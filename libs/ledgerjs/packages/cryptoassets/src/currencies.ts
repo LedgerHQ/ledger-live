@@ -3002,22 +3002,18 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     type: "CryptoCurrency",
     id: "vechain",
     coinType: CoinType.VECHAIN,
-    name: "VeChain",
+    name: "Vechain",
     managerAppName: "VeChain",
     ticker: "VET",
     scheme: "vechain",
-    color: "#00C2FF",
+    color: "#82BE00",
     family: "vechain",
-    units: [
-      {
-        name: "VET",
-        code: "VET",
-        magnitude: 8,
-      },
-    ],
+    blockAvgTime: 10,
+    units: ethereumUnits("VET", "VET"),
     explorerViews: [
       {
-        tx: "https://explore.veforge.com/transactions/$hash",
+        tx: "https://explore.vechain.org/transactions/$hash",
+        address: "https://explore.vechain.org/accounts/$address",
       },
     ],
   },
@@ -4531,11 +4527,7 @@ export function findCryptoCurrencyByTicker(ticker: string): CryptoCurrency | nul
   return cryptocurrenciesByTicker[ticker];
 }
 
-/**
- *
- * @param {*} id
- */
-export function findCryptoCurrencyById(id: string): CryptoCurrency | null | undefined {
+export function findCryptoCurrencyById(id: string): CryptoCurrency | undefined {
   return cryptocurrenciesById[id];
 }
 
@@ -4592,13 +4584,8 @@ export const findCryptoCurrencyByManagerAppName = (
  */
 export const hasCryptoCurrencyId = (id: string): boolean => id in cryptocurrenciesById;
 
-// TODO: signature should be getCryptoCurrencyById(id: CryptoCurrencyId)
-/**
- *
- * @param {*} id
- */
-export function getCryptoCurrencyById(id: string | undefined): CryptoCurrency {
-  const currency = id && findCryptoCurrencyById(id);
+export function getCryptoCurrencyById(id: string): CryptoCurrency {
+  const currency = findCryptoCurrencyById(id);
 
   if (!currency) {
     throw new Error(`currency with id "${id}" not found`);

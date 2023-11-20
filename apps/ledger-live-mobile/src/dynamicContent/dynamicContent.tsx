@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { ContentCard as BrazeContentCard } from "react-native-appboy-sdk";
+import { ContentCard as BrazeContentCard } from "@braze/react-native-sdk";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useCallback, useMemo } from "react";
 import { useBrazeContentCard } from "./brazeContentCard";

@@ -39,42 +39,38 @@ pnpm import:cal-tokens
     *   [Parameters](#parameters-4)
 *   [findCryptoCurrencyByTicker](#findcryptocurrencybyticker)
     *   [Parameters](#parameters-5)
-*   [findCryptoCurrencyById](#findcryptocurrencybyid)
-    *   [Parameters](#parameters-6)
 *   [findCryptoCurrencyByKeyword](#findcryptocurrencybykeyword)
-    *   [Parameters](#parameters-7)
+    *   [Parameters](#parameters-6)
 *   [hasCryptoCurrencyId](#hascryptocurrencyid)
-    *   [Parameters](#parameters-8)
-*   [getCryptoCurrencyById](#getcryptocurrencybyid)
-    *   [Parameters](#parameters-9)
+    *   [Parameters](#parameters-7)
 *   [findExchangeCurrencyConfig](#findexchangecurrencyconfig)
-    *   [Parameters](#parameters-10)
+    *   [Parameters](#parameters-8)
 *   [hasFiatCurrencyTicker](#hasfiatcurrencyticker)
-    *   [Parameters](#parameters-11)
+    *   [Parameters](#parameters-9)
 *   [findFiatCurrencyByTicker](#findfiatcurrencybyticker)
-    *   [Parameters](#parameters-12)
+    *   [Parameters](#parameters-10)
 *   [getFiatCurrencyByTicker](#getfiatcurrencybyticker)
-    *   [Parameters](#parameters-13)
+    *   [Parameters](#parameters-11)
 *   [listFiatCurrencies](#listfiatcurrencies)
 *   [\_\_clearObject](#__clearobject)
-    *   [Parameters](#parameters-14)
+    *   [Parameters](#parameters-12)
 *   [\_\_clearAllLists](#__clearalllists)
 *   [listTokens](#listtokens)
-    *   [Parameters](#parameters-15)
+    *   [Parameters](#parameters-13)
 *   [listTokensForCryptoCurrency](#listtokensforcryptocurrency)
-    *   [Parameters](#parameters-16)
+    *   [Parameters](#parameters-14)
 *   [listTokenTypesForCryptoCurrency](#listtokentypesforcryptocurrency)
-    *   [Parameters](#parameters-17)
+    *   [Parameters](#parameters-15)
 *   [findTokenByTicker](#findtokenbyticker)
-    *   [Parameters](#parameters-18)
+    *   [Parameters](#parameters-16)
 *   [findTokenById](#findtokenbyid)
-    *   [Parameters](#parameters-19)
+    *   [Parameters](#parameters-17)
 *   [hasTokenId](#hastokenid)
-    *   [Parameters](#parameters-20)
+    *   [Parameters](#parameters-18)
 *   [getTokenById](#gettokenbyid)
-    *   [Parameters](#parameters-21)
+    *   [Parameters](#parameters-19)
 *   [removeTokenFromAllLists](#removetokenfromalllists)
-    *   [Parameters](#parameters-22)
+    *   [Parameters](#parameters-20)
 *   [id](#id)
 
 ### abandonSeedAddresses
@@ -143,14 +139,6 @@ Returns **(CryptoCurrency | null | [undefined](https://developer.mozilla.org/doc
 
 Returns **(CryptoCurrency | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**&#x20;
 
-### findCryptoCurrencyById
-
-#### Parameters
-
-*   `id` **any**&#x20;
-
-Returns **(CryptoCurrency | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**&#x20;
-
 ### findCryptoCurrencyByKeyword
 
 #### Parameters
@@ -167,14 +155,6 @@ Returns **(CryptoCurrency | null | [undefined](https://developer.mozilla.org/doc
 *   `id` **any**&#x20;
 
 Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**&#x20;
-
-### getCryptoCurrencyById
-
-#### Parameters
-
-*   `id` **any**&#x20;
-
-Returns **CryptoCurrency**&#x20;
 
 ### findExchangeCurrencyConfig
 

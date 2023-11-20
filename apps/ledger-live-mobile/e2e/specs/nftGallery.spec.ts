@@ -64,14 +64,14 @@ describe("NFT Gallery screen", () => {
   });
 
   it("should let you pick a crypto account to receive NFT", async () => {
-    await expect(receivePage.getStep1HeaderTitle()).not.toBeVisible();
+    await expect(receivePage.step1HeaderTitle()).not.toBeVisible();
     await nftGalleryPage.continueFromReceiveNFTsModal();
-    await expect(receivePage.getStep1HeaderTitle()).toBeVisible();
-    await expect(receivePage.getStep2HeaderTitle()).not.toExist();
+    await expect(receivePage.step1HeaderTitle()).toBeVisible();
+    await expect(receivePage.step2HeaderTitle()).not.toExist();
     await tapByText("Ethereum");
-    await expect(receivePage.getStep2HeaderTitle()).toBeVisible();
+    await expect(receivePage.step2HeaderTitle()).toBeVisible();
     await tapByText("Ethereum");
-    await expect(receivePage.getStep2Accounts()).toBeVisible();
+    await expect(receivePage.step2Accounts()).toBeVisible();
   });
 
   it("should let users hide NFT's", async () => {

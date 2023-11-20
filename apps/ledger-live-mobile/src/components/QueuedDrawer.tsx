@@ -319,3 +319,15 @@ function cleanCurrentDisplayedDrawer() {
 function checkCurrentDisplayedDrawer() {
   return !!currentDisplayedDrawer;
 }
+
+/**
+ * Reset displayed and waiting list drawers
+ *
+ * Only used when lock screen appears.
+ */
+export function resetQueuedDrawer() {
+  if (checkCurrentDisplayedDrawer()) {
+    cleanWaitingDrawers();
+    cleanCurrentDisplayedDrawer();
+  }
+}

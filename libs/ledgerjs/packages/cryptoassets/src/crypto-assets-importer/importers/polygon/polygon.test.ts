@@ -17,9 +17,10 @@ const poylgonErc20 = [
   ],
 ];
 
+const mockedAxios = jest.spyOn(axios, "get");
+
 describe("import poylgon erc20", () => {
   beforeEach(() => {
-    const mockedAxios = jest.spyOn(axios, "get");
     mockedAxios.mockImplementation(() => Promise.resolve({ data: poylgonErc20 }));
   });
 
@@ -51,6 +52,7 @@ export default tokens as PolygonERC20Token[];
 
     await importPolygonTokens(".");
 
+    expect(mockedAxios).toHaveBeenCalledWith(expect.stringMatching(/.*\/polygon-erc20.json/));
     expect(mockedFs).toHaveBeenNthCalledWith(1, "polygon-erc20.json", JSON.stringify(poylgonErc20));
     expect(mockedFs).toHaveBeenNthCalledWith(2, "polygon-erc20.ts", expectedFile);
   });

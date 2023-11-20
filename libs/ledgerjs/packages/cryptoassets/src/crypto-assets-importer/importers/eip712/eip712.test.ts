@@ -18,9 +18,10 @@ const eip712Tokens = {
   },
 };
 
+const mockedAxios = jest.spyOn(axios, "get");
+
 describe("import EIP 712 tokens", () => {
   beforeEach(() => {
-    const mockedAxios = jest.spyOn(axios, "get");
     mockedAxios.mockImplementation(() => Promise.resolve({ data: eip712Tokens }));
   });
 
@@ -35,6 +36,7 @@ describe("import EIP 712 tokens", () => {
 
     await importEIP712(".");
 
+    expect(mockedAxios).toHaveBeenCalledWith(expect.stringMatching(/.*\/eip712.json/));
     expect(mockedFs).toHaveBeenNthCalledWith(1, "eip712.json", JSON.stringify(eip712Tokens));
     expect(mockedFs).toHaveBeenNthCalledWith(2, "eip712.ts", expectedFile);
   });

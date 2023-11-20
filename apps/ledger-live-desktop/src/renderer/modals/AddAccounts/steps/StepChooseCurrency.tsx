@@ -33,6 +33,8 @@ const listSupportedTokens = () =>
   listTokens().filter(token => isCurrencySupported(token.parentCurrency));
 
 const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
+  const mock = useEnv("MOCK");
+
   const axelar = useFeature("currencyAxelar");
   const stargaze = useFeature("currencyStargaze");
   const secretNetwork = useFeature("currencySecretNetwork");
@@ -68,8 +70,8 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const base = useFeature("currencyBase");
   const baseGoerli = useFeature("currencyBaseGoerli");
   const klaytn = useFeature("currencyKlaytn");
-  const mock = useEnv("MOCK");
   const injective = useFeature("currencyInjective");
+  const vechain = useFeature("currencyVechain");
   const casper = useFeature("currencyCasper");
   const neonEvm = useFeature("currencyNeonEvm");
   const lukso = useFeature("currencyLukso");
@@ -112,6 +114,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       base_goerli: baseGoerli,
       klaytn,
       injective,
+      vechain,
       casper,
       neon_evm: neonEvm,
       lukso,
@@ -153,6 +156,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       baseGoerli,
       klaytn,
       injective,
+      vechain,
       casper,
       neonEvm,
       lukso,
@@ -160,18 +164,23 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   );
 
   const currencies = useMemo(() => {
-    const currencies = (listSupportedCurrencies() as CryptoOrTokenCurrency[]).concat(
-      listSupportedTokens(),
-    );
+    const supportedCurrenciesAndTokens = (
+      listSupportedCurrencies() as CryptoOrTokenCurrency[]
+    ).concat(listSupportedTokens());
 
-    const deactivatedCurrencies = new Set(
+    const deactivatedCurrencyIds = new Set(
       mock
         ? [] // mock mode: all currencies are available for playwrigth tests
         : Object.entries(featureFlaggedCurrencies)
             .filter(([, feature]) => !feature?.enabled)
-            .map(([name]) => name),
+            .map(([id]) => id),
     );
-    return currencies.filter(c => !deactivatedCurrencies.has(c.id));
+
+    return supportedCurrenciesAndTokens.filter(
+      c =>
+        (c.type === "CryptoCurrency" && !deactivatedCurrencyIds.has(c.id)) ||
+        (c.type === "TokenCurrency" && !deactivatedCurrencyIds.has(c.parentCurrency.id)),
+    );
   }, [featureFlaggedCurrencies, mock]);
 
   const url =
@@ -188,7 +197,6 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       ) : currency ? (
         <CurrencyDownStatusAlert currencies={[currency]} />
       ) : null}
-      {/* $FlowFixMe: onChange type is not good */}
       <SelectCurrency currencies={currencies} autoFocus onChange={setCurrency} value={currency} />
       <FullNodeStatus currency={currency} />
       {currency && currency.type === "TokenCurrency" ? (
