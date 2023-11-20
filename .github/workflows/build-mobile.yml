@@ -19,6 +19,9 @@ on:
       base_ref:
         description: The base branch to merge the head into when checking out the code
         required: false
+      prNumber:
+        description: reference to the PR
+        required: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
