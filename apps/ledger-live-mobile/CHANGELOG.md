@@ -1,5 +1,17 @@
 # live-mobile
 
+## 3.35.0-next.4
+
+### Patch Changes
+
+- [#5486](https://github.com/LedgerHQ/ledger-live/pull/5486) [`4657a5ba87`](https://github.com/LedgerHQ/ledger-live/commit/4657a5ba87e6a237ae73c072e776ad55deb2fa02) Thanks [@alexandremgo](https://github.com/alexandremgo)! - fix: race condition on exchange issue in PairDevices
+
+  - Due to an incorrect usage of RxJS firstValueFrom
+  - Also improve observability with tracing
+
+- Updated dependencies [[`4657a5ba87`](https://github.com/LedgerHQ/ledger-live/commit/4657a5ba87e6a237ae73c072e776ad55deb2fa02)]:
+  - @ledgerhq/live-common@33.2.0-next.3
+
 ## 3.35.0-next.3
 
 ### Patch Changes
