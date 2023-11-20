@@ -19,7 +19,7 @@ export default function RecoverBanner() {
   const { colors } = useTheme();
 
   const recoverServices = useFeature("protectServicesDesktop");
-  const recoverBannerIsEnabled = recoverServices?.params?.ledgerliveStorageState;
+  const recoverBannerIsEnabled = recoverServices?.params?.bannerSubscriptionNotification;
   const protectID = recoverServices?.params?.protectId ?? "";
   const recoverUnfinishedOnboardingPath = useCustomPath(
     recoverServices,
