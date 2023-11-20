@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.35.0-next.5
+
+### Patch Changes
+
+- [#5463](https://github.com/LedgerHQ/ledger-live/pull/5463) [`6c07f1ec32`](https://github.com/LedgerHQ/ledger-live/commit/6c07f1ec32b9df630c1c53fe5c2407b7bf79458c) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - remove state update in earn screen that was causing App Not Found screen to display when app state was not loading but the manifest was also not yet found.
+
 ## 3.35.0-next.4
 
 ### Patch Changes
