@@ -129,7 +129,7 @@ export function Row({
     <Wrapper>
       <ValidatorName onClick={onExternalLinkClick}>
         <Box mr={2}>
-          <FirstLetterIcon label={validator?.identity} />
+          <FirstLetterIcon label={validator?.identity || "-"} />
         </Box>
         <ToolTip content={validator?.identity ? address : null}>
           <Ellipsis>{name}</Ellipsis>

@@ -20,11 +20,13 @@ const IconContainer = styled.div`
   height: 24px;
   color: ${p => p.theme.colors.palette.text.shade60};
 `;
+
 const InfoContainer = styled(Box).attrs(() => ({
   ml: 2,
   flexShrink: 0,
   mr: "auto",
 }))``;
+
 const Title = styled(Box).attrs(() => ({
   horizontal: true,
   alignItems: "center",
@@ -175,13 +177,16 @@ const ValidatorRow = ({
     },
     [onExternalLink, address],
   );
+
   const onToggle = useCallback(() => {
     onUpdateVote && (!disabled || isSelected) && onUpdateVote(address, !isSelected);
   }, [onUpdateVote, address, disabled, isSelected]);
+
   const formattedCommission = useMemo(
     () => (commissionBN ? `${commissionBN.multipliedBy(100).toFixed(2)} %` : "-"),
     [commissionBN],
   );
+
   const formattedTotal = useMemo(
     () =>
       totalBN && totalBN.gt(0)
@@ -194,10 +199,11 @@ const ValidatorRow = ({
         : "",
     [unit, totalBN],
   );
+
   return (
     <Row style={style} disabled={!!disabled} active={!!isSelected}>
       <IconContainer>
-        <FirstLetterIcon label={address} />
+        <FirstLetterIcon label={identity || "-"} />
       </IconContainer>
       <InfoContainer>
         <Tooltip content={identity ? address : null}>
