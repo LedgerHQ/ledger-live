@@ -59,6 +59,6 @@ test("Keyboard shortcuts", async ({ page }) => {
   // test right-click on the app doesn't open native browser menu
   await test.step("it doesn't open native browser menu", async () => {
     await layout.drawerPortfolioButton.click({ button: "right" });
-    expect(await page.screenshot()).toMatchSnapshot("no-native-menu.png");
+    await expect(page).toHaveScreenshot("no-native-menu.png");
   });
 });

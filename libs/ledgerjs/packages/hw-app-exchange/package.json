@@ -35,7 +35,7 @@
     "@ledgerhq/hw-transport-node-speculos-http": "workspace:^",
     "@types/jest": "^29.5.0",
     "@types/node": "^20.8.10",
-    "documentation": "13.2.5",
+    "documentation": "14.0.2",
     "jest": "^28.1.1",
     "protobufjs": "7.2.5",
     "secp256k1": "5.0.0",

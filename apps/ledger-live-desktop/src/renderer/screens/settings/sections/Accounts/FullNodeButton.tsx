@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { openModal } from "~/renderer/actions/modals";
 import { useDispatch } from "react-redux";
-import useEnv from "~/renderer/hooks/useEnv";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import Track from "~/renderer/analytics/Track";
 import Button from "~/renderer/components/Button";
 const FullNodeButton = () => {

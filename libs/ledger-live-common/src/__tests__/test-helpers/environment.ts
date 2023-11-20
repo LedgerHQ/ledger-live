@@ -91,6 +91,7 @@ setSupportedCurrencies([
   "telos_evm",
   "coreum",
   "injective",
+  "vechain",
   "casper",
   "neon_evm",
   "lukso",

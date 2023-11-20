@@ -62,7 +62,7 @@ export const importEVMTokens = async (outputDir: string) => {
     .sort((a, b) => a - b);
 
   await Promise.allSettled(
-    supportedChainIds.map(async chainId => await importTokenByChainId(outputDir, chainId)),
+    supportedChainIds.map(chainId => importTokenByChainId(outputDir, chainId)),
   );
 
   const rootIndexStringified = `${supportedChainIds

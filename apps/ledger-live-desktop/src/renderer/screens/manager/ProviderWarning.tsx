@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router";
 import Alert from "~/renderer/components/Alert";
-import useEnv from "~/renderer/hooks/useEnv";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 
 const ProviderWarning = () => {
   const forcedProvider = useEnv("FORCE_PROVIDER");

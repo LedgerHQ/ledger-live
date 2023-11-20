@@ -171,7 +171,13 @@ function ReceiveSelectAccount({
       />
 
       <Flex mb={insets.bottom + 2} px={6}>
-        <Button type="shade" size="large" outline onPress={createNewAccount}>
+        <Button
+          type="shade"
+          size="large"
+          outline
+          onPress={createNewAccount}
+          testID="button-create-account"
+        >
           {t("transfer.receive.selectAccount.cta")}
         </Button>
       </Flex>

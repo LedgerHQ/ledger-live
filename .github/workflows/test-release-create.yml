@@ -1,0 +1,77 @@
+name: "[Import CAL Tokens test Release] Create Branch"
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Use workflow from branch
+        required: false
+
+jobs:
+  create-test-release:
+    name: Create test Release
+    runs-on: ubuntu-latest
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      RELEASE_BRANCH: "import-cal-token-test-release"
+    steps:
+      - name: generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+      - uses: actions/checkout@v3
+        if: ${{ inputs.ref != null }}
+        with:
+          ref: ${{ inputs.ref }}
+          fetch-depth: 0
+          token: ${{ steps.generate-token.outputs.token }}
+      - uses: actions/checkout@v3
+        if: ${{ !inputs.ref }}
+        with:
+          ref: develop
+          token: ${{ steps.generate-token.outputs.token }}
+      - name: set git user
+        run: |
+          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
+          git config user.name "live-github-bot[bot]"
+      - name: create test release release branch
+        run: |
+          git checkout -b $RELEASE_BRANCH
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
+      - name: install dependencies
+        run: pnpm i -F "ledger-live"
+      - name: import CAL tokens
+        run: pnpm import:cal-tokens
+      - name: commit new tokens
+        run: |
+          git add .
+          git commit -m 'chore(prerelease) update cryptoassets'
+      - name: update cryptoassets.md
+        run: |
+          pnpm generate:cryptoassets-md
+          git add .
+          git commit -m 'update cryptoassets.md'
+      - name: update sortByMarketcap snapshot
+        run: |
+          pnpm common jest --runTestsByPath src/currencies/sortByMarketcap.test.ts -u
+          git add .
+          git commit -m 'update sortByMarketcap snapshot'
+      - name: enter prerelease mode
+        run: pnpm changeset pre enter next
+      - name: commit
+        run: |
+          git add .
+          git commit -m "chore(prerelease): :rocket: entering prerelease mode"
+      - name: Get date
+        id: date
+        run: |
+          echo "date=$(date +%F)" >> $GITHUB_OUTPUT
+      - name: push
+        run: |
+          git push origin release
+          gh pr create --title ":rocket: Release ${{ steps.date.outputs.date }}" -F .github/templates/release.md --base main --head release
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+  
