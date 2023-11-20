@@ -199,12 +199,15 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
             .map(([id]) => id),
     );
 
-    const currenciesFiltered = supportedCurrenciesAndTokens.filter(
-      c =>
-        (filteredCurrencyIds.size && filteredCurrencyIds.has(c.id)) ||
-        (c.type === "CryptoCurrency" && !deactivatedCurrencyIds.has(c.id)) ||
-        (c.type === "TokenCurrency" && !deactivatedCurrencyIds.has(c.parentCurrency.id)),
-    );
+    const currenciesFiltered = supportedCurrenciesAndTokens.filter(c => {
+      const id = c.type === "CryptoCurrency" ? c.id : c.parentCurrency.id;
+      return (
+        // If there's a filter the currency must be part of it
+        (!filteredCurrencyIds.size || filteredCurrencyIds.has(c.id)) &&
+        // The currency is not part of the deactivated features
+        !deactivatedCurrencyIds.has(id)
+      );
+    });
 
     if (!devMode) {
       return currenciesFiltered.filter(c => c.type !== "CryptoCurrency" || !c.isTestnetFor);
