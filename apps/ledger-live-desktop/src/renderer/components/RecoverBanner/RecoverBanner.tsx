@@ -64,10 +64,7 @@ export default function RecoverBanner() {
         return undefined;
     }
 
-    if (recoverBannerWording) {
-      recoverBannerWording.title = t("dashboard.recoverBanner.title");
-      return recoverBannerWording;
-    }
+    return recoverBannerWording;
   }, [storageData, t]);
 
   const onRedirectRecover = () => {
@@ -111,7 +108,7 @@ export default function RecoverBanner() {
             lineHeight="15px"
             fontWeight="extraLight"
           >
-            {`${stepNumber}/${maxStepNumber}`}
+            {`${stepNumber}/${maxStepNumber - 1}`}
           </Text>
         </Flex>
         <Flex flex={1} flexDirection="column" py={3} overflow="hidden">

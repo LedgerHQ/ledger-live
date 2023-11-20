@@ -1410,20 +1410,22 @@
       }
     },
     "recoverBanner": {
-      "title": "You're almost there!",
       "subscribeDone": {
-        "description":"Add your credit or debit card to continue subscribing to Ledger Recover.",
-        "primaryCta": "Add my card",
+        "title": "Add your payment card",
+        "description":"Add your payment method to get your backup secure.",
+        "primaryCta": "Add now",
         "secondaryCta": "Maybe later"
       },
       "verifyIdentity": {
-        "description":"Verify your identity to get your backup secure",
+        "title": "Verify your identity",
+        "description":"Verify your identity to get your backup secure.",
         "primaryCta": "Verify now",
         "secondaryCta": "Maybe later"
       },
       "connectDevice": {
-        "description":"Connect and confirm your details on your Ledger.",
-        "primaryCta": "Connecting your Ledger",
+        "title": "Connect your Ledger",
+        "description":"Connect your Ledger to get your backup secure.",
+        "primaryCta": "Connecting my Ledger",
         "secondaryCta": "Maybe later"
       }
     }
