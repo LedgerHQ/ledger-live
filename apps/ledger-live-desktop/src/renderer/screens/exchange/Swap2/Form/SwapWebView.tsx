@@ -8,16 +8,30 @@ import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/provide
 import { counterValueCurrencySelector, languageSelector } from "~/renderer/reducers/settings";
 import useTheme from "~/renderer/hooks/useTheme";
 import { Web3AppWebview } from "~/renderer/components/Web3AppWebview";
-import { WebviewAPI, WebviewState } from "~/renderer/components/Web3AppWebview/types";
+import { WebviewAPI, WebviewProps, WebviewState } from "~/renderer/components/Web3AppWebview/types";
 import { initialWebviewState } from "~/renderer/components/Web3AppWebview/helpers";
 import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
 import { TopBar } from "~/renderer/components/WebPlatformPlayer/TopBar";
+
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { SwapOperation } from "@ledgerhq/types-live/lib/swap";
 import BigNumber from "bignumber.js";
 import { SubAccount } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
+
+import { captureException } from "~/sentry/internal";
+
+const isDevelopment = process.env.NODE_ENV === "development";
+
+class UnableToLoadSwapLiveError extends Error {
+  constructor(message: string) {
+    const name = "UnableToLoadSwapLiveError";
+    super(message || name);
+    this.name = name;
+    this.message = message;
+  }
+}
 
 type CustomHandlersParams<Params> = {
   params: Params;
@@ -42,6 +56,7 @@ export type SwapProps = {
 
 export type SwapWebProps = {
   swapState?: Partial<SwapProps>;
+  liveAppUnavailable(): void;
 };
 
 export const SWAP_WEB_MANIFEST_ID = "swap-live-app-demo-0";
@@ -53,7 +68,7 @@ const SwapWebAppWrapper = styled.div<{ isDevelopment: boolean }>(
 `,
 );
 
-const SwapWebView = ({ swapState }: SwapWebProps) => {
+const SwapWebView = ({ swapState, liveAppUnavailable }: SwapWebProps) => {
   const {
     colors: {
       palette: { type: themeType },
@@ -153,12 +168,25 @@ const SwapWebView = ({ swapState }: SwapWebProps) => {
   if (!hasManifest || !hasSwapState) {
     return null;
   }
+
   const onSwapWebviewError = (error?: SwapLiveError) => {
     console.error("onSwapWebviewError", error);
     setDrawer(WebviewErrorDrawer, error);
   };
 
-  const isDevelopment = process.env.NODE_ENV === "development";
+  const onStateChange: WebviewProps["onStateChange"] = state => {
+    setWebviewState(state);
+    if (!state.loading && state.isAppUnavailable) {
+      console.error("onSwapLiveAppUnavailable", state);
+      liveAppUnavailable();
+      captureException(
+        new UnableToLoadSwapLiveError(
+          '"Failed to load swap live app using WebPlatformPlayer in SwapWeb",',
+        ),
+      );
+    }
+  };
+
   return (
     <>
       {isDevelopment && (
@@ -173,7 +201,7 @@ const SwapWebView = ({ swapState }: SwapWebProps) => {
             lang: locale,
             currencyTicker: fiatCurrency.ticker,
           }}
-          onStateChange={setWebviewState}
+          onStateChange={onStateChange}
           ref={webviewAPIRef}
           customHandlers={customHandlers as never}
         />

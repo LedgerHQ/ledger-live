@@ -282,7 +282,7 @@ const SwapForm = () => {
   };
 
   useEffect(() => {
-    if (isSwapLiveAppEnabled) {
+    if (isSwapLiveAppEnabled.enabled) {
       const { swap } = swapTransaction;
       const { to, from } = swap;
       const transaction = swapTransaction.transaction;
@@ -345,7 +345,7 @@ const SwapForm = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    isSwapLiveAppEnabled,
+    isSwapLiveAppEnabled.enabled,
     provider,
     swapTransaction.swap.from.account?.id,
     swapTransaction.swap.to.currency?.id,
@@ -401,7 +401,10 @@ const SwapForm = () => {
       )}
 
       {isSwapLiveAppEnabled ? (
-        <SwapWebView swapState={swapWebProps} />
+        <SwapWebView
+          swapState={swapWebProps}
+          liveAppUnavailable={isSwapLiveAppEnabled.onLiveAppCrashed}
+        />
       ) : (
         <Box>
           <Button primary disabled={!isSwapReady} onClick={onSubmit} data-test-id="exchange-button">
