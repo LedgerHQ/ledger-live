@@ -10,6 +10,7 @@ import {
   groupAccountOperationsByDay,
   groupAccountsOperationsByDay,
   flattenAccounts,
+  getMainAccount,
 } from "@ledgerhq/live-common/account/index";
 import logger from "~/renderer/logger";
 import { openModal } from "~/renderer/actions/modals";
@@ -151,6 +152,7 @@ export class OperationsList extends PureComponent<Props, State> {
                       return null;
                     }
                   }
+                  const mainAccount = getMainAccount(account, parentAccount);
                   return (
                     <OperationC
                       operation={operation}
@@ -160,7 +162,7 @@ export class OperationsList extends PureComponent<Props, State> {
                       onOperationClick={this.handleClickOperation}
                       t={t}
                       withAccount={withAccount}
-                      editable={account && isEditableOperation(account, operation)}
+                      editable={account && isEditableOperation({ account: mainAccount, operation })}
                     />
                   );
                 })}

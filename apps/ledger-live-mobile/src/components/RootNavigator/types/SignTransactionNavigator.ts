@@ -130,7 +130,6 @@ export type SignTransactionNavigatorParamList = {
     parentId?: string;
     transaction: EvmTransaction;
     gasOptions?: GasOptions;
-    goBackOnSetTransaction?: boolean;
     currentNavigation:
       | ScreenName.SignTransactionSummary
       | ScreenName.SignTransactionSummary

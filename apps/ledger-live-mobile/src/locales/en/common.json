@@ -100,6 +100,10 @@
     }
   },
   "errors": {
+    "ReplacementTransactionUnderpriced": {
+      "title": "Replacement transaction underpriced",
+      "description": "The network fee might be too low. Please increase"
+    },
     "countervaluesUnavailable": {
       "title": "We're not able to provide a countervalue for this asset at the moment"
     },
@@ -313,6 +317,9 @@
     "FeeNotLoaded": {
       "title": "Could not load fee rates"
     },
+    "FeeNotLoadedSwap": {
+      "title": "Network fee estimation failed because of technical issues. Try again or change the assets."
+    },
     "FeeRequired": {
       "title": "Fees are required"
     },
@@ -459,6 +466,18 @@
     },
     "ElrondDelegationBelowMinimumError": {
       "title": "Remaining delegation can't be less than {{formattedAmount}}"
+    },
+    "NotEnoughVTHO": {
+      "title": "Sorry, insufficient VTHO funds",
+      "description": "Please make sure the account has enough VTHO."
+    },
+    "MustBeVechain": {
+      "title": "Not a vechain account",
+      "description": "Please make sure the coin is VTHO or VET"
+    },
+    "ImpossibleToCalculateAmountAndFees": {
+      "title": "Impossible to calculate amount and fees",
+      "description": "Impossible to calculate amount and fees"
     },
     "NotEnoughEGLDForFees": {
       "title": "Not enough EGLD to pay the transaction fees",
@@ -999,7 +1018,8 @@
     "week": "1W",
     "month": "1M",
     "year": "1Y",
-    "all": "ALL"
+    "all": "ALL",
+    "graphNotSupported": "The graph is not available for this token"
   },
   "carousel": {
     "title": "Close banner?",
@@ -3582,10 +3602,10 @@
     },
     "previousFeesInfo": {
       "pendingTransactionFeesInfo": "Pending transaction fees info: ",
-      "networkfee": "Network fee = {{amount}} {{unit}}",
-      "maxFee": "Max fee = {{amount}} Gwei",
-      "maxPriorityFee": "Max Priority fee = {{amount}} Gwei",
-      "gasPrice": "GasPrice = {{amount}} Gwei"
+      "networkfee": "Network fee = {{amount}}",
+      "maxFee": "Max fee = {{amount}}",
+      "maxPriorityFee": "Max Priority fee = {{amount}}",
+      "gasPrice": "GasPrice = {{amount}}"
     },
     "speedUp": {
       "title": "Speed Up",
@@ -3593,14 +3613,14 @@
     },
     "cancel": {
       "title": "Cancel",
-      "description": "Sending 0 {{ticker}} to your own address.\nTo ensure cancellation, the network fee is 30% higher than the fee of the transaction meant to be cancelled."
+      "description": "Sending 0 {{ticker}} to your own address."
     },
     "error": {
       "notEnoughFundsToCancel": "Cancelling transaction is not available because you don't have enough funds on your account.",
       "notEnoughFundsToSpeedup": "Speeding up transaction is not available because you don’t have enough funds in your account.",
       "notlowestNonceToSpeedup": "Speed up feature is not available. Your transaction is pending because a previous transaction is stuck. You can wait for it to be confirmed, speed it up and cancel it.",
       "TransactionHasBeenValidatedError": {
-        "title": "Can't be speed up or cancel",
+        "title": "Can't be sped up or canceled",
         "description": "This transaction has already been validated"
       }
     }
@@ -3780,6 +3800,11 @@
         "title": "Add Token",
         "disclaimer": "{{tokenName}} is a BEP-20 Token.\nYou can receive tokens directly in a BNB account.",
         "learnMore": "Learn more about BEP-20"
+      },
+      "vip180": {
+        "title": "Add token",
+        "disclaimer": "{{tokenName}} is a VIP180 Token.\nYou can receive tokens directly in a VET account.",
+        "learnMore": "Learn more about VIP180"
       }
     },
     "showMoreChainType": "More address types",
@@ -5391,7 +5416,7 @@
     "unlockingBalance": "Unbonding balance",
     "unlockedBalance": "Unbonded balance",
     "networkFees": "Network fees are automatically set by the Polkadot consensus, you won't be able to review them on your device",
-    "bondedBalanceBelowMinimum": "Your bonded balance is below the current minimum of {{minimumBondBalance}}. Your nominations are at risk of being removed.",
+    "bondedBalanceBelowMinimum": "As a nominator, a minimum of {{minimumBondBalance}} is required to submit an intention to nominate",
     "info": {
       "available": {
         "title": "DOT available",
@@ -5413,10 +5438,7 @@
         "title": "Validators election ongoing",
         "description": "The election of new validators is currently ongoing. As such, staking operations are not available for 15 minutes at most."
       },
-      "minBondWarning": {
-        "title": "Not enough bonded",
-        "description": "Your bonded balance is below the current minimum allowed to nominate. Your nominations are at risk of being removed."
-      }
+      "notEnoughBonded": "Not enough bonded"
     },
     "nomination": {
       "emptyState": {

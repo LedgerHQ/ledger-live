@@ -56,8 +56,6 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
   // @ts-expect-error issue in typing
   const decorators = perFamilyAccountActions[mainAccount?.currency?.family];
 
-  const isWalletConnectSupported = ["ethereum", "bsc", "polygon"].includes(currency.id);
-
   const { isCurrencyAvailable } = useRampCatalog();
 
   const canBeBought = !!currency && isCurrencyAvailable(currency.id, "onRamp");
@@ -222,29 +220,7 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
       })) ||
     [];
 
-  const secondaryActions = [
-    ...familySpecificSecondaryActions,
-    ...(isWalletConnectSupported
-      ? [
-          {
-            id: "walletconnect",
-            navigationParams: [
-              NavigatorName.Base,
-              {
-                screen: NavigatorName.WalletConnect,
-                params: {
-                  screen: ScreenName.WalletConnectConnect,
-                },
-              },
-            ],
-            label: t("account.walletconnect"),
-            Icon: IconsLegacy.WalletConnectMedium,
-            event: "WalletConnect Account Button",
-            eventProperties: { currencyName: currency?.name },
-          },
-        ]
-      : []),
-  ];
+  const secondaryActions = [...familySpecificSecondaryActions];
 
   return {
     mainActions,

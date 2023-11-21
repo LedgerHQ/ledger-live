@@ -54,6 +54,8 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const devMode = useEnv("MANAGER_DEV_MODE");
   const { filterCurrencyIds = [], currency } = route.params || {};
 
+  const mock = useEnv("MOCK");
+
   const axelar = useFeature("currencyAxelar");
   const stargaze = useFeature("currencyStargaze");
   const secretNetwork = useFeature("currencySecretNetwork");
@@ -89,10 +91,11 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const base = useFeature("currencyBase");
   const baseGoerli = useFeature("currencyBaseGoerli");
   const klaytn = useFeature("currencyKlaytn");
-  const mock = useEnv("MOCK");
   const injective = useFeature("currencyInjective");
+  const vechain = useFeature("currencyVechain");
   const casper = useFeature("currencyCasper");
   const neonEvm = useFeature("currencyNeonEvm");
+  const lukso = useFeature("currencyLukso");
 
   const featureFlaggedCurrencies = useMemo(
     (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
@@ -132,8 +135,10 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       base_goerli: baseGoerli,
       klaytn,
       injective,
+      vechain,
       casper,
       neon_evm: neonEvm,
+      lukso,
     }),
     [
       axelar,
@@ -172,22 +177,30 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       baseGoerli,
       klaytn,
       injective,
+      vechain,
       casper,
       neonEvm,
+      lukso,
     ],
   );
 
   const cryptoCurrencies = useMemo(() => {
-    const currencies = [...listSupportedCurrencies(), ...listSupportedTokens()].filter(
-      ({ id }) => filterCurrencyIds.length <= 0 || filterCurrencyIds.includes(id),
-    );
+    const supportedCurrenciesAndTokens: CryptoOrTokenCurrency[] = [
+      ...listSupportedCurrencies(),
+      ...listSupportedTokens(),
+    ].filter(({ id }) => filterCurrencyIds.length <= 0 || filterCurrencyIds.includes(id));
+
     const deactivatedCurrencies = mock
-      ? []
+      ? [] // mock mode: all currencies are available for e2e tests
       : Object.entries(featureFlaggedCurrencies)
           .filter(([, feature]) => !feature?.enabled)
-          .map(([name]) => name);
+          .map(([id]) => id);
 
-    const currenciesFiltered = currencies.filter(c => !deactivatedCurrencies.includes(c.id));
+    const currenciesFiltered = supportedCurrenciesAndTokens.filter(
+      c =>
+        (c.type === "CryptoCurrency" && !deactivatedCurrencies.includes(c.id)) ||
+        (c.type === "TokenCurrency" && !deactivatedCurrencies.includes(c.parentCurrency.id)),
+    );
 
     if (!devMode) {
       return currenciesFiltered.filter(c => c.type !== "CryptoCurrency" || !c.isTestnetFor);

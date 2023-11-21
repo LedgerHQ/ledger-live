@@ -1,4 +1,4 @@
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature, isRecoverDisplayed } from "@ledgerhq/live-config/featureFlags/index";
 import {
   useAlreadySeededDevicePath,
   useRestore24Path,
@@ -572,12 +572,14 @@ export default function Tutorial({ useCase }: Props) {
             fallbackIfNoAction: () => history.push("/"),
           });
 
-        if (useCase === UseCase.setupDevice && upsellPath) {
-          history.push(upsellPath);
-        } else if (useCase === UseCase.recoveryPhrase && restore24Path) {
-          history.push(restore24Path);
-        } else if (useCase === UseCase.connectDevice && devicePairingPath) {
-          history.push(devicePairingPath);
+        if (isRecoverDisplayed(recoverFF, connectedDevice?.modelId)) {
+          if (useCase === UseCase.setupDevice && upsellPath) {
+            history.push(upsellPath);
+          } else if (useCase === UseCase.recoveryPhrase && restore24Path) {
+            history.push(restore24Path);
+          } else if (useCase === UseCase.connectDevice && devicePairingPath) {
+            history.push(devicePairingPath);
+          }
         }
       }, 0);
       return () => {
@@ -593,6 +595,7 @@ export default function Tutorial({ useCase }: Props) {
     restore24Path,
     upsellPath,
     useCase,
+    recoverFF,
   ]);
 
   const steps = useMemo(() => {

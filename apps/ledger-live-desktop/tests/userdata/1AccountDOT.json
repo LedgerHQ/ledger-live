@@ -32,7 +32,7 @@
             "controller": "15jLBbe9LD6VSUYFkV5Fmo5LhZU5cns9E6g8qcDv5KrKM1eP",
             "stash": "15jLBbe9LD6VSUYFkV5Fmo5LhZU5cns9E6g8qcDv5KrKM1eP",
             "nonce": 60,
-            "lockedBalance": "10000000000",
+            "lockedBalance": "999999999999999999999",
             "unlockedBalance": "0",
             "unlockingBalance": "10000000000",
             "unlockings": [

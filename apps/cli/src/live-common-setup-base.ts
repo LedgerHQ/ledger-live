@@ -80,6 +80,7 @@ setSupportedCurrencies([
   "sei_network",
   "persistence",
   "quicksilver",
+  "vechain",
   "internet_computer",
   "klaytn",
   "polygon_zk_evm",
@@ -92,6 +93,7 @@ setSupportedCurrencies([
   "injective",
   "casper",
   "neon_evm",
+  "lukso",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);

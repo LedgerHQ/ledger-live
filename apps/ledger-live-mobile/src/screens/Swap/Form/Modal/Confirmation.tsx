@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { StyleSheet, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
+import { getEnv } from "@ledgerhq/live-env";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import {
   Exchange,
@@ -17,14 +18,13 @@ import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/accou
 import { AccountLike, DeviceInfo, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { postSwapAccepted, postSwapCancelled } from "@ledgerhq/live-common/exchange/swap/index";
-import { getEnv } from "@ledgerhq/live-env";
 import { InstalledItem } from "@ledgerhq/live-common/apps/types";
+import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
 import { renderLoading } from "../../../../components/DeviceAction/rendering";
 import { updateAccountWithUpdater } from "../../../../actions/accounts";
 import DeviceAction from "../../../../components/DeviceAction";
 import QueuedDrawer from "../../../../components/QueuedDrawer";
 import ModalBottomAction from "../../../../components/ModalBottomAction";
-import { useBroadcast } from "../../../../components/useBroadcast";
 import { UnionToIntersection } from "../../../../types/helpers";
 import type { StackNavigatorNavigation } from "../../../../components/RootNavigator/types/helpers";
 import { ScreenName } from "../../../../const";

@@ -1,5 +1,3 @@
-// FIXME: to update when implementing edit transaction on evm
-
 import React, { useMemo } from "react";
 import {
   createStackNavigator,
@@ -10,7 +8,6 @@ import {
 import { useTranslation } from "react-i18next";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
-import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
 import { useSelector } from "react-redux";
 
 import { ScreenName, NavigatorName } from "../../const";
@@ -85,8 +82,7 @@ import {
   NavigationHeaderCloseButtonAdvanced,
 } from "../NavigationHeaderCloseButton";
 import { RootDrawer } from "../RootDrawer/RootDrawer";
-// to keep until edit transaction on evm is implemented
-// import EditTransactionNavigator from "../../families/ethereum/EditTransactionFlow/EditTransactionNavigator";
+import EditTransactionNavigator from "../../families/evm/EditTransactionFlow/EditTransactionNavigator";
 import { DrawerProps } from "../RootDrawer/types";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
@@ -102,7 +98,6 @@ export default function BaseNavigator() {
   >();
   const { colors } = useTheme();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
-  const walletConnectLiveApp = useFeature("walletConnectLiveApp");
   const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
   const isAccountsEmpty = useSelector(hasNoAccountsSelector);
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector) && isAccountsEmpty;
@@ -431,16 +426,15 @@ export default function BaseNavigator() {
             headerLeft: () => null,
           }}
         />
-        {walletConnectLiveApp?.enabled && (
-          <Stack.Screen
-            name={NavigatorName.WalletConnect}
-            component={WalletConnectLiveAppNavigator}
-            options={{
-              headerShown: false,
-            }}
-            {...noNanoBuyNanoWallScreenOptions}
-          />
-        )}
+
+        <Stack.Screen
+          name={NavigatorName.WalletConnect}
+          component={WalletConnectLiveAppNavigator}
+          options={{
+            headerShown: false,
+          }}
+          {...noNanoBuyNanoWallScreenOptions}
+        />
 
         <Stack.Screen
           name={NavigatorName.NotificationCenter}
@@ -538,12 +532,11 @@ export default function BaseNavigator() {
             headerLeft: () => null,
           }}
         />
-        {/* to keep until edit transaction on evm is implemented */}
-        {/* <Stack.Screen
-          name={NavigatorName.EditTransaction}
+        <Stack.Screen
+          name={NavigatorName.EvmEditTransaction}
           options={{ headerShown: false }}
           component={EditTransactionNavigator}
-        /> */}
+        />
       </Stack.Navigator>
     </>
   );

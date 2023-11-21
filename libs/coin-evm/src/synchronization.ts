@@ -221,7 +221,7 @@ export const getOperationStatus = async (
     }
 
     const { timestamp } = await nodeApi.getBlockByHeight(currency, blockHeight);
-    const date = new Date(timestamp * 1000);
+    const date = new Date(timestamp);
 
     return {
       ...op,
