@@ -118,4 +118,3 @@ export const getVotesCount = (
       return 0;
   }
 };
- 
