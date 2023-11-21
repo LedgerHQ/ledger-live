@@ -36,6 +36,7 @@ const defaultHubState = {
   actionsToComplete: [],
   actionsCompleted: {},
   lastActionCompleted: null,
+  postOnboardingInProgress: false,
 };
 
 const stateAllCompleted = {
@@ -51,6 +52,7 @@ const stateAllCompleted = {
     [PostOnboardingActionId.migrateAssetsMock]: true,
   },
   lastActionCompleted: PostOnboardingActionId.personalizeMock,
+  postOnboardingInProgress: true,
 };
 
 const stateAllNotCompleted = {
@@ -66,6 +68,7 @@ const stateAllNotCompleted = {
     [PostOnboardingActionId.migrateAssetsMock]: false,
   },
   lastActionCompleted: null,
+  postOnboardingInProgress: true,
 };
 
 describe("usePostOnboardingHubState", () => {
@@ -93,6 +96,7 @@ describe("usePostOnboardingHubState", () => {
       deviceModelId: state.deviceModelId,
       lastActionCompleted: null,
       actionsState: [],
+      postOnboardingInProgress: true,
     });
   });
 
@@ -106,6 +110,7 @@ describe("usePostOnboardingHubState", () => {
       deviceModelId: state.deviceModelId,
       lastActionCompleted: null,
       actionsState: [],
+      postOnboardingInProgress: false,
     });
   });
 
