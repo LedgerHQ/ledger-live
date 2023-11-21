@@ -7,7 +7,7 @@ export function inferCryptoCurrencyIcon<Icon>(
   iconsRegistry: Record<string, Icon>,
   currency: CryptoCurrency | TokenCurrency,
 ): Icon | null | undefined {
-  // FIXME ongoing hack due to ticker collision
+  // FIXME DEPRECATED (ongoing hack due to ticker collision)
   if (currency.disableCountervalue) return null;
   // we allow the icons to define a currency_{id} format
   const maybeIconById = iconsRegistry[camelCase(`currency_${currency.id}`).toUpperCase()];

@@ -28,7 +28,6 @@ pnpm import:cal-tokens
 *   [abandonSeedAddresses](#abandonseedaddresses)
 *   [getAbandonSeedAddress](#getabandonseedaddress)
     *   [Parameters](#parameters)
-*   [](#)
 *   [registerCryptoCurrency](#registercryptocurrency)
     *   [Parameters](#parameters-1)
 *   [listCryptoCurrencies](#listcryptocurrencies)
@@ -94,8 +93,6 @@ DO NOT USE AS RECIPIENT OR SIGN TRANSACTIONS INTO THEM
 *   `currencyId` **any**&#x20;
 
 Returns **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
-
-###
 
 ### registerCryptoCurrency
 
