@@ -18,6 +18,7 @@ import {
   formatCurrencyUnit,
   findCurrencyByTicker,
   listFiatCurrencies,
+  findCryptoCurrencyById,
 } from "@ledgerhq/live-common/currencies/index";
 import {
   initialState,
@@ -222,18 +223,18 @@ function asPortfolioRange(period: string): PortfolioRange {
 }
 
 async function getCurrencies(opts: Opts): Promise<Currency[]> {
-  let tickers;
+  let ids;
 
   if (opts.marketcap) {
-    tickers = await CountervaluesAPI.fetchMarketcapTickers();
-    tickers.splice(opts.marketcap);
+    ids = await CountervaluesAPI.fetchIdsSortedByMarketcap();
+    ids.splice(opts.marketcap);
   }
 
   if (opts.currency) {
-    tickers = (tickers || []).concat(opts.currency);
+    ids = (ids || []).concat(opts.currency);
   }
 
-  return uniq((tickers || ["BTC"]).map(findCurrencyByTicker).filter(Boolean));
+  return uniq((ids || ["bitcoin"]).map(findCryptoCurrencyById).filter(Boolean));
 }
 
 function getCountervalues(opts: Opts): Currency[] {

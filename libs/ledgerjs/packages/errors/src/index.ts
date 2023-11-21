@@ -32,7 +32,6 @@ export const DeviceHalted = createCustomErrorClass("DeviceHalted");
 export const DeviceNameInvalid = createCustomErrorClass("DeviceNameInvalid");
 export const DeviceSocketFail = createCustomErrorClass("DeviceSocketFail");
 export const DeviceSocketNoBulkStatus = createCustomErrorClass("DeviceSocketNoBulkStatus");
-export const LockedDeviceError = createCustomErrorClass("LockedDeviceError");
 export const UnresponsiveDeviceError = createCustomErrorClass("UnresponsiveDeviceError");
 export const DisconnectedDevice = createCustomErrorClass("DisconnectedDevice");
 export const DisconnectedDeviceDuringOperation = createCustomErrorClass(
@@ -169,6 +168,9 @@ export const NoDBPathGiven = createCustomErrorClass("NoDBPathGiven");
 export const DBWrongPassword = createCustomErrorClass("DBWrongPassword");
 export const DBNotReset = createCustomErrorClass("DBNotReset");
 
+// Represents the type of all the classes created with createCustomErrorClass
+export type CustomErrorClassType = ReturnType<typeof createCustomErrorClass>;
+
 /**
  * Type of a Transport error used to represent all equivalent errors coming from all possible implementation of Transport
  */
@@ -286,24 +288,50 @@ export function getAltStatusMessage(code: number): string | undefined | null {
  * Error thrown when a device returned a non success status.
  * the error.statusCode is one of the `StatusCodes` exported by this library.
  */
-export function TransportStatusError(statusCode: number): void {
-  const statusText =
-    Object.keys(StatusCodes).find(k => StatusCodes[k] === statusCode) || "UNKNOWN_ERROR";
-  const smsg = getAltStatusMessage(statusCode) || statusText;
-  const statusCodeStr = statusCode.toString(16);
-  const message = `Ledger device: ${smsg} (0x${statusCodeStr})`;
+export class TransportStatusError extends Error {
+  statusCode: number;
+  statusText: string;
 
-  // Maps to a LockedDeviceError
-  if (statusCode === StatusCodes.LOCKED_DEVICE) {
-    throw new LockedDeviceError(message);
+  /**
+   * @param statusCode The error status code coming from a Transport implementation
+   * @param options containing:
+   *  - canBeMappedToChildError: enable the mapping of TransportStatusError to an error extending/inheriting from it
+   *  . Ex: LockedDeviceError. Default to true.
+   */
+  constructor(
+    statusCode: number,
+    { canBeMappedToChildError = true }: { canBeMappedToChildError?: boolean } = {},
+  ) {
+    const statusText =
+      Object.keys(StatusCodes).find(k => StatusCodes[k] === statusCode) || "UNKNOWN_ERROR";
+    const smsg = getAltStatusMessage(statusCode) || statusText;
+    const statusCodeStr = statusCode.toString(16);
+    const message = `Ledger device: ${smsg} (0x${statusCodeStr})`;
+
+    super(message);
+    this.name = "TransportStatusError";
+
+    this.statusCode = statusCode;
+    this.statusText = statusText;
+
+    // Maps to a LockedDeviceError
+    if (canBeMappedToChildError && statusCode === StatusCodes.LOCKED_DEVICE) {
+      return new LockedDeviceError(message);
+    }
   }
-
-  this.name = "TransportStatusError";
-  this.message = message;
-  this.stack = new Error(message).stack;
-  this.statusCode = statusCode;
-  this.statusText = statusText;
 }
-TransportStatusError.prototype = new Error();
+
+export class LockedDeviceError extends TransportStatusError {
+  constructor(message?: string) {
+    super(StatusCodes.LOCKED_DEVICE, { canBeMappedToChildError: false });
+    if (message) {
+      this.message = message;
+    }
+    this.name = "LockedDeviceError";
+  }
+}
+
+// Represents the type of the class TransportStatusError and its children
+export type TransportStatusErrorClassType = typeof TransportStatusError | typeof LockedDeviceError;
 
 addCustomErrorDeserializer("TransportStatusError", e => new TransportStatusError(e.statusCode));

@@ -100,7 +100,6 @@ const completeExchange = (
             payoutAddressParameters.addressParameters,
           );
         } catch (e) {
-          // @ts-expect-error TransportStatusError to be typed on ledgerjs
           if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
             throw new WrongDeviceForAccount(undefined, {
               accountName: mainAccount.name,
@@ -121,7 +120,6 @@ const completeExchange = (
       }).catch(e => {
         if (ignoreTransportError) return;
 
-        // @ts-expect-error TransportStatusError to be typed on ledgerjs
         if (e instanceof TransportStatusError && e.statusCode === 0x6a84) {
           throw new TransactionRefusedOnDevice();
         }

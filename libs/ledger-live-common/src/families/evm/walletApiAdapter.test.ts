@@ -1,3 +1,4 @@
+import { DEFAULT_NONCE } from "@ledgerhq/coin-evm/createTransaction";
 import { Transaction } from "@ledgerhq/coin-evm/types/index";
 import { EthereumTransaction as WalletAPITransaction } from "@ledgerhq/wallet-api-core";
 import BigNumber from "bignumber.js";
@@ -18,7 +19,7 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
         recipient: ethPlatformTx.recipient,
         data: undefined,
         gasLimit: undefined,
-        nonce: undefined,
+        nonce: DEFAULT_NONCE,
         customGasLimit: undefined,
         feesStrategy: "medium",
         maxFeePerGas: undefined,
@@ -52,7 +53,7 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
         gasPrice: ethPlatformTx.gasPrice,
         gasLimit: ethPlatformTx.gasLimit,
         customGasLimit: ethPlatformTx.gasLimit,
-        nonce: undefined,
+        nonce: DEFAULT_NONCE,
         data: undefined,
         feesStrategy: "custom",
         type: 0,
@@ -86,7 +87,7 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
         customGasLimit: ethPlatformTx.gasLimit,
         maxFeePerGas: ethPlatformTx.maxFeePerGas,
         maxPriorityFeePerGas: ethPlatformTx.maxPriorityFeePerGas,
-        nonce: undefined,
+        nonce: DEFAULT_NONCE,
         data: undefined,
         feesStrategy: "custom",
         type: 2,
@@ -119,8 +120,40 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
         feesStrategy: "medium",
         maxFeePerGas: undefined,
         maxPriorityFeePerGas: undefined,
-        nonce: undefined,
+        nonce: DEFAULT_NONCE,
         data: undefined,
+        type: 2,
+      };
+
+      const { canEditFees, hasFeesProvided, liveTx } =
+        evm.getWalletAPITransactionSignFlowInfos(ethPlatformTx);
+
+      expect(canEditFees).toBe(true);
+
+      expect(hasFeesProvided).toBe(false);
+
+      expect(liveTx).toEqual(expectedLiveTx);
+    });
+
+    test("with nonce provided", () => {
+      const ethPlatformTx: WalletAPITransaction = {
+        family: "ethereum",
+        amount: new BigNumber(100000),
+        recipient: "0xABCDEF",
+        nonce: 1,
+      };
+
+      const expectedLiveTx: Partial<Transaction> = {
+        family: "evm",
+        amount: ethPlatformTx.amount,
+        recipient: ethPlatformTx.recipient,
+        data: undefined,
+        gasLimit: undefined,
+        nonce: 1,
+        customGasLimit: undefined,
+        feesStrategy: "medium",
+        maxFeePerGas: undefined,
+        maxPriorityFeePerGas: undefined,
         type: 2,
       };
 

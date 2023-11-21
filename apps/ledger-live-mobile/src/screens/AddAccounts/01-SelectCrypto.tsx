@@ -10,9 +10,9 @@ import type {
 import {
   isCurrencySupported,
   listTokens,
-  useCurrenciesByMarketcap,
   listSupportedCurrencies,
 } from "@ledgerhq/live-common/currencies/index";
+import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";
 import { useTheme } from "@react-navigation/native";
 import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
@@ -53,6 +53,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const { colors } = useTheme();
   const devMode = useEnv("MANAGER_DEV_MODE");
   const { filterCurrencyIds = [], currency } = route.params || {};
+  const filteredCurrencyIds = useMemo(() => new Set(filterCurrencyIds), [filterCurrencyIds]);
 
   const mock = useEnv("MOCK");
 
@@ -188,25 +189,31 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
     const supportedCurrenciesAndTokens: CryptoOrTokenCurrency[] = [
       ...listSupportedCurrencies(),
       ...listSupportedTokens(),
-    ].filter(({ id }) => filterCurrencyIds.length <= 0 || filterCurrencyIds.includes(id));
+    ];
 
-    const deactivatedCurrencies = mock
-      ? [] // mock mode: all currencies are available for e2e tests
-      : Object.entries(featureFlaggedCurrencies)
-          .filter(([, feature]) => !feature?.enabled)
-          .map(([id]) => id);
-
-    const currenciesFiltered = supportedCurrenciesAndTokens.filter(
-      c =>
-        (c.type === "CryptoCurrency" && !deactivatedCurrencies.includes(c.id)) ||
-        (c.type === "TokenCurrency" && !deactivatedCurrencies.includes(c.parentCurrency.id)),
+    const deactivatedCurrencyIds = new Set(
+      mock
+        ? []
+        : Object.entries(featureFlaggedCurrencies)
+            .filter(([, feature]) => !feature?.enabled)
+            .map(([id]) => id),
     );
+
+    const currenciesFiltered = supportedCurrenciesAndTokens.filter(c => {
+      const id = c.type === "CryptoCurrency" ? c.id : c.parentCurrency.id;
+      return (
+        // If there's a filter the currency must be part of it
+        (!filteredCurrencyIds.size || filteredCurrencyIds.has(c.id)) &&
+        // The currency is not part of the deactivated features
+        !deactivatedCurrencyIds.has(id)
+      );
+    });
 
     if (!devMode) {
       return currenciesFiltered.filter(c => c.type !== "CryptoCurrency" || !c.isTestnetFor);
     }
     return currenciesFiltered;
-  }, [devMode, featureFlaggedCurrencies, filterCurrencyIds, mock]);
+  }, [devMode, featureFlaggedCurrencies, filteredCurrencyIds, mock]);
 
   const sortedCryptoCurrencies = useCurrenciesByMarketcap(cryptoCurrencies);
 

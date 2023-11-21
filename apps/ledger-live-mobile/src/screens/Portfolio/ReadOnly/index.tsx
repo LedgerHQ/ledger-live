@@ -12,8 +12,8 @@ import {
   isCurrencySupported,
   listTokens,
   listSupportedCurrencies,
-  useCurrenciesByMarketcap,
 } from "@ledgerhq/live-common/currencies/index";
+import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";
 import { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useRefreshAccountsOrdering } from "../../../actions/general";
 import { counterValueCurrencySelector, hasOrderedNanoSelector } from "../../../reducers/settings";

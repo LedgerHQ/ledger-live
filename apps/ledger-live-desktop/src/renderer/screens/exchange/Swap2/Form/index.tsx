@@ -306,6 +306,23 @@ const SwapForm = () => {
       // However, if you wish to use a different fee type, you will need to set it as custom.
       const isCustomFee =
         feesStrategy === "slow" || feesStrategy === "fast" || feesStrategy === "custom";
+
+      const providerRedirectFromAccountId =
+        fromAccount &&
+        provider &&
+        walletApiPartnerList?.enabled &&
+        walletApiPartnerList?.params?.list.includes(provider)
+          ? accountToWalletAPIAccount(fromAccount, fromParentAccount)?.id
+          : fromAccount?.id;
+
+      const providerRedirectURLSearch = new URLSearchParams();
+      providerRedirectFromAccountId &&
+        providerRedirectURLSearch.set("accountId", providerRedirectFromAccountId);
+
+      exchangeRate?.providerURL &&
+        providerRedirectURLSearch.set("customDappUrl", exchangeRate.providerURL);
+      providerRedirectURLSearch.set("returnTo", "/swap");
+
       setSwapWebProps({
         provider,
         fromAccountId,
@@ -321,6 +338,9 @@ const SwapForm = () => {
         cacheKey: v4(),
         error: !!swapError,
         loading: swapTransaction.bridgePending || exchangeRatesState.status === "loading",
+        providerRedirectURL: `ledgerlive://discover/${getProviderName(
+          provider ?? "",
+        ).toLowerCase()}?${providerRedirectURLSearch.toString()}`,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -334,6 +354,7 @@ const SwapForm = () => {
     swapError,
     swapTransaction.bridgePending,
     exchangeRatesState.status,
+    exchangeRate?.providerURL,
   ]);
 
   return (
@@ -380,7 +401,7 @@ const SwapForm = () => {
       )}
 
       {isSwapLiveAppEnabled ? (
-        <SwapWebView redirectToProviderApp={redirectToProviderApp} swapState={swapWebProps} />
+        <SwapWebView swapState={swapWebProps} />
       ) : (
         <Box>
           <Button primary disabled={!isSwapReady} onClick={onSubmit} data-test-id="exchange-button">

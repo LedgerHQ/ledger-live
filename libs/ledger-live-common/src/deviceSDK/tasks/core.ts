@@ -4,7 +4,8 @@ import {
   LockedDeviceError,
   TransportRaceCondition,
   UnresponsiveDeviceError,
-  createCustomErrorClass,
+  TransportStatusErrorClassType,
+  CustomErrorClassType,
 } from "@ledgerhq/errors";
 import { Observable, from, of, throwError, timer } from "rxjs";
 import { catchError, concatMap, retryWhen, switchMap, timeout } from "rxjs/operators";
@@ -77,8 +78,7 @@ export function sharedLogicTaskWrapper<TaskArgsType, TaskEventsType>(
   };
 }
 
-// To update once createCustomErrorClass is not used on Transports errors
-type ErrorClass = ReturnType<typeof createCustomErrorClass>;
+type ErrorClass = CustomErrorClassType | TransportStatusErrorClassType;
 
 // To be able to retry a command, the command needs to take an object containing a transport as its argument
 type CommandTransportArgs = { transport: Transport };

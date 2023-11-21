@@ -168,16 +168,18 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       listSupportedCurrencies() as CryptoOrTokenCurrency[]
     ).concat(listSupportedTokens());
 
-    const deactivatedCurrencies = mock
-      ? [] // mock mode: all currencies are available for playwrigth tests
-      : Object.entries(featureFlaggedCurrencies)
-          .filter(([, feature]) => !feature?.enabled)
-          .map(([id]) => id);
+    const deactivatedCurrencyIds = new Set(
+      mock
+        ? [] // mock mode: all currencies are available for playwrigth tests
+        : Object.entries(featureFlaggedCurrencies)
+            .filter(([, feature]) => !feature?.enabled)
+            .map(([id]) => id),
+    );
 
     return supportedCurrenciesAndTokens.filter(
       c =>
-        (c.type === "CryptoCurrency" && !deactivatedCurrencies.includes(c.id)) ||
-        (c.type === "TokenCurrency" && !deactivatedCurrencies.includes(c.parentCurrency.id)),
+        (c.type === "CryptoCurrency" && !deactivatedCurrencyIds.has(c.id)) ||
+        (c.type === "TokenCurrency" && !deactivatedCurrencyIds.has(c.parentCurrency.id)),
     );
   }, [featureFlaggedCurrencies, mock]);
 
