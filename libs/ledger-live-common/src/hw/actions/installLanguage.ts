@@ -1,6 +1,6 @@
-import { Observable } from "rxjs";
-import { scan, tap } from "rxjs/operators";
-import { useCallback, useEffect, useState } from "react";
+import { Observable, Subject } from "rxjs";
+import { scan, takeUntil, tap } from "rxjs/operators";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { log } from "@ledgerhq/logs";
 import type { DeviceInfo } from "@ledgerhq/types-live";
 import { useReplaySubject } from "../../observable";
@@ -12,6 +12,7 @@ import type {
 import type { Action, Device } from "./types";
 import { currentMode } from "./app";
 import { getImplementation } from "./implementations";
+import { DisconnectedDevice, DisconnectedDeviceDuringOperation } from "@ledgerhq/errors";
 
 type State = {
   isLoading: boolean;
@@ -24,6 +25,7 @@ type State = {
   deviceInfo: DeviceInfo | null | undefined;
   error: Error | null | undefined;
   progress?: number;
+  poll?: boolean;
 };
 
 type ActionState = State & {
@@ -52,6 +54,7 @@ const getInitialState = (device?: Device | null | undefined): State => ({
   device,
   deviceInfo: null,
   error: null,
+  poll: true,
 });
 
 const reducer = (state: State, e: Event): State => {
@@ -67,6 +70,10 @@ const reducer = (state: State, e: Event): State => {
         ...getInitialState(state.device),
         error: e.error,
         isLoading: false,
+        poll: !(
+          (e.error as Error) instanceof DisconnectedDeviceDuringOperation ||
+          (e.error as Error) instanceof DisconnectedDevice
+        ),
       };
     case "appDetected":
       return {
@@ -115,6 +122,7 @@ export const createAction = (
     const [state, setState] = useState(() => getInitialState(device));
     const [resetIndex, setResetIndex] = useState(0);
     const deviceSubject = useReplaySubject(device);
+    const abortScanSignaler = useMemo(() => new Subject<void>(), []);
 
     useEffect(() => {
       if (state.languageInstalled) return;
@@ -128,13 +136,22 @@ export const createAction = (
       const sub = impl
         .pipe(
           tap((e: any) => log("actions-install-language-event", e.type, e)),
+          takeUntil(abortScanSignaler),
           scan(reducer, getInitialState()),
         )
-        .subscribe(setState);
+        .subscribe({
+          next: state => {
+            setState(state);
+
+            if (state.poll) return;
+
+            abortScanSignaler.next();
+          },
+        });
       return () => {
         sub.unsubscribe();
       };
-    }, [deviceSubject, request, state.languageInstalled, resetIndex]);
+    }, [abortScanSignaler, deviceSubject, request, state.languageInstalled, resetIndex]);
 
     const onRetry = useCallback(() => {
       setResetIndex(currIndex => currIndex + 1);
