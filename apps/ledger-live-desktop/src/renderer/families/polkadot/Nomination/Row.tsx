@@ -124,7 +124,6 @@ export function Row({
   );
 
   const onExternalLinkClick = useCallback(() => onExternalLink(address), [onExternalLink, address]);
-  console.log({ validator });
   return (
     <Wrapper>
       <ValidatorName onClick={onExternalLinkClick}>
