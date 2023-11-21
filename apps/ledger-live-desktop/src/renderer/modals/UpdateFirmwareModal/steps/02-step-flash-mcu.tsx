@@ -45,7 +45,13 @@ const Body = ({
   total,
 }: BodyProps) => {
   return installing || !firmware?.shouldFlashMCU || initialDelayPhase ? (
-    <Installing installing={installing} current={current} total={total} progress={progress} />
+    <Installing
+      installing={installing}
+      current={current}
+      total={total}
+      progress={progress}
+      deviceModelId={deviceModelId}
+    />
   ) : (
     <FlashMCU deviceModelId={deviceModelId} />
   );

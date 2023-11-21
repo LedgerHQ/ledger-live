@@ -76,26 +76,6 @@ const Body = ({
 
   if (!displayedOnDevice) {
     return (
-      <Box my={5} alignItems="center">
-        <Flex alignItems="center" justifyContent="center" borderRadius={9999} size={60} mb={5}>
-          <ProgressLoader
-            stroke={8}
-            infinite={!normalProgress}
-            progress={normalProgress}
-            showPercentage={false}
-          />
-        </Flex>
-        <Title>
-          {step !== "transfer"
-            ? t("manager.modal.steps.preparingUpdate")
-            : t("manager.modal.steps.transferringUpdate", { productName: deviceModel.productName })}
-        </Title>
-      </Box>
-    );
-  }
-
-  if (displayedOnDevice) {
-    return (
       <>
         <Track event={"FirmwareUpdateConfirmNewFirwmare"} onMount />
         <DeviceBlocker />
@@ -111,7 +91,7 @@ const Body = ({
           </Box>
         ) : (
           <Box mb={8}>
-            <Animation animation={getDeviceAnimation(deviceModelId, type, "verify")} />
+            <Animation animation={getDeviceAnimation(deviceModelId, type, "allowManager")} />
           </Box>
         )}
         {hasHash ? (
@@ -131,10 +111,28 @@ const Body = ({
           </Flex>
         )}
 
-        <Text ff="Inter|Regular" textAlign="center" color="palette.text.shade100">
+        <Text ff="Inter|SemiBold" fontSize={15} textAlign="center" color="palette.text.shade100">
           {t("manager.modal.confirmIdentifierText")}
         </Text>
       </>
+    );
+  } else {
+    return (
+      <Box my={5} alignItems="center">
+        <Flex alignItems="center" justifyContent="center" borderRadius={9999} size={60} mb={5}>
+          <ProgressLoader
+            stroke={8}
+            infinite={!normalProgress}
+            progress={normalProgress}
+            showPercentage={!!normalProgress}
+          />
+        </Flex>
+        <Title>
+          {step
+            ? t("manager.modal.steps.preparingUpdate")
+            : t("manager.modal.steps.transferringUpdate", { productName: deviceModel.productName })}
+        </Title>
+      </Box>
     );
   }
 
