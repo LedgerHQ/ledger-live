@@ -58019,3 +58019,7 @@ packages:
     dependencies:
       commander: 2.20.3
     dev: false
+
+settings:
+  autoInstallPeers: false
+  excludeLinksFromLockfile: false
