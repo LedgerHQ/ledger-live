@@ -45,14 +45,6 @@ export function LiveApp({ match, appId: propsAppId, location }: Props) {
     const params = new URLSearchParams(search);
     return urlParams?.returnTo || params.get("returnTo") || internalParams?.returnTo;
   }, [search, urlParams?.returnTo, internalParams?.returnTo]);
-  console.log(
-    "%cLiveApp.tsx line:48 search, customDappUrl, urlParams.customDappUrl, internalParams?.customDappUrl",
-    "color: #007acc;",
-    search,
-    customDappUrl,
-    urlParams.customDappUrl,
-    internalParams?.customDappUrl,
-  );
   const _customDappUrl = useMemo(() => {
     const params = new URLSearchParams(search);
     return (
@@ -61,7 +53,7 @@ export function LiveApp({ match, appId: propsAppId, location }: Props) {
       (params.has("customDappUrl") && params.get("customDappUrl")) ||
       internalParams?.customDappUrl
     );
-  }, [search, customDappUrl, urlParams.customDappUrl, internalParams?.customDappUrl]);
+  }, [search, customDappUrl, urlParams?.customDappUrl, internalParams?.customDappUrl]);
 
   const handleClose = useCallback(() => history.push(returnTo || `/platform`), [history, returnTo]);
   const themeType = useTheme().colors.palette.type;
