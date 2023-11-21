@@ -779,9 +779,6 @@ importers:
       '@likashefqet/react-native-image-zoom':
         specifier: ^1.3.0
         version: 1.3.0(react-native-gesture-handler@2.9.0)(react-native-reanimated@3.3.0)(react-native@0.72.6)(react@18.2.0)
-      '@polkadot/reactnative-identicon':
-        specifier: ^3.6.3
-        version: 3.6.4(react-native@0.72.6)(react@18.2.0)
       '@react-native-async-storage/async-storage':
         specifier: ^1.19.2
         version: 1.19.2(react-native@0.72.6)
@@ -17185,7 +17182,7 @@ packages:
       '@polkadot/util-crypto': 12.6.1
     dependencies:
       '@polkadot/util': 12.6.1
-      '@polkadot/util-crypto': 12.6.1
+      '@polkadot/util-crypto': 12.6.1(@polkadot/util@12.6.1)
       tslib: 2.6.2
     dev: false
 
@@ -17204,22 +17201,6 @@ packages:
     dependencies:
       '@polkadot/util': 12.6.1
       '@substrate/ss58-registry': 1.44.0
-      tslib: 2.6.2
-    dev: false
-
-  /@polkadot/reactnative-identicon@3.6.4(react-native@0.72.6)(react@18.2.0):
-    resolution: {integrity: sha512-UbwOEqCND1rRhMgkO26/cbn89GcmEh6bYQM8qRTXBGED6wiGthmre0taXesGOydMllQpPAma/o7g+A9xoWKQ5w==}
-    engines: {node: '>=18'}
-    peerDependencies:
-      react: '*'
-      react-native: '*'
-    dependencies:
-      '@polkadot/ui-shared': 3.6.4(@polkadot/util-crypto@12.6.1)(@polkadot/util@12.6.1)
-      '@polkadot/util': 12.6.1
-      '@polkadot/util-crypto': 12.6.1
-      react: 18.2.0
-      react-native: 0.72.6(@babel/core@7.23.2)(react@18.2.0)
-      react-native-svg: 12.5.1(react-native@0.72.6)(react@18.2.0)
       tslib: 2.6.2
     dev: false
 
@@ -17272,21 +17253,8 @@ packages:
       '@polkadot/types-codec': 10.11.1
       '@polkadot/types-create': 10.11.1
       '@polkadot/util': 12.6.1
-      '@polkadot/util-crypto': 12.6.1
+      '@polkadot/util-crypto': 12.6.1(@polkadot/util@12.6.1)
       rxjs: 7.8.1
-      tslib: 2.6.2
-    dev: false
-
-  /@polkadot/ui-shared@3.6.4(@polkadot/util-crypto@12.6.1)(@polkadot/util@12.6.1):
-    resolution: {integrity: sha512-nDlfKRPLxjSFm0769Nmkm+8vamH4HwZtKYZ5X+e2yDF1QkgaRUIc9+xJ/eeXp5lkfH985s0IAEmeNw8dQ0SbYg==}
-    engines: {node: '>=18'}
-    peerDependencies:
-      '@polkadot/util': '*'
-      '@polkadot/util-crypto': '*'
-    dependencies:
-      '@polkadot/util': 12.6.1
-      '@polkadot/util-crypto': 12.6.1
-      colord: 2.9.3
       tslib: 2.6.2
     dev: false
 
@@ -17308,9 +17276,11 @@ packages:
       tslib: 2.6.2
     dev: false
 
-  /@polkadot/util-crypto@12.6.1:
+  /@polkadot/util-crypto@12.6.1(@polkadot/util@12.6.1):
     resolution: {integrity: sha512-2ezWFLmdgeDXqB9NAUdgpp3s2rQztNrZLY+y0SJYNOG4ch+PyodTW/qSksnOrVGVdRhZ5OESRE9xvo9LYV5UAw==}
     engines: {node: '>=18'}
+    peerDependencies:
+      '@polkadot/util': 12.6.1
     dependencies:
       '@noble/curves': 1.2.0
       '@noble/hashes': 1.3.2
@@ -40368,7 +40338,7 @@ packages:
       pretty-format: 28.1.3
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.7.0(@types/node@20.8.10)(source-map-support@0.5.21)(typescript@5.1.3)
+      ts-node: 10.7.0(@types/node@20.8.10)(typescript@5.1.3)
     transitivePeerDependencies:
       - metro
       - supports-color
@@ -51046,18 +51016,6 @@ packages:
       react-native: 0.72.6(@babel/core@7.23.2)(react@18.2.0)
     dev: false
 
-  /react-native-svg@12.5.1(react-native@0.72.6)(react@18.2.0):
-    resolution: {integrity: sha512-c374ENsq2MWCfr+7jC7TGwSeOAuC1Dp0osh2pw8PjpYFxmmB/toFIwcnCLz+SgBd6iLJClRhbATealqM05HOGg==}
-    peerDependencies:
-      react: '*'
-      react-native: '>=0.50.0'
-    dependencies:
-      css-select: 5.1.0
-      css-tree: 1.1.3
-      react: 18.2.0
-      react-native: 0.72.6(@babel/core@7.23.2)(react@18.2.0)
-    dev: false
-
   /react-native-svg@13.11.0(react-native@0.72.6)(react@18.2.0):
     resolution: {integrity: sha512-ApMp0t7NQh85BNq66nfN1/l8pwkj1Lx8Y+ErmBmZ0Oado3DSd+o/Fx/6Jm3GmBkmXl62t6Et0FHj1NYxNQw64w==}
     peerDependencies:
@@ -56262,7 +56220,7 @@ packages:
     dependencies:
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
-      jest: 28.1.3(@types/node@20.8.10)(ts-node@10.9.1)
+      jest: 28.1.3(@types/node@20.8.10)(ts-node@10.7.0)
       jest-util: 28.1.3
       json5: 2.2.1
       lodash.memoize: 4.1.2
