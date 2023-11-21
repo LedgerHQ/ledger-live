@@ -26,7 +26,7 @@ env:
   base_branch: ${{ github.event.pull_request.base.ref || github.event.merge_group.base_ref }}
   base_owner: ${{ github.event.pull_request.base.repo.owner.login || github.repository_owner }}
   is_fork: ${{ github.event.pull_request.head.repo.fork || false }}
-  ref: ${{ github.ref }}
+  ref: ${{ github.sha }}
 
 jobs:
   setup:
@@ -35,7 +35,7 @@ jobs:
     outputs:
       affected: ${{ steps.affected.outputs.affected }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 

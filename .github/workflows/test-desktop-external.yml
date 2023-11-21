@@ -358,7 +358,7 @@ jobs:
     if: ${{ always() && !cancelled() && github.ref_name == 'develop' }}
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.ref_name }}
       - name: Download Allure Report - Linux

@@ -142,7 +142,7 @@ jobs:
     if: ${{ always() && !cancelled() && github.ref_name == 'develop' }}
     needs: [detox-tests-ios]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
       - uses: ./tools/actions/composites/upload-allure-report
@@ -278,7 +278,7 @@ jobs:
     needs: [detox-tests-android]
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
       - uses: ./tools/actions/composites/upload-allure-report
