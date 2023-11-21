@@ -57,9 +57,8 @@ Ledger Live main types.
     *   [Properties](#properties-13)
     *   [enabled](#enabled)
     *   [desktop\_version](#desktop_version)
-    *   [enabledOverriddenForCurrentDesktopVersion](#enabledoverriddenforcurrentdesktopversion)
     *   [mobile\_version](#mobile_version)
-    *   [enabledOverriddenForCurrentMobileVersion](#enabledoverriddenforcurrentmobileversion)
+    *   [enabledOverriddenForCurrentVersion](#enabledoverriddenforcurrentversion)
     *   [languages\_whitelisted](#languages_whitelisted)
     *   [languages\_blacklisted](#languages_blacklisted)
     *   [enabledOverriddenForCurrentLanguage](#enabledoverriddenforcurrentlanguage)
@@ -527,15 +526,14 @@ Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 
 Feature type.
 
-Type: {enabled: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), desktop\_version: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, enabledOverriddenForCurrentDesktopVersion: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, mobile\_version: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, enabledOverriddenForCurrentMobileVersion: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, languages\_whitelisted: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>?, languages\_blacklisted: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>?, enabledOverriddenForCurrentLanguage: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, overridesRemote: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, overriddenByEnv: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, params: T?}
+Type: {enabled: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), desktop\_version: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, mobile\_version: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, enabledOverriddenForCurrentVersion: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, languages\_whitelisted: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>?, languages\_blacklisted: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>?, enabledOverriddenForCurrentLanguage: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, overridesRemote: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, overriddenByEnv: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, params: T?}
 
 #### Properties
 
 *   `enabled` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**&#x20;
 *   `desktop_version` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?**&#x20;
-*   `enabledOverriddenForCurrentDesktopVersion` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?**&#x20;
 *   `mobile_version` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?**&#x20;
-*   `enabledOverriddenForCurrentMobileVersion` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?**&#x20;
+*   `enabledOverriddenForCurrentVersion` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?**&#x20;
 *   `languages_whitelisted` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>?**&#x20;
 *   `languages_blacklisted` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>?**&#x20;
 *   `enabledOverriddenForCurrentLanguage` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?**&#x20;
@@ -557,12 +555,6 @@ It should respect the semantic versioning specification (<https://semver.org/>)
 
 Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
 
-#### enabledOverriddenForCurrentDesktopVersion
-
-Whether the remote value of `enabled` was overriden due to `desktop_version`
-
-Type: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
-
 #### mobile\_version
 
 The `mobile_version` option is mobile specific, it has no impact on mobile
@@ -571,9 +563,9 @@ It should respect the semantic versioning specification (<https://semver.org/>)
 
 Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
 
-#### enabledOverriddenForCurrentMobileVersion
+#### enabledOverriddenForCurrentVersion
 
-Whether the remote value of `enabled` was overriden due to `mobile_version`
+Whether the remote value of `enabled` was overriden due to `desktop_version` or `mobile_version`
 
 Type: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
 
