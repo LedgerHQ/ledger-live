@@ -12,6 +12,7 @@ export type PullRequestMetadata = {
   base_branch: string;
   base_owner: string;
   is_fork: boolean;
+  ref: string;
 };
 export type CheckSuite = Awaited<ReturnType<Octokit["checks"]["getSuite"]>>["data"];
 
@@ -33,7 +34,7 @@ const commonGetInputs = (
   return "workflow_run" in payload
     ? {
         login: payload.workflow_run.actor.login,
-        ref: localRef ?? metadata?.head_branch ?? payload.workflow_run.pull_requests[0]?.head.ref,
+        ref: localRef ?? metadata?.ref ?? payload.workflow_run.pull_requests[0]?.head.ref,
         base_ref:
           metadata?.base_branch || payload.workflow_run.pull_requests[0]?.base.ref || "develop",
       }
@@ -174,8 +175,7 @@ export const WORKFLOWS = {
       return "workflow_run" in payload
         ? {
             login: payload.workflow_run.actor.login,
-            ref:
-              localRef ?? metadata?.head_branch ?? payload.workflow_run.pull_requests[0]?.head.ref,
+            ref: localRef ?? metadata?.ref ?? payload.workflow_run.pull_requests[0]?.head.ref,
             since_branch:
               metadata?.base_branch || payload.workflow_run.pull_requests[0]?.base.ref || "develop",
           }

@@ -28,9 +28,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
   cancel-in-progress: true
 
-env:
-  REFNAME: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
-
 jobs:
   codechecks:
     name: "Desktop code checks"
@@ -40,10 +37,9 @@ jobs:
       CI_OS: ubuntu-latest
     runs-on: ubuntu-latest
     steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+      - uses: actions/checkout@v4
         with:
-          ref: ${{ env.REFNAME }}
-          base: ${{ inputs.base_ref }}
+          ref: ${{ inputs.ref || github.ref }}
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
         with:
@@ -82,10 +78,9 @@ jobs:
       CI_OS: ubuntu-latest
     runs-on: ubuntu-latest
     steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+      - uses: actions/checkout@v4
         with:
-          ref: ${{ env.REFNAME }}
-          base: ${{ inputs.base_ref }}
+          ref: ${{ inputs.ref || github.ref }}
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
         with:
@@ -113,10 +108,9 @@ jobs:
       # DEBUG_LOGS: 1
     runs-on: [ledger-live-4xlarge-windows-2022]
     steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+      - uses: actions/checkout@v4
         with:
-          ref: ${{ env.REFNAME }}
-          base: ${{ inputs.base_ref }}
+          ref: ${{ inputs.ref || github.ref }}
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
         with:
@@ -187,10 +181,9 @@ jobs:
       # DEBUG_LOGS: 1
     runs-on: [ledger-live-4xlarge-linux]
     steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+      - uses: actions/checkout@v4
         with:
-          ref: ${{ env.REFNAME }}
-          base: ${{ inputs.base_ref }}
+          ref: ${{ inputs.ref || github.ref }}
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
         with:
@@ -257,10 +250,9 @@ jobs:
       # DEBUG: "pw:browser*"
       # DEBUG_LOGS: 1
     steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+      - uses: actions/checkout@v4
         with:
-          ref: ${{ env.REFNAME }}
-          base: ${{ inputs.base_ref }}
+          ref: ${{ inputs.ref || github.ref }}
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
         with:
@@ -320,10 +312,9 @@ jobs:
     runs-on: ubuntu-latest
     if: always() && !cancelled()
     steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+      - uses: actions/checkout@v4
         with:
-          ref: ${{ env.REFNAME }}
-          base: ${{ inputs.base_ref }}
+          ref: ${{ inputs.ref || github.ref }}
       - name: "download linter results"
         uses: actions/download-artifact@v3
         with:
