@@ -1425,7 +1425,7 @@
       "connectDevice": {
         "title": "Connect your Ledger",
         "description":"Connect your Ledger to get your backup secure.",
-        "primaryCta": "Connecting my Ledger",
+        "primaryCta": "Connect my Ledger",
         "secondaryCta": "Maybe later"
       }
     }
