@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.35.0-next.7
+
+### Patch Changes
+
+- [#5528](https://github.com/LedgerHQ/ledger-live/pull/5528) [`8438a7bdbc`](https://github.com/LedgerHQ/ledger-live/commit/8438a7bdbc704f425f5c89469cbe9bb38bb293bd) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix wording in receive flow
+
 ## 3.35.0-next.6
 
 ### Patch Changes
