@@ -1,7 +1,8 @@
 // TODO: to remove once live-app-sdk is depreciated and removed from LL
 
-import { EthereumTransaction as PlatformTransaction } from "@ledgerhq/live-app-sdk";
+import { DEFAULT_NONCE } from "@ledgerhq/coin-evm/createTransaction";
 import { Transaction } from "@ledgerhq/coin-evm/types/index";
+import { EthereumTransaction as PlatformTransaction } from "@ledgerhq/live-app-sdk";
 
 const CAN_EDIT_FEES = true;
 
@@ -12,7 +13,7 @@ const convertToLiveTransaction = (tx: PlatformTransaction): Partial<Transaction>
 
   const params = {
     family: "evm" as const,
-    nonce: tx.nonce,
+    nonce: tx.nonce === undefined ? DEFAULT_NONCE : tx.nonce,
     amount: tx.amount,
     recipient: tx.recipient,
     data: tx.data,
