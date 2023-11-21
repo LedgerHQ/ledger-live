@@ -7,7 +7,7 @@ concurrency:
 
 jobs:
   run-bot:
-    runs-on: [ledger-live-assets-stg]
+    runs-on: ledgerhq-shared-small
     steps:
       - uses: actions/checkout@v3
       - name: Retrieving crypto-assets
@@ -36,6 +36,11 @@ jobs:
           node libs/ledgerjs/script/crypto-assets-importer/index.js $PWD/crypto-assets true
           cd libs/ledgerjs/packages/cryptoassets/src/data
           cp -vf --parents **/*.json $out
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_STG }}:role/ledger-live-assets-github-role
+          aws-region: ${{ vars.AWS_REGION }}
       - name: Deploy json to s3 STG
         run: aws s3 sync ./cal/ s3://ledger-live-cryptoassets-stg/cryptoassets --delete --acl public-read
       - name: Cache invalidate STG
