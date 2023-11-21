@@ -117,6 +117,7 @@ jobs:
           mv main.jsbundle ios/build/Build/Products/Release-iphonesimulator/main.jsbundle
       - name: Test iOS app
         id: detox
+        timeout-minutes: 45
         run: |
           pnpm mobile e2e:test -c ios.sim.release --loglevel error --record-logs all --take-screenshots all --detectOpenHandles --headless --retries 1
       - name: Delete iOS simulator
@@ -243,7 +244,7 @@ jobs:
       - name: Start Emulator and Run Android Tests
         id: detox
         uses: reactivecircus/android-emulator-runner@v2
-        timeout-minutes: 60
+        timeout-minutes: 45
         env:
           DETOX_INSTALL_TIMEOUT: 120000
         with:

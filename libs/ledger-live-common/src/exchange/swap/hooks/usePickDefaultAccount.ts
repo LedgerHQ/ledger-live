@@ -22,7 +22,8 @@ export const usePickDefaultAccount = (
         .flat(1)
         .find(Boolean);
 
-      if (defaultAccount) setFromAccount(defaultAccount);
+      if (defaultAccount && defaultAccount?.id !== fromAccount?.["id"])
+        setFromAccount(defaultAccount);
     }
   }, [accounts, allCurrencies, fromAccount, setFromAccount]);
 };

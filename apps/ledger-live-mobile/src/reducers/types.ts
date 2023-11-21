@@ -234,6 +234,8 @@ export type SettingsState = {
     hash: string;
   };
   notifications: NotificationsSettings;
+  /** True if user never clicked on the AllowNotifications button in the notifications settings */
+  neverClickedOnAllowNotificationsButton: boolean;
   walletTabNavigatorLastVisitedTab: keyof WalletTabNavigatorStackParamList;
   overriddenFeatureFlags: { [key in FeatureId]?: Feature | undefined };
   featureFlagsBannerVisible: boolean;

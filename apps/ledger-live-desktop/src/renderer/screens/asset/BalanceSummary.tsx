@@ -6,12 +6,16 @@ import { CryptoCurrency, Currency, TokenCurrency, Unit } from "@ledgerhq/types-c
 import Chart from "~/renderer/components/Chart";
 import Box, { Card } from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
-import { useCurrencyPortfolio } from "~/renderer/actions/portfolio";
+import { useCurrencyPortfolio, usePortfolio } from "~/renderer/actions/portfolio";
 import AssetBalanceSummaryHeader from "./AssetBalanceSummaryHeader";
 import { discreetModeSelector } from "~/renderer/reducers/settings";
 import FormattedDate from "~/renderer/components/FormattedDate";
 import { Data } from "~/renderer/components/Chart/types";
 import { PortfolioRange } from "@ledgerhq/types-live";
+import PlaceholderChart from "~/renderer/components/PlaceholderChart";
+import Alert from "~/renderer/components/Alert";
+import { useTranslation } from "react-i18next";
+import { tokensWithUnsupportedGraph } from "~/helpers/tokensWithUnsupportedGraph";
 
 type Props = {
   counterValue: Currency;
@@ -29,6 +33,8 @@ export default function BalanceSummary({
   chartColor,
   currency,
 }: Props) {
+  const { t } = useTranslation();
+  const portfolio = usePortfolio();
   const { history, countervalueAvailable, countervalueChange, cryptoChange } = useCurrencyPortfolio(
     {
       currency,
@@ -90,23 +96,36 @@ export default function BalanceSummary({
       </Box>
 
       <Box px={5} ff="Inter" fontSize={4} color="palette.text.shade80" pt={6}>
-        <Chart
-          magnitude={chartMagnitude}
-          color={chartColor}
-          // TODO make date non optional
-          data={history as Data}
-          height={200}
-          tickXScale={range}
-          valueKey={displayCountervalue ? "countervalue" : "value"}
-          renderTickY={
-            discreetMode
-              ? () => ""
-              : displayCountervalue
-              ? renderTickYCounterValue
-              : renderTickYCryptoValue
-          }
-          renderTooltip={renderTooltip}
-        />
+        {currency.type === "TokenCurrency" && tokensWithUnsupportedGraph.includes(currency.id) ? (
+          <>
+            <Alert type="secondary" noIcon={false}>
+              <span>{t("graph.noGraphWarning")}</span>
+            </Alert>
+            <PlaceholderChart
+              magnitude={counterValue.units[0].magnitude}
+              data={portfolio.balanceHistory}
+              tickXScale={range}
+            />
+          </>
+        ) : (
+          <Chart
+            magnitude={chartMagnitude}
+            color={chartColor}
+            // TODO make date non optional
+            data={history as Data}
+            height={200}
+            tickXScale={range}
+            valueKey={displayCountervalue ? "countervalue" : "value"}
+            renderTickY={
+              discreetMode
+                ? () => ""
+                : displayCountervalue
+                ? renderTickYCounterValue
+                : renderTickYCryptoValue
+            }
+            renderTooltip={renderTooltip}
+          />
+        )}
       </Box>
     </Card>
   );

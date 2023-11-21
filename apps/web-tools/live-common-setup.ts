@@ -60,4 +60,5 @@ setSupportedCurrencies([
   "flare",
   "near",
   "coreum",
+  "vechain",
 ]);

@@ -328,6 +328,9 @@ const SwapForm = () => {
         fromAccountId,
         toAccountId,
         fromAmount: fromAmount?.toString(),
+        fromParentAccountId: fromParentAccount
+          ? accountToWalletAPIAccount(fromParentAccount)?.id
+          : undefined,
         quoteId: rateId ? rateId : undefined,
         rate: rate?.toString(),
         feeStrategy: (isCustomFee ? "custom" : "medium")?.toUpperCase(),

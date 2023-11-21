@@ -6,9 +6,10 @@ const cardanoNativeTokens = [
   ["cardano", "policyId", "assetName", "Pocket Change", "PTC", 0, false, false],
 ];
 
+const mockedAxios = jest.spyOn(axios, "get");
+
 describe("import Cardano Native tokens", () => {
   beforeEach(() => {
-    const mockedAxios = jest.spyOn(axios, "get");
     mockedAxios.mockImplementation(() => Promise.resolve({ data: cardanoNativeTokens }));
   });
 
@@ -37,6 +38,7 @@ export default tokens as CardanoNativeToken[];
 
     await importCardanoNativeTokens(".");
 
+    expect(mockedAxios).toHaveBeenCalledWith(expect.stringMatching(/.*\/cardanoNative.json/));
     expect(mockedFs).toHaveBeenNthCalledWith(
       1,
       "cardanoNative.json",
