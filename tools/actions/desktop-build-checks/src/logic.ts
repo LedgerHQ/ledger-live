@@ -360,7 +360,7 @@ export function formatMarkdownBoldList(items: string[]) {
   return map.slice(0, items.length - 1).join(", ") + " and " + map[items.length - 1];
 }
 
-export function formatHash(hash: string | undefined) : string {
+export function formatHash(hash: string | undefined): string {
   return hash
     ? `[\`${hash.slice(0, 7)}\`](https://github.com/LedgerHQ/ledger-live/commit/${hash})`
     : "_unknown_";
