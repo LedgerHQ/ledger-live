@@ -1,5 +1,15 @@
 # ledger-live-desktop
 
+## 2.72.0-nightly.3
+
+### Patch Changes
+
+- [#5365](https://github.com/LedgerHQ/ledger-live/pull/5365) [`0e46b38631`](https://github.com/LedgerHQ/ledger-live/commit/0e46b38631b9bfc84aaf42fe67b5cd4936438ba1) Thanks [@ak-ledger](https://github.com/ak-ledger)! - Update Stax onboarding UI
+
+- Updated dependencies [[`75d001910f`](https://github.com/LedgerHQ/ledger-live/commit/75d001910faa24bcb76c49eb66c0c49e9770f4b2), [`0e46b38631`](https://github.com/LedgerHQ/ledger-live/commit/0e46b38631b9bfc84aaf42fe67b5cd4936438ba1)]:
+  - @ledgerhq/live-common@33.2.0-nightly.3
+  - @ledgerhq/react-ui@0.14.11-nightly.2
+
 ## 2.72.0-nightly.2
 
 ### Patch Changes

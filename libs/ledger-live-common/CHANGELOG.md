@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 33.2.0-nightly.3
+
+### Patch Changes
+
+- [#5519](https://github.com/LedgerHQ/ledger-live/pull/5519) [`75d001910f`](https://github.com/LedgerHQ/ledger-live/commit/75d001910faa24bcb76c49eb66c0c49e9770f4b2) Thanks [@sarneijim](https://github.com/sarneijim)! - fix: fix swap crash in swap
+
 ## 33.2.0-nightly.2
 
 ### Patch Changes
