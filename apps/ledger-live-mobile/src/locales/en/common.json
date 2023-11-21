@@ -2222,6 +2222,20 @@
       "send": "Send",
       "deposit": "Receive",
       "stake": "Stake"
+    },
+    "recoverBanner": {
+      "subscribeDone": {
+        "title": "Add credit or debit card",
+        "description":"Add your payment method to get your backup secure."
+      },
+      "verifyIdentity": {
+        "title": "Verify my identity",
+        "description":"Verify your identity to get your backup secure."
+      },
+      "connectDevice": {
+        "title": "Connect Ledger",
+        "description":"Connect your Ledger to get your backup secure."
+      }
     }
   },
   "addAccountsModal": {

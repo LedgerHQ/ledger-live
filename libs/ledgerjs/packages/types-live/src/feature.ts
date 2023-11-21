@@ -304,6 +304,8 @@ export type CompatibleDevice = {
 
 export type Feature_ProtectServicesMobile = Feature<{
   deeplink: string;
+  ledgerliveStorageState: boolean;
+  bannerSubscriptionNotification: boolean;
   compatibleDevices: CompatibleDevice[];
   onboardingRestore: {
     restoreInfoDrawer: {
