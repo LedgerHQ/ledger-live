@@ -184,6 +184,10 @@ jobs:
         with:
           name: outputs
           path: ${{ github.workspace }}/summary-tests.txt
+      - name: Setup ssh session
+        uses: lhotari/action-upterm@v1
+        with:
+          wait-timeout-minutes: 5
 
   test-ui:
     name: "Test UI Libs"
