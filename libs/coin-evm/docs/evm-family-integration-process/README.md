@@ -41,7 +41,7 @@ _Common steps for all new EVM currency integration_
    2. run `pnpm test:jest` under `apps/ledger-live-desktop` to update the snapshots
 7. Add the related currency icon as SVG format under the [`libs/ui/packages/crypto-icons/src/svg`](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ui/packages/crypto-icons/src/svg) folder within the [@ledgerhq/icons-ui](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ui/packages/crypto-icons) package
    1. the file name should follow the `{currency_id}.svg` naming convention
-   2. the SVG icon should follow Ledger Live currency icon guideline (TBD)
+   2. the SVG icon should follow Ledger Live currency icon guideline (you can use [this tool](https://live.ledger.tools/svg-icons) for validation)
 
 ### Optional steps
 
