@@ -7,6 +7,9 @@ import type { Props as BottomModalProps } from "./QueuedDrawer";
 import { BaseNavigatorStackParamList } from "./RootNavigator/types/BaseNavigator";
 import { StackNavigatorNavigation } from "./RootNavigator/types/helpers";
 import Touchable from "./Touchable";
+import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
+import { useNavigateToPostOnboardingHubCallback } from "../logic/postOnboarding/useNavigateToPostOnboardingHubCallback";
+
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const emptyFunction = () => {};
 
@@ -72,8 +75,15 @@ export const NavigationHeaderCloseButtonAdvanced: React.FC<AdvancedProps> = Reac
     const navigation = useNavigation();
     const [isConfirmationModalOpened, setIsConfirmationModalOpened] = useState(false);
     const [onModalHide, setOnModalHide] = useState<BottomModalProps["onModalHide"]>();
+    const { postOnboardingInProgress } = usePostOnboardingHubState();
+    const navigateToPostOnboardingHub = useNavigateToPostOnboardingHubCallback();
 
     const close = useCallback(() => {
+      if (postOnboardingInProgress) {
+        navigateToPostOnboardingHub();
+        return;
+      }
+
       if (skipNavigation) {
         // onClose should always be called at the end of the close method,
         // so the callback will not interfere with the expected behavior of this component
@@ -92,7 +102,14 @@ export const NavigationHeaderCloseButtonAdvanced: React.FC<AdvancedProps> = Reac
         (navigation as unknown as { closeDrawer: () => void }).closeDrawer();
       navigation.goBack();
       onClose();
-    }, [navigation, onClose, preferDismiss, skipNavigation]);
+    }, [
+      navigateToPostOnboardingHub,
+      navigation,
+      onClose,
+      postOnboardingInProgress,
+      preferDismiss,
+      skipNavigation,
+    ]);
 
     const openConfirmationModal = useCallback(() => {
       setIsConfirmationModalOpened(true);

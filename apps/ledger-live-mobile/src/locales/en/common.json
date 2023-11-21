@@ -6368,6 +6368,12 @@
         "titleCompleted": "Assets transferred to Ledger",
         "description": "Easily transfer assets from Coinbase or any other exchange or wallet.",
         "popupLabel": "Assets transferred"
+      },
+      "buyCrypto": {
+        "title": "Buy Crypto",
+        "titleCompleted": "Assets transferred to Ledger",
+        "description": "Choose from 500+ coins and the best quotes from buy-providers, tailored to your preferences.",
+        "popupLabel": "Crypto bought"
       }
     }
   },
