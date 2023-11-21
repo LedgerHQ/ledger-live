@@ -8,7 +8,6 @@ import {
 import { Observable } from "rxjs";
 import { useCallback, useMemo, useEffect, useState } from "react";
 import { DeviceInfo, idsToLanguage, languageIds } from "@ledgerhq/types-live";
-import { LedgerErrorConstructor } from "@ledgerhq/errors/lib/helpers";
 import {
   CantOpenDevice,
   DisconnectedDevice,
@@ -18,6 +17,8 @@ import {
   UserRefusedAllowManager,
   WebsocketConnectionError,
   WebsocketConnectionFailed,
+  CustomErrorClassType,
+  TransportStatusErrorClassType,
 } from "@ledgerhq/errors";
 import {
   ConnectManagerTimeout,
@@ -34,9 +35,9 @@ import {
 } from "../../hooks/deviceActions";
 
 // Errors related to the device connection
-export const reconnectDeviceErrorClasses: LedgerErrorConstructor<{
-  [key: string]: unknown;
-}>[] = [
+export const reconnectDeviceErrorClasses: Array<
+  CustomErrorClassType | TransportStatusErrorClassType
+> = [
   CantOpenDevice,
   DisconnectedDevice,
   DisconnectedDeviceDuringOperation,
@@ -46,17 +47,16 @@ export const reconnectDeviceErrorClasses: LedgerErrorConstructor<{
 ];
 
 // Errors that could be solved by the user: either on their phone or on their device
-export const userSolvableErrorClasses: LedgerErrorConstructor<{
-  [key: string]: unknown;
-}>[] = [
-  ...reconnectDeviceErrorClasses,
-  WebsocketConnectionError,
-  UserRefusedAllowManager,
-  LanguageInstallRefusedOnDevice,
-  ImageCommitRefusedOnDevice,
-  ImageLoadRefusedOnDevice,
-  WebsocketConnectionFailed,
-];
+export const userSolvableErrorClasses: Array<CustomErrorClassType | TransportStatusErrorClassType> =
+  [
+    ...reconnectDeviceErrorClasses,
+    WebsocketConnectionError,
+    UserRefusedAllowManager,
+    LanguageInstallRefusedOnDevice,
+    ImageCommitRefusedOnDevice,
+    ImageLoadRefusedOnDevice,
+    WebsocketConnectionFailed,
+  ];
 
 export type FirmwareUpdateParams = {
   device: Device;

@@ -80,7 +80,6 @@ const reducer = (state: State, e: Event): State => {
     case "error": {
       const { error } = e;
       const transactionSignError =
-        // @ts-expect-error TODO: fix this
         error instanceof TransportStatusError && error.statusCode === 0x6985
           ? new TransactionRefusedOnDevice()
           : error;
