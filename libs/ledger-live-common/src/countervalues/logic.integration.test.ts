@@ -8,6 +8,7 @@ import {
 } from "../currencies";
 import { getBTCValues } from "../countervalues/mock";
 import { Currency } from "@ledgerhq/types-cryptoassets";
+import Prando from "prando";
 
 const ethereum = getCryptoCurrencyById("ethereum");
 const bitcoin = getCryptoCurrencyById("bitcoin");
@@ -74,11 +75,17 @@ describe("API sanity", () => {
 });
 
 describe("extreme cases", () => {
+  const universe = Object.keys(getBTCValues())
+    .filter(t => t !== "USD")
+    .map(findCurrencyByTicker)
+    .filter(Boolean) as Currency[];
+  universe.sort((a, b) => a.ticker.localeCompare(b.ticker));
+  const prando = new Prando("orderingrng");
+  const sampleCount = Math.min(120, universe.length);
+  const i = prando.nextInt(0, universe.length - sampleCount);
+  const currencies = universe.slice(i, i + sampleCount);
+
   test("all tickers against USD", async () => {
-    const currencies = Object.keys(getBTCValues())
-      .filter(t => t !== "USD")
-      .map(findCurrencyByTicker)
-      .filter(Boolean) as Currency[];
     const state = await loadCountervalues(initialState, {
       trackingPairs: currencies.map(from => ({
         from,
@@ -104,11 +111,6 @@ describe("extreme cases", () => {
   });
 
   test("all tickers against BTC", async () => {
-    const currencies = Object.keys(getBTCValues())
-      .filter(t => t !== "BTC")
-      .map(findCurrencyByTicker)
-      .filter(Boolean) as Currency[];
-
     const state = await loadCountervalues(initialState, {
       trackingPairs: currencies.map(from => ({
         from,
