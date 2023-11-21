@@ -162,16 +162,20 @@ const SwapWebView = ({ swapState, redirectToProviderApp }: SwapWebProps) => {
   };
 
   const isDevelopment = process.env.NODE_ENV === "development";
+  // TODO: remove hash logic after complete swap migration manifest={manifest}
   return (
     <>
       {isDevelopment && (
-        <TopBar manifest={manifest} webviewAPIRef={webviewAPIRef} webviewState={webviewState} />
+        <TopBar
+          manifest={{ ...manifest, url: `${manifest.url}#${swapState.cacheKey}` }}
+          webviewAPIRef={webviewAPIRef}
+          webviewState={webviewState}
+        />
       )}
       <SwapWebAppWrapper isDevelopment={isDevelopment}>
         <Web3AppWebview
-          manifest={manifest}
+          manifest={{ ...manifest, url: `${manifest.url}#${swapState.cacheKey}` }}
           inputs={{
-            cacheKey: swapState.cacheKey,
             theme: themeType,
             lang: locale,
             currencyTicker: fiatCurrency.ticker,
