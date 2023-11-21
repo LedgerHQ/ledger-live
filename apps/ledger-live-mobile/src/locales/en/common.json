@@ -2953,7 +2953,7 @@
     },
     "receive": {
       "title": "Receive",
-      "description": "Deposit crypto from another wallet.",
+      "description": "Receive crypto from another wallet.",
       "titleReadOnly": "Unverified address",
       "headerTitle": "Crypto asset",
       "titleDevice": "Connect device",
@@ -3004,7 +3004,7 @@
         }
       },
       "receiveConfirmation": {
-        "title": "Deposit {{currencyTicker}}",
+        "title": "Receive {{currencyTicker}}",
         "onCurrencyName": "On {{currencyName}}",
         "copyAdress": "Copy address",
         "addressCopied": "Address copied!",
