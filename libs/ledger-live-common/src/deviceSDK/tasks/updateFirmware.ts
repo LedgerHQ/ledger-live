@@ -6,7 +6,7 @@ import {
   UserRefusedAllowManager,
   UserRefusedFirmwareUpdate,
 } from "@ledgerhq/errors";
-import { LocalTracer, trace } from "@ledgerhq/logs";
+import { LocalTracer } from "@ledgerhq/logs";
 import type {
   DeviceId,
   DeviceInfo,
