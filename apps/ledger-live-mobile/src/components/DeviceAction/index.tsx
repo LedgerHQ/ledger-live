@@ -7,6 +7,8 @@ import {
   LatestFirmwareVersionRequired,
 } from "@ledgerhq/live-common/errors";
 import {
+  DisconnectedDevice,
+  DisconnectedDeviceDuringOperation,
   TransportStatusError,
   UserRefusedDeviceNameChange,
   UserRefusedOnDevice,
@@ -458,6 +460,24 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
       return <RequiredFirmwareUpdate t={t} navigation={navigation} device={selectedDevice} />;
     }
 
+    if (
+      (!isLoading && !device) ||
+      unresponsive ||
+      isLocked ||
+      (error as Error) instanceof DisconnectedDevice ||
+      (error as Error) instanceof DisconnectedDeviceDuringOperation
+    ) {
+      return renderConnectYourDevice({
+        t,
+        device: selectedDevice,
+        unresponsive,
+        isLocked: isLocked === null ? undefined : isLocked,
+        colors,
+        theme,
+        onSelectDeviceLink,
+      });
+    }
+
     if ((error as Status["error"]) instanceof UserRefusedDeviceNameChange) {
       return renderError({
         t,
@@ -484,18 +504,6 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
       colors,
       theme,
       device: device ?? undefined,
-    });
-  }
-
-  if ((!isLoading && !device) || unresponsive || isLocked) {
-    return renderConnectYourDevice({
-      t,
-      device: selectedDevice,
-      unresponsive,
-      isLocked: isLocked === null ? undefined : isLocked,
-      colors,
-      theme,
-      onSelectDeviceLink,
     });
   }
 
