@@ -11,7 +11,6 @@ overrides:
   stellar-base>sodium-native: ^3.2.1
   remove-flow-types-loader>flow-remove-types: ^2
   remove-flow-types-loader>loader-utils: '*'
-  '@polkadot/utils': 12.5.1
 
 packageExtensionsChecksum: 8b44dc959ddf462fc160cbda4fe2b3bd
 
