@@ -166,6 +166,7 @@ Ledger Live main types.
     *   [actionsToComplete](#actionstocomplete)
     *   [actionsCompleted](#actionscompleted)
     *   [lastActionCompleted](#lastactioncompleted)
+    *   [postOnboardingInProgress](#postonboardinginprogress)
 *   [PostOnboardingHubState](#postonboardinghubstate)
     *   [Properties](#properties-44)
 *   [SwapOperation](#swapoperation)
@@ -1283,7 +1284,7 @@ To be used for a redux reducer.
 Keeps all necessary information about the state of the post onboarding hub
 and can be persisted in storage.
 
-Type: {deviceModelId: (DeviceModelId | null), walletEntryPointDismissed: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), actionsToComplete: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[PostOnboardingActionId](#postonboardingactionid)>, actionsCompleted: any, lastActionCompleted: ([PostOnboardingActionId](#postonboardingactionid) | null)}
+Type: {deviceModelId: (DeviceModelId | null), walletEntryPointDismissed: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), actionsToComplete: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[PostOnboardingActionId](#postonboardingactionid)>, actionsCompleted: any, lastActionCompleted: ([PostOnboardingActionId](#postonboardingactionid) | null), postOnboardingInProgress: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)}
 
 #### Properties
 
@@ -1292,6 +1293,7 @@ Type: {deviceModelId: (DeviceModelId | null), walletEntryPointDismissed: [boolea
 *   `actionsToComplete` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[PostOnboardingActionId](#postonboardingactionid)>**&#x20;
 *   `actionsCompleted` **any**&#x20;
 *   `lastActionCompleted` **([PostOnboardingActionId](#postonboardingactionid) | null)**&#x20;
+*   `postOnboardingInProgress` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**&#x20;
 
 #### deviceModelId
 
@@ -1328,18 +1330,25 @@ onboarding hub UI depending on the last action that was completed.
 
 Type: ([PostOnboardingActionId](#postonboardingactionid) | null)
 
+#### postOnboardingInProgress
+
+Did the user started the PostOnboarding without closing or finishing it ?
+
+Type: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+
 ### PostOnboardingHubState
 
 Digest of the store & list of actions into something directly consumable
 by UI. (All UI data will be in there).
 
-Type: {deviceModelId: (DeviceModelId | null), lastActionCompleted: ([PostOnboardingAction](#postonboardingaction) | null), actionsState: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<any>}
+Type: {deviceModelId: (DeviceModelId | null), lastActionCompleted: ([PostOnboardingAction](#postonboardingaction) | null), actionsState: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<any>, postOnboardingInProgress: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)}
 
 #### Properties
 
 *   `deviceModelId` **(DeviceModelId | null)**&#x20;
 *   `lastActionCompleted` **([PostOnboardingAction](#postonboardingaction) | null)**&#x20;
 *   `actionsState` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<any>**&#x20;
+*   `postOnboardingInProgress` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**&#x20;
 
 ### SwapOperation
 
