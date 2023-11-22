@@ -137,7 +137,7 @@ export const etherscanERC721EventToOperations = (
   const to = safeEncodeEIP55(event.to);
   const value = new BigNumber(1); // value is representing the number of NFT transfered. ERC721 are always sending 1 NFT per transaction
   const fee = new BigNumber(event.gasUsed).times(new BigNumber(event.gasPrice));
-  const contract = safeEncodeEIP55(event.contractAddress);
+  const contract = eip55.encode(event.contractAddress);
   const nftId = encodeNftId(accountId, contract, event.tokenID, currencyId);
   const types: OperationType[] = [];
 
