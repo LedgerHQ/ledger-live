@@ -1,11 +1,10 @@
 // @flow
 import invariant from "invariant";
+import styled from "styled-components";
 import React, { useCallback, useState, useRef, useEffect } from "react";
-import { reduce, mergeWith, add } from "lodash";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import type { TFunction } from "react-i18next";
-import { BigNumber } from "bignumber.js";
 import {
   useIconPublicRepresentatives,
   useSortedSr,
@@ -21,13 +20,31 @@ import { openURL } from "~/renderer/linking";
 import Box from "~/renderer/components/Box";
 import Trophy from "~/renderer/icons/Trophy";
 import Medal from "~/renderer/icons/Medal";
+import Text from "~/renderer/components/Text";
 import ValidatorRow, { IconContainer } from "~/renderer/components/Delegation/ValidatorRow";
 import ValidatorListHeader from "~/renderer/components/Delegation/ValidatorListHeader";
 import ScrollLoadingList from "~/renderer/components/ScrollLoadingList";
 import ValidatorSearchInput, {
   NoResultPlaceholder,
 } from "~/renderer/components/Delegation/ValidatorSearchInput";
+import { colors } from "~/renderer/styles/theme";
 
+const TECHIAST_ADDRESS = "hxdc4b3fb5b47d6c14c7f9a0bac8eea9f3f48d3288";
+
+const VoteFieldStyled = styled.div`
+  .icon-pr-row:first-child {
+    border-color: ${colors.starYellow};
+    :before {
+      content: "";
+      width: 4px;
+      height: 100%;
+      top: 0;
+      left: 0;
+      position: absolute;
+      background-color: ${colors.starYellow};
+    }
+  }
+`;
 type Props = {
   t: TFunction;
   votes: Vote[];
@@ -52,6 +69,14 @@ const AmountField = ({ t, account, onChangeVotes, status, bridgePending, votes }
   const publicRepresentatives = useIconPublicRepresentatives(account.currency);
 
   const SR = useSortedSr(search, publicRepresentatives, votes);
+  const newSR = SR.slice();
+  for (let i = 0; i < newSR.length; i++) {
+    if (newSR[i].address === TECHIAST_ADDRESS) {
+      const techiast = newSR.splice(i, 1);
+      newSR.unshift(techiast[0]);
+      break;
+    }
+  }
 
   const votesAvailable = votingPower.toNumber();
   const totalVotes = totalDelegated.toNumber() + votesAvailable;
@@ -122,14 +147,24 @@ const AmountField = ({ t, account, onChangeVotes, status, bridgePending, votes }
               {isSR ? <Trophy size={16} /> : <Medal size={16} />}
             </IconContainer>
           }
-          title={`${rank}. ${pr.name || pr.address}`}
+          title={
+            <Text color={pr.address === TECHIAST_ADDRESS && colors.starYellow}>{`${rank}. ${
+              pr.name || pr.address
+            }`}</Text>
+          }
           subtitle={
-            <Trans
-              i18nKey="vote.steps.castVotes.totalVotes"
-              values={{ total: Math.round(pr.delegated.toNumber()).toLocaleString(locale) }}
-            >
-              <b></b>
-            </Trans>
+            <div style={{ display: "inline-grid" }}>
+              <Trans
+                i18nKey="vote.steps.castVotes.totalVotes"
+                values={{ total: Math.round(pr.delegated.toNumber()).toLocaleString(locale) }}
+              ></Trans>
+              {pr.address === TECHIAST_ADDRESS && (
+                <>
+                  <br />
+                  <Text>Support Techiast building this integration</Text>
+                </>
+              )}
+            </div>
           }
           value={item && item.value}
           onUpdateVote={onUpdateVote}
@@ -140,6 +175,7 @@ const AmountField = ({ t, account, onChangeVotes, status, bridgePending, votes }
           // dont allow for decimals
           unit={{ ...unit, magnitude: 0 }}
           shouldRenderMax={maxAvailable > 0 && !disabled}
+          className="icon-pr-row"
         />
       );
     },
@@ -157,7 +193,7 @@ const AmountField = ({ t, account, onChangeVotes, status, bridgePending, votes }
 
   if (!status) return null;
   return (
-    <>
+    <VoteFieldStyled>
       <ValidatorSearchInput search={search} onSearch={onSearch} />
       <ValidatorListHeader
         votesSelected={votesSelected}
@@ -166,17 +202,16 @@ const AmountField = ({ t, account, onChangeVotes, status, bridgePending, votes }
         maxVotes={SR_MAX_VOTES}
         totalValidators={SR.length}
         notEnoughVotes={notEnoughVotes}
-        hi
       />
       <Box ref={containerRef}>
         <ScrollLoadingList
-          data={SR}
+          data={newSR}
           style={{ flex: "1 0 240px" }}
           renderItem={renderItem}
           noResultPlaceholder={SR.length <= 0 && search && <NoResultPlaceholder search={search} />}
         />
       </Box>
-    </>
+    </VoteFieldStyled>
   );
 };
 
