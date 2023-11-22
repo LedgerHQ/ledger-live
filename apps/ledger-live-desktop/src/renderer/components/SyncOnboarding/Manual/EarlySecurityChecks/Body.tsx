@@ -5,7 +5,7 @@ import { Button, Link, Flex, Text, IconsLegacy, InfiniteLoader } from "@ledgerhq
 import { Bullet } from "./Bullet";
 import { Status as SoftwareCheckStatus } from "../types";
 import Animation from "~/renderer/animations";
-import ConfettiLottie from "~/renderer/animations/confetti.json";
+import ConfettiLottie from "~/renderer/animations/common/confetti.json";
 
 export type Props = {
   genuineCheckStatus: SoftwareCheckStatus;

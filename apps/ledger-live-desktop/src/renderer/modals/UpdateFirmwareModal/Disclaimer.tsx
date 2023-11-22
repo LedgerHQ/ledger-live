@@ -20,8 +20,7 @@ const Disclaimer = ({ firmware, onContinue, t }: Props) => (
       flexShrink={1}
       overflowY="hidden"
       px={12}
-      mt={12}
-      mb={12}
+      my={12}
     >
       <TrackPage category="Manager" name="DisclaimerModal" />
       <Alert type="info" title={t("manager.firmware.prepareSeed")} />
