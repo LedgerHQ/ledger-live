@@ -41,7 +41,7 @@ test.describe.parallel("Recover @smoke", () => {
     });
   });
 
-  test("Restore page with nanoX", async ({ page }) => {
+  test("Restore page with nanoSP", async ({ page }) => {
     const recoverPage = new RecoverRestorePage(page);
     recoverPage.useDeepLink();
 
