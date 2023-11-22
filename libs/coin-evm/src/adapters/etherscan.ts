@@ -15,7 +15,7 @@ import {
   EtherscanERC721Event,
   EtherscanERC1155Event,
 } from "../types";
-import { safeEncodeEIP55 } from "./encode";
+import { safeEncodeEIP55 } from "../logic";
 
 /**
  * Adapter to convert an Etherscan operation into Ledger Live Operations.
