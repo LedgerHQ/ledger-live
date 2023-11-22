@@ -1,5 +1,13 @@
 # @ledgerhq/errors
 
+## 6.16.0-nightly.3
+
+### Patch Changes
+
+- [#5432](https://github.com/LedgerHQ/ledger-live/pull/5432) [`4d1aade53c`](https://github.com/LedgerHQ/ledger-live/commit/4d1aade53cd33f8e7548ce340f54fbb834bdcdcb) Thanks [@alexandremgo](https://github.com/alexandremgo)! - chore: refactoring TransportStatusError
+
+  Refactor into a real class in order to improve TS inference
+
 ## 6.16.0-nightly.2
 
 ### Minor Changes

@@ -1,5 +1,47 @@
 # @ledgerhq/live-common
 
+## 33.2.0-nightly.4
+
+### Patch Changes
+
+- [#5453](https://github.com/LedgerHQ/ledger-live/pull/5453) [`b7d58b4cf3`](https://github.com/LedgerHQ/ledger-live/commit/b7d58b4cf3aa041b7b794d9af6f0b89bbc0df633) Thanks [@stephane-lieumont-ledger](https://github.com/stephane-lieumont-ledger)! - Get onboarding Recover state and display banner on portfolio
+
+- [#5522](https://github.com/LedgerHQ/ledger-live/pull/5522) [`44ee889445`](https://github.com/LedgerHQ/ledger-live/commit/44ee88944571c73afb105349f5f28b82e8be262d) Thanks [@stephane-lieumont-ledger](https://github.com/stephane-lieumont-ledger)! - Add recover banner for subscribtion informations
+
+- [#5458](https://github.com/LedgerHQ/ledger-live/pull/5458) [`13d9cbe9a4`](https://github.com/LedgerHQ/ledger-live/commit/13d9cbe9a4afbf3ccd532a33e4ada3685d9d646a) Thanks [@mle-gall](https://github.com/mle-gall)! - Changing post onboarding items in LLM
+
+- [#5432](https://github.com/LedgerHQ/ledger-live/pull/5432) [`4d1aade53c`](https://github.com/LedgerHQ/ledger-live/commit/4d1aade53cd33f8e7548ce340f54fbb834bdcdcb) Thanks [@alexandremgo](https://github.com/alexandremgo)! - chore: refactoring TransportStatusError
+
+  Refactor into a real class in order to improve TS inference
+
+- [#5446](https://github.com/LedgerHQ/ledger-live/pull/5446) [`2b3ed025d6`](https://github.com/LedgerHQ/ledger-live/commit/2b3ed025d6988a4b7560522c209a5c9c1ca430a2) Thanks [@gre](https://github.com/gre)! - Rework the marketcap ordering of currencies using the new v3 countervalues API.
+
+- Updated dependencies [[`4d1aade53c`](https://github.com/LedgerHQ/ledger-live/commit/4d1aade53cd33f8e7548ce340f54fbb834bdcdcb), [`e70e345bd2`](https://github.com/LedgerHQ/ledger-live/commit/e70e345bd21d4f5c82fbedfd4447aec0e866be5a)]:
+  - @ledgerhq/errors@6.16.0-nightly.3
+  - @ledgerhq/coin-framework@0.9.0-nightly.6
+  - @ledgerhq/coin-algorand@0.3.6-nightly.6
+  - @ledgerhq/coin-evm@0.11.0-nightly.6
+  - @ledgerhq/coin-polkadot@0.4.6-nightly.6
+  - @ledgerhq/hw-app-eth@6.35.0-nightly.6
+  - @ledgerhq/devices@8.1.0-nightly.3
+  - @ledgerhq/hw-app-algorand@6.28.0-nightly.3
+  - @ledgerhq/hw-app-cosmos@6.29.0-nightly.3
+  - @ledgerhq/hw-app-exchange@0.4.0-nightly.3
+  - @ledgerhq/hw-app-polkadot@6.28.0-nightly.3
+  - @ledgerhq/hw-app-solana@7.1.0-nightly.3
+  - @ledgerhq/hw-app-vet@0.1.0-nightly.2
+  - @ledgerhq/hw-transport@6.30.0-nightly.3
+  - @ledgerhq/hw-transport-node-speculos@6.28.0-nightly.3
+  - @ledgerhq/hw-transport-node-speculos-http@6.28.0-nightly.3
+  - @ledgerhq/live-network@1.1.9-nightly.4
+  - @ledgerhq/hw-app-btc@10.1.0-nightly.3
+  - @ledgerhq/hw-app-near@6.28.0-nightly.3
+  - @ledgerhq/hw-app-str@6.28.0-nightly.3
+  - @ledgerhq/hw-app-tezos@6.28.0-nightly.3
+  - @ledgerhq/hw-app-trx@6.28.0-nightly.3
+  - @ledgerhq/hw-app-xrp@6.28.0-nightly.3
+  - @ledgerhq/hw-transport-mocker@6.28.0-nightly.3
+
 ## 33.2.0-nightly.3
 
 ### Patch Changes

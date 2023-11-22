@@ -108,13 +108,17 @@
     "@ledgerhq/hw-app-vet": "0.0.1"
   },
   "changesets": [
+    "angry-rats-protect",
+    "big-seahorses-mate",
     "bright-crabs-act",
     "bright-mirrors-protect",
+    "bright-seals-drive",
     "calm-lizards-accept",
     "chilly-wombats-teach",
     "cool-lemons-develop",
     "cyan-balloons-sleep",
     "early-squids-think",
+    "eighty-berries-fly",
     "eleven-pants-cheat",
     "fair-houses-vanish",
     "fast-forks-serve",
@@ -123,6 +127,7 @@
     "giant-stingrays-train",
     "grumpy-pillows-think",
     "heavy-mails-grow",
+    "hot-birds-hug",
     "itchy-islands-marry",
     "khaki-clocks-tap",
     "khaki-cups-try",
@@ -157,6 +162,7 @@
     "spicy-days-deliver",
     "strange-snails-invent",
     "stupid-suns-argue",
+    "stupid-zoos-whisper",
     "swift-birds-explain",
     "swift-cherries-visit",
     "swift-pianos-buy",
@@ -171,8 +177,11 @@
     "tough-ladybugs-do",
     "tough-plants-call",
     "twelve-singers-jam",
+    "twenty-shoes-hang",
     "violet-bulldogs-pull",
     "violet-days-beg",
-    "warm-peaches-shake"
+    "warm-peaches-shake",
+    "wicked-actors-sleep",
+    "wild-days-build"
   ]
 }
