@@ -1,5 +1,5 @@
 name: "@Mobile • Test App End-2-End"
-run-name: "@Mobile • Test App End-2-End triggered by ${{ github.event_name == 'workflow_dispatch' && inputs.login || github.actor }} ${{ format('on ref {0}', github.ref_name) }}"
+run-name: "@Mobile • Test App End-2-End triggered by ${{ inputs.login || github.actor }} ${{ format('on ref {0}', github.ref_name) }}"
 
 on:
   push:
@@ -17,7 +17,7 @@ on:
           If you want to run only on a branch or specific commit, you can use either the sha or the branch name instead (prefer the first verion for PRs).
       login:
         description: The GitHub username that triggered the workflow
-        required: true
+        required: false
       base_ref:
         description: The base branch to merge the head into when checking out the code
         required: false

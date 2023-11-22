@@ -1,5 +1,5 @@
 name: "@Desktop • Build App"
-run-name: "@Desktop • Build App triggered by ${{ github.event_name == 'workflow_dispatch' && inputs.login || github.actor }} ${{ format('on ref {0}', github.ref_name) }}"
+run-name: "@Desktop • Build App triggered by ${{ inputs.login || github.actor }} ${{ format('on ref {0}', github.ref_name) }}"
 
 on:
   push:
@@ -18,7 +18,7 @@ on:
         required: false
       login:
         description: The GitHub username that triggered the workflow
-        required: true
+        required: false
       base_ref:
         description: The base branch to merge the head into when checking out the code
         required: false

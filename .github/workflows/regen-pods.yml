@@ -12,7 +12,7 @@ on:
         required: false
       login:
         description: The GitHub username that triggered the workflow
-        required: true
+        required: false
       commentId:
         description: comment id to update
         required: false

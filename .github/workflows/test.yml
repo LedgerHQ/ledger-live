@@ -1,5 +1,5 @@
 name: "@Libraries • Tests"
-run-name: "@Libraries • Tests triggered by ${{ github.event_name == 'workflow_dispatch' && inputs.login || github.actor }} ${{ format('on ref {0}', github.ref_name) }}"
+run-name: "@Libraries • Tests triggered by ${{ inputs.login || github.actor }} ${{ format('on ref {0}', github.ref_name) }}"
 
 on:
   push:
@@ -21,7 +21,7 @@ on:
         required: false
       login:
         description: The GitHub username that triggered the workflow
-        required: true
+        required: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
