@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { ipcRenderer } from "electron";
 import { Redirect, Route, Switch, useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { FeatureToggle } from "@ledgerhq/live-config/featureFlags/index";
 import TrackAppStart from "~/renderer/components/TrackAppStart";
 import { LiveApp } from "~/renderer/screens/platform";
 import { BridgeSyncProvider } from "~/renderer/bridge/BridgeSyncContext";
@@ -40,7 +39,7 @@ import FirmwareUpdateBanner from "~/renderer/components/FirmwareUpdateBanner";
 import VaultSignerBanner from "~/renderer/components/VaultSignerBanner";
 import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
 import { updateIdentify } from "./analytics/segment";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature, FeatureToggle } from "@ledgerhq/live-config/featureFlags/index";
 import { enableListAppsV2 } from "@ledgerhq/live-common/apps/hw";
 import {
   useFetchCurrencyAll,
