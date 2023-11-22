@@ -70,7 +70,7 @@ const Delegation = ({ account }: Props) => {
   const { iconResources, spendableBalance } = account;
   invariant(iconResources, "icon account expected");
   const { votes, votingPower, unwithdrawnReward } = iconResources;
-  const formattedRewardInUnit = unwithdrawnReward.times(1000000);
+  const formattedRewardInUnit = unwithdrawnReward;
   const votingPowerNum = new BigNumber(votingPower).toNumber();
   const unwithdrawnRewardNum = new BigNumber(unwithdrawnReward).toNumber();
   const discreet = useDiscreetMode();
@@ -84,6 +84,7 @@ const Delegation = ({ account }: Props) => {
       showCode: true,
       discreet,
       locale,
+      subMagnitude: 4,
     },
   );
 
