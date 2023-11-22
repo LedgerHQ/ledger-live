@@ -23,7 +23,7 @@ on:
         description: The base branch to merge the head into when checking out the code
         required: false
       prNumber:
-        description: reference to the PR
+        description: PR number
         required: false
 
 concurrency:
