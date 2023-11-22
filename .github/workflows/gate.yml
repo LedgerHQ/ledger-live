@@ -3,11 +3,6 @@ run-name: "@Gate triggered by ${{ github.actor }} ${{ format('on branch {0}', gi
 
 on:
   pull_request:
-    branches:
-      - develop
-      - main
-      - release
-      - hotfix
   merge_group:
 
 concurrency:
@@ -80,7 +75,7 @@ jobs:
               base_branch: "${{ env.base_branch }}",
               base_owner: "${{ env.base_owner }}",
               is_fork: ${{ env.is_fork }},
-              ref: "${{ github.ref }}"
+              ref: "${{ env.ref }}"
             }), "utf-8");
       - uses: actions/upload-artifact@v3
         with:

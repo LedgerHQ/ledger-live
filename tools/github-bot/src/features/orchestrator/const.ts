@@ -53,16 +53,10 @@ export const WORKFLOWS = {
     required: true,
     affected: ["ledger-live-desktop"],
     summaryFile: "summary.json",
-    getInputs: (
-      payload: GetInputsPayload,
-      metadata?: PullRequestMetadata,
-      localRef?: string,
-      draft?: boolean,
-    ) => {
+    getInputs: (payload: GetInputsPayload, metadata?: PullRequestMetadata, localRef?: string) => {
       const common = commonGetInputs(payload, metadata, localRef);
       return {
         ...common,
-        draft: draft ? `${draft}` : undefined,
         prNumber: typeof metadata?.number === "number" ? `${metadata?.number}` : undefined,
       };
     },
@@ -75,15 +69,7 @@ export const WORKFLOWS = {
     required: true,
     affected: ["ledger-live-desktop"],
     summaryFile: "summary.json",
-    getInputs: (
-      payload: GetInputsPayload,
-      metadata?: PullRequestMetadata,
-      localRef?: string,
-      draft?: boolean,
-    ) => {
-      const common = commonGetInputs(payload, metadata, localRef);
-      return { ...common, draft: draft ? `${draft}` : undefined };
-    },
+    getInputs: commonGetInputs,
   },
   "test-desktop.yml": {
     checkRunName: "@Desktop • Test App",
@@ -93,15 +79,7 @@ export const WORKFLOWS = {
     required: true,
     affected: ["ledger-live-desktop"],
     summaryFile: "summary.json",
-    getInputs: (
-      payload: GetInputsPayload,
-      metadata?: PullRequestMetadata,
-      localRef?: string,
-      draft?: boolean,
-    ) => {
-      const common = commonGetInputs(payload, metadata, localRef);
-      return { ...common, draft: draft ? `${draft}` : undefined };
-    },
+    getInputs: commonGetInputs,
   },
   "test-desktop-external.yml": {
     checkRunName: "@Desktop • Test App (external)",
@@ -111,15 +89,7 @@ export const WORKFLOWS = {
     required: true,
     affected: ["ledger-live-desktop"],
     summaryFile: "summary.json",
-    getInputs: (
-      payload: GetInputsPayload,
-      metadata?: PullRequestMetadata,
-      localRef?: string,
-      draft?: boolean,
-    ) => {
-      const common = commonGetInputs(payload, metadata, localRef);
-      return { ...common, draft: draft ? `${draft}` : undefined };
-    },
+    getInputs: commonGetInputs,
   },
   "build-mobile.yml": {
     checkRunName: "@Mobile • Build App",
