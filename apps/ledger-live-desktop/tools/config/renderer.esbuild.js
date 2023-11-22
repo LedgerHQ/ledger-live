@@ -3,7 +3,7 @@ const {
   AliasPlugin,
   HtmlPlugin,
   DotEnvPlugin,
-  JsonPlugin,
+  // JsonPlugin,
   electronRendererExternals,
   nodeExternals,
 } = require("esbuild-utils");
@@ -46,11 +46,11 @@ module.exports = {
       ],
     }),
     DotEnvPlugin(DOTENV_FILE),
-    JsonPlugin({
-      regexp: /\.(json)$/,
-      folderFilter: path.join("ledger-live-desktop", "src"),
-      targetPathPrefix: path.join(".webpack", "assets"),
-      pathPrefix: "./assets",
-    }),
+    // JsonPlugin({
+    //   regexp: /\.(json)$/,
+    //   folderFilter: path.join("ledger-live-desktop", "src"),
+    //   targetPathPrefix: path.join(".webpack", "assets"),
+    //   pathPrefix: "./assets",
+    // }),
   ],
 };
