@@ -1,5 +1,5 @@
-import eip55 from "eip55";
 import BigNumber from "bignumber.js";
+import eip55 from "eip55";
 import {
   encodeERC1155OperationId,
   encodeERC721OperationId,
@@ -15,6 +15,7 @@ import {
   EtherscanERC721Event,
   EtherscanERC1155Event,
 } from "../types";
+import { safeEncodeEIP55 } from "./encode";
 
 /**
  * Adapter to convert an Etherscan operation into Ledger Live Operations.
@@ -26,8 +27,8 @@ export const etherscanOperationToOperations = (
 ): Operation[] => {
   const { xpubOrAddress: address } = decodeAccountId(accountId);
   const checksummedAddress = eip55.encode(address);
-  const from = eip55.encode(etherscanOp.from);
-  const to = eip55.encode(etherscanOp.to);
+  const from = safeEncodeEIP55(etherscanOp.from);
+  const to = safeEncodeEIP55(etherscanOp.to);
   const value = new BigNumber(etherscanOp.value);
   const fee = new BigNumber(etherscanOp.gasUsed).times(new BigNumber(etherscanOp.gasPrice));
   const hasFailed = etherscanOp.isError === "1";
@@ -83,9 +84,9 @@ export const etherscanERC20EventToOperations = (
   if (!tokenCurrency) return [];
 
   const tokenAccountId = encodeTokenAccountId(accountId, tokenCurrency);
-  const from = eip55.encode(event.from);
-  const to = eip55.encode(event.to);
-  const checksummedAddress = eip55.encode(address);
+  const from = safeEncodeEIP55(event.from);
+  const to = safeEncodeEIP55(event.to);
+  const checksummedAddress = safeEncodeEIP55(address);
   const value = new BigNumber(event.value);
   const fee = new BigNumber(event.gasUsed).times(new BigNumber(event.gasPrice));
   const types: OperationType[] = [];
@@ -131,12 +132,12 @@ export const etherscanERC721EventToOperations = (
 ): Operation[] => {
   const { xpubOrAddress: address, currencyId } = decodeAccountId(accountId);
 
-  const from = eip55.encode(event.from);
-  const to = eip55.encode(event.to);
   const checksummedAddress = eip55.encode(address);
+  const from = safeEncodeEIP55(event.from);
+  const to = safeEncodeEIP55(event.to);
   const value = new BigNumber(1); // value is representing the number of NFT transfered. ERC721 are always sending 1 NFT per transaction
   const fee = new BigNumber(event.gasUsed).times(new BigNumber(event.gasPrice));
-  const contract = eip55.encode(event.contractAddress);
+  const contract = safeEncodeEIP55(event.contractAddress);
   const nftId = encodeNftId(accountId, contract, event.tokenID, currencyId);
   const types: OperationType[] = [];
 
@@ -181,12 +182,12 @@ export const etherscanERC1155EventToOperations = (
 ): Operation[] => {
   const { xpubOrAddress: address, currencyId } = decodeAccountId(accountId);
 
-  const from = eip55.encode(event.from);
-  const to = eip55.encode(event.to);
   const checksummedAddress = eip55.encode(address);
+  const from = safeEncodeEIP55(event.from);
+  const to = safeEncodeEIP55(event.to);
   const value = new BigNumber(event.tokenValue); // value is representing the number of NFT transfered.
   const fee = new BigNumber(event.gasUsed).times(new BigNumber(event.gasPrice));
-  const contract = eip55.encode(event.contractAddress);
+  const contract = safeEncodeEIP55(event.contractAddress);
   const nftId = encodeNftId(accountId, contract, event.tokenID, currencyId);
   const types: OperationType[] = [];
 
