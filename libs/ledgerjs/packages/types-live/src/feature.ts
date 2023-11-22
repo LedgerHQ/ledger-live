@@ -329,6 +329,8 @@ export type Feature_ProtectServicesDesktop = Feature<{
   availableOnDesktop: boolean;
   openRecoverFromSidebar: boolean;
   discoverTheBenefitsLink: string;
+  ledgerliveStorageState: boolean;
+  bannerSubscriptionNotification: boolean;
   compatibleDevices: CompatibleDevice[];
   onboardingRestore: {
     restoreInfoDrawer: {
