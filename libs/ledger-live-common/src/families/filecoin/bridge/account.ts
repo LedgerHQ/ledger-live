@@ -25,6 +25,7 @@ import {
 import { Transaction, TransactionStatus } from "../types";
 import { getAccountShape, getAddress, getTxToBroadcast } from "./utils/utils";
 import { broadcastTx, fetchBalances, fetchEstimatedFees } from "./utils/api";
+import { BroadcastBlockIncl } from "./utils/types";
 import { getMainAccount } from "../../../account";
 import { close } from "../../../hw";
 import { toCBOR } from "./utils/serializer";
@@ -112,6 +113,7 @@ const estimateMaxSpendable = async ({
   const a = getMainAccount(account, parentAccount);
   let { address: sender } = getAddress(a);
 
+  let methodNum = Methods.Transfer;
   let recipient = transaction?.recipient;
 
   const senderValidation = validateAddress(sender);
@@ -124,6 +126,10 @@ const estimateMaxSpendable = async ({
       throw new InvalidAddress();
     }
     recipient = recipientValidation.parsedAddress.toString();
+
+    methodNum = Address.isFilEthAddress(recipientValidation.parsedAddress)
+      ? Methods.InvokeEVM
+      : Methods.Transfer;
   }
 
   const balances = await fetchBalances(sender);
@@ -133,7 +139,12 @@ const estimateMaxSpendable = async ({
 
   const amount = transaction?.amount;
 
-  const result = await fetchEstimatedFees({ to: recipient, from: sender });
+  const result = await fetchEstimatedFees({
+    to: recipient,
+    from: sender,
+    methodNum,
+    blockIncl: BroadcastBlockIncl,
+  });
   const gasFeeCap = new BigNumber(result.gas_fee_cap);
   const gasLimit = new BigNumber(result.gas_limit);
   const estimatedFees = calculateEstimatedFees(gasFeeCap, gasLimit);
@@ -160,17 +171,22 @@ const prepareTransaction = async (a: Account, t: Transaction): Promise<Transacti
     if (recipientValidation.isValid && senderValidation.isValid) {
       const patch: Partial<Transaction> = {};
 
+      const method = Address.isFilEthAddress(recipientValidation.parsedAddress)
+        ? Methods.InvokeEVM
+        : Methods.Transfer;
+
       const result = await fetchEstimatedFees({
         to: recipientValidation.parsedAddress.toString(),
         from: senderValidation.parsedAddress.toString(),
+        methodNum: method,
+        blockIncl: BroadcastBlockIncl,
       });
+
       patch.gasFeeCap = new BigNumber(result.gas_fee_cap);
       patch.gasPremium = new BigNumber(result.gas_premium);
       patch.gasLimit = new BigNumber(result.gas_limit);
       patch.nonce = result.nonce;
-      patch.method = Address.isFilEthAddress(recipientValidation.parsedAddress)
-        ? Methods.InvokeEVM
-        : Methods.Transfer;
+      patch.method = method;
 
       const fee = calculateEstimatedFees(patch.gasFeeCap, patch.gasLimit);
       if (useAllAmount) patch.amount = balance.minus(fee);
