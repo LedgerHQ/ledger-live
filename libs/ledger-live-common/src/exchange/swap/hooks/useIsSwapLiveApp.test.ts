@@ -4,7 +4,7 @@ import { useIsSwapLiveApp } from "./useIsSwapLiveApp";
 import { cryptocurrenciesById } from "@ledgerhq/cryptoassets/currencies";
 
 // Mock dependencies.
-jest.mock("../../../featureFlags");
+jest.mock("@ledgerhq/live-config/featureFlags/index");
 
 const useMockFeature = useFeature as jest.Mock;
 

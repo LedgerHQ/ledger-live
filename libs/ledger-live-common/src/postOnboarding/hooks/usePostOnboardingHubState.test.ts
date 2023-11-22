@@ -10,7 +10,7 @@ import { usePostOnboardingHubState } from "./usePostOnboardingHubState";
 jest.mock("react-redux", () => ({
   useSelector: val => val(),
 }));
-jest.mock("../../featureFlags");
+jest.mock("@ledgerhq/live-config/featureFlags/index");
 jest.mock("./usePostOnboardingContext");
 jest.mock("../reducer");
 
