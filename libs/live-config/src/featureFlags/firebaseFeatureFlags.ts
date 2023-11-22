@@ -10,7 +10,7 @@ export const formatToFirebaseFeatureId = (id: string) => `feature_${snakeCase(id
 
 export const checkFeatureFlagVersion = (feature: Feature) => {
   const platform = LiveConfig.getInstance().platform;
-  if (!feature || !feature.enabled || !platform) {
+  if (!feature?.enabled || !platform) {
     return feature;
   }
   const featureSpecificVersion: string | undefined = (() => {
