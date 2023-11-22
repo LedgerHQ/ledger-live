@@ -212,7 +212,7 @@ describe("retryOnErrorsCommandWrapper", () => {
           concatMap(_event => {
             counter++;
 
-            // Throws an error even after the limit is reached
+            // Always throws an error, exceeding the set max retry
             return throwError(
               () => new DisconnectedDevice(`Handled error max ${disconnectedDeviceMaxRetries}`),
             );
