@@ -1,5 +1,5 @@
-import BigNumber from "bignumber.js";
 import eip55 from "eip55";
+import BigNumber from "bignumber.js";
 import {
   encodeERC1155OperationId,
   encodeERC721OperationId,
@@ -84,9 +84,9 @@ export const etherscanERC20EventToOperations = (
   if (!tokenCurrency) return [];
 
   const tokenAccountId = encodeTokenAccountId(accountId, tokenCurrency);
+  const checksummedAddress = eip55.encode(address);
   const from = safeEncodeEIP55(event.from);
   const to = safeEncodeEIP55(event.to);
-  const checksummedAddress = safeEncodeEIP55(address);
   const value = new BigNumber(event.value);
   const fee = new BigNumber(event.gasUsed).times(new BigNumber(event.gasPrice));
   const types: OperationType[] = [];
@@ -187,7 +187,7 @@ export const etherscanERC1155EventToOperations = (
   const to = safeEncodeEIP55(event.to);
   const value = new BigNumber(event.tokenValue); // value is representing the number of NFT transfered.
   const fee = new BigNumber(event.gasUsed).times(new BigNumber(event.gasPrice));
-  const contract = safeEncodeEIP55(event.contractAddress);
+  const contract = eip55.encode(event.contractAddress);
   const nftId = encodeNftId(accountId, contract, event.tokenID, currencyId);
   const types: OperationType[] = [];
 
