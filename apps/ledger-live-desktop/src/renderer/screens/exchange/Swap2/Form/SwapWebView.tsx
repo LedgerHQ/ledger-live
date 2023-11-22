@@ -37,11 +37,11 @@ export type SwapProps = {
   cacheKey: string;
   loading: boolean;
   error: boolean;
+  providerRedirectURL: string;
 };
 
 export type SwapWebProps = {
   swapState?: Partial<SwapProps>;
-  redirectToProviderApp(_: string): void;
 };
 
 export const SWAP_WEB_MANIFEST_ID = "swap-live-app-demo-0";
@@ -53,7 +53,7 @@ const SwapWebAppWrapper = styled.div<{ isDevelopment: boolean }>(
 `,
 );
 
-const SwapWebView = ({ swapState, redirectToProviderApp }: SwapWebProps) => {
+const SwapWebView = ({ swapState }: SwapWebProps) => {
   const {
     colors: {
       palette: { type: themeType },
@@ -137,9 +137,6 @@ const SwapWebView = ({ swapState, redirectToProviderApp }: SwapWebProps) => {
       "custom.throwGenericErrorToLedgerLive": () => {
         onSwapWebviewError();
         return Promise.resolve();
-      },
-      "custom.redirectToProviderApp": ({ params }: { params: string }) => {
-        redirectToProviderApp(params);
       },
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps

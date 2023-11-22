@@ -16,12 +16,10 @@ export default async function getDeviceInfo(transport: Transport): Promise<Devic
     .then(({ name }) => isDashboardName(name))
     .catch(e => {
       if (e instanceof TransportStatusError) {
-        // @ts-expect-error typescript not checking agains the instanceof
         if (e.statusCode === 0x6e00) {
           return true;
         }
 
-        // @ts-expect-error typescript not checking agains the instanceof
         if (e.statusCode === 0x6d00) {
           return false;
         }
@@ -36,7 +34,6 @@ export default async function getDeviceInfo(transport: Transport): Promise<Devic
 
   const res = await getVersion(transport).catch(e => {
     if (e instanceof TransportStatusError) {
-      // @ts-expect-error typescript not checking agains the instanceof
       if (e.statusCode === 0x6d06 || e.statusCode === 0x6d07) {
         throw new DeviceNotOnboarded();
       }

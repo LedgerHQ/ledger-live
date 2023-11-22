@@ -25,10 +25,8 @@ const initialErrorRemapping = (error: unknown, context?: TraceContext) => {
   let mappedError = error;
 
   if (error && error instanceof TransportStatusError) {
-    // @ts-expect-error TS only inferring Error and not TransportStatusError
     if (error.statusCode === 0x6faa) {
       mappedError = new DeviceHalted(error.message);
-      // @ts-expect-error TransportStatusError
     } else if (error.statusCode === 0x6b00) {
       mappedError = new FirmwareOrAppUpdateRequired(error.message);
     }

@@ -2222,6 +2222,20 @@
       "send": "Send",
       "deposit": "Receive",
       "stake": "Stake"
+    },
+    "recoverBanner": {
+      "subscribeDone": {
+        "title": "Add credit or debit card",
+        "description":"Add your payment method to get your backup secure."
+      },
+      "verifyIdentity": {
+        "title": "Verify my identity",
+        "description":"Verify your identity to get your backup secure."
+      },
+      "connectDevice": {
+        "title": "Connect Ledger",
+        "description":"Connect your Ledger to get your backup secure."
+      }
     }
   },
   "addAccountsModal": {
@@ -2953,7 +2967,7 @@
     },
     "receive": {
       "title": "Receive",
-      "description": "Deposit crypto from another wallet.",
+      "description": "Receive crypto from another wallet.",
       "titleReadOnly": "Unverified address",
       "headerTitle": "Crypto asset",
       "titleDevice": "Connect device",
@@ -3004,7 +3018,7 @@
         }
       },
       "receiveConfirmation": {
-        "title": "Deposit {{currencyTicker}}",
+        "title": "Receive {{currencyTicker}}",
         "onCurrencyName": "On {{currencyName}}",
         "copyAdress": "Copy address",
         "addressCopied": "Address copied!",
@@ -6368,6 +6382,12 @@
         "titleCompleted": "Assets transferred to Ledger",
         "description": "Easily transfer assets from Coinbase or any other exchange or wallet.",
         "popupLabel": "Assets transferred"
+      },
+      "buyCrypto": {
+        "title": "Buy Crypto",
+        "titleCompleted": "Assets transferred to Ledger",
+        "description": "Choose from 500+ coins and the best quotes from buy-providers, tailored to your preferences.",
+        "popupLabel": "Crypto bought"
       }
     }
   },

@@ -304,6 +304,8 @@ export type CompatibleDevice = {
 
 export type Feature_ProtectServicesMobile = Feature<{
   deeplink: string;
+  ledgerliveStorageState: boolean;
+  bannerSubscriptionNotification: boolean;
   compatibleDevices: CompatibleDevice[];
   onboardingRestore: {
     restoreInfoDrawer: {
@@ -332,6 +334,8 @@ export type Feature_ProtectServicesDesktop = Feature<{
   availableOnDesktop: boolean;
   openRecoverFromSidebar: boolean;
   discoverTheBenefitsLink: string;
+  ledgerliveStorageState: boolean;
+  bannerSubscriptionNotification: boolean;
   compatibleDevices: CompatibleDevice[];
   onboardingRestore: {
     restoreInfoDrawer: {

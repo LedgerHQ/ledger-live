@@ -53,16 +53,13 @@ function internalToggleOnboardingEarlyCheckTask({
         if (error instanceof TransportStatusError) {
           tracer.trace("A TransportStatusError error occurred", { error });
 
-          // @ts-expect-error TransportStatusError not typed correctly
           if (error.statusCode === StatusCodes.SECURITY_STATUS_NOT_SATISFIED) {
             subscriber.next({
               type: "taskError",
               error: "DeviceInInvalidState",
             });
             return;
-          }
-          // @ts-expect-error TransportStatusError not typed correctly
-          else if (error.statusCode === StatusCodes.INCORRECT_LENGTH) {
+          } else if (error.statusCode === StatusCodes.INCORRECT_LENGTH) {
             subscriber.next({
               type: "taskError",
               error: "InternalError",
