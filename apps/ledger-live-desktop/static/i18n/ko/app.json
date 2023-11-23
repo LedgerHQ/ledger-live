@@ -196,11 +196,11 @@
       "description" : "트랜잭션이 진행 중입니다. 트랜잭션을 취소하거나 네트워크 수수료를 올려 속도를 높일 수 있습니다.",
       "stuckDescription" : "트랜잭션이 중단되었습니다. 트랜잭션을 취소하거나 네트워크 수수료를 올려 속도를 높이세요.",
       "previousFeesInfo" : {
-        "pendingTransactionFeesInfo" : "보류 중인 트랜잭션 수수료 정보: ",
-        "networkfee" : "네트워크 수수료 = ",
-        "maxFee" : "최대 비용 = ",
-        "maxPriorityFee" : "최대 우선 수수료 = ",
-        "gasPrice" : "가스비 = "
+        "pendingTransactionFeesInfo" : "보류 중인 트랜잭션 수수료 정보:",
+        "networkfee" : "네트워크 수수료 = {{amount}}",
+        "maxFee" : "최대 수수료 = {{amount}}",
+        "maxPriorityFee" : "최대 우선 수수료 = {{amount}}",
+        "gasPrice" : "가스비 = {{amount}}"
       },
       "learnMore" : "더 자세히 알고 싶어요",
       "panel" : {
@@ -213,7 +213,7 @@
       },
       "cancel" : {
         "title" : "취소",
-        "description" : "0의 {{ticker}}를 본인 주소로 전송하기 취소를 담보하기 위해 네트워크 수수료는 취소하려는 트랜잭션 수수료보다 30% 더 높습니다."
+        "description" : "0의 {{ticker}}를 본인 주소로 전송하기."
       },
       "steps" : {
         "method" : {
@@ -1166,11 +1166,13 @@
       },
       "pinContent" : {
         "title" : "PIN",
+        "titleCompleted" : "PIN 설정",
         "description" : "다른 비밀번호와 마찬가지로 PIN을 사용하면 {{productName}}의 잠금을 해제하고 원치 않는 액세스를 방지할 수 있습니다.",
         "continueOnDevice" : "{{productName}}에 PIN을 설정하세요"
       },
       "seedContent" : {
         "title" : "비밀 복구 문구",
+        "titleCompleted" : "비밀 복구 문구 확인됨",
         "recoverSeed" : "자리 표시자: 복구",
         "restoreSeed" : "Ledger 장치에서 생성된 비밀 복구 문구를 사용해 자산에 대한 보안을 극대화하세요.\n\n복구 문구가 없으신가요? {{productName}}을 사용해 새로운 복구 문구를 생성하세요.",
         "selection" : "가장 적합한 설정 옵션을 선택하세요.",
@@ -1208,7 +1210,7 @@
           "contactSupportCTA" : "Ledger 지원 부서에 문의해주세요",
           "notFoundEntityError" : {
             "title" : "정품 확인을 다시 시작하세요",
-            "description" : "먼저 “나의 Ledger 공급자({{providerNumber}})” 설정을 비활성화해야 합니다. 이를 비활성화하려면 Ledger Live의 \"설정\"을 열고 \"실험기능\"을 선택한 다음 \"관리자 공급자\"를 끕니다."
+            "description" : "먼저 “My Ledger 공급자({{providerNumber}})” 설정을 비활성화해야 합니다. 이를 비활성화하려면 Ledger Live의 \"설정\"을 열고 \"실험 기능\"을 선택한 다음 \"My Ledger 공급자\"를 끕니다."
           },
           "deviceNotGenuineError" : {
             "title" : "이 {{productName}} 장치는 정품입니다",
@@ -1250,12 +1252,14 @@
       },
       "installApplications" : {
         "title" : "{{productName}}에 앱 설치하기",
+        "titleCompleted" : "{{productName}}에 설치된 앱",
         "install" : "설치",
         "skip" : "나중에",
         "info" : "{{deviceName}}의 앱은 트랜잭션 승인에 사용됩니다. 언제든지 추가나 삭제가 가능합니다."
       },
       "endOfSetup" : {
-        "title" : "설정 종료"
+        "title" : "설정 종료",
+        "titleCompleted" : "{{deviceName}} 장치가 준비되었습니다."
       },
       "softwareCheckAllowSecureChannelDrawer" : {
         "title" : "정품 확인을 시작하려면 \"허용\"을 탭하세요."
@@ -1286,7 +1290,8 @@
   "postOnboarding" : {
     "postOnboardingScreen" : {
       "title" : "다음으로, Ledger Stax를 사용해\n다음을 수행해보세요... ",
-      "titleCompleted" : "네, \n이상입니다!"
+      "titleCompleted" : "이제 모두 준비 끝!\n계속해서 내 지갑을 살펴보세요.",
+      "exploreCTA" : "지갑 살펴보기"
     },
     "postOnboardingContent" : {
       "skipLink" : "나중에 할게요"
@@ -1406,6 +1411,26 @@
       "earn" : {
         "title" : "스테이킹",
         "description" : "Ledger와 함께 암호화폐 수익 창출"
+      }
+    },
+    "recoverBanner" : {
+      "subscribeDone" : {
+        "title" : "결제 카드 추가",
+        "description" : "백업을 안전하게 보호하려면 결제 수단을 추가하세요.",
+        "primaryCta" : "지금 추가",
+        "secondaryCta" : "다음에 결정하기"
+      },
+      "verifyIdentity" : {
+        "title" : "신원 인증",
+        "description" : "백업을 안전하게 보호하려면 신원을 인증하세요.",
+        "primaryCta" : "지금 인증하기",
+        "secondaryCta" : "다음에 결정하기"
+      },
+      "connectDevice" : {
+        "title" : "Ledger 장치에 연결합니다",
+        "description" : "백업을 안전하게 보호하려면 Ledger 장치를 연결하세요.",
+        "primaryCta" : "내 Ledger 장치 연결",
+        "secondaryCta" : "다음에 결정하기"
       }
     }
   },
@@ -3151,7 +3176,7 @@
     "unlockedBalance" : "언본딩된",
     "unlockedTooltip" : "언본딩된 자산은 출금 거래를 통해 이동할 수 있습니다.",
     "networkFees" : "네트워크 수수료는 폴카닷 컨센서스에 의해 자동으로 설정되며, 사용자는 장치에서 네트워크 수수료를 검토할 수 없습니다",
-    "bondedBalanceBelowMinimum" : "본딩된 잔액이 현재 최소 금액 {{minimumBondBalance}} 미만입니다. 사용자가 지명한 검증인이 제거될 위험이 있습니다.",
+    "bondedBalanceBelowMinimum" : "지명자로서 지명 의사를 제출하려면 {{minimumBondBalance}}(이)가 필요합니다",
     "nomination" : {
       "emptyState" : {
         "description" : "자산을 본딩하고 검증인을 지명하여 보상을 받을 수 있습니다.",
@@ -3552,6 +3577,9 @@
         "supportLink" : "Kiln 풀링에 대해 자세히 알아보기"
       }
     }
+  },
+  "graph" : {
+    "noGraphWarning" : "이 토큰에 대해서는 그래프를 이용할 수 없습니다."
   },
   "near" : {
     "account" : {
@@ -4098,8 +4126,7 @@
     "updateAvailable" : "Ledger Live {{version}} 버전을 업데이트할 수 있습니다",
     "error" : "업데이트 중 오류가 발생했습니다. 다시 다운로드하세요",
     "reDownload" : "다시 다운로드",
-    "nightlyWarning" : "이 버전은 자동 업데이트되지 않습니다. 최신 버전을 수동으로 설치하세요",
-    "downloadNow" : "업데이트 다운로드"
+    "nightlyWarning" : "이 버전은 자동 업데이트되지 않습니다. 최신 버전을 수동으로 설치하세요"
   },
   "crash" : {
     "title" : "문제가 발생했습니다",
@@ -4248,7 +4275,6 @@
         "nextButton" : "시작하기",
         "noDevice" : "장치가 없나요?",
         "buyLink" : "장치가 없나요? Ledger Nano X 구매하기",
-        "recoverSignIn" : "Ledger Recover 로그인",
         "byTapping" : "\"시작하기\"를 탭하면 귀하는 당사의",
         "termsAndConditions" : "이용약관",
         "and" : "및",
@@ -4906,6 +4932,11 @@
     "cta" : "계속"
   },
   "families" : {
+    "casper" : {
+      "transferIdPlaceholder" : "선택 사항",
+      "transferId" : "전송 ID(메모)",
+      "transferIdWarningText" : "메모 기능을 사용할 때는 해당 정보를 수령인과 신중하게 확인하세요"
+    },
     "cardano" : {
       "memoPlaceholder" : "선택 사항",
       "memo" : "메모"
@@ -4955,6 +4986,10 @@
     }
   },
   "errors" : {
+    "ReplacementTransactionUnderpriced" : {
+      "title" : "시세 이하의 대체 트랜잭션",
+      "description" : "네트워크 수수료가 너무 낮은 것 같습니다. 조금 높여주세요"
+    },
     "NoSuchAppOnProvider" : {
       "title" : "특정 구성에 대한 {{appName}} 앱을 찾을 수 없습니다.",
       "description" : "내 Ledger에서 앱을 다시 설치해 보세요"
@@ -5138,8 +5173,8 @@
       "description" : "이 기능을 이용하려면 장치 펌웨어를 최신 버전으로 업데이트하세요"
     },
     "FirmwareNotRecognized" : {
-      "title" : "장치 펌웨어가 인식되지 않습니다",
-      "description" : "Ledger 지원 부서로 문의하세요"
+      "title" : "유효하지 않은 공급자",
+      "description" : "\"My Ledger 공급자\" 설정을 변경해야 합니다. 이를 변경하려면 Ledger Live \"설정\"을 열고 \"실험 기능\"을 선택한 다음 다른 공급자를 선택합니다."
     },
     "HardResetFail" : {
       "title" : "죄송하지만 리셋할 수 없습니다",
@@ -5247,6 +5282,18 @@
     "NotEnoughEGLDForFees" : {
       "title" : "트랜잭션 수수료로 지불할 EGLD가 충분하지 않습니다.",
       "description" : "계정에 EGLD를 전송하여 트랜잭션 수수료를 지불하세요."
+    },
+    "NotEnoughVTHO" : {
+      "title" : "죄송합니다. VTHO 자금이 부족합니다.",
+      "description" : "계정에 충분한 VTHO가 있는지 확인하세요."
+    },
+    "MustBeVechain" : {
+      "title" : "비체인 계정이 아닙니다",
+      "description" : "코인이 VTHO 또는 VET인지 확인하세요"
+    },
+    "ImpossibleToCalculateAmountAndFees" : {
+      "title" : "금액 및 수수료 계산이 불가능합니다",
+      "description" : "금액 및 수수료 계산이 불가능합니다"
     },
     "NotEnoughBalance" : {
       "title" : "죄송하지만 자금이 부족합니다",
@@ -5402,6 +5449,15 @@
       "title" : "죄송하지만, 연결에 실패했습니다",
       "description" : "장치가 발견했지만 연결에 실패했습니다. 문제가 지속되면 다시 시도하거나 Ledger 지원 부서에 연락하세요."
     },
+    "CasperInvalidTransferId" : {
+      "title" : "전송 ID는 {{maxTransferId}}보다 작은 양수여야 합니다"
+    },
+    "InvalidMinimumAmount" : {
+      "title" : "전송할 수 있는 최저 금액은 {{minAmount}}입니다"
+    },
+    "MayBlockAccount" : {
+      "title" : "귀하의 계정에는 송금을 수행하는 데 필요한 {{minAmount}} 미만의 금액이 남게 됩니다."
+    },
     "ETHAddressNonEIP" : {
       "title" : "자동 확인을 사용할 수 없습니다: 주소를 신중하게 확인해주세요",
       "description" : null
@@ -5411,7 +5467,7 @@
       "description" : "NFT 보내기 기능은 Nano X 및 Nano S+에서만 사용할 수 있습니다. Nano S로 NFT를 보내는 방법을 알아보려면 고객 지원 플랫폼을 방문하세요."
     },
     "TransactionHasBeenValidatedError" : {
-      "title" : "속도를 높이거나 취소할 수 없습니다.",
+      "title" : "속도를 높이거나 취소할 수 없음",
       "description" : "이 트랜잭션은 이미 검증되었습니다"
     },
     "CantScanQRCode" : {
@@ -5419,6 +5475,9 @@
     },
     "FeeNotLoaded" : {
       "title" : "수수료 요율을 로드할 수 없습니다. 수동 수수료를 설정하세요"
+    },
+    "FeeNotLoadedSwap" : {
+      "title" : "기술 문제로 네트워크 수수료 산정에 실패했습니다.다시 시도하거나 자산을 변경하세요."
     },
     "FeeRequired" : {
       "title" : "수수료가 필요합니다"
@@ -5546,7 +5605,7 @@
       "description" : "문제가 발생했습니다. 확실하지 않을 경우 다시 시도하거나 Ledger 지원 부서에 연락하세요."
     },
     "EthAppPleaseEnableContractData" : {
-      "title" : "이더리움 앱 설정에서 컨트랙트 데이터를 활성화하세요"
+      "title" : "이더리움 앱 설정에서 블라인드 서명 또는 컨트랙트 데이터를 활성화하세요"
     },
     "InvalidXRPTag" : {
       "title" : "유효하지 않은 XRP 데스티네이션 태그"
@@ -5893,7 +5952,6 @@
     },
     "progress" : {
       "loading" : "로딩 중...",
-      "resolving" : "의존성 해결",
       "progress" : "앱을 설치하는 동안 Ledger Live를 종료하지 마세요.",
       "disclaimer" : "Ledger Live에서 언제든지 앱을 추가하거나 제거하세요.",
       "skippedInfo" : "일부 앱은 이용할 수 없습니다. 아직 {{ productName }}용으로 개발되지 않았습니다.",
