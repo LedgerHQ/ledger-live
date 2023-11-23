@@ -688,7 +688,7 @@ describe("EVM Family", () => {
       it("Should return encoded address if valid address", () => {
         const address = "0x9aa99c23f67c81701c772b106b4f83f6e858dd2e";
         const encodedAddress = safeEncodeEIP55(address);
-        expect(encodedAddress).toBe(eip55.encode(address));
+        expect(encodedAddress).toBe("0x9AA99C23F67c81701C772B106b4F83f6e858dd2E");
       });
 
       it("Should return empty string if empty address", () => {
