@@ -9,9 +9,9 @@ jobs:
   run-bot:
     runs-on: ledgerhq-shared-small
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Retrieving crypto-assets
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: true
           repository: LedgerHQ/crypto-assets
