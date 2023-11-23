@@ -111,10 +111,6 @@ const UpdateModal = ({
 
   const createSteps = useCallback(
     ({ withResetStep }: { withResetStep: boolean }) => {
-      const prepareStepsLabel = firmware?.osu?.hash
-        ? t("manager.modal.identifier")
-        : t("manager.modal.steps.prepare");
-
       const resetStep: Step = {
         id: "resetDevice",
         label: t("manager.modal.steps.reset"),
@@ -124,13 +120,15 @@ const UpdateModal = ({
 
       const prepareStep: Step = {
         id: "idCheck",
-        label: prepareStepsLabel,
+        label: firmware?.osu?.hash
+          ? t("manager.modal.identifier")
+          : t("manager.modal.steps.prepare"),
         component: StepPrepare,
       };
 
       const mcuStep: Step = {
         id: "updateMCU",
-        label: prepareStepsLabel,
+        label: t("manager.modal.steps.install"),
         component: StepFlashMcu,
       };
 
@@ -228,6 +226,7 @@ const UpdateModal = ({
     setIsLanguagePromptOpen,
     confirmedPrompt,
     setConfirmedPrompt,
+    deviceHasPin: deviceModelId !== "stax",
   };
 
   const deviceModel = getDeviceModel(deviceModelId);

@@ -7,14 +7,14 @@ import { Flex, ProgressLoader } from "@ledgerhq/react-ui";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 
 type Props = {
-  progress: number;
-  installing?: string;
-  current: number;
-  total: number;
+  progress?: number;
+  isInstalling?: boolean;
+  current: number | null | undefined;
+  total: number | null | undefined;
   deviceModelId: DeviceModelId;
 };
 
-function Installing({ progress, installing, current, total, deviceModelId }: Props) {
+function Installing({ progress, isInstalling, current, total, deviceModelId }: Props) {
   const { t } = useTranslation();
   const normalProgress = (progress || 0) * 100;
   const deviceModel = getDeviceModel(deviceModelId);
@@ -30,7 +30,7 @@ function Installing({ progress, installing, current, total, deviceModelId }: Pro
         />
       </Flex>
       <Title>
-        {installing
+        {isInstalling && current && total
           ? t(`manager.modal.steps.progressStep`, { current, total })
           : t(`manager.modal.steps.progress`)}
       </Title>

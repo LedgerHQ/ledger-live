@@ -138,19 +138,12 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
               category={`Set up ${productName}: Step 1 device paired`}
               flow={analyticsFlowName}
             />
-            {/* @ts-expect-error StepText weird children prop issue */}
-            <StepText mb={6}>
+            <StepText>
               {
                 t("syncOnboarding.manual.pairedContent.description", {
                   deviceName: productName,
                 }) as string
               }
-            </StepText>
-            {/* @ts-expect-error StepText weird children prop issue */}
-            <StepText>
-              {t("syncOnboarding.manual.pairedContent.description", {
-                deviceName: productName,
-              })}
             </StepText>
             <ContinueOnDeviceWithAnim
               deviceModelId={device.modelId}
@@ -167,9 +160,6 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
         renderBody: () => (
           <Flex flexDirection="column">
             <TrackPage category={`Set up ${productName}: Step 2 PIN`} flow={analyticsFlowName} />
-            {/* @ts-expect-error StepText weird children prop issue */}
-            <StepText mb={6}>{t("syncOnboarding.manual.pinContent.description")}</StepText>
-            {/* @ts-expect-error StepText weird children prop issue */}
             <StepText>
               {t("syncOnboarding.manual.pinContent.description", { productName })}
             </StepText>

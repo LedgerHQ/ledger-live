@@ -74,7 +74,7 @@ const Body = ({
   const to = firmware?.final.name;
   const normalProgress = (progress || 0) * 100;
 
-  if (!displayedOnDevice) {
+  if (displayedOnDevice) {
     return (
       <>
         <Track event={"FirmwareUpdateConfirmNewFirwmare"} onMount />
@@ -117,18 +117,20 @@ const Body = ({
       </>
     );
   } else {
+    const isStepTransfer = step !== "transfer";
+
     return (
       <Box my={5} alignItems="center">
         <Flex alignItems="center" justifyContent="center" borderRadius={9999} size={60} mb={5}>
           <ProgressLoader
             stroke={8}
-            infinite={!normalProgress}
+            infinite={isStepTransfer || !normalProgress}
             progress={normalProgress}
-            showPercentage={!!normalProgress}
+            showPercentage={!isStepTransfer && !!normalProgress}
           />
         </Flex>
         <Title>
-          {step
+          {isStepTransfer
             ? t("manager.modal.steps.preparingUpdate")
             : t("manager.modal.steps.transferringUpdate", { productName: deviceModel.productName })}
         </Title>
