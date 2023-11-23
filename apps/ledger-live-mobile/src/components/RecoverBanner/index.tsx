@@ -89,7 +89,7 @@ function RecoverBanner() {
     <Flex justifyContent="center" position="relative">
       <Flex
         position="relative"
-        columnGap={6}
+        columnGap={12}
         bg={colors.opacityDefault.c05}
         flexDirection="row"
         justifyContent="space-between"
@@ -98,33 +98,44 @@ function RecoverBanner() {
         overflow="hidden"
         width="100%"
         onTouchEnd={onRedirectRecover}
-        p={3}
+        p="12px"
       >
-        <Flex alignItems="center" justifyContent="center" width={45}>
+        <Flex alignItems="center" justifyContent="center" width={40}>
           <ProgressLoader progress={stepNumber / maxStepNumber} radius={20}>
             <Text display="block" flex={1} textAlign="center" fontSize="12px" lineHeight="15px">
               {`${stepNumber}/${maxStepNumber - 1}`}
             </Text>
           </ProgressLoader>
         </Flex>
-        <Flex flex={1} flexDirection="column" py={3} overflow="hidden">
+        <Flex flex={1} flexDirection="column" overflow="hidden">
           <Text variant={"body"} fontWeight={"medium"} width="100%" overflow="hidden">
             {recoverBannerSelected.title}
           </Text>
           <Text
-            mt={1}
-            variant={"paragraph"}
-            fontWeight={"medium"}
+            variant="paragraph"
+            fontWeight="medium"
             width="100%"
             overflow="hidden"
             color={colors.neutral.c80}
+            numberOfLines={1}
           >
             {recoverBannerSelected.description}
           </Text>
         </Flex>
-        <Box position="absolute" top={0} right={0} p={3} onTouchEnd={onCloseBanner}>
+        <Flex
+          position="absolute"
+          top={-5}
+          right={-5}
+          height={40}
+          width={40}
+          p={3}
+          alignItems="center"
+          justifyContent="center"
+          onTouchEnd={onCloseBanner}
+          borderRadius={40}
+        >
           <Icon name="Close" size={16} color={colors.neutral.c100} />
-        </Box>
+        </Flex>
       </Flex>
     </Flex>
   );
