@@ -188,12 +188,13 @@ jobs:
         with:
           name: mac-js-bundle-metafiles
           path: mac-js-bundle-metafiles
-      - uses: ./tools/actions/desktop-build-checks
+      - uses: ./tools/actions/build-checks
         if: inputs.prNumber != ''
         with:
           token: ${{ steps.generate-token.outputs.token }}
           baseBranch: ${{ inputs.base_ref || 'develop' }}
           prNumber: ${{ inputs.prNumber }}
+          mode: desktop
       - uses: actions/github-script@v6
         name: build summary
         with:

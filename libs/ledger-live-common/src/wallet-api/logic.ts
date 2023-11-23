@@ -99,8 +99,12 @@ export function signTransactionLogic(
     ? parentAccount?.currency.family
     : account.currency.family;
 
-  const { canEditFees, liveTx, hasFeesProvided } =
-    getWalletAPITransactionSignFlowInfos(transaction);
+  const mainAccount = getMainAccount(account, parentAccount);
+
+  const { canEditFees, liveTx, hasFeesProvided } = getWalletAPITransactionSignFlowInfos({
+    walletApiTransaction: transaction,
+    account: mainAccount,
+  });
 
   if (accountFamily !== liveTx.family) {
     return Promise.reject(
@@ -311,7 +315,10 @@ export function completeExchangeLogic(
   const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
   const mainFromAccountFamily = mainFromAccount.currency.family;
 
-  const { liveTx } = getWalletAPITransactionSignFlowInfos(transaction);
+  const { liveTx } = getWalletAPITransactionSignFlowInfos({
+    walletApiTransaction: transaction,
+    account: mainFromAccount,
+  });
 
   if (liveTx.family !== mainFromAccountFamily) {
     return Promise.reject(

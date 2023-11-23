@@ -39,6 +39,15 @@ const defaultConfig = {
   testRegex,
   transformIgnorePatterns: ["/node_modules/(?!|@babel/runtime/helpers/esm/)"],
   moduleDirectories: ["node_modules", "cli/node_modules"],
+  /**
+   * Added because of this error happening when using toMatchInlineSnapshot:
+   *     TypeError: prettier.resolveConfig.sync is not a function
+
+      at runPrettier (../../node_modules/.pnpm/jest-snapshot@28.1.3/node_modules/jest-snapshot/build/InlineSnapshots.js:319:30)
+   * 
+   * See: https://github.com/jestjs/jest/issues/14305#issuecomment-1627346697   
+   */
+  prettierPath: null,
 };
 
 export default {

@@ -127,7 +127,13 @@ export const WORKFLOWS = {
     required: true,
     affected: ["live-mobile"],
     summaryFile: "summary.json",
-    getInputs: commonGetInputs,
+    getInputs: (payload: GetInputsPayload, metadata?: PullRequestMetadata, localRef?: string) => {
+      const common = commonGetInputs(payload, metadata, localRef);
+      return {
+        ...common,
+        prNumber: typeof metadata?.number === "number" ? `${metadata?.number}` : undefined,
+      };
+    },
   },
   "build-mobile-external.yml": {
     checkRunName: "@Mobile • Build App (external)",
