@@ -1,5 +1,6 @@
 import { LiveConfig, Value } from "../featureFlags";
 import { getValueByKey } from "./helper";
+import { configSchema } from "./schema";
 
 LiveConfig.init({
   appVersion: "0.0.0",
@@ -8,11 +9,18 @@ LiveConfig.init({
 });
 
 describe("getValueByKey test", () => {
-  it("should return the default value if LiveConfig in not instantiated", () => {
-    expect(getValueByKey("key1")).toEqual(1);
-    expect(getValueByKey("key2")).toEqual("2234ffdafs");
-    expect(getValueByKey("key3")).toEqual(2.9);
-    expect(getValueByKey("key4")).toEqual(true);
+  describe("default value", () => {
+    it("all config should have a default value", () => {
+      const parsedConfig = configSchema.parse({});
+      expect(parsedConfig).toBeDefined();
+    });
+
+    it("should return the default value if LiveConfig in not instantiated", () => {
+      expect(getValueByKey("key1")).toEqual(1);
+      expect(getValueByKey("key2")).toEqual("2234ffdafs");
+      expect(getValueByKey("key3")).toEqual(2.9);
+      expect(getValueByKey("key4")).toEqual(true);
+    });
   });
 
   it("should return config value if instantied", () => {
