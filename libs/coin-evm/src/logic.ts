@@ -1,4 +1,5 @@
 import eip55 from "eip55";
+import BigNumber from "bignumber.js";
 import {
   Account,
   AnyMessage,
@@ -6,7 +7,6 @@ import {
   Operation,
   SubAccount,
 } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
 import murmurhash from "imurmurhash";
 import { getEnv } from "@ledgerhq/live-env";
 import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
