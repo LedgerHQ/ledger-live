@@ -108,7 +108,7 @@ function RecoverBanner() {
           </ProgressLoader>
         </Flex>
         <Flex flex={1} flexDirection="column" overflow="hidden">
-          <Text variant={"body"} fontWeight={"medium"} width="100%" overflow="hidden">
+          <Text variant="body" fontWeight="bold" width="100%" overflow="hidden">
             {recoverBannerSelected.title}
           </Text>
           <Text
