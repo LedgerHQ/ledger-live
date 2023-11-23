@@ -1,18 +1,20 @@
 // refer to https://github.com/firebase/firebase-js-sdk/blob/master/packages/remote-config/src/public_types.ts#L71 for the firebase config value interface
-export declare interface Value {
-  asBoolean(): boolean;
-  asNumber(): number;
-  asString(): string;
-}
+export declare interface Value {}
+
+type SupportedProviders = "firebaseRemoteConfig";
+
+type ProviderGetValueMethod = { [provider in SupportedProviders]?: (key: string) => Value };
 
 export class LiveConfig {
   public appVersion?: string;
   public platform?: string;
   public environment?: string;
-  public providerGetvalueMethod?: { [provider: string]: (key: string) => Value };
+  public providerGetvalueMethod?: ProviderGetValueMethod;
 
   private static instance: LiveConfig; // Singleton instance
+
   private constructor() {}
+
   public static init(config: { appVersion: string; platform: string; environment: string }) {
     if (!LiveConfig.instance) {
       LiveConfig.instance = new LiveConfig();
@@ -21,25 +23,24 @@ export class LiveConfig {
     }
   }
 
-  public static setProviderGetValueMethod(provider2Method: {
-    [provider: string]: (key: string) => Value;
-  }) {
-    if (!LiveConfig.instance) {
-      throw new Error("LiveConfig instance is not initialized. Call init() first.");
-    }
-    if (!LiveConfig.instance.providerGetvalueMethod) {
-      LiveConfig.instance.providerGetvalueMethod = {};
-    }
-    LiveConfig.instance.providerGetvalueMethod = {
-      ...LiveConfig.instance.providerGetvalueMethod,
-      ...provider2Method,
-    };
-  }
-
   public static getInstance(): LiveConfig {
     if (!LiveConfig.instance) {
       throw new Error("LiveConfig instance is not initialized. Call init() first.");
     }
+
     return LiveConfig.instance;
+  }
+
+  public static setProviderGetValueMethod(provider2Method: {
+    [provider in SupportedProviders]: (key: string) => Value;
+  }) {
+    if (!LiveConfig.getInstance().providerGetvalueMethod) {
+      LiveConfig.instance.providerGetvalueMethod = {};
+    }
+
+    LiveConfig.instance.providerGetvalueMethod = {
+      ...LiveConfig.instance.providerGetvalueMethod,
+      ...provider2Method,
+    };
   }
 }
