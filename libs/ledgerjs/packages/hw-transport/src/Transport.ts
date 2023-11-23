@@ -328,7 +328,9 @@ export default class Transport {
    */
   async exchangeAtomicImpl<Output>(f: () => Promise<Output>): Promise<Output> {
     const tracer = this.tracer.withUpdatedContext({ function: "exchangeAtomicImpl" });
-    tracer.trace("Starting an atomic APDU exchange");
+    tracer.trace("Starting an atomic APDU exchange", {
+      unresponsiveTimeout: this.unresponsiveTimeout,
+    });
 
     if (this.exchangeBusyPromise) {
       tracer.trace("Atomic exchange is already busy");
@@ -347,7 +349,9 @@ export default class Transport {
     // The device unresponsiveness handler
     let unresponsiveReached = false;
     const timeout = setTimeout(() => {
-      tracer.trace(`Timeout reached, emitting Transport event "unresponsive"`);
+      tracer.trace(`Timeout reached, emitting Transport event "unresponsive"`, {
+        unresponsiveTimeout: this.unresponsiveTimeout,
+      });
       unresponsiveReached = true;
       this.emit("unresponsive");
     }, this.unresponsiveTimeout);
