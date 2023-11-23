@@ -31,9 +31,7 @@ export class LiveConfig {
     return LiveConfig.instance;
   }
 
-  public static setProviderGetValueMethod(provider2Method: {
-    [provider in SupportedProviders]: (key: string) => Value;
-  }) {
+  public static setProviderGetValueMethod(provider2Method: ProviderGetValueMethod) {
     if (!LiveConfig.getInstance().providerGetvalueMethod) {
       LiveConfig.instance.providerGetvalueMethod = {};
     }
