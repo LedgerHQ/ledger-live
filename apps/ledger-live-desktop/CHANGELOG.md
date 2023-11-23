@@ -1,5 +1,14 @@
 # ledger-live-desktop
 
+## 2.72.0-nightly.5
+
+### Patch Changes
+
+- [#5539](https://github.com/LedgerHQ/ledger-live/pull/5539) [`a43ced6205`](https://github.com/LedgerHQ/ledger-live/commit/a43ced6205bffc689bc7ff9f9ef6a94f10b89025) Thanks [@sarneijim](https://github.com/sarneijim)! - Move swap-web-app cacheKey from input to hash
+
+- Updated dependencies [[`39d327ec49`](https://github.com/LedgerHQ/ledger-live/commit/39d327ec4965bda6a8fb6f202238e3156451cfde), [`6d627002d7`](https://github.com/LedgerHQ/ledger-live/commit/6d627002d76a81d68663e33cdcaeebcd89ea84d8)]:
+  - @ledgerhq/live-common@33.2.0-nightly.5
+
 ## 2.72.0-nightly.4
 
 ### Patch Changes

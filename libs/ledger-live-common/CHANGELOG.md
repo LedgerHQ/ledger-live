@@ -1,5 +1,13 @@
 # @ledgerhq/live-common
 
+## 33.2.0-nightly.5
+
+### Patch Changes
+
+- [#5490](https://github.com/LedgerHQ/ledger-live/pull/5490) [`39d327ec49`](https://github.com/LedgerHQ/ledger-live/commit/39d327ec4965bda6a8fb6f202238e3156451cfde) Thanks [@chabroA](https://github.com/chabroA)! - use-create-tx-in-wallet-api-adapter
+
+- [#5438](https://github.com/LedgerHQ/ledger-live/pull/5438) [`6d627002d7`](https://github.com/LedgerHQ/ledger-live/commit/6d627002d76a81d68663e33cdcaeebcd89ea84d8) Thanks [@alexandremgo](https://github.com/alexandremgo)! - chore: refactoring deprecated retryWhen
+
 ## 33.2.0-nightly.4
 
 ### Patch Changes

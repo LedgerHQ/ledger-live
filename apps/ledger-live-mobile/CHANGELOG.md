@@ -1,5 +1,14 @@
 # live-mobile
 
+## 3.35.0-nightly.5
+
+### Patch Changes
+
+- [#5538](https://github.com/LedgerHQ/ledger-live/pull/5538) [`a7f3353b08`](https://github.com/LedgerHQ/ledger-live/commit/a7f3353b081a9af0591de1192a1d304d0d1724d3) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix text color when notifications enabled
+
+- Updated dependencies [[`39d327ec49`](https://github.com/LedgerHQ/ledger-live/commit/39d327ec4965bda6a8fb6f202238e3156451cfde), [`6d627002d7`](https://github.com/LedgerHQ/ledger-live/commit/6d627002d76a81d68663e33cdcaeebcd89ea84d8)]:
+  - @ledgerhq/live-common@33.2.0-nightly.5
+
 ## 3.35.0-nightly.4
 
 ### Patch Changes

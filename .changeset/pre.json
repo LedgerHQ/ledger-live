@@ -105,7 +105,8 @@
     "web-tools": "0.1.0",
     "dummy-ptx-app": "0.0.1",
     "@actions/desktop-build-checks": "1.0.0",
-    "@ledgerhq/hw-app-vet": "0.0.1"
+    "@ledgerhq/hw-app-vet": "0.0.1",
+    "@actions/build-checks": "1.0.0"
   },
   "changesets": [
     "angry-rats-protect",
@@ -123,7 +124,9 @@
     "fair-houses-vanish",
     "fast-forks-serve",
     "funny-cobras-call",
+    "funny-terms-collect",
     "fuzzy-kids-add",
+    "gentle-cups-remember",
     "giant-stingrays-train",
     "grumpy-pillows-think",
     "heavy-mails-grow",
@@ -168,6 +171,8 @@
     "swift-pianos-buy",
     "swift-tomatoes-march",
     "tall-spoons-swim",
+    "tasty-cobras-suffer",
+    "ten-cheetahs-allow",
     "tender-pandas-beam",
     "thick-pumas-do",
     "thirty-doors-compete",
