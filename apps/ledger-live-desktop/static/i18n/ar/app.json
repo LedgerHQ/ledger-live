@@ -196,11 +196,11 @@
       "description" : "معاملتك جارية. يمكنك تسريعها برسوم شبكة أعلى، أو إلغائها.",
       "stuckDescription" : "معاملتك عالقة. قم بتسريعها برسوم شبكة أعلى أو قم بإلغائها.",
       "previousFeesInfo" : {
-        "pendingTransactionFeesInfo" : "معلومات رسوم المعاملة المُعلَّقة: ",
-        "networkfee" : "رسوم الشبكة = ",
-        "maxFee" : "الحد الأقصى للرسوم = ",
-        "maxPriorityFee" : "الحد الأقصى لرسوم الأولوية = ",
-        "gasPrice" : "سعر الغاز = "
+        "pendingTransactionFeesInfo" : "معلومات رسوم المعاملة المُعلَّقة:",
+        "networkfee" : "رسوم الشبكة = {{amount}}",
+        "maxFee" : "الحد الأقصى للرسوم = {{amount}}",
+        "maxPriorityFee" : "الحد الأقصى لرسوم الأولوية = {{amount}}",
+        "gasPrice" : "سعر الغاز = {{amount}}"
       },
       "learnMore" : "أرغب في معرفة المزيد",
       "panel" : {
@@ -213,7 +213,7 @@
       },
       "cancel" : {
         "title" : "إلغاء",
-        "description" : "إرسال 0 {{ticker}} إلى عنوانك. لضمان الإلغاء، رسوم الشبكة أعلى بـ %30 من رسوم المعاملة المراد إلغاؤها."
+        "description" : "إرسال 0 {{ticker}} إلى عنوانك."
       },
       "steps" : {
         "method" : {
@@ -1208,7 +1208,7 @@
           "contactSupportCTA" : "تواصل مع دعم Ledger",
           "notFoundEntityError" : {
             "title" : "بدء اختبار الأصالة مجدداً",
-            "description" : "يجب عليك أولاً تعطيل إعداد ”My Ledger Provider (مزوّد جهازي Ledger) ({{providerNumber}})“. لتعطيله، افتح ”Settings (إعدادات)“ في Ledger Live، واختر ”Experimental features (الميزات التجريبية)“، ثم قم بتبديل زر ”Manager provider (مزوّد المدير)“ إلى وضع التعطيل."
+            "description" : "يجب عليك أولاً تعطيل إعداد \"My Ledger Provider (مزوّد جهازي Ledger) ({{providerNumber}})\". لتعطيله، افتح \"Settings (إعدادات)\" في Ledger Live، واختر \"Experimental features (الميزات التجريبية)\"، ثم قم بتبديل زر \"My Ledger provider (مزوّد جهازي Ledger)\" إلى وضع التعطيل."
           },
           "deviceNotGenuineError" : {
             "title" : "{{productName}} هذا غير أصلي",
@@ -1286,7 +1286,8 @@
   "postOnboarding" : {
     "postOnboardingScreen" : {
       "title" : "التالي، استخدم جهازك \nLedger Stax من أجل... ",
-      "titleCompleted" : "وهذا\nكل شيء!"
+      "titleCompleted" : "You're all set !\nKeep going and explore your wallet.",
+      "exploreCTA" : "Explore wallet"
     },
     "postOnboardingContent" : {
       "skipLink" : "سأقوم بذلك في وقت لاحق"
@@ -3151,7 +3152,7 @@
     "unlockedBalance" : "غير مقيد",
     "unlockedTooltip" : "الأصول غير المقيدة يمكن الآن نقلها باستخدام عملية السحب.",
     "networkFees" : "يتم تعيين رسوم الشبكة تلقائياً عن طريق إجماع Polkadot، لن تتمكن من مراجعتهم على جهازك",
-    "bondedBalanceBelowMinimum" : "رصيدك المقيد أقل من الحد الأدنى الحالي البالغ {{minimumBondBalance}}. ترشيحاتك معرضة للحذف.",
+    "bondedBalanceBelowMinimum" : "كمُرشِّح، مطلوب حد أدنى قدره {{minimumBondBalance}} لتقديم نية للترشيح",
     "nomination" : {
       "emptyState" : {
         "description" : "يمكنك كسب المكافآت عن طريق تقيد الأصول ثم ترشيح المدقق (المدققين) الخاص بك.",
@@ -4248,7 +4249,6 @@
         "nextButton" : "بدء الاستخدام",
         "noDevice" : "ليس لديك جهاز؟",
         "buyLink" : "ليس لديك جهاز؟ قم بشراء Ledger Nano X",
-        "recoverSignIn" : "تسجيل الدخول إلى Ledger Recover",
         "byTapping" : "بالضغط على \"Get Started (بدء الاستخدام)\" أنت توافق على وتقبل",
         "termsAndConditions" : "الشروط والأحكام",
         "and" : "و",
@@ -4906,6 +4906,11 @@
     "cta" : "متابعة"
   },
   "families" : {
+    "casper" : {
+      "transferIdPlaceholder" : "اختياري",
+      "transferId" : "مُعرّف التحويل (ملاحظة)",
+      "transferIdWarningText" : "عند استخدام ملاحظة، تحقق بعناية من المعلومات مع المستلم"
+    },
     "cardano" : {
       "memoPlaceholder" : "اختياري",
       "memo" : "ملاحظة (تسمية الوجهة)"
@@ -4955,6 +4960,10 @@
     }
   },
   "errors" : {
+    "ReplacementTransactionUnderpriced" : {
+      "title" : "المعاملة البديلة سعرها قليل",
+      "description" : "رسوم الشبكة قد تكون منخفضةً جداً. يُرجى زيادتها"
+    },
     "NoSuchAppOnProvider" : {
       "title" : "لا يمكن العثور على التطبيق {{appName}} للتهيئة الخاصة بك.",
       "description" : "حاول إعادة تثبيت التطبيق من My Ledger"
@@ -5138,8 +5147,8 @@
       "description" : "يرجى تحديث البرنامج الثابت لجهازك إلى أحدث إصدار للوصول إلى هذه الميزة"
     },
     "FirmwareNotRecognized" : {
-      "title" : "لم يتم التعرف على البرنامج الثابت للجهاز",
-      "description" : "يرجى التواصل مع دعم Ledger"
+      "title" : "مزوّد غير صالح",
+      "description" : "يجب عليك تغيير إعداد \"My Ledger Provider (مزوّد جهازي Ledger)\". لتغييره، افتح \"Settings (إعدادات)\" في Ledger Live، واختر \"Experimental features (الميزات التجريبية)\"، ثم اختر مزوّداً آخر."
     },
     "HardResetFail" : {
       "title" : "عذراً، لا يمكن إعادة التعيين",
@@ -5402,6 +5411,15 @@
       "title" : "عذراً، فشل الاتصال",
       "description" : "تم اكتشاف الجهاز ولكن فشل الاتصال. يرجى إعادة المحاولة مرة أخرى أو التواصل مع دعم Ledger إذا استمرت المشكلة."
     },
+    "CasperInvalidTransferId" : {
+      "title" : "مُعرّف التحويل يجب أن يكون رقماً موجباً أصغر من {{maxTransferId}}"
+    },
+    "InvalidMinimumAmount" : {
+      "title" : "الحد الأدنى لمبلغ التحويل هو {{minAmount}}"
+    },
+    "MayBlockAccount" : {
+      "title" : "حسابك سيبقى فيه أقل من {{minAmount}} المطلوب لإجراء عملية إرسال"
+    },
     "ETHAddressNonEIP" : {
       "title" : "التحقق التلقائي غير متاح: تحقق بعناية من العنوان",
       "description" : null
@@ -5419,6 +5437,9 @@
     },
     "FeeNotLoaded" : {
       "title" : "تعذر تحميل مُعدلات الرسوم. يرجى تعيين الرسوم يدوياً"
+    },
+    "FeeNotLoadedSwap" : {
+      "title" : "تقدير رسوم الشبكة فشل بسبب مشكلات تقنية. أعد المحاولة أو قم بتغيير الأصول."
     },
     "FeeRequired" : {
       "title" : "الرسوم مطلوبة"
@@ -5546,7 +5567,7 @@
       "description" : "حدث خطأ ما، يرجى المحاولة مرة أخرى أو التواصل مع دعم Ledger إذا كان لديك شك."
     },
     "EthAppPleaseEnableContractData" : {
-      "title" : "يرجى تمكين بيانات العقد (contract data) في إعدادات (Settings) تطبيق إيثريوم"
+      "title" : "يرجى تمكين Blind signing (التوقيع بدون اطلاع) أو بيانات العقد (Contract data) في إعدادات (Settings) تطبيق إيثريوم"
     },
     "InvalidXRPTag" : {
       "title" : "علامة وجهة XRP غير صالحة"
