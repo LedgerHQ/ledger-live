@@ -1,3 +1,4 @@
+import eip55 from "eip55";
 import {
   Account,
   AnyMessage,
@@ -15,6 +16,7 @@ import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets/tokens";
 import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { getEIP712FieldsDisplayedOnNano } from "@ledgerhq/evm-tools/message/EIP712/index";
+import { log } from "@ledgerhq/logs";
 import { getNodeApi } from "./api/node/index";
 import {
   EvmNftTransaction,
@@ -22,8 +24,6 @@ import {
   EvmTransactionEIP1559,
   EvmTransactionLegacy,
 } from "./types";
-import eip55 from "eip55";
-import { log } from "@ledgerhq/logs";
 
 /**
  * Helper to check if a legacy transaction has the right fee property
