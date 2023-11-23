@@ -123,8 +123,8 @@ const buildTasks = args => [
         commands.push("--config");
         commands.push("electron-builder-pre.yml");
       } else if (args.nosign) {
-        commands.push("--config");
-        commands.push("electron-builder-nosign.yml");
+        //commands.push("--config");
+        //commands.push("electron-builder-nosign.yml");
         commands.push("-c.afterSign='lodash/noop'");
         commands.push("--publish", "never");
       }

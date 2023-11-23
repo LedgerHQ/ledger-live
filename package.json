@@ -3,13 +3,6 @@
   "version": "0.0.0",
   "license": "MIT AND Apache-2.0",
   "private": true,
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/LedgerHQ/ledger-live.git"
-  },
-  "bugs": {
-    "url": "https://github.com/LedgerHQ/ledger-live/issues"
-  },
   "scripts": {
     "bump": "changeset version",
     "clean": "git clean -fdX",

@@ -43,28 +43,6 @@ runs:
       id: version
       with:
         path: ${{ github.workspace }}/apps/ledger-live-desktop
-    - name: set beta name
-      uses: ./tools/actions/change-product-name
-      with:
-        path: ${{ github.workspace }}/apps/ledger-live-desktop
-    - name: make local version (workflow dispatch)
-      if: github.event_name == 'workflow_dispatch'
-      env:
-        VERSION: ${{ steps.version.outputs.clean }}-sha.${{ github.sha }}
-      run: cd apps/ledger-live-desktop && npm version $VERSION
-      shell: bash
-    - name: make local version (pr)
-      if: github.event_name == 'pull_request'
-      env:
-        VERSION: ${{ steps.version.outputs.clean }}-sha.${{ github.event.pull_request.head.sha }}
-      run: cd apps/ledger-live-desktop && npm version $VERSION
-      shell: bash
-    - name: make local version (push)
-      if: github.event_name == 'push'
-      env:
-        VERSION: ${{ steps.version.outputs.clean }}-sha.${{ github.sha }}
-      run: cd apps/ledger-live-desktop && npm version $VERSION
-      shell: bash
     - uses: ./tools/actions/get-package-infos
       id: post-version
       with:

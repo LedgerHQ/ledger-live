@@ -13,11 +13,11 @@
   "license": "MIT",
   "private": true,
   "main": "./.webpack/main.bundle.js",
-  "version": "2.71.1",
+  "version": "2.0.0",
   "scripts": {
     "start:prod": "electron ./.webpack/main.bundle.js",
     "start": "cross-env NODE_ENV=development node ./tools/main.js",
-    "build": "cross-env CSC_IDENTITY_AUTO_DISCOVERY=false STAGING=1 node ./tools/dist --nosign -v",
+    "build": "node ./tools/dist --nosign --release -v",
     "build:js": "cross-env NODE_ENV=production node ./tools/main.js build",
     "build:testing": "cross-env NODE_ENV=production TESTING=1 node ./tools/main.js build",
     "lint": "eslint src static tools tests --ext .js,.jsx,.json,.ts,.tsx --cache",
