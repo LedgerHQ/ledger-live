@@ -91,7 +91,7 @@ describe("tokens", () => {
           false,
         ],
       ];
-      const tokenHash = createTokenHash(convertERC20(changeToken[0]));
+      const tokenHash = createTokenHash(convertERC20(changeToken[0])!);
       const existingToken = listTokens().find(t => t.ticker === "KIBA");
       if (!existingToken) throw new Error("Should not be empty");
       expect(tokenHash).toBe(createTokenHash(existingToken));

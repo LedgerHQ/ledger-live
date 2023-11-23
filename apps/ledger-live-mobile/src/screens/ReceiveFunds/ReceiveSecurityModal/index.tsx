@@ -4,6 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import QueuedDrawer from "../../../components/QueuedDrawer";
 import InitMessage from "./InitMessage";
 import ConfirmUnverified from "./ConfirmUnverified";
+import Config from "react-native-config";
 import { LayoutChangeEvent } from "react-native";
 
 const shouldNotRemindUserAgainToVerifyAddressOnReceive =
@@ -90,7 +91,7 @@ const ReceiveSecurityModal = ({
       noCloseButton
       preventBackdropClick
     >
-      <Animated.ScrollView style={animatedStyle}>
+      <Animated.ScrollView style={Config.MOCK ? undefined : animatedStyle}>
         <Animated.View onLayout={onLayout}>{component}</Animated.View>
       </Animated.ScrollView>
     </QueuedDrawer>

@@ -1,6 +1,6 @@
 import { loadBleState, loadConfig } from "../../bridge/server";
 import PortfolioPage from "../../models/wallet/portfolioPage";
-import ReceivePage from "../../models/receive";
+import ReceivePage from "../../models/trade/receivePage";
 import DeviceAction from "../../models/DeviceAction";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { tapById, tapByText, waitForElementById, waitForElementByText } from "../../helpers";
@@ -47,6 +47,6 @@ describe("Bitcoin 2 account", () => {
   it("don't verify the address", async () => {
     await tapById(receivePage.noVerifyAddressButton);
     await tapById(receivePage.noVerifyValidateButton);
-    await waitForElementById(receivePage.receiveFreshAddress);
+    await waitForElementById(receivePage.accountAddress);
   });
 });

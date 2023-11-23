@@ -13,6 +13,7 @@ import stacks from "../families/stacks/cli-transaction";
 import stellar from "../families/stellar/cli-transaction";
 import tezos from "../families/tezos/cli-transaction";
 import tron from "../families/tron/cli-transaction";
+import vechain from "../families/vechain/cli-transaction";
 import { cliTools as algorand } from "../families/algorand/setup";
 import { cliTools as evm } from "../families/evm/setup";
 import { cliTools as polkadot } from "../families/polkadot/setup";
@@ -33,6 +34,7 @@ export default {
   stellar,
   tezos,
   tron,
+  vechain,
   algorand,
   evm,
   polkadot,

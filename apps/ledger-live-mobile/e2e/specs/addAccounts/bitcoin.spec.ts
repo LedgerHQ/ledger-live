@@ -2,11 +2,14 @@ import { expect } from "detox";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { loadBleState, loadConfig } from "../../bridge/server";
 import PortfolioPage from "../../models/wallet/portfolioPage";
+import AccountPage from "../../models/accounts/accountPage";
+
 import DeviceAction from "../../models/DeviceAction";
 import AddAccountDrawer from "../../models/accounts/addAccountDrawer";
 import { getElementByText, waitForElementByText } from "../../helpers";
 
 let portfolioPage: PortfolioPage;
+let accountPage: AccountPage;
 let deviceAction: DeviceAction;
 let addAccountDrawer: AddAccountDrawer;
 
@@ -22,6 +25,7 @@ describe("Add Bitcoin Accounts", () => {
     loadBleState({ knownDevices: [knownDevice] });
 
     portfolioPage = new PortfolioPage();
+    accountPage = new AccountPage();
     deviceAction = new DeviceAction(knownDevice);
     addAccountDrawer = new AddAccountDrawer();
 
@@ -43,8 +47,7 @@ describe("Add Bitcoin Accounts", () => {
   });
 
   it("displays Bitcoin accounts page summary", async () => {
-    await expect(getElementByText("Your Bitcoin")).toBeVisible();
-
-    await waitForElementByText("1.19576 BTC");
+    await accountPage.waitForAccountAssetsToLoad("Bitcoin");
+    await waitForElementByText("1.19576\u00a0BTC");
   });
 });

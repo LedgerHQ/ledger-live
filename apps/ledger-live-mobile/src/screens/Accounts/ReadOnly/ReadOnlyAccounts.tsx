@@ -8,8 +8,8 @@ import {
   isCurrencySupported,
   listSupportedCurrencies,
   listTokens,
-  useCurrenciesByMarketcap,
 } from "@ledgerhq/live-common/currencies/index";
+import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import TrackScreen from "../../../analytics/TrackScreen";
 

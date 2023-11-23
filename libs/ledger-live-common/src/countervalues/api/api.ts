@@ -81,10 +81,10 @@ const api: CounterValuesAPI = {
 
     return data;
   },
-  fetchMarketcapTickers: async () => {
+  fetchIdsSortedByMarketcap: async () => {
     const { data } = await network({
       method: "GET",
-      url: `${baseURL()}/v2/tickers`,
+      url: `${baseURL()}/v3/currencies/supported`,
     });
     return data;
   },

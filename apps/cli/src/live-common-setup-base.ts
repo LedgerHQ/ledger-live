@@ -80,6 +80,7 @@ setSupportedCurrencies([
   "sei_network",
   "persistence",
   "quicksilver",
+  "vechain",
   "internet_computer",
   "klaytn",
   "polygon_zk_evm",
