@@ -285,6 +285,7 @@ export type Feature_Learn = Feature<{
 
 export type Feature_PtxEarn = Feature<{
   liveAppId: string;
+  isNew: boolean;
 }>;
 
 export type Feature_Storyly = Feature<{
