@@ -196,11 +196,11 @@
       "description" : "A transação está em andamento. Você pode acelerar a transação com uma taxa de rede maior ou cancelá-la.",
       "stuckDescription" : "Sua transação está travada. Acelere-a com uma taxa de rede maior ou cancele-a.",
       "previousFeesInfo" : {
-        "pendingTransactionFeesInfo" : "Informações sobre taxas de transação pendentes: ",
-        "networkfee" : "Taxa de Rede = ",
-        "maxFee" : "Taxa Máxima = ",
-        "maxPriorityFee" : "Taxa de Prioridade Máxima = ",
-        "gasPrice" : "Preço do Gás = "
+        "pendingTransactionFeesInfo" : "Informações sobre taxas de transação pendentes:",
+        "networkfee" : "Taxa de rede = {{amount}}",
+        "maxFee" : "Taxa máxima = {{amount}}",
+        "maxPriorityFee" : "Taxa de Prioridade Máxima = {{amount}}",
+        "gasPrice" : "Preço do Gás = {{amount}}"
       },
       "learnMore" : "Quero saber mais",
       "panel" : {
@@ -213,7 +213,7 @@
       },
       "cancel" : {
         "title" : "Cancelar",
-        "description" : "Enviando 0 {{ticker}} para seu próprio endereço. Para garantir o cancelamento, a taxa de rede é de 30% mais alta do que a taxa da transação a ser cancelada."
+        "description" : "Enviando 0 {{ticker}} ao seu próprio endereço."
       },
       "steps" : {
         "method" : {
@@ -1166,11 +1166,13 @@
       },
       "pinContent" : {
         "title" : "PIN",
+        "titleCompleted" : "PIN definido",
         "description" : "Assim como qualquer senha ou código de acesso, o PIN permite que você desbloqueie sua {{productName}} e evite acessos indesejados.",
         "continueOnDevice" : "Definir PIN em sua {{productName}}"
       },
       "seedContent" : {
         "title" : "Frase de Recuperação Secreta",
+        "titleCompleted" : "Frase de Recuperação Secreta confirmada",
         "recoverSeed" : "Placeholder: Recover",
         "restoreSeed" : "Certifique-se de usar uma Frase de Recuperação Secreta gerada por um dispositivo Ledger para garantir segurança máxima sobre seus ativos. \n\n Não possui uma? Use a sua {{productName}} para gerar uma nova Frase.",
         "selection" : "Escolha a opção de configuração que for melhor para você:",
@@ -1250,12 +1252,14 @@
       },
       "installApplications" : {
         "title" : "Instalando aplicativos em {{productName}}",
+        "titleCompleted" : "Aplicativos instalados na {{productName}}",
         "install" : "Instalar",
         "skip" : "Farei isso mais tarde",
         "info" : "Aplicativos da {{deviceName}} são usados para aprovar transações. Você pode adicioná-los ou removê-los a qualquer momento."
       },
       "endOfSetup" : {
-        "title" : "Fim da configuração"
+        "title" : "Fim da configuração",
+        "titleCompleted" : "A {{deviceName}} está pronta"
       },
       "softwareCheckAllowSecureChannelDrawer" : {
         "title" : "Toque em “Permitir” para iniciar a Verificação de Autenticidade"
@@ -1286,7 +1290,8 @@
   "postOnboarding" : {
     "postOnboardingScreen" : {
       "title" : "Em seguida, use sua\nLedger Stax para... ",
-      "titleCompleted" : "e\npronto!"
+      "titleCompleted" : "Tudo pronto!\nContinue a explorar sua carteira.",
+      "exploreCTA" : "Explorar carteira"
     },
     "postOnboardingContent" : {
       "skipLink" : "Farei isso mais tarde."
@@ -1406,6 +1411,26 @@
       "earn" : {
         "title" : "Aplicar",
         "description" : "Multiplique suas criptos com a Ledger"
+      }
+    },
+    "recoverBanner" : {
+      "subscribeDone" : {
+        "title" : "Add your payment card",
+        "description" : "Add your payment method to get your backup secure.",
+        "primaryCta" : "Add now",
+        "secondaryCta" : "Maybe later"
+      },
+      "verifyIdentity" : {
+        "title" : "Verify your identity",
+        "description" : "Verify your identity to get your backup secure.",
+        "primaryCta" : "Verify now",
+        "secondaryCta" : "Maybe later"
+      },
+      "connectDevice" : {
+        "title" : "Connect your Ledger",
+        "description" : "Connect your Ledger to get your backup secure.",
+        "primaryCta" : "Connect my Ledger",
+        "secondaryCta" : "Maybe later"
       }
     }
   },
@@ -3151,7 +3176,7 @@
     "unlockedBalance" : "Desvinculado",
     "unlockedTooltip" : "Os ativos desvinculados agora podem ser movidos usando a operação de saque.",
     "networkFees" : "As taxas de rede são automaticamente definidas pelo consenso da Polkadot, você não poderá revisá-las no seu dispositivo",
-    "bondedBalanceBelowMinimum" : "Seu saldo vinculado está abaixo do mínimo atual de {{minimumBondBalance}}. Suas nomeações correm o risco de serem removidas.",
+    "bondedBalanceBelowMinimum" : "Para enviar a sua intenção de nomear como nomeador, é necessário um saldo mínimo de {{minimumBondBalance}}",
     "nomination" : {
       "emptyState" : {
         "description" : "Você pode ganhar recompensas vinculando ativos e, em seguida, nomeando seus validadores.",
@@ -3552,6 +3577,9 @@
         "supportLink" : "Saiba mais sobre a reserva da Kiln"
       }
     }
+  },
+  "graph" : {
+    "noGraphWarning" : "O gráfico não está disponível para esse token"
   },
   "near" : {
     "account" : {
@@ -4098,8 +4126,7 @@
     "updateAvailable" : "Atualização para a versão {{version}} do Ledger Live disponível",
     "error" : "Erro durante a atualização. Baixe Novamente",
     "reDownload" : "Baixar Novamente",
-    "nightlyWarning" : "Esta versão não pode ser atualizada automaticamente. Instale a versão mais recente manualmente",
-    "downloadNow" : "Baixar Atualização"
+    "nightlyWarning" : "Esta versão não pode ser atualizada automaticamente. Instale a versão mais recente manualmente"
   },
   "crash" : {
     "title" : "Algo deu errado",
@@ -4248,7 +4275,6 @@
         "nextButton" : "Começar",
         "noDevice" : "Sem dispositivo?",
         "buyLink" : "Sem dispositivo? Compre uma Ledger",
-        "recoverSignIn" : "Entrar no Ledger Recover",
         "byTapping" : "Ao clicar em \"Começar\" você consente e concorda com nossos",
         "termsAndConditions" : "Termos e condições",
         "and" : "e",
@@ -4906,6 +4932,11 @@
     "cta" : "Continuar"
   },
   "families" : {
+    "casper" : {
+      "transferIdPlaceholder" : "Opcional",
+      "transferId" : "ID da Transferência (Memo)",
+      "transferIdWarningText" : "Ao usar um memo, verifique cuidadosamente as informações com o destinatário"
+    },
     "cardano" : {
       "memoPlaceholder" : "Opcional",
       "memo" : "Memo"
@@ -4955,6 +4986,10 @@
     }
   },
   "errors" : {
+    "ReplacementTransactionUnderpriced" : {
+      "title" : "Transação substituta com preço abaixo do esperado",
+      "description" : "A taxa de rede pode estar muito baixa. Aumente-a"
+    },
     "NoSuchAppOnProvider" : {
       "title" : "O aplicativo {{appName}} não pode ser encontrado para a sua configuração específica.",
       "description" : "Tente reinstalar o aplicativo através do My Ledger"
@@ -5138,8 +5173,8 @@
       "description" : "Para acessar este recurso, atualize o firmware do seu dispositivo para a versão mais recente"
     },
     "FirmwareNotRecognized" : {
-      "title" : "O firmware do dispositivo não foi reconhecido",
-      "description" : "Entre em contato com o Suporte Ledger"
+      "title" : "Provedor Inválido",
+      "description" : "Você deve mudar a configuração em “Provedor da Minha Ledger”. Para desativá-la, abra as “Configurações” do Ledger Live, selecione “Recursos experimentais” e, em seguida, selecione um provedor diferente."
     },
     "HardResetFail" : {
       "title" : "Não foi possível redefinir",
@@ -5247,6 +5282,18 @@
     "NotEnoughEGLDForFees" : {
       "title" : "EGLD insuficientes para pagar as taxas de transação",
       "description" : "Envie um pouco de EGLD para a sua conta para pagar pelas transações."
+    },
+    "NotEnoughVTHO" : {
+      "title" : "Fundos VTHO insuficientes",
+      "description" : "Certifique-se de que a conta tenha VTHO suficiente."
+    },
+    "MustBeVechain" : {
+      "title" : "Não é uma conta vechain",
+      "description" : "Certifique-se de que a moeda seja VTHO ou VET"
+    },
+    "ImpossibleToCalculateAmountAndFees" : {
+      "title" : "Impossível calcular quantia e taxas",
+      "description" : "Impossível calcular quantia e taxas"
     },
     "NotEnoughBalance" : {
       "title" : "Fundos Insuficientes",
@@ -5402,6 +5449,15 @@
       "title" : "Desculpe, falha de conexão",
       "description" : "Dispositivo detectado mas a conexão falhou. Se o problema persistir, tente novamente ou contate o Suporte Ledger."
     },
+    "CasperInvalidTransferId" : {
+      "title" : "A ID de transferência deve ser um número positivo menor que {{maxTransferId}}"
+    },
+    "InvalidMinimumAmount" : {
+      "title" : "A quantia mínima para transferência é {{minAmount}}"
+    },
+    "MayBlockAccount" : {
+      "title" : "Sua conta ficará com menos do que {{minAmount}}, necessário para realizar um envio"
+    },
     "ETHAddressNonEIP" : {
       "title" : "Verificação automática indisponível: verifique o endereço com cuidado.",
       "description" : null
@@ -5411,7 +5467,7 @@
       "description" : "A função de enviar NFTs está disponível apenas para a Nano X e a Nano S+. Visite nossa plataforma de suporte ao cliente para saber como enviar um NFT com uma Nano S."
     },
     "TransactionHasBeenValidatedError" : {
-      "title" : "Não pode ser acelerada ou cancelada",
+      "title" : "Não pode ser acelerada nem cancelada",
       "description" : "Essa transação já foi validada"
     },
     "CantScanQRCode" : {
@@ -5419,6 +5475,9 @@
     },
     "FeeNotLoaded" : {
       "title" : "Não foi possível carregar as taxas. Defina as taxas manualmente"
+    },
+    "FeeNotLoadedSwap" : {
+      "title" : "Falha em estimar a taxa de rede devido a problemas técnicos. Tente novamente ou mude os ativos."
     },
     "FeeRequired" : {
       "title" : "Taxas Necessárias"
@@ -5546,7 +5605,7 @@
       "description" : "Algo deu errado. Tente novamente ou fale com o Suporte Ledger em caso de dúvida."
     },
     "EthAppPleaseEnableContractData" : {
-      "title" : "Habilite os dados de contrato nas configurações do aplicativo Ethereum"
+      "title" : "Permita a Assinatura Cega ou Dados de Contrato nas Configurações do aplicativo Ethereum"
     },
     "InvalidXRPTag" : {
       "title" : "Tag de destino XRP inválida"
@@ -5893,7 +5952,6 @@
     },
     "progress" : {
       "loading" : "Carregando...",
-      "resolving" : "Resolvendo dependências",
       "progress" : "Permaneça no Ledger Live enquanto os aplicativos estão sendo instalados.",
       "disclaimer" : "Adicione ou remova aplicativos a qualquer hora com o Ledger Live.",
       "skippedInfo" : "Alguns aplicativos não estão disponíveis. Eles ainda serão desenvolvidos para {{ productName }}.",
