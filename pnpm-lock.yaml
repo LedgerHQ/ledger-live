@@ -1961,10 +1961,10 @@ importers:
         version: 1.1.2
       '@dfinity/agent':
         specifier: ^0.15.6
-        version: 0.15.6(@dfinity/candid@0.15.6)(@dfinity/principal@0.15.6)(@types/node@20.8.10)(typescript@5.1.3)
+        version: 0.15.6(@dfinity/candid@0.20.1)(@dfinity/principal@0.15.6)(@types/node@20.8.10)(typescript@5.1.3)
       '@dfinity/candid':
-        specifier: ^0.15.6
-        version: 0.15.6(@types/node@20.8.10)(typescript@5.1.3)
+        specifier: ^0.20.0
+        version: 0.20.1(@dfinity/principal@0.15.6)
       '@dfinity/principal':
         specifier: ^0.15.6
         version: 0.15.6(@types/node@20.8.10)(typescript@5.1.3)
@@ -11733,13 +11733,13 @@ packages:
       ajv-keywords: 3.5.2(ajv@6.12.6)
     dev: true
 
-  /@dfinity/agent@0.15.6(@dfinity/candid@0.15.6)(@dfinity/principal@0.15.6)(@types/node@20.8.10)(typescript@5.1.3):
+  /@dfinity/agent@0.15.6(@dfinity/candid@0.20.1)(@dfinity/principal@0.15.6)(@types/node@20.8.10)(typescript@5.1.3):
     resolution: {integrity: sha512-Ch+tXAszPap0zwRgr/oFEgJLDld4RDwBdFDqR1JUg38xhHWTFMrTkjMT6uQFvqf6d2wDXnh3zwhqbg5P7OCv7A==}
     peerDependencies:
       '@dfinity/candid': ^0.15.6
       '@dfinity/principal': ^0.15.6
     dependencies:
-      '@dfinity/candid': 0.15.6(@types/node@20.8.10)(typescript@5.1.3)
+      '@dfinity/candid': 0.20.1(@dfinity/principal@0.15.6)
       '@dfinity/principal': 0.15.6(@types/node@20.8.10)(typescript@5.1.3)
       base64-arraybuffer: 0.2.0
       bignumber.js: 9.1.2
@@ -11756,17 +11756,12 @@ packages:
       - typescript
     dev: false
 
-  /@dfinity/candid@0.15.6(@types/node@20.8.10)(typescript@5.1.3):
-    resolution: {integrity: sha512-Q9PGvhTE/1dTLfSo0pu0+ifzA7NA4X1rgSy9TE6O1Glk6Kl8Nf+Pg2sCHS2hWt0RAiKfR2glEVlbUAm6S8vRxA==}
+  /@dfinity/candid@0.20.1(@dfinity/principal@0.15.6):
+    resolution: {integrity: sha512-o8g/GOoAAbWr7uY8111nKd+6ARGTsy9viGjVkgzUg9Tpfx5KY0HSap2c1JJ00YkIxjb3dlihL8Xs8a/N7Jp+/A==}
+    peerDependencies:
+      '@dfinity/principal': ^0.20.1
     dependencies:
       '@dfinity/principal': 0.15.6(@types/node@20.8.10)(typescript@5.1.3)
-      ts-node: 10.9.1(@types/node@20.8.10)(typescript@5.1.3)
-    transitivePeerDependencies:
-      - '@swc/core'
-      - '@swc/wasm'
-      - '@types/node'
-      - source-map-support
-      - typescript
     dev: false
 
   /@dfinity/principal@0.15.6(@types/node@20.8.10)(typescript@5.1.3):
