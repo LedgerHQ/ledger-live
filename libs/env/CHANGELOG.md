@@ -1,5 +1,11 @@
 # @ledgerhq/live-env
 
+## 0.7.0
+
+### Minor Changes
+
+- [#4886](https://github.com/LedgerHQ/ledger-live/pull/4886) [`771c9d3c1d`](https://github.com/LedgerHQ/ledger-live/commit/771c9d3c1d138ddd68da2e4f9738e2c41ecaf81b) Thanks [@chabroA](https://github.com/chabroA)! - Add speedup / cancel tx feature for evm
+
 ## 0.7.0-next.0
 
 ### Minor Changes

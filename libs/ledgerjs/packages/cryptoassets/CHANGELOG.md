@@ -1,5 +1,23 @@
 # @ledgerhq/cryptoassets
 
+## 11.2.0
+
+### Minor Changes
+
+- [#4819](https://github.com/LedgerHQ/ledger-live/pull/4819) [`c5981ae341`](https://github.com/LedgerHQ/ledger-live/commit/c5981ae3411abc4c8594adf2efcb52aacddac143) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add support for casper blockchain
+
+- [#5430](https://github.com/LedgerHQ/ledger-live/pull/5430) [`5964e30bed`](https://github.com/LedgerHQ/ledger-live/commit/5964e30bed11d64a3b7401c6ab51ffc1ad4c427c) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update documentation v14 ledgerjs
+
+### Patch Changes
+
+- [#5292](https://github.com/LedgerHQ/ledger-live/pull/5292) [`08dde174fd`](https://github.com/LedgerHQ/ledger-live/commit/08dde174fdeaadbce85dcd914383839f788f21dd) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Lukso
+
+- [#5276](https://github.com/LedgerHQ/ledger-live/pull/5276) [`317685e696`](https://github.com/LedgerHQ/ledger-live/commit/317685e69678e6fe1f489f0c071e7613d329d389) Thanks [@lvndry](https://github.com/lvndry)! - Enable tron tokens countervalues by default
+
+- [#5283](https://github.com/LedgerHQ/ledger-live/pull/5283) [`b4e7201b0b`](https://github.com/LedgerHQ/ledger-live/commit/b4e7201b0b70d146de7d936ff2c9e9e443164243) Thanks [@lvndry](https://github.com/lvndry)! - Update cryptoasset list
+
+- [#5479](https://github.com/LedgerHQ/ledger-live/pull/5479) [`4a283060bf`](https://github.com/LedgerHQ/ledger-live/commit/4a283060bf2e837d73c6c1cb5d89f890a4e4b931) Thanks [@lvndry](https://github.com/lvndry)! - Only add tokens in ledger live if parent currency is supported
+
 ## 11.2.0-next.1
 
 ### Patch Changes

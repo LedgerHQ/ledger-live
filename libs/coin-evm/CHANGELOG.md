@@ -1,5 +1,34 @@
 # @ledgerhq/coin-evm
 
+## 0.11.0
+
+### Minor Changes
+
+- [#4886](https://github.com/LedgerHQ/ledger-live/pull/4886) [`771c9d3c1d`](https://github.com/LedgerHQ/ledger-live/commit/771c9d3c1d138ddd68da2e4f9738e2c41ecaf81b) Thanks [@chabroA](https://github.com/chabroA)! - Add speedup / cancel tx feature for evm
+
+### Patch Changes
+
+- [#5364](https://github.com/LedgerHQ/ledger-live/pull/5364) [`743e1ede3e`](https://github.com/LedgerHQ/ledger-live/commit/743e1ede3eebf806e1e22c8627191b419870a476) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Updating the hashing algorithm from SHA256 to MurmurHashV3 for the `getSyncHash` method in order to drastically increase performances on a React Native environment.
+
+- [#4886](https://github.com/LedgerHQ/ledger-live/pull/4886) [`771c9d3c1d`](https://github.com/LedgerHQ/ledger-live/commit/771c9d3c1d138ddd68da2e4f9738e2c41ecaf81b) Thanks [@chabroA](https://github.com/chabroA)! - Fix wrong usage of explorer block endpoint in coin evm
+
+- [#4987](https://github.com/LedgerHQ/ledger-live/pull/4987) [`e63205b850`](https://github.com/LedgerHQ/ledger-live/commit/e63205b85071538ed2431157a12818d7a8f0ffa9) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - add 10s timeout to estimate gas
+
+- Updated dependencies [[`48487abd29`](https://github.com/LedgerHQ/ledger-live/commit/48487abd297e41629c6725bc0ac9d69bfeaa74d3), [`08dde174fd`](https://github.com/LedgerHQ/ledger-live/commit/08dde174fdeaadbce85dcd914383839f788f21dd), [`771c9d3c1d`](https://github.com/LedgerHQ/ledger-live/commit/771c9d3c1d138ddd68da2e4f9738e2c41ecaf81b), [`c5981ae341`](https://github.com/LedgerHQ/ledger-live/commit/c5981ae3411abc4c8594adf2efcb52aacddac143), [`317685e696`](https://github.com/LedgerHQ/ledger-live/commit/317685e69678e6fe1f489f0c071e7613d329d389), [`a4299c5d62`](https://github.com/LedgerHQ/ledger-live/commit/a4299c5d629cd56e6e6795adaa14978ae2b90f42), [`b4e7201b0b`](https://github.com/LedgerHQ/ledger-live/commit/b4e7201b0b70d146de7d936ff2c9e9e443164243), [`e63205b850`](https://github.com/LedgerHQ/ledger-live/commit/e63205b85071538ed2431157a12818d7a8f0ffa9), [`5964e30bed`](https://github.com/LedgerHQ/ledger-live/commit/5964e30bed11d64a3b7401c6ab51ffc1ad4c427c), [`4a283060bf`](https://github.com/LedgerHQ/ledger-live/commit/4a283060bf2e837d73c6c1cb5d89f890a4e4b931)]:
+  - @ledgerhq/types-live@6.43.0
+  - @ledgerhq/types-cryptoassets@7.8.0
+  - @ledgerhq/cryptoassets@11.2.0
+  - @ledgerhq/errors@6.16.0
+  - @ledgerhq/coin-framework@0.9.0
+  - @ledgerhq/live-env@0.7.0
+  - @ledgerhq/hw-app-eth@6.35.0
+  - @ledgerhq/devices@8.1.0
+  - @ledgerhq/logs@6.12.0
+  - @ledgerhq/domain-service@1.1.15
+  - @ledgerhq/evm-tools@1.0.11
+  - @ledgerhq/live-network@1.1.9
+  - @ledgerhq/live-promise@0.0.3
+
 ## 0.11.0-next.1
 
 ### Patch Changes
