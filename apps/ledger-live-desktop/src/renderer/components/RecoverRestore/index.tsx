@@ -82,6 +82,7 @@ const RecoverRestore = () => {
     if (state && !state.isOnboarded) {
       switch (currentDevice?.modelId) {
         case DeviceModelId.nanoX:
+        case DeviceModelId.nanoSP:
           setDeviceModelId(currentDevice.modelId);
           history.push({
             pathname: `/onboarding/${UseCase.recover}/${ScreenId.pairMyNano}`,
