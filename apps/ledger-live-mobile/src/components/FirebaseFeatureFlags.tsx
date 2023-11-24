@@ -65,7 +65,6 @@ export const FirebaseFeatureFlagsProvider: React.FC<Props> = ({ children }) => {
     dispatch(setOverriddenFeatureFlags({}));
   }, [dispatch]);
 
-  // Nb wrapped because the method is also called from outside.
   const wrappedGetFeature = useCallback(
     <T extends FeatureId>(key: T): Features[T] => getFeature({ key, appLanguage, localOverrides }),
     [localOverrides, appLanguage],
