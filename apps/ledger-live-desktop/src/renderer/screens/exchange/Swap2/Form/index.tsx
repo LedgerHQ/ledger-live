@@ -274,6 +274,17 @@ const SwapForm = () => {
 
   const setFromAmount = (amount: BigNumber) => {
     swapTransaction.setFromAmount(amount);
+    const fromAmount =
+      swapTransaction.swap.from.account &&
+      convertToNonAtomicUnit({
+        amount,
+        account: swapTransaction.swap.from.account,
+      });
+    setSwapWebProps(state => ({
+      ...state,
+      cacheKey: v4(),
+      fromAmount: fromAmount?.toString(),
+    }));
   };
 
   const setToCurrency = (currency: TokenCurrency | CryptoCurrency | undefined) => {
