@@ -295,7 +295,7 @@ export const makeGetAccountShape =
     );
 
     const utxos = prepareUtxos(newTransactions, stableUtxos, accountCredentialsMap);
-    let utxosSum = utxos.reduce((total, u) => total.plus(u.amount), new BigNumber(0));
+    const utxosSum = utxos.reduce((total, u) => total.plus(u.amount), new BigNumber(0));
     const tokenBalance = mergeTokens(utxos.map(u => u.tokens).flat());
     const subAccounts = buildSubAccounts({
       initialAccount,
@@ -321,11 +321,7 @@ export const makeGetAccountShape =
     const cardanoNetworkInfo = await getNetworkInfo(initialAccount as CardanoAccount, currency);
     const delegationInfo = await getDelegationInfo(currency, stakeCredential.key);
 
-    let totalBalance = utxosSum;
-
-    if (delegationInfo?.rewards) {
-      totalBalance = utxosSum.plus(delegationInfo.rewards);
-    }
+    const totalBalance = delegationInfo?.rewards ? utxosSum.plus(delegationInfo.rewards) : utxosSum;
 
     const minAdaBalanceForTokens = tokenBalance.length
       ? calculateMinUtxoAmount(
