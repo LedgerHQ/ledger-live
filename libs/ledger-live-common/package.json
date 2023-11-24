@@ -119,7 +119,7 @@
     "@celo/wallet-ledger": "^3.0.1",
     "@cosmjs/amino": "^0.31.1",
     "@cosmjs/crypto": "^0.31.0",
-    "@cosmjs/stargate": "^0.26.5",
+    "@cosmjs/stargate": "^0.32.0",
     "@crypto-org-chain/chain-jslib": "1.1.2",
     "@dfinity/agent": "^0.15.6",
     "@dfinity/candid": "^0.15.6",
