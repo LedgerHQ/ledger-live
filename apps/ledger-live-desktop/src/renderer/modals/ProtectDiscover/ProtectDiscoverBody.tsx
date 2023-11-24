@@ -28,13 +28,14 @@ const ProtectDiscoverBody = ({ onClose }: Props) => {
   const { t } = useTranslation();
   const protectServicesDesktopFeature = useFeature("protectServicesDesktop");
 
+  const discoverTheBenefitsLink = protectServicesDesktopFeature?.params?.discoverTheBenefitsLink;
   const onDiscoverClick = useCallback(() => {
+    if (!discoverTheBenefitsLink) return;
     track("button_clicked", {
       button: "Discover the benefits",
     });
-    // @ts-expect-error TYPINGS
-    openURL(protectServicesDesktopFeature?.params?.discoverTheBenefitsLink);
-  }, [protectServicesDesktopFeature?.params?.discoverTheBenefitsLink]);
+    openURL(discoverTheBenefitsLink);
+  }, [discoverTheBenefitsLink]);
 
   return (
     <ModalBody

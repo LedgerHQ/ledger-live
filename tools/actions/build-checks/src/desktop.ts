@@ -1,27 +1,27 @@
 import * as core from "@actions/core";
 import * as github from "@actions/github";
 import {
-  Metafiles,
+  DesktopMetafiles,
   downloadMetafilesFromArtifact,
   getRecentArtifactFromBranch,
   retrieveLocalMetafiles,
   Reporter,
   submitCommentToPR,
-  MetafileSlug,
+  DesktopMetafileSlug,
   formatSize,
   getMetafileDuplicates,
   getMetafileBundleSize,
   formatMarkdownBoldList,
 } from "./logic";
 
-// here is the main logic of the action
-async function main() {
-  const githubToken = core.getInput("token");
-  const prNumber = core.getInput("prNumber");
-  // const artifactsFolder = core.getInput("artifactsFolder");
-  const baseBranch = core.getInput("baseBranch");
-  const octokit = github.getOctokit(githubToken);
+type Inputs = {
+  baseBranch: string;
+  octokit: ReturnType<typeof github.getOctokit>;
+  githubToken: string;
+  prNumber: string;
+};
 
+export async function desktopChecks({ baseBranch, octokit, githubToken, prNumber }: Inputs) {
   const latestLinux = await getRecentArtifactFromBranch(
     octokit,
     "linux-js-bundle-metafiles",
@@ -33,10 +33,11 @@ async function main() {
   }
 
   core.info(`Downloading most recent artifacts from ${baseBranch}`);
-  const referenceMetafiles = await downloadMetafilesFromArtifact(
+  const referenceMetafiles = (await downloadMetafilesFromArtifact(
     githubToken,
     latestLinux.archive_download_url,
-  );
+    "desktop",
+  )) as DesktopMetafiles;
 
   core.info(`Getting current builds metadata files`);
   const all = await Promise.all([
@@ -60,6 +61,7 @@ async function main() {
     githubToken,
     referenceSha: latestLinux.workflow_run?.head_sha,
     currentSha: github.context.sha,
+    title: "### Desktop Bundle Checks",
   });
 }
 
@@ -67,10 +69,10 @@ async function main() {
 
 const bundleSizeThreshold = 100 * 1024; // 100kb
 
-const slugsOfInterest: MetafileSlug[] = ["main", "renderer"];
+const slugsOfInterest: DesktopMetafileSlug[] = ["main", "renderer"];
 
 // checks that compare the build between OSes
-function crossPlatformChecks(reporter: Reporter, all: Metafiles[], osNames: string[]) {
+function crossPlatformChecks(reporter: Reporter, all: DesktopMetafiles[], osNames: string[]) {
   slugsOfInterest.forEach(slug => {
     const sizes = all.map(metafiles => getMetafileBundleSize(metafiles, slug));
     const ref = sizes[0];
@@ -97,7 +99,11 @@ function crossPlatformChecks(reporter: Reporter, all: Metafiles[], osNames: stri
 }
 
 // checks that compare one build against a reference (on the same OS)
-function checksAgainstReference(reporter: Reporter, metafiles: Metafiles, reference: Metafiles) {
+function checksAgainstReference(
+  reporter: Reporter,
+  metafiles: DesktopMetafiles,
+  reference: DesktopMetafiles,
+) {
   // diff on the bundle size
   slugsOfInterest.forEach(slug => {
     const ref = getMetafileBundleSize(reference, slug);
@@ -125,8 +131,8 @@ function checksAgainstReference(reporter: Reporter, metafiles: Metafiles, refere
   const newDuplicates: Record<string, string[]> = {};
   const removedDuplicates: Record<string, string[]> = {};
   for (const slug of slugsOfInterest) {
-    const duplicatesRef = getMetafileDuplicates(reference, slug as MetafileSlug);
-    const duplicates = getMetafileDuplicates(metafiles, slug as MetafileSlug);
+    const duplicatesRef = getMetafileDuplicates(reference, slug as DesktopMetafileSlug);
+    const duplicates = getMetafileDuplicates(metafiles, slug as DesktopMetafileSlug);
     core.info(`${slug} duplicates: ${duplicates.join(", ")}`);
     const added = duplicates.filter(d => !duplicatesRef.includes(d));
     const removed = duplicatesRef.filter(d => !duplicates.includes(d));
@@ -148,9 +154,7 @@ function checksAgainstReference(reporter: Reporter, metafiles: Metafiles, refere
   for (const lib in newDuplicates) {
     const bundles = newDuplicates[lib];
     reporter.warning(
-      `\`${lib}\` dependency is now duplicated in ${formatMarkdownBoldList(
-        bundles,
-      )}. [Read more](https://github.com/LedgerHQ/ledger-live/wiki/Dependencies-duplicates-management)`,
+      `\`${lib}\` library is now duplicated in ${formatMarkdownBoldList(bundles)} (regression)`,
     );
   }
   for (const lib in removedDuplicates) {
@@ -160,7 +164,3 @@ function checksAgainstReference(reporter: Reporter, metafiles: Metafiles, refere
     );
   }
 }
-
-main().catch(err => {
-  core.setFailed(err);
-});

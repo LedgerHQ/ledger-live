@@ -82,8 +82,9 @@ export default function Market() {
   );
 
   const updateTimeRange = useCallback(
-    // @ts-expect-error i don't know how to type this Dropdown function
-    ({ value }) => {
+    (e: { value: string; label: string } | null) => {
+      if (!e) return;
+      const { value } = e;
       refresh({ range: value });
     },
     [refresh],
@@ -141,7 +142,6 @@ export default function Market() {
             <Dropdown
               label={t("common.range")}
               menuPortalTarget={document.body}
-              // @ts-expect-error I don't know what you want Dropdown
               onChange={updateTimeRange}
               options={timeRanges}
               value={timeRangeValue}

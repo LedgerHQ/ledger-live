@@ -1,22 +1,31 @@
-import fs from "fs";
-import * as github from "@actions/github";
 import * as core from "@actions/core";
-import { Parse } from "unzipper";
+import * as github from "@actions/github";
+import fs from "fs";
+import path from "path";
+import { Readable } from "stream";
 import { parser } from "stream-json";
 import { streamValues } from "stream-json/streamers/StreamValues";
-import { Readable } from "stream";
-import path from "path";
+import { Parse } from "unzipper";
 
-export const metafilesKeys = {
+export const desktopMetafilesKeys = {
   main: "metafile.main.json",
   preloader: "metafile.preloader.json",
   renderer: "metafile.renderer.json",
   rendererWorker: "metafile.renderer.worker.json",
   webviewPreloader: "metafile.webviewPreloader.json",
 };
+
+export type MobileMetaKeys = ["main.ios.jsbundle", "main.android.jsbundle"];
+export const mobileMetafileKeys: MobileMetaKeys = ["main.ios.jsbundle", "main.android.jsbundle"];
+
+export type MobileMetaValues = (typeof mobileMetafileKeys)[number];
+export type MobileMetaFile = {
+  [Key in MobileMetaValues]?: { size: number };
+};
+
 type ValueOf<T> = T[keyof T];
-export type MetafileSlug = keyof typeof metafilesKeys;
-export type MetafileKey = ValueOf<typeof metafilesKeys>;
+export type DesktopMetafileSlug = keyof typeof desktopMetafilesKeys;
+export type DesktopMetafileKey = ValueOf<typeof desktopMetafilesKeys>;
 
 export interface FileImport {
   path: string;
@@ -39,25 +48,31 @@ export interface OutputFile {
   entryPoint?: string;
 }
 
-export interface Metafile {
+export interface DesktopMetafile {
   inputs: { [key: string]: FileBytes };
   outputs: { [key: string]: OutputFile };
 }
 
-export type Metafiles = {
-  [K in MetafileKey]?: Metafile;
+export type DesktopMetafiles = {
+  [K in DesktopMetafileKey]?: DesktopMetafile;
 };
 
-export function getMetafileBundleSize(metafile: Metafiles, slug: MetafileSlug): number | undefined {
-  const key = metafilesKeys[slug];
+export function getMetafileBundleSize(
+  metafile: DesktopMetafiles,
+  slug: DesktopMetafileSlug,
+): number | undefined {
+  const key = desktopMetafilesKeys[slug];
   if (key in metafile) {
     return metafile[key]?.outputs[`.webpack/${slug}.bundle.js`]?.bytes;
   }
 }
 
-export function getMetafileDuplicates(metafiles: Metafiles, slug: MetafileSlug): string[] {
+export function getMetafileDuplicates(
+  metafiles: DesktopMetafiles,
+  slug: DesktopMetafileSlug,
+): string[] {
   const all = [];
-  const key = metafilesKeys[slug];
+  const key = desktopMetafilesKeys[slug];
   if (key in metafiles) {
     const m = metafiles[key]!;
     // inspired from https://github.com/esbuild/esbuild.github.io/blob/main/src/analyze/warnings.ts
@@ -85,7 +100,7 @@ export function getMetafileDuplicates(metafiles: Metafiles, slug: MetafileSlug):
 type Octokit = ReturnType<typeof github.getOctokit>;
 export type Artifact = Awaited<
   ReturnType<Octokit["rest"]["actions"]["listArtifactsForRepo"]>
->["data"]["artifacts"][0];
+>["data"]["artifacts"][number];
 
 export async function getRecentArtifactFromBranch(
   octokit: Octokit,
@@ -134,7 +149,8 @@ export async function getRecentArtifactFromBranch(
 export async function downloadMetafilesFromArtifact(
   githubToken: string,
   url: string,
-): Promise<Metafiles> {
+  type: "desktop" | "mobile" = "desktop",
+): Promise<DesktopMetafiles | MobileMetaFile> {
   core.info("Downloading Metafiles: " + url);
   const res = await fetch(url, {
     headers: {
@@ -144,11 +160,13 @@ export async function downloadMetafilesFromArtifact(
   });
   const blob = await res.blob();
   const stream = Readable.fromWeb(blob.stream());
-  return zipStreamToMetafiles(stream);
+  return type === "desktop"
+    ? zipStreamToDesktopMetafiles(stream)
+    : zipStreamToMobileMetafiles(stream);
 }
 
-function zipStreamToMetafiles(stream: Readable): Promise<Metafiles> {
-  const bundles: Metafiles = {};
+function zipStreamToDesktopMetafiles(stream: Readable): Promise<DesktopMetafiles> {
+  const bundles: DesktopMetafiles = {};
   return new Promise((resolve, reject) => {
     stream
       .pipe(Parse())
@@ -158,7 +176,11 @@ function zipStreamToMetafiles(stream: Readable): Promise<Metafiles> {
           entry
             .pipe(parser())
             .pipe(streamValues())
-            .on("data", (e: { value: Metafile }) => (bundles[entry.path as MetafileKey] = e.value))
+            .on(
+              "data",
+              (e: { value: DesktopMetafile }) =>
+                (bundles[entry.path as DesktopMetafileKey] = e.value),
+            )
             .on("error", reject);
         } else {
           entry.autodrain();
@@ -170,10 +192,33 @@ function zipStreamToMetafiles(stream: Readable): Promise<Metafiles> {
   });
 }
 
-export async function jsonFileToMetafiles(folder: string): Promise<Metafiles> {
+function zipStreamToMobileMetafiles(stream: Readable): Promise<MobileMetaFile> {
+  let meta: MobileMetaFile;
+  return new Promise((resolve, reject) => {
+    stream
+      .pipe(Parse())
+      .on("entry", entry => {
+        const fileName = entry.path;
+        if (fileName.includes("metafile")) {
+          entry
+            .pipe(parser())
+            .pipe(streamValues())
+            .on("data", (e: { value: MobileMetaFile }) => (meta = e.value))
+            .on("error", reject);
+        } else {
+          entry.autodrain();
+        }
+      })
+      .on("finish", () => {
+        resolve(meta);
+      });
+  });
+}
+
+export async function jsonFileToMetafiles(folder: string): Promise<DesktopMetafiles> {
   return new Promise((resolve, reject) => {
     const files = fs.readdirSync(folder);
-    const bundles: Metafiles = {};
+    const bundles: DesktopMetafiles = {};
     for (const file of files) {
       const p = path.join(folder, file);
       if (!fs.lstatSync(p).isFile()) return;
@@ -181,8 +226,8 @@ export async function jsonFileToMetafiles(folder: string): Promise<Metafiles> {
       if (file.includes("metafile")) {
         try {
           const content = fs.readFileSync(p, "utf8");
-          const parsed = JSON.parse(content) as Metafile;
-          bundles[file as MetafileKey] = parsed;
+          const parsed = JSON.parse(content) as DesktopMetafile;
+          bundles[file as DesktopMetafileKey] = parsed;
         } catch (error) {
           reject(error);
         }
@@ -192,7 +237,7 @@ export async function jsonFileToMetafiles(folder: string): Promise<Metafiles> {
   });
 }
 
-export async function retrieveLocalMetafiles(folder: string): Promise<Metafiles> {
+export async function retrieveLocalMetafiles(folder: string): Promise<DesktopMetafiles> {
   return jsonFileToMetafiles(folder);
 }
 
@@ -265,38 +310,86 @@ export async function createOrUpdateComment({
   });
 }
 
-export async function submitCommentToPR({
-  reporter,
-  prNumber,
-  githubToken,
+export function replaceInComment({
+  title,
+  comment,
+  previous,
+}: {
+  title: string;
+  comment: string;
+  previous: string;
+}) {
+  let replacing = false;
+  let found = false;
+  let newComment = "";
+  for (const line of previous.split("\n")) {
+    if (!found && line.startsWith(title)) {
+      replacing = true;
+      found = true;
+      newComment += comment;
+      newComment += "\n\n";
+    } else if (replacing && line.startsWith("###")) {
+      replacing = false;
+      newComment += line + "\n";
+    } else if (!replacing) {
+      newComment += line + "\n";
+    }
+  }
+
+  if (!found) {
+    newComment += `${title}
+
+${comment}`;
+    newComment += "\n";
+  }
+
+  return newComment;
+}
+
+export async function messageFormatter({
   currentSha,
   referenceSha,
+  reporter,
+  found,
+  header,
+  title,
 }: {
-  reporter: Reporter;
-  prNumber: string;
-  githubToken: string;
   currentSha: string;
-  referenceSha: string;
-}): Promise<void> {
-  core.info("Submiting comment to PR");
-  const header = `<!-- desktop-build-checks-${prNumber} -->`;
-  const title = `### Desktop Build Checks
+  referenceSha?: string;
+  title: string;
+  header: string;
+  reporter: Reporter;
+  found?: Awaited<ReturnType<typeof findComment>>;
+}) {
+  const head = `${title}
 > Comparing ${formatHash(currentSha)} against ${formatHash(referenceSha)}.
 `;
-  core.info("Looking for existing comment");
-  const found = await findComment({ prNumber, githubToken, header });
+
   core.info(found ? `Found previous comment ${found.id}` : "No previous comment to update");
   const body = reporter.toMarkdown();
+  const bodyText = `${head}
 
-  if (reporter.isEmpty() && found) {
-    const allGood = `
-${header}
+${body}`;
 
-${title}
+  const allGoodText = `${head}
 
 ✅ Previous issues have all been fixed.`;
-    await createOrUpdateComment({ body: allGood, prNumber, githubToken, found });
-    return;
+
+  let comment = "";
+  if (found && found.body) {
+    if (found.body.includes(title)) {
+      comment = replaceInComment({
+        title,
+        comment: reporter.isEmpty() ? allGoodText : bodyText,
+        previous: found.body,
+      });
+    } else {
+      comment = `${found.body}
+
+${bodyText}`;
+    }
+
+    return comment;
   }
 
   if (reporter.isEmpty()) {
@@ -304,12 +397,45 @@ ${title}
     return;
   }
 
-  const comment = `${header}
+  comment = `${header}
 
-${title}
+${bodyText}`;
 
-${body}
-`;
+  return comment;
+}
+
+export async function submitCommentToPR({
+  reporter,
+  prNumber,
+  githubToken,
+  currentSha,
+  referenceSha,
+  title,
+}: {
+  reporter: Reporter;
+  prNumber: string;
+  githubToken: string;
+  currentSha: string;
+  referenceSha?: string;
+  title: string;
+}): Promise<void> {
+  core.info("Submiting comment to PR");
+  const header = `<!-- build-checks-${prNumber} -->`;
+
+  core.info("Looking for existing comment");
+  const found = await findComment({ prNumber, githubToken, header });
+
+  const comment = await messageFormatter({
+    title,
+    header,
+    currentSha,
+    reporter,
+    referenceSha,
+    found,
+  });
+
+  if (!comment) return;
+
   await createOrUpdateComment({ body: comment, prNumber, githubToken, found });
 }
 
