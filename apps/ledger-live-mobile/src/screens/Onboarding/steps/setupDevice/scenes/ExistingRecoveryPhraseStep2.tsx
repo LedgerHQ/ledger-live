@@ -37,7 +37,12 @@ const Next = ({ onNext }: { onNext: () => void }) => {
   const { t } = useTranslation();
 
   return (
-    <Button type="main" size="large" onPress={onNext}>
+    <Button
+      type="main"
+      size="large"
+      onPress={onNext}
+      testID="onboarding-existingRecoveryPhrase2-cta"
+    >
       {t("onboarding.stepRecoveryPhrase.existingRecoveryPhrase.nextStep")}
     </Button>
   );

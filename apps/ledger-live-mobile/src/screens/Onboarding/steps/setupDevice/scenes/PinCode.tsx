@@ -32,8 +32,16 @@ const Next = ({ onNext }: { onNext: () => void }) => {
         checked={checked}
         onChange={onChange}
         label={t("onboarding.stepSetupDevice.pinCode.checkboxDesc")}
+        testID="onboarding-pinCode-switch"
       />
-      <Button mt={6} disabled={!checked} type="main" size="large" onPress={onNext}>
+      <Button
+        mt={6}
+        disabled={!checked}
+        type="main"
+        size="large"
+        onPress={onNext}
+        testID="onboarding-pinCode-cta"
+      >
         {t("onboarding.stepSetupDevice.pinCode.cta")}
       </Button>
     </>
