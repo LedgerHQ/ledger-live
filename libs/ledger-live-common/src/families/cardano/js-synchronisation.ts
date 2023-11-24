@@ -205,7 +205,7 @@ export type SignerContext = (
   fn: (signer: Ada) => Promise<ExtendedPublicKey>,
 ) => Promise<ExtendedPublicKey>;
 
-const makeGetAccountShape =
+export const makeGetAccountShape =
   (signerContext: SignerContext): GetAccountShape =>
   async (info, { blacklistedTokenIds }) => {
     const {
