@@ -12,7 +12,6 @@ import type {
 import type { Action, Device } from "./types";
 import { currentMode } from "./app";
 import { getImplementation } from "./implementations";
-import { DisconnectedDeviceDuringOperation } from "@ledgerhq/errors";
 
 type State = {
   isLoading: boolean;
