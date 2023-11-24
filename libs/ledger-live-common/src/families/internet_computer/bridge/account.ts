@@ -79,13 +79,17 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
   if (!recipient) {
     errors.recipient = new RecipientRequired();
   } else if (!(await validateAddress(recipient)).isValid) {
-    errors.recipient = new InvalidAddress();
+    errors.recipient = new InvalidAddress("", {
+      currencyName: a.currency.name,
+    });
   } else if (recipient.toLowerCase() === address.toLowerCase()) {
     errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
   }
 
   if (!(await validateAddress(address)).isValid) {
-    errors.sender = new InvalidAddress();
+    errors.sender = new InvalidAddress("", {
+      currencyName: a.currency.name,
+    });
   }
 
   if (!validateMemo(t.memo).isValid) {

@@ -147,6 +147,7 @@
     "src/hoc/withRemountableWrapper.tsx",
     "src/hooks/recoverFeatureFlag.ts",
     "src/hooks/useAccountsWithFundsListener.ts",
+    "src/hooks/useBroadcast.ts",
     "src/hooks/useDBRaw.ts",
     "src/hooks/useDebounce.ts",
     "src/hooks/useEnv.ts",
@@ -269,6 +270,7 @@
     "src/transaction/signOperation.ts",
     "src/transactionsAlerts/index.ts",
     "src/user.ts",
+    "src/walletConnect/index.ts",
     "src/wallet-api/CustomLogger/client.ts",
     "src/wallet-api/constants.ts",
     "src/wallet-api/converters.ts",
@@ -303,7 +305,8 @@
     "src/index.ts",
     "src/jest.d.ts",
     "src/postOnboarding/mock.ts",
-    "src/reactNativeSvg.d.ts"
+    "src/reactNativeSvg.d.ts",
+    "src/currencies/mock.ts"
   ],
   "ignoreUnused": [
     "@types/bchaddrjs",

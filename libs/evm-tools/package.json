@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/evm-tools",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "EVM tooling used for coin integrations & app bindings",
   "main": "./index.ts",
   "keywords": [
@@ -55,7 +55,7 @@
     "@ledgerhq/types-live": "workspace:^",
     "@types/crypto-js": "^4.1.1",
     "@types/jest": "^28.1.8",
-    "@types/node": "^18.15.7",
+    "@types/node": "^20.8.10",
     "jest": "^28.1.3",
     "ts-jest": "^28.0.8"
   },

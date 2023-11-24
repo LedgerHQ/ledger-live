@@ -76,7 +76,6 @@ export enum ScreenName {
   EditAccountName = "EditAccountName",
   EditAccountUnits = "EditAccountUnits",
   EditDeviceName = "EditDeviceName",
-  EditTransactionMethodSelection = "EditTransactionMethodSelection",
   Exchange = "Exchange",
   ExchangeBuy = "ExchangeBuy",
   ExchangeHistory = "ExchangeHistory",
@@ -334,6 +333,8 @@ export enum ScreenName {
   // Evm
   EvmEditGasLimit = "EvmEditGasLimit",
   EvmCustomFees = "EvmCustomFees",
+  EditTransactionSummary = "EditTransactionSummary",
+  EvmEditTransactionMethodSelection = "EvmEditTransactionMethodSelection",
 
   // Polkadot
   PolkadotBondStarted = "PolkadotBondStarted",
@@ -458,6 +459,8 @@ export enum ScreenName {
 
   // stacks
   StacksEditMemo = "StacksEditMemo",
+  // casper
+  CasperEditTransferId = "CasperEditTransferId",
   // hedera
   HederaEditMemo = "HederaEditMemo",
   // near
@@ -561,8 +564,8 @@ export enum NavigatorName {
   RequestAccount = "RequestAccount",
   RequestAccountsAddAccounts = "RequestAccountsAddAccounts",
 
-  // Edit transaction
-  EditTransaction = "EditTransaction",
+  // Evm
+  EvmEditTransaction = "EvmEditTransaction",
 
   // Polkadot
   PolkadotBondFlow = "PolkadotBondFlow",

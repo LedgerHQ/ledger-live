@@ -196,11 +196,11 @@
       "description": "Your transaction is ongoing. You can speed it up with a higher network fee, or cancel it.",
       "stuckDescription": "Your transaction is stuck. Speed it up with a higher network fee, or cancel it.",
       "previousFeesInfo": {
-        "pendingTransactionFeesInfo": "Pending transaction fees info: ",
-        "networkfee": "Network fee = ",
-        "maxFee": "Max fee = ",
-        "maxPriorityFee": "Max Priority fee = ",
-        "gasPrice": "GasPrice = "
+        "pendingTransactionFeesInfo": "Pending transaction fees info:",
+        "networkfee": "Network fee = {{amount}}",
+        "maxFee": "Max fee = {{amount}}",
+        "maxPriorityFee": "Max Priority fee = {{amount}}",
+        "gasPrice": "GasPrice = {{amount}}"
       },
       "learnMore": "I want to learn more",
       "panel": {
@@ -213,7 +213,7 @@
       },
       "cancel": {
         "title": "Cancel",
-        "description": "Sending 0 {{ticker}} to your own address. To ensure cancellation, the network fee is 30% higher than the fee of the transaction meant to be cancelled."
+        "description": "Sending 0 {{ticker}} to your own address."
       },
       "steps": {
         "method": {
@@ -1208,7 +1208,7 @@
           "contactSupportCTA": "Contact Ledger support",
           "notFoundEntityError": {
             "title": "Initiate Genuine Check again",
-            "description": "You must first disable “My Ledger Provider ({{providerNumber}})” setting. To disable it, open Ledger Live “Settings”, select “Experimental features”, and then toggle off “Manager provider”."
+            "description": "You must first disable “My Ledger Provider ({{providerNumber}})” setting. To disable it, open Ledger Live “Settings”, select “Experimental features”, and then toggle off “My Ledger provider”."
           },
           "deviceNotGenuineError": {
             "title": "This {{productName}} is not genuine",
@@ -1286,7 +1286,8 @@
   "postOnboarding": {
     "postOnboardingScreen": {
       "title": "Next up, use your\nLedger Stax to... ",
-      "titleCompleted": "and that's a\nwrap!"
+      "titleCompleted": "You're all set !\nKeep going and explore your wallet.",
+      "exploreCTA": "Explore wallet"
     },
     "postOnboardingContent": {
       "skipLink": "I'll do this later"
@@ -3163,7 +3164,7 @@
     "unlockedBalance": "Unbonded",
     "unlockedTooltip": "Unbonded assets can now be moved using the withdraw operation.",
     "networkFees": "Network fees are automatically set by the Polkadot consensus, you won't be able to review them on your device",
-    "bondedBalanceBelowMinimum": "Your bonded balance is below the current minimum of {{minimumBondBalance}}. Your nominations are at risk of being removed.",
+    "bondedBalanceBelowMinimum": "As a nominator, a minimum of {{minimumBondBalance}} is required to submit an intention to nominate",
     "nomination": {
       "emptyState": {
         "description": "You can earn rewards by bonding assets and then nominating your validator(s).",
@@ -4268,7 +4269,6 @@
         "nextButton": "Get started",
         "noDevice": "No device?",
         "buyLink": "No device? Buy a Ledger Nano X",
-        "recoverSignIn": "Log in to Ledger Recover",
         "byTapping": "By tapping \"Get Started\" you consent and agree to our",
         "termsAndConditions": "Terms and conditions",
         "and": "and",
@@ -4929,6 +4929,11 @@
     "cta": "Continue"
   },
   "families": {
+    "casper": {
+      "transferIdPlaceholder": "Optional",
+      "transferId": "Transfer ID (Memo)",
+      "transferIdWarningText": "When using a memo, carefully check the information with the recipient"
+    },
     "cardano": {
       "memoPlaceholder": "Optional",
       "memo": "Memo"
@@ -4978,6 +4983,10 @@
     }
   },
   "errors": {
+    "ReplacementTransactionUnderpriced": {
+      "title": "Replacement transaction underpriced",
+      "description": "The network fee might be too low. Please increase"
+    },
     "NoSuchAppOnProvider": {
       "title": "The {{appName}} app cannot be found for your specific configuration.",
       "description": "Try reinstalling the app from My Ledger"
@@ -5161,8 +5170,8 @@
       "description": "Please update your devices Firmware to the latest version to access this feature"
     },
     "FirmwareNotRecognized": {
-      "title": "Device firmware is not recognized",
-      "description": "Please contact Ledger Support"
+      "title": "Invalid Provider",
+      "description": "You have to change \"My Ledger provider\" setting. To change it, open Ledger Live \"Settings\", select \"Experimental features\", and then select a different provider."
     },
     "HardResetFail": {
       "title": "Sorry, could not reset",
@@ -5425,6 +5434,15 @@
       "title": "Sorry, connection failed",
       "description": "Device detected but connection failed. Please try again or contact Ledger Support if the problem persists."
     },
+    "CasperInvalidTransferId": {
+      "title": "Transfer ID should be a positive number smaller than {{maxTransferId}}"
+    },
+    "InvalidMinimumAmount": {
+      "title": "Minimum amount to transfer is {{minAmount}}"
+    },
+    "MayBlockAccount": {
+      "title": "Your account will be left with less than the {{minAmount}} required to perform a send"
+    },
     "ETHAddressNonEIP": {
       "title": "Auto-verification not available: carefully verify the address",
       "description": null
@@ -5434,7 +5452,7 @@
       "description": "Send NFT feature is only available for Nano X and Nano S+. Please visit our customer support platform to know how to send a NFT with a Nano S."
     },
     "TransactionHasBeenValidatedError": {
-      "title": "Can't be speed up or cancel",
+      "title": "Can't be sped up or canceled",
       "description": "This transaction has already been validated"
     },
     "CantScanQRCode": {
@@ -5442,6 +5460,9 @@
     },
     "FeeNotLoaded": {
       "title": "Couldn't load fee rates. Please set manual fees"
+    },
+    "FeeNotLoadedSwap": {
+      "title": "Network fee estimation failed because of technical issues. Try again or change the assets."
     },
     "FeeRequired": {
       "title": "Fees are required"
@@ -5569,7 +5590,7 @@
       "description": "Something went wrong, please try again or contact Ledger Support if in doubt."
     },
     "EthAppPleaseEnableContractData": {
-      "title": "Please enable contract data in the Ethereum app settings"
+      "title": "Please enable Blind signing or Contract data in the Ethereum app Settings"
     },
     "InvalidXRPTag": {
       "title": "Invalid XRP Destination tag"

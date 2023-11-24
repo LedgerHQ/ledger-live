@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { memo } from "react";
+import { Platform } from "react-native";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import {
   useRemoteLiveAppContext,
@@ -19,17 +20,18 @@ import {
   languageSelector,
 } from "../../../reducers/settings";
 import { useSelector } from "react-redux";
-import { TAB_BAR_SAFE_HEIGHT } from "../../../components/TabBar/shared";
+import { MAIN_BUTTON_BOTTOM, MAIN_BUTTON_SIZE } from "../../../components/TabBar/shared";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
 export type Props = StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenName.Earn>;
 
-const appManifestNotFoundError = new Error("App not found"); // FIXME move this elsewhere.
+const appManifestNotFoundError = new Error("Earn App not found");
 const DEFAULT_EARN_APP_ID = "earn";
 
-export function EarnScreen({ route }: Props) {
+export const EarnScreen = memo(Earn);
+
+function Earn({ route }: Props) {
   const { theme } = useTheme();
-  const [manifest, setManifest] = useState<LiveAppManifest | undefined>();
   const language = useSelector(languageSelector);
   const { ticker: currencyTicker } = useSelector(counterValueCurrencySelector);
   const discreet = useSelector(discreetModeSelector);
@@ -40,19 +42,18 @@ export function EarnScreen({ route }: Props) {
     ? new URL("ledgerlive://" + route.path).searchParams
     : new URLSearchParams();
 
-  const localManifest = useLocalLiveAppManifest(DEFAULT_EARN_APP_ID);
-  const remoteManifest = useRemoteLiveAppManifest(DEFAULT_EARN_APP_ID);
+  const localManifest: LiveAppManifest | undefined = useLocalLiveAppManifest(DEFAULT_EARN_APP_ID);
+  const remoteManifest: LiveAppManifest | undefined = useRemoteLiveAppManifest(DEFAULT_EARN_APP_ID);
   const { state: remoteLiveAppState } = useRemoteLiveAppContext();
 
-  // To avoid manifest updating to undefined when previously defined
-  useEffect(() => {
-    const appManifest = localManifest || remoteManifest;
+  const manifest: LiveAppManifest | undefined = !localManifest ? remoteManifest : localManifest;
 
-    // Perform a simple diff check
-    if (appManifest && JSON.stringify(appManifest) !== JSON.stringify(manifest)) {
-      setManifest(appManifest);
-    }
-  }, [localManifest, remoteManifest, manifest]);
+  if (!remoteLiveAppState.isLoading && !manifest) {
+    // We want to track occurrences of this error in Sentry
+    console.error(appManifestNotFoundError);
+  }
+
+  const isAndroid = Platform.OS === "android";
 
   return manifest ? (
     <Flex
@@ -62,7 +63,7 @@ export function EarnScreen({ route }: Props) {
        */
       flex={1}
       pt={insets.top}
-      pb={TAB_BAR_SAFE_HEIGHT} // Avoid nav button at the bottom
+      pb={isAndroid ? MAIN_BUTTON_BOTTOM : MAIN_BUTTON_SIZE} // iOS calculates differently
       backgroundColor={"background.main"} // Earn app bg color
     >
       <TrackScreen category="EarnDashboard" name="Earn" />

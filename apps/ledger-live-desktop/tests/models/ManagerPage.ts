@@ -83,7 +83,7 @@ export class ManagerPage {
   }
 
   async openCustomImage() {
-    await this.customImageButton.waitFor({ state: "attached" });
+    await this.waitForFirmwareUpdateButton(); // this avoids click jacking when the firmware update banner appears
     await this.customImageButton.click();
   }
 }

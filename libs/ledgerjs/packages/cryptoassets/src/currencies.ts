@@ -512,13 +512,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       explorer: { type: "ledger", explorerId: "bnb" },
       gasTracker: { type: "ledger", explorerId: "bnb" },
     },
-    units: [
-      {
-        name: "BNB",
-        code: "BNB",
-        magnitude: 18,
-      },
-    ],
+    units: ethereumUnits("BNB", "BNB"),
     explorerViews: [
       {
         tx: "https://bscscan.com/tx/$hash",
@@ -2224,13 +2218,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       explorer: { type: "ledger", explorerId: "matic" },
       gasTracker: { type: "ledger", explorerId: "matic" },
     },
-    units: [
-      {
-        name: "MATIC",
-        code: "MATIC",
-        magnitude: 18,
-      },
-    ],
+    units: ethereumUnits("MATIC", "MATIC"),
     explorerViews: [
       {
         tx: "https://polygonscan.com/tx/$hash",
@@ -3628,6 +3616,35 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  casper: {
+    name: "Casper",
+    ticker: "CSPR",
+    coinType: CoinType.CSPR,
+    color: "#000000",
+    family: "casper",
+    id: "casper",
+    managerAppName: "Casper",
+    scheme: "casper",
+    type: "CryptoCurrency",
+    explorerViews: [
+      {
+        tx: "https://cspr.live/deploy/$hash",
+        address: "https://cspr.live/account/$address",
+      },
+    ],
+    units: [
+      {
+        name: "CSPR",
+        code: "CSPR",
+        magnitude: 9,
+      },
+      {
+        name: "motes",
+        code: "motes",
+        magnitude: 0,
+      },
+    ],
+  },
   // ethereum nanoapp currencies
   // Light Integrations are at the end of the list until we figure out a way to fix the ticker/managerApp collisions
   arbitrum: {
@@ -3869,13 +3886,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "btt",
     color: "#000000",
     family: "evm",
-    units: [
-      {
-        name: "BTT",
-        code: "BTT",
-        magnitude: 18,
-      },
-    ],
+    units: ethereumUnits("BTT", "BTT"),
     ethereumLikeInfo: {
       chainId: 199,
       node: { type: "external", uri: "https://rpc.bt.io" },
@@ -3902,13 +3913,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "kava_evm",
     color: "#FF232F",
     family: "evm",
-    units: [
-      {
-        name: "KAVA",
-        code: "KAVA",
-        magnitude: 18,
-      },
-    ],
+    units: ethereumUnits("KAVA", "KAVA"),
     ethereumLikeInfo: {
       chainId: 2222,
       node: { type: "external", uri: "https://evm2.kava.io" },
@@ -3935,13 +3940,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "evmos",
     color: "#ED4E33",
     family: "evm",
-    units: [
-      {
-        name: "EVMOS",
-        code: "EVMOS",
-        magnitude: 18,
-      },
-    ],
+    units: ethereumUnits("EVMOS", "EVMOS"),
     ethereumLikeInfo: {
       chainId: 9001,
       node: { type: "external", uri: "https://evmos-evm.publicnode.com" },
@@ -4134,13 +4133,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "moonriver",
     color: "#F2B705",
     family: "evm",
-    units: [
-      {
-        name: "MOVR",
-        code: "MOVR",
-        magnitude: 18,
-      },
-    ],
+    units: ethereumUnits("MOVR", "MOVR"),
     ethereumLikeInfo: {
       chainId: 1285,
       node: { type: "external", uri: "https://rpc.api.moonriver.moonbeam.network" },
@@ -4167,13 +4160,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "velas",
     color: "#000000",
     family: "evm",
-    units: [
-      {
-        name: "VLX",
-        code: "VLX",
-        magnitude: 18,
-      },
-    ],
+    units: ethereumUnits("VLX", "VLX"),
     ethereumLikeInfo: {
       chainId: 106,
       node: { type: "external", uri: "https://evmexplorer.velas.com/rpc" },
@@ -4357,7 +4344,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     color: "#FF8B00",
     family: "evm",
     units: ethereumUnits("KLAY", "KLAY"),
-    disableCountervalue: true,
     ethereumLikeInfo: {
       chainId: 8217,
       node: { type: "external", uri: "https://public-node-api.klaytnapi.com/v1/cypress" },
@@ -4392,6 +4378,34 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         tx: "https://neonscan.org/tx/$hash",
         address: "https://neonscan.org/address/$address",
         token: "https://neonscan.org/token/$address",
+      },
+    ],
+  },
+  lukso: {
+    type: "CryptoCurrency",
+    id: "lukso",
+    coinType: CoinType.ETH,
+    name: "Lukso",
+    managerAppName: "Ethereum",
+    ticker: "LYX",
+    scheme: "lukso",
+    color: "#FE0167",
+    family: "evm",
+    units: ethereumUnits("LYX", "LYX"),
+    disableCountervalue: false,
+    ethereumLikeInfo: {
+      chainId: 42,
+      node: { type: "external", uri: "https://rpc.mainnet.lukso.network	" },
+      explorer: {
+        type: "blockscout",
+        uri: "https://api.explorer.execution.mainnet.lukso.network",
+      },
+    },
+    explorerViews: [
+      {
+        tx: "https://explorer.execution.mainnet.lukso.network/tx/$hash",
+        address: "https://explorer.execution.mainnet.lukso.network/address/$address",
+        token: "https://explorer.execution.mainnet.lukso.network/token/$address",
       },
     ],
   },

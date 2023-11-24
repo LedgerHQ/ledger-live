@@ -64,7 +64,7 @@ WebHID Transport implementation
 
 #### Parameters
 
-*   `device` **HIDDevice** 
+*   `device` **HIDDevice**&#x20;
 
 #### Examples
 
@@ -78,7 +78,7 @@ TransportWebHID.create().then(transport => ...)
 
 Release the transport device
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<void>** 
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<void>**&#x20;
 
 #### exchange
 
@@ -86,7 +86,7 @@ Exchange with the device using APDU protocol.
 
 ##### Parameters
 
-*   `apdu` **[Buffer](https://nodejs.org/api/buffer.html)** 
+*   `apdu` **[Buffer](https://nodejs.org/api/buffer.html)**&#x20;
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[Buffer](https://nodejs.org/api/buffer.html)>** a promise of apdu response
 
@@ -107,9 +107,9 @@ Important: it must be called in the context of a UI click!
 
 ##### Parameters
 
-*   `observer` **Observer\<DescriptorEvent\<HIDDevice>>** 
+*   `observer` **Observer\<DescriptorEvent\<HIDDevice>>**&#x20;
 
-Returns **Subscription** 
+Returns **Subscription**&#x20;
 
 #### request
 
@@ -125,4 +125,4 @@ Create a Ledger transport with a HIDDevice
 
 ##### Parameters
 
-*   `device` **HIDDevice** 
+*   `device` **HIDDevice**&#x20;
