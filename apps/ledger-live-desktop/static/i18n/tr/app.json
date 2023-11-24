@@ -196,11 +196,11 @@
       "description" : "İşleminiz devam ediyor. Daha yüksek bir ağ ücretiyle hızlandırabilir ya da işlemi iptal edebilirsiniz.",
       "stuckDescription" : "İşleminiz takıldı. Daha yüksek bir ağ ücretiyle hızlandırın veya işlemi iptal edin.",
       "previousFeesInfo" : {
-        "pendingTransactionFeesInfo" : "Bekleyen işlem ücreti bilgileri: ",
-        "networkfee" : "Ağ ücreti = ",
-        "maxFee" : "Ücret üst limiti = ",
-        "maxPriorityFee" : "Öncelik ücreti üst limiti = ",
-        "gasPrice" : "Gas ücreti = "
+        "pendingTransactionFeesInfo" : "Bekleyen işlem ücreti bilgileri:",
+        "networkfee" : "Ağ ücreti = {{amount}}",
+        "maxFee" : "Maks. ücret = {{amount}}",
+        "maxPriorityFee" : "Maks. Öncelik ücreti = {{amount}}",
+        "gasPrice" : "Gas Ücreti = {{amount}}"
       },
       "learnMore" : "Daha fazla bilgi almak istiyorum",
       "panel" : {
@@ -213,7 +213,7 @@
       },
       "cancel" : {
         "title" : "İptal et",
-        "description" : "Sizin adresinize 0 {{ticker}} gönderiliyor. İptal edildiğinden emin olmak için ağ ücreti, iptal edilecek işlemin işlem ücretinden %30 daha yüksek olacaktır."
+        "description" : "Kendi adresinize 0 {{ticker}} gönderiliyor."
       },
       "steps" : {
         "method" : {
@@ -1166,11 +1166,13 @@
       },
       "pinContent" : {
         "title" : "PIN kodu",
+        "titleCompleted" : "PIN kodu belirlendi",
         "description" : "Tüm parolalar ve giriş kodları gibi PIN Kodu da {{productName}} cihazınızın kilidini açmanızı ve istenmeyen erişimleri önlemenizi sağlar.",
         "continueOnDevice" : "{{productName}} cihazınızda PIN Kodunuzu belirleyin"
       },
       "seedContent" : {
         "title" : "Gizli Kurtarma İfadesi",
+        "titleCompleted" : "Gizli Kurtarma İfadesi onaylandı",
         "recoverSeed" : "Yer tutucu: Recover",
         "restoreSeed" : "Varlıklarınızın azami düzeyde güvenliği için Ledger cihazı tarafından oluşturulan bir Gizli Kurtarma İfadesi kullandığınızdan emin olun.\n\nGizli Kurtarma İfadeniz yok mu? Yeni bir İfade oluşturmak için {{productName}} cihazınızı kullanın.",
         "selection" : "Size en uygun kurulum seçeneğini belirleyin:",
@@ -1208,7 +1210,7 @@
           "contactSupportCTA" : "Ledger Destek ile iletişime geçin",
           "notFoundEntityError" : {
             "title" : "Orijinallik Denetimini tekrar başlatın",
-            "description" : "İlk önce “My Ledger Sağlayıcım ({{providerNumber}})” ayarını devre dışı bırakmanız gerekmektedir. Bunu devre dışı bırakmak için Ledger Live'da “Ayarlar”ı açın, “Deneysel özellikler”i seçin ve “Yönetici sağlayıcısı” ayarını kapalı hâle getirin."
+            "description" : "İlk önce “My Ledger Sağlayıcım ({{providerNumber}})” ayarını devre dışı bırakmanız gerekmektedir. Bunu devre dışı bırakmak için Ledger Live'da “Ayarlar”ı açın, “Deneysel özellikler”i seçin ve “My Ledger sağlayıcım” ayarını kapalı hâle getirin."
           },
           "deviceNotGenuineError" : {
             "title" : "Bu {{productName}} orijinal değil",
@@ -1250,12 +1252,14 @@
       },
       "installApplications" : {
         "title" : "{{productName}} cihazında uygulamalar yükleyin",
+        "titleCompleted" : "Uygulamalar {{productName}} cihazına yüklendi",
         "install" : "Yükle",
         "skip" : "Daha sonra yapacağım",
         "info" : "{{deviceName}} cihazındaki uygulamalar işlemleri onaylamak için kullanılır. İstediğiniz zaman bu uygulamaları ekleyebilir ve silebilirsiniz."
       },
       "endOfSetup" : {
-        "title" : "Kurulum sonu"
+        "title" : "Kurulum sonu",
+        "titleCompleted" : "{{deviceName}} hazır"
       },
       "softwareCheckAllowSecureChannelDrawer" : {
         "title" : "Orijinallik Denetimini başlatmak için “Allow” (İzin Ver) seçeneğine dokunun"
@@ -1286,7 +1290,8 @@
   "postOnboarding" : {
     "postOnboardingScreen" : {
       "title" : "Şimdi Ledger Stax'iniz ile\nşunları yapın... ",
-      "titleCompleted" : "Hepsi\nbu kadar!"
+      "titleCompleted" : "Her şey hazır!\nŞimdi cüzdanınızı keşfetmeye başlayabilirsiniz.",
+      "exploreCTA" : "Cüzdanı keşfet"
     },
     "postOnboardingContent" : {
       "skipLink" : "Daha sonra yapacağım"
@@ -1406,6 +1411,26 @@
       "earn" : {
         "title" : "Stake et",
         "description" : "Ledger ile kripto bakiyenizi artırın"
+      }
+    },
+    "recoverBanner" : {
+      "subscribeDone" : {
+        "title" : "Ödeme kartınızı ekleyin",
+        "description" : "Yedeklemenizi güvenceye almak için ödeme yönteminizi ekleyin.",
+        "primaryCta" : "Şimdi ekle",
+        "secondaryCta" : "Belki sonra"
+      },
+      "verifyIdentity" : {
+        "title" : "Kimliğinizi doğrulayın",
+        "description" : "Yedeklemenizi güvenceye almak için kimliğinizi doğrulayın.",
+        "primaryCta" : "Şimdi doğrula",
+        "secondaryCta" : "Belki sonra"
+      },
+      "connectDevice" : {
+        "title" : "Ledger'ınızı bağlayın",
+        "description" : "Yedeklemenizi güvenceye almak için Ledger cihazınızı bağlayın.",
+        "primaryCta" : "Ledger cihazımı bağla",
+        "secondaryCta" : "Belki sonra"
       }
     }
   },
@@ -3151,7 +3176,7 @@
     "unlockedBalance" : "Çözülmüş",
     "unlockedTooltip" : "Çözülmüş varlıklar artık çekim işlemi kullanılarak taşınabilir.",
     "networkFees" : "Ağ ücretleri Polkadot konsensüs protokolü tarafından otomatik olarak belirlenir; bunları cihazınız üzerinden inceleyemezsiniz",
-    "bondedBalanceBelowMinimum" : "Bağlı bakiyenizin tutarı, aday göstermek için gerekli minimum {{minimumBondBalance}} miktarının altında. Aday gösterimleriniz kaldırılma riski altındadır.",
+    "bondedBalanceBelowMinimum" : "Bir aday gösteren olarak aday gösterme intention'ı göndermek için en az {{minimumBondBalance}} gerekiyor",
     "nomination" : {
       "emptyState" : {
         "description" : "Varlıkları bağlayıp, aday doğrulayıcı(lar) seçerek ödül kazanabilirsiniz.",
@@ -3552,6 +3577,9 @@
         "supportLink" : "Kiln havuzu hakkında daha fazla bilgi edinin"
       }
     }
+  },
+  "graph" : {
+    "noGraphWarning" : "Grafik bu token için mevcut değil"
   },
   "near" : {
     "account" : {
@@ -4098,8 +4126,7 @@
     "updateAvailable" : "Ledger Live {{version}} sürüm güncellemesi mevcut",
     "error" : "Güncelleme sırasında bir hata oluştu. Lütfen tekrar indirin",
     "reDownload" : "Tekrar indir",
-    "nightlyWarning" : "Bu sürüm otomatik olarak güncellenemez. Lütfen en son sürümü manuel olarak yükleyin",
-    "downloadNow" : "Güncellemeyi indir"
+    "nightlyWarning" : "Bu sürüm otomatik olarak güncellenemez. Lütfen en son sürümü manuel olarak yükleyin"
   },
   "crash" : {
     "title" : "Bir hata oluştu",
@@ -4248,7 +4275,6 @@
         "nextButton" : "Devam",
         "noDevice" : "Cihazınız yok mu?",
         "buyLink" : "Cihazınız yok mu? Ledger Nano X satın alın",
-        "recoverSignIn" : "Ledger Recover'a giriş yapın",
         "byTapping" : "“Hemen Başla” butonuna dokunduğunuzda bunlara izin vermiş ve rıza göstermiş olursunuz:",
         "termsAndConditions" : "Hüküm ve Koşullar",
         "and" : "ve",
@@ -4906,6 +4932,11 @@
     "cta" : "Devam"
   },
   "families" : {
+    "casper" : {
+      "transferIdPlaceholder" : "Tercihe bağlı",
+      "transferId" : "Transfer Kimliği (Memo)",
+      "transferIdWarningText" : "Memo kullanırken, bilgileri alıcıyla dikkatlice kontrol edin"
+    },
     "cardano" : {
       "memoPlaceholder" : "Tercihe bağlı",
       "memo" : "Memo"
@@ -4955,6 +4986,10 @@
     }
   },
   "errors" : {
+    "ReplacementTransactionUnderpriced" : {
+      "title" : "Yeni işlemin ücreti düşük",
+      "description" : "Ağ ücreti çok düşük olabilir. Lütfen artırın"
+    },
     "NoSuchAppOnProvider" : {
       "title" : "{{appName}} uygulaması, özel yapılandırmanız için bulunamadı.",
       "description" : "Uygulamayı My Ledger'dan yeniden yüklemeyi deneyin"
@@ -5138,8 +5173,8 @@
       "description" : "Bu özelliğe erişmek için lütfen donanım yazılımınızı en son sürüme güncelleyin"
     },
     "FirmwareNotRecognized" : {
-      "title" : "Donanım yazılımı tanınmadı",
-      "description" : "Lütfen Ledger Destek ile iletişime geçin"
+      "title" : "Geçersiz Sağlayıcı",
+      "description" : "\"My Ledger sağlayıcım\" ayarını değiştirmeniz gerekmektedir. Bunu değiştirmek için Ledger Live'da \"Ayarlar\"ı açın, \"Deneysel özellikler\"i seçin ve ardından farklı bir sağlayıcı seçin."
     },
     "HardResetFail" : {
       "title" : "Üzgünüz, sıfırlanamadı",
@@ -5247,6 +5282,18 @@
     "NotEnoughEGLDForFees" : {
       "title" : "İşlem ücretlerini ödemek için yeterli EGLD yok",
       "description" : "İşlem ücretlerini ödemek için lütfen hesabınıza bir miktar EGLD gönderin."
+    },
+    "NotEnoughVTHO" : {
+      "title" : "Üzgünüz, VTHO fon miktarı yetersiz",
+      "description" : "Hesabınızdaki VTHO miktarının yeterli olduğundan lütfen emin olun."
+    },
+    "MustBeVechain" : {
+      "title" : "VeChain hesabı değil",
+      "description" : "Coin'in VTHO veya VET olduğundan lütfen emin olun"
+    },
+    "ImpossibleToCalculateAmountAndFees" : {
+      "title" : "Miktarı ve ücretleri hesaplamak mümkün değil",
+      "description" : "Miktarı ve ücretleri hesaplamak mümkün değil"
     },
     "NotEnoughBalance" : {
       "title" : "Üzgünüz, fon miktarı yetersiz",
@@ -5402,6 +5449,15 @@
       "title" : "Üzgünüz, bağlantı başarısız",
       "description" : "Cihaz algılandı ancak bağlantı başarısız oldu. Lütfen tekrar deneyin veya sorun devam ederse Ledger Destek ile iletişime geçin."
     },
+    "CasperInvalidTransferId" : {
+      "title" : "Transfer Kimliği, {{maxTransferId}} sayısından küçük pozitif bir sayı olmalıdır"
+    },
+    "InvalidMinimumAmount" : {
+      "title" : "Transfer edilebilecek minimum tutar: {{minAmount}}"
+    },
+    "MayBlockAccount" : {
+      "title" : "Hesabınızda, gönderim yapabilmek için gereken {{minAmount}} tutarından daha düşük bir tutar kalacak"
+    },
     "ETHAddressNonEIP" : {
       "title" : "Otomatik doğrulama mevcut değil; adresi dikkatlice doğrulayın",
       "description" : null
@@ -5411,7 +5467,7 @@
       "description" : "NFT Gönder özelliği yalnızca Nano X ve Nano S+ ile kullanılabilir. Nano S ile nasıl NFT gönderebileceğinizi öğrenmek için lütfen müşteri destek platformumuzu ziyaret edin."
     },
     "TransactionHasBeenValidatedError" : {
-      "title" : "Hızlandırılamıyor veya iptal edilemiyor",
+      "title" : "Hızlandırılamaz ve iptal edilemez",
       "description" : "Bu işlem zaten doğrulanmış"
     },
     "CantScanQRCode" : {
@@ -5419,6 +5475,9 @@
     },
     "FeeNotLoaded" : {
       "title" : "Ücret oranları yüklenemedi. Lütfen manuel ücretler belirleyin"
+    },
+    "FeeNotLoadedSwap" : {
+      "title" : "Teknik sorunlar nedeniyle ağ ücreti tahmini başarısız oldu.  Tekrar deneyin veya varlıkları değiştirin."
     },
     "FeeRequired" : {
       "title" : "Ücretler zorunludur"
@@ -5546,7 +5605,7 @@
       "description" : "Bir hata oluştu, lütfen tekrar deneyin veya şüpheniz varsa Ledger Destek ile iletişime geçin."
     },
     "EthAppPleaseEnableContractData" : {
-      "title" : "Lütfen Ethereum uygulama ayarlarında sözleşme verilerini etkinleştirin"
+      "title" : "Lütfen Ethereum uygulamasının Ayarlar bölümünden Kör İmzalamayı veya Sözleşme Verilerini etkinleştirin"
     },
     "InvalidXRPTag" : {
       "title" : "Geçersiz XRP Hedef etiketi (Destination tag)"
@@ -5893,7 +5952,6 @@
     },
     "progress" : {
       "loading" : "Yükleniyor...",
-      "resolving" : "Gereksinimler çözülüyor",
       "progress" : "Uygulamalar yüklenirken Ledger Live'dan ayrılmayın.",
       "disclaimer" : "Ledger Live üzerinden uygulamaları istediğiniz zaman ekleyip kaldırabilirsiniz.",
       "skippedInfo" : "Bazı uygulamalar mevcut değil. Henüz {{ productName }} için geliştirilmediler.",
