@@ -59,7 +59,7 @@ function getDeviceTransactionConfig({
     });
   }
 
-  if (mode === "unfreeze") {
+  if (mode === "unfreeze" || mode === "legacyUnfreeze") {
     fields.push({
       type: "address",
       label: "Unfreeze To",

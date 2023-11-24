@@ -30,6 +30,7 @@ import type {
   TronResource,
   UnFreezeTransactionData,
   UnFrozenInfo,
+  LegacyUnfreezeTransactionData,
 } from "../types";
 import {
   abiEncodeTrc20Transfer,
@@ -136,6 +137,20 @@ export const unDelegateResourceTransaction = async (
   const url = `${getBaseApiUrl()}/wallet/undelegateresource`;
   const result = await post(url, txData);
 
+  return result;
+};
+
+export const legacyUnfreezeTronTransaction = async (
+  a: Account,
+  t: Transaction,
+): Promise<SendTransactionDataSuccess> => {
+  const txData: LegacyUnfreezeTransactionData = {
+    resource: t.resource,
+    owner_address: decode58Check(a.freshAddress),
+    receiver_address: t.recipient ? decode58Check(t.recipient) : undefined,
+  };
+  const url = `${getBaseApiUrl()}/wallet/unfreezebalance`;
+  const result = await post(url, txData);
   return result;
 };
 
@@ -558,6 +573,24 @@ export async function getTronResources(
 
   const frozenBalances: { type?: string; amount?: number }[] = get(acc, "frozenV2", undefined);
 
+  const legacyFrozenBandwidth = get(acc, "frozen[0]", undefined);
+  const legacyFrozenEnergy = get(acc, "account_resource.frozen_balance_for_energy", undefined);
+
+  const legacyFrozen = {
+    bandwidth: legacyFrozenBandwidth
+      ? {
+          amount: new BigNumber(legacyFrozenBandwidth.frozen_balance),
+          expiredAt: new Date(legacyFrozenBandwidth.expire_time),
+        }
+      : undefined,
+    energy: legacyFrozenEnergy
+      ? {
+          amount: new BigNumber(legacyFrozenEnergy.frozen_balance),
+          expiredAt: new Date(legacyFrozenEnergy.expire_time),
+        }
+      : undefined,
+  };
+
   const { frozenEnergy, frozenBandwidth } = frozenBalances.reduce(
     (accum, cur) => {
       const amount = new BigNumber(cur?.amount ?? 0);
@@ -586,12 +619,12 @@ export async function getTronResources(
           if (cur && cur.type === "ENERGY") {
             accum.energy.push({
               amount: new BigNumber(cur.unfreeze_amount),
-              expireTime: cur.unfreeze_expire_time,
+              expireTime: new Date(cur.unfreeze_expire_time),
             });
           } else if (cur) {
             accum.bandwidth.push({
               amount: new BigNumber(cur.unfreeze_amount),
-              expireTime: cur.unfreeze_expire_time,
+              expireTime: new Date(cur.unfreeze_expire_time),
             });
           }
           return accum;
@@ -634,6 +667,8 @@ export async function getTronResources(
     .plus(get(frozen, "energy.amount", 0))
     .plus(get(delegatedFrozen, "bandwidth.amount", 0))
     .plus(get(delegatedFrozen, "energy.amount", 0))
+    .plus(get(legacyFrozen, "energy.amount", 0))
+    .plus(get(legacyFrozen, "bandwidth.amount", 0))
     .dividedBy(1000000)
     .integerValue(BigNumber.ROUND_FLOOR)
     .toNumber();
@@ -658,6 +693,7 @@ export async function getTronResources(
     frozen,
     unFrozen,
     delegatedFrozen,
+    legacyFrozen,
     votes,
     tronPower,
     unwithdrawnReward,

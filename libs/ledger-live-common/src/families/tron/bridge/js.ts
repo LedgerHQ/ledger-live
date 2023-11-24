@@ -88,6 +88,7 @@ import {
   unDelegateResourceTransaction,
   unfreezeTronTransaction,
   getDelegatedResource,
+  legacyUnfreezeTronTransaction,
 } from "../api";
 import { activationFees, oneTrx } from "../constants";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
@@ -151,6 +152,9 @@ const signOperation: SignOperationFnSignature<Transaction> = ({ account, transac
               case "unDelegateResource":
                 return unDelegateResourceTransaction(account, transaction);
 
+              case "legacyUnfreeze":
+                return legacyUnfreezeTronTransaction(account, transaction);
+
               default:
                 return createTronTransaction(account, transaction, subAccount);
             }
@@ -201,6 +205,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({ account, transac
 
           const value = getValue();
           const operationType = getOperationTypefromMode(transaction.mode);
+          const resource = transaction.resource || "BANDWIDTH";
 
           const getExtra = (): TrongridExtraTxInfo | null | undefined => {
             switch (transaction.mode) {
@@ -223,6 +228,15 @@ const signOperation: SignOperationFnSignature<Transaction> = ({ account, transac
                 return {
                   unDelegatedResourceAmount: transaction.amount,
                   receiverAddress: transaction.recipient,
+                };
+
+              case "legacyUnfreeze":
+                return {
+                  unfreezeAmount: get(
+                    (account as TronAccount).tronResources,
+                    `frozen.${resource.toLocaleLowerCase()}.amount`,
+                    new BigNumber(0),
+                  ),
                 };
 
               default:
@@ -386,6 +400,16 @@ const getAccountShape = async (info: AccountShapeInfo, syncConfig) => {
         ? tronResources.unFrozen.bandwidth.reduce((accum, cur) => {
             return accum.plus(cur.amount);
           }, new BigNumber(0))
+        : new BigNumber(0),
+    )
+    .plus(
+      tronResources.legacyFrozen.bandwidth
+        ? tronResources.legacyFrozen.bandwidth.amount
+        : new BigNumber(0),
+    )
+    .plus(
+      tronResources.legacyFrozen.energy
+        ? tronResources.legacyFrozen.energy.amount
         : new BigNumber(0),
     );
 
@@ -595,7 +619,7 @@ const getTransactionStatus = async (a: TronAccount, t: Transaction): Promise<Tra
     errors.recipient = new RecipientRequired();
   }
 
-  if (["send", "unDelegateResource"].includes(mode)) {
+  if (["send", "unDelegateResource", "legacyUnfreeze"].includes(mode)) {
     if (recipient === a.freshAddress) {
       errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
     } else if (recipient && !(await validateAddress(recipient))) {
@@ -624,15 +648,37 @@ const getTransactionStatus = async (a: TronAccount, t: Transaction): Promise<Tra
     }
   }
 
+  if (mode === "legacyUnfreeze") {
+    const lowerCaseResource = resource ? resource.toLowerCase() : "bandwidth";
+    const now = new Date();
+    const expiredDatePath = `tronResources.legacyFrozen.${lowerCaseResource}.expiredAt`;
+    const expirationDate: Date | null | undefined = get(a, expiredDatePath, undefined);
+    if (!expirationDate) {
+      if (resource === "BANDWIDTH") {
+        errors.resource = new TronNoFrozenForBandwidth();
+      } else {
+        errors.resource = new TronNoFrozenForEnergy();
+      }
+    } else if (now.getTime() < expirationDate.getTime()) {
+      errors.resource = new TronUnfreezeNotExpired(undefined, {
+        until: expirationDate.toISOString(),
+      });
+    }
+  }
+
   if (mode === "withdrawExpireUnfreeze") {
-    const now = Date.now();
+    const now = new Date();
     if (!a.tronResources.unFrozen.bandwidth && !a.tronResources.unFrozen.energy) {
       errors.resource = new TronNoUnfrozenResource();
     } else if (
       a.tronResources.unFrozen.bandwidth &&
-      a.tronResources.unFrozen.bandwidth.every(unfrozen => unfrozen.expireTime > now) &&
+      a.tronResources.unFrozen.bandwidth.every(
+        unfrozen => unfrozen.expireTime.getTime() > now.getTime(),
+      ) &&
       a.tronResources.unFrozen.energy &&
-      a.tronResources.unFrozen.energy.every(unfrozen => unfrozen.expireTime > now)
+      a.tronResources.unFrozen.energy.every(
+        unfrozen => +unfrozen.expireTime.getTime() > now.getTime(),
+      )
     ) {
       errors.resource = new TronUnfreezeNotExpired();
     }

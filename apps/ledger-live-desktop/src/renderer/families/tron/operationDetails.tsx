@@ -172,7 +172,7 @@ const OperationDetailsExtra = ({
           </OpDetailsData>
         </OpDetailsSection>
       );
-    case "UNDELEGATERESOURCE":
+    case "UNDELEGATE_RESOURCE":
       return (
         <>
           <OpDetailsSection>
@@ -205,7 +205,25 @@ const OperationDetailsExtra = ({
           </OpDetailsSection>
         </>
       );
-
+    case "LEGACY_UNFREEZE":
+      return (
+        <OpDetailsSection>
+          <OpDetailsTitle>
+            <Trans i18nKey="operationDetails.extra.unfreezeAmount" />
+          </OpDetailsTitle>
+          <OpDetailsData>
+            <Box>
+              <FormattedVal
+                val={unfreezeAmount}
+                unit={account.unit}
+                showCode
+                fontSize={4}
+                color="palette.text.shade60"
+              />
+            </Box>
+          </OpDetailsData>
+        </OpDetailsSection>
+      );
     default:
       return null;
   }
@@ -269,6 +287,7 @@ const VoteAmountCell = ({ operation }: Props) => {
 const amountCellExtra = {
   FREEZE: FreezeAmountCell,
   UNFREEZE: UnfreezeAmountCell,
+  LEGACY_UNFREEZE: UnfreezeAmountCell,
   VOTE: VoteAmountCell,
 };
 export default {

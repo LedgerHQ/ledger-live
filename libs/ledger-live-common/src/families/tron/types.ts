@@ -17,7 +17,8 @@ export type TronOperationMode =
   | "vote"
   | "claimReward"
   | "withdrawExpireUnfreeze"
-  | "unDelegateResource";
+  | "unDelegateResource"
+  | "legacyUnfreeze";
 
 export type TronResource = "BANDWIDTH" | "ENERGY";
 export type NetworkInfo = {
@@ -57,7 +58,6 @@ export type TransactionRaw = TransactionCommonRaw & {
 export type TrongridTxType =
   | "TransferContract"
   | "TransferAssetContract"
-  | "FreezeBalanceContract"
   | "UnfreezeBalanceContract"
   | "VoteWitnessContract"
   | "TriggerSmartContract"
@@ -130,6 +130,12 @@ export type UnFreezeTransactionData = {
   unfreeze_balance: number;
 };
 
+export type LegacyUnfreezeTransactionData = {
+  receiver_address?: string;
+  owner_address: string;
+  resource: TronResource | null | undefined;
+};
+
 export type WithdrawExpireUnfreezeTransactionData = {
   owner_address: string;
 };
@@ -178,6 +184,10 @@ export type TronResources = {
     bandwidth: DelegatedFrozenInfo | null | undefined;
     energy: DelegatedFrozenInfo | null | undefined;
   };
+  legacyFrozen: {
+    bandwidth: LegacyFrozenInfo | null | undefined;
+    energy: LegacyFrozenInfo | null | undefined;
+  };
   votes: Vote[];
   tronPower: number;
   energy: BigNumber;
@@ -199,6 +209,10 @@ export type TronResourcesRaw = {
   delegatedFrozen: {
     bandwidth: DelegatedFrozenInfoRaw | null | undefined;
     energy: DelegatedFrozenInfoRaw | null | undefined;
+  };
+  legacyFrozen: {
+    bandwidth: LegacyFrozenInfoRaw | null | undefined;
+    energy: LegacyFrozenInfoRaw | null | undefined;
   };
   votes: Vote[];
   tronPower: number;
@@ -229,14 +243,24 @@ export type FrozenInfoRaw = {
   amount: string;
 };
 
+export type LegacyFrozenInfo = {
+  amount: BigNumber;
+  expiredAt: Date;
+};
+
+export type LegacyFrozenInfoRaw = {
+  amount: string;
+  expiredAt: string;
+};
+
 export type UnFrozenInfo = {
   amount: BigNumber;
-  expireTime: number;
+  expireTime: Date;
 };
 
 export type UnFrozenInfoRaw = {
   amount: string;
-  expireTime: number;
+  expireTime: string;
 };
 
 export type BandwidthInfo = {

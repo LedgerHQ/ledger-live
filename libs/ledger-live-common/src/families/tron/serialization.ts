@@ -6,6 +6,7 @@ export const toTronResourcesRaw = ({
   frozen,
   unFrozen,
   delegatedFrozen,
+  legacyFrozen,
   votes,
   tronPower,
   energy,
@@ -20,6 +21,8 @@ export const toTronResourcesRaw = ({
   const delegatedFrozenBandwidth = delegatedFrozen.bandwidth;
   const delegatedFrozenEnergy = delegatedFrozen.energy;
   const cacheTransactionInfoById = {};
+  const legacyFrozenBandwidth = legacyFrozen.bandwidth;
+  const legacyFrozenEnergy = legacyFrozen.energy;
 
   for (const k in cacheTx) {
     const { fee, blockNumber, withdraw_amount, unfreeze_amount } = cacheTx[k];
@@ -54,13 +57,27 @@ export const toTronResourcesRaw = ({
     unFrozen: {
       bandwidth: unFrozen.bandwidth
         ? unFrozen.bandwidth.map(entry => {
-            return { amount: entry.amount.toString(), expireTime: entry.expireTime };
+            return { amount: entry.amount.toString(), expireTime: entry.expireTime.toISOString() };
           })
         : undefined,
       energy: unFrozen.energy
         ? unFrozen.energy.map(entry => {
-            return { amount: entry.amount.toString(), expireTime: entry.expireTime };
+            return { amount: entry.amount.toString(), expireTime: entry.expireTime.toISOString() };
           })
+        : undefined,
+    },
+    legacyFrozen: {
+      bandwidth: legacyFrozenBandwidth
+        ? {
+            amount: legacyFrozenBandwidth.amount.toString(),
+            expiredAt: legacyFrozenBandwidth.expiredAt.toISOString(),
+          }
+        : undefined,
+      energy: legacyFrozenEnergy
+        ? {
+            amount: legacyFrozenEnergy.amount.toString(),
+            expiredAt: legacyFrozenEnergy.expiredAt.toISOString(),
+          }
         : undefined,
     },
     votes,
@@ -84,6 +101,7 @@ export const fromTronResourcesRaw = ({
   frozen,
   unFrozen,
   delegatedFrozen,
+  legacyFrozen,
   votes,
   tronPower,
   energy,
@@ -97,6 +115,9 @@ export const fromTronResourcesRaw = ({
   const frozenEnergy = frozen.energy;
   const delegatedFrozenBandwidth = delegatedFrozen.bandwidth;
   const delegatedFrozenEnergy = delegatedFrozen.energy;
+  const legacyFrozenBandwidth = legacyFrozen.bandwidth;
+  const legacyFrozenEnergy = legacyFrozen.energy;
+
   const cacheTransactionInfoById = {};
 
   if (cacheTransactionInfoByIdRaw) {
@@ -139,13 +160,27 @@ export const fromTronResourcesRaw = ({
     unFrozen: {
       bandwidth: unFrozen.bandwidth
         ? unFrozen.bandwidth.map(entry => {
-            return { amount: new BigNumber(entry.amount), expireTime: entry.expireTime };
+            return { amount: new BigNumber(entry.amount), expireTime: new Date(entry.expireTime) };
           })
         : undefined,
       energy: unFrozen.energy
         ? unFrozen.energy.map(entry => {
-            return { amount: new BigNumber(entry.amount), expireTime: entry.expireTime };
+            return { amount: new BigNumber(entry.amount), expireTime: new Date(entry.expireTime) };
           })
+        : undefined,
+    },
+    legacyFrozen: {
+      bandwidth: legacyFrozenBandwidth
+        ? {
+            amount: new BigNumber(legacyFrozenBandwidth.amount),
+            expiredAt: new Date(legacyFrozenBandwidth.expiredAt),
+          }
+        : undefined,
+      energy: legacyFrozenEnergy
+        ? {
+            amount: new BigNumber(legacyFrozenEnergy.amount),
+            expiredAt: new Date(legacyFrozenEnergy.expiredAt),
+          }
         : undefined,
     },
     votes,

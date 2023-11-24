@@ -32,8 +32,6 @@ export const hexToAscii = (hex: string): string => Buffer.from(hex, "hex").toStr
 
 const parentTx = [
   "TransferContract",
-  "FreezeBalanceContract",
-  "UnfreezeBalanceContract",
   "VoteWitnessContract",
   "WithdrawBalanceContract",
   "ExchangeTransactionContract",
@@ -41,6 +39,7 @@ const parentTx = [
   "UnfreezeBalanceV2Contract",
   "WithdrawExpireUnfreezeContract",
   "UnDelegateResourceContract",
+  "UnfreezeBalanceContract",
 ];
 
 export const isParentTx = (tx: TrongridTxInfo): boolean => parentTx.includes(tx.type);
@@ -65,6 +64,7 @@ export const getEstimatedBlockSize = (a: Account, t: Transaction): BigNumber => 
     case "claimReward":
     case "withdrawExpireUnfreeze":
     case "unDelegateResource":
+    case "legacyUnfreeze":
       return new BigNumber(260);
 
     case "vote":
@@ -93,10 +93,13 @@ export const getOperationTypefromMode = (mode: TronOperationMode): OperationType
       return "REWARD";
 
     case "withdrawExpireUnfreeze":
-      return "WITHDRAWEXPIREUNFREEZE";
+      return "WITHDRAW_EXPIRE_UNFREEZE";
 
     case "unDelegateResource":
-      return "UNDELEGATERESOURCE";
+      return "UNDELEGATE_RESOURCE";
+
+    case "legacyUnfreeze":
+      return "LEGACY_UNFREEZE";
 
     default:
       return "OUT";
@@ -129,10 +132,13 @@ const getOperationType = (
       return "UNFREEZE";
 
     case "WithdrawExpireUnfreezeContract":
-      return "WITHDRAWEXPIREUNFREEZE";
+      return "WITHDRAW_EXPIRE_UNFREEZE";
 
     case "UnDelegateResourceContract":
-      return "UNDELEGATERESOURCE";
+      return "UNDELEGATE_RESOURCE";
+
+    case "UnfreezeBalanceContract":
+      return "LEGACY_UNFREEZE";
 
     default:
       return undefined;
@@ -254,6 +260,11 @@ export const formatTrongridTxResponse = (
             receiverAddress: encode58Check(receiver_address),
           };
 
+        case "UnfreezeBalanceContract":
+          return {
+            unfreezeAmount: new BigNumber(unfreeze_amount || detail.unfreeze_amount),
+          };
+
         default:
           return undefined;
       }
@@ -324,6 +335,10 @@ export const defaultTronResources: TronResources = {
     energy: undefined,
   },
   delegatedFrozen: {
+    bandwidth: undefined,
+    energy: undefined,
+  },
+  legacyFrozen: {
     bandwidth: undefined,
     energy: undefined,
   },

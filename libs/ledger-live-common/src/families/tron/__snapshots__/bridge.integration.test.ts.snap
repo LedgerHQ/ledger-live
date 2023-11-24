@@ -3,7 +3,7 @@
 exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
 Array [
   Object {
-    "balance": "1781772",
+    "balance": "27781772",
     "currencyId": "tron",
     "derivationMode": "",
     "freshAddress": "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
@@ -18,7 +18,7 @@ Array [
     "index": 0,
     "name": "Tron 1",
     "nfts": undefined,
-    "operationsCount": 155,
+    "operationsCount": 163,
     "pendingOperations": Array [],
     "seedIdentifier": "049fc19cbc6d0f525b1c6947b4a36aec74b48e15f2531c5e7e58d272c9e926786da290eb3505d8fab9c83818c1174d9bc96fd18e0527365cba6b9534d43ad5052b",
     "spendableBalance": "1781772",
@@ -37,7 +37,14 @@ Array [
       },
       "lastVotedDate": "2022-05-19T12:43:42.000Z",
       "lastWithdrawnRewardDate": "2022-05-19T12:45:36.000Z",
-      "tronPower": 0,
+      "legacyFrozen": Object {
+        "bandwidth": undefined,
+        "energy": Object {
+          "amount": "26000000",
+          "expiredAt": "2020-02-01T16:04:51.000Z",
+        },
+      },
+      "tronPower": 26,
       "unFrozen": Object {
         "bandwidth": Array [],
         "energy": Array [],
@@ -178,7 +185,7 @@ Array [
     "type": "TokenAccountRaw",
   },
   Object {
-    "balance": "2094000",
+    "balance": "5094000",
     "currencyId": "tron",
     "derivationMode": "",
     "freshAddress": "THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi",
@@ -193,7 +200,7 @@ Array [
     "index": 1,
     "name": "Tron 2",
     "nfts": undefined,
-    "operationsCount": 17,
+    "operationsCount": 18,
     "pendingOperations": Array [],
     "seedIdentifier": "049fc19cbc6d0f525b1c6947b4a36aec74b48e15f2531c5e7e58d272c9e926786da290eb3505d8fab9c83818c1174d9bc96fd18e0527365cba6b9534d43ad5052b",
     "spendableBalance": "2094000",
@@ -212,7 +219,17 @@ Array [
       },
       "lastVotedDate": undefined,
       "lastWithdrawnRewardDate": undefined,
-      "tronPower": 0,
+      "legacyFrozen": Object {
+        "bandwidth": Object {
+          "amount": "2000000",
+          "expiredAt": "2022-05-23T08:20:39.000Z",
+        },
+        "energy": Object {
+          "amount": "1000000",
+          "expiredAt": "2022-05-22T12:51:12.000Z",
+        },
+      },
+      "tronPower": 3,
       "unFrozen": Object {
         "bandwidth": Array [],
         "energy": Array [],
@@ -452,6 +469,10 @@ Array [
       },
       "lastVotedDate": undefined,
       "lastWithdrawnRewardDate": undefined,
+      "legacyFrozen": Object {
+        "bandwidth": undefined,
+        "energy": undefined,
+      },
       "tronPower": 0,
       "unFrozen": Object {
         "bandwidth": Array [],
@@ -523,6 +544,10 @@ Array [
       },
       "lastVotedDate": undefined,
       "lastWithdrawnRewardDate": undefined,
+      "legacyFrozen": Object {
+        "bandwidth": undefined,
+        "energy": undefined,
+      },
       "tronPower": 0,
       "unFrozen": Object {
         "bandwidth": Array [],
@@ -581,6 +606,10 @@ Array [
       },
       "lastVotedDate": undefined,
       "lastWithdrawnRewardDate": undefined,
+      "legacyFrozen": Object {
+        "bandwidth": undefined,
+        "energy": undefined,
+      },
       "tronPower": 0,
       "unFrozen": Object {
         "bandwidth": Array [],
@@ -652,6 +681,10 @@ Array [
       },
       "lastVotedDate": undefined,
       "lastWithdrawnRewardDate": undefined,
+      "legacyFrozen": Object {
+        "bandwidth": undefined,
+        "energy": undefined,
+      },
       "tronPower": 0,
       "unFrozen": Object {
         "bandwidth": Array [],
@@ -710,6 +743,10 @@ Array [
       },
       "lastVotedDate": undefined,
       "lastWithdrawnRewardDate": undefined,
+      "legacyFrozen": Object {
+        "bandwidth": undefined,
+        "energy": undefined,
+      },
       "tronPower": 0,
       "unFrozen": Object {
         "bandwidth": Array [],
@@ -767,6 +804,10 @@ Array [
       },
       "lastVotedDate": undefined,
       "lastWithdrawnRewardDate": undefined,
+      "legacyFrozen": Object {
+        "bandwidth": undefined,
+        "energy": undefined,
+      },
       "tronPower": 0,
       "unFrozen": Object {
         "bandwidth": undefined,
@@ -1454,6 +1495,28 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "value": "0",
     },
     {
+      "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
+      "blockHash": null,
+      "blockHeight": 16220303,
+      "contract": undefined,
+      "extra": Object {
+        "unfreezeAmount": "46422359",
+      },
+      "fee": "0",
+      "hasFailed": false,
+      "hash": "302ad39424bc8308ac2a2ed05d833a0e9c39d3c025ca332506962b6ee4cbf605",
+      "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-302ad39424bc8308ac2a2ed05d833a0e9c39d3c025ca332506962b6ee4cbf605-LEGACY_UNFREEZE",
+      "operator": undefined,
+      "recipients": Array [],
+      "senders": Array [
+        "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
+      ],
+      "standard": undefined,
+      "tokenId": undefined,
+      "type": "LEGACY_UNFREEZE",
+      "value": "0",
+    },
+    Object {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
       "blockHeight": 16378840,
@@ -2241,6 +2304,28 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
     {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
+      "blockHeight": 12425496,
+      "contract": undefined,
+      "extra": Object {
+        "unfreezeAmount": "6000000",
+      },
+      "fee": "0",
+      "hasFailed": false,
+      "hash": "764d07b0c11e6bf3bdd702c79d21d5abb0ff8b3eb359a3a55f6a7a4b4384abe4",
+      "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-764d07b0c11e6bf3bdd702c79d21d5abb0ff8b3eb359a3a55f6a7a4b4384abe4-LEGACY_UNFREEZE",
+      "operator": undefined,
+      "recipients": Array [],
+      "senders": Array [
+        "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
+      ],
+      "standard": undefined,
+      "tokenId": undefined,
+      "type": "LEGACY_UNFREEZE",
+      "value": "0",
+    },
+    Object {
+      "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
+      "blockHash": null,
       "blockHeight": 12265086,
       "contract": undefined,
       "extra": {},
@@ -2763,6 +2848,28 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
     {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
+      "blockHeight": 11109550,
+      "contract": undefined,
+      "extra": Object {
+        "unfreezeAmount": "3000000",
+      },
+      "fee": "0",
+      "hasFailed": false,
+      "hash": "9e994037e0bf047923a412cdb720091f4b80ed2e2e3a164e26b1cbdb47ac827f",
+      "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-9e994037e0bf047923a412cdb720091f4b80ed2e2e3a164e26b1cbdb47ac827f-LEGACY_UNFREEZE",
+      "operator": undefined,
+      "recipients": Array [],
+      "senders": Array [
+        "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
+      ],
+      "standard": undefined,
+      "tokenId": undefined,
+      "type": "LEGACY_UNFREEZE",
+      "value": "0",
+    },
+    Object {
+      "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
+      "blockHash": null,
       "blockHeight": 11376321,
       "contract": undefined,
       "extra": {},
@@ -2883,6 +2990,28 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "value": "31000000",
     },
     {
+      "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
+      "blockHash": null,
+      "blockHeight": 16050392,
+      "contract": undefined,
+      "extra": Object {
+        "unfreezeAmount": "20000000",
+      },
+      "fee": "0",
+      "hasFailed": false,
+      "hash": "a6b15154bc5e6addcf9ba5b1ab5f190d58226b546e9b62370f81d85ba4b0b06e",
+      "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-a6b15154bc5e6addcf9ba5b1ab5f190d58226b546e9b62370f81d85ba4b0b06e-LEGACY_UNFREEZE",
+      "operator": undefined,
+      "recipients": Array [],
+      "senders": Array [
+        "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
+      ],
+      "standard": undefined,
+      "tokenId": undefined,
+      "type": "LEGACY_UNFREEZE",
+      "value": "0",
+    },
+    Object {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
       "blockHeight": 16350083,
@@ -3530,6 +3659,50 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
     {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
+      "blockHeight": 11593944,
+      "contract": undefined,
+      "extra": Object {
+        "unfreezeAmount": "3000000",
+      },
+      "fee": "0",
+      "hasFailed": false,
+      "hash": "ca05e36bb9546d435346384e7de0c96138c8fac50e0392faaa4ec9170ae22b05",
+      "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-ca05e36bb9546d435346384e7de0c96138c8fac50e0392faaa4ec9170ae22b05-LEGACY_UNFREEZE",
+      "operator": undefined,
+      "recipients": Array [],
+      "senders": Array [
+        "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
+      ],
+      "standard": undefined,
+      "tokenId": undefined,
+      "type": "LEGACY_UNFREEZE",
+      "value": "0",
+    },
+    Object {
+      "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
+      "blockHash": null,
+      "blockHeight": 16686355,
+      "contract": undefined,
+      "extra": Object {
+        "unfreezeAmount": "31000000",
+      },
+      "fee": "0",
+      "hasFailed": false,
+      "hash": "d2f56517ced73d6515d1ed053ae3cd244e098a3234166b8c09ed629c65685d7c",
+      "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-d2f56517ced73d6515d1ed053ae3cd244e098a3234166b8c09ed629c65685d7c-LEGACY_UNFREEZE",
+      "operator": undefined,
+      "recipients": Array [],
+      "senders": Array [
+        "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
+      ],
+      "standard": undefined,
+      "tokenId": undefined,
+      "type": "LEGACY_UNFREEZE",
+      "value": "0",
+    },
+    Object {
+      "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
+      "blockHash": null,
       "blockHeight": 11594357,
       "contract": undefined,
       "extra": {},
@@ -3744,6 +3917,28 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "value": "137718",
     },
     {
+      "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
+      "blockHash": null,
+      "blockHeight": 10511409,
+      "contract": undefined,
+      "extra": Object {
+        "unfreezeAmount": "1000000",
+      },
+      "fee": "0",
+      "hasFailed": false,
+      "hash": "e44b36703e3d83a61753a954f1e3d25d403ee2320f146c32d27b5512438efb73",
+      "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-e44b36703e3d83a61753a954f1e3d25d403ee2320f146c32d27b5512438efb73-LEGACY_UNFREEZE",
+      "operator": undefined,
+      "recipients": Array [],
+      "senders": Array [
+        "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
+      ],
+      "standard": undefined,
+      "tokenId": undefined,
+      "type": "LEGACY_UNFREEZE",
+      "value": "0",
+    },
+    Object {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
       "blockHeight": 16321258,
@@ -4228,6 +4423,28 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "value": "1000000",
     },
     {
+      "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
+      "blockHash": null,
+      "blockHeight": 9277271,
+      "contract": undefined,
+      "extra": Object {
+        "unfreezeAmount": "10000000",
+      },
+      "fee": "0",
+      "hasFailed": false,
+      "hash": "ffc5db75fb4f8971ca003c5fc0249c031159d89ceefe042107c91568d622f79f",
+      "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-ffc5db75fb4f8971ca003c5fc0249c031159d89ceefe042107c91568d622f79f-LEGACY_UNFREEZE",
+      "operator": undefined,
+      "recipients": Array [],
+      "senders": Array [
+        "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
+      ],
+      "standard": undefined,
+      "tokenId": undefined,
+      "type": "LEGACY_UNFREEZE",
+      "value": "0",
+    },
+    Object {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
       "blockHeight": 16206138,
@@ -5216,6 +5433,28 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "value": "1000000",
     },
     {
+      "accountId": "js:2:tron:THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi:",
+      "blockHash": null,
+      "blockHeight": 18903817,
+      "contract": undefined,
+      "extra": Object {
+        "unfreezeAmount": "9400000",
+      },
+      "fee": "0",
+      "hasFailed": false,
+      "hash": "26c2ae426ddee2a81f001daa231104f199ed56453988299656b9612944687a15",
+      "id": "js:2:tron:THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi:-26c2ae426ddee2a81f001daa231104f199ed56453988299656b9612944687a15-LEGACY_UNFREEZE",
+      "operator": undefined,
+      "recipients": Array [],
+      "senders": Array [
+        "THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi",
+      ],
+      "standard": undefined,
+      "tokenId": undefined,
+      "type": "LEGACY_UNFREEZE",
+      "value": "0",
+    },
+    Object {
       "accountId": "js:2:tron:THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi:",
       "blockHash": null,
       "blockHeight": 40832955,

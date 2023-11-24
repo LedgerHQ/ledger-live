@@ -569,6 +569,26 @@ const tron: CurrenciesData<Transaction> = {
             estimatedFees: new BigNumber("0"),
           },
         },
+        {
+          name: "tronLegacyUnFreezeBandwidth",
+          transaction: fromTransactionRaw({
+            family: "tron",
+            recipient: "",
+            amount: "1000000",
+            networkInfo: null,
+            mode: "legacyUnfreeze",
+            duration: undefined,
+            resource: "BANDWIDTH",
+            votes: [],
+          }),
+          expectedStatus: {
+            amount: new BigNumber("0"),
+            errors: {},
+            warnings: {},
+            totalSpent: new BigNumber("0"),
+            estimatedFees: new BigNumber("0"),
+          },
+        },
         // Not so sure how ot make this test work again, frozen energy seems to be expired.
         // {
         //   name: "tronNoFrozenForEnergy",

@@ -71,7 +71,7 @@ function OperationDetailsExtra({ operation, type, account }: OperationDetailsExt
       return <Section title={t("operationDetails.extra.unfreezeAmount")} value={value} />;
     }
 
-    case "UNDELEGATERESOURCE": {
+    case "UNDELEGATE_RESOURCE": {
       const value = formatCurrencyUnit(
         account.unit,
         unDelegatedResourceAmount || new BigNumber(0),
@@ -87,6 +87,15 @@ function OperationDetailsExtra({ operation, type, account }: OperationDetailsExt
           <Section title={t("operationDetails.extra.undelegatedFrom")} value={receiverAddress} />
         </>
       );
+    }
+
+    case "LEGACY_UNFREEZE": {
+      const value = formatCurrencyUnit(account.unit, unfreezeAmount || new BigNumber(0), {
+        showCode: true,
+        discreet,
+        locale,
+      });
+      return <Section title={t("operationDetails.extra.unfreezeAmount")} value={value} />;
     }
 
     default:
