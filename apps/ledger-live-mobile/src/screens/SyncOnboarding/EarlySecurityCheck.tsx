@@ -75,7 +75,7 @@ export type EarlySecurityCheckProps = {
   isAlreadyGenuine?: boolean;
 
   /**
-   * To tell the ESC that there is no need to re display the FW update drawer (optionnal)
+   * To tell the ESC that there is no need to re display the FW update drawer (optional)
    */
   isPreviousUpdateCancelled?: boolean;
 
