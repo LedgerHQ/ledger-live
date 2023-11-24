@@ -430,7 +430,7 @@
         "description" : "المغادرة ستقوم بإلغاء عمليات تحديث التطبيقات قيد التقدم.",
         "stay" : "متابعة التحديث"
       },
-      "quit" : "مغادرة My Ledger"
+      "quit" : "مغادرة My Ledger (جهازي Ledger)"
     },
     "ManagerUninstallBTCDep" : {
       "title" : "عفواً، هذا التطبيق مطلوب",
@@ -477,7 +477,7 @@
     },
     "NoSuchAppOnProvider" : {
       "title" : "لا يمكن العثور على التطبيق {{appName}} للتهيئة الخاصة بك.",
-      "description" : "حاول إعادة تثبيت التطبيق من My Ledger"
+      "description" : "حاول إعادة تثبيت التطبيق من My Ledger (جهازي Ledger)"
     },
     "NotEnoughGas" : {
       "title" : "رصيد الحساب الأصلي غير كاف لرسوم الشبكة",
@@ -2676,7 +2676,7 @@
       "reportErrors" : "تقارير الخلل",
       "reportErrorsDesc" : "إرسال التقارير تلقائياً لمساعدة Ledger في تحسين منتجاتها.",
       "developerMode" : "وضع المطور",
-      "developerModeDesc" : "اعرض تطبيقات المطور في My Ledger (جهازي Ledger) وقم بتمكين تطبيقات Testnet.",
+      "developerModeDesc" : "عرض تطبيقات المطور في My Ledger (جهازي Ledger) وتمكين تطبيقات Testnet.",
       "analytics" : "تحليلات",
       "analyticsDesc" : "قم بتمكين التحليلات لمساعدة Ledger على تحسين تجربة المستخدم.",
       "analyticsModal" : {
@@ -3827,7 +3827,7 @@
     "connectAnotherDevice" : "توصيل جهاز Ledger آخر",
     "unlockDevice" : "قم بإلغاء قفل جهازك",
     "outdated" : "إصدار التطبيق قديم",
-    "outdatedDesc" : "هناك تحديث مهم لتطبيق {{appName}} متاح على جهازك. يُرجى الانتقال إلى My Ledger لتحديثه.",
+    "outdatedDesc" : "هناك تحديث مهم متاح لتطبيق {{appName}} على جهازك. يُرجى الانتقال إلى My Ledger (جهازي Ledger) لتحديثه.",
     "quitApp" : "الخروج من التطبيق على جهازك",
     "appNotInstalled" : "يُرجى تثبيت تطبيق {{appName}}",
     "appNotInstalled_plural" : "الرجاء تثبيت تطبيقات {{appName}}",
