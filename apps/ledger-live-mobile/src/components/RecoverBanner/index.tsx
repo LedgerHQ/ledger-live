@@ -98,11 +98,11 @@ function RecoverBanner() {
         overflow="hidden"
         width="100%"
         onTouchEnd={onRedirectRecover}
-        p="12px"
+        p={4}
       >
         <Flex alignItems="center" justifyContent="center" width={40}>
           <ProgressLoader progress={stepNumber / maxStepNumber} radius={20}>
-            <Text display="block" flex={1} textAlign="center" fontSize="12px" lineHeight="15px">
+            <Text display="block" flex={1} textAlign="center" fontSize={2}>
               {`${stepNumber}/${maxStepNumber - 1}`}
             </Text>
           </ProgressLoader>
