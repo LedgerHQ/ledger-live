@@ -1,5 +1,11 @@
 # @ledgerhq/coin-polkadot
 
+## 0.4.6-nightly.7
+
+### Patch Changes
+
+- [#5112](https://github.com/LedgerHQ/ledger-live/pull/5112) [`ab1db965c2`](https://github.com/LedgerHQ/ledger-live/commit/ab1db965c25cd629bf384f7323f0b018309e4e66) Thanks [@lvndry](https://github.com/lvndry)! - Upgrade @polkadot/\* dependencies
+
 ## 0.4.6-nightly.6
 
 ### Patch Changes

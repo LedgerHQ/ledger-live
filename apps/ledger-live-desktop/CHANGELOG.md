@@ -1,5 +1,18 @@
 # ledger-live-desktop
 
+## 2.72.0-nightly.6
+
+### Minor Changes
+
+- [#5544](https://github.com/LedgerHQ/ledger-live/pull/5544) [`0bed2a4816`](https://github.com/LedgerHQ/ledger-live/commit/0bed2a48162bfb58a9163d34638d33f8fb567eec) Thanks [@Justkant](https://github.com/Justkant)! - feat(LLD): add nanoSP support in recover restore
+
+### Patch Changes
+
+- [#5112](https://github.com/LedgerHQ/ledger-live/pull/5112) [`ab1db965c2`](https://github.com/LedgerHQ/ledger-live/commit/ab1db965c25cd629bf384f7323f0b018309e4e66) Thanks [@lvndry](https://github.com/lvndry)! - Eliminate usage of @polkadot/react-identicons
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@33.2.0-nightly.6
+
 ## 2.72.0-nightly.5
 
 ### Patch Changes

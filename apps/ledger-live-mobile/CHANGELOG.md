@@ -1,5 +1,14 @@
 # live-mobile
 
+## 3.35.0-nightly.6
+
+### Patch Changes
+
+- [#5112](https://github.com/LedgerHQ/ledger-live/pull/5112) [`ab1db965c2`](https://github.com/LedgerHQ/ledger-live/commit/ab1db965c25cd629bf384f7323f0b018309e4e66) Thanks [@lvndry](https://github.com/lvndry)! - Eliminate usage of @polkadot/react-identicons
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@33.2.0-nightly.6
+
 ## 3.35.0-nightly.5
 
 ### Patch Changes
