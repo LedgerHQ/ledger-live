@@ -89,6 +89,7 @@ export default function RecoverBanner() {
         columnGap={12}
         bg={colors.opacityPurple.c10}
         justifyContent="space-between"
+        alignItems="center"
         borderRadius="8px"
         overflow="hidden"
         width="100%"
