@@ -58,6 +58,7 @@ export type TransactionRaw = TransactionCommonRaw & {
 export type TrongridTxType =
   | "TransferContract"
   | "TransferAssetContract"
+  | "FreezeBalanceContract"
   | "UnfreezeBalanceContract"
   | "VoteWitnessContract"
   | "TriggerSmartContract"

@@ -39,6 +39,7 @@ const parentTx = [
   "UnfreezeBalanceV2Contract",
   "WithdrawExpireUnfreezeContract",
   "UnDelegateResourceContract",
+  "FreezeBalanceContract",
   "UnfreezeBalanceContract",
 ];
 
@@ -125,6 +126,7 @@ const getOperationType = (
     case "WithdrawBalanceContract":
       return "REWARD";
 
+    case "FreezeBalanceContract":
     case "FreezeBalanceV2Contract":
       return "FREEZE";
 
@@ -244,6 +246,7 @@ export const formatTrongridTxResponse = (
             })),
           };
 
+        case "FreezeBalanceContract":
         case "FreezeBalanceV2Contract":
           return {
             frozenAmount: new BigNumber(frozen_balance),

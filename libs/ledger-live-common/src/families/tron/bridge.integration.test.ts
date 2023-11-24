@@ -74,7 +74,6 @@ const tron: CurrenciesData<Transaction> = {
   ],
   accounts: [
     {
-      FIXME_tests: ["balance is sum of ops"],
       transactions: [
         {
           name: "sendSuccess",
