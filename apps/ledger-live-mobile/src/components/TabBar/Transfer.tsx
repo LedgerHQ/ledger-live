@@ -10,6 +10,8 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import { useExperimental } from "../../experimental";
+import { HEIGHT as ExperimentalHeaderHeight } from "../../screens/Settings/Experimental/ExperimentalHeader";
 import proxyStyled, { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import styled, { useTheme } from "styled-components/native";
@@ -86,7 +88,7 @@ export function TransferTabIcon() {
   const {
     colors: { type: themeType },
   } = useTheme();
-
+  const isExperimental = useExperimental();
   const track = useTrack();
 
   // Value used to derive which step of animation is being displayed.
@@ -192,6 +194,9 @@ export function TransferTabIcon() {
   const { width: screenWidth, height: screenHeight } = Dimensions.get("screen");
   const { bottom: bottomInset, top: topInset } = useSafeAreaInsets();
 
+  const drawerHeight =
+    screenHeight - bottomInset - topInset - (isExperimental ? ExperimentalHeaderHeight : 0);
+
   return (
     <>
       <BackdropPressable animatedProps={backdropProps} onPress={closeModal} style={opacityStyle} />
@@ -201,7 +206,7 @@ export function TransferTabIcon() {
           style={[
             {
               width: screenWidth,
-              maxHeight: screenHeight - bottomInset - topInset,
+              maxHeight: drawerHeight,
               paddingBottom: bottomInset + 16 + MAIN_BUTTON_SIZE + MAIN_BUTTON_BOTTOM,
             },
             opacityStyle,
