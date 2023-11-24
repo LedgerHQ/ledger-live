@@ -3,6 +3,8 @@ import { BatteryStatusFlags, ChargingModes } from "@ledgerhq/types-devices";
 import { TransportStatusError, StatusCodes } from "@ledgerhq/errors";
 import { LocalTracer } from "@ledgerhq/logs";
 
+import { LOG_TYPE } from ".";
+
 export enum BatteryStatusTypes {
   BATTERY_PERCENTAGE = 0x00,
   BATTERY_VOLTAGE = 0x01,
@@ -36,7 +38,10 @@ const getBatteryStatus = async <StatusesType extends ReadonlyArray<BatteryStatus
   transport: Transport,
   statuses: StatusesType,
 ): Promise<BatteryStatusTuple<StatusesType>> => {
-  const tracer = new LocalTracer("hw", { statuses });
+  const tracer = new LocalTracer(LOG_TYPE, {
+    function: "getBatteryStatus",
+    statuses,
+  });
   tracer.trace(`Starting`);
 
   const result: (BatteryStatusFlags | number)[] = [];
