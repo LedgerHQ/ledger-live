@@ -52,7 +52,11 @@ export const useBatteryStatuses = ({
         statuses,
       }).subscribe({
         next: state => {
-          setBatteryStatusesState(state);
+          if (state.error?.type === "UnknownApdu") {
+            setBatteryStatusesState({ ...state, error: null });
+          } else {
+            setBatteryStatusesState(state);
+          }
 
           // no battery status flags available
           if (state.batteryStatuses.length <= 1) return;
