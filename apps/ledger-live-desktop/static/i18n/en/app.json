@@ -1412,6 +1412,26 @@
         "title": "Stake",
         "description": "Grow your crypto with Ledger"
       }
+    },
+    "recoverBanner": {
+      "subscribeDone": {
+        "title": "Add your payment card",
+        "description":"Add your payment method to get your backup secure.",
+        "primaryCta": "Add now",
+        "secondaryCta": "Maybe later"
+      },
+      "verifyIdentity": {
+        "title": "Verify your identity",
+        "description":"Verify your identity to get your backup secure.",
+        "primaryCta": "Verify now",
+        "secondaryCta": "Maybe later"
+      },
+      "connectDevice": {
+        "title": "Connect your Ledger",
+        "description":"Connect your Ledger to get your backup secure.",
+        "primaryCta": "Connect my Ledger",
+        "secondaryCta": "Maybe later"
+      }
     }
   },
   "currentAddress": {
@@ -4126,8 +4146,7 @@
     "updateAvailable": "Update to Ledger Live version {{version}} is available",
     "error": "Error during update. Please download again",
     "reDownload": "Download again",
-    "nightlyWarning": "This version cannot auto-update. Please install the latest version manually",
-    "downloadNow": "Download update"
+    "nightlyWarning": "This version cannot auto-update. Please install the latest version manually"
   },
   "crash": {
     "title": "Something went wrong",

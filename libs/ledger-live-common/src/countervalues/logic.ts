@@ -20,14 +20,7 @@ import {
   incrementPerGranularity,
   datapointLimits,
 } from "./helpers";
-import {
-  fetchHistorical,
-  fetchLatest,
-  isCountervalueEnabled,
-  aliasPair,
-  mapRate,
-  resolveTrackingPair,
-} from "./modules";
+import { fetchHistorical, fetchLatest, aliasPair, mapRate, resolveTrackingPair } from "./modules";
 import type { Account } from "@ledgerhq/types-live";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
 
@@ -322,10 +315,6 @@ export function lenseRateMap(
     to: Currency;
   },
 ): PairRateMapCache | null | undefined {
-  if (!isCountervalueEnabled(pair.from) || !isCountervalueEnabled(pair.to)) {
-    return;
-  }
-
   const rateId = pairId(pair);
   return state.cache[rateId];
 }
@@ -505,7 +494,6 @@ export function resolveTrackingPairs(pairs: TrackingPair[]): TrackingPair[] {
       to: pair.to,
     });
 
-    if (!isCountervalueEnabled(from) || !isCountervalueEnabled(to)) return;
     if (from === to) return;
 
     // dedup and keep oldest date

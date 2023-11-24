@@ -285,6 +285,7 @@ export type Feature_Learn = Feature<{
 
 export type Feature_PtxEarn = Feature<{
   liveAppId: string;
+  isNew: boolean;
 }>;
 
 export type Feature_Storyly = Feature<{
@@ -304,6 +305,8 @@ export type CompatibleDevice = {
 
 export type Feature_ProtectServicesMobile = Feature<{
   deeplink: string;
+  ledgerliveStorageState: boolean;
+  bannerSubscriptionNotification: boolean;
   compatibleDevices: CompatibleDevice[];
   onboardingRestore: {
     restoreInfoDrawer: {
@@ -332,6 +335,8 @@ export type Feature_ProtectServicesDesktop = Feature<{
   availableOnDesktop: boolean;
   openRecoverFromSidebar: boolean;
   discoverTheBenefitsLink: string;
+  ledgerliveStorageState: boolean;
+  bannerSubscriptionNotification: boolean;
   compatibleDevices: CompatibleDevice[];
   onboardingRestore: {
     restoreInfoDrawer: {

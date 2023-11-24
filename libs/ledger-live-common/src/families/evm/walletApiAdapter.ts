@@ -1,5 +1,6 @@
-import { EthereumTransaction as WalletAPIEthereumTransaction } from "@ledgerhq/wallet-api-core";
+import { createTransaction } from "@ledgerhq/coin-evm/createTransaction";
 import { Transaction } from "@ledgerhq/coin-evm/types/index";
+import { EthereumTransaction as WalletAPIEthereumTransaction } from "@ledgerhq/wallet-api-core";
 import {
   AreFeesProvided,
   ConvertToLiveTransaction,
@@ -14,21 +15,36 @@ const areFeesProvided: AreFeesProvided<WalletAPIEthereumTransaction> = tx =>
 const convertToLiveTransaction: ConvertToLiveTransaction<
   WalletAPIEthereumTransaction,
   Transaction
-> = tx => {
-  const hasFeesProvided = areFeesProvided(tx);
-
-  const params = {
-    family: "evm" as const,
-    nonce: tx.nonce,
-    amount: tx.amount,
-    recipient: tx.recipient,
-    data: tx.data,
-    gasLimit: tx.gasLimit,
-    feesStrategy: hasFeesProvided ? ("custom" as const) : ("medium" as const),
-    customGasLimit: tx.gasLimit,
-  };
+> = ({ walletApiTransaction, account }) => {
+  const hasFeesProvided = areFeesProvided(walletApiTransaction);
 
   // We create a type 2 tx by default, and fallback to type 0 if gasPrice is provided
+  const liveTx: Transaction = createTransaction(account);
+
+  if (walletApiTransaction.nonce !== undefined) {
+    liveTx.nonce = walletApiTransaction.nonce;
+  }
+
+  if (walletApiTransaction.amount) {
+    liveTx.amount = walletApiTransaction.amount;
+  }
+
+  if (walletApiTransaction.recipient) {
+    liveTx.recipient = walletApiTransaction.recipient;
+  }
+
+  if (walletApiTransaction.data) {
+    liveTx.data = walletApiTransaction.data;
+  }
+
+  if (walletApiTransaction.gasLimit) {
+    liveTx.gasLimit = walletApiTransaction.gasLimit;
+    liveTx.customGasLimit = walletApiTransaction.gasLimit;
+  }
+
+  if (hasFeesProvided) {
+    liveTx.feesStrategy = "custom";
+  }
 
   /**
    * We explicitly set unrelated type specific fields to undefined to avoid transaction
@@ -45,22 +61,17 @@ const convertToLiveTransaction: ConvertToLiveTransaction<
       // `transaction` will be of type 2 here if `maxFeePerGas` and `maxPriorityFeePerGas` are not undefined
       const transaction = bridge.updateTransaction(tx2, txData);
    */
-
-  const liveTx: Partial<Transaction> = tx.gasPrice
-    ? {
-        ...params,
-        gasPrice: tx.gasPrice,
-        maxFeePerGas: undefined,
-        maxPriorityFeePerGas: undefined,
-        type: 0,
-      }
-    : {
-        ...params,
-        gasPrice: undefined,
-        maxFeePerGas: tx.maxFeePerGas,
-        maxPriorityFeePerGas: tx.maxPriorityFeePerGas,
-        type: 2,
-      };
+  if (walletApiTransaction.gasPrice) {
+    liveTx.maxFeePerGas = undefined;
+    liveTx.maxPriorityFeePerGas = undefined;
+    liveTx.gasPrice = walletApiTransaction.gasPrice;
+    liveTx.type = 0;
+  } else {
+    liveTx.gasPrice = undefined;
+    liveTx.maxFeePerGas = walletApiTransaction.maxFeePerGas;
+    liveTx.maxPriorityFeePerGas = walletApiTransaction.maxPriorityFeePerGas;
+    liveTx.type = 2;
+  }
 
   return liveTx;
 };
@@ -68,11 +79,11 @@ const convertToLiveTransaction: ConvertToLiveTransaction<
 const getWalletAPITransactionSignFlowInfos: GetWalletAPITransactionSignFlowInfos<
   WalletAPIEthereumTransaction,
   Transaction
-> = tx => {
+> = ({ walletApiTransaction, account }) => {
   return {
     canEditFees: CAN_EDIT_FEES,
-    liveTx: convertToLiveTransaction(tx),
-    hasFeesProvided: areFeesProvided(tx),
+    liveTx: convertToLiveTransaction({ walletApiTransaction, account }),
+    hasFeesProvided: areFeesProvided(walletApiTransaction),
   };
 };
 

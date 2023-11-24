@@ -216,9 +216,8 @@ const ValidatorRow = ({
     [validator, onExternalLink],
   );
   const onChange = useCallback(
-    // @ts-expect-error this makes no sense as the component that uses onChange has a signature like this:
     // onChange: (b: BigNumber, a: Unit) => void;
-    e => {
+    (e: BigNumber) => {
       onUpdateVote && onUpdateVote(validator.address, e.toString());
     },
     [validator, onUpdateVote],

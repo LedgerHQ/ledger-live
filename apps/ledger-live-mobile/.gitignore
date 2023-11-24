@@ -65,6 +65,9 @@ coverage/
 # Bundle artifact
 *.jsbundle
 
+# Meta artifact
+mobile.metafile.*
+
 # VS Code
 *.vscode
 

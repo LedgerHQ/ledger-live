@@ -37,11 +37,11 @@ export type SwapProps = {
   cacheKey: string;
   loading: boolean;
   error: boolean;
+  providerRedirectURL: string;
 };
 
 export type SwapWebProps = {
   swapState?: Partial<SwapProps>;
-  redirectToProviderApp(_: string): void;
 };
 
 export const SWAP_WEB_MANIFEST_ID = "swap-live-app-demo-0";
@@ -53,7 +53,7 @@ const SwapWebAppWrapper = styled.div<{ isDevelopment: boolean }>(
 `,
 );
 
-const SwapWebView = ({ swapState, redirectToProviderApp }: SwapWebProps) => {
+const SwapWebView = ({ swapState }: SwapWebProps) => {
   const {
     colors: {
       palette: { type: themeType },
@@ -138,9 +138,6 @@ const SwapWebView = ({ swapState, redirectToProviderApp }: SwapWebProps) => {
         onSwapWebviewError();
         return Promise.resolve();
       },
-      "custom.redirectToProviderApp": ({ params }: { params: string }) => {
-        redirectToProviderApp(params);
-      },
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [swapState?.cacheKey]);
@@ -162,16 +159,20 @@ const SwapWebView = ({ swapState, redirectToProviderApp }: SwapWebProps) => {
   };
 
   const isDevelopment = process.env.NODE_ENV === "development";
+  // TODO: remove hash logic after complete swap migration manifest={manifest}
   return (
     <>
       {isDevelopment && (
-        <TopBar manifest={manifest} webviewAPIRef={webviewAPIRef} webviewState={webviewState} />
+        <TopBar
+          manifest={{ ...manifest, url: `${manifest.url}#${swapState.cacheKey}` }}
+          webviewAPIRef={webviewAPIRef}
+          webviewState={webviewState}
+        />
       )}
       <SwapWebAppWrapper isDevelopment={isDevelopment}>
         <Web3AppWebview
-          manifest={manifest}
+          manifest={{ ...manifest, url: `${manifest.url}#${swapState.cacheKey}` }}
           inputs={{
-            cacheKey: swapState.cacheKey,
             theme: themeType,
             lang: locale,
             currencyTicker: fiatCurrency.ticker,

@@ -156,6 +156,8 @@ export const DEFAULT_FEATURES: Features = {
     enabled: false,
     params: {
       availableOnDesktop: false,
+      ledgerliveStorageState: false,
+      bannerSubscriptionNotification: false,
       account: {
         homeURI:
           "ledgerlive://recover/protect-simu?redirectTo=account&source=lld-sidebar-navigation&ajs_recover_source=lld-sidebar-navigation&ajs_recover_campaign=recover-launch",
@@ -295,6 +297,8 @@ export const DEFAULT_FEATURES: Features = {
   protectServicesMobile: {
     enabled: false,
     params: {
+      ledgerliveStorageState: false,
+      bannerSubscriptionNotification: false,
       deeplink: "",
       compatibleDevices: [],
       account: {
