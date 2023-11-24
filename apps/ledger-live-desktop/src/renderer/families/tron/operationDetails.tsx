@@ -114,8 +114,8 @@ const OperationDetailsExtra = ({
     ? (operation.extra.unfreezeAmount as BigNumber)
     : new BigNumber(10);
 
-  const unDelegatedResourceAmount = operation.extra?.unDelegatedResourceAmount
-    ? (operation.extra.unDelegatedResourceAmount as BigNumber)
+  const unDelegatedAmount = operation.extra?.unDelegatedAmount
+    ? (operation.extra.unDelegatedAmount as BigNumber)
     : new BigNumber(0);
 
   const receiverAddress = operation.extra?.receiverAddress ? operation.extra.receiverAddress : "";
@@ -182,7 +182,7 @@ const OperationDetailsExtra = ({
             <OpDetailsData>
               <Box>
                 <FormattedVal
-                  val={unDelegatedResourceAmount}
+                  val={unDelegatedAmount}
                   unit={account.unit}
                   showCode
                   fontSize={4}

@@ -90,14 +90,14 @@ export type TrongridExtraTxInfo = {
   frozenAmount?: BigNumber;
   unfreezeAmount?: BigNumber;
   votes?: Vote[];
-  unDelegatedResourceAmount?: BigNumber;
+  unDelegatedAmount?: BigNumber;
   receiverAddress?: string;
 };
 export type TrongridExtraTxInfoRaw = {
   frozenAmount?: string;
   unfreezeAmount?: string;
   votes?: Vote[];
-  unDelegatedResourceAmount?: string;
+  unDelegatedAmount?: string;
   receiverAddress?: string;
 };
 

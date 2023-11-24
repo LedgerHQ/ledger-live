@@ -16,8 +16,8 @@ export function fromOperationExtraRaw(extraRaw: TrongridExtraTxInfoRaw): Trongri
     extra.votes = extraRaw.votes;
   }
 
-  if (extraRaw.unDelegatedResourceAmount) {
-    extra.unDelegatedResourceAmount = new BigNumber(extraRaw.unDelegatedResourceAmount);
+  if (extraRaw.unDelegatedAmount) {
+    extra.unDelegatedAmount = new BigNumber(extraRaw.unDelegatedAmount);
   }
 
   if (extraRaw.receiverAddress) {
@@ -42,8 +42,8 @@ export function toOperationExtraRaw(extra: TrongridExtraTxInfo): TrongridExtraTx
     extraRaw.votes = extra.votes;
   }
 
-  if (extra.unDelegatedResourceAmount) {
-    extraRaw.unDelegatedResourceAmount = extra.unDelegatedResourceAmount.toString();
+  if (extra.unDelegatedAmount) {
+    extraRaw.unDelegatedAmount = extra.unDelegatedAmount.toString();
   }
 
   if (extra.receiverAddress) {

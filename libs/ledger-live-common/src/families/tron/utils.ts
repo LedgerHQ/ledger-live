@@ -256,7 +256,7 @@ export const formatTrongridTxResponse = (
 
         case "UnDelegateResourceContract":
           return {
-            unDelegatedResourceAmount: new BigNumber(balance),
+            unDelegatedAmount: new BigNumber(balance),
             receiverAddress: encode58Check(receiver_address),
           };
 

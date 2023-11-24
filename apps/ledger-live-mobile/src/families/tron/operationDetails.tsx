@@ -44,7 +44,7 @@ function OperationDetailsExtra({ operation, type, account }: OperationDetailsExt
   const discreet = useSelector(discreetModeSelector);
   const locale = useSelector(localeSelector);
   const {
-    extra: { votes, frozenAmount, unfreezeAmount, unDelegatedResourceAmount, receiverAddress },
+    extra: { votes, frozenAmount, unfreezeAmount, unDelegatedAmount, receiverAddress },
   } = operation;
 
   switch (type) {
@@ -72,15 +72,11 @@ function OperationDetailsExtra({ operation, type, account }: OperationDetailsExt
     }
 
     case "UNDELEGATE_RESOURCE": {
-      const value = formatCurrencyUnit(
-        account.unit,
-        unDelegatedResourceAmount || new BigNumber(0),
-        {
-          showCode: true,
-          discreet,
-          locale,
-        },
-      );
+      const value = formatCurrencyUnit(account.unit, unDelegatedAmount || new BigNumber(0), {
+        showCode: true,
+        discreet,
+        locale,
+      });
       return (
         <>
           <Section title={t("operationDetails.extra.undelegatedAmount")} value={value} />

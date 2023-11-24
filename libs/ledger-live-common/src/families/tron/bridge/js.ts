@@ -226,7 +226,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({ account, transac
 
               case "unDelegateResource":
                 return {
-                  unDelegatedResourceAmount: transaction.amount,
+                  unDelegatedAmount: transaction.amount,
                   receiverAddress: transaction.recipient,
                 };
 
