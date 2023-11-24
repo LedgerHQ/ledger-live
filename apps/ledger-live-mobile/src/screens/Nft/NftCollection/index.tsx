@@ -183,7 +183,6 @@ const NftCollection = ({ route }: NavigationProps) => {
           renderItem={({ item }) => item}
           keyExtractor={(item, index) => String(index)}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
         />
       </TabBarSafeAreaView>
     </>

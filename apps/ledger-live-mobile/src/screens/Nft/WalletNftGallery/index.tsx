@@ -4,6 +4,9 @@ import { useSelector } from "react-redux";
 import { useTheme } from "styled-components/native";
 import { isEqual } from "lodash";
 import NftList from "../../../components/Nft/NftGallery/NftList";
+import TabBarSafeAreaView, {
+  TAB_BAR_SAFE_HEIGHT,
+} from "../../../components/TabBar/TabBarSafeAreaView";
 
 import NftGalleryEmptyState from "../NftGallery/NftGalleryEmptyState";
 import CollapsibleHeaderScrollView from "../../../components/WalletTab/CollapsibleHeaderScrollView";
@@ -21,6 +24,7 @@ const WalletNftGallery = () => {
         <CollapsibleHeaderScrollView
           contentContainerStyle={{
             paddingTop: 0,
+            marginTop: 0,
             marginHorizontal: space[6],
           }}
         >

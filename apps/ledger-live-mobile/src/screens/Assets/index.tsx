@@ -16,15 +16,13 @@ import { withDiscreetMode } from "../../context/DiscreetModeContext";
 import AssetRow, { NavigationProp } from "../WalletCentricAsset/AssetRow";
 
 import Spinning from "../../components/Spinning";
-import TabBarSafeAreaView, {
-  TAB_BAR_SAFE_HEIGHT,
-} from "../../components/TabBar/TabBarSafeAreaView";
 import AssetsNavigationHeader from "./AssetsNavigationHeader";
 import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
 import AddAccountsModal from "../AddAccounts/AddAccountsModal";
 import { BaseNavigation } from "../../components/RootNavigator/types/helpers";
 import { Asset } from "../../types/asset";
 import { ScreenName } from "../../const";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const List = globalSyncRefreshControl<FlatListProps<Asset>>(FlatList);
 
@@ -65,7 +63,7 @@ function Assets() {
 
   return (
     <ReactNavigationPerformanceView screenName={ScreenName.Assets} interactive>
-      <TabBarSafeAreaView>
+      <SafeAreaView style={{ flex: 1 }}>
         <TrackScreen category="Assets List" />
         <Flex flex={1} bg={"background.main"}>
           <AssetsNavigationHeader />
@@ -84,9 +82,6 @@ function Assets() {
               data={assets}
               renderItem={renderItem}
               keyExtractor={i => i.currency.id}
-              contentContainerStyle={{
-                paddingBottom: TAB_BAR_SAFE_HEIGHT,
-              }}
               showsVerticalScrollIndicator={false}
               ListHeaderComponent={
                 <Flex mt={3} mb={3}>
@@ -114,7 +109,7 @@ function Assets() {
           isOpened={isAddModalOpened}
           onClose={closeAddModal}
         />
-      </TabBarSafeAreaView>
+      </SafeAreaView>
     </ReactNavigationPerformanceView>
   );
 }

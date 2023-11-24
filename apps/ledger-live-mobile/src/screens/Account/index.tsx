@@ -7,6 +7,7 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { Flex } from "@ledgerhq/native-ui";
 import debounce from "lodash/debounce";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
@@ -28,9 +29,6 @@ import CurrencyBackgroundGradient from "../../components/CurrencyBackgroundGradi
 import AccountHeader from "./AccountHeader";
 import { getListHeaderComponents } from "./ListHeaderComponent";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
-import TabBarSafeAreaView, {
-  TAB_BAR_SAFE_HEIGHT,
-} from "../../components/TabBar/TabBarSafeAreaView";
 import SectionContainer from "../WalletCentricSections/SectionContainer";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";
@@ -150,7 +148,7 @@ const AccountScreenInner = ({
 
   return (
     <ReactNavigationPerformanceView screenName={ScreenName.Account} interactive>
-      <TabBarSafeAreaView edges={["bottom", "left", "right"]}>
+      <SafeAreaView style={{ flex: 1 }} edges={["top", "left", "right", "bottom"]}>
         {analytics}
         <CurrencyBackgroundGradient
           currentPositionY={currentPositionY}
@@ -160,8 +158,7 @@ const AccountScreenInner = ({
         <AnimatedFlatListWithRefreshControl
           style={{ flex: 1 }}
           contentContainerStyle={{
-            paddingBottom: TAB_BAR_SAFE_HEIGHT + 48,
-            marginTop: 92,
+            paddingTop: 48, //CurrencyHeader height
           }}
           data={data}
           renderItem={({ item }: ListRenderItemInfo<unknown>) => item as JSX.Element}
@@ -179,7 +176,7 @@ const AccountScreenInner = ({
           countervalueAvailable={countervalueAvailable}
           parentAccount={parentAccount}
         />
-      </TabBarSafeAreaView>
+      </SafeAreaView>
     </ReactNavigationPerformanceView>
   );
 };

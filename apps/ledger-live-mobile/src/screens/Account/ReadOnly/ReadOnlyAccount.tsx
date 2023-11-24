@@ -117,7 +117,6 @@ function ReadOnlyAccount({ route }: Props) {
     <SafeAreaView style={{ flex: 1 }} edges={["bottom", "left", "right"]}>
       <TrackScreen category="Account" currency={currency.name} operationsSize={0} source={source} />
       <FlatList
-        contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
         data={data}
         renderItem={renderItem}
         keyExtractor={keyExtractor}

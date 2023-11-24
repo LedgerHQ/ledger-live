@@ -6,7 +6,7 @@ import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { RefreshMedium } from "@ledgerhq/native-ui/assets/icons";
-
+import { SafeAreaView } from "react-native-safe-area-context";
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import { useTranslation } from "react-i18next";
 import { useGlobalSyncState } from "@ledgerhq/live-common/bridge/react/index";
@@ -108,9 +108,9 @@ function Accounts({ navigation, route }: NavigationProps) {
   );
 
   return (
-    <TabBarSafeAreaView>
+    <>
       <TrackScreen category="Accounts" accountsLength={accounts.length} />
-      <Flex flex={1} bg={"background.main"}>
+      <SafeAreaView style={{ flex: 1 }}>
         <AccountsNavigationHeader currencyId={params?.currencyId} />
         {syncPending && (
           <Flex flexDirection={"row"} alignItems={"center"} px={6} my={3}>
@@ -148,8 +148,8 @@ function Accounts({ navigation, route }: NavigationProps) {
           isOpened={!!account}
           account={account as TokenAccount}
         />
-      </Flex>
-    </TabBarSafeAreaView>
+      </SafeAreaView>
+    </>
   );
 }
 
