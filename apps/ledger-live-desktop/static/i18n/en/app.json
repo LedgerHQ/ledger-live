@@ -1415,21 +1415,21 @@
     },
     "recoverBanner": {
       "subscribeDone": {
-        "title": "Add your payment card",
-        "description":"Add your payment method to get your backup secure.",
-        "primaryCta": "Add now",
+        "title": "Finish adding your payment card",
+        "description":"Restore reliably with Ledger Recover.",
+        "primaryCta": "Add card",
         "secondaryCta": "Maybe later"
       },
       "verifyIdentity": {
-        "title": "Verify your identity",
-        "description":"Verify your identity to get your backup secure.",
-        "primaryCta": "Verify now",
+        "title": "Finish verifying your identity",
+        "description":"Restore reliably with Ledger Recover.",
+        "primaryCta": "Verify",
         "secondaryCta": "Maybe later"
       },
       "connectDevice": {
         "title": "Connect your Ledger",
-        "description":"Connect your Ledger to get your backup secure.",
-        "primaryCta": "Connect my Ledger",
+        "description":"You're 1 step away from Ledger Recover.",
+        "primaryCta": "Connect",
         "secondaryCta": "Maybe later"
       }
     }
