@@ -118,6 +118,7 @@ function RecoverBanner() {
             overflow="hidden"
             color={colors.neutral.c80}
             numberOfLines={1}
+            pb={1}
           >
             {recoverBannerSelected.description}
           </Text>
