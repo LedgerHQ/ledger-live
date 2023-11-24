@@ -309,6 +309,10 @@ const SwapForm = () => {
           account: fromAccount,
         });
 
+      // Currency ids
+      const fromCurrencyId = swapTransaction.swap.from.currency?.id;
+      const toCurrencyId = swapTransaction.swap.to.currency?.id;
+
       const customFeeConfig = transaction && getCustomFeesPerFamily(transaction);
       // The Swap web app will automatically recreate the transaction with "default" fees.
       // However, if you wish to use a different fee type, you will need to set it as custom.
@@ -339,6 +343,8 @@ const SwapForm = () => {
         fromParentAccountId: fromParentAccount
           ? accountToWalletAPIAccount(fromParentAccount)?.id
           : undefined,
+        fromCurrencyId,
+        toCurrencyId,
         quoteId: rateId ? rateId : undefined,
         rate: rate?.toString(),
         feeStrategy: (isCustomFee ? "custom" : "medium")?.toUpperCase(),
@@ -357,6 +363,7 @@ const SwapForm = () => {
     isSwapLiveAppEnabled,
     provider,
     swapTransaction.swap.from.account?.id,
+    swapTransaction.swap.from.currency?.id,
     swapTransaction.swap.to.currency?.id,
     swapTransaction.swap.to.account?.id,
     exchangeRate?.providerType,
@@ -398,7 +405,7 @@ const SwapForm = () => {
         </Hide>
       )}
 
-      {pageState === "loaded" && (
+      {/* {pageState === "loaded" && (
         <>
           <SwapFormSummary swapTransaction={swapTransaction} provider={provider} />
           <SwapFormRates
@@ -408,7 +415,7 @@ const SwapForm = () => {
             countdown={!pauseRefreshing}
           />
         </>
-      )}
+      )} */}
 
       {isSwapLiveAppEnabled ? (
         <SwapWebView swapState={swapWebProps} />
