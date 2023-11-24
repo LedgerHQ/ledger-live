@@ -183,8 +183,6 @@ export const getUnfreezeData = (
   unfreezeEnergy: BigNumber;
   canUnfreezeBandwidth: boolean;
   canUnfreezeEnergy: boolean;
-  bandwidthExpiredAt: Date | null | undefined;
-  energyExpiredAt: Date | null | undefined;
 } => {
   const { tronResources } = account;
   invariant(tronResources, "getUnfreezeData: tron account is expected");
@@ -193,31 +191,18 @@ export const getUnfreezeData = (
   const bandwidth = frozen.bandwidth;
   const energy = frozen.energy;
 
-  /** ! expiredAt should always be set with the amount if not this will disable the field by default ! */
-  const bandwidthExpiredAt = bandwidth ? bandwidth.expiredAt : null;
-
-  // eslint-disable-next-line no-underscore-dangle
-  const _bandwidthExpiredAt = +new Date(+(bandwidthExpiredAt ?? 0));
-
-  const energyExpiredAt = energy ? energy.expiredAt : null;
-
-  // eslint-disable-next-line no-underscore-dangle
-  const _energyExpiredAt = +new Date(+(energyExpiredAt ?? 0));
-
   const unfreezeBandwidth = new BigNumber(bandwidth ? bandwidth.amount : 0);
 
-  const canUnfreezeBandwidth = unfreezeBandwidth.gt(0) && Date.now() > _bandwidthExpiredAt;
+  const canUnfreezeBandwidth = unfreezeBandwidth.gt(0);
 
   const unfreezeEnergy = new BigNumber(energy ? energy.amount : 0);
 
-  const canUnfreezeEnergy = unfreezeEnergy.gt(0) && Date.now() > _energyExpiredAt;
+  const canUnfreezeEnergy = unfreezeEnergy.gt(0);
 
   return {
     unfreezeBandwidth,
     unfreezeEnergy,
     canUnfreezeBandwidth,
     canUnfreezeEnergy,
-    bandwidthExpiredAt,
-    energyExpiredAt,
   };
 };

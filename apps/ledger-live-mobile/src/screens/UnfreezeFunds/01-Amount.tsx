@@ -35,51 +35,7 @@ import {
   StackNavigatorProps,
 } from "~/components/RootNavigator/types/helpers";
 import { UnfreezeNavigatorParamList } from "~/components/RootNavigator/types/UnfreezeNavigator";
-
-/** @TODO move this to common */
-const getUnfreezeData = (
-  account: Account,
-): {
-  unfreezeBandwidth: BigNumber;
-  unfreezeEnergy: BigNumber;
-  canUnfreezeBandwidth: boolean;
-  canUnfreezeEnergy: boolean;
-  bandwidthExpiredAt?: Date;
-  energyExpiredAt?: Date;
-} => {
-  const { tronResources } = account as TronAccount;
-  const {
-    frozen: { bandwidth, energy },
-  } = tronResources || {};
-
-  /** ! expiredAt should always be set with the amount if not this will disable the field by default ! */
-  const { amount: bandwidthAmount, expiredAt: bandwidthExpiredAt } = bandwidth || {};
-
-  // eslint-disable-next-line no-underscore-dangle
-  const _bandwidthExpiredAt = bandwidthExpiredAt ? +new Date(bandwidthExpiredAt) : +new Date();
-
-  const { amount: energyAmount, expiredAt: energyExpiredAt } = energy || {};
-
-  // eslint-disable-next-line no-underscore-dangle
-  const _energyExpiredAt = energyExpiredAt ? +new Date(energyExpiredAt) : +new Date();
-
-  const unfreezeBandwidth = BigNumber(bandwidthAmount || 0);
-
-  const canUnfreezeBandwidth = unfreezeBandwidth.gt(0) && Date.now() > _bandwidthExpiredAt;
-
-  const unfreezeEnergy = BigNumber(energyAmount || 0);
-
-  const canUnfreezeEnergy = unfreezeEnergy.gt(0) && Date.now() > _energyExpiredAt;
-
-  return {
-    unfreezeBandwidth,
-    unfreezeEnergy,
-    canUnfreezeBandwidth,
-    canUnfreezeEnergy,
-    bandwidthExpiredAt,
-    energyExpiredAt,
-  };
-};
+import { getUnfreezeData } from "@ledgerhq/live-common/families/tron/react";
 
 type Props = StackNavigatorProps<UnfreezeNavigatorParamList, ScreenName.UnfreezeAmount>;
 
@@ -104,14 +60,10 @@ function UnfreezeAmountInner({ account }: InnerProps) {
   const unit = getAccountUnit(account);
   const { tronResources } = account as TronAccount;
   invariant(tronResources, "tron resources expected");
-  const {
-    unfreezeBandwidth,
-    unfreezeEnergy,
-    canUnfreezeBandwidth,
-    canUnfreezeEnergy,
-    bandwidthExpiredAt,
-    energyExpiredAt,
-  } = useMemo(() => getUnfreezeData(account), [account]);
+  const { unfreezeBandwidth, unfreezeEnergy, canUnfreezeBandwidth, canUnfreezeEnergy } = useMemo(
+    () => getUnfreezeData(account as TronAccount),
+    [account],
+  );
   const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
     () => {
       const t = bridge.createTransaction(account);
@@ -190,14 +142,6 @@ function UnfreezeAmountInner({ account }: InnerProps) {
                 <LText semiBold color={!canUnfreezeBandwidth ? "grey" : "darkBlue"}>
                   <Trans i18nKey="account.bandwidth" />
                 </LText>
-                {bandwidthExpiredAt && unfreezeBandwidth.gt(0) && !canUnfreezeBandwidth ? (
-                  <View style={styles.timeWarn}>
-                    <ClockIcon color={colors.grey} size={12} />
-                    <LText style={styles.timeLabel} semiBold color="grey">
-                      <DateFromNow date={+bandwidthExpiredAt} />
-                    </LText>
-                  </View>
-                ) : null}
               </View>
               <LText
                 semiBold
@@ -226,21 +170,6 @@ function UnfreezeAmountInner({ account }: InnerProps) {
                 <LText semiBold color={!canUnfreezeEnergy ? "grey" : "darkBlue"}>
                   <Trans i18nKey="account.energy" />
                 </LText>
-                {energyExpiredAt && unfreezeEnergy.gt(0) && !canUnfreezeEnergy ? (
-                  <View
-                    style={[
-                      styles.timeWarn,
-                      {
-                        backgroundColor: colors.lightFog,
-                      },
-                    ]}
-                  >
-                    <ClockIcon color={colors.grey} size={12} />
-                    <LText style={styles.timeLabel} semiBold color="grey">
-                      <DateFromNow date={+energyExpiredAt} />
-                    </LText>
-                  </View>
-                ) : null}
               </View>
               <LText
                 semiBold

@@ -16,8 +16,6 @@ export type TronOperationMode =
   | "unfreeze"
   | "vote"
   | "claimReward"
-  | "freezeV2"
-  | "unFreezeV2"
   | "withdrawExpireUnfreeze"
   | "unDelegateResource";
 
@@ -92,8 +90,6 @@ export type TrongridExtraTxInfo = {
   frozenAmount?: BigNumber;
   unfreezeAmount?: BigNumber;
   votes?: Vote[];
-  frozenV2Amount?: BigNumber;
-  unfreezeV2Amount?: BigNumber;
   unDelegatedResourceAmount?: BigNumber;
   receiverAddress?: string;
 };
@@ -101,8 +97,6 @@ export type TrongridExtraTxInfoRaw = {
   frozenAmount?: string;
   unfreezeAmount?: string;
   votes?: Vote[];
-  frozenV2Amount?: string;
-  unfreezeV2Amount?: string;
   unDelegatedResourceAmount?: string;
   receiverAddress?: string;
 };
@@ -123,26 +117,14 @@ export type SmartContractTransactionData = {
   parameter: string;
   owner_address: string;
 };
-export type UnfreezeTransactionData = {
-  receiver_address?: string;
-  owner_address: string;
-  resource: TronResource | null | undefined;
-};
+
 export type FreezeTransactionData = {
-  receiver_address?: string;
-  owner_address: string;
-  frozen_balance: number;
-  frozen_duration: number;
-  resource: TronResource | null | undefined;
-};
-
-export type FreezeV2TransactionData = {
   owner_address: string;
   frozen_balance: number;
   resource: TronResource | null | undefined;
 };
 
-export type UnFreezeV2TransactionData = {
+export type UnFreezeTransactionData = {
   owner_address: string;
   resource: TronResource | null | undefined;
   unfreeze_balance: number;
@@ -188,19 +170,11 @@ export type TronResources = {
     bandwidth: FrozenInfo | null | undefined;
     energy: FrozenInfo | null | undefined;
   };
-  frozenV2: {
-    bandwidth: FrozenV2Info | null | undefined;
-    energy: FrozenV2Info | null | undefined;
-  };
-  unFrozenV2: {
-    bandwidth: UnFrozenV2Info[] | null | undefined;
-    energy: UnFrozenV2Info[] | null | undefined;
+  unFrozen: {
+    bandwidth: UnFrozenInfo[] | null | undefined;
+    energy: UnFrozenInfo[] | null | undefined;
   };
   delegatedFrozen: {
-    bandwidth: DelegatedFrozenInfo | null | undefined;
-    energy: DelegatedFrozenInfo | null | undefined;
-  };
-  delegatedFrozenV2: {
     bandwidth: DelegatedFrozenInfo | null | undefined;
     energy: DelegatedFrozenInfo | null | undefined;
   };
@@ -218,19 +192,11 @@ export type TronResourcesRaw = {
     bandwidth: FrozenInfoRaw | null | undefined;
     energy: FrozenInfoRaw | null | undefined;
   };
-  frozenV2: {
-    bandwidth: FrozenV2InfoRaw | null | undefined;
-    energy: FrozenV2InfoRaw | null | undefined;
-  };
-  unFrozenV2: {
-    bandwidth: UnFrozenV2InfoRaw[] | null | undefined;
-    energy: UnFrozenV2InfoRaw[] | null | undefined;
+  unFrozen: {
+    bandwidth: UnFrozenInfoRaw[] | null | undefined;
+    energy: UnFrozenInfoRaw[] | null | undefined;
   };
   delegatedFrozen: {
-    bandwidth: DelegatedFrozenInfoRaw | null | undefined;
-    energy: DelegatedFrozenInfoRaw | null | undefined;
-  };
-  delegatedFrozenV2: {
     bandwidth: DelegatedFrozenInfoRaw | null | undefined;
     energy: DelegatedFrozenInfoRaw | null | undefined;
   };
@@ -247,14 +213,7 @@ export type Vote = {
   address: string;
   voteCount: number;
 };
-export type FrozenInfo = {
-  amount: BigNumber;
-  expiredAt: Date;
-};
-export type FrozenInfoRaw = {
-  amount: string;
-  expiredAt: string;
-};
+
 export type DelegatedFrozenInfo = {
   amount: BigNumber;
 };
@@ -262,20 +221,20 @@ export type DelegatedFrozenInfoRaw = {
   amount: string;
 };
 
-export type FrozenV2Info = {
+export type FrozenInfo = {
   amount: BigNumber;
 };
 
-export type FrozenV2InfoRaw = {
+export type FrozenInfoRaw = {
   amount: string;
 };
 
-export type UnFrozenV2Info = {
+export type UnFrozenInfo = {
   amount: BigNumber;
   expireTime: number;
 };
 
-export type UnFrozenV2InfoRaw = {
+export type UnFrozenInfoRaw = {
   amount: string;
   expireTime: number;
 };

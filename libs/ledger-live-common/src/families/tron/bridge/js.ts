@@ -64,7 +64,7 @@ import {
   TronUnexpectedFees,
   TronNotEnoughTronPower,
   TronNotEnoughEnergy,
-  TronNoUnfrozenV2,
+  TronNoUnfrozenResource,
   TronInvalidUnDelegateResourceAmount,
 } from "../../../errors";
 import {
@@ -81,15 +81,13 @@ import {
   hydrateSuperRepresentatives,
   validateAddress,
   freezeTronTransaction,
-  unfreezeTronTransaction,
   voteTronSuperRepresentatives,
   fetchCurrentBlockHeight,
   getContractUserEnergyRatioConsumption,
-  freezeV2TronTransaction,
-  unFreezeV2TronTransaction,
   withdrawExpireUnfreezeTronTransaction,
   unDelegateResourceTransaction,
-  getDelegatedResourceV2,
+  unfreezeTronTransaction,
+  getDelegatedResource,
 } from "../api";
 import { activationFees, oneTrx } from "../constants";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
@@ -147,12 +145,6 @@ const signOperation: SignOperationFnSignature<Transaction> = ({ account, transac
               case "claimReward":
                 return claimRewardTronTransaction(account);
 
-              case "freezeV2":
-                return freezeV2TronTransaction(account, transaction);
-
-              case "unFreezeV2":
-                return unFreezeV2TronTransaction(account, transaction);
-
               case "withdrawExpireUnfreeze":
                 return withdrawExpireUnfreezeTronTransaction(account, transaction);
 
@@ -209,7 +201,6 @@ const signOperation: SignOperationFnSignature<Transaction> = ({ account, transac
 
           const value = getValue();
           const operationType = getOperationTypefromMode(transaction.mode);
-          const resource = transaction.resource || "BANDWIDTH";
 
           const getExtra = (): TrongridExtraTxInfo | null | undefined => {
             switch (transaction.mode) {
@@ -220,26 +211,12 @@ const signOperation: SignOperationFnSignature<Transaction> = ({ account, transac
 
               case "unfreeze":
                 return {
-                  unfreezeAmount: get(
-                    (account as TronAccount).tronResources,
-                    `frozen.${resource.toLocaleLowerCase()}.amount`,
-                    new BigNumber(0),
-                  ),
+                  unfreezeAmount: transaction.amount,
                 };
 
               case "vote":
                 return {
                   votes: transaction.votes,
-                };
-
-              case "freezeV2":
-                return {
-                  frozenV2Amount: transaction.amount,
-                };
-
-              case "unFreezeV2":
-                return {
-                  unfreezeV2Amount: transaction.amount,
                 };
 
               case "unDelegateResource":
@@ -396,34 +373,22 @@ const getAccountShape = async (info: AccountShapeInfo, syncConfig) => {
         ? tronResources.delegatedFrozen.energy.amount
         : new BigNumber(0),
     )
+
     .plus(
-      tronResources.frozenV2.bandwidth ? tronResources.frozenV2.bandwidth.amount : new BigNumber(0),
-    )
-    .plus(tronResources.frozenV2.energy ? tronResources.frozenV2.energy.amount : new BigNumber(0))
-    .plus(
-      tronResources.unFrozenV2.energy
-        ? tronResources.unFrozenV2.energy.reduce((accum, cur) => {
+      tronResources.unFrozen.energy
+        ? tronResources.unFrozen.energy.reduce((accum, cur) => {
             return accum.plus(cur.amount);
           }, new BigNumber(0))
         : new BigNumber(0),
     )
     .plus(
-      tronResources.unFrozenV2.bandwidth
-        ? tronResources.unFrozenV2.bandwidth.reduce((accum, cur) => {
+      tronResources.unFrozen.bandwidth
+        ? tronResources.unFrozen.bandwidth.reduce((accum, cur) => {
             return accum.plus(cur.amount);
           }, new BigNumber(0))
-        : new BigNumber(0),
-    )
-    .plus(
-      tronResources.delegatedFrozenV2.bandwidth
-        ? tronResources.delegatedFrozenV2.bandwidth.amount
-        : new BigNumber(0),
-    )
-    .plus(
-      tronResources.delegatedFrozenV2.energy
-        ? tronResources.delegatedFrozenV2.energy.amount
         : new BigNumber(0),
     );
+
   const parentTxs = txs.filter(isParentTx);
   const parentOperations: TronOperation[] = compact(
     parentTxs.map(tx => txInfoToOperation(accountId, info.address, tx)),
@@ -630,7 +595,7 @@ const getTransactionStatus = async (a: TronAccount, t: Transaction): Promise<Tra
     errors.recipient = new RecipientRequired();
   }
 
-  if (["send", "freeze", "unfreeze", "unDelegateResource"].includes(mode)) {
+  if (["send", "unDelegateResource"].includes(mode)) {
     if (recipient === a.freshAddress) {
       errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
     } else if (recipient && !(await validateAddress(recipient))) {
@@ -651,51 +616,30 @@ const getTransactionStatus = async (a: TronAccount, t: Transaction): Promise<Tra
   }
 
   if (mode === "unfreeze") {
-    const lowerCaseResource = resource ? resource.toLowerCase() : "bandwidth";
-    const now = new Date();
-    const expiredDatePath = recipient
-      ? `tronResources.delegatedFrozen.${lowerCaseResource}.expiredAt`
-      : `tronResources.frozen.${lowerCaseResource}.expiredAt`;
-    const expirationDate: Date | null | undefined = get(a, expiredDatePath, undefined);
-
-    if (!expirationDate) {
-      if (resource === "BANDWIDTH") {
-        errors.resource = new TronNoFrozenForBandwidth();
-      } else {
-        errors.resource = new TronNoFrozenForEnergy();
-      }
-    } else if (now.getTime() < expirationDate.getTime()) {
-      errors.resource = new TronUnfreezeNotExpired(undefined, {
-        until: expirationDate.toISOString(),
-      });
-    }
-  }
-
-  if (mode === "unFreezeV2") {
-    const { bandwidth, energy } = a.tronResources.frozenV2;
-    if (resource === "BANDWIDTH" && (bandwidth?.amount || new BigNumber(0)).lt(t.amount)) {
+    const { bandwidth, energy } = a.tronResources.frozen;
+    if (resource === "BANDWIDTH" && t.amount.gt(bandwidth?.amount || new BigNumber(0))) {
       errors.resource = new TronNoFrozenForBandwidth();
-    } else if ((energy?.amount || new BigNumber(0)).lt(t.amount)) {
+    } else if (t.amount.gt(energy?.amount || new BigNumber(0))) {
       errors.resource = new TronNoFrozenForEnergy();
     }
   }
 
   if (mode === "withdrawExpireUnfreeze") {
     const now = Date.now();
-    if (!a.tronResources.unFrozenV2.bandwidth && !a.tronResources.unFrozenV2.energy) {
-      errors.resource = new TronNoUnfrozenV2();
+    if (!a.tronResources.unFrozen.bandwidth && !a.tronResources.unFrozen.energy) {
+      errors.resource = new TronNoUnfrozenResource();
     } else if (
-      a.tronResources.unFrozenV2.bandwidth &&
-      a.tronResources.unFrozenV2.bandwidth.every(unfrozen => unfrozen.expireTime > now) &&
-      a.tronResources.unFrozenV2.energy &&
-      a.tronResources.unFrozenV2.energy.every(unfrozen => unfrozen.expireTime > now)
+      a.tronResources.unFrozen.bandwidth &&
+      a.tronResources.unFrozen.bandwidth.every(unfrozen => unfrozen.expireTime > now) &&
+      a.tronResources.unFrozen.energy &&
+      a.tronResources.unFrozen.energy.every(unfrozen => unfrozen.expireTime > now)
     ) {
       errors.resource = new TronUnfreezeNotExpired();
     }
   }
 
   if (mode === "unDelegateResource" && resource && a.tronResources) {
-    const delegatedResourceAmount = await getDelegatedResourceV2(a, t, resource);
+    const delegatedResourceAmount = await getDelegatedResource(a, t, resource);
     if (delegatedResourceAmount.lt(t.amount)) {
       errors.resource = new TronInvalidUnDelegateResourceAmount();
     }
@@ -752,20 +696,18 @@ const getTransactionStatus = async (a: TronAccount, t: Transaction): Promise<Tra
       ? BigNumber.max(0, account.spendableBalance.minus(estimatedFees))
       : account.balance;
   const amount = useAllAmount ? balance : t.amount;
-  const amountSpent = ["send", "freeze", "freezeV2", "unFreezeV2", "undelegateResource"].includes(
-    mode,
-  )
+  const amountSpent = ["send", "freeze", "undelegateResource"].includes(mode)
     ? amount
     : new BigNumber(0);
 
-  if ((mode === "freeze" || mode === "freezeV2") && amount.lt(oneTrx)) {
+  if (mode === "freeze" && amount.lt(oneTrx)) {
     errors.amount = new TronInvalidFreezeAmount();
   }
 
   // fees are applied in the parent only (TRX)
   const totalSpent = account.type === "Account" ? amountSpent.plus(estimatedFees) : amountSpent;
 
-  if (["send", "freeze", "freezeV2"].includes(mode)) {
+  if (["send", "freeze"].includes(mode)) {
     if (amount.eq(0)) {
       errors.amount = new AmountRequired();
     }

@@ -167,8 +167,6 @@
       "VOTE": "Voted",
       "FREEZE": "Frozen",
       "UNFREEZE": "Unfrozen",
-      "FREEZEV2": "Frozen",
-      "UNFREEZEV2": "Unfrozen",
       "UNDELEGATERESOURCE": "Undelegated",
       "WITHDRAWEXPIREUNFREEZE": "Withdrawal",
       "REWARD": "Claimed reward",

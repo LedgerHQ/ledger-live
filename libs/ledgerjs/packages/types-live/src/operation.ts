@@ -20,8 +20,6 @@ export type OperationType =
   | "FEES"
   | "FREEZE"
   | "UNFREEZE"
-  | "FREEZEV2"
-  | "UNFREEZEV2"
   | "WITHDRAWEXPIREUNFREEZE"
   | "UNDELEGATERESOURCE"
   // POLKADOT

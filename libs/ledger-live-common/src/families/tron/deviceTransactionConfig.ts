@@ -51,7 +51,7 @@ function getDeviceTransactionConfig({
     });
   }
 
-  if (mode === "freeze" || mode === "freezeV2") {
+  if (mode === "freeze") {
     fields.push({
       type: "address",
       label: "Freeze To",
@@ -59,10 +59,10 @@ function getDeviceTransactionConfig({
     });
   }
 
-  if (mode === "unfreeze" || mode === "unFreezeV2") {
+  if (mode === "unfreeze") {
     fields.push({
       type: "address",
-      label: "Delegated To",
+      label: "Unfreeze To",
       address: mainAccount.freshAddress,
     });
   }
@@ -70,7 +70,7 @@ function getDeviceTransactionConfig({
   if (mode === "withdrawExpireUnfreeze") {
     fields.push({
       type: "address",
-      label: "Withdraw UnfrozenV2 to",
+      label: "Withdraw unfrozen to",
       address: mainAccount.freshAddress,
     });
   }

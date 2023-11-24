@@ -16,14 +16,6 @@ export function fromOperationExtraRaw(extraRaw: TrongridExtraTxInfoRaw): Trongri
     extra.votes = extraRaw.votes;
   }
 
-  if (extraRaw.frozenV2Amount) {
-    extra.frozenV2Amount = new BigNumber(extraRaw.frozenV2Amount);
-  }
-
-  if (extraRaw.unfreezeV2Amount) {
-    extra.unfreezeV2Amount = new BigNumber(extraRaw.unfreezeV2Amount);
-  }
-
   if (extraRaw.unDelegatedResourceAmount) {
     extra.unDelegatedResourceAmount = new BigNumber(extraRaw.unDelegatedResourceAmount);
   }
@@ -48,14 +40,6 @@ export function toOperationExtraRaw(extra: TrongridExtraTxInfo): TrongridExtraTx
 
   if (extra.votes) {
     extraRaw.votes = extra.votes;
-  }
-
-  if (extra.frozenV2Amount) {
-    extraRaw.frozenV2Amount = extra.frozenV2Amount.toString();
-  }
-
-  if (extra.unfreezeV2Amount) {
-    extraRaw.unfreezeV2Amount = extra.unfreezeV2Amount.toString();
   }
 
   if (extra.unDelegatedResourceAmount) {

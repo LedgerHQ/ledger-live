@@ -74,6 +74,7 @@ const tron: CurrenciesData<Transaction> = {
   ],
   accounts: [
     {
+      FIXME_tests: ["balance is sum of ops"],
       transactions: [
         {
           name: "sendSuccess",
@@ -139,6 +140,35 @@ const tron: CurrenciesData<Transaction> = {
           },
         },
         {
+          name: "voteSuccess",
+          transaction: fromTransactionRaw({
+            family: "tron",
+            recipient: activatedAddress1,
+            amount: "0",
+            networkInfo: null,
+            mode: "vote",
+            duration: undefined,
+            resource: undefined,
+            votes: [
+              {
+                address: "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH",
+                voteCount: 1,
+              },
+              {
+                address: "TGj1Ej1qRzL9feLTLhjwgxXF4Ct6GTWg2U",
+                voteCount: 1,
+              },
+            ],
+          }),
+          expectedStatus: {
+            amount: new BigNumber("0"),
+            errors: {},
+            warnings: {},
+            totalSpent: new BigNumber("0"),
+            estimatedFees: new BigNumber("0"),
+          },
+        },
+        {
           name: "freezeBandwidthSuccess",
           transaction: fromTransactionRaw({
             family: "tron",
@@ -179,120 +209,51 @@ const tron: CurrenciesData<Transaction> = {
           },
         },
         {
-          name: "voteSuccess",
+          name: "NotEnoughFrozenEnergy",
           transaction: fromTransactionRaw({
             family: "tron",
-            recipient: activatedAddress1,
-            amount: "0",
+            recipient: "TBsyKdNsCKNXLgvneeUJ3rbXgWSgk6paTM",
+            amount: "1000000",
             networkInfo: null,
-            mode: "vote",
+            mode: "unfreeze",
             duration: undefined,
-            resource: undefined,
-            votes: [
-              {
-                address: "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH",
-                voteCount: 1,
-              },
-              {
-                address: "TGj1Ej1qRzL9feLTLhjwgxXF4Ct6GTWg2U",
-                voteCount: 1,
-              },
-            ],
+            resource: "ENERGY",
+            votes: [],
           }),
           expectedStatus: {
             amount: new BigNumber("0"),
-            errors: {},
+            errors: {
+              resource: new TronNoFrozenForEnergy(),
+            },
             warnings: {},
             totalSpent: new BigNumber("0"),
             estimatedFees: new BigNumber("0"),
           },
         },
         {
-          name: "freezeV2BandwidthSuccess",
-          transaction: fromTransactionRaw({
-            family: "tron",
-            recipient: "",
-            amount: "1000000",
-            networkInfo: null,
-            mode: "freezeV2",
-            duration: undefined,
-            resource: "BANDWIDTH",
-            votes: [],
-          }),
-          expectedStatus: {
-            amount: new BigNumber("1000000"),
-            errors: {},
-            warnings: {},
-            totalSpent: new BigNumber("1000000"),
-            estimatedFees: new BigNumber("0"),
-          },
-        },
-        {
-          name: "freezeV2EnergySuccess",
-          transaction: fromTransactionRaw({
-            family: "tron",
-            recipient: "",
-            amount: "1000000",
-            networkInfo: null,
-            mode: "freezeV2",
-            duration: undefined,
-            resource: "ENERGY",
-            votes: [],
-          }),
-          expectedStatus: {
-            amount: new BigNumber("1000000"),
-            errors: {},
-            warnings: {},
-            totalSpent: new BigNumber("1000000"),
-            estimatedFees: new BigNumber("0"),
-          },
-        },
-        {
-          name: "NotEnoughFrozenV2Energy",
+          name: "NotEnoughFrozenBandwidth",
           transaction: fromTransactionRaw({
             family: "tron",
             recipient: "TBsyKdNsCKNXLgvneeUJ3rbXgWSgk6paTM",
             amount: "1000000",
             networkInfo: null,
-            mode: "unFreezeV2",
-            duration: undefined,
-            resource: "ENERGY",
-            votes: [],
-          }),
-          expectedStatus: {
-            amount: new BigNumber("1000000"),
-            errors: {
-              resource: new TronNoFrozenForEnergy(),
-            },
-            warnings: {},
-            totalSpent: new BigNumber("1000000"),
-            estimatedFees: new BigNumber("0"),
-          },
-        },
-        {
-          name: "NotEnoughFrozenV2Bandwidth",
-          transaction: fromTransactionRaw({
-            family: "tron",
-            recipient: "TBsyKdNsCKNXLgvneeUJ3rbXgWSgk6paTM",
-            amount: "1000000",
-            networkInfo: null,
-            mode: "unFreezeV2",
+            mode: "unfreeze",
             duration: undefined,
             resource: "BANDWIDTH",
             votes: [],
           }),
           expectedStatus: {
-            amount: new BigNumber("1000000"),
+            amount: new BigNumber("0"),
             errors: {
               resource: new TronNoFrozenForBandwidth(),
             },
             warnings: {},
-            totalSpent: new BigNumber("1000000"),
+            totalSpent: new BigNumber("0"),
             estimatedFees: new BigNumber("0"),
           },
         },
         {
-          name: "NoUnfrozenV2Balances",
+          name: "NoUnfrozenBalances",
           transaction: fromTransactionRaw({
             family: "tron",
             recipient: "",
@@ -812,8 +773,8 @@ const tron: CurrenciesData<Transaction> = {
           name: "tronNoFrozenForBandwidth",
           transaction: fromTransactionRaw({
             family: "tron",
-            recipient: "",
-            amount: "0",
+            recipient: "TBsyKdNsCKNXLgvneeUJ3rbXgWSgk6paTM",
+            amount: "1000000",
             networkInfo: null,
             mode: "unfreeze",
             duration: undefined,

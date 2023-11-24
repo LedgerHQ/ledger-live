@@ -62,8 +62,6 @@ export const getEstimatedBlockSize = (a: Account, t: Transaction): BigNumber => 
 
     case "freeze":
     case "unfreeze":
-    case "freezeV2":
-    case "unFreezeV2":
     case "claimReward":
     case "withdrawExpireUnfreeze":
     case "unDelegateResource":
@@ -94,12 +92,6 @@ export const getOperationTypefromMode = (mode: TronOperationMode): OperationType
     case "claimReward":
       return "REWARD";
 
-    case "freezeV2":
-      return "FREEZEV2";
-
-    case "unFreezeV2":
-      return "UNFREEZEV2";
-
     case "withdrawExpireUnfreeze":
       return "WITHDRAWEXPIREUNFREEZE";
 
@@ -124,12 +116,6 @@ const getOperationType = (
     case "ExchangeTransactionContract":
       return "OUT";
 
-    case "FreezeBalanceContract":
-      return "FREEZE";
-
-    case "UnfreezeBalanceContract":
-      return "UNFREEZE";
-
     case "VoteWitnessContract":
       return "VOTE";
 
@@ -137,10 +123,10 @@ const getOperationType = (
       return "REWARD";
 
     case "FreezeBalanceV2Contract":
-      return "FREEZEV2";
+      return "FREEZE";
 
     case "UnfreezeBalanceV2Contract":
-      return "UNFREEZEV2";
+      return "UNFREEZE";
 
     case "WithdrawExpireUnfreezeContract":
       return "WITHDRAWEXPIREUNFREEZE";
@@ -244,16 +230,6 @@ export const formatTrongridTxResponse = (
 
     const getExtra = (): TrongridExtraTxInfo | null | undefined => {
       switch (type) {
-        case "FreezeBalanceContract":
-          return {
-            frozenAmount: new BigNumber(frozen_balance),
-          };
-
-        case "UnfreezeBalanceContract":
-          return {
-            unfreezeAmount: new BigNumber(unfreeze_amount || detail.unfreeze_amount),
-          };
-
         case "VoteWitnessContract":
           return {
             votes: votes.map(v => ({
@@ -264,12 +240,12 @@ export const formatTrongridTxResponse = (
 
         case "FreezeBalanceV2Contract":
           return {
-            frozenV2Amount: new BigNumber(frozen_balance),
+            frozenAmount: new BigNumber(frozen_balance),
           };
 
         case "UnfreezeBalanceV2Contract":
           return {
-            unfreezeV2Amount: new BigNumber(unfreeze_balance),
+            unfreezeAmount: new BigNumber(unfreeze_balance),
           };
 
         case "UnDelegateResourceContract":
@@ -343,19 +319,11 @@ export const defaultTronResources: TronResources = {
     bandwidth: undefined,
     energy: undefined,
   },
-  frozenV2: {
-    bandwidth: undefined,
-    energy: undefined,
-  },
-  unFrozenV2: {
+  unFrozen: {
     bandwidth: undefined,
     energy: undefined,
   },
   delegatedFrozen: {
-    bandwidth: undefined,
-    energy: undefined,
-  },
-  delegatedFrozenV2: {
     bandwidth: undefined,
     energy: undefined,
   },

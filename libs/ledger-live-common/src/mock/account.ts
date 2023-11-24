@@ -92,19 +92,11 @@ export function genAccount(id: number | string, opts: GenAccountOptions = {}): A
               bandwidth: null,
               energy: null,
             },
-            frozenV2: {
-              bandwidth: null,
-              energy: null,
-            },
-            unFrozenV2: {
+            unFrozen: {
               bandwidth: null,
               energy: null,
             },
             delegatedFrozen: {
-              bandwidth: null,
-              energy: null,
-            },
-            delegatedFrozenV2: {
               bandwidth: null,
               energy: null,
             },

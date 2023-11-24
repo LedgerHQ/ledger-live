@@ -63,19 +63,17 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
     locale,
   };
   const energy = tronResources.energy;
-  const bandwidthAmount = tronResources.frozen.bandwidth?.amount;
-  const energyAmount = tronResources.frozen.energy?.amount;
-  const frozenV2bandwidthAmount = tronResources.frozenV2.bandwidth?.amount;
-  const frozenV2EnergyAmount = tronResources.frozenV2.energy?.amount;
-  const delegatedFrozenV2BandwidthAmount = tronResources.delegatedFrozenV2.bandwidth?.amount;
-  const delegatedFrozenV2EnergyAmount = tronResources.delegatedFrozenV2.energy?.amount;
-  const unfrozenV2BandwidthAmount = tronResources.unFrozenV2.bandwidth
-    ? tronResources.unFrozenV2.bandwidth.reduce((accum, cur) => {
+  const frozenBandwidthAmount = tronResources.frozen.bandwidth?.amount;
+  const frozenEnergyAmount = tronResources.frozen.energy?.amount;
+  const delegatedFrozenBandwidthAmount = tronResources.delegatedFrozen.bandwidth?.amount;
+  const delegatedFrozenEnergyAmount = tronResources.delegatedFrozen.energy?.amount;
+  const unfrozenBandwidthAmount = tronResources.unFrozen.bandwidth
+    ? tronResources.unFrozen.bandwidth.reduce((accum, cur) => {
         return accum.plus(cur.amount);
       }, new BigNumber(0))
     : new BigNumber(0);
-  const unfrozenV2EnergyAmount = tronResources.unFrozenV2.energy
-    ? tronResources.unFrozenV2.energy.reduce((accum, cur) => {
+  const unfrozenEnergyAmount = tronResources.unFrozen.energy
+    ? tronResources.unFrozen.energy.reduce((accum, cur) => {
         return accum.plus(cur.amount);
       }, new BigNumber(0))
     : new BigNumber(0);
@@ -85,14 +83,12 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const spendableBalance = formatCurrencyUnit(account.unit, account.spendableBalance, formatConfig);
   const frozenAmount = formatCurrencyUnit(
     account.unit,
-    BigNumber(bandwidthAmount || 0)
-      .plus(BigNumber(energyAmount || 0))
-      .plus(BigNumber(frozenV2bandwidthAmount || 0))
-      .plus(BigNumber(frozenV2EnergyAmount || 0))
-      .plus(BigNumber(delegatedFrozenV2BandwidthAmount || 0))
-      .plus(BigNumber(delegatedFrozenV2EnergyAmount || 0))
-      .plus(BigNumber(unfrozenV2BandwidthAmount))
-      .plus(BigNumber(unfrozenV2EnergyAmount)),
+    BigNumber(frozenBandwidthAmount || 0)
+      .plus(BigNumber(frozenEnergyAmount || 0))
+      .plus(BigNumber(delegatedFrozenBandwidthAmount || 0))
+      .plus(BigNumber(delegatedFrozenEnergyAmount || 0))
+      .plus(BigNumber(unfrozenBandwidthAmount))
+      .plus(BigNumber(unfrozenEnergyAmount)),
     formatConfig,
   );
   const formatedEnergy = energy && energy.gt(0) ? energy : null;

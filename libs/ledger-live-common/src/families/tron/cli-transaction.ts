@@ -19,7 +19,7 @@ const options = [
   {
     name: "mode",
     type: String,
-    desc: "mode of transaction: send, freeze, unfreeze, freezeV2, unFreezeV2, withdrawExpireUnfreeze, unDelegateResource",
+    desc: "mode of transaction: send, freeze, unfreeze, withdrawExpireUnfreeze, unDelegateResource",
   },
   {
     name: "duration",
@@ -94,8 +94,6 @@ function inferTransactions(
       "unfreeze",
       "vote",
       "claimReward",
-      "freezeV2",
-      "unFreezeV2",
       "withdrawExpireUnfreeze",
       "unDelegateResource",
     ].includes(mode),
