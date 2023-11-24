@@ -416,26 +416,32 @@ const SwapForm = () => {
         </Hide>
       )}
 
-      {/* {pageState === "loaded" && (
-        <>
-          <SwapFormSummary swapTransaction={swapTransaction} provider={provider} />
-          <SwapFormRates
-            swap={swapTransaction.swap}
-            provider={provider}
-            refreshTime={refreshTime}
-            countdown={!pauseRefreshing}
-          />
-        </>
-      )} */}
-
       {isSwapLiveAppEnabled ? (
         <SwapWebView swapState={swapWebProps} />
       ) : (
-        <Box>
-          <Button primary disabled={!isSwapReady} onClick={onSubmit} data-test-id="exchange-button">
-            {t("common.exchange")}
-          </Button>
-        </Box>
+        <>
+          {pageState === "loaded" && (
+            <>
+              <SwapFormSummary swapTransaction={swapTransaction} provider={provider} />
+              <SwapFormRates
+                swap={swapTransaction.swap}
+                provider={provider}
+                refreshTime={refreshTime}
+                countdown={!pauseRefreshing}
+              />
+            </>
+          )}
+          <Box>
+            <Button
+              primary
+              disabled={!isSwapReady}
+              onClick={onSubmit}
+              data-test-id="exchange-button"
+            >
+              {t("common.exchange")}
+            </Button>
+          </Box>
+        </>
       )}
     </Wrapper>
   );
