@@ -1,6 +1,7 @@
 import BigNumber from "bignumber.js";
 import { Operation } from "@ledgerhq/types-live";
 import { encodeAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
+import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
 import {
   ledgerERC1155EventToOperations,
   ledgerERC20EventToOperations,
@@ -13,7 +14,6 @@ import {
   LedgerExplorerERC20TransferEvent,
   LedgerExplorerOperation,
 } from "../../../types";
-import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
 
 const accountId = encodeAccountId({
   type: "js",

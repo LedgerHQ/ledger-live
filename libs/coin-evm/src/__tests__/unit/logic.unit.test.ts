@@ -1,4 +1,3 @@
-import eip55 from "eip55";
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
 import * as cryptoAssetsTokens from "@ledgerhq/cryptoassets/tokens";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
