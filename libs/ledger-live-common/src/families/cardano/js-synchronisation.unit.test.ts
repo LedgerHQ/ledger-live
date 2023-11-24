@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { AccountShapeInfo, GetAccountShape } from "../../bridge/jsHelpers";
-import { APINetworkInfo, APITransaction } from "./api/api-types";
+import { APINetworkInfo } from "./api/api-types";
 import { getDelegationInfo } from "./api/getDelegationInfo";
 import { getNetworkInfo } from "./api/getNetworkInfo";
 import { getTransactions } from "./api/getTransactions";
