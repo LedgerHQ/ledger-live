@@ -35,7 +35,7 @@ const Container = styled(Box).attrs(() => ({
 }))``;
 
 const HighlightVersion = styled(Text).attrs(() => ({
-  backgroundColor: "neutral.c30",
+  backgroundColor: "neutral.c40",
   color: "palette.text.shade100",
   ff: "Inter|SemiBold",
   variant: "subtitle",
@@ -102,7 +102,7 @@ const Body = ({
                 .map((hash, i) => <span key={`${i}-${hash}`}>{hash}</span>)}
           </HighlightVersion>
         ) : (
-          <Flex flexDirection="row" alignItems="center" my={2}>
+          <Flex flexDirection="row" alignItems="center" mb={4}>
             <>
               <HighlightVersion>{`V ${from}`}</HighlightVersion>
               <IconsLegacy.ArrowRightMedium size={14} />
@@ -111,9 +111,7 @@ const Body = ({
           </Flex>
         )}
 
-        <Text ff="Inter|SemiBold" fontSize={15} textAlign="center" color="palette.text.shade100">
-          {t("manager.modal.confirmIdentifierText")}
-        </Text>
+        <Title>{t("manager.modal.confirmIdentifierText")}</Title>
       </>
     );
   } else {

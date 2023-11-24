@@ -1927,10 +1927,12 @@
     "modal": {
       "title": "{{productName}} OS update",
       "steps": {
-        "preparingUpdate": "Backing up your settings and apps",
+        "preparingUpdate": "Backing up your settings\nand apps",
         "transferringUpdate": "Transferring update to {{productName}}",
         "prepare": "Prepare update",
+        "prepareDone": "Update ready\nto install",
         "install": "Install update",
+        "installDone": "Update\ninstalled",
         "restore": "Restore settings",
         "apps": "Restore apps",
         "updateMCU": "Firmware update",
@@ -1945,7 +1947,7 @@
         "flash": "Preparing your device..."
       },
       "confirmIdentifier": "Verify the identifier",
-      "confirmIdentifierText": "Tap on “Install” to start the OS update",
+      "confirmIdentifierText": "Tap on “Install” to\nstart the OS update",
       "identifier": "Identifier",
       "newFirmware": "New firmware {{version}}",
       "confirmUpdate": "Please confirm the update on your device",
@@ -1957,7 +1959,7 @@
       "mcuSecondNanoX": "Press and hold the left button until <1><0>{{bootloaderOption}}</0></1> appears. Press both buttons to confirm and reconnect your device.",
       "mcuBlueFirst": "Press and hold the side button for 10 seconds to turn off the device. Release the button.",
       "mcuBlueSecond": "Press and hold the button for at least 5 seconds until the Boot Options are displayed. Tap Bootloader Mode",
-      "successTitle": "Your {{deviceName}} OS is up to date.",
+      "successTitle": "Your {{deviceName}} OS is\nup to date.",
       "sucessCTAApps": "Reinstall apps",
       "SuccessCTANoApps": "Install apps",
       "cancelReinstallCTA": "Install update",

@@ -35,6 +35,10 @@ export interface Props extends FlexBoxProps {
    * Delete steps with same following labels
    */
   filterDuplicate?: boolean;
+  /**
+   * Complete all the steps
+   */
+  isOver?: boolean;
 }
 
 export type StepProps = {
@@ -99,6 +103,7 @@ export const Item = {
 
 export const StepText = styled(Text)<{ state: StepState }>`
   text-align: center;
+  white-space: pre-wrap;
   color: ${p => {
     if (p.state === "errored") {
       return p.theme.colors.error.c50;
@@ -186,7 +191,16 @@ export const Step = memo(function Step({
   );
 });
 
-function getState(activeIndex: number, index: number, errored?: boolean, disabled?: boolean) {
+function getState(
+  activeIndex: number,
+  index: number,
+  errored?: boolean,
+  disabled?: boolean,
+  completed?: boolean,
+) {
+  if (completed) {
+    return "completed";
+  }
   if (disabled) {
     return "disabled";
   }
@@ -205,6 +219,7 @@ function Stepper({
   errored,
   disabledIndexes,
   filterDuplicate,
+  isOver,
   ...extraProps
 }: Props) {
   const displayedSteps = filterDuplicate
@@ -217,7 +232,13 @@ function Stepper({
   return (
     <Flex flexWrap="nowrap" justifyContent="space-between" {...extraProps}>
       {displayedSteps.map((step, idx) => {
-        const state = getState(dislayedActiveIndex, idx, errored, disabledIndexes?.includes(idx));
+        const state = getState(
+          dislayedActiveIndex,
+          idx,
+          errored,
+          disabledIndexes?.includes(idx),
+          isOver,
+        );
         const nextState =
           idx < displayedSteps.length - 1 ? getState(dislayedActiveIndex, idx + 1) : undefined;
         return (

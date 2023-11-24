@@ -11,7 +11,7 @@ import SoftwareCheckAllowSecureChannelDrawer, {
   Props as SoftwareCheckAllowSecureChannelDrawerProps,
 } from "./SoftwareCheckAllowSecureChannelDrawer";
 import { Status as SoftwareCheckStatus } from "../types";
-import { getDeviceModel } from "@ledgerhq/devices";
+import { getDeviceModel, DeviceModelId } from "@ledgerhq/devices";
 import { openURL } from "~/renderer/linking";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import UpdateFirmwareModal, {
@@ -170,7 +170,7 @@ const EarlySecurityChecks = ({
         closeFwUpdateDrawer();
         restartChecksAfterUpdate();
       },
-      deviceHasPin: deviceModelId !== "stax", // early security checks are triggered only if the device is in one of the steps prior to setting a PIN code
+      deviceHasPin: deviceModelId !== DeviceModelId.stax, // early security checks are triggered only if the device is in one of the steps prior to setting a PIN code
     };
 
     setDrawer(UpdateFirmwareModal, updateFirmwareModalProps, {
