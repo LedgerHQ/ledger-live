@@ -4146,8 +4146,7 @@
     "updateAvailable": "Update to Ledger Live version {{version}} is available",
     "error": "Error during update. Please download again",
     "reDownload": "Download again",
-    "nightlyWarning": "This version cannot auto-update. Please install the latest version manually",
-    "downloadNow": "Download update"
+    "nightlyWarning": "This version cannot auto-update. Please install the latest version manually"
   },
   "crash": {
     "title": "Something went wrong",
