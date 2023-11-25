@@ -156,6 +156,7 @@ export const DEFAULT_FEATURES: Features = {
     enabled: false,
     params: {
       availableOnDesktop: false,
+      isNew: false,
       ledgerliveStorageState: false,
       bannerSubscriptionNotification: false,
       account: {

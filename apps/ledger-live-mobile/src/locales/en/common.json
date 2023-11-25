@@ -2225,16 +2225,16 @@
     },
     "recoverBanner": {
       "subscribeDone": {
-        "title": "Add credit or debit card",
-        "description":"Add your payment method to get your backup secure."
+        "title": "Finish adding your payment card",
+        "description":"Restore reliably with Ledger Recover."
       },
       "verifyIdentity": {
-        "title": "Verify my identity",
-        "description":"Verify your identity to get your backup secure."
+        "title": "Finish verifying your identity",
+        "description":"Restore reliably with Ledger Recover."
       },
       "connectDevice": {
-        "title": "Connect Ledger",
-        "description":"Connect your Ledger to get your backup secure."
+        "title": "Final step: Connect your Ledger",
+        "description":"You're 1 step away from Ledger Recover."
       }
     }
   },
