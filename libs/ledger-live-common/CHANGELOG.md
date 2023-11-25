@@ -1,5 +1,20 @@
 # @ledgerhq/live-common
 
+## 33.2.0-nightly.7
+
+### Patch Changes
+
+- [#4801](https://github.com/LedgerHQ/ledger-live/pull/4801) [`f20c1149be`](https://github.com/LedgerHQ/ledger-live/commit/f20c1149be9eb255e05f0f41f4a0575e8b89dab6) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Remove legacy hack for decred,qtum,viacoin fees that is not needed anymore
+
+- [#5517](https://github.com/LedgerHQ/ledger-live/pull/5517) [`6dea54057f`](https://github.com/LedgerHQ/ledger-live/commit/6dea54057f67162a1f556661afae16e0422f7ac3) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Add isNew field to Feature_ProtectServicesDesktop and rename Ledger Recover to [L] Recover.
+
+- Updated dependencies []:
+  - @ledgerhq/coin-algorand@0.3.6-nightly.7
+  - @ledgerhq/coin-evm@0.11.0-nightly.7
+  - @ledgerhq/coin-framework@0.9.0-nightly.7
+  - @ledgerhq/coin-polkadot@0.4.6-nightly.8
+  - @ledgerhq/hw-app-eth@6.35.0-nightly.7
+
 ## 33.2.0-nightly.6
 
 ### Patch Changes

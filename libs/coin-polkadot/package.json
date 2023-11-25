@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-polkadot",
-  "version": "0.4.6-nightly.7",
+  "version": "0.4.6-nightly.8",
   "description": "Ledger Polkadot Coin integration",
   "keywords": [
     "Ledger",

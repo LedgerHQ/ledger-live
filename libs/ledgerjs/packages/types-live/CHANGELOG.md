@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.43.0-nightly.4
+
+### Patch Changes
+
+- [#5517](https://github.com/LedgerHQ/ledger-live/pull/5517) [`6dea54057f`](https://github.com/LedgerHQ/ledger-live/commit/6dea54057f67162a1f556661afae16e0422f7ac3) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Add isNew field to Feature_ProtectServicesDesktop and rename Ledger Recover to [L] Recover.
+
 ## 6.43.0-nightly.3
 
 ### Patch Changes

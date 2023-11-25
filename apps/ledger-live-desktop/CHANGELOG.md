@@ -1,5 +1,22 @@
 # ledger-live-desktop
 
+## 2.72.0-nightly.7
+
+### Patch Changes
+
+- [#5550](https://github.com/LedgerHQ/ledger-live/pull/5550) [`594457c012`](https://github.com/LedgerHQ/ledger-live/commit/594457c01268c14251273cae5374ce64e3cf74de) Thanks [@gre](https://github.com/gre)! - Fix auto update to not have a broken 'Download update' button.
+
+- [#5560](https://github.com/LedgerHQ/ledger-live/pull/5560) [`50de57cf05`](https://github.com/LedgerHQ/ledger-live/commit/50de57cf05e30ac3b5a593872579c40f41467469) Thanks [@stephane-lieumont-ledger](https://github.com/stephane-lieumont-ledger)! - update design recover banner pixel polish
+
+- [#5517](https://github.com/LedgerHQ/ledger-live/pull/5517) [`6dea54057f`](https://github.com/LedgerHQ/ledger-live/commit/6dea54057f67162a1f556661afae16e0422f7ac3) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Add isNew field to Feature_ProtectServicesDesktop and rename Ledger Recover to [L] Recover.
+
+- Updated dependencies [[`f20c1149be`](https://github.com/LedgerHQ/ledger-live/commit/f20c1149be9eb255e05f0f41f4a0575e8b89dab6), [`6dea54057f`](https://github.com/LedgerHQ/ledger-live/commit/6dea54057f67162a1f556661afae16e0422f7ac3)]:
+  - @ledgerhq/live-common@33.2.0-nightly.7
+  - @ledgerhq/types-live@6.43.0-nightly.4
+  - @ledgerhq/coin-evm@0.11.0-nightly.7
+  - @ledgerhq/coin-framework@0.9.0-nightly.7
+  - @ledgerhq/domain-service@1.1.15-nightly.5
+
 ## 2.72.0-nightly.6
 
 ### Minor Changes
