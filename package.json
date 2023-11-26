@@ -137,7 +137,6 @@
     "@typescript-eslint/eslint-plugin": "^6.2.0",
     "@typescript-eslint/parser": "^6.2.0",
     "create-release-hash": "workspace:*",
-    "electron-rebuild": "^3.2.9",
     "eslint": "^8.51.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-json": "^3.1.0",
