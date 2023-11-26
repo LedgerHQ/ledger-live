@@ -175,6 +175,9 @@ const modes: Readonly<Partial<Record<DerivationMode, unknown>>> = Object.freeze(
     overridesDerivation: "44'/397'/0'/0'/<account>'",
     mandatoryEmptyAccountSkip: 1,
   },
+  icon: {
+    overridesDerivation: "44'/4801368'/0'/0'/<account>'",
+  },
   vechain: {
     overridesDerivation: "44'/818'/0'/0/<account>",
   },
@@ -185,9 +188,6 @@ const modes: Readonly<Partial<Record<DerivationMode, unknown>>> = Object.freeze(
     overridesDerivation: "44'/5757'/0'/0/<account>",
     startsAt: 1,
     tag: "third-party",
-  },
-  icon: {
-    overridesDerivation: "44'/4801368'/0'/0'/<account>'",
   },
 });
 
@@ -211,14 +211,6 @@ const legacyDerivations: Partial<Record<CryptoCurrency["id"], DerivationMode[]>>
   stacks: ["stacks_wallet"],
   icon: ["icon"],
   icon_berlin_testnet: ["icon"],
-};
-
-const legacyDerivationsPerFamily: Record<string, DerivationMode[]> = {
-  ethereum: ["ethM", "ethMM"],
-  ethereum_classic: ["ethM", "ethMM", "etcM"],
-  solana: ["solanaMain", "solanaSub"],
-  solana_devnet: ["solanaMain", "solanaSub"],
-  solana_testnet: ["solanaMain", "solanaSub"],
 };
 
 export const asDerivationMode = (derivationMode: string): DerivationMode => {

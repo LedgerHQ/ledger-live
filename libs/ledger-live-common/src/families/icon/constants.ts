@@ -1,4 +1,4 @@
-import { getEnv } from "../../env";
+import { getEnv } from "@ledgerhq/live-env";
 
 export const ICON_API_ENDPOINT = getEnv("ICON_API_ENDPOINT");
 export const ICON_TESTNET_API_ENDPOINT = getEnv("ICON_TESTNET_API_ENDPOINT");
