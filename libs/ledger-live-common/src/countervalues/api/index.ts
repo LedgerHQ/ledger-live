@@ -1,4 +1,4 @@
-import { getEnv } from "../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import type { CounterValuesAPI } from "../types";
 import prodAPI from "./api";
 import mockAPI from "./api.mock";
@@ -10,10 +10,10 @@ const api: CounterValuesAPI = {
       : prodAPI.fetchHistorical(granularity, pair),
   fetchLatest: pairs =>
     getEnv("MOCK_COUNTERVALUES") ? mockAPI.fetchLatest(pairs) : prodAPI.fetchLatest(pairs),
-  fetchMarketcapTickers: () =>
+  fetchIdsSortedByMarketcap: () =>
     getEnv("MOCK_COUNTERVALUES")
-      ? mockAPI.fetchMarketcapTickers()
-      : prodAPI.fetchMarketcapTickers(),
+      ? mockAPI.fetchIdsSortedByMarketcap()
+      : prodAPI.fetchIdsSortedByMarketcap(),
 };
 
 export default api;

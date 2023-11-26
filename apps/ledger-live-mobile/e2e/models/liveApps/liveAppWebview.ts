@@ -4,6 +4,7 @@ import { e2eBridgeServer } from "../../bridge/server";
 import { first, filter, map } from "rxjs/operators";
 import { startDummyServer } from "@ledgerhq/test-utils";
 import { getElementById } from "../../helpers";
+import { firstValueFrom } from "rxjs";
 
 export default class LiveAppWebview {
   appTitle = () => getElementById("live-app-title");
@@ -43,13 +44,13 @@ export default class LiveAppWebview {
       window.ledger.e2e.walletApi.send('${json}');
     }`);
 
-    const response = e2eBridgeServer
-      .pipe(
+    const response = firstValueFrom(
+      e2eBridgeServer.pipe(
         filter(msg => msg.type === "walletAPIResponse"),
         first(),
         map(msg => msg.payload),
-      )
-      .toPromise();
+      ),
+    );
 
     return { id, response };
   }

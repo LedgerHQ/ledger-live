@@ -5,7 +5,7 @@ import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/provide
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import { OnboardingStep } from "@ledgerhq/live-common/hw/extractOnboardingState";
-import { languageSelector } from "~/renderer/reducers/settings";
+import { counterValueCurrencySelector, languageSelector } from "~/renderer/reducers/settings";
 import WebRecoverPlayer from "~/renderer/components/WebRecoverPlayer";
 import useTheme from "~/renderer/hooks/useTheme";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
@@ -21,6 +21,7 @@ export type RecoverComponentParams = {
 
 export type RecoverState = {
   fromOnboarding?: boolean;
+  deviceId?: string;
 };
 
 const FullscreenWrapper = styled.div`
@@ -43,6 +44,7 @@ export default function RecoverPlayer({
   const { search, state } = location;
   const queryParams = useMemo(() => Object.fromEntries(new URLSearchParams(search)), [search]);
   const locale = useSelector(languageSelector);
+  const currencySettings = useSelector(counterValueCurrencySelector);
   const localManifest = useLocalLiveAppManifest(params.appId);
   const remoteManifest = useRemoteLiveAppManifest(params.appId);
   const manifest = localManifest || remoteManifest;
@@ -52,6 +54,7 @@ export default function RecoverPlayer({
   const recoverConfig = useFeature("protectServicesDesktop");
 
   const availableOnDesktop = recoverConfig?.enabled && recoverConfig?.params?.availableOnDesktop;
+  const currency = currencySettings.ticker;
 
   const device = useSelector(getCurrentDevice);
 
@@ -71,19 +74,22 @@ export default function RecoverPlayer({
     }
   }, [onClose, onboardingState]);
 
+  const inputs = useMemo(
+    () => ({
+      theme,
+      lang: locale,
+      availableOnDesktop,
+      deviceId: state?.deviceId,
+      currency,
+      ...params,
+      ...queryParams,
+    }),
+    [availableOnDesktop, locale, params, queryParams, state?.deviceId, currency, theme],
+  );
+
   return manifest ? (
     <FullscreenWrapper>
-      <WebRecoverPlayer
-        manifest={manifest}
-        inputs={{
-          theme,
-          lang: locale,
-          availableOnDesktop,
-          ...params,
-          ...queryParams,
-        }}
-        onClose={onClose}
-      />
+      <WebRecoverPlayer manifest={manifest} inputs={inputs} onClose={onClose} />
     </FullscreenWrapper>
   ) : null; // TODO: display an error component instead of `null`
 }

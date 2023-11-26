@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { Flex } from "@ledgerhq/native-ui";
-import { WebView } from "react-native-webview";
+import { WebView, WebViewMessageEvent } from "react-native-webview";
 import VersionNumber from "react-native-version-number";
 import { Platform } from "react-native";
 import styled from "styled-components/native";
@@ -81,7 +81,7 @@ const DisappointedForm = ({ setStep }: Props) => {
     });
   }, [ratingsFeatureParams, ratingsHappyMoment?.route_name]);
   const onMessage = useCallback(
-    event => {
+    (event: WebViewMessageEvent) => {
       const { data } = event.nativeEvent;
 
       if (data === "form-submit") {
@@ -99,7 +99,7 @@ const DisappointedForm = ({ setStep }: Props) => {
   );
   const formUrlSplitted = ratingsFeatureParams?.typeform_url.split("?");
   const formUrl =
-    formUrlSplitted[0] +
+    formUrlSplitted?.[0] +
     `#app_version=${appVersion}` +
     `&app_language=${language}` +
     `&platform_os=${Platform.OS}` +
@@ -108,7 +108,7 @@ const DisappointedForm = ({ setStep }: Props) => {
     `&firmware_version=${lastDevice?.deviceInfo?.version}` +
     `&notifications_allowed=${notificationsAllowed}` +
     `&notifications_blacklisted=${notificationsBlacklisted}` +
-    `&done?${formUrlSplitted[1] || ""}`;
+    `&done?${formUrlSplitted?.[1] || ""}`;
 
   return (
     <Flex flex={1} height={height * (4 / 5)}>

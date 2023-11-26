@@ -13,7 +13,7 @@ import {
   findCryptoCurrencyById,
 } from "../../currencies";
 import ManagerAPI from "../../manager/api";
-import { getEnv } from "../../env";
+import { getEnv } from "@ledgerhq/live-env";
 
 import { calculateDependencies, polyfillApp, polyfillApplication } from "../polyfill";
 import getDeviceName from "../../hw/getDeviceName";
@@ -28,13 +28,13 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
   log("list-apps", "using legacy version");
 
   if (deviceInfo.isOSU || deviceInfo.isBootloader) {
-    return throwError(new UnexpectedBootloader(""));
+    return throwError(() => new UnexpectedBootloader(""));
   }
 
   const deviceModelId =
     (transport.deviceModel && transport.deviceModel.id) ||
     (deviceInfo && identifyTargetId(deviceInfo.targetId as number))?.id ||
-    getEnv("DEVICE_PROXY_MODEL");
+    (getEnv("DEVICE_PROXY_MODEL") as DeviceModelId);
 
   return new Observable(o => {
     let sub;
@@ -160,7 +160,6 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
           if (application.compatibleWalletsJSON) {
             try {
               const parsed = JSON.parse(application.compatibleWalletsJSON);
-
               if (parsed && Array.isArray(parsed)) {
                 parsed.forEach(w => {
                   if (w && typeof w === "object" && w.name) {

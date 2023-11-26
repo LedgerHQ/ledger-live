@@ -10,6 +10,7 @@ export type CardProps = TouchableOpacityProps & {
   title?: string;
   onPressDismiss?: () => void;
   LeftElement?: JSX.Element;
+  hideLeftElementContainer?: boolean;
   typeOfRightIcon: "arrow" | "close";
 };
 
@@ -57,20 +58,24 @@ export const CloseButton = ({ onPressDismiss }: CloseProps) => {
 };
 
 const CardContainer = (props: CardProps): React.ReactElement => {
-  const { onPressDismiss, LeftElement, title, typeOfRightIcon } = props;
+  const { onPressDismiss, LeftElement, hideLeftElementContainer, title, typeOfRightIcon } = props;
 
   return (
     <Container {...props}>
-      <Flex
-        borderRadius={50}
-        height={40}
-        width={40}
-        alignItems="center"
-        justifyContent="center"
-        bg={"opacityDefault.c05"}
-      >
-        {LeftElement}
-      </Flex>
+      {hideLeftElementContainer ? (
+        <Flex
+          borderRadius={50}
+          height={40}
+          width={40}
+          alignItems="center"
+          justifyContent="center"
+          bg={"opacityDefault.c05"}
+        >
+          {LeftElement}
+        </Flex>
+      ) : (
+        LeftElement
+      )}
 
       <Text
         mx={4}

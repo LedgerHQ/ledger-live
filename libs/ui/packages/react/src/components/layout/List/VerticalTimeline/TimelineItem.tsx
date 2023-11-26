@@ -1,12 +1,13 @@
 import React from "react";
 
-import { Theme } from "src/styles/theme";
+import { Theme } from "../../../../styles/theme";
 import styled, { useTheme } from "styled-components";
 
 import { Item, ItemStatus } from ".";
 import { Flex, Box } from "../..";
 import { Text } from "../../..";
 import Tag from "../../../Tag";
+import InfiniteLoader from "../../../loaders/InfiniteLoader";
 
 import TimelineIndicator from "./TimelineIndicator";
 
@@ -76,7 +77,7 @@ function TimelineItem({ item, isFirstItem, isLastItem, onClick }: Props) {
           >
             {item.title}
           </Text>
-          {item?.estimatedTime && item.status === "active" && (
+          {(item?.estimatedTime && item.status === "active" && (
             <Tag
               size="small"
               type="opacity"
@@ -84,7 +85,8 @@ function TimelineItem({ item, isFirstItem, isLastItem, onClick }: Props) {
               disabled
               textProps={{ color: colors.neutral.c100 }}
             >{`${item.estimatedTime / 60} min`}</Tag>
-          )}
+          )) ||
+            (item?.hasLoader && item.status === "active" && <InfiniteLoader size={30} />)}
         </TimelineIndicatorContentHeader>
         {item.renderBody && item.status === "active" && (
           <Box position="relative" pt={6}>

@@ -12,7 +12,9 @@ export function EarnInfoDrawer() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const [modalOpened, setModalOpened] = useState(false);
+
   const openModal = useCallback(() => setModalOpened(true), []);
+
   const closeModal = useCallback(async () => {
     await dispatch(setEarnInfoModal({}));
     await setModalOpened(false);
@@ -39,7 +41,7 @@ export function EarnInfoDrawer() {
             </Text>
           </Flex>
         </Flex>
-        <Button onPress={() => closeModal()} type="main">
+        <Button onPress={closeModal} type="main">
           {t("common.close")}
         </Button>
       </Flex>

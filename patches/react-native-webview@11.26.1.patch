@@ -1,8 +1,51 @@
 diff --git a/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewManager.java b/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewManager.java
-index 9cfe821f29921b6007e4bdd5267bfb0330246863..b360dde882414c8d5375a2191f03f7199170dc15 100644
+index 9cfe821f29921b6007e4bdd5267bfb0330246863..f85b0cfb42fce06d8f66a879f3ea4a101665b7b8 100644
 --- a/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewManager.java
 +++ b/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewManager.java
-@@ -935,6 +935,17 @@ public class RNCWebViewManager extends SimpleViewManager<WebView> {
+@@ -160,6 +160,7 @@ public class RNCWebViewManager extends SimpleViewManager<WebView> {
+ 
+   protected RNCWebChromeClient mWebChromeClient = null;
+   protected boolean mAllowsFullscreenVideo = false;
++  protected boolean mAllowsUnsecureHttps = false;
+   protected boolean mAllowsProtectedMedia = false;
+   protected @Nullable String mUserAgent = null;
+   protected @Nullable String mUserAgentWithApplicationName = null;
+@@ -625,6 +626,15 @@ public class RNCWebViewManager extends SimpleViewManager<WebView> {
+     setupWebChromeClient((ReactContext)view.getContext(), view);
+   }
+ 
++  @ReactProp(name = "allowsUnsecureHttps")
++  public void setAllowsUnsecureHttps(
++    WebView view,
++    @Nullable Boolean allowsUnsecureHttps) {
++    mAllowsUnsecureHttps = allowsUnsecureHttps != null && allowsUnsecureHttps;
++
++    ((RNCWebView) view).setAllowsUnsecureHttps(mAllowsUnsecureHttps);
++  }
++
+   @ReactProp(name = "allowFileAccess")
+   public void setAllowFileAccess(
+     WebView view,
+@@ -908,6 +918,7 @@ public class RNCWebViewManager extends SimpleViewManager<WebView> {
+   protected static class RNCWebViewClient extends WebViewClient {
+ 
+     protected boolean mLastLoadFailed = false;
++    protected boolean mAllowsUnsecureHttps = false;
+     protected @Nullable
+     ReadableArray mUrlPrefixesForDefaultIntent;
+     protected RNCWebView.ProgressChangedFilter progressChangedFilter = null;
+@@ -922,6 +933,10 @@ public class RNCWebViewManager extends SimpleViewManager<WebView> {
+       basicAuthCredential = credential;
+     }
+ 
++    public void setAllowsUnsecureHttps(boolean allowsUnsecureHttps) {
++      mAllowsUnsecureHttps = allowsUnsecureHttps;
++    }
++
+     @Override
+     public void onPageFinished(WebView webView, String url) {
+       super.onPageFinished(webView, url);
+@@ -935,6 +950,17 @@ public class RNCWebViewManager extends SimpleViewManager<WebView> {
        }
      }
  
@@ -20,11 +63,43 @@ index 9cfe821f29921b6007e4bdd5267bfb0330246863..b360dde882414c8d5375a2191f03f719
      @Override
      public void onPageStarted(WebView webView, String url, Bitmap favicon) {
        super.onPageStarted(webView, url, favicon);
+@@ -1027,7 +1053,11 @@ public class RNCWebViewManager extends SimpleViewManager<WebView> {
+         // Cancel request after obtaining top-level URL.
+         // If request is cancelled before obtaining top-level URL, undesired behavior may occur.
+         // Undesired behavior: Return value of WebView.getUrl() may be the current URL instead of the failing URL.
+-        handler.cancel();
++        if (mAllowsUnsecureHttps) {
++          handler.proceed();
++        } else {
++          handler.cancel();
++        }
+ 
+         if (!topWindowUrl.equalsIgnoreCase(failingUrl)) {
+           // If error is not due to top-level navigation, then do not call onReceivedError()
+@@ -1567,6 +1597,10 @@ public class RNCWebViewManager extends SimpleViewManager<WebView> {
+       mRNCWebViewClient.setBasicAuthCredential(credential);
+     }
+ 
++    public void setAllowsUnsecureHttps(boolean allowsUnsecureHttps) {
++      mRNCWebViewClient.setAllowsUnsecureHttps(allowsUnsecureHttps);
++    }
++
+     public void setSendContentSizeChangeEvents(boolean sendContentSizeChangeEvents) {
+       this.sendContentSizeChangeEvents = sendContentSizeChangeEvents;
+     }
 diff --git a/apple/RNCWebView.h b/apple/RNCWebView.h
-index 90c9d62abd249c2cab80fd248f4756801069bd5f..de8a0a9c96f9196f5b82cb4e4b5503c716774aab 100644
+index 90c9d62abd249c2cab80fd248f4756801069bd5f..742a0a8a07bfc225eefb3607dd224d91bddc36df 100644
 --- a/apple/RNCWebView.h
 +++ b/apple/RNCWebView.h
-@@ -58,6 +58,7 @@ shouldStartLoadForRequest:(NSMutableDictionary<NSString *, id> *_Nonnull)request
+@@ -50,6 +50,7 @@ shouldStartLoadForRequest:(NSMutableDictionary<NSString *, id> *_Nonnull)request
+ @property (nonatomic, assign) BOOL pagingEnabled;
+ @property (nonatomic, assign) CGFloat decelerationRate;
+ @property (nonatomic, assign) BOOL allowsInlineMediaPlayback;
++@property (nonatomic, assign) BOOL allowsUnsecureHttps;
+ @property (nonatomic, assign) BOOL allowsAirPlayForMediaPlayback;
+ @property (nonatomic, assign) BOOL bounces;
+ @property (nonatomic, assign) BOOL mediaPlaybackRequiresUserAction;
+@@ -58,6 +59,7 @@ shouldStartLoadForRequest:(NSMutableDictionary<NSString *, id> *_Nonnull)request
  #endif
  @property (nonatomic, assign) UIEdgeInsets contentInset;
  @property (nonatomic, assign) BOOL automaticallyAdjustContentInsets;
@@ -33,7 +108,7 @@ index 90c9d62abd249c2cab80fd248f4756801069bd5f..de8a0a9c96f9196f5b82cb4e4b5503c7
  @property (nonatomic, assign) BOOL hideKeyboardAccessoryView;
  @property (nonatomic, assign) BOOL allowsBackForwardNavigationGestures;
 diff --git a/apple/RNCWebView.m b/apple/RNCWebView.m
-index 7570d8dc5456b4a48c72c0549099bec289f45578..9a42a06ceebe17b70a0f6efa997a508c609aad69 100644
+index 7570d8dc5456b4a48c72c0549099bec289f45578..76d910723c53aea6ebc276d5b47913eefd813382 100644
 --- a/apple/RNCWebView.m
 +++ b/apple/RNCWebView.m
 @@ -130,6 +130,7 @@ RCTAutoInsetsProtocol>
@@ -59,11 +134,32 @@ index 7570d8dc5456b4a48c72c0549099bec289f45578..9a42a06ceebe17b70a0f6efa997a508c
    return nil;
  }
  
+@@ -975,6 +980,12 @@ RCTAutoInsetsProtocol>
+     completionHandler(NSURLSessionAuthChallengeUseCredential, clientAuthenticationCredential);
+     return;
+   }
++  if (_allowsUnsecureHttps == true) {
++    SecTrustRef trust = [[challenge protectionSpace] serverTrust];
++    NSURLCredential *useCredential = [NSURLCredential credentialForTrust:trust];
++    completionHandler(NSURLSessionAuthChallengeUseCredential, useCredential);
++    return;
++  }
+   if ([[challenge protectionSpace] serverTrust] != nil && customCertificatesForHost != nil && host != nil) {
+     SecCertificateRef localCertificate = (__bridge SecCertificateRef)([customCertificatesForHost objectForKey:host]);
+     if (localCertificate != nil) {
 diff --git a/apple/RNCWebViewManager.m b/apple/RNCWebViewManager.m
-index 401e40e017ee7340881e85806d3927c93e056ba4..09fdfab7e6cb0209f281802eaff3aa4e4bd09163 100644
+index 401e40e017ee7340881e85806d3927c93e056ba4..acfc4924a82bc1d55ae7965e9fdb546eaddd7ced 100644
 --- a/apple/RNCWebViewManager.m
 +++ b/apple/RNCWebViewManager.m
-@@ -78,6 +78,7 @@ RCT_EXPORT_VIEW_PROPERTY(dataDetectorTypes, WKDataDetectorTypes)
+@@ -71,6 +71,7 @@ RCT_EXPORT_VIEW_PROPERTY(javaScriptCanOpenWindowsAutomatically, BOOL)
+ RCT_EXPORT_VIEW_PROPERTY(allowFileAccessFromFileURLs, BOOL)
+ RCT_EXPORT_VIEW_PROPERTY(allowUniversalAccessFromFileURLs, BOOL)
+ RCT_EXPORT_VIEW_PROPERTY(allowsInlineMediaPlayback, BOOL)
++RCT_EXPORT_VIEW_PROPERTY(allowsUnsecureHttps, BOOL)
+ RCT_EXPORT_VIEW_PROPERTY(allowsAirPlayForMediaPlayback, BOOL)
+ RCT_EXPORT_VIEW_PROPERTY(mediaPlaybackRequiresUserAction, BOOL)
+ #if WEBKIT_IOS_10_APIS_AVAILABLE
+@@ -78,6 +79,7 @@ RCT_EXPORT_VIEW_PROPERTY(dataDetectorTypes, WKDataDetectorTypes)
  #endif
  RCT_EXPORT_VIEW_PROPERTY(contentInset, UIEdgeInsets)
  RCT_EXPORT_VIEW_PROPERTY(automaticallyAdjustContentInsets, BOOL)
@@ -71,3 +167,22 @@ index 401e40e017ee7340881e85806d3927c93e056ba4..09fdfab7e6cb0209f281802eaff3aa4e
  RCT_EXPORT_VIEW_PROPERTY(autoManageStatusBarEnabled, BOOL)
  RCT_EXPORT_VIEW_PROPERTY(hideKeyboardAccessoryView, BOOL)
  RCT_EXPORT_VIEW_PROPERTY(allowsBackForwardNavigationGestures, BOOL)
+diff --git a/lib/WebViewTypes.d.ts b/lib/WebViewTypes.d.ts
+index 74e14ef5dedabbcf1330e1830d7b053599308ee5..ddd33549d6bea9d7fa6f227d97114ebee2674d53 100644
+--- a/lib/WebViewTypes.d.ts
++++ b/lib/WebViewTypes.d.ts
+@@ -406,6 +406,11 @@ export interface IOSWebViewProps extends WebViewSharedProps {
+      * @platform ios
+      */
+     allowsInlineMediaPlayback?: boolean;
++     /**
++     * A Boolean value indicating whether unsecure https is allowed. The default value is `false`.
++     * @platform ios
++     */
++    allowsUnsecureHttps?: boolean;    
+     /**
+      * A Boolean value indicating whether AirPlay is allowed. The default value is `false`.
+      * @platform ios
+diff --git a/windows/.gitignore b/windows/.gitignore
+deleted file mode 100644
+index a57fdbbc37f41b02b03a4cd12d45d618a01ddeed..0000000000000000000000000000000000000000

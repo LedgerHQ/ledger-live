@@ -17,7 +17,7 @@ export default function CustomImage() {
   }, [navigation]);
 
   return (
-    <FeatureToggle feature="customImage" fallback={null}>
+    <FeatureToggle featureId="customImage" fallback={null}>
       <SettingsRow
         title="Custom lockscreen"
         desc="Convenient access to the flow"

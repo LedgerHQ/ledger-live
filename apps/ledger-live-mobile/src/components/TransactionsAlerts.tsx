@@ -11,10 +11,7 @@ import type { ChainwatchNetwork, Account } from "@ledgerhq/types-live";
 import { notificationsSelector } from "../reducers/settings";
 
 const TransactionsAlerts = () => {
-  const featureTransactionsAlerts = useFeature<{
-    chainwatchBaseUrl: string;
-    networks: ChainwatchNetwork[];
-  }>("transactionsAlerts");
+  const featureTransactionsAlerts = useFeature("transactionsAlerts");
   const chainwatchBaseUrl = featureTransactionsAlerts?.params?.chainwatchBaseUrl;
   const supportedChains = useMemo(
     () => featureTransactionsAlerts?.params?.networks || [],

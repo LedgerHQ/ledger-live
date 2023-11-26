@@ -15,13 +15,6 @@ type Props = {
   onStart?: () => void;
   onResult?: () => void;
   onError?: (err: Error) => void;
-  /*
-   * Defines in what type of component this action will be rendered.
-   *
-   * If "drawer", the component will be rendered as a content to be rendered in a drawer.
-   * If "view", the component will be rendered as a view. Defaults to "view".
-   */
-  renderedInType?: "drawer" | "view";
 };
 
 const ChangeDeviceLanguageAction: React.FC<Props> = ({
@@ -31,7 +24,6 @@ const ChangeDeviceLanguageAction: React.FC<Props> = ({
   onContinue,
   onResult,
   onError,
-  renderedInType,
 }) => {
   const action = useInstallLanguageDeviceAction();
   const showAlert = !device?.wired;
@@ -59,7 +51,6 @@ const ChangeDeviceLanguageAction: React.FC<Props> = ({
               installedLanguage={language}
             />
           )}
-          renderedInType={renderedInType}
         />
       </Flex>
       {showAlert && <Alert type="info" title={t("DeviceAction.stayInTheAppPlz")} />}

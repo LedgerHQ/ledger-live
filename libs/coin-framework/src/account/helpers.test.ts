@@ -281,7 +281,7 @@ describe(isAccountEmpty.name, () => {
   describe("given an account", () => {
     beforeEach(() => {
       mockAccount.type = "Account";
-      mockAccount.currency = { family: "ethereum" } as CryptoCurrency;
+      mockAccount.currency = { family: "evm" } as CryptoCurrency;
     });
     describe("when account has no subaccounts", () => {
       beforeEach(() => {
@@ -445,7 +445,7 @@ describe(clearAccount.name, () => {
 
   describe("given an Account", () => {
     const ethereumCurrency = {
-      family: "ethereum",
+      family: "evm",
     } as CryptoCurrency;
     const withSubAccounts = {
       ...mockAccount,

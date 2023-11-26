@@ -12,8 +12,8 @@ import {
   isCurrencySupported,
   listTokens,
   listSupportedCurrencies,
-  useCurrenciesByMarketcap,
 } from "@ledgerhq/live-common/currencies/index";
+import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";
 import { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useRefreshAccountsOrdering } from "../../../actions/general";
 import { counterValueCurrencySelector, hasOrderedNanoSelector } from "../../../reducers/settings";
@@ -22,7 +22,6 @@ import { usePortfolioAllAccounts } from "../../../hooks/portfolio";
 import GraphCardContainer from "../GraphCardContainer";
 import TrackScreen from "../../../analytics/TrackScreen";
 import { NavigatorName, ScreenName } from "../../../const";
-import { useProviders } from "../../Swap/Form/index";
 import CheckLanguageAvailability from "../../../components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "../../../components/CheckTermOfUseUpdate";
 import { TAB_BAR_SAFE_HEIGHT } from "../../../components/TabBar/TabBarSafeAreaView";
@@ -51,7 +50,6 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
   const portfolio = usePortfolioAllAccounts();
   const { colors } = useTheme();
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
-  useProviders();
 
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
   useFocusEffect(refreshAccountsOrdering);

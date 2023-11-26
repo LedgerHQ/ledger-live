@@ -1,6 +1,8 @@
 import { ServerApi } from "stellar-sdk";
 import type { BigNumber } from "bignumber.js";
 import type {
+  Operation,
+  OperationType,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
@@ -91,3 +93,14 @@ export type Signer = {
 export type TransactionStatus = TransactionStatusCommon;
 
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
+
+export type StellarOperation = Operation<StellarOperationExtra>;
+
+export type StellarOperationExtra = {
+  pagingToken?: string;
+  assetCode?: string;
+  assetIssuer?: string;
+  assetAmount?: string;
+  ledgerOpType: OperationType;
+  memo?: string;
+};

@@ -42,7 +42,7 @@ describe("EVM Family", () => {
         jest.spyOn(nodeApi, "getBlockByHeight").mockImplementation(async () => ({
           hash: "blockHash6969",
           height: 6969,
-          timestamp: Math.floor(Date.now() / 1000),
+          timestamp: Date.now(),
         }));
       });
 
@@ -84,7 +84,7 @@ describe("EVM Family", () => {
                     uri: "http://nope.com",
                     type: "unsupported" as any,
                   },
-                },
+                } as any,
               },
             },
             {} as any,
@@ -341,7 +341,7 @@ describe("EVM Family", () => {
           expect(accountShape).toEqual({
             type: "Account",
             id: account.id,
-            syncHash: expect.stringMatching(/^0x[A-Fa-f0-9]{64}$/), // matching a sha256 hex
+            syncHash: expect.stringMatching(/^0x[A-Fa-f0-9]{7,8}$/), // matching a 32 bits hex string (MurmurHash result)
             balance: new BigNumber(100),
             spendableBalance: new BigNumber(100),
             nfts: [nfts[0], nfts[1]],
@@ -506,7 +506,7 @@ describe("EVM Family", () => {
               blockHash: "hash",
               timestamp: 101010010,
               nonce: 1,
-            } as any),
+            }) as any,
         );
 
         const operationStatus = await synchronization.getOperationStatus(
@@ -521,7 +521,7 @@ describe("EVM Family", () => {
           hash: "0xTransactionHash",
           blockHeight: 10,
           blockHash: "hash",
-          timestamp: Date.now() / 1000,
+          timestamp: Date.now(),
           nonce: 123,
         }));
 
@@ -559,12 +559,11 @@ describe("EVM Family", () => {
           hash: "0xTransactionHash",
           blockHeight: 10,
           blockHash: "hash",
-          timestamp: Date.now() / 1000,
           nonce: 123,
         }));
         jest
           .spyOn(nodeApi, "getBlockByHeight")
-          .mockImplementationOnce(async () => ({ timestamp: Date.now() / 1000 } as any));
+          .mockImplementationOnce(async () => ({ timestamp: Date.now() }) as any);
 
         const expectedAddition = {
           blockHash: "hash",
@@ -686,7 +685,7 @@ describe("EVM Family", () => {
       it("should remove pending operation if ", () => {
         const latePending = {
           ...pendingOperation,
-          date: new Date() + getEnv("OPERATION_OPTIMISTIC_RETENTION") + 1,
+          date: new Date(new Date().getTime() + getEnv("OPERATION_OPTIMISTIC_RETENTION") + 1),
         };
         const tokenAccountWithPending = {
           ...tokenAccount,

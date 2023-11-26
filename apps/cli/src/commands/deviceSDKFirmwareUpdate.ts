@@ -5,7 +5,7 @@ import { mergeMap } from "rxjs/operators";
 // import { UnknownMCU } from "@ledgerhq/errors";
 // import ManagerAPI from "@ledgerhq/live-common/manager/api";
 import network from "@ledgerhq/live-network/network";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 // import { getProviderId } from "@ledgerhq/live-common/manager/provider";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";

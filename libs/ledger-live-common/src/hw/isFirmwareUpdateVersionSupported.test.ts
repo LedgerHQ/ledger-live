@@ -1,6 +1,6 @@
 import { DeviceModelId } from "@ledgerhq/devices";
 import isFirmwareUpdateVersionSupported from "./isFirmwareUpdateVersionSupported";
-import { setEnv } from "../env";
+import { setEnv } from "@ledgerhq/live-env";
 
 const goodDataset: { [key in DeviceModelId]?: string[] } = {
   nanoS: ["2.0.0", "3.0.0"],

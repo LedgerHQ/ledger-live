@@ -1,11 +1,8 @@
-import type { Account, OperationType, Operation } from "@ledgerhq/types-live";
+import type { Account, OperationType } from "@ledgerhq/types-live";
+import type { ElrondOperation } from "@ledgerhq/live-common/families/elrond/types";
 
 export interface DetailsPropsType {
   type: OperationType;
   account: Account;
-  operation: Operation;
-  extra: {
-    amount: string;
-    memo?: string;
-  };
+  operation: ElrondOperation;
 }

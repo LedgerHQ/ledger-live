@@ -1,36 +1,31 @@
-// TODO: this file will be moved to a @ledgerhq/env library
-import mapValues from "lodash/mapValues";
 // set and get environment & config variables
 import { Subject } from "rxjs";
 import { $ElementType } from "utility-types";
-type EnvDef<V> = {
-  desc: string;
-  def: V;
-  parser: (arg0: unknown) => V | null | undefined;
-};
 // type ExtractEnvValue = <V>(arg0: EnvDef<V>) => V;
 type EnvDefs = typeof envDefinitions;
 type Env = typeof env;
+
+type EnvDef<T extends string> = T extends EnvName ? EnvDefs[T] : undefined;
+
 export type EnvName = keyof EnvDefs;
 export type EnvValue<Name extends EnvName> = $ElementType<Env, Name>;
 
-const intParser = (v: any): number | null | undefined => {
+const intParser = (v: any): number | undefined => {
   if (!Number.isNaN(v)) return parseInt(v, 10);
 };
 
-const floatParser = (v: any): number | null | undefined => {
+const floatParser = (v: any): number | undefined => {
   if (!Number.isNaN(v)) return parseFloat(v);
 };
 
-const boolParser = (v: unknown): boolean | null | undefined => {
+const boolParser = (v: unknown): boolean | undefined => {
   if (typeof v === "boolean") return v;
   return !(v === "0" || v === "false");
 };
 
-const stringParser = (v: unknown): string | null | undefined =>
-  typeof v === "string" ? v : undefined;
+const stringParser = (v: unknown): string | undefined => (typeof v === "string" ? v : undefined);
 
-type JSONValue = string | number | boolean | null | { [x: string]: JSONValue } | Array<JSONValue>;
+type JSONValue = string | number | boolean | { [x: string]: JSONValue } | Array<JSONValue>;
 
 const jsonParser = (v: unknown): JSONValue | undefined => {
   try {
@@ -41,12 +36,12 @@ const jsonParser = (v: unknown): JSONValue | undefined => {
   }
 };
 
-const stringArrayParser = (v: any): string[] | null | undefined => {
+const stringArrayParser = (v: unknown): string[] | undefined => {
   const v_array = typeof v === "string" ? v.split(",") : null;
   if (Array.isArray(v_array) && v_array.length > 0) return v_array;
 };
 
-const envDefinitions: Record<string, EnvDef<boolean | string | number | string[] | unknown>> = {
+const envDefinitions = {
   ADDRESS_POISONING_FAMILIES: {
     def: "ethereum,evm,tron",
     parser: stringParser,
@@ -67,6 +62,16 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     parser: stringParser,
     desc: "Rosetta API for ICP",
   },
+  API_CASPER_INDEXER_ENDPOINT: {
+    parser: stringParser,
+    def: "https://casper.coin.ledger.com/indexer",
+    desc: "Casper API url indexer",
+  },
+  API_CASPER_NODE_ENDPOINT: {
+    parser: stringParser,
+    def: "https://casper.coin.ledger.com/node/",
+    desc: "Casper API url node",
+  },
   API_ALGORAND_BLOCKCHAIN_EXPLORER_API_ENDPOINT: {
     def: "https://algorand.coin.ledger.com",
     parser: stringParser,
@@ -83,7 +88,7 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     desc: "Node endpoint for celo",
   },
   COSMOS_GAS_AMPLIFIER: {
-    def: 1.2,
+    def: 1.5,
     parser: intParser,
     desc: "Cosmos gas estimate multiplier",
   },
@@ -197,6 +202,11 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     parser: stringParser,
     desc: "mirror node API for Hedera",
   },
+  API_VECHAIN_THOREST: {
+    def: "https://vechain.coin.ledger.com",
+    parser: stringParser,
+    desc: "Thorest API for VeChain",
+  },
   BASE_SOCKET_URL: {
     def: "wss://scriptrunner.api.live.ledger.com/update",
     parser: stringParser,
@@ -212,6 +222,13 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     parser: intParser,
     desc: "define the default value of spec.skipMutationsTimeout (if not overriden by spec)",
   },
+  BUY_API_BASE: {
+    def: "https://buy.api.live.ledger.com/buy/v1",
+
+    parser: stringParser,
+    desc: "Buy crypto API base url - version 1",
+  },
+
   CARDANO_API_ENDPOINT: {
     def: "https://cardano.coin.ledger.com/api",
     parser: stringParser,
@@ -522,7 +539,7 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     desc: "if defined, avoids bypass of the currentDevice in the store.",
   },
   NFT_CURRENCIES: {
-    def: "ethereum,polygon,ethereum_as_evm_test_only,polygon_as_evm_test_only",
+    def: "ethereum,polygon",
     parser: stringParser,
     desc: "set the currencies where NFT is active",
   },
@@ -581,20 +598,22 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     parser: intParser,
     desc: "offset to be added to the speculos pid and avoid collision with other instances",
   },
+  /**
+   * It's just here as a backup, the REST API is supposed to be the right mode
+   * We can always fallback on the previous method if we need to.
+   * The websocket option is harmless, we can remove it at some point but let's
+   * keep it for a while just in case.
+   * Introduced on June 27th 2023 by https://github.com/LedgerHQ/ledger-live/pull/3824
+   */
   SPECULOS_USE_WEBSOCKET: {
     def: false,
     parser: boolParser,
     desc: "Use speculos websocket interface instead of Rest API",
   },
   SWAP_API_BASE: {
-    def: "https://swap.ledger.com/v4",
+    def: "https://swap.ledger.com/v5",
     parser: stringParser,
     desc: "Swap API base",
-  },
-  SWAP_API_BASE_V5: {
-    def: "https://swap-stg.ledger.com/v5",
-    parser: stringParser,
-    desc: "Swap API base staging version 5",
   },
   SYNC_ALL_INTERVAL: {
     def: 8 * 60 * 1000,
@@ -756,30 +775,20 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     parser: intParser,
     desc: "Time after which an optimisc operation is considered stuck",
   },
-  EDIT_TX_LEGACY_GASPRICE_GAP_SPEEDUP_FACTOR: {
-    def: 0.1,
+  EVM_REPLACE_TX_LEGACY_GASPRICE_FACTOR: {
+    def: 1.3,
     parser: floatParser,
-    desc: "Speedup transaction gasprice gap factor for NON-EIP1559 for edit eth transaction feature",
+    desc: "Replace transaction gasprice factor for legacy evm transaction. This value should be 1.1 minimum since this is the minimum increase required by most nodes",
   },
-  EDIT_TX_LEGACY_GASPRICE_GAP_CANCEL_FACTOR: {
-    def: 0.3,
+  EVM_REPLACE_TX_EIP1559_MAXFEE_FACTOR: {
+    def: 1.3,
     parser: floatParser,
-    desc: "Cancel transaction gasprice gap factor for NON-EIP1559 for edit eth transaction feature",
+    desc: "Replace transaction max fee factor for EIP1559 evm transaction. This value should be 1.1 minimum since this is the minimum increase required by most nodes",
   },
-  EDIT_TX_EIP1559_FEE_GAP_SPEEDUP_FACTOR: {
-    def: 0.1,
+  EVM_REPLACE_TX_EIP1559_MAXPRIORITYFEE_FACTOR: {
+    def: 1.1,
     parser: floatParser,
-    desc: "Speedup transaction max priority fee gap factor for EIP1559 for edit eth transaction feature",
-  },
-  EDIT_TX_EIP1559_MAXPRIORITYFEE_GAP_CANCEL_FACTOR: {
-    def: 0.1,
-    parser: floatParser,
-    desc: "Cancel transaction max priority fee gap factor for EIP1559 for edit eth transaction feature",
-  },
-  EDIT_TX_EIP1559_MAXFEE_GAP_CANCEL_FACTOR: {
-    def: 0.3,
-    parser: floatParser,
-    desc: "Cancel transaction max fee gap factor for EIP1559 for edit eth transaction feature",
+    desc: "Replace transaction max priority fee factor for EIP1559 evm transaction. This value should be 1.1 minimum since this is the minimum increase required by most nodes",
   },
   ENABLE_NETWORK_LOGS: {
     def: false,
@@ -791,27 +800,37 @@ const envDefinitions: Record<string, EnvDef<boolean | string | number | string[]
     parser: stringArrayParser,
     desc: "Fuse search attributes to find a currency according to user input",
   },
-  EDIT_TX_NON_EIP1559_GASPRICE_GAP_SPEEDUP_FACTOR: {
-    def: 0.1,
-    parser: floatParser,
-    desc: "Speedup transaction gasprice gap factor for NON-EIP1559 for edit eth transaction feature",
+  VERBOSE: {
+    def: [] as Array<string>,
+    parser: stringArrayParser,
+    desc: 'Sets up debug console printing of logs. `VERBOSE=1` or `VERBOSE=true`: to print all logs | `VERBOSE="apdu,hw,transport,hid-verbose"` : filtering on a list of log `type` separated by a `,`',
   },
-  EDIT_TX_NON_EIP1559_GASPRICE_GAP_CANCEL_FACTOR: {
-    def: 0.3,
-    parser: floatParser,
-    desc: "Cancel transaction gasprice gap factor for NON-EIP1559 for edit eth transaction feature",
+  DEFAULT_TRANSACTION_POLLING_INTERVAL: {
+    def: 30 * 1000,
+    parser: intParser,
+    desc: "Default interval to poll for transaction confirmation in speedup/cancel evm flow (in ms)",
   },
 };
 
-export const getDefinition = (name: string): EnvDef<any> | null | undefined => envDefinitions[name];
+export const getDefinition = (name: string): EnvDef<any> => {
+  if (name in envDefinitions) {
+    return envDefinitions[name];
+  }
+  return undefined;
+};
 
-envDefinitions as Record<EnvName, EnvDef<any>>;
-const defaults: Record<EnvName, any> = mapValues(envDefinitions, o => o.def) as unknown as Record<
-  EnvName,
-  any
->;
+const defaults = Object.keys(envDefinitions).reduce<{ [Key in EnvName]: EnvDefs[Key]["def"] }>(
+  (acc, curr) => {
+    return {
+      ...acc,
+      [curr]: envDefinitions[curr].def,
+    };
+  },
+  {} as { [Key in EnvName]: EnvDefs[Key]["def"] },
+);
+
 // private local state
-const env: Record<EnvName, any> = { ...defaults };
+const env = { ...defaults };
 export const getAllEnvNames = (): EnvName[] => Object.keys(envDefinitions) as EnvName[];
 export const getAllEnvs = (): Env => ({ ...env });
 // Usage: you must use getEnv at runtime because the env might be settled over time. typically will allow us to dynamically change them on the interface (e.g. some sort of experimental flags system)
@@ -840,7 +859,7 @@ export const setEnv = <Name extends EnvName>(name: Name, value: EnvValue<Name>):
   }
 };
 // change one environment with safety. returns true if it succeed
-export const setEnvUnsafe = (name: EnvName, unsafeValue: unknown): boolean => {
+export const setEnvUnsafe = (name: string, unsafeValue: unknown): boolean => {
   const definition = getDefinition(name);
   if (!definition) return false;
   const { parser } = definition;
@@ -851,7 +870,6 @@ export const setEnvUnsafe = (name: EnvName, unsafeValue: unknown): boolean => {
     return false;
   }
 
-  // $FlowFixMe flow don't seem to type proof it
-  setEnv(name, value);
+  setEnv(name as EnvName, value);
   return true;
 };

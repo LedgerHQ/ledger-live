@@ -9,6 +9,7 @@ import { Transaction as EvmTransaction } from "../../types";
 import { makeAccount } from "../fixtures/common.fixtures";
 import * as nodeApi from "../../api/node/rpc.common";
 import { getEstimatedFees } from "../../logic";
+import { DEFAULT_NONCE } from "../../createTransaction";
 
 const currency: CryptoCurrency = {
   ...getCryptoCurrencyById("ethereum"),
@@ -65,7 +66,12 @@ const mockSignerContext: SignerContext<EvmSigner, EvmAddress | EvmSignature> = (
 jest.mock("@ledgerhq/hw-app-eth", () => ({
   __esModule: true,
   ledgerService: {
-    resolveTransaction: () =>
+    resolveTransaction: (): Promise<{
+      erc20Tokens: never[];
+      nfts: never[];
+      externalPlugin: never[];
+      plugin: never[];
+    }> =>
       Promise.resolve({
         erc20Tokens: [],
         nfts: [],
@@ -91,7 +97,7 @@ describe("EVM Family", () => {
 
         const signOpObservable = signOperation({
           account,
-          transaction: transactionEIP1559,
+          transaction: { ...transactionEIP1559, nonce: DEFAULT_NONCE },
           deviceId: "",
         });
 
@@ -117,6 +123,21 @@ describe("EVM Family", () => {
               subOperations: [],
               nftOperations: [],
               extra: {},
+              transactionRaw: {
+                amount: "100",
+                chainId: 1,
+                family: "evm",
+                feesStrategy: "custom",
+                gasLimit: "21000",
+                maxFeePerGas: "100",
+                maxPriorityFeePerGas: "100",
+                mode: "send",
+                nonce: 1,
+                recipient: "0x6775e49108cb77cda06Fc3BEF51bcD497602aD88",
+                subAccountId: "id",
+                type: 2,
+                useAllAmount: false,
+              },
             });
             expect(signature).toBe(
               "0x02e601016464825208946775e49108cb77cda06fc3bef51bcd497602ad886480c080820123820abc",
@@ -129,7 +150,7 @@ describe("EVM Family", () => {
 
     describe("applyEIP155", () => {
       const chainIds = listCryptoCurrencies(true)
-        .filter(c => c.family === "evm")
+        .filter(c => c.family === "evm" && c.ethereumLikeInfo !== undefined)
         .map(c => c.ethereumLikeInfo!.chainId)
         .sort((a, b) => a - b);
 

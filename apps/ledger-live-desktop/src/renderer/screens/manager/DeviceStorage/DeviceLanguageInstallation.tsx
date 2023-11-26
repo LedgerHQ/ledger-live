@@ -71,7 +71,7 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
   }, [setInstalling, selectedLanguage]);
 
   const onWrappedError = useCallback(
-    error => {
+    (error: Error) => {
       setError(error);
       onError(error);
     },
@@ -92,7 +92,7 @@ const DeviceLanguageInstallation: React.FC<Props> = ({
       overflowY="hidden"
       width="100%"
       flex={1}
-      data-test-id="device-rename-container"
+      data-test-id="device-language-installation-container"
     >
       <Text alignSelf="center" variant="h5Inter" mb={12}>
         {t("deviceLocalization.deviceLanguage")}

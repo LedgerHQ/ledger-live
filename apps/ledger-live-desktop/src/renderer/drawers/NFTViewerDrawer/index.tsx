@@ -360,7 +360,7 @@ const NFTViewerDrawer = ({ account, nftId, height }: NFTViewerDrawerProps) => {
                 />
               </React.Fragment>
             ) : null}
-            <FeatureToggle feature="counterValue">
+            <FeatureToggle featureId="counterValue">
               {!floorPriceLoading && floorPrice ? (
                 <NFTAttribute
                   separatorTop

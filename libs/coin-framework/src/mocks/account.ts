@@ -66,6 +66,8 @@ const hardcodedMarketcap = [
   "qtum",
   "ethereum/erc20/huobitoken",
   "bitcoin_gold",
+  "kava_evm",
+  "optimism",
   "ethereum/erc20/paxos_standard__pax_",
   "ethereum/erc20/trueusd",
   "ethereum/erc20/omg",
@@ -177,6 +179,10 @@ const currencyIdApproxMarketPrice: Record<string, number> = {
   dash: 0.0003367,
   peercoin: 0.000226,
   zcash: 0.000205798,
+  polygon: 1.0e-15,
+  bsc: 5.0e-14,
+  optimism: 2.0e-15,
+  kava_evm: 2.0e-16,
 };
 // mock only use subset of cryptocurrencies to not affect tests when adding coins
 const currencies = listCryptoCurrencies().filter(c => currencyIdApproxMarketPrice[c.id]);

@@ -13,6 +13,7 @@ import {
   Text,
   VerticalStepper,
   ItemStatus,
+  Icons,
 } from "@ledgerhq/native-ui";
 import { useTheme, useNavigation, useRoute } from "@react-navigation/native";
 import { Item } from "@ledgerhq/native-ui/components/Layout/List/types";
@@ -53,6 +54,7 @@ import Button from "../../components/wrappedUi/Button";
 import Link from "../../components/wrappedUi/Link";
 import { RestoreStepDenied } from "./RestoreStepDenied";
 import UpdateReleaseNotes from "./UpdateReleaseNotes";
+import { GenericInformationBody } from "../../components/GenericInformationBody";
 
 // Screens/components navigating to this screen shouldn't know the implementation fw update
 // -> re-exporting useful types.
@@ -306,10 +308,8 @@ export const FirmwareUpdate = ({
           : t("FirmwareUpdate.steps.prepareUpdate.titleBackingUp"),
         renderBody: () => (
           <>
-            <TrackScreen
-              category={`Update ${productName} - Step 1: preparing updates for install`}
-            />
-            <Text color="neutral.c80">
+            <TrackScreen category={"Update device - Step 1: preparing updates for install"} />
+            <Text variant="bodyLineHeight" color="neutral.c80">
               {isBeforeOnboarding
                 ? t("FirmwareUpdate.steps.prepareUpdate.earlySecurityCheck.description", {
                     deviceName: productName,
@@ -326,11 +326,8 @@ export const FirmwareUpdate = ({
         title: t("FirmwareUpdate.steps.installUpdate.titleInactive"),
         renderBody: () => (
           <>
-            <TrackScreen
-              category={`Update ${productName} - Step 2: installing updates`}
-              avoidDuplicates
-            />
-            <Text color="neutral.c80">
+            <TrackScreen category={"Update device - Step 2: installing updates"} avoidDuplicates />
+            <Text variant="bodyLineHeight" color="neutral.c80">
               {t("FirmwareUpdate.steps.installUpdate.description", {
                 deviceName: productName,
               })}
@@ -345,8 +342,8 @@ export const FirmwareUpdate = ({
           : t("FirmwareUpdate.steps.restoreSettings.titleInactive"),
         renderBody: () => (
           <Flex>
-            <TrackScreen category={`Update ${productName} - Step 3: restore apps and settings`} />
-            <Text color="neutral.c80">
+            <TrackScreen category={"Update device - Step 3: restore apps and settings"} />
+            <Text variant="bodyLineHeight" color="neutral.c80">
               {isBeforeOnboarding
                 ? t("FirmwareUpdate.steps.restoreSettings.earlySecurityCheck.description")
                 : t("FirmwareUpdate.steps.restoreSettings.description")}
@@ -534,7 +531,7 @@ export const FirmwareUpdate = ({
       });
     }
 
-    if (restoreAppsState.allowManagerRequestedWording) {
+    if (restoreAppsState.allowManagerRequested) {
       return (
         <AllowManager
           device={device}
@@ -545,7 +542,7 @@ export const FirmwareUpdate = ({
       );
     }
 
-    if (connectManagerState.allowManagerRequestedWording) {
+    if (connectManagerState.allowManagerRequested) {
       return <AllowManager device={device} wording={t("DeviceAction.allowSecureConnection")} />;
     }
 
@@ -626,6 +623,7 @@ export const FirmwareUpdate = ({
         return (
           <ConfirmFirmwareUpdate
             device={device}
+            currentFirmwareVersion={deviceInfo.version}
             newFirmwareVersion={firmwareUpdateContext.final.name}
             t={t}
           />
@@ -662,8 +660,8 @@ export const FirmwareUpdate = ({
     hasReconnectErrors,
     staxLoadImageState.imageLoadRequested,
     staxLoadImageState.imageCommitRequested,
-    restoreAppsState.allowManagerRequestedWording,
-    connectManagerState.allowManagerRequestedWording,
+    restoreAppsState.allowManagerRequested,
+    connectManagerState.allowManagerRequested,
     installLanguageState.languageInstallationRequested,
     restoreStepDeniedError,
     userSolvableError,
@@ -679,6 +677,7 @@ export const FirmwareUpdate = ({
     firmwareUpdateContext.final.name,
     firmwareUpdateContext.shouldFlashMCU,
     isBeforeOnboarding,
+    deviceInfo.version,
   ]);
 
   return (
@@ -689,36 +688,28 @@ export const FirmwareUpdate = ({
           firmwareNotes={firmwareUpdateContext.osu?.notes}
         />
       ) : fullUpdateComplete ? (
-        <Flex flex={1} px={7} pb={7}>
-          <TrackScreen category={`${productName} OS successfully updated`} />
-          <Flex flex={1} justifyContent="center" alignItems="center">
-            <Flex mb={7}>
-              <IconBadge
-                Icon={IconsLegacy.CheckAloneMedium}
-                iconColor="success.c50"
-                iconSize={32}
-                backgroundColor="neutral.c20"
-              />
-            </Flex>
-            <Text textAlign="center" fontSize={7} mb={3} fontWeight="semiBold">
-              {t("FirmwareUpdate.updateDone", { deviceName: productName })}
-            </Text>
-            <Text textAlign="center" fontSize={4} color="neutral.c80" variant="largeLineHeight">
-              {t("FirmwareUpdate.updateDoneDescription", {
+        <Flex flex={1} px={6} pb={7}>
+          <TrackScreen category={"device OS successfully updated"} />
+          <Flex flex={1} justifyContent="center">
+            <GenericInformationBody
+              Icon={Icons.CheckmarkCircleFill}
+              iconColor="success.c50"
+              title={t("FirmwareUpdate.updateDone", { deviceName: productName })}
+              description={t("FirmwareUpdate.updateDoneDescription", {
                 firmwareVersion: firmwareUpdateContext.final.name,
               })}
-            </Text>
+            />
           </Flex>
           <Flex>
-            <Button type="main" outline={false} onPress={quitUpdate}>
+            <Button size="large" type="main" outline={false} onPress={quitUpdate}>
               {t("FirmwareUpdate.finishUpdateCTA")}
             </Button>
           </Flex>
         </Flex>
       ) : (
         <Flex flex={1} justifyContent="space-between">
-          <Flex>
-            <Text variant="h4" ml={5}>
+          <Flex mb={6}>
+            <Text variant="h4" fontWeight="semiBold" mx={6} my={3}>
               {t("FirmwareUpdate.updateDevice", { deviceName: productName })}
             </Text>
             <VerticalStepper steps={steps} />
@@ -743,18 +734,15 @@ export const FirmwareUpdate = ({
         />
       </QueuedDrawer>
       {updateStep === "languageRestore" ? (
-        <TrackScreen key="a" category={`Update ${productName} - Step 3a: restore language`} />
+        <TrackScreen key="a" category={"Update device - Step 3a: restore language"} />
       ) : updateStep === "imageRestore" ? (
-        <TrackScreen
-          key="b"
-          category={`Update ${productName} - Step 3b: restore lock screen picture`}
-        />
+        <TrackScreen key="b" category={"Update device - Step 3b: restore lock screen picture"} />
       ) : updateStep === "appsRestore" ? (
-        <TrackScreen key="c" category={`Update ${productName} - Step 3c: reinstall apps`} />
+        <TrackScreen key="c" category={"Update device - Step 3b: reinstall apps"} />
       ) : updateStep === "completed" ? (
         <TrackScreen
           key="d"
-          category={`Update ${productName} - Step 3d: apps and settings successfully restored`}
+          category={"Update device - Step 3d: apps and settings successfully restored"}
         />
       ) : null}
       {staxFetchImageState.hexImage ? (

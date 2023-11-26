@@ -83,13 +83,31 @@ Produces a development .apk that can be installed on Android phones. Not eligibl
 
 Optional environment variables you can put in `.env`, `.env.production` or `.env.staging` for debug, release, or staging release builds respectively.
 
-[A more exhaustive list of documented environment variables can be found here](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/ledger-live-common/src/env.ts).
+[A more exhaustive list of documented environment variables can be found here](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/env/src/env.ts).
 
 - `DEVICE_PROXY_URL=http://localhost:8435` Use the ledger device over HTTP. Useful for debugging on an emulator. More info about this in the section [Connection via HTTP bridge](#connection-via-http-bridge).
 - `BRIDGESTREAM_DATA=...` Come from console.log of the desktop app during the qrcode export. allow to bypass the bridgestream scanning.
 - `DEBUG_RNDEBUGGER=1` Enable react native debugger.
 - `DISABLE_READ_ONLY=1` Disable readonly mode by default.
 - `SKIP_ONBOARDING=1` Skips the onboarding flow.
+
+## Path mappings
+
+Add any desired path mapping in `tsconfig.json`: (for instance `"@utils/*": ["./src/utils/*"]`)
+Then, import `@utils/constants` in your project files and it will automatically resolve to `./src/utils/constants.{js/jsx/ts/tsx}`.
+
+Please respect the following structure: `"@{package}/*": ["{any/path}/*"]`
+
+```
+// tsconfig.json
+ {
+    { ... }
+    "paths": {
+      "@utils/*": ["./src/utils/*"],
+      "@constants/*": ["./src/constants/*"],
+    }
+  }
+```
 
 ## Maintenance
 

@@ -5,7 +5,7 @@ import Button from "~/renderer/components/ButtonV3";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import {
-  defaultFeatures,
+  DEFAULT_FEATURES,
   groupedFeatures,
   useFeature,
   useFeatureFlags,
@@ -24,13 +24,6 @@ import TabBar from "~/renderer/components/TabBar";
 import { featureFlagsButtonVisibleSelector } from "~/renderer/reducers/settings";
 import { setFeatureFlagsButtonVisible } from "~/renderer/actions/settings";
 
-const addFlagHint = `\
-If a feature flag is defined in the targeted Firebase environment \
-but it is missing from the following list, you can type its **exact** name in \
-the search input and it will appear in the list. Type the \
-flag name in camelCase without the "feature" prefix.\
-`;
-
 export const FeatureFlagContent = withV3StyleProvider((props: { expanded?: boolean }) => {
   const { t } = useTranslation();
   const featureFlagsButtonVisible = useSelector(featureFlagsButtonVisibleSelector);
@@ -44,7 +37,7 @@ export const FeatureFlagContent = withV3StyleProvider((props: { expanded?: boole
   const [focusedGroupName, setFocusedGroupName] = useState<string | undefined>();
 
   const featureFlags = useMemo(() => {
-    const featureKeys = Object.keys(defaultFeatures);
+    const featureKeys = Object.keys(DEFAULT_FEATURES);
     if (searchInputTrimmed && !featureKeys.includes(searchInputTrimmed)) {
       const isHiddenFeature = isFeature(searchInputTrimmed);
 
@@ -162,12 +155,12 @@ export const FeatureFlagContent = withV3StyleProvider((props: { expanded?: boole
             </Tag>
           </Flex>
           <SearchInput
-            placeholder="Search"
+            placeholder={t("settings.developer.search")}
             value={searchInput}
             onChange={setSearchInput}
             clearable
           />
-          <Alert type="info" title={addFlagHint} showIcon={false} />
+          <Alert type="info" title={t("settings.developer.flagHint")} showIcon={false} />
           <Flex flexDirection="row" justifyContent="space-between" mt={5}>
             <Text>{t("settings.developer.showButtonDesc")}</Text>
             <Switch
@@ -190,7 +183,7 @@ export const FeatureFlagContent = withV3StyleProvider((props: { expanded?: boole
             onIndexChange={handleChangeTab}
             defaultIndex={activeTabIndex}
             index={activeTabIndex}
-            tabs={["All", "Groups"]}
+            tabs={[t("settings.developer.all"), t("settings.developer.groups")]}
             separator
             withId
             fontSize={14}
@@ -226,7 +219,7 @@ const FeatureFlagsSettings = () => {
       desc={<FeatureFlagContent expanded={contentExpanded} />}
     >
       <ButtonV2 small primary onClick={toggleContentVisibility}>
-        {contentExpanded ? "Hide" : "Show"}
+        {contentExpanded ? t("settings.developer.hide") : t("settings.developer.show")}
       </ButtonV2>
     </Row>
   );

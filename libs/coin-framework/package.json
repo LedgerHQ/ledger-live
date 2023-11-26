@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-framework",
-  "version": "0.5.1",
+  "version": "0.8.1",
   "description": "Ledger framework for Coin integration",
   "keywords": [
     "Ledger",
@@ -79,7 +79,6 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/compressjs": "github:LedgerHQ/compressjs#d9e8e4d994923e0ea76a32b97289bcccfe71b82e",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
@@ -87,7 +86,7 @@
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "bignumber.js": "^9.1.1",
+    "bignumber.js": "^9.1.2",
     "eip55": "^2.1.0",
     "expect": "^27.4.6",
     "invariant": "^2.2.2",
@@ -95,9 +94,11 @@
     "lru-cache": "^7.14.1",
     "numeral": "^2.0.6",
     "prando": "^6.0.1",
-    "rxjs": "^6.6.7"
+    "rxjs": "^7.8.1"
   },
   "devDependencies": {
+    "@ledgerhq/hw-transport-node-speculos": "workspace:^",
+    "@ledgerhq/hw-transport-node-speculos-http": "workspace:^",
     "@types/invariant": "^2.2.2",
     "@types/jest": "^29.2.4",
     "@types/lodash": "^4.14.191",
@@ -115,6 +116,7 @@
     "doc": "documentation readme src/** --section=API --pe ts --re ts --re d.ts",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx --cache",
     "lint:fix": "pnpm lint --fix",
-    "test": "cross-env TZ=America/New_York jest"
+    "test": "jest",
+    "unimported": "unimported"
   }
 }

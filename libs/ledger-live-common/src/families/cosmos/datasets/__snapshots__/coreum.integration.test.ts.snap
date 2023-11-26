@@ -89,7 +89,7 @@ Array [
     Object {
       "accountId": "js:2:coreum:core10l6h3qw05u7qduqgafj8wlrx3fjhr852z7r5l2:",
       "blockHash": null,
-      "blockHeight": "6306505",
+      "blockHeight": 6306505,
       "contract": undefined,
       "extra": Object {
         "memo": "Ledger Live",
@@ -115,11 +115,10 @@ Array [
     Object {
       "accountId": "js:2:coreum:core10l6h3qw05u7qduqgafj8wlrx3fjhr852z7r5l2:",
       "blockHash": null,
-      "blockHeight": "6306437",
+      "blockHeight": 6306437,
       "contract": undefined,
       "extra": Object {
         "memo": "lb",
-        "validators": Array [],
       },
       "fee": "8880",
       "hash": "0B17FF19A1E8DC703A3AEC457B414DE88845DD76BB4D95F8F6368F68D59248DF",
@@ -140,11 +139,10 @@ Array [
     Object {
       "accountId": "js:2:coreum:core10l6h3qw05u7qduqgafj8wlrx3fjhr852z7r5l2:",
       "blockHash": null,
-      "blockHeight": "6306340",
+      "blockHeight": 6306340,
       "contract": undefined,
       "extra": Object {
         "memo": "Lc",
-        "validators": Array [],
       },
       "fee": "10000",
       "hash": "B128DC8C3D820F0832BEBD81045FA65ABFDC88FB83246B37E3F1298AF3DE778A",
@@ -167,11 +165,10 @@ Array [
     Object {
       "accountId": "js:2:coreum:core1sel9ys8a7jlsmrxp9692zfjncnmhxkws0qr3g9:",
       "blockHash": null,
-      "blockHeight": "6306437",
+      "blockHeight": 6306437,
       "contract": undefined,
       "extra": Object {
         "memo": "lb",
-        "validators": Array [],
       },
       "fee": "8880",
       "hash": "0B17FF19A1E8DC703A3AEC457B414DE88845DD76BB4D95F8F6368F68D59248DF",

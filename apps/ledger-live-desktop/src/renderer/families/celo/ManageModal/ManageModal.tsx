@@ -17,6 +17,7 @@ import {
 } from "@ledgerhq/live-common/families/celo/logic";
 import * as S from "./ManageModal.styles";
 import { CeloAccount } from "@ledgerhq/live-common/families/celo/types";
+import { ModalData } from "~/renderer/modals/types";
 
 export type Props = {
   account: CeloAccount;
@@ -29,7 +30,7 @@ const ManageModal = ({ account, source, ...rest }: Props) => {
   invariant(celoResources, "celo account expected");
   const dispatch = useDispatch();
   const onSelectAction = useCallback(
-    (onClose, name, params = {}) => {
+    (onClose: () => void, name: keyof ModalData, params = {}) => {
       onClose();
       dispatch(
         openModal(name, {

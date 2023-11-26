@@ -1,15 +1,15 @@
 import React, { ReactNode, useEffect, useState } from "react";
 import remoteConfig from "@react-native-firebase/remote-config";
-import { defaultFeatures } from "@ledgerhq/live-common/featureFlags/index";
+import { DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/index";
 import { reduce, snakeCase } from "lodash";
-import { DefaultFeatures } from "@ledgerhq/types-live";
+import { FeatureMap } from "@ledgerhq/types-live";
 
 export const formatToFirebaseFeatureId = (id: string) => {
   return `feature_${snakeCase(id)}`;
 };
 
 // Firebase SDK treat JSON values as strings
-const formatDefaultFeatures = (config: DefaultFeatures) =>
+const formatDefaultFeatures = (config: FeatureMap) =>
   reduce(
     config,
     (acc, feature, featureId) => ({
@@ -31,7 +31,7 @@ export const FirebaseRemoteConfigProvider = ({ children }: Props): JSX.Element |
     const loadRemoteConfig = async () => {
       try {
         await remoteConfig().setDefaults({
-          ...formatDefaultFeatures(defaultFeatures),
+          ...formatDefaultFeatures(DEFAULT_FEATURES),
         });
         await remoteConfig().fetchAndActivate();
       } catch (error) {

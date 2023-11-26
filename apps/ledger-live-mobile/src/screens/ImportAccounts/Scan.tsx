@@ -96,7 +96,7 @@ class Scan extends PureComponent<
     const { progress, error } = this.state;
     return (
       <View style={styles.root}>
-        <TrackScreen category="ImportAccounts" name="Scan" />
+        <TrackScreen category="Account Import Sync" />
         <Scanner onResult={this.onBarCodeRead} progress={progress} liveQrCode />
         <GenericErrorBottomModal error={error} onClose={this.onCloseError} />
       </View>

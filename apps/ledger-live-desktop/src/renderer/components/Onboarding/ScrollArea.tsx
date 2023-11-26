@@ -75,7 +75,8 @@ export function ScrollArea({
   isInsideDrawer = false,
 }: ScrollAreaProps) {
   const [hintVisible, setHintVisible] = useState(true);
-  const handleScroll = useCallback(event => {
+  const handleScroll: React.UIEventHandler<HTMLInputElement> = useCallback(event => {
+    // @ts-expect-error scrollTop does not exist on this type of event, yet it is what we receive from the onScroll...
     setHintVisible(event.target.scrollTop === 0);
   }, []);
   return (

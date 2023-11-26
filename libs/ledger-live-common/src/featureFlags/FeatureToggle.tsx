@@ -4,12 +4,12 @@ import useFeature from "./useFeature";
 import type { FeatureId } from "@ledgerhq/types-live";
 
 type Props = {
-  feature: FeatureId;
+  featureId: FeatureId;
   fallback?: ReactNode;
   children?: ReactNode;
 };
 
-const FeatureToggle = ({ feature: featureId, fallback, children }: Props): JSX.Element => {
+const FeatureToggle = ({ featureId, fallback, children }: Props): JSX.Element => {
   const feature = useFeature(featureId);
 
   if (!feature || !feature.enabled) {

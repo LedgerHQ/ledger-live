@@ -10,6 +10,8 @@ const BTC = getCryptoCurrencyById("bitcoin");
 const ETH = getCryptoCurrencyById("ethereum");
 const USDT = getTokenById("ethereum/erc20/usd_tether__erc20_");
 
+const selectedAccount = genAccount("mocked-account-selected", { currency: ETH });
+
 const accounts: Account[] = [
   genAccount("mocked-account-1", { currency: BTC }),
   genAccount("mocked-account-2", { currency: ETH }),
@@ -17,7 +19,7 @@ const accounts: Account[] = [
 const subAccount = genTokenAccount(1, accounts[1], USDT);
 
 describe("useToState", () => {
-  const defaultProps = { accounts };
+  const defaultProps = { accounts, fromCurrencyAccount: selectedAccount };
 
   it("should initialize a blank state", () => {
     const { result } = renderHook(useToState, { initialProps: defaultProps });

@@ -18,6 +18,7 @@ import Confirmation from "./Confirmation";
 import Restore from "./Restore";
 import { lastSeenDeviceSelector } from "../../../reducers/settings";
 import { useAppDeviceAction } from "../../../hooks/deviceActions";
+import { UserRefusedAllowManager } from "@ledgerhq/errors";
 
 type Props = {
   restore?: boolean;
@@ -76,7 +77,7 @@ const InstallSetOfApps = ({
   const status = action.useHook(userConfirmed ? selectedDevice : undefined, commandRequest);
 
   const {
-    allowManagerRequestedWording,
+    allowManagerRequested,
     skippedAppOps,
     installQueue,
     listedApps,
@@ -160,10 +161,13 @@ const InstallSetOfApps = ({
         })}
       </Flex>
       <QueuedDrawer
-        isRequestingToBeOpened={!!allowManagerRequestedWording || !!error}
+        isRequestingToBeOpened={allowManagerRequested || !!error}
         onClose={onWrappedError}
         onModalHide={onWrappedError}
       >
+        {error instanceof UserRefusedAllowManager ? (
+          <TrackScreen category="App restoration cancelled on device" refreshSource={false} />
+        ) : null}
         <Flex alignItems="center">
           <Flex flexDirection="row">
             <DeviceActionDefaultRendering status={status} device={selectedDevice} />

@@ -40,10 +40,7 @@ import type {
 } from "../../components/RootNavigator/types/helpers";
 
 type ScreenProps = CompositeScreenProps<
-  StackNavigatorProps<
-    ReceiveFundsStackParamList,
-    ScreenName.ReceiveConfirmation | ScreenName.ReceiveVerificationConfirmation
-  >,
+  StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveConfirmation>,
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
 

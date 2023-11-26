@@ -1,5 +1,5 @@
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import React, { useState, useCallback, Component, useEffect } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
@@ -39,6 +39,7 @@ import type { SendFundsNavigatorStackParamList } from "../../components/RootNavi
 import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
+import SupportLinkError from "../../components/SupportLinkError";
 
 type Navigation = BaseComposite<
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
@@ -141,15 +142,18 @@ function SendSummary({ navigation, route }: Props) {
     account.type === "Account" &&
     (account.subAccounts || []).some(subAccount => subAccount.balance.gt(0));
 
-  const onBuyEth = useCallback(() => {
-    navigation.navigate(NavigatorName.Exchange, {
-      screen: ScreenName.ExchangeBuy,
-      params: {
-        defaultAccountId: account?.id,
-        defaultCurrencyId: currencyOrToken?.id,
-      },
-    });
-  }, [navigation, account?.id, currencyOrToken?.id]);
+  const onBuy = useCallback(
+    (account: Account) => {
+      navigation.navigate(NavigatorName.Exchange, {
+        screen: ScreenName.ExchangeBuy,
+        params: {
+          defaultAccountId: account.id,
+          defaultCurrencyId: account.currency.id,
+        },
+      });
+    },
+    [navigation],
+  );
 
   // FIXME: why is recipient sometimes empty?
   if (!account || !transaction || !transaction.recipient || !currencyOrToken) {
@@ -180,7 +184,7 @@ function SendSummary({ navigation, route }: Props) {
           </View>
         ) : null}
         <SummaryFromSection account={account} parentAccount={parentAccount} />
-        <VerticalConnector
+        <View
           style={[
             styles.verticalConnector,
             {
@@ -222,19 +226,25 @@ function SendSummary({ navigation, route }: Props) {
         />
 
         {error ? (
-          <View style={styles.gasPriceError}>
-            <View
-              style={{
-                padding: 4,
-              }}
-            >
-              <Info size={12} color={colors.alert} />
+          <View style={styles.gasPriceErrorContainer}>
+            <View style={styles.gasPriceError}>
+              <View
+                style={{
+                  padding: 4,
+                }}
+              >
+                <Info size={12} color={colors.alert} />
+              </View>
+              <LText style={[styles.error, styles.gasPriceErrorText]}>
+                <TranslatedError error={error} />
+              </LText>
             </View>
-            <LText style={[styles.error, styles.gasPriceErrorText]}>
-              <TranslatedError error={error} />
-            </LText>
+            <View>
+              <SupportLinkError error={error} type="alert" />
+            </View>
           </View>
         ) : null}
+
         {!amount.eq(totalSpent) && !hideTotal ? (
           <>
             <SectionSeparator lineColor={colors.lightFog} />
@@ -251,13 +261,23 @@ function SendSummary({ navigation, route }: Props) {
           <TranslatedError error={transactionError} />
         </LText>
         {error && error instanceof NotEnoughGas ? (
-          isCurrencySupported(currencyOrToken) && (
+          // If the user does not enough funds for gas, he needs to buy
+          // the main account currency (which is not necessarily ETH depending
+          // on the EVM network used)
+          isCurrencySupported(mainAccount.currency) && (
             <Button
               event="SummaryBuyEth"
               type="primary"
-              title={<Trans i18nKey="common.buyEth" />}
+              title={
+                <Trans
+                  i18nKey="buyCurrency.buyCTA"
+                  values={{
+                    currencyNameOrTicker: mainAccount.currency.name,
+                  }}
+                />
+              }
               containerStyle={styles.continueButton}
-              onPress={onBuyEth}
+              onPress={() => onBuy(mainAccount)}
             />
           )
         ) : (
@@ -337,6 +357,10 @@ const styles = StyleSheet.create({
     top: 60,
     left: 16,
   },
+  gasPriceErrorContainer: {
+    display: "flex",
+    alignItems: "center",
+  },
   gasPriceError: {
     marginTop: 16,
     flexDirection: "row",
@@ -346,15 +370,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 });
-
-// FIXME: PROBABLY SOME TYPE OF StyleProp<ViewStyle>
-class VerticalConnector extends Component<{
-  style: Record<string, string | number> | Array<Record<string, string | number>>;
-}> {
-  render() {
-    const { style } = this.props;
-    return <View style={style} />;
-  }
-}
 
 export default SendSummary;

@@ -2,6 +2,10 @@ import { encode, decode } from "@ethersproject/rlp";
 import { BigNumber } from "bignumber.js";
 import { LedgerEthTransactionResolution } from "./services/types";
 
+export const padHexString = (str: string) => {
+  return str.length % 2 ? "0" + str : str;
+};
+
 export function splitPath(path: string): number[] {
   const result: number[] = [];
   const components = path.split("/");
@@ -19,7 +23,8 @@ export function splitPath(path: string): number[] {
 }
 
 export function hexBuffer(str: string): Buffer {
-  return Buffer.from(str.startsWith("0x") ? str.slice(2) : str, "hex");
+  const strWithoutPrefix = str.startsWith("0x") ? str.slice(2) : str;
+  return Buffer.from(padHexString(strWithoutPrefix), "hex");
 }
 
 export function maybeHexBuffer(str: string | null | undefined): Buffer | null | undefined {

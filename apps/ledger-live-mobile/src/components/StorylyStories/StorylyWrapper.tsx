@@ -27,6 +27,7 @@ const StorylyLocalizedWrapper = forwardRef((props: Props, ref: ForwardedRef<Stor
   const [fallbackToEnglish, setFallbackToEnglish] = useState(false);
 
   const {
+    // @ts-expect-error TYPINGS
     params: { stories },
   } = useFeature("storyly") || {};
   const storyConfig = stories[instanceID] || {};

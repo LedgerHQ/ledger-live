@@ -1,15 +1,10 @@
 import "./live-common-setup";
-import { LLDCoinFamily } from "../types";
 import sendAmountFields from "./SendAmountFields";
 import sendRecipientFields from "./SendRecipientFields";
 import StepReceiveFundsPostAlert from "./StepReceiveFundsPostAlert";
-import {
-  BitcoinAccount,
-  Transaction,
-  TransactionStatus,
-} from "@ledgerhq/live-common/families/bitcoin/types";
+import { BitcoinFamily } from "./types";
 
-const family: LLDCoinFamily<BitcoinAccount, Transaction, TransactionStatus> = {
+const family: BitcoinFamily = {
   sendAmountFields,
   sendRecipientFields,
   StepReceiveFundsPostAlert,

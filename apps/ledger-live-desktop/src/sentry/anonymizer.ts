@@ -1,16 +1,15 @@
-const configDir = (() => {
-  const { LEDGER_CONFIG_DIRECTORY } = process.env;
-  if (LEDGER_CONFIG_DIRECTORY) return LEDGER_CONFIG_DIRECTORY;
+import resolveUserDataDirectory from "~/helpers/resolveUserDataDirectory";
 
-  const electron = process.type === "browser" ? require("electron") : require("@electron/remote");
-  return electron.app.getPath("userData") || "__NOTHING_TO_REPLACE__";
-})();
+const configDir = resolveUserDataDirectory();
 const homeDir = (() => {
   const { HOME_DIRECTORY } = process.env;
   if (HOME_DIRECTORY) return HOME_DIRECTORY;
-
-  const electron = process.type === "browser" ? require("electron") : require("@electron/remote");
-  return electron.app.getPath("home") || "__NOTHING_TO_REPLACE__";
+  if (process.type === "browser") {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const electron = require("electron");
+    return electron.app.getPath("home");
+  }
+  return window.api.pathHome;
 })();
 
 // all the paths the app will use. we replace them to anonymize

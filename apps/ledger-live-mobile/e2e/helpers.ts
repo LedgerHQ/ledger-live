@@ -1,7 +1,7 @@
 import { by, element, waitFor, device } from "detox";
 import { Direction } from "react-native-modal";
 
-const DEFAULT_TIMEOUT = 60000;
+const DEFAULT_TIMEOUT = 60000; // 60s !!
 const BASE_DEEPLINK = "ledgerlive://";
 const startPositionY = 0.8; // Needed on Android to scroll views : https://github.com/wix/Detox/issues/3918
 export const currencyParam = "?currency=";
@@ -44,11 +44,16 @@ export async function typeTextById(id: string, text: string, focus = true) {
   return getElementById(id).typeText(text);
 }
 
-export async function typeTextByElement(elem: Detox.NativeElement, text: string, focus = true) {
+export async function typeTextByElement(
+  elem: Detox.NativeElement,
+  text: string,
+  closeKeyboard = true,
+  focus = true,
+) {
   if (focus) {
     await tapByElement(elem);
   }
-  await elem.typeText(text);
+  await elem.typeText(text + (closeKeyboard ? "\n" : "")); // ' \n' close keyboard if open
 }
 
 export async function clearTextByElement(elem: Detox.NativeElement) {
@@ -82,7 +87,7 @@ export async function scrollToId(
 
 export async function getTextOfElement(id: string, index = 0) {
   const attributes = await getElementById(id, index).getAttributes();
-  return !("elements" in attributes) ? attributes.text : attributes.elements[index].text;
+  return (!("elements" in attributes) ? attributes.text : attributes.elements[index].text) || "";
 }
 
 /**
@@ -98,8 +103,9 @@ export async function delay(ms: number) {
   });
 }
 
-export function openDeeplink(link?: string) {
-  return device.openURL({ url: BASE_DEEPLINK + link });
+/** @param path the part after "ledgerlive://", e.g. "portfolio", or "discover?param=123"  */
+export function openDeeplink(path?: string) {
+  return device.openURL({ url: BASE_DEEPLINK + path });
 }
 
 export function isAndroid() {

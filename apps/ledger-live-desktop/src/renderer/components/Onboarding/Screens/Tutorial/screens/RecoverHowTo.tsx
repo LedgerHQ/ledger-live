@@ -1,24 +1,22 @@
 import React, { useCallback, useContext } from "react";
-import { useTranslation, Trans } from "react-i18next";
-import { Title, AsideFooter, Column, Bullet, AnimationContainer } from "../shared";
+import { Trans, useTranslation } from "react-i18next";
+import { AnimationContainer, AsideFooter, Bullet, Column, Title } from "../shared";
 
-import NanoDeviceCheckIcon from "~/renderer/icons/NanoDeviceCheckIcon";
-import NanoDeviceCancelIcon from "~/renderer/icons/NanoDeviceCancelIcon";
 import { useTheme } from "styled-components";
+import NanoDeviceCancelIcon from "~/renderer/icons/NanoDeviceCancelIcon";
+import NanoDeviceCheckIcon from "~/renderer/icons/NanoDeviceCheckIcon";
 
+import { Box, Button, IconsLegacy, Link, Popin, Text } from "@ledgerhq/react-ui";
+import { DeviceModelId } from "@ledgerhq/types-devices";
+import { urls } from "~/config/urls";
 import Animation from "~/renderer/animations";
 import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
-import { OnboardingContext } from "../../../index";
-import { IconsLegacy, Link, Box, Button, Popin, Text } from "@ledgerhq/react-ui";
-import { useSelector } from "react-redux";
-import { languageSelector } from "~/renderer/reducers/settings";
 import { openURL } from "~/renderer/linking";
-import { urls } from "~/config/urls";
-import { DeviceModelId } from "@ledgerhq/types-devices";
+import { useDynamicUrl } from "~/renderer/terms";
+import { OnboardingContext } from "../../../index";
 
 export function RecoverHowTo() {
   const theme = useTheme();
-  const locale = useSelector(languageSelector) || "en";
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
   const color = theme.colors.palette.primary.c80;
   const steps = [
@@ -39,10 +37,9 @@ export function RecoverHowTo() {
 
   const onClickArticleLink = useCallback(() => openURL(urls.howToUpdateNewLedger), []);
 
-  const onClickSupportLink = useCallback(
-    () => openURL(urls.faq[locale in urls.faq ? locale : "en"]),
-    [locale],
-  );
+  const urlFaq = useDynamicUrl("faq");
+
+  const onClickSupportLink = () => openURL(urlFaq);
 
   return (
     <Column>

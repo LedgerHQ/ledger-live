@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import installLanguage from "@ledgerhq/live-common/hw/installLanguage";
 import { createAction } from "@ledgerhq/live-common/hw/actions/installLanguage";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import DeviceAction from "./DeviceAction";
 import { Language } from "@ledgerhq/types-live";

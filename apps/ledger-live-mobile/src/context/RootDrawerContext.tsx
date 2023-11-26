@@ -3,7 +3,7 @@ import React, { PropsWithChildren, createContext, useCallback, useContext, useSt
 import { ParamListBase, useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { NavigatorName } from "../const";
-import { DrawerProps, RootDrawerProps } from "../components/RootDrawer/types";
+import type { DrawerProps, RootDrawerProps } from "../components/RootDrawer/types";
 
 const rootDrawerEmitter = new EventEmitter();
 

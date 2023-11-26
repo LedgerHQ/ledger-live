@@ -31,7 +31,7 @@ const Accordion = ({
 
   const style = useAnimatedStyle(() => {
     return {
-      maxHeight: withTiming(animationHeight.value, config),
+      maxHeight: withTiming(animationHeight.value, config) as unknown as number, // patch for
     };
   });
 

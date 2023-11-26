@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { FlatList } from "react-native";
+import { FlatList, ListRenderItem } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Button } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
@@ -30,7 +30,7 @@ const AccountsSection = ({ accounts, currencyId, currencyTicker }: ListProps) =>
     [accounts],
   );
 
-  const renderItem = useCallback(
+  const renderItem: ListRenderItem<Account | TokenAccount> = useCallback(
     ({ item, index }) => (
       <AccountRow
         navigation={navigation}

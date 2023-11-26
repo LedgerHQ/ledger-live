@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import { EMPTY, interval, Observable } from "rxjs";
+import { interval, Observable, of } from "rxjs";
 import { scan, debounce, tap, takeWhile } from "rxjs/operators";
 import { useEffect, useCallback, useState, useMemo, useRef } from "react";
 import { log } from "@ledgerhq/logs";
@@ -40,7 +40,7 @@ export type State = {
   unresponsive: boolean;
   allowOpeningRequestedWording: string | null | undefined;
   allowOpeningGranted: boolean;
-  allowManagerRequestedWording: string | null | undefined;
+  allowManagerRequested: boolean;
   allowManagerGranted: boolean;
   device: Device | null | undefined;
   deviceInfo?: DeviceInfo | null | undefined;
@@ -140,7 +140,7 @@ const getInitialState = (device?: Device | null | undefined, request?: AppReques
   requiresAppInstallation: null,
   allowOpeningRequestedWording: null,
   allowOpeningGranted: false,
-  allowManagerRequestedWording: null,
+  allowManagerRequested: false,
   allowManagerGranted: false,
   device: null,
   deviceInfo: null,
@@ -200,7 +200,7 @@ const reducer = (state: State, e: Event): State => {
         requiresAppInstallation: null,
         allowOpeningRequestedWording: null,
         allowOpeningGranted: true,
-        allowManagerRequestedWording: null,
+        allowManagerRequested: false,
         allowManagerGranted: true,
         device: state.device,
         opened: false,
@@ -251,7 +251,7 @@ const reducer = (state: State, e: Event): State => {
         requiresAppInstallation: null,
         allowOpeningRequestedWording: null,
         allowOpeningGranted: false,
-        allowManagerRequestedWording: null,
+        allowManagerRequested: false,
         allowManagerGranted: false,
         device: state.device,
         opened: false,
@@ -274,7 +274,7 @@ const reducer = (state: State, e: Event): State => {
         requiresAppInstallation: null,
         allowOpeningRequestedWording: null,
         allowOpeningGranted: false,
-        allowManagerRequestedWording: null,
+        allowManagerRequested: false,
         allowManagerGranted: false,
         device: state.device,
         opened: false,
@@ -307,7 +307,7 @@ const reducer = (state: State, e: Event): State => {
         allowOpeningGranted: false,
         allowOpeningRequestedWording: null,
         allowManagerGranted: false,
-        allowManagerRequestedWording: e.wording,
+        allowManagerRequested: true,
 
         request: state.request,
         skippedAppOps: state.skippedAppOps,
@@ -331,7 +331,7 @@ const reducer = (state: State, e: Event): State => {
         allowOpeningGranted: true,
         allowOpeningRequestedWording: null,
         allowManagerGranted: true,
-        allowManagerRequestedWording: null,
+        allowManagerRequested: false,
 
         request: state.request,
         skippedAppOps: state.skippedAppOps,
@@ -355,7 +355,7 @@ const reducer = (state: State, e: Event): State => {
         allowOpeningGranted: false,
         allowOpeningRequestedWording: null,
         allowManagerGranted: false,
-        allowManagerRequestedWording: null,
+        allowManagerRequested: false,
         requiresAppInstallation: {
           appNames: e.appNames,
           appName: e.appName,
@@ -380,7 +380,7 @@ const reducer = (state: State, e: Event): State => {
         allowOpeningGranted: false,
         allowOpeningRequestedWording: null,
         allowManagerGranted: false,
-        allowManagerRequestedWording: null,
+        allowManagerRequested: false,
         device: state.device,
         error: null,
         isLoading: false,
@@ -542,7 +542,7 @@ export const createAction = (
       const sub = impl
         .pipe(
           tap((e: any) => log("actions-app-event", e.type, e)),
-          debounce((e: Event) => ("replaceable" in e && e.replaceable ? interval(100) : EMPTY)),
+          debounce((e: Event) => ("replaceable" in e && e.replaceable ? interval(100) : of(null))),
           scan(reducer, getInitialState()),
           takeWhile((s: State) => !s.requiresAppInstallation && !s.error, true),
         )

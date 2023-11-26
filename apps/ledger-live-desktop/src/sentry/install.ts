@@ -3,7 +3,6 @@ import * as SentryMainModule from "@sentry/electron/main";
 import { ElectronMainOptions } from "@sentry/electron/main";
 import pname from "./pname";
 import anonymizer from "./anonymizer";
-import "../env";
 import { getOperatingSystemSupportStatus } from "~/support/os";
 
 /* eslint-disable no-continue */
@@ -77,11 +76,14 @@ const ignoreErrors = [
   "DisconnectedDevice",
   "DisconnectedDeviceDuringOperation",
   "EthAppPleaseEnableContractData",
+  "VechainAppPleaseEnableContractDataAndMultiClause",
   "failed with status code",
   "GetAppAndVersionUnsupportedFormat",
   "Invalid channel",
   "Ledger Device is busy",
   "ManagerDeviceLocked",
+  "LockedDeviceError",
+  "UnresponsiveDeviceError",
   "PairingFailed",
   "Ledger device: UNKNOWN_ERROR",
   // errors coming from the usage of a Transport implementation

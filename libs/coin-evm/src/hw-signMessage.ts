@@ -5,7 +5,7 @@ import { Account, AnyMessage, DeviceId, TypedEvmMessage } from "@ledgerhq/types-
 import { EvmSignature, EvmSigner } from "./signer";
 
 export const prepareMessageToSign = ({ message }: { message: string }): TypedEvmMessage => {
-  const parsedMessage = (() => {
+  const parsedMessage = ((): string | Record<string, unknown> => {
     try {
       return JSON.parse(message) as Record<string, unknown>;
     } catch (error) {

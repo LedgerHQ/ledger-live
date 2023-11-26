@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useLocation, useHistory } from "react-router-dom";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { latestFirmwareSelector } from "~/renderer/reducers/settings";
 import TopBanner, { FakeLink } from "~/renderer/components/TopBanner";
 import getCleanVersion from "~/renderer/screens/manager/FirmwareUpdate/getCleanVersion";

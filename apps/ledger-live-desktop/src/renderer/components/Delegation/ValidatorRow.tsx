@@ -208,7 +208,7 @@ const ValidatorRow = ({
   className,
 }: ValidatorRowProps) => {
   const inputRef = useRef<HTMLInputElement>();
-  const onTitleClick = useCallback(
+  const onTitleClick: React.MouseEventHandler<HTMLDivElement> = useCallback(
     e => {
       e.stopPropagation();
       onExternalLink(validator.address);
@@ -216,7 +216,8 @@ const ValidatorRow = ({
     [validator, onExternalLink],
   );
   const onChange = useCallback(
-    e => {
+    // onChange: (b: BigNumber, a: Unit) => void;
+    (e: BigNumber) => {
       onUpdateVote && onUpdateVote(validator.address, e.toString());
     },
     [validator, onUpdateVote],
@@ -274,11 +275,12 @@ const ValidatorRow = ({
       disabled={!value && disabled}
       active={!!value}
       onClick={onRowClick}
+      data-test-id="modal-provider-row"
     >
       {icon}
       <InfoContainer>
         <Title onClick={onTitleClick}>
-          <Text>{title}</Text>
+          <Text data-test-id="modal-provider-title">{title}</Text>
           <IconContainer>
             <ExternalLink size={16} />
           </IconContainer>

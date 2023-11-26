@@ -15,6 +15,11 @@ import Text from "~/renderer/components/Text";
 import DelegationSelectorField from "../fields/DelegationSelectorField";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
+import {
+  CosmosLikeTransaction,
+  CosmosMappedDelegation,
+} from "@ledgerhq/live-common/families/cosmos/types";
+
 export default function StepClaimRewards({
   account,
   parentAccount,
@@ -29,16 +34,16 @@ export default function StepClaimRewards({
   const bridge = getAccountBridge(account, parentAccount);
   const unit = getAccountUnit(account);
   const updateClaimRewards = useCallback(
-    newTransaction => {
+    (newTransaction: Partial<CosmosLikeTransaction>) => {
       onUpdateTransaction(transaction => bridge.updateTransaction(transaction, newTransaction));
     },
     [bridge, onUpdateTransaction],
   );
   const onChangeMode = useCallback(
-    mode => {
+    (mode: string) => {
       updateClaimRewards({
         ...transaction,
-        mode,
+        mode: mode as CosmosLikeTransaction["mode"],
       });
     },
     [updateClaimRewards, transaction],
@@ -53,7 +58,9 @@ export default function StepClaimRewards({
       locale,
     });
   const onDelegationChange = useCallback(
-    ({ validatorAddress, pendingRewards }) => {
+    (maybeValue: CosmosMappedDelegation | null | undefined) => {
+      if (!maybeValue) return;
+      const { validatorAddress, pendingRewards } = maybeValue;
       updateClaimRewards({
         ...transaction,
         validators: [

@@ -1,8 +1,9 @@
-import * as detox from "detox";
+import { expect, web, by } from "detox";
 import PortfolioPage from "../models/wallet/portfolioPage";
 import MarketPage from "../models/market/marketPage";
 import { loadConfig } from "../bridge/server";
 import { isAndroid, getElementByText } from "../helpers";
+import jestExpect from "expect";
 
 let portfolioPage: PortfolioPage;
 let marketPage: MarketPage;
@@ -17,30 +18,27 @@ describe("Market page for user with no device", () => {
   it("should find the researched crypto", async () => {
     await portfolioPage.waitForPortfolioPageToLoad();
     await portfolioPage.openMarketPage();
-    await marketPage.searchAsset("btc\n");
-    await detox.expect(getElementByText("Bitcoin (BTC)")).toBeVisible();
+    await marketPage.searchAsset("btc");
+    await expect(getElementByText("Bitcoin (BTC)")).toBeVisible();
   });
 
   it("should filter starred asset in the list", async () => {
-    if (isAndroid()) return;
     await marketPage.openAssetPage("Bitcoin (BTC)");
     await marketPage.starFavoriteCoin();
     await marketPage.backToAssetList();
     await marketPage.filterStaredAsset();
-    await detox.expect(getElementByText("Bitcoin (BTC)")).toBeVisible();
+    await expect(getElementByText("Bitcoin (BTC)")).toBeVisible();
   });
 
   it("should redirect to the buy a nano marketplace page", async () => {
-    if (isAndroid()) return;
     await marketPage.openAssetPage("Bitcoin (BTC)");
     await marketPage.buyNano();
     await marketPage.openMarketPlace();
-
     if (isAndroid()) {
-      const url = await detox.web.element(detox.by.web.id("main")).getCurrentUrl();
+      const url = await web.element(by.web.id("__next")).getCurrentUrl();
       const expectedUrl = "https://shop.ledger.com/";
 
-      expect(url).toContain(expectedUrl);
+      jestExpect(url).toContain(expectedUrl);
     } else {
       console.warn("Skipping webview check on iOS");
     }

@@ -23,9 +23,6 @@ export type TransactionRaw = TransactionCommonRaw & {
   memo?: string;
 };
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
-export const reflect = (_declare: any) => {};
-
 export type TransactionStatus = TransactionStatusCommon;
 
 export type TransactionStatusRaw = TransactionStatusCommonRaw;

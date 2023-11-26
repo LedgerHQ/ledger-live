@@ -17,7 +17,7 @@ export function ReferralProgram() {
   const { t } = useTranslation();
   const referralProgramMobile = useFeature("referralProgramMobile");
   const accessReferralProgram = useCallback(() => {
-    const path = referralProgramMobile?.params.path;
+    const path = referralProgramMobile?.params?.path;
     if (referralProgramMobile?.enabled && path) {
       Linking.canOpenURL(path).then(() => Linking.openURL(path));
       track("banner_clicked", {

@@ -242,5 +242,29 @@ describe("EIP712", () => {
         v: 28,
       });
     });
+
+    test("should sign correctly the 14.json sample message (shorthand byte string => 0x3 vs 0x03)", async () => {
+      const apdusBuffer = await fs.readFile(getFilePath("apdu", "14"), "utf-8");
+      const messageShorthand = await fs
+        .readFile(getFilePath("message", "14"), "utf-8")
+        .then(JSON.parse);
+      const messageFull = await fs
+        .readFile(getFilePath("message", "14bis"), "utf-8")
+        .then(JSON.parse);
+
+      const transportShort = await openTransportReplayer(RecordStore.fromString(`${apdusBuffer}`));
+      const ethShort = new Eth(transportShort);
+      const resultShorthand = await ethShort.signEIP712Message("44'/60'/0'/0/0", messageShorthand);
+      const transportFull = await openTransportReplayer(RecordStore.fromString(`${apdusBuffer}`));
+      const ethFull = new Eth(transportFull);
+      const resultFull = await ethFull.signEIP712Message("44'/60'/0'/0/0", messageFull);
+
+      expect(resultShorthand).toEqual(resultFull);
+      expect(resultShorthand).toEqual({
+        r: "15502f71994b3a6cade2f2aa0243058ccfd44d09ad1fb5392180f2a430ed396d",
+        s: "1ecf5ac4964fd1068ad90b2586bc12e9ac9a77fb04331da54023ee1674794411",
+        v: 27,
+      });
+    });
   });
 });

@@ -9,12 +9,12 @@ type Props = {
 function LabelInfoTooltip(props: Props) {
   const { text, children } = props;
   return (
-    <Tooltip disableWrapper content={text}>
-      <Box horizontal alignItems="center" flow={1}>
-        {children}
+    <Box horizontal alignItems="center" flow={1}>
+      {children}
+      <Tooltip content={text}>
         <IconInfoCircle size={12} />
-      </Box>
-    </Tooltip>
+      </Tooltip>
+    </Box>
   );
 }
 export default React.memo<Props>(LabelInfoTooltip);

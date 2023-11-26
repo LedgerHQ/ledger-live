@@ -67,11 +67,15 @@ const NftCard = ({ id, mode, account, withContextMenu = false, onHideCollection 
   const show = useMemo(() => status === "loading", [status]);
   const isGrid = mode === "grid";
   const onItemClick = useCallback(() => {
-    setDrawer(NFTViewerDrawer, {
-      account,
-      nftId: id,
-      isOpen: true,
-    });
+    setDrawer(
+      NFTViewerDrawer,
+      {
+        account,
+        nftId: id,
+        isOpen: true,
+      },
+      { forceDisableFocusTrap: true },
+    );
   }, [id, account]);
   const MaybeContext = ({ children }: { children: React.ReactNode }) =>
     withContextMenu && nft && metadata ? (

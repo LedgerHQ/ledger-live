@@ -22,7 +22,7 @@ outputs:
     description: null if not prerelease, otherwise channel name (v1.2.3-nightly.0 => nightly)
 
 runs:
-  using: node16
+  using: node20
   main: build/main.js
 
 branding:

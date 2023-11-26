@@ -31,8 +31,8 @@ describe("getEstimatedFees", () => {
         },
       },
     });
-    const { estimatedGas } = await getEstimatedFees(account, transaction);
-    expect(estimatedGas.gt(new BigNumber(gasSimulationMock))).toEqual(true);
+    const { gasWanted } = await getEstimatedFees(account, transaction);
+    expect(gasWanted.gt(new BigNumber(gasSimulationMock))).toEqual(true);
   });
 
   it("should calculate fees for a transaction", async () => {
@@ -44,9 +44,9 @@ describe("getEstimatedFees", () => {
         },
       },
     });
-    const { estimatedFees, estimatedGas } = await getEstimatedFees(account, transaction);
-    expect(estimatedFees.gt(0)).toEqual(true);
-    expect(estimatedGas.gt(0)).toEqual(true);
+    const { gasWantedFees, gasWanted } = await getEstimatedFees(account, transaction);
+    expect(gasWantedFees.gt(0)).toEqual(true);
+    expect(gasWanted.gt(0)).toEqual(true);
   });
 });
 

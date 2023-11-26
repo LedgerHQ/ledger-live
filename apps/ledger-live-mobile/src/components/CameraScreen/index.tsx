@@ -1,11 +1,13 @@
-import React from "react";
-import liveCommonPkg from "@ledgerhq/live-common/package.json";
-import { StyleSheet, View } from "react-native";
+import React, { useCallback } from "react";
+import { View } from "react-native";
 import { rgba } from "../../colors";
-import QRCodeTopLayer from "./QRCodeTopLayer";
 import QRCodeBottomLayer from "./QRCodeBottomLayer";
-import QRCodeRectangleViewport from "./QRCodeRectangleViewport";
-import LText from "../LText";
+import { Box, Flex, IconsLegacy } from "@ledgerhq/native-ui";
+import { useTheme } from "styled-components/native";
+import ScanTargetSvg from "./ScanTargetSvg";
+import { TouchableOpacity } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { track } from "../../analytics";
 
 type Props = {
   width: number;
@@ -15,8 +17,17 @@ type Props = {
   instruction?: React.ReactNode | string;
 };
 export default function CameraScreen({ width, height, progress, liveQrCode, instruction }: Props) {
+  const { colors } = useTheme();
+  const { goBack } = useNavigation();
+
+  const onClose = useCallback(() => {
+    track("button_clicked", {
+      button: "Close",
+    });
+    goBack();
+  }, [goBack]);
+
   // Make the viewfinder borders 2/3 of the screen shortest border
-  const viewFinderSize = (width > height ? height : width) * (2 / 3);
   const wrapperStyle =
     width > height
       ? {
@@ -29,48 +40,39 @@ export default function CameraScreen({ width, height, progress, liveQrCode, inst
         };
   return (
     <View style={wrapperStyle}>
-      <View
-        style={[
-          styles.darken,
-          {
-            backgroundColor: rgba("#142533", 0.4),
-          },
-          styles.centered,
-          styles.topCell,
-        ]}
+      <Flex
+        height={height * 0.15}
+        backgroundColor={rgba(colors.constant.black, 0.8)}
+        alignItems={"flex-end"}
+        px={6}
+        pt={9}
+        zIndex={1}
       >
-        <QRCodeTopLayer liveQrCode={liveQrCode} />
-      </View>
-      <QRCodeRectangleViewport viewFinderSize={viewFinderSize} />
-      <QRCodeBottomLayer progress={progress} liveQrCode={liveQrCode} instruction={instruction} />
-      <LText style={styles.version}>{liveCommonPkg.version}</LText>
+        <TouchableOpacity onPress={onClose}>
+          <Flex
+            bg={"neutral.c100"}
+            width={"32px"}
+            height={"32px"}
+            alignItems={"center"}
+            justifyContent={"center"}
+            borderRadius={32}
+          >
+            <IconsLegacy.CloseMedium size={20} color={"neutral.c00"} />
+          </Flex>
+        </TouchableOpacity>
+      </Flex>
+      <Flex flexDirection={"row"} justifyContent={"space-evenly"} alignItems={"center"}>
+        <Box flexGrow={1} backgroundColor={rgba(colors.constant.black, 0.8)} height={"100%"} />
+        <ScanTargetSvg />
+        <Box flexGrow={1} backgroundColor={rgba(colors.constant.black, 0.8)} height={"100%"} />
+      </Flex>
+      <Box backgroundColor={rgba(colors.constant.black, 0.8)} flex={1}>
+        <QRCodeBottomLayer
+          liveQrCode={liveQrCode}
+          progress={progress}
+          instruction={instruction}
+        ></QRCodeBottomLayer>
+      </Box>
     </View>
   );
 }
-const styles = StyleSheet.create({
-  darken: {
-    flexGrow: 1,
-  },
-  border: {
-    borderColor: "white",
-    flexGrow: 1,
-  },
-  centered: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  topCell: {
-    paddingTop: 64,
-    paddingHorizontal: 16,
-    paddingBottom: 8,
-  },
-  version: {
-    fontSize: 10,
-    position: "absolute",
-    bottom: 10,
-    right: 10,
-    opacity: 0.4,
-    color: "#fff",
-  },
-});

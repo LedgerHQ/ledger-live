@@ -24,7 +24,7 @@ import Info from "../../../icons/Info";
 import QueuedDrawer from "../../../components/QueuedDrawer";
 import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
 import type { AlgorandOptInFlowParamList } from "./types";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 
 const Row = ({
   item,
@@ -114,6 +114,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
   const subAccounts = mainAccount.subAccounts;
   const options = listTokensForCryptoCurrency(mainAccount.currency);
   const [infoModalOpen, setInfoModalOpen] = useState(false);
+  // @ts-expect-error token is a string and setInfoModalOpen expect a boolean, whut ?
   const openModal = useCallback(token => setInfoModalOpen(token), [setInfoModalOpen]);
   const closeModal = useCallback(() => setInfoModalOpen(false), [setInfoModalOpen]);
   const renderList = useCallback(

@@ -1,12 +1,12 @@
-import React, { PropsWithChildren, useCallback, useEffect } from "react";
+import React, { PropsWithChildren, useCallback, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import isEqual from "lodash/isEqual";
 import semver from "semver";
 import remoteConfig from "@react-native-firebase/remote-config";
 import VersionNumber from "react-native-version-number";
-import { FeatureFlagsProvider, defaultFeatures } from "@ledgerhq/live-common/featureFlags/index";
-import { FeatureId, Feature } from "@ledgerhq/types-live";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { FeatureFlagsProvider, DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/index";
+import { FeatureId, Feature, Features } from "@ledgerhq/types-live";
+import { getEnv } from "@ledgerhq/live-env";
 
 import { formatToFirebaseFeatureId } from "./FirebaseRemoteConfig";
 import { languageSelector, overriddenFeatureFlagsSelector } from "../reducers/settings";
@@ -107,10 +107,10 @@ export const getAllDivergedFlags = (
   appLanguage: string,
 ): Partial<{ [key in FeatureId]: boolean }> => {
   const res: Partial<{ [key in FeatureId]: boolean }> = {};
-  Object.keys(defaultFeatures).forEach(k => {
-    const key = k as keyof typeof defaultFeatures;
+  Object.keys(DEFAULT_FEATURES).forEach(k => {
+    const key = k as keyof typeof DEFAULT_FEATURES;
     const value = getFeature({ key, appLanguage });
-    if (value && value.enabled !== defaultFeatures[key]?.enabled) {
+    if (value && value.enabled !== DEFAULT_FEATURES[key]?.enabled) {
       res[key] = value.enabled;
     }
   });
@@ -141,13 +141,16 @@ export const FirebaseFeatureFlagsProvider: React.FC<Props> = ({ children }) => {
     [appLanguage, dispatch],
   );
 
-  const resetFeature = (key: FeatureId): void => {
-    dispatch(setOverriddenFeatureFlag({ id: key, value: undefined }));
-  };
+  const resetFeature = useCallback(
+    (key: FeatureId): void => {
+      dispatch(setOverriddenFeatureFlag({ id: key, value: undefined }));
+    },
+    [dispatch],
+  );
 
-  const resetFeatures = (): void => {
+  const resetFeatures = useCallback((): void => {
     dispatch(setOverriddenFeatureFlags({}));
-  };
+  }, [dispatch]);
 
   const getAllFlags = useCallback((): Record<string, Feature> => {
     const allFeatures = remoteConfig().getAll();
@@ -160,7 +163,7 @@ export const FirebaseFeatureFlagsProvider: React.FC<Props> = ({ children }) => {
 
   // Nb wrapped because the method is also called from outside.
   const wrappedGetFeature = useCallback(
-    (key: FeatureId): Feature => getFeature({ key, appLanguage, localOverrides }),
+    <T extends FeatureId>(key: T): Features[T] => getFeature({ key, appLanguage, localOverrides }),
     [localOverrides, appLanguage],
   );
 
@@ -170,16 +173,17 @@ export const FirebaseFeatureFlagsProvider: React.FC<Props> = ({ children }) => {
     return () => setAnalyticsFeatureFlagMethod(null);
   }, [wrappedGetFeature]);
 
-  return (
-    <FeatureFlagsProvider
-      isFeature={isFeature}
-      getFeature={wrappedGetFeature}
-      overrideFeature={overrideFeature}
-      resetFeature={resetFeature}
-      resetFeatures={resetFeatures}
-      getAllFlags={getAllFlags}
-    >
-      {children}
-    </FeatureFlagsProvider>
+  const contextValue = useMemo(
+    () => ({
+      isFeature,
+      getFeature: wrappedGetFeature,
+      overrideFeature,
+      resetFeature,
+      resetFeatures,
+      getAllFlags,
+    }),
+    [getAllFlags, overrideFeature, resetFeature, resetFeatures, wrappedGetFeature],
   );
+
+  return <FeatureFlagsProvider value={contextValue}>{children}</FeatureFlagsProvider>;
 };

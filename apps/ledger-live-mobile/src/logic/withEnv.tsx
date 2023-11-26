@@ -1,6 +1,6 @@
 import React from "react";
-import { changes, getAllEnvs } from "@ledgerhq/live-common/env";
-import type { EnvName } from "@ledgerhq/live-common/env";
+import { changes, getAllEnvs } from "@ledgerhq/live-env";
+import type { EnvName } from "@ledgerhq/live-env";
 import hoistNonReactStatics from "hoist-non-react-statics";
 import { Subscription } from "rxjs";
 
@@ -10,7 +10,7 @@ const withEnv =
     class WithEnv extends React.Component<
       Props,
       {
-        env: string;
+        env: string | number | boolean | string[];
       }
     > {
       state = {

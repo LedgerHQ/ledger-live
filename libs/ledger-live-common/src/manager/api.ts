@@ -37,7 +37,7 @@ import semver from "semver";
 import URL from "url";
 import { version as livecommonversion } from "../../package.json";
 import { mapApplicationV2ToApp } from "../apps/polyfill";
-import { getEnv } from "../env";
+import { getEnv } from "@ledgerhq/live-env";
 import { createDeviceSocket } from "../socket";
 import {
   bulkSocketMock,
@@ -58,17 +58,16 @@ declare global {
 
 const remapSocketError = (context?: string) =>
   catchError((e: Error) => {
-    if (!e || !e.message) return throwError(e);
+    if (!e || !e.message) return throwError(() => e);
 
     if (e.message.startsWith("invalid literal")) {
       // hack to detect the case you're not in good condition (not in dashboard)
-      return throwError(new DeviceOnDashboardExpected());
+      return throwError(() => new DeviceOnDashboardExpected());
     }
 
     const status =
       e instanceof TransportStatusError
-        ? // @ts-expect-error TransportStatusError to be typed on ledgerjs
-          e.statusCode.toString(16)
+        ? e.statusCode.toString(16)
         : (e as Error).message.slice((e as Error).message.length - 4);
 
     // TODO use StatusCode instead of this.
@@ -77,38 +76,38 @@ const remapSocketError = (context?: string) =>
       case "6a81":
       case "6a8e":
       case "6a8f":
-        return throwError(new ManagerAppAlreadyInstalledError());
+        return throwError(() => new ManagerAppAlreadyInstalledError());
 
       case "6982":
       case "5303":
-        return throwError(new ManagerDeviceLockedError());
+        return throwError(() => new ManagerDeviceLockedError());
 
       case "6a84":
       case "5103":
         if (context === "firmware" || context === "mcu") {
-          return throwError(new ManagerFirmwareNotEnoughSpaceError());
+          return throwError(() => new ManagerFirmwareNotEnoughSpaceError());
         }
 
-        return throwError(new ManagerNotEnoughSpaceError());
+        return throwError(() => new ManagerNotEnoughSpaceError());
 
       case "6a85":
       case "5102":
         if (context === "firmware" || context === "mcu") {
-          return throwError(new UserRefusedFirmwareUpdate());
+          return throwError(() => new UserRefusedFirmwareUpdate());
         }
 
-        return throwError(new ManagerNotEnoughSpaceError());
+        return throwError(() => new ManagerNotEnoughSpaceError());
 
       case "6985":
       case "5501":
         if (context === "firmware" || context === "mcu") {
-          return throwError(new UserRefusedFirmwareUpdate());
+          return throwError(() => new UserRefusedFirmwareUpdate());
         }
 
-        return throwError(new ManagerNotEnoughSpaceError());
+        return throwError(() => new ManagerNotEnoughSpaceError());
 
       default:
-        return throwError(e);
+        return throwError(() => e);
     }
   });
 
@@ -130,7 +129,10 @@ const applicationsByDevice: (params: {
     });
     return r.data.application_versions;
   },
-  p => `${p.provider}_${p.current_se_firmware_final_version}_${p.device_version}`,
+  p =>
+    `${getEnv("MANAGER_API_BASE")}_${p.provider}_${p.current_se_firmware_final_version}_${
+      p.device_version
+    }`,
 );
 
 /**
@@ -168,7 +170,7 @@ const catalogForDevice: (params: {
 
     return data.map(mapApplicationV2ToApp);
   },
-  _ => "",
+  a => `${getEnv("MANAGER_API_BASE")}_${a.provider}_${a.targetId}_${a.firmwareVersion}`,
 );
 
 const listApps: () => Promise<Array<Application>> = makeLRUCache(
@@ -189,7 +191,7 @@ const listApps: () => Promise<Array<Application>> = makeLRUCache(
 
     return data;
   },
-  () => "",
+  () => getEnv("MANAGER_API_BASE"),
 );
 
 const listCategories = async (): Promise<Array<Category>> => {
@@ -218,7 +220,7 @@ const getMcus: () => Promise<any> = makeLRUCache(
     });
     return data;
   },
-  () => "",
+  () => getEnv("MANAGER_API_BASE"),
 );
 
 const compatibleMCUForDeviceInfo = (
@@ -320,7 +322,10 @@ const getLatestFirmware: (arg0: {
 
     return data.se_firmware_osu_version;
   },
-  a => `${a.current_se_firmware_final_version}_${a.device_version}_${a.provider}`,
+  a =>
+    `${getEnv("MANAGER_API_BASE")}_${a.current_se_firmware_final_version}_${a.device_version}_${
+      a.provider
+    }`,
 );
 
 const getCurrentOSU: (input: {
@@ -345,7 +350,7 @@ const getCurrentOSU: (input: {
     });
     return data;
   },
-  a => `${a.version}_${a.deviceId}_${a.provider}`,
+  a => `${getEnv("MANAGER_API_BASE")}_${a.version}_${a.deviceId}_${a.provider}`,
 );
 const getCurrentFirmware: (input: {
   version: string;
@@ -370,10 +375,16 @@ const getCurrentFirmware: (input: {
         version_name: input.version,
         provider: input.provider,
       },
+    }).catch(error => {
+      const status = error?.status || error?.response?.status;
+
+      if (status === 404) throw new FirmwareNotRecognized();
+
+      throw error;
     });
     return data;
   },
-  a => `${a.version}_${a.deviceId}_${a.provider}`,
+  a => `${getEnv("MANAGER_API_BASE")}_${a.version}_${a.deviceId}_${a.provider}`,
 );
 const getFinalFirmwareById: (id: number) => Promise<FinalFirmware> = makeLRUCache(
   async id => {
@@ -392,20 +403,25 @@ const getFinalFirmwareById: (id: number) => Promise<FinalFirmware> = makeLRUCach
     });
     return data;
   },
-  id => String(id),
+  id => `${getEnv("MANAGER_API_BASE")}}_${String(id)}`,
 );
 
 /**
+ * Resolve applications details by hashes.
+ * Order of outputs matches order of inputs.
+ * If an application version is not found, a null is returned instead.
+ * If several versions match the same hash, only the latest one is returned.
+ *
  * Given an array of hashes that we can obtain by either listInstalledApps in this same
  * API (a websocket connection to a scriptrunner) or via direct apdus using hw/listApps.ts
  * retrieve all the information needed from the backend for those applications.
  */
-const getAppsByHash: (hashes: string[]) => Promise<Array<App>> = makeLRUCache(
+const getAppsByHash: (hashes: string[]) => Promise<Array<App | null>> = makeLRUCache(
   async hashes => {
     const {
       data,
     }: {
-      data: Array<ApplicationV2>;
+      data: Array<ApplicationV2 | null>;
     } = await network({
       method: "POST",
       url: URL.format({
@@ -421,9 +437,9 @@ const getAppsByHash: (hashes: string[]) => Promise<Array<App>> = makeLRUCache(
       throw new NetworkDown("");
     }
 
-    return data.map(mapApplicationV2ToApp);
+    return data.map(appV2 => (appV2 ? mapApplicationV2ToApp(appV2) : null));
   },
-  hashes => String(hashes),
+  hashes => `${getEnv("MANAGER_API_BASE")}_${hashes.join("-")}`,
 );
 
 const getDeviceVersion: (targetId: string | number, provider: number) => Promise<DeviceVersion> =
@@ -446,19 +462,18 @@ const getDeviceVersion: (targetId: string | number, provider: number) => Promise
           target_id: targetId,
         },
       }).catch(error => {
-        const status = error && (error.status || (error.response && error.response.status)); // FIXME LLD is doing error remapping already. we probably need to move the remapping in live-common
+        const status = error?.status || error?.response?.status;
 
-        if (status === 404) {
+        if (status === 404)
           throw new FirmwareNotRecognized("manager api did not recognize targetId=" + targetId, {
             targetId,
           });
-        }
 
         throw error;
       });
       return data;
     },
-    (targetId, provider) => `${targetId}_${provider}`,
+    (targetId, provider) => `${getEnv("MANAGER_API_BASE")}_${targetId}_${provider}`,
   );
 
 const install = (

@@ -15,12 +15,13 @@ import {
   getProtect,
 } from "../db";
 import reducers from "../reducers";
-import { importSettings } from "../actions/settings";
+import { importSettings, setSupportedCounterValues } from "../actions/settings";
 import { importStore as importAccounts } from "../actions/accounts";
 import { importBle } from "../actions/ble";
 import { updateProtectData, updateProtectStatus } from "../actions/protect";
-import { INITIAL_STATE as settingsState, supportedCountervalues } from "../reducers/settings";
+import { INITIAL_STATE as settingsState } from "../reducers/settings";
 import { listCachedCurrencyIds, hydrateCurrency } from "../bridge/cache";
+import { getCryptoCurrencyById, listSupportedFiats } from "@ledgerhq/live-common/currencies/index";
 
 const middlewares: [Middleware] = [thunk];
 
@@ -37,11 +38,7 @@ export type StoreType = typeof store;
 export default class LedgerStoreProvider extends Component<
   {
     onInitFinished: () => void;
-    children: (
-      ready: boolean,
-      store: StoreType,
-      initialCountervalues?: CounterValuesStateRaw,
-    ) => JSX.Element;
+    children: (ready: boolean, initialCountervalues?: CounterValuesStateRaw) => JSX.Element;
   },
   {
     ready: boolean;
@@ -82,11 +79,29 @@ export default class LedgerStoreProvider extends Component<
             .catch((reason: unknown) => ({ status: "rejected", reason })),
         ),
     );
+    const bitcoin = getCryptoCurrencyById("bitcoin");
+    const ethereum = getCryptoCurrencyById("ethereum");
+    const possibleIntermediaries = [bitcoin, ethereum];
+
+    const getsupportedCountervalues = async () => {
+      const supportedFiats = await listSupportedFiats();
+      const supportedCounterValues = [...supportedFiats, ...possibleIntermediaries]
+        .map(currency => ({
+          value: currency.ticker,
+          ticker: currency.ticker,
+          label: `${currency.name} - ${currency.ticker}`,
+          currency,
+        }))
+        .sort((a, b) => (a.currency.name < b.currency.name ? -1 : 1));
+      return supportedCounterValues;
+    };
+    const supportedCounterValues = await getsupportedCountervalues();
+    store.dispatch(setSupportedCounterValues(supportedCounterValues));
 
     if (
       settingsData &&
       settingsData.counterValue &&
-      !supportedCountervalues.find(({ ticker }) => ticker === settingsData.counterValue)
+      !supportedCounterValues.find(({ ticker }) => ticker === settingsData.counterValue)
     ) {
       settingsData.counterValue = settingsState.counterValue;
     }
@@ -121,6 +136,6 @@ export default class LedgerStoreProvider extends Component<
   render() {
     const { children } = this.props;
     const { ready, initialCountervalues } = this.state;
-    return <Provider store={store}>{children(ready, store, initialCountervalues)}</Provider>;
+    return <Provider store={store}>{children(ready, initialCountervalues)}</Provider>;
   }
 }

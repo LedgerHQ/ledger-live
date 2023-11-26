@@ -1,4 +1,4 @@
-import { Observable, from } from "rxjs";
+import { Observable, firstValueFrom, from } from "rxjs";
 import {
   GetAccountShape,
   IterateResultBuilder,
@@ -22,9 +22,9 @@ export {
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 
 function getAddr(deviceId: string, opts: GetAddressOptions): Promise<Result> {
-  return withDevice(deviceId)((transport: Transport) =>
-    from(getAddress(transport, opts)),
-  ).toPromise();
+  return firstValueFrom(
+    withDevice(deviceId)((transport: Transport) => from(getAddress(transport, opts))),
+  );
 }
 
 export const makeScanAccounts = ({

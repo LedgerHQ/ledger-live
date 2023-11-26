@@ -11,6 +11,7 @@ module.exports = {
   plugins: [
     "@babel/plugin-transform-named-capturing-groups-regex",
     "@babel/plugin-proposal-export-namespace-from",
-    "react-native-reanimated/plugin",
+    "@babel/plugin-transform-class-static-block",
+    "react-native-reanimated/plugin", // react-native-reanimated/plugin has to be listed last.
   ],
 };

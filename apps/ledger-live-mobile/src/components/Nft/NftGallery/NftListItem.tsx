@@ -81,7 +81,7 @@ const NftCardView = ({
               {displayText(metadata?.nftName)}
             </Text>
           </Skeleton>
-          <FeatureToggle feature="counterValue">
+          <FeatureToggle featureId="counterValue">
             <NftListItemFloorPriceRow nft={nft} />
           </FeatureToggle>
         </Flex>

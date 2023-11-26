@@ -1,8 +1,8 @@
 import type { CacheRes } from "@ledgerhq/live-network/cache";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
-import type { Account, Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
+import type { Account, OperationType, TokenAccount } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import StellarSdk, { ServerApi } from "stellar-sdk";
+import { ServerApi, StrKey, MuxedAccount } from "stellar-sdk";
 import { findSubAccountById } from "../../account";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { encodeOperationId } from "../../operation";
@@ -13,7 +13,13 @@ import {
   fetchSigners,
   loadAccount,
 } from "./api";
-import type { BalanceAsset, RawOperation, Transaction, TransactionRaw } from "./types";
+import type {
+  BalanceAsset,
+  RawOperation,
+  StellarOperation,
+  Transaction,
+  TransactionRaw,
+} from "./types";
 
 export const STELLAR_BURN_ADDRESS = "GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWHF";
 
@@ -144,7 +150,7 @@ export const formatOperation = async (
   rawOperation: RawOperation,
   accountId: string,
   addr: string,
-): Promise<Operation> => {
+): Promise<StellarOperation> => {
   const transaction = await rawOperation.transaction();
   const type = getOperationType(rawOperation, addr);
   const value = getValue(rawOperation, transaction, type);
@@ -154,7 +160,8 @@ export const formatOperation = async (
       ? Buffer.from(transaction.memo, "base64").toString("hex")
       : transaction.memo
     : null;
-  const operation = {
+
+  const operation: StellarOperation = {
     id: encodeOperationId(accountId, rawOperation.transaction_hash, type),
     accountId,
     fee: new BigNumber(transaction.fee_charged),
@@ -171,14 +178,24 @@ export const formatOperation = async (
     hasFailed: !rawOperation.transaction_successful,
     blockHash: null,
     extra: {
-      pagingToken: rawOperation.paging_token,
-      assetCode: rawOperation?.asset_code,
-      assetIssuer: rawOperation?.asset_issuer,
-      assetAmount: rawOperation?.asset_code ? value.toString() : undefined,
       ledgerOpType: type,
-      memo,
     },
   };
+
+  if (rawOperation.paging_token) {
+    operation.extra.pagingToken = rawOperation.paging_token;
+  }
+  if (rawOperation.asset_code) {
+    operation.extra.assetCode = rawOperation.asset_code;
+    operation.extra.assetAmount = rawOperation.asset_code ? value.toString() : undefined;
+  }
+  if (rawOperation.asset_issuer) {
+    operation.extra.assetIssuer = rawOperation.asset_issuer;
+  }
+  if (memo) {
+    operation.extra.memo = memo;
+  }
+
   return operation;
 };
 
@@ -258,10 +275,7 @@ export const isAddressValid = (address: string): boolean => {
   if (address === STELLAR_BURN_ADDRESS) return false;
 
   try {
-    return (
-      StellarSdk.StrKey.isValidEd25519PublicKey(address) ||
-      StellarSdk.StrKey.isValidMed25519PublicKey(address)
-    );
+    return StrKey.isValidEd25519PublicKey(address) || StrKey.isValidMed25519PublicKey(address);
   } catch (err) {
     return false;
   }
@@ -299,10 +313,10 @@ export const recipientAccount = async (
 
   let accountAddress = address;
 
-  const isMuxedAccount = Boolean(StellarSdk.StrKey.isValidMed25519PublicKey(address));
+  const isMuxedAccount = StrKey.isValidMed25519PublicKey(address);
 
   if (isMuxedAccount) {
-    const muxedAccount = new StellarSdk.MuxedAccount.fromAddress(address, "0");
+    const muxedAccount = MuxedAccount.fromAddress(address, "0");
     accountAddress = muxedAccount.baseAccount().accountId();
   }
 
@@ -321,11 +335,11 @@ export const recipientAccount = async (
   };
 };
 
-export const rawOperationsToOperations = async (
+export const rawOperationsToOperations = (
   operations: RawOperation[],
   addr: string,
   accountId: string,
-): Promise<Operation[]> => {
+): Promise<StellarOperation[]> => {
   const supportedOperationTypes = [
     "create_account",
     "payment",

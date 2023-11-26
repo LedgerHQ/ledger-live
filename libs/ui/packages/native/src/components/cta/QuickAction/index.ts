@@ -1,2 +1,2 @@
-export { default as QuickActionList } from "./QuickActionList";
-export { default as QuickActionButton } from "./QuickActionButton";
+export { default as QuickActionList, type QuickActionListProps } from "./QuickActionList";
+export { default as QuickActionButton, type QuickActionButtonProps } from "./QuickActionButton";

@@ -4,10 +4,8 @@ import {
   getElementById,
   waitForElementById,
   tapById,
-  isAndroid,
   waitForElementByText,
 } from "../../helpers";
-import { device } from "detox";
 import * as bridge from "../../bridge/server";
 
 export default class OnboardingSteps {
@@ -42,16 +40,11 @@ export default class OnboardingSteps {
   }
 
   async chooseToExploreApp() {
-    await device.disableSynchronization(); // Animations prevent click
     await tapByElement(this.exploreAppButton());
-    // Fixme : Found a way to skip discover carousel first page on iOS
-    for (let i = isAndroid() ? 0 : 1; i < 4; i++) {
-      await waitForElementById(this.discoverLiveTitle(i));
+    for (let i = 0; i < 4; i++) {
       await tapById(this.discoverLiveTitle(i));
     }
-    await waitForElementById(this.exploreWithoutDeviceButtonId);
     await tapById(this.exploreWithoutDeviceButtonId);
-    await device.enableSynchronization();
   }
 
   async selectYourDevice(device: string) {
@@ -67,10 +60,8 @@ export default class OnboardingSteps {
   }
 
   async addDeviceViaBluetooth(name = "David") {
-    await device.disableSynchronization(); // Scanning animation prevents launching mocks
     await tapByElement(this.pairDeviceButton());
     bridge.addDevices();
-    await device.enableSynchronization();
     await waitForElementByText(this.deviceName(name));
     await tapByText(this.deviceName(name));
     bridge.setInstalledApps(); // tell LLM what apps the mock device has

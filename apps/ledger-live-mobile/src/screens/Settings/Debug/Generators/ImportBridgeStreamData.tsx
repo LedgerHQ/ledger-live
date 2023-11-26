@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { Buffer } from "buffer";
 import { useNavigation } from "@react-navigation/native";
-import Clipboard from "@react-native-community/clipboard";
+import Clipboard from "@react-native-clipboard/clipboard";
 import { NavigatorName, ScreenName } from "../../../../const";
 import SettingsRow from "../../../../components/SettingsRow";
 

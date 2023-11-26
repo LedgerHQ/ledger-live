@@ -16,6 +16,7 @@ export default class SwapFormPage {
   swapDestinationSelector = () => getElementById("swap-destination-selector");
   swapSourceInputTextbox = () => getElementById("swap-source-amount-textbox");
   exchangeButton = () => getElementById("exchange-button");
+  exchangeScrollView = () => getElementById("exchange-scrollView");
   chooseProviderButton = () => getElementById("choose-provider-button");
   sendMaxToggle = () => getElementById("exchange-send-max-toggle");
   termsAcceptButton = () => getElementById("terms-accept-button");
@@ -62,7 +63,8 @@ export default class SwapFormPage {
     return tapByElement(this.sendMaxToggle());
   }
 
-  startExchange() {
-    return tapByElement(this.exchangeButton());
+  async startExchange() {
+    await this.exchangeScrollView().scrollTo("bottom");
+    return await tapByElement(this.exchangeButton());
   }
 }

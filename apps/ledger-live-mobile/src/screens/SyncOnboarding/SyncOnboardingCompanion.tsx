@@ -23,7 +23,7 @@ import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { SeedPhraseType, StorylyInstanceID } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { addKnownDevice } from "../../actions/ble";
-import { ScreenName } from "../../const";
+import { NavigatorName, ScreenName } from "../../const";
 import HelpDrawer from "./HelpDrawer";
 import DesyncOverlay from "./DesyncOverlay";
 import {
@@ -226,12 +226,11 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
     onLostDevice();
   }, [onShouldHeaderBeOverlaid, onLostDevice]);
 
-  const handleDeviceReady = useCallback(() => {
-    // Adds the device to the list of known devices
-    dispatchRedux(setReadOnlyMode(false));
-    dispatchRedux(setHasOrderedNano(false));
+  /**
+   * Adds the device to the list of known devices
+   */
+  const addToKnownDevices = useCallback(() => {
     dispatchRedux(setLastConnectedDevice(device));
-    dispatchRedux(completeOnboarding());
     dispatchRedux(
       addKnownDevice({
         id: device.deviceId,
@@ -239,7 +238,15 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
         modelId: device.modelId,
       }),
     );
+  }, [device, dispatchRedux]);
 
+  /**
+   * Triggers the end of the onboarding
+   */
+  const handleOnboardingDone = useCallback(() => {
+    dispatchRedux(setReadOnlyMode(false));
+    dispatchRedux(setHasOrderedNano(false));
+    dispatchRedux(completeOnboarding());
     navigation.navigate(ScreenName.SyncOnboardingCompletion, { device });
   }, [device, dispatchRedux, navigation]);
 
@@ -321,7 +328,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
       !analyticsSeedingTracked.current
     ) {
       screen(
-        `Set up ${productName}: Step 3 Seed Success`,
+        "Set up device: Step 3 Seed Success",
         undefined,
         {
           seedPhraseType: analyticsSeedPhraseType.current
@@ -426,17 +433,24 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
 
   const preventNavigation = useRef(false);
 
+  const addedToKnownDevices = useRef(false);
   useEffect(() => {
-    // Stops the polling once the installation apps step is reached
     if (companionStepKey >= CompanionStepKey.Apps) {
+      // Stops the polling once the installation apps step is reached
       setIsPollingOn(false);
+      // At this step, device has been successfully setup so it can be saved in
+      // the list of known devices
+      if (!addedToKnownDevices.current) {
+        addedToKnownDevices.current = true;
+        addToKnownDevices();
+      }
     }
 
     if (companionStepKey === CompanionStepKey.Exit) {
       preventNavigation.current = true;
       readyRedirectTimerRef.current = setTimeout(() => {
         preventNavigation.current = false;
-        handleDeviceReady();
+        handleOnboardingDone();
       }, READY_REDIRECT_DELAY_MS);
     }
 
@@ -447,7 +461,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
         readyRedirectTimerRef.current = null;
       }
     };
-  }, [companionStepKey, handleDeviceReady]);
+  }, [companionStepKey, addToKnownDevices, handleOnboardingDone]);
 
   useEffect(
     () =>
@@ -459,11 +473,15 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
 
   useEffect(() => {
     if (seedPathStatus === "recover_seed" && servicesConfig?.enabled) {
-      navigation.navigate(ScreenName.Recover, {
-        fromOnboarding: true,
-        device,
-        platform: servicesConfig.params?.protectId,
-        redirectTo: "restore",
+      navigation.navigate(NavigatorName.Base, {
+        screen: ScreenName.Recover,
+        params: {
+          fromOnboarding: true,
+          device,
+          platform: servicesConfig.params?.protectId,
+          redirectTo: "restore",
+          date: new Date().toISOString(), // adding a date to reload the page in case of same device restored again
+        },
       });
     }
   }, [
@@ -482,9 +500,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
           title: t("syncOnboarding.earlySecurityCheckCompletedStep.title", { productName }),
           renderBody: () => (
             <>
-              <TrackScreen
-                category={`Set up ${productName}: Step 1 early security check completed`}
-              />
+              <TrackScreen category={"Set up device: Step 1 device paired"} />
               <ContinueOnDeviceWithAnim
                 deviceModelId={device.modelId}
                 text={t("syncOnboarding.earlySecurityCheckCompletedStep.description", {
@@ -501,7 +517,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
           doneTitle: t("syncOnboarding.pinStep.doneTitle"),
           renderBody: () => (
             <Flex>
-              <TrackScreen category={`Set up ${productName}: Step 2 PIN`} />
+              <TrackScreen category={"Set up device: Step 2 PIN"} />
               <BodyText>{t("syncOnboarding.pinStep.description", { productName })}</BodyText>
               <ContinueOnDeviceWithAnim
                 deviceModelId={device.modelId}
@@ -518,7 +534,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
           doneTitle: t("syncOnboarding.seedStep.doneTitle"),
           renderBody: () => (
             <Flex>
-              <TrackScreen category={`Set up ${productName}: Step 3 Seed Intro`} />
+              <TrackScreen category={"Set up device: Step 3 Seed Intro"} />
               {seedPathStatus === "new_seed" ? (
                 <Flex pb={1}>
                   <BodyText mb={6}>
@@ -648,7 +664,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
             }
           />
           {companionStepKey === CompanionStepKey.Exit ? (
-            <TrackScreen category="Stax Set Up - Final step: Stax is ready" />
+            <TrackScreen category="Set up device: Final Step Your device is ready" />
           ) : null}
         </Flex>
       </Flex>

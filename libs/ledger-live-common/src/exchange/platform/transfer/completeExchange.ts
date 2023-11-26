@@ -1,5 +1,5 @@
 import secp256k1 from "secp256k1";
-import { from, Observable } from "rxjs";
+import { firstValueFrom, from, Observable } from "rxjs";
 import { TransportStatusError, WrongDeviceForAccount } from "@ledgerhq/errors";
 
 import { delay } from "../../../promise";
@@ -9,7 +9,7 @@ import { getAccountCurrency, getMainAccount } from "../../../account";
 import { getAccountBridge } from "../../../bridge";
 import { TransactionRefusedOnDevice } from "../../../errors";
 import { withDevice } from "../../../hw/deviceAccess";
-import { getCurrencyExchangeConfig } from "../..";
+import { convertToAppExchangePartnerKey, getCurrencyExchangeConfig } from "../..";
 import { getProvider } from ".";
 
 import type {
@@ -19,7 +19,7 @@ import type {
 } from "../types";
 
 const withDevicePromise = (deviceId, fn) =>
-  withDevice(deviceId)(transport => from(fn(transport))).toPromise();
+  firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));
 
 const completeExchange = (
   input: CompleteExchangeInputFund | CompleteExchangeInputSell,
@@ -70,7 +70,7 @@ const completeExchange = (
         const errorsKeys = Object.keys(errors);
         if (errorsKeys.length > 0) throw errors[errorsKeys[0]]; // throw the first error
 
-        await exchange.setPartnerKey(providerNameAndSignature.nameAndPubkey);
+        await exchange.setPartnerKey(convertToAppExchangePartnerKey(providerNameAndSignature));
         if (unsubscribed) return;
 
         await exchange.checkPartner(providerNameAndSignature.signature);
@@ -80,20 +80,7 @@ const completeExchange = (
         if (unsubscribed) return;
 
         const bufferSignature = Buffer.from(signature, "hex");
-        /**
-         * For the Fund and Swap flow, the signature sent to the nano needs to
-         * be in DER format, which is not the case for Sell flow. Hence the
-         * ternary.
-         * cf. https://github.com/LedgerHQ/app-exchange/blob/e67848f136dc7227521791b91f608f7cd32e7da7/src/check_tx_signature.c#L14-L32
-         */
-        const goodSign =
-          exchangeType === ExchangeTypes.Sell
-            ? bufferSignature
-            : Buffer.from(secp256k1.signatureExport(bufferSignature));
-
-        if (!goodSign) {
-          throw new Error("Could not check provider signature");
-        }
+        const goodSign = convertSignature(bufferSignature, exchangeType);
 
         await exchange.checkTransactionSignature(goodSign);
         if (unsubscribed) return;
@@ -113,7 +100,6 @@ const completeExchange = (
             payoutAddressParameters.addressParameters,
           );
         } catch (e) {
-          // @ts-expect-error TransportStatusError to be typed on ledgerjs
           if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
             throw new WrongDeviceForAccount(undefined, {
               accountName: mainAccount.name,
@@ -125,7 +111,7 @@ const completeExchange = (
 
         o.next({
           type: "complete-exchange-requested",
-          estimatedFees,
+          estimatedFees: estimatedFees.toString(),
         });
 
         if (unsubscribed) return;
@@ -134,7 +120,6 @@ const completeExchange = (
       }).catch(e => {
         if (ignoreTransportError) return;
 
-        // @ts-expect-error TransportStatusError to be typed on ledgerjs
         if (e instanceof TransportStatusError && e.statusCode === 0x6a84) {
           throw new TransactionRefusedOnDevice();
         }
@@ -168,5 +153,27 @@ const completeExchange = (
     };
   });
 };
+
+/**
+ * For the Fund and Swap flow, the signature sent to the nano needs to
+ * be in DER format, which is not the case for Sell flow. Hence the
+ * ternary.
+ * cf. https://github.com/LedgerHQ/app-exchange/blob/e67848f136dc7227521791b91f608f7cd32e7da7/src/check_tx_signature.c#L14-L32
+ * @param {Buffer} bufferSignature
+ * @param {ExchangeTypes} exchangeType
+ * @return {Buffer} The correct format Buffer for AppExchange call.
+ */
+function convertSignature(bufferSignature: Buffer, exchangeType: ExchangeTypes): Buffer {
+  const goodSign =
+    exchangeType === ExchangeTypes.Sell
+      ? bufferSignature
+      : Buffer.from(secp256k1.signatureExport(bufferSignature));
+
+  if (!goodSign) {
+    throw new Error("Could not check provider signature");
+  }
+
+  return goodSign;
+}
 
 export default completeExchange;

@@ -1,5 +1,5 @@
 import { from } from "rxjs";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { listAppCandidates } from "@ledgerhq/live-common/load/speculos";
 import { formatAppCandidate } from "@ledgerhq/live-common/bot/formatters";
 import invariant from "invariant";

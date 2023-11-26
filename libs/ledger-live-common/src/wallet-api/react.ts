@@ -15,8 +15,7 @@ import {
   Permission,
 } from "@ledgerhq/wallet-api-core";
 import { StateDB } from "../hooks/useDBRaw";
-import { Subject } from "rxjs";
-import { Observable, firstValueFrom } from "rxjs7";
+import { Observable, firstValueFrom, Subject } from "rxjs";
 import { first } from "rxjs/operators";
 import {
   accountToWalletAPIAccount,
@@ -24,7 +23,7 @@ import {
   getAccountIdFromWalletAccountId,
 } from "./converters";
 import { isWalletAPISupportedCurrency } from "./helpers";
-import { WalletAPICurrency, AppManifest, WalletAPIAccount } from "./types";
+import { WalletAPICurrency, AppManifest, WalletAPIAccount, WalletAPICustomHandlers } from "./types";
 import { getMainAccount, getParentAccount } from "../account";
 import { listCurrencies, findCryptoCurrencyById, findTokenById } from "../currencies";
 import { TrackingAPI } from "./tracking";
@@ -40,7 +39,7 @@ import {
   signTransactionLogic,
 } from "./logic";
 import { getAccountBridge } from "../bridge";
-import { getEnv } from "../env";
+import { getEnv } from "@ledgerhq/live-env";
 import openTransportAsSubject, { BidirectionalEvent } from "../hw/openTransportAsSubject";
 import { AppResult } from "../hw/actions/app";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
@@ -113,7 +112,7 @@ export interface UiHook {
     accounts$: Observable<WalletAPIAccount[]>;
     currencies: CryptoOrTokenCurrency[];
     onSuccess: (account: AccountLike, parentAccount: Account | undefined) => void;
-    onError: () => void;
+    onCancel: () => void;
   }) => void;
   "account.receive": (params: {
     account: AccountLike;
@@ -265,6 +264,19 @@ function useDeviceTransport({ manifest, tracking }) {
 
 const allCurrenciesAndTokens = listCurrencies(true);
 
+export type useWalletAPIServerOptions = {
+  manifest: AppManifest;
+  accounts: AccountLike[];
+  tracking: TrackingAPI;
+  config: ServerConfig;
+  webviewHook: {
+    reload: () => void;
+    postMessage: (message: string) => void;
+  };
+  uiHook: Partial<UiHook>;
+  customHandlers?: WalletAPICustomHandlers;
+};
+
 export function useWalletAPIServer({
   manifest,
   accounts,
@@ -284,17 +296,8 @@ export function useWalletAPIServer({
     "exchange.start": uiExchangeStart,
     "exchange.complete": uiExchangeComplete,
   },
-}: {
-  manifest: AppManifest;
-  accounts: AccountLike[];
-  tracking: TrackingAPI;
-  config: ServerConfig;
-  webviewHook: {
-    reload: () => void;
-    postMessage: (message: string) => void;
-  };
-  uiHook: Partial<UiHook>;
-}): {
+  customHandlers,
+}: useWalletAPIServerOptions): {
   onMessage: (event: string) => void;
   widgetLoaded: boolean;
   onLoad: () => void;
@@ -314,6 +317,7 @@ export function useWalletAPIServer({
     accounts: walletAPIAccounts,
     currencies: walletAPICurrencies,
     permission,
+    customHandlers,
   });
 
   useEffect(() => {
@@ -355,7 +359,7 @@ export function useWalletAPIServer({
             tracking.requestAccountSuccess(manifest);
             resolve(accountToWalletAPIAccount(account, parentAccount));
           },
-          onError: () => {
+          onCancel: () => {
             tracking.requestAccountFail(manifest);
             reject(new Error("Canceled by user"));
           },
@@ -727,6 +731,8 @@ export function useWalletAPIServer({
         signature: params.signature.toString("hex"),
         feesStrategy: params.feeStrategy,
         exchangeType: ExchangeType[params.exchangeType],
+        swapId: params.exchangeType === "SWAP" ? params.swapId : undefined,
+        rate: params.exchangeType === "SWAP" ? params.rate : undefined,
       };
 
       return completeExchangeLogic(
@@ -786,7 +792,7 @@ export function useCategories(): Categories {
     () => all.filter(m => ["complete", "searchable"].includes(m.visibility)),
     [all],
   );
-  const { categories, manifestsByCategories } = useCategoriesRaw(complete);
+  const { categories, manifestsByCategories } = useCategoriesRaw(searchable);
   const [selected, setSelected] = useState(DISCOVER_INITIAL_CATEGORY);
 
   const reset = useCallback(() => {
@@ -816,14 +822,17 @@ function useCategoriesRaw(manifests: AppManifest[]): {
   manifestsByCategories: Map<string, AppManifest[]>;
 } {
   const manifestsByCategories = useMemo(() => {
-    const res = manifests.reduce((res, m) => {
-      m.categories.forEach(c => {
-        const list = res.has(c) ? [...res.get(c), m] : [m];
-        res.set(c, list);
-      });
+    const res = manifests.reduce(
+      (res, m) => {
+        m.categories.forEach(c => {
+          const list = res.has(c) ? [...res.get(c), m] : [m];
+          res.set(c, list);
+        });
 
-      return res;
-    }, new Map().set("all", manifests));
+        return res;
+      },
+      new Map().set("all", manifests),
+    );
 
     return res;
   }, [manifests]);

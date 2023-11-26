@@ -40,7 +40,7 @@ export const useSide = (): ContextValue => {
 const SideProvider = ({ children }: { children: React.ReactNode }): JSX.Element => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const _setSide = useCallback((Component, props) => {
+  const _setSide = useCallback((Component: any, props: any) => {
     dispatch({
       Component,
       props,

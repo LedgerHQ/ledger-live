@@ -19,7 +19,7 @@ jobs:
           app_id: ${{ secrets.GH_BOT_APP_ID }}
           private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - name: Checkout Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: nightly
           fetch-depth: 0
@@ -35,9 +35,9 @@ jobs:
         uses: ./tools/actions/composites/setup-toolchain
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version:
-            3.1.2 # Not needed with a .ruby-version file
-            # runs 'bundle install' and caches installed gems automatically
+          ruby-version: 3.2.2
+          # Not needed with a .ruby-version file
+          # runs 'bundle install' and caches installed gems automatically
       - uses: ./tools/actions/get-package-infos
         id: desktop-version
         with:

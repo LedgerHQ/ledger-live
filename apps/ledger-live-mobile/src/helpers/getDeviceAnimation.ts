@@ -1,9 +1,9 @@
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import type { AnimatedLottieViewProps } from "lottie-react-native/lib/typescript/LottieView.types";
+import type { LottieViewProps } from "lottie-react-native/lib/typescript/LottieView.types";
 import Config from "react-native-config";
 
-type AnimationSource = AnimatedLottieViewProps["source"];
+type AnimationSource = LottieViewProps["source"];
 type AnimationRecord = Record<"light" | "dark", AnimationSource>;
 
 type S_SP_BLUE = DeviceModelId.nanoS | DeviceModelId.nanoSP | DeviceModelId.blue;

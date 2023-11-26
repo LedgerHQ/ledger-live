@@ -2,13 +2,12 @@ import { useState, useEffect } from "react";
 import Config from "react-native-config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { concatMap } from "rxjs/operators";
-import { setEnvUnsafe, isEnvDefault, changes } from "@ledgerhq/live-common/env";
-import type { EnvName } from "@ledgerhq/live-common/env";
+import { setEnvUnsafe, isEnvDefault, changes } from "@ledgerhq/live-env";
+import type { EnvName } from "@ledgerhq/live-env";
 
 import { FeatureId } from "@ledgerhq/types-live";
 
 import logger from "./logger";
-import { i18n } from "./context/Locale";
 
 export type FeatureCommon = {
   name: EnvName;
@@ -54,8 +53,8 @@ export const experimentalFeatures: Feature[] = [
         {
           type: "toggle",
           name: "EXPERIMENTAL_CURRENCIES",
-          title: i18n.t(i18nKey("experimentalIntegrations", "title")),
-          description: i18n.t(i18nKey("experimentalIntegrations", "description")),
+          title: i18nKey("experimentalIntegrations", "title"),
+          description: i18nKey("experimentalIntegrations", "description"),
           valueOn: experimentalCurrencies,
           valueOff: "",
         },
@@ -64,21 +63,21 @@ export const experimentalFeatures: Feature[] = [
   {
     type: "toggle",
     name: "MANAGER_DEV_MODE",
-    title: i18n.t(i18nKey("developerMode", "title")),
-    description: i18n.t(i18nKey("developerMode", "description")),
+    title: i18nKey("developerMode", "title"),
+    description: i18nKey("developerMode", "description"),
   },
   {
     type: "integer",
     name: "FORCE_PROVIDER",
-    title: i18n.t(i18nKey("managerProvider", "title")),
-    description: i18n.t(i18nKey("managerProvider", "description")),
+    title: i18nKey("managerProvider", "title"),
+    description: i18nKey("managerProvider", "description"),
     minValue: 1,
   },
   {
     type: "toggle",
     name: "EXPERIMENTAL_EXPLORERS",
-    title: i18n.t(i18nKey("experimentalExplorers", "title")),
-    description: i18n.t(i18nKey("experimentalExplorers", "description")),
+    title: i18nKey("experimentalExplorers", "title"),
+    description: i18nKey("experimentalExplorers", "description"),
   },
   {
     type: "toggle",
@@ -109,16 +108,16 @@ export const experimentalFeatures: Feature[] = [
   {
     type: "toggle",
     name: "ENABLE_NETWORK_LOGS",
-    title: i18n.t(i18nKey("experimentalEnableNetworkLogs", "title")),
-    description: i18n.t(i18nKey("experimentalEnableNetworkLogs", "description")),
+    title: i18nKey("experimentalEnableNetworkLogs", "title"),
+    description: i18nKey("experimentalEnableNetworkLogs", "description"),
   },
   ...(__DEV__
     ? [
         {
           type: "toggle",
           name: "EXPERIMENTAL_SWAP",
-          title: i18n.t(i18nKey("experimentalSwap", "title")),
-          description: i18n.t(i18nKey("experimentalSwap", "description")),
+          title: i18nKey("experimentalSwap", "title"),
+          description: i18nKey("experimentalSwap", "description"),
         },
       ]
     : []),
@@ -128,20 +127,20 @@ export const developerFeatures: Feature[] = [
   {
     type: "toggle",
     name: "PLATFORM_DEBUG",
-    title: i18n.t(i18nKeyDeveloper("debugApps", "title")),
-    description: i18n.t(i18nKeyDeveloper("debugApps", "description")),
+    title: i18nKeyDeveloper("debugApps", "title"),
+    description: i18nKeyDeveloper("debugApps", "description"),
   },
   {
     type: "toggle",
     name: "PLATFORM_EXPERIMENTAL_APPS",
-    title: i18n.t(i18nKeyDeveloper("experimentalApps", "title")),
-    description: i18n.t(i18nKeyDeveloper("experimentalApps", "description")),
+    title: i18nKeyDeveloper("experimentalApps", "title"),
+    description: i18nKeyDeveloper("experimentalApps", "description"),
   },
   {
     type: "toggle",
     name: "USE_LEARN_STAGING_URL",
-    title: i18n.t(i18nKeyDeveloper("staggingUrl", "title")),
-    description: i18n.t(i18nKeyDeveloper("staggingUrl", "description")),
+    title: i18nKeyDeveloper("staggingUrl", "title"),
+    description: i18nKeyDeveloper("staggingUrl", "description"),
   },
 ];
 

@@ -1,28 +1,31 @@
 import { getAccountUnit } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
-import type { Account, Operation } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
-import type { AlgorandAccount, AlgorandResources } from "./types";
+import type {
+  AlgorandAccount,
+  AlgorandOperation,
+  AlgorandOperationExtra,
+  AlgorandOperationExtraRaw,
+} from "./types";
 
-function formatOperationSpecifics(op: Operation, unit: Unit | null | undefined): string {
+function formatOperationSpecifics(op: AlgorandOperation, unit: Unit | null | undefined): string {
   const { rewards } = op.extra;
   return rewards
-    ? " REWARDS : " +
-        `${
-          unit
-            ? formatCurrencyUnit(unit, new BigNumber(rewards), {
-                showCode: true,
-                disableRounding: true,
-              }).padEnd(16)
-            : rewards
-        }`
+    ? ` REWARDS : ${
+        unit
+          ? formatCurrencyUnit(unit, rewards, {
+              showCode: true,
+              disableRounding: true,
+            }).padEnd(16)
+          : rewards.toString()
+      }`
     : "";
 }
 
-function formatAccountSpecifics(account: Account): string {
-  const { algorandResources } = account as AlgorandAccount;
+function formatAccountSpecifics(account: AlgorandAccount): string {
+  const { algorandResources } = account;
   invariant(algorandResources, "algorand account expected");
   const unit = getAccountUnit(account);
   const formatConfig = {
@@ -33,29 +36,47 @@ function formatAccountSpecifics(account: Account): string {
   let str = " ";
   str += formatCurrencyUnit(unit, account.spendableBalance, formatConfig) + " spendable. ";
 
-  if ((algorandResources as AlgorandResources).rewards.gt(0)) {
-    str +=
-      formatCurrencyUnit(unit, (algorandResources as AlgorandResources).rewards, formatConfig) +
-      " rewards. ";
+  if (algorandResources.rewards.gt(0)) {
+    str += formatCurrencyUnit(unit, algorandResources.rewards, formatConfig) + " rewards. ";
   }
 
   return str;
 }
 
-export function fromOperationExtraRaw(extra: Record<string, any> | null | undefined) {
-  if (extra && extra.rewards) {
-    return { ...extra, rewards: new BigNumber(extra.rewards) };
+export function fromOperationExtraRaw(extraRaw: AlgorandOperationExtraRaw) {
+  const extra: AlgorandOperationExtra = {};
+  if (extraRaw.rewards) {
+    extra.rewards = new BigNumber(extraRaw.rewards);
+  }
+
+  if (extraRaw.memo) {
+    extra.memo = extraRaw.memo;
+  }
+
+  if (extraRaw.assetId) {
+    extra.assetId = extraRaw.assetId;
   }
 
   return extra;
 }
-export function toOperationExtraRaw(extra: Record<string, any> | null | undefined) {
-  if (extra && extra.rewards) {
-    return { ...extra, rewards: extra.rewards.toString() };
+
+export function toOperationExtraRaw(extra: AlgorandOperationExtra) {
+  const extraRaw: AlgorandOperationExtraRaw = {};
+  if (extra.rewards) {
+    extraRaw.rewards = extra.rewards.toString();
   }
 
-  return extra;
+  if (extra.memo) {
+    extraRaw.memo = extra.memo;
+  }
+
+  if (extra.assetId) {
+    extraRaw.assetId = extra.assetId;
+  }
+
+  return extraRaw;
 }
+
 export default {
   formatAccountSpecifics,
   formatOperationSpecifics,

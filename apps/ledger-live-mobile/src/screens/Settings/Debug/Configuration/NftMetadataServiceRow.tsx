@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { Switch } from "@ledgerhq/native-ui";
-import { setEnvUnsafe, getEnv } from "@ledgerhq/live-common/env";
+import { setEnvUnsafe, getEnv } from "@ledgerhq/live-env";
 import { useNftAPI } from "@ledgerhq/live-common/nft/NftMetadataProvider/index";
 
 import SettingsRow from "../../../../components/SettingsRow";

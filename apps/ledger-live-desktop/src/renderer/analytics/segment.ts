@@ -1,7 +1,7 @@
 import { v4 as uuid } from "uuid";
 import invariant from "invariant";
 import { ReplaySubject } from "rxjs";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import logger from "~/renderer/logger";
 import { getParsedSystemLocale } from "~/helpers/systemLocale";
 import user from "~/helpers/user";
@@ -14,7 +14,7 @@ import {
   devicesModelListSelector,
 } from "~/renderer/reducers/settings";
 import { State } from "~/renderer/reducers";
-import { AccountLike, Feature, FeatureId, idsToLanguage } from "@ledgerhq/types-live";
+import { AccountLike, Feature, FeatureId, Features, idsToLanguage } from "@ledgerhq/types-live";
 import { getAccountName } from "@ledgerhq/live-common/account/index";
 import { accountsSelector } from "../reducers/accounts";
 import {
@@ -46,7 +46,9 @@ const getContext = () => ({
 type ReduxStore = ReturnType<typeof createStore>;
 
 let storeInstance: ReduxStore | null | undefined; // is the redux store. it's also used as a flag to know if analytics is on or off.
-let analyticsFeatureFlagMethod: null | ((key: FeatureId) => Feature | null);
+let analyticsFeatureFlagMethod:
+  | null
+  | (<T extends FeatureId>(key: T) => Feature<Features[T]["params"]> | null);
 
 export function setAnalyticsFeatureFlagMethod(method: typeof analyticsFeatureFlagMethod): void {
   analyticsFeatureFlagMethod = method;
@@ -56,9 +58,20 @@ const getFeatureFlagProperties = (): Record<string, boolean | string> => {
   try {
     if (!analyticsFeatureFlagMethod) return {};
     const ptxEarnFeatureFlag = analyticsFeatureFlagMethod("ptxEarn");
+    const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
+
+    const isBatch1Enabled =
+      !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
+    const isBatch2Enabled =
+      !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 2;
+    const isBatch3Enabled =
+      !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 3;
 
     return {
       ptxEarnEnabled: !!ptxEarnFeatureFlag?.enabled,
+      isBatch1Enabled,
+      isBatch2Enabled,
+      isBatch3Enabled,
     };
   } catch (e) {
     return {};
@@ -73,6 +86,7 @@ const extraProperties = (store: ReduxStore) => {
   const device = lastSeenDeviceSelector(state);
   const devices = devicesModelListSelector(state);
   const accounts = accountsSelector(state);
+
   const deviceInfo = device
     ? {
         modelId: device.modelId,

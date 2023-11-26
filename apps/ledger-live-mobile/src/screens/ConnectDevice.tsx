@@ -56,6 +56,7 @@ import { IconFreezeFlowParamList } from "../families/icon/FreezeFlow/type";
 import { IconUnfreezeFlowParamList } from "../families/icon/UnfreezeFlow/type";
 import { IconVoteFlowParamList } from "../families/icon/VoteFlow/types";
 import { useTransactionDeviceAction } from "../hooks/deviceActions";
+import { SignedOperation } from "@ledgerhq/types-live";
 
 type Props =
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendConnectDevice>
@@ -145,7 +146,7 @@ export default function ConnectDevice({ route, navigation }: Props) {
     parentAccount,
   });
   const onResult = useCallback(
-    payload => {
+    (payload: { signedOperation: SignedOperation; transactionSignError?: Error }) => {
       handleTx(payload);
       return renderLoading({
         t,
@@ -175,6 +176,7 @@ export default function ConnectDevice({ route, navigation }: Props) {
         >
           <TrackScreen category={route.name.replace("ConnectDevice", "")} name="ConnectDevice" />
           <DeviceAction
+            // @ts-expect-error what is going on with this
             action={action}
             request={{
               account,

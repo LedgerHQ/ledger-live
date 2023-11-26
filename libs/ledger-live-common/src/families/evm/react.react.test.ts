@@ -18,6 +18,10 @@ const fakeCurrency: Partial<CryptoCurrency> = {
   id: "my_new_chain" as CryptoCurrencyId,
   ethereumLikeInfo: {
     chainId: 1,
+    node: {
+      type: "ledger",
+      explorerId: "eth",
+    },
     gasTracker: {
       type: "ledger",
       explorerId: "eth",
@@ -83,6 +87,8 @@ describe("useGasOptions", () => {
       });
     });
 
+    expect(result.current).toMatchObject([undefined, null, true]);
+
     await waitForNextUpdate();
 
     expect(mockedGetGasTracker).toHaveBeenCalledTimes(1);
@@ -93,7 +99,7 @@ describe("useGasOptions", () => {
 
     expect(setInterval).toHaveBeenCalledTimes(0);
 
-    expect(result.current).toMatchObject([expectedGasOptions, null]);
+    expect(result.current).toMatchObject([expectedGasOptions, null, false]);
   });
 
   test("call hook with interval < 0", async () => {
@@ -105,6 +111,8 @@ describe("useGasOptions", () => {
       });
     });
 
+    expect(result.current).toMatchObject([undefined, null, true]);
+
     await waitForNextUpdate();
 
     expect(mockedGetGasTracker).toHaveBeenCalledTimes(1);
@@ -115,7 +123,7 @@ describe("useGasOptions", () => {
 
     expect(setInterval).toHaveBeenCalledTimes(0);
 
-    expect(result.current).toMatchObject([expectedGasOptions, null]);
+    expect(result.current).toMatchObject([expectedGasOptions, null, false]);
   });
 
   test("call hook with interval > 0", async () => {
@@ -126,6 +134,8 @@ describe("useGasOptions", () => {
         interval: 1,
       });
     });
+
+    expect(result.current).toMatchObject([undefined, null, true]);
 
     await waitForNextUpdate();
 
@@ -138,7 +148,7 @@ describe("useGasOptions", () => {
     expect(setInterval).toHaveBeenCalledTimes(1);
     expect(setInterval).toHaveBeenLastCalledWith(expect.any(Function), 1);
 
-    expect(result.current).toMatchObject([expectedGasOptions, null]);
+    expect(result.current).toMatchObject([expectedGasOptions, null, false]);
   });
 
   test("should use EIP-1559 when transaction is type 2", async () => {
@@ -193,7 +203,7 @@ describe("useGasOptions", () => {
     });
 
     expect(mockedGetGasTracker).toHaveBeenCalledTimes(1);
-    expect(result.current).toMatchObject([undefined, null]);
+    expect(result.current).toMatchObject([undefined, null, false]);
   });
 
   test("should return error if getGasOptions throws", async () => {
@@ -209,9 +219,10 @@ describe("useGasOptions", () => {
         interval: 0,
       });
     });
+    expect(result.current).toMatchObject([undefined, null, true]);
 
     await waitForNextUpdate();
 
-    expect(result.current).toMatchObject([undefined, expectedError]);
+    expect(result.current).toMatchObject([undefined, expectedError, false]);
   });
 });

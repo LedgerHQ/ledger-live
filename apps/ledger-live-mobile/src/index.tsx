@@ -35,11 +35,11 @@ import {
   osThemeSelector,
   themeSelector,
 } from "./reducers/settings";
-import { exportSelector as accountsExportSelector } from "./reducers/accounts";
+import { accountsSelector, exportSelector as accountsExportSelector } from "./reducers/accounts";
 import { exportSelector as bleSelector } from "./reducers/ble";
 import LocaleProvider, { i18n } from "./context/Locale";
 import RebootProvider from "./context/Reboot";
-import ButtonUseTouchable from "./context/ButtonUseTouchable";
+import ButtonUseTouchableContext from "./context/ButtonUseTouchableContext";
 import AuthPass from "./context/AuthPass";
 import LedgerStoreProvider from "./context/LedgerStore";
 import LoadingApp from "./components/LoadingApp";
@@ -52,7 +52,7 @@ import useAppStateListener from "./components/useAppStateListener";
 import SyncNewAccounts from "./bridge/SyncNewAccounts";
 import { OnboardingContextProvider } from "./screens/Onboarding/onboardingContext";
 
-import AnalyticsProvider from "./analytics/AnalyticsProvider";
+import SegmentSetup from "./analytics/SegmentSetup";
 import HookSentry from "./components/HookSentry";
 import HookNotifications from "./notifications/HookNotifications";
 import RootNavigator from "./components/RootNavigator";
@@ -68,10 +68,9 @@ import NavBarColorHandler from "./components/NavBarColorHandler";
 import { FirebaseRemoteConfigProvider } from "./components/FirebaseRemoteConfig";
 import { FirebaseFeatureFlagsProvider } from "./components/FirebaseFeatureFlags";
 import MarketDataProvider from "./screens/Market/MarketDataProviderWrapper";
-import AdjustProvider from "./components/AdjustProvider";
-import DelayedTrackingProvider from "./components/DelayedTrackingProvider";
+import AdjustSetup from "./components/AdjustSetup";
 import PostOnboardingProviderWrapped from "./logic/postOnboarding/PostOnboardingProviderWrapped";
-import { GeneralTermsContextProvider } from "./logic/terms";
+import { TermsAndConditionMigrateLegacyData } from "./logic/terms";
 import HookDynamicContentCards from "./dynamicContent/useContentCards";
 import PlatformAppProviderWrapper from "./PlatformAppProviderWrapper";
 import PerformanceConsole from "./components/PerformanceConsole";
@@ -81,6 +80,12 @@ import StyleProvider from "./StyleProvider";
 import { performanceReportSubject } from "./components/PerformanceConsole/usePerformanceReportsLog";
 import { setOsTheme } from "./actions/settings";
 import TransactionsAlerts from "./components/TransactionsAlerts";
+import {
+  useFetchCurrencyAll,
+  useFetchCurrencyFrom,
+} from "@ledgerhq/live-common/exchange/swap/hooks/index";
+import useAccountsWithFundsListener from "@ledgerhq/live-common/hooks/useAccountsWithFundsListener";
+import { updateIdentify } from "./analytics";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -100,10 +105,15 @@ const styles = StyleSheet.create({
 });
 
 function App() {
+  const accounts = useSelector(accountsSelector);
+
+  useAccountsWithFundsListener(accounts, updateIdentify);
   useAppStateListener();
+  useFetchCurrencyAll();
+  useFetchCurrencyFrom();
   useListenToHidDevices();
 
-  const getSettingsChanged = useCallback((a, b) => a.settings !== b.settings, []);
+  const getSettingsChanged = useCallback((a: State, b: State) => a.settings !== b.settings, []);
   const getAccountsChanged = useCallback(
     (
       oldState: State,
@@ -130,7 +140,7 @@ function App() {
   );
 
   const getPostOnboardingStateChanged = useCallback(
-    (a, b) => !isEqual(a.postOnboarding, b.postOnboarding),
+    (a: State, b: State) => !isEqual(a.postOnboarding, b.postOnboarding),
     [],
   );
 
@@ -231,9 +241,7 @@ const StylesProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <StyleProvider selectedPalette={resolvedTheme}>
-      <GeneralTermsContextProvider>
-        <DeeplinksProvider resolvedTheme={resolvedTheme}>{children}</DeeplinksProvider>
-      </GeneralTermsContextProvider>
+      <DeeplinksProvider resolvedTheme={resolvedTheme}>{children}</DeeplinksProvider>
     </StyleProvider>
   );
 };
@@ -265,58 +273,56 @@ export default class Root extends Component {
     return (
       <RebootProvider onRebootStart={this.onRebootStart}>
         <LedgerStoreProvider onInitFinished={this.onInitFinished}>
-          {(ready, store, initialCountervalues) =>
+          {(ready, initialCountervalues) =>
             ready ? (
               <>
                 <SetEnvsFromSettings />
                 <HookSentry />
-                <AdjustProvider />
-                <DelayedTrackingProvider />
-                <AnalyticsProvider store={store}>
-                  <HookNotifications />
-                  <HookDynamicContentCards />
-
-                  <PlatformAppProviderWrapper>
-                    <FirebaseRemoteConfigProvider>
-                      <FirebaseFeatureFlagsProvider>
-                        <SafeAreaProvider>
-                          <PerformanceProvider>
-                            <StylesProvider>
-                              <StyledStatusBar />
-                              <NavBarColorHandler />
-                              <AuthPass>
-                                <I18nextProvider i18n={i18n}>
-                                  <LocaleProvider>
-                                    <BridgeSyncProvider>
-                                      <CounterValuesProvider initialState={initialCountervalues}>
-                                        <ButtonUseTouchable.Provider value={true}>
-                                          <OnboardingContextProvider>
-                                            <PostOnboardingProviderWrapped>
-                                              <ToastProvider>
-                                                <NotificationsProvider>
-                                                  <SnackbarContainer />
-                                                  <NftMetadataProvider>
-                                                    <MarketDataProvider>
-                                                      <App />
-                                                    </MarketDataProvider>
-                                                  </NftMetadataProvider>
-                                                </NotificationsProvider>
-                                              </ToastProvider>
-                                            </PostOnboardingProviderWrapped>
-                                          </OnboardingContextProvider>
-                                        </ButtonUseTouchable.Provider>
-                                      </CounterValuesProvider>
-                                    </BridgeSyncProvider>
-                                  </LocaleProvider>
-                                </I18nextProvider>
-                              </AuthPass>
-                            </StylesProvider>
-                          </PerformanceProvider>
-                        </SafeAreaProvider>
-                      </FirebaseFeatureFlagsProvider>
-                    </FirebaseRemoteConfigProvider>
-                  </PlatformAppProviderWrapper>
-                </AnalyticsProvider>
+                <AdjustSetup />
+                <SegmentSetup />
+                <HookNotifications />
+                <HookDynamicContentCards />
+                <TermsAndConditionMigrateLegacyData />
+                <PlatformAppProviderWrapper>
+                  <FirebaseRemoteConfigProvider>
+                    <FirebaseFeatureFlagsProvider>
+                      <SafeAreaProvider>
+                        <PerformanceProvider>
+                          <StylesProvider>
+                            <StyledStatusBar />
+                            <NavBarColorHandler />
+                            <AuthPass>
+                              <I18nextProvider i18n={i18n}>
+                                <LocaleProvider>
+                                  <BridgeSyncProvider>
+                                    <CounterValuesProvider initialState={initialCountervalues}>
+                                      <ButtonUseTouchableContext.Provider value={true}>
+                                        <OnboardingContextProvider>
+                                          <PostOnboardingProviderWrapped>
+                                            <ToastProvider>
+                                              <NotificationsProvider>
+                                                <SnackbarContainer />
+                                                <NftMetadataProvider>
+                                                  <MarketDataProvider>
+                                                    <App />
+                                                  </MarketDataProvider>
+                                                </NftMetadataProvider>
+                                              </NotificationsProvider>
+                                            </ToastProvider>
+                                          </PostOnboardingProviderWrapped>
+                                        </OnboardingContextProvider>
+                                      </ButtonUseTouchableContext.Provider>
+                                    </CounterValuesProvider>
+                                  </BridgeSyncProvider>
+                                </LocaleProvider>
+                              </I18nextProvider>
+                            </AuthPass>
+                          </StylesProvider>
+                        </PerformanceProvider>
+                      </SafeAreaProvider>
+                    </FirebaseFeatureFlagsProvider>
+                  </FirebaseRemoteConfigProvider>
+                </PlatformAppProviderWrapper>
               </>
             ) : (
               <LoadingApp />

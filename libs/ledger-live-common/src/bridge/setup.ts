@@ -1,6 +1,6 @@
 // Goal of this file is to provide utils for injecting device/signer dependency to coin-modules.
 
-import { from } from "rxjs";
+import { firstValueFrom, from } from "rxjs";
 import Transport from "@ledgerhq/hw-transport";
 import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import { PassthroughFn, SignerContext } from "@ledgerhq/coin-framework/signer";
@@ -19,7 +19,7 @@ export type MessageSigner<T, U> = (signerContext: SignerContext<T, U>) => Messag
  */
 export function executeWithSigner<T, U>(signerFactory: CreateSigner<T>): SignerContext<T, U> {
   return (deviceId: string, fn: PassthroughFn<T, U>): Promise<U> =>
-    withDevice(deviceId)(transport => from(fn(signerFactory(transport)))).toPromise();
+    firstValueFrom(withDevice(deviceId)(transport => from(fn(signerFactory(transport)))));
 }
 
 /**

@@ -86,6 +86,7 @@ export enum AppStateActionTypes {
   CLEAR_BACKGROUND_EVENTS = "CLEAR_BACKGROUND_EVENTS",
   DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
   UPDATE_MAIN_NAVIGATOR_VISIBILITY = "UPDATE_MAIN_NAVIGATOR_VISIBILITY",
+  SET_BLOCK_PASSWORD_LOCK = "SET_BLOCK_PASSWORD_LOCK",
 }
 
 export type AppStateIsConnectedPayload = AppState["isConnected"];
@@ -94,6 +95,7 @@ export type AppStateSetModalLockPayload = AppState["modalLock"];
 export type AppStateAddBackgroundEventPayload = {
   event: FwUpdateBackgroundEvent;
 };
+export type AppStateBlockPasswordLockPayload = boolean;
 
 export type AppStateUpdateMainNavigatorVisibilityPayload = AppState["isMainNavigatorVisible"];
 export type AppStatePayload =
@@ -101,7 +103,8 @@ export type AppStatePayload =
   | AppStateSetHasConnectedDevicePayload
   | AppStateSetModalLockPayload
   | AppStateAddBackgroundEventPayload
-  | AppStateUpdateMainNavigatorVisibilityPayload;
+  | AppStateUpdateMainNavigatorVisibilityPayload
+  | AppStateBlockPasswordLockPayload;
 
 // === BLE ACTIONS ===
 
@@ -222,7 +225,7 @@ export enum SettingsActionTypes {
   SETTINGS_SET_SELECTED_TIME_RANGE = "SETTINGS_SET_SELECTED_TIME_RANGE",
   SETTINGS_COMPLETE_ONBOARDING = "SETTINGS_COMPLETE_ONBOARDING",
   SETTINGS_COMPLETE_CUSTOM_IMAGE_FLOW = "SETTINGS_COMPLETE_CUSTOM_IMAGE_FLOW",
-  SETTINGS_INSTALL_APP_FIRST_TIME = "SETTINGS_INSTALL_APP_FIRST_TIME",
+  SETTINGS_SET_HAS_INSTALLED_ANY_APP = "SETTINGS_SET_HAS_INSTALLED_ANY_APP",
   SETTINGS_SET_READONLY_MODE = "SETTINGS_SET_READONLY_MODE",
   SETTINGS_SET_EXPERIMENTAL_USB_SUPPORT = "SETTINGS_SET_EXPERIMENTAL_USB_SUPPORT",
   SETTINGS_SWITCH_COUNTERVALUE_FIRST = "SETTINGS_SWITCH_COUNTERVALUE_FIRST",
@@ -263,6 +266,7 @@ export enum SettingsActionTypes {
   SET_SENSITIVE_ANALYTICS = "SET_SENSITIVE_ANALYTICS",
   SET_ONBOARDING_HAS_DEVICE = "SET_ONBOARDING_HAS_DEVICE",
   SET_NOTIFICATIONS = "SET_NOTIFICATIONS",
+  SET_NEVER_CLICKED_ON_ALLOW_NOTIFICATIONS_BUTTON = "SET_NEVER_CLICKED_ON_ALLOW_NOTIFICATIONS_BUTTON",
   WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB = "WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB",
   SET_STATUS_CENTER = "SET_STATUS_CENTER",
   SET_OVERRIDDEN_FEATURE_FLAG = "SET_OVERRIDDEN_FEATURE_FLAG",
@@ -275,6 +279,7 @@ export enum SettingsActionTypes {
   SET_CLOSED_NETWORK_BANNER = "SET_CLOSED_NETWORK_BANNER",
   SET_CLOSED_WITHDRAW_BANNER = "SET_CLOSED_WITHDRAW_BANNER",
   SET_USER_NPS = "SET_USER_NPS",
+  SET_SUPPORTED_COUNTER_VALUES = "SET_SUPPORTED_COUNTER_VALUES",
 }
 
 export type SettingsImportPayload = Partial<SettingsState>;
@@ -294,7 +299,7 @@ export type SettingsSetCountervaluePayload = SettingsState["counterValue"];
 export type SettingsSetOrderAccountsPayload = SettingsState["orderAccounts"];
 export type SettingsSetPairsPayload = { pairs: Array<Pair> };
 export type SettingsSetSelectedTimeRangePayload = SettingsState["selectedTimeRange"];
-export type SettingsInstallAppFirstTimePayload = SettingsState["hasInstalledAnyApp"];
+export type SettingsSetHasInstalledAnyAppPayload = SettingsState["hasInstalledAnyApp"];
 export type SettingsSetReadOnlyModePayload = SettingsState["readOnlyModeEnabled"];
 export type SettingsHideEmptyTokenAccountsPayload = SettingsState["hideEmptyTokenAccounts"];
 export type SettingsFilterTokenOperationsZeroAmountPayload =
@@ -352,6 +357,8 @@ export type SettingsSetClosedNetworkBannerPayload = boolean;
 export type SettingsSetClosedWithdrawBannerPayload = boolean;
 
 export type SettingsSetNotificationsPayload = Partial<SettingsState["notifications"]>;
+export type SettingsSetNeverClickedOnAllowNotificationsButton =
+  SettingsState["neverClickedOnAllowNotificationsButton"];
 export type SettingsSetWalletTabNavigatorLastVisitedTabPayload =
   SettingsState["walletTabNavigatorLastVisitedTab"];
 export type SettingsSetDateFormatPayload = SettingsState["dateFormat"];
@@ -372,6 +379,7 @@ export type SettingsSetHasBeenUpsoldProtectPayload = SettingsState["hasBeenUpsol
 export type SettingsCompleteOnboardingPayload = void | SettingsState["hasCompletedOnboarding"];
 export type SettingsSetGeneralTermsVersionAccepted = SettingsState["generalTermsVersionAccepted"];
 export type SettingsSetUserNps = number;
+export type SettingsSetSupportedCounterValues = SettingsState["supportedCounterValues"];
 
 export type SettingsPayload =
   | SettingsImportPayload
@@ -385,7 +393,7 @@ export type SettingsPayload =
   | SettingsSetOrderAccountsPayload
   | SettingsSetPairsPayload
   | SettingsSetSelectedTimeRangePayload
-  | SettingsInstallAppFirstTimePayload
+  | SettingsSetHasInstalledAnyAppPayload
   | SettingsSetReadOnlyModePayload
   | SettingsHideEmptyTokenAccountsPayload
   | SettingsShowTokenPayload
@@ -426,7 +434,8 @@ export type SettingsPayload =
   | SettingsSetHasBeenUpsoldProtectPayload
   | SettingsSetOnboardingTypePayload
   | SettingsSetClosedNetworkBannerPayload
-  | SettingsSetUserNps;
+  | SettingsSetUserNps
+  | SettingsSetSupportedCounterValues;
 
 // === WALLET CONNECT ACTIONS ===
 export enum WalletConnectActionTypes {

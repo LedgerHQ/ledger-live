@@ -2,14 +2,14 @@ import BigNumber from "bignumber.js";
 import { encodeOperationId } from "../../operation";
 import { APITransaction } from "./api/api-types";
 import { getAccountChange, getMemoFromTx, isHexString } from "./logic";
-import { PaymentCredential, Token } from "./types";
+import { CardanoOperation, CardanoOperationExtra, PaymentCredential, Token } from "./types";
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
 import { findTokenById } from "@ledgerhq/cryptoassets";
 import { decodeTokenAccountId, emptyHistoryCache, encodeTokenAccountId } from "../../account";
 import { groupBy, keyBy } from "lodash";
 import { mergeOps } from "../../bridge/jsHelpers";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
+import type { Account, TokenAccount } from "@ledgerhq/types-live";
 
 export const getTokenAssetId = ({
   policyId,
@@ -52,8 +52,8 @@ const mapTxToTokenAccountOperation = ({
   parentCurrency: CryptoCurrency;
   newTransactions: Array<APITransaction>;
   accountCredentialsMap: Record<string, PaymentCredential>;
-}): Array<Operation> => {
-  const operations: Array<Operation> = [];
+}): Array<CardanoOperation> => {
+  const operations: Array<CardanoOperation> = [];
 
   newTransactions.forEach(tx => {
     const accountChange = getAccountChange(tx, accountCredentialsMap);
@@ -73,11 +73,11 @@ const mapTxToTokenAccountOperation = ({
 
       const tokenOperationType = token.amount.lt(0) ? "OUT" : "IN";
       const memo = getMemoFromTx(tx);
-      const extra = {};
+      const extra: CardanoOperationExtra = {};
       if (memo) {
-        extra["memo"] = memo;
+        extra.memo = memo;
       }
-      const operation: Operation = {
+      const operation: CardanoOperation = {
         accountId: tokenAccountId,
         id: encodeOperationId(tokenAccountId, tx.hash, tokenOperationType),
         hash: tx.hash,
@@ -92,7 +92,7 @@ const mapTxToTokenAccountOperation = ({
         ),
         blockHeight: tx.blockHeight,
         date: new Date(tx.timestamp),
-        extra: extra,
+        extra,
         blockHash: undefined,
       };
       operations.push(operation);
@@ -127,7 +127,7 @@ export function buildSubAccounts({
     }
   }
 
-  const tokenOperations: Array<Operation> = mapTxToTokenAccountOperation({
+  const tokenOperations: Array<CardanoOperation> = mapTxToTokenAccountOperation({
     parentAccountId,
     parentCurrency,
     newTransactions: newTransactions,

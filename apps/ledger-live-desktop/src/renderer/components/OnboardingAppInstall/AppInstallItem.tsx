@@ -54,7 +54,7 @@ const AppInstallItem = ({ appName, state, itemProgress, productName, i }: Props)
       </Flex>
       <Flex flexDirection="column">
         <Text ml={3} fontSize={3}>
-          {appName}
+          {t("onboardingAppInstall.progress.app", { appName })}
         </Text>
         {state === ItemState.Skipped ? (
           <Text ml={3} color="neutral.c70" fontSize={2}>

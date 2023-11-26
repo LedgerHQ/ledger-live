@@ -59,6 +59,7 @@ function MarketDetail({ navigation, route }: NavigationProps) {
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
   const isStarred = starredMarketCoins.includes(currencyId);
   const { triggerMarketPushNotificationModal } = useNotifications();
+  const [hasRetried, setHasRetried] = useState<boolean>(false);
 
   let loc = locale;
   // TEMPORARY : quick win to transform arabic to english
@@ -77,6 +78,17 @@ function MarketDetail({ navigation, route }: NavigationProps) {
   } = useSingleCoinMarketData();
 
   const { name, image, price, priceChangePercentage, internalCurrency, chartData } = currency || {};
+
+  useEffect(() => {
+    if (!loading) {
+      if (currency === undefined && !hasRetried) {
+        selectCurrency(currencyId);
+        setHasRetried(true);
+      } else if (currency && hasRetried) {
+        setHasRetried(false);
+      }
+    }
+  }, [currency, selectCurrency, currencyId, hasRetried, loading]);
 
   useEffect(() => {
     const resetState = () => {

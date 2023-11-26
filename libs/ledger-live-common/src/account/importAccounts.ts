@@ -8,8 +8,8 @@ import type { Account } from "@ledgerhq/types-live";
 import { BridgeCacheSystem } from "../bridge/cache";
 import { getAccountBridge } from "../bridge";
 import { promiseAllBatched } from "../promise";
-import { getEnv } from "../env";
-import { Observable } from "rxjs";
+import { getEnv } from "@ledgerhq/live-env";
+import { Observable, firstValueFrom } from "rxjs";
 import { reduce } from "rxjs/operators";
 
 const itemModeDisplaySort = {
@@ -135,7 +135,7 @@ export const syncNewAccountsToImport = async (
       const reduced: Observable<Account> = observable.pipe(
         reduce((a, f: (_: Account) => Account) => f(a), account),
       );
-      const synced = await reduced.toPromise();
+      const synced = await firstValueFrom(reduced);
       synchronized[account.id] = synced;
     } catch (e) {
       failed[account.id] = e;

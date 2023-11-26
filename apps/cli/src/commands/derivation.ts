@@ -5,7 +5,7 @@ import {
   runDerivationScheme,
   getDerivationScheme,
 } from "@ledgerhq/coin-framework/derivation";
-import { setEnv, getEnv } from "@ledgerhq/live-common/env";
+import { setEnv, getEnv } from "@ledgerhq/live-env";
 import { getAccountPlaceholderName } from "@ledgerhq/live-common/account/index";
 export default {
   args: [],

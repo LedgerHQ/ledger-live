@@ -1,5 +1,5 @@
 import Prando from "prando";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import {
   AnnouncementsApi,
   RawAnnouncement,

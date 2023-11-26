@@ -11,18 +11,13 @@ They all are prefixed by **_ledgerlive://_**
 
 - **_accounts?id_** 🠒 Accounts page
 
-  `ledgerlive://accounts` will redirect to accounts page
-
-  `ledgerlive://accounts?currency=ethereum&address={{eth_account_address}}` will open a given ethereum account if found, will fallback to the currency page found and if not to the list of accounts
-
-  `?currency` param can be name or ticker of the currency targeted
-  `?address` param requires currency to work, address of the account to select
+  `ledgerlive://accounts` will redirect to portfolio of accounts page
 
 - **_account?currency_** 🠒 Account Page
 
   `ledgerlive://account` will redirect to accounts page
 
-  `ledgerlive://account?currency=ethereum&address={{eth_account_address}}` will open a given ethereum account if found, will fallback to the currency page found and if not to the list of accounts
+  `ledgerlive://account?currency=ethereum&address={{eth_account_address}}` will open a given account if found, will fallback to the currency page found, and if not to the list of accounts
 
   `?currency` param can be name or ticker of the currency targeted
   `?address` param requires currency to work, address of the account to select

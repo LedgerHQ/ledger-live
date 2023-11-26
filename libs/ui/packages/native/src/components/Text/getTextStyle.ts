@@ -80,7 +80,7 @@ export function getTextTypeStyle({ bracket }: { bracket?: boolean }): Record<
     },
     bodyLineHeight: {
       fontFamily: "Inter",
-      lineHeight: "20px",
+      lineHeight: "21px",
     },
     paragraph: {
       fontFamily: "Inter",

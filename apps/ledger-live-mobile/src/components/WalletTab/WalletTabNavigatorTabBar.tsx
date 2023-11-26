@@ -14,7 +14,7 @@ import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManag
 import WalletTabBackgroundGradient from "./WalletTabBackgroundGradient";
 import { readOnlyModeEnabledSelector } from "../../reducers/settings";
 import { hasNoAccountsSelector } from "../../reducers/accounts";
-import { ScreenName } from "../../const";
+import { NavigatorName, ScreenName } from "../../const";
 
 const StyledTouchableOpacity = styled.TouchableOpacity`
   height: 32px;
@@ -39,6 +39,18 @@ const StyledAnimatedView = styled(Animated.View)<BaseStyledProps>`
   height: 100%;
   width: 100%;
 `;
+
+function getAnalyticsEvent(route: string) {
+  switch (route) {
+    case ScreenName.WalletNftGallery:
+      return "NFTs";
+    case NavigatorName.Market:
+      return "Market";
+    case ScreenName.Portfolio:
+    default:
+      return "Crypto";
+  }
+}
 
 function Tab({
   route,
@@ -78,11 +90,11 @@ function Tab({
 
     if (!isActive && !event.defaultPrevented) {
       track("tab_clicked", {
-        tab: route.name === ScreenName.WalletNftGallery ? "NFTs" : "Crypto",
+        tab: getAnalyticsEvent(route.name),
       });
       navigation.navigate(route.name);
     }
-  }, [isActive, navigation, route.key, route.name]);
+  }, [isActive, navigation, route]);
 
   return (
     <StyledTouchableOpacity onPress={onPress} testID={`wallet-tab-${route.name}`}>
@@ -143,7 +155,7 @@ function WalletTabNavigatorTabBar({
   const insets = useSafeAreaInsets();
 
   const accessReferralProgram = useCallback(() => {
-    const path = referralProgramMobile?.params.path;
+    const path = referralProgramMobile?.params?.path;
     if (referralProgramMobile?.enabled && path) {
       Linking.canOpenURL(path).then(() => Linking.openURL(path));
 

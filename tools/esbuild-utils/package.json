@@ -9,7 +9,7 @@
   "devDependencies": {
     "@craftamap/esbuild-plugin-html": "^0.6.0",
     "dotenv": "^16.0.0",
-    "esbuild": "^0.18.0",
+    "esbuild": "^0.19.0",
     "esbuild-plugin-import-glob": "^0.1.1",
     "flow-remove-types": "^2.180.0"
   }

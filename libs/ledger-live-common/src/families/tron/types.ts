@@ -1,6 +1,8 @@
 import {
   Account,
   AccountRaw,
+  Operation,
+  OperationRaw,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
@@ -53,6 +55,7 @@ export type TrongridTxType =
   | "TriggerSmartContract"
   | "WithdrawBalanceContract"
   | "ExchangeTransactionContract";
+
 export type TrongridTxInfo = {
   txID: string;
   date: Date;
@@ -67,18 +70,19 @@ export type TrongridTxInfo = {
   extra?: TrongridExtraTxInfo;
   hasFailed: boolean;
 };
-export type TrongridExtraTxInfo =
-  | TrongridFreezeTxInfo
-  | TrongridUnfreezeTxInfo
-  | TrongridVotesTxInfo;
-export type TrongridFreezeTxInfo = {
-  frozenAmount: BigNumber;
+
+export type TronOperation = Operation<TrongridExtraTxInfo>;
+export type TronOperationRaw = OperationRaw<TrongridExtraTxInfoRaw>;
+
+export type TrongridExtraTxInfo = {
+  frozenAmount?: BigNumber;
+  unfreezeAmount?: BigNumber;
+  votes?: Vote[];
 };
-export type TrongridUnfreezeTxInfo = {
-  unfreezeAmount: BigNumber;
-};
-export type TrongridVotesTxInfo = {
-  votes: Vote[];
+export type TrongridExtraTxInfoRaw = {
+  frozenAmount?: string;
+  unfreezeAmount?: string;
+  votes?: Vote[];
 };
 
 /** Payload types to send to trongrid */

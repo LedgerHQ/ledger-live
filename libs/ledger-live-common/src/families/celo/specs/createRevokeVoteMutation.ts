@@ -23,7 +23,6 @@ export const createRevokeVoteMutation = (): MutationSpec<Transaction> => ({
       transaction: bridge.createTransaction(account),
       updates: [
         {
-          memo: "LedgerLiveBot",
           mode: "revoke",
           recipient: revokableVote!.validatorGroup,
           group: revokableVote!.validatorGroup,

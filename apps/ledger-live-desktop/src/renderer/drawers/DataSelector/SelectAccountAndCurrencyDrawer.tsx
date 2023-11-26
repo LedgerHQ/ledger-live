@@ -6,13 +6,13 @@ import { Account, AccountLike } from "@ledgerhq/types-live";
 import { CryptoOrTokenCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 import { setDrawer } from "../Provider";
 import Fuse from "fuse.js";
-import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/index";
+import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";
 import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import Text from "~/renderer/components/Text";
 import { CurrencyList } from "./CurrencyList";
 import SelectAccountDrawer from "./SelectAccountDrawer";
-import { Observable } from "rxjs7";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { Observable } from "rxjs";
+import { getEnv } from "@ledgerhq/live-env";
 
 const options = {
   includeScore: false,
@@ -75,7 +75,7 @@ function SelectAccountAndCurrencyDrawer(props: SelectAccountAndCurrencyDrawerPro
     return fuzzySearch(sortedCurrencies, searchValue);
   }, [searchValue, sortedCurrencies]);
   const handleCurrencySelected = useCallback(
-    currency => {
+    (currency: CryptoOrTokenCurrency) => {
       setDrawer(
         SelectAccountDrawer,
         {
@@ -95,7 +95,13 @@ function SelectAccountAndCurrencyDrawer(props: SelectAccountAndCurrencyDrawerPro
     [onAccountSelected, props, onClose, accounts$],
   );
   if (currencies.length === 1) {
-    return <SelectAccountDrawer currency={currencies[0]} onAccountSelected={onAccountSelected} />;
+    return (
+      <SelectAccountDrawer
+        currency={currencies[0]}
+        onAccountSelected={onAccountSelected}
+        accounts$={accounts$}
+      />
+    );
   }
   return (
     <SelectAccountAndCurrencyDrawerContainer>
@@ -120,6 +126,7 @@ function SelectAccountAndCurrencyDrawer(props: SelectAccountAndCurrencyDrawerPro
             onChange={setSearchValue}
           />
         </SearchInputContainer>
+        {/* @ts-expect-error compatibility issue betwenn CryptoOrTokenCurrency and Currency (which includes Fiat) and the SelectAccountDrawer components  */}
         <CurrencyList currencies={filteredCurrencies} onCurrencySelect={handleCurrencySelected} />
       </SelectorContent>
     </SelectAccountAndCurrencyDrawerContainer>

@@ -8,6 +8,9 @@ describe("getAccount", () => {
     const lockedBalanceFn = getAccount(networkApiMock, jest.fn());
     networkApiMock.mockResolvedValue({
       data: {
+        at: {
+          height: "0",
+        },
         locks: [
           {
             amount: "60000000000",
@@ -25,6 +28,9 @@ describe("getAccount", () => {
     const lockedBalanceFn = getAccount(networkApiMock, jest.fn());
     networkApiMock.mockResolvedValue({
       data: {
+        at: {
+          height: "0",
+        },
         locks: [
           {
             amount: "1",

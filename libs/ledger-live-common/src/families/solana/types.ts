@@ -1,6 +1,7 @@
 import {
   Account,
   AccountRaw,
+  Operation,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
@@ -255,3 +256,9 @@ export type SolanaAccountRaw = AccountRaw & {
 export type TransactionStatus = TransactionStatusCommon;
 
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
+
+export type SolanaOperation = Operation<SolanaOperationExtra>;
+
+export type SolanaOperationExtra = {
+  memo?: string;
+};

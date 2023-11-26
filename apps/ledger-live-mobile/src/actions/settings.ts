@@ -14,7 +14,7 @@ import {
   SettingsHideNftCollectionPayload,
   SettingsImportDesktopPayload,
   SettingsImportPayload,
-  SettingsInstallAppFirstTimePayload,
+  SettingsSetHasInstalledAnyAppPayload,
   SettingsLastSeenDeviceInfoPayload,
   SettingsLastSeenDevicePayload,
   SettingsRemoveStarredMarketcoinsPayload,
@@ -33,6 +33,7 @@ import {
   SettingsSetMarketFilterByStarredAccountsPayload,
   SettingsSetMarketRequestParamsPayload,
   SettingsSetNotificationsPayload,
+  SettingsSetNeverClickedOnAllowNotificationsButton,
   SettingsSetOrderAccountsPayload,
   SettingsSetOsThemePayload,
   SettingsSetPrivacyBiometricsPayload,
@@ -66,6 +67,7 @@ import {
   SettingsSetClosedNetworkBannerPayload,
   SettingsSetClosedWithdrawBannerPayload,
   SettingsSetUserNps,
+  SettingsSetSupportedCounterValues,
 } from "./types";
 import { ImageType } from "../components/CustomImage/types";
 
@@ -115,8 +117,8 @@ export const clearLastSeenCustomImage = () =>
 export const completeOnboarding = createAction<SettingsCompleteOnboardingPayload>(
   SettingsActionTypes.SETTINGS_COMPLETE_ONBOARDING,
 );
-export const installAppFirstTime = createAction<SettingsInstallAppFirstTimePayload>(
-  SettingsActionTypes.SETTINGS_INSTALL_APP_FIRST_TIME,
+export const setHasInstalledAnyApp = createAction<SettingsSetHasInstalledAnyAppPayload>(
+  SettingsActionTypes.SETTINGS_SET_HAS_INSTALLED_ANY_APP,
 );
 export const switchCountervalueFirst = createAction(
   SettingsActionTypes.SETTINGS_SWITCH_COUNTERVALUE_FIRST,
@@ -233,6 +235,10 @@ export const setOnboardingType = createAction<SettingsSetOnboardingTypePayload>(
 export const setNotifications = createAction<SettingsSetNotificationsPayload>(
   SettingsActionTypes.SET_NOTIFICATIONS,
 );
+export const setNeverClickedOnAllowNotificationsButton =
+  createAction<SettingsSetNeverClickedOnAllowNotificationsButton>(
+    SettingsActionTypes.SET_NEVER_CLICKED_ON_ALLOW_NOTIFICATIONS_BUTTON,
+  );
 export const setCloseNetworkBanner = createAction<SettingsSetClosedWithdrawBannerPayload>(
   SettingsActionTypes.SET_CLOSED_NETWORK_BANNER,
 );
@@ -273,6 +279,10 @@ export const setGeneralTermsVersionAccepted = createAction<SettingsSetGeneralTer
 );
 
 export const setUserNps = createAction<SettingsSetUserNps>(SettingsActionTypes.SET_USER_NPS);
+
+export const setSupportedCounterValues = createAction<SettingsSetSupportedCounterValues>(
+  SettingsActionTypes.SET_SUPPORTED_COUNTER_VALUES,
+);
 
 type PortfolioRangeOption = {
   key: PortfolioRange;

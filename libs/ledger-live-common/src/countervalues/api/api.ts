@@ -1,7 +1,7 @@
 import network from "@ledgerhq/live-network/network";
 import chunk from "lodash/chunk";
 import URL from "url";
-import { getEnv } from "../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import { promiseAllBatched } from "../../promise";
 import {
   encodeCurrencyAsLedgerId,
@@ -17,11 +17,14 @@ const LATEST_CHUNK = 50;
 const latest = async (pairs: TrackingPair[], direct?: boolean) => {
   const all = await promiseAllBatched(4, chunk(pairs, LATEST_CHUNK), async partial => {
     const url = `${baseURL()}/v2/latest/${direct ? "direct" : "indirect"}?pairs=${partial
-      .map(p => encodePairAsLedgerIdPair(p.from, p.to))
+      .map(pair => encodePairAsLedgerIdPair(pair.from, pair.to))
       .join(",")}`;
+
     const { data } = await network({ method: "GET", url });
+
     return data;
   });
+
   const data = all.reduce((acc, data) => acc.concat(data), []);
   return data;
 };
@@ -43,6 +46,7 @@ const api: CounterValuesAPI = {
       // for anything else than fiat, we use direct
       query.method = "direct";
     }
+
     const url = URL.format({
       pathname: `${baseURL()}/v2/${granularity}/${encodeCurrencyAsLedgerId(from)}/${to.ticker}`,
       query,
@@ -74,14 +78,16 @@ const api: CounterValuesAPI = {
     indirectP.forEach((p, i) => {
       data[pairs.indexOf(p)] = indirect[i];
     });
+
     return data;
   },
-  fetchMarketcapTickers: async () => {
+  fetchIdsSortedByMarketcap: async () => {
     const { data } = await network({
       method: "GET",
-      url: `${baseURL()}/v2/tickers`,
+      url: `${baseURL()}/v3/currencies/supported`,
     });
     return data;
   },
 };
+
 export default api;

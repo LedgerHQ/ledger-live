@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { generateMnemonic } from "bip39";
 import { from } from "rxjs";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { bot } from "@ledgerhq/live-common/bot/index";
 import { currencyOpt } from "../scan";
 export default {
@@ -28,6 +28,12 @@ export default {
           "'",
       );
       throw new Error("Please define a SEED env variable to run this bot.");
+    }
+
+    if (arg.currency) {
+      // Remapping to match arg format in libs/ledger-live-common/src/bot/cli.ts
+      arg.filter = { currencies: [arg.currency] };
+      delete arg.currency;
     }
 
     return from(bot(arg));

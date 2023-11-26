@@ -1,4 +1,4 @@
-import { getEnv } from "./env";
+import { getEnv } from "@ledgerhq/live-env";
 import { sha256 } from "./crypto";
 
 const userHashesPerUserId = (userId: string) => {

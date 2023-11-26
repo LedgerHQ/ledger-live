@@ -21,51 +21,16 @@ export default function AppTree({ color, icon, app }: Props) {
       </Flex>
       <Svg width="163" height="50" viewBox="0 0 163 50" fill="none">
         <G opacity="0.25">
-          <Image
-            x="141"
-            y="27"
-            width="22"
-            height="22"
-            rx="11"
-            ry="11"
-            // @ts-expect-error Wrong bindings?
-            href={uri}
-          />
+          <Image x="141" y="27" width="22" height="22" href={uri} />
         </G>
         <G opacity="0.25">
-          <Image
-            x="94"
-            y="27"
-            width="22"
-            height="22"
-            rx="11"
-            ry="11"
-            // @ts-expect-error Wrong bindings?
-            href={uri}
-          />
+          <Image x="94" y="27" width="22" height="22" href={uri} />
         </G>
         <G opacity="0.25">
-          <Image
-            x="47"
-            y="27"
-            width="22"
-            height="22"
-            rx="11"
-            ry="11"
-            // @ts-expect-error Wrong bindings?
-            href={uri}
-          />
+          <Image x="47" y="27" width="22" height="22" href={uri} />
         </G>
         <G opacity="0.25">
-          <Image
-            y="27"
-            width="22"
-            height="22"
-            rx="11"
-            ry="11"
-            // @ts-expect-error Wrong bindings?
-            href={uri}
-          />
+          <Image y="27" width="22" height="22" href={uri} />
         </G>
         <Path
           d="M82 3V11.5H13C11.8954 11.5 11 12.3954 11 13.5V20"

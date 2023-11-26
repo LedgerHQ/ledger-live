@@ -99,6 +99,7 @@ export default function RequestAmount({
           value={cryptoAmount}
           onChange={onChange}
           renderRight={<InputRight>{cryptoUnit.code}</InputRight>}
+          data-test-id="modal-amount-field"
         />
         <InputCenter>
           <IconTransfer />

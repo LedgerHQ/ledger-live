@@ -11,6 +11,7 @@ import { NavigationHeaderCloseButtonAdvanced } from "./NavigationHeaderCloseButt
 import getWindowDimensions from "../logic/getWindowDimensions";
 import RequiresCameraPermissions from "./RequiresCameraPermissions";
 import CameraPermissionContext from "./RequiresCameraPermissions/CameraPermissionContext";
+import ForceTheme from "./theme/ForceTheme";
 
 type Props = {
   onResult: (_: string) => void;
@@ -39,27 +40,30 @@ const Scanner = ({ onResult, liveQrCode, progress, instruction }: Props) => {
   }, [colors, hasPermission, navigation]);
 
   if (!hasPermission) return <View />;
+
   return (
-    <Flex flex={1}>
-      <StyledStatusBar barStyle="light-content" />
-      <Camera
-        style={styles.camera}
-        type={CameraType.back}
-        ratio="16:9"
-        onBarCodeScanned={({ data }: BarCodeScanningResult) => onResult(data)}
-        barCodeScannerSettings={{
-          barCodeTypes: [BarCodeScanner.Constants.BarCodeType.qr],
-        }}
-      >
-        <CameraScreen
-          liveQrCode={liveQrCode}
-          progress={progress}
-          width={width}
-          height={height}
-          instruction={instruction}
-        />
-      </Camera>
-    </Flex>
+    <ForceTheme selectedPalette="dark">
+      <Flex flex={1}>
+        <StyledStatusBar barStyle="light-content" />
+        <Camera
+          style={styles.camera}
+          type={CameraType.back}
+          ratio="16:9"
+          onBarCodeScanned={({ data }: BarCodeScanningResult) => onResult(data)}
+          barCodeScannerSettings={{
+            barCodeTypes: [BarCodeScanner.Constants.BarCodeType.qr],
+          }}
+        >
+          <CameraScreen
+            liveQrCode={liveQrCode}
+            progress={progress}
+            width={width}
+            height={height}
+            instruction={instruction}
+          />
+        </Camera>
+      </Flex>
+    </ForceTheme>
   );
 };
 

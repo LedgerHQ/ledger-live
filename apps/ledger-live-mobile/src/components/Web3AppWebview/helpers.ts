@@ -1,5 +1,5 @@
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
-import { addParamsToURL, getClientHeaders } from "@ledgerhq/live-common/wallet-api/helpers";
+import { getClientHeaders, getInitialURL } from "@ledgerhq/live-common/wallet-api/helpers";
 import {
   safeGetRefValue,
   ExchangeType,
@@ -14,7 +14,7 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import BigNumber from "bignumber.js";
 import { useSelector } from "react-redux";
 import { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
-import { WebViewProps, WebView } from "react-native-webview";
+import { WebViewProps, WebView, WebViewMessageEvent } from "react-native-webview";
 import VersionNumber from "react-native-version-number";
 import { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
@@ -26,16 +26,44 @@ import { StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { analyticsEnabledSelector } from "../../reducers/settings";
 import deviceStorage from "../../logic/storeWrapper";
-import { track } from "../../analytics/segment";
+import { track } from "../../analytics";
 import getOrCreateUser from "../../user";
 import * as bridge from "../../../e2e/bridge/client";
 import Config from "react-native-config";
+import { currentRouteNameRef } from "../../analytics/screenRefs";
 
 export function useWebView(
-  { manifest, inputs }: Pick<WebviewProps, "manifest" | "inputs">,
+  {
+    manifest,
+    inputs,
+    customHandlers,
+  }: Pick<WebviewProps, "manifest" | "inputs" | "customHandlers">,
   ref: React.ForwardedRef<WebviewAPI>,
   onStateChange: WebviewProps["onStateChange"],
 ) {
+  const tracking = useMemo(
+    () =>
+      trackingWrapper(
+        (
+          eventName: string,
+          properties?: Record<string, unknown> | null,
+          mandatory?: boolean | null,
+        ) =>
+          track(
+            eventName,
+            {
+              ...properties,
+              flowInitiatedFrom:
+                currentRouteNameRef.current === "Platform Catalog"
+                  ? "Discover"
+                  : currentRouteNameRef.current,
+            },
+            mandatory,
+          ),
+      ),
+    [],
+  );
+
   const { webviewProps, webviewRef } = useWebviewState(
     {
       manifest: manifest as AppManifest,
@@ -86,10 +114,11 @@ export function useWebView(
     config,
     webviewHook,
     uiHook,
+    customHandlers,
   });
 
   const onMessage = useCallback(
-    e => {
+    (e: WebViewMessageEvent) => {
       if (e.nativeEvent?.data) {
         try {
           const msg = JSON.parse(e.nativeEvent.data);
@@ -130,16 +159,7 @@ export function useWebviewState(
 ) {
   const webviewRef = useRef<WebView>(null);
   const { manifest, inputs } = params;
-
-  const initialURL = useMemo(() => {
-    const url = new URL(manifest.url);
-    addParamsToURL(url, inputs);
-    if (manifest.params) {
-      url.searchParams.set("params", JSON.stringify(manifest.params));
-    }
-    return url.toString();
-  }, [manifest, inputs]);
-
+  const initialURL = useMemo(() => getInitialURL(inputs, manifest), [manifest, inputs]);
   const [state, setState] = useState<WebviewState>(initialWebviewState);
 
   useEffect(() => {
@@ -260,7 +280,7 @@ function useUiHook(): Partial<UiHook> {
 
   return useMemo(
     () => ({
-      "account.request": ({ accounts$, currencies, onSuccess, onError }) => {
+      "account.request": ({ accounts$, currencies, onSuccess, onCancel }) => {
         if (currencies.length === 1) {
           navigation.navigate(NavigatorName.RequestAccount, {
             screen: ScreenName.RequestAccountsSelectAccount,
@@ -269,8 +289,8 @@ function useUiHook(): Partial<UiHook> {
               currency: currencies[0],
               allowAddAccount: true,
               onSuccess,
-              onError,
             },
+            onClose: onCancel,
           });
         } else {
           navigation.navigate(NavigatorName.RequestAccount, {
@@ -280,8 +300,8 @@ function useUiHook(): Partial<UiHook> {
               currencies,
               allowAddAccount: true,
               onSuccess,
-              onError,
             },
+            onClose: onCancel,
           });
         }
       },
@@ -446,8 +466,6 @@ const wallet = {
   name: "ledger-live-mobile",
   version: VersionNumber.appVersion,
 };
-
-const tracking = trackingWrapper(track);
 
 function useGetUserId() {
   const [userId, setUserId] = useState("");

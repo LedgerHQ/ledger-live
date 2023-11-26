@@ -3,7 +3,7 @@ import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import type { Transaction } from "./types";
-import type { Operation, SignOperationEvent, Account } from "@ledgerhq/types-live";
+import type { Operation, Account, SignOperationFnSignature } from "@ledgerhq/types-live";
 import { open, close } from "../../hw";
 import { encodeOperationId } from "../../operation";
 import Near from "@ledgerhq/hw-app-near";
@@ -50,15 +50,7 @@ const buildOptimisticOperation = (
   return operation;
 };
 
-const signOperation = ({
-  account,
-  deviceId,
-  transaction,
-}: {
-  account: Account;
-  deviceId: any;
-  transaction: Transaction;
-}): Observable<SignOperationEvent> =>
+const signOperation: SignOperationFnSignature<Transaction> = ({ account, deviceId, transaction }) =>
   new Observable(o => {
     async function main() {
       const transport = await open(deviceId);
@@ -96,7 +88,6 @@ const signOperation = ({
           signedOperation: {
             operation,
             signature: Buffer.from(signedSerializedTx).toString("base64"),
-            expirationDate: null,
           },
         });
       } finally {

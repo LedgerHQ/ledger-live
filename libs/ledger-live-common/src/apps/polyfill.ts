@@ -1,11 +1,7 @@
 // polyfill the unfinished support of apps logic
 import uniq from "lodash/uniq";
 import semver from "semver";
-import {
-  listCryptoCurrencies,
-  findCryptoCurrencyById,
-  findCryptoCurrency,
-} from "@ledgerhq/cryptoassets";
+import { listCryptoCurrencies, findCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { App, AppType, Application, ApplicationV2 } from "@ledgerhq/types-live";
 import type { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 const directDep = {};
@@ -97,13 +93,18 @@ export const getDependencies = (appName: string, appVersion?: string): string[] 
 
 export const getDependents = (appName: string): string[] => reverseDep[appName] || [];
 
+function matchAppNameAndCryptoCurrency(appName: string, crypto: CryptoCurrency) {
+  return (
+    appName.toLowerCase() === crypto.managerAppName.toLowerCase() &&
+    (crypto.managerAppName !== "Ethereum" ||
+      // if it's ethereum, we have a specific case that we must only allow the Ethereum app
+      appName === "Ethereum")
+  );
+}
+
 export const polyfillApplication = (app: Application): Application => {
-  const crypto = listCryptoCurrencies(true, true).find(
-    crypto =>
-      app.name.toLowerCase() === crypto.managerAppName.toLowerCase() &&
-      (crypto.managerAppName !== "Ethereum" ||
-        // if it's ethereum, we have a specific case that we must only allow the Ethereum app
-        app.name === "Ethereum"),
+  const crypto = listCryptoCurrencies(true, true).find(crypto =>
+    matchAppNameAndCryptoCurrency(app.name, crypto),
   );
 
   if (crypto && !app.currencyId) {
@@ -114,13 +115,13 @@ export const polyfillApplication = (app: Application): Application => {
 };
 
 export const getCurrencyIdFromAppName = (
-  name: string,
+  appName: string,
 ): CryptoCurrencyId | "LBRY" | "groestcoin" | "osmo" | undefined => {
   const crypto =
     // try to find the "official" currency when possible (2 currencies can have the same manager app and ticker)
-    findCryptoCurrency(c => c.name === name) ||
-    // Else take the first one with that manager app
-    findCryptoCurrency(c => c.managerAppName === name);
+    listCryptoCurrencies(true, true).find(
+      c => c.name === appName || matchAppNameAndCryptoCurrency(appName, c),
+    );
   return crypto?.id;
 };
 
@@ -140,8 +141,9 @@ export const mapApplicationV2ToApp = ({
   applicationType: type,
   compatibleWallets,
   parentName,
+  currencyId,
   ...rest
-}: ApplicationV2): App => ({
+}: ApplicationV2) => ({
   id,
   name,
   displayName,
@@ -151,7 +153,7 @@ export const mapApplicationV2ToApp = ({
   indexOfMarketCap: -1, // We don't know at this point.
   type: name === "Exchange" ? AppType.swap : type,
   ...rest,
-  currencyId: getCurrencyIdFromAppName(name),
+  currencyId: findCryptoCurrencyById(currencyId) ? currencyId : getCurrencyIdFromAppName(name),
   compatibleWallets: parseCompatibleWallets(compatibleWallets, name),
 });
 
@@ -159,7 +161,12 @@ export const calculateDependencies = (): void => {
   listCryptoCurrencies(true, true).forEach((currency: CryptoCurrency) => {
     if (!currency.managerAppName) return; // no app for this currency
 
-    const family = findCryptoCurrencyById(currency.family);
+    /**
+     * For currencies from the evm family that use a specific app (other than the Ethereum app),
+     * the currency ID of the parent app is ethereum and not the family name.
+     */
+    const parentCurrencyId = currency.family === "evm" ? "ethereum" : currency.family;
+    const family = findCryptoCurrencyById(parentCurrencyId);
 
     if (!family || !family.managerAppName) return; // no dep
     if (family.managerAppName === currency.managerAppName) return; // same app

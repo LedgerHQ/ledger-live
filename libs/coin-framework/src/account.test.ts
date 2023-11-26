@@ -18,6 +18,7 @@ setSupportedCurrencies(["ethereum", "ethereum_classic", "tron"]);
 describe("groupAccountOperationsByDay", () => {
   test("basic", () => {
     const account = genAccount("seed_7", {
+      currency: getCryptoCurrencyById("zcash"),
       operationsSize: 20,
     });
     const res1 = groupAccountOperationsByDay(account, {

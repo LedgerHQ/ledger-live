@@ -117,8 +117,9 @@ export const resolveTrackingPair = (pair: {
 }): {
   from: Currency;
   to: Currency;
-} =>
-  modules.reduce((pair, m) => (m.resolveTrackingPair ? m.resolveTrackingPair(pair) : pair), pair);
-
-export const isCountervalueEnabled = (c: Currency): boolean =>
-  !c.disableCountervalue || modules.some(m => m.handleCountervalue && m.handleCountervalue(c));
+} => {
+  return modules.reduce(
+    (pair, module) => (module.resolveTrackingPair ? module.resolveTrackingPair(pair) : pair),
+    pair,
+  );
+};

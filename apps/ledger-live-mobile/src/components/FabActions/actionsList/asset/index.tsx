@@ -27,15 +27,15 @@ const FabAssetActionsComponent: React.FC<Props> = ({ currency, accounts, default
             <QuickActionList
               data={quickActions}
               numColumns={2}
-              key={"asset_two_columns"}
-              keyExtractor={(_item, index) => "asset_two_columns_" + index}
+              id="asset_two_columns"
+              key="asset_two_columns"
             />
           ) : (
             <QuickActionList
               data={quickActions}
               numColumns={3}
-              key={"asset_three_columns"}
-              keyExtractor={(_item, index) => "asset_three_columns_" + index}
+              id="asset_three_columns"
+              key="asset_three_columns"
             />
           )}
         </>

@@ -16,6 +16,7 @@ import AccountCard from "../../components/AccountCard";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AccountsNavigatorParamList } from "../../components/RootNavigator/types/AccountsNavigator";
 import { useNavigation } from "@react-navigation/core";
+import { withDiscreetMode } from "../../context/DiscreetModeContext";
 
 type SubAccountEnhanced = SubAccount & {
   parentAccount: Account;
@@ -140,7 +141,7 @@ function ReceiveSelectAccount({
     }
   }, [currency, navigationAccount]);
 
-  const keyExtractor = useCallback(item => item?.id, []);
+  const keyExtractor = useCallback((item: AccountLike) => item?.id, []);
 
   return currency && aggregatedAccounts && aggregatedAccounts.length > 0 ? (
     <>
@@ -170,12 +171,17 @@ function ReceiveSelectAccount({
       />
 
       <Flex mb={insets.bottom + 2} px={6}>
-        <Button type="shade" size="large" outline onPress={createNewAccount}>
+        <Button
+          type="shade"
+          size="large"
+          outline
+          onPress={createNewAccount}
+          testID="button-create-account"
+        >
           {t("transfer.receive.selectAccount.cta")}
         </Button>
       </Flex>
     </>
   ) : null;
 }
-
-export default ReceiveSelectAccount;
+export default withDiscreetMode(ReceiveSelectAccount);

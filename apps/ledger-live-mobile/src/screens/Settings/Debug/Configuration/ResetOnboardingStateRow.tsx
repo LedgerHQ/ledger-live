@@ -9,13 +9,13 @@ import {
 import { RebootContext } from "../../../../context/Reboot";
 import { knownDevicesSelector } from "../../../../reducers/ble";
 import { removeKnownDevices } from "../../../../actions/ble";
-import { TermsContext } from "../../../../logic/terms";
+import { useUnacceptGeneralTerms } from "../../../../logic/terms";
 
 export default function ResetOnboardingStateRow() {
   const dispatch = useDispatch();
   const reboot = useContext(RebootContext);
-  const termsContext = useContext(TermsContext);
   const knownDevices = useSelector(knownDevicesSelector);
+  const unacceptGeneralTerms = useUnacceptGeneralTerms();
   return (
     <SettingsRow
       hasBorderTop
@@ -26,7 +26,7 @@ export default function ResetOnboardingStateRow() {
         dispatch(setHasOrderedNano(false));
         dispatch(completeOnboarding(false));
         dispatch(removeKnownDevices(knownDevices.map(d => d.id)));
-        termsContext.unAccept();
+        unacceptGeneralTerms();
         requestAnimationFrame(() => {
           reboot();
         });

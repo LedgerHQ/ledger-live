@@ -1,15 +1,9 @@
 import React from "react";
-import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex";
-import {
-  CheckTickMedium,
-  ExternalLinkMedium,
-  WarningSolidMedium,
-  InfoAltFillMedium,
-} from "@ledgerhq/native-ui/assets/icons";
-import { Flex, InfiniteLoader, Text, Link, BoxedIcon } from "@ledgerhq/native-ui";
+import { ExternalLinkMedium } from "@ledgerhq/native-ui/assets/icons";
+import { Flex, Icons, InfiniteLoader, Text, Link, BoxedIcon } from "@ledgerhq/native-ui";
 import { UiCheckStatus } from "./EarlySecurityCheck";
 
-export type CheckCardProps = FlexBoxProps & {
+export type CheckCardProps = {
   title: string;
   description?: string | null;
   learnMore?: string | null;
@@ -25,7 +19,6 @@ const CheckCard: React.FC<CheckCardProps> = ({
   onLearnMore,
   index,
   status,
-  ...props
 }) => {
   let checkIcon;
   switch (status) {
@@ -33,14 +26,14 @@ const CheckCard: React.FC<CheckCardProps> = ({
       checkIcon = <InfiniteLoader color="primary.c80" size={20} />;
       break;
     case "completed":
-      checkIcon = <CheckTickMedium color="success.c50" size={20} />;
+      checkIcon = <Icons.CheckmarkCircleFill color="success.c60" size="S" />;
       break;
     case "error":
     case "genuineCheckRefused":
-      checkIcon = <WarningSolidMedium color="warning.c60" size={20} />;
+      checkIcon = <Icons.WarningFill color="warning.c70" size="S" />;
       break;
     case "firmwareUpdateRefused":
-      checkIcon = <InfoAltFillMedium color="primary.c80" size={20} />;
+      checkIcon = <Icons.InformationFill color="primary.c80" size="S" />;
       break;
     case "inactive":
     default:
@@ -48,24 +41,25 @@ const CheckCard: React.FC<CheckCardProps> = ({
   }
 
   return (
-    <Flex flexDirection="row" alignItems="flex-start" {...props}>
+    <Flex
+      flexDirection="row"
+      alignItems={description || (learnMore && onLearnMore) ? "flex-start" : "center"}
+    >
       <BoxedIcon
-        backgroundColor="neutral.c30"
-        borderColor="neutral.c30"
+        backgroundColor="opacityDefault.c10"
+        borderColor="transparent"
         variant="circle"
         Icon={checkIcon}
       />
-      <Flex flexDirection="column" flex={1} justifyContent="flex-end">
-        <Text ml={4} variant="large">
-          {title}
-        </Text>
+      <Flex ml={6} flexDirection="column" flex={1} justifyContent="flex-end">
+        <Text variant="largeLineHeight">{title}</Text>
         {description ? (
-          <Text ml={4} mt={2} mb={4} variant="body" color="neutral.c70">
+          <Text mt={1} variant="body" color="neutral.c70">
             {description}
           </Text>
         ) : null}
         {learnMore && onLearnMore ? (
-          <Flex ml={4} mb={4}>
+          <Flex mt={3}>
             <Link
               Icon={ExternalLinkMedium}
               onPress={onLearnMore}

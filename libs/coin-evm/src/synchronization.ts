@@ -60,7 +60,11 @@ export const getAccountShape: GetAccountShape = async infos => {
         return (acc?.blockHeight || 0) > (curr?.blockHeight || 0) ? acc : curr;
       }, null);
 
-  const { lastCoinOperations, lastTokenOperations, lastNftOperations } = await (async () => {
+  const { lastCoinOperations, lastTokenOperations, lastNftOperations } = await (async (): Promise<{
+    lastCoinOperations: Operation[];
+    lastTokenOperations: Operation[];
+    lastNftOperations: Operation[];
+  }> => {
     try {
       const { getLastOperations } = getExplorerApi(currency);
       return await getLastOperations(
@@ -83,7 +87,9 @@ export const getAccountShape: GetAccountShape = async infos => {
   })();
 
   const newSubAccounts = await getSubAccounts(infos, accountId, lastTokenOperations);
-  const subAccounts = mergeSubAccounts(initialAccount, newSubAccounts); // Merging potential new subAccouns while preserving the references
+  const subAccounts = shouldSyncFromScratch
+    ? newSubAccounts
+    : mergeSubAccounts(initialAccount, newSubAccounts); // Merging potential new subAccouns while preserving the references
 
   // Trying to confirm pending operations that we are sure of
   // because they were made in the live
@@ -101,7 +107,10 @@ export const getAccountShape: GetAccountShape = async infos => {
     lastNftOperations,
   );
   const newOperations = [...confirmedOperations, ...lastCoinOperationsWithAttachements];
-  const operations = mergeOps(initialAccount?.operations || [], newOperations);
+  const operations =
+    shouldSyncFromScratch || !initialAccount?.operations
+      ? newOperations
+      : mergeOps(initialAccount?.operations, newOperations);
   const operationsWithPendings = mergeOps(operations, initialAccount?.pendingOperations || []);
 
   // Merging potential new nfts while preserving the references.
@@ -212,7 +221,7 @@ export const getOperationStatus = async (
     }
 
     const { timestamp } = await nodeApi.getBlockByHeight(currency, blockHeight);
-    const date = new Date(timestamp * 1000);
+    const date = new Date(timestamp);
 
     return {
       ...op,

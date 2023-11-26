@@ -3,6 +3,8 @@ import { types as TyphonTypes } from "@stricahq/typhonjs";
 import type {
   Account,
   AccountRaw,
+  Operation,
+  OperationRaw,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
@@ -213,3 +215,13 @@ export type CardanoAccountRaw = AccountRaw & {
 export type TransactionStatus = TransactionStatusCommon;
 
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
+
+export type CardanoOperation = Operation<CardanoOperationExtra>;
+export type CardanoOperationRaw = OperationRaw<CardanoOperationExtra>;
+
+export type CardanoOperationExtra = {
+  memo?: string;
+  deposit?: string;
+  refund?: string;
+  rewards?: string;
+};

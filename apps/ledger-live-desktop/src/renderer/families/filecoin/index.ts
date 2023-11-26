@@ -2,9 +2,9 @@ import { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/f
 import { LLDCoinFamily } from "../types";
 import transactionConfirmFields from "./TransactionConfirmFields";
 import AccountSubHeader from "./AccountSubHeader";
-import { Account } from "@ledgerhq/types-live";
+import { Account, Operation } from "@ledgerhq/types-live";
 
-const family: LLDCoinFamily<Account, Transaction, TransactionStatus> = {
+const family: LLDCoinFamily<Account, Transaction, TransactionStatus, Operation> = {
   transactionConfirmFields,
   AccountSubHeader,
 };

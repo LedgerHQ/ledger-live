@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { createAction } from "@ledgerhq/live-common/hw/actions/app";
 import Modal, { ModalBody } from "~/renderer/components/Modal";
 import Box from "~/renderer/components/Box";

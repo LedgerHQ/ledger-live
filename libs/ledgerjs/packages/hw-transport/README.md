@@ -20,35 +20,39 @@
 *   [DescriptorEvent](#descriptorevent)
 *   [Observer](#observer)
 *   [Transport](#transport)
+    *   [Parameters](#parameters)
     *   [exchange](#exchange)
-        *   [Parameters](#parameters)
-    *   [exchangeBulk](#exchangebulk)
         *   [Parameters](#parameters-1)
-    *   [setScrambleKey](#setscramblekey)
+    *   [exchangeBulk](#exchangebulk)
         *   [Parameters](#parameters-2)
+    *   [setScrambleKey](#setscramblekey)
+        *   [Parameters](#parameters-3)
     *   [close](#close)
     *   [on](#on)
-        *   [Parameters](#parameters-3)
-    *   [off](#off)
         *   [Parameters](#parameters-4)
+    *   [off](#off)
+        *   [Parameters](#parameters-5)
     *   [setDebugMode](#setdebugmode)
     *   [setExchangeTimeout](#setexchangetimeout)
-        *   [Parameters](#parameters-5)
-    *   [setExchangeUnresponsiveTimeout](#setexchangeunresponsivetimeout)
         *   [Parameters](#parameters-6)
-    *   [send](#send)
+    *   [setExchangeUnresponsiveTimeout](#setexchangeunresponsivetimeout)
         *   [Parameters](#parameters-7)
+    *   [send](#send)
+        *   [Parameters](#parameters-8)
+    *   [setTraceContext](#settracecontext)
+        *   [Parameters](#parameters-9)
+    *   [getTraceContext](#gettracecontext)
     *   [isSupported](#issupported)
     *   [list](#list)
         *   [Examples](#examples)
     *   [listen](#listen)
-        *   [Parameters](#parameters-8)
+        *   [Parameters](#parameters-10)
         *   [Examples](#examples-1)
     *   [open](#open)
-        *   [Parameters](#parameters-9)
+        *   [Parameters](#parameters-11)
         *   [Examples](#examples-2)
     *   [create](#create)
-        *   [Parameters](#parameters-10)
+        *   [Parameters](#parameters-12)
         *   [Examples](#examples-3)
 
 ### Subscription
@@ -57,7 +61,7 @@ Type: {unsubscribe: function (): void}
 
 #### Properties
 
-*   `unsubscribe` **function (): void** 
+*   `unsubscribe` **function (): void**&#x20;
 
 ### Device
 
@@ -83,6 +87,13 @@ The Transport class defines a generic interface for communicating with a Ledger 
 There are different kind of transports based on the technology (channels like U2F, HID, Bluetooth, Webusb) and environment (Node, Web,...).
 It is an abstract class that needs to be implemented.
 
+#### Parameters
+
+*   `$0` **{context: TraceContext?, logType: LogType?}**  (optional, default `{}`)
+
+    *   `$0.context` &#x20;
+    *   `$0.logType` &#x20;
+
 #### exchange
 
 Send data to the device using a low level API.
@@ -90,7 +101,7 @@ It's recommended to use the "send" method for a higher level API.
 
 ##### Parameters
 
-*   `_apdu` **[Buffer](https://nodejs.org/api/buffer.html)** 
+*   `_apdu` **[Buffer](https://nodejs.org/api/buffer.html)**&#x20;
 *   `apdu` **[Buffer](https://nodejs.org/api/buffer.html)** The data to send.
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[Buffer](https://nodejs.org/api/buffer.html)>** A promise that resolves with the response data from the device.
@@ -114,12 +125,11 @@ Each app can have a different scramble key and it is set internally during insta
 
 ##### Parameters
 
-*   `_key` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+*   `_key` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
 *   `key` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** The scramble key to set.
-
-**Meta**
-
-*   **deprecated**: This method is no longer needed for modern transports and should be migrated away from.
+    deprecated This method is no longer needed for modern transports and should be migrated away from.
+    no @ before deprecated as it breaks documentationjs on version 14.0.2
+    <https://github.com/documentationjs/documentation/issues/1596>
 
 #### close
 
@@ -136,9 +146,9 @@ Transport implementations may have specific events. Common events include:
 ##### Parameters
 
 *   `eventName` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** The name of the event to listen for.
-*   `cb` **function (...args: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<any>): any** 
+*   `cb` **function (...args: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<any>): any**&#x20;
 
-Returns **void** 
+Returns **void**&#x20;
 
 #### off
 
@@ -146,10 +156,10 @@ Stop listening to an event on an instance of transport.
 
 ##### Parameters
 
-*   `eventName` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
-*   `cb` **function (...args: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<any>): any** 
+*   `eventName` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
+*   `cb` **function (...args: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<any>): any**&#x20;
 
-Returns **void** 
+Returns **void**&#x20;
 
 #### setDebugMode
 
@@ -161,9 +171,9 @@ Set a timeout (in milliseconds) for the exchange call. Only some transport might
 
 ##### Parameters
 
-*   `exchangeTimeout` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
+*   `exchangeTimeout` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
 
-Returns **void** 
+Returns **void**&#x20;
 
 #### setExchangeUnresponsiveTimeout
 
@@ -171,9 +181,9 @@ Define the delay before emitting "unresponsive" on an exchange that does not res
 
 ##### Parameters
 
-*   `unresponsiveTimeout` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
+*   `unresponsiveTimeout` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
 
-Returns **void** 
+Returns **void**&#x20;
 
 #### send
 
@@ -189,6 +199,23 @@ Send data to the device using the higher level API.
 *   `statusList` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)>** A list of acceptable status codes for the response. Defaults to \[StatusCodes.OK]. (optional, default `[StatusCodes.OK]`)
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[Buffer](https://nodejs.org/api/buffer.html)>** A promise that resolves with the response data from the device.
+
+#### setTraceContext
+
+Updates the context used by the logging/tracing mechanism
+
+Useful when re-using (cached) the same Transport instance,
+but with a new tracing context.
+
+##### Parameters
+
+*   `context` **TraceContext?** A TraceContext, that can undefined to reset the context
+
+#### getTraceContext
+
+Gets the tracing context of the transport instance
+
+Returns **(TraceContext | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**&#x20;
 
 #### isSupported
 
@@ -247,12 +274,13 @@ Returns **[Subscription](#subscription)** A Subscription object on which you can
 
 Attempt to create a Transport instance with a specific descriptor.
 
-Type: function (descriptor: any, timeout: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)): [Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[Transport](#transport)>
+Type: function (descriptor: any, timeoutMs: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), context: TraceContext): [Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[Transport](#transport)>
 
 ##### Parameters
 
 *   `descriptor` **any** The descriptor to open the transport with.
 *   `timeout` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** An optional timeout for the transport connection.
+*   `context` **TraceContext** Optional tracing/log context
 
 ##### Examples
 
@@ -271,7 +299,7 @@ This is a light helper, alternative to using listen() and open() (that you may n
 ##### Parameters
 
 *   `openTimeout`   (optional, default `3000`)
-*   `listenTimeout` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?** 
+*   `listenTimeout` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?**&#x20;
 
 ##### Examples
 
@@ -279,4 +307,4 @@ This is a light helper, alternative to using listen() and open() (that you may n
 TransportFoo.create().then(transport => ...)
 ```
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[Transport](#transport)>** 
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[Transport](#transport)>**&#x20;

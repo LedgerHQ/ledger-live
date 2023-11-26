@@ -1,12 +1,4 @@
-import React, {
-  PureComponent,
-  useEffect,
-  useCallback,
-  useState,
-  useRef,
-  memo,
-  useMemo,
-} from "react";
+import React, { useEffect, useCallback, useState, useRef, memo, useMemo } from "react";
 import { StyleSheet, View, Linking, SafeAreaView } from "react-native";
 import { concat, from, Subscription } from "rxjs";
 import { ignoreElements } from "rxjs/operators";
@@ -46,7 +38,7 @@ import NavigationScrollView from "../../components/NavigationScrollView";
 import { prepareCurrency } from "../../bridge/cache";
 import { blacklistedTokenIdsSelector } from "../../reducers/settings";
 import QueuedDrawer from "../../components/QueuedDrawer";
-import { urls } from "../../config/urls";
+import { urls } from "@utils/urls";
 import noAssociatedAccountsByFamily from "../../generated/NoAssociatedAccounts";
 import { State } from "../../reducers/types";
 import {
@@ -56,6 +48,7 @@ import {
 } from "../../components/RootNavigator/types/helpers";
 import { AddAccountsNavigatorParamList } from "../../components/RootNavigator/types/AddAccountsNavigator";
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
+import Config from "react-native-config";
 
 const SectionAccounts = ({
   defaultSelected,
@@ -339,7 +332,7 @@ function AddAccountsAccounts({
               <SectionAccounts
                 defaultSelected={defaultSelected}
                 key={id}
-                showHint={selectable && i === 0}
+                showHint={selectable && i === 0 && !Config.MOCK}
                 header={
                   <Trans
                     values={{
@@ -488,7 +481,7 @@ const AddressTypeTooltip = ({
   );
 };
 
-class Footer extends PureComponent<{
+type FooterProps = {
   isScanning: boolean;
   canRetry: boolean;
   canDone: boolean;
@@ -500,88 +493,86 @@ class Footer extends PureComponent<{
   supportLink?: AddAccountSupportLink;
   colors: Theme["colors"];
   returnToSwap?: boolean;
-}> {
-  render() {
-    const {
-      isDisabled,
-      onContinue,
-      isScanning,
-      onStop,
-      canRetry,
-      canDone,
-      onRetry,
-      onDone,
-      colors,
-    } = this.props;
-    return (
-      <View
-        style={[
-          styles.footer,
-          {
-            borderColor: colors.lightFog,
-          },
-        ]}
-      >
-        {isScanning ? (
-          <Button
-            event="AddAccountsStopScan"
-            type="tertiary"
-            title={<Trans i18nKey="addAccounts.stopScanning" />}
-            onPress={onStop}
-            IconLeft={IconPause}
-          />
-        ) : canRetry ? (
-          <Button
-            event="AddAccountsRetryScan"
-            type="primary"
-            title={<Trans i18nKey="addAccounts.retryScanning" />}
-            onPress={onRetry}
-          />
-        ) : canDone ? (
-          <Button
-            event="AddAccountsDone"
-            type="primary"
-            title={<Trans i18nKey="addAccounts.done" />}
-            onPress={onDone}
-          />
-        ) : (
-          <Button
-            testID="add-accounts-continue-button"
-            event="AddAccountsSelected"
-            type="primary"
-            title={<Trans i18nKey="addAccounts.finalCta" />}
-            onPress={isDisabled ? undefined : onContinue}
-          />
-        )}
-      </View>
-    );
-  }
-}
+};
 
-class ScanLoading extends PureComponent<{
+const Footer = ({
+  isDisabled,
+  onContinue,
+  isScanning,
+  onStop,
+  canRetry,
+  canDone,
+  onRetry,
+  onDone,
+  colors,
+}: FooterProps) => {
+  return (
+    <View
+      style={[
+        styles.footer,
+        {
+          borderColor: colors.lightFog,
+        },
+      ]}
+    >
+      {isScanning ? (
+        <Button
+          event="AddAccountsStopScan"
+          type="tertiary"
+          title={<Trans i18nKey="addAccounts.stopScanning" />}
+          onPress={onStop}
+          IconLeft={IconPause}
+        />
+      ) : canRetry ? (
+        <Button
+          event="AddAccountsRetryScan"
+          type="primary"
+          title={<Trans i18nKey="addAccounts.retryScanning" />}
+          onPress={onRetry}
+        />
+      ) : canDone ? (
+        <Button
+          event="AddAccountsDone"
+          type="primary"
+          title={<Trans i18nKey="addAccounts.done" />}
+          onPress={onDone}
+        />
+      ) : (
+        <Button
+          testID="add-accounts-continue-button"
+          event="AddAccountsSelected"
+          type="primary"
+          title={<Trans i18nKey="addAccounts.finalCta" />}
+          onPress={isDisabled ? undefined : onContinue}
+        />
+      )}
+    </View>
+  );
+};
+
+type ScanProps = {
   colors: Theme["colors"];
-}> {
-  render() {
-    const { colors } = this.props;
-    return (
-      <View
-        style={[
-          styles.scanLoadingRoot,
-          {
-            borderColor: colors.fog,
-          },
-        ]}
-      >
-        <Spinning>
-          <LiveLogo color={colors.grey} size={16} />
-        </Spinning>
-        <LText semiBold style={styles.scanLoadingText} color="grey">
-          <Trans i18nKey="addAccounts.synchronizing" />
-        </LText>
-      </View>
-    );
-  }
-}
+};
+
+const ScanLoading = ({ colors }: ScanProps) => {
+  return (
+    <View
+      style={[
+        styles.scanLoadingRoot,
+        {
+          borderColor: colors.fog,
+        },
+      ]}
+    >
+      <Spinning>
+        <LiveLogo color={colors.grey} size={16} />
+      </Spinning>
+      <LText semiBold style={styles.scanLoadingText} color="grey">
+        <Trans i18nKey="addAccounts.synchronizing" />
+      </LText>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   root: {

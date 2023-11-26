@@ -5,11 +5,9 @@ import {
   AccountBridge,
   AccountLike,
   BroadcastFnSignature,
-  Operation,
-  SignOperationEvent,
   SignOperationFnSignature,
 } from "@ledgerhq/types-live";
-import { Transaction, TransactionStatus } from "../types";
+import { InternetComputerOperation, Transaction, TransactionStatus } from "../types";
 import { getAccountShape } from "./bridgeHelpers/account";
 import BigNumber from "bignumber.js";
 import { getEstimatedFees } from "./bridgeHelpers/fee";
@@ -81,13 +79,17 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
   if (!recipient) {
     errors.recipient = new RecipientRequired();
   } else if (!(await validateAddress(recipient)).isValid) {
-    errors.recipient = new InvalidAddress();
+    errors.recipient = new InvalidAddress("", {
+      currencyName: a.currency.name,
+    });
   } else if (recipient.toLowerCase() === address.toLowerCase()) {
     errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
   }
 
   if (!(await validateAddress(address)).isValid) {
-    errors.sender = new InvalidAddress();
+    errors.sender = new InvalidAddress("", {
+      currencyName: a.currency.name,
+    });
   }
 
   if (!validateMemo(t.memo).isValid) {
@@ -144,11 +146,7 @@ const estimateMaxSpendable = async ({
   return maxSpendable;
 };
 
-const signOperation: SignOperationFnSignature<Transaction> = ({
-  account,
-  deviceId,
-  transaction,
-}): Observable<SignOperationEvent> =>
+const signOperation: SignOperationFnSignature<Transaction> = ({ account, deviceId, transaction }) =>
   withDevice(deviceId)(
     transport =>
       new Observable(o => {
@@ -180,7 +178,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
             type: "device-signature-granted",
           });
 
-          const operation: Operation = {
+          const operation: InternetComputerOperation = {
             id: encodeOperationId(accountId, hash, "OUT"),
             hash,
             type: "OUT",

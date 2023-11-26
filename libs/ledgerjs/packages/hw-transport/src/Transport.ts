@@ -7,7 +7,9 @@ import {
   getAltStatusMessage,
   TransportStatusError,
 } from "@ledgerhq/errors";
+import { LocalTracer, TraceContext, LogType } from "@ledgerhq/logs";
 export { TransportError, TransportStatusError, StatusCodes, getAltStatusMessage };
+const DEFAULT_LOG_TYPE = "transport";
 
 /**
  */
@@ -52,6 +54,11 @@ export default class Transport {
   exchangeTimeout = 30000;
   unresponsiveTimeout = 15000;
   deviceModel: DeviceModel | null | undefined = null;
+  tracer: LocalTracer;
+
+  constructor({ context, logType }: { context?: TraceContext; logType?: LogType } = {}) {
+    this.tracer = new LocalTracer(logType ?? DEFAULT_LOG_TYPE, context);
+  }
 
   /**
    * Check if the transport is supported on the current platform/browser.
@@ -94,11 +101,16 @@ export default class Transport {
    * Attempt to create a Transport instance with a specific descriptor.
    * @param {any} descriptor - The descriptor to open the transport with.
    * @param {number} timeout - An optional timeout for the transport connection.
+   * @param {TraceContext} context Optional tracing/log context
    * @returns {Promise<Transport>} A promise that resolves with a Transport instance.
    * @example
   TransportFoo.open(descriptor).then(transport => ...)
    */
-  static readonly open: (descriptor?: any, timeout?: number) => Promise<Transport>;
+  static readonly open: (
+    descriptor?: any,
+    timeoutMs?: number,
+    context?: TraceContext,
+  ) => Promise<Transport>;
 
   /**
    * Send data to the device using a low level API.
@@ -148,7 +160,9 @@ export default class Transport {
    * Set the "scramble key" for the next data exchanges with the device.
    * Each app can have a different scramble key and it is set internally during instantiation.
    * @param {string} key - The scramble key to set.
-   * @deprecated This method is no longer needed for modern transports and should be migrated away from.
+   * deprecated This method is no longer needed for modern transports and should be migrated away from.
+   * no @ before deprecated as it breaks documentationjs on version 14.0.2
+   * https://github.com/documentationjs/documentation/issues/1596
    */
   setScrambleKey(_key: string) {}
 
@@ -284,12 +298,17 @@ export default class Transport {
 
   exchangeBusyPromise: Promise<void> | null | undefined;
   exchangeAtomicImpl = async (f: () => Promise<Buffer | void>): Promise<Buffer | void> => {
+    const tracer = this.tracer.withUpdatedContext({ function: "exchangeAtomicImpl" });
+    tracer.trace("Starting an atomic APDU exchange");
+
     if (this.exchangeBusyPromise) {
+      tracer.trace("Atomic exchange is already busy");
       throw new TransportRaceCondition(
         "An action was already pending on the Ledger device. Please deny or reconnect.",
       );
     }
 
+    // Sets the atomic guard
     let resolveBusy;
     const busyPromise: Promise<void> = new Promise(r => {
       resolveBusy = r;
@@ -297,14 +316,17 @@ export default class Transport {
     this.exchangeBusyPromise = busyPromise;
     let unresponsiveReached = false;
     const timeout = setTimeout(() => {
+      tracer.trace(`Timeout reached, emitting Transport event "unresponsive"`);
       unresponsiveReached = true;
       this.emit("unresponsive");
     }, this.unresponsiveTimeout);
 
     try {
       const res = await f();
+      tracer.trace("Received a response from atomic exchange");
 
       if (unresponsiveReached) {
+        tracer.trace("Device was unresponsive, emitting responsive");
         this.emit("responsive");
       }
 
@@ -347,6 +369,25 @@ export default class Transport {
         this._appAPIlock = null;
       }
     };
+  }
+
+  /**
+   * Updates the context used by the logging/tracing mechanism
+   *
+   * Useful when re-using (cached) the same Transport instance,
+   * but with a new tracing context.
+   *
+   * @param context A TraceContext, that can undefined to reset the context
+   */
+  setTraceContext(context?: TraceContext) {
+    this.tracer = this.tracer.withContext(context);
+  }
+
+  /**
+   * Gets the tracing context of the transport instance
+   */
+  getTraceContext(): TraceContext | undefined {
+    return this.tracer.getContext();
   }
 
   static ErrorMessage_ListenTimeout = "No Ledger device found (timeout)";

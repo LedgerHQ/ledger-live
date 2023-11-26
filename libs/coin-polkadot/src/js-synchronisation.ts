@@ -1,4 +1,3 @@
-import type { Account } from "@ledgerhq/types-live";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
@@ -34,10 +33,11 @@ export function makeGetAccountShape(polkadotAPI: PolkadotAPI): GetAccountShape {
     });
     const newOperations = await polkadotAPI.getOperations(accountId, address, startAt);
     const operations = mergeOps(oldOperations, newOperations);
-    const shape = {
+    return {
       id: accountId,
       balance,
       spendableBalance,
+      operations,
       operationsCount: operations.length,
       blockHeight,
       polkadotResources: {
@@ -52,6 +52,5 @@ export function makeGetAccountShape(polkadotAPI: PolkadotAPI): GetAccountShape {
         numSlashingSpans,
       },
     };
-    return { ...shape, operations } as Partial<Account>;
   };
 }

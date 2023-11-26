@@ -3,9 +3,9 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import Fuse from "fuse.js";
 import { CryptoOrTokenCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/index";
-import useEnv from "~/renderer/hooks/useEnv";
-import { getEnv } from "@ledgerhq/live-common/env";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";
+import { getEnv } from "@ledgerhq/live-env";
 import Select from "~/renderer/components/Select";
 import { CreateStylesReturnType } from "~/renderer/components/Select/createStyles";
 import Box from "~/renderer/components/Box";
@@ -65,7 +65,10 @@ const SelectCurrency = ({
   }
   const [searchInputValue, setSearchInputValue] = useState("");
   const cryptos = useCurrenciesByMarketcap(c);
-  const onChangeCallback = useCallback(item => onChange(item ? item.currency : null), [onChange]);
+  const onChangeCallback = useCallback(
+    (item: CurrencyOption) => onChange(item ? item.currency : null),
+    [onChange],
+  );
   const noOptionsMessage = useCallback(
     ({ inputValue }: { inputValue: string }) =>
       inputValue
@@ -132,6 +135,7 @@ const SelectCurrency = ({
       inputValue={searchInputValue}
       placeholder={placeholder || t("common.selectCurrency")}
       noOptionsMessage={noOptionsMessage}
+      // @ts-expect-error Select hell again
       onChange={onChangeCallback}
       minWidth={minWidth}
       width={width}
@@ -203,7 +207,7 @@ export function CurrencyOption({
     </>
   );
   return (
-    <Box grow horizontal alignItems="center" flow={2}>
+    <Box grow horizontal role="option" alignItems="center" flow={2}>
       <CryptoCurrencyIcon circle currency={currency} size={26} />
       {textContents}
     </Box>

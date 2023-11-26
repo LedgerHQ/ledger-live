@@ -76,17 +76,4 @@ export type ReceiveFundsStackParamList = {
     onSuccess?: (_?: string) => void;
     onError?: () => void;
   };
-  [ScreenName.ReceiveVerificationConfirmation]: {
-    account?: AccountLike;
-    accountId: string;
-    parentId?: string;
-    modelId?: DeviceModelId;
-    verified?: boolean;
-    wired?: boolean;
-    device?: Device;
-    currency?: Currency;
-    createTokenAccount?: boolean;
-    onSuccess?: (_?: string) => void;
-    onError?: () => void;
-  };
 };

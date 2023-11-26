@@ -9,18 +9,14 @@ export class LiveAppWebview {
   readonly liveAppTitle: Locator;
   readonly liveAppLoadingSpinner: Locator;
   readonly webview: Locator;
-  readonly selectAssetTitle: Locator;
   readonly selectAssetSearchBar: Locator;
-  readonly selectAccountTitle: Locator;
 
   constructor(page: Page) {
     this.page = page;
     this.webview = page.locator("webview");
     this.liveAppTitle = page.locator("data-test-id=live-app-title");
     this.liveAppLoadingSpinner = page.locator("data-test-id=live-app-loading-spinner");
-    this.selectAssetTitle = page.locator("data-test-id=select-asset-drawer-title");
     this.selectAssetSearchBar = page.locator("data-test-id=select-asset-drawer-search-input");
-    this.selectAccountTitle = page.locator("data-test-id=select-account-drawer-title");
   }
 
   static async startLiveApp(
@@ -87,8 +83,12 @@ export class LiveAppWebview {
     await this.clickWebviewElement("[data-test-id=list-currencies-button]");
   }
 
-  async signTransaction() {
-    await this.clickWebviewElement("[data-test-id=sign-transaction-button]");
+  async signBitcoinTransaction() {
+    await this.clickWebviewElement("[data-test-id=sign-bitcoin-transaction-button]");
+  }
+
+  async signEthereumTransaction() {
+    await this.clickWebviewElement("[data-test-id=sign-ethereum-transaction-button]");
   }
 
   async clickWebviewElement(elementName: string) {
@@ -108,16 +108,15 @@ export class LiveAppWebview {
     return waitFor(() => this.textIsPresent(textToCheck));
   }
 
+  async waitForLoaded() {
+    return this.page.waitForLoadState("domcontentloaded");
+  }
+
   async textIsPresent(textToCheck: string) {
     const result: boolean = await this.page.evaluate(textToCheck => {
       const webview = document.querySelector("webview");
       return (webview as WebviewTag)
-        .executeJavaScript(
-          `(function() {
-        return document.querySelector('*').innerHTML;
-      })();
-    `,
-        )
+        .executeJavaScript("document.body.innerHTML")
         .then((text: string) => {
           return text.includes(textToCheck);
         });

@@ -29,7 +29,8 @@ export function orchestrator(app: Probot) {
    * When a workflow is requested for the first time:
    *  - Create the related check run
    */
-  app.on("workflow_run.requested", async (context): Promise<void> => {
+  // @ts-expect-error ts pls
+  app.on("workflow_run.requested", async context => {
     const { payload, octokit } = context;
 
     const { owner, repo } = context.repo();
@@ -281,22 +282,19 @@ export function orchestrator(app: Probot) {
             const workflowRef =
               metadata?.head_branch || payload.workflow_run.pull_requests[0]?.head.ref;
 
-            let draft = false;
-            if (typeof metadata?.number == "number") {
-              const { data } = await octokit.pulls.get({
-                owner,
-                repo,
-                pull_number: metadata?.number,
-              });
-              draft = data?.draft || false;
-            }
+            // NOTE: Keeping this here in case we ever need it again
 
-            const inputs = workflow.getInputs(
-              payload,
-              metadata,
-              isFork ? localRef : undefined,
-              draft,
-            );
+            // let draft = false;
+            // if (typeof metadata?.number == "number") {
+            //   const { data } = await octokit.pulls.get({
+            //     owner,
+            //     repo,
+            //     pull_number: metadata?.number,
+            //   });
+            //   draft = data?.draft || false;
+            // }
+
+            const inputs = workflow.getInputs(payload, metadata, isFork ? localRef : undefined);
 
             context.log.info(
               `[Orchestrator](workflow_run.completed) Dispatching workflow ${fileName} on ref ${workflowRef} with inputs ${JSON.stringify(
@@ -390,9 +388,8 @@ export function orchestrator(app: Probot) {
           payload.workflow_run.id,
         );
 
-        const artifactId = artifacts.find(
-          artifact => artifact.name === matchedWorkflow.summaryFile,
-        )?.id;
+        const artifactId = artifacts.find(artifact => artifact.name === matchedWorkflow.summaryFile)
+          ?.id;
 
         if (artifactId) {
           try {
@@ -638,9 +635,8 @@ export function orchestrator(app: Probot) {
 
         const artifacts = await listWorkflowRunArtifacts(octokit, owner, repo, workflowRun.id);
 
-        const artifactId = artifacts.find(
-          artifact => artifact.name === workflowMeta[1].summaryFile,
-        )?.id;
+        const artifactId = artifacts.find(artifact => artifact.name === workflowMeta[1].summaryFile)
+          ?.id;
 
         if (artifactId) {
           try {

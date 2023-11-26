@@ -1,4 +1,4 @@
-import { getEnv, setEnv } from "../../env";
+import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { fetchAllTransactions } from "./synchronisation";
 
 jest.setTimeout(2 * 60 * 1000);

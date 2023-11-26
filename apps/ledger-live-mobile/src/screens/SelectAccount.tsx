@@ -11,6 +11,7 @@ import AccountSelector from "../components/AccountSelector";
 import GenericErrorBottomModal from "../components/GenericErrorBottomModal";
 import { SendFundsNavigatorStackParamList } from "../components/RootNavigator/types/SendFundsNavigator";
 import { StackNavigatorProps } from "../components/RootNavigator/types/helpers";
+import { AccountLike } from "@ledgerhq/types-live";
 
 type Props = StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendCoin>;
 
@@ -55,7 +56,7 @@ export default function ReceiveFunds({ navigation, route }: Props) {
     : enhancedAccounts;
 
   const handleSelectAccount = useCallback(
-    account => {
+    (account: AccountLike) => {
       const balance = getAccountSpendableBalance(account);
 
       if (typeof minBalance !== "undefined" && !isNaN(minBalance) && balance.lte(minBalance)) {

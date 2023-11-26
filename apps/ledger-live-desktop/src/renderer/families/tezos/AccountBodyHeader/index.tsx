@@ -41,7 +41,7 @@ const AccountBodyHeader = ({ account, parentAccount }: Props) => {
   }, [history, account.id]);
   return (
     <>
-      <FeatureToggle feature="objkt">
+      <FeatureToggle featureId="objkt">
         <TableContainer mb={6}>
           <Wrapper horizontal>
             <Box

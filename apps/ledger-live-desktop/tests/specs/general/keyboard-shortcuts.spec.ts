@@ -19,9 +19,12 @@ test("Keyboard shortcuts", async ({ page }) => {
       ? await page.keyboard.press("Meta+Shift+I")
       : await page.keyboard.press("Control+Shift+I");
 
-    const isDevToolsOpened = await page.evaluate(() => {
-      return require("@electron/remote").getCurrentWebContents().isDevToolsOpened();
-    });
+    const isDevToolsOpened = await page.evaluate(
+      () =>
+        // https://stackoverflow.com/questions/7798748/find-out-whether-chrome-console-is-open
+        window.outerHeight - window.innerHeight > 100 ||
+        window.outerWidth - window.innerWidth > 100,
+    );
 
     expect(isDevToolsOpened).toBe(false);
   });
@@ -56,6 +59,6 @@ test("Keyboard shortcuts", async ({ page }) => {
   // test right-click on the app doesn't open native browser menu
   await test.step("it doesn't open native browser menu", async () => {
     await layout.drawerPortfolioButton.click({ button: "right" });
-    expect(await page.screenshot()).toMatchSnapshot("no-native-menu.png");
+    await expect(page).toHaveScreenshot("no-native-menu.png");
   });
 });

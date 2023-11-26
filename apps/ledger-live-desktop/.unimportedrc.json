@@ -9,14 +9,8 @@
   "extensions": [".ts", ".js", ".jsx", ".tsx"],
   "ignorePatterns": ["**/node_modules/**"],
   "ignoreUnresolved": ["unzip-crx-3", "../../../../release-notes.json"],
-  "ignoreUnimported": ["**/*.test.*", "**/*.spec.*", "**/*.d.ts", "**/types.js", "**/types.*"],
-  "ignoreUnused": [
-    "@types/semver",
-    "@types/qrcode",
-    "@types/react-key-handler",
-    "rxjs7",
-    "prop-types"
-  ],
+  "ignoreUnimported": ["**/*.test.*", "**/*.spec.*", "**/*.d.ts", "**/types.js", "**/types.*", "src/generate-cryptoassets-md.ts"],
+  "ignoreUnused": ["@types/semver", "@types/qrcode", "@types/react-key-handler", "prop-types"],
   "aliases": {
     "~/*": ["./src/*"]
   }

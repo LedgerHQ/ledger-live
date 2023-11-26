@@ -1,7 +1,7 @@
 import axios from "axios";
 import { AssertionError, fail } from "assert";
 import { delay } from "@ledgerhq/live-promise";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, EthereumLikeInfo } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import * as ETHERSCAN_API from "../../../../api/explorer/etherscan";
 import { makeAccount } from "../../../fixtures/common.fixtures";
@@ -31,6 +31,10 @@ const currency: CryptoCurrency = {
     chainId: 1,
     explorer: {
       type: "etherscan",
+      uri: "mock",
+    },
+    node: {
+      type: "external",
       uri: "mock",
     },
   },
@@ -122,7 +126,7 @@ describe("EVM Family", () => {
               ethereumLikeInfo: {
                 chainId: 1,
                 // no explorer
-              },
+              } as EthereumLikeInfo,
             },
             account.freshAddress,
             account.id,
@@ -249,7 +253,7 @@ describe("EVM Family", () => {
               ethereumLikeInfo: {
                 chainId: 1,
                 // no explorer
-              },
+              } as EthereumLikeInfo,
             },
             account.freshAddress,
             account.id,
@@ -385,7 +389,7 @@ describe("EVM Family", () => {
               ethereumLikeInfo: {
                 chainId: 1,
                 // no explorer
-              },
+              } as EthereumLikeInfo,
             },
             account.freshAddress,
             account.id,
@@ -521,7 +525,7 @@ describe("EVM Family", () => {
               ethereumLikeInfo: {
                 chainId: 1,
                 // no explorer
-              },
+              } as EthereumLikeInfo,
             },
             account.freshAddress,
             account.id,

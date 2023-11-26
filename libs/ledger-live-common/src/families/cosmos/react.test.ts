@@ -3,7 +3,7 @@ import { renderHook, act } from "@testing-library/react-hooks";
 import { getAccountUnit } from "../../account";
 import { getAccountBridge, getCurrencyBridge } from "../../bridge";
 import { getCryptoCurrencyById } from "../../currencies";
-import { setEnv } from "../../env";
+import { setEnv } from "@ledgerhq/live-env";
 import { makeBridgeCacheSystem } from "../../bridge/cache";
 import { genAccount, genAddingOperationsInAccount } from "../../mock/account";
 import defaultConfig from "../../config/defaultConfig";
@@ -189,7 +189,7 @@ function setup(): {
   transaction: Transaction;
   prepare: () => Promise<any>;
 } {
-  setEnv("MOCK", 1);
+  setEnv("MOCK", "1");
   setEnv("EXPERIMENTAL_CURRENCIES", "cosmos");
   const seed = "cosmos-2";
   const currency = getCryptoCurrencyById("cosmos");

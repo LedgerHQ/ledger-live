@@ -1,4 +1,3 @@
-import * as remote from "@electron/remote";
 import { JSONRPCRequest } from "json-rpc-2.0";
 import React, { forwardRef, useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -37,11 +36,34 @@ import {
 import { Loader } from "./styled";
 import { WebviewAPI, WebviewProps } from "./types";
 import { useWebviewState } from "./helpers";
+import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 
-const tracking = trackingWrapper(track);
 export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
   ({ manifest, inputs = {}, onStateChange }, ref) => {
     const { webviewState, webviewRef, webviewProps } = useWebviewState({ manifest, inputs }, ref);
+
+    const tracking = useMemo(
+      () =>
+        trackingWrapper(
+          (
+            eventName: string,
+            properties?: Record<string, unknown> | null,
+            mandatory?: boolean | null,
+          ) =>
+            track(
+              eventName,
+              {
+                ...properties,
+                flowInitiatedFrom:
+                  currentRouteNameRef.current === "Platform Catalog"
+                    ? "Discover"
+                    : currentRouteNameRef.current,
+              },
+              mandatory,
+            ),
+        ),
+      [],
+    );
 
     useEffect(() => {
       if (onStateChange) {
@@ -92,7 +114,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
             );
           },
         ),
-      [manifest, accounts, dispatch],
+      [manifest, accounts, dispatch, tracking],
     );
 
     const signTransaction = useCallback(
@@ -138,7 +160,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           },
         );
       },
-      [manifest, dispatch, accounts],
+      [manifest, dispatch, accounts, tracking],
     );
 
     const broadcastTransaction = useCallback(
@@ -150,14 +172,14 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         signedTransaction: RawPlatformSignedTransaction;
       }) => {
         return broadcastTransactionLogic(
-          { manifest, dispatch, accounts },
+          { manifest, dispatch, accounts, tracking },
           accountId,
           signedTransaction,
           pushToast,
           t,
         );
       },
-      [manifest, accounts, pushToast, dispatch, t],
+      [manifest, accounts, pushToast, dispatch, t, tracking],
     );
 
     const startExchange = useCallback(
@@ -180,7 +202,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           ),
         );
       },
-      [manifest, dispatch],
+      [manifest, dispatch, tracking],
     );
 
     const completeExchange = useCallback(
@@ -195,6 +217,8 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
             binaryPayload,
             signature,
             exchangeType,
+            swapId,
+            rate,
           }: CompleteExchangeUiRequest): Promise<Operation> =>
             new Promise((resolve, reject) => {
               dispatch(
@@ -205,6 +229,8 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
                   binaryPayload,
                   signature,
                   exchangeType,
+                  swapId,
+                  rate,
                   onResult: (operation: Operation) => {
                     tracking.platformCompleteExchangeSuccess(manifest);
                     resolve(operation);
@@ -218,7 +244,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
             }),
         );
       },
-      [accounts, dispatch, manifest],
+      [accounts, dispatch, manifest, tracking],
     );
 
     const signMessage = useCallback(
@@ -243,14 +269,14 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
                   },
                   onClose: () => {
                     tracking.platformSignMessageUserRefused(manifest);
-                    reject(UserRefusedOnDevice());
+                    reject(new UserRefusedOnDevice());
                   },
                 }),
               );
             }),
         );
       },
-      [accounts, dispatch, manifest],
+      [accounts, dispatch, manifest, tracking],
     );
 
     const handlers = useMemo(
@@ -292,7 +318,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     const [receive] = useJSONRPCServer(handlers, handleSend);
 
     const handleMessage = useCallback(
-      event => {
+      (event: Electron.IpcMessageEvent) => {
         if (event.channel === "webviewToParent") {
           receive(JSON.parse(event.args[0]));
         }
@@ -318,7 +344,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     const handleLoad = useCallback(() => {
       tracking.platformLoadSuccess(manifest);
       setWidgetLoaded(true);
-    }, [manifest]);
+    }, [manifest, tracking]);
 
     const handleDomReady = useCallback(() => {
       const webview = webviewRef.current;
@@ -372,7 +398,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
            */
           style={webviewStyle}
           // eslint-disable-next-line react/no-unknown-property
-          preload={`file://${remote.app.dirname}/webviewPreloader.bundle.js`}
+          preload={`file://${window.api.appDirname}/webviewPreloader.bundle.js`}
           /**
            * There seems to be an issue between Electron webview and react
            * Hence, the normal `allowpopups` prop does not work and we need to

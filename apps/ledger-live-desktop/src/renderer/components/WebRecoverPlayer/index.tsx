@@ -29,6 +29,7 @@ const recoverIdsShowTopBar = [
   "protect-local-dev",
   "protect-simu",
   "protect-staging",
+  "protect-staging-v2",
 ];
 
 export default function WebRecoverPlayer({ manifest, inputs, onClose }: RecoverWebviewProps) {

@@ -3,11 +3,14 @@ import { FlatList, FlatListProps } from "react-native";
 
 import QuickActionButton, { QuickActionButtonProps } from "../QuickActionButton";
 
-export type QuickActionListProps = Omit<FlatListProps<QuickActionButtonProps>, "renderItem">;
+export type QuickActionListProps = Omit<FlatListProps<QuickActionButtonProps>, "renderItem"> & {
+  id: string;
+};
 
 const QuickActionList = ({
   numColumns = 3,
   data,
+  id,
   ...otherProps
 }: QuickActionListProps): React.ReactElement => {
   const renderItem = useCallback(
@@ -28,10 +31,10 @@ const QuickActionList = ({
     <FlatList
       {...otherProps}
       data={data}
+      keyExtractor={(_item, index) => `${id}${index}`}
       horizontal={false}
       renderItem={renderItem}
       numColumns={numColumns}
-      style={{ width: "100%" }}
     />
   );
 };

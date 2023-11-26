@@ -1,6 +1,6 @@
 import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { AlgorandAccount } from "@ledgerhq/live-common/families/algorand/types";
+import { AlgorandAccount, AlgorandOperation } from "@ledgerhq/live-common/families/algorand/types";
 import { BigNumber } from "bignumber.js";
 import React from "react";
 import { Trans } from "react-i18next";
@@ -53,10 +53,13 @@ const Cell = styled(Box).attrs(() => ({
   }
 `;
 
-const OperationDetailsExtra = ({ extra, account }: OperationDetailsExtraProps<AlgorandAccount>) => {
+const OperationDetailsExtra = ({
+  account,
+  operation,
+}: OperationDetailsExtraProps<AlgorandAccount, AlgorandOperation>) => {
   const unit = getAccountUnit(account);
   const currency = getAccountCurrency(account);
-  const { rewards, memo, assetId } = extra;
+  const { rewards, memo, assetId } = operation.extra;
   return (
     <>
       {rewards && rewards instanceof BigNumber && rewards.gt(0) && (
@@ -111,9 +114,8 @@ const OperationDetailsExtra = ({ extra, account }: OperationDetailsExtraProps<Al
   );
 };
 
-const AmountCell = ({ amount, operation, currency, unit }: AmountCellProps) => {
-  const reward =
-    operation.extra && operation.extra.rewards ? operation.extra.rewards : BigNumber(0);
+const AmountCell = ({ amount, operation, currency, unit }: AmountCellProps<AlgorandOperation>) => {
+  const reward = operation.extra.rewards ?? BigNumber(0);
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   const formatConfig = {
@@ -168,9 +170,8 @@ const ConfirmationCell = ({
   t,
   withTooltip = true,
   style,
-}: ConfirmationCellProps) => {
-  const reward =
-    operation.extra && operation.extra.rewards ? operation.extra.rewards : BigNumber(0);
+}: ConfirmationCellProps<AlgorandOperation>) => {
+  const reward = operation.extra.rewards ?? BigNumber(0);
   return (
     <Cell alignItems="center" justifyContent="flex-start" style={style}>
       {reward.gt(0) ? (
@@ -212,7 +213,7 @@ const ConfirmationCell = ({
     </Cell>
   );
 };
-const AmountTooltip = ({ operation, amount, unit }: AmountTooltipProps) => {
+const AmountTooltip = ({ operation, amount, unit }: AmountTooltipProps<AlgorandOperation>) => {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   const formatConfig = {
@@ -221,7 +222,7 @@ const AmountTooltip = ({ operation, amount, unit }: AmountTooltipProps) => {
     discreet,
     locale,
   };
-  const reward = operation.extra.rewards ? operation.extra.rewards : BigNumber(0);
+  const reward = operation.extra.rewards ?? BigNumber(0);
   const initialAmount = amount.minus(reward);
   return reward.gt(0) ? (
     <Trans

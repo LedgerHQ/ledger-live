@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
 import {
   ImageCropError,
-  ImageMetadataLoadingError,
+  ImageSizeLoadingError,
   ImageResizeError,
 } from "@ledgerhq/live-common/customImage/errors";
 import { ImageBase64Data, ImageDimensions } from "./types";
@@ -46,7 +46,7 @@ function useCenteredImage(params: Params) {
         realImageDimensions = await loadImageSizeAsync(imageUri);
       } catch (e) {
         console.error(e);
-        throw new ImageMetadataLoadingError();
+        throw new ImageSizeLoadingError();
       }
 
       const imageDimensions = {

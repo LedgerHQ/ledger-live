@@ -1,19 +1,24 @@
 /* istanbul ignore file: not reaching userland - bot only. */
 
+import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import {
   deviceActionFlow,
   formatDeviceAmount,
   SpeculosButton,
 } from "@ledgerhq/coin-framework/bot/specs";
-import type { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
+import type { DeviceAction, State } from "@ledgerhq/coin-framework/bot/types";
+import { Account, TransactionStatusCommon } from "@ledgerhq/types-live";
 import type { Transaction } from "./types";
 
-// FIXME: fix types
-const maxFeesExpectedValue = ({ account, status }: { account: any; status: any }) =>
-  formatDeviceAmount(account.currency, status.estimatedFees);
+const maxFeesExpectedValue = ({
+  account,
+  status,
+}: {
+  account: Account;
+  status: TransactionStatusCommon;
+}): string => formatDeviceAmount(account.currency, status.estimatedFees);
 
-export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
+export const acceptTransaction: DeviceAction<Transaction, State<Transaction>> = deviceActionFlow({
   steps: [
     {
       title: "Review",
@@ -26,7 +31,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
     {
       title: "Amount",
       button: SpeculosButton.RIGHT,
-      expectedValue: ({ account, status, transaction }) => {
+      expectedValue: ({ account, status, transaction }): string => {
         const subAccount = findSubAccountById(account, transaction.subAccountId || "");
 
         if (subAccount && subAccount.type === "TokenAccount") {
@@ -71,6 +76,51 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
   ],
 });
 
-export default {
-  acceptTransaction,
-};
+export const avalancheSpeculosDeviceAction: DeviceAction<
+  Transaction,
+  State<Transaction>
+> = deviceActionFlow({
+  steps: [
+    {
+      title: "Review",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Type",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Transfer",
+      button: SpeculosButton.RIGHT,
+      expectedValue: ({ account, transaction, status }): string => {
+        const amount = transaction.useAllAmount ? status.amount : transaction.amount;
+
+        return formatDeviceAmount(account.currency, amount);
+      },
+    },
+    {
+      title: "Contract",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Network",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Fee(GWEI)",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "To",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Accept",
+      button: SpeculosButton.BOTH,
+    },
+    {
+      title: "APPROVE",
+      button: SpeculosButton.BOTH,
+    },
+  ],
+});

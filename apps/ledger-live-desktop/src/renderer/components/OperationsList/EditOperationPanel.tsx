@@ -1,12 +1,14 @@
-import React, { useCallback, memo } from "react";
-import { AccountLike, Account, Operation } from "@ledgerhq/types-live";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
+import invariant from "invariant";
+import React, { memo, useCallback } from "react";
 import { Trans } from "react-i18next";
+import { useDispatch } from "react-redux";
+import { closeModal, openModal } from "~/renderer/actions/modals";
 import Alert from "~/renderer/components/Alert";
 import Link from "~/renderer/components/Link";
-import { openModal, closeModal } from "~/renderer/actions/modals";
-import { useDispatch } from "react-redux";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import invariant from "invariant";
 
 type Props = {
   operation: Operation;
@@ -17,12 +19,16 @@ type Props = {
 const EditOperationPanel = (props: Props) => {
   const { operation, account, parentAccount } = props;
   const dispatch = useDispatch();
-  const editEthTx = useFeature("editEthTx");
+  const { enabled: isEditEvmTxEnabled, params } = useFeature("editEvmTx") ?? {};
+  const mainAccount = getMainAccount(account, parentAccount);
+  const isCurrencySupported =
+    params?.supportedCurrencyIds?.includes(mainAccount.currency.id as CryptoCurrencyId) || false;
+
   const handleOpenEditModal = useCallback(() => {
     invariant(operation.transactionRaw, "operation.transactionRaw is required");
     dispatch(closeModal("MODAL_SEND"));
     dispatch(
-      openModal("MODAL_EDIT_TRANSACTION", {
+      openModal("MODAL_EVM_EDIT_TRANSACTION", {
         account,
         parentAccount,
         transactionRaw: operation.transactionRaw,
@@ -30,9 +36,11 @@ const EditOperationPanel = (props: Props) => {
       }),
     );
   }, [parentAccount, account, operation, dispatch]);
-  if (!editEthTx?.enabled) {
+
+  if (!isEditEvmTxEnabled || !isCurrencySupported) {
     return null;
   }
+
   return (
     <div style={{ marginBottom: "15px" }}>
       <Alert type="warning">

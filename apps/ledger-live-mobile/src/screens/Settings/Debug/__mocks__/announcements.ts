@@ -3,7 +3,7 @@ import type {
   AnnouncementsApi,
   RawAnnouncement,
 } from "@ledgerhq/live-common/notifications/AnnouncementProvider/types";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 
 const announcementsPool: RawAnnouncement[] = [
   {

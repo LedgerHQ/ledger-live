@@ -1,7 +1,7 @@
 import React, { ComponentProps, useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Image } from "react-native";
-import { Flex, IconsLegacy } from "@ledgerhq/native-ui";
+import { Flex, Icons } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import withRemountableWrapper from "@ledgerhq/live-common/hoc/withRemountableWrapper";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -15,6 +15,7 @@ import Button from "./wrappedUi/Button";
 import Link from "./wrappedUi/Link";
 import { screen, TrackScreen } from "../analytics";
 import { useStaxLoadImageDeviceAction } from "../hooks/deviceActions";
+import { SettingsSetLastSeenCustomImagePayload } from "../actions/types";
 
 type Props = {
   device: Device;
@@ -25,7 +26,7 @@ type Props = {
   onSkip?: () => void;
 };
 
-const analyticsScreenNameRefusedOnStax = "Lock screen cancelled on Ledger Stax";
+const analyticsScreenNameRefusedOnStax = "Lock screen cancelled on device";
 const analyticsRefusedOnStaxUploadAnotherEventProps = {
   button: "Upload another image",
 };
@@ -71,7 +72,7 @@ const CustomImageDeviceAction: React.FC<Props & { remountMe: () => void }> = ({
   }, [setIsModalOpened]);
 
   const handleResult = useCallback(
-    lastSeenCustomImage => {
+    (lastSeenCustomImage: SettingsSetLastSeenCustomImagePayload) => {
       screen("The lock screen has successfully loaded");
       dispatch(setLastSeenCustomImage(lastSeenCustomImage));
       onResult && onResult(lastSeenCustomImage);
@@ -114,7 +115,7 @@ const CustomImageDeviceAction: React.FC<Props & { remountMe: () => void }> = ({
               error,
               device,
               ...(isRefusedOnStaxError
-                ? { Icon: IconsLegacy.CircledAlertMedium, iconColor: "warning.c50" }
+                ? { Icon: Icons.Warning, iconColor: "warning.c60", hasExportLogButton: false }
                 : {}),
             })}
             {}

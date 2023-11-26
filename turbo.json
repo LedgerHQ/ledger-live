@@ -27,6 +27,9 @@
       "cache": false,
       "dependsOn": ["^build"]
     },
+    "unimported": {
+      "cache": false
+    },
     "android:apk:local": {
       "dependsOn": ["^build"]
     },
@@ -61,6 +64,11 @@
     "doc": {
       "cache": false
     },
+    "web-tools#build": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "!.next/cache/**"],
+      "cache": false
+    },
     "ledger-live-desktop#build": {
       "dependsOn": ["^build"],
       "cache": false
@@ -75,14 +83,7 @@
     },
     "@ledgerhq/live-common#build": {
       "dependsOn": ["^build"],
-      "outputs": [
-        "lib/**",
-        "lib-es/**",
-        "src/data/icons/react/**",
-        "src/data/icons/reactNative/**",
-        "src/data/flags/react/**",
-        "src/data/flags/reactNative/**"
-      ]
+      "outputs": ["lib/**", "lib-es/**"]
     },
     "@ledgerhq/live-common#typecheck": {
       "dependsOn": ["build"],

@@ -2,10 +2,8 @@ import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, FlatList, Linking } from "react-native";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import {
-  useCurrenciesByMarketcap,
-  findCryptoCurrencyById,
-} from "@ledgerhq/live-common/currencies/index";
+import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";
 
 import { BannerCard, Flex, Text } from "@ledgerhq/native-ui";
 import { useDispatch, useSelector } from "react-redux";
@@ -156,8 +154,9 @@ export default function SelectNetwork({ navigation, route }: Props) {
       type: "card",
       page: "Choose a network",
     });
-    Linking.openURL(depositNetworkBannerMobile?.params.url);
-  }, [depositNetworkBannerMobile?.params.url]);
+    // @ts-expect-error TYPINGS
+    Linking.openURL(depositNetworkBannerMobile?.params?.url);
+  }, [depositNetworkBannerMobile?.params?.url]);
 
   const renderItem = useCallback(
     ({ item }: { item: CryptoWithAccounts }) => (

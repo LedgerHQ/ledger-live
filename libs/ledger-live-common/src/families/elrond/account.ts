@@ -3,7 +3,12 @@ import type { Operation } from "@ledgerhq/types-live";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
-import type { ElrondAccount } from "./types";
+import type {
+  ElrondAccount,
+  ElrondOperation,
+  ElrondOperationExtra,
+  ElrondOperationExtraRaw,
+} from "./types";
 import BigNumber from "bignumber.js";
 
 function formatAccountSpecifics(account: ElrondAccount): string {
@@ -56,7 +61,7 @@ function formatAccountSpecifics(account: ElrondAccount): string {
 }
 
 function formatOperationSpecifics(op: Operation, unit: Unit | null | undefined): string {
-  const { amount } = op.extra;
+  const { amount } = (op as ElrondOperation).extra;
   return amount?.gt && amount.gt(0)
     ? " amount: " +
         `${
@@ -70,7 +75,25 @@ function formatOperationSpecifics(op: Operation, unit: Unit | null | undefined):
     : "";
 }
 
+export function fromOperationExtraRaw(extraRaw: ElrondOperationExtraRaw) {
+  const extra: ElrondOperationExtra = {};
+  if (extraRaw.amount) {
+    extra.amount = new BigNumber(extraRaw.amount);
+  }
+  return extra;
+}
+
+export function toOperationExtraRaw(extra: ElrondOperationExtra) {
+  const extraRaw: ElrondOperationExtraRaw = {};
+  if (extra.amount) {
+    extraRaw.amount = extra.amount.toString();
+  }
+  return extraRaw;
+}
+
 export default {
   formatAccountSpecifics,
   formatOperationSpecifics,
+  fromOperationExtraRaw,
+  toOperationExtraRaw,
 };

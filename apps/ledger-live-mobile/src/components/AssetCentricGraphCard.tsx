@@ -18,6 +18,8 @@ import { ensureContrast } from "../colors";
 import { track } from "../analytics";
 import { Item } from "./Graph/types";
 import { Merge } from "../types/helpers";
+import { GraphPlaceholder } from "./Graph/Placeholder";
+import { tokensWithUnsupportedGraph } from "./Graph/tokensWithUnsupportedGraph";
 
 const Placeholder = styled(Flex).attrs({
   backgroundColor: "neutral.c40",
@@ -87,7 +89,7 @@ function AssetCentricGraphCard({
   ];
 
   const updateTimeRange = useCallback(
-    index => {
+    (index: number) => {
       track("timeframe_clicked", {
         timeframe: timeRangeItems[index],
       });
@@ -96,7 +98,7 @@ function AssetCentricGraphCard({
     [setTimeRange, timeRangeItems],
   );
 
-  const mapCounterValue = useCallback(d => d.value || 0, []);
+  const mapCounterValue = useCallback((d: Item) => d.value || 0, []);
 
   const range = assetPortfolio.range;
   const isAvailable = assetPortfolio.balanceAvailable;
@@ -207,25 +209,31 @@ function AssetCentricGraphCard({
       </Flex>
       {accountsEmpty ? null : (
         <>
-          <Flex onTouchEnd={handleGraphTouch}>
-            <Graph
-              isInteractive={isAvailable}
-              height={110}
-              width={getWindowDimensions().width + 1}
-              color={graphColor}
-              data={balanceHistory}
-              onItemHover={setHoverItem}
-              mapValue={mapCounterValue}
-              fill={colors.background.main}
-            />
-          </Flex>
-          <Flex paddingTop={6} background={colors.background.main}>
-            <GraphTabs
-              activeIndex={activeRangeIndex}
-              onChange={updateTimeRange}
-              labels={rangesLabels}
-            />
-          </Flex>
+          {currency.type === "TokenCurrency" && tokensWithUnsupportedGraph.includes(currency.id) ? (
+            <GraphPlaceholder />
+          ) : (
+            <>
+              <Flex onTouchEnd={handleGraphTouch}>
+                <Graph
+                  isInteractive={isAvailable}
+                  height={110}
+                  width={getWindowDimensions().width + 1}
+                  color={graphColor}
+                  data={balanceHistory}
+                  onItemHover={setHoverItem}
+                  mapValue={mapCounterValue}
+                  fill={colors.background.main}
+                />
+              </Flex>
+              <Flex paddingTop={6} background={colors.background.main}>
+                <GraphTabs
+                  activeIndex={activeRangeIndex}
+                  onChange={updateTimeRange}
+                  labels={rangesLabels}
+                />
+              </Flex>
+            </>
+          )}
         </>
       )}
     </Flex>

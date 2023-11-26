@@ -54,12 +54,14 @@ const Collections = ({ account }: Props) => {
       dispatch(
         openModal("MODAL_RECEIVE", {
           account,
+          receiveNFTMode: true,
         }),
       ),
     [account, dispatch],
   );
   const onOpenCollection = useCallback(
-    collectionAddress => history.push(`/account/${account.id}/nft-collection/${collectionAddress}`),
+    (collectionAddress: string) =>
+      history.push(`/account/${account.id}/nft-collection/${collectionAddress}`),
     [account.id, history],
   );
   const collections = useMemo(() => nftsByCollections(account.nfts), [account.nfts]);

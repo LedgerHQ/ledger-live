@@ -191,7 +191,7 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
 ): Result<T> => {
   const [
     { account, parentAccount, transaction, status, statusOnTransaction, errorAccount, errorStatus },
-    dispatch, // $FlowFixMe for ledger-live-mobile older react/flow version
+    dispatch,
   ] = useReducer(reducer as Reducer<T>, undefined, makeInit<T>(optionalInit));
   const setAccount = useCallback(
     (account, parentAccount) =>
@@ -202,6 +202,7 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
       }),
     [dispatch],
   );
+
   const setTransaction = useCallback(
     transaction =>
       dispatch({
@@ -218,6 +219,7 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
       }),
     [dispatch],
   );
+
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   const errorDelay = useRef(INITIAL_ERROR_RETRY_DELAY);
   const statusIsPending = useRef(false); // Stores if status already being processed
@@ -226,7 +228,7 @@ const useBridgeTransaction = <T extends Transaction = Transaction>(
   // when transaction changes, prepare the transaction
   useEffect(() => {
     let ignore = false;
-    let errorTimeout;
+    let errorTimeout: NodeJS.Timeout | null;
     // If bridge is not pending, transaction change is due to
     // the last onStatus dispatch (prepareTransaction changed original transaction) and must be ignored
     if (!bridgePending) return;

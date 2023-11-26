@@ -1,5 +1,5 @@
 import network from "@ledgerhq/live-network/network";
-import { getEnv } from "../../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import type { AnnouncementsApi, RawAnnouncement } from "../types";
 
 // expose a function to fetch data from the cdn (data from ledger-live-assets)

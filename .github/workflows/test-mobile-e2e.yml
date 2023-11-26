@@ -1,5 +1,5 @@
 name: "@Mobile • Test App End-2-End"
-run-name: "@Mobile • Test App End-2-End triggered by ${{ github.event_name == 'workflow_dispatch' && inputs.login || github.actor }} ${{ format('on ref {0}', github.ref_name) }}"
+run-name: "@Mobile • Test App End-2-End triggered by ${{ inputs.login || github.actor }} ${{ format('on ref {0}', github.ref_name) }}"
 
 on:
   push:
@@ -11,11 +11,13 @@ on:
   workflow_dispatch:
     inputs:
       ref:
-        description: the branch which triggered this workflow
-        required: false
+        description: |
+          If you run this manually, and want to run on a PR, the correct ref should be refs/pull/{PR_NUMBER}/merge to
+          have the "normal" scenario involving checking out a merge commit between your branch and the base branch.
+          If you want to run only on a branch or specific commit, you can use either the sha or the branch name instead (prefer the first verion for PRs).
       login:
         description: The GitHub username that triggered the workflow
-        required: true
+        required: false
       base_ref:
         description: The base branch to merge the head into when checking out the code
         required: false
@@ -41,14 +43,14 @@ jobs:
     outputs:
       status: ${{ steps.detox.outcome }}
     steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+      - uses: actions/checkout@v4
         with:
-          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
-          base: ${{ inputs.base_ref }}
+          ref: ${{ inputs.ref || github.sha }}
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
         with:
-          pnpm_dest: ${{ runner.temp }}/setup-pnpm
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: Install applesimutils
         run: |
           brew update
@@ -62,6 +64,21 @@ jobs:
             ~/Library/Caches/CocoaPods
             ~/.cocoapods
           key: ${{ runner.os }}-pods-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock') }}
+
+      - name: cache detox build
+        uses: tespkg/actions-cache@v1
+        id: detox-build
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
+          key: ${{ runner.os }}-detox-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/ledgerlivemobile.xcodeproj/project.pbxproj') }}
+          restore-keys: |
+            ${{ runner.os }}-detox-
+          accessKey: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          secretKey: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          bucket: ll-gha-s3-cache
+          region: eu-west-1
+          use-fallback: false
+
       - name: TurboRepo local caching server
         id: turborepo-cache-server
         uses: ./tools/actions/turborepo-s3-cache
@@ -72,38 +89,50 @@ jobs:
           aws-secret-key: ${{ secrets.SECRET_KEY_BUCKET }}
       - name: install dependencies
         run: |
-          pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="dummy-*" --no-frozen-lockfile --unsafe-perm
+          pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="dummy-*-app..." --no-frozen-lockfile --unsafe-perm
       - name: Build dependencies
         run: |
           pnpm build:llm:deps --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
       - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
         run: |
-          pnpm test-utils dummy-apps:build
+          pnpm build:dummy-apps
         shell: bash
       - name: Create iOS simulator
         id: simulator
         run: |
-          ID=$(xcrun simctl create "iPhone 13" "iPhone 13")
+          ID=$(xcrun simctl create "iPhone 14" "iPhone 14")
           echo "id=$ID" >> $GITHUB_OUTPUT
       - name: Build iOS app for Detox test run
+        if: steps.detox-build.outputs.cache-hit != 'true'
         run: |
           pnpm mobile e2e:build -c ios.sim.release
+
+      - name: Build JS Bundle app for Detox test run
+        if: steps.detox-build.outputs.cache-hit == 'true'
+        run: |
+          pnpm mobile bundle:ios --dev false --minify false
+          pnpm mobile exec detox clean-framework-cache
+          pnpm mobile exec detox build-framework-cache
+          cd apps/ledger-live-mobile
+          cp main.jsbundle ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app/main.jsbundle
+          mv main.jsbundle ios/build/Build/Products/Release-iphonesimulator/main.jsbundle
       - name: Test iOS app
         id: detox
+        timeout-minutes: 45
         run: |
-          pnpm mobile e2e:test -c ios.sim.release --loglevel error --record-logs all --take-screenshots all --detectOpenHandles --cleanup --headless
+          pnpm mobile e2e:test -c ios.sim.release --loglevel error --record-logs all --take-screenshots all --headless --retries 1 --cleanup --record-performance all
       - name: Delete iOS simulator
         if: always()
         run: |
           xcrun simctl delete ${{ steps.simulator.outputs.id }}
       - name: Upload test artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: always()
         with:
           name: test-ios-artifacts
           path: apps/ledger-live-mobile/artifacts
       - name: Upload Allure report
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: always()
         with:
           name: "allure-ios-reports"
@@ -115,7 +144,7 @@ jobs:
     if: ${{ always() && !cancelled() && github.ref_name == 'develop' }}
     needs: [detox-tests-ios]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
       - uses: ./tools/actions/composites/upload-allure-report
@@ -136,11 +165,14 @@ jobs:
     outputs:
       status: ${{ steps.detox.outcome }}
     steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+      - uses: actions/checkout@v4
         with:
-          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
+          ref: ${{ inputs.ref || github.sha }}
       - name: Setup the toolchain
-        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-toolchain@develop
+        uses: ./tools/actions/composites/setup-toolchain
+        with:
+          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: setup JDK 11
         uses: actions/setup-java@v3
         with:
@@ -148,7 +180,7 @@ jobs:
           java-version: "11"
           cache: "gradle"
       - name: setup Android SDK
-        uses: android-actions/setup-android@v2.0.8
+        uses: android-actions/setup-android@v2.0.10
       - name: Gradle cache
         uses: gradle/gradle-build-action@v2
 
@@ -169,47 +201,73 @@ jobs:
           aws-secret-key: ${{ secrets.SECRET_KEY_BUCKET }}
       - name: Install dependencies
         run: |
-          pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="dummy-*" --no-frozen-lockfile --unsafe-perm
+          pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="dummy-*-app..." --no-frozen-lockfile --unsafe-perm
       - name: Build dependencies
         run: |
           pnpm build:llm:deps --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
       - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
         run: |
-          pnpm test-utils dummy-apps:build
+          pnpm build:dummy-apps
         shell: bash
       - name: Build Android app for Detox test run
         run: |
           pnpm mobile e2e:build -c android.emu.release
-      - name: Start Emulator
-        uses: reactivecircus/android-emulator-runner@v2
-        timeout-minutes: 60
+      - name: cache android emulator
+        uses: tespkg/actions-cache@v1
+        id: detox-avd
         with:
-          api-level: 31
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: ${{ runner.os }}-detox-avd-${{ hashFiles('~/.android/avd/*/config.ini') }}
+          restore-keys: |
+            ${{ runner.os }}-detox-avd-
+          accessKey: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
+          secretKey: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          bucket: ll-gha-s3-cache
+          region: eu-west-1
+          use-fallback: false
+      - name: create AVD and generate snapshot for caching
+        if: steps.detox-avd.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 32
           arch: x86_64
+          profile: pixel_6_pro
           target: google_apis
-          avd-name: "Pixel_5_API_31"
+          avd-name: "Pixel_6_Pro_API_32"
           force-avd-creation: true
-          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           cores: 4
-          ram-size: 4096M
-          heap-size: 512M
-          disk-size: 4096M
+          ram-size: 8192M
           disable-linux-hw-accel: false
-          script: echo "Starting Emulator"
-      - name: Run Android Tests
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          script: ./tools/scripts/wait_emulator_idle.sh
+      - name: Start Emulator and Run Android Tests
         id: detox
+        uses: reactivecircus/android-emulator-runner@v2
+        timeout-minutes: 45
         env:
           DETOX_INSTALL_TIMEOUT: 120000
-        run: |
-          pnpm mobile e2e:test -c android.emu.release --loglevel error --record-logs all --take-screenshots all --record-videos failing --forceExit --detectOpenHandles --cleanup --headless
+        with:
+          api-level: 32
+          arch: x86_64
+          profile: pixel_6_pro
+          target: google_apis
+          avd-name: "Pixel_6_Pro_API_32"
+          force-avd-creation: false
+          cores: 4
+          ram-size: 8192M
+          disable-linux-hw-accel: false
+          emulator-options: -read-only -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          script: pnpm mobile e2e:test -c android.emu.release --loglevel error --record-logs all --take-screenshots all --forceExit --headless --retries 1 --cleanup
       - name: Upload test artifacts
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: test-android-artifacts
           path: apps/ledger-live-mobile/artifacts/
       - name: Upload Allure Report
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: always()
         with:
           name: "allure-android-reports"
@@ -222,7 +280,7 @@ jobs:
     needs: [detox-tests-android]
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
       - uses: ./tools/actions/composites/upload-allure-report
@@ -237,10 +295,9 @@ jobs:
     runs-on: ubuntu-latest
     if: always() && !cancelled() && github.event_name == 'workflow_dispatch'
     steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+      - uses: actions/checkout@v4
         with:
-          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
-          base: ${{ inputs.base_ref }}
+          ref: ${{ inputs.ref || github.sha }}
       - uses: actions/github-script@v6
         name: prepare status
         id: status
@@ -403,6 +460,14 @@ jobs:
         uses: slackapi/slack-github-action@v1.23.0
         with:
           channel-id: "CTMQ0S5SB"
+          payload-file-path: "./payload-slack-content.json"
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+      - name: post to a Slack channel
+        if: contains(fromJson('["develop", "main"]'), github.ref_name)
+        uses: slackapi/slack-github-action@v1.23.0
+        with:
+          channel-id: "C05FKJ7DFAP"
           payload-file-path: "./payload-slack-content.json"
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}

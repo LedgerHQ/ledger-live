@@ -1,19 +1,20 @@
-import React, { useCallback, useMemo, useState, memo } from "react";
-import BigNumber from "bignumber.js";
-import { useNftMetadata, getNftCapabilities } from "@ledgerhq/live-common/nft/index";
-import { useNavigation, useTheme } from "@react-navigation/native";
-import { Account, ProtoNFT } from "@ledgerhq/types-live";
+import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { View, StyleSheet, FlatList, TouchableOpacity, Platform } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { getNftCapabilities, useNftMetadata } from "@ledgerhq/live-common/nft/index";
+import { Account, ProtoNFT } from "@ledgerhq/types-live";
+import { useNavigation, useTheme } from "@react-navigation/native";
+import BigNumber from "bignumber.js";
+import React, { memo, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { FlatList, Platform, StyleSheet, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import LText from "../../components/LText";
 import LoadingFooter from "../../components/LoadingFooter";
 import NftMedia from "../../components/Nft/NftMedia";
-import Skeleton from "../../components/Skeleton";
-import LText from "../../components/LText";
-import { ScreenName } from "../../const";
-import { StackNavigatorNavigation } from "../../components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
+import { StackNavigatorNavigation } from "../../components/RootNavigator/types/helpers";
+import Skeleton from "../../components/Skeleton";
+import { ScreenName } from "../../const";
 
 const MAX_NFTS_FIRST_RENDER = 8;
 const NFTS_TO_ADD_ON_LIST_END_REACHED = 8;
@@ -28,33 +29,31 @@ const NftRow = memo(({ account, nft }: { account: Account; nft: ProtoNFT }) => {
   const nftCapabilities = useMemo(() => getNftCapabilities(nft), [nft]);
 
   const goToRecipientSelection = useCallback(() => {
-    const bridge = getAccountBridge(account);
+    // Only evm family handles nft as of today. If later we have other family,
+    // we will need to rework the NFT send flow by implementing family specific
+    // logic under their "src/families" respective folder.
+    const bridge = getAccountBridge<EvmTransaction>(account);
 
     const defaultTransaction = bridge.createTransaction(account);
-    let transaction;
-    if (account.currency.family === "evm") {
-      transaction = bridge.updateTransaction(defaultTransaction, {
-        nft: {
-          contract: nft?.contract,
-          tokenId: nft?.tokenId,
-          // When available, quantity is set to Infinity (considered null) first for
-          // the next UI. It allows the user to not have a default value during
-          // the first screen, like 0 or 1, which could trigger an error
-          quantities: nftCapabilities.hasQuantity ? new BigNumber(Infinity) : new BigNumber(1),
-          mode: `${nft?.standard?.toLowerCase()}`,
-        },
-      });
-    } else if (account.currency.family === "ethereum") {
-      transaction = bridge.updateTransaction(defaultTransaction, {
-        tokenIds: [nft?.tokenId],
-        // When available, quantity is set to null first for the next UI.
-        // It allows the user to not have a default value during the
-        // first screen, like 0 or 1, which could trigger an error
-        quantities: [nftCapabilities.hasQuantity ? null : new BigNumber(1)],
-        collection: nft?.contract,
-        mode: `${nft?.standard?.toLowerCase()}.transfer`,
-      });
-    }
+
+    const nftTxPatch: Partial<EvmTransaction> = {
+      nft: {
+        contract: nft?.contract,
+        tokenId: nft?.tokenId,
+        // When available, quantity is set to Infinity (considered null) first for
+        // the next UI. It allows the user to not have a default value during
+        // the first screen, like 0 or 1, which could trigger an error
+        quantity: nftCapabilities.hasQuantity ? new BigNumber(Infinity) : new BigNumber(1),
+        // collectionName defaults to empty string since it is unknown at this stage
+        // and set by `prepareNftTransaction` after being fetched from the
+        // Collection Metadata service
+        // cf. libs/coin-evm/src/prepareTransaction.ts
+        collectionName: "",
+      },
+      mode: `${nft?.standard?.toLowerCase()}` as "erc721" | "erc1155",
+    };
+
+    const transaction = bridge.updateTransaction(defaultTransaction, nftTxPatch);
 
     navigation.navigate(ScreenName.SendSelectRecipient, {
       accountId: account.id,

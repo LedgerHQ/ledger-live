@@ -12,10 +12,10 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useTheme } from "@react-navigation/native";
 import { TransportBleDevice } from "@ledgerhq/live-common/ble/types";
 import TransportBLE from "../../react-native-hw-transport-ble";
-import { GENUINE_CHECK_TIMEOUT } from "../../constants";
+import { GENUINE_CHECK_TIMEOUT } from "@utils/constants";
 import { addKnownDevice } from "../../actions/ble";
 import {
-  installAppFirstTime,
+  setHasInstalledAnyApp,
   setLastSeenDeviceInfo,
   setReadOnlyMode,
 } from "../../actions/settings";
@@ -31,6 +31,7 @@ import { RootComposite, StackNavigatorProps } from "../../components/RootNavigat
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import { ScreenName } from "../../const";
 import { BaseOnboardingNavigatorParamList } from "../../components/RootNavigator/types/BaseOnboardingNavigator";
+import { firstValueFrom } from "rxjs";
 
 type NavigationProps = RootComposite<
   | StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.PairDevices>
@@ -142,8 +143,8 @@ function PairDevicesInner({ navigation, route }: NavigationProps) {
             payload: device,
           });
           let appsInstalled;
-          await listApps(transport, deviceInfo)
-            .pipe(
+          await firstValueFrom(
+            listApps(transport, deviceInfo).pipe(
               timeout(GENUINE_CHECK_TIMEOUT),
               tap(e => {
                 if (e.type === "result") {
@@ -153,7 +154,7 @@ function PairDevicesInner({ navigation, route }: NavigationProps) {
                     const hasAnyAppInstalled = e.result && e.result.installed.length > 0;
 
                     if (!hasAnyAppInstalled) {
-                      dispatchRedux(installAppFirstTime(false));
+                      dispatchRedux(setHasInstalledAnyApp(false));
                     }
                   }
 
@@ -165,8 +166,8 @@ function PairDevicesInner({ navigation, route }: NavigationProps) {
                   payload: e.type === "allow-manager-requested",
                 });
               }),
-            )
-            .toPromise();
+            ),
+          );
           if (unmounted.current) return;
           const name = (await getDeviceName(transport)) || device.deviceName || "";
           if (unmounted.current) return;

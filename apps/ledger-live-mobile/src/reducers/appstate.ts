@@ -7,13 +7,14 @@ import type { AppState, State } from "./types";
 import type {
   AppStateAddBackgroundEventPayload,
   AppStateIsConnectedPayload,
+  AppStateBlockPasswordLockPayload,
   AppStatePayload,
   AppStateSetHasConnectedDevicePayload,
   AppStateSetModalLockPayload,
   AppStateUpdateMainNavigatorVisibilityPayload,
   DangerouslyOverrideStatePayload,
 } from "../actions/types";
-import { AppStateActionTypes } from "../actions/types";
+import { AppStateActionTypes, EarnActionTypes } from "../actions/types";
 
 export type AsyncState = {
   isConnected: boolean | null;
@@ -26,6 +27,7 @@ export const INITIAL_STATE: AppState = {
   backgroundEvents: [],
   debugMenuVisible: false,
   isMainNavigatorVisible: true,
+  isPasswordLockBlocked: false,
 };
 
 const handlers: ReducerMap<AppState, AppStatePayload> = {
@@ -80,6 +82,17 @@ const handlers: ReducerMap<AppState, AppStatePayload> = {
     isMainNavigatorVisible: (action as Action<AppStateUpdateMainNavigatorVisibilityPayload>)
       .payload,
   }),
+
+  /** Prevents deep links from triggering privacy lock. See AuthPass. */
+  [AppStateActionTypes.SET_BLOCK_PASSWORD_LOCK]: (state, action) => ({
+    ...state,
+    isPasswordLockBlocked: (action as Action<AppStateBlockPasswordLockPayload>)?.payload || false,
+  }),
+
+  [EarnActionTypes.EARN_INFO_MODAL]: state => ({
+    ...state,
+    isPasswordLockBlocked: true,
+  }),
 };
 
 // Selectors
@@ -102,5 +115,7 @@ export const networkErrorSelector = createSelector(
   isConnectedSelector,
   (isConnected: boolean | null) => (!isConnected ? globalNetworkDown : null),
 );
+
+export const isPasswordLockBlocked = (state: State) => state.appstate.isPasswordLockBlocked;
 
 export default handleActions<AppState, AppStatePayload>(handlers, INITIAL_STATE);

@@ -1,4 +1,4 @@
-import { expect, device } from "detox";
+import { expect } from "detox";
 import { loadBleState, loadConfig } from "../bridge/server";
 import PortfolioPage from "../models/wallet/portfolioPage";
 import DeviceAction from "../models/DeviceAction";
@@ -30,8 +30,6 @@ describe("Bitcoin Account", () => {
 
   it("open manager", async () => {
     await portfolioPage.openMyLedger();
-    // device actions have animations that requires to disable synchronization default detox behavior
-    await device.disableSynchronization();
     await deviceAction.selectMockDevice();
     await deviceAction.accessManager();
     await managerPage.waitForManagerPageToLoad();

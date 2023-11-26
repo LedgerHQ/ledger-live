@@ -1,10 +1,10 @@
 import bitcoin from "../families/bitcoin/deviceTransactionConfig";
 import cardano from "../families/cardano/deviceTransactionConfig";
+import casper from "../families/casper/deviceTransactionConfig";
 import celo from "../families/celo/deviceTransactionConfig";
 import cosmos from "../families/cosmos/deviceTransactionConfig";
 import crypto_org from "../families/crypto_org/deviceTransactionConfig";
 import elrond from "../families/elrond/deviceTransactionConfig";
-import ethereum from "../families/ethereum/deviceTransactionConfig";
 import filecoin from "../families/filecoin/deviceTransactionConfig";
 import hedera from "../families/hedera/deviceTransactionConfig";
 import icon from "../families/icon/deviceTransactionConfig";
@@ -23,11 +23,11 @@ import polkadot from "@ledgerhq/coin-polkadot/deviceTransactionConfig";
 export default {
   bitcoin,
   cardano,
+  casper,
   celo,
   cosmos,
   crypto_org,
   elrond,
-  ethereum,
   filecoin,
   hedera,
   icon,
@@ -43,6 +43,7 @@ export default {
   evm,
   polkadot,
 };
+import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_casper } from "../families/casper/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_cosmos } from "../families/cosmos/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_filecoin } from "../families/filecoin/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_icon } from "../families/icon/deviceTransactionConfig";
@@ -53,6 +54,7 @@ import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_tron } from 
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_polkadot } from "@ledgerhq/coin-polkadot/deviceTransactionConfig";
 
 export type ExtraDeviceTransactionField =
+  | ExtraDeviceTransactionField_casper
   | ExtraDeviceTransactionField_cosmos
   | ExtraDeviceTransactionField_filecoin
   | ExtraDeviceTransactionField_icon

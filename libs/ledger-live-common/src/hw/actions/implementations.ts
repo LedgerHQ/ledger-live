@@ -160,7 +160,7 @@ const pollingImplementation: Implementation = <SpecificType, GenericRequestType>
                 }
               }
               // All other events pass through.
-              return EMPTY;
+              return of(null);
             }),
           )
           .subscribe({

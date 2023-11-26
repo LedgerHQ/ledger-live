@@ -73,7 +73,7 @@ const StakeBanner: React.FC<{ account: CosmosAccount }> = ({ account }) => {
       onClick={onClick}
       display={display}
       linkText={t("account.banner.delegation.linkText")}
-      linkUrl={"https://www.ledger.com/staking-ethereum"}
+      linkUrl={"https://www.ledger.com/staking/ledger-node/cosmos"}
     />
   );
 };

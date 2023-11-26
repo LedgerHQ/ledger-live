@@ -3,9 +3,9 @@ import { Observable, from, defer, of, throwError, concat } from "rxjs";
 import { skip, take, reduce, mergeMap, map, filter, concatMap } from "rxjs/operators";
 import type { Account, SyncConfig } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { encodeAccountId, decodeAccountId } from "@ledgerhq/live-common/lib/account/index";
-import { emptyHistoryCache } from "@ledgerhq/live-common/lib/account/index";
-import { fromAccountRaw } from "@ledgerhq/live-common/lib/account/serialization";
+import { encodeAccountId, decodeAccountId } from "@ledgerhq/live-common/account/index";
+import { emptyHistoryCache } from "@ledgerhq/live-common/account/index";
+import { fromAccountRaw } from "@ledgerhq/live-common/account/serialization";
 import { asDerivationMode, DerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { getAccountBridge, getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import {
@@ -208,7 +208,7 @@ export function scan(arg: ScanCommonOpts): Observable<Account> {
         };
 
     if (typeof appjsondata.data.accounts === "string") {
-      return throwError(new Error("encrypted ledger live data is not supported"));
+      return throwError(() => new Error("encrypted ledger live data is not supported"));
     }
 
     return from(appjsondata.data.accounts.map(a => fromAccountRaw(a.data))).pipe(

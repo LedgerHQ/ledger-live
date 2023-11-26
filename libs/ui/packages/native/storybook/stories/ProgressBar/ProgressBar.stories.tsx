@@ -73,9 +73,34 @@ export const Default = (args: typeof DefaultArgs): JSX.Element => {
     </>
   );
 };
+
 Default.storyName = "ProgressBar";
 const DefaultArgs = {
   length: 5,
   index: 1,
 };
 Default.args = DefaultArgs;
+
+export const Custom = (): JSX.Element => {
+  return (
+    <Flex
+      width={300}
+      height={64}
+      px={6}
+      bg={"neutral.c30"}
+      alignItems={"center"}
+      justifyContent={"center"}
+    >
+      <ProgressBar
+        index={3}
+        length={10}
+        bg={"neutral.c40"}
+        height={8}
+        borderRadius={2}
+        activeBarProps={{ bg: "primary.c80", borderRadius: 2 }}
+      />
+    </Flex>
+  );
+};
+
+Custom.storyName = "ProgressBar (custom style)";

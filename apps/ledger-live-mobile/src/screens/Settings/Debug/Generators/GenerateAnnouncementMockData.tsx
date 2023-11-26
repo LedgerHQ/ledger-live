@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { StyleSheet } from "react-native";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { useAnnouncements } from "@ledgerhq/live-common/notifications/AnnouncementProvider/index";
 import { useTheme } from "@react-navigation/native";
 import { IconsLegacy } from "@ledgerhq/native-ui";

@@ -1,7 +1,7 @@
 import { Observable } from "rxjs";
-import { log } from "@ledgerhq/logs";
+import { LocalTracer } from "@ledgerhq/logs";
 import type { DeviceId } from "@ledgerhq/types-live";
-import { sharedLogicTaskWrapper, SharedTaskEvent } from "./core";
+import { LOG_TYPE, sharedLogicTaskWrapper, SharedTaskEvent } from "./core";
 import { withTransport } from "../transports/core";
 import {
   toggleOnboardingEarlyCheckCmd,
@@ -33,6 +33,12 @@ function internalToggleOnboardingEarlyCheckTask({
   deviceId,
   toggleType,
 }: ToggleOnboardingEarlyCheckTaskArgs): Observable<ToggleOnboardingEarlyCheckTaskEvent> {
+  const tracer = new LocalTracer(LOG_TYPE, {
+    function: "toggleOnboardingEarlyCheckTask",
+    toggleType,
+  });
+  tracer.trace("Starting toggleOnboardingEarlyCheckTask");
+
   const p2 = toggleType === "enter" ? ToggleTypeP2.EnterChecking : ToggleTypeP2.ExitChecking;
 
   return new Observable(subscriber => {
@@ -45,16 +51,15 @@ function internalToggleOnboardingEarlyCheckTask({
       next: _ => subscriber.next({ type: "success" }),
       error: (error: unknown) => {
         if (error instanceof TransportStatusError) {
-          // @ts-expect-error TransportStatusError not typed correctly
+          tracer.trace("A TransportStatusError error occurred", { error });
+
           if (error.statusCode === StatusCodes.SECURITY_STATUS_NOT_SATISFIED) {
             subscriber.next({
               type: "taskError",
               error: "DeviceInInvalidState",
             });
             return;
-          }
-          // @ts-expect-error TransportStatusError not typed correctly
-          else if (error.statusCode === StatusCodes.INCORRECT_LENGTH) {
+          } else if (error.statusCode === StatusCodes.INCORRECT_LENGTH) {
             subscriber.next({
               type: "taskError",
               error: "InternalError",
@@ -62,12 +67,8 @@ function internalToggleOnboardingEarlyCheckTask({
             return;
           }
         }
-        // Otherwise unknown error
-        let message = "";
-        if (error instanceof Error) {
-          message = `${error.name}: ${error.message}`;
-        }
-        log("toggleOnboardingEarlyCheckTask", `Error: ${message}`);
+
+        tracer.trace("An unknown error occurred", { error });
         subscriber.next({ type: "taskError", error: "Unknown" });
       },
       complete: () => subscriber.complete(),

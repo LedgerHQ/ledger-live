@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import Clipboard from "@react-native-community/clipboard";
+import Clipboard from "@react-native-clipboard/clipboard";
 import SettingsRow from "../../../../components/SettingsRow";
 import getOrCreateUser from "../../../../user";
 

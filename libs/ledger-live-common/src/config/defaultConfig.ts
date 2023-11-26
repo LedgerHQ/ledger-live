@@ -17,6 +17,11 @@ const defaultConfig = {
         lcd: "https://desmos-api.ibs.team",
         minGasPrice: 0.0025,
       },
+      dydx: {
+        lcd: "https://api.dydx.nodestake.top:443",
+        minGasPrice: 12500000000,
+        ledgerValidator: "dydxvaloper1gffkd68xcnfpzcsplf0fsuetxkysunud6a900w",
+      },
       nyx: {
         lcd: "https://api.nyx.nodes.guru",
         minGasPrice: 0,
@@ -32,7 +37,7 @@ const defaultConfig = {
         minGasPrice: 0.025,
       },
       persistence: {
-        lcd: "https://rest-persistence.architectnodes.com",
+        lcd: "https://rest.core.persistence.one",
         minGasPrice: 0.025,
         ledgerValidator: "persistencevaloper1fgklp9hemczlwtqp9jqzq3xahh38hznxatty38",
       },
@@ -45,6 +50,10 @@ const defaultConfig = {
         lcd: "https://lcd.secret.express",
         minGasPrice: 0.25,
       },
+      sei_network: {
+        lcd: "https://sei-api.polkachu.com",
+        minGasPrice: 0.1,
+      },
       stargaze: {
         lcd: "https://stargaze-api.polkachu.com",
         minGasPrice: 1,
@@ -56,6 +65,10 @@ const defaultConfig = {
       coreum: {
         lcd: "https://full-node.mainnet-1.coreum.dev:1317",
         minGasPrice: 0.1,
+      },
+      injective: {
+        lcd: "https://injective-api.polkachu.com",
+        minGasPrice: 900000000,
       },
     } as { [currency: string]: CosmosCurrencyConfig },
   },

@@ -30,7 +30,7 @@ import byFamilyPostAlert from "../../generated/ReceiveConfirmationPostAlert";
 import { ReceiveFundsStackParamList } from "../../components/RootNavigator/types/ReceiveFundsNavigator";
 import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import styled, { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
-import Clipboard from "@react-native-community/clipboard";
+import Clipboard from "@react-native-clipboard/clipboard";
 import ConfirmationHeaderTitle from "./ConfirmationHeaderTitle";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { BankMedium } from "@ledgerhq/native-ui/assets/icons";
@@ -42,10 +42,7 @@ import * as Animatable from "react-native-animatable";
 const AnimatedView = Animatable.View;
 
 type ScreenProps = BaseComposite<
-  StackNavigatorProps<
-    ReceiveFundsStackParamList,
-    ScreenName.ReceiveConfirmation | ScreenName.ReceiveVerificationConfirmation
-  >
+  StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveConfirmation>
 >;
 
 type Props = {
@@ -124,8 +121,9 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
       type: "card",
       page: "Receive Account Qr Code",
     });
-    Linking.openURL(depositWithdrawBannerMobile?.params.url);
-  }, [depositWithdrawBannerMobile?.params.url]);
+    // @ts-expect-error TYPINGS
+    Linking.openURL(depositWithdrawBannerMobile?.params?.url);
+  }, [depositWithdrawBannerMobile?.params?.url]);
 
   useEffect(() => {
     if (route.params?.createTokenAccount && !hasAddedTokenAccount) {
@@ -285,6 +283,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
                   fontWeight={"semiBold"}
                   textAlign={"center"}
                   numberOfLines={1}
+                  testID={"receive-account-name-" + mainAccount.name}
                 >
                   {mainAccount.name}
                 </Text>
@@ -375,8 +374,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
               textAlign="center"
             >
               {t("transfer.receive.receiveConfirmation.sendWarning", {
-                currencyName: currency.name,
-                currencyTicker: currency.ticker,
+                network: network || currency.name,
               })}
             </Text>
           </Flex>
@@ -385,7 +383,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
       </NavigationScrollView>
       <Flex m={6}>
         <Flex>
-          <Button type="main" size="large" onPress={onRetry}>
+          <Button type="main" size="large" onPress={onRetry} testID="button-receive-confirmation">
             {t("transfer.receive.receiveConfirmation.verifyAddress")}
           </Button>
 

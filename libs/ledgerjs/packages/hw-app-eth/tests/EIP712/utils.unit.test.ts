@@ -1,14 +1,11 @@
 import BigNumber from "bignumber.js";
+import { hexBuffer, padHexString } from "../../src/utils";
 import {
   constructTypeDescByteString,
   destructTypeFromString,
   EIP712_TYPE_ENCODERS,
   makeTypeEntryStructBuffer,
 } from "../../src/modules/EIP712/utils";
-
-const padHexString = (str: string) => {
-  return str.length % 2 ? "0" + str : str;
-};
 
 const convertTwosComplementToDecimalString = (hex: string, initialValue: string) => {
   if (!initialValue?.startsWith("-")) {
@@ -409,6 +406,36 @@ describe("EIP712", () => {
           });
         });
       });
+    });
+
+    describe("hexBuffer", () => {
+      const hexValues = [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+      ];
+      it.each(hexValues)(
+        "should bufferize every possible byte string of: %s",
+        (noPrefixShorthand: string) => {
+          const prefixFull = `0x0${noPrefixShorthand}`;
+          const prefixShorthand = `0x${noPrefixShorthand}`;
+          expect(Buffer.compare(hexBuffer(prefixFull), hexBuffer(prefixShorthand))).toBe(0);
+          expect(Buffer.compare(hexBuffer(prefixFull), hexBuffer(noPrefixShorthand))).toBe(0);
+        },
+      );
     });
   });
 });

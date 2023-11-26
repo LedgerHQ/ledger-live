@@ -10,16 +10,21 @@ import {
   PendingOperation,
   OperationDetails,
 } from "../../screens/Swap/index";
+import { StackNavigatorProps } from "./types/helpers";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
 import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
 import { SwapNavigatorParamList } from "./types/SwapNavigator";
-import { ScreenName } from "../../const";
+import { ScreenName, NavigatorName } from "../../const";
 import SwapFormNavigator from "./SwapFormNavigator";
+import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
 
 const Stack = createStackNavigator<SwapNavigatorParamList>();
 
-export default function SwapNavigator() {
+export default function SwapNavigator(
+  props: StackNavigatorProps<BaseNavigatorStackParamList, NavigatorName.Swap> | undefined,
+) {
+  const params = props?.route?.params?.params || {};
   const { t } = useTranslation();
   const { colors } = useTheme();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
@@ -35,6 +40,9 @@ export default function SwapNavigator() {
           ...(noNanoBuyNanoWallScreenOptions as { options: object }).options,
           title: t("transfer.swap2.form.title"),
           headerLeft: () => null,
+        }}
+        initialParams={{
+          ...params,
         }}
       />
 

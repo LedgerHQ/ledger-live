@@ -83,10 +83,13 @@ const StepChooseImage: React.FC<Props> = props => {
              * virtual delay to ensure showing loading state at least 400ms so
              * it doesn't look glitchy if it's too fast
              */
-            setTimeout(() => {
-              if (!isMounted()) return;
-              setSelectedNftBase64({ imageBase64DataUri: res as string });
-            }, Math.max(0, 400 - (Date.now() - t1)));
+            setTimeout(
+              () => {
+                if (!isMounted()) return;
+                setSelectedNftBase64({ imageBase64DataUri: res as string });
+              },
+              Math.max(0, 400 - (Date.now() - t1)),
+            );
           })
           .catch(() => {
             onError(new ImageDownloadError());
@@ -104,7 +107,7 @@ const StepChooseImage: React.FC<Props> = props => {
             nextDisabled={!selectedNftBase64Data}
             nextLoading={Boolean(selectedNftId && !selectedNftBase64Data)}
             nextLabel={t("customImage.steps.choose.selectNft")}
-            previousLabel={t("common.previous")}
+            previousLabel={t("common.back")}
             onClickNext={handleClickNext}
             onClickPrevious={handleClickPrevious}
             previousTestId="custom-image-nft-previous-button"

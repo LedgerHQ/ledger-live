@@ -4,9 +4,9 @@ import {
   Transaction,
   TransactionStatus,
   CosmosAccount,
-  CosmosOperation,
 } from "@ledgerhq/live-common/families/cosmos/types";
 import { OpenModal } from "~/renderer/actions/modals";
+import { Operation } from "@ledgerhq/types-live";
 export type StepId = "amount" | "device" | "confirmation";
 export type StepProps = {
   transitionTo: (address: string) => void;
@@ -16,7 +16,7 @@ export type StepProps = {
   onRetry: () => void;
   onClose: () => void;
   openModal: OpenModal;
-  optimisticOperation: CosmosOperation | undefined;
+  optimisticOperation: Operation | undefined;
   error: Error | undefined;
   signed: boolean;
   transaction: Transaction | undefined | null;
@@ -24,7 +24,7 @@ export type StepProps = {
   onChangeTransaction: (tx: Transaction) => void;
   onUpdateTransaction: (a: (tx: Transaction) => Transaction) => void;
   onTransactionError: (error: Error) => void;
-  onOperationBroadcasted: (operation: CosmosOperation) => void;
+  onOperationBroadcasted: (operation: Operation) => void;
   setSigned: (signed: boolean) => void;
   bridgePending: boolean;
   validatorAddress: string;

@@ -1,7 +1,14 @@
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { useCallback, useState, useMemo } from "react";
-import { View, StyleSheet, TouchableOpacity, SectionList, Linking } from "react-native";
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  SectionList,
+  Linking,
+  SectionListRenderItem,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans, useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
@@ -47,11 +54,12 @@ import type {
 } from "../../../components/RootNavigator/types/helpers";
 import type { PolkadotNominateFlowParamList } from "./types";
 import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
-import Identicon from "@polkadot/reactnative-identicon";
+import FirstLetterIcon from "~/components/FirstLetterIcon";
 
 type Props = BaseComposite<
   StackNavigatorProps<PolkadotNominateFlowParamList, ScreenName.PolkadotNominateSelectValidators>
 >;
+
 function NominateSelectValidator({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
@@ -161,7 +169,7 @@ function NominateSelectValidator({ navigation, route }: Props) {
     });
   }, [navigation, route.params, transaction, status]);
   const onSelect = useCallback(
-    (validator, selected) => {
+    (validator: PolkadotValidator, selected: boolean) => {
       setDrawerValidator(undefined);
       const newValidators = selected
         ? validators.filter(v => v !== validator.address)
@@ -181,7 +189,7 @@ function NominateSelectValidator({ navigation, route }: Props) {
     [mainAccount.currency],
   );
   const onOpenDrawer = useCallback(
-    address => {
+    (address: string) => {
       const validator = polkadotValidators.find(v => v.address === address);
       setDrawerValidator(validator);
     },
@@ -214,7 +222,7 @@ function NominateSelectValidator({ navigation, route }: Props) {
         : [],
     [drawerValidator, t, account, maxNominatorRewardedPerValidator, onOpenExplorer],
   );
-  const renderItem = useCallback(
+  const renderItem: SectionListRenderItem<PolkadotValidator> = useCallback(
     ({ item }) => {
       const selected = validators.indexOf(item.address) > -1;
       const disabled = validators.length >= MAX_NOMINATIONS;
@@ -249,11 +257,7 @@ function NominateSelectValidator({ navigation, route }: Props) {
         isOpen={drawerInfo && drawerInfo.length > 0}
         onClose={onCloseDrawer}
         account={account}
-        ValidatorImage={({ size }) =>
-          drawerValidator ? (
-            <Identicon value={drawerValidator.address} size={size} theme="polkadot" />
-          ) : null
-        }
+        ValidatorImage={() => <FirstLetterIcon label={drawerValidator?.identity || "-"} />}
         data={drawerInfo}
       />
       <View>

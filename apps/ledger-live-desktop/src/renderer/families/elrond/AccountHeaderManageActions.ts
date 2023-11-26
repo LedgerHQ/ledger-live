@@ -17,14 +17,17 @@ const AccountHeaderManageActions = (props: {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const validators = useElrondRandomizedValidators();
+
   const earnRewardEnabled = useMemo(
     () => account.type === "Account" && hasMinimumDelegableBalance(account),
     [account],
   );
+
   const hasDelegations =
     account.type === "Account" && account.elrondResources
       ? account.elrondResources.delegations.length > 0
       : false;
+
   const onClick = useCallback(() => {
     if (account.type !== "Account") return;
     if (!earnRewardEnabled) {
@@ -46,7 +49,9 @@ const AccountHeaderManageActions = (props: {
       );
     }
   }, [earnRewardEnabled, hasDelegations, dispatch, account, validators, source]);
+
   if (account.type !== "Account") return null;
+
   return [
     {
       key: "Stake",

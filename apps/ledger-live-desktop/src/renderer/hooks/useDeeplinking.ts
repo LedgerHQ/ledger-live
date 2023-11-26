@@ -71,7 +71,7 @@ export function useDeepLinkHandler() {
     [history, location],
   );
   const handler = useCallback(
-    (_, deeplink: string) => {
+    (_: unknown, deeplink: string) => {
       const { pathname, searchParams, search } = new URL(deeplink);
       /**
        * TODO: handle duplicated query params
@@ -101,13 +101,18 @@ export function useDeepLinkHandler() {
       const query = Object.fromEntries(searchParams);
       const fullUrl = pathname.replace(/(^\/+|\/+$)/g, "");
       const [url, path] = fullUrl.split("/");
-      // Track deeplink only when ajsPropSource attribute exists.
-      const ajsPropSource = searchParams.get("ajs_prop_source");
-      const ajsPropCampaign = searchParams.get("ajs_prop_campaign");
-      const ajsPropTrackData = searchParams.get("ajs_prop_track_data");
 
+      const {
+        ajs_prop_source: ajsPropSource,
+        ajs_prop_campaign: ajsPropCampaign,
+        ajs_prop_track_data: ajsPropTrackData,
+        currency,
+        installApp,
+        appName,
+      } = query;
+
+      // Track deeplink only when ajsPropSource attribute exists.
       if (ajsPropSource) {
-        const { currency, installApp, appName } = query;
         track("deeplink_clicked", {
           deeplinkSource: ajsPropSource,
           deeplinkCampaign: ajsPropCampaign,
@@ -131,6 +136,58 @@ export function useDeepLinkHandler() {
           navigate("/accounts");
           break;
         }
+        case "account": {
+          const { address, currency } = query;
+
+          if (!currency || typeof currency !== "string") return;
+          const c = findCryptoCurrencyByKeyword(currency.toUpperCase()) as Currency;
+          if (!c || c.type === "FiatCurrency") return;
+          const foundAccounts = getAccountsOrSubAccountsByCurrency(c, accounts || []);
+          if (!foundAccounts.length) return;
+
+          // Navigate to a specific account if a valid 'address' is provided and the account currency matches the 'currency' param in the deeplink URL
+          if (address && typeof address === "string") {
+            const account = accounts.find(
+              acc =>
+                acc.freshAddress === address &&
+                acc.currency.id.toLowerCase() === currency.toLowerCase(),
+            );
+
+            if (account) {
+              navigate(`/account/${account.id}`);
+            }
+            break;
+          }
+
+          const [chosenAccount] = foundAccounts;
+
+          if (chosenAccount?.type === "Account") {
+            navigate(`/account/${chosenAccount.id}`);
+          } else {
+            navigate(`/account/${chosenAccount?.parentId}/${chosenAccount?.id}`);
+          }
+          break;
+        }
+        case "add-account": {
+          const { currency } = query;
+
+          const foundCurrency = findCryptoCurrencyByKeyword(
+            typeof currency === "string" ? currency?.toUpperCase() : "",
+          ) as Currency;
+
+          dispatch(
+            openModal(
+              "MODAL_ADD_ACCOUNTS",
+              !foundCurrency || foundCurrency.type === "FiatCurrency"
+                ? undefined
+                : {
+                    currency: foundCurrency,
+                  },
+            ),
+          );
+
+          break;
+        }
         case "buy":
           navigate("/exchange", undefined, search);
           break;
@@ -150,32 +207,7 @@ export function useDeepLinkHandler() {
         case "swap":
           navigate("/swap");
           break;
-        case "account": {
-          const { address, currency } = query;
 
-          if (!currency || typeof currency !== "string") return;
-          const c = findCryptoCurrencyByKeyword(currency.toUpperCase()) as Currency;
-          if (!c || c.type === "FiatCurrency") return;
-          const foundAccounts = getAccountsOrSubAccountsByCurrency(c, accounts || []);
-          if (!foundAccounts.length) return;
-          const [chosenAccount] = foundAccounts;
-
-          // Navigate to a specific account if a valid 'address' is provided and the account currency matches the 'currency' param in the deeplink URL
-          if (address && typeof address === "string") {
-            const account = accounts.find(acc => acc.freshAddress === address);
-            if (account && account.currency.id === currency) {
-              navigate(`/account/${account.id}`);
-            }
-            break;
-          }
-
-          if (chosenAccount?.type === "Account") {
-            navigate(`/account/${chosenAccount.id}`);
-          } else {
-            navigate(`/account/${chosenAccount?.parentId}/${chosenAccount?.id}`);
-          }
-          break;
-        }
         case "bridge": {
           const { origin, appName } = query;
           dispatch(closeAllModal());
@@ -193,10 +225,14 @@ export function useDeepLinkHandler() {
           const modal =
             url === "send" ? "MODAL_SEND" : url === "receive" ? "MODAL_RECEIVE" : "MODAL_DELEGATE";
           const { currency, recipient, amount } = query;
-          if (!currency || typeof currency !== "string") return;
+
           if (url === "delegate" && currency !== "tezos") return;
-          const c = findCryptoCurrencyByKeyword(currency.toUpperCase()) as Currency;
-          if (!c || c.type === "FiatCurrency") {
+
+          const foundCurrency = findCryptoCurrencyByKeyword(
+            typeof currency === "string" ? currency.toUpperCase() : "",
+          ) as Currency;
+
+          if (!currency || !foundCurrency || foundCurrency.type === "FiatCurrency") {
             dispatch(
               openModal(modal, {
                 recipient,
@@ -204,15 +240,12 @@ export function useDeepLinkHandler() {
             );
             return;
           }
-          const found = getAccountsOrSubAccountsByCurrency(c, accounts || []);
+          const found = getAccountsOrSubAccountsByCurrency(foundCurrency, accounts || []);
+
           if (!found.length) {
             dispatch(
-              openModal(modal, {
-                recipient,
-                amount:
-                  amount && typeof amount === "string"
-                    ? parseCurrencyUnit(c.units[0], amount)
-                    : undefined,
+              openModal("MODAL_ADD_ACCOUNTS", {
+                currency: foundCurrency,
               }),
             );
             return;
@@ -226,7 +259,7 @@ export function useDeepLinkHandler() {
                 recipient,
                 amount:
                   amount && typeof amount === "string"
-                    ? parseCurrencyUnit(c.units[0], amount)
+                    ? parseCurrencyUnit(foundCurrency.units[0], amount)
                     : undefined,
               }),
             );
@@ -238,7 +271,7 @@ export function useDeepLinkHandler() {
                 recipient,
                 amount:
                   amount && typeof amount === "string"
-                    ? parseCurrencyUnit(c.units[0], amount)
+                    ? parseCurrencyUnit(foundCurrency.units[0], amount)
                     : undefined,
               }),
             );

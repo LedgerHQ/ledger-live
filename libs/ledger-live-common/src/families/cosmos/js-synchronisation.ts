@@ -9,41 +9,46 @@ import {
 import { encodeAccountId } from "../../account";
 import { CosmosAPI } from "./api/Cosmos";
 import { encodeOperationId } from "../../operation";
-import { CosmosDelegationInfo, CosmosMessage, CosmosTx } from "./types";
-import type { Operation, OperationType } from "@ledgerhq/types-live";
+import { CosmosOperation, CosmosMessage, CosmosTx } from "./types";
+import type { OperationType } from "@ledgerhq/types-live";
 import { getMainMessage } from "./helpers";
 import { parseAmountStringToNumber } from "./logic";
 
-const getBlankOperation = (tx, fees, id) => ({
-  id: "",
-  hash: tx.txhash,
-  type: "" as OperationType,
-  value: new BigNumber(0),
-  fee: fees,
-  blockHash: null,
-  blockHeight: tx.height,
-  senders: [] as string[],
-  recipients: [] as string[],
-  accountId: id,
-  date: new Date(tx.timestamp),
-  extra: {
-    validators: [] as CosmosDelegationInfo[],
-  },
-  transactionSequenceNumber: parseInt(tx.tx.auth_info.signer_infos[0].sequence),
-});
+const getBlankOperation = (tx: CosmosTx, fees: BigNumber, accountId: string): CosmosOperation => {
+  return {
+    id: "",
+    hash: tx.txhash,
+    type: "" as OperationType,
+    value: new BigNumber(0),
+    fee: fees,
+    blockHash: null,
+    blockHeight: parseInt(tx.height),
+    senders: [] as string[],
+    recipients: [] as string[],
+    accountId,
+    date: new Date(tx.timestamp),
+    extra: {},
+    transactionSequenceNumber: parseInt(tx?.tx?.auth_info?.signer_infos[0]?.sequence || "0"),
+  };
+};
 
-const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): Operation[] => {
+const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): CosmosOperation[] => {
   const { address, currency } = info;
   const unitCode = currency.units[1].code;
-  const ops: Operation[] = [];
+  const ops: CosmosOperation[] = [];
   for (const tx of txs) {
-    let fees = new BigNumber(0);
+    const amounts = tx?.tx?.auth_info?.fee?.amount;
 
-    tx.tx.auth_info.fee.amount.forEach(elem => {
-      if (elem.denom === unitCode) fees = fees.plus(elem.amount);
-    });
+    const fees = !amounts
+      ? new BigNumber(0)
+      : amounts.reduce((acc: BigNumber, curr: { denom: string; amount: string }) => {
+          if (curr.denom === unitCode) {
+            return acc.plus(curr.amount);
+          }
+          return acc;
+        }, new BigNumber(0));
 
-    const op: Operation = getBlankOperation(tx, fees, accountId);
+    const op: CosmosOperation = getBlankOperation(tx, fees, accountId);
 
     const messages: CosmosMessage[] = tx.logs.map(log => log.events).flat(1);
 
@@ -122,12 +127,10 @@ const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): Op
         const redelegateShards: { amount: BigNumber; address: string }[] = [];
         for (const message of correspondingMessages) {
           const amount = message.attributes.find(attr => attr.key === "amount")?.value;
-          const validatorDst = message.attributes.find(
-            attr => attr.key === "destination_validator",
-          )?.value;
-          const validatorSrc = message.attributes.find(
-            attr => attr.key === "source_validator",
-          )?.value;
+          const validatorDst = message.attributes.find(attr => attr.key === "destination_validator")
+            ?.value;
+          const validatorSrc = message.attributes.find(attr => attr.key === "source_validator")
+            ?.value;
           if (amount && validatorDst && validatorSrc && amount.endsWith(unitCode)) {
             op.extra.sourceValidator = validatorSrc;
             redelegateShards.push({
@@ -157,6 +160,7 @@ const txToOps = (info: AccountShapeInfo, accountId: string, txs: CosmosTx[]): Op
         break;
       }
     }
+
     if (tx.tx.body.memo != null) {
       op.extra.memo = tx.tx.body.memo;
     }
@@ -180,8 +184,16 @@ export const getAccountShape: GetAccountShape = async info => {
     derivationMode,
   });
 
-  const { balances, blockHeight, txs, delegations, redelegations, unbondings, withdrawAddress } =
-    await new CosmosAPI(currency.id).getAccountInfo(address, currency);
+  const {
+    accountInfo,
+    balances,
+    blockHeight,
+    txs,
+    delegations,
+    redelegations,
+    unbondings,
+    withdrawAddress,
+  } = await new CosmosAPI(currency.id).getAccountInfo(address, currency);
   const oldOperations = initialAccount?.operations || [];
   const newOperations = txToOps(info, accountId, txs);
   const operations = mergeOps(oldOperations, newOperations);
@@ -223,6 +235,7 @@ export const getAccountShape: GetAccountShape = async info => {
       pendingRewardsBalance,
       unbondingBalance,
       withdrawAddress,
+      sequence: accountInfo.sequence,
     },
   };
 

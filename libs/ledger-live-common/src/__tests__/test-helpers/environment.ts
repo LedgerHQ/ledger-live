@@ -1,10 +1,9 @@
 import winston from "winston";
 import { listen } from "@ledgerhq/logs";
 import { setSupportedCurrencies } from "../../currencies";
-import { EnvName, setEnvUnsafe } from "../../env";
+import { EnvName, setEnvUnsafe, setEnv } from "@ledgerhq/live-env";
 import { setWalletAPIVersion } from "../../wallet-api/version";
 import { WALLET_API_VERSION } from "../../wallet-api/constants";
-import { setEnv } from "../../env";
 
 setWalletAPIVersion(WALLET_API_VERSION);
 setSupportedCurrencies([
@@ -14,7 +13,9 @@ setSupportedCurrencies([
   "secret_network",
   "umee",
   "desmos",
+  "dydx",
   "onomy",
+  "sei_network",
   "quicksilver",
   "persistence",
   "bitcoin",
@@ -83,8 +84,6 @@ setSupportedCurrencies([
   "velas_evm",
   "syscoin",
   "internet_computer",
-  "ethereum_as_evm_test_only",
-  "polygon_as_evm_test_only",
   "klaytn",
   "polygon_zk_evm",
   "polygon_zk_evm_testnet",
@@ -93,6 +92,11 @@ setSupportedCurrencies([
   "stacks",
   "telos_evm",
   "coreum",
+  "injective",
+  "vechain",
+  "casper",
+  "neon_evm",
+  "lukso",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);

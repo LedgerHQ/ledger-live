@@ -25,17 +25,23 @@ export const usePageState = (
     swapTransaction.swap.isMaxLoading || swapTransaction.swap.rates.status === "loading";
 
   useEffect(() => {
-    if (pageState === "loading" && swapTransaction.swap.rates.status === "success") {
-      setPageState("loaded");
-    } else if (pageState === "loading" && swapTransaction.swap.rates.status === "error") {
-      setPageState("initial");
+    let state: PageState | undefined;
+    if (!fromFieldIsZero && swapTransaction.swap.rates.status === "success") {
+      state = "loaded";
+    } else if (
+      pageState === "loading" &&
+      !isDataLoading &&
+      swapTransaction.swap.rates.status === "error"
+    ) {
+      state = "initial";
     } else if ((pageState === "initial" || pageState === "empty") && isDataLoading) {
-      setPageState("loading");
+      state = "loading";
     } else if (swapError && swapError?.message.length === 0 && !isDataLoading) {
-      setPageState("empty");
+      state = "empty";
     } else if (fromFieldIsZero && !isDataLoading) {
-      setPageState("initial");
+      state = "initial";
     }
+    state && pageState !== state && setPageState(state);
   }, [
     pageState,
     isDataLoading,

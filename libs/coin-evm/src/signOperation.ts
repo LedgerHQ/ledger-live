@@ -59,8 +59,11 @@ export const buildSignOperation =
     transaction: Transaction;
   }): Observable<SignOperationEvent> =>
     new Observable(o => {
-      async function main() {
-        const preparedTransaction = await prepareForSignOperation(account, transaction);
+      async function main(): Promise<void> {
+        const preparedTransaction = await prepareForSignOperation({
+          account,
+          transaction,
+        });
         const serializedTxHexString = getSerializedTransaction(preparedTransaction).slice(2); // Remove 0x prefix
 
         // Configure type of resolutions necessary for the clear signing
@@ -115,7 +118,6 @@ export const buildSignOperation =
           signedOperation: {
             operation,
             signature,
-            expirationDate: null,
           },
         });
       }

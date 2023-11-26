@@ -1,16 +1,16 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useContext } from "react";
 import { PermissionsAndroid, Linking } from "react-native";
 import { useTranslation } from "react-i18next";
 import { locationPermission } from "./hooks/useAndroidLocationPermission";
 import NoLocationImage from "../../icons/NoLocationImage";
 import GenericInformationalDrawerContent from "../GenericInformationalDrawerContent";
 import GenericInformationalView from "../GenericInformationalView";
+import IsInDrawerContext from "../../context/IsInDrawerContext";
 
 type Props = {
   onRetry?: (() => void) | null;
   neverAskAgain?: boolean;
   forceOpenSettings?: boolean;
-  componentType?: "drawer" | "view";
 };
 
 /**
@@ -22,16 +22,14 @@ type Props = {
  *   Otherwise, the user will be prompted to open the native settings.
  * @param neverAskAgain If true, the user has denied the app permission to use its location and has selected "Don't ask again". Default to true.
  * @param forceOpenSettings Used mainly for debug purposes. If true pressing the button will make the user go to the settings. Defaults to false.
- * @param componentType If "drawer", the component will be rendered as a content to be rendered in a drawer.
- *   If "view", the component will be rendered as a view. Defaults to "view".
  */
 const LocationPermissionDenied: React.FC<Props> = ({
   onRetry,
   neverAskAgain = true,
   forceOpenSettings = false,
-  componentType = "view",
 }) => {
   const { t } = useTranslation();
+  const { isInDrawer } = useContext(IsInDrawerContext);
 
   const openNativeSettings = useCallback(() => {
     Linking.openSettings();
@@ -61,7 +59,7 @@ const LocationPermissionDenied: React.FC<Props> = ({
     buttonEvent = "LocationPermissionDeniedRetryAuthorize";
   }
 
-  if (componentType === "drawer") {
+  if (isInDrawer) {
     return (
       <GenericInformationalDrawerContent
         icon={<NoLocationImage viewBox="0 0 113 114" height="60" width="60" />}

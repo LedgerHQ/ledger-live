@@ -65,6 +65,9 @@ coverage/
 # Bundle artifact
 *.jsbundle
 
+# Meta artifact
+mobile.metafile.*
+
 # VS Code
 *.vscode
 
@@ -94,6 +97,7 @@ src/generated/
 
 # CocoaPods
 /ios/Pods/
+/ios/.podhash.json
 /vendor/bundle/
 
 # jest

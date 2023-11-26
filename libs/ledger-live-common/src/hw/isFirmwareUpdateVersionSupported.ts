@@ -1,7 +1,7 @@
 import { DeviceModelId } from "@ledgerhq/devices";
 import { DeviceInfo } from "@ledgerhq/types-live";
 import { satisfies, coerce } from "semver";
-import { getEnv } from "../env";
+import { getEnv } from "@ledgerhq/live-env";
 
 const deviceVersionRangesForUpdate: { [key in DeviceModelId]?: string } = {
   nanoS: ">=1.6.1",

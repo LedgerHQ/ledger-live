@@ -9,7 +9,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Illustration from "../../images/illustration/Illustration";
 import { NavigatorName, ScreenName } from "../../const";
 import DiscoverCard from "./DiscoverCard";
-import { urls } from "../../config/urls";
+import { urls } from "@utils/urls";
 import { TrackScreen, track } from "../../analytics";
 import { TAB_BAR_SAFE_HEIGHT } from "../../components/TabBar/TabBarSafeAreaView";
 import { AnalyticsContext } from "../../analytics/AnalyticsContext";
@@ -69,7 +69,7 @@ function Discover() {
   }[] = useMemo(
     () =>
       [
-        ...(config?.enabled && config?.params.version === "2"
+        ...(config?.enabled && config?.params?.version === "2"
           ? [
               {
                 title: t("discover.sections.browseWeb3.title"),
@@ -197,7 +197,7 @@ function Discover() {
                 ),
               },
             ]),
-        ...(referralProgramConfig?.enabled && referralProgramConfig?.params.url
+        ...(referralProgramConfig?.enabled && referralProgramConfig?.params?.url
           ? [
               {
                 title: t("discover.sections.referralProgram.title"),
@@ -205,9 +205,10 @@ function Discover() {
                 onPress: () => {
                   readOnlyTrack("referralProgram");
                   track("Discover - Refer Program - OpenUrl", {
-                    url: referralProgramConfig?.params.url,
+                    url: referralProgramConfig?.params?.url,
                   });
-                  Linking.openURL(referralProgramConfig?.params.url);
+                  // @ts-expect-error TYPINGS
+                  Linking.openURL(referralProgramConfig?.params?.url);
                 },
                 disabled: false,
                 Image: (
@@ -227,7 +228,7 @@ function Discover() {
       learnCards,
       isNFTDisabled,
       referralProgramConfig?.enabled,
-      referralProgramConfig?.params.url,
+      referralProgramConfig?.params?.url,
       navigation,
       readOnlyTrack,
       isNewsfeedAvailable,

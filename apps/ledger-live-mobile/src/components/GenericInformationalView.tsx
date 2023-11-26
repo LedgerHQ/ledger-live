@@ -1,10 +1,11 @@
 import React from "react";
-import { Box, Text, Flex } from "@ledgerhq/native-ui";
+import { Text, Flex } from "@ledgerhq/native-ui";
 import Button from "./wrappedUi/Button";
+import { GenericInformationBody } from "./GenericInformationBody";
 
 type Props = {
   title: string;
-  icon?: React.ReactNode;
+  icon: React.ReactElement;
   description: string;
   subTitle?: string;
   primaryButtonLabel: string;
@@ -37,57 +38,19 @@ const GenericInformationalView: React.FC<Props> = ({
   primaryButtonEvent,
 }) => {
   return (
-    <Flex flexDirection="column" alignSelf="stretch" flex={1} mx={4}>
+    <Flex flexDirection="column" alignSelf="stretch" flexGrow={1} flexShrink={0} mx={4}>
       <Flex alignItems="center" justifyContent="center" flexGrow={1}>
-        <Box mb={7}>
-          <Flex
-            backgroundColor={"opacityDefault.c05"}
-            height={64}
-            width={64}
-            borderRadius={999}
-            justifyContent="center"
-            alignItems="center"
-          >
-            {icon}
-          </Flex>
-        </Box>
-
-        <Text
-          color="neutral.c100"
-          fontSize={7}
-          fontWeight="semiBold"
-          mb={6}
-          numberOfLines={3}
-          textAlign={"center"}
-          variant={"h4"}
-        >
-          {title}
-        </Text>
-
-        {subTitle ? (
+        <GenericInformationBody Icon={() => icon} title={title} description={subTitle} />
+        {description ? (
           <Text
             variant={"bodyLineHeight"}
+            color="neutral.c80"
+            mt={6}
             textAlign="center"
-            color="neutral.c70"
-            numberOfLines={3}
-            mb={6}
+            numberOfLines={5}
           >
-            {subTitle}
+            {description}
           </Text>
-        ) : null}
-
-        {description ? (
-          <>
-            <Text
-              variant={"bodyLineHeight"}
-              color="neutral.c70"
-              fontSize={4}
-              textAlign="center"
-              numberOfLines={5}
-            >
-              {description}
-            </Text>
-          </>
         ) : null}
       </Flex>
 

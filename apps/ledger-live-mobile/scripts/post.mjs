@@ -1,10 +1,91 @@
 #!/usr/bin/env zx
 import "zx/globals";
+import { createHash } from "crypto";
+import { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from "fs";
+import { join } from "path";
+
+function computeMetaHash(paths, inputHash) {
+  const hash = inputHash ? inputHash : createHash("sha1");
+  for (const path of paths) {
+    const statInfo = statSync(path);
+    if (statInfo.isDirectory()) {
+      const directoryEntries = readdirSync(path, { withFileTypes: true });
+      const fullPaths = directoryEntries.map(e => join(path, e.name));
+      // recursively walk sub-folders
+      computeMetaHash(fullPaths, hash);
+    } else {
+      const statInfo = statSync(path);
+      // compute hash string name:size:mtime
+      const fileInfo = `${path}:${statInfo.size}:${statInfo.mtimeMs}`;
+      hash.update(fileInfo);
+    }
+  }
+  // if not being called recursively, get the digest and return it as the hash result
+  if (!inputHash) {
+    return hash.digest().toString("base64");
+  }
+  return;
+}
+
+function compareHashes(cacheFile = {}, current = {}) {
+  if (!cacheFile || !current) return false;
+  return (
+    cacheFile.lock === current.lock &&
+    cacheFile.podsHash === current.podsHash &&
+    cacheFile.pkg === current.pkg
+  );
+}
+
+function getCache(path) {
+  const exists = existsSync(path);
+
+  if (exists) {
+    const file = readFileSync(path);
+    const json = JSON.parse(file);
+    return json;
+  }
+
+  return null;
+}
+
+function runHashChecks(writeCache = false) {
+  const pods = join(__dirname, "..", "ios", "Pods");
+  const lock = join(__dirname, "..", "ios", "Podfile.lock");
+  const pkg = join(__dirname, "..", "package.json");
+
+  if (!existsSync(pods)) return false;
+
+  const podsHash = computeMetaHash([pods]);
+  const lockHash = computeMetaHash([lock]);
+  const packageHash = computeMetaHash([pkg]);
+  const cachePath = join(__dirname, "..", "ios", ".podhash.json");
+
+  const result = {
+    lock: lockHash,
+    pod: podsHash,
+    pkg: packageHash,
+  };
+
+  const cache = getCache(cachePath);
+
+  if (!cache || writeCache) {
+    try {
+      const data = JSON.stringify(result);
+      writeFileSync(cachePath, data);
+    } catch (error) {
+      echo(chal.red(error));
+      return false;
+    }
+
+    return false;
+  }
+
+  return compareHashes(cache, result);
+}
 
 cd(path.join(__dirname, ".."));
 
-const syncFamilies = async () =>
-  await $`zx ./scripts/sync-families-dispatch.mjs`;
+const syncFamilies = async () => await $`zx ./scripts/sync-families-dispatch.mjs`;
 
 const final = async () => {
   // Had to remove the following because we already have the AsyncSocket lib as a dependency from Flipper 🐬
@@ -17,7 +98,7 @@ const final = async () => {
   });
 
   // Create the dev .env file with APP_NAME if it doesn't exist
-  const exists = fs.existsSync(".env");
+  const exists = existsSync(".env");
   if (!exists) {
     const str = `APP_NAME="LL [DEV]"
 ANALYTICS_TOKEN=ICid4O5K4AE2Utbv1ZT5CLmZalVWz8V9
@@ -40,16 +121,31 @@ BRAZE_CUSTOM_ENDPOINT="sdk.fra-02.braze.eu"`;
     }
   } catch (error) {
     echo(
-      chalk.red(
-        "Error: `bundle` command is missing. Please install Bundler. https://bundler.io",
-      ),
+      chalk.red("Error: `bundle` command is missing. Please install Bundler. https://bundler.io"),
     );
   }
 
-  if (os.platform() === "darwin" && !process.env["SKIP_BUNDLE_CHECK"]) {
+  let hashesAreEquals = false;
+  try {
+    hashesAreEquals = runHashChecks();
+    if (hashesAreEquals) {
+      echo(chalk.green("Pods hashes are equal, skipping Pods install"));
+    } else {
+      echo(chalk.yellow("Pods hashes are not in sync, installing Pods"));
+    }
+  } catch (error) {
+    echo(chalk.red(error));
+  }
+
+  if (os.platform() === "darwin" && !process.env["SKIP_BUNDLE_CHECK"] && !hashesAreEquals) {
     cd("ios");
     try {
       await $`bundle exec pod install --deployment --repo-update`;
+      try {
+        runHashChecks(true);
+      } catch (error) {
+        echo(chalk.red(error));
+      }
     } catch (error) {
       const str = `
         ________________________________________

@@ -24,6 +24,7 @@ import SearchBox from "../../accounts/AccountList/SearchBox";
 import { App } from "@ledgerhq/types-live";
 import { AppType, SortOptions } from "@ledgerhq/live-common/apps/filtering";
 import NoResults from "~/renderer/icons/NoResults";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 // sticky top bar with extra width to cover card boxshadow underneath
 export const StickyTabBar = styled.div`
@@ -106,7 +107,7 @@ const AppsList = ({
   }, [search]);
   const { installed: installedApps, uninstallQueue, apps } = state;
   const addAccount = useCallback(
-    currency => {
+    (currency?: CryptoOrTokenCurrency) => {
       push("/accounts");
       reduxDispatch(
         openModal("MODAL_ADD_ACCOUNTS", {

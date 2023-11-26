@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { ContentCard as BrazeContentCard } from "react-native-appboy-sdk";
+import { ContentCard as BrazeContentCard } from "@braze/react-native-sdk";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useCallback, useMemo } from "react";
 import { useBrazeContentCard } from "./brazeContentCard";
@@ -17,6 +17,7 @@ import {
   LocationContentCard,
   NotificationContentCard,
   WalletContentCard,
+  ContentCard as LedgerContentCard,
 } from "./types";
 import { track } from "../analytics";
 import { setDismissedDynamicCards } from "../actions/settings";
@@ -26,6 +27,19 @@ export const getMobileContentCards = (array: BrazeContentCard[]) =>
 
 export const filterByPage = (array: BrazeContentCard[], page: string) =>
   array.filter(elem => elem.extras.location === page);
+
+export const compareCards = (a: LedgerContentCard, b: LedgerContentCard) => {
+  if (a.order && !b.order) {
+    return -1;
+  }
+  if (!a.order && b.order) {
+    return 1;
+  }
+  if ((!a.order && !b.order) || a.order === b.order) {
+    return b.createdAt - a.createdAt;
+  }
+  return (a.order || 0) - (b.order || 0);
+};
 
 export const mapAsWalletContentCard = (card: BrazeContentCard) =>
   ({
@@ -37,7 +51,8 @@ export const mapAsWalletContentCard = (card: BrazeContentCard) =>
     link: card.extras.link,
     background: Background[card.extras.background as Background] || Background.purple,
     createdAt: card.created,
-  } as WalletContentCard);
+    order: parseInt(card.extras.order) ? parseInt(card.extras.order) : undefined,
+  }) as WalletContentCard;
 
 export const mapAsAssetContentCard = (card: BrazeContentCard) =>
   ({
@@ -51,7 +66,8 @@ export const mapAsAssetContentCard = (card: BrazeContentCard) =>
     assets: card.extras.assets ?? "",
     displayOnEveryAssets: Boolean(card.extras.displayOnEveryAssets) ?? false,
     createdAt: card.created,
-  } as AssetContentCard);
+    order: parseInt(card.extras.order) ? parseInt(card.extras.order) : undefined,
+  }) as AssetContentCard;
 
 export const mapAsLearnContentCard = (card: BrazeContentCard) =>
   ({
@@ -62,7 +78,8 @@ export const mapAsLearnContentCard = (card: BrazeContentCard) =>
     image: card.extras.image,
     link: card.extras.link,
     createdAt: card.created,
-  } as LearnContentCard);
+    order: parseInt(card.extras.order) ? parseInt(card.extras.order) : undefined,
+  }) as LearnContentCard;
 
 export const mapAsNotificationContentCard = (card: BrazeContentCard) =>
   ({
@@ -75,7 +92,8 @@ export const mapAsNotificationContentCard = (card: BrazeContentCard) =>
     cta: card.extras.cta,
     createdAt: card.created,
     viewed: card.viewed,
-  } as NotificationContentCard);
+    order: parseInt(card.extras.order) ? parseInt(card.extras.order) : undefined,
+  }) as NotificationContentCard;
 
 const useDynamicContent = () => {
   const dispatch = useDispatch();
@@ -95,21 +113,9 @@ const useDynamicContent = () => {
     () => assetsCards.filter((ac: AssetContentCard) => !hiddenCards.includes(ac.id)),
     [assetsCards, hiddenCards],
   );
-  const orderedNotificationsCards = useMemo(
-    () =>
-      notificationCards.sort(
-        (notif: NotificationContentCard, nt: NotificationContentCard) =>
-          nt.createdAt - notif.createdAt,
-      ),
-    [notificationCards],
-  );
   const isAWalletCardDisplayed = useMemo(
     () => walletCardsDisplayed.length >= 1,
     [walletCardsDisplayed],
-  );
-  const isAtLeastOneCardDisplayed = useMemo(
-    () => isAWalletCardDisplayed || assetsCardsDisplayed.length >= 1,
-    [isAWalletCardDisplayed, assetsCardsDisplayed],
   );
 
   const getAssetCardByIdOrTicker = useCallback(
@@ -157,14 +163,12 @@ const useDynamicContent = () => {
     assetsCards,
     learnCards,
     getAssetCardByIdOrTicker,
-    isAtLeastOneCardDisplayed,
     logClickCard,
     logDismissCard,
     logImpressionCard,
     dismissCard,
     trackContentCardEvent,
     notificationCards,
-    orderedNotificationsCards,
     refreshDynamicContent,
   };
 };

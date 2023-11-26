@@ -11,7 +11,7 @@ const txToOperation =
   (accountId: string, address: string) =>
   ({
     meta: { delivered_amount },
-    tx: { DestinationTag, Fee, hash, inLedger, date, Account, Destination, Sequence },
+    tx: { Fee, hash, inLedger, date, Account, Destination, Sequence },
   }: TxXRPL): Operation | null | undefined => {
     const type = Account === address ? "OUT" : "IN";
     let value =
@@ -44,10 +44,6 @@ const txToOperation =
       transactionSequenceNumber: Sequence,
       extra: {},
     };
-
-    if (DestinationTag) {
-      op.extra.tag = DestinationTag;
-    }
 
     return op;
   };

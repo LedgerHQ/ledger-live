@@ -8,12 +8,13 @@ import {
   ElrondTransactionOperation,
   ESDTToken,
   Transaction,
+  ElrondOperation,
 } from "../types";
-import type { TokenAccount, Operation, OperationType, SignedOperation } from "@ledgerhq/types-live";
+import type { TokenAccount, OperationType, SignedOperation } from "@ledgerhq/types-live";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
-import { getEnv } from "../../../env";
-import { inferSubOperations } from "../../../account";
-import { encodeOperationId } from "../../../operation";
+import { getEnv } from "@ledgerhq/live-env";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { inferSubOperations } from "@ledgerhq/coin-framework/account/index";
 import {
   Address,
   INetworkConfig,
@@ -175,7 +176,7 @@ function getEGLDOperationValue(transaction: ElrondApiTransaction, address: strin
     }
   } else {
     // Operation value for staking transactions are just the fees, plus possible rewards
-    // Other amounts are put in extra.delegationAmount
+    // Other amounts are put in extra.amount
     return new BigNumber(transaction.fee ?? 0);
   }
 }
@@ -188,7 +189,7 @@ function transactionToEGLDOperation(
   addr: string,
   transaction: ElrondApiTransaction,
   subAccounts: TokenAccount[],
-): Operation {
+): ElrondOperation {
   const type = getEGLDOperationType(transaction, addr);
   const fee = new BigNumber(transaction.fee ?? 0);
   const hasFailed =
@@ -245,7 +246,7 @@ const transactionToESDTOperation = (
   addr: string,
   transaction: ElrondApiTransaction,
   tokenIdentifier?: string,
-): Operation => {
+): ElrondOperation => {
   const type = getESDTOperationType(transaction, addr);
   const value = getESDTOperationValue(transaction, tokenIdentifier);
   const fee = new BigNumber(transaction.fee ?? 0);
@@ -279,7 +280,7 @@ export const getEGLDOperations = async (
   addr: string,
   startAt: number,
   subAccounts: TokenAccount[],
-): Promise<Operation[]> => {
+): Promise<ElrondOperation[]> => {
   const rawTransactions = await api.getHistory(addr, startAt);
   if (!rawTransactions) return rawTransactions;
   return rawTransactions.map(transaction =>
@@ -305,7 +306,7 @@ export const getESDTOperations = async (
   address: string,
   tokenIdentifier: string,
   startAt: number,
-): Promise<Operation[]> => {
+): Promise<ElrondOperation[]> => {
   const accountESDTTransactions = await api.getESDTTransactionsForAddress(
     address,
     tokenIdentifier,

@@ -115,6 +115,7 @@ const AmountField = <T extends TransactionCommon>({
               isChecked={useAllAmount}
               onChange={onChangeSendMax}
               disabled={walletConnectProxy}
+              data-test-id="modal-max-checkbox"
             />
           </Box>
         ) : null}

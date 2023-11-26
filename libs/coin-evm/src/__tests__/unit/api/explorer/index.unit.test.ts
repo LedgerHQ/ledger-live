@@ -7,9 +7,9 @@ import { UnknownExplorer } from "../../../../errors";
 describe("EVM Family", () => {
   describe("api/explorer/index.ts", () => {
     describe("getExplorerApi", () => {
-      it("should throw when requesting a non existing explorer", async () => {
+      it("should throw when requesting a non existing explorer", () => {
         try {
-          await getExplorerApi({
+          getExplorerApi({
             id: "not-existing",
             ethereumLikeInfo: { explorer: { type: "anything", uri: "notworking" } },
           } as any);
@@ -22,11 +22,11 @@ describe("EVM Family", () => {
         }
       });
 
-      it("should return the etherscan api", async () => {
-        const explorerA = await getExplorerApi({
+      it("should return the etherscan api", () => {
+        const explorerA = getExplorerApi({
           ethereumLikeInfo: { explorer: { type: "etherscan", uri: "working" } },
         } as any);
-        const explorerB = await getExplorerApi({
+        const explorerB = getExplorerApi({
           ethereumLikeInfo: { explorer: { type: "blockscout", uri: "working" } },
         } as any);
 
@@ -34,8 +34,8 @@ describe("EVM Family", () => {
         expect(explorerB).toBe(etherscanLikeApi);
       });
 
-      it("should return the ledger api", async () => {
-        const explorerA = await getExplorerApi({
+      it("should return the ledger api", () => {
+        const explorerA = getExplorerApi({
           ethereumLikeInfo: { explorer: { type: "ledger", explorerId: "eth" } },
         } as any);
 

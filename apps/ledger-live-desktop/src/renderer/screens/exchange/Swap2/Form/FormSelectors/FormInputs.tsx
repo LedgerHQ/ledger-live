@@ -33,6 +33,7 @@ type FormInputsProps = {
   isSendMaxLoading: boolean;
   updateSelectedRate: SwapDataType["updateSelectedRate"];
 };
+
 type SwapButtonProps = {
   onClick: SwapTransactionType["reverseSwap"];
   disabled: boolean;
@@ -43,6 +44,7 @@ const RoundButton = styled(Button)`
   border-radius: 9999px;
   height: initial;
 `;
+
 const Main = styled.section`
   display: flex;
   flex-direction: column;

@@ -24,14 +24,18 @@ import { listCurrencies } from "../currencies";
  *
  * We can also use the stringify method of qs (https://github.com/ljharb/qs#stringifying)
  */
-export function usePlatformUrl(manifest: LiveAppManifest, inputs?: Record<string, string>): URL {
+export function usePlatformUrl(
+  manifest: LiveAppManifest,
+  inputs?: Record<string, string | undefined>,
+): URL {
   return useMemo(() => {
     const url = new URL(manifest.url.toString());
 
     if (inputs) {
       for (const key in inputs) {
-        if (Object.prototype.hasOwnProperty.call(inputs, key) && inputs[key] !== undefined) {
-          url.searchParams.set(key, inputs[key]);
+        const value = inputs[key];
+        if (Object.prototype.hasOwnProperty.call(inputs, key) && value !== undefined) {
+          url.searchParams.set(key, value);
         }
       }
     }
