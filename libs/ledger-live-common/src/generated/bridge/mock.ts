@@ -3,8 +3,8 @@ import bitcoin from "../../families/bitcoin/bridge/mock";
 import cardano from "../../families/cardano/bridge/mock";
 import casper from "../../families/casper/bridge/mock";
 import cosmos from "../../families/cosmos/bridge/mock";
-import icon from "../../families/icon/bridge/mock";
 import evm from "../../families/evm/bridge/mock";
+import icon from "../../families/icon/bridge/mock";
 import polkadot from "../../families/polkadot/bridge/mock";
 import ripple from "../../families/ripple/bridge/mock";
 import solana from "../../families/solana/bridge/mock";
@@ -20,6 +20,7 @@ export default {
   casper,
   cosmos,
   evm,
+  icon,
   polkadot,
   ripple,
   solana,
@@ -27,5 +28,4 @@ export default {
   tezos,
   tron,
   vechain,
-  icon,
 };

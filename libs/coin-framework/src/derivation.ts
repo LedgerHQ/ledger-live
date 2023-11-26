@@ -200,6 +200,7 @@ const modes = Object.freeze({
   },
   icon: {
     overridesDerivation: "44'/4801368'/0'/0'/<account>'",
+  },
   vechain: {
     overridesDerivation: "44'/818'/0'/0/<account>",
   },

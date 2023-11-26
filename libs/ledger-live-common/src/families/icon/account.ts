@@ -34,27 +34,27 @@ function formatAccountSpecifics(account: IconAccount): string {
   return str;
 }
 
-function formatOperationSpecifics(op: Operation, unit: Unit | null | undefined): string {
-  const { additionalField } = op.extra;
+// function formatOperationSpecifics(op: Operation, unit: Unit | null | undefined): string {
+//   const { extra }  = op;
 
-  let str = " ";
+//   let str = " ";
 
-  const formatConfig = {
-    disableRounding: true,
-    alwaysShowSign: false,
-    showCode: true,
-    subMagnitude: 2,
-  };
+//   const formatConfig = {
+//     disableRounding: true,
+//     alwaysShowSign: false,
+//     showCode: true,
+//     subMagnitude: 2,
+//   };
 
-  str +=
-    additionalField && !Number.isNaN(additionalField)
-      ? `\n    additionalField: ${
-          unit ? formatCurrencyUnit(unit, additionalField, formatConfig) : additionalField
-        }`
-      : "";
+//   str +=
+//   extra && !Number.isNaN(extra)
+//       ? `\n    additionalField: ${
+//           unit ? formatCurrencyUnit(unit, extra, formatConfig) : extra
+//         }`
+//       : "";
 
-  return str;
-}
+//   return str;
+// }
 
 export function fromOperationExtraRaw(extra: any | null | undefined) {
   if (extra && extra.additionalField) {
@@ -78,7 +78,7 @@ export function toOperationExtraRaw(extra: any | null | undefined) {
 
 export default {
   formatAccountSpecifics,
-  formatOperationSpecifics,
+  //formatOperationSpecifics,
   fromOperationExtraRaw,
   toOperationExtraRaw,
 };
