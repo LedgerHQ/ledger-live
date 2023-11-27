@@ -14,8 +14,8 @@ import type { Action, Device } from "./types";
 import { currentMode } from "./app";
 import { defaultImplementationConfig, getImplementation } from "./implementations";
 
-// 5 minutes
-const CONNECTION_TIMEOUT_MS = 300000;
+// 2 minutes
+const CONNECTION_TIMEOUT_MS = 120000;
 
 type State = {
   isLoading: boolean;
