@@ -46,7 +46,15 @@ type PollingImplementationParams<Request, EmittedEvents> = {
   task: (params: { deviceId: string; request: Request }) => Observable<EmittedEvents>;
   request: Request;
   config?: PollingImplementationConfig;
+  // retryableWithDelayDisconnectedErrors has default value of [DisconnectedDevice, DisconnectedDeviceDuringOperation]
+  // used to filter which error(s) retry polling after a delay, reconnectWaitTime
+  retryableWithDelayDisconnectedErrors?: ReadonlyArray<ErrorConstructor>;
 };
+
+const defaultRetryableWithDelayDisconnectedErrors: ReadonlyArray<ErrorConstructor> = [
+  DisconnectedDevice,
+  DisconnectedDeviceDuringOperation,
+];
 
 const defaultConfig: PollingImplementationConfig = {
   pollingFrequency: 2000,
@@ -147,17 +155,16 @@ const pollingImplementation: Implementation = <SpecificType, GenericRequestType>
 
             debounce((event: EmittedEvent<SpecificType> | ImplementationEvent) => {
               if (event.type === "error" && "error" in event) {
+                const allowedRetryableErrors =
+                  params.retryableWithDelayDisconnectedErrors ||
+                  defaultRetryableWithDelayDisconnectedErrors;
                 const error = event.error as unknown;
-                if (
-                  // Delay emission of disconnects to allow reconnection.
-                  error instanceof DisconnectedDevice ||
-                  error instanceof DisconnectedDeviceDuringOperation
-                ) {
+                if (allowedRetryableErrors.find(e => error instanceof e)) {
+                  // Delay emission of allowed disconnects to allow reconnection.
                   return timer(reconnectWaitTime);
-                } else {
-                  // Other errors should cancel the loop.
-                  shouldStopPolling = true;
                 }
+                // Other errors should cancel the loop.
+                shouldStopPolling = true;
               }
               // All other events pass through.
               return of(null);
