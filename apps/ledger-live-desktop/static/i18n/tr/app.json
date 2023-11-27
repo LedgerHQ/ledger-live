@@ -284,7 +284,7 @@
     "lend" : "Borç ver",
     "catalog" : "Keşfet",
     "market" : "Piyasa",
-    "recover" : "Ledger Recover"
+    "recover" : "[L] Recover"
   },
   "stars" : {
     "placeholder" : "Favori hesaplarınızı yıldızlayarak burada görüntüleyebilirsiniz.",
@@ -1166,11 +1166,13 @@
       },
       "pinContent" : {
         "title" : "PIN kodu",
+        "titleCompleted" : "PIN kodu belirlendi",
         "description" : "Tüm parolalar ve giriş kodları gibi PIN Kodu da {{productName}} cihazınızın kilidini açmanızı ve istenmeyen erişimleri önlemenizi sağlar.",
         "continueOnDevice" : "{{productName}} cihazınızda PIN Kodunuzu belirleyin"
       },
       "seedContent" : {
         "title" : "Gizli Kurtarma İfadesi",
+        "titleCompleted" : "Gizli Kurtarma İfadesi onaylandı",
         "recoverSeed" : "Yer tutucu: Recover",
         "restoreSeed" : "Varlıklarınızın azami düzeyde güvenliği için Ledger cihazı tarafından oluşturulan bir Gizli Kurtarma İfadesi kullandığınızdan emin olun.\n\nGizli Kurtarma İfadeniz yok mu? Yeni bir İfade oluşturmak için {{productName}} cihazınızı kullanın.",
         "selection" : "Size en uygun kurulum seçeneğini belirleyin:",
@@ -1250,12 +1252,14 @@
       },
       "installApplications" : {
         "title" : "{{productName}} cihazında uygulamalar yükleyin",
+        "titleCompleted" : "Uygulamalar {{productName}} cihazına yüklendi",
         "install" : "Yükle",
         "skip" : "Daha sonra yapacağım",
         "info" : "{{deviceName}} cihazındaki uygulamalar işlemleri onaylamak için kullanılır. İstediğiniz zaman bu uygulamaları ekleyebilir ve silebilirsiniz."
       },
       "endOfSetup" : {
-        "title" : "Kurulum sonu"
+        "title" : "Kurulum sonu",
+        "titleCompleted" : "{{deviceName}} hazır"
       },
       "softwareCheckAllowSecureChannelDrawer" : {
         "title" : "Orijinallik Denetimini başlatmak için “Allow” (İzin Ver) seçeneğine dokunun"
@@ -1355,7 +1359,7 @@
       "description" : "Compound protokolüne stabil coin borç vererek hemen faiz getirisi kazanmaya başlayın"
     },
     "blackfriday" : {
-      "title" : "EFSANE CUMA ",
+      "title" : "BLACK FRIDAY ",
       "description" : "BLACKFRIDAY20 promosyon koduyla Ledger donanım cüzdanlarda %40'lık indirimden yararlanın"
     },
     "referralProgram" : {
@@ -1407,6 +1411,26 @@
       "earn" : {
         "title" : "Stake et",
         "description" : "Ledger ile kripto bakiyenizi artırın"
+      }
+    },
+    "recoverBanner" : {
+      "subscribeDone" : {
+        "title" : "Finish adding your payment card",
+        "description" : "Restore reliably with Ledger Recover.",
+        "primaryCta" : "Add card",
+        "secondaryCta" : "Belki sonra"
+      },
+      "verifyIdentity" : {
+        "title" : "Finish verifying your identity",
+        "description" : "Restore reliably with Ledger Recover.",
+        "primaryCta" : "Verify",
+        "secondaryCta" : "Belki sonra"
+      },
+      "connectDevice" : {
+        "title" : "Ledger'ınızı bağlayın",
+        "description" : "You're 1 step away from Ledger Recover.",
+        "primaryCta" : "Connect",
+        "secondaryCta" : "Belki sonra"
       }
     }
   },
@@ -1903,10 +1927,12 @@
     "modal" : {
       "title" : "{{productName}} Güncellemesi",
       "steps" : {
-        "preparingUpdate" : "Ayarlarınız ve uygulamalarınız yedekleniyor",
+        "preparingUpdate" : "Backing up your settings\nand apps",
         "transferringUpdate" : "Güncelleme {{productName}} cihazına aktarılıyor",
         "prepare" : "Güncelleme hazırlanıyor",
+        "prepareDone" : "Update ready\nto install",
         "install" : "Güncelleme yükleniyor",
+        "installDone" : "Update\ninstalled",
         "restore" : "Ayarlarınız geri yükleniyor",
         "apps" : "Uygulamaları geri yükleyin",
         "updateMCU" : "Donanım yazılımı güncellemesi",
@@ -1915,12 +1941,13 @@
         "osu" : "OSU Yükleniyor...",
         "flash-mcu" : "MCU güncelleniyor...",
         "flash-bootloader" : "Bootloader güncelleniyor...",
-        "progress" : "Güncelleme yükleniyor {{current}}/{{total}}",
+        "progress" : "Güncelleme yükleniyor",
+        "progressStep" : "Güncelleme yükleniyor {{current}}/{{total}}",
         "firmware" : "Donanım yazılımı güncelleniyor...",
         "flash" : "Cihazınız hazırlanıyor..."
       },
       "confirmIdentifier" : "Tanımlayıcıyı doğrulayın",
-      "confirmIdentifierText" : "İşletim sistemi güncellemesini başlatmak için “Yükle” seçeneğine dokunun",
+      "confirmIdentifierText" : "Tap on “Install” to\nstart the OS update",
       "identifier" : "Tanımlayıcı",
       "newFirmware" : "Yeni donanım yazılımı {{version}}",
       "confirmUpdate" : "Lütfen cihazınızdaki güncellemeyi onaylayın",
@@ -1928,10 +1955,11 @@
       "mcuFirst" : "USB kablosunu cihazınızdan çıkartın",
       "mcuSecond" : "Sol tuşa basın ve basılı tutarken USB kablosunu tekrar bağlayıp, <1><0>{{repairProcessing}}</0></1> ekranı görünene kadar basılı tutmaya devam edin",
       "mcuPin" : "Lütfen güncellemenin bitmesini bekleyin",
+      "mcuRestart" : "{{device}} might restart multiple times.",
       "mcuSecondNanoX" : "<1><0>{{bootloaderOption}}</0></1> görünene kadar sol tuşa basılı tutun. Onaylamak ve cihazınızı tekrar bağlamak için her iki tuşa da basın.",
       "mcuBlueFirst" : "Cihazı kapatmak için yan tuşu 10 saniye basılı tutun. Tuşu bırakın.",
       "mcuBlueSecond" : "Başlatma Seçenekleri görüntülenene kadar tuşu en az 5 saniye basılı tutun. Bootlader Moduna dokunun",
-      "successTitle" : "{{deviceName}} işletim sisteminiz güncel.",
+      "successTitle" : "Your {{deviceName}} OS is\nup to date.",
       "sucessCTAApps" : "Uygulamaları yeniden yükle",
       "SuccessCTANoApps" : "Uygulama yükleyin",
       "cancelReinstallCTA" : "Güncellemeyi yükle",
@@ -3554,6 +3582,9 @@
       }
     }
   },
+  "graph" : {
+    "noGraphWarning" : "Grafik bu token için mevcut değil"
+  },
   "near" : {
     "account" : {
       "stakedBalance" : "Stake bakiyesi",
@@ -4099,8 +4130,7 @@
     "updateAvailable" : "Ledger Live {{version}} sürüm güncellemesi mevcut",
     "error" : "Güncelleme sırasında bir hata oluştu. Lütfen tekrar indirin",
     "reDownload" : "Tekrar indir",
-    "nightlyWarning" : "Bu sürüm otomatik olarak güncellenemez. Lütfen en son sürümü manuel olarak yükleyin",
-    "downloadNow" : "Güncellemeyi indir"
+    "nightlyWarning" : "Bu sürüm otomatik olarak güncellenemez. Lütfen en son sürümü manuel olarak yükleyin"
   },
   "crash" : {
     "title" : "Bir hata oluştu",
@@ -5257,6 +5287,18 @@
       "title" : "İşlem ücretlerini ödemek için yeterli EGLD yok",
       "description" : "İşlem ücretlerini ödemek için lütfen hesabınıza bir miktar EGLD gönderin."
     },
+    "NotEnoughVTHO" : {
+      "title" : "Üzgünüz, VTHO fon miktarı yetersiz",
+      "description" : "Hesabınızdaki VTHO miktarının yeterli olduğundan lütfen emin olun."
+    },
+    "MustBeVechain" : {
+      "title" : "VeChain hesabı değil",
+      "description" : "Coin'in VTHO veya VET olduğundan lütfen emin olun"
+    },
+    "ImpossibleToCalculateAmountAndFees" : {
+      "title" : "Miktarı ve ücretleri hesaplamak mümkün değil",
+      "description" : "Miktarı ve ücretleri hesaplamak mümkün değil"
+    },
     "NotEnoughBalance" : {
       "title" : "Üzgünüz, fon miktarı yetersiz",
       "description" : "Hesabınızdaki fon miktarının yeterli olduğundan lütfen emin olun."
@@ -5914,7 +5956,6 @@
     },
     "progress" : {
       "loading" : "Yükleniyor...",
-      "resolving" : "Gereksinimler çözülüyor",
       "progress" : "Uygulamalar yüklenirken Ledger Live'dan ayrılmayın.",
       "disclaimer" : "Ledger Live üzerinden uygulamaları istediğiniz zaman ekleyip kaldırabilirsiniz.",
       "skippedInfo" : "Bazı uygulamalar mevcut değil. Henüz {{ productName }} için geliştirilmediler.",
