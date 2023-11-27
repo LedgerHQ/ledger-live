@@ -72,6 +72,7 @@ const Tag = styled(Link)`
 `;
 
 const CustomTag = styled(TagComponent)`
+  margin: 0px;
   border-radius: 6px;
   padding: 2px 6px 2px 6px;
 `;
@@ -463,7 +464,6 @@ const MainSideBar = () => {
                     isActive={location.pathname === "/earn"}
                     collapsed={secondAnim}
                     NotifComponent={
-                      // @ts-expect-error TODO doesn't exist yet in our types
                       ptxEarnConfig?.params?.isNew ? (
                         <CustomTag active type="plain" size="small">
                           {t("common.new")}
@@ -540,6 +540,13 @@ const MainSideBar = () => {
                     iconActiveColor="wallet"
                     onClick={handleClickRecover}
                     collapsed={secondAnim}
+                    NotifComponent={
+                      recoverFeature?.params?.isNew && (
+                        <CustomTag active type="plain" size="small">
+                          {t("common.new")}
+                        </CustomTag>
+                      )
+                    }
                   />
                 </FeatureToggle>
                 <SideBarListItem

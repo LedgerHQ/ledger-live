@@ -8,7 +8,7 @@ import { useFlipper } from "@react-navigation/devtools";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { DEFAULT_MULTIBUY_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
 
-import Braze from "react-native-appboy-sdk";
+import Braze from "@braze/react-native-sdk";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import * as Sentry from "@sentry/react-native";

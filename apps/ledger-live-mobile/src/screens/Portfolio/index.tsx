@@ -28,6 +28,7 @@ import { ScreenName } from "../../const";
 import FirmwareUpdateBanner from "../../components/FirmwareUpdateBanner";
 import CheckLanguageAvailability from "../../components/CheckLanguageAvailability";
 import CheckTermOfUseUpdate from "../../components/CheckTermOfUseUpdate";
+import RecoverBanner from "../../components/RecoverBanner";
 import PortfolioEmptyState from "./PortfolioEmptyState";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 import SectionContainer from "../WalletCentricSections/SectionContainer";
@@ -147,6 +148,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
       <PortfolioGraphCard showAssets={showAssets} key="PortfolioGraphCard" />,
       showAssets ? (
         <Box background={colors.background.main} px={6} mt={6} key="PortfolioAssets">
+          <RecoverBanner />
           <PortfolioAssets
             hideEmptyTokenAccount={hideEmptyTokenAccount}
             openAddModal={openAddModal}
@@ -181,9 +183,10 @@ function PortfolioScreen({ navigation }: NavigationProps) {
           ]
         : [
             // If the user has no accounts we display an empty state
-            <Box mx={6} mt={12} key="PortfolioEmptyState">
+            <Flex flexDirection="column" rowGap={30} mx={6} key="PortfolioEmptyState">
+              <RecoverBanner />
               <PortfolioEmptyState openAddAccountModal={openAddModal} />
-            </Box>,
+            </Flex>,
           ]),
     ],
     [

@@ -27,10 +27,7 @@ async function listTsJsFilesPairs() {
   return executeAsync('git ls-files | grep -e ".\\.ts$" -e ".\\.tsx$"')
     .then(res =>
       res.split("\n").forEach(path => {
-        const beforeExtensionPath = path
-          .split(".")
-          .slice(0, -1)
-          .join(".");
+        const beforeExtensionPath = path.split(".").slice(0, -1).join(".");
         const jsFilePath = `${beforeExtensionPath}.js`;
         if (jsFilesPath[jsFilePath]) {
           jsTsPairs.push({

@@ -188,11 +188,7 @@ function NotificationsSettings() {
             ) : null}
           </Box>
           <Box m={6}>
-            <Text
-              color={notifications.areNotificationsAllowed ? "neutral.c40" : "neutral.c70"}
-              variant={"small"}
-              textAlign="center"
-            >
+            <Text color="neutral.c70" variant="small" textAlign="center">
               {t("settings.notifications.disclaimer")}
             </Text>
           </Box>

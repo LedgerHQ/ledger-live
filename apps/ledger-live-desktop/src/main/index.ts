@@ -79,7 +79,7 @@ app.on("ready", async () => {
     setUserId(userId);
     sentry(() => {
       const value = getSentryEnabled();
-      if (value === null) return settings?.sentryLogs;
+      if (value === undefined) return settings?.sentryLogs;
       return value;
     }, userId);
   }

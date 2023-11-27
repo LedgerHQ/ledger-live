@@ -10,9 +10,9 @@ import type {
 import {
   isCurrencySupported,
   listTokens,
-  useCurrenciesByMarketcap,
   listSupportedCurrencies,
 } from "@ledgerhq/live-common/currencies/index";
+import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";
 import { useTheme } from "@react-navigation/native";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
@@ -53,6 +53,9 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const { colors } = useTheme();
   const devMode = useEnv("MANAGER_DEV_MODE");
   const { filterCurrencyIds = [], currency } = route.params || {};
+  const filteredCurrencyIds = useMemo(() => new Set(filterCurrencyIds), [filterCurrencyIds]);
+
+  const mock = useEnv("MOCK");
 
   const axelar = useFeature("currencyAxelar");
   const stargaze = useFeature("currencyStargaze");
@@ -89,8 +92,8 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const base = useFeature("currencyBase");
   const baseGoerli = useFeature("currencyBaseGoerli");
   const klaytn = useFeature("currencyKlaytn");
-  const mock = useEnv("MOCK");
   const injective = useFeature("currencyInjective");
+  const vechain = useFeature("currencyVechain");
   const casper = useFeature("currencyCasper");
   const neonEvm = useFeature("currencyNeonEvm");
   const lukso = useFeature("currencyLukso");
@@ -133,6 +136,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       base_goerli: baseGoerli,
       klaytn,
       injective,
+      vechain,
       casper,
       neon_evm: neonEvm,
       lukso,
@@ -174,6 +178,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       baseGoerli,
       klaytn,
       injective,
+      vechain,
       casper,
       neonEvm,
       lukso,
@@ -181,22 +186,34 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   );
 
   const cryptoCurrencies = useMemo(() => {
-    const currencies = [...listSupportedCurrencies(), ...listSupportedTokens()].filter(
-      ({ id }) => filterCurrencyIds.length <= 0 || filterCurrencyIds.includes(id),
-    );
-    const deactivatedCurrencies = mock
-      ? []
-      : Object.entries(featureFlaggedCurrencies)
-          .filter(([, feature]) => !feature?.enabled)
-          .map(([name]) => name);
+    const supportedCurrenciesAndTokens: CryptoOrTokenCurrency[] = [
+      ...listSupportedCurrencies(),
+      ...listSupportedTokens(),
+    ];
 
-    const currenciesFiltered = currencies.filter(c => !deactivatedCurrencies.includes(c.id));
+    const deactivatedCurrencyIds = new Set(
+      mock
+        ? []
+        : Object.entries(featureFlaggedCurrencies)
+            .filter(([, feature]) => !feature?.enabled)
+            .map(([id]) => id),
+    );
+
+    const currenciesFiltered = supportedCurrenciesAndTokens.filter(c => {
+      const id = c.type === "CryptoCurrency" ? c.id : c.parentCurrency.id;
+      return (
+        // If there's a filter the currency must be part of it
+        (!filteredCurrencyIds.size || filteredCurrencyIds.has(c.id)) &&
+        // The currency is not part of the deactivated features
+        !deactivatedCurrencyIds.has(id)
+      );
+    });
 
     if (!devMode) {
       return currenciesFiltered.filter(c => c.type !== "CryptoCurrency" || !c.isTestnetFor);
     }
     return currenciesFiltered;
-  }, [devMode, featureFlaggedCurrencies, filterCurrencyIds, mock]);
+  }, [devMode, featureFlaggedCurrencies, filteredCurrencyIds, mock]);
 
   const sortedCryptoCurrencies = useCurrenciesByMarketcap(cryptoCurrencies);
 

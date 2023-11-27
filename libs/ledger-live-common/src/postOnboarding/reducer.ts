@@ -10,6 +10,7 @@ export const initialState: PostOnboardingState = {
   actionsToComplete: [],
   actionsCompleted: {},
   lastActionCompleted: null,
+  postOnboardingInProgress: false,
 };
 
 type PartialNewStatePayload = { newState: Partial<PostOnboardingState> };
@@ -33,6 +34,7 @@ const handlers: ReducerMap<PostOnboardingState, Payload> = {
       actionsToComplete: actionsIds,
       actionsCompleted: Object.fromEntries(actionsIds.map(id => [id, false])),
       lastActionCompleted: null,
+      postOnboardingInProgress: true,
     };
   },
   POST_ONBOARDING_SET_ACTION_COMPLETED: (state, { payload }) => {
@@ -51,6 +53,11 @@ const handlers: ReducerMap<PostOnboardingState, Payload> = {
   POST_ONBOARDING_HIDE_WALLET_ENTRY_POINT: state => ({
     ...state,
     walletEntryPointDismissed: true,
+  }),
+
+  POST_ONBOARDING_SET_FINISHED: state => ({
+    ...state,
+    postOnboardingInProgress: false,
   }),
 };
 
@@ -83,13 +90,19 @@ export const postOnboardingSelector: Selector<
 );
 
 export const hubStateSelector = createSelector(postOnboardingSelector, postOnboarding => {
-  const { deviceModelId, actionsToComplete, actionsCompleted, lastActionCompleted } =
-    postOnboarding;
+  const {
+    deviceModelId,
+    actionsToComplete,
+    actionsCompleted,
+    lastActionCompleted,
+    postOnboardingInProgress,
+  } = postOnboarding;
   return {
     deviceModelId: sanitizeDeviceModelId(deviceModelId),
     actionsToComplete,
     actionsCompleted,
     lastActionCompleted,
+    postOnboardingInProgress,
   };
 });
 

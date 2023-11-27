@@ -249,6 +249,7 @@ test("Wallet API methods @smoke", async ({ page }) => {
     });
 
     await deviceAction.openApp();
+    await deviceAction.complete();
     await modal.waitForModalToDisappear();
     await expect(response).resolves.toStrictEqual({
       id,

@@ -1,0 +1,20 @@
+name: build-checks
+description: Perform build checks to compare performance metrics like bundle size,...
+author: valpinkman
+inputs:
+  token:
+    description: github token to push a comment
+    required: true
+  baseBranch:
+    description: base branch name
+    required: true
+  mode:
+    description: either `desktop` or `mobile`
+    required: true
+  prNumber:
+    description: pull request number
+    required: true
+
+runs:
+  using: node20
+  main: build/main.js

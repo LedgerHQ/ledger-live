@@ -58,7 +58,9 @@ export default function StepClaimRewards({
       locale,
     });
   const onDelegationChange = useCallback(
-    ({ validatorAddress, pendingRewards }: CosmosMappedDelegation) => {
+    (maybeValue: CosmosMappedDelegation | null | undefined) => {
+      if (!maybeValue) return;
+      const { validatorAddress, pendingRewards } = maybeValue;
       updateClaimRewards({
         ...transaction,
         validators: [
@@ -101,7 +103,6 @@ export default function StepClaimRewards({
         transaction={transaction}
         account={account}
         t={t}
-        // @ts-expect-error the underlying select can accept null and undefined
         onChange={onDelegationChange}
       />
     </Box>

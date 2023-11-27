@@ -54,11 +54,12 @@ import type {
 } from "../../../components/RootNavigator/types/helpers";
 import type { PolkadotNominateFlowParamList } from "./types";
 import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
-import Identicon from "@polkadot/reactnative-identicon";
+import FirstLetterIcon from "~/components/FirstLetterIcon";
 
 type Props = BaseComposite<
   StackNavigatorProps<PolkadotNominateFlowParamList, ScreenName.PolkadotNominateSelectValidators>
 >;
+
 function NominateSelectValidator({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
@@ -256,11 +257,7 @@ function NominateSelectValidator({ navigation, route }: Props) {
         isOpen={drawerInfo && drawerInfo.length > 0}
         onClose={onCloseDrawer}
         account={account}
-        ValidatorImage={({ size }) =>
-          drawerValidator ? (
-            <Identicon value={drawerValidator.address} size={size} theme="polkadot" />
-          ) : null
-        }
+        ValidatorImage={() => <FirstLetterIcon label={drawerValidator?.identity || "-"} />}
         data={drawerInfo}
       />
       <View>

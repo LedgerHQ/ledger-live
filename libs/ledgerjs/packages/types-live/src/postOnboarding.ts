@@ -11,6 +11,7 @@ export enum PostOnboardingActionId {
   customImage = "customImage",
   claimNft = "claimNft",
   assetsTransfer = "assetsTransfer",
+  buyCrypto = "buyCrypto",
 }
 
 export type WithNavigationParams = {
@@ -135,6 +136,11 @@ export type PostOnboardingState = {
    * onboarding hub UI depending on the last action that was completed.
    */
   lastActionCompleted: PostOnboardingActionId | null;
+
+  /**
+   * Did the user started the PostOnboarding without closing or finishing it ?
+   */
+  postOnboardingInProgress: boolean;
 };
 
 /**
@@ -145,4 +151,5 @@ export type PostOnboardingHubState = {
   deviceModelId: DeviceModelId | null;
   lastActionCompleted: PostOnboardingAction | null;
   actionsState: (PostOnboardingAction & PostOnboardingActionState)[];
+  postOnboardingInProgress: boolean;
 };

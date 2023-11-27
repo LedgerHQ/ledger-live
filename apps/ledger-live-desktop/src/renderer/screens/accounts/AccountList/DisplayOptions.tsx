@@ -14,9 +14,9 @@ function DisplayOptions() {
   const mode = useSelector(accountsViewModeSelector);
   return (
     <>
-      <AccountsRange />
+      <AccountsOrder />
       <Box ml={4} mr={4}>
-        <AccountsOrder />
+        <AccountsRange />
       </Box>
       <ToggleButton
         event="Account view table"
