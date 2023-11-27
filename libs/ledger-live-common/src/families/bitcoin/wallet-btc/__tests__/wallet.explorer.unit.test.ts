@@ -131,24 +131,6 @@ describe("BitcoinApi", () => {
     });
   });
 
-  describe("getRelayFee unit test", () => {
-    beforeEach(() => {
-      // @ts-expect-error method is mocked
-      network.mockResolvedValue({
-        data: {
-          relay_fee: "0.00001000",
-          incremental_fee: "0.00001000",
-          version: "210100",
-          subversion: "/Satoshi:0.21.1/",
-        },
-      });
-    });
-    it("getRelayFee api should return relay fee that is greater than 0 by using /network endpoint", async () => {
-      const relayFee = await explorer.getRelayFee();
-      expect(relayFee).toBeGreaterThan(0);
-    });
-  });
-
   describe("getFees unit test", () => {
     beforeEach(() => {
       // @ts-expect-error method is mocked

@@ -284,7 +284,7 @@
     "lend": "Lend",
     "catalog": "Discover",
     "market": "Market",
-    "recover": "Ledger Recover"
+    "recover": "[L] Recover"
   },
   "stars": {
     "placeholder": "Star an account to display it here.",
@@ -1415,21 +1415,21 @@
     },
     "recoverBanner": {
       "subscribeDone": {
-        "title": "Add your payment card",
-        "description":"Add your payment method to get your backup secure.",
-        "primaryCta": "Add now",
+        "title": "Finish adding your payment card",
+        "description":"Restore reliably with Ledger Recover.",
+        "primaryCta": "Add card",
         "secondaryCta": "Maybe later"
       },
       "verifyIdentity": {
-        "title": "Verify your identity",
-        "description":"Verify your identity to get your backup secure.",
-        "primaryCta": "Verify now",
+        "title": "Finish verifying your identity",
+        "description":"Restore reliably with Ledger Recover.",
+        "primaryCta": "Verify",
         "secondaryCta": "Maybe later"
       },
       "connectDevice": {
         "title": "Connect your Ledger",
-        "description":"Connect your Ledger to get your backup secure.",
-        "primaryCta": "Connect my Ledger",
+        "description":"You're 1 step away from Ledger Recover.",
+        "primaryCta": "Connect",
         "secondaryCta": "Maybe later"
       }
     }
@@ -1927,10 +1927,12 @@
     "modal": {
       "title": "{{productName}} OS update",
       "steps": {
-        "preparingUpdate": "Backing up your settings and apps",
+        "preparingUpdate": "Backing up your settings\nand apps",
         "transferringUpdate": "Transferring update to {{productName}}",
         "prepare": "Prepare update",
+        "prepareDone": "Update ready\nto install",
         "install": "Install update",
+        "installDone": "Update\ninstalled",
         "restore": "Restore settings",
         "apps": "Restore apps",
         "updateMCU": "Firmware update",
@@ -1939,12 +1941,13 @@
         "osu": "Installing OSU...",
         "flash-mcu": "MCU updating...",
         "flash-bootloader": "Bootloader updating...",
-        "progress": "Installing update {{current}}/{{total}}",
+        "progress": "Installing update",
+        "progressStep": "Installing update {{current}}/{{total}}",
         "firmware": "Firmware updating...",
         "flash": "Preparing your device..."
       },
       "confirmIdentifier": "Verify the identifier",
-      "confirmIdentifierText": "Tap on “Install” to start the OS update",
+      "confirmIdentifierText": "Tap on “Install” to\nstart the OS update",
       "identifier": "Identifier",
       "newFirmware": "New firmware {{version}}",
       "confirmUpdate": "Please confirm the update on your device",
@@ -1952,10 +1955,11 @@
       "mcuFirst": "Disconnect the USB cable from your device",
       "mcuSecond": "Press the left button and hold it while you reconnect the USB cable until the <1><0>{{repairProcessing}}</0></1> screen appears",
       "mcuPin": "Please wait for the update to finish",
+      "mcuRestart": "{{device}} might restart multiple times.",
       "mcuSecondNanoX": "Press and hold the left button until <1><0>{{bootloaderOption}}</0></1> appears. Press both buttons to confirm and reconnect your device.",
       "mcuBlueFirst": "Press and hold the side button for 10 seconds to turn off the device. Release the button.",
       "mcuBlueSecond": "Press and hold the button for at least 5 seconds until the Boot Options are displayed. Tap Bootloader Mode",
-      "successTitle": "Your {{deviceName}} OS is up to date.",
+      "successTitle": "Your {{deviceName}} OS is\nup to date.",
       "sucessCTAApps": "Reinstall apps",
       "SuccessCTANoApps": "Install apps",
       "cancelReinstallCTA": "Install update",
@@ -4146,8 +4150,7 @@
     "updateAvailable": "Update to Ledger Live version {{version}} is available",
     "error": "Error during update. Please download again",
     "reDownload": "Download again",
-    "nightlyWarning": "This version cannot auto-update. Please install the latest version manually",
-    "downloadNow": "Download update"
+    "nightlyWarning": "This version cannot auto-update. Please install the latest version manually"
   },
   "crash": {
     "title": "Something went wrong",

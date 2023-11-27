@@ -73,9 +73,7 @@ const quitAndInstall = () => {
   });
   autoUpdater.quitAndInstall();
 };
-const downloadUpdate = () => autoUpdater.downloadUpdate();
 init();
 export default {
   quitAndInstall,
-  downloadUpdate,
 };
