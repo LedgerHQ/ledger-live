@@ -5,6 +5,7 @@ import { Trans } from "react-i18next";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
 import type { CardanoAccount } from "@ledgerhq/live-common/families/cardano/types";
 import { NavigatorName, ScreenName } from "../../const";
+import { NavigationParamsType } from "../../components/FabActions";
 
 const getMainActions = ({
   account,
@@ -15,7 +16,7 @@ const getMainActions = ({
   parentAccount: Account;
   parentRoute: RouteProp<ParamListBase, ScreenName>;
 }) => {
-  const navigationParams = [
+  const navigationParams: NavigationParamsType = [
     NavigatorName.CardanoDelegationFlow,
     {
       screen: ScreenName.CardanoDelegationStarted,
