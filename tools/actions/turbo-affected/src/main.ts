@@ -8,7 +8,7 @@ async function main() {
 
   try {
     const turboOutput = execSync(
-      `npx turbo@^1.10.1 run ${command} --filter=...[${ref}] --dry=json`,
+      `npx turbo@^1.10.16 run ${command} --filter=...[${ref}] --dry=json`,
       {
         encoding: "utf-8",
         maxBuffer: 2048 * 1024,
