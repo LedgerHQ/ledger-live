@@ -284,7 +284,7 @@
     "lend" : "Prêter",
     "catalog" : "Discover",
     "market" : "Marché",
-    "recover" : "Ledger Recover"
+    "recover" : "[L] Recover"
   },
   "stars" : {
     "placeholder" : "Mettez une étoile sur un compte pour l’afficher ici.",
@@ -1166,11 +1166,13 @@
       },
       "pinContent" : {
         "title" : "Code PIN",
+        "titleCompleted" : "Code PIN configuré",
         "description" : "Comme tout mot de passe ou code d’accès, le code PIN vous permet de déverrouiller votre {{productName}} et de le protéger contre tout accès indésirable.",
         "continueOnDevice" : "Définissez votre code PIN sur votre {{productName}}"
       },
       "seedContent" : {
         "title" : "Phrase de récupération secrète",
+        "titleCompleted" : "Phrase de récupération secrète confirmée",
         "recoverSeed" : "Placeholder : Ledger Recover",
         "restoreSeed" : "Pour une sécurité optimale, utilisez une phrase de récupération secrète générée par un appareil Ledger.\n\nVous n’en n’avez pas ? Générez une nouvelle phrase avec votre {{productName}}.",
         "selection" : "Choisissez votre option de configuration :",
@@ -1250,12 +1252,14 @@
       },
       "installApplications" : {
         "title" : "Installez des apps sur votre {{productName}}",
+        "titleCompleted" : "Apps installées sur votre {{productName}}",
         "install" : "Installer",
         "skip" : "Plus tard",
         "info" : "Les apps sur votre {{deviceName}} vous permettent de valider vos opérations. Vous pouvez les ajouter ou supprimer à tout moment."
       },
       "endOfSetup" : {
-        "title" : "Configuration terminée"
+        "title" : "Configuration terminée",
+        "titleCompleted" : "Votre {{deviceName}} est prêt"
       },
       "softwareCheckAllowSecureChannelDrawer" : {
         "title" : "Touchez Autoriser pour lancer la vérification de l’authenticité"
@@ -1407,6 +1411,26 @@
       "earn" : {
         "title" : "Staker",
         "description" : "Faites fructifier vos crypto-actifs via Ledger."
+      }
+    },
+    "recoverBanner" : {
+      "subscribeDone" : {
+        "title" : "Finish adding your payment card",
+        "description" : "Restore reliably with Ledger Recover.",
+        "primaryCta" : "Add card",
+        "secondaryCta" : "Pas maintenant"
+      },
+      "verifyIdentity" : {
+        "title" : "Finish verifying your identity",
+        "description" : "Restore reliably with Ledger Recover.",
+        "primaryCta" : "Vérifier",
+        "secondaryCta" : "Pas maintenant"
+      },
+      "connectDevice" : {
+        "title" : "Connectez votre appareil Ledger",
+        "description" : "You're 1 step away from Ledger Recover.",
+        "primaryCta" : "Connecter",
+        "secondaryCta" : "Pas maintenant"
       }
     }
   },
@@ -1903,10 +1927,12 @@
     "modal" : {
       "title" : "Mise à jour de votre {{productName}}",
       "steps" : {
-        "preparingUpdate" : "Sauvegarde de vos paramètres et apps",
+        "preparingUpdate" : "Backing up your settings\nand apps",
         "transferringUpdate" : "Transfert de la mise à jour vers votre {{productName}}",
         "prepare" : "Préparation",
+        "prepareDone" : "Update ready\nto install",
         "install" : "Installation",
+        "installDone" : "Update\ninstalled",
         "restore" : "Restauration réglages",
         "apps" : "Restauration apps",
         "updateMCU" : "Mise à jour du micrologiciel",
@@ -1915,12 +1941,13 @@
         "osu" : "Installation de l’OSU...",
         "flash-mcu" : "Mise à jour du MCU...",
         "flash-bootloader" : "Mise à jour du Bootloader...",
-        "progress" : "Installation de la mise à jour {{current}}/{{total}}",
+        "progress" : "Installation de la mise à jour",
+        "progressStep" : "Installation de la mise à jour {{current}}/{{total}}",
         "firmware" : "Mise à jour du micrologiciel...",
         "flash" : "Préparation de votre appareil..."
       },
       "confirmIdentifier" : "Vérifier l’identifiant",
-      "confirmIdentifierText" : "Appuyez sur Installer pour lancer la mise à jour",
+      "confirmIdentifierText" : "Tap on “Install” to\nstart the OS update",
       "identifier" : "Identifiant",
       "newFirmware" : "Nouveau micrologiciel {{version}}",
       "confirmUpdate" : "Confirmez la mise à jour sur votre appareil.",
@@ -1928,10 +1955,11 @@
       "mcuFirst" : "Déconnectez le câble USB de votre appareil.",
       "mcuSecond" : "Maintenez le bouton gauche enfoncé tout en reconnectant le câble USB jusqu’à ce que l’écran <1><0>{{repairProcessing}}</0></1> apparaisse.",
       "mcuPin" : "Veuillez attendre que la mise à jour soit terminée.",
+      "mcuRestart" : "Votre {{device}} pourrait redémarrer plusieurs fois.",
       "mcuSecondNanoX" : "Maintenez le bouton gauche enfoncé jusqu’à ce que <1><0>{{bootloaderOption}}</0></1> apparaisse. Appuyez sur les deux boutons pour confirmer et reconnecter votre appareil.",
       "mcuBlueFirst" : "Appuyez sur le bouton latéral pendant 10 secondes pour éteindre l’appareil. Relâchez le bouton.",
       "mcuBlueSecond" : "Faites un appui long sur le bouton pendant au moins 5 secondes jusqu’à ce que les options de Boot apparaissent. Sélectionnez le mode Bootloader.",
-      "successTitle" : "Le système d’exploitation de votre {{deviceName}} est à jour.",
+      "successTitle" : "Your {{deviceName}} OS is\nup to date.",
       "sucessCTAApps" : "Réinstaller les apps",
       "SuccessCTANoApps" : "Installer des applications",
       "cancelReinstallCTA" : "Installer la mise à jour",
@@ -3554,6 +3582,9 @@
       }
     }
   },
+  "graph" : {
+    "noGraphWarning" : "Graphique non disponible pour ce token"
+  },
   "near" : {
     "account" : {
       "stakedBalance" : "Solde de staking",
@@ -4099,8 +4130,7 @@
     "updateAvailable" : "Mise à jour disponible vers la version Ledger Live {{version}}",
     "error" : "Erreur lors de la mise à jour. Merci de recommencer le téléchargement.",
     "reDownload" : "Recommencer le téléchargement",
-    "nightlyWarning" : "Cette version ne peut pas être mise à jour automatiquement. Merci d’installer la dernière version manuellement.",
-    "downloadNow" : "Télécharger la mise à jour"
+    "nightlyWarning" : "Cette version ne peut pas être mise à jour automatiquement. Merci d’installer la dernière version manuellement."
   },
   "crash" : {
     "title" : "Une erreur est survenue.",
@@ -5257,6 +5287,18 @@
       "title" : "Solde d’EGLD insuffisant pour payer les frais de transaction",
       "description" : "Envoyez des EGLD sur votre compte pour régler vos transactions."
     },
+    "NotEnoughVTHO" : {
+      "title" : "Solde en VTHO insuffisant",
+      "description" : "Votre compte doit avoir un solde en VTHO suffisant."
+    },
+    "MustBeVechain" : {
+      "title" : "Ce n’est pas un compte VeChain",
+      "description" : "La crypto doit être le VTHO ou le VET."
+    },
+    "ImpossibleToCalculateAmountAndFees" : {
+      "title" : "Impossible de calculer le montant et les frais",
+      "description" : "Impossible de calculer le montant et les frais"
+    },
     "NotEnoughBalance" : {
       "title" : "Solde insuffisant",
       "description" : "Vérifiez que ce compte a des fonds suffisants."
@@ -5914,7 +5956,6 @@
     },
     "progress" : {
       "loading" : "Chargement...",
-      "resolving" : "Installation des apps requises",
       "progress" : "Restez dans Ledger Live pendant l’installation.",
       "disclaimer" : "Ajoutez ou supprimez des apps à tout moment depuis Ledger Live.",
       "skippedInfo" : "Certaines apps ne sont pas disponibles. Elles doivent encore être développées pour le {{ productName }}.",
