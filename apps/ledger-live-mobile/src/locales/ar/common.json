@@ -430,7 +430,7 @@
         "description" : "المغادرة ستقوم بإلغاء عمليات تحديث التطبيقات قيد التقدم.",
         "stay" : "متابعة التحديث"
       },
-      "quit" : "مغادرة My Ledger"
+      "quit" : "مغادرة My Ledger (جهازي Ledger)"
     },
     "ManagerUninstallBTCDep" : {
       "title" : "عفواً، هذا التطبيق مطلوب",
@@ -467,6 +467,18 @@
     "ElrondDelegationBelowMinimumError" : {
       "title" : "لا يمكن أن يكون التفويض المتبقي أقل من {{formattedAmount}}"
     },
+    "NotEnoughVTHO" : {
+      "title" : "عذراً، أرصدة VTHO غير كافية",
+      "description" : "يُرجى التأكد من أن الحساب به ما يكفي من VTHO."
+    },
+    "MustBeVechain" : {
+      "title" : "ليس حساب vechain",
+      "description" : "يُرجى التأكد من أن العملة VTHO أو VET"
+    },
+    "ImpossibleToCalculateAmountAndFees" : {
+      "title" : "من المستحيل حساب المبلغ والرسوم",
+      "description" : "من المستحيل حساب المبلغ والرسوم"
+    },
     "NotEnoughEGLDForFees" : {
       "title" : "لا يوجد ما يكفي من EGLD لدفع رسوم المعاملة",
       "description" : "يُرجى إرسال بعض EGLD إلى حسابك للدفع مقابل المعاملات."
@@ -477,7 +489,7 @@
     },
     "NoSuchAppOnProvider" : {
       "title" : "لا يمكن العثور على التطبيق {{appName}} للتهيئة الخاصة بك.",
-      "description" : "حاول إعادة تثبيت التطبيق من My Ledger"
+      "description" : "حاول إعادة تثبيت التطبيق من My Ledger (جهازي Ledger)"
     },
     "NotEnoughGas" : {
       "title" : "رصيد الحساب الأصلي غير كاف لرسوم الشبكة",
@@ -1006,7 +1018,8 @@
     "week" : "1 أسبوع",
     "month" : "1 شهر",
     "year" : "1 سنة",
-    "all" : "الكل"
+    "all" : "الكل",
+    "graphNotSupported" : "الرسم البياني غير متاح لرمز التوكن هذا"
   },
   "carousel" : {
     "title" : "إغلاق الشريط ؟",
@@ -2209,6 +2222,20 @@
       "send" : "إرسال",
       "deposit" : "تلقي",
       "stake" : "تكديس"
+    },
+    "recoverBanner" : {
+      "subscribeDone" : {
+        "title" : "Finish adding your payment card",
+        "description" : "Restore reliably with Ledger Recover."
+      },
+      "verifyIdentity" : {
+        "title" : "Finish verifying your identity",
+        "description" : "Restore reliably with Ledger Recover."
+      },
+      "connectDevice" : {
+        "title" : "Final step: Connect your Ledger",
+        "description" : "You're 1 step away from Ledger Recover."
+      }
     }
   },
   "addAccountsModal" : {
@@ -2676,7 +2703,7 @@
       "reportErrors" : "تقارير الخلل",
       "reportErrorsDesc" : "إرسال التقارير تلقائياً لمساعدة Ledger في تحسين منتجاتها.",
       "developerMode" : "وضع المطور",
-      "developerModeDesc" : "اعرض تطبيقات المطور في My Ledger (جهازي Ledger) وقم بتمكين تطبيقات Testnet.",
+      "developerModeDesc" : "عرض تطبيقات المطور في My Ledger (جهازي Ledger) وتمكين تطبيقات Testnet.",
       "analytics" : "تحليلات",
       "analyticsDesc" : "قم بتمكين التحليلات لمساعدة Ledger على تحسين تجربة المستخدم.",
       "analyticsModal" : {
@@ -3789,6 +3816,11 @@
         "title" : "إضافة رمز توكن",
         "disclaimer" : "{{tokenName}} هو رمز BEP-20.\nيمكنك تلقي رموز التوكن مباشرةً في حساب BNB.",
         "learnMore" : "معرفة المزيد عن BEP-20"
+      },
+      "vip180" : {
+        "title" : "إضافة رمز توكن",
+        "disclaimer" : "{{tokenName}} هو رمز VIP180.\nيمكنك تلقي رموز التوكن مباشرةً في حساب VET.",
+        "learnMore" : "معرفة المزيد عن VIP180"
       }
     },
     "showMoreChainType" : "المزيد من أنواع العناوين",
@@ -3827,7 +3859,7 @@
     "connectAnotherDevice" : "توصيل جهاز Ledger آخر",
     "unlockDevice" : "قم بإلغاء قفل جهازك",
     "outdated" : "إصدار التطبيق قديم",
-    "outdatedDesc" : "هناك تحديث مهم لتطبيق {{appName}} متاح على جهازك. يُرجى الانتقال إلى My Ledger لتحديثه.",
+    "outdatedDesc" : "هناك تحديث مهم متاح لتطبيق {{appName}} على جهازك. يُرجى الانتقال إلى My Ledger (جهازي Ledger) لتحديثه.",
     "quitApp" : "الخروج من التطبيق على جهازك",
     "appNotInstalled" : "يُرجى تثبيت تطبيق {{appName}}",
     "appNotInstalled_plural" : "الرجاء تثبيت تطبيقات {{appName}}",
@@ -6344,6 +6376,12 @@
         "titleCompleted" : "تم تحويل الأصول إلى Ledger",
         "description" : "قم بتحويل الأصول بسهولة من كوينباس (Coinbase) أو أي منصة تداول أخرى أو محفظة.",
         "popupLabel" : "تم تحويل الأصول"
+      },
+      "buyCrypto" : {
+        "title" : "شراء الأصول المشفرة",
+        "titleCompleted" : "تم تحويل الأصول إلى Ledger",
+        "description" : "اختر من بين أكثر من 500 عملة وأفضل عروض الأسعار من مزودي الشراء، الملائمين لتفضيلاتك.",
+        "popupLabel" : "الأصول المشفرة التي تم شراؤها"
       }
     }
   },
