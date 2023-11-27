@@ -284,7 +284,7 @@
     "lend" : "Emprestar",
     "catalog" : "Explorar",
     "market" : "Mercado",
-    "recover" : "Ledger Recover"
+    "recover" : "[L] Recover"
   },
   "stars" : {
     "placeholder" : "Veja suas contas favoritas aqui",
@@ -1166,11 +1166,13 @@
       },
       "pinContent" : {
         "title" : "PIN",
+        "titleCompleted" : "PIN definido",
         "description" : "Assim como qualquer senha ou código de acesso, o PIN permite que você desbloqueie sua {{productName}} e evite acessos indesejados.",
         "continueOnDevice" : "Definir PIN em sua {{productName}}"
       },
       "seedContent" : {
         "title" : "Frase de Recuperação Secreta",
+        "titleCompleted" : "Frase de Recuperação Secreta confirmada",
         "recoverSeed" : "Placeholder: Recover",
         "restoreSeed" : "Certifique-se de usar uma Frase de Recuperação Secreta gerada por um dispositivo Ledger para garantir segurança máxima sobre seus ativos. \n\n Não possui uma? Use a sua {{productName}} para gerar uma nova Frase.",
         "selection" : "Escolha a opção de configuração que for melhor para você:",
@@ -1250,12 +1252,14 @@
       },
       "installApplications" : {
         "title" : "Instalando aplicativos em {{productName}}",
+        "titleCompleted" : "Aplicativos instalados na {{productName}}",
         "install" : "Instalar",
         "skip" : "Farei isso mais tarde",
         "info" : "Aplicativos da {{deviceName}} são usados para aprovar transações. Você pode adicioná-los ou removê-los a qualquer momento."
       },
       "endOfSetup" : {
-        "title" : "Fim da configuração"
+        "title" : "Fim da configuração",
+        "titleCompleted" : "A {{deviceName}} está pronta"
       },
       "softwareCheckAllowSecureChannelDrawer" : {
         "title" : "Toque em “Permitir” para iniciar a Verificação de Autenticidade"
@@ -1407,6 +1411,26 @@
       "earn" : {
         "title" : "Aplicar",
         "description" : "Multiplique suas criptos com a Ledger"
+      }
+    },
+    "recoverBanner" : {
+      "subscribeDone" : {
+        "title" : "Finish adding your payment card",
+        "description" : "Restore reliably with Ledger Recover.",
+        "primaryCta" : "Add card",
+        "secondaryCta" : "Talvez mais tarde"
+      },
+      "verifyIdentity" : {
+        "title" : "Finish verifying your identity",
+        "description" : "Restore reliably with Ledger Recover.",
+        "primaryCta" : "Verify",
+        "secondaryCta" : "Talvez mais tarde"
+      },
+      "connectDevice" : {
+        "title" : "Conectar sua Ledger",
+        "description" : "You're 1 step away from Ledger Recover.",
+        "primaryCta" : "Connect",
+        "secondaryCta" : "Talvez mais tarde"
       }
     }
   },
@@ -1903,10 +1927,12 @@
     "modal" : {
       "title" : "Atualização de OS da {{productName}}",
       "steps" : {
-        "preparingUpdate" : "Fazendo backup de suas configurações e aplicativos",
+        "preparingUpdate" : "Backing up your settings\nand apps",
         "transferringUpdate" : "Transferindo atualização à {{productName}}",
         "prepare" : "Preparar atualização",
+        "prepareDone" : "Update ready\nto install",
         "install" : "Instalar atualização",
+        "installDone" : "Update\ninstalled",
         "restore" : "Restaurar configurações",
         "apps" : "Restaurar aplicativos",
         "updateMCU" : "Atualização de firmware",
@@ -1915,12 +1941,13 @@
         "osu" : "Instalando OSU...",
         "flash-mcu" : "Atualizando MCU...",
         "flash-bootloader" : "Atualizando Bootloader...",
-        "progress" : "Instalando atualização {{current}}/{{total}}",
+        "progress" : "Installing update",
+        "progressStep" : "Installing update {{current}}/{{total}}",
         "firmware" : "Atualizando Firmware...",
         "flash" : "Preparando seu dispositivo..."
       },
       "confirmIdentifier" : "Verifique o identificador",
-      "confirmIdentifierText" : "Toque em “Instalar” para iniciar a atualização do sistema operacional",
+      "confirmIdentifierText" : "Tap on “Install” to\nstart the OS update",
       "identifier" : "Identificador",
       "newFirmware" : "Novo firmware {{version}}",
       "confirmUpdate" : "Confirme a atualização no seu dispositivo",
@@ -1928,10 +1955,11 @@
       "mcuFirst" : "Desconecte o cabo USB do seu dispositivo",
       "mcuSecond" : "Pressione e segure o botão esquerdo enquanto reconecta o cabo USB até que a tela <1><0>{{repairProcessing}}</0></1> seja exibida",
       "mcuPin" : "Aguarde a atualização terminar",
+      "mcuRestart" : "{{device}} might restart multiple times.",
       "mcuSecondNanoX" : "Mantenha pressionado o botão esquerdo até que <1><0>{{bootloaderOption}}</0></1> seja exibido. Pressione ambos os botões para confirmar e reconectar seu dispositivo.",
       "mcuBlueFirst" : "Mantenha pressionado o botão lateral por 10 segundos para desligar seu dispositivo. Solte o botão.",
       "mcuBlueSecond" : "Pressione e segure o botão por pelo menos 5 segundos até que as opções de inicialização sejam exibidas. Selecione o modo bootloader",
-      "successTitle" : "O sistema operacional da sua {{deviceName}} está atualizado.",
+      "successTitle" : "Your {{deviceName}} OS is\nup to date.",
       "sucessCTAApps" : "Reinstalar aplicativos",
       "SuccessCTANoApps" : "Instalar Aplicativos",
       "cancelReinstallCTA" : "Instalar Atualização",
@@ -3554,6 +3582,9 @@
       }
     }
   },
+  "graph" : {
+    "noGraphWarning" : "O gráfico não está disponível para esse token"
+  },
   "near" : {
     "account" : {
       "stakedBalance" : "Saldo aplicado",
@@ -4099,8 +4130,7 @@
     "updateAvailable" : "Atualização para a versão {{version}} do Ledger Live disponível",
     "error" : "Erro durante a atualização. Baixe Novamente",
     "reDownload" : "Baixar Novamente",
-    "nightlyWarning" : "Esta versão não pode ser atualizada automaticamente. Instale a versão mais recente manualmente",
-    "downloadNow" : "Baixar Atualização"
+    "nightlyWarning" : "Esta versão não pode ser atualizada automaticamente. Instale a versão mais recente manualmente"
   },
   "crash" : {
     "title" : "Algo deu errado",
@@ -5257,6 +5287,18 @@
       "title" : "EGLD insuficientes para pagar as taxas de transação",
       "description" : "Envie um pouco de EGLD para a sua conta para pagar pelas transações."
     },
+    "NotEnoughVTHO" : {
+      "title" : "Fundos VTHO insuficientes",
+      "description" : "Certifique-se de que a conta tenha VTHO suficiente."
+    },
+    "MustBeVechain" : {
+      "title" : "Não é uma conta vechain",
+      "description" : "Certifique-se de que a moeda seja VTHO ou VET"
+    },
+    "ImpossibleToCalculateAmountAndFees" : {
+      "title" : "Impossível calcular quantia e taxas",
+      "description" : "Impossível calcular quantia e taxas"
+    },
     "NotEnoughBalance" : {
       "title" : "Fundos Insuficientes",
       "description" : "Certifique-se de que a conta tem fundos suficientes."
@@ -5914,7 +5956,6 @@
     },
     "progress" : {
       "loading" : "Carregando...",
-      "resolving" : "Resolvendo dependências",
       "progress" : "Permaneça no Ledger Live enquanto os aplicativos estão sendo instalados.",
       "disclaimer" : "Adicione ou remova aplicativos a qualquer hora com o Ledger Live.",
       "skippedInfo" : "Alguns aplicativos não estão disponíveis. Eles ainda serão desenvolvidos para {{ productName }}.",
