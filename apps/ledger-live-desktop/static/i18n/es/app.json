@@ -284,7 +284,7 @@
     "lend" : "Prestar",
     "catalog" : "Discover",
     "market" : "Mercado",
-    "recover" : "Ledger Recover"
+    "recover" : "[L] Recover"
   },
   "stars" : {
     "placeholder" : "Tus cuentas favoritas aparecerán aquí.",
@@ -1166,11 +1166,13 @@
       },
       "pinContent" : {
         "title" : "PIN",
+        "titleCompleted" : "PIN establecido",
         "description" : "Al igual que cualquier contraseña o código de acceso, el PIN te permite desbloquear tu {{productName}} e impedir accesos no deseados.",
         "continueOnDevice" : "Configura tu PIN en tu {{productName}}"
       },
       "seedContent" : {
         "title" : "Frase de recuperación secreta",
+        "titleCompleted" : "Frase de recuperación secreta confirmada",
         "recoverSeed" : "Marcador de posición: Recover",
         "restoreSeed" : "Para que tus activos estén lo más seguros posible, utiliza una Frase de recuperación secreta generada por un dispositivo Ledger.\n\n¿No tienes uno?Usa tu {{productName}} para generar una Frase nueva.",
         "selection" : "Elige la opción de configuración que mejor se ajuste a tus necesidades:",
@@ -1250,12 +1252,14 @@
       },
       "installApplications" : {
         "title" : "Instalar aplicaciones en {{productName}}",
+        "titleCompleted" : "Aplicaciones instaladas en {{productName}}",
         "install" : "Instalar",
         "skip" : "Recordar más adelante",
         "info" : "Las aplicaciones el {{deviceName}} se usan para aprobar transacciones. Puedes añadirlas o eliminarlas cuando quieras."
       },
       "endOfSetup" : {
-        "title" : "Fin de la configuración"
+        "title" : "Fin de la configuración",
+        "titleCompleted" : "{{deviceName}} está listo"
       },
       "softwareCheckAllowSecureChannelDrawer" : {
         "title" : "Toca “Allow” (Permitir) para iniciar la Verificación de Autenticidad."
@@ -1407,6 +1411,26 @@
       "earn" : {
         "title" : "Poner en participación",
         "description" : "Con Ledger tus cripto generan intereses"
+      }
+    },
+    "recoverBanner" : {
+      "subscribeDone" : {
+        "title" : "Finish adding your payment card",
+        "description" : "Restore reliably with Ledger Recover.",
+        "primaryCta" : "Add card",
+        "secondaryCta" : "Quizás más tarde"
+      },
+      "verifyIdentity" : {
+        "title" : "Finish verifying your identity",
+        "description" : "Restore reliably with Ledger Recover.",
+        "primaryCta" : "Verificar",
+        "secondaryCta" : "Quizás más tarde"
+      },
+      "connectDevice" : {
+        "title" : "Conecta tu Ledger",
+        "description" : "You're 1 step away from Ledger Recover.",
+        "primaryCta" : "Conectar",
+        "secondaryCta" : "Quizás más tarde"
       }
     }
   },
@@ -1906,7 +1930,9 @@
         "preparingUpdate" : "Copia de seguridad de tus ajustes y tus aplicaciones",
         "transferringUpdate" : "Transfiriendo la actualización a {{productName}}",
         "prepare" : "Preparando actualización",
+        "prepareDone" : "Actualización lista para instalar",
         "install" : "Instalar actualización",
+        "installDone" : "Update\ninstalled",
         "restore" : "Restaurando ajustes",
         "apps" : "Restaurando aplicaciones",
         "updateMCU" : "Actualización de firmware",
@@ -1915,7 +1941,8 @@
         "osu" : "Instalando OSU...",
         "flash-mcu" : "Actualizando MCU...",
         "flash-bootloader" : "Actualizando Bootloader...",
-        "progress" : "Instalando actualización {{current}}/{{total}}",
+        "progress" : "Instalando actualización",
+        "progressStep" : "Instalando actualización {{current}}/{{total}}",
         "firmware" : "Actualizando firmware...",
         "flash" : "Preparando tu dispositivo..."
       },
@@ -1928,6 +1955,7 @@
       "mcuFirst" : "Desconecta el cable USB de tu dispositivo.",
       "mcuSecond" : "Mantén presionado el botón izquierdo mientras vuelves a conectar el cable USB hasta que aparezca la pantalla <1><0>{{repairProcessing}}</0></1>",
       "mcuPin" : "Espera a que finalice la actualización",
+      "mcuRestart" : "{{device}} podría reiniciarse varias veces.",
       "mcuSecondNanoX" : "Mantén presionado el botón izquierdo hasta que aparezca <1><0>{{bootloaderOption}}</0></1>. Presiona ambos botones para confirmar y vuelve a conectar tu dispositivo.",
       "mcuBlueFirst" : "Mantén presionado el botón lateral durante 10 segundos para apagar el dispositivo. Suelta el botón.",
       "mcuBlueSecond" : "Mantén presionado el botón durante al menos 5 segundos hasta que se muestren las “Boot Options” (\"Opciones de arranque\"). Toca en Bootloader Mode",
@@ -3554,6 +3582,9 @@
       }
     }
   },
+  "graph" : {
+    "noGraphWarning" : "El gráfico no está disponible para este token"
+  },
   "near" : {
     "account" : {
       "stakedBalance" : "Saldo en participación",
@@ -4099,8 +4130,7 @@
     "updateAvailable" : "Se encuentra disponible la actualización a la versión {{version}} de Ledger Live",
     "error" : "Error durante la actualización. Descárgala de nuevo",
     "reDownload" : "Descargar de nuevo",
-    "nightlyWarning" : "Esta versión no puede actualizarse automáticamente. Instala la última versión manualmente",
-    "downloadNow" : "Descargar actualización"
+    "nightlyWarning" : "Esta versión no puede actualizarse automáticamente. Instala la última versión manualmente"
   },
   "crash" : {
     "title" : "Algo ha salido mal",
@@ -5257,6 +5287,18 @@
       "title" : "EGLD insuficientes para pagar las tarifas de transacción",
       "description" : "Envía EGLD a tu cuenta para pagar las transacciones."
     },
+    "NotEnoughVTHO" : {
+      "title" : "Lo sentimos, fondos de VTHO insuficientes",
+      "description" : "Asegúrate de que la cuenta tenga VTHO suficientes."
+    },
+    "MustBeVechain" : {
+      "title" : "No es una cuenta de VeChain",
+      "description" : "Asegúrate de que la moneda es VTHO o VET"
+    },
+    "ImpossibleToCalculateAmountAndFees" : {
+      "title" : "No es posible calcular la cantidad y las tarifas",
+      "description" : "No es posible calcular la cantidad y las tarifas"
+    },
     "NotEnoughBalance" : {
       "title" : "Fondos insuficientes",
       "description" : "Asegúrate de que la cuenta tenga fondos suficientes."
@@ -5914,7 +5956,6 @@
     },
     "progress" : {
       "loading" : "Cargando...",
-      "resolving" : "Resolviendo dependencias",
       "progress" : "No cierres Ledger Live mientras se instalan las aplicaciones.",
       "disclaimer" : "Agrega o elimina aplicaciones en cualquier momento desde Ledger Live.",
       "skippedInfo" : "Algunas aplicaciones no están disponibles. Todavía tienen que desarrollarse para {{ productName }}.",
