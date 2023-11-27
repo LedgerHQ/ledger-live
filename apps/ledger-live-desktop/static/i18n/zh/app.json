@@ -284,7 +284,7 @@
     "lend" : "借出",
     "catalog" : "探索",
     "market" : "市场",
-    "recover" : "Ledger Recover"
+    "recover" : "[L] Recover"
   },
   "stars" : {
     "placeholder" : "星标账户以在此显示。",
@@ -1166,11 +1166,13 @@
       },
       "pinContent" : {
         "title" : "识别码",
+        "titleCompleted" : "识别码已设置",
         "description" : "就像其他密码一样，识别码可以让您解锁 {{productName}}，同时防止他人未经许可访问。",
         "continueOnDevice" : "在您的 {{productName}} 上设置识别码"
       },
       "seedContent" : {
         "title" : "秘密恢复短语",
+        "titleCompleted" : "秘密恢复短语已确认",
         "recoverSeed" : "Placeholder: Recover",
         "restoreSeed" : "务必使用 Ledger 设备生成的秘密恢复短语，最大限度提高资产的安全性。\n\n还没有秘密恢复短语？请使用您的 {{productName}} 生成新的短语。",
         "selection" : "选择最适合您的设置选项：",
@@ -1250,12 +1252,14 @@
       },
       "installApplications" : {
         "title" : "在 {{productName}} 上安装应用程序",
+        "titleCompleted" : "{{productName}} 上安装的应用程序",
         "install" : "安装",
         "skip" : "我以后再下载",
         "info" : "{{deviceName}} 上的应用程序用于批准交易。您可以随时添加或删除它们。"
       },
       "endOfSetup" : {
-        "title" : "设置结束"
+        "title" : "设置结束",
+        "titleCompleted" : "{{deviceName}} 已经就绪"
       },
       "softwareCheckAllowSecureChannelDrawer" : {
         "title" : "点按“Allow”（允许）开始正品检查"
@@ -1407,6 +1411,26 @@
       "earn" : {
         "title" : "权益质押",
         "description" : "通过 Ledger 增长加密资产"
+      }
+    },
+    "recoverBanner" : {
+      "subscribeDone" : {
+        "title" : "Finish adding your payment card",
+        "description" : "Restore reliably with Ledger Recover.",
+        "primaryCta" : "Add card",
+        "secondaryCta" : "以后再说"
+      },
+      "verifyIdentity" : {
+        "title" : "Finish verifying your identity",
+        "description" : "Restore reliably with Ledger Recover.",
+        "primaryCta" : "验证",
+        "secondaryCta" : "以后再说"
+      },
+      "connectDevice" : {
+        "title" : "连接 Ledger 设备",
+        "description" : "You're 1 step away from Ledger Recover.",
+        "primaryCta" : "连接",
+        "secondaryCta" : "以后再说"
       }
     }
   },
@@ -1903,10 +1927,12 @@
     "modal" : {
       "title" : "{{productName}} 操作系统更新",
       "steps" : {
-        "preparingUpdate" : "备份您的设置和应用程序",
+        "preparingUpdate" : "备份您的设置\n和应用程序",
         "transferringUpdate" : "正在向 {{productName}} 传输更新",
         "prepare" : "准备更新",
+        "prepareDone" : "更新可供\n安装",
         "install" : "安装更新",
+        "installDone" : "Update\ninstalled",
         "restore" : "恢复设置",
         "apps" : "恢复应用程序",
         "updateMCU" : "固件更新",
@@ -1915,12 +1941,13 @@
         "osu" : "正在安装 OSU ……",
         "flash-mcu" : "MCU 更新中……",
         "flash-bootloader" : "正在更新 Bootloader 启动装载程序……",
-        "progress" : "正在安装更新 {{current}}/{{total}}",
+        "progress" : "正在安装更新",
+        "progressStep" : "正在安装更新 {{current}}/{{total}}",
         "firmware" : "正在更新固件……",
         "flash" : "正在准备您的设备……"
       },
       "confirmIdentifier" : "验证标识符",
-      "confirmIdentifierText" : "点按“安装”开始更新操作系统",
+      "confirmIdentifierText" : "点按“安装”开始\n更新操作系统",
       "identifier" : "标识符",
       "newFirmware" : "新固件 {{version}}",
       "confirmUpdate" : "请在您的设备上确认更新",
@@ -1928,10 +1955,11 @@
       "mcuFirst" : "从您的设备上断开 USB 数据线连接",
       "mcuSecond" : "按下左键，长按住的同时重新连接 USB 数据线直到屏幕出现 <1><0>{{repairProcessing}}</0></1>",
       "mcuPin" : "请等待更新完成",
+      "mcuRestart" : "{{device}} 可能会重启几次。",
       "mcuSecondNanoX" : "长按左键，直到 <1><0>{{bootloaderOption}}</0></1> 显示出来。同时按下两个按钮来确认并重新连接您的设备。",
       "mcuBlueFirst" : "持续按住设备侧面按钮10秒来关闭设备。松开按钮。",
       "mcuBlueSecond" : "持续按住设备侧面按钮至少5秒直至设备显示 Boot Options（启动选项）。轻击 Bootloader Mode（启动装载模式）。",
-      "successTitle" : "您的 {{deviceName}} 操作系统是最新的。",
+      "successTitle" : "您的 {{deviceName}} 操作系统\n是最新的。",
       "sucessCTAApps" : "重新安装应用程序",
       "SuccessCTANoApps" : "安装应用程序",
       "cancelReinstallCTA" : "安装更新",
@@ -3554,6 +3582,9 @@
       }
     }
   },
+  "graph" : {
+    "noGraphWarning" : "图表不适用于此代币"
+  },
   "near" : {
     "account" : {
       "stakedBalance" : "已权益质押的余额",
@@ -4099,8 +4130,7 @@
     "updateAvailable" : "Ledger Live 有新版本 {{version}} 可更新",
     "error" : "更新时出错。请重新下载",
     "reDownload" : "重新下载",
-    "nightlyWarning" : "此版本不能自动更新。请手动安装最新版本",
-    "downloadNow" : "下载更新"
+    "nightlyWarning" : "此版本不能自动更新。请手动安装最新版本"
   },
   "crash" : {
     "title" : "出错了",
@@ -5257,6 +5287,18 @@
       "title" : "EGLD 数额不足以支付交易费用",
       "description" : "请向您的账户发送一些 EGLD 以支付交易费用。"
     },
+    "NotEnoughVTHO" : {
+      "title" : "很抱歉，VTHO 资金不足",
+      "description" : "请确保账户内有足够的 VTHO。"
+    },
+    "MustBeVechain" : {
+      "title" : "不是 VeChain 账户",
+      "description" : "请确保币种是 VTHO 或 VET"
+    },
+    "ImpossibleToCalculateAmountAndFees" : {
+      "title" : "无法计算金额和费用",
+      "description" : "无法计算金额和费用"
+    },
     "NotEnoughBalance" : {
       "title" : "抱歉，资金不足",
       "description" : "请确保该账户资金充足。"
@@ -5914,7 +5956,6 @@
     },
     "progress" : {
       "loading" : "正在加载……",
-      "resolving" : "解决依赖关系",
       "progress" : "在安装应用程序时，停留在 Ledger Live 中。",
       "disclaimer" : "随时在 Ledger Live 中添加或删除应用程序。",
       "skippedInfo" : "一些应用程序无法使用。适用于 {{ productName }} 的应用程序有待开发。",
