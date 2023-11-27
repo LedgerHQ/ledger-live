@@ -467,6 +467,18 @@
     "ElrondDelegationBelowMinimumError" : {
       "title" : "Kalan yetki devri miktarı en az {{formattedAmount}} olmalıdır"
     },
+    "NotEnoughVTHO" : {
+      "title" : "Üzgünüz, VTHO fon miktarı yetersiz",
+      "description" : "Hesabınızdaki VTHO miktarının yeterli olduğundan lütfen emin olun."
+    },
+    "MustBeVechain" : {
+      "title" : "VeChain hesabı değil",
+      "description" : "Coin'in VTHO veya VET olduğundan lütfen emin olun"
+    },
+    "ImpossibleToCalculateAmountAndFees" : {
+      "title" : "Miktarı ve ücretleri hesaplamak mümkün değil",
+      "description" : "Miktarı ve ücretleri hesaplamak mümkün değil"
+    },
     "NotEnoughEGLDForFees" : {
       "title" : "İşlem ücretlerini ödemek için yeterli EGLD yok",
       "description" : "İşlem ücretlerini ödemek için lütfen hesabınıza bir miktar EGLD gönderin."
@@ -1006,7 +1018,8 @@
     "week" : "1H",
     "month" : "1A",
     "year" : "1Y",
-    "all" : "TÜMÜ"
+    "all" : "TÜMÜ",
+    "graphNotSupported" : "Grafik bu token için mevcut değil"
   },
   "carousel" : {
     "title" : "Afiş kapansın mı?",
@@ -1069,7 +1082,7 @@
         "description" : "Compound Protocol'da varlık borç verin"
       },
       "blackfriday" : {
-        "title" : "EFSANE CUMA",
+        "title" : "BLACK FRIDAY",
         "description" : "BLACKFRIDAY20 promosyon koduyla %40'lık indirimden yararlanın"
       },
       "lido" : {
@@ -2209,6 +2222,20 @@
       "send" : "Gönder",
       "deposit" : "Al",
       "stake" : "Stake et"
+    },
+    "recoverBanner" : {
+      "subscribeDone" : {
+        "title" : "Finish adding your payment card",
+        "description" : "Restore reliably with Ledger Recover."
+      },
+      "verifyIdentity" : {
+        "title" : "Finish verifying your identity",
+        "description" : "Restore reliably with Ledger Recover."
+      },
+      "connectDevice" : {
+        "title" : "Final step: Connect your Ledger",
+        "description" : "You're 1 step away from Ledger Recover."
+      }
     }
   },
   "addAccountsModal" : {
@@ -3789,6 +3816,11 @@
         "title" : "Token Ekle",
         "disclaimer" : "{{tokenName}} bir BEP-20 Token'ıdır.\nToken'ları doğrudan bir Tron hesabına alabilirsiniz.",
         "learnMore" : "BEP-20 hakkında daha fazla bilgi edinin"
+      },
+      "vip180" : {
+        "title" : "Token ekle",
+        "disclaimer" : "{{tokenName}} bir VIP180 Token'ıdır.\nToken'ları doğrudan bir VET hesabına alabilirsiniz.",
+        "learnMore" : "VIP180 hakkında daha fazla bilgi edinin"
       }
     },
     "showMoreChainType" : "Daha fazla adres türü",
@@ -6344,6 +6376,12 @@
         "titleCompleted" : "Varlıklar Ledger’a taşındı",
         "description" : "Coinbase'den veya diğer herhangi bir borsa veya cüzdandan varlıkları kolayca aktarabilirsiniz.",
         "popupLabel" : "Varlıklar aktarıldı"
+      },
+      "buyCrypto" : {
+        "title" : "Kripto Satın Alın",
+        "titleCompleted" : "Varlıklar Ledger’a taşındı",
+        "description" : "500'ün üzerinde coin ve tercihlerinize uygun en iyi teklifleri sunan satın alım sağlayıcıları arasından seçim yapın.",
+        "popupLabel" : "Kripto satın alındı"
       }
     }
   },
