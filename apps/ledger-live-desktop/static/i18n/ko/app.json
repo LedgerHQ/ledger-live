@@ -284,7 +284,7 @@
     "lend" : "대출",
     "catalog" : "탐색",
     "market" : "마켓",
-    "recover" : "Ledger Recover"
+    "recover" : "[L] Recover"
   },
   "stars" : {
     "placeholder" : "계정을 즐겨찾기 하여 여기서 바로 확인하세요.",
@@ -1166,11 +1166,13 @@
       },
       "pinContent" : {
         "title" : "PIN",
+        "titleCompleted" : "PIN 설정",
         "description" : "다른 비밀번호와 마찬가지로 PIN을 사용하면 {{productName}}의 잠금을 해제하고 원치 않는 액세스를 방지할 수 있습니다.",
         "continueOnDevice" : "{{productName}}에 PIN을 설정하세요"
       },
       "seedContent" : {
         "title" : "비밀 복구 문구",
+        "titleCompleted" : "비밀 복구 문구 확인됨",
         "recoverSeed" : "자리 표시자: 복구",
         "restoreSeed" : "Ledger 장치에서 생성된 비밀 복구 문구를 사용해 자산에 대한 보안을 극대화하세요.\n\n복구 문구가 없으신가요? {{productName}}을 사용해 새로운 복구 문구를 생성하세요.",
         "selection" : "가장 적합한 설정 옵션을 선택하세요.",
@@ -1250,12 +1252,14 @@
       },
       "installApplications" : {
         "title" : "{{productName}}에 앱 설치하기",
+        "titleCompleted" : "{{productName}}에 설치된 앱",
         "install" : "설치",
         "skip" : "나중에",
         "info" : "{{deviceName}}의 앱은 트랜잭션 승인에 사용됩니다. 언제든지 추가나 삭제가 가능합니다."
       },
       "endOfSetup" : {
-        "title" : "설정 종료"
+        "title" : "설정 종료",
+        "titleCompleted" : "{{deviceName}} 장치가 준비되었습니다."
       },
       "softwareCheckAllowSecureChannelDrawer" : {
         "title" : "정품 확인을 시작하려면 \"허용\"을 탭하세요."
@@ -1407,6 +1411,26 @@
       "earn" : {
         "title" : "스테이킹",
         "description" : "Ledger와 함께 암호화폐 수익 창출"
+      }
+    },
+    "recoverBanner" : {
+      "subscribeDone" : {
+        "title" : "Finish adding your payment card",
+        "description" : "Restore reliably with Ledger Recover.",
+        "primaryCta" : "Add card",
+        "secondaryCta" : "다음에 결정하기"
+      },
+      "verifyIdentity" : {
+        "title" : "Finish verifying your identity",
+        "description" : "Restore reliably with Ledger Recover.",
+        "primaryCta" : "Verify",
+        "secondaryCta" : "다음에 결정하기"
+      },
+      "connectDevice" : {
+        "title" : "Ledger 장치에 연결합니다",
+        "description" : "You're 1 step away from Ledger Recover.",
+        "primaryCta" : "Connect",
+        "secondaryCta" : "다음에 결정하기"
       }
     }
   },
@@ -1903,10 +1927,12 @@
     "modal" : {
       "title" : "{{productName}} OS 업데이트",
       "steps" : {
-        "preparingUpdate" : "설정 및 앱 백업",
+        "preparingUpdate" : "Backing up your settings\nand apps",
         "transferringUpdate" : "{{productName}}에 업데이트 전송 중",
         "prepare" : "업데이트 준비",
+        "prepareDone" : "Update ready\nto install",
         "install" : "업데이트 설치",
+        "installDone" : "Update\ninstalled",
         "restore" : "설정 복원",
         "apps" : "앱 복원",
         "updateMCU" : "펌웨어 업데이트",
@@ -1915,12 +1941,13 @@
         "osu" : "OSU를 설치하는 중...",
         "flash-mcu" : "MCU 업데이트 중...",
         "flash-bootloader" : "부트로더 업데이트 중...",
-        "progress" : "업데이트 {{current}}/{{total}} 설치 중",
+        "progress" : "업데이트 설치 중",
+        "progressStep" : "업데이트 {{current}}/{{total}} 설치 중",
         "firmware" : "펌웨어 업데이트 중...",
         "flash" : "장치 준비 중..."
       },
       "confirmIdentifier" : "식별자 확인",
-      "confirmIdentifierText" : "\"설치\"를 탭하여 OS 업데이트를 시작하세요",
+      "confirmIdentifierText" : "Tap on “Install” to\nstart the OS update",
       "identifier" : "식별자",
       "newFirmware" : "새 펌웨어 {{version}}",
       "confirmUpdate" : "장치에서 업데이트를 확인하세요",
@@ -1928,10 +1955,11 @@
       "mcuFirst" : "장치에서 USB 케이블 분리",
       "mcuSecond" : "USB 케이블을 다시 연결하는 동안에 <1><0>{{repairProcessing}}</0></1>스크린이 표시될 때까지 왼쪽 버튼을 길게 누르세요",
       "mcuPin" : "업데이트가 완료될 때까지 기다려 주세요",
+      "mcuRestart" : "{{device}} 장치가 여러 번 다시 시작될 수 있습니다.",
       "mcuSecondNanoX" : "<1><0>{{bootloaderOption}}</0></1>이 표시될 때까지 왼쪽 버튼을 길게 누르세요. 버튼 두 개를 모두 눌러 장치를 확인하고 재연결하세요.",
       "mcuBlueFirst" : "측면 버튼을 10초간 길게 눌러 장치를 끄세요. 버튼에서 손을 떼세요.",
       "mcuBlueSecond" : "부팅 옵션이 표시될 때까지 버튼을 5초 이상 누르세요. Bootloader 모드 탭",
-      "successTitle" : "사용 중인 {{deviceName}} OS가 최신 상태입니다.",
+      "successTitle" : "Your {{deviceName}} OS is\nup to date.",
       "sucessCTAApps" : "앱 재설치",
       "SuccessCTANoApps" : "앱 설치하기",
       "cancelReinstallCTA" : "업데이트 설치",
@@ -3554,6 +3582,9 @@
       }
     }
   },
+  "graph" : {
+    "noGraphWarning" : "이 토큰에 대해서는 그래프를 이용할 수 없습니다."
+  },
   "near" : {
     "account" : {
       "stakedBalance" : "스테이킹 잔액",
@@ -4099,8 +4130,7 @@
     "updateAvailable" : "Ledger Live {{version}} 버전을 업데이트할 수 있습니다",
     "error" : "업데이트 중 오류가 발생했습니다. 다시 다운로드하세요",
     "reDownload" : "다시 다운로드",
-    "nightlyWarning" : "이 버전은 자동 업데이트되지 않습니다. 최신 버전을 수동으로 설치하세요",
-    "downloadNow" : "업데이트 다운로드"
+    "nightlyWarning" : "이 버전은 자동 업데이트되지 않습니다. 최신 버전을 수동으로 설치하세요"
   },
   "crash" : {
     "title" : "문제가 발생했습니다",
@@ -5257,6 +5287,18 @@
       "title" : "트랜잭션 수수료로 지불할 EGLD가 충분하지 않습니다.",
       "description" : "계정에 EGLD를 전송하여 트랜잭션 수수료를 지불하세요."
     },
+    "NotEnoughVTHO" : {
+      "title" : "죄송합니다. VTHO 자금이 부족합니다.",
+      "description" : "계정에 충분한 VTHO가 있는지 확인하세요."
+    },
+    "MustBeVechain" : {
+      "title" : "비체인 계정이 아닙니다",
+      "description" : "코인이 VTHO 또는 VET인지 확인하세요"
+    },
+    "ImpossibleToCalculateAmountAndFees" : {
+      "title" : "금액 및 수수료 계산이 불가능합니다",
+      "description" : "금액 및 수수료 계산이 불가능합니다"
+    },
     "NotEnoughBalance" : {
       "title" : "죄송하지만 자금이 부족합니다",
       "description" : "계정에 자금이 충분한지 확인해 주세요."
@@ -5914,7 +5956,6 @@
     },
     "progress" : {
       "loading" : "로딩 중...",
-      "resolving" : "의존성 해결",
       "progress" : "앱을 설치하는 동안 Ledger Live를 종료하지 마세요.",
       "disclaimer" : "Ledger Live에서 언제든지 앱을 추가하거나 제거하세요.",
       "skippedInfo" : "일부 앱은 이용할 수 없습니다. 아직 {{ productName }}용으로 개발되지 않았습니다.",
