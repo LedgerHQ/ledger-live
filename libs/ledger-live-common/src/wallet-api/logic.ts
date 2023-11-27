@@ -6,11 +6,12 @@ import {
 } from "./converters";
 import type { TrackingAPI } from "./tracking";
 import { AppManifest, TranslatableString, WalletAPITransaction } from "./types";
-import { isTokenAccount, isAccount, getMainAccount } from "../account/index";
+import { isTokenAccount, isAccount, getMainAccount, makeEmptyTokenAccount } from "../account/index";
 import { Transaction } from "../generated/types";
 import { prepareMessageToSign } from "../hw/signMessage/index";
 import { getAccountBridge } from "../bridge";
 import { Exchange } from "../exchange/swap/types";
+import { findTokenById } from "@ledgerhq/cryptoassets";
 
 export function translateContent(content: string | TranslatableString, locale = "en"): string {
   if (!content || typeof content === "string") return content;
@@ -242,6 +243,7 @@ export type CompleteExchangeRequest = {
   swapId?: string;
   rate?: number;
   amountExpectedTo?: number;
+  tokenCurrency?: string;
 };
 export type CompleteExchangeUiRequest = {
   provider: string;
@@ -254,6 +256,7 @@ export type CompleteExchangeUiRequest = {
   swapId?: string;
   rate?: number;
   amountExpectedTo?: number;
+  tokenCurrency?: string;
 };
 
 export function completeExchangeLogic(
@@ -269,6 +272,7 @@ export function completeExchangeLogic(
     exchangeType,
     swapId,
     rate,
+    tokenCurrency,
   }: CompleteExchangeRequest,
   uiNavigation: (request: CompleteExchangeUiRequest) => Promise<string>,
 ): Promise<string> {
@@ -303,12 +307,14 @@ export function completeExchangeLogic(
   }
 
   const fromParentAccount = getParentAccount(fromAccount, accounts);
+  const currency = tokenCurrency ? findTokenById(tokenCurrency) : null;
+  const newTokenAccount = currency ? makeEmptyTokenAccount(toAccount, currency) : null
   const toParentAccount = toAccount ? getParentAccount(toAccount, accounts) : undefined;
   const exchange = {
     fromAccount,
     fromParentAccount,
-    toAccount,
-    toParentAccount,
+    toAccount: newTokenAccount ? newTokenAccount : toAccount,
+    toParentAccount: newTokenAccount ? toAccount : toParentAccount,
   };
 
   const accountBridge = getAccountBridge(fromAccount, fromParentAccount);
