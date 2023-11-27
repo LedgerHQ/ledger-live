@@ -22,7 +22,7 @@ function CollapsibleHeaderFlatList<T>({
   }, [route.name, syncScrollOffset]);
 
   return (
-    <SafeAreaView>
+    <SafeAreaView isFlex>
       <Animated.FlatList<T>
         scrollToOverflowEnabled={true}
         ref={(ref: FlatList) => onGetRef({ key: route.name, value: ref })}

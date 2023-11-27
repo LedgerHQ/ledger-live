@@ -7,7 +7,7 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { Flex } from "@ledgerhq/native-ui";
 import debounce from "lodash/debounce";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "../../components/SafeAreaView";
 import { useTranslation } from "react-i18next";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
@@ -148,7 +148,7 @@ const AccountScreenInner = ({
 
   return (
     <ReactNavigationPerformanceView screenName={ScreenName.Account} interactive>
-      <SafeAreaView style={{ flex: 1 }} edges={["top", "left", "right", "bottom"]}>
+      <SafeAreaView isFlex>
         {analytics}
         <CurrencyBackgroundGradient
           currentPositionY={currentPositionY}

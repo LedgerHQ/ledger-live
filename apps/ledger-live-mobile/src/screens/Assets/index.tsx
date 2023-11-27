@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { Flex, Text, Button, IconsLegacy } from "@ledgerhq/native-ui";
 import { RefreshMedium } from "@ledgerhq/native-ui/assets/icons";
-
+import SafeAreaView from "../../components/SafeAreaView";
 import { useTranslation } from "react-i18next";
 import { useGlobalSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import { FlatList, FlatListProps } from "react-native";
@@ -22,7 +22,6 @@ import AddAccountsModal from "../AddAccounts/AddAccountsModal";
 import { BaseNavigation } from "../../components/RootNavigator/types/helpers";
 import { Asset } from "../../types/asset";
 import { ScreenName } from "../../const";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 const List = globalSyncRefreshControl<FlatListProps<Asset>>(FlatList);
 
@@ -63,7 +62,7 @@ function Assets() {
 
   return (
     <ReactNavigationPerformanceView screenName={ScreenName.Assets} interactive>
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView isFlex>
         <TrackScreen category="Assets List" />
         <Flex flex={1} bg={"background.main"}>
           <AssetsNavigationHeader />
@@ -94,6 +93,7 @@ function Assets() {
                   size="large"
                   outline
                   mt={6}
+                  mb={8}
                   iconPosition="left"
                   Icon={IconsLegacy.PlusMedium}
                   onPress={openAddModal}

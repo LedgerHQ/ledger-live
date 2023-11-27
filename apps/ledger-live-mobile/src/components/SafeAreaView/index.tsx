@@ -6,6 +6,7 @@ type Props = {
   children: ReactNode;
   style?: StyleProp<ViewStyle>;
   edges?: readonly Edge[] | undefined;
+  isFlex?: boolean;
 } & ViewProps;
 
 /**
@@ -15,7 +16,7 @@ type Props = {
  * [219](https://github.com/th3rdwave/react-native-safe-area-context/issues/219),
  * [226](https://github.com/th3rdwave/react-native-safe-area-context/issues/226)
  */
-export default function SafeAreaViewFixed({ children, style, edges, ...rest }: Props) {
+export default function SafeAreaViewFixed({ children, style, edges, isFlex, ...rest }: Props) {
   const insets = useSafeAreaInsets();
   const defaultEdges = edges === undefined;
   return (
@@ -26,6 +27,7 @@ export default function SafeAreaViewFixed({ children, style, edges, ...rest }: P
           paddingBottom: defaultEdges || edges?.includes("bottom") ? insets.bottom : undefined,
           paddingLeft: defaultEdges || edges?.includes("left") ? insets.left : undefined,
           paddingRight: defaultEdges || edges?.includes("right") ? insets.right : undefined,
+          flex: isFlex ? 1 : 0,
         },
         style,
       )}

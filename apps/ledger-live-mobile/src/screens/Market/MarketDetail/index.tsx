@@ -11,7 +11,7 @@ import {
   readOnlyModeEnabledSelector,
   starredMarketCoinsSelector,
 } from "../../../reducers/settings";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "../../../components/SafeAreaView";
 import { useLocale } from "../../../context/Locale";
 import CircleCurrencyIcon from "../../../components/CircleCurrencyIcon";
 import { IconContainer } from "../MarketRowItem";
@@ -178,7 +178,7 @@ function MarketDetail({ navigation, route }: NavigationProps) {
   const [hoveredItem, setHoverItem] = useState<Item | null | undefined>(null);
 
   return (
-    <SafeAreaView style={{ flex: 1 }} edges={["top", "left", "right"]}>
+    <SafeAreaView edges={["top", "left", "right"]} isFlex>
       <ScrollContainerHeader
         TopLeftSection={<BackButton navigation={navigation} />}
         MiddleSection={

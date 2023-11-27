@@ -21,7 +21,7 @@ const CollapsibleHeaderScrollView = ({
   }, [route.name, syncScrollOffset]);
 
   return (
-    <SafeAreaView>
+    <SafeAreaView isFlex>
       <Animated.ScrollView
         scrollToOverflowEnabled={true}
         ref={(ref: ScrollView) => onGetRef({ key: route.name, value: ref })}

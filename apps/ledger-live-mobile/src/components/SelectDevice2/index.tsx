@@ -9,7 +9,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useBleDevicesScanning } from "@ledgerhq/live-common/ble/hooks/useBleDevicesScanning";
 import { usePostOnboardingEntryPointVisibleOnWallet } from "@ledgerhq/live-common/postOnboarding/hooks/usePostOnboardingEntryPointVisibleOnWallet";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-
+import SafeAreaView from "../SafeAreaView";
 import TransportBLE from "../../react-native-hw-transport-ble";
 import { TrackScreen, track } from "../../analytics";
 import { NavigatorName, ScreenName } from "../../const";
@@ -307,7 +307,7 @@ export default function SelectDevice({
   );
 
   return (
-    <Flex flex={1}>
+    <SafeAreaView edges={["left", "right"]} isFlex>
       {withMyLedgerTracking ? <TrackScreen {...trackScreenProps} /> : null}
       <RequiresBluetoothDrawer
         isOpenedOnIssue={isBleRequired}
@@ -486,6 +486,6 @@ export default function SelectDevice({
           </QueuedDrawer>
         </Flex>
       )}
-    </Flex>
+    </SafeAreaView>
   );
 }

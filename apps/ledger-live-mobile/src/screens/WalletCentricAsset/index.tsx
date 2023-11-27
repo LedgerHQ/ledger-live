@@ -15,7 +15,7 @@ import BigNumber from "bignumber.js";
 import { ReactNavigationPerformanceView } from "@shopify/react-native-performance-navigation";
 import accountSyncRefreshControl from "../../components/accountSyncRefreshControl";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "../../components/SafeAreaView";
 import { flattenAccountsByCryptoCurrencyScreenSelector } from "../../reducers/accounts";
 import SectionContainer from "../WalletCentricSections/SectionContainer";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
@@ -174,7 +174,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
 
   return (
     <ReactNavigationPerformanceView screenName={ScreenName.Asset} interactive>
-      <SafeAreaView edges={["bottom", "left", "right"]}>
+      <SafeAreaView edges={["bottom", "left", "right"]} isFlex>
         <TrackScreen category="Asset" currency={currency.name} />
         <CurrencyBackgroundGradient
           currentPositionY={currentPositionY}
