@@ -111,10 +111,17 @@ function AddAccountsAccounts({
     inline,
     returnToSwap,
   } = route.params || {};
-  // Find accounts that are (scanned && !existing && !used)
-  const newAccountSchemes = scannedAccounts
-    ?.filter(a1 => !existingAccounts.map(a2 => a2.id).includes(a1.id) && !a1.used)
-    .map(a => a.derivationMode);
+
+  const newAccountSchemes = useMemo(() => {
+    // Find accounts that are (scanned && !existing && !used)
+    const accountSchemes = scannedAccounts
+      ?.filter(a1 => !existingAccounts.map(a2 => a2.id).includes(a1.id) && !a1.used)
+      .map(a => a.derivationMode);
+
+    // Make sure to return a list of unique derivationModes (i.e: avoid duplicates)
+    return [...new Set(accountSchemes)];
+  }, [existingAccounts, scannedAccounts]);
+
   const preferredNewAccountScheme = useMemo(
     () => (newAccountSchemes && newAccountSchemes.length > 0 ? newAccountSchemes[0] : undefined),
     [newAccountSchemes],
