@@ -22,7 +22,7 @@
 | Coreum | CORE | YES | coreum |
 | Cosmos | ATOM | YES | cosmos |
 | Cronos | CRO | YES | cronos |
-| Crypto.org | CRO | YES | crypto_org |
+| Cronos POS Chain | CRO | YES | crypto_org |
 | Dash | DASH | YES | dash |
 | Decred | DCR | YES | decred |
 | Desmos | DSM | YES | desmos |

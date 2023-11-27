@@ -5,8 +5,9 @@ import type { CryptoOrgAccount } from "./types";
 
 function formatAccountSpecifics(account: CryptoOrgAccount): string {
   const { cryptoOrgResources } = account;
-  invariant(cryptoOrgResources, "Crypto.org account expected");
-  if (!cryptoOrgResources) throw new Error("Crypto.org account expected");
+  invariant(cryptoOrgResources, "Cronos POS Chain (formerly Crypto.org) account expected");
+  if (!cryptoOrgResources)
+    throw new Error("Cronos POS Chain (formerly Crypto.org) account expected");
   const unit = getAccountUnit(account);
   const formatConfig = {
     disableRounding: true,
