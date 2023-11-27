@@ -467,6 +467,18 @@
     "ElrondDelegationBelowMinimumError" : {
       "title" : "Остаток делегированных средств должен быть не менее {{formattedAmount}}"
     },
+    "NotEnoughVTHO" : {
+      "title" : "Не хватает VTHO",
+      "description" : "Убедитесь в наличии нужного объёма VTHO на счёте."
+    },
+    "MustBeVechain" : {
+      "title" : "Не выбран счёт VeChain",
+      "description" : "Убедитесь в выборе монеты VTHO или VET"
+    },
+    "ImpossibleToCalculateAmountAndFees" : {
+      "title" : "Невозможно рассчитать сумму и комиссию",
+      "description" : "Невозможно рассчитать сумму и комиссию"
+    },
     "NotEnoughEGLDForFees" : {
       "title" : "Недостаточно EGLD для оплаты комиссии за транзакцию",
       "description" : "Пожалуйста, пополните счёт EGLD для оплаты транзакций."
@@ -1006,7 +1018,8 @@
     "week" : "1Н",
     "month" : "1М",
     "year" : "1Г",
-    "all" : "ВСЕ"
+    "all" : "ВСЕ",
+    "graphNotSupported" : "График этого токена недоступен"
   },
   "carousel" : {
     "title" : "Скрыть баннер?",
@@ -2209,6 +2222,20 @@
       "send" : "Отправить",
       "deposit" : "Получить",
       "stake" : "Стейкать"
+    },
+    "recoverBanner" : {
+      "subscribeDone" : {
+        "title" : "Finish adding your payment card",
+        "description" : "Restore reliably with Ledger Recover."
+      },
+      "verifyIdentity" : {
+        "title" : "Finish verifying your identity",
+        "description" : "Restore reliably with Ledger Recover."
+      },
+      "connectDevice" : {
+        "title" : "Final step: Connect your Ledger",
+        "description" : "You're 1 step away from Ledger Recover."
+      }
     }
   },
   "addAccountsModal" : {
@@ -3789,6 +3816,11 @@
         "title" : "Добавить токен",
         "disclaimer" : "{{tokenName}} – это токен BEP-20.\nПолучать токены можно непосредственно на счёт BNB.",
         "learnMore" : "Подробнее о BEP-20"
+      },
+      "vip180" : {
+        "title" : "Добавить токен",
+        "disclaimer" : "{{tokenName}} — это токен VIP-180.\nПолучать токены можно непосредственно на счёт VET.",
+        "learnMore" : "Подробнее о VIP-180"
       }
     },
     "showMoreChainType" : "Другие типы адресов",
@@ -6344,6 +6376,12 @@
         "titleCompleted" : "Криптоактивы переведены на Ledger",
         "description" : "Перевести криптоактивы с Coinbase, любой другой биржи или кошелька.",
         "popupLabel" : "Криптоактивы переведены"
+      },
+      "buyCrypto" : {
+        "title" : "Покупка криптовалюты",
+        "titleCompleted" : "Криптоактивы переведены на Ledger",
+        "description" : "Выбирайте подходящие криптоактивы из 500+ монет по лучшим курсам от операторов.",
+        "popupLabel" : "Куплено криптовалюты"
       }
     }
   },
