@@ -467,6 +467,18 @@
     "ElrondDelegationBelowMinimumError" : {
       "title" : "残りのデリゲートは{{formattedAmount}}を下回ることはできません"
     },
+    "NotEnoughVTHO" : {
+      "title" : "VTHO資金が不足しています",
+      "description" : "アカウントに十分なVTHO資金があることをご確認ください。"
+    },
+    "MustBeVechain" : {
+      "title" : "VeChainアカウントではありません",
+      "description" : "コインがVTHOまたはVETであることをご確認ください"
+    },
+    "ImpossibleToCalculateAmountAndFees" : {
+      "title" : "金額と手数料を算出できません",
+      "description" : "金額と手数料を算出できません"
+    },
     "NotEnoughEGLDForFees" : {
       "title" : "トランザクション手数料の支払いに十分なEGLDがありません",
       "description" : "EGLDをアカウントに送付し、トランザクションの支払いを行ってください。"
@@ -1006,7 +1018,8 @@
     "week" : "1週",
     "month" : "1月",
     "year" : "1年",
-    "all" : "ALL"
+    "all" : "ALL",
+    "graphNotSupported" : "このトークンでは、グラフを使用できません"
   },
   "carousel" : {
     "title" : "バナーを閉じますか？",
@@ -2209,6 +2222,20 @@
       "send" : "送付",
       "deposit" : "受け取る",
       "stake" : "ステーキング"
+    },
+    "recoverBanner" : {
+      "subscribeDone" : {
+        "title" : "Finish adding your payment card",
+        "description" : "Restore reliably with Ledger Recover."
+      },
+      "verifyIdentity" : {
+        "title" : "Finish verifying your identity",
+        "description" : "Restore reliably with Ledger Recover."
+      },
+      "connectDevice" : {
+        "title" : "Final step: Connect your Ledger",
+        "description" : "You're 1 step away from Ledger Recover."
+      }
     }
   },
   "addAccountsModal" : {
@@ -3789,6 +3816,11 @@
         "title" : "トークンの追加",
         "disclaimer" : "{{tokenName}}は、BEP-20トークンです。\nBNBアカウントで直接トークンを受け取ることができます。",
         "learnMore" : "BEP-20についての詳細"
+      },
+      "vip180" : {
+        "title" : "トークンの追加",
+        "disclaimer" : "{{tokenName}}はVIP180トークンです。\nVETアカウントで直接トークンを受け取ることができます。",
+        "learnMore" : "VIP180についての詳細"
       }
     },
     "showMoreChainType" : "その他のアドレスタイプ",
@@ -6344,6 +6376,12 @@
         "titleCompleted" : "資産がLedgerに転送されました",
         "description" : "Coinbaseやその他の取引所、またはウォレットから資産を簡単に転送できます。",
         "popupLabel" : "資産が転送されました"
+      },
+      "buyCrypto" : {
+        "title" : "暗号資産を購入する",
+        "titleCompleted" : "資産がLedgerに転送されました",
+        "description" : "500種類以上のコインと、購入プロバイダーによる見積もりから、お好みに合わせて選択できます。",
+        "popupLabel" : "暗号資産を購入しました"
       }
     }
   },
