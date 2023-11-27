@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
@@ -39,6 +39,18 @@ export default function WebPlatformPlayer({ manifest, inputs, onClose, config }:
       ...loggerHandlers,
     };
   }, []);
+
+  useEffect(() => {
+    const i = setInterval(
+      () => webviewAPIRef.current?.notify("event.account.updated", "random message"),
+      2000,
+    );
+
+    return () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      clearInterval(i as any);
+    };
+  }, [webviewAPIRef]);
 
   return (
     <Container>
