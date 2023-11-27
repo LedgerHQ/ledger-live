@@ -467,6 +467,18 @@
     "ElrondDelegationBelowMinimumError" : {
       "title" : "剩余委托不能少于 {{formattedAmount}}"
     },
+    "NotEnoughVTHO" : {
+      "title" : "很抱歉，VTHO 资金不足",
+      "description" : "请确保账户内有足够的 VTHO。"
+    },
+    "MustBeVechain" : {
+      "title" : "不是 VeChain 账户",
+      "description" : "请确保币种是 VTHO 或 VET"
+    },
+    "ImpossibleToCalculateAmountAndFees" : {
+      "title" : "无法计算金额和费用",
+      "description" : "无法计算金额和费用"
+    },
     "NotEnoughEGLDForFees" : {
       "title" : "EGLD 数额不足以支付交易费用",
       "description" : "请向您的账户发送一些 EGLD 以支付交易费用。"
@@ -1006,7 +1018,8 @@
     "week" : "1 周",
     "month" : "1 月",
     "year" : "1 年",
-    "all" : "全部"
+    "all" : "全部",
+    "graphNotSupported" : "图表不适用于此代币"
   },
   "carousel" : {
     "title" : "关闭横幅？",
@@ -2209,6 +2222,20 @@
       "send" : "发送",
       "deposit" : "接收",
       "stake" : "质押"
+    },
+    "recoverBanner" : {
+      "subscribeDone" : {
+        "title" : "Finish adding your payment card",
+        "description" : "Restore reliably with Ledger Recover."
+      },
+      "verifyIdentity" : {
+        "title" : "Finish verifying your identity",
+        "description" : "Restore reliably with Ledger Recover."
+      },
+      "connectDevice" : {
+        "title" : "Final step: Connect your Ledger",
+        "description" : "You're 1 step away from Ledger Recover."
+      }
     }
   },
   "addAccountsModal" : {
@@ -3789,6 +3816,11 @@
         "title" : "添加代币",
         "disclaimer" : "{{tokenName}} 为 BEP-20 代币。\n您可以直接通过 BNB 币安账户接收代币。",
         "learnMore" : "了解关于 BEP-20 的更多详情"
+      },
+      "vip180" : {
+        "title" : "添加代币",
+        "disclaimer" : "{{tokenName}} 是 VIP180 代币。\n您可以直接在 VET 账户中接收代币。",
+        "learnMore" : "详细了解 VIP180"
       }
     },
     "showMoreChainType" : "更多地址类型",
@@ -6344,6 +6376,12 @@
         "titleCompleted" : "资产已转入 Ledger",
         "description" : "轻松从比特币基地 (Coinbase) 或任何其他交易所或钱包转移资产。",
         "popupLabel" : "资产已转移"
+      },
+      "buyCrypto" : {
+        "title" : "购买加密货币",
+        "titleCompleted" : "资产已转入 Ledger",
+        "description" : "从买入服务提供商根据您的偏好提供的 500 多种币和最佳报价中进行选择",
+        "popupLabel" : "已购买的加密货币"
       }
     }
   },
