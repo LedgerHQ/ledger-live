@@ -3,6 +3,11 @@ import { ScrollView } from "react-native";
 import { Flex, VerticalStepper, Text, Switch, Divider } from "../../../../src";
 import { ItemStatus } from "../../../../src";
 
+export default {
+  title: "Layout/List",
+  component: VerticalStepper,
+};
+
 const restoreSteps = [
   {
     status: ItemStatus.completed,

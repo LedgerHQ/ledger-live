@@ -1,9 +1,7 @@
 import { dirname, join } from "path";
 module.exports = {
   typescript: {
-    check: false,
-    checkOptions: {},
-    reactDocgen: false, // FIXME: this is disabled for now due to incompatibilities with TS 5. re-enable when upgrading storybook.
+    reactDocgen: true,
   },
 
   stories: ["../src/**/*.stories.mdx", "../src/**/*.stories.@(ts|tsx)"],

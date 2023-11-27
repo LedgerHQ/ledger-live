@@ -6,6 +6,11 @@ import { useTheme } from "styled-components/native";
 import { ComponentStory } from "@storybook/react-native";
 import Text from "../../../src/components/Text";
 
+export default {
+  title: "Icon",
+  component: FlatList,
+};
+
 interface SizeData {
   size: number;
   stroke: number;
@@ -134,5 +139,3 @@ IconGridStory.parameters = {
     },
   },
 };
-
-export default IconGridStory;

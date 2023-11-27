@@ -4,6 +4,11 @@ import { View } from "react-native";
 import { Flex, VerticalTimeline, Button, Switch, Divider, ContinueOnDevice } from "../../../../src";
 import { ItemStatus } from "../../../../src";
 
+export default {
+  title: "Layout/List",
+  component: VerticalTimeline,
+};
+
 const { BodyText, SubtitleText } = VerticalTimeline;
 
 const defaultItems = [
