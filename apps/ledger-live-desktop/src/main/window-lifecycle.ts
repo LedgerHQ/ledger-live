@@ -1,5 +1,5 @@
 import "./setup";
-import { BrowserWindow, screen, app } from "electron";
+import { BrowserWindow, screen, app, WebPreferences } from "electron";
 import path from "path";
 import { delay } from "@ledgerhq/live-common/promise";
 import { URL } from "url";
@@ -45,22 +45,25 @@ const getWindowPosition = (width: number, height: number, display = screen.getPr
   };
 };
 
+const webPreferences: WebPreferences = {
+  // https://ledgerhq.atlassian.net/browse/LIVE-6785 : This is a TEMPORARY workaround for some of our backend not yet supporting CORS. we will remove this once it's the case. this is only for develop mode because production don't do strict CORS check at the moment.
+  webSecurity: !(__DEV__ && BYPASS_CORS === "1"),
+  // required for Live Apps integration (usage of <webview> in PlatformAPIWebview.tsx)
+  webviewTag: true,
+  // allow devtools to exists in development mode or when explicitly enabled with DEV_TOOLS env var
+  devTools: !!(__DEV__ || DEV_TOOLS),
+  // Allow to use nodejs in renderer thread.
+  nodeIntegration: true, // FIXME https://ledgerhq.atlassian.net/browse/LIVE-10304
+  // disable the context isolation in order to be able to use "electron" on preloader/renderer side
+  contextIsolation: false,
+  // globally disable spellchecks which aren't useful to us & problematic for crypto address fields & so on
+  spellcheck: false, // FIXME we should overrides this directly on the input fields instead of globally disabling it
+};
+
 const defaultWindowOptions = {
   icon: path.join(__dirname, "/build/icons/icon.png"),
   backgroundColor: "#fff",
-  webPreferences: {
-    // This is a TEMPORARY workaround for some of our backend not yet supporting CORS. we will remove this once it's the case. this is only for develop mode because production don't do strict CORS check at the moment.
-    webSecurity: !(__DEV__ && BYPASS_CORS === "1"),
-    webviewTag: true,
-    blinkFeatures: "OverlayScrollbars",
-    devTools: !!(__DEV__ || DEV_TOOLS),
-    experimentalFeatures: true,
-    nodeIntegration: true,
-    contextIsolation: false,
-    spellcheck: false,
-    // Legacy - allows listening to the "new-window" even in webviews.
-    nativeWindowOpen: false,
-  },
+  webPreferences,
 };
 
 export const loadWindow = async () => {
