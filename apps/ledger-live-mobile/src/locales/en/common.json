@@ -2226,15 +2226,15 @@
     "recoverBanner": {
       "subscribeDone": {
         "title": "Finish adding your payment card",
-        "description":"Restore reliably with Ledger Recover."
+        "description": "Restore reliably with Ledger Recover."
       },
       "verifyIdentity": {
         "title": "Finish verifying your identity",
-        "description":"Restore reliably with Ledger Recover."
+        "description": "Restore reliably with Ledger Recover."
       },
       "connectDevice": {
         "title": "Final step: Connect your Ledger",
-        "description":"You're 1 step away from Ledger Recover."
+        "description": "You're 1 step away from Ledger Recover."
       }
     }
   },
