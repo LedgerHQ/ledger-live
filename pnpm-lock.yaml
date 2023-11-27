@@ -15172,7 +15172,7 @@ packages:
       '@jest/fake-timers': 29.7.0
       '@jest/types': 29.6.3
       '@types/node': 20.8.10
-      jest-mock: 29.7.0
+      jest-mock: 29.6.2
     dev: true
 
   /@jest/environment@29.7.0:
