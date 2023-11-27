@@ -467,6 +467,18 @@
     "ElrondDelegationBelowMinimumError" : {
       "title" : "Le montant restant à déléguer ne peut pas être inférieur à {{formattedAmount}}."
     },
+    "NotEnoughVTHO" : {
+      "title" : "Solde en VTHO insuffisant",
+      "description" : "Votre compte doit avoir un solde en VTHO suffisant."
+    },
+    "MustBeVechain" : {
+      "title" : "Ce n’est pas un compte VeChain",
+      "description" : "La crypto doit être le VTHO ou le VET."
+    },
+    "ImpossibleToCalculateAmountAndFees" : {
+      "title" : "Impossible de calculer le montant et les frais",
+      "description" : "Impossible de calculer le montant et les frais"
+    },
     "NotEnoughEGLDForFees" : {
       "title" : "Solde d’EGLD insuffisant pour payer les frais de transaction",
       "description" : "Envoyez des EGLD sur votre compte pour régler vos transactions."
@@ -1006,7 +1018,8 @@
     "week" : "1S",
     "month" : "1M",
     "year" : "1A",
-    "all" : "TOUT"
+    "all" : "TOUT",
+    "graphNotSupported" : "Graphique non disponible pour ce token"
   },
   "carousel" : {
     "title" : "Fermer la bannière ?",
@@ -2209,6 +2222,20 @@
       "send" : "Envoyer",
       "deposit" : "Recevoir",
       "stake" : "Staker"
+    },
+    "recoverBanner" : {
+      "subscribeDone" : {
+        "title" : "Finish adding your payment card",
+        "description" : "Restore reliably with Ledger Recover."
+      },
+      "verifyIdentity" : {
+        "title" : "Finish verifying your identity",
+        "description" : "Restore reliably with Ledger Recover."
+      },
+      "connectDevice" : {
+        "title" : "Final step: Connect your Ledger",
+        "description" : "You're 1 step away from Ledger Recover."
+      }
     }
   },
   "addAccountsModal" : {
@@ -3789,6 +3816,11 @@
         "title" : "Ajouter Token",
         "disclaimer" : "{{tokenName}} est un token BEP-20.\nVous pouvez recevoir ces tokens directement sur un compte BNB.",
         "learnMore" : "En savoir plus sur les BEP-20"
+      },
+      "vip180" : {
+        "title" : "Ajouter un token",
+        "disclaimer" : "{{tokenName}} est un token VIP180.\nVous pouvez recevoir ces tokens directement sur un compte VET.",
+        "learnMore" : "En savoir plus sur les VIP180"
       }
     },
     "showMoreChainType" : "Plus de types d’adresses",
@@ -6344,6 +6376,12 @@
         "titleCompleted" : "Actifs transférés sur votre Ledger",
         "description" : "Transférez facilement des actifs depuis Coinbase ou la plateforme d’échange/wallet de votre choix.",
         "popupLabel" : "Actifs transférés"
+      },
+      "buyCrypto" : {
+        "title" : "Acheter des cryptos",
+        "titleCompleted" : "Actifs transférés sur votre Ledger",
+        "description" : "Choisissez parmi plus de 500 cryptos et bénéficiez des meilleures offres des prestataires d’achat, en fonction de vos préférences.",
+        "popupLabel" : "Crypto achetée"
       }
     }
   },
