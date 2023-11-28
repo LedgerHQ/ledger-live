@@ -333,6 +333,7 @@ export type Feature_ProtectServicesMobile = Feature<{
 
 export type Feature_ProtectServicesDesktop = Feature<{
   availableOnDesktop: boolean;
+  isNew: boolean;
   openRecoverFromSidebar: boolean;
   discoverTheBenefitsLink: string;
   ledgerliveStorageState: boolean;

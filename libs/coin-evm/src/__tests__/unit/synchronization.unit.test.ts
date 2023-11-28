@@ -1,5 +1,5 @@
-import BigNumber from "bignumber.js";
 import { AssertionError, fail } from "assert";
+import BigNumber from "bignumber.js";
 import { decodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { makeTokenAccount } from "../fixtures/common.fixtures";
