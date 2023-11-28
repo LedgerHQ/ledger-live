@@ -1,5 +1,11 @@
 # @ledgerhq/react-ui
 
+## 0.14.11-nightly.3
+
+### Patch Changes
+
+- [#5501](https://github.com/LedgerHQ/ledger-live/pull/5501) [`f6dd7d391a`](https://github.com/LedgerHQ/ledger-live/commit/f6dd7d391a54442d4a7c428bc7be9261b104fb21) Thanks [@ak-ledger](https://github.com/ak-ledger)! - Update Stax onboarding (firmware update)
+
 ## 0.14.11-nightly.2
 
 ### Patch Changes

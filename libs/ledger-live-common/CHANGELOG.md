@@ -1,5 +1,26 @@
 # @ledgerhq/live-common
 
+## 33.2.0-nightly.8
+
+### Minor Changes
+
+- [#5543](https://github.com/LedgerHQ/ledger-live/pull/5543) [`0f5292af8f`](https://github.com/LedgerHQ/ledger-live/commit/0f5292af8feaa517f36ec35155d813b17c4f66e9) Thanks [@chabroA](https://github.com/chabroA)! - rename Crypto.org to Cronos POS Chain
+
+### Patch Changes
+
+- [#5350](https://github.com/LedgerHQ/ledger-live/pull/5350) [`342ed3b816`](https://github.com/LedgerHQ/ledger-live/commit/342ed3b81613ca81790c1c3d6cfe639c8700562a) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Fix UI issue on shutdown device during language pack install by whitelisting errors that retry polling
+
+- Updated dependencies [[`0f5292af8f`](https://github.com/LedgerHQ/ledger-live/commit/0f5292af8feaa517f36ec35155d813b17c4f66e9)]:
+  - @ledgerhq/cryptoassets@11.2.0-nightly.4
+  - @ledgerhq/coin-framework@0.9.0-nightly.8
+  - @ledgerhq/live-env@0.7.0-nightly.2
+  - @ledgerhq/coin-algorand@0.3.6-nightly.8
+  - @ledgerhq/coin-evm@0.11.0-nightly.8
+  - @ledgerhq/coin-polkadot@0.4.6-nightly.9
+  - @ledgerhq/hw-app-eth@6.35.0-nightly.8
+  - @ledgerhq/hw-app-vet@0.1.0-nightly.3
+  - @ledgerhq/live-network@1.1.9-nightly.5
+
 ## 33.2.0-nightly.7
 
 ### Patch Changes

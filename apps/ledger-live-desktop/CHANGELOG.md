@@ -1,5 +1,23 @@
 # ledger-live-desktop
 
+## 2.72.0-nightly.8
+
+### Minor Changes
+
+- [#5543](https://github.com/LedgerHQ/ledger-live/pull/5543) [`0f5292af8f`](https://github.com/LedgerHQ/ledger-live/commit/0f5292af8feaa517f36ec35155d813b17c4f66e9) Thanks [@chabroA](https://github.com/chabroA)! - rename Crypto.org to Cronos POS Chain
+
+### Patch Changes
+
+- [#5501](https://github.com/LedgerHQ/ledger-live/pull/5501) [`f6dd7d391a`](https://github.com/LedgerHQ/ledger-live/commit/f6dd7d391a54442d4a7c428bc7be9261b104fb21) Thanks [@ak-ledger](https://github.com/ak-ledger)! - Update Stax onboarding (firmware update)
+
+- Updated dependencies [[`f6dd7d391a`](https://github.com/LedgerHQ/ledger-live/commit/f6dd7d391a54442d4a7c428bc7be9261b104fb21), [`0f5292af8f`](https://github.com/LedgerHQ/ledger-live/commit/0f5292af8feaa517f36ec35155d813b17c4f66e9), [`342ed3b816`](https://github.com/LedgerHQ/ledger-live/commit/342ed3b81613ca81790c1c3d6cfe639c8700562a)]:
+  - @ledgerhq/react-ui@0.14.11-nightly.3
+  - @ledgerhq/live-common@33.2.0-nightly.8
+  - @ledgerhq/coin-framework@0.9.0-nightly.8
+  - @ledgerhq/live-env@0.7.0-nightly.2
+  - @ledgerhq/coin-evm@0.11.0-nightly.8
+  - @ledgerhq/live-network@1.1.9-nightly.5
+
 ## 2.72.0-nightly.7
 
 ### Patch Changes
