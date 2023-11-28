@@ -74,6 +74,10 @@ import { Transaction as tezosTransaction } from "../families/tezos/types";
 import { TransactionRaw as tezosTransactionRaw } from "../families/tezos/types";
 import { TransactionStatus as tezosTransactionStatus } from "../families/tezos/types";
 import { TransactionStatusRaw as tezosTransactionStatusRaw } from "../families/tezos/types";
+import { Transaction as tonTransaction } from "../families/ton/types";
+import { TransactionRaw as tonTransactionRaw } from "../families/ton/types";
+import { TransactionStatus as tonTransactionStatus } from "../families/ton/types";
+import { TransactionStatusRaw as tonTransactionStatusRaw } from "../families/ton/types";
 import { Transaction as tronTransaction } from "../families/tron/types";
 import { TransactionRaw as tronTransactionRaw } from "../families/tron/types";
 import { TransactionStatus as tronTransactionStatus } from "../families/tron/types";
@@ -103,6 +107,7 @@ export type Transaction =
   | stacksTransaction
   | stellarTransaction
   | tezosTransaction
+  | tonTransaction
   | tronTransaction
   | vechainTransaction;
 
@@ -126,6 +131,7 @@ export type TransactionRaw =
   | stacksTransactionRaw
   | stellarTransactionRaw
   | tezosTransactionRaw
+  | tonTransactionRaw
   | tronTransactionRaw
   | vechainTransactionRaw;
 
@@ -149,6 +155,7 @@ export type TransactionStatus =
   | stacksTransactionStatus
   | stellarTransactionStatus
   | tezosTransactionStatus
+  | tonTransactionStatus
   | tronTransactionStatus
   | vechainTransactionStatus;
 
@@ -172,5 +179,6 @@ export type TransactionStatusRaw =
   | stacksTransactionStatusRaw
   | stellarTransactionStatusRaw
   | tezosTransactionStatusRaw
+  | tonTransactionStatusRaw
   | tronTransactionStatusRaw
   | vechainTransactionStatusRaw;

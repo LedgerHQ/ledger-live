@@ -189,6 +189,9 @@ const modes = Object.freeze({
     startsAt: 1,
     tag: "third-party",
   },
+  ton: {
+    overridesDerivation: "44'/607'/0'/0'/<account>'/0'",
+  },
 });
 modes as Record<DerivationMode, ModeSpec>; // eslint-disable-line
 
@@ -208,6 +211,7 @@ const legacyDerivations: Partial<Record<CryptoCurrency["id"], DerivationMode[]>>
   near: ["nearbip44h"],
   vechain: ["vechain"],
   stacks: ["stacks_wallet"],
+  ton: ["ton"],
   ethereum: ["ethM", "ethMM"],
   ethereum_classic: ["ethM", "ethMM", "etcM"],
   solana: ["solanaMain", "solanaSub"],
@@ -349,6 +353,7 @@ const disableBIP44: Record<string, boolean> = {
   internet_computer: true,
   casper: true,
   filecoin: true,
+  ton: true,
 };
 type SeedInfo = {
   purpose: number;
@@ -367,6 +372,7 @@ const seedIdentifierPath: Record<string, SeedPathFn> = {
   internet_computer: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   near: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0'/0'`,
   vechain: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
+  ton: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0'/0'/0'`,
   _: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'`,
 };
 export const getSeedIdentifierDerivation = (

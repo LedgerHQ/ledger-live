@@ -117,6 +117,7 @@ export type CurrencyFeatures = {
   currencyLukso: DefaultFeature;
   currencyLinea: DefaultFeature;
   currencyLineaGoerli: DefaultFeature;
+  currencyTon: DefaultFeature;
 };
 
 /**
