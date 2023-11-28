@@ -15,6 +15,8 @@ import { catchError, debounce, delayWhen, filter, switchMap, tap, timeout } from
 import { Device } from "./types";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { ConnectManagerTimeout } from "../../errors";
+import { LocalTracer } from "@ledgerhq/logs";
+import { LOG_TYPE } from "..";
 
 export enum ImplementationType {
   event = "enum",
@@ -56,7 +58,7 @@ const defaultRetryableWithDelayDisconnectedErrors: ReadonlyArray<ErrorConstructo
   DisconnectedDeviceDuringOperation,
 ];
 
-const defaultConfig: PollingImplementationConfig = {
+export const defaultImplementationConfig: PollingImplementationConfig = {
   pollingFrequency: 2000,
   initialWaitTime: 5000,
   reconnectWaitTime: 5000,
@@ -82,8 +84,10 @@ const pollingImplementation: Implementation = <SpecificType, GenericRequestType>
   params: PollingImplementationParams<GenericRequestType, SpecificType>,
 ): Observable<SpecificType | ImplementationEvent> =>
   new Observable((subscriber: Observer<EmittedEvent<SpecificType> | ImplementationEvent>) => {
-    const { deviceSubject, task, request, config = defaultConfig } = params;
+    const { deviceSubject, task, request, config = defaultImplementationConfig } = params;
     const { pollingFrequency, initialWaitTime, reconnectWaitTime, connectionTimeout } = config;
+    const tracer = new LocalTracer(LOG_TYPE, { function: "pollingImplementation" });
+    tracer.trace("Setting up device action polling implementation", { config });
 
     let shouldStopPolling = false;
     let connectSub: Subscription;
@@ -147,6 +151,11 @@ const pollingImplementation: Implementation = <SpecificType, GenericRequestType>
                     }) as Error)
                   : error;
 
+              tracer.trace(`Error when running task in polling implementation: ${error}`, {
+                error,
+                maybeRemappedError,
+              });
+
               return of({
                 type: "error",
                 error: maybeRemappedError,
@@ -205,7 +214,7 @@ const pollingImplementation: Implementation = <SpecificType, GenericRequestType>
 const eventImplementation: Implementation = <SpecificType, GenericRequestType>(
   params: PollingImplementationParams<GenericRequestType, SpecificType>,
 ): Observable<EmittedEvent<SpecificType> | ImplementationEvent> => {
-  const { deviceSubject, task, request, config = defaultConfig } = params;
+  const { deviceSubject, task, request, config = defaultImplementationConfig } = params;
   const { reconnectWaitTime } = config;
   return new Observable(
     (subscriber: Observer<EmittedEvent<SpecificType> | ImplementationEvent>) => {
