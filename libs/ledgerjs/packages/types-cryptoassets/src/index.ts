@@ -108,6 +108,7 @@ export type CryptoCurrencyId =
   | "tezos"
   | "thundercore"
   | "tomo"
+  | "ton"
   | "tron"
   | "ubiq"
   | "umee"

@@ -90,6 +90,7 @@ export enum CoinType {
   TEZOS = 1729,
   THUNDERCORE = 1001,
   TOMO = 889,
+  TON = 607,
   TRON = 195,
   UBIQ = 108,
   VECHAIN = 818,
