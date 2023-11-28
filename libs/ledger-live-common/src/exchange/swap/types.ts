@@ -339,4 +339,5 @@ export type SwapTransactionType = UseBridgeTransactionResult & {
   reverseSwap: () => void;
   fromAmountError?: Error;
   fromAmountWarning?: Error;
+  ptxSwapMoonpayProviderFlag: boolean;
 };
