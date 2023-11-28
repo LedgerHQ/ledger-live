@@ -40,9 +40,12 @@ import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigat
 import { MarketNavigatorStackParamList } from "../../components/RootNavigator/types/MarketNavigator";
 import EmptyState from "./EmptyState";
 
-const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl(CollapsibleHeaderFlatList, {
-  progressViewOffset: Platform.OS === "android" ? 64 : 0,
-});
+const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl(
+  CollapsibleHeaderFlatList<CurrencyData>,
+  {
+    progressViewOffset: Platform.OS === "android" ? 64 : 0,
+  },
+);
 
 const noResultIllustration = {
   dark: require("../../images/illustration/Dark/_051.png"),
@@ -53,6 +56,8 @@ const noNetworkIllustration = {
   dark: require("../../images/illustration/Dark/_078.png"),
   light: require("../../images/illustration/Light/_078.png"),
 };
+
+const keyExtractor = (item: CurrencyData, index: number) => item.id + index;
 
 function getAnalyticsProperties<P extends object>(
   requestParams: MarketListRequestParams,
@@ -450,7 +455,7 @@ export default function Market({ navigation }: NavigationProps) {
       onEndReachedThreshold={0.5}
       scrollEventThrottle={50}
       initialNumToRender={limit}
-      keyExtractor={(item, index) => item.id + index}
+      keyExtractor={keyExtractor}
       ListFooterComponent={renderFooter}
       ListEmptyComponent={renderEmptyComponent}
       refreshControl={

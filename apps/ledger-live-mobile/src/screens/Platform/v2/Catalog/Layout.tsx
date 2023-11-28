@@ -1,6 +1,6 @@
 import { Flex, ScrollContainer, Text } from "@ledgerhq/native-ui";
 import React from "react";
-import { Platform, StatusBar, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import Animated, {
   Extrapolate,
   interpolate,
