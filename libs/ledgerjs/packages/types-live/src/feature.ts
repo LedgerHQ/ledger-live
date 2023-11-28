@@ -183,6 +183,7 @@ export type Features = CurrencyFeatures & {
   cexDepositEntryPointsMobile: Feature_CexDepositEntryPointsMobile;
   fetchAdditionalCoins: Feature_FetchAdditionalCoins;
   ptxSwapLiveApp: Feature_PtxSwapLiveApp;
+  ptxSwapMoonpayProvider: Feature_PtxSwapMoonpayProvider;
 };
 
 /**
@@ -465,6 +466,8 @@ export type Feature_PtxSwapLiveApp = Feature<{
   currencies?: Array<string>;
   families?: Array<string>;
 }>;
+
+export type Feature_PtxSwapMoonpayProvider = Feature<{}>;
 
 export type Feature_FetchAdditionalCoins = Feature<{
   batch: number;
