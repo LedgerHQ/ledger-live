@@ -91,6 +91,7 @@ setSupportedCurrencies([
   "lukso",
   "filecoin",
   "linea",
+  "ton",
   "linea_sepolia",
   "blast",
   "blast_sepolia",

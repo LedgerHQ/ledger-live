@@ -2802,6 +2802,30 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  ton: {
+    type: "CryptoCurrency",
+    id: "ton",
+    coinType: CoinType.TON,
+    name: "TON",
+    managerAppName: "TON",
+    ticker: "TON",
+    scheme: "ton",
+    color: "#0098ea",
+    family: "ton",
+    units: [
+      {
+        name: "TON",
+        code: "TON",
+        magnitude: 9,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://testnet.tonscan.org/tx/$hash", // TODO: TON switch to mainnet
+        address: "https://testnet.tonscan.org/address/$address",
+      },
+    ],
+  },
   tron: {
     type: "CryptoCurrency",
     id: "tron",
