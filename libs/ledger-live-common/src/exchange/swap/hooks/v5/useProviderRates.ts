@@ -27,7 +27,7 @@ export function useProviderRates({
   const ptxSwapMoonpayProviderFlag = useFeature("ptxSwapMoonpayProvider");
   const filterMoonpay = useCallback(
     rates => {
-      if (!rates || !ptxSwapMoonpayProviderFlag?.enabled) return rates;
+      if (!rates || ptxSwapMoonpayProviderFlag?.enabled) return rates;
       return rates.filter(r => r.provider !== "moonpay");
     },
     [ptxSwapMoonpayProviderFlag?.enabled],
