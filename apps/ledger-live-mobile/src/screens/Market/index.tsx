@@ -11,9 +11,10 @@ import {
 } from "@ledgerhq/native-ui";
 import { useDispatch, useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
+import TabBarSafeAreaView from "../../components/TabBar/TabBarSafeAreaView";
 import { useMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
-import { Platform, ListRenderItem, RefreshControl, TouchableOpacity } from "react-native";
+import { Platform, ListRenderItem, RefreshControl, TouchableOpacity, FlatList } from "react-native";
 import { CurrencyData, MarketListRequestParams } from "@ledgerhq/live-common/market/types";
 import { useRoute, useFocusEffect } from "@react-navigation/native";
 import { useNetInfo } from "@react-native-community/netinfo";
@@ -429,42 +430,56 @@ export default function Market({ navigation }: NavigationProps) {
     }, [setScreen, setSource]),
   );
 
+  const listProps = {
+    contentContainerStyle: {
+      paddingHorizontal: 16,
+      paddingBottom: TAB_BAR_SAFE_HEIGHT,
+    },
+    data: marketDataFiltered,
+    renderItem: renderItems,
+    onEndReached: onEndReached,
+    onEndReachedThreshold: 0.5,
+    scrollEventThrottle: 50,
+    initialNumToRender: limit,
+    keyExtractor,
+    ListFooterComponent: renderFooter,
+    ListEmptyComponent: renderEmptyComponent,
+    refreshControl: (
+      <RefreshControl
+        refreshing={refreshControlVisible}
+        colors={[colors.primary.c80]}
+        tintColor={colors.primary.c80}
+        onRefresh={handlePullToRefresh}
+      />
+    ),
+  };
+
+  if (!ptxEarnFeature?.enabled) {
+    return (
+      <TabBarSafeAreaView>
+        <Flex px={6} pt={ptxEarnFeature?.enabled ? 6 : 0}>
+          <Text my={3} variant="h4" fontWeight="semiBold">
+            {t("market.title")}
+          </Text>
+          <SearchHeader search={search} refresh={refresh} />
+          <BottomSection navigation={navigation} />
+        </Flex>
+        <FlatList {...listProps} />
+      </TabBarSafeAreaView>
+    );
+  }
+
   return (
     <RefreshableCollapsibleHeaderFlatList
+      {...listProps}
       stickyHeaderIndices={[0]}
       ListHeaderComponent={
         <WalletTabSafeAreaView edges={["left", "right"]}>
           <Flex backgroundColor={colors.background.main}>
-            {!ptxEarnFeature?.enabled && (
-              <Text my={3} variant="h4" fontWeight="semiBold">
-                {t("market.title")}
-              </Text>
-            )}
             <SearchHeader search={search} refresh={refresh} />
             <BottomSection navigation={navigation} />
           </Flex>
         </WalletTabSafeAreaView>
-      }
-      contentContainerStyle={{
-        paddingHorizontal: 16,
-        paddingBottom: TAB_BAR_SAFE_HEIGHT,
-      }}
-      data={marketDataFiltered}
-      renderItem={renderItems}
-      onEndReached={onEndReached}
-      onEndReachedThreshold={0.5}
-      scrollEventThrottle={50}
-      initialNumToRender={limit}
-      keyExtractor={keyExtractor}
-      ListFooterComponent={renderFooter}
-      ListEmptyComponent={renderEmptyComponent}
-      refreshControl={
-        <RefreshControl
-          refreshing={refreshControlVisible}
-          colors={[colors.primary.c80]}
-          tintColor={colors.primary.c80}
-          onRefresh={handlePullToRefresh}
-        />
       }
     />
   );
