@@ -247,22 +247,22 @@ const envDefinitions = {
   CRYPTO_ORG_INDEXER: {
     def: "https://cryptoorg-rpc-indexer.coin.ledger.com",
     parser: stringParser,
-    desc: "location of the crypto.org indexer API",
+    desc: "location of the Cronos POS Chain (formerly Crypto.org) indexer API",
   },
   CRYPTO_ORG_TESTNET_INDEXER: {
-    def: "https://crypto.org/explorer/croeseid4",
+    def: "https://cronos-pos.org/explorer/croeseid4",
     parser: stringParser,
-    desc: "location of the crypto.org indexer testnet API",
+    desc: "location of the Cronos POS Chain (formerly Crypto.org) indexer testnet API",
   },
   CRYPTO_ORG_RPC_URL: {
     def: "https://cryptoorg-rpc-node.coin.ledger.com",
     parser: stringParser,
-    desc: "location of the crypto.org chain node",
+    desc: "location of the Cronos POS Chain (formerly Crypto.org) chain node",
   },
   CRYPTO_ORG_TESTNET_RPC_URL: {
     def: "https://rpc-testnet-croeseid-4.crypto.org",
     parser: stringParser,
-    desc: "location of the crypto.org chain testnet node",
+    desc: "location of the Cronos POS Chain (formerly Crypto.org) chain testnet node",
   },
   DEBUG_UTXO_DISPLAY: {
     def: 4,

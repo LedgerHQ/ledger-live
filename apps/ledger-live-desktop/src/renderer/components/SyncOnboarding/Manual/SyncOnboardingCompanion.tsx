@@ -36,7 +36,7 @@ import LockedDeviceDrawer, { Props as LockedDeviceDrawerProps } from "./LockedDe
 import { LockedDeviceError } from "@ledgerhq/errors";
 import { saveSettings } from "~/renderer/actions/settings";
 
-const READY_REDIRECT_DELAY_MS = 2500;
+const READY_REDIRECT_DELAY_MS = 2000;
 const POLLING_PERIOD_MS = 1000;
 const DESYNC_TIMEOUT_MS = 60000;
 const LONG_DESYNC_TIMEOUT_MS = 100000;
@@ -121,7 +121,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
   const deviceName = device?.deviceName || productName;
 
   const handleInstallRecommendedApplicationComplete = useCallback(() => {
-    setStepKey(nextStepKey(StepKey.Applications));
+    setTimeout(() => setStepKey(nextStepKey(StepKey.Applications)), READY_REDIRECT_DELAY_MS);
   }, []);
 
   const defaultSteps: Step[] = useMemo(
@@ -138,19 +138,13 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
               category={`Set up ${productName}: Step 1 device paired`}
               flow={analyticsFlowName}
             />
-            {/* @ts-expect-error StepText weird children prop issue */}
-            <StepText mb={6}>
+            {/* @ts-expect-error weird props issue with React 18 */}
+            <StepText>
               {
                 t("syncOnboarding.manual.pairedContent.description", {
                   deviceName: productName,
                 }) as string
               }
-            </StepText>
-            {/* @ts-expect-error StepText weird children prop issue */}
-            <StepText>
-              {t("syncOnboarding.manual.pairedContent.description", {
-                deviceName: productName,
-              })}
             </StepText>
             <ContinueOnDeviceWithAnim
               deviceModelId={device.modelId}
@@ -167,9 +161,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
         renderBody: () => (
           <Flex flexDirection="column">
             <TrackPage category={`Set up ${productName}: Step 2 PIN`} flow={analyticsFlowName} />
-            {/* @ts-expect-error StepText weird children prop issue */}
-            <StepText mb={6}>{t("syncOnboarding.manual.pinContent.description")}</StepText>
-            {/* @ts-expect-error StepText weird children prop issue */}
+            {/* @ts-expect-error weird props issue with React 18 */}
             <StepText>
               {t("syncOnboarding.manual.pinContent.description", { productName })}
             </StepText>

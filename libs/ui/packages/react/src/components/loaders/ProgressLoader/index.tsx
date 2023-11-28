@@ -149,7 +149,7 @@ export default function ProgressLoader({
     <StyledProgressLoaderContainer>
       {showPercentage && (
         <StyledCenteredText variant="body" color={textColor || "primary.c80"}>
-          {progress}%
+          {Math.floor(progress)}%
         </StyledCenteredText>
       )}
       {infinite ? (
