@@ -2821,8 +2821,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx: "https://tonscan.org/tx/$hash",
-        address: "https://tonscan.org/address/$address",
+        tx: "https://testnet.tonscan.org/tx/$hash", // TODO: TON switch to mainnet
+        address: "https://testnet.tonscan.org/address/$address",
       },
     ],
   },
