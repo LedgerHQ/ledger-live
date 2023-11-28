@@ -155,19 +155,14 @@ export const useSwapTransaction = ({
     bridge: bridgeTransaction,
   });
 
-  const providerRates = useProviderRates({
+  const { rates, refetchRates, updateSelectedRate } = useProviderRates({
     fromState,
     toState,
     onNoRates,
     setExchangeRate,
   });
-  const { refetchRates, updateSelectedRate } = providerRates;
-  let { rates } = providerRates;
-  const ptxSwapMoonpayProviderFlag = useFeature("ptxSwapMoonpayProvider");
 
-  if (!ptxSwapMoonpayProviderFlag?.enabled && rates.value) {
-    rates = { ...rates, value: rates.value.filter(v => v.provider !== "moonpay") };
-  }
+  const ptxSwapMoonpayProviderFlag = useFeature("ptxSwapMoonpayProvider");
 
   return {
     ...bridgeTransaction,
