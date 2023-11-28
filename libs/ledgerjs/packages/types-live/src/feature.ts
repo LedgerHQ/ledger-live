@@ -467,7 +467,7 @@ export type Feature_PtxSwapLiveApp = Feature<{
   families?: Array<string>;
 }>;
 
-export type Feature_PtxSwapMoonpayProvider = Feature<{}>;
+export type Feature_PtxSwapMoonpayProvider = DefaultFeature;
 
 export type Feature_FetchAdditionalCoins = Feature<{
   batch: number;
