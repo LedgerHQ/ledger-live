@@ -40,6 +40,8 @@ import { OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
 import { v4 } from "uuid";
 import SwapWebView, { SWAP_WEB_MANIFEST_ID, SwapWebProps } from "./SwapWebView";
 
+const WEB_PROVIDERS = ["moonpay"];
+
 const Wrapper = styled(Box).attrs({
   p: 20,
   mt: 12,
@@ -96,6 +98,7 @@ const SwapForm = () => {
     timeout: SWAP_RATES_TIMEOUT,
     timeoutErrorMessage: t("swap2.form.timeout.message"),
   });
+  const { ptxSwapMoonpayProviderFlag } = swapTransaction;
 
   const isSwapLiveAppEnabled = useIsSwapLiveApp({
     currencyFrom: swapTransaction.swap.from.currency,
@@ -146,6 +149,7 @@ const SwapForm = () => {
       const fromAccountId = from.parentAccount?.id || from.account?.id;
 
       const pathname = `/platform/${getProviderName(provider).toLowerCase()}`;
+
       const account = accounts.find(a => a.id === fromAccountId);
       if (!account) return;
       const parentAccount = isTokenAccount(account)
@@ -206,6 +210,7 @@ const SwapForm = () => {
           page: "Page Swap Form",
           ...swapDefaultTrack,
           sourcecurrency: swapTransaction.swap.from.currency?.name,
+          ptxSwapMoonpayProviderFlag,
           provider,
         });
     },
@@ -234,9 +239,10 @@ const SwapForm = () => {
       sourceCurrency: sourceCurrency?.name,
       targetCurrency: targetCurrency?.name,
       partner: provider,
+      ptxSwapMoonpayProviderFlag,
     });
 
-    if (providerType === "DEX") {
+    if (providerType === "DEX" || WEB_PROVIDERS.includes(provider)) {
       redirectToProviderApp(provider);
     } else {
       setDrawer(
@@ -359,7 +365,13 @@ const SwapForm = () => {
 
   return (
     <Wrapper>
-      <TrackPage category="Swap" name="Form" provider={provider} {...swapDefaultTrack} />
+      <TrackPage
+        category="Swap"
+        name="Form"
+        provider={provider}
+        ptxSwapMoonpayProviderFlag={ptxSwapMoonpayProviderFlag}
+        {...swapDefaultTrack}
+      />
       <SwapFormSelectors
         fromAccount={sourceAccount}
         toAccount={swapTransaction.swap.to.account}
