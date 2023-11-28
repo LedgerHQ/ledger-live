@@ -733,7 +733,7 @@ export function useWalletAPIServer({
         exchangeType: ExchangeType[params.exchangeType],
         swapId: params.exchangeType === "SWAP" ? params.swapId : undefined,
         rate: params.exchangeType === "SWAP" ? params.rate : undefined,
-        tokenCurrency: params.tokenCurrency !== "SELL" ? params.tokenCurrency : undefined,
+        tokenCurrency: params.exchangeType !== "SELL" ? params.tokenCurrency : undefined,
       };
 
       return completeExchangeLogic(
