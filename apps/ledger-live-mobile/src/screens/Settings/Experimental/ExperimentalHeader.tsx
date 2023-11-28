@@ -97,7 +97,7 @@ function ExperimentalHeader() {
         styles.root,
         {
           zIndex: !isExperimental && !areFeatureFlagsOverridden && !Config.MOCK ? 0 : 1,
-          marginBottom: isExperimental ? -top + 20 : 0,
+          marginBottom: isExperimental || Config.MOCK ? -top + 20 : 0,
           backgroundColor: colors.lightLiveBg,
         },
         heightStyle,
@@ -108,7 +108,6 @@ function ExperimentalHeader() {
           styles.container,
           {
             top,
-
             backgroundColor: colors.lightLiveBg,
           },
           opacityStyle,

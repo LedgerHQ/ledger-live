@@ -11,6 +11,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { useExperimental } from "../../experimental";
+import Config from "react-native-config";
 import { HEIGHT as ExperimentalHeaderHeight } from "../../screens/Settings/Experimental/ExperimentalHeader";
 import proxyStyled, { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -195,7 +196,10 @@ export function TransferTabIcon() {
   const { bottom: bottomInset, top: topInset } = useSafeAreaInsets();
 
   const drawerHeight =
-    screenHeight - bottomInset - topInset - (isExperimental ? ExperimentalHeaderHeight : 0);
+    screenHeight -
+    bottomInset -
+    topInset -
+    (isExperimental || Config.MOCK ? ExperimentalHeaderHeight : 0);
 
   return (
     <>
