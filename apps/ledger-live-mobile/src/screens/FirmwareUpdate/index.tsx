@@ -628,6 +628,7 @@ export const FirmwareUpdate = ({
             t={t}
           />
         );
+      case "allowSecureChannelDenied":
       case "installOsuDevicePermissionDenied":
         return (
           <FirmwareUpdateDenied

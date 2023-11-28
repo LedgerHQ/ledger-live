@@ -3,9 +3,10 @@ import {
   DisconnectedDevice,
   DisconnectedDeviceDuringOperation,
   UnresponsiveDeviceError,
+  UserRefusedAllowManager,
   UserRefusedFirmwareUpdate,
 } from "@ledgerhq/errors";
-import { log } from "@ledgerhq/logs";
+import { LocalTracer } from "@ledgerhq/logs";
 import type {
   DeviceId,
   DeviceInfo,
@@ -24,7 +25,12 @@ import { quitApp } from "../commands/quitApp";
 
 import ManagerAPI from "../../manager/api";
 
-import { SharedTaskEvent, sharedLogicTaskWrapper, retryOnErrorsCommandWrapper } from "./core";
+import {
+  SharedTaskEvent,
+  sharedLogicTaskWrapper,
+  retryOnErrorsCommandWrapper,
+  LOG_TYPE,
+} from "./core";
 import { TransportRef, withTransport } from "../transports/core";
 import { parseDeviceInfo } from "./getDeviceInfo";
 
@@ -48,6 +54,7 @@ export type UpdateFirmwareTaskEvent =
   | { type: "installOsuDevicePermissionGranted" }
   | { type: "installOsuDevicePermissionDenied" }
   | { type: "allowSecureChannelRequested" }
+  | { type: "allowSecureChannelDenied" }
   | { type: "taskError"; error: UpdateFirmwareTaskError }
   | SharedTaskEvent;
 
@@ -70,11 +77,18 @@ function internalUpdateFirmwareTask({
   deviceId,
   updateContext,
 }: UpdateFirmwareTaskArgs): Observable<UpdateFirmwareTaskEvent> {
+  const tracer = new LocalTracer(LOG_TYPE, {
+    function: "updateFirmwareTask",
+  });
+
   return new Observable(subscriber => {
     const sub = withTransport(deviceId)(({ transportRef }) =>
       concat(
         quitApp(transportRef.current).pipe(
-          switchMap(() => waitForGetVersion(transportRef, {})),
+          switchMap(() => {
+            tracer.updateContext({ transportContext: transportRef.current.getTraceContext() });
+            return waitForGetVersion(transportRef, {});
+          }),
           switchMap(value => {
             const { firmwareInfo } = value;
 
@@ -84,6 +98,7 @@ function internalUpdateFirmwareTask({
                   firmwareInfo,
                   updateContext,
                   transport: transportRef.current,
+                  tracer,
                 }).pipe(
                   map(e => {
                     if (e.type === "unresponsive") {
@@ -112,12 +127,15 @@ function internalUpdateFirmwareTask({
       next: event => {
         switch (event.type) {
           case "allowSecureChannelRequested":
+            tracer.trace("allowSecureChannelRequested");
             subscriber.next(event);
             break;
           case "firmwareInstallPermissionRequested":
+            tracer.trace("firmwareInstallPermissionRequested");
             subscriber.next({ type: "installOsuDevicePermissionRequested" });
             break;
           case "firmwareInstallPermissionGranted":
+            tracer.trace("firmwareInstallPermissionGranted");
             subscriber.next({ type: "installOsuDevicePermissionGranted" });
             break;
           case "progress":
@@ -132,8 +150,12 @@ function internalUpdateFirmwareTask({
       },
       complete: () => subscriber.complete(),
       error: error => {
+        tracer.trace(`Error: ${error}`, { error });
+
         if (error instanceof UserRefusedFirmwareUpdate) {
           subscriber.next({ type: "installOsuDevicePermissionDenied" });
+        } else if (error instanceof UserRefusedAllowManager) {
+          subscriber.next({ type: "allowSecureChannelDenied" });
         } else {
           subscriber.next({ type: "error", error, retrying: false });
           subscriber.complete();
@@ -278,14 +300,17 @@ const installOsuFirmware = ({
   transport,
   updateContext,
   firmwareInfo,
+  tracer,
 }: {
   firmwareInfo: FirmwareInfo;
   updateContext: FirmwareUpdateContext;
   transport: Transport;
+  tracer: LocalTracer;
 }) => {
   const { targetId } = firmwareInfo;
   const { osu } = updateContext;
-  log("hw", "initiating osu firmware installation", { targetId, osu });
+  tracer.trace("Initiating osu firmware installation", { targetId, osu });
+
   // install OSU firmware
   return installFirmwareCommand(transport, {
     targetId,
