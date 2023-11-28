@@ -15,7 +15,6 @@ import { TrackScreen, track } from "../../analytics";
 import { NavigatorName, ScreenName } from "../../const";
 import { knownDevicesSelector } from "../../reducers/ble";
 import Touchable from "../Touchable";
-import Item from "./Item";
 import { saveBleDeviceName } from "../../actions/ble";
 import { setHasConnectedDevice, updateMainNavigatorVisibility } from "../../actions/appstate";
 import { setLastConnectedDevice, setReadOnlyMode } from "../../actions/settings";
@@ -30,6 +29,7 @@ import { useDebouncedRequireBluetooth } from "../RequiresBLE/hooks/useRequireBlu
 import RequiresBluetoothDrawer from "../RequiresBLE/RequiresBluetoothDrawer";
 import QueuedDrawer from "../QueuedDrawer";
 import ServicesWidget from "../ServicesWidget";
+import { DeviceList } from "./DeviceList";
 
 export type { SetHeaderOptionsRequest };
 
@@ -366,9 +366,7 @@ export default function SelectDevice({
           >
             <Flex>
               {deviceList.length > 0 ? (
-                deviceList.map(device => (
-                  <Item key={device.deviceId} device={device as Device} onPress={handleOnSelect} />
-                ))
+                <DeviceList deviceList={deviceList} handleOnSelect={handleOnSelect} />
               ) : (
                 <Touchable
                   onPress={isChoiceDrawerDisplayedOnAddDevice ? onAddNewPress : openBlePairingFlow}
@@ -404,6 +402,7 @@ export default function SelectDevice({
                     fontWeight="semiBold"
                     fontSize={4}
                     lineHeight="21px"
+                    mt={3}
                   >
                     <Trans i18nKey="manager.selectDevice.otgBanner" />
                   </Text>
