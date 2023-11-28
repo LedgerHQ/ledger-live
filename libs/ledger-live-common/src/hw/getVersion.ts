@@ -38,8 +38,20 @@ export const isHardwareVersionSupported = (seVersion: string, modelId?: DeviceMo
     deviceVersionRangesForHardwareVersion[modelId] as string,
   );
 
-export default async function getVersion(transport: Transport): Promise<FirmwareInfo> {
-  const res = await transport.send(0xe0, 0x01, 0x00, 0x00);
+/**
+ * Get the FirmwareInfo of a given device
+ *
+ * @param transport
+ * @param options - Contains optional options:
+ *  - abortTimeoutMs: aborts the APDU exchange after a given timeout
+ */
+export default async function getVersion(
+  transport: Transport,
+  { abortTimeoutMs }: { abortTimeoutMs?: number } = {},
+): Promise<FirmwareInfo> {
+  const res = await transport.send(0xe0, 0x01, 0x00, 0x00, undefined, undefined, {
+    abortTimeoutMs,
+  });
   const data = res.slice(0, res.length - 2);
   let i = 0;
 

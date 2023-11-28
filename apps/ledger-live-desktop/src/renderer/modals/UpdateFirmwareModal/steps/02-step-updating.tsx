@@ -22,11 +22,16 @@ const Container = styled(Box).attrs(() => ({
 type BodyProps = {
   modelId: DeviceModelId;
   deviceHasPin?: boolean | undefined;
+  downloadPhase?: { current: number; total: number };
 };
 
-export const Body = ({ modelId, deviceHasPin }: BodyProps) => {
+type StepUpdatingProps = StepProps & {
+  downloadPhase?: { current: number; total: number };
+};
+
+export const Body = ({ modelId, deviceHasPin, downloadPhase }: BodyProps) => {
   const type = useTheme().colors.palette.type;
-  return renderFirmwareUpdating({ modelId, type, deviceHasPin });
+  return renderFirmwareUpdating({ modelId, type, deviceHasPin, downloadPhase });
 };
 
 const StepUpdating = ({
@@ -36,7 +41,8 @@ const StepUpdating = ({
   transitionTo,
   setUpdatedDeviceInfo,
   deviceHasPin,
-}: StepProps) => {
+  downloadPhase,
+}: StepUpdatingProps) => {
   useEffect(() => {
     const sub = (
       getEnv("MOCK")
@@ -68,7 +74,7 @@ const StepUpdating = ({
   return (
     <Container>
       <TrackPage category="Manager" name="Firmware Updating" />
-      <Body modelId={deviceModelId} deviceHasPin={deviceHasPin} />
+      <Body modelId={deviceModelId} deviceHasPin={deviceHasPin} downloadPhase={downloadPhase} />
     </Container>
   );
 };

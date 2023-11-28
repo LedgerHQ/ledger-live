@@ -1,6 +1,6 @@
 /* eslint-disable no-bitwise */
 import { DeviceOnDashboardExpected, TransportStatusError } from "@ledgerhq/errors";
-import { log } from "@ledgerhq/logs";
+import { LocalTracer, log } from "@ledgerhq/logs";
 import Transport from "@ledgerhq/hw-transport";
 import getVersion from "./getVersion";
 import isDevFirmware from "./isDevFirmware";
@@ -12,9 +12,16 @@ import type { DeviceInfo } from "@ledgerhq/types-live";
 const ManagerAllowedFlag = 0x08;
 const PinValidatedFlag = 0x80;
 export default async function getDeviceInfo(transport: Transport): Promise<DeviceInfo> {
+  const tracer = new LocalTracer("hw", {
+    ...transport.getTraceContext(),
+    function: "getDeviceInfo",
+  });
+  tracer.trace("Starting get device info");
+
   const probablyOnDashboard = await getAppAndVersion(transport)
     .then(({ name }) => isDashboardName(name))
     .catch(e => {
+      tracer.trace(`Error from getAppAndVersion: ${e}`, { error: e });
       if (e instanceof TransportStatusError) {
         if (e.statusCode === 0x6e00) {
           return true;
@@ -29,10 +36,12 @@ export default async function getDeviceInfo(transport: Transport): Promise<Devic
     });
 
   if (!probablyOnDashboard) {
+    tracer.trace(`Device not on dashboard`);
     throw new DeviceOnDashboardExpected();
   }
 
   const res = await getVersion(transport).catch(e => {
+    tracer.trace(`Error from getVersion: ${e}`, { error: e });
     if (e instanceof TransportStatusError) {
       if (e.statusCode === 0x6d06 || e.statusCode === 0x6d07) {
         throw new DeviceNotOnboarded();

@@ -54,7 +54,7 @@ export type StepProps = {
   deviceHasPin?: boolean;
 };
 
-export type StepId = "idCheck" | "updateMCU" | "updating" | "finish" | "resetDevice" | "restore";
+export type StepId = "resetDevice" | "idCheck" | "updateMCU" | "updating" | "restore" | "finish";
 
 export type Props = {
   withResetStep: boolean;
@@ -111,45 +111,52 @@ const UpdateModal = ({
 
   const createSteps = useCallback(
     ({ withResetStep }: { withResetStep: boolean }) => {
-      const prepareStep: Step = {
-        id: "idCheck",
-        label: firmware?.osu?.hash
-          ? t("manager.modal.identifier")
-          : t("manager.modal.steps.prepare"),
-        component: StepPrepare,
-      };
-
-      const finalStep: Step = {
-        id: "finish",
-        label: t("addAccounts.breadcrumb.finish"),
-        component: StepConfirmation,
-        footer: StepConfirmFooter,
-      };
-
-      const mcuStep: Step = {
-        id: "updateMCU",
-        label: t("manager.modal.steps.updateMCU"),
-        component: StepFlashMcu,
-      };
-
-      const restoreStep: Step = {
-        id: "restore",
-        label: t("manager.modal.steps.restore"),
-        component: StepRestore,
-        footer: StepRestoreFooter,
-      };
-
-      const updatingStep: Step = {
-        id: "updating",
-        label: t("manager.modal.steps.install"),
-        component: StepUpdating,
-      };
+      const installUpdateLabel =
+        stateStepId === "finish"
+          ? t("manager.modal.steps.installDone")
+          : t("manager.modal.steps.install");
 
       const resetStep: Step = {
         id: "resetDevice",
         label: t("manager.modal.steps.reset"),
         component: StepResetDevice,
         footer: StepResetFooter,
+      };
+
+      const prepareStep: Step = {
+        id: "idCheck",
+        label: firmware?.osu?.hash
+          ? t("manager.modal.identifier")
+          : stateStepId === "resetDevice" || stateStepId === "idCheck"
+          ? t("manager.modal.steps.prepare")
+          : t("manager.modal.steps.prepareDone"),
+        component: StepPrepare,
+      };
+
+      const mcuStep: Step = {
+        id: "updateMCU",
+        label: installUpdateLabel,
+        component: StepFlashMcu,
+      };
+
+      const updatingStep: Step = {
+        id: "updating",
+        label: installUpdateLabel,
+        component: StepUpdating,
+      };
+
+      const restoreStep: Step = {
+        id: "restore",
+        label: installUpdateLabel,
+        component: StepRestore,
+        footer: StepRestoreFooter,
+      };
+
+      const finalStep: Step = {
+        id: "finish",
+        label: installUpdateLabel,
+        component: StepConfirmation,
+        footer: StepConfirmFooter,
       };
 
       const steps: Step[] = [];
@@ -170,7 +177,7 @@ const UpdateModal = ({
       steps.push(finalStep);
       return steps;
     },
-    [t, firmware, withFinal, deviceModelId],
+    [t, firmware, withFinal, deviceModelId, stateStepId],
   );
 
   const steps = useMemo(() => createSteps({ withResetStep }), [createSteps, withResetStep]);
@@ -226,6 +233,7 @@ const UpdateModal = ({
     setIsLanguagePromptOpen,
     confirmedPrompt,
     setConfirmedPrompt,
+    deviceHasPin: deviceModelId !== DeviceModelId.stax,
   };
 
   const deviceModel = getDeviceModel(deviceModelId);
@@ -253,7 +261,11 @@ const UpdateModal = ({
         <FlowStepper.Indexed
           activeKey={stateStepId}
           extraStepperContainerProps={{ px: 12 }}
-          extraStepperProps={{ errored: !!error }}
+          extraStepperProps={{
+            errored: !!error,
+            filterDuplicate: true,
+            isOver: stateStepId === "finish",
+          }}
           extraContainerProps={{ overflowY: "hidden" }}
           extraChildrenContainerProps={{ overflowY: "hidden" }}
           renderChildren={undefined}

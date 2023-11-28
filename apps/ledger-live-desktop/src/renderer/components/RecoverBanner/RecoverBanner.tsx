@@ -89,6 +89,7 @@ export default function RecoverBanner() {
         columnGap={12}
         bg={colors.opacityPurple.c10}
         justifyContent="space-between"
+        alignItems="center"
         borderRadius="8px"
         overflow="hidden"
         width="100%"
@@ -106,14 +107,14 @@ export default function RecoverBanner() {
             textAlign="center"
             fontSize="12px"
             lineHeight="15px"
-            fontWeight="extraLight"
+            fontWeight="medium"
           >
             {`${stepNumber}/${maxStepNumber - 1}`}
           </Text>
         </Flex>
         <Flex flex={1} flexDirection="column" py={3} overflow="hidden">
           <Text
-            ff="Inter|Regular"
+            fontWeight="semiBold"
             fontSize="13px"
             lineHeight="16px"
             whiteSpace="nowrap"
@@ -127,7 +128,7 @@ export default function RecoverBanner() {
             mt={1}
             fontSize="12px"
             lineHeight="15px"
-            fontWeight="extraLight"
+            fontWeight="medium"
             whiteSpace="nowrap"
             textOverflow="ellipsis"
             width="100%"

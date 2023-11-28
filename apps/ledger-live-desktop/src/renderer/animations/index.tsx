@@ -3,6 +3,7 @@ import Lottie, { LottieProps } from "react-lottie";
 import { Flex } from "@ledgerhq/react-ui";
 import { getEnv } from "@ledgerhq/live-env";
 const Animation = ({
+  className = "",
   animation,
   loop = true,
   autoplay = true,
@@ -14,6 +15,7 @@ const Animation = ({
   isPaused = false,
   isStopped = false,
 }: {
+  className?: string;
   animation: unknown;
   width?: string;
   height?: string;
@@ -27,6 +29,7 @@ const Animation = ({
   const isPlaywright = !!getEnv("PLAYWRIGHT_RUN");
   return animation ? (
     <Flex
+      className={className}
       style={{
         maxHeight: `200px`,
         maxWidth: `500px`,
@@ -39,7 +42,7 @@ const Animation = ({
         isPaused={isPaused}
         isStopped={isStopped}
         options={{
-          loop: loop,
+          loop,
           autoplay: !isPlaywright && autoplay,
           animationData: animation,
           rendererSettings,

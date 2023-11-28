@@ -12,7 +12,7 @@ on:
         required: true
       login:
         description: The GitHub username that triggered the workflow
-        required: true
+        required: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

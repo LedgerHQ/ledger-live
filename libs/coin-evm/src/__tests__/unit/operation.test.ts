@@ -1,10 +1,10 @@
+import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/coin-framework/currencies/index";
 import { genAccount, genOperation, genTokenAccount } from "@ledgerhq/coin-framework/mocks/account";
 import { Operation } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import Prando from "prando";
 import { getStuckAccountAndOperation, isEditableOperation } from "../../operation";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 const ethereum = getCryptoCurrencyById("ethereum");
 const usdc = getTokenById("ethereum/erc20/usd__coin");

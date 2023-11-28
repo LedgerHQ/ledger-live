@@ -82,18 +82,17 @@ const InstallSetOfApps = ({
   );
 
   useEffect(() => {
-    setHeaderLoader(!installing);
-  }, [setHeaderLoader, installing]);
+    setHeaderLoader(!installing && !opened);
+  }, [setHeaderLoader, installing, opened]);
 
   if (opened) {
     onComplete();
-    return null;
   }
 
   return (
     <>
       <AllowManagerModal
-        isOpen={!isLoading && !allowManagerGranted && !error}
+        isOpen={!isLoading && !allowManagerGranted && !error && !opened}
         status={status}
         request={commandRequest}
       />
