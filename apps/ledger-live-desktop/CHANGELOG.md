@@ -1,5 +1,189 @@
 # ledger-live-desktop
 
+## 2.72.0
+
+### Minor Changes
+
+- [#4886](https://github.com/LedgerHQ/ledger-live/pull/4886) [`771c9d3c1d`](https://github.com/LedgerHQ/ledger-live/commit/771c9d3c1d138ddd68da2e4f9738e2c41ecaf81b) Thanks [@chabroA](https://github.com/chabroA)! - Add speedup / cancel tx feature for evm
+
+- [#5445](https://github.com/LedgerHQ/ledger-live/pull/5445) [`f34793d3c0`](https://github.com/LedgerHQ/ledger-live/commit/f34793d3c0827af1edf57a0ba2f3c9946a667a0a) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Remove useEnv hooks and rely on live-common one
+
+- [#4819](https://github.com/LedgerHQ/ledger-live/pull/4819) [`c5981ae341`](https://github.com/LedgerHQ/ledger-live/commit/c5981ae3411abc4c8594adf2efcb52aacddac143) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add support for casper blockchain
+
+- [#5375](https://github.com/LedgerHQ/ledger-live/pull/5375) [`b05b4825fc`](https://github.com/LedgerHQ/ledger-live/commit/b05b4825fcfa8f8602ad45adce6d3fe689c847fa) Thanks [@nparigi-ledger](https://github.com/nparigi-ledger)! - Fix link in LLD Onboarding
+
+- [#5359](https://github.com/LedgerHQ/ledger-live/pull/5359) [`133ad8f25e`](https://github.com/LedgerHQ/ledger-live/commit/133ad8f25e6b82d779bb5bc92d1ba34e7a65c0e8) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Move useBroadcast from LLD/LLM to live-common
+
+### Patch Changes
+
+- [#5252](https://github.com/LedgerHQ/ledger-live/pull/5252) [`48487abd29`](https://github.com/LedgerHQ/ledger-live/commit/48487abd297e41629c6725bc0ac9d69bfeaa74d3) Thanks [@ak-ledger](https://github.com/ak-ledger)! - Recover options/promotion remove for uncompatible devices
+
+- [#5351](https://github.com/LedgerHQ/ledger-live/pull/5351) [`76cdb9b508`](https://github.com/LedgerHQ/ledger-live/commit/76cdb9b508eaac18ae9e63748afaddb65e16baa6) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Pixel polish Stax update lock screen
+
+- [#5291](https://github.com/LedgerHQ/ledger-live/pull/5291) [`98aeaf3f23`](https://github.com/LedgerHQ/ledger-live/commit/98aeaf3f23e387d0473e31c6df33b8f390e2c7a8) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Immediatly display a network down error drawer during ESC
+
+- [#5292](https://github.com/LedgerHQ/ledger-live/pull/5292) [`08dde174fd`](https://github.com/LedgerHQ/ledger-live/commit/08dde174fdeaadbce85dcd914383839f788f21dd) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Lukso
+
+- [#5421](https://github.com/LedgerHQ/ledger-live/pull/5421) [`7ee72950da`](https://github.com/LedgerHQ/ledger-live/commit/7ee72950da402030032e41622de39624dd29e3eb) Thanks [@gre](https://github.com/gre)! - Electron 27.0.4
+
+- [#5330](https://github.com/LedgerHQ/ledger-live/pull/5330) [`69f8f7da6c`](https://github.com/LedgerHQ/ledger-live/commit/69f8f7da6c5a839a91e2265b1e8fe4c3726353b1) Thanks [@gre](https://github.com/gre)! - Fix the QR Code Camera Picker fallback mode to properly display in dark mode context. Also add a 20s timeout in specific cases where OS would "never end" instead of failing the getUserMedia call.
+
+- [#5334](https://github.com/LedgerHQ/ledger-live/pull/5334) [`b3ac48b221`](https://github.com/LedgerHQ/ledger-live/commit/b3ac48b221b8169f5544977974d886266fb2e400) Thanks [@alexandremgo](https://github.com/alexandremgo)! - chore: adding logs to FirmwareUpdate component
+
+- [#5335](https://github.com/LedgerHQ/ledger-live/pull/5335) [`d163b6f148`](https://github.com/LedgerHQ/ledger-live/commit/d163b6f1486d1164ade7da02c5b3011628dc9054) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Firmware update: add retry button to footer if there is a LockedDeviceError
+
+- [#5441](https://github.com/LedgerHQ/ledger-live/pull/5441) [`d61ada1ff5`](https://github.com/LedgerHQ/ledger-live/commit/d61ada1ff5df590f143a04b8f240845af28df634) Thanks [@RamyEB](https://github.com/RamyEB)! - Fix refreshing Discover page on sync
+
+- [#5444](https://github.com/LedgerHQ/ledger-live/pull/5444) [`23d19443fe`](https://github.com/LedgerHQ/ledger-live/commit/23d19443fef6e314e56084b0a8ec8630eb412c7b) Thanks [@chabroA](https://github.com/chabroA)! - update "enable contract data" error message
+
+- [#4987](https://github.com/LedgerHQ/ledger-live/pull/4987) [`e63205b850`](https://github.com/LedgerHQ/ledger-live/commit/e63205b85071538ed2431157a12818d7a8f0ffa9) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - add 10s timeout to estimate gas
+
+- [#5355](https://github.com/LedgerHQ/ledger-live/pull/5355) [`cee4af0d17`](https://github.com/LedgerHQ/ledger-live/commit/cee4af0d1752f4e690496814733736b38f331f92) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Pixel polish on Stax Post Onboarding Hub
+
+- [#5225](https://github.com/LedgerHQ/ledger-live/pull/5225) [`de2e03534a`](https://github.com/LedgerHQ/ledger-live/commit/de2e03534ac831fcb66d1f038d0e90e7f65f2545) Thanks [@lvndry](https://github.com/lvndry)! - Update bondedBalanceBelowMinimum message
+
+- [#5315](https://github.com/LedgerHQ/ledger-live/pull/5315) [`19c7484663`](https://github.com/LedgerHQ/ledger-live/commit/19c7484663e9e1592b8b2024bee3cdbeb1853e0a) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Improve wording of "not found entity" error
+
+- [#5342](https://github.com/LedgerHQ/ledger-live/pull/5342) [`4d47fcdde3`](https://github.com/LedgerHQ/ledger-live/commit/4d47fcdde340255fc06249fa630e84a805e0cc13) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - add handler for custom.redirectToProviderApp
+
+- [#5285](https://github.com/LedgerHQ/ledger-live/pull/5285) [`b1d4fdf4cc`](https://github.com/LedgerHQ/ledger-live/commit/b1d4fdf4ccbc6c04a9192a5761834cd042bb0bec) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - add custom handlers to manange state and errors between lld and swap-live-app
+
+- [#5336](https://github.com/LedgerHQ/ledger-live/pull/5336) [`7a4ff193d4`](https://github.com/LedgerHQ/ledger-live/commit/7a4ff193d4aff8cf0413df0f451e136515ddd5ea) Thanks [@sarneijim](https://github.com/sarneijim)! - Add execute btn to swap web app
+
+- [#5288](https://github.com/LedgerHQ/ledger-live/pull/5288) [`6d782bb877`](https://github.com/LedgerHQ/ledger-live/commit/6d782bb877451f18000a65c44524b9a79cf3403b) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix wording mentioning "Manager"/"the manager" instead of "My Ledger" which is the correct name for this screen
+
+- [#5263](https://github.com/LedgerHQ/ledger-live/pull/5263) [`efb63747a7`](https://github.com/LedgerHQ/ledger-live/commit/efb63747a7dc37ac56786754ffdacc54f7d8b88e) Thanks [@ak-ledger](https://github.com/ak-ledger)! - Remove "Login to Ledger Recover" button
+
+- [#5161](https://github.com/LedgerHQ/ledger-live/pull/5161) [`4a36a64da7`](https://github.com/LedgerHQ/ledger-live/commit/4a36a64da7738cdab4b60574c79b8496526f36fb) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update & Fix some deeplinks (Account & Add-account)
+
+- [#5366](https://github.com/LedgerHQ/ledger-live/pull/5366) [`043619e807`](https://github.com/LedgerHQ/ledger-live/commit/043619e807dfa355e75054dad0e178b798f962a3) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Fix disconnected device drawer during stax ESC
+
+- Updated dependencies [[`a3ee4acfaa`](https://github.com/LedgerHQ/ledger-live/commit/a3ee4acfaa286c73916514f320451fa9d562d4fb), [`743e1ede3e`](https://github.com/LedgerHQ/ledger-live/commit/743e1ede3eebf806e1e22c8627191b419870a476), [`48487abd29`](https://github.com/LedgerHQ/ledger-live/commit/48487abd297e41629c6725bc0ac9d69bfeaa74d3), [`98739b2007`](https://github.com/LedgerHQ/ledger-live/commit/98739b2007ee33ad675881cd824056a41b2907f6), [`08dde174fd`](https://github.com/LedgerHQ/ledger-live/commit/08dde174fdeaadbce85dcd914383839f788f21dd), [`b47113d7bb`](https://github.com/LedgerHQ/ledger-live/commit/b47113d7bbc42b06e85e4b5e6e247565ec6cd2cb), [`771c9d3c1d`](https://github.com/LedgerHQ/ledger-live/commit/771c9d3c1d138ddd68da2e4f9738e2c41ecaf81b), [`f2e408d7a1`](https://github.com/LedgerHQ/ledger-live/commit/f2e408d7a1debf9bb4fcc9811999b2be3764059f), [`771c9d3c1d`](https://github.com/LedgerHQ/ledger-live/commit/771c9d3c1d138ddd68da2e4f9738e2c41ecaf81b), [`a150321fc9`](https://github.com/LedgerHQ/ledger-live/commit/a150321fc90a5256144316ce20f071885065a6d9), [`1b72bebc07`](https://github.com/LedgerHQ/ledger-live/commit/1b72bebc07da1a5be6f16d1b329f5e26c30311f0), [`d53359ee99`](https://github.com/LedgerHQ/ledger-live/commit/d53359ee994d0f06b4c20b382ec471c2a38d02a8), [`c5981ae341`](https://github.com/LedgerHQ/ledger-live/commit/c5981ae3411abc4c8594adf2efcb52aacddac143), [`4657a5ba87`](https://github.com/LedgerHQ/ledger-live/commit/4657a5ba87e6a237ae73c072e776ad55deb2fa02), [`3aef1832ea`](https://github.com/LedgerHQ/ledger-live/commit/3aef1832ea76ba32c999bee6e408251e7ecb0b3b), [`3122c64b07`](https://github.com/LedgerHQ/ledger-live/commit/3122c64b07177468016f2becaa036bc67c8743f5), [`710fed08da`](https://github.com/LedgerHQ/ledger-live/commit/710fed08daf6d54727065657e9cb9feaa1a2e54a), [`a4299c5d62`](https://github.com/LedgerHQ/ledger-live/commit/a4299c5d629cd56e6e6795adaa14978ae2b90f42), [`e63205b850`](https://github.com/LedgerHQ/ledger-live/commit/e63205b85071538ed2431157a12818d7a8f0ffa9), [`133ad8f25e`](https://github.com/LedgerHQ/ledger-live/commit/133ad8f25e6b82d779bb5bc92d1ba34e7a65c0e8), [`da9e3cd1e6`](https://github.com/LedgerHQ/ledger-live/commit/da9e3cd1e6f3b9b8846260b552e18fde19e18b32), [`19c7484663`](https://github.com/LedgerHQ/ledger-live/commit/19c7484663e9e1592b8b2024bee3cdbeb1853e0a), [`5964e30bed`](https://github.com/LedgerHQ/ledger-live/commit/5964e30bed11d64a3b7401c6ab51ffc1ad4c427c)]:
+  - @ledgerhq/live-common@33.2.0
+  - @ledgerhq/coin-evm@0.11.0
+  - @ledgerhq/types-live@6.43.0
+  - @ledgerhq/types-cryptoassets@7.8.0
+  - @ledgerhq/errors@6.16.0
+  - @ledgerhq/coin-framework@0.9.0
+  - @ledgerhq/live-env@0.7.0
+  - @ledgerhq/hw-transport-node-hid-singleton@6.30.0
+  - @ledgerhq/hw-transport-vault@1.2.0
+  - @ledgerhq/hw-transport-http@6.29.0
+  - @ledgerhq/types-devices@6.23.0
+  - @ledgerhq/hw-transport@6.30.0
+  - @ledgerhq/devices@8.1.0
+  - @ledgerhq/logs@6.12.0
+  - @ledgerhq/domain-service@1.1.15
+  - @ledgerhq/react-ui@0.14.11
+  - @ledgerhq/live-network@1.1.9
+
+## 2.72.0-next.4
+
+### Patch Changes
+
+- Updated dependencies [[`b47113d7bb`](https://github.com/LedgerHQ/ledger-live/commit/b47113d7bbc42b06e85e4b5e6e247565ec6cd2cb)]:
+  - @ledgerhq/live-common@33.2.0-next.4
+
+## 2.72.0-next.3
+
+### Patch Changes
+
+- Updated dependencies [[`4657a5ba87`](https://github.com/LedgerHQ/ledger-live/commit/4657a5ba87e6a237ae73c072e776ad55deb2fa02)]:
+  - @ledgerhq/live-common@33.2.0-next.3
+
+## 2.72.0-next.2
+
+### Patch Changes
+
+- Updated dependencies [[`a3ee4acfaa`](https://github.com/LedgerHQ/ledger-live/commit/a3ee4acfaa286c73916514f320451fa9d562d4fb)]:
+  - @ledgerhq/live-common@33.2.0-next.2
+
+## 2.72.0-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-evm@0.11.0-next.1
+  - @ledgerhq/coin-framework@0.9.0-next.1
+  - @ledgerhq/live-common@33.2.0-next.1
+
+## 2.72.0-next.0
+
+### Minor Changes
+
+- [#4886](https://github.com/LedgerHQ/ledger-live/pull/4886) [`771c9d3c1d`](https://github.com/LedgerHQ/ledger-live/commit/771c9d3c1d138ddd68da2e4f9738e2c41ecaf81b) Thanks [@chabroA](https://github.com/chabroA)! - Add speedup / cancel tx feature for evm
+
+- [#5445](https://github.com/LedgerHQ/ledger-live/pull/5445) [`f34793d3c0`](https://github.com/LedgerHQ/ledger-live/commit/f34793d3c0827af1edf57a0ba2f3c9946a667a0a) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Remove useEnv hooks and rely on live-common one
+
+- [#4819](https://github.com/LedgerHQ/ledger-live/pull/4819) [`c5981ae341`](https://github.com/LedgerHQ/ledger-live/commit/c5981ae3411abc4c8594adf2efcb52aacddac143) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add support for casper blockchain
+
+- [#5375](https://github.com/LedgerHQ/ledger-live/pull/5375) [`b05b4825fc`](https://github.com/LedgerHQ/ledger-live/commit/b05b4825fcfa8f8602ad45adce6d3fe689c847fa) Thanks [@nparigi-ledger](https://github.com/nparigi-ledger)! - Fix link in LLD Onboarding
+
+- [#5359](https://github.com/LedgerHQ/ledger-live/pull/5359) [`133ad8f25e`](https://github.com/LedgerHQ/ledger-live/commit/133ad8f25e6b82d779bb5bc92d1ba34e7a65c0e8) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Move useBroadcast from LLD/LLM to live-common
+
+### Patch Changes
+
+- [#5252](https://github.com/LedgerHQ/ledger-live/pull/5252) [`48487abd29`](https://github.com/LedgerHQ/ledger-live/commit/48487abd297e41629c6725bc0ac9d69bfeaa74d3) Thanks [@ak-ledger](https://github.com/ak-ledger)! - Recover options/promotion remove for uncompatible devices
+
+- [#5351](https://github.com/LedgerHQ/ledger-live/pull/5351) [`76cdb9b508`](https://github.com/LedgerHQ/ledger-live/commit/76cdb9b508eaac18ae9e63748afaddb65e16baa6) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Pixel polish Stax update lock screen
+
+- [#5291](https://github.com/LedgerHQ/ledger-live/pull/5291) [`98aeaf3f23`](https://github.com/LedgerHQ/ledger-live/commit/98aeaf3f23e387d0473e31c6df33b8f390e2c7a8) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Immediatly display a network down error drawer during ESC
+
+- [#5292](https://github.com/LedgerHQ/ledger-live/pull/5292) [`08dde174fd`](https://github.com/LedgerHQ/ledger-live/commit/08dde174fdeaadbce85dcd914383839f788f21dd) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Lukso
+
+- [#5421](https://github.com/LedgerHQ/ledger-live/pull/5421) [`7ee72950da`](https://github.com/LedgerHQ/ledger-live/commit/7ee72950da402030032e41622de39624dd29e3eb) Thanks [@gre](https://github.com/gre)! - Electron 27.0.4
+
+- [#5330](https://github.com/LedgerHQ/ledger-live/pull/5330) [`69f8f7da6c`](https://github.com/LedgerHQ/ledger-live/commit/69f8f7da6c5a839a91e2265b1e8fe4c3726353b1) Thanks [@gre](https://github.com/gre)! - Fix the QR Code Camera Picker fallback mode to properly display in dark mode context. Also add a 20s timeout in specific cases where OS would "never end" instead of failing the getUserMedia call.
+
+- [#5334](https://github.com/LedgerHQ/ledger-live/pull/5334) [`b3ac48b221`](https://github.com/LedgerHQ/ledger-live/commit/b3ac48b221b8169f5544977974d886266fb2e400) Thanks [@alexandremgo](https://github.com/alexandremgo)! - chore: adding logs to FirmwareUpdate component
+
+- [#5335](https://github.com/LedgerHQ/ledger-live/pull/5335) [`d163b6f148`](https://github.com/LedgerHQ/ledger-live/commit/d163b6f1486d1164ade7da02c5b3011628dc9054) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Firmware update: add retry button to footer if there is a LockedDeviceError
+
+- [#5441](https://github.com/LedgerHQ/ledger-live/pull/5441) [`d61ada1ff5`](https://github.com/LedgerHQ/ledger-live/commit/d61ada1ff5df590f143a04b8f240845af28df634) Thanks [@RamyEB](https://github.com/RamyEB)! - Fix refreshing Discover page on sync
+
+- [#5444](https://github.com/LedgerHQ/ledger-live/pull/5444) [`23d19443fe`](https://github.com/LedgerHQ/ledger-live/commit/23d19443fef6e314e56084b0a8ec8630eb412c7b) Thanks [@chabroA](https://github.com/chabroA)! - update "enable contract data" error message
+
+- [#4987](https://github.com/LedgerHQ/ledger-live/pull/4987) [`e63205b850`](https://github.com/LedgerHQ/ledger-live/commit/e63205b85071538ed2431157a12818d7a8f0ffa9) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - add 10s timeout to estimate gas
+
+- [#5355](https://github.com/LedgerHQ/ledger-live/pull/5355) [`cee4af0d17`](https://github.com/LedgerHQ/ledger-live/commit/cee4af0d1752f4e690496814733736b38f331f92) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Pixel polish on Stax Post Onboarding Hub
+
+- [#5225](https://github.com/LedgerHQ/ledger-live/pull/5225) [`de2e03534a`](https://github.com/LedgerHQ/ledger-live/commit/de2e03534ac831fcb66d1f038d0e90e7f65f2545) Thanks [@lvndry](https://github.com/lvndry)! - Update bondedBalanceBelowMinimum message
+
+- [#5315](https://github.com/LedgerHQ/ledger-live/pull/5315) [`19c7484663`](https://github.com/LedgerHQ/ledger-live/commit/19c7484663e9e1592b8b2024bee3cdbeb1853e0a) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Improve wording of "not found entity" error
+
+- [#5342](https://github.com/LedgerHQ/ledger-live/pull/5342) [`4d47fcdde3`](https://github.com/LedgerHQ/ledger-live/commit/4d47fcdde340255fc06249fa630e84a805e0cc13) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - add handler for custom.redirectToProviderApp
+
+- [#5285](https://github.com/LedgerHQ/ledger-live/pull/5285) [`b1d4fdf4cc`](https://github.com/LedgerHQ/ledger-live/commit/b1d4fdf4ccbc6c04a9192a5761834cd042bb0bec) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - add custom handlers to manange state and errors between lld and swap-live-app
+
+- [#5336](https://github.com/LedgerHQ/ledger-live/pull/5336) [`7a4ff193d4`](https://github.com/LedgerHQ/ledger-live/commit/7a4ff193d4aff8cf0413df0f451e136515ddd5ea) Thanks [@sarneijim](https://github.com/sarneijim)! - Add execute btn to swap web app
+
+- [#5288](https://github.com/LedgerHQ/ledger-live/pull/5288) [`6d782bb877`](https://github.com/LedgerHQ/ledger-live/commit/6d782bb877451f18000a65c44524b9a79cf3403b) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix wording mentioning "Manager"/"the manager" instead of "My Ledger" which is the correct name for this screen
+
+- [#5263](https://github.com/LedgerHQ/ledger-live/pull/5263) [`efb63747a7`](https://github.com/LedgerHQ/ledger-live/commit/efb63747a7dc37ac56786754ffdacc54f7d8b88e) Thanks [@ak-ledger](https://github.com/ak-ledger)! - Remove "Login to Ledger Recover" button
+
+- [#5161](https://github.com/LedgerHQ/ledger-live/pull/5161) [`4a36a64da7`](https://github.com/LedgerHQ/ledger-live/commit/4a36a64da7738cdab4b60574c79b8496526f36fb) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update & Fix some deeplinks (Account & Add-account)
+
+- [#5366](https://github.com/LedgerHQ/ledger-live/pull/5366) [`043619e807`](https://github.com/LedgerHQ/ledger-live/commit/043619e807dfa355e75054dad0e178b798f962a3) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Fix disconnected device drawer during stax ESC
+
+- Updated dependencies [[`743e1ede3e`](https://github.com/LedgerHQ/ledger-live/commit/743e1ede3eebf806e1e22c8627191b419870a476), [`48487abd29`](https://github.com/LedgerHQ/ledger-live/commit/48487abd297e41629c6725bc0ac9d69bfeaa74d3), [`98739b2007`](https://github.com/LedgerHQ/ledger-live/commit/98739b2007ee33ad675881cd824056a41b2907f6), [`08dde174fd`](https://github.com/LedgerHQ/ledger-live/commit/08dde174fdeaadbce85dcd914383839f788f21dd), [`771c9d3c1d`](https://github.com/LedgerHQ/ledger-live/commit/771c9d3c1d138ddd68da2e4f9738e2c41ecaf81b), [`f2e408d7a1`](https://github.com/LedgerHQ/ledger-live/commit/f2e408d7a1debf9bb4fcc9811999b2be3764059f), [`771c9d3c1d`](https://github.com/LedgerHQ/ledger-live/commit/771c9d3c1d138ddd68da2e4f9738e2c41ecaf81b), [`a150321fc9`](https://github.com/LedgerHQ/ledger-live/commit/a150321fc90a5256144316ce20f071885065a6d9), [`1b72bebc07`](https://github.com/LedgerHQ/ledger-live/commit/1b72bebc07da1a5be6f16d1b329f5e26c30311f0), [`d53359ee99`](https://github.com/LedgerHQ/ledger-live/commit/d53359ee994d0f06b4c20b382ec471c2a38d02a8), [`c5981ae341`](https://github.com/LedgerHQ/ledger-live/commit/c5981ae3411abc4c8594adf2efcb52aacddac143), [`3aef1832ea`](https://github.com/LedgerHQ/ledger-live/commit/3aef1832ea76ba32c999bee6e408251e7ecb0b3b), [`3122c64b07`](https://github.com/LedgerHQ/ledger-live/commit/3122c64b07177468016f2becaa036bc67c8743f5), [`710fed08da`](https://github.com/LedgerHQ/ledger-live/commit/710fed08daf6d54727065657e9cb9feaa1a2e54a), [`a4299c5d62`](https://github.com/LedgerHQ/ledger-live/commit/a4299c5d629cd56e6e6795adaa14978ae2b90f42), [`e63205b850`](https://github.com/LedgerHQ/ledger-live/commit/e63205b85071538ed2431157a12818d7a8f0ffa9), [`133ad8f25e`](https://github.com/LedgerHQ/ledger-live/commit/133ad8f25e6b82d779bb5bc92d1ba34e7a65c0e8), [`da9e3cd1e6`](https://github.com/LedgerHQ/ledger-live/commit/da9e3cd1e6f3b9b8846260b552e18fde19e18b32), [`19c7484663`](https://github.com/LedgerHQ/ledger-live/commit/19c7484663e9e1592b8b2024bee3cdbeb1853e0a), [`5964e30bed`](https://github.com/LedgerHQ/ledger-live/commit/5964e30bed11d64a3b7401c6ab51ffc1ad4c427c)]:
+  - @ledgerhq/coin-evm@0.11.0-next.0
+  - @ledgerhq/types-live@6.43.0-next.0
+  - @ledgerhq/live-common@33.2.0-next.0
+  - @ledgerhq/types-cryptoassets@7.8.0-next.0
+  - @ledgerhq/errors@6.16.0-next.0
+  - @ledgerhq/coin-framework@0.9.0-next.0
+  - @ledgerhq/live-env@0.7.0-next.0
+  - @ledgerhq/hw-transport-node-hid-singleton@6.30.0-next.0
+  - @ledgerhq/hw-transport-vault@1.2.0-next.0
+  - @ledgerhq/hw-transport-http@6.29.0-next.0
+  - @ledgerhq/types-devices@6.23.0-next.0
+  - @ledgerhq/hw-transport@6.30.0-next.0
+  - @ledgerhq/devices@8.1.0-next.0
+  - @ledgerhq/logs@6.12.0-next.0
+  - @ledgerhq/domain-service@1.1.15-next.0
+  - @ledgerhq/react-ui@0.14.11-next.0
+  - @ledgerhq/live-network@1.1.9-next.0
+
 ## 2.71.1
 
 ### Patch Changes
