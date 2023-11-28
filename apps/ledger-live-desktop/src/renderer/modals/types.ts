@@ -91,3 +91,4 @@ export type GlobalModalData = {
  * finally, we make a union with the coin modals data and we obtain the complete modal data type.
  */
 export type ModalData = GlobalModalData & CoinModalsData;
+export type AllModalNames = keyof ModalData;
