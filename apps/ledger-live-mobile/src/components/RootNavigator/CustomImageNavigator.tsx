@@ -12,7 +12,6 @@ import Step0Welcome from "../../screens/CustomImage/Step0Welcome";
 import PreviewPreEdit from "../../screens/CustomImage/PreviewPreEdit";
 import PreviewPostEdit from "../../screens/CustomImage/PreviewPostEdit";
 import NFTGallerySelector from "../../screens/CustomImage/NFTGallerySelector";
-import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import { CustomImageNavigatorParamList } from "./types/CustomImageNavigator";
 
 export default function CustomImageNavigator() {
@@ -48,11 +47,11 @@ export default function CustomImageNavigator() {
       <Stack.Screen
         name={ScreenName.CustomImageErrorScreen}
         component={ErrorScreen}
-        options={({ navigation }) => ({
+        options={{
           title: "",
-          headerLeft: () => <NavigationHeaderBackButton onPress={() => navigation.popToTop()} />,
+          headerLeft: undefined,
           gestureEnabled: false,
-        })}
+        }}
       />
       <Stack.Screen
         name={ScreenName.CustomImagePreviewPreEdit}
