@@ -48,7 +48,7 @@ export type SwapWebProps = {
   swapState?: Partial<SwapProps>;
 };
 
-export const SWAP_WEB_MANIFEST_ID = "swap-live-app-demo-0";
+export const SWAP_WEB_MANIFEST_ID = "swap-live-app-demo-1";
 
 const SwapWebAppWrapper = styled.div<{ isDevelopment: boolean }>(
   ({ isDevelopment }) => `
