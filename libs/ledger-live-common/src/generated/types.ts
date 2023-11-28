@@ -151,6 +151,7 @@ export type Transaction =
   | stacksTransaction
   | stellarTransaction
   | tezosTransaction
+  | tonTransaction
   | tronTransaction
   | vechainTransaction
   | xrpTransaction;
@@ -175,6 +176,7 @@ export type TransactionRaw =
   | stacksTransactionRaw
   | stellarTransactionRaw
   | tezosTransactionRaw
+  | tonTransactionRaw
   | tronTransactionRaw
   | vechainTransactionRaw
   | xrpTransactionRaw;
@@ -199,6 +201,7 @@ export type TransactionStatus =
   | stacksTransactionStatus
   | stellarTransactionStatus
   | tezosTransactionStatus
+  | tonTransactionStatus
   | tronTransactionStatus
   | vechainTransactionStatus
   | xrpTransactionStatus;
@@ -223,6 +226,7 @@ export type TransactionStatusRaw =
   | stacksTransactionStatusRaw
   | stellarTransactionStatusRaw
   | tezosTransactionStatusRaw
+  | tonTransactionStatusRaw
   | tronTransactionStatusRaw
   | vechainTransactionStatusRaw
   | xrpTransactionStatusRaw;
