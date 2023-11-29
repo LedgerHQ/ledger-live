@@ -1,5 +1,5 @@
 name: desktop-report-build
-description: Desktop report build
+description: Report the results of desktop builds in a `summary.json` file
 inputs:
   token:
     description: Github token
