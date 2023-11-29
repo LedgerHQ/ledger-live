@@ -16,10 +16,14 @@ const getMainActions = ({
   parentAccount: Account;
   parentRoute: RouteProp<ParamListBase, ScreenName>;
 }) => {
+  const isAlreadyDelegated = !!account.cardanoResources?.delegation?.poolId;
+
   const navigationParams: NavigationParamsType = [
     NavigatorName.CardanoDelegationFlow,
     {
-      screen: ScreenName.CardanoDelegationStarted,
+      screen: isAlreadyDelegated
+        ? ScreenName.CardanoDelegationSummary
+        : ScreenName.CardanoDelegationStarted,
       params: {
         accountId: account.id,
         parentId: parentAccount ? parentAccount.id : undefined,

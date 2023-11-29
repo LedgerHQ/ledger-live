@@ -764,6 +764,9 @@
     "CardanoNotEnoughFunds": {
       "title": "Please ensure you have enough funds to pay for fees"
     },
+    "CardanoStakeKeyDepositError": {
+      "title": "Ensure that you have {{depositAmount}} ADA available for the deposit"
+    },
     "StacksMemoTooLong": {
       "title": "Memo length is too long"
     },
