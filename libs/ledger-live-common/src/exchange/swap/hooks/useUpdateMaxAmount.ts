@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { getAccountBridge } from "../../../bridge";
 import { Result as UseBridgeTransactionResult } from "../../../bridge/useBridgeTransaction";
 import { SwapDataType, SwapSelectorStateType, SwapTransactionType } from "../types";
+import { isAccount } from "@ledgerhq/coin-framework/account/helpers";
 
 export const ZERO = new BigNumber(0);
 
@@ -62,7 +63,12 @@ export const useUpdateMaxAmount = ({
           transaction,
         });
         setIsMaxLoading(false);
-        setFromAmount(amount);
+        // todo check amount before reducing it
+        if (isAccount(account) && ["evm", "bitcoin", "dot"].includes(transaction?.family || "")) {
+          setFromAmount(amount.minus(new BigNumber(0.01).shiftedBy(account.unit.magnitude)));
+        } else {
+          setFromAmount(amount);
+        }
       };
 
       if (isMaxEnabled) {
