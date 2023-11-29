@@ -9,7 +9,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useBleDevicesScanning } from "@ledgerhq/live-common/ble/hooks/useBleDevicesScanning";
 import { usePostOnboardingEntryPointVisibleOnWallet } from "@ledgerhq/live-common/postOnboarding/hooks/usePostOnboardingEntryPointVisibleOnWallet";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-
+import SafeAreaView from "../SafeAreaView";
 import TransportBLE from "../../react-native-hw-transport-ble";
 import { TrackScreen, track } from "../../analytics";
 import { NavigatorName, ScreenName } from "../../const";
@@ -58,7 +58,6 @@ type Props = {
   isChoiceDrawerDisplayedOnAddDevice?: boolean;
   withMyLedgerTracking?: boolean;
   filterByDeviceModelId?: DeviceModelId;
-  paddingBottom?: number;
 };
 
 export default function SelectDevice({
@@ -70,7 +69,6 @@ export default function SelectDevice({
   hasPostOnboardingEntryPointCard,
   withMyLedgerTracking,
   filterByDeviceModelId,
-  paddingBottom,
 }: Props) {
   const [USBDevice, setUSBDevice] = useState<Device | undefined>();
   const [ProxyDevice, setProxyDevice] = useState<Device | undefined>();
@@ -309,7 +307,7 @@ export default function SelectDevice({
   );
 
   return (
-    <Flex flex={1} pb={paddingBottom && !isPairingDevices ? paddingBottom : 0}>
+    <SafeAreaView edges={["left", "right"]} isFlex>
       {withMyLedgerTracking ? <TrackScreen {...trackScreenProps} /> : null}
       <RequiresBluetoothDrawer
         isOpenedOnIssue={isBleRequired}
@@ -410,7 +408,7 @@ export default function SelectDevice({
               {displayServicesWidget && <ServicesWidget />}
             </Flex>
 
-            <Flex alignItems="center" mt={10}>
+            <Flex alignItems="center" mt={10} mb={8}>
               <BuyDeviceCTA />
             </Flex>
           </ScrollContainer>
@@ -487,6 +485,6 @@ export default function SelectDevice({
           </QueuedDrawer>
         </Flex>
       )}
-    </Flex>
+    </SafeAreaView>
   );
 }

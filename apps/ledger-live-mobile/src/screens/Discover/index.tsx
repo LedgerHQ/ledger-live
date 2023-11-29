@@ -5,13 +5,12 @@ import { useTranslation } from "react-i18next";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import TabBarSafeAreaView from "../../components/TabBar/TabBarSafeAreaView";
 import Illustration from "../../images/illustration/Illustration";
 import { NavigatorName, ScreenName } from "../../const";
 import DiscoverCard from "./DiscoverCard";
 import { urls } from "@utils/urls";
 import { TrackScreen, track } from "../../analytics";
-import { TAB_BAR_SAFE_HEIGHT } from "../../components/TabBar/TabBarSafeAreaView";
 import { AnalyticsContext } from "../../analytics/AnalyticsContext";
 import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
 import { MainNavigatorParamList } from "../../components/RootNavigator/types/MainNavigator";
@@ -248,17 +247,8 @@ function Discover() {
     }, [setSource, setScreen]),
   );
 
-  const insets = useSafeAreaInsets();
-
   return (
-    <Flex
-      /**
-       * NB: not using SafeAreaView because it flickers during navigation
-       * https://github.com/th3rdwave/react-native-safe-area-context/issues/219
-       */
-      flex={1}
-      mt={insets.top}
-    >
+    <TabBarSafeAreaView>
       <TrackScreen category="Discover" />
       <Flex px={6} pb={6} flexDirection="row">
         <Flex flex={1} justifyContent="flex-start" alignItems="flex-start">
@@ -267,7 +257,7 @@ function Discover() {
           </Text>
         </Flex>
       </Flex>
-      <ScrollView contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}>
+      <ScrollView>
         {featuresList.map(({ title, subTitle, onPress, disabled, labelBadge, Image }, i) => (
           <DiscoverCard
             key={i}
@@ -288,7 +278,7 @@ function Discover() {
           />
         ))}
       </ScrollView>
-    </Flex>
+    </TabBarSafeAreaView>
   );
 }
 
