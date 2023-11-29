@@ -1,5 +1,59 @@
 # @ledgerhq/live-common
 
+## 33.3.0-nightly.0
+
+### Minor Changes
+
+- [#5171](https://github.com/LedgerHQ/ledger-live/pull/5171) [`52a373273d`](https://github.com/LedgerHQ/ledger-live/commit/52a373273dee3b2cb5a3e8d2d4b05f90616d71a2) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Feat: Usage of new abort timeouts and transport access refactoring
+
+  - `getOnboardingStatePolling` : usage of `transportAbortTimeoutMs` value for both the opening and exchange (via `getVersion`) abort timeout
+  - `getVersion` : usage of `abortTimeoutMs` on exchange
+  - More tracing and documentations
+
+  `withDevice` refactoring:
+
+  - better variables names
+  - more documentation (especially the queue-made-with-promise part)
+  - some simple unit tests
+
+  Updates on 1st version of the device SDK:
+
+  The 1st implementation of the "device SDK" is redefining a `withDevie` named `withTransport`.
+  It had its own queue of waiting jobs, that was independent from the queue of job from `withDevice`
+  With this refactoring, `withTransport` and `withDevice` have been updated to use the same jobs queue.
+
+### Patch Changes
+
+- [#5566](https://github.com/LedgerHQ/ledger-live/pull/5566) [`25454425a7`](https://github.com/LedgerHQ/ledger-live/commit/25454425a7f80b551025513f1c2f1bdecb7cceeb) Thanks [@alexandremgo](https://github.com/alexandremgo)! - fix: longer timer triggering an error when loading an image on Stax
+
+- [#5594](https://github.com/LedgerHQ/ledger-live/pull/5594) [`124fbb349a`](https://github.com/LedgerHQ/ledger-live/commit/124fbb349a67b2aad8f8cc8f102100ff6c7a3d8e) Thanks [@mle-gall](https://github.com/mle-gall)! - Fix - LLM - Fixed post onboarding not properly closed causing it to reopen.
+
+- Updated dependencies [[`cf41c532ca`](https://github.com/LedgerHQ/ledger-live/commit/cf41c532caa5eb112d2bf3b85de8566e20f71ccb), [`52a373273d`](https://github.com/LedgerHQ/ledger-live/commit/52a373273dee3b2cb5a3e8d2d4b05f90616d71a2), [`6dc1007740`](https://github.com/LedgerHQ/ledger-live/commit/6dc100774010ad674001d04b531239f5adfdce7b), [`52a373273d`](https://github.com/LedgerHQ/ledger-live/commit/52a373273dee3b2cb5a3e8d2d4b05f90616d71a2)]:
+  - @ledgerhq/coin-polkadot@0.5.0-nightly.0
+  - @ledgerhq/hw-transport@6.30.1-nightly.0
+  - @ledgerhq/errors@6.16.1-nightly.0
+  - @ledgerhq/coin-evm@0.11.1-nightly.0
+  - @ledgerhq/devices@8.2.0-nightly.0
+  - @ledgerhq/hw-app-algorand@6.28.1-nightly.0
+  - @ledgerhq/hw-app-btc@10.1.1-nightly.0
+  - @ledgerhq/hw-app-cosmos@6.29.1-nightly.0
+  - @ledgerhq/hw-app-eth@6.35.1-nightly.0
+  - @ledgerhq/hw-app-exchange@0.4.1-nightly.0
+  - @ledgerhq/hw-app-near@6.28.1-nightly.0
+  - @ledgerhq/hw-app-polkadot@6.28.1-nightly.0
+  - @ledgerhq/hw-app-solana@7.1.1-nightly.0
+  - @ledgerhq/hw-app-str@6.28.1-nightly.0
+  - @ledgerhq/hw-app-tezos@6.28.1-nightly.0
+  - @ledgerhq/hw-app-trx@6.28.1-nightly.0
+  - @ledgerhq/hw-app-vet@0.1.0-nightly.4
+  - @ledgerhq/hw-app-xrp@6.28.1-nightly.0
+  - @ledgerhq/hw-transport-mocker@6.28.1-nightly.0
+  - @ledgerhq/hw-transport-node-speculos@6.28.1-nightly.0
+  - @ledgerhq/hw-transport-node-speculos-http@6.28.1-nightly.0
+  - @ledgerhq/coin-algorand@0.3.7-nightly.0
+  - @ledgerhq/coin-framework@0.9.1-nightly.0
+  - @ledgerhq/live-network@1.1.10-nightly.0
+
 ## 33.2.0
 
 ### Minor Changes

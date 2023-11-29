@@ -1,5 +1,46 @@
 # live-mobile
 
+## 3.35.1-nightly.0
+
+### Patch Changes
+
+- [#5171](https://github.com/LedgerHQ/ledger-live/pull/5171) [`52a373273d`](https://github.com/LedgerHQ/ledger-live/commit/52a373273dee3b2cb5a3e8d2d4b05f90616d71a2) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Feat: Usage of new abort timeouts and transport access refactoring
+
+  - `getOnboardingStatePolling` : usage of `transportAbortTimeoutMs` value for both the opening and exchange (via `getVersion`) abort timeout
+  - `getVersion` : usage of `abortTimeoutMs` on exchange
+  - More tracing and documentations
+
+  `withDevice` refactoring:
+
+  - better variables names
+  - more documentation (especially the queue-made-with-promise part)
+  - some simple unit tests
+
+  Updates on 1st version of the device SDK:
+
+  The 1st implementation of the "device SDK" is redefining a `withDevie` named `withTransport`.
+  It had its own queue of waiting jobs, that was independent from the queue of job from `withDevice`
+  With this refactoring, `withTransport` and `withDevice` have been updated to use the same jobs queue.
+
+- [#5572](https://github.com/LedgerHQ/ledger-live/pull/5572) [`134cb77a2c`](https://github.com/LedgerHQ/ledger-live/commit/134cb77a2ce893b892ac5c1361f2382845c50c24) Thanks [@ak-ledger](https://github.com/ak-ledger)! - Loading multiple invalid picture for stax and using the back arrow navigate to the correct page
+
+- [#5594](https://github.com/LedgerHQ/ledger-live/pull/5594) [`124fbb349a`](https://github.com/LedgerHQ/ledger-live/commit/124fbb349a67b2aad8f8cc8f102100ff6c7a3d8e) Thanks [@mle-gall](https://github.com/mle-gall)! - Fix - LLM - Fixed post onboarding not properly closed causing it to reopen.
+
+- [#5465](https://github.com/LedgerHQ/ledger-live/pull/5465) [`38f9956fba`](https://github.com/LedgerHQ/ledger-live/commit/38f9956fba6bded4e7b41062ea973d85dba0d745) Thanks [@mbertin-ledger](https://github.com/mbertin-ledger)! - Remove useless notification channel on Android
+
+- Updated dependencies [[`52a373273d`](https://github.com/LedgerHQ/ledger-live/commit/52a373273dee3b2cb5a3e8d2d4b05f90616d71a2), [`52a373273d`](https://github.com/LedgerHQ/ledger-live/commit/52a373273dee3b2cb5a3e8d2d4b05f90616d71a2), [`5d03bf514f`](https://github.com/LedgerHQ/ledger-live/commit/5d03bf514fcf7aea91dc8beae0cd503ed6b4ab3c), [`25454425a7`](https://github.com/LedgerHQ/ledger-live/commit/25454425a7f80b551025513f1c2f1bdecb7cceeb), [`124fbb349a`](https://github.com/LedgerHQ/ledger-live/commit/124fbb349a67b2aad8f8cc8f102100ff6c7a3d8e), [`6dc1007740`](https://github.com/LedgerHQ/ledger-live/commit/6dc100774010ad674001d04b531239f5adfdce7b), [`52a373273d`](https://github.com/LedgerHQ/ledger-live/commit/52a373273dee3b2cb5a3e8d2d4b05f90616d71a2)]:
+  - @ledgerhq/live-common@33.3.0-nightly.0
+  - @ledgerhq/react-native-hw-transport-ble@6.32.0-nightly.0
+  - @ledgerhq/hw-transport@6.30.1-nightly.0
+  - @ledgerhq/errors@6.16.1-nightly.0
+  - @ledgerhq/types-live@6.43.1-nightly.0
+  - @ledgerhq/coin-evm@0.11.1-nightly.0
+  - @ledgerhq/devices@8.2.0-nightly.0
+  - @ledgerhq/hw-transport-http@6.29.1-nightly.0
+  - @ledgerhq/react-native-hid@6.31.1-nightly.0
+  - @ledgerhq/coin-framework@0.9.1-nightly.0
+  - @ledgerhq/domain-service@1.1.16-nightly.0
+
 ## 3.35.0
 
 ### Minor Changes

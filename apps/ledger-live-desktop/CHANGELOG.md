@@ -1,5 +1,29 @@
 # ledger-live-desktop
 
+## 2.72.1-nightly.0
+
+### Patch Changes
+
+- [#5602](https://github.com/LedgerHQ/ledger-live/pull/5602) [`ad73390d4d`](https://github.com/LedgerHQ/ledger-live/commit/ad73390d4ddb9d49e11fd01791d5fd81427e4adb) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - LLD was showing an error page : TypeError Cannot destructure property ‘Component’ of ‘n[Y]’ as it is undefined
+
+- [#5590](https://github.com/LedgerHQ/ledger-live/pull/5590) [`a7ee28aedc`](https://github.com/LedgerHQ/ledger-live/commit/a7ee28aedc55451271cb8d3fb234d1b215a90539) Thanks [@gre](https://github.com/gre)! - webPreferences: no longer requires Chromium's experimentalFeatures. also drop dead code web preferences from the past (nativeWindowOpen, blinkFeatures:"OverlayScrollbars")
+
+- [#5547](https://github.com/LedgerHQ/ledger-live/pull/5547) [`5d03bf514f`](https://github.com/LedgerHQ/ledger-live/commit/5d03bf514fcf7aea91dc8beae0cd503ed6b4ab3c) Thanks [@mle-gall](https://github.com/mle-gall)! - Adding new items to LLD post onboarding
+
+- Updated dependencies [[`52a373273d`](https://github.com/LedgerHQ/ledger-live/commit/52a373273dee3b2cb5a3e8d2d4b05f90616d71a2), [`52a373273d`](https://github.com/LedgerHQ/ledger-live/commit/52a373273dee3b2cb5a3e8d2d4b05f90616d71a2), [`5d03bf514f`](https://github.com/LedgerHQ/ledger-live/commit/5d03bf514fcf7aea91dc8beae0cd503ed6b4ab3c), [`25454425a7`](https://github.com/LedgerHQ/ledger-live/commit/25454425a7f80b551025513f1c2f1bdecb7cceeb), [`124fbb349a`](https://github.com/LedgerHQ/ledger-live/commit/124fbb349a67b2aad8f8cc8f102100ff6c7a3d8e), [`6dc1007740`](https://github.com/LedgerHQ/ledger-live/commit/6dc100774010ad674001d04b531239f5adfdce7b), [`52a373273d`](https://github.com/LedgerHQ/ledger-live/commit/52a373273dee3b2cb5a3e8d2d4b05f90616d71a2)]:
+  - @ledgerhq/live-common@33.3.0-nightly.0
+  - @ledgerhq/hw-transport@6.30.1-nightly.0
+  - @ledgerhq/errors@6.16.1-nightly.0
+  - @ledgerhq/types-live@6.43.1-nightly.0
+  - @ledgerhq/coin-evm@0.11.1-nightly.0
+  - @ledgerhq/devices@8.2.0-nightly.0
+  - @ledgerhq/hw-transport-http@6.29.1-nightly.0
+  - @ledgerhq/hw-transport-node-hid-singleton@6.30.1-nightly.0
+  - @ledgerhq/coin-framework@0.9.1-nightly.0
+  - @ledgerhq/domain-service@1.1.16-nightly.0
+  - @ledgerhq/hw-transport-vault@1.2.1-nightly.0
+  - @ledgerhq/live-network@1.1.10-nightly.0
+
 ## 2.72.0
 
 ### Minor Changes

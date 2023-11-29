@@ -1,5 +1,21 @@
 # @ledgerhq/devices
 
+## 8.2.0-nightly.0
+
+### Minor Changes
+
+- [#5171](https://github.com/LedgerHQ/ledger-live/pull/5171) [`52a373273d`](https://github.com/LedgerHQ/ledger-live/commit/52a373273dee3b2cb5a3e8d2d4b05f90616d71a2) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Feat: cleaner refactoring of BLE and USB HID frames encoding/decoding
+
+  - Cleans up + documentation + tracing/logs + unit tests of BLE frame encoding and decoding:
+    `receiveAPDU` and `sendAPDU`
+  - Cleans up + documentation + tracing/logs + unit tests of HID USB frame encoding and decoding:
+    `hid-framing`
+
+### Patch Changes
+
+- Updated dependencies [[`52a373273d`](https://github.com/LedgerHQ/ledger-live/commit/52a373273dee3b2cb5a3e8d2d4b05f90616d71a2)]:
+  - @ledgerhq/errors@6.16.1-nightly.0
+
 ## 8.1.0
 
 ### Minor Changes

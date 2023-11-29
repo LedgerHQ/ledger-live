@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.43.1-nightly.0
+
+### Patch Changes
+
+- [#5547](https://github.com/LedgerHQ/ledger-live/pull/5547) [`5d03bf514f`](https://github.com/LedgerHQ/ledger-live/commit/5d03bf514fcf7aea91dc8beae0cd503ed6b4ab3c) Thanks [@mle-gall](https://github.com/mle-gall)! - Adding new items to LLD post onboarding
+
 ## 6.43.0
 
 ### Minor Changes

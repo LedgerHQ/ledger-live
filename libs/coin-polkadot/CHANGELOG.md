@@ -1,5 +1,19 @@
 # @ledgerhq/coin-polkadot
 
+## 0.5.0-nightly.0
+
+### Minor Changes
+
+- [#5462](https://github.com/LedgerHQ/ledger-live/pull/5462) [`cf41c532ca`](https://github.com/LedgerHQ/ledger-live/commit/cf41c532caa5eb112d2bf3b85de8566e20f71ccb) Thanks [@chabroA](https://github.com/chabroA)! - Polkadot network upgrade: sunset of stash/controller feature
+
+### Patch Changes
+
+- Updated dependencies [[`52a373273d`](https://github.com/LedgerHQ/ledger-live/commit/52a373273dee3b2cb5a3e8d2d4b05f90616d71a2), [`5d03bf514f`](https://github.com/LedgerHQ/ledger-live/commit/5d03bf514fcf7aea91dc8beae0cd503ed6b4ab3c), [`52a373273d`](https://github.com/LedgerHQ/ledger-live/commit/52a373273dee3b2cb5a3e8d2d4b05f90616d71a2)]:
+  - @ledgerhq/errors@6.16.1-nightly.0
+  - @ledgerhq/types-live@6.43.1-nightly.0
+  - @ledgerhq/devices@8.2.0-nightly.0
+  - @ledgerhq/coin-framework@0.9.1-nightly.0
+
 ## 0.4.6
 
 ### Patch Changes

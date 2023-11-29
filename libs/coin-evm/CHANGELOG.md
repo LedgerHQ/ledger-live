@@ -1,5 +1,21 @@
 # @ledgerhq/coin-evm
 
+## 0.11.1-nightly.0
+
+### Patch Changes
+
+- [#5546](https://github.com/LedgerHQ/ledger-live/pull/5546) [`6dc1007740`](https://github.com/LedgerHQ/ledger-live/commit/6dc100774010ad674001d04b531239f5adfdce7b) Thanks [@lvndry](https://github.com/lvndry)! - safeEncode senders and recipient addresses
+
+- Updated dependencies [[`52a373273d`](https://github.com/LedgerHQ/ledger-live/commit/52a373273dee3b2cb5a3e8d2d4b05f90616d71a2), [`5d03bf514f`](https://github.com/LedgerHQ/ledger-live/commit/5d03bf514fcf7aea91dc8beae0cd503ed6b4ab3c), [`52a373273d`](https://github.com/LedgerHQ/ledger-live/commit/52a373273dee3b2cb5a3e8d2d4b05f90616d71a2)]:
+  - @ledgerhq/errors@6.16.1-nightly.0
+  - @ledgerhq/types-live@6.43.1-nightly.0
+  - @ledgerhq/devices@8.2.0-nightly.0
+  - @ledgerhq/hw-app-eth@6.35.1-nightly.0
+  - @ledgerhq/coin-framework@0.9.1-nightly.0
+  - @ledgerhq/domain-service@1.1.16-nightly.0
+  - @ledgerhq/live-network@1.1.10-nightly.0
+  - @ledgerhq/evm-tools@1.0.12-nightly.0
+
 ## 0.11.0
 
 ### Minor Changes

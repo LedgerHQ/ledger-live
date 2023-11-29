@@ -1,5 +1,12 @@
 # @ledgerhq/hw-app-xrp
 
+## 6.28.1-nightly.0
+
+### Patch Changes
+
+- Updated dependencies [[`52a373273d`](https://github.com/LedgerHQ/ledger-live/commit/52a373273dee3b2cb5a3e8d2d4b05f90616d71a2)]:
+  - @ledgerhq/hw-transport@6.30.1-nightly.0
+
 ## 6.28.0
 
 ### Minor Changes
