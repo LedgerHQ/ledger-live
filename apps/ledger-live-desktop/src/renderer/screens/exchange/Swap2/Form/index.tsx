@@ -298,7 +298,7 @@ const SwapForm = () => {
       const toAccountId = isToAccountValid
         ? toAccount && accountToWalletAPIAccount(toAccount, toParentAccount)?.id
         : toParentAccount && accountToWalletAPIAccount(toParentAccount, null)?.id;
-      const toNewTokenId = !isToAccountValid ? toAccount?.token?.id : null;
+      const toNewTokenId = !isToAccountValid ? toAccount?.token?.id : undefined;
       const fromAmount =
         fromAccount &&
         convertToNonAtomicUnit({
