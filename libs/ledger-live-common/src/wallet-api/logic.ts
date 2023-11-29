@@ -308,7 +308,7 @@ export function completeExchangeLogic(
 
   const fromParentAccount = getParentAccount(fromAccount, accounts);
   const currency = tokenCurrency ? findTokenById(tokenCurrency) : null;
-  const newTokenAccount = currency ? makeEmptyTokenAccount(toAccount, currency) : null
+  const newTokenAccount = currency ? makeEmptyTokenAccount(toAccount, currency) : null;
   const toParentAccount = toAccount ? getParentAccount(toAccount, accounts) : undefined;
   const exchange = {
     fromAccount,
