@@ -46,6 +46,29 @@ export const NavigationHeaderCloseButton: React.FC<Props> = React.memo(({ onPres
   );
 });
 
+export const NavigationHeaderCloseButtonRounded: React.FC<Props> = React.memo(({ onPress }) => {
+  const navigation = useNavigation<StackNavigationProp<ParamListBase>>();
+  return (
+    <Touchable
+      onPress={() => (onPress ? onPress() : navigation.popToTop())}
+      touchableTestID="NavigationHeaderCloseButton"
+      event="HeaderRightClose"
+    >
+      <Flex
+        bg="neutral.c100"
+        width="32px"
+        height="32px"
+        alignItems="center"
+        justifyContent="center"
+        borderRadius={32}
+        mr={6}
+      >
+        <IconsLegacy.CloseMedium size={20} color="neutral.c00" />
+      </Flex>
+    </Touchable>
+  );
+});
+
 type AdvancedProps = {
   preferDismiss?: boolean;
   skipNavigation?: boolean;
@@ -54,6 +77,7 @@ type AdvancedProps = {
   confirmationTitle?: React.ReactNode;
   confirmationDesc?: React.ReactNode;
   onClose?: () => void;
+  rounded?: boolean;
 };
 
 /**
@@ -71,6 +95,7 @@ export const NavigationHeaderCloseButtonAdvanced: React.FC<AdvancedProps> = Reac
     confirmationTitle,
     confirmationDesc,
     onClose = emptyFunction,
+    rounded = false,
   }) => {
     const navigation = useNavigation();
     const [isConfirmationModalOpened, setIsConfirmationModalOpened] = useState(false);
@@ -134,7 +159,12 @@ export const NavigationHeaderCloseButtonAdvanced: React.FC<AdvancedProps> = Reac
 
     return (
       <>
-        <NavigationHeaderCloseButton onPress={onPress} color={color} />
+        {rounded ? (
+          <NavigationHeaderCloseButtonRounded onPress={onPress} color={color} />
+        ) : (
+          <NavigationHeaderCloseButton onPress={onPress} color={color} />
+        )}
+
         {withConfirmation && (
           <ConfirmationModal
             isOpened={isConfirmationModalOpened}

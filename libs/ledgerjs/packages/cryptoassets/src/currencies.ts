@@ -104,8 +104,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        address: "https://explorer.near.org/accounts/$address",
-        tx: "https://explorer.near.org/transactions/$hash",
+        address: "https://nearblocks.io/address/$address",
+        tx: "https://nearblocks.io/txns/$hash",
       },
     ],
     keywords: ["near"],

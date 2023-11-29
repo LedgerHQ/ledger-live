@@ -29,9 +29,11 @@ type WithStartActionFunction = {
   /**
    * The function to call when the user presses the button for this action
    */
-  startAction: () => void;
+  startAction: (openModalCallback?: any, navigationCallback?: any) => void;
+  /**
+   * Optional Redux dispatch function
+   */
 };
-
 /**
  * All necessary information for complete integration of a post onboarding
  * action.

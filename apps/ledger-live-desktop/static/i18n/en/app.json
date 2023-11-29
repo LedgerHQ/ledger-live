@@ -1300,6 +1300,18 @@
       "title": "What's next for your Ledger Stax?",
       "description": "Claim the Infinity NFT, customize it's lock screen, or\ntransfer your assets from other exchanges.",
       "link": "See what's next"
+    },
+    "actions": {
+      "buyCrypto": {
+        "title": "Buy Crypto",
+        "description": "Choose from 500+ coins and the best quotes from buy-providers, tailored to your preferences.",
+        "actionCompletedPopupLabel": "Crypto bought"
+      },
+      "assetsTransfer": {
+        "title": "Transfer your assets to Ledger",
+        "description": "Easily transfer assets from Coinbase or any other exchange or wallet.",
+        "actionCompletedPopupLabel": "Assets transferred"
+      }
     }
   },
   "hideNftCollection": {
@@ -1416,19 +1428,19 @@
     "recoverBanner": {
       "subscribeDone": {
         "title": "Finish adding your payment card",
-        "description":"Restore reliably with Ledger Recover.",
+        "description": "Restore reliably with Ledger Recover.",
         "primaryCta": "Add card",
         "secondaryCta": "Maybe later"
       },
       "verifyIdentity": {
         "title": "Finish verifying your identity",
-        "description":"Restore reliably with Ledger Recover.",
+        "description": "Restore reliably with Ledger Recover.",
         "primaryCta": "Verify",
         "secondaryCta": "Maybe later"
       },
       "connectDevice": {
         "title": "Connect your Ledger",
-        "description":"You're 1 step away from Ledger Recover.",
+        "description": "You're 1 step away from Ledger Recover.",
         "primaryCta": "Connect",
         "secondaryCta": "Maybe later"
       }
@@ -1810,7 +1822,7 @@
       "capacity": "Capacity",
       "used": "Used",
       "OSVersion": "OS version",
-      "genuine": "Device is genuine",
+      "genuine": "Genuine check",
       "incomplete": "Some apps were not recognized. Please uninstall, then reinstall them."
     },
     "applist": {
