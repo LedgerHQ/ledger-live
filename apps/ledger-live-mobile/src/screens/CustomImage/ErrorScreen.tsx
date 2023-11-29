@@ -1,5 +1,5 @@
 import { Flex } from "@ledgerhq/native-ui";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
@@ -25,10 +25,30 @@ const buttonClickedEventProperties = {
   button: "upload another image",
 };
 
-const ErrorScreen = ({ route }: NavigationProps) => {
+const ErrorScreen = ({ route, navigation }: NavigationProps) => {
   const [isModalOpened, setIsModalOpened] = useState(false);
   const { params } = route;
   const { error, device } = params;
+
+  // Only keep 1 instance of error page in the navigation
+  useEffect(() => {
+    const navigationState = navigation.getState();
+    const { index, routes } = navigationState;
+    const firstErrorPageIndex = routes.findIndex(
+      (route: { name: string }, id: number) =>
+        route.name === ScreenName.CustomImageErrorScreen && index !== id,
+    );
+
+    if (firstErrorPageIndex !== -1) {
+      const filteredRoutes = routes.filter((route, id) => id !== firstErrorPageIndex);
+
+      navigation.reset({
+        ...navigationState,
+        index: filteredRoutes.length - 1,
+        routes: filteredRoutes,
+      });
+    }
+  }, [navigation]);
 
   const { t } = useTranslation();
 

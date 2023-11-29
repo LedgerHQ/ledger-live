@@ -6,6 +6,7 @@ inputs:
     required: false
   install_dotnet:
     description: "dotnet setup for Windows"
+    required: false
   no_pnpm_cache:
     description: should install without pnpm cache
     required: false
