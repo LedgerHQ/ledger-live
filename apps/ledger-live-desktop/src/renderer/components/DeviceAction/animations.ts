@@ -17,9 +17,9 @@ import NANO_S_LIGHT_quitApp from "~/renderer/animations/nanoS/4QuitApp/light.jso
 // @ts-ignore
 import NANO_S_DARK_quitApp from "~/renderer/animations/nanoS/4QuitApp/dark.json";
 // @ts-ignore
-import NANO_S_LIGHT_allowManager from "~/renderer/animations/nanoS/5AllowManager/light.json";
+import NANO_S_LIGHT_allowManager from "~/renderer/animations/nanoS/7Validate/light.json";
 // @ts-ignore
-import NANO_S_DARK_allowManager from "~/renderer/animations/nanoS/5AllowManager/dark.json";
+import NANO_S_DARK_allowManager from "~/renderer/animations/nanoS/7Validate/dark.json";
 // @ts-ignore
 import NANO_S_LIGHT_openApp from "~/renderer/animations/nanoS/6OpenApp/light.json";
 // @ts-ignore
@@ -51,9 +51,9 @@ import NANO_X_LIGHT_quitApp from "~/renderer/animations/nanoX/4QuitApp/light.jso
 // @ts-ignore
 import NANO_X_DARK_quitApp from "~/renderer/animations/nanoX/4QuitApp/dark.json";
 // @ts-ignore
-import NANO_X_LIGHT_allowManager from "~/renderer/animations/nanoX/5AllowManager/light.json";
+import NANO_X_LIGHT_allowManager from "~/renderer/animations/nanoX/7Validate/light.json";
 // @ts-ignore
-import NANO_X_DARK_allowManager from "~/renderer/animations/nanoX/5AllowManager/dark.json";
+import NANO_X_DARK_allowManager from "~/renderer/animations/nanoX/7Validate/dark.json";
 // @ts-ignore
 import NANO_X_LIGHT_openApp from "~/renderer/animations/nanoX/6OpenApp/light.json";
 // @ts-ignore
@@ -88,9 +88,9 @@ import NANO_SP_LIGHT_quitApp from "~/renderer/animations/nanoSP/4QuitApp/light.j
 // @ts-ignore
 import NANO_SP_DARK_quitApp from "~/renderer/animations/nanoSP/4QuitApp/dark.json";
 // @ts-ignore
-import NANO_SP_LIGHT_allowManager from "~/renderer/animations/nanoSP/5AllowManager/light.json";
+import NANO_SP_LIGHT_allowManager from "~/renderer/animations/nanoSP/7Validate/light.json";
 // @ts-ignore
-import NANO_SP_DARK_allowManager from "~/renderer/animations/nanoSP/5AllowManager/dark.json";
+import NANO_SP_DARK_allowManager from "~/renderer/animations/nanoSP/7Validate/dark.json";
 // @ts-ignore
 import NANO_SP_LIGHT_openApp from "~/renderer/animations/nanoSP/6OpenApp/light.json";
 // @ts-ignore
