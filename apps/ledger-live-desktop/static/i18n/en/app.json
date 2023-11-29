@@ -1936,8 +1936,10 @@
       "disclaimerTitle": "You are about to install <1>firmware version {{version}}</1>.",
       "cancelUpdate": "Cancel OS update",
       "continueUpdate": "Continue OS update",
-      "cancelUpdateWarning": "Your settings and apps may not be restored properly if you cancel the update now.",
-      "updateInProgress": "OS update is in progress"
+      "restartUpdate": "Restart OS update",
+      "skipRestore": "Skip restore",
+      "cancelUpdateWarning": "Your settings and apps may not be restored\nproperly if you cancel the update now.",
+      "updateInProgress": "OS update in progress"
     },
     "modal": {
       "title": "{{productName}} OS update",
@@ -1975,10 +1977,10 @@
       "mcuBlueFirst": "Press and hold the side button for 10 seconds to turn off the device. Release the button.",
       "mcuBlueSecond": "Press and hold the button for at least 5 seconds until the Boot Options are displayed. Tap Bootloader Mode",
       "successTitle": "Your {{deviceName}} OS is\nup to date.",
-      "sucessCTAApps": "Reinstall apps",
-      "SuccessCTANoApps": "Install apps",
-      "cancelReinstallCTA": "Restart OS update",
-      "cancelReinstallCloseCTA": "Cancel OS update",
+      "successTitleApps": "Your {{deviceName}} OS is\nup to date. One last thing...",
+      "successSubtitleApps": "To initiate app restore on your Ledger Stax, select\nthe “Restore apps“ button below.",
+      "sucessCTAApps": "Restore apps",
+      "SuccessCTANoApps": "Finish",
       "resetSteps": {
         "first": "1. Reset your device",
         "connect": "Connect the {{deviceName}} to your computer using the USB cable.",
@@ -2304,7 +2306,7 @@
       "title": "Set your {{deviceName}} in {{language}}?",
       "description": "{{language}} is now available for your {{deviceName}}. You can set it now, or change your device language at any time from My Ledger."
     },
-    "allowLanguageInstallation": "Allow language installation",
+    "allowLanguageInstallation": "Tap on “Allow” to\ninstall language",
     "languageInstalled": "Language changed to {{language}}",
     "installingLanguage": "Installing language",
     "languages": {
@@ -5224,8 +5226,8 @@
       "description": "Please try again or contact Ledger Support if the problem persists."
     },
     "LanguageInstallRefusedOnDevice": {
-      "title": "Language installation refused on device",
-      "description": "Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
+      "title": "Language restore\ncancelled on device",
+      "description": "If this was a mistake, retry now."
     },
     "RestoreLanguageInstallRefusedOnDevice": {
       "title": "Restoration of Language was cancelled on Ledger Stax",
@@ -5430,7 +5432,7 @@
       "title": "My Ledger denied on device"
     },
     "UserRefusedFirmwareUpdate": {
-      "title": "OS update install cancelled on device",
+      "title": "OS update install cancelled\non device",
       "description": "If this was a mistake, restart the update."
     },
     "UserRefusedOnDevice": {
@@ -5837,12 +5839,12 @@
       "description": "Please try again with another image"
     },
     "ImageCommitRefusedOnDevice": {
-      "title": "Lock screen cancelled on Ledger Stax",
-      "description": "If this image wasn't the right fit, you can try again with another image."
+      "title": "Installation of lock screen picture\ncancelled on Ledger Stax",
+      "description": "If this this was a mistake, retry now."
     },
     "ImageLoadRefusedOnDevice": {
-      "title": "Lock screen cancelled on Ledger Stax",
-      "description": "If this image wasn't the right fit, you can try again with another image."
+      "title": "Installation of lock screen picture\ncancelled on Ledger Stax",
+      "description": "If this this was a mistake, retry now."
     },
     "ImageDoesNotExistOnDevice": {
       "title": "Your Ledger Stax doesn’t have a lock screen picture to remove",
@@ -5964,13 +5966,13 @@
       "transfer": {
         "stepLabel": "Load",
         "useAnotherPicture": "Upload another picture",
-        "allowPreview": "Tap on “Load picture” to customize the lock screen",
-        "allowConfirmPreview": "Allow lock screen picture restoration on {{productName}}",
-        "loadingPicture": "Loading...",
+        "allowPreview": "Tap on “Load picture” to\ncustomize the lock screen picture",
+        "allowConfirmPreview": "Tap on “Load picture“ to\nrestore lock screen picture",
+        "loadingPicture": "Installing...",
         "voila": "Voilà!",
         "imageLoaded": "Image loaded on {{productName}}",
         "confirmPicture": "Like what you see?\nKeep it!",
-        "confirmRestorePicture": "Confirm restoration of the lock screen picture",
+        "confirmRestorePicture": "Tap on “Keep“ to\nconfirm your lock screen picture",
         "doThisLater": "Maybe later"
       }
     },
