@@ -92,20 +92,13 @@ export default function DelegationSummary({ navigation, route }: Props) {
     return null;
   }, [ledgerPools, pool]);
 
+  let tx = bridge.createTransaction(account);
+  tx = bridge.updateTransaction(tx, { mode: "delegate" });
+
   const { transaction, updateTransaction, setTransaction, status, bridgePending, bridgeError } =
     useBridgeTransaction(() => {
-      const tx = route.params.transaction;
-
-      if (!tx && chosenPool) {
-        const t = bridge.createTransaction(mainAccount);
-
-        return {
-          account,
-          transaction: bridge.updateTransaction(t, {
-            mode: "delegate",
-            poolId: chosenPool.poolId,
-          }),
-        };
+      if (chosenPool) {
+        tx = bridge.updateTransaction(tx, { poolId: chosenPool.poolId });
       }
 
       return { account, transaction: tx };
@@ -150,7 +143,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
   }, [status, account, parentAccount, navigation, transaction]);
 
   const displayError = useMemo(() => {
-    return status.errors.amount?.message === "CardanoNotEnoughFunds" ? status.errors.amount : "";
+    return status.errors.amount ? status.errors.amount : "";
   }, [status]);
 
   return (
