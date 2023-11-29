@@ -1,18 +1,12 @@
 # @ledgerhq/live-env
 
-## 0.7.0-nightly.2
+## 0.7.0
 
 ### Minor Changes
 
-- [#5543](https://github.com/LedgerHQ/ledger-live/pull/5543) [`0f5292af8f`](https://github.com/LedgerHQ/ledger-live/commit/0f5292af8feaa517f36ec35155d813b17c4f66e9) Thanks [@chabroA](https://github.com/chabroA)! - rename Crypto.org to Cronos POS Chain
+- [#4886](https://github.com/LedgerHQ/ledger-live/pull/4886) [`771c9d3c1d`](https://github.com/LedgerHQ/ledger-live/commit/771c9d3c1d138ddd68da2e4f9738e2c41ecaf81b) Thanks [@chabroA](https://github.com/chabroA)! - Add speedup / cancel tx feature for evm
 
-## 0.7.0-nightly.1
-
-### Minor Changes
-
-- [#4947](https://github.com/LedgerHQ/ledger-live/pull/4947) [`2edfa533bc`](https://github.com/LedgerHQ/ledger-live/commit/2edfa533bccafbfd8a61aea0f5422c0db79825ea) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - vechain integration
-
-## 0.7.0-nightly.0
+## 0.7.0-next.0
 
 ### Minor Changes
 

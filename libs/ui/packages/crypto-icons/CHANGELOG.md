@@ -1,12 +1,12 @@
 # @ledgerhq/icons-ui
 
-## 0.7.0-nightly.1
+## 0.6.1
 
-### Minor Changes
+### Patch Changes
 
-- [#4947](https://github.com/LedgerHQ/ledger-live/pull/4947) [`2edfa533bc`](https://github.com/LedgerHQ/ledger-live/commit/2edfa533bccafbfd8a61aea0f5422c0db79825ea) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - vechain integration
+- [#5292](https://github.com/LedgerHQ/ledger-live/pull/5292) [`08dde174fd`](https://github.com/LedgerHQ/ledger-live/commit/08dde174fdeaadbce85dcd914383839f788f21dd) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Lukso
 
-## 0.6.1-nightly.0
+## 0.6.1-next.0
 
 ### Patch Changes
 

@@ -1,50 +1,22 @@
 # @ledgerhq/domain-service
 
-## 1.1.15-nightly.5
+## 1.1.15
 
 ### Patch Changes
 
-- Updated dependencies [[`6dea54057f`](https://github.com/LedgerHQ/ledger-live/commit/6dea54057f67162a1f556661afae16e0422f7ac3)]:
-  - @ledgerhq/types-live@6.43.0-nightly.4
+- Updated dependencies [[`48487abd29`](https://github.com/LedgerHQ/ledger-live/commit/48487abd297e41629c6725bc0ac9d69bfeaa74d3), [`08dde174fd`](https://github.com/LedgerHQ/ledger-live/commit/08dde174fdeaadbce85dcd914383839f788f21dd), [`771c9d3c1d`](https://github.com/LedgerHQ/ledger-live/commit/771c9d3c1d138ddd68da2e4f9738e2c41ecaf81b), [`c5981ae341`](https://github.com/LedgerHQ/ledger-live/commit/c5981ae3411abc4c8594adf2efcb52aacddac143), [`a4299c5d62`](https://github.com/LedgerHQ/ledger-live/commit/a4299c5d629cd56e6e6795adaa14978ae2b90f42), [`e63205b850`](https://github.com/LedgerHQ/ledger-live/commit/e63205b85071538ed2431157a12818d7a8f0ffa9), [`5964e30bed`](https://github.com/LedgerHQ/ledger-live/commit/5964e30bed11d64a3b7401c6ab51ffc1ad4c427c)]:
+  - @ledgerhq/types-live@6.43.0
+  - @ledgerhq/errors@6.16.0
+  - @ledgerhq/logs@6.12.0
 
-## 1.1.15-nightly.4
-
-### Patch Changes
-
-- Updated dependencies [[`b7d58b4cf3`](https://github.com/LedgerHQ/ledger-live/commit/b7d58b4cf3aa041b7b794d9af6f0b89bbc0df633), [`44ee889445`](https://github.com/LedgerHQ/ledger-live/commit/44ee88944571c73afb105349f5f28b82e8be262d), [`13d9cbe9a4`](https://github.com/LedgerHQ/ledger-live/commit/13d9cbe9a4afbf3ccd532a33e4ada3685d9d646a), [`4d1aade53c`](https://github.com/LedgerHQ/ledger-live/commit/4d1aade53cd33f8e7548ce340f54fbb834bdcdcb)]:
-  - @ledgerhq/types-live@6.43.0-nightly.3
-  - @ledgerhq/errors@6.16.0-nightly.3
-
-## 1.1.15-nightly.3
+## 1.1.15-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`5964e30bed`](https://github.com/LedgerHQ/ledger-live/commit/5964e30bed11d64a3b7401c6ab51ffc1ad4c427c)]:
-  - @ledgerhq/types-live@6.43.0-nightly.2
-  - @ledgerhq/errors@6.16.0-nightly.2
-  - @ledgerhq/logs@6.12.0-nightly.0
-
-## 1.1.15-nightly.2
-
-### Patch Changes
-
-- Updated dependencies [[`771c9d3c1d`](https://github.com/LedgerHQ/ledger-live/commit/771c9d3c1d138ddd68da2e4f9738e2c41ecaf81b)]:
-  - @ledgerhq/errors@6.16.0-nightly.1
-
-## 1.1.15-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`a4299c5d62`](https://github.com/LedgerHQ/ledger-live/commit/a4299c5d629cd56e6e6795adaa14978ae2b90f42), [`e63205b850`](https://github.com/LedgerHQ/ledger-live/commit/e63205b85071538ed2431157a12818d7a8f0ffa9)]:
-  - @ledgerhq/types-live@6.42.1-nightly.1
-  - @ledgerhq/errors@6.15.1-nightly.0
-
-## 1.1.15-nightly.0
-
-### Patch Changes
-
-- Updated dependencies [[`08dde174fd`](https://github.com/LedgerHQ/ledger-live/commit/08dde174fdeaadbce85dcd914383839f788f21dd)]:
-  - @ledgerhq/types-live@6.42.1-nightly.0
+- Updated dependencies [[`48487abd29`](https://github.com/LedgerHQ/ledger-live/commit/48487abd297e41629c6725bc0ac9d69bfeaa74d3), [`08dde174fd`](https://github.com/LedgerHQ/ledger-live/commit/08dde174fdeaadbce85dcd914383839f788f21dd), [`771c9d3c1d`](https://github.com/LedgerHQ/ledger-live/commit/771c9d3c1d138ddd68da2e4f9738e2c41ecaf81b), [`c5981ae341`](https://github.com/LedgerHQ/ledger-live/commit/c5981ae3411abc4c8594adf2efcb52aacddac143), [`a4299c5d62`](https://github.com/LedgerHQ/ledger-live/commit/a4299c5d629cd56e6e6795adaa14978ae2b90f42), [`e63205b850`](https://github.com/LedgerHQ/ledger-live/commit/e63205b85071538ed2431157a12818d7a8f0ffa9), [`5964e30bed`](https://github.com/LedgerHQ/ledger-live/commit/5964e30bed11d64a3b7401c6ab51ffc1ad4c427c)]:
+  - @ledgerhq/types-live@6.43.0-next.0
+  - @ledgerhq/errors@6.16.0-next.0
+  - @ledgerhq/logs@6.12.0-next.0
 
 ## 1.1.14
 

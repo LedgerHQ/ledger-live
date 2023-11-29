@@ -1,13 +1,6 @@
 # @ledgerhq/hw-app-tezos
 
-## 6.28.0-nightly.3
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-transport@6.30.0-nightly.3
-
-## 6.28.0-nightly.2
+## 6.28.0
 
 ### Minor Changes
 
@@ -16,21 +9,18 @@
 ### Patch Changes
 
 - Updated dependencies [[`5964e30bed`](https://github.com/LedgerHQ/ledger-live/commit/5964e30bed11d64a3b7401c6ab51ffc1ad4c427c)]:
-  - @ledgerhq/hw-transport@6.30.0-nightly.2
+  - @ledgerhq/hw-transport@6.30.0
 
-## 6.27.21-nightly.1
+## 6.28.0-next.0
 
-### Patch Changes
+### Minor Changes
 
-- Updated dependencies []:
-  - @ledgerhq/hw-transport@6.29.1-nightly.1
-
-## 6.27.21-nightly.0
+- [#5430](https://github.com/LedgerHQ/ledger-live/pull/5430) [`5964e30bed`](https://github.com/LedgerHQ/ledger-live/commit/5964e30bed11d64a3b7401c6ab51ffc1ad4c427c) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update documentation v14 ledgerjs
 
 ### Patch Changes
 
-- Updated dependencies []:
-  - @ledgerhq/hw-transport@6.29.1-nightly.0
+- Updated dependencies [[`5964e30bed`](https://github.com/LedgerHQ/ledger-live/commit/5964e30bed11d64a3b7401c6ab51ffc1ad4c427c)]:
+  - @ledgerhq/hw-transport@6.30.0-next.0
 
 ## 6.27.20
 

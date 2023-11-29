@@ -1300,6 +1300,18 @@
       "title": "What's next for your Ledger Stax?",
       "description": "Claim the Infinity NFT, customize it's lock screen, or\ntransfer your assets from other exchanges.",
       "link": "See what's next"
+    },
+    "actions": {
+      "buyCrypto": {
+        "title": "Buy Crypto",
+        "description": "Choose from 500+ coins and the best quotes from buy-providers, tailored to your preferences.",
+        "actionCompletedPopupLabel": "Crypto bought"
+      },
+      "assetsTransfer": {
+        "title": "Transfer your assets to Ledger",
+        "description": "Easily transfer assets from Coinbase or any other exchange or wallet.",
+        "actionCompletedPopupLabel": "Assets transferred"
+      }
     }
   },
   "hideNftCollection": {

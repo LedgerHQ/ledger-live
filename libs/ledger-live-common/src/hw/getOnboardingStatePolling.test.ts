@@ -123,8 +123,9 @@ describe("getOnboardingStatePolling", () => {
       });
     });
 
-    describe("and when a timeout occurred before the error (or the fetch took too long)", () => {
-      it("should update the allowed error value to notify the consumer - default value for the timeout", done => {
+    describe("and when a timeout occurred before the error (because the response from the device took too long)", () => {
+      it("should update the allowed error value to notify the consumer", done => {
+        const safeGuardTimeoutMs = pollingPeriodMs + 500;
         mockedGetVersion.mockResolvedValue(aFirmwareInfo);
         mockedExtractOnboardingState.mockReturnValue(anOnboardingState);
 
@@ -133,6 +134,7 @@ describe("getOnboardingStatePolling", () => {
         getOnboardingStatePolling({
           deviceId: device.deviceId,
           pollingPeriodMs,
+          safeGuardTimeoutMs,
         }).subscribe({
           next: value => {
             try {
@@ -147,35 +149,7 @@ describe("getOnboardingStatePolling", () => {
         });
 
         // Waits more than the timeout
-        jest.advanceTimersByTime(pollingPeriodMs * 10 + 1);
-      });
-
-      it("should update the allowed error value to notify the consumer - timeout value set by the consumer", done => {
-        const fetchingTimeoutMs = pollingPeriodMs + 500;
-        mockedGetVersion.mockResolvedValue(aFirmwareInfo);
-        mockedExtractOnboardingState.mockReturnValue(anOnboardingState);
-
-        const device = aDevice;
-
-        getOnboardingStatePolling({
-          deviceId: device.deviceId,
-          pollingPeriodMs,
-          fetchingTimeoutMs,
-        }).subscribe({
-          next: value => {
-            try {
-              expect(value.onboardingState).toBeNull();
-              expect(value.allowedError).toBeInstanceOf(TimeoutError);
-              expect(value.lockedDevice).toBe(false);
-              done();
-            } catch (expectError) {
-              done(expectError);
-            }
-          },
-        });
-
-        // Waits more than the timeout
-        jest.advanceTimersByTime(fetchingTimeoutMs + 1);
+        jest.advanceTimersByTime(safeGuardTimeoutMs + 1);
       });
     });
 
@@ -272,19 +246,19 @@ describe("getOnboardingStatePolling", () => {
       // Did not manage to test that the polling is repeated by using jest's fake timer
       // and advanceTimersByTime method or equivalent.
       // Hacky test: spy on the repeatWhen operator to see if it has been called.
-      const spiedRepeatWhen = jest.spyOn(rxjsOperators, "repeatWhen");
+      const spiedRepeat = jest.spyOn(rxjsOperators, "repeat");
 
       onboardingStatePollingSubscription = getOnboardingStatePolling({
         deviceId: device.deviceId,
         pollingPeriodMs,
-        fetchingTimeoutMs: pollingPeriodMs * 10,
+        safeGuardTimeoutMs: pollingPeriodMs * 10,
       }).subscribe({
         next: value => {
           try {
             expect(value.onboardingState).toEqual(anOnboardingState);
             expect(value.allowedError).toBeNull();
             expect(value.lockedDevice).toBe(false);
-            expect(spiedRepeatWhen).toHaveBeenCalledTimes(1);
+            expect(spiedRepeat).toHaveBeenCalledTimes(1);
             done();
           } catch (expectError) {
             done(expectError);
@@ -294,8 +268,6 @@ describe("getOnboardingStatePolling", () => {
           done(error);
         },
       });
-
-      jest.advanceTimersByTime(1);
     });
   });
 

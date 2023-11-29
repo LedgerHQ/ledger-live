@@ -1,32 +1,18 @@
 # @ledgerhq/react-ui
 
-## 0.14.11-nightly.3
-
-### Patch Changes
-
-- [#5501](https://github.com/LedgerHQ/ledger-live/pull/5501) [`f6dd7d391a`](https://github.com/LedgerHQ/ledger-live/commit/f6dd7d391a54442d4a7c428bc7be9261b104fb21) Thanks [@ak-ledger](https://github.com/ak-ledger)! - Update Stax onboarding (firmware update)
-
-## 0.14.11-nightly.2
-
-### Patch Changes
-
-- [#5365](https://github.com/LedgerHQ/ledger-live/pull/5365) [`0e46b38631`](https://github.com/LedgerHQ/ledger-live/commit/0e46b38631b9bfc84aaf42fe67b5cd4936438ba1) Thanks [@ak-ledger](https://github.com/ak-ledger)! - Update Stax onboarding UI
-
-## 0.14.11-nightly.1
-
-### Patch Changes
-
-- [#5464](https://github.com/LedgerHQ/ledger-live/pull/5464) [`c4bc2688de`](https://github.com/LedgerHQ/ledger-live/commit/c4bc2688de43ad1f5ecec5e83d8e5c88edb6d372) Thanks [@mle-gall](https://github.com/mle-gall)! - Adding icons instructions
-
-- Updated dependencies [[`2edfa533bc`](https://github.com/LedgerHQ/ledger-live/commit/2edfa533bccafbfd8a61aea0f5422c0db79825ea)]:
-  - @ledgerhq/crypto-icons-ui@0.7.0-nightly.1
-
-## 0.14.11-nightly.0
+## 0.14.11
 
 ### Patch Changes
 
 - Updated dependencies [[`08dde174fd`](https://github.com/LedgerHQ/ledger-live/commit/08dde174fdeaadbce85dcd914383839f788f21dd)]:
-  - @ledgerhq/crypto-icons-ui@0.6.1-nightly.0
+  - @ledgerhq/crypto-icons-ui@0.6.1
+
+## 0.14.11-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`08dde174fd`](https://github.com/LedgerHQ/ledger-live/commit/08dde174fdeaadbce85dcd914383839f788f21dd)]:
+  - @ledgerhq/crypto-icons-ui@0.6.1-next.0
 
 ## 0.14.10
 

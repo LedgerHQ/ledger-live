@@ -1,91 +1,40 @@
 # @ledgerhq/coin-algorand
 
-## 0.3.6-nightly.8
+## 0.3.6
 
 ### Patch Changes
 
-- Updated dependencies [[`0f5292af8f`](https://github.com/LedgerHQ/ledger-live/commit/0f5292af8feaa517f36ec35155d813b17c4f66e9)]:
-  - @ledgerhq/cryptoassets@11.2.0-nightly.4
-  - @ledgerhq/coin-framework@0.9.0-nightly.8
-  - @ledgerhq/live-env@0.7.0-nightly.2
+- Updated dependencies [[`48487abd29`](https://github.com/LedgerHQ/ledger-live/commit/48487abd297e41629c6725bc0ac9d69bfeaa74d3), [`08dde174fd`](https://github.com/LedgerHQ/ledger-live/commit/08dde174fdeaadbce85dcd914383839f788f21dd), [`771c9d3c1d`](https://github.com/LedgerHQ/ledger-live/commit/771c9d3c1d138ddd68da2e4f9738e2c41ecaf81b), [`c5981ae341`](https://github.com/LedgerHQ/ledger-live/commit/c5981ae3411abc4c8594adf2efcb52aacddac143), [`317685e696`](https://github.com/LedgerHQ/ledger-live/commit/317685e69678e6fe1f489f0c071e7613d329d389), [`a4299c5d62`](https://github.com/LedgerHQ/ledger-live/commit/a4299c5d629cd56e6e6795adaa14978ae2b90f42), [`b4e7201b0b`](https://github.com/LedgerHQ/ledger-live/commit/b4e7201b0b70d146de7d936ff2c9e9e443164243), [`e63205b850`](https://github.com/LedgerHQ/ledger-live/commit/e63205b85071538ed2431157a12818d7a8f0ffa9), [`5964e30bed`](https://github.com/LedgerHQ/ledger-live/commit/5964e30bed11d64a3b7401c6ab51ffc1ad4c427c), [`4a283060bf`](https://github.com/LedgerHQ/ledger-live/commit/4a283060bf2e837d73c6c1cb5d89f890a4e4b931)]:
+  - @ledgerhq/types-live@6.43.0
+  - @ledgerhq/types-cryptoassets@7.8.0
+  - @ledgerhq/cryptoassets@11.2.0
+  - @ledgerhq/errors@6.16.0
+  - @ledgerhq/coin-framework@0.9.0
+  - @ledgerhq/live-env@0.7.0
+  - @ledgerhq/devices@8.1.0
+  - @ledgerhq/live-promise@0.0.3
 
-## 0.3.6-nightly.7
-
-### Patch Changes
-
-- Updated dependencies [[`6dea54057f`](https://github.com/LedgerHQ/ledger-live/commit/6dea54057f67162a1f556661afae16e0422f7ac3)]:
-  - @ledgerhq/types-live@6.43.0-nightly.4
-  - @ledgerhq/coin-framework@0.9.0-nightly.7
-
-## 0.3.6-nightly.6
+## 0.3.6-next.1
 
 ### Patch Changes
 
-- Updated dependencies [[`b7d58b4cf3`](https://github.com/LedgerHQ/ledger-live/commit/b7d58b4cf3aa041b7b794d9af6f0b89bbc0df633), [`44ee889445`](https://github.com/LedgerHQ/ledger-live/commit/44ee88944571c73afb105349f5f28b82e8be262d), [`13d9cbe9a4`](https://github.com/LedgerHQ/ledger-live/commit/13d9cbe9a4afbf3ccd532a33e4ada3685d9d646a), [`4d1aade53c`](https://github.com/LedgerHQ/ledger-live/commit/4d1aade53cd33f8e7548ce340f54fbb834bdcdcb), [`e70e345bd2`](https://github.com/LedgerHQ/ledger-live/commit/e70e345bd21d4f5c82fbedfd4447aec0e866be5a)]:
-  - @ledgerhq/types-live@6.43.0-nightly.3
-  - @ledgerhq/errors@6.16.0-nightly.3
-  - @ledgerhq/coin-framework@0.9.0-nightly.6
-  - @ledgerhq/devices@8.1.0-nightly.3
+- Updated dependencies [[`4a283060bf`](https://github.com/LedgerHQ/ledger-live/commit/4a283060bf2e837d73c6c1cb5d89f890a4e4b931)]:
+  - @ledgerhq/cryptoassets@11.2.0-next.1
+  - @ledgerhq/coin-framework@0.9.0-next.1
 
-## 0.3.6-nightly.5
+## 0.3.6-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`618307f928`](https://github.com/LedgerHQ/ledger-live/commit/618307f92899af07f4c8ad97c67df483492e3d9d)]:
-  - @ledgerhq/cryptoassets@11.2.0-nightly.3
-  - @ledgerhq/coin-framework@0.9.0-nightly.5
-
-## 0.3.6-nightly.4
-
-### Patch Changes
-
-- Updated dependencies [[`2edfa533bc`](https://github.com/LedgerHQ/ledger-live/commit/2edfa533bccafbfd8a61aea0f5422c0db79825ea)]:
-  - @ledgerhq/cryptoassets@11.2.0-nightly.2
-  - @ledgerhq/coin-framework@0.9.0-nightly.4
-  - @ledgerhq/live-env@0.7.0-nightly.1
-
-## 0.3.6-nightly.3
-
-### Patch Changes
-
-- Updated dependencies [[`5964e30bed`](https://github.com/LedgerHQ/ledger-live/commit/5964e30bed11d64a3b7401c6ab51ffc1ad4c427c)]:
-  - @ledgerhq/types-cryptoassets@7.8.0-nightly.1
-  - @ledgerhq/cryptoassets@11.2.0-nightly.1
-  - @ledgerhq/types-live@6.43.0-nightly.2
-  - @ledgerhq/devices@8.1.0-nightly.2
-  - @ledgerhq/errors@6.16.0-nightly.2
-  - @ledgerhq/coin-framework@0.9.0-nightly.3
-  - @ledgerhq/live-promise@0.0.3-nightly.0
-
-## 0.3.6-nightly.2
-
-### Patch Changes
-
-- Updated dependencies [[`771c9d3c1d`](https://github.com/LedgerHQ/ledger-live/commit/771c9d3c1d138ddd68da2e4f9738e2c41ecaf81b)]:
-  - @ledgerhq/errors@6.16.0-nightly.1
-  - @ledgerhq/coin-framework@0.9.0-nightly.2
-  - @ledgerhq/live-env@0.7.0-nightly.0
-  - @ledgerhq/devices@8.0.9-nightly.1
-
-## 0.3.6-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`a4299c5d62`](https://github.com/LedgerHQ/ledger-live/commit/a4299c5d629cd56e6e6795adaa14978ae2b90f42), [`e63205b850`](https://github.com/LedgerHQ/ledger-live/commit/e63205b85071538ed2431157a12818d7a8f0ffa9)]:
-  - @ledgerhq/types-live@6.42.1-nightly.1
-  - @ledgerhq/errors@6.15.1-nightly.0
-  - @ledgerhq/coin-framework@0.8.2-nightly.1
-  - @ledgerhq/devices@8.0.9-nightly.0
-
-## 0.3.6-nightly.0
-
-### Patch Changes
-
-- Updated dependencies [[`08dde174fd`](https://github.com/LedgerHQ/ledger-live/commit/08dde174fdeaadbce85dcd914383839f788f21dd)]:
-  - @ledgerhq/types-cryptoassets@7.7.1-nightly.0
-  - @ledgerhq/cryptoassets@11.1.1-nightly.0
-  - @ledgerhq/types-live@6.42.1-nightly.0
-  - @ledgerhq/coin-framework@0.8.2-nightly.0
+- Updated dependencies [[`48487abd29`](https://github.com/LedgerHQ/ledger-live/commit/48487abd297e41629c6725bc0ac9d69bfeaa74d3), [`08dde174fd`](https://github.com/LedgerHQ/ledger-live/commit/08dde174fdeaadbce85dcd914383839f788f21dd), [`771c9d3c1d`](https://github.com/LedgerHQ/ledger-live/commit/771c9d3c1d138ddd68da2e4f9738e2c41ecaf81b), [`c5981ae341`](https://github.com/LedgerHQ/ledger-live/commit/c5981ae3411abc4c8594adf2efcb52aacddac143), [`317685e696`](https://github.com/LedgerHQ/ledger-live/commit/317685e69678e6fe1f489f0c071e7613d329d389), [`a4299c5d62`](https://github.com/LedgerHQ/ledger-live/commit/a4299c5d629cd56e6e6795adaa14978ae2b90f42), [`b4e7201b0b`](https://github.com/LedgerHQ/ledger-live/commit/b4e7201b0b70d146de7d936ff2c9e9e443164243), [`e63205b850`](https://github.com/LedgerHQ/ledger-live/commit/e63205b85071538ed2431157a12818d7a8f0ffa9), [`5964e30bed`](https://github.com/LedgerHQ/ledger-live/commit/5964e30bed11d64a3b7401c6ab51ffc1ad4c427c)]:
+  - @ledgerhq/types-live@6.43.0-next.0
+  - @ledgerhq/types-cryptoassets@7.8.0-next.0
+  - @ledgerhq/cryptoassets@11.2.0-next.0
+  - @ledgerhq/errors@6.16.0-next.0
+  - @ledgerhq/coin-framework@0.9.0-next.0
+  - @ledgerhq/live-env@0.7.0-next.0
+  - @ledgerhq/devices@8.1.0-next.0
+  - @ledgerhq/live-promise@0.0.3-next.0
 
 ## 0.3.5
 

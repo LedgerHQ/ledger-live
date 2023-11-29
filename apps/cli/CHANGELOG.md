@@ -1,105 +1,92 @@
 # @ledgerhq/live-cli
 
-## 23.0.0-nightly.8
-
-### Patch Changes
-
-- Updated dependencies [[`0f5292af8f`](https://github.com/LedgerHQ/ledger-live/commit/0f5292af8feaa517f36ec35155d813b17c4f66e9), [`342ed3b816`](https://github.com/LedgerHQ/ledger-live/commit/342ed3b81613ca81790c1c3d6cfe639c8700562a)]:
-  - @ledgerhq/cryptoassets@11.2.0-nightly.4
-  - @ledgerhq/live-common@33.2.0-nightly.8
-  - @ledgerhq/coin-framework@0.9.0-nightly.8
-  - @ledgerhq/live-env@0.7.0-nightly.2
-  - @ledgerhq/live-network@1.1.9-nightly.5
-
-## 23.0.0-nightly.7
-
-### Patch Changes
-
-- Updated dependencies [[`f20c1149be`](https://github.com/LedgerHQ/ledger-live/commit/f20c1149be9eb255e05f0f41f4a0575e8b89dab6), [`6dea54057f`](https://github.com/LedgerHQ/ledger-live/commit/6dea54057f67162a1f556661afae16e0422f7ac3)]:
-  - @ledgerhq/live-common@33.2.0-nightly.7
-  - @ledgerhq/coin-framework@0.9.0-nightly.7
-
-## 23.0.0-nightly.6
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/live-common@33.2.0-nightly.6
-
-## 23.0.0-nightly.5
-
-### Patch Changes
-
-- Updated dependencies [[`39d327ec49`](https://github.com/LedgerHQ/ledger-live/commit/39d327ec4965bda6a8fb6f202238e3156451cfde), [`6d627002d7`](https://github.com/LedgerHQ/ledger-live/commit/6d627002d76a81d68663e33cdcaeebcd89ea84d8)]:
-  - @ledgerhq/live-common@33.2.0-nightly.5
-
-## 23.0.0-nightly.4
-
-### Patch Changes
-
-- Updated dependencies [[`b7d58b4cf3`](https://github.com/LedgerHQ/ledger-live/commit/b7d58b4cf3aa041b7b794d9af6f0b89bbc0df633), [`44ee889445`](https://github.com/LedgerHQ/ledger-live/commit/44ee88944571c73afb105349f5f28b82e8be262d), [`13d9cbe9a4`](https://github.com/LedgerHQ/ledger-live/commit/13d9cbe9a4afbf3ccd532a33e4ada3685d9d646a), [`4d1aade53c`](https://github.com/LedgerHQ/ledger-live/commit/4d1aade53cd33f8e7548ce340f54fbb834bdcdcb), [`2b3ed025d6`](https://github.com/LedgerHQ/ledger-live/commit/2b3ed025d6988a4b7560522c209a5c9c1ca430a2), [`e70e345bd2`](https://github.com/LedgerHQ/ledger-live/commit/e70e345bd21d4f5c82fbedfd4447aec0e866be5a)]:
-  - @ledgerhq/live-common@33.2.0-nightly.4
-  - @ledgerhq/errors@6.16.0-nightly.3
-  - @ledgerhq/coin-framework@0.9.0-nightly.6
-  - @ledgerhq/hw-transport@6.30.0-nightly.3
-  - @ledgerhq/hw-transport-http@6.29.0-nightly.3
-  - @ledgerhq/hw-transport-node-ble@6.28.0-nightly.3
-  - @ledgerhq/hw-transport-node-hid@6.28.0-nightly.3
-  - @ledgerhq/hw-transport-node-speculos@6.28.0-nightly.3
-  - @ledgerhq/live-network@1.1.9-nightly.4
-  - @ledgerhq/hw-app-btc@10.1.0-nightly.3
-  - @ledgerhq/hw-transport-mocker@6.28.0-nightly.3
-
-## 23.0.0-nightly.3
-
-### Patch Changes
-
-- Updated dependencies [[`75d001910f`](https://github.com/LedgerHQ/ledger-live/commit/75d001910faa24bcb76c49eb66c0c49e9770f4b2)]:
-  - @ledgerhq/live-common@33.2.0-nightly.3
-
-## 23.0.0-nightly.2
-
-### Patch Changes
-
-- Updated dependencies [[`618307f928`](https://github.com/LedgerHQ/ledger-live/commit/618307f92899af07f4c8ad97c67df483492e3d9d)]:
-  - @ledgerhq/cryptoassets@11.2.0-nightly.3
-  - @ledgerhq/coin-framework@0.9.0-nightly.5
-  - @ledgerhq/live-common@33.2.0-nightly.2
-
-## 23.0.0-nightly.1
+## 23.0.0
 
 ### Minor Changes
 
-- [#4947](https://github.com/LedgerHQ/ledger-live/pull/4947) [`2edfa533bc`](https://github.com/LedgerHQ/ledger-live/commit/2edfa533bccafbfd8a61aea0f5422c0db79825ea) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - vechain integration
+- [#4819](https://github.com/LedgerHQ/ledger-live/pull/4819) [`c5981ae341`](https://github.com/LedgerHQ/ledger-live/commit/c5981ae3411abc4c8594adf2efcb52aacddac143) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add support for casper blockchain
 
 ### Patch Changes
 
-- Updated dependencies [[`88da01e071`](https://github.com/LedgerHQ/ledger-live/commit/88da01e071a0332236b7fdeda619a0eb0284cec7), [`2edfa533bc`](https://github.com/LedgerHQ/ledger-live/commit/2edfa533bccafbfd8a61aea0f5422c0db79825ea)]:
-  - @ledgerhq/live-common@33.2.0-nightly.1
-  - @ledgerhq/cryptoassets@11.2.0-nightly.2
-  - @ledgerhq/coin-framework@0.9.0-nightly.4
-  - @ledgerhq/live-env@0.7.0-nightly.1
-  - @ledgerhq/live-network@1.1.9-nightly.3
+- [#5292](https://github.com/LedgerHQ/ledger-live/pull/5292) [`08dde174fd`](https://github.com/LedgerHQ/ledger-live/commit/08dde174fdeaadbce85dcd914383839f788f21dd) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Lukso
 
-## 23.0.0-nightly.0
+- [#5349](https://github.com/LedgerHQ/ledger-live/pull/5349) [`57497fb3d7`](https://github.com/LedgerHQ/ledger-live/commit/57497fb3d7c2d28b48141c9b4e98813ed24411db) Thanks [@aussedatlo](https://github.com/aussedatlo)! - add listApps command to display all installed apps on device
+
+- Updated dependencies [[`a3ee4acfaa`](https://github.com/LedgerHQ/ledger-live/commit/a3ee4acfaa286c73916514f320451fa9d562d4fb), [`48487abd29`](https://github.com/LedgerHQ/ledger-live/commit/48487abd297e41629c6725bc0ac9d69bfeaa74d3), [`98739b2007`](https://github.com/LedgerHQ/ledger-live/commit/98739b2007ee33ad675881cd824056a41b2907f6), [`08dde174fd`](https://github.com/LedgerHQ/ledger-live/commit/08dde174fdeaadbce85dcd914383839f788f21dd), [`b47113d7bb`](https://github.com/LedgerHQ/ledger-live/commit/b47113d7bbc42b06e85e4b5e6e247565ec6cd2cb), [`771c9d3c1d`](https://github.com/LedgerHQ/ledger-live/commit/771c9d3c1d138ddd68da2e4f9738e2c41ecaf81b), [`f2e408d7a1`](https://github.com/LedgerHQ/ledger-live/commit/f2e408d7a1debf9bb4fcc9811999b2be3764059f), [`a150321fc9`](https://github.com/LedgerHQ/ledger-live/commit/a150321fc90a5256144316ce20f071885065a6d9), [`1b72bebc07`](https://github.com/LedgerHQ/ledger-live/commit/1b72bebc07da1a5be6f16d1b329f5e26c30311f0), [`d53359ee99`](https://github.com/LedgerHQ/ledger-live/commit/d53359ee994d0f06b4c20b382ec471c2a38d02a8), [`c5981ae341`](https://github.com/LedgerHQ/ledger-live/commit/c5981ae3411abc4c8594adf2efcb52aacddac143), [`4657a5ba87`](https://github.com/LedgerHQ/ledger-live/commit/4657a5ba87e6a237ae73c072e776ad55deb2fa02), [`3aef1832ea`](https://github.com/LedgerHQ/ledger-live/commit/3aef1832ea76ba32c999bee6e408251e7ecb0b3b), [`317685e696`](https://github.com/LedgerHQ/ledger-live/commit/317685e69678e6fe1f489f0c071e7613d329d389), [`3122c64b07`](https://github.com/LedgerHQ/ledger-live/commit/3122c64b07177468016f2becaa036bc67c8743f5), [`710fed08da`](https://github.com/LedgerHQ/ledger-live/commit/710fed08daf6d54727065657e9cb9feaa1a2e54a), [`a4299c5d62`](https://github.com/LedgerHQ/ledger-live/commit/a4299c5d629cd56e6e6795adaa14978ae2b90f42), [`b4e7201b0b`](https://github.com/LedgerHQ/ledger-live/commit/b4e7201b0b70d146de7d936ff2c9e9e443164243), [`e63205b850`](https://github.com/LedgerHQ/ledger-live/commit/e63205b85071538ed2431157a12818d7a8f0ffa9), [`133ad8f25e`](https://github.com/LedgerHQ/ledger-live/commit/133ad8f25e6b82d779bb5bc92d1ba34e7a65c0e8), [`da9e3cd1e6`](https://github.com/LedgerHQ/ledger-live/commit/da9e3cd1e6f3b9b8846260b552e18fde19e18b32), [`19c7484663`](https://github.com/LedgerHQ/ledger-live/commit/19c7484663e9e1592b8b2024bee3cdbeb1853e0a), [`5964e30bed`](https://github.com/LedgerHQ/ledger-live/commit/5964e30bed11d64a3b7401c6ab51ffc1ad4c427c), [`4a283060bf`](https://github.com/LedgerHQ/ledger-live/commit/4a283060bf2e837d73c6c1cb5d89f890a4e4b931)]:
+  - @ledgerhq/live-common@33.2.0
+  - @ledgerhq/cryptoassets@11.2.0
+  - @ledgerhq/errors@6.16.0
+  - @ledgerhq/coin-framework@0.9.0
+  - @ledgerhq/live-env@0.7.0
+  - @ledgerhq/hw-transport-node-speculos@6.28.0
+  - @ledgerhq/hw-transport-node-ble@6.28.0
+  - @ledgerhq/hw-transport-node-hid@6.28.0
+  - @ledgerhq/hw-transport-mocker@6.28.0
+  - @ledgerhq/hw-transport-http@6.29.0
+  - @ledgerhq/types-devices@6.23.0
+  - @ledgerhq/hw-transport@6.30.0
+  - @ledgerhq/hw-app-btc@10.1.0
+  - @ledgerhq/logs@6.12.0
+  - @ledgerhq/live-network@1.1.9
+
+## 23.0.0-next.4
 
 ### Patch Changes
 
-- Updated dependencies [[`5964e30bed`](https://github.com/LedgerHQ/ledger-live/commit/5964e30bed11d64a3b7401c6ab51ffc1ad4c427c)]:
-  - @ledgerhq/hw-transport-node-speculos@6.28.0-nightly.2
-  - @ledgerhq/hw-transport-node-ble@6.28.0-nightly.2
-  - @ledgerhq/hw-transport-node-hid@6.28.0-nightly.2
-  - @ledgerhq/hw-transport-mocker@6.28.0-nightly.2
-  - @ledgerhq/hw-transport-http@6.29.0-nightly.2
-  - @ledgerhq/types-devices@6.23.0-nightly.0
-  - @ledgerhq/cryptoassets@11.2.0-nightly.1
-  - @ledgerhq/hw-transport@6.30.0-nightly.2
-  - @ledgerhq/hw-app-btc@10.1.0-nightly.2
-  - @ledgerhq/errors@6.16.0-nightly.2
-  - @ledgerhq/logs@6.12.0-nightly.0
-  - @ledgerhq/coin-framework@0.9.0-nightly.3
-  - @ledgerhq/live-common@33.1.2-nightly.0
-  - @ledgerhq/live-network@1.1.9-nightly.2
+- Updated dependencies [[`b47113d7bb`](https://github.com/LedgerHQ/ledger-live/commit/b47113d7bbc42b06e85e4b5e6e247565ec6cd2cb)]:
+  - @ledgerhq/live-common@33.2.0-next.4
+
+## 23.0.0-next.3
+
+### Patch Changes
+
+- Updated dependencies [[`4657a5ba87`](https://github.com/LedgerHQ/ledger-live/commit/4657a5ba87e6a237ae73c072e776ad55deb2fa02)]:
+  - @ledgerhq/live-common@33.2.0-next.3
+
+## 23.0.0-next.2
+
+### Patch Changes
+
+- Updated dependencies [[`a3ee4acfaa`](https://github.com/LedgerHQ/ledger-live/commit/a3ee4acfaa286c73916514f320451fa9d562d4fb)]:
+  - @ledgerhq/live-common@33.2.0-next.2
+
+## 23.0.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`4a283060bf`](https://github.com/LedgerHQ/ledger-live/commit/4a283060bf2e837d73c6c1cb5d89f890a4e4b931)]:
+  - @ledgerhq/cryptoassets@11.2.0-next.1
+  - @ledgerhq/coin-framework@0.9.0-next.1
+  - @ledgerhq/live-common@33.2.0-next.1
+
+## 23.0.0-next.0
+
+### Minor Changes
+
+- [#4819](https://github.com/LedgerHQ/ledger-live/pull/4819) [`c5981ae341`](https://github.com/LedgerHQ/ledger-live/commit/c5981ae3411abc4c8594adf2efcb52aacddac143) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add support for casper blockchain
+
+### Patch Changes
+
+- [#5292](https://github.com/LedgerHQ/ledger-live/pull/5292) [`08dde174fd`](https://github.com/LedgerHQ/ledger-live/commit/08dde174fdeaadbce85dcd914383839f788f21dd) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Lukso
+
+- [#5349](https://github.com/LedgerHQ/ledger-live/pull/5349) [`57497fb3d7`](https://github.com/LedgerHQ/ledger-live/commit/57497fb3d7c2d28b48141c9b4e98813ed24411db) Thanks [@aussedatlo](https://github.com/aussedatlo)! - add listApps command to display all installed apps on device
+
+- Updated dependencies [[`48487abd29`](https://github.com/LedgerHQ/ledger-live/commit/48487abd297e41629c6725bc0ac9d69bfeaa74d3), [`98739b2007`](https://github.com/LedgerHQ/ledger-live/commit/98739b2007ee33ad675881cd824056a41b2907f6), [`08dde174fd`](https://github.com/LedgerHQ/ledger-live/commit/08dde174fdeaadbce85dcd914383839f788f21dd), [`771c9d3c1d`](https://github.com/LedgerHQ/ledger-live/commit/771c9d3c1d138ddd68da2e4f9738e2c41ecaf81b), [`f2e408d7a1`](https://github.com/LedgerHQ/ledger-live/commit/f2e408d7a1debf9bb4fcc9811999b2be3764059f), [`a150321fc9`](https://github.com/LedgerHQ/ledger-live/commit/a150321fc90a5256144316ce20f071885065a6d9), [`1b72bebc07`](https://github.com/LedgerHQ/ledger-live/commit/1b72bebc07da1a5be6f16d1b329f5e26c30311f0), [`d53359ee99`](https://github.com/LedgerHQ/ledger-live/commit/d53359ee994d0f06b4c20b382ec471c2a38d02a8), [`c5981ae341`](https://github.com/LedgerHQ/ledger-live/commit/c5981ae3411abc4c8594adf2efcb52aacddac143), [`3aef1832ea`](https://github.com/LedgerHQ/ledger-live/commit/3aef1832ea76ba32c999bee6e408251e7ecb0b3b), [`317685e696`](https://github.com/LedgerHQ/ledger-live/commit/317685e69678e6fe1f489f0c071e7613d329d389), [`3122c64b07`](https://github.com/LedgerHQ/ledger-live/commit/3122c64b07177468016f2becaa036bc67c8743f5), [`710fed08da`](https://github.com/LedgerHQ/ledger-live/commit/710fed08daf6d54727065657e9cb9feaa1a2e54a), [`a4299c5d62`](https://github.com/LedgerHQ/ledger-live/commit/a4299c5d629cd56e6e6795adaa14978ae2b90f42), [`b4e7201b0b`](https://github.com/LedgerHQ/ledger-live/commit/b4e7201b0b70d146de7d936ff2c9e9e443164243), [`e63205b850`](https://github.com/LedgerHQ/ledger-live/commit/e63205b85071538ed2431157a12818d7a8f0ffa9), [`133ad8f25e`](https://github.com/LedgerHQ/ledger-live/commit/133ad8f25e6b82d779bb5bc92d1ba34e7a65c0e8), [`da9e3cd1e6`](https://github.com/LedgerHQ/ledger-live/commit/da9e3cd1e6f3b9b8846260b552e18fde19e18b32), [`19c7484663`](https://github.com/LedgerHQ/ledger-live/commit/19c7484663e9e1592b8b2024bee3cdbeb1853e0a), [`5964e30bed`](https://github.com/LedgerHQ/ledger-live/commit/5964e30bed11d64a3b7401c6ab51ffc1ad4c427c)]:
+  - @ledgerhq/live-common@33.2.0-next.0
+  - @ledgerhq/cryptoassets@11.2.0-next.0
+  - @ledgerhq/errors@6.16.0-next.0
+  - @ledgerhq/coin-framework@0.9.0-next.0
+  - @ledgerhq/live-env@0.7.0-next.0
+  - @ledgerhq/hw-transport-node-speculos@6.28.0-next.0
+  - @ledgerhq/hw-transport-node-ble@6.28.0-next.0
+  - @ledgerhq/hw-transport-node-hid@6.28.0-next.0
+  - @ledgerhq/hw-transport-mocker@6.28.0-next.0
+  - @ledgerhq/hw-transport-http@6.29.0-next.0
+  - @ledgerhq/types-devices@6.23.0-next.0
+  - @ledgerhq/hw-transport@6.30.0-next.0
+  - @ledgerhq/hw-app-btc@10.1.0-next.0
+  - @ledgerhq/logs@6.12.0-next.0
+  - @ledgerhq/live-network@1.1.9-next.0
 
 ## 22.14.1
 
