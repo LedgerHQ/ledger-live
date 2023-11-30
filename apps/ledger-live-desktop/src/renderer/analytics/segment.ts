@@ -60,7 +60,6 @@ const getFeatureFlagProperties = () => {
   (async () => {
     const { id } = await user();
     const analytics = getAnalytics();
-    console.log("%csegment.ts line:63 id, analytics", "color: #007acc;", id, analytics);
     const ptxEarnFeatureFlag = analyticsFeatureFlagMethod("ptxEarn");
     const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
 
