@@ -240,6 +240,8 @@ const SwapForm = () => {
     if (providerType === "DEX") {
       redirectToProviderApp(provider);
     } else {
+      // Fix LIVE-9064, prevent the transaction from being updated when using useAllAmount
+      swapTransaction.transaction ? (swapTransaction.transaction.useAllAmount = false) : null;
       setDrawer(
         ExchangeDrawer,
         {
