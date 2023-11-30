@@ -63,8 +63,11 @@ export const useUpdateMaxAmount = ({
           transaction,
         });
         setIsMaxLoading(false);
-        // todo check amount before reducing it
-        if (isAccount(account) && ["evm", "bitcoin", "dot"].includes(transaction?.family || "")) {
+        if (
+          isAccount(account) && // only apply fix to native currencies account
+          ["evm"].includes(transaction?.family || "") && // Only apply fix to EVM families
+          amount.shiftedBy(account.unit.magnitude).gt(0.02) // prevent going below 0 with max amount
+        ) {
           setFromAmount(amount.minus(new BigNumber(0.01).shiftedBy(account.unit.magnitude)));
         } else {
           setFromAmount(amount);
