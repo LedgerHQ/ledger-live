@@ -18,7 +18,7 @@ type Props = {
   //
   metadata?: {
     displayed: boolean;
-    onDismiss: ButtonAction;
+    onDismiss?: ButtonAction;
   };
 };
 
