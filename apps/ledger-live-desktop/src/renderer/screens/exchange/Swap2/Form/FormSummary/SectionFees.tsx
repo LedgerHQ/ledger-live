@@ -22,7 +22,6 @@ import TachometerMedium from "~/renderer/icons/TachometerMedium";
 import styled from "styled-components";
 import { useGetSwapTrackingProperties } from "../../utils/index";
 import { getLLDCoinFamily } from "~/renderer/families";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 type Strategies = "slow" | "medium" | "fast" | "advanced";
 
@@ -82,10 +81,7 @@ const SectionFees = ({
   const sendAmountSpecific = account && family && getLLDCoinFamily(family)?.sendAmountFields;
   const canEdit =
     hasRates && showSummaryValue && transaction && account && family && sendAmountSpecific;
-  const ptxSwapMoonpayProviderFlag = useFeature("ptxSwapMoonpayProvider");
-  const swapDefaultTrack = useGetSwapTrackingProperties({
-    ptxSwapMoonpayProviderEnabled: !!ptxSwapMoonpayProviderFlag?.enabled,
-  });
+  const swapDefaultTrack = useGetSwapTrackingProperties();
 
   const StrategyIcon = useMemo(
     () =>

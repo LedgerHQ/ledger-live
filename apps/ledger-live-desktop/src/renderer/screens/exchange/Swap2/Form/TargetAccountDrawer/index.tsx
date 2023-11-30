@@ -23,7 +23,6 @@ import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import { context } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
 import { useGetSwapTrackingProperties } from "../../utils/index";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 const AccountWrapper = styled(Tabbable)<{ selected?: boolean }>`
   cursor: pointer;
@@ -63,10 +62,7 @@ const TargetAccount = memo(function TargetAccount({
   setAccount?: Props["setToAccount"];
   isChild?: boolean;
 }) {
-  const ptxSwapMoonpayProviderFlag = useFeature("ptxSwapMoonpayProvider");
-  const swapDefaultTrack = useGetSwapTrackingProperties({
-    ptxSwapMoonpayProviderEnabled: !!ptxSwapMoonpayProviderFlag?.enabled,
-  });
+  const swapDefaultTrack = useGetSwapTrackingProperties();
   const allAccounts = useSelector(shallowAccountsSelector);
   const theme = useTheme();
   const currency = getAccountCurrency(account);
@@ -165,10 +161,7 @@ export default function TargetAccountDrawer({
   setToAccount,
   setDrawerStateRef,
 }: Props) {
-  const ptxSwapMoonpayProviderFlag = useFeature("ptxSwapMoonpayProvider");
-  const swapDefaultTrack = useGetSwapTrackingProperties({
-    ptxSwapMoonpayProviderEnabled: !!ptxSwapMoonpayProviderFlag?.enabled,
-  });
+  const swapDefaultTrack = useGetSwapTrackingProperties();
   const allAccounts = useSelector(shallowAccountsSelector);
   const dispatch = useDispatch();
   const { setDrawer } = React.useContext(context);

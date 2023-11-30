@@ -30,7 +30,6 @@ import { WarningSolidMedium } from "@ledgerhq/react-ui/assets/icons";
 import { useSwapableAccounts } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { useSelector } from "react-redux";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 const SwapStatusContainer = styled.div<{ isError: boolean }>(
   ({ theme: { space, colors }, isError }) => `
@@ -123,10 +122,7 @@ function FromRow({
   isSendMaxLoading,
   updateSelectedRate,
 }: Props) {
-  const ptxSwapMoonpayProviderFlag = useFeature("ptxSwapMoonpayProvider");
-  const swapDefaultTrack = useGetSwapTrackingProperties({
-    ptxSwapMoonpayProviderEnabled: !!ptxSwapMoonpayProviderFlag?.enabled,
-  });
+  const swapDefaultTrack = useGetSwapTrackingProperties();
   const flattenedAccounts = useSelector(flattenAccountsSelector);
   const accounts = useSwapableAccounts({ accounts: flattenedAccounts });
   const unit = fromAccount && getAccountUnit(fromAccount);

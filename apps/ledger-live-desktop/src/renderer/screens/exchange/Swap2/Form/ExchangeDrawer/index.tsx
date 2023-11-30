@@ -27,7 +27,6 @@ import { Separator } from "../Separator";
 import SwapAction from "./SwapAction";
 import SwapCompleted from "./SwapCompleted";
 import { Operation } from "@ledgerhq/types-live";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 const ContentBox = styled(Box)`
   ${DeviceActionHeader} {
@@ -51,10 +50,7 @@ export default function ExchangeDrawer({ swapTransaction, exchangeRate, onComple
     operation: Operation;
     swapId: string;
   } | null>(null);
-  const ptxSwapMoonpayProviderFlag = useFeature("ptxSwapMoonpayProvider");
-  const swapDefaultTrack = useGetSwapTrackingProperties({
-    ptxSwapMoonpayProviderEnabled: !!ptxSwapMoonpayProviderFlag?.enabled,
-  });
+  const swapDefaultTrack = useGetSwapTrackingProperties();
   const redirectToHistory = useRedirectToSwapHistory();
   const {
     transaction,
