@@ -40,7 +40,7 @@ import { OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
 import { v4 } from "uuid";
 import SwapWebView, { SWAP_WEB_MANIFEST_ID, SwapWebProps } from "./SwapWebView";
 
-const WEB_PROVIDERS = ["moonpay"];
+const DAPP_PROVIDERS = ["paraswap", "oneinch", "moonpay"];
 
 const Wrapper = styled(Box).attrs({
   p: 20,
@@ -242,7 +242,7 @@ const SwapForm = () => {
       partner: provider,
     });
 
-    if (providerType === "DEX" || WEB_PROVIDERS.includes(provider)) {
+    if (DAPP_PROVIDERS.includes(provider)) {
       redirectToProviderApp(provider);
     } else {
       setDrawer(
