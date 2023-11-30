@@ -1,6 +1,5 @@
 import { getLatestFirmwareForDevice } from "./getLatestFirmwareForDevice";
-import { ManagerApiPort } from "../repositories/ManagerApiRepository";
-import { DeviceInfoEntity } from "../entities/DeviceInfoEntity";
+import { ManagerApiRepository } from "../repositories/ManagerApiRepository";
 import { aDeviceInfoBuilder } from "../../mock/fixtures/aDeviceInfo";
 import { DeviceVersion, OsuFirmware } from "@ledgerhq/types-live";
 import { UnknownMCU } from "@ledgerhq/errors";
@@ -9,7 +8,7 @@ jest.mock("../repositories/ManagerApiRepository");
 const mockedFetchMcus = jest.fn();
 const mockedGetDeviceVersion = jest.fn();
 const mockedGetCurrentOSU = jest.fn();
-const mockedManagerApiRepository: ManagerApiPort = {
+const mockedManagerApiRepository: ManagerApiRepository = {
   fetchLatestFirmware: jest.fn(),
   fetchMcus: mockedFetchMcus,
   getDeviceVersion: mockedGetDeviceVersion,
