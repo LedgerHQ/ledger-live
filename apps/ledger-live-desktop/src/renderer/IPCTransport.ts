@@ -1,6 +1,9 @@
 import { ipcRenderer } from "electron";
 import Transport from "@ledgerhq/hw-transport";
-import { log } from "@ledgerhq/logs";
+import { log, LocalTracer } from "@ledgerhq/logs";
+import APDUContext from "@ledgerhq/live-common/hw/APDUContext";
+
+//new LocalTracer(LOG_TYPE, context)
 import { deserializeError } from "@ledgerhq/errors";
 import { v4 as uuidv4 } from "uuid";
 import {
@@ -39,6 +42,9 @@ const rendererRequest = (channel: string, data: unknown) => {
 };
 export class IPCTransport extends Transport {
   static isSupported = (): Promise<boolean> => Promise.resolve(typeof ipcRenderer === "function");
+
+  //public static currentContext = new LocalTracer("ipc-apdu");
+
   // this transport is not discoverable
   static list = (): Promise<unknown[]> => Promise.resolve([]);
   static listen = (observer: Observer<DescriptorEvent<string>>) => {
@@ -88,12 +94,17 @@ export class IPCTransport extends Transport {
 
   async exchange(apdu: Buffer): Promise<Buffer> {
     const apduHex = apdu.toString("hex");
-    log("ipc-apdu", "=> " + apduHex);
+    //log("ipc-apdu", "=> " + apduHex);
+    //IPCTransport.currentContext
+
+    APDUContext.currentContext.trace("=> " + apduHex);
+
     const responseHex = await rendererRequest(transportExchangeChannel, {
       descriptor: this.id,
       apduHex,
     });
-    log("ipc-apdu", "<= " + responseHex);
+    //log("ipc-apdu", "<= " + responseHex);
+    APDUContext.currentContext.trace("<= " + responseHex);
     return Buffer.from(responseHex as string, "hex");
   }
 

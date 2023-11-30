@@ -2,6 +2,7 @@ import React, { useEffect, Component } from "react";
 import BigNumber from "bignumber.js";
 import { Trans, useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
+import APDUContext from "@ledgerhq/live-common/hw/APDUContext";
 import { Action } from "@ledgerhq/live-common/hw/actions/types";
 import {
   OutdatedApp,
@@ -595,6 +596,20 @@ export default function DeviceAction<R, H extends States, P>({
   const hookState = action.useHook(device, request);
   const payload = action.mapResult(hookState);
 
+  if (device) {
+    APDUContext.currentContext = APDUContext.currentContext.withUpdatedContext({"device": device.modelId});
+  }
+  if (hookState.appAndVersion) {
+    APDUContext.currentContext = APDUContext.currentContext.withUpdatedContext({"app.name": hookState.appAndVersion.name + "  " + hookState.appAndVersion.version});
+  }
+  if ((request as any).transaction) {
+    APDUContext.currentContext = APDUContext.currentContext.withUpdatedContext({"transaction_recipient": (request as any).transaction.recipient});
+    APDUContext.currentContext = APDUContext.currentContext.withUpdatedContext({"transaction_amount": (request as any).transaction.amount.toNumber()});
+    console.log("amount", (request as any).transaction.amount);
+  }
+  else if ((request as any).account) {
+    APDUContext.currentContext = APDUContext.currentContext.withUpdatedContext({"accountId": (request as any).account.id});
+  }
   return (
     <DeviceActionDefaultRendering
       status={hookState}
