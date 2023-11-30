@@ -1,8 +1,12 @@
 import { runOnceWhen } from "../runOnceWhen";
 
-jest.useFakeTimers();
-
 describe("runOnceWhen function", () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+  afterEach(() => {
+    jest.useRealTimers();
+  });
   test("calls the callback function when the condition is fulfilled", () => {
     const conditionFunc = jest.fn(() => true);
     const callback = jest.fn();
