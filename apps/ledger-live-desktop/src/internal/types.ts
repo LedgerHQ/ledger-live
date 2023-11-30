@@ -1,3 +1,5 @@
+import { TraceContext } from "@ledgerhq/logs";
+
 export type MessageTypes =
   | "transport:open"
   | "transport:exchange"
@@ -11,13 +13,18 @@ export type MessageTypes =
   | "internalCrashTest"
   | "setEnv";
 
+/**
+ * Types of messages received on the internal thread.
+ *
+ * Careful: this types are not currently enforced in the renderer and main threads.
+ */
 export type MessagesMap = {
   "transport:open": {
-    data: { descriptor: string };
+    data: { descriptor: string; timeoutMs?: number; context?: TraceContext };
     requestId: string;
   };
   "transport:exchange": {
-    data: { descriptor: string; apduHex: string };
+    data: { descriptor: string; apduHex: string; abortTimeoutMs?: number; context?: TraceContext };
     requestId: string;
   };
   "transport:exchangeBulk": {

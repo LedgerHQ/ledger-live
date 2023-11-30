@@ -11,9 +11,18 @@ import {
   transportListenChannel,
 } from "~/config/transportChannels";
 import { MessagesMap } from "./types";
+import { LocalTracer, TraceContext, trace } from "@ledgerhq/logs";
+
+const LOG_TYPE = "internal-transport-handler";
 
 type APDUMessage =
-  | { type: "exchange"; apduHex: string; requestId: string }
+  | {
+      type: "exchange";
+      apduHex: string;
+      requestId: string;
+      abortTimeoutMs?: number;
+      context?: TraceContext;
+    }
   | { type: "exchangeBulk"; apdusHex: string[]; requestId: string }
   | { type: "exchangeBulkUnsubscribe"; requestId: string };
 
@@ -21,7 +30,11 @@ const transports = new Map<string, Subject<APDUMessage>>();
 const transportsBulkSubscriptions = new Map<string, { unsubscribe: () => void }>();
 
 export const transportOpen = ({ data, requestId }: MessagesMap["transport:open"]) => {
-  const subjectExist = transports.get(data.descriptor);
+  const { descriptor, timeoutMs, context } = data;
+  const tracer = new LocalTracer(LOG_TYPE, { ipcContext: context, function: "transportOpen" });
+  tracer.trace("Received open transport request", { descriptor, timeoutMs });
+
+  const subjectExist = transports.get(descriptor);
 
   const onEnd = () => {
     process.send?.({
@@ -33,6 +46,7 @@ export const transportOpen = ({ data, requestId }: MessagesMap["transport:open"]
 
   // If already exists simply return success
   if (subjectExist) {
+    tracer.trace("Transport subject instance already exists");
     return onEnd();
   }
 
@@ -114,7 +128,9 @@ export const transportOpen = ({ data, requestId }: MessagesMap["transport:open"]
 };
 
 export const transportExchange = ({ data, requestId }: MessagesMap["transport:exchange"]) => {
-  const subject = transports.get(data.descriptor);
+  const { descriptor, apduHex, abortTimeoutMs, context } = data;
+  const subject = transports.get(descriptor);
+
   if (!subject) {
     process.send?.({
       type: transportExchangeChannel,
@@ -125,7 +141,8 @@ export const transportExchange = ({ data, requestId }: MessagesMap["transport:ex
     });
     return;
   }
-  subject.next({ type: "exchange", apduHex: data.apduHex, requestId });
+
+  subject.next({ type: "exchange", apduHex, requestId, abortTimeoutMs, context });
 };
 
 export const transportExchangeBulk = ({
@@ -199,6 +216,12 @@ export const transportListenUnsubscribe = ({
 };
 
 export const transportClose = ({ data, requestId }: MessagesMap["transport:close"]) => {
+  trace({
+    type: LOG_TYPE,
+    message: "Received close transport request",
+    context: { data, requestId },
+  });
+
   const subject = transports.get(data.descriptor);
   if (!subject) {
     process.send?.({
@@ -212,6 +235,7 @@ export const transportClose = ({ data, requestId }: MessagesMap["transport:close
   }
   subject.subscribe({
     complete: () => {
+      trace({ type: LOG_TYPE, message: "Close complete", context: { data, requestId } });
       process.send?.({
         type: transportCloseChannel,
         data,

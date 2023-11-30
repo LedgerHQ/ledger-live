@@ -52,6 +52,7 @@ if (INITIAL_SENTRY_TAGS) {
   if (parsed) setTags(parsed);
 }
 
+// Handles messages from the `main` thread
 process.on("message", (m: Message) => {
   switch (m.type) {
     case transportOpenChannel:
@@ -97,7 +98,9 @@ process.on("message", (m: Message) => {
       log("error", `internal thread: '${(m as { type: string }).type}' event not supported`);
   }
 });
+
 process.on("disconnect", () => {
   process.exit(0);
 });
+
 log("internal", "Internal process is up!");
