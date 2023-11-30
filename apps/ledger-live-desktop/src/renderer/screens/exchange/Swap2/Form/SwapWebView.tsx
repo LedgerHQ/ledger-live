@@ -18,6 +18,7 @@ import BigNumber from "bignumber.js";
 import { SubAccount } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
+import { useRedirectToSwapHistory } from "../utils/index";
 
 type CustomHandlersParams<Params> = {
   params: Params;
@@ -67,6 +68,8 @@ const SwapWebView = ({ swapState }: SwapWebProps) => {
   const locale = useSelector(languageSelector);
   const localManifest = useLocalLiveAppManifest(SWAP_WEB_MANIFEST_ID);
   const remoteManifest = useRemoteLiveAppManifest(SWAP_WEB_MANIFEST_ID);
+  const redirectToHistory = useRedirectToSwapHistory();
+
   const manifest = localManifest || remoteManifest;
 
   const hasManifest = !!manifest;
@@ -137,6 +140,9 @@ const SwapWebView = ({ swapState }: SwapWebProps) => {
       "custom.throwGenericErrorToLedgerLive": () => {
         onSwapWebviewError();
         return Promise.resolve();
+      },
+      "custom.swapRedirectToHistory": () => {
+        redirectToHistory();
       },
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
