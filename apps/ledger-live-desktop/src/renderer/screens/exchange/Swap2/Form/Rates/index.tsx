@@ -23,6 +23,7 @@ import IconInfoCircle from "~/renderer/icons/InfoCircle";
 import { filterRates } from "./filterRates";
 import { getFeesUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 type Props = {
   fromCurrency: SwapSelectorStateType["currency"];
@@ -57,7 +58,10 @@ export default function ProviderRate({
   refreshTime,
   countdown,
 }: Props) {
-  const swapDefaultTrack = useGetSwapTrackingProperties();
+  const ptxSwapMoonpayProviderFlag = useFeature("ptxSwapMoonpayProvider");
+  const swapDefaultTrack = useGetSwapTrackingProperties({
+    ptxSwapMoonpayProviderEnabled: ptxSwapMoonpayProviderFlag.enabled,
+  });
   const dispatch = useDispatch();
   const [filter, setFilter] = useState<string[]>([]);
   const [defaultPartner, setDefaultPartner] = useState<string | null>(null);

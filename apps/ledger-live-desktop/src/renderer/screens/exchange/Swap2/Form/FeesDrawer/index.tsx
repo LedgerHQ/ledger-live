@@ -11,6 +11,7 @@ import { DrawerTitle } from "../DrawerTitle";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { useGetSwapTrackingProperties } from "../../utils/index";
 import { Account, FeeStrategy } from "@ledgerhq/types-live";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 type Props = {
   setTransaction: SwapTransactionType["setTransaction"];
@@ -32,7 +33,10 @@ export default function FeesDrawer({
   provider,
   disableSlowStrategy = false,
 }: Props) {
-  const swapDefaultTrack = useGetSwapTrackingProperties();
+  const ptxSwapMoonpayProviderFlag = useFeature("ptxSwapMoonpayProvider");
+  const swapDefaultTrack = useGetSwapTrackingProperties({
+    ptxSwapMoonpayProviderEnabled: ptxSwapMoonpayProviderFlag.enabled,
+  });
   const transaction = useSelector(transactionSelector);
 
   const mapStrategies = useCallback(

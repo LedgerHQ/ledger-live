@@ -8,6 +8,7 @@ import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import swapRoutes from "./routes.json";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 const Nav = styled.nav`
   background-color: ${p => p.theme.colors.palette.background.paper};
@@ -24,7 +25,10 @@ const Navbar = () => {
   const { pathname } = useLocation();
   const history = useHistory();
   const { t } = useTranslation();
-  const swapDefaultTrack = useGetSwapTrackingProperties();
+  const ptxSwapMoonpayProviderFlag = useFeature("ptxSwapMoonpayProvider");
+  const swapDefaultTrack = useGetSwapTrackingProperties({
+    ptxSwapMoonpayProviderEnabled: ptxSwapMoonpayProviderFlag.enabled,
+  });
   const currentIndex = useMemo(() => {
     return swapRoutes.findIndex(route => route.path === pathname);
   }, [pathname]);

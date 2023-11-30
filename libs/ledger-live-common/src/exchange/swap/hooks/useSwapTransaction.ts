@@ -22,7 +22,6 @@ import { Transaction } from "../../../generated/types";
 import { getAccountCurrency, getFeesUnit } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { useProviderRates } from "./v5/useProviderRates";
-import { useFeature } from "../../../featureFlags";
 
 export const selectorStateDefaultValues = {
   currency: undefined,
@@ -162,8 +161,6 @@ export const useSwapTransaction = ({
     setExchangeRate,
   });
 
-  const ptxSwapMoonpayProviderFlag = useFeature("ptxSwapMoonpayProvider");
-
   return {
     ...bridgeTransaction,
     swap: {
@@ -192,6 +189,5 @@ export const useSwapTransaction = ({
     setFromAccount,
     setToAmount,
     reverseSwap,
-    ptxSwapMoonpayProviderFlag: !!ptxSwapMoonpayProviderFlag?.enabled,
   };
 };

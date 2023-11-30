@@ -12,6 +12,7 @@ import {
   SwapDataType,
 } from "@ledgerhq/live-common/exchange/swap/types";
 import { useGetSwapTrackingProperties } from "../../utils/index";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 type FormInputsProps = {
   fromAccount: SwapSelectorStateType["account"];
@@ -85,7 +86,10 @@ export default function FormInputs({
   isSendMaxLoading,
   updateSelectedRate,
 }: FormInputsProps) {
-  const swapDefaultTrack = useGetSwapTrackingProperties();
+  const ptxSwapMoonpayProviderFlag = useFeature("ptxSwapMoonpayProvider");
+  const swapDefaultTrack = useGetSwapTrackingProperties({
+    ptxSwapMoonpayProviderEnabled: ptxSwapMoonpayProviderFlag.enabled,
+  });
   const reverseSwapAndTrack = () => {
     track("button_clicked", {
       button: "switch",

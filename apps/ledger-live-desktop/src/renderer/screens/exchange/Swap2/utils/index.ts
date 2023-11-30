@@ -6,11 +6,12 @@ import { track } from "~/renderer/analytics/segment";
 
 export const SWAP_VERSION = "2.35";
 
-export const useGetSwapTrackingProperties = () => {
+export const useGetSwapTrackingProperties = (props) => {
   return useMemo(
     () => ({
       swapVersion: SWAP_VERSION,
       flow: "swap",
+      ...props,
     }),
     [],
   );

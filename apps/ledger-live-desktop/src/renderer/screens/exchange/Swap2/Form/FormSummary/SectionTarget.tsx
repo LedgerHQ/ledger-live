@@ -18,6 +18,7 @@ import {
 } from "@ledgerhq/live-common/exchange/swap/types";
 import TargetAccountDrawer from "../TargetAccountDrawer";
 import { AccountLike } from "@ledgerhq/types-live";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 const AccountSection = ({
   account,
@@ -30,7 +31,10 @@ const AccountSection = ({
 }) => {
   const { t } = useTranslation();
   const accountName = account ? getAccountName(account) : undefined;
-  const swapDefaultTrack = useGetSwapTrackingProperties();
+  const ptxSwapMoonpayProviderFlag = useFeature("ptxSwapMoonpayProvider");
+  const swapDefaultTrack = useGetSwapTrackingProperties({
+    ptxSwapMoonpayProviderEnabled: ptxSwapMoonpayProviderFlag.enabled,
+  });
 
   const handleChangeAndTrack = useCallback(() => {
     track("button_clicked", {
@@ -92,7 +96,10 @@ const SectionTarget = ({
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { setDrawer } = React.useContext(context);
-  const swapDefaultTrack = useGetSwapTrackingProperties();
+  const ptxSwapMoonpayProviderFlag = useFeature("ptxSwapMoonpayProvider");
+  const swapDefaultTrack = useGetSwapTrackingProperties({
+    ptxSwapMoonpayProviderEnabled: ptxSwapMoonpayProviderFlag.enabled,
+  });
 
   const handleAddAccount = () => {
     track("button_clicked", {

@@ -61,7 +61,6 @@ const Button = styled(ButtonBase)`
 `;
 
 const SwapForm = () => {
-  const swapDefaultTrack = useGetSwapTrackingProperties();
   const [idleState, setIdleState] = useState(false);
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -70,6 +69,10 @@ const SwapForm = () => {
   const accounts = useSelector(shallowAccountsSelector);
   const exchangeRate = useSelector(rateSelector);
   const walletApiPartnerList = useFeature("swapWalletApiPartnerList");
+  const ptxSwapMoonpayProviderFlag = useFeature("ptxSwapMoonpayProvider");
+  const swapDefaultTrack = useGetSwapTrackingProperties({
+    ptxSwapMoonpayProviderEnabled: ptxSwapMoonpayProviderFlag.enabled,
+  });
 
   const setExchangeRate: SetExchangeRateCallback = useCallback(
     rate => {
@@ -98,7 +101,6 @@ const SwapForm = () => {
     timeout: SWAP_RATES_TIMEOUT,
     timeoutErrorMessage: t("swap2.form.timeout.message"),
   });
-  const { ptxSwapMoonpayProviderFlag } = swapTransaction;
 
   const isSwapLiveAppEnabled = useIsSwapLiveApp({
     currencyFrom: swapTransaction.swap.from.currency,
@@ -210,7 +212,6 @@ const SwapForm = () => {
           page: "Page Swap Form",
           ...swapDefaultTrack,
           sourcecurrency: swapTransaction.swap.from.currency?.name,
-          ptxSwapMoonpayProviderFlag,
           provider,
         });
     },
@@ -239,7 +240,6 @@ const SwapForm = () => {
       sourceCurrency: sourceCurrency?.name,
       targetCurrency: targetCurrency?.name,
       partner: provider,
-      ptxSwapMoonpayProviderFlag,
     });
 
     if (providerType === "DEX" || WEB_PROVIDERS.includes(provider)) {
@@ -365,13 +365,7 @@ const SwapForm = () => {
 
   return (
     <Wrapper>
-      <TrackPage
-        category="Swap"
-        name="Form"
-        provider={provider}
-        ptxSwapMoonpayProviderFlag={ptxSwapMoonpayProviderFlag}
-        {...swapDefaultTrack}
-      />
+      <TrackPage category="Swap" name="Form" provider={provider} {...swapDefaultTrack} />
       <SwapFormSelectors
         fromAccount={sourceAccount}
         toAccount={swapTransaction.swap.to.account}

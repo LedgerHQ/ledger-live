@@ -6,6 +6,7 @@ import Box from "~/renderer/components/Box";
 import { useGetSwapTrackingProperties } from "../../utils/index";
 import { Text } from "@ledgerhq/react-ui";
 import ErrorNoBorder from "~/renderer/icons/ErrorNoBorder";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 const ContentBox = styled(Box)`
   display: flex;
@@ -52,7 +53,10 @@ export type SwapLiveError = {
 };
 
 export default function WebviewErrorDrawer(error?: SwapLiveError) {
-  const swapDefaultTrack = useGetSwapTrackingProperties();
+  const ptxSwapMoonpayProviderFlag = useFeature("ptxSwapMoonpayProvider");
+  const swapDefaultTrack = useGetSwapTrackingProperties({
+    ptxSwapMoonpayProviderEnabled: ptxSwapMoonpayProviderFlag.enabled,
+  });
   return (
     <ContentBox>
       <TrackPage category="Swap" name="Webview error drawer" {...swapDefaultTrack} {...error} />

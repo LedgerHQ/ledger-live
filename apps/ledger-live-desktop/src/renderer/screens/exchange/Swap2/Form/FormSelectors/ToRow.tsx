@@ -24,6 +24,7 @@ import CounterValue from "~/renderer/components/CounterValue";
 import { track } from "~/renderer/analytics/segment";
 import { useGetSwapTrackingProperties } from "../../utils/index";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 type Props = {
   fromAccount: SwapSelectorStateType["account"];
@@ -61,7 +62,10 @@ function ToRow({
   const { data: currenciesTo, isLoading: currenciesToIsLoading } = useFetchCurrencyTo({
     fromCurrencyAccount: fromAccount,
   });
-  const swapDefaultTrack = useGetSwapTrackingProperties();
+  const ptxSwapMoonpayProviderFlag = useFeature("ptxSwapMoonpayProvider");
+  const swapDefaultTrack = useGetSwapTrackingProperties({
+    ptxSwapMoonpayProviderEnabled: ptxSwapMoonpayProviderFlag.enabled,
+  });
   const currencies = useSelectableCurrencies({
     allCurrencies: currenciesTo ?? [],
   });
