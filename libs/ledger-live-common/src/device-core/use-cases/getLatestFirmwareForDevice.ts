@@ -1,13 +1,13 @@
 import { UnknownMCU } from "@ledgerhq/errors";
 import { DeviceInfoEntity } from "../entities/DeviceInfoEntity";
 import { FirmwareUpdateContextEntity } from "../entities/FirmwareUpdateContextEntity";
-import { ManagerApiPort } from "../repositories/ManagerApiRepository";
+import { ManagerApiRepository } from "../repositories/ManagerApiRepository";
 
 type GetLatestFirmwareForDeviceParams = {
   deviceInfo: DeviceInfoEntity;
   providerId: number;
   userId: string;
-  managerApiRepository: ManagerApiPort;
+  managerApiRepository: ManagerApiRepository;
 };
 
 export async function getLatestFirmwareForDevice({

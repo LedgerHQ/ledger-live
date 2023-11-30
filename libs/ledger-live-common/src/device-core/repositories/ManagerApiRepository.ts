@@ -7,7 +7,7 @@ import URL from "url";
 import { FirmwareNotRecognized } from "@ledgerhq/errors";
 
 // Used to name interfaces like this "Port"
-export interface ManagerApiPort {
+export interface ManagerApiRepository {
   fetchLatestFirmware(params: {
     current_se_firmware_final_version: Id;
     device_version: Id;
@@ -40,7 +40,7 @@ export interface ManagerApiPort {
   getFinalFirmwareById(id: number): Promise<FinalFirmware>;
 }
 
-export class ManagerApiRepository implements ManagerApiPort {
+export class ManagerApiHttpRepository implements ManagerApiRepository {
   private readonly managerApiBase: string;
   private readonly liveCommonVersion: string;
 
