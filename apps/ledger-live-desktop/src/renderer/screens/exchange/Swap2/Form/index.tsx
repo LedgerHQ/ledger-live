@@ -71,7 +71,7 @@ const SwapForm = () => {
   const walletApiPartnerList = useFeature("swapWalletApiPartnerList");
   const ptxSwapMoonpayProviderFlag = useFeature("ptxSwapMoonpayProvider");
   const swapDefaultTrack = useGetSwapTrackingProperties({
-    ptxSwapMoonpayProviderEnabled: ptxSwapMoonpayProviderFlag.enabled,
+    ptxSwapMoonpayProviderEnabled: !!ptxSwapMoonpayProviderFlag?.enabled,
   });
 
   const setExchangeRate: SetExchangeRateCallback = useCallback(

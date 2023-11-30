@@ -84,7 +84,7 @@ const SectionFees = ({
     hasRates && showSummaryValue && transaction && account && family && sendAmountSpecific;
   const ptxSwapMoonpayProviderFlag = useFeature("ptxSwapMoonpayProvider");
   const swapDefaultTrack = useGetSwapTrackingProperties({
-    ptxSwapMoonpayProviderEnabled: ptxSwapMoonpayProviderFlag.enabled,
+    ptxSwapMoonpayProviderEnabled: !!ptxSwapMoonpayProviderFlag?.enabled,
   });
 
   const StrategyIcon = useMemo(

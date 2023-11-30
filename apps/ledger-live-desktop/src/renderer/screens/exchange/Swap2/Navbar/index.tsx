@@ -27,7 +27,7 @@ const Navbar = () => {
   const { t } = useTranslation();
   const ptxSwapMoonpayProviderFlag = useFeature("ptxSwapMoonpayProvider");
   const swapDefaultTrack = useGetSwapTrackingProperties({
-    ptxSwapMoonpayProviderEnabled: ptxSwapMoonpayProviderFlag.enabled,
+    ptxSwapMoonpayProviderEnabled: !!ptxSwapMoonpayProviderFlag?.enabled,
   });
   const currentIndex = useMemo(() => {
     return swapRoutes.findIndex(route => route.path === pathname);

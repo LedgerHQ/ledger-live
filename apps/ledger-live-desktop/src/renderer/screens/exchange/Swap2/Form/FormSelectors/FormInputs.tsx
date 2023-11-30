@@ -88,7 +88,7 @@ export default function FormInputs({
 }: FormInputsProps) {
   const ptxSwapMoonpayProviderFlag = useFeature("ptxSwapMoonpayProvider");
   const swapDefaultTrack = useGetSwapTrackingProperties({
-    ptxSwapMoonpayProviderEnabled: ptxSwapMoonpayProviderFlag.enabled,
+    ptxSwapMoonpayProviderEnabled: !!ptxSwapMoonpayProviderFlag?.enabled,
   });
   const reverseSwapAndTrack = () => {
     track("button_clicked", {

@@ -35,7 +35,7 @@ export default function FeesDrawer({
 }: Props) {
   const ptxSwapMoonpayProviderFlag = useFeature("ptxSwapMoonpayProvider");
   const swapDefaultTrack = useGetSwapTrackingProperties({
-    ptxSwapMoonpayProviderEnabled: ptxSwapMoonpayProviderFlag.enabled,
+    ptxSwapMoonpayProviderEnabled: !!ptxSwapMoonpayProviderFlag?.enabled,
   });
   const transaction = useSelector(transactionSelector);
 

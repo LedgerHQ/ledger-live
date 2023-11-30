@@ -125,7 +125,7 @@ function FromRow({
 }: Props) {
   const ptxSwapMoonpayProviderFlag = useFeature("ptxSwapMoonpayProvider");
   const swapDefaultTrack = useGetSwapTrackingProperties({
-    ptxSwapMoonpayProviderEnabled: ptxSwapMoonpayProviderFlag.enabled,
+    ptxSwapMoonpayProviderEnabled: !!ptxSwapMoonpayProviderFlag?.enabled,
   });
   const flattenedAccounts = useSelector(flattenAccountsSelector);
   const accounts = useSwapableAccounts({ accounts: flattenedAccounts });

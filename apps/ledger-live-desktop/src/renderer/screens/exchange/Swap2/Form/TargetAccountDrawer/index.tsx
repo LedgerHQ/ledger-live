@@ -65,7 +65,7 @@ const TargetAccount = memo(function TargetAccount({
 }) {
   const ptxSwapMoonpayProviderFlag = useFeature("ptxSwapMoonpayProvider");
   const swapDefaultTrack = useGetSwapTrackingProperties({
-    ptxSwapMoonpayProviderEnabled: ptxSwapMoonpayProviderFlag.enabled,
+    ptxSwapMoonpayProviderEnabled: !!ptxSwapMoonpayProviderFlag?.enabled,
   });
   const allAccounts = useSelector(shallowAccountsSelector);
   const theme = useTheme();
@@ -167,7 +167,7 @@ export default function TargetAccountDrawer({
 }: Props) {
   const ptxSwapMoonpayProviderFlag = useFeature("ptxSwapMoonpayProvider");
   const swapDefaultTrack = useGetSwapTrackingProperties({
-    ptxSwapMoonpayProviderEnabled: ptxSwapMoonpayProviderFlag.enabled,
+    ptxSwapMoonpayProviderEnabled: !!ptxSwapMoonpayProviderFlag?.enabled,
   });
   const allAccounts = useSelector(shallowAccountsSelector);
   const dispatch = useDispatch();

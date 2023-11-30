@@ -53,7 +53,7 @@ export default function ExchangeDrawer({ swapTransaction, exchangeRate, onComple
   } | null>(null);
   const ptxSwapMoonpayProviderFlag = useFeature("ptxSwapMoonpayProvider");
   const swapDefaultTrack = useGetSwapTrackingProperties({
-    ptxSwapMoonpayProviderEnabled: ptxSwapMoonpayProviderFlag.enabled,
+    ptxSwapMoonpayProviderEnabled: !!ptxSwapMoonpayProviderFlag?.enabled,
   });
   const redirectToHistory = useRedirectToSwapHistory();
   const {
