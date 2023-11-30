@@ -3,14 +3,17 @@ import { useHistory } from "react-router-dom";
 import { SwapExchangeRateAmountTooLow } from "@ledgerhq/live-common/errors";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { track } from "~/renderer/analytics/segment";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 export const SWAP_VERSION = "2.35";
 
-export const useGetSwapTrackingProperties = () => {
+export const useGetSwapTrackingProperties = (props) => {
+  const ptxSwapMoonpayProviderFlag = useFeature("ptxSwapMoonpayProvider");
   return useMemo(
     () => ({
       swapVersion: SWAP_VERSION,
       flow: "swap",
+      ptxSwapMoonpayProviderEnabled: !!ptxSwapMoonpayProviderFlag?.enabled,
     }),
     [],
   );
