@@ -5,6 +5,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import logger from "~/renderer/logger";
 import { getParsedSystemLocale } from "~/helpers/systemLocale";
 import user from "~/helpers/user";
+import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
 import {
   sidebarCollapsedSelector,
   shareAnalyticsSelector,
@@ -54,9 +55,11 @@ export function setAnalyticsFeatureFlagMethod(method: typeof analyticsFeatureFla
   analyticsFeatureFlagMethod = method;
 }
 
-const getFeatureFlagProperties = (): Record<string, boolean | string> => {
-  try {
-    if (!analyticsFeatureFlagMethod) return {};
+const getFeatureFlagProperties = () => {
+  if (!analyticsFeatureFlagMethod) return {};
+  (async () => {
+    const { id } = await user();
+    const analytics = getAnalytics();
     const ptxEarnFeatureFlag = analyticsFeatureFlagMethod("ptxEarn");
     const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
 
@@ -67,16 +70,22 @@ const getFeatureFlagProperties = (): Record<string, boolean | string> => {
     const isBatch3Enabled =
       !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 3;
 
-    return {
-      ptxEarnEnabled: !!ptxEarnFeatureFlag?.enabled,
-      isBatch1Enabled,
-      isBatch2Enabled,
-      isBatch3Enabled,
-    };
-  } catch (e) {
-    return {};
-  }
+    analytics.identify(
+      id,
+      {
+        ptxEarnEnabled: !!ptxEarnFeatureFlag?.enabled,
+        isBatch1Enabled,
+        isBatch2Enabled,
+        isBatch3Enabled,
+      },
+      {
+        context: getContext(),
+      },
+    );
+  })();
 };
+
+runOnceWhen(() => !!analyticsFeatureFlagMethod && !!getAnalytics(), getFeatureFlagProperties);
 
 const extraProperties = (store: ReduxStore) => {
   const state: State = store.getState();
@@ -137,7 +146,6 @@ const extraProperties = (store: ReduxStore) => {
     hasInfinityPass,
     modelIdList: devices,
     ...deviceInfo,
-    ...getFeatureFlagProperties(),
   };
 };
 
