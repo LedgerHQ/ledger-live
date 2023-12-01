@@ -1237,7 +1237,7 @@
         "firmwareUpdate": {
           "title": {
             "active": "OS update check",
-            "completed": "Your {{modelName}} OS is up to date. One last thing...",
+            "completed": "Your {{modelName}} OS is up to date.",
             "updateAvailable": "OS update {{firmwareVersion}} available"
           },
           "subtitle": {
