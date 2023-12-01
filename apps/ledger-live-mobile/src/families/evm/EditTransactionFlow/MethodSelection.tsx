@@ -16,15 +16,15 @@ import { getEnv } from "@ledgerhq/live-env";
 import { log } from "@ledgerhq/logs";
 import { Box, Flex, SelectableList } from "@ledgerhq/native-ui";
 import { Account, AccountBridge } from "@ledgerhq/types-live";
-import { urls } from "@utils/urls";
+import { urls } from "~/utils/urls";
 import invariant from "invariant";
 import React, { memo, useCallback, useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Dimensions, Linking } from "react-native";
-import { TrackScreen } from "../../../analytics";
-import LText from "../../../components/LText";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
-import { ScreenName } from "../../../const";
+import { TrackScreen } from "~/analytics";
+import LText from "~/components/LText";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { ScreenName } from "~/const";
 import { EditTransactionParamList } from "./EditTransactionParamList";
 
 const getSpeedUpDescriptionKey = (

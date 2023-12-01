@@ -1,5 +1,5 @@
 import type { Device } from "@ledgerhq/types-devices";
-import { ScreenName } from "../../../const";
+import { ScreenName } from "~/const";
 import { FilterByDeviceModelId } from "../../BleDevicePairingFlow/BleDevicesScanning";
 
 export type SettingsNavigatorStackParamList = {

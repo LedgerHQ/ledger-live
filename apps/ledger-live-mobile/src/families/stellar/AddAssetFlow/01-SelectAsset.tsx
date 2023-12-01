@@ -11,17 +11,17 @@ import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/fa
 import type { SubAccount } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useTheme } from "@react-navigation/native";
-import { ScreenName } from "../../../const";
-import LText from "../../../components/LText";
-import { accountScreenSelector } from "../../../reducers/accounts";
-import { TrackScreen } from "../../../analytics";
-import FilteredSearchBar from "../../../components/FilteredSearchBar";
-import FirstLetterIcon from "../../../components/FirstLetterIcon";
-import KeyboardView from "../../../components/KeyboardView";
-import InfoIcon from "../../../components/InfoIcon";
-import Info from "../../../icons/Info";
-import QueuedDrawer from "../../../components/QueuedDrawer";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { ScreenName } from "~/const";
+import LText from "~/components/LText";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { TrackScreen } from "~/analytics";
+import FilteredSearchBar from "~/components/FilteredSearchBar";
+import FirstLetterIcon from "~/components/FirstLetterIcon";
+import KeyboardView from "~/components/KeyboardView";
+import InfoIcon from "~/components/InfoIcon";
+import Info from "~/icons/Info";
+import QueuedDrawer from "~/components/QueuedDrawer";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { StellarAddAssetFlowParamList } from "./types";
 import { getEnv } from "@ledgerhq/live-env";
 

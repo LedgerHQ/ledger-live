@@ -10,14 +10,14 @@ import { getAccountCurrency, listSubAccounts } from "@ledgerhq/live-common/accou
 import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { DropdownMedium, DropupMedium, PlusMedium } from "@ledgerhq/native-ui/assets/icons";
-import { NavigatorName, ScreenName } from "../../const";
-import SubAccountRow from "../../components/SubAccountRow";
-import Touchable from "../../components/Touchable";
+import { NavigatorName, ScreenName } from "~/const";
+import SubAccountRow from "~/components/SubAccountRow";
+import Touchable from "~/components/Touchable";
 import TokenContextualModal from "../Settings/Accounts/TokenContextualModal";
 import perFamilySubAccountList from "../../generated/SubAccountList";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
-import Button from "../../components/Button";
-import { blacklistedTokenIdsSelector } from "../../reducers/settings";
+import Button from "~/components/Button";
+import { blacklistedTokenIdsSelector } from "~/reducers/settings";
 
 const keyExtractor = (item: SubAccount): string => item.id;
 

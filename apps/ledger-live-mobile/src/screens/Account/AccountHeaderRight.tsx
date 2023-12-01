@@ -4,12 +4,12 @@ import { useSelector } from "react-redux";
 import { NavigationProp, RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { SettingsMedium, OthersMedium } from "@ledgerhq/native-ui/assets/icons";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { NavigatorName, ScreenName } from "../../const";
-import Touchable from "../../components/Touchable";
-import { accountScreenSelector, accountsSelector } from "../../reducers/accounts";
+import { NavigatorName, ScreenName } from "~/const";
+import Touchable from "~/components/Touchable";
+import { accountScreenSelector, accountsSelector } from "~/reducers/accounts";
 import TokenContextualModal from "../Settings/Accounts/TokenContextualModal";
-import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
-import type { AccountsNavigatorParamList } from "../../components/RootNavigator/types/AccountsNavigator";
+import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import type { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
 
 import { Flex } from "@ledgerhq/native-ui";
 import { WalletConnectAction } from "../WalletCentricAsset/WalletConnectHeader";

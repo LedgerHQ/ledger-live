@@ -7,9 +7,9 @@ import { Button, Flex, IconsLegacy, Text, Link } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
-import { TrackScreen, track } from "../../analytics";
-import { useCompleteActionCallback } from "../../logic/postOnboarding/useCompleteAction";
-import { NavigatorName, ScreenName } from "../../const";
+import { TrackScreen, track } from "~/analytics";
+import { useCompleteActionCallback } from "~/logic/postOnboarding/useCompleteAction";
+import { NavigatorName, ScreenName } from "~/const";
 import videoSources from "../../../assets/videos";
 
 const AnimatedFlex = Animated.createAnimatedComponent(Flex);

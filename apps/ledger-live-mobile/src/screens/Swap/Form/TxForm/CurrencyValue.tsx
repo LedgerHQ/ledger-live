@@ -2,8 +2,8 @@ import React from "react";
 import BigNumber from "bignumber.js";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import CurrencyUnitValue from "../../../../components/CurrencyUnitValue";
-import CounterValue from "../../../../components/CounterValue";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import CounterValue from "~/components/CounterValue";
 
 interface Props {
   currency?: CryptoCurrency | TokenCurrency;

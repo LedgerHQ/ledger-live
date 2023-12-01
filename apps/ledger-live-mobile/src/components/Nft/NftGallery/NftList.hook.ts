@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { BackHandler } from "react-native";
 import { hideNftCollection } from "../../../actions/settings";
 import { track } from "../../../analytics";
-import { NavigatorName, ScreenName } from "../../../const";
+import { NavigatorName, ScreenName } from "~/const";
 import { updateMainNavigatorVisibility } from "../../../actions/appstate";
 import {
   galleryFilterDrawerVisibleSelector,

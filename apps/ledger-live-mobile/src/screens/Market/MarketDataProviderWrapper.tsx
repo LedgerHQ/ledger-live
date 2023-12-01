@@ -11,7 +11,7 @@ import {
   marketFilterByStarredAccountsSelector,
   marketRequestParamsSelector,
   starredMarketCoinsSelector,
-} from "../../reducers/settings";
+} from "~/reducers/settings";
 
 type Props = {
   children: React.ReactNode;

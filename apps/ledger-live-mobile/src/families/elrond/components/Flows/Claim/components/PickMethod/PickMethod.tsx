@@ -17,16 +17,16 @@ import type { AccountBridge } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { PickMethodPropsType, OptionType, ModalType } from "./types";
 
-import Button from "../../../../../../../components/Button";
-import LText from "../../../../../../../components/LText";
-import ToggleButton from "../../../../../../../components/ToggleButton";
-import InfoModal from "../../../../../../../modals/Info";
-import Info from "../../../../../../../icons/Info";
-import CurrencyUnitValue from "../../../../../../../components/CurrencyUnitValue";
-import CounterValue from "../../../../../../../components/CounterValue";
-import FirstLetterIcon from "../../../../../../../components/FirstLetterIcon";
-import TranslatedError from "../../../../../../../components/TranslatedError";
-import { ScreenName } from "../../../../../../../const";
+import Button from "~/components/Button";
+import LText from "~/components/LText";
+import ToggleButton from "~/components/ToggleButton";
+import InfoModal from "~/modals/Info";
+import Info from "~/icons/Info";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import CounterValue from "~/components/CounterValue";
+import FirstLetterIcon from "~/components/FirstLetterIcon";
+import TranslatedError from "~/components/TranslatedError";
+import { ScreenName } from "~/const";
 
 import { TransactionMethodEnum } from "./enums";
 

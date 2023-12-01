@@ -4,19 +4,16 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
-import { ScreenName, NavigatorName } from "../../../../const";
-import Button from "../../../../components/Button";
-import LText from "../../../../components/LText";
-import ExternalLink from "../../../../components/ExternalLink";
-import BulletList, { BulletGreenCheck } from "../../../../components/BulletList";
-import NavigationScrollView from "../../../../components/NavigationScrollView";
-import { urls } from "@utils/urls";
-import { TrackScreen } from "../../../../analytics";
-import Illustration from "../../../../images/illustration/Illustration";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../../../components/RootNavigator/types/helpers";
+import { ScreenName, NavigatorName } from "~/const";
+import Button from "~/components/Button";
+import LText from "~/components/LText";
+import ExternalLink from "~/components/ExternalLink";
+import BulletList, { BulletGreenCheck } from "~/components/BulletList";
+import NavigationScrollView from "~/components/NavigationScrollView";
+import { urls } from "~/utils/urls";
+import { TrackScreen } from "~/analytics";
+import Illustration from "~/images/illustration/Illustration";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { AlgorandClaimRewardsFlowParamList } from "./type";
 
 type Props = BaseComposite<
@@ -55,8 +52,8 @@ export default function ClaimRewardsStarted({ navigation, route }: Props) {
         <Flex alignItems="center" justifyContent="center" mb={6}>
           <Illustration
             size={200}
-            lightSource={require("../../../../images/illustration/Light/_003.png")}
-            darkSource={require("../../../../images/illustration/Dark/_003.png")}
+            lightSource={require("~/images/illustration/Light/_003.png")}
+            darkSource={require("~/images/illustration/Dark/_003.png")}
           />
         </Flex>
         <LText semiBold style={styles.description}>

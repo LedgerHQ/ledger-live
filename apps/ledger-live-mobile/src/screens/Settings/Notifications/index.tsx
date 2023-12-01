@@ -5,13 +5,13 @@ import { useTranslation } from "react-i18next";
 import { capitalize } from "lodash/fp";
 import { Box, Switch, Text, Button, IconsLegacy, InfiniteLoader } from "@ledgerhq/native-ui";
 import SettingsNavigationScrollView from "../SettingsNavigationScrollView";
-import SettingsRow from "../../../components/SettingsRow";
-import { track, TrackScreen, updateIdentify } from "../../../analytics";
-import { notificationsSelector } from "../../../reducers/settings";
-import { setNotifications } from "../../../actions/settings";
-import type { State } from "../../../reducers/types";
-import useNotifications from "../../../logic/notifications";
-import { updateUserPreferences } from "../../../notifications/braze";
+import SettingsRow from "~/components/SettingsRow";
+import { track, TrackScreen, updateIdentify } from "~/analytics";
+import { notificationsSelector } from "~/reducers/settings";
+import { setNotifications } from "~/actions/settings";
+import type { State } from "~/reducers/types";
+import useNotifications from "~/logic/notifications";
+import { updateUserPreferences } from "~/notifications/braze";
 
 const notificationsMapping = {
   areNotificationsAllowed: "allowed",

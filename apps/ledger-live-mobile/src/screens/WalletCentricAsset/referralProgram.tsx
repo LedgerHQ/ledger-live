@@ -5,8 +5,8 @@ import styled from "styled-components/native";
 import { ChevronRightMedium, GiftMedium } from "@ledgerhq/native-ui/assets/icons";
 import { Linking, TouchableOpacity } from "react-native";
 import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
-import { track } from "../../analytics";
-import { ScreenName } from "../../const";
+import { track } from "~/analytics";
+import { ScreenName } from "~/const";
 
 const ReferralContainer = styled(Flex)`
   background-color: ${p => p.theme.colors.opacityDefault.c05};

@@ -1,7 +1,7 @@
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { NavigatorScreenParams } from "@react-navigation/native";
 
-import { NavigatorName, ScreenName } from "../../../const";
+import { NavigatorName, ScreenName } from "~/const";
 
 export type OnboardingPreQuizModalNavigatorParamList = {
   [ScreenName.OnboardingPreQuizModal]: { onNext?: () => void };

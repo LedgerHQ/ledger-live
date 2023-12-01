@@ -1,7 +1,7 @@
 import { ScrollListContainer } from "@ledgerhq/native-ui";
 import React, { useRef } from "react";
 import { ScrollViewProps } from "react-native";
-import { useScrollToTop } from "../navigation/utils";
+import { useScrollToTop } from "~/navigation/utils";
 
 export default function NavigationScrollView({
   children,

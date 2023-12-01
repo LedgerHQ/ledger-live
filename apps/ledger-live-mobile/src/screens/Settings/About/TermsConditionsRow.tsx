@@ -3,8 +3,8 @@ import { Linking } from "react-native";
 import { Trans } from "react-i18next";
 import { ExternalLinkMedium } from "@ledgerhq/native-ui/assets/icons";
 
-import SettingsRow from "../../../components/SettingsRow";
-import { useLocalizedTermsUrl } from "../../../logic/terms";
+import SettingsRow from "~/components/SettingsRow";
+import { useLocalizedTermsUrl } from "~/logic/terms";
 
 const TermsConditionsRow = () => {
   const termsUrl = useLocalizedTermsUrl();

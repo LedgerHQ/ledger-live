@@ -2,9 +2,9 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { Switch } from "@ledgerhq/native-ui";
-import SettingsRow from "../../../components/SettingsRow";
-import { setReportErrors } from "../../../actions/settings";
-import { reportErrorsEnabledSelector } from "../../../reducers/settings";
+import SettingsRow from "~/components/SettingsRow";
+import { setReportErrors } from "~/actions/settings";
+import { reportErrorsEnabledSelector } from "~/reducers/settings";
 
 const ReportErrorsRow = () => {
   const { t } = useTranslation();

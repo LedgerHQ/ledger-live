@@ -69,7 +69,7 @@ import {
   SettingsSetUserNps,
   SettingsSetSupportedCounterValues,
 } from "./types";
-import { ImageType } from "../components/CustomImage/types";
+import { ImageType } from "~/components/CustomImage/types";
 
 export const setPrivacy = createAction<SettingsSetPrivacyPayload>(
   SettingsActionTypes.SETTINGS_SET_PRIVACY,

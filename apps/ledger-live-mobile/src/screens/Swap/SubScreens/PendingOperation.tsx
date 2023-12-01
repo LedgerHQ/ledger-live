@@ -6,15 +6,15 @@ import { Trans } from "react-i18next";
 
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useSelector } from "react-redux";
-import LText from "../../../components/LText";
-import Button from "../../../components/Button";
-import IconCheck from "../../../icons/Check";
-import IconClock from "../../../icons/Clock";
+import LText from "~/components/LText";
+import Button from "~/components/Button";
+import IconCheck from "~/icons/Check";
+import IconClock from "~/icons/Clock";
 import { rgba } from "../../../colors";
-import { TrackScreen } from "../../../analytics";
+import { TrackScreen } from "~/analytics";
 import { PendingOperationParamList } from "../types";
-import { flattenAccountsSelector } from "../../../reducers/accounts";
-import { ScreenName } from "../../../const";
+import { flattenAccountsSelector } from "~/reducers/accounts";
+import { ScreenName } from "~/const";
 
 export function PendingOperation({ route, navigation }: PendingOperationParamList) {
   const { colors } = useTheme();

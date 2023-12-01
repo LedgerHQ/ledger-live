@@ -8,8 +8,8 @@ import type { Account, AccountLike, TransactionCommonRaw } from "@ledgerhq/types
 import React, { memo } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import LText from "../../components/LText";
-import { localeSelector } from "../../reducers/settings";
+import LText from "~/components/LText";
+import { localeSelector } from "~/reducers/settings";
 
 const CurrentNetworkFeeComponent = ({
   account,

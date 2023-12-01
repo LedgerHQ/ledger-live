@@ -8,16 +8,13 @@ import type {
   Transaction as CardanoTransaction,
 } from "@ledgerhq/live-common/families/cardano/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import LText from "../../components/LText";
-import { ScreenName } from "../../const";
-import SummaryRow from "../../screens/SendFunds/SummaryRow";
-import type {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
-import type { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
-import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
-import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
+import LText from "~/components/LText";
+import { ScreenName } from "~/const";
+import SummaryRow from "~/screens/SendFunds/SummaryRow";
+import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import type { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
+import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
+import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 
 type Navigation = BaseComposite<
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>

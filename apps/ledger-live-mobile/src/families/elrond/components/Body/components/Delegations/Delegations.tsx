@@ -9,12 +9,12 @@ import type { StackNavigationProp } from "@react-navigation/stack";
 
 import type { NavigationType } from "../../../../types";
 import type { DelegationsPropsType } from "./types";
-import AccountDelegationInfo from "../../../../../../components/AccountDelegationInfo";
-import AccountSectionLabel from "../../../../../../components/AccountSectionLabel";
-import IlluRewards from "../../../../../../icons/images/Rewards";
-import { ScreenName, NavigatorName } from "../../../../../../const";
+import AccountDelegationInfo from "~/components/AccountDelegationInfo";
+import AccountSectionLabel from "~/components/AccountSectionLabel";
+import IlluRewards from "~/icons/images/Rewards";
+import { ScreenName, NavigatorName } from "~/const";
 
-import { urls } from "@utils/urls";
+import { urls } from "~/utils/urls";
 
 import Delegation from "./components/Delegation";
 import Right from "./components/Right";

@@ -11,7 +11,7 @@ import {
 } from "@ledgerhq/native-ui";
 import { useDispatch, useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
-import TabBarSafeAreaView from "../../components/TabBar/TabBarSafeAreaView";
+import TabBarSafeAreaView from "~/components/TabBar/TabBarSafeAreaView";
 import { useMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
 import { Platform, ListRenderItem, RefreshControl, TouchableOpacity, FlatList } from "react-native";
@@ -22,23 +22,23 @@ import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
 import {
   marketFilterByStarredAccountsSelector,
   starredMarketCoinsSelector,
-} from "../../reducers/settings";
+} from "~/reducers/settings";
 import MarketRowItem from "./MarketRowItem";
-import { useLocale } from "../../context/Locale";
+import { useLocale } from "~/context/Locale";
 import SortBadge, { Badge } from "./SortBadge";
 import SearchHeader from "./SearchHeader";
-import { ScreenName } from "../../const";
-import { track } from "../../analytics";
-import TrackScreen from "../../analytics/TrackScreen";
-import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
-import { TAB_BAR_SAFE_HEIGHT } from "../../components/TabBar/TabBarSafeAreaView";
-import CollapsibleHeaderFlatList from "../../components/WalletTab/CollapsibleHeaderFlatList";
-import WalletTabSafeAreaView from "../../components/WalletTab/WalletTabSafeAreaView";
-import { setMarketFilterByStarredAccounts, setMarketRequestParams } from "../../actions/settings";
-import { AnalyticsContext } from "../../analytics/AnalyticsContext";
+import { ScreenName } from "~/const";
+import { track } from "~/analytics";
+import TrackScreen from "~/analytics/TrackScreen";
+import globalSyncRefreshControl from "~/components/globalSyncRefreshControl";
+import { TAB_BAR_SAFE_HEIGHT } from "~/components/TabBar/TabBarSafeAreaView";
+import CollapsibleHeaderFlatList from "~/components/WalletTab/CollapsibleHeaderFlatList";
+import WalletTabSafeAreaView from "~/components/WalletTab/WalletTabSafeAreaView";
+import { setMarketFilterByStarredAccounts, setMarketRequestParams } from "~/actions/settings";
+import { AnalyticsContext } from "~/analytics/AnalyticsContext";
 import EmptyStarredCoins from "./EmptyStarredCoins";
-import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { MarketNavigatorStackParamList } from "../../components/RootNavigator/types/MarketNavigator";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { MarketNavigatorStackParamList } from "~/components/RootNavigator/types/MarketNavigator";
 import EmptyState from "./EmptyState";
 
 const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl(
@@ -49,13 +49,13 @@ const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl(
 );
 
 const noResultIllustration = {
-  dark: require("../../images/illustration/Dark/_051.png"),
-  light: require("../../images/illustration/Light/_051.png"),
+  dark: require("~/images/illustration/Dark/_051.png"),
+  light: require("~/images/illustration/Light/_051.png"),
 };
 
 const noNetworkIllustration = {
-  dark: require("../../images/illustration/Dark/_078.png"),
-  light: require("../../images/illustration/Light/_078.png"),
+  dark: require("~/images/illustration/Dark/_078.png"),
+  light: require("~/images/illustration/Light/_078.png"),
 };
 
 const keyExtractor = (item: CurrencyData, index: number) => item.id + index;

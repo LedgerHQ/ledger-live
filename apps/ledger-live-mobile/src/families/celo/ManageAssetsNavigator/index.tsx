@@ -11,14 +11,11 @@ import {
   hasRevokableVotes,
 } from "@ledgerhq/live-common/families/celo/logic";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { accountScreenSelector } from "../../../reducers/accounts";
-import { ScreenName, NavigatorName } from "../../../const";
-import Button from "../../../components/Button";
-import {
-  RootComposite,
-  StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
-import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { ScreenName, NavigatorName } from "~/const";
+import Button from "~/components/Button";
+import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 
 type NavigationProps = RootComposite<
   StackNavigatorProps<BaseNavigatorStackParamList, NavigatorName.CeloManageAssetsNavigator>

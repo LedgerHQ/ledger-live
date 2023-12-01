@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { NumberedList } from "@ledgerhq/native-ui";
 import { useRoute, RouteProp } from "@react-navigation/native";
-import Button from "../../../../../components/PreventDoubleClickButton";
+import Button from "~/components/PreventDoubleClickButton";
 
 const items = [
   {

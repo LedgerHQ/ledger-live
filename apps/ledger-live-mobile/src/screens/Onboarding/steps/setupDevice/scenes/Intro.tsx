@@ -1,7 +1,7 @@
 import { IconBoxList, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import Button from "../../../../../components/PreventDoubleClickButton";
+import Button from "~/components/PreventDoubleClickButton";
 import OnboardingSetupDeviceInformation from "../drawers/Warning";
 
 const items = [

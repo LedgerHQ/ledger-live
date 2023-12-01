@@ -1,7 +1,7 @@
 import { Text } from "@ledgerhq/native-ui";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import Button from "../../../../../components/PreventDoubleClickButton";
+import Button from "~/components/PreventDoubleClickButton";
 import OnboardingRecoveryPhraseWarning from "../drawers/RecoveryPhraseWarning";
 
 const RestoreRecoveryPhraseScene = () => {

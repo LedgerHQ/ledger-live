@@ -14,14 +14,14 @@ import estimateMaxSpendable from "@ledgerhq/live-common/families/elrond/js-estim
 import type { Transaction } from "@ledgerhq/live-common/families/elrond/types";
 import type { PickAmountPropsType, RatioType } from "./types";
 
-import { localeSelector } from "../../../../../../../reducers/settings";
-import { ScreenName } from "../../../../../../../const";
-import Button from "../../../../../../../components/Button";
-import CurrencyInput from "../../../../../../../components/CurrencyInput";
-import LText from "../../../../../../../components/LText";
-import Warning from "../../../../../../../icons/Warning";
-import Check from "../../../../../../../icons/Check";
-import KeyboardView from "../../../../../../../components/KeyboardView";
+import { localeSelector } from "~/reducers/settings";
+import { ScreenName } from "~/const";
+import Button from "~/components/Button";
+import CurrencyInput from "~/components/CurrencyInput";
+import LText from "~/components/LText";
+import Warning from "~/icons/Warning";
+import Check from "~/icons/Check";
+import KeyboardView from "~/components/KeyboardView";
 
 import styles from "./styles";
 

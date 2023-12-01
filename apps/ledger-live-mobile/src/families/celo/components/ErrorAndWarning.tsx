@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { StyleProp, ViewStyle, StyleSheet, View } from "react-native";
-import LText from "../../../components/LText";
-import TranslatedError from "../../../components/TranslatedError";
+import LText from "~/components/LText";
+import TranslatedError from "~/components/TranslatedError";
 
 const ErrorAndWarning = ({
   error,

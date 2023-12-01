@@ -5,12 +5,12 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useStartProfiler } from "@shopify/react-native-performance";
 import { GestureResponderEvent } from "react-native";
-import { useDistribution } from "../../actions/general";
-import { TrackScreen } from "../../analytics";
-import { NavigatorName, ScreenName } from "../../const";
+import { useDistribution } from "~/actions/general";
+import { TrackScreen } from "~/analytics";
+import { NavigatorName, ScreenName } from "~/const";
 import { Box } from "@ledgerhq/native-ui";
 import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
-import { blacklistedTokenIdsSelector, discreetModeSelector } from "../../reducers/settings";
+import { blacklistedTokenIdsSelector, discreetModeSelector } from "~/reducers/settings";
 import Assets from "./Assets";
 import PortfolioQuickActionsBar from "./PortfolioQuickActionsBar";
 

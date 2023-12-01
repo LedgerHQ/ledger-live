@@ -15,24 +15,24 @@ import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
 
 import { Trans } from "react-i18next";
 import { isAddressPoisoningOperation } from "@ledgerhq/live-common/operation";
-import { useRefreshAccountsOrdering } from "../../actions/general";
-import { flattenAccountsSelector } from "../../reducers/accounts";
+import { useRefreshAccountsOrdering } from "~/actions/general";
+import { flattenAccountsSelector } from "~/reducers/accounts";
 
-import NoOperationFooter from "../../components/NoOperationFooter";
-import NoMoreOperationFooter from "../../components/NoMoreOperationFooter";
+import NoOperationFooter from "~/components/NoOperationFooter";
+import NoMoreOperationFooter from "~/components/NoMoreOperationFooter";
 
 import EmptyStatePortfolio from "../Portfolio/EmptyStatePortfolio";
 import NoOpStatePortfolio from "../Portfolio/NoOpStatePortfolio";
-import OperationRow from "../../components/OperationRow";
-import SectionHeader from "../../components/SectionHeader";
-import LoadingFooter from "../../components/LoadingFooter";
-import Button from "../../components/Button";
-import { ScreenName } from "../../const";
-import { TrackScreen } from "../../analytics";
-import { withDiscreetMode } from "../../context/DiscreetModeContext";
-import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
-import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { filterTokenOperationsZeroAmountEnabledSelector } from "../../reducers/settings";
+import OperationRow from "~/components/OperationRow";
+import SectionHeader from "~/components/SectionHeader";
+import LoadingFooter from "~/components/LoadingFooter";
+import Button from "~/components/Button";
+import { ScreenName } from "~/const";
+import { TrackScreen } from "~/analytics";
+import { withDiscreetMode } from "~/context/DiscreetModeContext";
+import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { filterTokenOperationsZeroAmountEnabledSelector } from "~/reducers/settings";
 
 type Props = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.AnalyticsOperations>;
 
