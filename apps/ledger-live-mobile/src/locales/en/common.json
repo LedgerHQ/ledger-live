@@ -2545,6 +2545,7 @@
       }
     },
     "availableBalance": "Available balance",
+    "claimableRewards": "Claimable rewards",
     "totalSupplied": "Amount deposited",
     "tronFrozen": "Frozen",
     "bandwidth": "Bandwidth",
@@ -4873,6 +4874,10 @@
       "delegationUnavailable": {
         "title": "Delegation unavailable",
         "description": "Not enough available balance in your account to start a new delegation."
+      },
+      "claimable": {
+        "title": "Claimable Rewards",
+        "description": "Currently, the option to claim USDC rewards is unavailable. Please use a third-party wallet for this purpose."
       }
     },
     "delegation": {
