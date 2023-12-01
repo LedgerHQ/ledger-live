@@ -29,7 +29,8 @@ const StyledReferral = styled.TouchableOpacity`
   align-items: center;
   justify-content: center;
   border-radius: 200px;
-  width: 58px;
+  width: auto;
+  padding: 0px 8px;
   background-color: ${p => p.theme.colors.opacityDefault.c10};
 `;
 
@@ -151,9 +152,7 @@ function WalletTabNavigatorTabBar({
     outputRange: [0, 1],
     extrapolate: "clamp",
   });
-
   const insets = useSafeAreaInsets();
-
   const accessReferralProgram = useCallback(() => {
     const path = referralProgramMobile?.params?.path;
     if (referralProgramMobile?.enabled && path) {

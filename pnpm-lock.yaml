@@ -45,8 +45,8 @@ importers:
   .:
     devDependencies:
       '@changesets/changelog-github':
-        specifier: ^0.4.8
-        version: 0.4.8
+        specifier: ^0.5.0
+        version: 0.5.0
       '@changesets/cli':
         specifier: ^2.26.0
         version: 2.26.0
@@ -2080,14 +2080,14 @@ importers:
         specifier: workspace:^
         version: link:../ledgerjs/packages/logs
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.2.1
-        version: 1.2.1
+        specifier: ^1.3.0
+        version: 1.3.0
       '@ledgerhq/wallet-api-core':
-        specifier: ^1.3.1
-        version: 1.3.1
+        specifier: ^1.4.0
+        version: 1.4.0
       '@ledgerhq/wallet-api-server':
-        specifier: ^1.3.1
-        version: 1.3.1(react@18.2.0)(rxjs@7.8.1)
+        specifier: ^1.4.0
+        version: 1.4.0(react@18.2.0)(rxjs@7.8.1)
       '@solana/spl-token':
         specifier: ^0.3.7
         version: 0.3.8(@solana/web3.js@1.77.3)
@@ -4940,14 +4940,14 @@ importers:
         specifier: workspace:*
         version: link:../../libs/ledger-live-common
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.2.1
-        version: 1.2.1
+        specifier: ^1.3.0
+        version: 1.3.0
       '@ledgerhq/wallet-api-client-react':
+        specifier: ^1.1.3
+        version: 1.1.3(react@18.2.0)
+      '@ledgerhq/wallet-api-simulator':
         specifier: ^1.1.2
         version: 1.1.2(react@18.2.0)
-      '@ledgerhq/wallet-api-simulator':
-        specifier: ^1.1.1
-        version: 1.1.1(react@18.2.0)
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
@@ -5018,6 +5018,21 @@ importers:
       '@actions/github':
         specifier: ^6.0.0
         version: 6.0.0
+      tsup:
+        specifier: ^7.0.0
+        version: 7.0.0(typescript@5.1.3)
+
+  tools/actions/desktop-report-build:
+    devDependencies:
+      '@actions/core':
+        specifier: ^1.10.1
+        version: 1.10.1
+      '@actions/github':
+        specifier: ^6.0.0
+        version: 6.0.0
+      node-fetch:
+        specifier: ^3.3.2
+        version: 3.3.2
       tsup:
         specifier: ^7.0.0
         version: 7.0.0(typescript@5.1.3)
@@ -5367,7 +5382,7 @@ packages:
   /@actions/core@1.10.1:
     resolution: {integrity: sha512-3lBR9EDAY+iYIpTnTIXmWcNbX3T2kCkAEQGIQx4NVQ0575nk2k3GRZDTPQG+vVtS2izSLmINlxXf0uLtnrTP+g==}
     dependencies:
-      '@actions/http-client': 2.0.1
+      '@actions/http-client': 2.2.0
       uuid: 8.3.2
     dev: true
 
@@ -10554,11 +10569,11 @@ packages:
       '@changesets/types': 5.2.1
     dev: true
 
-  /@changesets/changelog-github@0.4.8:
-    resolution: {integrity: sha512-jR1DHibkMAb5v/8ym77E4AMNWZKB5NPzw5a5Wtqm1JepAuIF+hrKp2u04NKM14oBZhHglkCfrla9uq8ORnK/dw==}
+  /@changesets/changelog-github@0.5.0:
+    resolution: {integrity: sha512-zoeq2LJJVcPJcIotHRJEEA2qCqX0AQIeFE+L21L8sRLPVqDhSXY8ZWAt2sohtBpFZkBwu+LUwMSKRr2lMy3LJA==}
     dependencies:
-      '@changesets/get-github-info': 0.5.2
-      '@changesets/types': 5.2.1
+      '@changesets/get-github-info': 0.6.0
+      '@changesets/types': 6.0.0
       dotenv: 8.6.0
     transitivePeerDependencies:
       - encoding
@@ -10631,8 +10646,8 @@ packages:
       semver: 5.7.1
     dev: true
 
-  /@changesets/get-github-info@0.5.2:
-    resolution: {integrity: sha512-JppheLu7S114aEs157fOZDjFqUDpm7eHdq5E8SSR0gUBTEK0cNSHsrSR5a66xs0z3RWuo46QvA3vawp8BxDHvg==}
+  /@changesets/get-github-info@0.6.0:
+    resolution: {integrity: sha512-v/TSnFVXI8vzX9/w3DU2Ol+UlTZcu3m0kXTjTT4KlAdwSvwutcByYwyYn9hwerPWfPkT2JfpoX0KgvCEi8Q/SA==}
     dependencies:
       dataloader: 1.4.0
       node-fetch: 2.7.0
@@ -10710,6 +10725,10 @@ packages:
 
   /@changesets/types@5.2.1:
     resolution: {integrity: sha512-myLfHbVOqaq9UtUKqR/nZA/OY7xFjQMdfgfqeZIBK4d0hA6pgxArvdv8M+6NUzzBsjWLOtvApv8YHr4qM+Kpfg==}
+    dev: true
+
+  /@changesets/types@6.0.0:
+    resolution: {integrity: sha512-b1UkfNulgKoWfqyHtzKS5fOZYSJO+77adgL7DLRDr+/7jhChN+QcHnbjiQVOz/U+Ts3PGNySq7diAItzDgugfQ==}
     dev: true
 
   /@changesets/write@0.2.3:
@@ -15949,34 +15968,34 @@ packages:
     resolution: {integrity: sha512-K3SETlNUJAjU/bN6dNJf56gfpxOhGldmClezIU5puw1PcGDvNf4y8vmEouVz5Htc2a/0vetklf0eIQD8Wk3Hww==}
     dev: false
 
-  /@ledgerhq/wallet-api-client-react@1.1.2(react@18.2.0):
-    resolution: {integrity: sha512-ZBnp8HBHwtuDE/jqYuJmqx20Dx9dqqcZaOW4YuaY32GRwqEJJslTtcypCCgq2kArl0Y0q0irOYEd/0I7ULxdLQ==}
+  /@ledgerhq/wallet-api-client-react@1.1.3(react@18.2.0):
+    resolution: {integrity: sha512-61IS2pESh5UGpfM6glyKwpxuYc6HfXBDtgTkkg8PW6m6c6mGvuu8zu8j4VwGuTuZvyCT2S7Mdzbf6zQC8kiVbw==}
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18
     dependencies:
-      '@ledgerhq/wallet-api-client': 1.2.1
+      '@ledgerhq/wallet-api-client': 1.3.0
       react: 18.2.0
     dev: false
 
-  /@ledgerhq/wallet-api-client@1.2.1:
-    resolution: {integrity: sha512-uTBTZCpbLTM5y5Cd7ioQB0lcq0b3cbrU2bGzCiKuY1IEd0NUyFhr2dKliRrcLoMPDRtQRmRnSxeX0BFKinoo8Q==}
+  /@ledgerhq/wallet-api-client@1.3.0:
+    resolution: {integrity: sha512-H8FLVxrJeDt8+/M9DsKSraYkWMO3j9IQq35wpJG5nRNqsq+7X0QbxAFECmojEOaJRv9oqwTMG+UMc8oLmWhqGw==}
     dependencies:
       '@ledgerhq/hw-transport': 6.28.8
-      '@ledgerhq/wallet-api-core': 1.3.1
+      '@ledgerhq/wallet-api-core': 1.4.0
       bignumber.js: 9.1.2
     dev: false
 
-  /@ledgerhq/wallet-api-core@1.3.1:
-    resolution: {integrity: sha512-yOeb1tfdwF6NdxVEIVr8SVz5iOyh6asWa0bbuCyMpiLrfuVS/Wkr6OeDMBYSxWxXxRFmQDJ9XQxdtSS+MGNk1Q==}
+  /@ledgerhq/wallet-api-core@1.4.0:
+    resolution: {integrity: sha512-tuQUKKMmIxkZCDDj5rA8YQPxb+8Jr73qHugNhW8rEijgqIROYHVFNqpqAVmNWiv1EFNmm4c7Nx98XRZpauw6xg==}
     dependencies:
       '@ledgerhq/errors': 6.14.0
       bignumber.js: 9.1.2
-      uuid: 9.0.0
+      uuid: 9.0.1
       zod: 3.22.2
     dev: false
 
-  /@ledgerhq/wallet-api-server@1.3.1(react@18.2.0)(rxjs@7.8.1):
-    resolution: {integrity: sha512-D6me7bUUgzEX3kKFHmrDjd16ba4k/bMzHgFgi6b3sMWjZIE+xNDGUAdik1awFVr/9BumUKz7AAkh4aVutwwZGA==}
+  /@ledgerhq/wallet-api-server@1.4.0(react@18.2.0)(rxjs@7.8.1):
+    resolution: {integrity: sha512-japc0vlB9ysx+OKHdfXahtcqSEG6TKyMC7l+SA1riSmpr4wXK4tUyQh03sXvmmrDLKt9RooIz1wa8GZkOxyueg==}
     peerDependencies:
       react: ^17.x || ^18.x
       rxjs: ^7.x
@@ -15984,21 +16003,21 @@ packages:
       react:
         optional: true
     dependencies:
-      '@ledgerhq/wallet-api-core': 1.3.1
+      '@ledgerhq/wallet-api-core': 1.4.0
       bignumber.js: 9.1.2
       picomatch: 2.3.1
       react: 18.2.0
       rxjs: 7.8.1
     dev: false
 
-  /@ledgerhq/wallet-api-simulator@1.1.1(react@18.2.0):
-    resolution: {integrity: sha512-DVdkswQbIlWjvbRo+KHCZPurx+wJjQKkU7vzO9wNJd63YA9lADdVlsHHXSagTkTtfWjR4k7w6ilWeiyIf/0piA==}
+  /@ledgerhq/wallet-api-simulator@1.1.2(react@18.2.0):
+    resolution: {integrity: sha512-TEecUV8Co67/OMdC+WMmRFdqUMkiG/wIkFLcGHYRHMKlEke19ejRY7LCTCz6oMFn/DZyfG+UmBMakh7pRjDRFg==}
     dependencies:
       '@ledgerhq/hw-transport': 6.28.8
       '@ledgerhq/hw-transport-http': 6.28.3
-      '@ledgerhq/wallet-api-client': 1.2.1
-      '@ledgerhq/wallet-api-core': 1.3.1
-      '@ledgerhq/wallet-api-server': 1.3.1(react@18.2.0)(rxjs@7.8.1)
+      '@ledgerhq/wallet-api-client': 1.3.0
+      '@ledgerhq/wallet-api-core': 1.4.0
+      '@ledgerhq/wallet-api-server': 1.4.0(react@18.2.0)(rxjs@7.8.1)
       rxjs: 7.8.1
       ws: 8.14.1
     transitivePeerDependencies:
@@ -18468,7 +18487,7 @@ packages:
     resolution: {integrity: sha512-3oBulRHCatRKkTYFDrRc/Bli62ATnUQ7zNheAxXdylYWGk9bR7Rdfe+SCzt3Npytljg8KOFT8kTugpGJLmaasQ==}
     engines: {node: '>=14.15'}
     dependencies:
-      fast-glob: 3.2.12
+      fast-glob: 3.3.1
       find-up: 5.0.0
       read-yaml-file: 2.1.0
       strip-json-comments: 3.1.1
@@ -30864,7 +30883,7 @@ packages:
     peerDependencies:
       webpack: ^5.1.0
     dependencies:
-      fast-glob: 3.2.12
+      fast-glob: 3.3.1
       glob-parent: 6.0.2
       globby: 12.2.0
       normalize-path: 3.0.0
@@ -30879,7 +30898,7 @@ packages:
     peerDependencies:
       webpack: ^5.1.0
     dependencies:
-      fast-glob: 3.2.12
+      fast-glob: 3.3.1
       glob-parent: 6.0.2
       globby: 11.1.0
       normalize-path: 3.0.0
@@ -37497,7 +37516,7 @@ packages:
     dependencies:
       array-union: 3.0.1
       dir-glob: 3.0.1
-      fast-glob: 3.2.12
+      fast-glob: 3.3.1
       ignore: 5.2.4
       merge2: 1.4.1
       slash: 4.0.0
@@ -37508,7 +37527,7 @@ packages:
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
     dependencies:
       dir-glob: 3.0.1
-      fast-glob: 3.2.12
+      fast-glob: 3.3.1
       ignore: 5.2.4
       merge2: 1.4.1
       slash: 4.0.0
@@ -48032,10 +48051,6 @@ packages:
       node-modules-regexp: 1.0.0
     dev: true
 
-  /pirates@4.0.5:
-    resolution: {integrity: sha512-8V9+HQPupnaXMA23c5hvl69zXvTwTzyAYasnkb0Tts4XvO4CliqONMOnvlq26rkhLC3nWDFBJf73LU1e1VZLaQ==}
-    engines: {node: '>= 6'}
-
   /pirates@4.0.6:
     resolution: {integrity: sha512-saLsH7WeYYPiD25LDuLRRY/i+6HaPYr6G1OUlN39otzkSTxKnubR9RTxS3/Kk50s1g2JTgFwWQDQyplC5/SHZg==}
     engines: {node: '>= 6'}
@@ -54960,7 +54975,7 @@ packages:
       glob: 7.1.6
       lines-and-columns: 1.2.4
       mz: 2.7.0
-      pirates: 4.0.5
+      pirates: 4.0.6
       ts-interface-checker: 0.1.13
 
   /sucrase@3.34.0:

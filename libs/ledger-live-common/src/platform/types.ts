@@ -102,7 +102,10 @@ export type LiveAppManifest = {
   categories: string[];
   currencies: string[] | "*";
   visibility: Visibility;
+  highlight?: boolean;
   content: {
+    cta?: TranslatableString;
+    subtitle?: TranslatableString;
     shortDescription: TranslatableString;
     description: TranslatableString;
   };

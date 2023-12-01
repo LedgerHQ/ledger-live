@@ -3,7 +3,7 @@
 exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
 Array [
   Object {
-    "balance": "99670839",
+    "balance": "99460655",
     "currencyId": "hedera",
     "derivationMode": "hederaBip44",
     "freshAddress": "0.0.1040977",
@@ -18,10 +18,10 @@ Array [
     "index": 0,
     "name": "Hedera 1",
     "nfts": undefined,
-    "operationsCount": 2,
+    "operationsCount": 3,
     "pendingOperations": Array [],
     "seedIdentifier": "9e92a312233d5fd6b5a723875aeea2cea81a8e48ffc00341cff6dffcfd3ab7f2",
-    "spendableBalance": "99670839",
+    "spendableBalance": "99460655",
     "starred": false,
     "swapHistory": Array [],
     "syncHash": undefined,
@@ -39,7 +39,32 @@ Array [
       "blockHash": null,
       "blockHeight": 5,
       "contract": undefined,
-      "extra": Object {},
+      "extra": Object {
+        "consensusTimestamp": "1697645669.026204003",
+      },
+      "fee": "210184",
+      "hash": "856d1d9dbd2b355a6097078608a68f687947c6bdd1a97a68302f49bb3f3ac0324767d7b51e9e567e67ea773c6459e402",
+      "id": "js:2:hedera:0.0.1040977:hederaBip44-856d1d9dbd2b355a6097078608a68f687947c6bdd1a97a68302f49bb3f3ac0324767d7b51e9e567e67ea773c6459e402-OUT",
+      "operator": undefined,
+      "recipients": Array [
+        "0.0.98",
+      ],
+      "senders": Array [
+        "0.0.1040977",
+      ],
+      "standard": undefined,
+      "tokenId": undefined,
+      "type": "OUT",
+      "value": "210184",
+    },
+    Object {
+      "accountId": "js:2:hedera:0.0.1040977:hederaBip44",
+      "blockHash": null,
+      "blockHeight": 5,
+      "contract": undefined,
+      "extra": Object {
+        "consensusTimestamp": "1657021403.368076000",
+      },
       "fee": "163081",
       "hash": "890fe82eaf8f10c9709a84846415e978afc9f44340a4b267cfeb86077ff55d5aad467314fb456f74a98957713c8a0e49",
       "id": "js:2:hedera:0.0.1040977:hederaBip44-890fe82eaf8f10c9709a84846415e978afc9f44340a4b267cfeb86077ff55d5aad467314fb456f74a98957713c8a0e49-IN",
@@ -60,7 +85,9 @@ Array [
       "blockHash": null,
       "blockHeight": 5,
       "contract": undefined,
-      "extra": Object {},
+      "extra": Object {
+        "consensusTimestamp": "1669565599.465640003",
+      },
       "fee": "199161",
       "hash": "b01bc7b970fc2b4c4ab689e97bbaf95a1b8cffed1a4d9e6ea782c485ae9bb82de38ccfd3defeb8e65c45f7a5f200a0c0",
       "id": "js:2:hedera:0.0.1040977:hederaBip44-b01bc7b970fc2b4c4ab689e97bbaf95a1b8cffed1a4d9e6ea782c485ae9bb82de38ccfd3defeb8e65c45f7a5f200a0c0-OUT",

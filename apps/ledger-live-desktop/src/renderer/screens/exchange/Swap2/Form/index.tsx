@@ -21,7 +21,7 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import ButtonBase from "~/renderer/components/Button";
 import { context } from "~/renderer/drawers/Provider";
-import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
+import { shallowAccountsSelector, flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import { trackSwapError, useGetSwapTrackingProperties } from "../utils/index";
 import ExchangeDrawer from "./ExchangeDrawer/index";
 import SwapFormSelectors from "./FormSelectors";
@@ -67,6 +67,7 @@ const SwapForm = () => {
   const { state: locationState } = useLocation();
   const history = useHistory();
   const accounts = useSelector(shallowAccountsSelector);
+  const totalListedAccounts = useSelector(flattenAccountsSelector);
   const exchangeRate = useSelector(rateSelector);
   const walletApiPartnerList = useFeature("swapWalletApiPartnerList");
   const swapDefaultTrack = useGetSwapTrackingProperties();
@@ -242,6 +243,8 @@ const SwapForm = () => {
     if (DAPP_PROVIDERS.includes(provider)) {
       redirectToProviderApp(provider);
     } else {
+      // Fix LIVE-9064, prevent the transaction from being updated when using useAllAmount
+      swapTransaction.transaction ? (swapTransaction.transaction.useAllAmount = false) : null;
       setDrawer(
         ExchangeDrawer,
         {
@@ -294,9 +297,14 @@ const SwapForm = () => {
       const { feesStrategy } = transaction || {};
       const { rate, rateId } = exchangeRate || {};
 
+      const isToAccountValid = totalListedAccounts.some(account => account.id === toAccount?.id);
       const fromAccountId =
         fromAccount && accountToWalletAPIAccount(fromAccount, fromParentAccount)?.id;
-      const toAccountId = toAccount && accountToWalletAPIAccount(toAccount, toParentAccount)?.id;
+      const toAccountId = isToAccountValid
+        ? toAccount && accountToWalletAPIAccount(toAccount, toParentAccount)?.id
+        : toParentAccount && accountToWalletAPIAccount(toParentAccount, undefined)?.id;
+      const toNewTokenId =
+        !isToAccountValid && toAccount?.type === "TokenAccount" ? toAccount.token?.id : undefined;
       const fromAmount =
         fromAccount &&
         convertToNonAtomicUnit({
@@ -344,6 +352,7 @@ const SwapForm = () => {
         providerRedirectURL: `ledgerlive://discover/${getProviderName(
           provider ?? "",
         ).toLowerCase()}?${providerRedirectURLSearch.toString()}`,
+        toNewTokenId,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -352,6 +361,7 @@ const SwapForm = () => {
     provider,
     swapTransaction.swap.from.account?.id,
     swapTransaction.swap.to.currency?.id,
+    swapTransaction.swap.to.account?.id,
     exchangeRate?.providerType,
     exchangeRate?.tradeMethod,
     swapError,
