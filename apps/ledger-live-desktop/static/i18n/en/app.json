@@ -2334,7 +2334,9 @@
       "delegatedAssetsTooltip": "Delegated assets are used indirectly by the staking provider to operate validator nodes, process transactions and secure the network by participating in the consensus mechanism.",
       "delegatedAssets": "Delegated assets",
       "undelegatingTooltip": "Undelegated assets are subject to a 10-day unbonding period, before being able to be withdrawn.",
-      "undelegating": "Pending Withdrawals"
+      "undelegating": "Pending Withdrawals",
+      "claimableRewards": "Claimable Rewards",
+      "claimableRewardsTooltip": "Currently, the option to claim USDC rewards is unavailable. Please use a third-party wallet for this purpose"
     },
     "account": {
       "subHeader": {
