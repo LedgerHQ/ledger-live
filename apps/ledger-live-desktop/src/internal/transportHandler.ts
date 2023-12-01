@@ -50,29 +50,40 @@ export const transportOpen = ({ data, requestId }: MessagesMap["transport:open"]
     return onEnd();
   }
 
-  withDevice(data.descriptor)(transport => {
+  withDevice(data.descriptor, { openTimeoutMs: timeoutMs })(transport => {
     const subject = new Subject<APDUMessage>();
     subject.subscribe({
       next: e => {
+        tracer.trace(`Handling an action on the internal transport instance`, { e });
+
         if (e.type === "exchange") {
+          // TODO: updating the context here is not ideal, if several exchanges/bulk exchanges are requested
+          transport.updateTraceContext({ ipcContext: e.context });
+          tracer.trace(`Exchange request`, {
+            apduHex: e.apduHex,
+            abortTimeoutMs: e.abortTimeoutMs,
+          });
+
           transport
-            .exchange(Buffer.from(e.apduHex, "hex"))
-            .then(
-              response =>
-                process.send?.({
-                  type: transportExchangeChannel,
-                  data: response.toString("hex"),
-                  requestId: e.requestId,
-                }),
-            )
-            .catch(
-              error =>
-                process.send?.({
-                  type: transportExchangeChannel,
-                  error: serializeError(error),
-                  requestId: e.requestId,
-                }),
-            );
+            .exchange(Buffer.from(e.apduHex, "hex"), { abortTimeoutMs: e.abortTimeoutMs })
+            .then(response => {
+              tracer.trace(`Exchange response`, { response });
+
+              process.send?.({
+                type: transportExchangeChannel,
+                data: response.toString("hex"),
+                requestId: e.requestId,
+              });
+            })
+            .catch(error => {
+              tracer.trace(`Exchange error`, { error });
+
+              process.send?.({
+                type: transportExchangeChannel,
+                error: serializeError(error),
+                requestId: e.requestId,
+              });
+            });
         } else if (e.type === "exchangeBulk") {
           const apdus = e.apdusHex.map(apduHex => Buffer.from(apduHex, "hex"));
           const subscription = transport.exchangeBulk(apdus, {
@@ -106,7 +117,12 @@ export const transportOpen = ({ data, requestId }: MessagesMap["transport:open"]
           }
         }
       },
-      complete: () => {
+
+      complete: async () => {
+        tracer.trace(
+          "Cleaning transport subject: closing transport and clearing mapping from descriptor to subject",
+        );
+        await transport.close();
         transports.delete(data.descriptor);
       },
     });

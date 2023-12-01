@@ -193,15 +193,19 @@ export const withDevice =
       tracer.trace(`New job for device: ${deviceId || "USB"}`);
 
       // To call to cleanup the current transport
-      const finalize = (transport: Transport, cleanups: Array<() => void>) => {
-        tracer.trace("Closing and cleaning transport");
+      const finalize = async (transport: Transport, cleanups: Array<() => void>) => {
+        tracer.trace("Closing and cleaning transport", { function: "finalize" });
 
         setAllowAutoDisconnect(transport, deviceId, true);
-        return close(transport, deviceId)
-          .catch(() => {})
-          .then(() => {
-            cleanups.forEach(c => c());
+        try {
+          await close(transport, deviceId);
+        } catch (error) {
+          tracer.trace(`An error occurred when closing transport (ignoring it): ${error}`, {
+            error,
+            function: "finalize",
           });
+        }
+        cleanups.forEach(c => c());
       };
 
       let unsubscribed;
