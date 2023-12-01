@@ -99,7 +99,6 @@ const SwapForm = () => {
     timeout: SWAP_RATES_TIMEOUT,
     timeoutErrorMessage: t("swap2.form.timeout.message"),
   });
-  const { ptxSwapMoonpayProviderFlag } = swapTransaction;
 
   const isSwapLiveAppEnabled = useIsSwapLiveApp({
     currencyFrom: swapTransaction.swap.from.currency,
@@ -240,7 +239,6 @@ const SwapForm = () => {
           page: "Page Swap Form",
           ...swapDefaultTrack,
           sourcecurrency: swapTransaction.swap.from.currency?.name,
-          ptxSwapMoonpayProviderFlag,
           provider,
         });
     },
@@ -269,7 +267,6 @@ const SwapForm = () => {
       sourceCurrency: sourceCurrency?.name,
       targetCurrency: targetCurrency?.name,
       partner: provider,
-      ptxSwapMoonpayProviderFlag,
     });
 
     if (DAPP_PROVIDERS.includes(provider)) {
@@ -404,13 +401,7 @@ const SwapForm = () => {
 
   return (
     <Wrapper>
-      <TrackPage
-        category="Swap"
-        name="Form"
-        provider={provider}
-        ptxSwapMoonpayProviderFlag={ptxSwapMoonpayProviderFlag}
-        {...swapDefaultTrack}
-      />
+      <TrackPage category="Swap" name="Form" provider={provider} {...swapDefaultTrack} />
       <SwapFormSelectors
         fromAccount={sourceAccount}
         toAccount={swapTransaction.swap.to.account}
