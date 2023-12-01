@@ -7,7 +7,7 @@ import { ComponentStory } from "@storybook/react-native";
 import Text from "../../../src/components/Text";
 
 export default {
-  title: "Icon",
+  title: "Icon/Icon",
   component: FlatList,
 };
 
