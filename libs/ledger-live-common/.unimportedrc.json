@@ -269,6 +269,7 @@
     "src/transaction/index.ts",
     "src/transaction/signOperation.ts",
     "src/transactionsAlerts/index.ts",
+    "src/utils/runOnceWhen.ts",
     "src/user.ts",
     "src/walletConnect/index.ts",
     "src/wallet-api/CustomLogger/client.ts",
