@@ -104,23 +104,16 @@ jobs:
           echo "id=$ID" >> $GITHUB_OUTPUT
       - name: Build iOS app for Detox test run
         if: steps.detox-build.outputs.cache-hit != 'true'
-        run: |
-          pnpm mobile e2e:build -c ios.sim.release
+        run: pnpm mobile e2e:build -c ios.sim.release
 
       - name: Build JS Bundle app for Detox test run
         if: steps.detox-build.outputs.cache-hit == 'true'
         run: |
-          pnpm mobile bundle:ios --dev false --minify false
-          pnpm mobile exec detox clean-framework-cache
-          pnpm mobile exec detox build-framework-cache
-          cd apps/ledger-live-mobile
-          cp main.jsbundle ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app/main.jsbundle
-          mv main.jsbundle ios/build/Build/Products/Release-iphonesimulator/main.jsbundle
+          pnpm mobile e2e:ci -p ios -b
       - name: Test iOS app
         id: detox
         timeout-minutes: 45
-        run: |
-          pnpm mobile e2e:test -c ios.sim.release --loglevel error --record-logs all --take-screenshots all --headless --retries 1 --cleanup --record-performance all
+        run: pnpm mobile e2e:ci -p ios -t
       - name: Delete iOS simulator
         if: always()
         run: |
@@ -211,7 +204,7 @@ jobs:
         shell: bash
       - name: Build Android app for Detox test run
         run: |
-          pnpm mobile e2e:build -c android.emu.release
+          pnpm mobile e2e:ci -p android -b
       - name: cache android emulator
         uses: tespkg/actions-cache@v1
         id: detox-avd
@@ -259,7 +252,7 @@ jobs:
           ram-size: 8192M
           disable-linux-hw-accel: false
           emulator-options: -read-only -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          script: pnpm mobile e2e:test -c android.emu.release --loglevel error --record-logs all --take-screenshots all --forceExit --headless --retries 1 --cleanup
+          script: pnpm mobile e2e:ci -p android -t
       - name: Upload test artifacts
         if: always()
         uses: actions/upload-artifact@v3
