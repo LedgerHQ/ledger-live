@@ -5,6 +5,7 @@ module.exports = {
   },
 
   stories: ["../src/**/*.stories.mdx", "../src/**/*.stories.@(ts|tsx)"],
+  staticDirs: ['../src'],
 
   addons: [
     getAbsolutePath("@storybook/addon-links"),
