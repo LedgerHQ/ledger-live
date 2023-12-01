@@ -34,7 +34,7 @@ describe("txToMessages", () => {
         expect(aminoMsg.type).toContain("MsgSend");
         expect(aminoMsg.value.to_address).toEqual(transaction.recipient);
         expect(aminoMsg.value.from_address).toEqual(account.freshAddress);
-        expect(aminoMsg.value.amount[0].amount).toEqual(transaction.amount.toString());
+        expect(aminoMsg.value.amount[0].amount).toEqual(transaction.amount.toFixed());
         expect(aminoMsg.value.amount[0].denom).toEqual(account.currency.units[1].code);
       });
 
@@ -75,7 +75,7 @@ describe("txToMessages", () => {
         expect(protoMsg.typeUrl).toContain("MsgSend");
         expect(value.toAddress).toEqual(transaction.recipient);
         expect(value.fromAddress).toEqual(account.freshAddress);
-        expect(value.amount[0].amount).toEqual(transaction.amount.toString());
+        expect(value.amount[0].amount).toEqual(transaction.amount.toFixed());
         expect(value.amount[0].denom).toEqual(account.currency.units[1].code);
       });
 
@@ -120,7 +120,7 @@ describe("txToMessages", () => {
         expect(message.type).toContain("MsgDelegate");
         expect(message.value.validator_address).toEqual(transaction.validators[0].address);
         expect(message.value.delegator_address).toEqual(account.freshAddress);
-        expect(message.value.amount?.amount).toEqual(transaction.amount.toString());
+        expect(message.value.amount?.amount).toEqual(transaction.amount.toFixed());
         expect(message.value.amount?.denom).toEqual(account.currency.units[1].code);
       });
 
@@ -167,7 +167,7 @@ describe("txToMessages", () => {
         const value = MsgDelegate.decode(message.value);
         expect(value.validatorAddress).toEqual(transaction.validators[0].address);
         expect(value.delegatorAddress).toEqual(account.freshAddress);
-        expect(value.amount?.amount).toEqual(transaction.amount.toString());
+        expect(value.amount?.amount).toEqual(transaction.amount.toFixed());
         expect(value.amount?.denom).toEqual(account.currency.units[1].code);
       });
 
@@ -219,7 +219,7 @@ describe("txToMessages", () => {
         expect(message.type).toContain("MsgUndelegate");
         expect(message.value.validator_address).toEqual(transaction.validators[0].address);
         expect(message.value.delegator_address).toEqual(account.freshAddress);
-        expect(message.value.amount?.amount).toEqual(transaction.validators[0].amount.toString());
+        expect(message.value.amount?.amount).toEqual(transaction.validators[0].amount.toFixed());
         expect(message.value.amount?.denom).toEqual(account.currency.units[1].code);
       });
 
@@ -279,7 +279,7 @@ describe("txToMessages", () => {
         const value = MsgUndelegate.decode(message.value);
         expect(value.validatorAddress).toEqual(transaction.validators[0].address);
         expect(value.delegatorAddress).toEqual(account.freshAddress);
-        expect(value.amount?.amount).toEqual(transaction.validators[0].amount.toString());
+        expect(value.amount?.amount).toEqual(transaction.validators[0].amount.toFixed());
         expect(value.amount?.denom).toEqual(account.currency.units[1].code);
       });
 
@@ -345,7 +345,7 @@ describe("txToMessages", () => {
         expect(message.value.validator_src_address).toEqual(transaction.sourceValidator);
         expect(message.value.validator_dst_address).toEqual(transaction.validators[0].address);
         expect(message.value.delegator_address).toEqual(account.freshAddress);
-        expect(message.value.amount.amount).toEqual(transaction.validators[0].amount.toString());
+        expect(message.value.amount.amount).toEqual(transaction.validators[0].amount.toFixed());
         expect(message.value.amount.denom).toEqual(account.currency.units[1].code);
       });
 
@@ -410,7 +410,7 @@ describe("txToMessages", () => {
         expect(value.validatorSrcAddress).toEqual(transaction.sourceValidator);
         expect(value.validatorDstAddress).toEqual(transaction.validators[0].address);
         expect(value.delegatorAddress).toEqual(account.freshAddress);
-        expect(value.amount?.amount).toEqual(transaction.validators[0].amount.toString());
+        expect(value.amount?.amount).toEqual(transaction.validators[0].amount.toFixed());
         expect(value.amount?.denom).toEqual(account.currency.units[1].code);
       });
 
@@ -558,7 +558,7 @@ describe("txToMessages", () => {
         expect(delegateMessage.value.validator_address).toEqual(transaction.validators[0].address);
         expect(delegateMessage.value.delegator_address).toEqual(account.freshAddress);
         expect(delegateMessage.value.amount.amount).toEqual(
-          transaction.validators[0].amount.toString(),
+          transaction.validators[0].amount.toFixed(),
         );
         expect(delegateMessage.value.amount.denom).toEqual(account.currency.units[1].code);
       });
@@ -585,7 +585,7 @@ describe("txToMessages", () => {
         expect(delegateMessageValue.validatorAddress).toEqual(transaction.validators[0].address);
         expect(delegateMessageValue.delegatorAddress).toEqual(account.freshAddress);
         expect(delegateMessageValue.amount?.amount).toEqual(
-          transaction.validators[0].amount.toString(),
+          transaction.validators[0].amount.toFixed(),
         );
         expect(delegateMessageValue.amount?.denom).toEqual(account.currency.units[1].code);
       });
