@@ -1,26 +1,26 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast < minFees should return the expected patch for coin transaction 1`] = `
-Object {
+{
   "amount": "0",
   "customGasLimit": "21000",
   "data": undefined,
   "feesStrategy": "custom",
   "gasLimit": "21000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": "11",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": "10",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": "9",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
@@ -39,26 +39,26 @@ Object {
 `;
 
 exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast < minFees should return the expected patch for erc20 transaction 1`] = `
-Object {
+{
   "amount": "0",
   "customGasLimit": "21000",
   "data": undefined,
   "feesStrategy": "custom",
   "gasLimit": "21000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": "11",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": "10",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": "9",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
@@ -77,26 +77,26 @@ Object {
 `;
 
 exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast < minFees should return the expected patch for erc721 transaction 1`] = `
-Object {
+{
   "amount": "0",
   "customGasLimit": "21000",
   "data": undefined,
   "feesStrategy": "custom",
   "gasLimit": "21000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": "11",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": "10",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": "9",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
@@ -115,26 +115,26 @@ Object {
 `;
 
 exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast < minFees should return the expected patch for erc1155 transaction 1`] = `
-Object {
+{
   "amount": "0",
   "customGasLimit": "21000",
   "data": undefined,
   "feesStrategy": "custom",
   "gasLimit": "21000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": "11",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": "10",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": "9",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
@@ -153,26 +153,26 @@ Object {
 `;
 
 exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast == minFees should return the expected patch for coin transaction 1`] = `
-Object {
+{
   "amount": "0",
   "customGasLimit": "21000",
   "data": undefined,
   "feesStrategy": "fast",
   "gasLimit": "21000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": "1000",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": "10",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": "9",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
@@ -191,26 +191,26 @@ Object {
 `;
 
 exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast == minFees should return the expected patch for erc20 transaction 1`] = `
-Object {
+{
   "amount": "0",
   "customGasLimit": "21000",
   "data": undefined,
   "feesStrategy": "fast",
   "gasLimit": "21000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": "1000",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": "10",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": "9",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
@@ -229,26 +229,26 @@ Object {
 `;
 
 exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast == minFees should return the expected patch for erc721 transaction 1`] = `
-Object {
+{
   "amount": "0",
   "customGasLimit": "21000",
   "data": undefined,
   "feesStrategy": "fast",
   "gasLimit": "21000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": "1000",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": "10",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": "9",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
@@ -267,26 +267,26 @@ Object {
 `;
 
 exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast == minFees should return the expected patch for erc1155 transaction 1`] = `
-Object {
+{
   "amount": "0",
   "customGasLimit": "21000",
   "data": undefined,
   "feesStrategy": "fast",
   "gasLimit": "21000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": "1000",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": "10",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": "9",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
@@ -305,26 +305,26 @@ Object {
 `;
 
 exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast > minFees should return the expected patch for coin transaction 1`] = `
-Object {
+{
   "amount": "0",
   "customGasLimit": "21000",
   "data": undefined,
   "feesStrategy": "fast",
   "gasLimit": "21000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": "1100",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": "10",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": "9",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
@@ -343,26 +343,26 @@ Object {
 `;
 
 exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast > minFees should return the expected patch for erc20 transaction 1`] = `
-Object {
+{
   "amount": "0",
   "customGasLimit": "21000",
   "data": undefined,
   "feesStrategy": "fast",
   "gasLimit": "21000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": "1100",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": "10",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": "9",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
@@ -381,26 +381,26 @@ Object {
 `;
 
 exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast > minFees should return the expected patch for erc721 transaction 1`] = `
-Object {
+{
   "amount": "0",
   "customGasLimit": "21000",
   "data": undefined,
   "feesStrategy": "fast",
   "gasLimit": "21000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": "1100",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": "10",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": "9",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
@@ -419,26 +419,26 @@ Object {
 `;
 
 exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast > minFees should return the expected patch for erc1155 transaction 1`] = `
-Object {
+{
   "amount": "0",
   "customGasLimit": "21000",
   "data": undefined,
   "feesStrategy": "fast",
   "gasLimit": "21000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": "1100",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": "10",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": "9",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
@@ -457,26 +457,26 @@ Object {
 `;
 
 exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast < minFees should return the expected patch for coin transaction 1`] = `
-Object {
+{
   "amount": "0",
   "customGasLimit": "21000",
   "data": undefined,
   "feesStrategy": "custom",
   "gasLimit": "21000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": null,
       "maxFeePerGas": "11",
       "maxPriorityFeePerGas": "3",
       "nextBaseFee": "4",
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": null,
       "maxFeePerGas": "10",
       "maxPriorityFeePerGas": "2",
       "nextBaseFee": "4",
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": null,
       "maxFeePerGas": "9",
       "maxPriorityFeePerGas": "1",
@@ -495,26 +495,26 @@ Object {
 `;
 
 exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast < minFees should return the expected patch for erc20 transaction 1`] = `
-Object {
+{
   "amount": "0",
   "customGasLimit": "60000",
   "data": undefined,
   "feesStrategy": "custom",
   "gasLimit": "60000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": null,
       "maxFeePerGas": "11",
       "maxPriorityFeePerGas": "3",
       "nextBaseFee": "4",
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": null,
       "maxFeePerGas": "10",
       "maxPriorityFeePerGas": "2",
       "nextBaseFee": "4",
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": null,
       "maxFeePerGas": "9",
       "maxPriorityFeePerGas": "1",
@@ -533,26 +533,26 @@ Object {
 `;
 
 exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast < minFees should return the expected patch for erc721 transaction 1`] = `
-Object {
+{
   "amount": "0",
   "customGasLimit": "21000",
   "data": undefined,
   "feesStrategy": "custom",
   "gasLimit": "21000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": null,
       "maxFeePerGas": "11",
       "maxPriorityFeePerGas": "3",
       "nextBaseFee": "4",
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": null,
       "maxFeePerGas": "10",
       "maxPriorityFeePerGas": "2",
       "nextBaseFee": "4",
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": null,
       "maxFeePerGas": "9",
       "maxPriorityFeePerGas": "1",
@@ -571,26 +571,26 @@ Object {
 `;
 
 exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast < minFees should return the expected patch for erc1155 transaction 1`] = `
-Object {
+{
   "amount": "0",
   "customGasLimit": "60000",
   "data": undefined,
   "feesStrategy": "custom",
   "gasLimit": "60000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": null,
       "maxFeePerGas": "11",
       "maxPriorityFeePerGas": "3",
       "nextBaseFee": "4",
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": null,
       "maxFeePerGas": "10",
       "maxPriorityFeePerGas": "2",
       "nextBaseFee": "4",
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": null,
       "maxFeePerGas": "9",
       "maxPriorityFeePerGas": "1",
@@ -609,26 +609,26 @@ Object {
 `;
 
 exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast == minFees should return the expected patch for coin transaction 1`] = `
-Object {
+{
   "amount": "0",
   "customGasLimit": "21000",
   "data": undefined,
   "feesStrategy": "fast",
   "gasLimit": "21000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": null,
       "maxFeePerGas": "110",
       "maxPriorityFeePerGas": "30",
       "nextBaseFee": "4",
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": null,
       "maxFeePerGas": "10",
       "maxPriorityFeePerGas": "2",
       "nextBaseFee": "4",
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": null,
       "maxFeePerGas": "9",
       "maxPriorityFeePerGas": "1",
@@ -647,26 +647,26 @@ Object {
 `;
 
 exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast == minFees should return the expected patch for erc20 transaction 1`] = `
-Object {
+{
   "amount": "0",
   "customGasLimit": "60000",
   "data": undefined,
   "feesStrategy": "fast",
   "gasLimit": "60000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": null,
       "maxFeePerGas": "110",
       "maxPriorityFeePerGas": "30",
       "nextBaseFee": "4",
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": null,
       "maxFeePerGas": "10",
       "maxPriorityFeePerGas": "2",
       "nextBaseFee": "4",
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": null,
       "maxFeePerGas": "9",
       "maxPriorityFeePerGas": "1",
@@ -685,26 +685,26 @@ Object {
 `;
 
 exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast == minFees should return the expected patch for erc721 transaction 1`] = `
-Object {
+{
   "amount": "0",
   "customGasLimit": "21000",
   "data": undefined,
   "feesStrategy": "fast",
   "gasLimit": "21000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": null,
       "maxFeePerGas": "110",
       "maxPriorityFeePerGas": "30",
       "nextBaseFee": "4",
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": null,
       "maxFeePerGas": "10",
       "maxPriorityFeePerGas": "2",
       "nextBaseFee": "4",
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": null,
       "maxFeePerGas": "9",
       "maxPriorityFeePerGas": "1",
@@ -723,26 +723,26 @@ Object {
 `;
 
 exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast == minFees should return the expected patch for erc1155 transaction 1`] = `
-Object {
+{
   "amount": "0",
   "customGasLimit": "60000",
   "data": undefined,
   "feesStrategy": "fast",
   "gasLimit": "60000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": null,
       "maxFeePerGas": "110",
       "maxPriorityFeePerGas": "30",
       "nextBaseFee": "4",
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": null,
       "maxFeePerGas": "10",
       "maxPriorityFeePerGas": "2",
       "nextBaseFee": "4",
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": null,
       "maxFeePerGas": "9",
       "maxPriorityFeePerGas": "1",
@@ -761,26 +761,26 @@ Object {
 `;
 
 exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast > minFees should return the expected patch for coin transaction 1`] = `
-Object {
+{
   "amount": "0",
   "customGasLimit": "21000",
   "data": undefined,
   "feesStrategy": "fast",
   "gasLimit": "21000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": null,
       "maxFeePerGas": "1100",
       "maxPriorityFeePerGas": "300",
       "nextBaseFee": "4",
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": null,
       "maxFeePerGas": "10",
       "maxPriorityFeePerGas": "2",
       "nextBaseFee": "4",
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": null,
       "maxFeePerGas": "9",
       "maxPriorityFeePerGas": "1",
@@ -799,26 +799,26 @@ Object {
 `;
 
 exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast > minFees should return the expected patch for erc20 transaction 1`] = `
-Object {
+{
   "amount": "0",
   "customGasLimit": "60000",
   "data": undefined,
   "feesStrategy": "fast",
   "gasLimit": "60000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": null,
       "maxFeePerGas": "1100",
       "maxPriorityFeePerGas": "300",
       "nextBaseFee": "4",
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": null,
       "maxFeePerGas": "10",
       "maxPriorityFeePerGas": "2",
       "nextBaseFee": "4",
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": null,
       "maxFeePerGas": "9",
       "maxPriorityFeePerGas": "1",
@@ -837,26 +837,26 @@ Object {
 `;
 
 exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast > minFees should return the expected patch for erc721 transaction 1`] = `
-Object {
+{
   "amount": "0",
   "customGasLimit": "21000",
   "data": undefined,
   "feesStrategy": "fast",
   "gasLimit": "21000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": null,
       "maxFeePerGas": "1100",
       "maxPriorityFeePerGas": "300",
       "nextBaseFee": "4",
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": null,
       "maxFeePerGas": "10",
       "maxPriorityFeePerGas": "2",
       "nextBaseFee": "4",
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": null,
       "maxFeePerGas": "9",
       "maxPriorityFeePerGas": "1",
@@ -875,26 +875,26 @@ Object {
 `;
 
 exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast > minFees should return the expected patch for erc1155 transaction 1`] = `
-Object {
+{
   "amount": "0",
   "customGasLimit": "60000",
   "data": undefined,
   "feesStrategy": "fast",
   "gasLimit": "60000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": null,
       "maxFeePerGas": "1100",
       "maxPriorityFeePerGas": "300",
       "nextBaseFee": "4",
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": null,
       "maxFeePerGas": "10",
       "maxPriorityFeePerGas": "2",
       "nextBaseFee": "4",
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": null,
       "maxFeePerGas": "9",
       "maxPriorityFeePerGas": "1",
@@ -913,11 +913,11 @@ Object {
 `;
 
 exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast < minFees should return the expected patch for coin transaction 1`] = `
-Object {
+{
   "amount": "100",
   "customGasLimit": "21000",
-  "data": Object {
-    "data": Array [
+  "data": {
+    "data": [
       116,
       101,
       115,
@@ -939,20 +939,20 @@ Object {
   },
   "feesStrategy": "custom",
   "gasLimit": "21000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": "11",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": "10",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": "9",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
@@ -971,11 +971,11 @@ Object {
 `;
 
 exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast < minFees should return the expected patch for erc20 transaction 1`] = `
-Object {
+{
   "amount": "100",
   "customGasLimit": "21000",
-  "data": Object {
-    "data": Array [
+  "data": {
+    "data": [
       116,
       101,
       115,
@@ -997,20 +997,20 @@ Object {
   },
   "feesStrategy": "custom",
   "gasLimit": "21000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": "11",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": "10",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": "9",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
@@ -1029,11 +1029,11 @@ Object {
 `;
 
 exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast < minFees should return the expected patch for erc721 transaction 1`] = `
-Object {
+{
   "amount": "100",
   "customGasLimit": "21000",
-  "data": Object {
-    "data": Array [
+  "data": {
+    "data": [
       116,
       101,
       115,
@@ -1055,20 +1055,20 @@ Object {
   },
   "feesStrategy": "custom",
   "gasLimit": "21000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": "11",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": "10",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": "9",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
@@ -1087,11 +1087,11 @@ Object {
 `;
 
 exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast < minFees should return the expected patch for erc1155 transaction 1`] = `
-Object {
+{
   "amount": "100",
   "customGasLimit": "21000",
-  "data": Object {
-    "data": Array [
+  "data": {
+    "data": [
       116,
       101,
       115,
@@ -1113,20 +1113,20 @@ Object {
   },
   "feesStrategy": "custom",
   "gasLimit": "21000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": "11",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": "10",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": "9",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
@@ -1145,11 +1145,11 @@ Object {
 `;
 
 exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast == minFees should return the expected patch for coin transaction 1`] = `
-Object {
+{
   "amount": "100",
   "customGasLimit": "21000",
-  "data": Object {
-    "data": Array [
+  "data": {
+    "data": [
       116,
       101,
       115,
@@ -1171,20 +1171,20 @@ Object {
   },
   "feesStrategy": "fast",
   "gasLimit": "21000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": "1000",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": "10",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": "9",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
@@ -1203,11 +1203,11 @@ Object {
 `;
 
 exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast == minFees should return the expected patch for erc20 transaction 1`] = `
-Object {
+{
   "amount": "100",
   "customGasLimit": "21000",
-  "data": Object {
-    "data": Array [
+  "data": {
+    "data": [
       116,
       101,
       115,
@@ -1229,20 +1229,20 @@ Object {
   },
   "feesStrategy": "fast",
   "gasLimit": "21000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": "1000",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": "10",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": "9",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
@@ -1261,11 +1261,11 @@ Object {
 `;
 
 exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast == minFees should return the expected patch for erc721 transaction 1`] = `
-Object {
+{
   "amount": "100",
   "customGasLimit": "21000",
-  "data": Object {
-    "data": Array [
+  "data": {
+    "data": [
       116,
       101,
       115,
@@ -1287,20 +1287,20 @@ Object {
   },
   "feesStrategy": "fast",
   "gasLimit": "21000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": "1000",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": "10",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": "9",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
@@ -1319,11 +1319,11 @@ Object {
 `;
 
 exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast == minFees should return the expected patch for erc1155 transaction 1`] = `
-Object {
+{
   "amount": "100",
   "customGasLimit": "21000",
-  "data": Object {
-    "data": Array [
+  "data": {
+    "data": [
       116,
       101,
       115,
@@ -1345,20 +1345,20 @@ Object {
   },
   "feesStrategy": "fast",
   "gasLimit": "21000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": "1000",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": "10",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": "9",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
@@ -1377,11 +1377,11 @@ Object {
 `;
 
 exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast > minFees should return the expected patch for coin transaction 1`] = `
-Object {
+{
   "amount": "100",
   "customGasLimit": "21000",
-  "data": Object {
-    "data": Array [
+  "data": {
+    "data": [
       116,
       101,
       115,
@@ -1403,20 +1403,20 @@ Object {
   },
   "feesStrategy": "fast",
   "gasLimit": "21000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": "1100",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": "10",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": "9",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
@@ -1435,11 +1435,11 @@ Object {
 `;
 
 exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast > minFees should return the expected patch for erc20 transaction 1`] = `
-Object {
+{
   "amount": "100",
   "customGasLimit": "21000",
-  "data": Object {
-    "data": Array [
+  "data": {
+    "data": [
       116,
       101,
       115,
@@ -1461,20 +1461,20 @@ Object {
   },
   "feesStrategy": "fast",
   "gasLimit": "21000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": "1100",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": "10",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": "9",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
@@ -1493,11 +1493,11 @@ Object {
 `;
 
 exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast > minFees should return the expected patch for erc721 transaction 1`] = `
-Object {
+{
   "amount": "100",
   "customGasLimit": "21000",
-  "data": Object {
-    "data": Array [
+  "data": {
+    "data": [
       116,
       101,
       115,
@@ -1519,20 +1519,20 @@ Object {
   },
   "feesStrategy": "fast",
   "gasLimit": "21000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": "1100",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": "10",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": "9",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
@@ -1551,11 +1551,11 @@ Object {
 `;
 
 exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast > minFees should return the expected patch for erc1155 transaction 1`] = `
-Object {
+{
   "amount": "100",
   "customGasLimit": "21000",
-  "data": Object {
-    "data": Array [
+  "data": {
+    "data": [
       116,
       101,
       115,
@@ -1577,20 +1577,20 @@ Object {
   },
   "feesStrategy": "fast",
   "gasLimit": "21000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": "1100",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": "10",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
       "nextBaseFee": null,
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": "9",
       "maxFeePerGas": null,
       "maxPriorityFeePerGas": null,
@@ -1609,11 +1609,11 @@ Object {
 `;
 
 exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast < minFees should return the expected patch for coin transaction 1`] = `
-Object {
+{
   "amount": "100",
   "customGasLimit": "21000",
-  "data": Object {
-    "data": Array [
+  "data": {
+    "data": [
       116,
       101,
       115,
@@ -1635,20 +1635,20 @@ Object {
   },
   "feesStrategy": "custom",
   "gasLimit": "21000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": null,
       "maxFeePerGas": "11",
       "maxPriorityFeePerGas": "3",
       "nextBaseFee": "4",
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": null,
       "maxFeePerGas": "10",
       "maxPriorityFeePerGas": "2",
       "nextBaseFee": "4",
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": null,
       "maxFeePerGas": "9",
       "maxPriorityFeePerGas": "1",
@@ -1667,26 +1667,26 @@ Object {
 `;
 
 exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast < minFees should return the expected patch for erc20 transaction 1`] = `
-Object {
+{
   "amount": "100",
   "customGasLimit": "60000",
   "data": undefined,
   "feesStrategy": "custom",
   "gasLimit": "60000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": null,
       "maxFeePerGas": "11",
       "maxPriorityFeePerGas": "3",
       "nextBaseFee": "4",
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": null,
       "maxFeePerGas": "10",
       "maxPriorityFeePerGas": "2",
       "nextBaseFee": "4",
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": null,
       "maxFeePerGas": "9",
       "maxPriorityFeePerGas": "1",
@@ -1705,11 +1705,11 @@ Object {
 `;
 
 exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast < minFees should return the expected patch for erc721 transaction 1`] = `
-Object {
+{
   "amount": "100",
   "customGasLimit": "21000",
-  "data": Object {
-    "data": Array [
+  "data": {
+    "data": [
       116,
       101,
       115,
@@ -1731,20 +1731,20 @@ Object {
   },
   "feesStrategy": "custom",
   "gasLimit": "21000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": null,
       "maxFeePerGas": "11",
       "maxPriorityFeePerGas": "3",
       "nextBaseFee": "4",
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": null,
       "maxFeePerGas": "10",
       "maxPriorityFeePerGas": "2",
       "nextBaseFee": "4",
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": null,
       "maxFeePerGas": "9",
       "maxPriorityFeePerGas": "1",
@@ -1763,26 +1763,26 @@ Object {
 `;
 
 exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast < minFees should return the expected patch for erc1155 transaction 1`] = `
-Object {
+{
   "amount": "0",
   "customGasLimit": "60000",
   "data": undefined,
   "feesStrategy": "custom",
   "gasLimit": "60000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": null,
       "maxFeePerGas": "11",
       "maxPriorityFeePerGas": "3",
       "nextBaseFee": "4",
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": null,
       "maxFeePerGas": "10",
       "maxPriorityFeePerGas": "2",
       "nextBaseFee": "4",
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": null,
       "maxFeePerGas": "9",
       "maxPriorityFeePerGas": "1",
@@ -1801,11 +1801,11 @@ Object {
 `;
 
 exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast == minFees should return the expected patch for coin transaction 1`] = `
-Object {
+{
   "amount": "100",
   "customGasLimit": "21000",
-  "data": Object {
-    "data": Array [
+  "data": {
+    "data": [
       116,
       101,
       115,
@@ -1827,20 +1827,20 @@ Object {
   },
   "feesStrategy": "fast",
   "gasLimit": "21000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": null,
       "maxFeePerGas": "110",
       "maxPriorityFeePerGas": "30",
       "nextBaseFee": "4",
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": null,
       "maxFeePerGas": "10",
       "maxPriorityFeePerGas": "2",
       "nextBaseFee": "4",
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": null,
       "maxFeePerGas": "9",
       "maxPriorityFeePerGas": "1",
@@ -1859,26 +1859,26 @@ Object {
 `;
 
 exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast == minFees should return the expected patch for erc20 transaction 1`] = `
-Object {
+{
   "amount": "100",
   "customGasLimit": "60000",
   "data": undefined,
   "feesStrategy": "fast",
   "gasLimit": "60000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": null,
       "maxFeePerGas": "110",
       "maxPriorityFeePerGas": "30",
       "nextBaseFee": "4",
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": null,
       "maxFeePerGas": "10",
       "maxPriorityFeePerGas": "2",
       "nextBaseFee": "4",
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": null,
       "maxFeePerGas": "9",
       "maxPriorityFeePerGas": "1",
@@ -1897,11 +1897,11 @@ Object {
 `;
 
 exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast == minFees should return the expected patch for erc721 transaction 1`] = `
-Object {
+{
   "amount": "100",
   "customGasLimit": "21000",
-  "data": Object {
-    "data": Array [
+  "data": {
+    "data": [
       116,
       101,
       115,
@@ -1923,20 +1923,20 @@ Object {
   },
   "feesStrategy": "fast",
   "gasLimit": "21000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": null,
       "maxFeePerGas": "110",
       "maxPriorityFeePerGas": "30",
       "nextBaseFee": "4",
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": null,
       "maxFeePerGas": "10",
       "maxPriorityFeePerGas": "2",
       "nextBaseFee": "4",
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": null,
       "maxFeePerGas": "9",
       "maxPriorityFeePerGas": "1",
@@ -1955,26 +1955,26 @@ Object {
 `;
 
 exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast == minFees should return the expected patch for erc1155 transaction 1`] = `
-Object {
+{
   "amount": "0",
   "customGasLimit": "60000",
   "data": undefined,
   "feesStrategy": "fast",
   "gasLimit": "60000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": null,
       "maxFeePerGas": "110",
       "maxPriorityFeePerGas": "30",
       "nextBaseFee": "4",
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": null,
       "maxFeePerGas": "10",
       "maxPriorityFeePerGas": "2",
       "nextBaseFee": "4",
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": null,
       "maxFeePerGas": "9",
       "maxPriorityFeePerGas": "1",
@@ -1993,11 +1993,11 @@ Object {
 `;
 
 exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast > minFees should return the expected patch for coin transaction 1`] = `
-Object {
+{
   "amount": "100",
   "customGasLimit": "21000",
-  "data": Object {
-    "data": Array [
+  "data": {
+    "data": [
       116,
       101,
       115,
@@ -2019,20 +2019,20 @@ Object {
   },
   "feesStrategy": "fast",
   "gasLimit": "21000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": null,
       "maxFeePerGas": "1100",
       "maxPriorityFeePerGas": "300",
       "nextBaseFee": "4",
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": null,
       "maxFeePerGas": "10",
       "maxPriorityFeePerGas": "2",
       "nextBaseFee": "4",
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": null,
       "maxFeePerGas": "9",
       "maxPriorityFeePerGas": "1",
@@ -2051,26 +2051,26 @@ Object {
 `;
 
 exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast > minFees should return the expected patch for erc20 transaction 1`] = `
-Object {
+{
   "amount": "100",
   "customGasLimit": "60000",
   "data": undefined,
   "feesStrategy": "fast",
   "gasLimit": "60000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": null,
       "maxFeePerGas": "1100",
       "maxPriorityFeePerGas": "300",
       "nextBaseFee": "4",
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": null,
       "maxFeePerGas": "10",
       "maxPriorityFeePerGas": "2",
       "nextBaseFee": "4",
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": null,
       "maxFeePerGas": "9",
       "maxPriorityFeePerGas": "1",
@@ -2089,11 +2089,11 @@ Object {
 `;
 
 exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast > minFees should return the expected patch for erc721 transaction 1`] = `
-Object {
+{
   "amount": "100",
   "customGasLimit": "21000",
-  "data": Object {
-    "data": Array [
+  "data": {
+    "data": [
       116,
       101,
       115,
@@ -2115,20 +2115,20 @@ Object {
   },
   "feesStrategy": "fast",
   "gasLimit": "21000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": null,
       "maxFeePerGas": "1100",
       "maxPriorityFeePerGas": "300",
       "nextBaseFee": "4",
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": null,
       "maxFeePerGas": "10",
       "maxPriorityFeePerGas": "2",
       "nextBaseFee": "4",
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": null,
       "maxFeePerGas": "9",
       "maxPriorityFeePerGas": "1",
@@ -2147,26 +2147,26 @@ Object {
 `;
 
 exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast > minFees should return the expected patch for erc1155 transaction 1`] = `
-Object {
+{
   "amount": "0",
   "customGasLimit": "60000",
   "data": undefined,
   "feesStrategy": "fast",
   "gasLimit": "60000",
-  "gasOptions": Object {
-    "fast": Object {
+  "gasOptions": {
+    "fast": {
       "gasPrice": null,
       "maxFeePerGas": "1100",
       "maxPriorityFeePerGas": "300",
       "nextBaseFee": "4",
     },
-    "medium": Object {
+    "medium": {
       "gasPrice": null,
       "maxFeePerGas": "10",
       "maxPriorityFeePerGas": "2",
       "nextBaseFee": "4",
     },
-    "slow": Object {
+    "slow": {
       "gasPrice": null,
       "maxFeePerGas": "9",
       "maxPriorityFeePerGas": "1",

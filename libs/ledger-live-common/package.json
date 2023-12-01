@@ -248,7 +248,7 @@
     "@ledgerhq/types-live": "workspace:^",
     "@svgr/core": "^5.5.0",
     "@testing-library/react": "^14.1.2",
-    "@testing-library/react-hooks": "^8.0.0",
+    "@testing-library/react-hooks": "^8.0.1",
     "@types/bn.js": "^5.1.1",
     "@types/bs58": "^4.0.1",
     "@types/cbor": "^6.0.0",
@@ -282,7 +282,7 @@
     "react-test-renderer": "^18.2.0",
     "redux-actions": "2.6.5",
     "timemachine": "^0.3.2",
-    "ts-jest": "^28.0.5",
+    "ts-jest": "^29.1.1",
     "ts-node": "^10.4.0",
     "uuid": "^8.3.2",
     "ws": "7"
