@@ -12,6 +12,8 @@ import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1b
 import { TxBody, TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx";
 import { Fee } from "@keplr-wallet/proto-types/cosmos/tx/v1beta1/tx";
 
+const veryBigNumber = new BigNumber(3333300000000000000000);
+
 describe("txToMessages", () => {
   const transaction: Transaction = {} as Transaction;
   const account: CosmosAccount = {
@@ -36,6 +38,14 @@ describe("txToMessages", () => {
         expect(aminoMsg.value.from_address).toEqual(account.freshAddress);
         expect(aminoMsg.value.amount[0].amount).toEqual(transaction.amount.toFixed());
         expect(aminoMsg.value.amount[0].denom).toEqual(account.currency.units[1].code);
+      });
+
+      it("should not include exponential part on big numbers", () => {
+        transaction.recipient = "address";
+        transaction.amount = veryBigNumber;
+        const { aminoMsgs } = txToMessages(account, transaction);
+        const [aminoMsg] = aminoMsgs;
+        expect(aminoMsg.value.amount[0].amount.includes("e")).toEqual(false);
       });
 
       it("should return no message if recipient isn't defined", () => {
@@ -77,6 +87,15 @@ describe("txToMessages", () => {
         expect(value.fromAddress).toEqual(account.freshAddress);
         expect(value.amount[0].amount).toEqual(transaction.amount.toFixed());
         expect(value.amount[0].denom).toEqual(account.currency.units[1].code);
+      });
+
+      it("should not include exponential part on big numbers", () => {
+        transaction.recipient = "address";
+        transaction.amount = veryBigNumber;
+        const { protoMsgs } = txToMessages(account, transaction);
+        const [protoMsg] = protoMsgs;
+        const value = cosmos.bank.v1beta1.MsgSend.decode(protoMsg.value);
+        expect(value.amount[0].amount?.includes("e")).toEqual(false);
       });
 
       it("should return no message if recipient isn't defined", () => {
@@ -124,6 +143,20 @@ describe("txToMessages", () => {
         expect(message.value.amount?.denom).toEqual(account.currency.units[1].code);
       });
 
+      it("should not include exponential part on big numbers", () => {
+        transaction.recipient = "address";
+        transaction.amount = veryBigNumber;
+        transaction.validators = [
+          {
+            address: "realAddressTrustMe",
+            amount: veryBigNumber,
+          } as CosmosDelegationInfo,
+        ];
+        const { aminoMsgs } = txToMessages(account, transaction);
+        const [message] = aminoMsgs;
+        expect(message.value.amount?.amount.includes("e")).toEqual(false);
+      });
+
       it("should return no message if tx has a 0 amount", () => {
         transaction.amount = new BigNumber(0);
         transaction.validators = [{ address: "realAddressTrustMe" } as CosmosDelegationInfo];
@@ -169,6 +202,20 @@ describe("txToMessages", () => {
         expect(value.delegatorAddress).toEqual(account.freshAddress);
         expect(value.amount?.amount).toEqual(transaction.amount.toFixed());
         expect(value.amount?.denom).toEqual(account.currency.units[1].code);
+      });
+
+      it("should not include exponential part on big numbers", () => {
+        transaction.amount = veryBigNumber;
+        transaction.validators = [
+          {
+            address: "realAddressTrustMe",
+            amount: veryBigNumber,
+          } as CosmosDelegationInfo,
+        ];
+        const { protoMsgs } = txToMessages(account, transaction);
+        const [message] = protoMsgs;
+        const value = MsgDelegate.decode(message.value);
+        expect(value.amount?.amount.includes("e")).toEqual(false);
       });
 
       it("should return no message if tx has a 0 amount", () => {
@@ -221,6 +268,19 @@ describe("txToMessages", () => {
         expect(message.value.delegator_address).toEqual(account.freshAddress);
         expect(message.value.amount?.amount).toEqual(transaction.validators[0].amount.toFixed());
         expect(message.value.amount?.denom).toEqual(account.currency.units[1].code);
+      });
+
+      it("should not include exponential part on big numbers", () => {
+        transaction.amount = veryBigNumber;
+        transaction.validators = [
+          {
+            address: "realAddressTrustMe",
+            amount: veryBigNumber,
+          } as CosmosDelegationInfo,
+        ];
+        const { aminoMsgs } = txToMessages(account, transaction);
+        const [message] = aminoMsgs;
+        expect(message.value.amount?.amount.includes("e")).toEqual(false);
       });
 
       it("should return no message if validators aren't defined", () => {
@@ -281,6 +341,20 @@ describe("txToMessages", () => {
         expect(value.delegatorAddress).toEqual(account.freshAddress);
         expect(value.amount?.amount).toEqual(transaction.validators[0].amount.toFixed());
         expect(value.amount?.denom).toEqual(account.currency.units[1].code);
+      });
+
+      it("should not include exponential part on big numbers", () => {
+        transaction.amount = veryBigNumber;
+        transaction.validators = [
+          {
+            address: "realAddressTrustMe",
+            amount: veryBigNumber,
+          } as CosmosDelegationInfo,
+        ];
+        const { protoMsgs } = txToMessages(account, transaction);
+        const [message] = protoMsgs;
+        const value = MsgUndelegate.decode(message.value);
+        expect(value.amount?.amount.includes("e")).toEqual(false);
       });
 
       it("should return no message if validators aren't defined", () => {
@@ -349,6 +423,19 @@ describe("txToMessages", () => {
         expect(message.value.amount.denom).toEqual(account.currency.units[1].code);
       });
 
+      it("should not include exponential part on big numbers", () => {
+        transaction.sourceValidator = "source";
+        transaction.validators = [
+          {
+            address: "realAddressTrustMe",
+            amount: veryBigNumber,
+          } as CosmosDelegationInfo,
+        ];
+        const { aminoMsgs } = txToMessages(account, transaction);
+        const [message] = aminoMsgs;
+        expect(message.value.amount.amount.includes("e")).toEqual(false);
+      });
+
       it("should return no message if sourceValidator isn't defined", () => {
         transaction.sourceValidator = "";
         transaction.validators = [
@@ -412,6 +499,21 @@ describe("txToMessages", () => {
         expect(value.delegatorAddress).toEqual(account.freshAddress);
         expect(value.amount?.amount).toEqual(transaction.validators[0].amount.toFixed());
         expect(value.amount?.denom).toEqual(account.currency.units[1].code);
+      });
+
+      it("should not include exponential part on big numbers", () => {
+        transaction.sourceValidator = "source";
+        transaction.validators = [
+          {
+            address: "realAddressTrustMe",
+            amount: veryBigNumber,
+          } as CosmosDelegationInfo,
+        ];
+        const { protoMsgs } = txToMessages(account, transaction);
+        const [message] = protoMsgs;
+        expect(message).toBeTruthy();
+        const value = MsgBeginRedelegate.decode(message.value);
+        expect(value.amount?.amount.includes("e")).toEqual(false);
       });
 
       it("should return no message if sourceValidator isn't defined", () => {
@@ -562,6 +664,18 @@ describe("txToMessages", () => {
         );
         expect(delegateMessage.value.amount.denom).toEqual(account.currency.units[1].code);
       });
+
+      it("should not include exponential part on big numbers", () => {
+        transaction.validators = [
+          {
+            address: "iAmAValidatorAddress",
+            amount: veryBigNumber,
+          } as CosmosDelegationInfo,
+        ];
+        const { aminoMsgs } = txToMessages(account, transaction);
+        const [, delegateMessage] = aminoMsgs;
+        expect(delegateMessage.value.amount.amount.includes("e")).toEqual(false);
+      });
     });
 
     describe("Proto", () => {
@@ -588,6 +702,19 @@ describe("txToMessages", () => {
           transaction.validators[0].amount.toFixed(),
         );
         expect(delegateMessageValue.amount?.denom).toEqual(account.currency.units[1].code);
+      });
+
+      it("should return a MsgWithdrawDelegatorReward message and a MsgDelegate if transaction is complete", () => {
+        transaction.validators = [
+          {
+            address: "iAmAValidatorAddress",
+            amount: veryBigNumber,
+          } as CosmosDelegationInfo,
+        ];
+        const { protoMsgs } = txToMessages(account, transaction);
+        const [, delegateMessage] = protoMsgs;
+        const delegateMessageValue = MsgDelegate.decode(delegateMessage.value);
+        expect(delegateMessageValue.amount?.amount.includes("e")).toEqual(false);
       });
     });
   });
