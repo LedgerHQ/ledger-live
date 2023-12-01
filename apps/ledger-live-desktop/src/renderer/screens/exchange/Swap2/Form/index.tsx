@@ -167,6 +167,34 @@ const SwapForm = () => {
         goToURL: providerURL,
       };
 
+      if (provider === "moonpay") {
+        const fromAccountId = accountToWalletAPIAccount(account, parentAccount)?.id;
+        const transactionTo = swapTransaction.swap.to;
+        const transactionToAccountId = transactionTo.parentAccount?.id || transactionTo.account?.id;
+        const toAccount = accounts.find(a => a.id === transactionToAccountId);
+        const toParentAccount = isTokenAccount(account)
+          ? getParentAccount(account, accounts)
+          : undefined;
+        const toAccountId = accountToWalletAPIAccount(toAccount, toParentAccount)?.id;
+        const moonpayFields = {
+          quoteId: exchangeRate.rateId,
+          toAccountId,
+          fromAccountId,
+          fromAmount: convertToNonAtomicUnit({
+            amount: swapTransaction.transaction?.amount,
+            account: swapTransaction.swap.from.account,
+          }),
+          rate: exchangeRate.rate,
+          feeStrategy: swapTransaction.transaction.feesStrategy.toUpperCase(),
+        };
+
+        const moonpayURL = new URL(
+          "https://buy.moonpay.com/swaps?apiKey=pk_live_R5Lf25uBfNZyKwccAZpzcxuL3ZdJ3Hc",
+        );
+        Object.entries(moonpayFields).forEach(param => moonpayURL.searchParams.append(...param));
+        state.goToURL = moonpayURL.toString();
+      }
+
       history.push({
         // This looks like an issue, the proper signature is: push(path, [state]) - (function) Pushes a new entry onto the history stack
         // It seems possible to also pass a LocationDescriptorObject but it does not expect extra properties
