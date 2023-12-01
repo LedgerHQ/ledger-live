@@ -60,10 +60,8 @@ jobs:
         run: gh pr checkout ${{ inputs.number }}
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
-      - name: set git user
-        run: |
-          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
-          git config user.name "live-github-bot[bot]"
+      - name: Setup git user
+        uses: ./tools/actions/composites/setup-git-user
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
         with:
@@ -124,10 +122,8 @@ jobs:
           install_playwright: true
           aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
           aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
-      - name: set git user
-        run: |
-          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
-          git config user.name "live-github-bot[bot]"
+      - name: Setup git user
+        uses: ./tools/actions/composites/setup-git-user
       - uses: ./tools/actions/composites/update-snapshots-desktop
         id: update-snapshots
         with:
@@ -175,10 +171,8 @@ jobs:
           install_playwright: true
           aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
           aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
-      - name: set git user
-        run: |
-          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
-          git config user.name "live-github-bot[bot]"
+      - name: Setup git user
+        uses: ./tools/actions/composites/setup-git-user
       - uses: ./tools/actions/composites/update-snapshots-desktop
         id: update-snapshots
         with:

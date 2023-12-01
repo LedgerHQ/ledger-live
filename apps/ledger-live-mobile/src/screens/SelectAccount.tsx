@@ -11,6 +11,7 @@ import AccountSelector from "../components/AccountSelector";
 import GenericErrorBottomModal from "../components/GenericErrorBottomModal";
 import { SendFundsNavigatorStackParamList } from "../components/RootNavigator/types/SendFundsNavigator";
 import { StackNavigatorProps } from "../components/RootNavigator/types/helpers";
+import SafeAreaView from "../components/SafeAreaView";
 import { AccountLike } from "@ledgerhq/types-live";
 
 type Props = StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendCoin>;
@@ -81,9 +82,9 @@ export default function ReceiveFunds({ navigation, route }: Props) {
   );
 
   return (
-    <Flex flex={1} color="background.main">
+    <SafeAreaView isFlex edges={["left", "right"]}>
       <TrackScreen category={category || ""} name="SelectAccount" />
-      <Flex p={6}>
+      <Flex m={6} style={{ flex: 1 }}>
         <AccountSelector
           list={allAccounts}
           onSelectAccount={handleSelectAccount}
@@ -91,6 +92,6 @@ export default function ReceiveFunds({ navigation, route }: Props) {
         />
       </Flex>
       {error ? <GenericErrorBottomModal error={error} onClose={() => setError(undefined)} /> : null}
-    </Flex>
+    </SafeAreaView>
   );
 }

@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import { withTranslation, Trans } from "react-i18next";
+import { withTranslation, useTranslation } from "react-i18next";
 import {
   TouchableWithoutFeedback,
   View,
@@ -53,14 +53,17 @@ type Props = OwnProps & {
 
 function NormalHeader() {
   const { colors } = useTheme();
+
+  const { t } = useTranslation();
+
   return (
     <Flex alignItems="center" justifyContent="center">
       <Logos.LedgerLiveAltRegular color={colors.neutral.c100} width={50} height={50} />
       <LText semiBold secondary style={styles.title}>
-        <Trans i18nKey="auth.unlock.title" />
+        {t("auth.unlock.title")}
       </LText>
       <LText style={styles.description} color="grey">
-        <Trans i18nKey="auth.unlock.desc" />
+        {t("auth.unlock.desc")}
       </LText>
     </Flex>
   );
@@ -82,11 +85,12 @@ const FormFooter = ({
   passwordError,
   onPress,
 }: FormFooterProps) => {
+  const { t } = useTranslation();
   return inputFocused ? (
     <TouchableWithoutFeedback>
       <BaseButton
         event="SubmitUnlock"
-        title={<Trans i18nKey="auth.unlock.login" />}
+        title={t("auth.unlock.login")}
         type="primary"
         onPress={onSubmit}
         containerStyle={styles.buttonContainer}
@@ -98,7 +102,7 @@ const FormFooter = ({
   ) : (
     <Touchable event="ForgetPassword" onPress={onPress}>
       <LText semiBold style={styles.link} color="live">
-        <Trans i18nKey="auth.unlock.forgotPassword" />
+        {t("auth.unlock.forgotPassword")}
       </LText>
     </Touchable>
   );

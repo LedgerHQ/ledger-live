@@ -21,7 +21,7 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import ButtonBase from "~/renderer/components/Button";
 import { context } from "~/renderer/drawers/Provider";
-import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
+import { shallowAccountsSelector, flattenAccountsSelector } from "~/renderer/reducers/accounts";
 import { trackSwapError, useGetSwapTrackingProperties } from "../utils/index";
 import ExchangeDrawer from "./ExchangeDrawer/index";
 import SwapFormSelectors from "./FormSelectors";
@@ -40,7 +40,7 @@ import { OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
 import { v4 } from "uuid";
 import SwapWebView, { SWAP_WEB_MANIFEST_ID, SwapWebProps } from "./SwapWebView";
 
-const WEB_PROVIDERS = ["moonpay"];
+const DAPP_PROVIDERS = ["paraswap", "oneinch", "moonpay"];
 
 const Wrapper = styled(Box).attrs({
   p: 20,
@@ -61,15 +61,16 @@ const Button = styled(ButtonBase)`
 `;
 
 const SwapForm = () => {
-  const swapDefaultTrack = useGetSwapTrackingProperties();
   const [idleState, setIdleState] = useState(false);
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { state: locationState } = useLocation();
   const history = useHistory();
   const accounts = useSelector(shallowAccountsSelector);
+  const totalListedAccounts = useSelector(flattenAccountsSelector);
   const exchangeRate = useSelector(rateSelector);
   const walletApiPartnerList = useFeature("swapWalletApiPartnerList");
+  const swapDefaultTrack = useGetSwapTrackingProperties();
 
   const setExchangeRate: SetExchangeRateCallback = useCallback(
     rate => {
@@ -260,7 +261,7 @@ const SwapForm = () => {
   const onSubmit = () => {
     if (!exchangeRate) return;
 
-    const { provider, providerType } = exchangeRate;
+    const { provider } = exchangeRate;
     track("button_clicked", {
       button: "Request",
       page: "Page Swap Form",
@@ -271,9 +272,11 @@ const SwapForm = () => {
       ptxSwapMoonpayProviderFlag,
     });
 
-    if (providerType === "DEX" || WEB_PROVIDERS.includes(provider)) {
+    if (DAPP_PROVIDERS.includes(provider)) {
       redirectToProviderApp(provider);
     } else {
+      // Fix LIVE-9064, prevent the transaction from being updated when using useAllAmount
+      swapTransaction.transaction ? (swapTransaction.transaction.useAllAmount = false) : null;
       setDrawer(
         ExchangeDrawer,
         {
@@ -326,9 +329,14 @@ const SwapForm = () => {
       const { feesStrategy } = transaction || {};
       const { rate, rateId } = exchangeRate || {};
 
+      const isToAccountValid = totalListedAccounts.some(account => account.id === toAccount?.id);
       const fromAccountId =
         fromAccount && accountToWalletAPIAccount(fromAccount, fromParentAccount)?.id;
-      const toAccountId = toAccount && accountToWalletAPIAccount(toAccount, toParentAccount)?.id;
+      const toAccountId = isToAccountValid
+        ? toAccount && accountToWalletAPIAccount(toAccount, toParentAccount)?.id
+        : toParentAccount && accountToWalletAPIAccount(toParentAccount, undefined)?.id;
+      const toNewTokenId =
+        !isToAccountValid && toAccount?.type === "TokenAccount" ? toAccount.token?.id : undefined;
       const fromAmount =
         fromAccount &&
         convertToNonAtomicUnit({
@@ -376,6 +384,7 @@ const SwapForm = () => {
         providerRedirectURL: `ledgerlive://discover/${getProviderName(
           provider ?? "",
         ).toLowerCase()}?${providerRedirectURLSearch.toString()}`,
+        toNewTokenId,
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -384,6 +393,7 @@ const SwapForm = () => {
     provider,
     swapTransaction.swap.from.account?.id,
     swapTransaction.swap.to.currency?.id,
+    swapTransaction.swap.to.account?.id,
     exchangeRate?.providerType,
     exchangeRate?.tradeMethod,
     swapError,
