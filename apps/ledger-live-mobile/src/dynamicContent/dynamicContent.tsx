@@ -5,6 +5,7 @@ import { useCallback, useMemo } from "react";
 import { useBrazeContentCard } from "./brazeContentCard";
 import {
   assetsCardsSelector,
+  categoriesCardsSelector,
   learnCardsSelector,
   notificationsCardsSelector,
   walletCardsSelector,
@@ -17,7 +18,9 @@ import {
   LocationContentCard,
   NotificationContentCard,
   WalletContentCard,
+  CategoryContentCard,
   ContentCard as LedgerContentCard,
+  ContentCardsType,
 } from "./types";
 import { track } from "~/analytics";
 import { setDismissedDynamicCards } from "~/actions/settings";
@@ -27,6 +30,9 @@ export const getMobileContentCards = (array: BrazeContentCard[]) =>
 
 export const filterByPage = (array: BrazeContentCard[], page: string) =>
   array.filter(elem => elem.extras.location === page);
+
+export const filterByType = (array: BrazeContentCard[], type: ContentCardsType) =>
+  array.filter(elem => elem.extras.type === type);
 
 export const compareCards = (a: LedgerContentCard, b: LedgerContentCard) => {
   if (a.order && !b.order) {
@@ -95,6 +101,26 @@ export const mapAsNotificationContentCard = (card: BrazeContentCard) =>
     order: parseInt(card.extras.order) ? parseInt(card.extras.order) : undefined,
   }) as NotificationContentCard;
 
+
+export const mapAsCategoryContentCard = (card: BrazeContentCard) =>
+  ({
+    id: card.id,
+
+    title: card.extras.title,
+    description: card.extras.description,
+    link: card.extras.link,
+    cta: card.extras.cta,
+
+    category: ContentCardsType.category,
+
+    createdAt: card.created,
+    viewed: card.viewed,
+    order: parseInt(card.extras.order) ? parseInt(card.extras.order) : undefined,
+
+    location: card.extras.location,
+    tag: card.extras.tag,
+  }) as CategoryContentCard;
+
 const useDynamicContent = () => {
   const dispatch = useDispatch();
   const { logClickCard, logDismissCard, logImpressionCard, refreshDynamicContent } =
@@ -103,6 +129,7 @@ const useDynamicContent = () => {
   const assetsCards = useSelector(assetsCardsSelector);
   const walletCards = useSelector(walletCardsSelector);
   const learnCards = useSelector(learnCardsSelector);
+  const categoriesCards = useSelector(categoriesCardsSelector);
   const hiddenCards: string[] = useSelector(dismissedDynamicCardsSelector);
 
   const walletCardsDisplayed = useMemo(
@@ -162,6 +189,7 @@ const useDynamicContent = () => {
     isAWalletCardDisplayed,
     assetsCards,
     learnCards,
+    categoriesCards,
     getAssetCardByIdOrTicker,
     logClickCard,
     logDismissCard,
