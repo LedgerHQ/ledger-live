@@ -29,7 +29,7 @@ runs:
 
     - uses: pnpm/action-setup@v2
       with:
-        version: 8.10
+        version: 8.11
     - name: Get pnpm store directory
       shell: bash
       run: |
