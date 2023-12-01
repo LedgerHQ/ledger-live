@@ -3,7 +3,7 @@ import { snakeCase } from "lodash";
 import semver from "semver";
 import { Feature, FeatureId } from "@ledgerhq/types-live";
 import { getEnv } from "@ledgerhq/live-env";
-import { LiveConfig } from "./LiveConfig";
+import { LiveConfig } from "../LiveConfig";
 
 export type FirebaseFeatureFlagsProviderProps = PropsWithChildren<unknown>;
 export const formatToFirebaseFeatureId = (id: string) => `feature_${snakeCase(id)}`;
@@ -44,10 +44,10 @@ export const isFeature = (key: string): boolean => {
     return false;
   }
   try {
-    const value = LiveConfig.getInstance().providerGetvalueMethod!["firebaseRemoteConfig"](
+    const value = LiveConfig.getInstance().providerGetvalueMethod!.firebaseRemoteConfig?.(
       formatToFirebaseFeatureId(key),
     );
-    if (!value || !value.asString()) {
+    if (!value || !value?.asString()) {
       return false;
     }
     return true;

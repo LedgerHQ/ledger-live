@@ -1,5 +1,5 @@
-import { LiveConfig, Value } from "../featureFlags";
-import { getValueByKey } from "./helper";
+import { LiveConfig, Value } from "../../featureFlags";
+import { getValueByKey } from "./helpers";
 import { configSchema } from "./schema";
 
 LiveConfig.init({

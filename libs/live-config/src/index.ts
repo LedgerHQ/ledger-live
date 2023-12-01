@@ -1,2 +1,2 @@
 export * from "./featureFlags";
-export * from "./firebaseRemoteConfig";
+export * from "./providers/firebaseRemoteConfig";

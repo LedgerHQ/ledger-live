@@ -1,7 +1,9 @@
-// refer to https://github.com/firebase/firebase-js-sdk/blob/master/packages/remote-config/src/public_types.ts#L71 for the firebase config value interface
-export declare interface Value {}
+import { SupportedProviders } from "./providers";
 
-type SupportedProviders = "firebaseRemoteConfig";
+// refer to https://github.com/firebase/firebase-js-sdk/blob/master/packages/remote-config/src/public_types.ts#L71 for the firebase config value interface
+export interface Value {
+  asString(s: unknown): string;
+}
 
 type ProviderGetValueMethod = { [provider in SupportedProviders]?: (key: string) => Value };
 

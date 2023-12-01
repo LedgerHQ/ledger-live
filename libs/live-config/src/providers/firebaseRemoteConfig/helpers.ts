@@ -1,7 +1,7 @@
-import { LiveConfig } from "../featureFlags";
+import { LiveConfig } from "../../LiveConfig";
 import { ConfigKeys, configSchema } from "./schema";
 
-export function getValueByKey<K extends ConfigKeys>(key: K) {
+export function getValueByKey(key: ConfigKeys) {
   const configInstance = LiveConfig.getInstance();
   const defaultConfig = configSchema.parse({});
 

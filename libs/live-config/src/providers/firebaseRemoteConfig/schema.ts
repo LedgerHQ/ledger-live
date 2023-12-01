@@ -1,4 +1,14 @@
 import { z } from "zod";
+import { Provider } from "..";
+
+export interface FirebaseRemoteConfigProvider extends Provider {
+  name: "firebaseRemoteConfig";
+  value: {
+    asString: (value: unknown) => string;
+    asBoolean: (value: unknown) => boolean;
+    asNumber: (value: unknown) => number;
+  };
+}
 
 export const configSchema = z.object({
   /** this is key 1 */
