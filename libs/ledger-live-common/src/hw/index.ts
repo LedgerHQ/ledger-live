@@ -186,6 +186,15 @@ export const close = (
   // Otherwise fallbacks on the transport implementation of close directly
   return transport.close();
 };
+
+/**
+ * TODO: fix this, or remove comments.
+ *
+ * Currently only used by TransportNodeHid.
+ * But the logic seems wrong to find the module to call `setAllowAutoDisconnect` on:
+ * the 1st registered module that defines `setAllowAutoDisconnect` will be chosen, while
+ * it could be another module that can handle the transport.
+ */
 export const setAllowAutoDisconnect = (
   transport: Transport,
   deviceId: string,

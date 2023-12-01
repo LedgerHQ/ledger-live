@@ -87,19 +87,28 @@ export default class TransportNodeHidNoEvents extends Transport {
     { context, logType }: { context?: TraceContext; logType?: LogType } = {},
   ) {
     super({ context, logType });
+    this.updateTraceContext({ hidChannel: this.channel });
     this.device = device;
 
     // @ts-expect-error accessing low level API in C
     const info = device.getDeviceInfo();
+
+    this.tracer.trace(`Connected to HID device ${!!info}`, { info });
+
     this.deviceModel = info && info.product ? identifyProductName(info.product) : null;
   }
 
+  // TODO: IS THIS the pb ? emitting while still disconnected the device
+  // emitsDisconnect or notifyNeedsDisconnect
   setDisconnected = () => {
+    this.tracer.trace("Setting to disconnected", { alreadyDisconnected: this.disconnected });
+
     if (!this.disconnected) {
       this.emit("disconnect");
       this.disconnected = true;
     }
   };
+
   writeHID = (content: Buffer): Promise<void> => {
     const data = [0x00];
 
@@ -111,15 +120,22 @@ export default class TransportNodeHidNoEvents extends Transport {
       this.device.write(data);
       return Promise.resolve();
     } catch (e: any) {
+      // TODO: here: should we retry ? in exchange catch this error and retry ?
+      // Error: TypeError: Cannot write to hid device
+      this.tracer.trace(`Received an error during HID write: ${e}`, { e });
+
       const maybeMappedError =
         e && e.message ? new DisconnectedDeviceDuringOperation(e.message) : e;
+
       if (maybeMappedError instanceof DisconnectedDeviceDuringOperation) {
+        this.tracer.trace("Disconnected during HID write");
         this.setDisconnected();
       }
 
       return Promise.reject(maybeMappedError);
     }
   };
+
   readHID = (): Promise<Buffer> =>
     new Promise((resolve, reject) =>
       this.device.read((e, res) => {
@@ -128,9 +144,13 @@ export default class TransportNodeHidNoEvents extends Transport {
         }
 
         if (e) {
+          this.tracer.trace(`Received an error during HID read: ${e}`, { e });
+
           const maybeMappedError =
             e && e.message ? new DisconnectedDeviceDuringOperation(e.message) : e;
+
           if (maybeMappedError instanceof DisconnectedDeviceDuringOperation) {
+            this.tracer.trace("Disconnected during HID read");
             this.setDisconnected();
           }
 
@@ -148,20 +168,23 @@ export default class TransportNodeHidNoEvents extends Transport {
    * @param apdu
    * @returns a promise of apdu response
    */
-  async exchange(apdu: Buffer): Promise<Buffer> {
+  async exchange(
+    apdu: Buffer,
+    { abortTimeoutMs }: { abortTimeoutMs?: number } = {},
+  ): Promise<Buffer> {
     const tracer = this.tracer.withUpdatedContext({
       function: "exchange",
     });
-    tracer.trace("Exchanging APDU ...");
+    tracer.trace("Exchanging APDU ...", { abortTimeoutMs });
 
     const b = await this.exchangeAtomicImpl(async () => {
       const { channel, packetSize } = this;
-      tracer.withType("apdu").trace(`=> ${apdu.toString("hex")}`);
+      tracer.withType("apdu").trace(`=> ${apdu.toString("hex")}`, { channel, packetSize });
 
-      const framing = hidFraming(channel, packetSize);
+      const framingHelper = hidFraming(channel, packetSize);
 
-      // Write...
-      const blocks = framing.makeBlocks(apdu);
+      // Creates HID-framed chunks from the APDU to be sent to the device...
+      const blocks = framingHelper.makeBlocks(apdu);
 
       for (let i = 0; i < blocks.length; i++) {
         await this.writeHID(blocks[i]);
@@ -171,12 +194,12 @@ export default class TransportNodeHidNoEvents extends Transport {
       let result;
       let acc;
 
-      while (!(result = framing.getReducedResult(acc))) {
+      while (!(result = framingHelper.getReducedResult(acc))) {
         const buffer = await this.readHID();
-        acc = framing.reduceResponse(acc, buffer);
+        acc = framingHelper.reduceResponse(acc, buffer);
       }
 
-      tracer.withType("apdu").trace(`<= ${result.toString("hex")}`);
+      tracer.withType("apdu").trace(`<= ${result.toString("hex")}`, { channel, packetSize });
       return result;
     });
 
