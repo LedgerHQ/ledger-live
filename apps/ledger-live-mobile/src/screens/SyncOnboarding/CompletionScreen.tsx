@@ -6,10 +6,10 @@ import Video from "react-native-video";
 import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/useStartPostOnboardingCallback";
 import { useTheme } from "styled-components/native";
 
-import { NavigatorName, ScreenName } from "../../const";
-import { SyncOnboardingStackParamList } from "../../components/RootNavigator/types/SyncOnboardingNavigator";
-import { BaseComposite, RootNavigation } from "../../components/RootNavigator/types/helpers";
-import useIsAppInBackground from "../../components/useIsAppInBackground";
+import { NavigatorName, ScreenName } from "~/const";
+import { SyncOnboardingStackParamList } from "~/components/RootNavigator/types/SyncOnboardingNavigator";
+import { BaseComposite, RootNavigation } from "~/components/RootNavigator/types/helpers";
+import useIsAppInBackground from "~/components/useIsAppInBackground";
 import videoSources from "../../../assets/videos";
 
 const sourceLight = videoSources.onboardingSuccessStaxLight;

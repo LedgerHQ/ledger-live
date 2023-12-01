@@ -4,7 +4,7 @@ import { QuickActionList } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 
 import { FabButtonBarProvider } from "../../index";
-import useAccountActions from "../../../../screens/Account/hooks/useAccountActions";
+import useAccountActions from "~/screens/Account/hooks/useAccountActions";
 import FabButtonBar from "../../FabButtonBar";
 
 type FabAccountActionsProps = {

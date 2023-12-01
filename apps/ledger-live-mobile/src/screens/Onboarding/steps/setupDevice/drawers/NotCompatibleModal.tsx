@@ -3,8 +3,8 @@ import { Button, Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { InfoMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useTheme } from "styled-components/native";
-import QueuedDrawer from "../../../../../components/QueuedDrawer";
-import Circle from "../../../../../components/Circle";
+import QueuedDrawer from "~/components/QueuedDrawer";
+import Circle from "~/components/Circle";
 
 type Props = {
   onClose: () => void;

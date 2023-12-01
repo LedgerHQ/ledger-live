@@ -6,9 +6,9 @@ import { useTheme } from "@react-navigation/native";
 import { Text } from "@ledgerhq/native-ui";
 import { isDefaultValidatorGroupAddress } from "@ledgerhq/live-common/families/celo/logic";
 import { CeloAccount, CeloVote } from "@ledgerhq/live-common/families/celo/types";
-import CounterValue from "../../../components/CounterValue";
-import ArrowRight from "../../../icons/ArrowRight";
-import LText from "../../../components/LText";
+import CounterValue from "~/components/CounterValue";
+import ArrowRight from "~/icons/ArrowRight";
+import LText from "~/components/LText";
 import ValidatorImage from "../../cosmos/shared/ValidatorImage";
 import { formatAmount } from "./utils";
 

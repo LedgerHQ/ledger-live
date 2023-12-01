@@ -4,9 +4,9 @@ import { BottomDrawer } from "@ledgerhq/native-ui";
 import { useFocusEffect } from "@react-navigation/native";
 import type { BaseModalProps } from "@ledgerhq/native-ui/components/Layout/Modals/BaseModal/index";
 import { useSelector } from "react-redux";
-import { isModalLockedSelector } from "../reducers/appstate";
-import { Merge } from "../types/helpers";
-import { IsInDrawerProvider } from "../context/IsInDrawerContext";
+import { isModalLockedSelector } from "~/reducers/appstate";
+import { Merge } from "~/types/helpers";
+import { IsInDrawerProvider } from "~/context/IsInDrawerContext";
 
 // Purposefully removes isOpen prop so consumers can't use it directly
 export type Props = Merge<

@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { Linking, TouchableOpacity } from "react-native";
 import { HelpMedium } from "@ledgerhq/native-ui/assets/icons";
 import { Box } from "@ledgerhq/native-ui";
-import { track } from "../../analytics";
+import { track } from "~/analytics";
 
 type Props = {
   enabled: boolean;

@@ -12,23 +12,23 @@ import {
 import { CompositeScreenProps, useNavigation, useRoute } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import { useCalculate } from "@ledgerhq/live-common/countervalues/react";
-import CurrencyUnitValue from "../../../../components/CurrencyUnitValue";
-import ProviderIcon from "../../../../components/ProviderIcon";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import ProviderIcon from "~/components/ProviderIcon";
 import { Item } from "./Item";
 import { Banner } from "../Banner";
-import { NavigatorName, ScreenName } from "../../../../const";
-import CurrencyIcon from "../../../../components/CurrencyIcon";
-import { rateExpirationSelector, rateSelector } from "../../../../actions/swap";
+import { NavigatorName, ScreenName } from "~/const";
+import CurrencyIcon from "~/components/CurrencyIcon";
+import { rateExpirationSelector, rateSelector } from "~/actions/swap";
 import { CountdownTimer } from "./CountdownTimer";
-import { counterValueCurrencySelector } from "../../../../reducers/settings";
+import { counterValueCurrencySelector } from "~/reducers/settings";
 import {
   BaseComposite,
   MaterialTopTabNavigatorProps,
   StackNavigatorProps,
-} from "../../../../components/RootNavigator/types/helpers";
-import type { SwapNavigatorParamList } from "../../../../components/RootNavigator/types/SwapNavigator";
-import type { SwapFormNavigatorParamList } from "../../../../components/RootNavigator/types/SwapFormNavigator";
-import { useAnalytics } from "../../../../analytics";
+} from "~/components/RootNavigator/types/helpers";
+import type { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
+import type { SwapFormNavigatorParamList } from "~/components/RootNavigator/types/SwapFormNavigator";
+import { useAnalytics } from "~/analytics";
 import { sharedSwapTracking } from "../../utils";
 
 interface Props {

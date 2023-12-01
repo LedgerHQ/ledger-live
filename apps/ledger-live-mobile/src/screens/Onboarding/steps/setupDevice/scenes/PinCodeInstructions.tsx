@@ -1,9 +1,9 @@
 import React from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { NumberedList } from "@ledgerhq/native-ui";
-import NanoDeviceCheckIcon from "../../../../../icons/NanoDeviceCheckIcon";
-import NanoDeviceCancelIcon from "../../../../../icons/NanoDeviceCancelIcon";
-import Button from "../../../../../components/PreventDoubleClickButton";
+import NanoDeviceCheckIcon from "~/icons/NanoDeviceCheckIcon";
+import NanoDeviceCancelIcon from "~/icons/NanoDeviceCancelIcon";
+import Button from "~/components/PreventDoubleClickButton";
 
 const items = [
   {

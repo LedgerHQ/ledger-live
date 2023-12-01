@@ -3,16 +3,13 @@ import { Flex } from "@ledgerhq/native-ui";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Device } from "@ledgerhq/types-devices";
 
-import { ScreenName } from "../../../../const";
+import { ScreenName } from "~/const";
 import BleDevicePairingFlowComponent, {
   SetHeaderOptionsRequest,
-} from "../../../../components/BleDevicePairingFlow";
+} from "~/components/BleDevicePairingFlow";
 import { bleDevicePairingFlowHeaderOptions } from "../../../BleDevicePairingFlow";
-import { SettingsNavigatorStackParamList } from "../../../../components/RootNavigator/types/SettingsNavigator";
-import {
-  RootComposite,
-  StackNavigatorProps,
-} from "../../../../components/RootNavigator/types/helpers";
+import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
+import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 
 export type Props = RootComposite<
   StackNavigatorProps<SettingsNavigatorStackParamList, ScreenName.DebugBLEDevicePairing>

@@ -8,8 +8,8 @@ import { appendQueryParamsToDappURL } from "@ledgerhq/live-common/platform/utils
 
 import { ListProvider } from "./types";
 import { EvmStakingDrawerProvider } from "./EvmStakingDrawerProvider";
-import { useAnalytics } from "../../../analytics";
-import { NavigatorName, ScreenName } from "../../../const";
+import { useAnalytics } from "~/analytics";
+import { NavigatorName, ScreenName } from "~/const";
 import { StackNavigationProp } from "@react-navigation/stack";
 
 type Props = {

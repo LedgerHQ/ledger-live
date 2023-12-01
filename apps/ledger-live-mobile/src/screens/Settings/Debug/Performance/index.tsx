@@ -1,6 +1,6 @@
 import React from "react";
 import { Text } from "@ledgerhq/native-ui";
-import SettingsRow from "../../../../components/SettingsRow";
+import SettingsRow from "~/components/SettingsRow";
 import SettingsNavigationScrollView from "../../SettingsNavigationScrollView";
 import { appStartupTime } from "../../../../StartupTimeMarker";
 import PerformanceConsoleRow from "./PerformanceConsoleRow";

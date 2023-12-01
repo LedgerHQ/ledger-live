@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import Share from "react-native-share";
 import logger from "../logger";
 import logReport from "../log-report";
-import getFullAppVersion from "../logic/version";
+import getFullAppVersion from "~/logic/version";
 
 export default function useExportLogs() {
   return useCallback(() => {

@@ -8,13 +8,13 @@ import { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import { useFilteredServiceStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
 
-import NotificationCenter from "../../screens/NotificationCenter/Notifications";
-import { NavigatorName, ScreenName } from "../../const";
+import NotificationCenter from "~/screens/NotificationCenter/Notifications";
+import { NavigatorName, ScreenName } from "~/const";
 import type { NotificationCenterNavigatorParamList } from "./types/NotificationCenterNavigator";
-import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
-import { track } from "../../analytics";
-import FullNodeWarning from "../../icons/FullNodeWarning";
-import StatusCenter from "../../screens/NotificationCenter/Status";
+import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import { track } from "~/analytics";
+import FullNodeWarning from "~/icons/FullNodeWarning";
+import StatusCenter from "~/screens/NotificationCenter/Status";
 
 const Stack = createStackNavigator<NotificationCenterNavigatorParamList>();
 

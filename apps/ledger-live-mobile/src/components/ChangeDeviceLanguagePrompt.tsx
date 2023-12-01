@@ -4,9 +4,9 @@ import { ImageSourcePropType, Linking } from "react-native";
 import { useTranslation } from "react-i18next";
 import { Language } from "@ledgerhq/types-live";
 import { DeviceModel, DeviceModelId } from "@ledgerhq/types-devices";
-import { urls } from "@utils/urls";
-import Illustration from "../images/illustration/Illustration";
-import { TrackScreen } from "../analytics";
+import { urls } from "~/utils/urls";
+import Illustration from "~/images/illustration/Illustration";
+import { TrackScreen } from "~/analytics";
 import Button from "./wrappedUi/Button";
 
 type Props = {
@@ -20,12 +20,12 @@ type Images = {
 };
 const images: Images = {
   stax: {
-    light: require("../images/illustration/Light/Device/Stax.png"),
-    dark: require("../images/illustration/Dark/Device/Stax.png"),
+    light: require("~/images/illustration/Light/Device/Stax.png"),
+    dark: require("~/images/illustration/Dark/Device/Stax.png"),
   },
   nanoX: {
-    light: require("../images/illustration/Light/Device/XFolded.png"),
-    dark: require("../images/illustration/Dark/Device/XFolded.png"),
+    light: require("~/images/illustration/Light/Device/XFolded.png"),
+    dark: require("~/images/illustration/Dark/Device/XFolded.png"),
   },
 };
 

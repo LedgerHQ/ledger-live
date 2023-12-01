@@ -3,9 +3,9 @@ import { TouchableWithoutFeedback } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import { Text } from "@ledgerhq/native-ui";
 import { StackScreenProps } from "@react-navigation/stack";
-import { scrollToTop } from "../../../navigation/utils";
-import { AccountsNavigatorParamList } from "../../../components/RootNavigator/types/AccountsNavigator";
-import { ScreenName } from "../../../const";
+import { scrollToTop } from "~/navigation/utils";
+import { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
+import { ScreenName } from "~/const";
 
 type NavigationProps = StackScreenProps<AccountsNavigatorParamList, ScreenName.NftGallery>;
 

@@ -13,10 +13,10 @@ import { getMainAccount, getAccountUnit } from "@ledgerhq/live-common/account/in
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useCosmosFamilyMappedDelegations } from "@ledgerhq/live-common/families/cosmos/react";
 import { useTheme } from "@react-navigation/native";
-import { accountScreenSelector } from "../../../reducers/accounts";
-import { ScreenName } from "../../../const";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { ScreenName } from "~/const";
 import Item from "../shared/Item";
-import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { CosmosClaimRewardsFlowParamList } from "./types";
 import BigNumber from "bignumber.js";
 

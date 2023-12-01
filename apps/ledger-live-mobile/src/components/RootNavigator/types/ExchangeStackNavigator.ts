@@ -1,6 +1,6 @@
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { ScreenName } from "../../../const";
+import { ScreenName } from "~/const";
 
 export type ExchangeStackNavigatorParamList = {
   [ScreenName.ExchangeSelectCurrency]: {
