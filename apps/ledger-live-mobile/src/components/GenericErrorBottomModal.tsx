@@ -34,7 +34,6 @@ const styles = StyleSheet.create({
   root: {
     flexDirection: "column",
     minHeight: 280,
-    paddingHorizontal: 20,
   },
   close: {
     position: "absolute",

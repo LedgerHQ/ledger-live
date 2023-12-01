@@ -13,7 +13,7 @@ export const GenericInformationBody: React.FC<{
   description?: string | React.ReactNode;
 }> = ({ Icon = Icons.DeleteCircleFill, iconColor = "error.c60", title, subtitle, description }) => {
   return (
-    <>
+    <Flex px={"7"}>
       <Flex justifyContent="center" alignSelf="center">
         <BoxedIcon
           Icon={Icon}
@@ -52,6 +52,6 @@ export const GenericInformationBody: React.FC<{
           {description}
         </Text>
       ) : null}
-    </>
+    </Flex>
   );
 };
