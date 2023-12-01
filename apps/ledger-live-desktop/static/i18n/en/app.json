@@ -764,6 +764,8 @@
     "energyTooltip": "Freeze assets to gain energy",
     "delegatedTooltip": "Delegated assets are used in the voting process. This represents your total number of votes.",
     "undelegatingTooltip": "Undelegated assets are in a timelock of {{timelockInDays}} days, before being available.",
+    "claimableRewards": "Claimable Rewards",
+    "claimableRewardsTooltip": "Currently, the option to claim USDC rewards is unavailable. Please use a third-party wallet for this purpose",
     "banner": {
       "redelegation": {
         "title": "In case you didn’t know...",
@@ -2334,9 +2336,7 @@
       "delegatedAssetsTooltip": "Delegated assets are used indirectly by the staking provider to operate validator nodes, process transactions and secure the network by participating in the consensus mechanism.",
       "delegatedAssets": "Delegated assets",
       "undelegatingTooltip": "Undelegated assets are subject to a 10-day unbonding period, before being able to be withdrawn.",
-      "undelegating": "Pending Withdrawals",
-      "claimableRewards": "Claimable Rewards",
-      "claimableRewardsTooltip": "Currently, the option to claim USDC rewards is unavailable. Please use a third-party wallet for this purpose"
+      "undelegating": "Pending Withdrawals"
     },
     "account": {
       "subHeader": {
