@@ -1237,11 +1237,12 @@
         "firmwareUpdate": {
           "title": {
             "active": "OS update check",
-            "completed": "Your {{modelName}} OS is up to date",
+            "completed": "Your {{modelName}} OS is up to date. One last thing...",
             "updateAvailable": "OS update {{firmwareVersion}} available"
           },
           "subtitle": {
             "active": "This checks if your {{modelName}} Operating System is up to date or not.",
+            "completed": "To initiate app restore on your {{modelName}}, select the “Restore apps” button below.",
             "updateAvailable": "Update for optimal security and access to the latest features."
           },
           "viewUpdateCTA": "Update {{modelName}} OS",
@@ -1757,8 +1758,8 @@
     "loading": "Loading...",
     "connectAndUnlockDevice": "Connect and unlock your device",
     "unlockDevice": "Unlock your device",
-    "unlockDeviceAfterFirmwareUpdateStep1": "Wait for installation to finish on your {{productName}}",
-    "unlockDeviceAfterFirmwareUpdateStep2": "Unlock {{productName}} to complete installation",
+    "unlockDeviceAfterFirmwareUpdateStep1": "Wait for installation to finish on your {{productName}}.",
+    "unlockDeviceAfterFirmwareUpdateStep2": "Unlock {{productName}} with your PIN to complete the update.",
     "quitApp": "Quit the application on your device",
     "appNotInstalledTitle": "Missing required app",
     "appNotInstalledTitle_plural": "Missing required apps",
@@ -1931,12 +1932,12 @@
       "latest": "Firmware version {{version}} is available",
       "contactSupport": "Contact support",
       "deprecated": "Device firmware version too old to be updated. Contact Ledger Support for a replacement.",
-      "prepareSeed": "Ensure your 24-word recovery phrase is written down on the Recovery Sheet and it is available, as a precaution.",
+      "prepareSeed": "Ensure your 24-word recovery phrase is written down on the Recovery Sheet and is available, as a precaution.",
       "disclaimerTitle": "You are about to install <1>firmware version {{version}}</1>.",
-      "cancelUpdate": "Cancel update",
-      "continueUpdate": "Continue update",
+      "cancelUpdate": "Cancel OS update",
+      "continueUpdate": "Continue OS update",
       "cancelUpdateWarning": "Your settings and apps may not be restored properly if you cancel the update now.",
-      "updateInProgress": "OS update in progress"
+      "updateInProgress": "OS update is in progress"
     },
     "modal": {
       "title": "{{productName}} OS update",
@@ -1976,7 +1977,8 @@
       "successTitle": "Your {{deviceName}} OS is\nup to date.",
       "sucessCTAApps": "Reinstall apps",
       "SuccessCTANoApps": "Install apps",
-      "cancelReinstallCTA": "Install update",
+      "cancelReinstallCTA": "Restart OS update",
+      "cancelReinstallCloseCTA": "Cancel OS update",
       "resetSteps": {
         "first": "1. Reset your device",
         "connect": "Connect the {{deviceName}} to your computer using the USB cable.",
@@ -5428,8 +5430,8 @@
       "title": "My Ledger denied on device"
     },
     "UserRefusedFirmwareUpdate": {
-      "title": "Update was cancelled on device",
-      "description": "The installation of OS update was refused on your device. If this was a mistake, restart the update."
+      "title": "OS update install cancelled on device",
+      "description": "If this was a mistake, restart the update."
     },
     "UserRefusedOnDevice": {
       "title": "Action rejected",

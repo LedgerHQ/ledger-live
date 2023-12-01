@@ -11,7 +11,7 @@ import Box from "~/renderer/components/Box";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { StepProps } from "../";
 import { context } from "~/renderer/drawers/Provider";
-import { BoxedIcon, Button, IconsLegacy } from "@ledgerhq/react-ui";
+import { BoxedIcon, Button, IconsLegacy, Flex, Link } from "@ledgerhq/react-ui";
 
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
@@ -89,16 +89,21 @@ export const StepConfirmFooter = ({
     const isDeviceLockedError = error instanceof LockedDeviceError;
     const isRetryableError = isUserRefusedFirmwareUpdate || isDeviceLockedError;
     return (
-      <>
-        <Button variant={"main"} outline={isRetryableError} onClick={onCloseReload}>
-          {t("common.close")}
-        </Button>
+      <Flex
+        flex={1}
+        alignSelf="stretch"
+        flexDirection="row"
+        justifyContent="space-between"
+        paddingTop={4}
+      >
+        <Link onClick={onCloseReload}>{isUserRefusedFirmwareUpdate ? t("manager.modal.cancelReinstallCloseCTA") : t("common.close")}</Link>
+        <Flex flex={1} />
         {isRetryableError ? (
-          <Button variant="main" ml={4} onClick={() => onRetry()}>
+          <Button data-test-id="modal-continue-button" variant="main" ml={4} onClick={onRetry}>
             {isDeviceLockedError ? t("common.retry") : t("manager.modal.cancelReinstallCTA")}
           </Button>
         ) : null}
-      </>
+      </Flex>
     );
   }
 
@@ -117,8 +122,8 @@ export const StepConfirmFooter = ({
         {finalStepSuccessButtonLabel
           ? finalStepSuccessButtonLabel
           : appsToBeReinstalled
-          ? t("manager.modal.sucessCTAApps")
-          : t("manager.modal.SuccessCTANoApps")}
+            ? t("manager.modal.sucessCTAApps")
+            : t("manager.modal.SuccessCTANoApps")}
       </Button>
     </>
   );

@@ -41,7 +41,7 @@ const ErrorIcon = ({ error, size = 44 }: ErrorIconProps) => {
     error instanceof ImageDoesNotExistOnDevice ||
     error instanceof UserRefusedDeviceNameChange
   ) {
-    return <IconsLegacy.InfoMedium size={size} />;
+    return <IconsLegacy.InfoMedium size={size} color="primary.c80" />;
   }
 
   if (error instanceof SwapGenericAPIError || error instanceof NoSuchAppOnProvider) {
