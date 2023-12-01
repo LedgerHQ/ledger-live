@@ -161,16 +161,17 @@ const SwapForm = () => {
           ? accountToWalletAPIAccount(account, parentAccount)?.id
           : fromAccountId;
 
+      const state = {
+        returnTo: "/swap",
+        accountId,
+        goToURL: providerURL,
+      };
+
       history.push({
         // This looks like an issue, the proper signature is: push(path, [state]) - (function) Pushes a new entry onto the history stack
         // It seems possible to also pass a LocationDescriptorObject but it does not expect extra properties
-        // @ts-expect-error so customDappUrl is not expected to be here
-        customDappUrl: providerURL,
         pathname,
-        state: {
-          returnTo: "/swap",
-          accountId,
-        },
+        state,
       });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
