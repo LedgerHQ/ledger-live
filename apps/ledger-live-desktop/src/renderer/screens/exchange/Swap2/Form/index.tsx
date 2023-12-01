@@ -230,7 +230,7 @@ const SwapForm = () => {
   const onSubmit = () => {
     if (!exchangeRate) return;
 
-    const { provider, providerType } = exchangeRate;
+    const { provider } = exchangeRate;
     track("button_clicked", {
       button: "Request",
       page: "Page Swap Form",

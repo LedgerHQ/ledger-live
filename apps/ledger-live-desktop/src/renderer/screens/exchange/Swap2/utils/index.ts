@@ -7,7 +7,7 @@ import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 export const SWAP_VERSION = "2.35";
 
-export const useGetSwapTrackingProperties = (props) => {
+export const useGetSwapTrackingProperties = () => {
   const ptxSwapMoonpayProviderFlag = useFeature("ptxSwapMoonpayProvider");
   return useMemo(
     () => ({
@@ -15,7 +15,7 @@ export const useGetSwapTrackingProperties = (props) => {
       flow: "swap",
       ptxSwapMoonpayProviderEnabled: !!ptxSwapMoonpayProviderFlag?.enabled,
     }),
-    [],
+    [ptxSwapMoonpayProviderFlag?.enabled],
   );
 };
 
