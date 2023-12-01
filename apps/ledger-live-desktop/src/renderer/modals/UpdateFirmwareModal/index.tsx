@@ -293,14 +293,14 @@ const UpdateModal = ({
                   <Flex flexDirection="column" alignSelf="stretch">
                     <Divider />
                     <Flex
+                      flex={1}
                       px={12}
                       alignSelf="stretch"
                       flexDirection="row"
-                      justifyContent="space-between"
+                      justifyContent="end"
                       pt={4}
                       pb={1}
                     >
-                      <Flex flex={1} />
                       <step.footer {...additionalProps} />
                     </Flex>
                   </Flex>
