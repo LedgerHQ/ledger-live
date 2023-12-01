@@ -40,6 +40,8 @@ import { OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
 import { v4 } from "uuid";
 import SwapWebView, { SWAP_WEB_MANIFEST_ID, SwapWebProps } from "./SwapWebView";
 
+const DAPP_PROVIDERS = ["paraswap", "oneinch", "moonpay"];
+
 const Wrapper = styled(Box).attrs({
   p: 20,
   mt: 12,
@@ -59,7 +61,6 @@ const Button = styled(ButtonBase)`
 `;
 
 const SwapForm = () => {
-  const swapDefaultTrack = useGetSwapTrackingProperties();
   const [idleState, setIdleState] = useState(false);
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -69,6 +70,7 @@ const SwapForm = () => {
   const totalListedAccounts = useSelector(flattenAccountsSelector);
   const exchangeRate = useSelector(rateSelector);
   const walletApiPartnerList = useFeature("swapWalletApiPartnerList");
+  const swapDefaultTrack = useGetSwapTrackingProperties();
 
   const setExchangeRate: SetExchangeRateCallback = useCallback(
     rate => {
@@ -147,6 +149,7 @@ const SwapForm = () => {
       const fromAccountId = from.parentAccount?.id || from.account?.id;
 
       const pathname = `/platform/${getProviderName(provider).toLowerCase()}`;
+
       const account = accounts.find(a => a.id === fromAccountId);
       if (!account) return;
       const parentAccount = isTokenAccount(account)
@@ -227,7 +230,7 @@ const SwapForm = () => {
   const onSubmit = () => {
     if (!exchangeRate) return;
 
-    const { provider, providerType } = exchangeRate;
+    const { provider } = exchangeRate;
     track("button_clicked", {
       button: "Request",
       page: "Page Swap Form",
@@ -237,7 +240,7 @@ const SwapForm = () => {
       partner: provider,
     });
 
-    if (providerType === "DEX") {
+    if (DAPP_PROVIDERS.includes(provider)) {
       redirectToProviderApp(provider);
     } else {
       // Fix LIVE-9064, prevent the transaction from being updated when using useAllAmount
