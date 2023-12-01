@@ -8,6 +8,7 @@ import {
   DynamicContentSetAssetCardsPayload,
   DynamicContentSetLearnCardsPayload,
   DynamicContentSetNotificationCardsPayload,
+  DynamicContentSetCategoriesCardsPayload,
 } from "../actions/types";
 
 export const INITIAL_STATE: DynamicContentState = {
@@ -15,6 +16,7 @@ export const INITIAL_STATE: DynamicContentState = {
   walletCards: [],
   learnCards: [],
   notificationCards: [],
+  categoriesCards: [],
 };
 
 const handlers: ReducerMap<DynamicContentState, DynamicContentPayload> = {
@@ -34,6 +36,10 @@ const handlers: ReducerMap<DynamicContentState, DynamicContentPayload> = {
     ...state,
     notificationCards: (action as Action<DynamicContentSetNotificationCardsPayload>).payload,
   }),
+  [DynamicContentActionTypes.DYNAMIC_CONTENT_SET_CATEGORIES_CARDS]: (state, action) => ({
+    ...state,
+    categoriesCards: (action as Action<DynamicContentSetCategoriesCardsPayload>).payload,
+  }),
 };
 
 // Selectors
@@ -42,6 +48,9 @@ export const assetsCardsSelector = (s: State) => s.dynamicContent.assetsCards;
 export const walletCardsSelector = (s: State) => s.dynamicContent.walletCards;
 
 export const learnCardsSelector = (s: State) => s.dynamicContent.learnCards;
+
 export const notificationsCardsSelector = (s: State) => s.dynamicContent.notificationCards;
+
+export const categoriesCardsSelector = (s: State) => s.dynamicContent.categoriesCards;
 
 export default handleActions<DynamicContentState, DynamicContentPayload>(handlers, INITIAL_STATE);

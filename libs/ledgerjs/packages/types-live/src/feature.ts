@@ -179,6 +179,7 @@ export type Features = CurrencyFeatures & {
   fetchAdditionalCoins: Feature_FetchAdditionalCoins;
   ptxSwapLiveApp: Feature_PtxSwapLiveApp;
   ptxSwapMoonpayProvider: Feature_PtxSwapMoonpayProvider;
+  flexibleContentCards: Feature_FlexibleContentCards;
 };
 
 /**
@@ -491,6 +492,7 @@ export type Feature_BrazeLearn = DefaultFeature;
 export type Feature_LlmNewDeviceSelection = DefaultFeature;
 export type Feature_LlmWalletQuickActions = DefaultFeature;
 export type Feature_PtxSwapMoonpayProvider = DefaultFeature;
+export type Feature_FlexibleContentCards = DefaultFeature;
 
 /**
  * Utils types.

@@ -4,6 +4,7 @@ import {
   AssetContentCard,
   LearnContentCard,
   NotificationContentCard,
+  CategoryContentCard,
 } from "../dynamicContent/types";
 import {
   DynamicContentActionTypes,
@@ -11,6 +12,7 @@ import {
   DynamicContentSetAssetCardsPayload,
   DynamicContentSetLearnCardsPayload,
   DynamicContentSetNotificationCardsPayload,
+  DynamicContentSetCategoriesCardsPayload,
 } from "./types";
 
 const setDynamicContentWalletCardsAction = createAction<DynamicContentSetWalletCardsPayload>(
@@ -33,6 +35,14 @@ const setDynamicContentLearnCardsAction = createAction<DynamicContentSetLearnCar
 
 export const setDynamicContentLearnCards = (learnCards: LearnContentCard[]) =>
   setDynamicContentLearnCardsAction(learnCards);
+
+
+const setDynamicContentCategoriesCardsAction = createAction<DynamicContentSetCategoriesCardsPayload>(
+  DynamicContentActionTypes.DYNAMIC_CONTENT_SET_CATEGORIES_CARDS,
+);
+
+export const setDynamicContentCategoriesCards = (categoriesCards: CategoryContentCard[]) =>
+  setDynamicContentCategoriesCardsAction(categoriesCards);
 
 const setDynamicContentNotificationCardsAction =
   createAction<DynamicContentSetNotificationCardsPayload>(

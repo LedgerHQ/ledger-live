@@ -1,3 +1,7 @@
+enum ContentCardsType {
+  category = "category",
+}
+
 enum LocationContentCard {
   Wallet = "wallet",
   Asset = "asset",
@@ -17,6 +21,20 @@ type ContentCard = {
   link?: string;
   image?: string;
   tag: string;
+  createdAt: number;
+  order?: number;
+};
+
+type CategoryContentCard = {
+  id: string;
+  location: LocationContentCard;
+
+  title?: string;
+  description?: string;
+  cta?: string;
+  link?: string;
+  image?: string;
+  tag?: string; // TODO : to remove from this Card and add the missing fields
   createdAt: number;
   order?: number;
 };
@@ -45,5 +63,6 @@ export type {
   WalletContentCard,
   NotificationContentCard,
   LearnContentCard,
+  CategoryContentCard,
 };
-export { LocationContentCard, Background };
+export { LocationContentCard, Background, ContentCardsType };
