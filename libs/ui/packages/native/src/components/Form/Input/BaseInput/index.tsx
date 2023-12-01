@@ -87,10 +87,11 @@ const InputContainer = styled.View<Partial<CommonProps> & { focus?: boolean }>`
   flex-direction: row;
   width: 100%;
   background: ${(p) => p.theme.colors.background.main};
-  height: 48px;
-  border: ${(p) => `1px solid ${p.theme.colors.neutral.c40}`};
-  border-radius: 24px;
+  height: 56px;
+  border: ${(p) => `1px solid ${p.theme.colors.opacityDefault.c20}`};
+  border-radius: 8px;
   color: ${(p) => p.theme.colors.neutral.c100};
+  padding: 14px 16px;
 
   ${(p) =>
     p.disabled &&
@@ -123,7 +124,6 @@ const InputContainer = styled.View<Partial<CommonProps> & { focus?: boolean }>`
 
 const BaseInput = styled.TextInput.attrs((p) => ({
   selectionColor: p.theme.colors.primary.c80 as ColorValue,
-  color: p.theme.colors.neutral.c100,
   placeholderTextColor: p.theme.colors.neutral.c80 as ColorValue,
 }))<Partial<CommonProps> & { focus?: boolean }>`
   height: 100%;
