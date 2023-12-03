@@ -1,12 +1,4 @@
-import { CSSProperties } from "react";
-import { ImageStyle, TextStyle, ViewStyle } from "react-native";
-import Animated, {
-  AnimateProps,
-  AnimateStyle,
-  AnimatedStyleProp,
-  useAnimatedStyle,
-  withSpring,
-} from "react-native-reanimated";
+import Animated, { useAnimatedStyle, withSpring } from "react-native-reanimated";
 import { useTheme } from "styled-components/native";
 
 type BulletType = "active" | "nearby" | "far" | "none";
@@ -48,6 +40,7 @@ const Bullet = ({ type }: { type: BulletType }) => {
   const animatedStyles = useAnimatedStyle(
     () => ({
       width: withSpring(bulletStyles[type].width),
+      height: withSpring(bulletStyles[type].height),
       backgroundColor: withSpring(bulletStyles[type].backgroundColor),
     }),
     [type],

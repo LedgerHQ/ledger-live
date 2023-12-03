@@ -1,7 +1,8 @@
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
-import { ComponentProps, useState } from "react";
-import { Button, Image, TouchableOpacity } from "react-native";
+import { ComponentProps } from "react";
+import { Image, TouchableOpacity } from "react-native";
 import { useTheme } from "styled-components/native";
+import { CarouselItemMetadata } from "~/cards/types";
 
 type ButtonAction = ComponentProps<typeof TouchableOpacity>["onPress"];
 
@@ -10,17 +11,11 @@ type Props = {
   subtitle: string;
 
   //
-  image: string;
+  image?: string;
 
   //
   tag?: string;
-
-  //
-  metadata?: {
-    displayed: boolean;
-    onDismiss?: ButtonAction;
-  };
-};
+} & CarouselItemMetadata;
 
 type ImageComponentProps = {
   uri: string;
@@ -97,53 +92,44 @@ const SubtitleComponent = ({ label }: TagComponentProps) => {
 /**
  *
  */
-const HorizontalCard = ({
-  title,
-  subtitle,
-  image,
-  tag,
-
-  metadata = {
-    displayed: true,
-    onDismiss: () => {},
-  },
-}: Props) => {
+const HorizontalCard = ({ title, subtitle, image, tag, metadata }: Props) => {
   const { colors, space } = useTheme();
 
   const isDismissable = !!metadata.onDismiss;
   const isTag = !!tag;
 
   return (
-    <Flex
-      bg={colors.opacityDefault.c05}
-      p="13px"
-      borderRadius="12px"
-      flexDirection="row"
-      justifyContent="space-between"
-      alignItems="center"
-      columnGap={13}
-      style={{ display: metadata.displayed ? "flex" : "none" }}
-    >
-      <ImageComponent uri={image} />
+    <TouchableOpacity onPress={metadata.onClick}>
+      <Flex
+        bg={colors.opacityDefault.c05}
+        p="13px"
+        borderRadius="12px"
+        flexDirection="row"
+        justifyContent="space-between"
+        alignItems="center"
+        columnGap={13}
+      >
+        {image && <ImageComponent uri={image} />}
 
-      <Flex flexGrow={1} rowGap={space[2]}>
-        <Flex flexDirection="row" justifyContent="space-between" columnGap={space[3]}>
-          <Flex overflow={"hidden"} flex={1}>
-            <TitleComponent label={title} />
+        <Flex flexGrow={1} rowGap={space[2]}>
+          <Flex flexDirection="row" justifyContent="space-between" columnGap={space[3]}>
+            <Flex overflow={"hidden"} flex={1}>
+              <TitleComponent label={title} />
+            </Flex>
+
+            <Flex alignSelf="center" height="16px">
+              {isDismissable ? (
+                <CloseComponent onPress={metadata.onDismiss} />
+              ) : (
+                isTag && <TagComponent label={tag} />
+              )}
+            </Flex>
           </Flex>
 
-          <Flex alignSelf="center" height="16px">
-            {isDismissable ? (
-              <CloseComponent onPress={metadata.onDismiss} />
-            ) : (
-              isTag && <TagComponent label={tag} />
-            )}
-          </Flex>
+          <SubtitleComponent label={subtitle} />
         </Flex>
-
-        <SubtitleComponent label={subtitle} />
       </Flex>
-    </Flex>
+    </TouchableOpacity>
   );
 };
 

@@ -1,10 +1,21 @@
 import { Flex } from "@ledgerhq/native-ui";
-import { useRef, useState } from "react";
-import { Dimensions, ScrollView } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import {
+  Dimensions,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  ScrollView,
+  View,
+} from "react-native";
+import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
+import { useTheme } from "styled-components/native";
 import Bullet from "./bullets";
+import { CarouselItem } from "./utils";
 
-type Props = {
-  elements: React.ReactNode[];
+const width = Dimensions.get("screen").width;
+
+type Props<P> = {
+  items: CarouselItem<P>[];
 
   //
   gap?: number;
@@ -13,45 +24,68 @@ type Props = {
 /**
  *
  */
-const Carousel = ({ elements, gap = 6 }: Props) => {
-  const ref = useRef<ScrollView>(null);
+const Carousel = <P,>({ items: initialItems, gap = 6 }: Props<P>) => {
+  const { space } = useTheme();
 
-  const [index, setIndex] = useState(1);
+  const carouselRef = useRef<ScrollView>(null);
 
-  const handleMomentumScrollEnd = (event: any) => {
-    const contentOffsetX = event.nativeEvent.contentOffset.x;
-    const newIndex = Math.round(contentOffsetX / event.nativeEvent.layoutMeasurement.width);
+  const [carouselIndex, setCarouselIndex] = useState(0);
+  const [items, setItems] = useState(initialItems.filter(item => item.props.metadata.displayed));
 
-    if (newIndex !== index) {
-      setIndex(newIndex);
+  const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const contentOffsetX = e.nativeEvent.contentOffset.x;
+    const newIndex = Math.round(contentOffsetX / e.nativeEvent.layoutMeasurement.width);
+
+    if (newIndex !== carouselIndex) {
+      setCarouselIndex(newIndex);
     }
   };
 
+  useEffect(() => {
+    setItems(() => initialItems.filter(item => item.props.metadata.displayed));
+  }, [...initialItems.map(item => item.props.metadata?.displayed)]);
+
   return (
-    <Flex rowGap={8}>
+    <View style={{ flex: 1, gap: 8 }}>
       <ScrollView
-        ref={ref}
+        style={{ flex: 1 }}
+        ref={carouselRef}
         horizontal
         showsHorizontalScrollIndicator={false}
-        pagingEnabled={true}
-        onScroll={handleMomentumScrollEnd}
+        onScroll={onScroll}
         scrollEventThrottle={16}
+        bounces={false}
+        snapToInterval={width}
+        decelerationRate={0}
       >
-        {elements.map((item, index) => (
-          <Flex key={index} width={Dimensions.get("screen").width} position={"relative"} px={gap}>
-            {item}
-          </Flex>
+        {items.map(item => (
+          <Animated.View
+            key={item.props.metadata.id}
+            entering={FadeIn}
+            exiting={FadeOut}
+            layout={Layout.delay(100)}
+            style={{ width, flex: 1, paddingHorizontal: space[gap] }}
+          >
+            {<item.component {...item.props} />}
+          </Animated.View>
         ))}
       </ScrollView>
 
       <Flex flexDirection="row" columnGap={4} justifyContent="center">
-        {elements.map((_, _index) => (
+        {items.map((item, index) => (
           <Bullet
-            type={_index === index ? "active" : Math.abs(_index - index) === 1 ? "nearby" : "far"}
+            key={item.props.metadata.id}
+            type={
+              index === carouselIndex
+                ? "active"
+                : Math.abs(index - carouselIndex) === 1
+                ? "nearby"
+                : "far"
+            }
           />
         ))}
       </Flex>
-    </Flex>
+    </View>
   );
 };
 
