@@ -23,7 +23,7 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
       expect(hasFeesProvided).toBe(false);
 
       expect(liveTx).toMatchInlineSnapshot(`
-Object {
+{
   "amount": "100000",
   "era": null,
   "family": "polkadot",
@@ -33,7 +33,7 @@ Object {
   "recipient": "0xABCDEF",
   "rewardDestination": null,
   "useAllAmount": false,
-  "validators": Array [],
+  "validators": [],
 }
 `);
     });
@@ -57,7 +57,7 @@ Object {
       expect(hasFeesProvided).toBe(false);
 
       expect(liveTx).toMatchInlineSnapshot(`
-Object {
+{
   "amount": "100000",
   "era": "1",
   "family": "polkadot",
@@ -67,7 +67,7 @@ Object {
   "recipient": "0xABCDEF",
   "rewardDestination": null,
   "useAllAmount": false,
-  "validators": Array [],
+  "validators": [],
 }
 `);
     });
@@ -90,7 +90,7 @@ Object {
       expect(hasFeesProvided).toBe(false);
 
       expect(liveTx).toMatchInlineSnapshot(`
-Object {
+{
   "amount": "100000",
   "era": null,
   "family": "polkadot",
@@ -100,7 +100,7 @@ Object {
   "recipient": "0xABCDEF",
   "rewardDestination": null,
   "useAllAmount": false,
-  "validators": Array [],
+  "validators": [],
 }
 `);
     });
@@ -124,7 +124,7 @@ Object {
       expect(hasFeesProvided).toBe(true);
 
       expect(liveTx).toMatchInlineSnapshot(`
-Object {
+{
   "amount": "100000",
   "era": null,
   "family": "polkadot",
@@ -135,7 +135,7 @@ Object {
   "recipient": "0xABCDEF",
   "rewardDestination": null,
   "useAllAmount": false,
-  "validators": Array [],
+  "validators": [],
 }
 `);
     });

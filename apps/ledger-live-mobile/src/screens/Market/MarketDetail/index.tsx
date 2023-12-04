@@ -6,10 +6,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useSingleCoinMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import { AccountLike, SubAccount } from "@ledgerhq/types-live";
+
 import {
   readOnlyModeEnabledSelector,
   starredMarketCoinsSelector,
 } from "../../../reducers/settings";
+import SafeAreaView from "../../../components/SafeAreaView";
 import { useLocale } from "../../../context/Locale";
 import CircleCurrencyIcon from "../../../components/CircleCurrencyIcon";
 import { IconContainer } from "../MarketRowItem";
@@ -24,9 +26,6 @@ import Button from "../../../components/wrappedUi/Button";
 import MarketGraph from "./MarketGraph";
 import { ScreenName } from "../../../const";
 import { withDiscreetMode } from "../../../context/DiscreetModeContext";
-import TabBarSafeAreaView, {
-  TAB_BAR_SAFE_HEIGHT,
-} from "../../../components/TabBar/TabBarSafeAreaView";
 import useNotifications from "../../../logic/notifications";
 import { FabMarketActions } from "../../../components/FabActions/actionsList/market";
 import {
@@ -179,9 +178,8 @@ function MarketDetail({ navigation, route }: NavigationProps) {
   const [hoveredItem, setHoverItem] = useState<Item | null | undefined>(null);
 
   return (
-    <TabBarSafeAreaView style={{ backgroundColor: colors.background.main }}>
+    <SafeAreaView edges={["top", "left", "right"]} isFlex>
       <ScrollContainerHeader
-        contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
         TopLeftSection={<BackButton navigation={navigation} />}
         MiddleSection={
           <Flex height={48} flexDirection="row" justifyContent="flex-start" alignItems="center">
@@ -287,7 +285,7 @@ function MarketDetail({ navigation, route }: NavigationProps) {
           <MarketStats currency={currency} counterCurrency={counterCurrency} />
         )}
       </ScrollContainerHeader>
-    </TabBarSafeAreaView>
+    </SafeAreaView>
   );
 }
 

@@ -1,15 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`stargaze currency bridge scanAccounts stargaze seed 1 1`] = `
-Array [
-  Object {
+[
+  {
     "balance": "2000000",
     "currencyId": "stargaze",
     "derivationMode": "",
     "freshAddress": "stars1gyauvl44q2apn3u3aujm36q8zrj74vrypyf2yc",
     "freshAddressPath": "44'/118'/0'/0/0",
-    "freshAddresses": Array [
-      Object {
+    "freshAddresses": [
+      {
         "address": "stars1gyauvl44q2apn3u3aujm36q8zrj74vrypyf2yc",
         "derivationPath": "44'/118'/0'/0/0",
       },
@@ -18,24 +18,24 @@ Array [
     "index": 0,
     "name": "Stargaze 1",
     "nfts": undefined,
-    "pendingOperations": Array [],
+    "pendingOperations": [],
     "seedIdentifier": "03d5e0ebb3f1ae2afe87e5d5a24b5029a59cc12f8fd1056840091b2f0b97e54e83",
     "spendableBalance": "2000000",
     "starred": false,
-    "swapHistory": Array [],
+    "swapHistory": [],
     "syncHash": undefined,
     "unitMagnitude": 6,
     "used": true,
     "xpub": "stars1gyauvl44q2apn3u3aujm36q8zrj74vrypyf2yc",
   },
-  Object {
+  {
     "balance": "0",
     "currencyId": "stargaze",
     "derivationMode": "",
     "freshAddress": "stars1v2mp0m7k96dm9qv60fkspcqlzpkzrwnekeys8l",
     "freshAddressPath": "44'/118'/1'/0/0",
-    "freshAddresses": Array [
-      Object {
+    "freshAddresses": [
+      {
         "address": "stars1v2mp0m7k96dm9qv60fkspcqlzpkzrwnekeys8l",
         "derivationPath": "44'/118'/1'/0/0",
       },
@@ -44,11 +44,11 @@ Array [
     "index": 1,
     "name": "Stargaze 2",
     "nfts": undefined,
-    "pendingOperations": Array [],
+    "pendingOperations": [],
     "seedIdentifier": "03d5e0ebb3f1ae2afe87e5d5a24b5029a59cc12f8fd1056840091b2f0b97e54e83",
     "spendableBalance": "0",
     "starred": false,
-    "swapHistory": Array [],
+    "swapHistory": [],
     "syncHash": undefined,
     "unitMagnitude": 6,
     "used": false,
@@ -58,8 +58,8 @@ Array [
 `;
 
 exports[`stargaze currency bridge scanAccounts stargaze seed 1 2`] = `
-Array [
-  Array [],
-  Array [],
+[
+  [],
+  [],
 ]
 `;

@@ -1,6 +1,7 @@
 import React, { memo, useCallback, useState, useMemo } from "react";
 import { Flex, IconsLegacy } from "@ledgerhq/native-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import SafeAreaView from "../../components/SafeAreaView";
 import { useNavigation } from "@react-navigation/native";
 import { WebViewMessageEvent } from "react-native-webview";
 import { useTranslation } from "react-i18next";
@@ -103,7 +104,7 @@ const PurchaseDevice = () => {
   );
 
   return (
-    <>
+    <SafeAreaView isFlex>
       <WebViewScreen
         screenName={t("purchaseDevice.pageTitle")}
         uri={urlWithParam}
@@ -139,7 +140,7 @@ const PurchaseDevice = () => {
           onChange={setUrl}
         />
       )}
-    </>
+    </SafeAreaView>
   );
 };
 

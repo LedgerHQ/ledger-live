@@ -22,7 +22,7 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
       expect(hasFeesProvided).toBe(false);
 
       expect(liveTx).toMatchInlineSnapshot(`
-Object {
+{
   "amount": "100000",
   "chainId": 0,
   "family": "evm",
@@ -59,7 +59,7 @@ Object {
       expect(hasFeesProvided).toBe(true);
 
       expect(liveTx).toMatchInlineSnapshot(`
-Object {
+{
   "amount": "100000",
   "chainId": 0,
   "customGasLimit": "21000",
@@ -98,7 +98,7 @@ Object {
       expect(hasFeesProvided).toBe(true);
 
       expect(liveTx).toMatchInlineSnapshot(`
-Object {
+{
   "amount": "100000",
   "chainId": 0,
   "customGasLimit": "21000",
@@ -135,7 +135,7 @@ Object {
       expect(hasFeesProvided).toBe(false);
 
       expect(liveTx).toMatchInlineSnapshot(`
-Object {
+{
   "amount": "100000",
   "chainId": 0,
   "customGasLimit": "21000",
@@ -172,7 +172,7 @@ Object {
       expect(hasFeesProvided).toBe(false);
 
       expect(liveTx).toMatchInlineSnapshot(`
-Object {
+{
   "amount": "100000",
   "chainId": 0,
   "family": "evm",
@@ -208,11 +208,11 @@ Object {
       expect(hasFeesProvided).toBe(false);
 
       expect(liveTx).toMatchInlineSnapshot(`
-Object {
+{
   "amount": "100000",
   "chainId": 0,
-  "data": Object {
-    "data": Array [
+  "data": {
+    "data": [
       116,
       101,
       115,
@@ -264,7 +264,7 @@ Object {
       expect(hasFeesProvided).toBe(false);
 
       expect(liveTx).toMatchInlineSnapshot(`
-Object {
+{
   "amount": "100000",
   "chainId": 1,
   "family": "evm",

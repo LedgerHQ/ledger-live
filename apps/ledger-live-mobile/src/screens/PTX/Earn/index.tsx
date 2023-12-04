@@ -1,13 +1,12 @@
 import React, { memo } from "react";
-import { Platform } from "react-native";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import {
   useRemoteLiveAppContext,
   useRemoteLiveAppManifest,
 } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+import TabBarSafeAreaView from "../../../components/TabBar/TabBarSafeAreaView";
 import { useTheme } from "styled-components/native";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import TrackScreen from "../../../analytics/TrackScreen";
 import GenericErrorView from "../../../components/GenericErrorView";
 import { WebPTXPlayer } from "../../../components/WebPTXPlayer";
@@ -20,7 +19,6 @@ import {
   languageSelector,
 } from "../../../reducers/settings";
 import { useSelector } from "react-redux";
-import { MAIN_BUTTON_BOTTOM, MAIN_BUTTON_SIZE } from "../../../components/TabBar/shared";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
 export type Props = StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenName.Earn>;
@@ -35,8 +33,6 @@ function Earn({ route }: Props) {
   const language = useSelector(languageSelector);
   const { ticker: currencyTicker } = useSelector(counterValueCurrencySelector);
   const discreet = useSelector(discreetModeSelector);
-  const insets = useSafeAreaInsets();
-
   const { platform: appId, ...params } = route.params || {};
   const searchParams = route.path
     ? new URL("ledgerlive://" + route.path).searchParams
@@ -53,19 +49,8 @@ function Earn({ route }: Props) {
     console.error(appManifestNotFoundError);
   }
 
-  const isAndroid = Platform.OS === "android";
-
   return manifest ? (
-    <Flex
-      /**
-       * NB: not using SafeAreaView because it flickers during navigation
-       * https://github.com/th3rdwave/react-native-safe-area-context/issues/219
-       */
-      flex={1}
-      pt={insets.top}
-      pb={isAndroid ? MAIN_BUTTON_BOTTOM : MAIN_BUTTON_SIZE} // iOS calculates differently
-      backgroundColor={"background.main"} // Earn app bg color
-    >
+    <TabBarSafeAreaView>
       <TrackScreen category="EarnDashboard" name="Earn" />
       <WebPTXPlayer
         manifest={manifest}
@@ -80,7 +65,7 @@ function Earn({ route }: Props) {
           ...Object.fromEntries(searchParams.entries()),
         }}
       />
-    </Flex>
+    </TabBarSafeAreaView>
   ) : (
     <Flex flex={1} p={10} justifyContent="center" alignItems="center">
       {remoteLiveAppState.isLoading ? (

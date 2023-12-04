@@ -47,7 +47,7 @@ export default {
     },
   },
   argTypes: {
-    content: { type: "string", defaultValue: "Hello World!" },
+    content: { type: "string" },
     visible: { options: [true, false, undefined] },
     disabled: { type: "boolean" },
     placement: {
@@ -70,6 +70,9 @@ export default {
         "auto-end",
       ],
     },
+  },
+  args: {
+    content: "Hello World!",
   },
 };
 

@@ -62,6 +62,8 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
   // Used to know if a first genuine check already happened and to pass the information to the ESC
   const [isAlreadyGenuine, setIsAlreadyGenuine] = useState<boolean>(false);
 
+  const [isPreviousUpdateCancelled, setIsPreviousUpdateCancelled] = useState<boolean>(false);
+
   // States handling a UI trick to hide the header while the desync alert overlay
   // is displayed from the companion
   const [isHeaderOverlayOpen, setIsHeaderOverlayOpen] = useState<boolean>(false);
@@ -123,7 +125,16 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
   // Probably because the device restarted.
   // If the caller knows that the device is already genuine, save this information.
   const notifyEarlySecurityCheckShouldReset = useCallback(
-    ({ isAlreadyGenuine }: { isAlreadyGenuine: boolean } = { isAlreadyGenuine: false }) => {
+    (
+      {
+        isAlreadyGenuine,
+        isPreviousUpdateCancelled,
+      }: { isAlreadyGenuine: boolean; isPreviousUpdateCancelled: boolean } = {
+        isAlreadyGenuine: false,
+        isPreviousUpdateCancelled: false,
+      },
+    ) => {
+      setIsPreviousUpdateCancelled(isPreviousUpdateCancelled);
       setIsAlreadyGenuine(isAlreadyGenuine);
       setCurrentStep("loading");
       // Resets the polling state because it could return the same result object (and so no state has changed)
@@ -276,6 +287,7 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
       <EarlySecurityCheck
         device={device}
         isAlreadyGenuine={isAlreadyGenuine}
+        isPreviousUpdateCancelled={isPreviousUpdateCancelled}
         notifyOnboardingEarlyCheckEnded={notifyOnboardingEarlyCheckEnded}
         notifyEarlySecurityCheckShouldReset={notifyEarlySecurityCheckShouldReset}
         onCancelOnboarding={onCancelEarlySecurityCheck}
