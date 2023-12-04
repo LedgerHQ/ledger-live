@@ -4,6 +4,7 @@ import semver from "semver";
 import { Feature, FeatureId } from "@ledgerhq/types-live";
 import { getEnv } from "@ledgerhq/live-env";
 import { LiveConfig } from "../LiveConfig";
+import { getValueByKey } from "../providers/firebaseRemoteConfig";
 
 export type FirebaseFeatureFlagsProviderProps = PropsWithChildren<unknown>;
 export const formatToFirebaseFeatureId = (id: string) => `feature_${snakeCase(id)}`;
@@ -88,7 +89,7 @@ export const getFeature = (args: {
         };
     }
 
-    const value = LiveConfig.getInstance().providerGetvalueMethod!["firebaseRemoteConfig"]!(
+    const value = LiveConfig.getInstance().providerGetvalueMethod!.firebaseRemoteConfig!(
       formatToFirebaseFeatureId(key),
     );
 
