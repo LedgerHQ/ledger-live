@@ -1,17 +1,10 @@
 import { LiveConfig } from "../../LiveConfig";
-import { ConfigKeys, configSchema } from "./schema";
+import { ConfigKeys, configSchema, defaultConfig } from "./schema";
 
 export function getValueByKey(key: ConfigKeys) {
   const configInstance = LiveConfig.getInstance();
-  const defaultConfig = configSchema.parse({});
+  const value = configInstance.providerGetvalueMethod?.firebaseRemoteConfig?.(key);
 
-  if (!configInstance.providerGetvalueMethod) {
-    // return all default values
-    return defaultConfig[key];
-  }
-
-  const configProvier = LiveConfig.getInstance().providerGetvalueMethod;
-  const value = configProvier?.firebaseRemoteConfig?.(key);
-
-  return configSchema.shape[key].parse(value);
+  console.log({ [key]: configSchema.shape[key].parse(value) });
+  return configSchema.shape[key].parse(value) ?? defaultConfig[key];
 }

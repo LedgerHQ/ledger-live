@@ -2,7 +2,9 @@ import { SupportedProviders } from "./providers";
 
 // refer to https://github.com/firebase/firebase-js-sdk/blob/master/packages/remote-config/src/public_types.ts#L71 for the firebase config value interface
 export interface Value {
-  asString(s: unknown): string;
+  asString(): string;
+  asBoolean(): boolean;
+  asNumber(): number;
 }
 
 type ProviderGetValueMethod = { [provider in SupportedProviders]?: (key: string) => Value };

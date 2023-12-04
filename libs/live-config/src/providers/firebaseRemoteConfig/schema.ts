@@ -1,26 +1,57 @@
 import { z } from "zod";
 import { Provider } from "..";
+import { Value } from "../../LiveConfig";
 
 export interface FirebaseRemoteConfigProvider extends Provider {
   name: "firebaseRemoteConfig";
-  value: {
-    asString: (value: unknown) => string;
-    asBoolean: (value: unknown) => boolean;
-    asNumber: (value: unknown) => number;
-  };
 }
 
+const defaultEnabledSchema = z.object({ enabled: z.boolean().default(false) });
+
+export const stringParser = (value: unknown) => {
+  return (value as Value).asString() || undefined;
+};
+
+export const booleanParser = (value: unknown) => {
+  const valueExist = (value as Value).asString();
+  return valueExist.length > 0 ? (value as Value).asBoolean() : undefined;
+};
+
+export const numberParser = (value: unknown) => {
+  const numberValue = (value as Value).asNumber();
+  return numberValue !== 0 ? numberValue : undefined;
+};
+
+export const objectParser = (value: unknown) => {
+  const stringValue = (value as Value).asString();
+  return stringValue ? JSON.parse(stringValue) : undefined;
+};
+
 export const configSchema = z.object({
-  /** this is key 1 */
-  key1: z.number().min(0).default(1),
-  /** this is key 2 */
-  key2: z.string().min(1).default("2234ffdafs"),
-  /** this is key 3 */
-  key3: z.number().default(2.9),
-  /** this is key 4 */
-  key4: z.boolean().default(true),
+  cosmos_gas_amplifer1: z.preprocess(booleanParser, z.boolean().default(true)),
+  cosmos_gas_amplifer: z.preprocess(numberParser, z.number().default(1)),
+  feature_test1: z.preprocess(stringParser, z.string().default("default value")),
+  feature_app_author_name: z.preprocess(objectParser, defaultEnabledSchema),
+  test_string_key: z.preprocess(stringParser, z.string().default("test_key")),
+  test_number_key: z.preprocess(numberParser, z.number().default(17)),
+  test_boolean_key: z.preprocess(booleanParser, z.boolean().default(true)),
+  test_object_key: z.preprocess(
+    objectParser,
+    z.object({ key: z.string() }).default({ key: "value" }),
+  ),
 });
 
 export type Config = z.infer<typeof configSchema>;
 
 export type ConfigKeys = keyof Config;
+
+export const defaultConfig: Config = {
+  cosmos_gas_amplifer1: true,
+  cosmos_gas_amplifer: 0.5,
+  feature_test1: "default value",
+  feature_app_author_name: { enabled: false },
+  test_string_key: "test_key",
+  test_number_key: 23456,
+  test_boolean_key: true,
+  test_object_key: { key: "value" },
+};

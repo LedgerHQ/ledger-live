@@ -88,7 +88,7 @@ export const getFeature = (args: {
         };
     }
 
-    const value = LiveConfig.getInstance().providerGetvalueMethod!["firebaseRemoteConfig"](
+    const value = LiveConfig.getInstance().providerGetvalueMethod!["firebaseRemoteConfig"]!(
       formatToFirebaseFeatureId(key),
     );
 
