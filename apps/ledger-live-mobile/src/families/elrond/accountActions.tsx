@@ -7,7 +7,7 @@ import { IconsLegacy } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
 
 import type { Account } from "@ledgerhq/types-live";
-import type { ActionButtonEvent } from "../../components/FabActions";
+import type { ActionButtonEvent, NavigationParamsType } from "../../components/FabActions";
 
 import { NavigatorName, ScreenName } from "../../const";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
@@ -22,8 +22,6 @@ export interface getActionsType {
   parentRoute: RouteProp<ParamListBase, ScreenName>;
 }
 export type getActionsReturnType = ActionButtonEvent[] | null | undefined;
-
-type NavigationParamsType = readonly [name: string, options: object];
 
 /*
  * Declare the function that will return the actions' settings array.
@@ -58,7 +56,7 @@ const getMainActions = ({
   /*
    * Return the array of actions.
    */
-  const navigationParams = delegationEnabled
+  const navigationParams: NavigationParamsType = delegationEnabled
     ? [
         NavigatorName.ElrondDelegationFlow,
         { screen, params: { account, validators, source: parentRoute } },
@@ -78,7 +76,7 @@ const getMainActions = ({
       id: "stake",
       label: <Trans i18nKey="account.stake" />,
       Icon: IconsLegacy.CoinsMedium,
-      navigationParams: navigationParams as unknown as NavigationParamsType,
+      navigationParams,
       event: "button_clicked",
       eventProperties: {
         button: "stake",
