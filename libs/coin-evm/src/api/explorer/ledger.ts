@@ -4,7 +4,6 @@ import { getEnv } from "@ledgerhq/live-env";
 import { delay } from "@ledgerhq/live-promise";
 import { Operation } from "@ledgerhq/types-live";
 import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
-import { ExplorerApi, isLedgerExplorerConfig } from "./types";
 import { LedgerExplorerUsedIncorrectly } from "../../errors";
 import { LedgerExplorerOperation } from "../../types";
 import {
@@ -13,6 +12,7 @@ import {
   ledgerERC721EventToOperations,
   ledgerOperationToOperations,
 } from "../../adapters/index";
+import { ExplorerApi, isLedgerExplorerConfig } from "./types";
 
 export const BATCH_SIZE = 10_000;
 export const LEDGER_TIMEOUT = 200; // 200ms between 2 calls
