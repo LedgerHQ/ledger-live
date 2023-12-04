@@ -160,8 +160,9 @@ const SwapForm = () => {
     const customFeeConfig = transaction && getCustomFeesPerFamily(transaction);
     // The Swap web app will automatically recreate the transaction with "default" fees.
     // However, if you wish to use a different fee type, you will need to set it as custom.
-    const isCustomFee =
-      feesStrategy === "slow" || feesStrategy === "fast" || feesStrategy === "custom";
+    const feeStrategyParam = ["slow", "fast", "custom"].includes(feesStrategy)
+      ? "CUSTOM"
+      : "MEDIUM";
 
     return {
       fromAccountId,
@@ -169,7 +170,7 @@ const SwapForm = () => {
       fromAmount: fromAmount?.toString(),
       quoteId: rateId ? rateId : undefined,
       rate: rate?.toString(),
-      feeStrategy: (isCustomFee ? "custom" : "medium")?.toUpperCase(),
+      feeStrategy: feeStrategyParam,
       customFeeConfig: customFeeConfig ? JSON.stringify(customFeeConfig) : undefined,
       toNewTokenId,
     };
