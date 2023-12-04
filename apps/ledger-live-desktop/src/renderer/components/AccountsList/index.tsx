@@ -8,7 +8,6 @@ import FakeLink from "~/renderer/components/FakeLink";
 import { SpoilerIcon } from "~/renderer/components/Spoiler";
 import { openURL } from "~/renderer/linking";
 import AccountRow from "./AccountRow";
-import { getValueByKey } from "@ledgerhq/live-config/firebaseRemoteConfig/index";
 
 export type AccountListProps = {
   accounts: Account[];

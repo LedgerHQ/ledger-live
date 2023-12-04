@@ -53426,6 +53426,7 @@ packages:
       fast-json-stable-stringify: 2.1.0
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
       jest: 28.1.3(@types/node@20.8.10)
 =======
       jest: 28.1.3(@types/node@20.8.9)
@@ -53433,6 +53434,9 @@ packages:
 =======
       jest: 28.1.3
 >>>>>>> 9435050afb (no need for default config)
+=======
+      jest: 28.1.3(@types/node@20.8.9)
+>>>>>>> df53769180 (remove logs)
       jest-util: 28.1.3
       json5: 2.2.3
       lodash.memoize: 4.1.2
