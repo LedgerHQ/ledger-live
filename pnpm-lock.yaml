@@ -4263,7 +4263,7 @@ importers:
         specifier: ^20.2.5
         version: 20.8.9
       firebase:
-        specifier: ^9.6.6
+        specifier: ^9.8.1
         version: 9.8.1
       jest:
         specifier: ^28.1.1
@@ -27382,7 +27382,7 @@ packages:
       babel-plugin-syntax-jsx: 6.18.0
       lodash: 4.17.21
       picomatch: 2.3.1
-      styled-components: 5.3.5(react-is@18.1.0)(react@18.2.0)
+      styled-components: 5.3.5(react-dom@18.2.0)(react-is@17.0.2)(react@18.2.0)
 
   /babel-plugin-syntax-jsx@6.18.0:
     resolution: {integrity: sha512-qrPaCSo9c8RHNRHIotaufGbuOBN8rtdC4QrrFFc43vyWCCz7Kl7GL1PGaXtMGQZUXrkCjNEgxDfmAuAabr/rlw==}
@@ -52004,6 +52004,7 @@ packages:
       react-is: 18.1.0
       shallowequal: 1.1.0
       supports-color: 5.5.0
+    dev: false
 
   /styled-components@6.0.7(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-xIwWuiRMYR43mskVsW9MGTRjSo7ol4bcVjT595fGUp3OLBJOlOgaiKaxsHdC4a2HqWKqKnh0CmcRbk5ogyDjTg==}
@@ -53424,10 +53425,14 @@ packages:
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
 <<<<<<< HEAD
+<<<<<<< HEAD
       jest: 28.1.3(@types/node@20.8.10)
 =======
       jest: 28.1.3(@types/node@20.8.9)
 >>>>>>> 4551c80126 (zod schema)
+=======
+      jest: 28.1.3
+>>>>>>> 9435050afb (no need for default config)
       jest-util: 28.1.3
       json5: 2.2.3
       lodash.memoize: 4.1.2
@@ -58191,13 +58196,21 @@ packages:
     id: file:libs/ui/packages/crypto-icons
     name: '@ledgerhq/crypto-icons-ui'
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 1bd2db7ecd (no need for default config)
 <<<<<<< HEAD
     version: 0.6.1
 =======
     version: 0.6.0
 >>>>>>> 18ff7a94e5 (fix: build error)
+<<<<<<< HEAD
 >>>>>>> 049d6cc765 (fix: build error)
+=======
+=======
+>>>>>>> 9435050afb (no need for default config)
+>>>>>>> 1bd2db7ecd (no need for default config)
     peerDependencies:
       '@types/react': '*'
       react: '*'
@@ -58217,7 +58230,6 @@ packages:
     resolution: {directory: libs/ui/packages/icons, type: directory}
     id: file:libs/ui/packages/icons
     name: '@ledgerhq/icons-ui'
-    version: 0.6.2
     peerDependencies:
       '@types/react': '*'
       react: '*'

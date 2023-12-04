@@ -14,7 +14,7 @@ export const stringParser = (value: unknown) => {
 
 export const booleanParser = (value: unknown) => {
   const valueExist = (value as Value).asString();
-  return valueExist.length > 0 ? (value as Value).asBoolean() : undefined;
+  return valueExist ? (value as Value).asBoolean() : undefined;
 };
 
 export const numberParser = (value: unknown) => {
@@ -44,14 +44,3 @@ export const configSchema = z.object({
 export type Config = z.infer<typeof configSchema>;
 
 export type ConfigKeys = keyof Config;
-
-export const defaultConfig: Config = {
-  cosmos_gas_amplifer1: true,
-  cosmos_gas_amplifer: 0.5,
-  feature_test1: "default value",
-  feature_app_author_name: { enabled: false },
-  test_string_key: "test_key",
-  test_number_key: 23456,
-  test_boolean_key: true,
-  test_object_key: { key: "value" },
-};

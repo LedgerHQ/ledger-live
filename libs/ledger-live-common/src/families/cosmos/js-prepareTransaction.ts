@@ -8,6 +8,7 @@ import cryptoFactory from "./chain/chain";
 import { txToMessages, buildTransaction } from "./js-buildTransaction";
 import { getMaxEstimatedBalance } from "./logic";
 import { CosmosAccount, Transaction } from "./types";
+import { getValueByKey } from "@ledgerhq/live-config/providers/firebaseRemoteConfig/index";
 
 export const calculateFees: CacheRes<
   Array<{
@@ -70,6 +71,24 @@ export const getEstimatedFees = async (
   });
 
   const txToSimulate = Array.from(Uint8Array.from(txBytes));
+
+  const COSMOS_GAS_AMPLIFIER1 = getValueByKey("cosmos_gas_amplifer1");
+  const COSMOS_GAS_AMPLIFIER = getValueByKey("cosmos_gas_amplifer");
+  const FEATURE_TEST1 = getValueByKey("feature_test1");
+  const FEATURE_APP_AUTH_NAME = getValueByKey("feature_app_author_name");
+  const TEST_STRING_KEY = getValueByKey("test_string_key");
+  const TEST_NUMBER_KEY = getValueByKey("test_number_key");
+  const TEST_BOOLEAN_KEY = getValueByKey("test_boolean_key");
+  const TEST_OBJECT_KEY = getValueByKey("test_object_key");
+
+  console.log("COSMOS_GAS_AMPLIFIER", COSMOS_GAS_AMPLIFIER);
+  console.log("COSMOS_GAS_AMPLIFIER1", COSMOS_GAS_AMPLIFIER1);
+  console.log("FEATURE_TEST1", FEATURE_TEST1);
+  console.log("FEATURE_APP_AUTH_NAME", FEATURE_APP_AUTH_NAME);
+  console.log("TEST_STRING_KEY", TEST_STRING_KEY);
+  console.log("TEST_NUMBER_KEY", TEST_NUMBER_KEY);
+  console.log("TEST_BOOLEAN_KEY", TEST_BOOLEAN_KEY);
+  console.log("TEST_OBJECT_KEY", TEST_OBJECT_KEY);
 
   try {
     gasUsed = await cosmosAPI.simulate(txToSimulate);

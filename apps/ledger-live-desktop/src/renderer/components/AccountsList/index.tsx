@@ -8,6 +8,7 @@ import FakeLink from "~/renderer/components/FakeLink";
 import { SpoilerIcon } from "~/renderer/components/Spoiler";
 import { openURL } from "~/renderer/linking";
 import AccountRow from "./AccountRow";
+import { getValueByKey } from "@ledgerhq/live-config/firebaseRemoteConfig/index";
 
 export type AccountListProps = {
   accounts: Account[];
@@ -84,6 +85,7 @@ class AccountsList extends Component<
     const withToggleAll = !!onSelectAll && !!onUnselectAll && accounts.length > 1;
     const isAllSelected =
       !checkedIds || accounts.every(acc => !!checkedIds.find(id => acc.id === id));
+
     return (
       <Box flow={3} mt={4}>
         {(title || withToggleAll) && (
