@@ -24,7 +24,9 @@ const Title = styled(Box).attrs(() => ({
   fontSize: 6,
   color: "palette.text.shade100",
 }))`
-  font-weight: 500;
+  font-weight: 600;
+  white-space: pre-wrap;
+  text-align: center;
 `;
 
 const StepConfirmation = ({ error, deviceModelId }: StepProps) => {
@@ -105,6 +107,7 @@ export const StepConfirmFooter = ({
       <Track event={"FirmwareUpdatedClose"} onUnmount />
       <Button
         variant="main"
+        mt={2}
         onClick={
           finalStepSuccessButtonOnClick
             ? finalStepSuccessButtonOnClick

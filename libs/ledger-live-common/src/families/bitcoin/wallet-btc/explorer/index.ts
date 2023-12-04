@@ -68,14 +68,6 @@ class BitcoinLikeExplorer implements IExplorer {
     return data;
   }
 
-  async getRelayFee(): Promise<number> {
-    const { data } = await network({
-      method: "GET",
-      url: `${this.baseUrl}/network`,
-    });
-    return parseFloat(data["relay_fee"]);
-  }
-
   async getPendings(address: Address, nbMax = 1000): Promise<TX[]> {
     const params: ExplorerParams = {
       batch_size: nbMax,

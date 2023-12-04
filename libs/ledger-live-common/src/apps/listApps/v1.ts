@@ -3,7 +3,7 @@ import { DeviceModelId, getDeviceModel, identifyTargetId } from "@ledgerhq/devic
 import { UnexpectedBootloader } from "@ledgerhq/errors";
 import { Observable, throwError } from "rxjs";
 import { App, AppType, DeviceInfo } from "@ledgerhq/types-live";
-import { log } from "@ledgerhq/logs";
+import { LocalTracer } from "@ledgerhq/logs";
 import type { ListAppsEvent, ListAppsResult } from "../types";
 import manager, { getProviderId } from "../../manager";
 import staxFetchImageSize from "../../hw/staxFetchImageSize";
@@ -25,7 +25,8 @@ const emptyHashData = "000000000000000000000000000000000000000000000000000000000
 //TODO if you are reading this, don't worry, a big rewrite is coming and we'll be able
 //to simplify this a lot. Stay calm.
 const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<ListAppsEvent> => {
-  log("list-apps", "using legacy version");
+  const tracer = new LocalTracer("list-apps", { transport: transport.getTraceContext() });
+  tracer.trace("Using legacy version", { deviceInfo });
 
   if (deviceInfo.isOSU || deviceInfo.isBootloader) {
     return throwError(() => new UnexpectedBootloader(""));
@@ -69,7 +70,7 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
             })),
         )
         .catch(e => {
-          log("hw", "failed to HSM list apps " + String(e) + "\n" + e.stack);
+          tracer.trace(`Failed to HSM list apps ${e}`, { error: e });
           throw e;
         })
         .then(apps => [apps, true]);
@@ -212,8 +213,7 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
         })
         .filter(Boolean);
 
-      log(
-        "list-apps",
+      tracer.trace(
         `${installedList.length} apps installed. ${applicationsList.length} apps store total. ${apps.length} available.`,
         {
           installedList,

@@ -183,6 +183,7 @@ export type Features = CurrencyFeatures & {
   cexDepositEntryPointsMobile: Feature_CexDepositEntryPointsMobile;
   fetchAdditionalCoins: Feature_FetchAdditionalCoins;
   ptxSwapLiveApp: Feature_PtxSwapLiveApp;
+  ptxSwapMoonpayProvider: Feature_PtxSwapMoonpayProvider;
 };
 
 /**
@@ -285,6 +286,7 @@ export type Feature_Learn = Feature<{
 
 export type Feature_PtxEarn = Feature<{
   liveAppId: string;
+  isNew: boolean;
 }>;
 
 export type Feature_Storyly = Feature<{
@@ -304,6 +306,8 @@ export type CompatibleDevice = {
 
 export type Feature_ProtectServicesMobile = Feature<{
   deeplink: string;
+  ledgerliveStorageState: boolean;
+  bannerSubscriptionNotification: boolean;
   compatibleDevices: CompatibleDevice[];
   onboardingRestore: {
     restoreInfoDrawer: {
@@ -330,8 +334,11 @@ export type Feature_ProtectServicesMobile = Feature<{
 
 export type Feature_ProtectServicesDesktop = Feature<{
   availableOnDesktop: boolean;
+  isNew: boolean;
   openRecoverFromSidebar: boolean;
   discoverTheBenefitsLink: string;
+  ledgerliveStorageState: boolean;
+  bannerSubscriptionNotification: boolean;
   compatibleDevices: CompatibleDevice[];
   onboardingRestore: {
     restoreInfoDrawer: {
@@ -488,6 +495,7 @@ export type Feature_ListAppsV2minor1 = DefaultFeature;
 export type Feature_BrazeLearn = DefaultFeature;
 export type Feature_LlmNewDeviceSelection = DefaultFeature;
 export type Feature_LlmWalletQuickActions = DefaultFeature;
+export type Feature_PtxSwapMoonpayProvider = DefaultFeature;
 
 /**
  * Utils types.

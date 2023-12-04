@@ -155,8 +155,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        address: "https://explorer.near.org/accounts/$address",
-        tx: "https://explorer.near.org/transactions/$hash",
+        address: "https://nearblocks.io/address/$address",
+        tx: "https://nearblocks.io/txns/$hash",
       },
     ],
     keywords: ["near"],
@@ -3337,11 +3337,12 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  // Cronos POS Chain (formerly Crypto.org)
   crypto_org: {
     type: "CryptoCurrency",
     id: "crypto_org",
     coinType: CoinType.CRYPTO_ORG,
-    name: "Crypto.org",
+    name: "Cronos POS Chain",
     managerAppName: "Crypto.org Chain",
     ticker: "CRO",
     scheme: "crypto_org",
@@ -3361,8 +3362,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx: "https://crypto.org/explorer/tx/$hash",
-        address: "https://crypto.org/explorer/account/$address",
+        tx: "https://cronos-pos.org/explorer/tx/$hash",
+        address: "https://cronos-pos.org/explorer/account/$address",
       },
     ],
   },
@@ -3485,11 +3486,12 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  // Cronos POS Chain Croeseid (formerly Crypto.org Croeseid)
   crypto_org_croeseid: {
     type: "CryptoCurrency",
     id: "crypto_org_croeseid",
     coinType: CoinType.CRYPTO_ORG,
-    name: "Crypto.org Croeseid",
+    name: "Cronos POS Chain Croeseid",
     managerAppName: "Crypto.org Chain",
     ticker: "CRO",
     scheme: "crypto_org_croeseid",
@@ -3511,8 +3513,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     disableCountervalue: true,
     explorerViews: [
       {
-        tx: "https://crypto.org/explorer/croeseid/tx/$hash",
-        address: "https://crypto.org/explorer/croeseid/account/$address",
+        tx: "https://cronos-pos.org/explorer/croeseid/tx/$hash",
+        address: "https://cronos-pos.org/explorer/croeseid/account/$address",
       },
     ],
   },
@@ -3751,6 +3753,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  // Cronos EVM blockchain
   cronos: {
     type: "CryptoCurrency",
     id: "cronos",

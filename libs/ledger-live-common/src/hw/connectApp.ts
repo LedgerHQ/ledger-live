@@ -159,7 +159,6 @@ export const openAppFromDashboard = (
             ),
             catchError(e => {
               if (e && e instanceof TransportStatusError) {
-                // @ts-expect-error TransportStatusError to be typed on ledgerjs
                 switch (e.statusCode) {
                   case 0x6984: // No StatusCodes definition
                   case 0x6807: // No StatusCodes definition
@@ -240,7 +239,6 @@ const derivationLogic = (
       }
 
       if (e instanceof TransportStatusError) {
-        // @ts-expect-error TransportStatusError to be typed on ledgerjs
         const { statusCode } = e;
 
         if (
@@ -439,7 +437,6 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
               }
 
               if (e && e instanceof TransportStatusError) {
-                // @ts-expect-error TransportStatusError to be typed on ledgerjs
                 switch (e.statusCode) {
                   case StatusCodes.CLA_NOT_SUPPORTED: // in 1.3.1 dashboard
                   case StatusCodes.INS_NOT_SUPPORTED: // in 1.3.1 and bitcoin app

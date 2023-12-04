@@ -6,7 +6,7 @@ import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { RefreshMedium } from "@ledgerhq/native-ui/assets/icons";
-
+import SafeAreaView from "../../components/SafeAreaView";
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import { useTranslation } from "react-i18next";
 import { useGlobalSyncState } from "@ledgerhq/live-common/bridge/react/index";
@@ -22,9 +22,6 @@ import { ScreenName } from "../../const";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
 
 import Spinning from "../../components/Spinning";
-import TabBarSafeAreaView, {
-  TAB_BAR_SAFE_HEIGHT,
-} from "../../components/TabBar/TabBarSafeAreaView";
 import AccountsNavigationHeader from "./AccountsNavigationHeader";
 import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
 import { AccountsNavigatorParamList } from "../../components/RootNavigator/types/AccountsNavigator";
@@ -108,9 +105,9 @@ function Accounts({ navigation, route }: NavigationProps) {
   );
 
   return (
-    <TabBarSafeAreaView>
+    <>
       <TrackScreen category="Accounts" accountsLength={accounts.length} />
-      <Flex flex={1} bg={"background.main"}>
+      <SafeAreaView isFlex>
         <AccountsNavigationHeader currencyId={params?.currencyId} />
         {syncPending && (
           <Flex flexDirection={"row"} alignItems={"center"} px={6} my={3}>
@@ -140,7 +137,6 @@ function Accounts({ navigation, route }: NavigationProps) {
           }
           contentContainerStyle={{
             paddingHorizontal: 16,
-            paddingBottom: TAB_BAR_SAFE_HEIGHT,
           }}
         />
         <TokenContextualModal
@@ -148,8 +144,8 @@ function Accounts({ navigation, route }: NavigationProps) {
           isOpened={!!account}
           account={account as TokenAccount}
         />
-      </Flex>
-    </TabBarSafeAreaView>
+      </SafeAreaView>
+    </>
   );
 }
 

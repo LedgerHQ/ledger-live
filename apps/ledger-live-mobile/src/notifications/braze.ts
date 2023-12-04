@@ -1,4 +1,4 @@
-import Braze from "react-native-appboy-sdk";
+import Braze from "@braze/react-native-sdk";
 import getOrCreateUser from "../user";
 import { NotificationsSettings } from "../reducers/types";
 

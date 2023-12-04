@@ -7,11 +7,11 @@ concurrency:
 
 jobs:
   run-bot:
-    runs-on: [ledger-live-assets-prd]
+    runs-on: ledgerhq-shared-small
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Retrieving crypto-assets
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: true
           repository: LedgerHQ/crypto-assets
@@ -36,6 +36,11 @@ jobs:
           node libs/ledgerjs/script/crypto-assets-importer/index.js $PWD/crypto-assets true
           cd libs/ledgerjs/packages/cryptoassets/src/data
           cp -vf --parents **/*.json $out
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PRD }}:role/crypto-assets-github-role
+          aws-region: ${{ vars.AWS_REGION }}
       - name: Deploy json to s3 PRD
         run: aws s3 sync ./cal/ s3://ledger-live-cryptoassets-prd/cryptoassets --delete --acl public-read
       - name: Cache invalidate PRD

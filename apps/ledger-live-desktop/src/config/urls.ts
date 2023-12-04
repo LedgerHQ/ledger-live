@@ -261,7 +261,7 @@ export const urls = {
   approvedOperation:
     "https://support.ledger.com/hc/en-us/articles/360020849134-Track-your-transaction?docs=true",
   cryptoOrg: {
-    website: "https://crypto.org",
+    website: "https://cronos-pos.org",
   },
   elrond: {
     website: "https://elrond.com",

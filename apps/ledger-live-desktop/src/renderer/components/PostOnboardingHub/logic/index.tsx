@@ -56,6 +56,29 @@ const customImage: PostOnboardingAction = {
   buttonLabelForAnalyticsEvent: "Set lock screen picture",
 };
 
+const assetsTransfer: PostOnboardingAction = {
+  id: PostOnboardingActionId.assetsTransfer,
+  featureFlagId: "postOnboardingAssetsTransfer",
+  Icon: Icons.ArrowDown,
+  title: "postOnboarding.actions.assetsTransfer.title",
+  titleCompleted: "postOnboarding.actions.assetsTransfer.titleCompleted",
+  description: "postOnboarding.actions.assetsTransfer.description",
+  actionCompletedPopupLabel: "postOnboarding.actions.assetsTransfer.popupLabel",
+  buttonLabelForAnalyticsEvent: "Secure your assets on Ledger",
+  startAction: ({ openModalCallback }) => openModalCallback("MODAL_RECEIVE"),
+};
+
+const buyCrypto: PostOnboardingAction = {
+  id: PostOnboardingActionId.buyCrypto,
+  Icon: Icons.Plus,
+  title: "postOnboarding.actions.buyCrypto.title",
+  titleCompleted: "postOnboarding.actions.buyCrypto.titleCompleted",
+  description: "postOnboarding.actions.buyCrypto.description",
+  actionCompletedPopupLabel: "postOnboarding.actions.buyCrypto.popupLabel",
+  buttonLabelForAnalyticsEvent: "Buy Crypto",
+  startAction: ({ navigationCallback }) => navigationCallback("/exchange"),
+};
+
 /**
  * All implemented post onboarding actions.
  */
@@ -64,6 +87,8 @@ const postOnboardingActions: { [id in PostOnboardingActionId]?: PostOnboardingAc
   migrateAssetsMock,
   personalizeMock,
   customImage,
+  assetsTransfer,
+  buyCrypto,
 };
 
 /**
@@ -106,7 +131,7 @@ export function getPostOnboardingActionsForDevice(
        * Set here the list of actions for the post onboarding of the
        * DeviceModelId.stax
        * */
-      return [customImage];
+      return [customImage, assetsTransfer, buyCrypto];
     default:
       return [];
   }

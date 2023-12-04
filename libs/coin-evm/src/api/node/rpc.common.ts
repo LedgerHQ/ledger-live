@@ -9,9 +9,9 @@ import OptimismGasPriceOracleAbi from "../../abis/optimismGasPriceOracle.abi.jso
 import { GasEstimationError, InsufficientFunds } from "../../errors";
 import { transactionToEthersTransaction } from "../../adapters";
 import { getSerializedTransaction } from "../../transaction";
-import { NodeApi, isExternalNodeConfig } from "./types";
 import ERC20Abi from "../../abis/erc20.abi.json";
 import { FeeHistory } from "../../types";
+import { NodeApi, isExternalNodeConfig } from "./types";
 
 export const RPC_TIMEOUT = process.env.NODE_ENV === "test" ? 100 : 5000; // wait 5 sec after a fail
 export const DEFAULT_RETRIES_RPC_METHODS = process.env.NODE_ENV === "test" ? 1 : 3;

@@ -11,12 +11,15 @@ import PostOnboardingMockActionScreen from "../../screens/PostOnboarding/PostOnb
 import { PostOnboardingNavigatorParamList } from "./types/PostOnboardingNavigator";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import { NavigationHeaderCloseButton } from "../NavigationHeaderCloseButton";
+import { useCompletePostOnboarding } from "~/logic/postOnboarding/useCompletePostOnboarding";
 
 const Stack = createStackNavigator<PostOnboardingNavigatorParamList>();
 
 const PostOnboardingNavigator = () => {
   const { colors } = useTheme();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
+
+  const closePostOnboarding = useCompletePostOnboarding();
 
   return (
     <Stack.Navigator
@@ -32,7 +35,7 @@ const PostOnboardingNavigator = () => {
           headerShown: true,
           headerLeft: () => null,
           headerTitle: () => null,
-          headerRight: () => <NavigationHeaderCloseButton />,
+          headerRight: () => <NavigationHeaderCloseButton onPress={closePostOnboarding} />,
         }}
       />
       <Stack.Screen

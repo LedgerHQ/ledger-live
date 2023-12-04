@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from "react";
-import { Alert, Flex, InfiniteLoader, Text } from "@ledgerhq/react-ui";
+import { Alert, Flex, Text } from "@ledgerhq/react-ui";
 import { createAction } from "@ledgerhq/live-common/hw/actions/app";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { SkipReason } from "@ledgerhq/live-common/apps/types";
@@ -17,6 +17,7 @@ const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
 type Props = {
   device: Device;
   dependencies: string[];
+  setHeaderLoader: (hasLoader: boolean) => void;
   onComplete: () => void;
   onCancel: () => void;
   onLocked: () => void;
@@ -26,6 +27,7 @@ type Props = {
 const InstallSetOfApps = ({
   device,
   dependencies,
+  setHeaderLoader,
   onComplete,
   onCancel,
   onLocked,
@@ -55,7 +57,6 @@ const InstallSetOfApps = ({
     itemProgress,
     progress,
     opened,
-
     isLocked,
     allowManagerGranted,
     isLoading,
@@ -80,31 +81,27 @@ const InstallSetOfApps = ({
     skippedAppOp => skippedAppOp.reason === SkipReason.NoSuchAppOnProvider,
   );
 
+  useEffect(() => {
+    setHeaderLoader(!installing && !opened);
+  }, [setHeaderLoader, installing, opened]);
+
   if (opened) {
     onComplete();
-    return null;
   }
 
   return (
     <>
       <AllowManagerModal
-        isOpen={!isLoading && !allowManagerGranted && !error}
+        isOpen={!isLoading && !allowManagerGranted && !error && !opened}
         status={status}
         request={commandRequest}
       />
       <Flex height="100%">
         <Flex flex={1} alignItems="flex-start" flexDirection="column">
           <Flex style={{ width: "100%" }} flexDirection="row" justifyContent="space-between" mb={6}>
-            {installing ? (
-              <Text data-test-id="installing-text">
-                {t("onboardingAppInstall.progress.progress")}
-              </Text>
-            ) : (
-              <>
-                <Text>{t("onboardingAppInstall.progress.resolving")}</Text>
-                <InfiniteLoader size={20} />
-              </>
-            )}
+            <Text data-test-id="installing-text">
+              {t("onboardingAppInstall.progress.progress")}
+            </Text>
           </Flex>
           {missingApps ? (
             <Alert title={t("onboardingAppInstall.progress.skippedInfo", { productName })} />

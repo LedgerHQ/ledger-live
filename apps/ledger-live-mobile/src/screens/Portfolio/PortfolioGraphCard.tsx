@@ -27,7 +27,7 @@ const PortfolioGraphCard = ({ showAssets }: Props) => {
   }, []);
 
   return (
-    <Box mt={3} onLayout={onPortfolioCardLayout}>
+    <Box pt={60} onLayout={onPortfolioCardLayout}>
       <GraphCardContainer
         counterValueCurrency={counterValueCurrency}
         portfolio={portfolio}

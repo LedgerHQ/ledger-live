@@ -1,6 +1,6 @@
-module.exports = {
+module.exports = async () => ({
   rootDir: "..",
-  maxWorkers: 1,
+  maxWorkers: process.env.CI ? 2 : 1,
   preset: "ts-jest",
   transform: {
     "^.+\\.(js|jsx)?$": "babel-jest",
@@ -20,4 +20,4 @@ module.exports = {
   globalTeardown: "detox/runners/jest/globalTeardown",
   testEnvironment: "<rootDir>/e2e/environment.js",
   verbose: true,
-};
+});

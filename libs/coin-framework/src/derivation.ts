@@ -6,7 +6,7 @@ import { TransportStatusError, UserRefusedAddress } from "@ledgerhq/errors";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "./currencies";
 import { getEnv } from "@ledgerhq/live-env";
-import type { CryptoCurrencyIds } from "@ledgerhq/types-live";
+
 export type ModeSpec = {
   mandatoryEmptyAccountSkip?: number;
   isNonIterable?: boolean;
@@ -215,14 +215,11 @@ const modes = Object.freeze({
 });
 modes as Record<DerivationMode, ModeSpec>; // eslint-disable-line
 
-// FIXME: CryptoCurrencyConfig was a flowtype we could not easily convert to ts so it has been deleted
-// previous types: Partial<CryptoCurrencyConfig<DerivationMode[]>>
-const legacyDerivations: Record<CryptoCurrencyIds, DerivationMode[]> = {
+const legacyDerivations: Partial<Record<CryptoCurrency["id"], DerivationMode[]>> = {
   aeternity: ["aeternity"],
   bitcoin_cash: [],
   bitcoin: ["legacy_on_bch"],
   vertcoin: ["vertcoin_128", "vertcoin_128_segwit"],
-  ethereum_classic: ["etcM"],
   tezos: ["galleonL", "tezboxL", "tezosbip44h", "tezbox"],
   stellar: ["sep5"],
   polkadot: ["polkadotbip44"],
@@ -235,10 +232,11 @@ const legacyDerivations: Record<CryptoCurrencyIds, DerivationMode[]> = {
   near: ["nearbip44h"],
   vechain: ["vechain"],
   stacks: ["stacks_wallet"],
-};
-
-const legacyDerivationsPerFamily: Record<string, DerivationMode[]> = {
   ethereum: ["ethM", "ethMM"],
+  ethereum_classic: ["ethM", "ethMM", "etcM"],
+  solana: ["solanaMain", "solanaSub"],
+  solana_devnet: ["solanaMain", "solanaSub"],
+  solana_testnet: ["solanaMain", "solanaSub"],
 };
 
 export const asDerivationMode = (derivationMode: string): DerivationMode => {
@@ -410,11 +408,8 @@ export const getSeedIdentifierDerivation = (
 // return an array of ways to derivate, by convention the latest is the standard one.
 export const getDerivationModesForCurrency = (currency: CryptoCurrency): DerivationMode[] => {
   let all: DerivationMode[] = [];
-  if (currency.family in legacyDerivationsPerFamily) {
-    all = all.concat(legacyDerivationsPerFamily[currency.family]);
-  }
   if (currency.id in legacyDerivations) {
-    all = all.concat(legacyDerivations[currency.id]);
+    all = all.concat(legacyDerivations[currency.id] || []);
   }
   if (currency.forkedFrom) {
     all.push("unsplit");
@@ -425,9 +420,7 @@ export const getDerivationModesForCurrency = (currency: CryptoCurrency): Derivat
   }
 
   if (currency.supportsSegwit) {
-    all.push("segwit_on_legacy");
-    all.push("legacy_on_segwit");
-    all.push("legacy_on_native_segwit");
+    all.push("segwit_on_legacy", "legacy_on_segwit", "legacy_on_native_segwit");
   }
 
   if (currency.supportsNativeSegwit) {
@@ -441,16 +434,13 @@ export const getDerivationModesForCurrency = (currency: CryptoCurrency): Derivat
     }
   }
 
+  // Can't this be concatenated with the first `supportsSegwit` condition ?
   if (currency.supportsSegwit) {
     all.push("segwit");
   }
 
   if (!disableBIP44[currency.id]) {
     all.push("");
-  }
-
-  if (currency.family === "solana") {
-    all.push("solanaMain", "solanaSub");
   }
 
   if (!getEnv("SCAN_FOR_INVALID_PATHS")) {

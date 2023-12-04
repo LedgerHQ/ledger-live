@@ -18,6 +18,7 @@ import BigNumber from "bignumber.js";
 import { SubAccount } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
+import { useRedirectToSwapHistory } from "../utils/index";
 
 type CustomHandlersParams<Params> = {
   params: Params;
@@ -37,11 +38,12 @@ export type SwapProps = {
   cacheKey: string;
   loading: boolean;
   error: boolean;
+  providerRedirectURL: string;
+  toNewTokenId: string;
 };
 
 export type SwapWebProps = {
   swapState?: Partial<SwapProps>;
-  redirectToProviderApp(_: string): void;
 };
 
 export const SWAP_WEB_MANIFEST_ID = "swap-live-app-demo-0";
@@ -53,7 +55,7 @@ const SwapWebAppWrapper = styled.div<{ isDevelopment: boolean }>(
 `,
 );
 
-const SwapWebView = ({ swapState, redirectToProviderApp }: SwapWebProps) => {
+const SwapWebView = ({ swapState }: SwapWebProps) => {
   const {
     colors: {
       palette: { type: themeType },
@@ -67,6 +69,8 @@ const SwapWebView = ({ swapState, redirectToProviderApp }: SwapWebProps) => {
   const locale = useSelector(languageSelector);
   const localManifest = useLocalLiveAppManifest(SWAP_WEB_MANIFEST_ID);
   const remoteManifest = useRemoteLiveAppManifest(SWAP_WEB_MANIFEST_ID);
+  const redirectToHistory = useRedirectToSwapHistory();
+
   const manifest = localManifest || remoteManifest;
 
   const hasManifest = !!manifest;
@@ -138,8 +142,8 @@ const SwapWebView = ({ swapState, redirectToProviderApp }: SwapWebProps) => {
         onSwapWebviewError();
         return Promise.resolve();
       },
-      "custom.redirectToProviderApp": ({ params }: { params: string }) => {
-        redirectToProviderApp(params);
+      "custom.swapRedirectToHistory": () => {
+        redirectToHistory();
       },
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -162,16 +166,20 @@ const SwapWebView = ({ swapState, redirectToProviderApp }: SwapWebProps) => {
   };
 
   const isDevelopment = process.env.NODE_ENV === "development";
+  // TODO: remove hash logic after complete swap migration manifest={manifest}
   return (
     <>
       {isDevelopment && (
-        <TopBar manifest={manifest} webviewAPIRef={webviewAPIRef} webviewState={webviewState} />
+        <TopBar
+          manifest={{ ...manifest, url: `${manifest.url}#${swapState.cacheKey}` }}
+          webviewAPIRef={webviewAPIRef}
+          webviewState={webviewState}
+        />
       )}
       <SwapWebAppWrapper isDevelopment={isDevelopment}>
         <Web3AppWebview
-          manifest={manifest}
+          manifest={{ ...manifest, url: `${manifest.url}#${swapState.cacheKey}` }}
           inputs={{
-            cacheKey: swapState.cacheKey,
             theme: themeType,
             lang: locale,
             currencyTicker: fiatCurrency.ticker,
