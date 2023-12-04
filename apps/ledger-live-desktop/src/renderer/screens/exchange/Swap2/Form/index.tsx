@@ -193,7 +193,10 @@ const SwapForm = () => {
       Object.entries(args).forEach(
         ([key, value]) =>
           // customFeeConfig is an object
-          value && moonpayURL.searchParams.append(...[key, JSON.stringify(value)]),
+          value &&
+          moonpayURL.searchParams.append(
+            ...[key, typeof value === "object" ? JSON.stringify(value) : value],
+          ),
       );
       return moonpayURL;
     },
