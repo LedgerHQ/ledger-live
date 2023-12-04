@@ -187,7 +187,7 @@ const SwapForm = () => {
   ]);
 
   const generateMoonpayUrl = useCallback(
-    ({ base = "", args = {} }: { base: string; args: { [key: string]: any } }) => {
+    ({ base = "", args = {} }: { base: string; args: { [key: string]: string | undefined } }) => {
       const moonpayURL = new URL(base || "");
       Object.entries(args).forEach(
         ([key, value]) =>
@@ -355,7 +355,7 @@ const SwapForm = () => {
       partner: provider,
     });
 
-    if (DAPP_PROVIDERS.includes(provider)) {
+    if (provider && DAPP_PROVIDERS.includes(provider)) {
       redirectToProviderApp(provider);
     } else {
       // Fix LIVE-9064, prevent the transaction from being updated when using useAllAmount
