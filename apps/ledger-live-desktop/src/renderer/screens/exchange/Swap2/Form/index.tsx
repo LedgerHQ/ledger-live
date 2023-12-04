@@ -134,57 +134,57 @@ const SwapForm = () => {
     pause: pauseRefreshing,
   });
 
-  const getExchangeSDKParams = useCallback(
-    () => {
-      const { swap, transaction } = swapTransaction;
-      const { to, from } = swap;
-      const { account: fromAccount, parentAccount: fromParentAccount } = from;
-      const { account: toAccount, parentAccount: toParentAccount } = to;
-      const { feesStrategy } = transaction || {};
-      const { rate, rateId } = exchangeRate || {};
+  const getExchangeSDKParams = useCallback(() => {
+    const { swap, transaction } = swapTransaction;
+    const { to, from } = swap;
+    const { account: fromAccount, parentAccount: fromParentAccount } = from;
+    const { account: toAccount, parentAccount: toParentAccount } = to;
+    const { feesStrategy } = transaction || {};
+    const { rate, rateId } = exchangeRate || {};
 
-      const isToAccountValid = totalListedAccounts.some(account => account.id === toAccount?.id);
-      const fromAccountId =
-        fromAccount && accountToWalletAPIAccount(fromAccount, fromParentAccount)?.id;
-      const toAccountId = isToAccountValid
-        ? toAccount && accountToWalletAPIAccount(toAccount, toParentAccount)?.id
-        : toParentAccount && accountToWalletAPIAccount(toParentAccount, undefined)?.id;
-      const toNewTokenId =
-        !isToAccountValid && toAccount?.type === "TokenAccount" ? toAccount.token?.id : undefined;
-      const fromAmount =
-        fromAccount &&
-        convertToNonAtomicUnit({
-          amount: transaction?.amount,
-          account: fromAccount,
-        });
+    const isToAccountValid = totalListedAccounts.some(account => account.id === toAccount?.id);
+    const fromAccountId =
+      fromAccount && accountToWalletAPIAccount(fromAccount, fromParentAccount)?.id;
+    const toAccountId = isToAccountValid
+      ? toAccount && accountToWalletAPIAccount(toAccount, toParentAccount)?.id
+      : toParentAccount && accountToWalletAPIAccount(toParentAccount, undefined)?.id;
+    const toNewTokenId =
+      !isToAccountValid && toAccount?.type === "TokenAccount" ? toAccount.token?.id : undefined;
+    const fromAmount =
+      fromAccount &&
+      convertToNonAtomicUnit({
+        amount: transaction?.amount,
+        account: fromAccount,
+      });
 
-      const customFeeConfig = transaction && getCustomFeesPerFamily(transaction);
-      // The Swap web app will automatically recreate the transaction with "default" fees.
-      // However, if you wish to use a different fee type, you will need to set it as custom.
-      const isCustomFee =
-        feesStrategy === "slow" || feesStrategy === "fast" || feesStrategy === "custom";
+    const customFeeConfig = transaction && getCustomFeesPerFamily(transaction);
+    // The Swap web app will automatically recreate the transaction with "default" fees.
+    // However, if you wish to use a different fee type, you will need to set it as custom.
+    const isCustomFee =
+      feesStrategy === "slow" || feesStrategy === "fast" || feesStrategy === "custom";
 
-      return {
-        fromAccountId,
-        toAccountId,
-        fromAmount: fromAmount?.toString(),
-        quoteId: rateId ? rateId : undefined,
-        rate: rate?.toString(),
-        feeStrategy: (isCustomFee ? "custom" : "medium")?.toUpperCase(),
-        customFeeConfig: customFeeConfig ? JSON.stringify(customFeeConfig) : undefined,
-        toNewTokenId,
-      };
-    },
-    [
-      // provider,
-      // swapTransaction.swap.from,
-      // swapTransaction.swap.to,
-      // // swapTransaction.transaction,
-      // // swapTransaction,
-      // exchangeRate,
-      // totalListedAccounts,
-    ],
-  );
+    return {
+      fromAccountId,
+      toAccountId,
+      fromAmount: fromAmount?.toString(),
+      quoteId: rateId ? rateId : undefined,
+      rate: rate?.toString(),
+      feeStrategy: (isCustomFee ? "custom" : "medium")?.toUpperCase(),
+      customFeeConfig: customFeeConfig ? JSON.stringify(customFeeConfig) : undefined,
+      toNewTokenId,
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    provider,
+    swapTransaction.swap.from.account?.id,
+    swapTransaction.swap.to.currency?.id,
+    swapTransaction.swap.to.account?.id,
+    exchangeRate?.providerType,
+    exchangeRate?.tradeMethod,
+    exchangeRate?.providerURL,
+    exchangeRate,
+    totalListedAccounts,
+  ]);
 
   const generateMoonpayUrl = useCallback(
     ({ base = "", args = {} }: { base: string; args: { [key: string]: any } }) => {
