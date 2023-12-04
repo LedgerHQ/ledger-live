@@ -196,11 +196,11 @@
       "description" : "您的交易正在进行。您可使用较高的网络费用加速交易，或取消交易。",
       "stuckDescription" : "您的交易已停滞。使用较高的网络费用加速交易，或取消交易。",
       "previousFeesInfo" : {
-        "pendingTransactionFeesInfo" : "待处理交易费用信息： ",
-        "networkfee" : "网络费用 = ",
-        "maxFee" : "最高费用 = ",
-        "maxPriorityFee" : "最高优先费用 = ",
-        "gasPrice" : "Gas 价格 = "
+        "pendingTransactionFeesInfo" : "待处理交易费用信息：",
+        "networkfee" : "网络费用 = {{amount}}",
+        "maxFee" : "最高费用 = {{amount}}",
+        "maxPriorityFee" : "最高优先费用 = {{amount}}",
+        "gasPrice" : "Gas 价格 = {{amount}}"
       },
       "learnMore" : "我想进一步了解",
       "panel" : {
@@ -213,7 +213,7 @@
       },
       "cancel" : {
         "title" : "取消",
-        "description" : "发送 0 {{ticker}} 到您自己的地址。为确保取消交易，网络费用比将要取消的交易费用高 30%。"
+        "description" : "发送 0 {{ticker}} 到您自己的地址。"
       },
       "steps" : {
         "method" : {
@@ -1208,7 +1208,7 @@
           "contactSupportCTA" : "联系 Ledger 客服",
           "notFoundEntityError" : {
             "title" : "再次启动正品检查",
-            "description" : "您必须先禁用“我的 Ledger 提供商 ({{providerNumber}})”设置。要禁用该设置，请打开 Ledger Live“设置”，选择“实验性功能”，然后关闭“管理器提供商”。"
+            "description" : "您必须先禁用“我的 Ledger 提供商 ({{providerNumber}})”设置。要禁用该设置，请打开 Ledger Live“设置”，选择“实验性功能”，然后关闭“我的 Ledger 提供商”。"
           },
           "deviceNotGenuineError" : {
             "title" : "此 {{productName}} 不是正品",
@@ -1286,7 +1286,8 @@
   "postOnboarding" : {
     "postOnboardingScreen" : {
       "title" : "接下来，使用您的\nLedger Stax…… ",
-      "titleCompleted" : "\n到此结束！"
+      "titleCompleted" : "一切准备就绪！\n继续探索您的钱包。",
+      "exploreCTA" : "探索钱包"
     },
     "postOnboardingContent" : {
       "skipLink" : "我以后再下载"
@@ -3151,7 +3152,7 @@
     "unlockedBalance" : "已解绑",
     "unlockedTooltip" : "现在可使用提取操作转移已解绑的资产。",
     "networkFees" : "网络费用由 Polkadot 波卡共识协议自动设定，您无法在自己的设备上查看它们。",
-    "bondedBalanceBelowMinimum" : "您的绑定余额低于当前最小值{{minimumBondBalance}}。你的提名有可能被删除。",
+    "bondedBalanceBelowMinimum" : "提名者至少需要有 {{minimumBondBalance}} 才能提交提名意向",
     "nomination" : {
       "emptyState" : {
         "description" : "您可以通过绑定资产并随后提名您的（某个或多个）验证者来赚取奖励。",
@@ -4248,7 +4249,6 @@
         "nextButton" : "开始",
         "noDevice" : "没有设备？",
         "buyLink" : "没有设备？购买 Ledger Nano X",
-        "recoverSignIn" : "登录 Ledger Recover",
         "byTapping" : "点按“开始”即表示您应允并同意我们的",
         "termsAndConditions" : "条款与条件",
         "and" : "和",
@@ -4906,6 +4906,11 @@
     "cta" : "继续"
   },
   "families" : {
+    "casper" : {
+      "transferIdPlaceholder" : "可选",
+      "transferId" : "转账 ID（备忘标签）",
+      "transferIdWarningText" : "当使用备忘标签时，请仔细核对接收方的信息。"
+    },
     "cardano" : {
       "memoPlaceholder" : "可选",
       "memo" : "Memo"
@@ -4955,6 +4960,10 @@
     }
   },
   "errors" : {
+    "ReplacementTransactionUnderpriced" : {
+      "title" : "替换交易定价过低",
+      "description" : "网络费用可能太低。请增加"
+    },
     "NoSuchAppOnProvider" : {
       "title" : "无法为您的特定配置找到 {{appName}} 应用程序。",
       "description" : "尝试在 My Ledger（我的 Ledger）中重新安装应用程序"
@@ -5138,8 +5147,8 @@
       "description" : "请更新您的设备固件到最新版本以访问此功能"
     },
     "FirmwareNotRecognized" : {
-      "title" : "无法识别设备固件",
-      "description" : "请联系 Ledger 客服"
+      "title" : "提供商无效",
+      "description" : "您必须更改“我的 Ledger 提供商”设置。要更改该设置，请打开 Ledger Live“设置”，选择“实验性功能”，然后选择其他提供商。"
     },
     "HardResetFail" : {
       "title" : "抱歉，无法重置",
@@ -5402,6 +5411,15 @@
       "title" : "抱歉，连接失败",
       "description" : "检测到设备但连接失败。请重试，如果问题仍然存在，请联系 Ledger 客服。"
     },
+    "CasperInvalidTransferId" : {
+      "title" : "转账 ID 应为小于 {{maxTransferId}} 的正数"
+    },
+    "InvalidMinimumAmount" : {
+      "title" : "最低转账数额为 {{minAmount}}"
+    },
+    "MayBlockAccount" : {
+      "title" : "您账户的余额将少于执行发送所需的 {{minAmount}}"
+    },
     "ETHAddressNonEIP" : {
       "title" : "无法自动验证：请仔细核对该地址。",
       "description" : null
@@ -5419,6 +5437,9 @@
     },
     "FeeNotLoaded" : {
       "title" : "无法加载费率。请手动设置费用"
+    },
+    "FeeNotLoadedSwap" : {
+      "title" : "由于技术问题，网络费用估算失败。请重试或更改资产。"
     },
     "FeeRequired" : {
       "title" : "需要费用"
@@ -5546,7 +5567,7 @@
       "description" : "出错了，请重试；如有疑问，请联系 Ledger 客服。"
     },
     "EthAppPleaseEnableContractData" : {
-      "title" : "请在 Ethereum 以太坊应用程序 settings 设置中启用 contract data 合约数据"
+      "title" : "请在以太坊应用程序设置中启用盲签名或合约数据"
     },
     "InvalidXRPTag" : {
       "title" : "无效的 XRP 目的地标签"

@@ -1,15 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`injective currency bridge scanAccounts injective seed 1 1`] = `
-Array [
-  Object {
+[
+  {
     "balance": "607564000000000",
     "currencyId": "injective",
     "derivationMode": "",
     "freshAddress": "inj1hn46zvx43mxq47vsecvw84k5chjhuhwp6d62dt",
     "freshAddressPath": "44'/60'/0'/0/0",
-    "freshAddresses": Array [
-      Object {
+    "freshAddresses": [
+      {
         "address": "inj1hn46zvx43mxq47vsecvw84k5chjhuhwp6d62dt",
         "derivationPath": "44'/60'/0'/0/0",
       },
@@ -18,24 +18,24 @@ Array [
     "index": 0,
     "name": "Injective 1",
     "nfts": undefined,
-    "pendingOperations": Array [],
+    "pendingOperations": [],
     "seedIdentifier": "03f8e9b05b4de510b0b7d970060eac6a0f76d3c4eb07e11418c0747bc593c91c7d",
     "spendableBalance": "506564000000000",
     "starred": false,
-    "swapHistory": Array [],
+    "swapHistory": [],
     "syncHash": undefined,
     "unitMagnitude": 18,
     "used": true,
     "xpub": "inj1hn46zvx43mxq47vsecvw84k5chjhuhwp6d62dt",
   },
-  Object {
+  {
     "balance": "0",
     "currencyId": "injective",
     "derivationMode": "",
     "freshAddress": "inj1604wce9t0u8vne0zrj4t2rspjsg28dymyljzrm",
     "freshAddressPath": "44'/60'/1'/0/0",
-    "freshAddresses": Array [
-      Object {
+    "freshAddresses": [
+      {
         "address": "inj1604wce9t0u8vne0zrj4t2rspjsg28dymyljzrm",
         "derivationPath": "44'/60'/1'/0/0",
       },
@@ -44,11 +44,11 @@ Array [
     "index": 1,
     "name": "Injective 2",
     "nfts": undefined,
-    "pendingOperations": Array [],
+    "pendingOperations": [],
     "seedIdentifier": "03f8e9b05b4de510b0b7d970060eac6a0f76d3c4eb07e11418c0747bc593c91c7d",
     "spendableBalance": "0",
     "starred": false,
-    "swapHistory": Array [],
+    "swapHistory": [],
     "syncHash": undefined,
     "unitMagnitude": 18,
     "used": false,
@@ -58,8 +58,8 @@ Array [
 `;
 
 exports[`injective currency bridge scanAccounts injective seed 1 2`] = `
-Array [
-  Array [],
-  Array [],
+[
+  [],
+  [],
 ]
 `;

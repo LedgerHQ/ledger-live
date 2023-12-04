@@ -14,6 +14,9 @@ import {
   CosmosUnbonding,
 } from "../types";
 
+type Rewards = { denom: string; amount: string };
+const USDC_DENOM = "ibc/8E27BA2D5493AF5636760E354E46004562C46AB7EC0CC4C1CA14E9E20E2545B5";
+
 export class CosmosAPI {
   protected defaultEndpoint: string;
   private version: string;
@@ -398,6 +401,29 @@ export class CosmosAPI {
       }
     } catch (e) {
       throw new Error("Tx simulation failed");
+    }
+  };
+
+  /**
+   * This is a quick and dirty way to get the usdc staking rewards for a given dYdX address
+   * This should be cleaned up when the proper ibc token integration is done
+   */
+  getUsdcRewards = async (address: string): Promise<BigNumber> => {
+    try {
+      const { data } = await network({
+        method: "GET",
+        url: `${this.defaultEndpoint}/cosmos/distribution/v1beta1/delegators/${address}/rewards`,
+      });
+
+      const usdcRewards: Rewards = data?.total?.find(
+        (reward: Rewards) => reward.denom === USDC_DENOM,
+      );
+
+      const usdcRewardsAmount = new BigNumber(usdcRewards?.amount || "0");
+
+      return usdcRewardsAmount;
+    } catch (e) {
+      throw new Error(`Can't fetch usdc rewards for address ${address}`);
     }
   };
 }

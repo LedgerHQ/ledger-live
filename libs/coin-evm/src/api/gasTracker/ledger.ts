@@ -2,9 +2,9 @@ import { BigNumber } from "bignumber.js";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
 import { CryptoCurrency, LedgerExplorerId } from "@ledgerhq/types-cryptoassets";
-import { GasTrackerApi, isLedgerGasTracker } from "./types";
 import { GasOptions } from "../../types";
 import { LedgerGasTrackerUsedIncorrectly, NoGasTrackerFound } from "../../errors";
+import { GasTrackerApi, isLedgerGasTracker } from "./types";
 
 type GasTracker = {
   compatibilty: {

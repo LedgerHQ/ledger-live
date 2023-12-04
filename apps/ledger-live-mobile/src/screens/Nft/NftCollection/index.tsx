@@ -24,9 +24,7 @@ import NftCard from "../../../components/Nft/NftCard";
 import Button from "../../../components/Button";
 import SendIcon from "../../../icons/Send";
 import { withDiscreetMode } from "../../../context/DiscreetModeContext";
-import TabBarSafeAreaView, {
-  TAB_BAR_SAFE_HEIGHT,
-} from "../../../components/TabBar/TabBarSafeAreaView";
+import TabBarSafeAreaView from "../../../components/TabBar/TabBarSafeAreaView";
 import {
   BaseComposite,
   StackNavigatorProps,
@@ -183,7 +181,6 @@ const NftCollection = ({ route }: NavigationProps) => {
           renderItem={({ item }) => item}
           keyExtractor={(item, index) => String(index)}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
         />
       </TabBarSafeAreaView>
     </>

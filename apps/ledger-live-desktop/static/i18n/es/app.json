@@ -196,11 +196,11 @@
       "description" : "Tu transacción está en curso. Puedes acelerarla con una tarifa de red más alta o cancelarla.",
       "stuckDescription" : "Tu transacción se ha quedado atascada. Acelérala con una tarifa de red más alta o cancélala.",
       "previousFeesInfo" : {
-        "pendingTransactionFeesInfo" : "Información sobre las tarifas de transacciones pendientes: ",
-        "networkfee" : "Tarifa de red = ",
-        "maxFee" : "Tarifa máxima = ",
-        "maxPriorityFee" : "Tarifa de prioridad máxima = ",
-        "gasPrice" : "Precio del gas = "
+        "pendingTransactionFeesInfo" : "Información sobre las tarifas de transacciones pendientes:",
+        "networkfee" : "Tarifa de red = {{amount}}",
+        "maxFee" : "Tarifa máxima = {{amount}}",
+        "maxPriorityFee" : "Tarifa de prioridad máxima = {{amount}}",
+        "gasPrice" : "Precio del gas = {{amount}}"
       },
       "learnMore" : "Quiero saber más",
       "panel" : {
@@ -213,7 +213,7 @@
       },
       "cancel" : {
         "title" : "Cancelar",
-        "description" : "Enviando 0 {{ticker}} a tu propia dirección. Para garantizar la cancelación, la tarifa de red es un 30% más alta que la tarifa de la transacción que se pretende cancelar."
+        "description" : "Enviando 0 {{ticker}} a tu propia dirección."
       },
       "steps" : {
         "method" : {
@@ -1208,7 +1208,7 @@
           "contactSupportCTA" : "Ponte en contacto con el Soporte de Ledger",
           "notFoundEntityError" : {
             "title" : "Iniciar Verificación de Autenticidad de nuevo",
-            "description" : "Primero debes desactivar el ajuste “Mi proveedor de Ledger ({{providerNumber}})”. Para desactivarlo, abre los “Ajustes” de Ledger Live, selecciona “Funciones experimentales” y desactiva “Proveedor administrador”."
+            "description" : "Primero debes desactivar el ajuste “Proveedor de Mi Ledger ({{providerNumber}})”. Para desactivarlo, abre los “Ajustes” de Ledger Live, selecciona “Funciones experimentales” y desactiva “Proveedor de Mi Ledger”."
           },
           "deviceNotGenuineError" : {
             "title" : "Este {{productName}} no es auténtico",
@@ -1286,7 +1286,8 @@
   "postOnboarding" : {
     "postOnboardingScreen" : {
       "title" : "A continuación, usa tu\nLedger Stax para... ",
-      "titleCompleted" : "¡y eso es\ntodo!"
+      "titleCompleted" : "¡Ya está todo!\nYa puedes explorar tu billetera.",
+      "exploreCTA" : "Explorar billetera"
     },
     "postOnboardingContent" : {
       "skipLink" : "Lo haré más adelante"
@@ -3151,7 +3152,7 @@
     "unlockedBalance" : "Desvinculado",
     "unlockedTooltip" : "Los activos desvinculados ya se pueden mover utilizando la operación de retiro.",
     "networkFees" : "El consenso Polkadot establece automáticamente las tarifas de red, no podrás modificarlas desde tu dispositivo",
-    "bondedBalanceBelowMinimum" : "Tu saldo vinculado está por debajo del mínimo actual de {{minimumBondBalance}}. Tus nominaciones corren riesgo de ser eliminadas.",
+    "bondedBalanceBelowMinimum" : "Como nominador, se necesita un mínimo de {{minimumBondBalance}} para enviar una intención de nominar",
     "nomination" : {
       "emptyState" : {
         "description" : "Puedes recibir recompensas vinculando activos y nominando luego a los validadores.",
@@ -4248,7 +4249,6 @@
         "nextButton" : "Comenzar",
         "noDevice" : "¿No tienes un dispositivo?",
         "buyLink" : "¿No tienes un dispositivo? Compra un Ledger Nano X",
-        "recoverSignIn" : "Iniciar sesión en Ledger Recover",
         "byTapping" : "Al tocar “Comenzar” otorgas tu consentimiento y aceptas nuestros",
         "termsAndConditions" : "Términos y condiciones",
         "and" : "y",
@@ -4906,6 +4906,11 @@
     "cta" : "Continuar"
   },
   "families" : {
+    "casper" : {
+      "transferIdPlaceholder" : "Opcional",
+      "transferId" : "ID de transferencia (Memo)",
+      "transferIdWarningText" : "Al utilizar un Memo, comprueba cuidadosamente la información con el receptor"
+    },
     "cardano" : {
       "memoPlaceholder" : "Opcional",
       "memo" : "Memo"
@@ -4955,6 +4960,10 @@
     }
   },
   "errors" : {
+    "ReplacementTransactionUnderpriced" : {
+      "title" : "El precio de la transacción de sustitución es más bajo",
+      "description" : "La tarifa de red podría ser demasiado baja.Auméntala."
+    },
     "NoSuchAppOnProvider" : {
       "title" : "No es posible encontrar la aplicación {{appName}} para tu configuración específica.",
       "description" : "Prueba a reinstalar la aplicación desde Mi Ledger"
@@ -5138,8 +5147,8 @@
       "description" : "Actualiza el firmware de tus dispositivos con la última versión para acceder a esta característica"
     },
     "FirmwareNotRecognized" : {
-      "title" : "No se reconoce el firmware del dispositivo",
-      "description" : "Ponte en contacto con el Soporte de Ledger"
+      "title" : "Proveedor no válido",
+      "description" : "Tienes que cambiar el ajuste \"Proveedor de Mi Ledger\". Para cambiarlo, abre los \"Ajustes\" de Ledger Live, selecciona \"Funciones experimentales\" y, a continuación, elige un proveedor distinto."
     },
     "HardResetFail" : {
       "title" : "No fue posible restablecer",
@@ -5402,6 +5411,15 @@
       "title" : "La conexión ha fallado",
       "description" : "Dispositivo detectado pero conexión fallida. Inténtalo de nuevo o contacta al Soporte de Ledger si persiste el problema."
     },
+    "CasperInvalidTransferId" : {
+      "title" : "El ID de transferencia debe ser un número positivo menor que {{maxTransferId}}"
+    },
+    "InvalidMinimumAmount" : {
+      "title" : "La cantidad mínima de transferencia es {{minAmount}}"
+    },
+    "MayBlockAccount" : {
+      "title" : "Tu cuenta quedará con menos de la cantidad mínima necesaria de {{minAmount}} para realizar un envío"
+    },
     "ETHAddressNonEIP" : {
       "title" : "Verificación automática no disponible: verifica cuidadosamente la dirección.",
       "description" : null
@@ -5411,7 +5429,7 @@
       "description" : "La función Enviar NFT sólo está disponible en el Nano X y el Nano S+. Visita nuestra plataforma de soporte al cliente para saber cómo enviar NFTs con un Nano S."
     },
     "TransactionHasBeenValidatedError" : {
-      "title" : "No es posible acelerarla ni cancelarla",
+      "title" : "No se puede acelerar ni cancelar",
       "description" : "Esta transacción ya se ha validado"
     },
     "CantScanQRCode" : {
@@ -5419,6 +5437,9 @@
     },
     "FeeNotLoaded" : {
       "title" : "No fue posible cargar las tasas de tarifas. Configura las tarifas manualmente"
+    },
+    "FeeNotLoadedSwap" : {
+      "title" : "El cálculo de la tarifa de red ha fallado debido a problemas técnicos. Inténtalo de nuevo o cambia de activos."
     },
     "FeeRequired" : {
       "title" : "Se requieren tarifas"
@@ -5546,7 +5567,7 @@
       "description" : "Algo ha salido mal. Inténtalo de nuevo o contacta al Soporte de Ledger en caso de duda."
     },
     "EthAppPleaseEnableContractData" : {
-      "title" : "Habilita los datos de contrato en los ajustes de la aplicación Ethereum"
+      "title" : "Habilita la firma a ciegas o los datos de contrato en los ajustes de la aplicación Ethereum"
     },
     "InvalidXRPTag" : {
       "title" : "Etiqueta de destino XRP no válida"

@@ -2,6 +2,7 @@
 
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTLinkingManager.h>
+#import <React/RCTRootView.h>
 #import "ReactNativeConfig.h"
 #import "RNSplashScreen.h"  // here
 #import <BrazeKit/BrazeKit-Swift.h>
@@ -33,6 +34,12 @@ static NSString *const iOSPushAutoEnabledKey = @"iOSPushAutoEnabled";
   // You can add your custom initial props in the dictionary below.
   // They will be passed down to the ViewController used by React Native.
   self.initialProps = @{};
+  
+  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
+  RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
+                                               moduleName:@"ledgerlivemobile"
+                                               initialProperties:nil];
+
 
   // Retrieve the correct GoogleService-Info.plist file name for a given environment
   NSString *googleServiceInfoEnvName = [ReactNativeConfig envFor:@"GOOGLE_SERVICE_INFO_NAME"];
@@ -78,7 +85,14 @@ static NSString *const iOSPushAutoEnabledKey = @"iOSPushAutoEnabled";
 
   [[BrazeReactUtils sharedInstance] populateInitialUrlFromLaunchOptions:launchOptions];
     
-  return [super application:application didFinishLaunchingWithOptions:launchOptions];
+  [self.window makeKeyAndVisible];
+  UIStoryboard *sb = [UIStoryboard storyboardWithName:@"LaunchScreen" bundle:nil];
+  UIViewController *vc = [sb instantiateInitialViewController];
+  rootView.loadingView = vc.view;
+  
+  [super application:application didFinishLaunchingWithOptions:launchOptions];
+  
+  return YES;
 }
 
 - (void)registerForPushNotifications {

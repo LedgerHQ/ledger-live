@@ -32,6 +32,7 @@ export const DeviceHalted = createCustomErrorClass("DeviceHalted");
 export const DeviceNameInvalid = createCustomErrorClass("DeviceNameInvalid");
 export const DeviceSocketFail = createCustomErrorClass("DeviceSocketFail");
 export const DeviceSocketNoBulkStatus = createCustomErrorClass("DeviceSocketNoBulkStatus");
+export const DeviceNeedsRestart = createCustomErrorClass("DeviceSocketNoBulkStatus");
 export const UnresponsiveDeviceError = createCustomErrorClass("UnresponsiveDeviceError");
 export const DisconnectedDevice = createCustomErrorClass("DisconnectedDevice");
 export const DisconnectedDeviceDuringOperation = createCustomErrorClass(
@@ -129,6 +130,9 @@ export const TransportWebUSBGestureRequired = createCustomErrorClass(
 );
 export const TransactionHasBeenValidatedError = createCustomErrorClass(
   "TransactionHasBeenValidatedError",
+);
+export const TransportExchangeTimeoutError = createCustomErrorClass(
+  "TransportExchangeTimeoutError",
 );
 export const DeviceShouldStayInApp = createCustomErrorClass("DeviceShouldStayInApp");
 export const WebsocketConnectionError = createCustomErrorClass("WebsocketConnectionError");

@@ -1,5 +1,6 @@
 import React from "react";
 import Tip, { TipProps } from "./index";
+
 export default {
   title: "Messages/Tips",
   argTypes: {
@@ -13,8 +14,11 @@ export default {
       control: {
         type: "text",
       },
-      defaultValue: "Label",
     },
+  },
+  args: {
+    type: "sucess",
+    label: "Label",
   },
 };
 

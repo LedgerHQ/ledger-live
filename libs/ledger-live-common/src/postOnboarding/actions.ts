@@ -37,3 +37,8 @@ export const hidePostOnboardingWalletEntryPoint: ActionCreatorPlain = () => ({
   type: `${actionTypePrefix}HIDE_WALLET_ENTRY_POINT`,
   payload: undefined,
 });
+
+export const postOnboardingSetFinished: ActionCreatorPlain = () => ({
+  type: `${actionTypePrefix}SET_FINISHED`,
+  payload: undefined,
+});

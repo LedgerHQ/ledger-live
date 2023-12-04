@@ -12,7 +12,10 @@ import type {
 } from "../staxLoadImage";
 import type { Action, Device } from "./types";
 import { currentMode } from "./app";
-import { getImplementation } from "./implementations";
+import { defaultImplementationConfig, getImplementation } from "./implementations";
+
+// 2 minutes
+const CONNECTION_TIMEOUT_MS = 120000;
 
 type State = {
   isLoading: boolean;
@@ -137,6 +140,10 @@ export const createAction = (
       if (state.imageLoaded) return;
 
       const impl = getImplementation(currentMode)<LoadImageEvent, LoadImageRequest>({
+        config: {
+          ...defaultImplementationConfig,
+          connectionTimeout: CONNECTION_TIMEOUT_MS,
+        },
         deviceSubject,
         task,
         request,

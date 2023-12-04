@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { makeAccount, makeTokenAccount } from "./common.fixtures";
+
 import {
   EvmTransactionEIP1559,
   EvmTransactionEIP1559Raw,
@@ -12,6 +12,7 @@ import {
   EvmNftTransactionRaw,
   EvmNftTransaction,
 } from "../../types";
+import { makeAccount, makeTokenAccount } from "./common.fixtures";
 
 export const testData = Object.freeze(Buffer.from("testBufferString").toString("hex"));
 
