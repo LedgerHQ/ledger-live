@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet, TouchableOpacity, Linking } from "react-native";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import ExternalLink from "../icons/ExternalLink";
 import Button from "./Button";
 import LText from "./LText";
@@ -32,7 +32,7 @@ export default function AccountDelegationInfo({
         style={[
           styles.container,
           {
-            backgroundColor: colors.background,
+            backgroundColor: colors.background.main,
           },
         ]}
       >
@@ -43,17 +43,17 @@ export default function AccountDelegationInfo({
               {title}
             </LText>
           )}
-          <LText style={styles.description} color="grey">
+          <LText style={styles.description} color="neutral.c60">
             {description}
           </LText>
           <TouchableOpacity
             style={styles.infoLinkContainer}
             onPress={() => Linking.openURL(infoUrl)}
           >
-            <LText bold style={styles.infoLink} color="live">
+            <LText bold style={styles.infoLink} color="primary.c70">
               {infoTitle}
             </LText>
-            <ExternalLink size={11} color={colors.live} />
+            <ExternalLink size={11} color={colors.primary.c80} />
           </TouchableOpacity>
         </View>
         <Button type="primary" disabled={disabled} onPress={onPress} title={ctaTitle} event="" />

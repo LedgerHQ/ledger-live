@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
-import { CompositeScreenProps, useTheme } from "@react-navigation/native";
+import { CompositeScreenProps } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { TrackScreen } from "../../analytics";
 import PreventNativeBack from "../../components/PreventNativeBack";
 import ValidateSuccess from "../../components/ValidateSuccess";
@@ -38,7 +39,7 @@ export default function ValidationSuccess({
       style={[
         styles.root,
         {
-          backgroundColor: colors.background,
+          backgroundColor: colors.background.main,
         },
       ]}
     >

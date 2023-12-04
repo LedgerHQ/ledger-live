@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { useTranslation, Trans } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { Box, SearchInput, Text } from "@ledgerhq/native-ui";
 import { FlatList, View } from "react-native";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -58,7 +58,7 @@ const PickValidator = (props: PickValidatorPropsType) => {
    */
 
   return (
-    <View style={[styles.root, { backgroundColor: colors.background }]}>
+    <View style={[styles.root, { backgroundColor: colors.background.main }]}>
       <TrackScreen
         category="DelegationFlow"
         name="SelectValidator"
@@ -82,7 +82,7 @@ const PickValidator = (props: PickValidatorPropsType) => {
         <View style={styles.validatorHead}>
           <Text
             style={styles.validatorHeadText}
-            color="smoke"
+            color="neutral.c60"
             numberOfLines={1}
             fontWeight="semiBold"
           >
@@ -92,7 +92,7 @@ const PickValidator = (props: PickValidatorPropsType) => {
           <View style={styles.validatorHeadContainer}>
             <Text
               style={styles.validatorHeadText}
-              color="smoke"
+              color="neutral.c60"
               numberOfLines={1}
               fontWeight="semiBold"
             >

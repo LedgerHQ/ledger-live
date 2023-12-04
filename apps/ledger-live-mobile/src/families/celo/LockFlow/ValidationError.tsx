@@ -1,4 +1,4 @@
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -30,7 +30,7 @@ export default function ValidationError({ navigation, route }: Props) {
   const error = route.params?.error;
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background.main }]}>
       <TrackScreen
         category="CeloLock"
         name="ValidationError"

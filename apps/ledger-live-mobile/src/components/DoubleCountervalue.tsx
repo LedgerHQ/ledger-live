@@ -4,7 +4,7 @@ import { BigNumber } from "bignumber.js";
 import { useSelector } from "react-redux";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
 import { useCalculate } from "@ledgerhq/live-common/countervalues/react";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { Trans } from "react-i18next";
 import { counterValueCurrencySelector } from "../reducers/settings";
 import CurrencyUnitValue, { CurrencyUnitValueProps } from "./CurrencyUnitValue";
@@ -76,8 +76,8 @@ function DoubleCounterValue({
           onClose={closeModal}
           style={[styles.modal]}
         >
-          <Circle bg={colors.lightLive} size={70}>
-            <InfoIcon size={30} color={colors.live} />
+          <Circle bg={colors.opacityPurple.c10} size={70}>
+            <InfoIcon size={30} color={colors.primary.c80} />
           </Circle>
 
           <LText style={styles.modalTitle} semiBold>
@@ -91,7 +91,7 @@ function DoubleCounterValue({
   const inner = (
     <>
       <TouchableOpacity style={styles.root} onPress={onOpen}>
-        <LText style={styles.label} color="smoke">
+        <LText style={styles.label} color="neutral.c60">
           <CurrencyUnitValue
             {...props}
             unit={counterValueCurrency.units[0]}
@@ -99,7 +99,7 @@ function DoubleCounterValue({
           />
         </LText>
 
-        <InfoIcon size={16} color={colors.grey} />
+        <InfoIcon size={16} color={colors.neutral.c70} />
       </TouchableOpacity>
       <QueuedDrawer isRequestingToBeOpened={isOpened} onClose={onClose} style={styles.modal}>
         <View style={styles.row}>
@@ -107,11 +107,11 @@ function DoubleCounterValue({
             <LText bold style={styles.title}>
               <Trans i18nKey="common.transactionDate" />
             </LText>
-            <LText style={styles.subtitle} color="grey">
+            <LText style={styles.subtitle} color="neutral.c70">
               <FormatDate date={date} />
             </LText>
           </View>
-          <LText semiBold style={styles.amount} color="grey">
+          <LText semiBold style={styles.amount} color="neutral.c70">
             <CurrencyUnitValue
               {...props}
               unit={counterValueCurrency.units[0]}
@@ -123,7 +123,7 @@ function DoubleCounterValue({
           style={[
             styles.separator,
             {
-              backgroundColor: colors.lightFog,
+              backgroundColor: colors.neutral.c20,
             },
           ]}
         />
@@ -132,12 +132,12 @@ function DoubleCounterValue({
             <LText bold style={styles.title}>
               <Trans i18nKey="common.today" />
             </LText>
-            <LText style={styles.subtitle} color="grey">
+            <LText style={styles.subtitle} color="neutral.c70">
               <FormatDate date={compareDate} />
             </LText>
           </View>
           {typeof compareCountervalue === "number" ? (
-            <LText semiBold style={styles.amount} color="grey">
+            <LText semiBold style={styles.amount} color="neutral.c70">
               <CurrencyUnitValue
                 {...props}
                 unit={counterValueCurrency.units[0]}

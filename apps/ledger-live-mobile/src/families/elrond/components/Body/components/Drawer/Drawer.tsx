@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import BigNumber from "bignumber.js";
 import { ELROND_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/elrond/constants";
 
@@ -48,7 +48,7 @@ const Drawer = (props: DrawerPropsType) => {
       ValidatorImage={({ size }) => (
         <Circle crop={true} size={size}>
           {ELROND_LEDGER_VALIDATOR_ADDRESS === data.validator.contract ? (
-            <LedgerLogo size={size * 0.7} color={colors.text} />
+            <LedgerLogo size={size * 0.7} color={colors.neutral.c100} />
           ) : (
             <FirstLetterIcon label={name || "-"} round={true} size={size} fontSize={24} />
           )}

@@ -7,7 +7,7 @@ import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/accoun
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import type { AccountLike } from "@ledgerhq/types-live";
 // TODO move to component
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import DelegatingContainer from "../families/tezos/DelegatingContainer";
 import { rgba } from "../colors";
 import getWindowDimensions from "../logic/getWindowDimensions";
@@ -72,7 +72,7 @@ export default function DelegationDrawer({
             <CurrencyUnitValue showCode unit={unit} value={amount} />
           </LText>
 
-          <LText semiBold style={styles.counterValue} color="grey">
+          <LText semiBold style={styles.counterValue} color="neutral.c70">
             <CounterValue
               currency={currency}
               showCode
@@ -115,13 +115,13 @@ function DataField({ label, Component, isLast }: DataFieldProps) {
         styles.row,
         styles.fieldRow,
         {
-          borderBottomColor: colors.lightFog,
+          borderBottomColor: colors.neutral.c20,
         },
         isLast ? styles.lastRow : undefined,
       ]}
     >
       <View>
-        <LText numberOfLines={1} semiBold style={styles.labelText} color="smoke">
+        <LText numberOfLines={1} semiBold style={styles.labelText} color="neutral.c60">
           {label}
         </LText>
       </View>
@@ -156,7 +156,7 @@ function ActionButton({ label, Icon, event, eventProperties, onPress, disabled }
       onPress={onPress}
     >
       <Icon size={48} style={styles.actionIcon} />
-      <LText semiBold style={[styles.actionText]} color={disabled ? "grey" : "darkBlue"}>
+      <LText semiBold style={[styles.actionText]} color={disabled ? "neutral.c70" : "neutral.c80"}>
         {label}
       </LText>
     </Touchable>

@@ -30,7 +30,7 @@ const Right = (props: RightPropsType) => {
 
   return (
     <TouchableOpacity onPress={onClick}>
-      <LText semiBold={true} color={disabled ? "grey" : "live"}>
+      <LText semiBold={true} color={disabled ? "neutral.c70" : "primary.c70"}>
         {t("account.delegation.addDelegation")}
       </LText>
 

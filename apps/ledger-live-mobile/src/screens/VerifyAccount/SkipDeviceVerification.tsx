@@ -3,7 +3,7 @@ import { Trans } from "react-i18next";
 import { View, StyleSheet } from "react-native";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import LText from "../../components/LText";
 import CurrencyIcon from "../../components/CurrencyIcon";
 import Button from "../../components/Button";
@@ -28,7 +28,7 @@ const SkipDeviceVerification = ({ onCancel, onConfirm, account }: Props) => {
         style={[
           styles.title,
           {
-            color: colors.darkBlue,
+            color: colors.neutral.c90,
           },
         ]}
       >
@@ -40,7 +40,7 @@ const SkipDeviceVerification = ({ onCancel, onConfirm, account }: Props) => {
         />
       </LText>
       <View style={styles.account}>
-        <CurrencyIcon color={colors.live} size={16} currency={currency} />
+        <CurrencyIcon color={colors.primary.c80} size={16} currency={currency} />
         <LText style={styles.accountName} semiBold>
           {(account as Account).name}
         </LText>
@@ -49,8 +49,8 @@ const SkipDeviceVerification = ({ onCancel, onConfirm, account }: Props) => {
         style={[
           styles.addressContainer,
           {
-            backgroundColor: colors.background,
-            borderColor: colors.fog,
+            backgroundColor: colors.background.main,
+            borderColor: colors.neutral.c70,
           },
         ]}
       >

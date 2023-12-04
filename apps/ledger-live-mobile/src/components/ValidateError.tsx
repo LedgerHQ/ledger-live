@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import GenericErrorView from "./GenericErrorView";
 import Button from "./Button";
 import NeedHelp from "./NeedHelp";
@@ -20,7 +20,7 @@ function ValidateError({ error, onClose, onRetry }: Props) {
       style={[
         styles.root,
         {
-          backgroundColor: colors.background,
+          backgroundColor: colors.background.main,
         },
       ]}
     >
@@ -45,7 +45,7 @@ function ValidateError({ error, onClose, onRetry }: Props) {
         style={[
           styles.footer,
           {
-            borderColor: colors.lightFog,
+            borderColor: colors.neutral.c20,
           },
         ]}
       >

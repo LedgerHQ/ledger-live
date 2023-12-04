@@ -1,7 +1,7 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import type { TFunction } from "i18next";
 import type { AccountLike } from "@ledgerhq/types-live";
 import type { PolkadotValidator } from "@ledgerhq/live-common/families/polkadot/types";
@@ -54,11 +54,11 @@ export function getDrawerInfo({
               semiBold
               ellipsizeMode="middle"
               style={[styles.valueText]}
-              color="live"
+              color="primary.c70"
             >
               {validator.address}
               <View style={styles.iconContainer}>
-                <ExternalLink size={14} color={colors.live} />
+                <ExternalLink size={14} color={colors.primary.c80} />
               </View>
             </LText>
           </Touchable>
@@ -74,7 +74,7 @@ export function getDrawerInfo({
           semiBold
           ellipsizeMode="middle"
           style={[styles.valueText]}
-          color={validator.isElected ? "live" : "darkBlue"}
+          color={validator.isElected ? "primary.c70" : "neutral.c80"}
         >
           {t(`polkadot.nomination.${validatorStatus}`) as string}
         </LText>
@@ -116,7 +116,7 @@ export function getDrawerInfo({
         semiBold
         ellipsizeMode="middle"
         style={[styles.valueText]}
-        color={validator.isOversubscribed ? "orange" : "darkBlue"}
+        color={validator.isOversubscribed ? "warning.c60" : "neutral.c80"}
       >
         {validator.isOversubscribed
           ? (t("polkadot.nomination.oversubscribed", {
@@ -138,7 +138,7 @@ export function getDrawerInfo({
             <CurrencyUnitValue value={totalStake} unit={unit} />
           </LText>
           {totalStake ? (
-            <LText style={styles.valueCounterValue} color="grey">
+            <LText style={styles.valueCounterValue} color="neutral.c70">
               <CounterValue currency={currency} value={totalStake} withPlaceholder />
             </LText>
           ) : null}

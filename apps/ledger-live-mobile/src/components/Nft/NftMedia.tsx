@@ -9,6 +9,7 @@ import { getMetadataMediaType } from "../../logic/nft";
 import { withTheme } from "../../colors";
 import NftImage from "./NftImage";
 import NftVideo from "./NftVideo";
+import { PaletteType } from "~/StyleProvider";
 
 type Props = {
   style?: StyleProp<ViewStyle>;
@@ -16,13 +17,13 @@ type Props = {
   metadata?: NFTMetadata | null;
   mediaFormat: NFTMediaSize;
   resizeMode?: FastImageProps["resizeMode"] & VideoProperties["resizeMode"];
-  colors: Theme["colors"];
+  colors: PaletteType;
   transparency?: boolean;
   children?: React.ReactNode | null;
 };
 
 export const NftMedia = (props: Props) => {
-  const { metadata, mediaFormat, status } = props;
+  const { metadata, mediaFormat, status, colors } = props;
 
   let { uri } = metadata?.medias?.[mediaFormat] || {};
   let contentType = getMetadataMediaType(metadata, mediaFormat);
@@ -41,6 +42,7 @@ export const NftMedia = (props: Props) => {
   return (
     <Component
       {...props}
+      colors={colors}
       src={uri as string}
       srcFallback={metadata?.medias?.preview?.uri as string}
     />

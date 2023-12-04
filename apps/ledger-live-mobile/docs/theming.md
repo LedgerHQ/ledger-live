@@ -16,12 +16,12 @@ using either one of those methods to load the colors in the app:
 
 ```javascript
 import React from "react";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 
 export default function() {
   const { colors, dark } = useTheme();
 
-  return <View style={{ backgroundColor: colors.background }} />;
+  return <View style={{ backgroundColor: colors.background.main}} />;
 }
 ```
 
@@ -35,7 +35,7 @@ class ThemedView extends Component() {
   render() {
     const { colors } = this.props;
 
-    return <View style={{ backgroundColor: colors.background }} />;
+    return <View style={{ backgroundColor: colors.background.main}} />;
   }
 }
 
@@ -54,7 +54,7 @@ export default withTheme(ThemedView);
 In addition to these tools some components handle theming by themselves using color props without the need of importing the theme from the provider:
 
 - [LText](../src/components/LText/index.js) use `color` prop to target a specific theme color
-  it will default to `colors.darkBlue`
+  it will default to `colors.neutral.c90`
 
 ```javascript
 import LText from "../components/LText";
@@ -72,8 +72,8 @@ export default function App() {
 While developping we try to keep the app theme coherent by setting the same colors at the same spots:
 
 - use `colors.background` for background of the pages
-- use `colors.card` for foreground containers
-- use `colors.lightLive` for live background overlay
+- use `colors.background.drawer` for foreground containers
+- use `colors.opacityPurple.c10` for live background overlay
 
 ```javascript
 import React from "react";
@@ -83,8 +83,8 @@ export default function App() {
   const { colors } = useTheme();
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
-      <View style={[styles.container, { backgroundColor: colors.card }]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background.main}]}>
+      <View style={[styles.container, { backgroundColor: colors.background.drawer }]}>
         ...
       </View>
     </SafeAreaView>
@@ -92,16 +92,16 @@ export default function App() {
 }
 ```
 
-- use `colors.darkBlue` for contrast text color
-- use `colors.grey` for lower contrast text color
-- use `colors.fog` for light contrast borders
+- use `colors.neutral.c90` for contrast text color
+- use `colors.neutral.c70` for lower contrast text color
+- use `colors.neutral.c70` for light contrast borders
 
 most of the other themed colors don't change between themes and are usually safe to use this includes:
 
-- `colors.live` primary color
-- `colors.alert` error color
-- `colors.success` success color
-- `colors.orange` warning color
+- `colors.primary.c80` primary color
+- `colors.error.c60` error color
+- `colors.success.c50` success color
+- `colors.warning.c70` warning color
 
 ### **Migration from previous versions**
 

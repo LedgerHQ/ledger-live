@@ -9,7 +9,8 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { Trans } from "react-i18next";
-import { useNavigation, useTheme } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Config from "react-native-config";
 import { useHasLocallyOverriddenFeatureFlags } from "@ledgerhq/live-common/featureFlags/useHasOverriddenFeatureFlags";
@@ -98,7 +99,7 @@ function ExperimentalHeader() {
         {
           zIndex: !isExperimental && !areFeatureFlagsOverridden && !Config.MOCK ? 0 : 1,
           marginBottom: isExperimental || Config.MOCK ? -top + 20 : 0,
-          backgroundColor: colors.lightLiveBg,
+          backgroundColor: "white",
         },
         heightStyle,
       ]}
@@ -108,14 +109,14 @@ function ExperimentalHeader() {
           styles.container,
           {
             top,
-            backgroundColor: colors.lightLiveBg,
+            backgroundColor: "white",
           },
           opacityStyle,
         ]}
       >
         {isExperimental && (
           <>
-            <ExperimentalIcon size={16} color={colors.live} />
+            <ExperimentalIcon size={16} color={"red"} />
             <LText bold style={styles.label} onPress={onPressExperimental}>
               <Trans i18nKey="settings.experimental.title" />
             </LText>

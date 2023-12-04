@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, View, TouchableWithoutFeedback } from "react-native";
 import { useTranslation } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import LText from "../../components/LText";
 import BiometricsIcon from "../../components/BiometricsIcon";
 import type { Privacy } from "../../reducers/types";
@@ -25,7 +25,7 @@ function FailBiometrics({ privacy, lock }: Props) {
           <BiometricsIcon
             biometricsType={privacy.biometricsType}
             failed={true}
-            color={colors.alert}
+            color={colors.error.c60}
             size={80}
           />
         </View>
@@ -34,7 +34,7 @@ function FailBiometrics({ privacy, lock }: Props) {
         <LText semiBold secondary style={styles.title}>
           {t("auth.failed.biometrics.title", { biometricsType })}
         </LText>
-        <LText style={styles.description} color="grey">
+        <LText style={styles.description} color="neutral.c70">
           {t("auth.failed.biometrics.description")}
         </LText>
       </View>

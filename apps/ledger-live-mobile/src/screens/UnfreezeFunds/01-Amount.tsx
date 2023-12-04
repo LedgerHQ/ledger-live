@@ -5,7 +5,8 @@ import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
-import { useNavigation, useTheme } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import type { Account } from "@ledgerhq/types-live";
 import { getMainAccount, getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -163,6 +164,7 @@ function UnfreezeAmountInner({ account }: InnerProps) {
     return e instanceof Error ? e : null;
   }, [status.errors]);
   const warning = status.warnings.amount;
+
   return (
     <>
       <TrackScreen category="UnfreezeFunds" name="Amount" />
@@ -170,13 +172,13 @@ function UnfreezeAmountInner({ account }: InnerProps) {
         style={[
           styles.root,
           {
-            backgroundColor: colors.background,
+            backgroundColor: colors.background.main,
           },
         ]}
       >
         <View style={styles.container}>
           <View style={styles.wrapper}>
-            <LText style={styles.label} color="grey">
+            <LText style={styles.label} color="neutral.c60">
               <Trans i18nKey="unfreeze.amount.title" />
             </LText>
 
@@ -185,15 +187,18 @@ function UnfreezeAmountInner({ account }: InnerProps) {
               disabled={!canUnfreezeBandwidth}
               onPress={() => onChangeResource("BANDWIDTH")}
             >
-              <Bandwidth size={16} color={!canUnfreezeBandwidth ? colors.grey : colors.darkBlue} />
+              <Bandwidth
+                size={16}
+                color={!canUnfreezeBandwidth ? colors.neutral.c70 : colors.neutral.c90}
+              />
               <View style={styles.selectCardLabelContainer}>
-                <LText semiBold color={!canUnfreezeBandwidth ? "grey" : "darkBlue"}>
+                <LText semiBold color={!canUnfreezeBandwidth ? "neutral.c70" : "neutral.c80"}>
                   <Trans i18nKey="account.bandwidth" />
                 </LText>
                 {bandwidthExpiredAt && unfreezeBandwidth.gt(0) && !canUnfreezeBandwidth ? (
                   <View style={styles.timeWarn}>
-                    <ClockIcon color={colors.grey} size={12} />
-                    <LText style={styles.timeLabel} semiBold color="grey">
+                    <ClockIcon color={colors.neutral.c70} size={12} />
+                    <LText style={styles.timeLabel} semiBold color="neutral.c70">
                       <DateFromNow date={+bandwidthExpiredAt} />
                     </LText>
                   </View>
@@ -202,7 +207,7 @@ function UnfreezeAmountInner({ account }: InnerProps) {
               <LText
                 semiBold
                 style={[styles.frozenAmount]}
-                color={!canUnfreezeBandwidth ? "grey" : "darkBlue"}
+                color={!canUnfreezeBandwidth ? "neutral.c70" : "neutral.c80"}
               >
                 <CurrencyUnitValue unit={unit} value={unfreezeBandwidth} />
               </LText>
@@ -215,15 +220,18 @@ function UnfreezeAmountInner({ account }: InnerProps) {
               style={[
                 styles.selectCard,
                 {
-                  backgroundColor: colors.card,
+                  backgroundColor: colors.background.drawer,
                 },
               ]}
               disabled={!canUnfreezeEnergy}
               onPress={() => onChangeResource("ENERGY")}
             >
-              <Bolt size={16} color={!canUnfreezeEnergy ? colors.grey : colors.darkBlue} />
+              <Bolt
+                size={16}
+                color={!canUnfreezeEnergy ? colors.neutral.c70 : colors.neutral.c90}
+              />
               <View style={styles.selectCardLabelContainer}>
-                <LText semiBold color={!canUnfreezeEnergy ? "grey" : "darkBlue"}>
+                <LText semiBold color={!canUnfreezeEnergy ? "neutral.c70" : "neutral.c80"}>
                   <Trans i18nKey="account.energy" />
                 </LText>
                 {energyExpiredAt && unfreezeEnergy.gt(0) && !canUnfreezeEnergy ? (
@@ -231,12 +239,12 @@ function UnfreezeAmountInner({ account }: InnerProps) {
                     style={[
                       styles.timeWarn,
                       {
-                        backgroundColor: colors.lightFog,
+                        backgroundColor: colors.neutral.c20,
                       },
                     ]}
                   >
-                    <ClockIcon color={colors.grey} size={12} />
-                    <LText style={styles.timeLabel} semiBold color="grey">
+                    <ClockIcon color={colors.neutral.c70} size={12} />
+                    <LText style={styles.timeLabel} semiBold color="neutral.c70">
                       <DateFromNow date={+energyExpiredAt} />
                     </LText>
                   </View>
@@ -245,7 +253,7 @@ function UnfreezeAmountInner({ account }: InnerProps) {
               <LText
                 semiBold
                 style={[styles.frozenAmount]}
-                color={!canUnfreezeEnergy ? "grey" : "darkBlue"}
+                color={!canUnfreezeEnergy ? "neutral.c70" : "neutral.c80"}
               >
                 <CurrencyUnitValue unit={unit} value={unfreezeEnergy} />
               </LText>
@@ -259,12 +267,12 @@ function UnfreezeAmountInner({ account }: InnerProps) {
               style={[
                 styles.infoSection,
                 {
-                  backgroundColor: colors.lightLive,
+                  backgroundColor: colors.opacityPurple.c10,
                 },
               ]}
             >
-              <Info size={16} color={colors.live} />
-              <LText style={styles.infoText} numberOfLines={3} color="live">
+              <Info size={16} color={colors.primary.c80} />
+              <LText style={styles.infoText} numberOfLines={3} color="primary.c70">
                 <Trans
                   i18nKey="unfreeze.amount.info"
                   values={{
@@ -274,7 +282,11 @@ function UnfreezeAmountInner({ account }: InnerProps) {
               </LText>
             </View>
 
-            <LText style={[styles.error]} numberOfLines={2} color={error ? "alert" : "orange"}>
+            <LText
+              style={[styles.error]}
+              numberOfLines={2}
+              color={error ? "error.c60" : "warning.c60"}
+            >
               <TranslatedError error={error || warning} />
             </LText>
           </View>

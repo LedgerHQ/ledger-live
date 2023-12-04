@@ -29,7 +29,7 @@ const SummaryRowCustom = ({ label, data, iconLeft }: Props) => {
     <View style={styles.root}>
       <View style={styles.iconLeft}>{iconLeft}</View>
       <View style={styles.right}>
-        <LText style={styles.labelStyle} color="grey">
+        <LText style={styles.labelStyle} color="neutral.c70">
           {label}
         </LText>
         {data}

@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { View } from "react-native";
 import { Trans } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { handleTransactionStatus } from "@ledgerhq/live-common/families/elrond/helpers/handleTransactionStatus";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import {
@@ -78,10 +78,10 @@ const WithdrawFunds = (props: WithdrawFundsPropsType) => {
    */
 
   return (
-    <View style={[styles.root, { backgroundColor: colors.background }]}>
+    <View style={[styles.root, { backgroundColor: colors.background.main }]}>
       <View style={styles.main}>
         <View style={styles.sectionLabel}>
-          <LText semiBold={true} style={styles.subLabel} color="grey">
+          <LText semiBold={true} style={styles.subLabel} color="neutral.c70">
             <Trans i18nKey="elrond.withdraw.flow.steps.method.youEarned" />
           </LText>
 
@@ -89,13 +89,13 @@ const WithdrawFunds = (props: WithdrawFundsPropsType) => {
             <CurrencyUnitValue unit={unit} value={amount} showCode={true} />
           </LText>
 
-          <LText semiBold={true} style={styles.subLabel} color="grey">
+          <LText semiBold={true} style={styles.subLabel} color="neutral.c70">
             <CounterValue currency={currency} value={amount} withPlaceholder={true} />
           </LText>
         </View>
 
         <View style={styles.sectionLabel}>
-          <LText semiBold={true} style={styles.subLabel} color="grey">
+          <LText semiBold={true} style={styles.subLabel} color="neutral.c70">
             <Trans i18nKey="elrond.withdraw.flow.steps.method.byDelegationAssetsTo" />
           </LText>
 
@@ -117,7 +117,7 @@ const WithdrawFunds = (props: WithdrawFundsPropsType) => {
         <View style={styles.spacer} />
       </View>
 
-      <View style={[styles.footer, { backgroundColor: colors.background }]}>
+      <View style={[styles.footer, { backgroundColor: colors.background.main }]}>
         <View style={styles.warningSection}>
           {error && error instanceof Error ? (
             <LText
@@ -125,7 +125,7 @@ const WithdrawFunds = (props: WithdrawFundsPropsType) => {
               secondary={true}
               semiBold={true}
               style={styles.warning}
-              color="alert"
+              color="error.c60"
             >
               <TranslatedError error={error} />
             </LText>
@@ -135,7 +135,7 @@ const WithdrawFunds = (props: WithdrawFundsPropsType) => {
               secondary={true}
               semiBold={true}
               style={styles.warning}
-              color="alert"
+              color="error.c60"
             >
               <TranslatedError error={warning} />
             </LText>

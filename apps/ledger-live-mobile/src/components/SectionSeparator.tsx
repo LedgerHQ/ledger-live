@@ -1,7 +1,7 @@
 import React from "react";
 import { View, StyleSheet, PixelRatio, ViewStyle, StyleProp } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 
 type Props = {
   thin?: boolean;
@@ -17,12 +17,12 @@ export const ArrowDownCircle = ({ size = 24, big }: { size?: number; big?: boole
       style={[
         styles.circle,
         {
-          borderColor: colors.lightFog,
+          borderColor: colors.neutral.c20,
         },
         big ? styles.arrowBig : null,
       ]}
     >
-      <Icon name={"ios-arrow-down"} size={big ? 32 : size} color={colors.live} />
+      <Icon name={"ios-arrow-down"} size={big ? 32 : size} color={colors.primary.c80} />
     </View>
   );
 };
@@ -31,7 +31,7 @@ export default function SectionSeparator({ thin, lineColor, children, style, noM
   const lineStyle = [
     styles.line,
     {
-      backgroundColor: colors.lightFog,
+      backgroundColor: colors.neutral.c20,
     },
     thin ? styles.thin : undefined,
     lineColor

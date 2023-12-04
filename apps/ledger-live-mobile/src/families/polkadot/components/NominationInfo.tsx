@@ -1,4 +1,4 @@
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import LText from "../../../components/LText";
@@ -15,18 +15,18 @@ export default function NominationInfo({ address, identity, onPress }: Props) {
       style={[
         styles.wrapper,
         {
-          borderLeftColor: colors.fog,
+          borderLeftColor: colors.neutral.c70,
         },
       ]}
     >
       {identity ? (
-        <LText color="grey">
+        <LText color="neutral.c70">
           <LText semiBold>{identity}</LText>
         </LText>
       ) : null}
 
       <TouchableOpacity onPress={() => onPress(address)}>
-        <LText color="grey">{address}</LText>
+        <LText color="neutral.c70">{address}</LText>
       </TouchableOpacity>
     </View>
   );

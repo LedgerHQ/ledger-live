@@ -2,7 +2,7 @@ import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
 import { getCryptoCurrencyIcon, getTokenCurrencyIcon } from "@ledgerhq/live-common/reactNative";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import LText from "./LText";
 import { ensureContrast, rgba } from "../colors";
@@ -19,7 +19,7 @@ function CircleCurrencyIcon({ size, currency, color, sizeRatio = 0.5 }: Props) {
   const isToken = currency.type === "TokenCurrency";
   const backgroundColorContrast = ensureContrast(
     color || rgba(getCurrencyColor(currency), isToken ? 1 : 1),
-    colors.background,
+    colors.background.main,
   );
   const initialBackgroundColor = color || rgba(getCurrencyColor(currency), isToken ? 1 : 1);
   const backgroundColor =

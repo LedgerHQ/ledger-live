@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { View, TouchableOpacity } from "react-native";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { Text } from "@ledgerhq/native-ui";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 import { useTranslation } from "react-i18next";
@@ -63,7 +63,7 @@ const Unbonding = (props: UnbondingPropsType) => {
           {validator && (
             <Circle crop={true} size={42}>
               {ELROND_LEDGER_VALIDATOR_ADDRESS === validator.contract ? (
-                <LedgerLogo size={42 * 0.7} color={colors.text} />
+                <LedgerLogo size={42 * 0.7} color={colors.neutral.c100} />
               ) : (
                 <FirstLetterIcon label={name || "-"} round={true} size={42} fontSize={24} />
               )}
@@ -77,11 +77,11 @@ const Unbonding = (props: UnbondingPropsType) => {
           </Text>
 
           <View style={styles.row}>
-            <LText style={styles.seeMore} color="live">
+            <LText style={styles.seeMore} color="primary.c70">
               {t("common.seeMore")}
             </LText>
 
-            <ArrowRight color={colors.primary} size={14} />
+            <ArrowRight color={colors.primary.c70} size={14} />
           </View>
         </View>
 
@@ -90,7 +90,7 @@ const Unbonding = (props: UnbondingPropsType) => {
             {value} {currency.ticker}
           </Text>
 
-          <LText color="grey">
+          <LText color="neutral.c70">
             <CounterValue
               currency={currency}
               value={new BigNumber(amount)}

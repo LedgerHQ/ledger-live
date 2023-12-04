@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { StyleSheet, View } from "react-native";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans } from "react-i18next";
 
@@ -40,7 +40,7 @@ export function PendingOperation({ route, navigation }: PendingOperationParamLis
   }, [navigation, route.params.swapOperation]);
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background.main}]}>
       <TrackScreen
         category="Swap Form"
         name="Confirmation Success"
@@ -50,25 +50,25 @@ export function PendingOperation({ route, navigation }: PendingOperationParamLis
       />
       <View style={styles.wrapper}>
         <View style={styles.content}>
-          <View style={[styles.iconWrapper, { backgroundColor: rgba(colors.success, 0.1) }]}>
-            <IconCheck color={colors.success} size={20} />
-            <View style={[styles.wrapperClock, { backgroundColor: colors.background }]}>
-              <IconClock color={colors.grey} size={14} />
+          <View style={[styles.iconWrapper, { backgroundColor: rgba(colors.success.c50, 0.1) }]}>
+            <IconCheck color={colors.success.c50} size={20} />
+            <View style={[styles.wrapperClock, { backgroundColor: colors.background.main}]}>
+              <IconClock color={colors.neutral.c70} size={14} />
             </View>
           </View>
           <LText secondary style={styles.title}>
             <Trans i18nKey={"transfer.swap.pendingOperation.title"} />
           </LText>
           <View style={styles.label}>
-            <LText style={styles.swapID} color="grey">
+            <LText style={styles.swapID} color="neutral.c70">
               <Trans i18nKey={"transfer.swap.pendingOperation.label"} />
             </LText>
 
-            <LText style={[styles.swapID]} color="darkBlue">
+            <LText style={[styles.swapID]} color="neutral.c80">
               {swapId}
             </LText>
           </View>
-          <LText style={styles.description} color="grey">
+          <LText style={styles.description} color="neutral.c70">
             {targetCurrency ? (
               <Trans
                 i18nKey={"transfer.swap.pendingOperation.description"}

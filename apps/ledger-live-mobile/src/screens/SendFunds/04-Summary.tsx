@@ -9,7 +9,7 @@ import type { Account } from "@ledgerhq/types-live";
 import type { TransactionStatus as BitcoinTransactionStatus } from "@ledgerhq/live-common/families/bitcoin/types";
 import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
 import { NotEnoughGas } from "@ledgerhq/errors";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import invariant from "invariant";
 
@@ -165,7 +165,7 @@ function SendSummary({ navigation, route }: Props) {
       style={[
         styles.root,
         {
-          backgroundColor: colors.background,
+          backgroundColor: colors.background.main,
         },
       ]}
     >
@@ -188,13 +188,13 @@ function SendSummary({ navigation, route }: Props) {
           style={[
             styles.verticalConnector,
             {
-              borderColor: colors.lightFog,
+              borderColor: colors.neutral.c20,
             },
           ]}
         />
         <SummaryToSection transaction={transaction} currency={mainAccount.currency} />
         {status.warnings.recipient ? (
-          <LText style={styles.warning} color="orange">
+          <LText style={styles.warning} color="warning.c60">
             <TranslatedError error={status.warnings.recipient} />
           </LText>
         ) : null}
@@ -204,7 +204,7 @@ function SendSummary({ navigation, route }: Props) {
           navigation={navigation}
           route={route}
         />
-        <SectionSeparator lineColor={colors.lightFog} />
+        <SectionSeparator lineColor={colors.neutral.c20} />
         {isNFTSend ? (
           <SummaryNft transaction={transaction} currencyId={(account as Account).currency.id} />
         ) : (
@@ -233,7 +233,7 @@ function SendSummary({ navigation, route }: Props) {
                   padding: 4,
                 }}
               >
-                <Info size={12} color={colors.alert} />
+                <Info size={12} color={colors.error.c60} />
               </View>
               <LText style={[styles.error, styles.gasPriceErrorText]}>
                 <TranslatedError error={error} />
@@ -247,7 +247,7 @@ function SendSummary({ navigation, route }: Props) {
 
         {!amount.eq(totalSpent) && !hideTotal ? (
           <>
-            <SectionSeparator lineColor={colors.lightFog} />
+            <SectionSeparator lineColor={colors.neutral.c20} />
             <SummaryTotalSection
               account={account}
               parentAccount={parentAccount}
@@ -257,7 +257,7 @@ function SendSummary({ navigation, route }: Props) {
         ) : null}
       </NavigationScrollView>
       <View style={styles.footer}>
-        <LText style={styles.error} color="alert">
+        <LText style={styles.error} color="error.c60">
           <TranslatedError error={transactionError} />
         </LText>
         {error && error instanceof NotEnoughGas ? (
@@ -301,7 +301,7 @@ function SendSummary({ navigation, route }: Props) {
         confirmationDesc={
           <Trans i18nKey="send.highFeeModal">
             {"Be careful, your fees represent more than "}
-            <LText color="smoke" bold>
+            <LText color="neutral.c60" bold>
               10%
             </LText>
             {" of the amount. Do you want to continue?"}

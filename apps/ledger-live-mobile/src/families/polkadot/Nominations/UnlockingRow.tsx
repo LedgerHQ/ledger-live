@@ -4,7 +4,7 @@ import React, { useMemo } from "react";
 import { View, StyleSheet } from "react-native";
 import type { Account } from "@ledgerhq/types-live";
 import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
 import CounterValue from "../../../components/CounterValue";
 import LText from "../../../components/LText";
@@ -39,14 +39,16 @@ export default function UnlockingRow({
       style={[
         styles.row,
         styles.wrapper,
-        !isLast ? { ...styles.borderBottom, borderBottomColor: colors.lightGrey } : undefined,
+        !isLast
+          ? { ...styles.borderBottom, borderBottomColor: colors.opacityDefault.c05 }
+          : undefined,
       ]}
     >
       <View style={styles.valueWrapper}>
         <LText semiBold>
           <CurrencyUnitValue value={amount} unit={unit} />
         </LText>
-        <LText style={styles.valueCounterValue} color="grey">
+        <LText style={styles.valueCounterValue} color="neutral.c70">
           <CounterValue currency={currency} value={amount} withPlaceholder />
         </LText>
       </View>

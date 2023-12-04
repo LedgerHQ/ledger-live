@@ -1,7 +1,7 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { TFunction } from "i18next";
 import { Account } from "@ledgerhq/types-live";
 import {
@@ -67,11 +67,11 @@ export function getDrawerInfo({
               semiBold
               ellipsizeMode="middle"
               style={[styles.valueText]}
-              color="live"
+              color="primary.c70"
             >
               {nomination.address}
               <View style={styles.iconContainer}>
-                <ExternalLink size={14} color={colors.live} />
+                <ExternalLink size={14} color={colors.primary.c80} />
               </View>
             </LText>
           </Touchable>
@@ -89,7 +89,11 @@ export function getDrawerInfo({
           ellipsizeMode="middle"
           style={[styles.valueText]}
           color={
-            !nomination.status ? "orange" : nomination.status === "active" ? "success" : "darkBlue"
+            !nomination.status
+              ? "warning.c60"
+              : nomination.status === "active"
+              ? "success"
+              : "neutral.c80"
           }
         >
           {t(`polkadot.nomination.${nomination.status || "notValidator"}`) as string}
@@ -118,7 +122,7 @@ export function getDrawerInfo({
                 semiBold
                 ellipsizeMode="middle"
                 style={[styles.valueText]}
-                color={validator?.isOversubscribed ? "orange" : "darkBlue"}
+                color={validator?.isOversubscribed ? "warning.c60" : "neutral.c80"}
               >
                 {validator?.isOversubscribed
                   ? (t(`polkadot.nomination.oversubscribed`, {
@@ -139,7 +143,7 @@ export function getDrawerInfo({
                     <CurrencyUnitValue value={totalStake} unit={unit} />
                   </LText>
                   {totalStake ? (
-                    <LText style={styles.valueCounterValue} color="grey">
+                    <LText style={styles.valueCounterValue} color="neutral.c70">
                       <CounterValue currency={currency} value={totalStake} withPlaceholder />
                     </LText>
                   ) : null}
@@ -155,7 +159,7 @@ export function getDrawerInfo({
                   <LText semiBold>
                     <CurrencyUnitValue value={amount} unit={unit} />
                   </LText>
-                  <LText style={styles.valueCounterValue} color="grey">
+                  <LText style={styles.valueCounterValue} color="neutral.c70">
                     <CounterValue currency={currency} value={amount} withPlaceholder />
                   </LText>
                 </View>

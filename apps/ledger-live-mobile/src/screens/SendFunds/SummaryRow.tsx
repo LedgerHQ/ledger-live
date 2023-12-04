@@ -35,7 +35,7 @@ type Props = {
 const SummaryRow = ({ title, children, titleProps, additionalInfo, onPress, event }: Props) => {
   const titleContainer = (
     <View style={styles.titleContainer}>
-      <LText style={[styles.title]} color="grey" {...titleProps}>
+      <LText style={[styles.title]} color="neutral.c70" {...titleProps}>
         {title}
       </LText>
       <View style={styles.iconContainer}>{!!additionalInfo && <View>{additionalInfo}</View>}</View>

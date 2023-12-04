@@ -3,7 +3,7 @@ import { useValidators } from "@ledgerhq/live-common/families/solana/react";
 import { ValidatorsAppValidator } from "@ledgerhq/live-common/families/solana/validator-app/index";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import invariant from "invariant";
 import React, { useCallback, useState } from "react";
 import { Trans } from "react-i18next";
@@ -55,7 +55,7 @@ export default function SelectValidator({ navigation, route }: Props) {
   );
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background.main }]}>
       <TrackScreen
         category="DelegationFlow"
         name="SelectValidator"
@@ -163,11 +163,21 @@ const keyExtractor = (v: ValidatorsAppValidator) => v.voteAccount;
 
 const ValidatorHead = () => (
   <View style={styles.validatorHead}>
-    <Text style={styles.validatorHeadText} color="smoke" numberOfLines={1} fontWeight="semiBold">
+    <Text
+      style={styles.validatorHeadText}
+      color="neutral.c60"
+      numberOfLines={1}
+      fontWeight="semiBold"
+    >
       <Trans i18nKey="delegation.validator" />
     </Text>
     <View style={styles.validatorHeadContainer}>
-      <Text style={styles.validatorHeadText} color="smoke" numberOfLines={1} fontWeight="semiBold">
+      <Text
+        style={styles.validatorHeadText}
+        color="neutral.c60"
+        numberOfLines={1}
+        fontWeight="semiBold"
+      >
         <Trans i18nKey="solana.delegation.totalStake" />
       </Text>
     </View>
@@ -208,7 +218,12 @@ const ValidatorRow = ({
             <Trans i18nKey="solana.delegation.commission" /> {validator.commission} %
           </Text>
         </View>
-        <Text fontWeight="semiBold" numberOfLines={1} style={[styles.validatorYield]} color="smoke">
+        <Text
+          fontWeight="semiBold"
+          numberOfLines={1}
+          style={[styles.validatorYield]}
+          color="neutral.c60"
+        >
           <Text fontWeight="semiBold" numberOfLines={1}>
             <CurrencyUnitValue
               showCode

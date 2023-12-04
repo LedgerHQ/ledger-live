@@ -15,7 +15,7 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import LText from "./LText";
 import Chevron from "../icons/Chevron";
 
@@ -104,7 +104,7 @@ const CollapsibleList = <T,>({
       style={[
         styles.root,
         {
-          backgroundColor: colors.card,
+          backgroundColor: colors.background.drawer,
         },
         containerStyle,
         heightStyle,
@@ -113,9 +113,9 @@ const CollapsibleList = <T,>({
       <TouchableWithoutFeedback onPress={onPress}>
         <View style={styles.toggleButton}>
           <Animated.View style={[styles.chevronIcon, rotateZStyle]}>
-            <Chevron size={10} color={colors.live} />
+            <Chevron size={10} color={colors.primary.c80} />
           </Animated.View>
-          <LText style={styles.toggleButtonText} color="live">
+          <LText style={styles.toggleButtonText} color="primary.c70">
             {title}
           </LText>
         </View>

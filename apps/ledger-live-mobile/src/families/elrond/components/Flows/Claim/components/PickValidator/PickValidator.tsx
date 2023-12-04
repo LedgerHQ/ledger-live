@@ -1,6 +1,6 @@
 import React, { useMemo, useCallback } from "react";
 import { View, FlatList } from "react-native";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount, getAccountUnit } from "@ledgerhq/live-common/account/index";
 import BigNumber from "bignumber.js";
@@ -74,7 +74,7 @@ const PickValidator = (props: PickValidatorPropsType) => {
    */
 
   return (
-    <View style={[styles.root, { backgroundColor: colors.background }]}>
+    <View style={[styles.root, { backgroundColor: colors.background.main}]}>
       <View style={styles.main}>
         <FlatList
           style={styles.list}

@@ -1,12 +1,8 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import { Trans } from "react-i18next";
-import {
-  CompositeNavigationProp,
-  useNavigation,
-  useRoute,
-  useTheme,
-} from "@react-navigation/native";
+import { CompositeNavigationProp, useNavigation, useRoute } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { Transaction as RippleTransaction } from "@ledgerhq/live-common/families/ripple/types";
@@ -68,7 +64,7 @@ export default function RippleFeeRow({ account, transaction, parentAccount }: Pr
       title={<Trans i18nKey="send.fees.title" />}
       additionalInfo={
         <View>
-          <ExternalLink size={12} color={colors.grey} />
+          <ExternalLink size={12} color={colors.neutral.c70} />
         </View>
       }
     >
@@ -88,16 +84,16 @@ export default function RippleFeeRow({ account, transaction, parentAccount }: Pr
             style={[
               styles.link,
               {
-                textDecorationColor: colors.live,
+                textDecorationColor: colors.primary.c80,
               },
             ]}
-            color="live"
+            color="primary.c70"
             onPress={openFees}
           >
             <Trans i18nKey="common.edit" />
           </LText>
         </View>
-        <LText style={styles.countervalue} color="grey">
+        <LText style={styles.countervalue} color="neutral.c70">
           {fee ? <CounterValue before="≈ " value={fee} currency={account.currency} /> : null}
         </LText>
       </View>

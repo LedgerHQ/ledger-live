@@ -2,7 +2,7 @@ import React, { useEffect, useReducer } from "react";
 import { StyleSheet } from "react-native";
 import { Flex, Text, Alert } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 
 import {
   troubleshootOverObservable,
@@ -37,7 +37,9 @@ export default function Network() {
         />
         {state.map(({ title, status }) => (
           <Flex flexDirection="row" key={title} alignItems="center" mt={4}>
-            <Bullet backgroundColor={status === "success" ? colors.success : colors.alert} />
+            <Bullet
+              backgroundColor={status === "success" ? colors.success.c60 : colors.error.c60}
+            />
             <Text variant="body">{title}</Text>
           </Flex>
         ))}

@@ -1,7 +1,8 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
-import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import type { Account } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { Transaction as HederaTransaction } from "@ledgerhq/live-common/families/hedera/types";
@@ -51,10 +52,10 @@ export default function HederaSendRowsCustom(props: Props) {
             style={[
               styles.link,
               {
-                textDecorationColor: colors.live,
+                textDecorationColor: colors.primary.c80,
               },
             ]}
-            color="live"
+            color="primary.c70"
             onPress={editMemo}
           >
             {t("common.edit")}

@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { Platform, Pressable } from "react-native";
-import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { DeviceModelInfo } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
@@ -52,8 +53,7 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
   const hasConnectedDevice = useSelector(hasConnectedDeviceSelector);
   const hasCompletedOnboarding: boolean = useSelector(hasCompletedOnboardingSelector);
 
-  const { dark } = useTheme();
-  const theme: "dark" | "light" = dark ? "dark" : "light";
+  const { palette } = useTheme();
   const [loading, setLoading] = useState(false);
   const [showBatteryWarningDrawer, setShowBatteryWarningDrawer] = useState<boolean>(false);
 
@@ -305,7 +305,7 @@ const FirmwareUpdateBanner = ({ onBackFromUpdate }: FirmwareUpdateBannerProps) =
               renderConnectYourDevice({
                 t,
                 device: lastConnectedDevice,
-                theme,
+                theme: palette,
                 fullScreen: false,
               })
             ) : (

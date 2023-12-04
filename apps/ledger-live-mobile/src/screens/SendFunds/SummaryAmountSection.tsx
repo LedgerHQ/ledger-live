@@ -45,7 +45,7 @@ const SummaryAmountSection = ({ account, amount, overrideAmountLabel }: Props) =
             <LText style={styles.valueText} semiBold>
               <CurrencyUnitValue unit={unit} value={amount} disableRounding />
             </LText>
-            <LText style={styles.counterValueText} color="grey" semiBold>
+            <LText style={styles.counterValueText} color="neutral.c70" semiBold>
               <CounterValue before="≈ " value={amount} currency={currency} showCode />
             </LText>
           </>

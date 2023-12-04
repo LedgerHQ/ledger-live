@@ -20,7 +20,7 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useLedgerFirstShuffledValidatorsCosmosFamily } from "@ledgerhq/live-common/families/cosmos/react";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import SelectValidatorSearchBox from "../../tron/VoteFlow/01-SelectValidator/SearchBox";
 import ValidatorRow from "../shared/ValidatorRow";
 import ValidatorHead from "../shared/ValidatorHead";
@@ -131,7 +131,7 @@ function RedelegationSelectValidator({ navigation, route }: Props) {
       style={[
         styles.root,
         {
-          backgroundColor: colors.background,
+          backgroundColor: colors.background.main,
         },
       ]}
     >

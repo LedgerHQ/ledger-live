@@ -8,7 +8,7 @@ import {
   ScrollView,
   Linking,
 } from "react-native";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
 import { rgba } from "../../colors";
 import Styles from "../../navigation/styles";
@@ -20,6 +20,7 @@ import { UnionToIntersection } from "../../types/helpers";
 import { StackNavigatorProps } from "../RootNavigator/types/helpers";
 import { OnboardingNavigatorParamList } from "../RootNavigator/types/OnboardingNavigator";
 import { ScreenName } from "../../const";
+import { PaletteType } from "~/StyleProvider";
 
 export type SceneInfoProp = {
   title?: React.ReactNode;
@@ -61,7 +62,11 @@ export default function OnboardingInfoModal({ navigation, route }: NavigationPro
     sceneInfoKey as keyof typeof infoModalScenes
   ] as InfoModalSceneValues;
   const close = useCallback(() => navigation.goBack(), [navigation]);
-  const [primaryColor, textColor, bulletColor] = [colors.card, colors.darkBlue, colors.lightLive];
+  const [primaryColor, textColor, bulletColor] = [
+    colors.background.drawer,
+    colors.neutral.c90,
+    colors.opacityPurple.c10,
+  ];
   return sceneInfoProps ? (
     <SafeAreaView
       style={[
@@ -88,7 +93,11 @@ export default function OnboardingInfoModal({ navigation, route }: NavigationPro
                 <View style={styles.iconContainer}>
                   <Icon
                     size={56}
-                    color={iconColor ? colors[iconColor as keyof typeof colors] : colors.live}
+                    color={
+                      iconColor
+                        ? (colors[iconColor as keyof PaletteType] as string)
+                        : colors.primary.c80
+                    }
                   />
                 </View>
               )}
@@ -129,7 +138,7 @@ export default function OnboardingInfoModal({ navigation, route }: NavigationPro
                     style={[
                       styles.link,
                       {
-                        color: colors.live,
+                        color: colors.primary.c80,
                       },
                     ]}
                   >
@@ -146,7 +155,7 @@ export default function OnboardingInfoModal({ navigation, route }: NavigationPro
                           styles.bulletIcon,
                           {
                             backgroundColor: color
-                              ? rgba(colors[color as keyof typeof colors], 0.1)
+                              ? rgba(colors[color as keyof PaletteType] as string, 0.1)
                               : bulletColor,
                           },
                         ]}
@@ -154,10 +163,14 @@ export default function OnboardingInfoModal({ navigation, route }: NavigationPro
                         {Icon ? (
                           <Icon
                             size={10}
-                            color={color ? colors[color as keyof typeof colors] : colors.live}
+                            color={
+                              color
+                                ? (colors[color as keyof PaletteType] as string)
+                                : colors.primary.c80
+                            }
                           />
                         ) : (
-                          <LText semiBold style={[styles.label]} color={color || "live"}>
+                          <LText semiBold style={[styles.label]} color={color || "primary.c70"}>
                             {i + 1}
                           </LText>
                         )}
@@ -199,7 +212,7 @@ export default function OnboardingInfoModal({ navigation, route }: NavigationPro
                               style={[
                                 styles.label,
                                 {
-                                  color: colors.live,
+                                  color: colors.primary.c80,
                                 },
                               ]}
                             >

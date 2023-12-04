@@ -4,7 +4,7 @@ import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import type { Transaction } from "@ledgerhq/live-common/families/ripple/types";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { i18n } from "../../context/Locale";
 import { accountScreenSelector } from "../../reducers/accounts";
 import KeyboardView from "../../components/KeyboardView";
@@ -36,7 +36,7 @@ function RippleEditFee({ route }: Props) {
       style={[
         styles.root,
         {
-          backgroundColor: colors.background,
+          backgroundColor: colors.background.main,
         },
       ]}
     >

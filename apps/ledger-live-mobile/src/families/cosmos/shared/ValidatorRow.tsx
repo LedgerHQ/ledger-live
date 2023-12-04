@@ -47,7 +47,12 @@ const ValidatorRow = ({
             <Trans i18nKey="cosmos.delegation.commission" /> {validator.commission * 100} %
           </Text>
         </View>
-        <Text fontWeight="semiBold" numberOfLines={1} style={[styles.validatorYield]} color="smoke">
+        <Text
+          fontWeight="semiBold"
+          numberOfLines={1}
+          style={[styles.validatorYield]}
+          color="neutral.c60"
+        >
           <Text fontWeight="semiBold" numberOfLines={1}>
             <CurrencyUnitValue showCode unit={getAccountUnit(account)} value={validator.tokens} />
           </Text>

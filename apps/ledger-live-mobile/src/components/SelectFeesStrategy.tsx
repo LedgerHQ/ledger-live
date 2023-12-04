@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { useTranslation } from "react-i18next";
 import { getMainAccount, getFeesCurrency, getFeesUnit } from "@ledgerhq/live-common/account/index";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import type { Account, AccountLike, FeeStrategy } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import BigNumber from "bignumber.js";
@@ -47,7 +47,7 @@ type Props = {
 };
 
 const CVWrapper = ({ children }: { children?: React.ReactNode }) => (
-  <LText semiBold color="grey">
+  <LText semiBold color="neutral.c70">
     {children}
   </LText>
 );
@@ -107,8 +107,9 @@ export default function SelectFeesStrategy({
         style={[
           styles.feeButton,
           {
-            borderColor: feesStrategy === item.label ? colors.live : colors.background,
-            backgroundColor: feesStrategy === item.label ? colors.lightLive : colors.lightFog,
+            borderColor: feesStrategy === item.label ? colors.primary.c80 : colors.background.main,
+            backgroundColor:
+              feesStrategy === item.label ? colors.opacityPurple.c10 : colors.neutral.c20,
           },
         ]}
       >
@@ -122,11 +123,11 @@ export default function SelectFeesStrategy({
         >
           <View style={styles.leftBox}>
             {item.label === "slow" ? (
-              <TachometerSlow size={16} color={colors.grey} />
+              <TachometerSlow size={16} color={colors.neutral.c70} />
             ) : item.label === "medium" ? (
-              <TachometerMedium size={16} color={colors.grey} />
+              <TachometerMedium size={16} color={colors.neutral.c70} />
             ) : (
-              <TachometerFast size={16} color={colors.grey} />
+              <TachometerFast size={16} color={colors.neutral.c70} />
             )}
             <LText semiBold style={styles.feeLabel}>
               {t(`fees.speed.${item.label}`)}
@@ -169,13 +170,13 @@ export default function SelectFeesStrategy({
       </QueuedDrawer>
 
       <View>
-        <SectionSeparator lineColor={colors.lightFog} />
+        <SectionSeparator lineColor={colors.neutral.c20} />
         <SummaryRow
           onPress={toggleNetworkFeeHelpModal}
           title={t("send.summary.maxEstimatedFee")}
           additionalInfo={
             <View>
-              <Info size={12} color={colors.grey} />
+              <Info size={12} color={colors.neutral.c70} />
             </View>
           }
         >
@@ -194,12 +195,12 @@ export default function SelectFeesStrategy({
           style={[
             styles.customizeFeesButton,
             {
-              backgroundColor: colors.lightLive,
+              backgroundColor: colors.opacityPurple.c10,
             },
           ]}
           onPress={onCustomFeesPress}
         >
-          <LText semiBold color="live">
+          <LText semiBold color="primary.c70">
             {t("send.summary.customizeFees")}
           </LText>
         </TouchableOpacity>

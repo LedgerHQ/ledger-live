@@ -1,7 +1,7 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import type { Transaction as CosmosTransaction } from "@ledgerhq/live-common/families/cosmos/types";
 import LText from "../../../components/LText";
 import SummaryRow from "../../../screens/SendFunds/SummaryRow";
@@ -26,10 +26,10 @@ export default function CosmosFamilySendRowsCustomComponent({ transaction, editM
             style={[
               styles.link,
               {
-                textDecorationColor: colors.live,
+                textDecorationColor: colors.primary.c80,
               },
             ]}
-            color="live"
+            color="primary.c70"
             onPress={editMemo}
           >
             {t("common.edit")}

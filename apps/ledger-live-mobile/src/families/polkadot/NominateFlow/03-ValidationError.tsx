@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { StyleSheet, SafeAreaView } from "react-native";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { TrackScreen } from "../../../analytics";
 import ValidateError from "../../../components/ValidateError";
 import type {
@@ -28,7 +28,7 @@ export default function ValidationError({ navigation, route }: Props) {
       style={[
         styles.root,
         {
-          backgroundColor: colors.background,
+          backgroundColor: colors.background.main,
         },
       ]}
     >

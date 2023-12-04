@@ -5,7 +5,7 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import type { AccountLike } from "@ledgerhq/types-live";
 // TODO move to component
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import DelegatingContainer from "../../tezos/DelegatingContainer";
 import { rgba } from "../../../colors";
 import getWindowDimensions from "../../../logic/getWindowDimensions";
@@ -86,21 +86,27 @@ function DataField({ label, info, infoType, Component, isLast }: DataFieldProps)
       style={[
         styles.row,
         {
-          borderBottomColor: colors.lightFog,
+          borderBottomColor: colors.neutral.c20,
         },
         isLast ? styles.lastRow : undefined,
       ]}
     >
       <View style={styles.rowWrapper}>
-        <LText numberOfLines={1} semiBold style={styles.labelText} color="smoke">
+        <LText numberOfLines={1} semiBold style={styles.labelText} color="neutral.c60">
           {label}
         </LText>
         <View style={styles.valueWrapper}>{Component}</View>
       </View>
       {info ? (
         <View style={[styles.infoBox]}>
-          <IconHelp color={infoType === "warning" ? colors.orange : colors.grey} size={16} />
-          <LText style={[styles.infoContent]} color={infoType === "warning" ? "orange" : "grey"}>
+          <IconHelp
+            color={infoType === "warning" ? colors.warning.c70 : colors.neutral.c70}
+            size={16}
+          />
+          <LText
+            style={[styles.infoContent]}
+            color={infoType === "warning" ? "warning.c60" : "neutral.c70"}
+          >
             {info}
           </LText>
         </View>

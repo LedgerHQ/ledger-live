@@ -14,7 +14,8 @@ import { Trans, useTranslation } from "react-i18next";
 import invariant from "invariant";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { CompositeScreenProps, useTheme } from "@react-navigation/native";
+import { CompositeScreenProps } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { GraphTabs, Text, IconsLegacy } from "@ledgerhq/native-ui";
 import { Transaction } from "@ledgerhq/live-common/families/tron/types";
 import { accountScreenSelector } from "../../reducers/accounts";
@@ -216,7 +217,7 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
   return (
     <>
       <TrackScreen category="FreezeFunds" name="Amount" />
-      <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+      <SafeAreaView style={[styles.root, { backgroundColor: colors.background.main }]}>
         <KeyboardView style={styles.container}>
           <View style={styles.topContainer}>
             <GraphTabs
@@ -246,7 +247,11 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
                   hasError={!!error}
                   hasWarning={!!warning}
                 />
-                <LText style={[styles.error]} color={error ? "alert" : "orange"} numberOfLines={2}>
+                <LText
+                  style={[styles.error]}
+                  color={error ? "error.c60" : "warning.c60"}
+                  numberOfLines={2}
+                >
                   <TranslatedError error={error || warning} />
                 </LText>
               </View>
@@ -258,17 +263,17 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
                         styles.amountRatioButton,
                         selectedRatio === value
                           ? {
-                              backgroundColor: colors.live,
-                              borderColor: colors.live,
+                              backgroundColor: colors.primary.c80,
+                              borderColor: colors.primary.c80,
                             }
-                          : { borderColor: colors.grey },
+                          : { borderColor: colors.neutral.c70 },
                       ]}
                       key={key}
                       onPress={() => onRatioPress(value)}
                     >
                       <LText
                         style={[styles.amountRatioLabel]}
-                        color={selectedRatio === value ? "white" : "grey"}
+                        color={selectedRatio === value ? "white" : "neutral.c70"}
                       >
                         {label}
                       </LText>

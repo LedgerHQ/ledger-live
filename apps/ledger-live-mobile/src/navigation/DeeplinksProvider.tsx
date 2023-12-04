@@ -2,7 +2,12 @@ import React, { useMemo, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Linking } from "react-native";
 import SplashScreen from "react-native-splash-screen";
-import { getStateFromPath, LinkingOptions, NavigationContainer } from "@react-navigation/native";
+import {
+  getStateFromPath,
+  LinkingOptions,
+  NavigationContainer,
+  type Theme,
+} from "@react-navigation/native";
 import Config from "react-native-config";
 import { useFlipper } from "@react-navigation/devtools";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
@@ -19,20 +24,14 @@ import { ScreenName, NavigatorName } from "../const";
 import { setWallectConnectUri } from "../actions/walletconnect";
 import { useGeneralTermsAccepted } from "../logic/terms";
 import { Writeable } from "../types/helpers";
-import { lightTheme, darkTheme, Theme } from "../colors";
+import { getTheme } from "~/StyleProvider";
+import { useTheme } from "styled-components/native";
 import { track } from "../analytics";
 import { setEarnInfoModal } from "../actions/earn";
 import { OptionalFeatureMap } from "@ledgerhq/types-live";
 import { blockPasswordLock } from "../actions/appstate";
 
 const routingInstrumentation = new Sentry.ReactNavigationInstrumentation();
-
-const themes: {
-  [key: string]: Theme;
-} = {
-  light: lightTheme,
-  dark: darkTheme,
-};
 
 function isWalletConnectUrl(url: string) {
   return url.substring(0, 3) === "wc:";
@@ -437,6 +436,7 @@ export const DeeplinksProvider = ({
   const manifests = state?.value?.liveAppByIndex || emptyObject;
   // Can be either true, false or null, meaning we don't know yet
   const userAcceptedTerms = useGeneralTermsAccepted();
+  const { colors } = useTheme();
 
   const linking = useMemo<LinkingOptions<ReactNavigation.RootParamList>>(
     () =>
@@ -586,9 +586,21 @@ export const DeeplinksProvider = ({
     return null;
   }
 
+  const navigationTheme: Theme = {
+    colors: {
+      primary: colors.primary.c80,
+      background: colors.background.main,
+      card: colors.background.drawer,
+      text: colors.neutral.c100,
+      border: colors.neutral.c60,
+      notification: colors.error.c60,
+    },
+    dark: resolvedTheme === "dark",
+  };
+
   return (
     <NavigationContainer
-      theme={themes[resolvedTheme]}
+      theme={navigationTheme}
       linking={linking}
       ref={navigationRef}
       onReady={() => {

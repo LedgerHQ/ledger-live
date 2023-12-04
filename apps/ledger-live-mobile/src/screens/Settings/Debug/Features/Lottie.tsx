@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { StyleSheet, ScrollView, View } from "react-native";
 import { Edge, SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import Config from "react-native-config";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { Flex, IconsLegacy } from "@ledgerhq/native-ui";
@@ -96,7 +96,7 @@ const DebugLottie = () => {
       style={[
         styles.root,
         {
-          backgroundColor: colors.background,
+          backgroundColor: colors.background.main,
         },
       ]}
     >
@@ -206,7 +206,7 @@ const DebugLottie = () => {
               >
                 {_key}
               </LText>
-              {key === _key && <Check size={16} color={colors.live} />}
+              {key === _key && <Check size={16} color={colors.primary.c80} />}
             </Touchable>
           ))}
         </ScrollView>

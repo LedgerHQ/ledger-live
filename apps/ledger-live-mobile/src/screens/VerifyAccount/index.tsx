@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { getMainAccount, getReceiveFlowError } from "@ledgerhq/live-common/account/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -95,7 +95,7 @@ export default function VerifyAccount({ navigation, route }: NavigationProps) {
       style={[
         styles.root,
         {
-          backgroundColor: colors.background,
+          backgroundColor: colors.background.main,
         },
       ]}
     >

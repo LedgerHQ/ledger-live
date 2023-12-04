@@ -11,7 +11,7 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
 import { getStuckAccountAndOperation } from "@ledgerhq/live-common/operation";
 import { Operation } from "@ledgerhq/types-live";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import invariant from "invariant";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
@@ -199,7 +199,7 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
         style={[
           styles.root,
           {
-            backgroundColor: colors.background,
+            backgroundColor: colors.background.main,
           },
         ]}
       >
@@ -244,16 +244,16 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
                 style={[
                   styles.separatorLine,
                   {
-                    borderBottomColor: colors.lightFog,
+                    borderBottomColor: colors.neutral.c20,
                   },
                 ]}
               />
-              <LText color="grey">{<Trans i18nKey="common.or" />}</LText>
+              <LText color="neutral.c70">{<Trans i18nKey="common.or" />}</LText>
               <View
                 style={[
                   styles.separatorLine,
                   {
-                    borderBottomColor: colors.lightFog,
+                    borderBottomColor: colors.neutral.c20,
                   },
                 ]}
               />

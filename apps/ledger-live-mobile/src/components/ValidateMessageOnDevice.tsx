@@ -2,7 +2,7 @@ import { getMessageProperties } from "@ledgerhq/coin-evm/logic";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { AccountLike, AnyMessage, MessageProperties } from "@ledgerhq/types-live";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet, View } from "react-native";
@@ -24,7 +24,7 @@ export default function ValidateOnDevice({ device, message: messageData, account
     () => [
       styles.messageContainer,
       {
-        backgroundColor: colors.background,
+        backgroundColor: colors.background.main,
       },
     ],
     [colors.background],
@@ -33,10 +33,10 @@ export default function ValidateOnDevice({ device, message: messageData, account
     () => [
       styles.property,
       {
-        color: colors.text,
+        color: colors.neutral.c100,
       },
     ],
-    [colors.text],
+    [colors.neutral.c100],
   );
   const mainAccount = getMainAccount(account, null);
 

@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useCallback, useState, ComponentProps } from "react";
-import { useNavigation, useTheme } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { Image, StyleSheet, View } from "react-native";
 import { Text, Flex, Button } from "@ledgerhq/native-ui";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -110,7 +111,7 @@ export default function DebugFetchCustomImage() {
 
   return (
     <NavigationScrollView>
-      <View style={[styles.root, { backgroundColor: colors.background }]}>
+      <View style={[styles.root, { backgroundColor: colors.background.main}]}>
         {!device ? (
           newDeviceSelectionFeatureFlag?.enabled ? (
             <SelectDevice2

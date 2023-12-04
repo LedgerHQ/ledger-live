@@ -1,4 +1,4 @@
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { View, StyleSheet } from "react-native";
@@ -10,11 +10,11 @@ export default function PoweredByLedger() {
   const { colors } = useTheme();
   return (
     <View style={styles.container}>
-      <LText secondary semiBold style={styles.textStyle} color="grey">
+      <LText secondary semiBold style={styles.textStyle} color="neutral.c70">
         {t("common.poweredBy")}
       </LText>
       <View style={styles.iconStyle}>
-        <LedgerLogoRec height={17} width={68} color={colors.grey} />
+        <LedgerLogoRec height={17} width={68} color={colors.neutral.c70} />
       </View>
     </View>
   );

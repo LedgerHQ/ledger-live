@@ -2,7 +2,8 @@ import React, { useCallback } from "react";
 import { StyleSheet, ScrollView, View, Linking } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans } from "react-i18next";
-import { CompositeScreenProps, useTheme } from "@react-navigation/native";
+import { CompositeScreenProps } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
 import Button from "../../components/Button";
@@ -36,7 +37,7 @@ export default function FreezeInfo({ navigation, route }: NavigatorProps) {
       style={[
         styles.root,
         {
-          backgroundColor: colors.background,
+          backgroundColor: colors.background.main,
         },
       ]}
     >
@@ -64,7 +65,7 @@ export default function FreezeInfo({ navigation, route }: NavigatorProps) {
           style={[
             styles.howVotingWorks,
             {
-              borderColor: colors.live,
+              borderColor: colors.primary.c80,
             },
           ]}
         >

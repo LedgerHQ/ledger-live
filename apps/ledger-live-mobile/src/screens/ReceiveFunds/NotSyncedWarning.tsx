@@ -33,7 +33,7 @@ const NotSyncedWarning = (props: Props) => {
       <LText secondary semiBold style={styles.title}>
         <Trans i18nKey="transfer.receive.notSynced.text" />
       </LText>
-      <LText style={styles.subtitle} color="smoke">
+      <LText style={styles.subtitle} color="neutral.c60">
         <Trans i18nKey="transfer.receive.notSynced.desc" values={deviceNames.nanoX} />
       </LText>
     </PendingContainer>

@@ -14,7 +14,7 @@ import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
 import type { DerivationMode } from "@ledgerhq/coin-framework/derivation";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { replaceAccounts } from "../../actions/accounts";
 import { accountsSelector } from "../../reducers/accounts";
 import logger from "../../logger";
@@ -320,7 +320,7 @@ function AddAccountsAccounts({
       style={[
         styles.root,
         {
-          backgroundColor: colors.background,
+          backgroundColor: colors.background.main,
         },
       ]}
     >
@@ -385,7 +385,7 @@ function AddAccountsAccounts({
         })}
 
         {sections.length === 0 && scanning ? (
-          <LText style={styles.descText} color="smoke">
+          <LText style={styles.descText} color="neutral.c60">
             <Trans i18nKey="addAccounts.synchronizingDesc" />
           </LText>
         ) : null}
@@ -451,7 +451,7 @@ const AddressTypeTooltip = ({
       />
       <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose} style={styles.modal}>
         <View style={styles.modalContainer}>
-          <LText style={styles.subtitle} color="grey">
+          <LText style={styles.subtitle} color="neutral.c70">
             <Trans i18nKey="addAccounts.addressTypeInfo.subtitle" />
           </LText>
           <LText bold style={styles.modalTitle}>
@@ -464,7 +464,7 @@ const AddressTypeTooltip = ({
             <LText bold style={styles.title}>
               <Trans i18nKey={`addAccounts.addressTypeInfo.${scheme}.title`} />
             </LText>
-            <LText style={styles.subtitle} color="grey">
+            <LText style={styles.subtitle} color="neutral.c70">
               <Trans
                 i18nKey={`addAccounts.addressTypeInfo.${scheme}.desc`}
                 values={{
@@ -518,7 +518,7 @@ const Footer = ({
       style={[
         styles.footer,
         {
-          borderColor: colors.lightFog,
+          borderColor: colors.neutral.c20,
         },
       ]}
     >
@@ -567,14 +567,14 @@ const ScanLoading = ({ colors }: ScanProps) => {
       style={[
         styles.scanLoadingRoot,
         {
-          borderColor: colors.fog,
+          borderColor: colors.neutral.c70,
         },
       ]}
     >
       <Spinning>
-        <LiveLogo color={colors.grey} size={16} />
+        <LiveLogo color={colors.neutral.c70} size={16} />
       </Spinning>
-      <LText semiBold style={styles.scanLoadingText} color="grey">
+      <LText semiBold style={styles.scanLoadingText} color="neutral.c70">
         <Trans i18nKey="addAccounts.synchronizing" />
       </LText>
     </View>

@@ -3,7 +3,7 @@ import React, { useCallback } from "react";
 import { StyleSheet, View } from "react-native";
 import { useTranslation, Trans } from "react-i18next";
 import { useSelector } from "react-redux";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import type {
   Transaction as PolkadotTransaction,
   TransactionStatus,
@@ -80,7 +80,7 @@ export default function PolkadotSimpleOperationStarted({ navigation, route }: Na
         style={[
           styles.root,
           {
-            backgroundColor: colors.background,
+            backgroundColor: colors.background.main,
           },
         ]}
       >
@@ -105,10 +105,10 @@ export default function PolkadotSimpleOperationStarted({ navigation, route }: Na
               style={[
                 styles.footerMessage,
                 warning && {
-                  color: colors.orange,
+                  color: colors.warning.c70,
                 },
                 error && {
-                  color: colors.alert,
+                  color: colors.error.c60,
                 },
               ]}
             >

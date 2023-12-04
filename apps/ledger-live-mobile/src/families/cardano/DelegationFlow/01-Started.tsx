@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import { Trans } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { Button, Flex, Text } from "@ledgerhq/native-ui";
 import LText from "../../../components/LText";
 import ExternalLink from "../../../components/ExternalLink";
@@ -34,7 +34,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
   }, []);
 
   return (
-    <View style={[styles.root, { backgroundColor: colors.background }]}>
+    <View style={[styles.root, { backgroundColor: colors.background.main }]}>
       <NavigationScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
         <TrackScreen category="DelegationFlow" name="Started" />
         <Flex alignItems="center" mb={6}>

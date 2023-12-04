@@ -52,7 +52,7 @@ export function SetControllerAction({ onPress }: Props) {
 
   return (
     <TouchableOpacity onPress={onPress}>
-      <LText semiBold color={"live"}>
+      <LText semiBold color={"primary.c70"}>
         {t("polkadot.nomination.setController")}
       </LText>
     </TouchableOpacity>
@@ -73,7 +73,7 @@ export function RebondAction({ onPress, disabled }: Props) {
 
   return (
     <TouchableOpacity onPress={onClick}>
-      <LText semiBold color={disabled ? "grey" : "live"}>
+      <LText semiBold color={disabled ? "neutral.c70" : "primary.c70"}>
         {t("polkadot.unlockings.rebond")}
       </LText>
       <InfoModal
@@ -104,7 +104,7 @@ export function WithdrawAction({ onPress, disabled }: Props) {
 
   return (
     <TouchableOpacity onPress={onClick}>
-      <LText semiBold color={disabled ? "grey" : "live"}>
+      <LText semiBold color={disabled ? "neutral.c70" : "primary.c70"}>
         {t("polkadot.unlockings.withdrawUnbonded")}
       </LText>
       <InfoModal

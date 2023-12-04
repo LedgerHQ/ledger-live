@@ -7,7 +7,7 @@ import type { TokenAccount } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { shortAddressPreview } from "@ledgerhq/live-common/account/helpers";
 
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
 
@@ -38,14 +38,14 @@ const TokenContractAddress = ({ account, onClose, url, token }: Props) => {
 
   return (
     <SafeAreaView style={styles.root}>
-      <View style={[styles.iconWrapper, { backgroundColor: colors.lightLive }]}>
-        <Icon name="file-text" size={24} color={colors.live} />
+      <View style={[styles.iconWrapper, { backgroundColor: colors.opacityPurple.c10 }]}>
+        <Icon name="file-text" size={24} color={colors.primary.c80} />
       </View>
       <View style={styles.textWrapper}>
         <LText secondary bold style={styles.textTitle}>
           <Trans i18nKey="account.tokens.contractAddress" />
         </LText>
-        <LText style={styles.textContract} color="smoke">
+        <LText style={styles.textContract} color="neutral.c60">
           {shortAddressPreview(contractAddress, 30)}
         </LText>
       </View>

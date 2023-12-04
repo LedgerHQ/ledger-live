@@ -48,7 +48,12 @@ const ValidatorRow = ({
             </Text>
           ) : null}
         </View>
-        <Text fontWeight="semiBold" numberOfLines={1} style={[styles.validatorYield]} color="smoke">
+        <Text
+          fontWeight="semiBold"
+          numberOfLines={1}
+          style={[styles.validatorYield]}
+          color="neutral.c60"
+        >
           <Text fontWeight="semiBold" numberOfLines={1}>
             <CurrencyUnitValue
               showCode

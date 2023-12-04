@@ -1,6 +1,6 @@
 import React from "react";
 import { View, TouchableOpacity } from "react-native";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { Trans } from "react-i18next";
 import BigNumber from "bignumber.js";
 import { ELROND_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/elrond/constants";
@@ -35,7 +35,7 @@ const Item = (props: ItemPropsType) => {
       <View style={styles.iconWrapper}>
         <Circle crop={true} size={32}>
           {ELROND_LEDGER_VALIDATOR_ADDRESS === contract ? (
-            <LedgerLogo size={32 * 0.7} color={colors.text} />
+            <LedgerLogo size={32 * 0.7} color={colors.neutral.c100} />
           ) : (
             <FirstLetterIcon label={name || "-"} round={true} size={32} fontSize={24} />
           )}
@@ -47,7 +47,7 @@ const Item = (props: ItemPropsType) => {
           {name}
         </LText>
 
-        <LText style={styles.subText} color="grey" numberOfLines={1}>
+        <LText style={styles.subText} color="neutral.c70" numberOfLines={1}>
           <Trans
             i18nKey="cosmos.delegation.flow.steps.validator.estYield"
             values={{
@@ -59,7 +59,7 @@ const Item = (props: ItemPropsType) => {
 
       <View style={styles.value}>
         <View style={styles.valueContainer}>
-          <LText semiBold={true} style={styles.valueLabel} color="darkBlue">
+          <LText semiBold={true} style={styles.valueLabel} color="neutral.c80">
             <CurrencyUnitValue
               value={new BigNumber(claimableRewards)}
               unit={unit}
@@ -68,7 +68,7 @@ const Item = (props: ItemPropsType) => {
           </LText>
         </View>
 
-        <ArrowRight size={16} color={colors.primary} />
+        <ArrowRight size={16} color={colors.primary.c70} />
       </View>
     </TouchableOpacity>
   );

@@ -1,7 +1,7 @@
 import { getGasLimit } from "@ledgerhq/coin-evm/logic";
 import { Transaction } from "@ledgerhq/coin-evm/types/index";
 import { Account } from "@ledgerhq/types-live";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { memo, useMemo, useState } from "react";
@@ -60,7 +60,7 @@ const EvmLegacyCustomFees = ({ account, onValidateFees, transaction }: Props) =>
         title={"send.summary.gasPrice"}
       />
 
-      <SectionSeparator style={styles.sectionSeparator} lineColor={colors.fog} />
+      <SectionSeparator style={styles.sectionSeparator} lineColor={colors.neutral.c70} />
 
       <View style={styles.container}>
         <EvmGasLimit

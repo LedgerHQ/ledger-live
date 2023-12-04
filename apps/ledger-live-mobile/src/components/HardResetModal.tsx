@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { Trans } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import ModalBottomAction from "./ModalBottomAction";
 import Alert from "./Alert";
 import Trash from "../icons/Trash";
@@ -13,8 +13,8 @@ function HardResetModal() {
     <ModalBottomAction
       title={null}
       icon={
-        <Circle bg={colors.lightAlert} size={56}>
-          <Trash size={24} color={colors.alert} />
+        <Circle bg={colors.opacityDefault.c05} size={56}>
+          <Trash size={24} color={colors.error.c60} />
         </Circle>
       }
       description={<Trans i18nKey="reset.description" />}

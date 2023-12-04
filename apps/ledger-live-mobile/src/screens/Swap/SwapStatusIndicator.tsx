@@ -3,28 +3,28 @@ import {
   operationStatusList,
 } from "@ledgerhq/live-common/exchange/swap/index";
 import { Icon } from "@ledgerhq/native-ui";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { rgba, Theme } from "../../colors";
 import { SwapIcon } from "../../icons/swap/index";
 
-export const getStatusColor = (status: string, colors: Theme["colors"], colorKey = false) => {
-  let key: keyof Theme["colors"] = "grey";
+export const getStatusColor = (status: string, colors: Theme["colors"]) => {
+  let color = colors.neutral.c60;
 
   if (isSwapOperationPending(status)) {
-    key = status === "onhold" ? "orange" : "live";
+    color = status === "onhold" ? colors.warning.c60 : colors.primary.c70;
   }
 
   if (operationStatusList.finishedOK.includes(status)) {
-    key = "green";
+    color = colors.success.c60;
   }
 
   if (operationStatusList.finishedKO.includes(status)) {
-    key = "alert";
+    color = colors.error.c60;
   }
 
-  return colorKey ? key : colors[key];
+  return color;
 };
 
 export function SwapStatusIndicator({ status, small }: { status: string; small?: boolean }) {
@@ -44,8 +44,8 @@ export function SwapStatusIndicator({ status, small }: { status: string; small?:
           style={[
             styles.pending,
             {
-              backgroundColor: colors.white,
-              borderColor: colors.white,
+              backgroundColor: colors.neutral.c20,
+              borderColor: colors.neutral.c20,
             },
           ]}
         >

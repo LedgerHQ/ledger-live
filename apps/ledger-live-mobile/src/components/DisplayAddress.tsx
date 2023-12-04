@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import LText from "./LText/index";
 import { rgba } from "../colors";
 
@@ -16,12 +16,12 @@ function DisplayAddress({ address, verified = false }: Props) {
       style={[
         styles.container,
         {
-          borderColor: colors.fog,
+          borderColor: colors.neutral.c70,
         },
         verified
           ? {
-              borderColor: colors.success,
-              backgroundColor: rgba(colors.success, 0.03),
+              borderColor: colors.success.c50,
+              backgroundColor: rgba(colors.success.c50, 0.03),
             }
           : undefined,
       ]}

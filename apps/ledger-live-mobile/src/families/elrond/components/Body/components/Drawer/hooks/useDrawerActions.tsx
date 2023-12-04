@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigation, useTheme } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import BigNumber from "bignumber.js";
 
 import type { StackNavigationProp } from "@react-navigation/stack";
@@ -109,8 +110,11 @@ const useDrawerActions = (
               onPress: onCollectRwards,
               event: "DelegationActionCollectRewards",
               Icon: (props: IconProps) => (
-                <Circle {...props} bg={rewardsEnabled ? rgba(colors.yellow, 0.2) : colors.lightFog}>
-                  <ClaimRewardIcon color={rewardsEnabled ? undefined : colors.grey} />
+                <Circle
+                  {...props}
+                  bg={rewardsEnabled ? rgba(colors.warning.c80, 0.2) : colors.neutral.c20}
+                >
+                  <ClaimRewardIcon color={rewardsEnabled ? undefined : colors.neutral.c70} />
                 </Circle>
               ),
             },
@@ -120,8 +124,11 @@ const useDrawerActions = (
               event: "DelegationActionUndelegate",
               disabled: amount.isZero(),
               Icon: (props: IconProps) => (
-                <Circle {...props} bg={amount.isZero() ? colors.lightFog : rgba(colors.alert, 0.2)}>
-                  <UndelegateIcon color={amount.isZero() ? colors.grey : undefined} />
+                <Circle
+                  {...props}
+                  bg={amount.isZero() ? colors.neutral.c20 : rgba(colors.error.c60, 0.2)}
+                >
+                  <UndelegateIcon color={amount.isZero() ? colors.neutral.c70 : undefined} />
                 </Circle>
               ),
             },
@@ -146,9 +153,12 @@ const useDrawerActions = (
               Icon: (props: IconProps) => (
                 <Circle
                   {...props}
-                  bg={withdrawalEnabled ? rgba(colors.green, 0.2) : colors.lightFog}
+                  bg={withdrawalEnabled ? rgba(colors.success.c70, 0.2) : colors.neutral.c20}
                 >
-                  <WithdrawIcon size={24} color={withdrawalEnabled ? colors.green : colors.grey} />
+                  <WithdrawIcon
+                    size={24}
+                    color={withdrawalEnabled ? colors.success.c70 : colors.neutral.c70}
+                  />
                 </Circle>
               ),
             },

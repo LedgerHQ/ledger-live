@@ -3,7 +3,8 @@ import { Trans, useTranslation } from "react-i18next";
 import { StyleSheet, View, SafeAreaView } from "react-native";
 import { useSelector } from "react-redux";
 import { findTokenAccountByCurrency } from "@ledgerhq/live-common/account/index";
-import { CompositeScreenProps, useTheme } from "@react-navigation/native";
+import { CompositeScreenProps } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { accountsSelector } from "../../reducers/accounts";
 import CurrencyIcon from "../../components/CurrencyIcon";
 import Button from "../../components/Button";
@@ -62,7 +63,7 @@ export default function AddAccountsTokenCurrencyDisclaimer({ navigation, route }
       style={[
         styles.root,
         {
-          backgroundColor: colors.background,
+          backgroundColor: colors.background.main,
         },
       ]}
     >

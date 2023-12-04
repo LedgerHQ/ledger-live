@@ -2,7 +2,7 @@ import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
 import { Currency } from "@ledgerhq/types-cryptoassets";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { Text } from "@ledgerhq/native-ui";
 import { isDefaultValidatorGroupAddress } from "@ledgerhq/live-common/families/celo/logic";
 import { CeloAccount, CeloVote } from "@ledgerhq/live-common/families/celo/types";
@@ -39,7 +39,7 @@ export default function DelegationRow({
       style={[
         styles.row,
         styles.wrapper,
-        !isLast ? { ...styles.borderBottom, borderBottomColor: colors.lightGrey } : undefined,
+        !isLast ? { ...styles.borderBottom, borderBottomColor: colors.opacityDefault.c05 } : undefined,
       ]}
       onPress={() => onPress(vote)}
     >
@@ -57,10 +57,10 @@ export default function DelegationRow({
         </Text>
 
         <View style={styles.row}>
-          <LText style={styles.seeMore} color="live">
+          <LText style={styles.seeMore} color="primary.c70">
             {t("common.seeMore")}
           </LText>
-          <ArrowRight color={colors.live} size={14} />
+          <ArrowRight color={colors.primary.c80} size={14} />
         </View>
       </View>
 
@@ -69,7 +69,7 @@ export default function DelegationRow({
           {formatAmount(account, vote.amount ?? 0)}
         </Text>
 
-        <LText color="grey">
+        <LText color="neutral.c70">
           <CounterValue
             currency={currency}
             showCode={true}

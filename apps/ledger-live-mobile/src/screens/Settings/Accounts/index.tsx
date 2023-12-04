@@ -38,7 +38,7 @@ export default function AccountsSettings({
   const renderSectionHeader = useCallback(
     ({ section: { parentCurrency } }: { section: { parentCurrency: CryptoCurrency } }) => (
       <View style={styles.section}>
-        <LText style={[styles.sectionTitle, { backgroundColor: colors.card }]}>
+        <LText style={[styles.sectionTitle, { backgroundColor: colors.background.drawer }]}>
           {parentCurrency.name}
         </LText>
       </View>
@@ -58,7 +58,7 @@ export default function AccountsSettings({
           style={styles.cta}
           hitSlop={hitSlop}
         >
-          <Close size={16} color={colors.smoke} />
+          <Close size={16} color={colors.neutral.c70} />
         </TouchableOpacity>
       </View>
     ),

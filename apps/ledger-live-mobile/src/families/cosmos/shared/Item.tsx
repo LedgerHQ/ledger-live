@@ -8,7 +8,7 @@ import type {
   CosmosValidatorItem,
 } from "@ledgerhq/live-common/families/cosmos/types";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import cosmosBase from "@ledgerhq/live-common/families/cosmos/chain/cosmosBase";
 import LText from "../../../components/LText";
 import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
@@ -53,7 +53,7 @@ function Item({ item, value, disabled, onSelect, unit, showVal = true, delegated
           {name || validatorAddress}
         </LText>
 
-        <LText style={styles.subText} color="grey" numberOfLines={1}>
+        <LText style={styles.subText} color="neutral.c70" numberOfLines={1}>
           <Trans
             i18nKey="cosmos.delegation.flow.steps.validator.estYield"
             values={{
@@ -67,12 +67,20 @@ function Item({ item, value, disabled, onSelect, unit, showVal = true, delegated
       <View style={styles.value}>
         {(showVal || value) && (
           <View style={styles.valueContainer}>
-            <LText semiBold style={[styles.valueLabel]} color={isDisabled ? "grey" : "darkBlue"}>
+            <LText
+              semiBold
+              style={[styles.valueLabel]}
+              color={isDisabled ? "neutral.c70" : "neutral.c80"}
+            >
               {value ? <CurrencyUnitValue value={value} unit={unit} showCode={false} /> : "0"}
             </LText>
 
             {delegatedValue && delegatedValue.gt(0) ? (
-              <LText style={[styles.valueLabel, styles.subText]} color="grey" numberOfLines={1}>
+              <LText
+                style={[styles.valueLabel, styles.subText]}
+                color="neutral.c70"
+                numberOfLines={1}
+              >
                 <Trans i18nKey="cosmos.delegation.flow.steps.validator.currentAmount">
                   <CurrencyUnitValue value={delegatedValue} unit={unit} showCode={false} />
                 </Trans>
@@ -80,7 +88,7 @@ function Item({ item, value, disabled, onSelect, unit, showVal = true, delegated
             ) : null}
           </View>
         )}
-        <ArrowRight size={16} color={colors.grey} />
+        <ArrowRight size={16} color={colors.neutral.c70} />
       </View>
     </TouchableOpacity>
   );

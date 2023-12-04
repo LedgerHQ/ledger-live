@@ -15,7 +15,8 @@ import {
   ItemStatus,
   Icons,
 } from "@ledgerhq/native-ui";
-import { useTheme, useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { Item } from "@ledgerhq/native-ui/components/Layout/List/types";
 import { DeviceInfo, FirmwareUpdateContext, languageIds } from "@ledgerhq/types-live";
 
@@ -158,8 +159,8 @@ export const FirmwareUpdate = ({
 }: FirmwareUpdateProps) => {
   const navigation = useNavigation();
   const { t } = useTranslation();
-  const { dark } = useTheme();
-  const theme: "dark" | "light" = dark ? "dark" : "light";
+  const { palette } = useTheme();
+  const theme = palette;
   const dispatch = useDispatch();
 
   const productName = getDeviceModel(device.modelId).productName;

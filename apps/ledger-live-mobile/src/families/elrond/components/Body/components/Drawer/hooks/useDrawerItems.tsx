@@ -96,7 +96,7 @@ const useDrawerItems = (data: DrawerPropsType["data"], account: ElrondAccount) =
             semiBold={true}
             ellipsizeMode="middle"
             style={styles.valueText}
-            color="live"
+            color="primary.c70"
           >
             {name}
           </LText>
@@ -111,7 +111,7 @@ const useDrawerItems = (data: DrawerPropsType["data"], account: ElrondAccount) =
               semiBold={true}
               ellipsizeMode="middle"
               style={styles.valueText}
-              color="live"
+              color="primary.c70"
             >
               {validator.contract}
             </LText>
@@ -126,7 +126,7 @@ const useDrawerItems = (data: DrawerPropsType["data"], account: ElrondAccount) =
             semiBold={true}
             ellipsizeMode="middle"
             style={styles.valueText}
-            color="live"
+            color="primary.c70"
           >
             {account.name}
           </LText>
@@ -140,7 +140,7 @@ const useDrawerItems = (data: DrawerPropsType["data"], account: ElrondAccount) =
             semiBold={true}
             ellipsizeMode="middle"
             style={styles.valueText}
-            color="live"
+            color="primary.c70"
           >
             {t(`elrond.delegation.drawer.${status[type]}`)}
           </LText>

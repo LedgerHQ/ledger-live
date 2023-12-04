@@ -11,7 +11,8 @@ import {
   getAccountCurrency,
   getAccountName,
 } from "@ledgerhq/live-common/account/index";
-import { CompositeScreenProps, useTheme } from "@react-navigation/native";
+import { CompositeScreenProps } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import getWindowDimensions from "../../logic/getWindowDimensions";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
@@ -51,7 +52,7 @@ type Props = {
 } & ScreenProps;
 
 export default function ReceiveConfirmation({ navigation, route }: Props) {
-  const { colors, dark } = useTheme();
+  const { colors, palette } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const [verified] = useState(false);
   const [isModalOpened, setIsModalOpened] = useState(false);
@@ -114,7 +115,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
       style={[
         styles.root,
         {
-          backgroundColor: colors.background,
+          backgroundColor: colors.background.main,
         },
       ]}
     >
@@ -148,9 +149,9 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
                 style={[
                   styles.qrWrapper,
                   {
-                    borderColor: colors.lightFog,
+                    borderColor: colors.neutral.c20,
                   },
-                  dark
+                  palette === "dark"
                     ? {
                         backgroundColor: "white",
                       }
@@ -162,7 +163,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
             )}
           </Touchable>
           <View>
-            <LText style={styles.addressTitle} color="grey">
+            <LText style={styles.addressTitle} color="neutral.c70">
               <Trans i18nKey="transfer.receive.address" />
             </LText>
           </View>
@@ -250,7 +251,7 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
           </View>
         ) : null}
         <Touchable event="ReceiveClose" style={styles.close} onPress={onModalClose}>
-          <Close color={colors.fog} size={20} />
+          <Close color={colors.neutral.c70} size={20} />
         </Touchable>
       </QueuedDrawer>
     </SafeAreaView>

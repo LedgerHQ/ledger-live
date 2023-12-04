@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { View, TouchableOpacity } from "react-native";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { Trans } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -145,22 +145,22 @@ const PickMethod = (props: PickMethodPropsType) => {
    */
 
   return (
-    <View style={[styles.root, { backgroundColor: colors.background }]}>
+    <View style={[styles.root, { backgroundColor: colors.background.main }]}>
       <View style={styles.main}>
         <ToggleButton value={mode} options={options} onChange={onChangeMode} />
 
         <TouchableOpacity onPress={() => setModal(true)} style={styles.info}>
-          <LText semiBold={true} style={styles.infoLabel} color="grey">
+          <LText semiBold={true} style={styles.infoLabel} color="neutral.c70">
             <Trans i18nKey="elrond.claimRewards.flow.steps.method.compoundOrCashIn" />
           </LText>
 
-          <Info size={16} color={colors.background} />
+          <Info size={16} color={colors.background.main} />
         </TouchableOpacity>
 
         <View style={styles.spacer} />
 
         <View style={styles.sectionLabel}>
-          <LText semiBold={true} style={styles.subLabel} color="grey">
+          <LText semiBold={true} style={styles.subLabel} color="neutral.c70">
             <Trans i18nKey="elrond.claimRewards.flow.steps.method.youEarned" />
           </LText>
 
@@ -168,13 +168,13 @@ const PickMethod = (props: PickMethodPropsType) => {
             <CurrencyUnitValue unit={unit} value={new BigNumber(value)} showCode={true} />
           </LText>
 
-          <LText semiBold={true} style={styles.subLabel} color="grey">
+          <LText semiBold={true} style={styles.subLabel} color="neutral.c70">
             <CounterValue currency={currency} value={new BigNumber(value)} withPlaceholder={true} />
           </LText>
         </View>
 
         <View style={styles.sectionLabel}>
-          <LText semiBold={true} style={styles.subLabel} color="grey">
+          <LText semiBold={true} style={styles.subLabel} color="neutral.c70">
             <Trans i18nKey="elrond.claimRewards.flow.steps.method.byDelegationAssetsTo" />
           </LText>
 
@@ -196,7 +196,7 @@ const PickMethod = (props: PickMethodPropsType) => {
         <View style={styles.spacer} />
       </View>
 
-      <View style={[styles.footer, { backgroundColor: colors.background }]}>
+      <View style={[styles.footer, { backgroundColor: colors.background.main }]}>
         <View style={styles.warningSection}>
           {error && error instanceof Error ? (
             <LText
@@ -204,7 +204,7 @@ const PickMethod = (props: PickMethodPropsType) => {
               secondary={true}
               semiBold={true}
               style={styles.warning}
-              color="alert"
+              color="error.c60"
             >
               <TranslatedError error={error} />
             </LText>
@@ -214,7 +214,7 @@ const PickMethod = (props: PickMethodPropsType) => {
               secondary={true}
               semiBold={true}
               style={styles.warning}
-              color="alert"
+              color="error.c60"
             >
               <TranslatedError error={warning} />
             </LText>

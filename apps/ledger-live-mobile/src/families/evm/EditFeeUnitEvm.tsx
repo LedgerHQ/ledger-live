@@ -1,7 +1,7 @@
 import { getDefaultFeeUnit } from "@ledgerhq/coin-evm/logic";
 import { Range, projectRangeIndex, reverseRangeIndex } from "@ledgerhq/live-common/range";
 import type { Account } from "@ledgerhq/types-live";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { BigNumber } from "bignumber.js";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
@@ -33,8 +33,8 @@ const FeeSlider = React.memo(
         onValueChange={setValueIndex}
         minimumValue={0}
         maximumValue={range.steps - 1}
-        thumbTintColor={colors.live}
-        minimumTrackTintColor={colors.live}
+        thumbTintColor={colors.primary.c80}
+        minimumTrackTintColor={colors.primary.c80}
       />
     );
   },
@@ -66,12 +66,12 @@ export default function EditFeeUnitEvm({ account, feeAmount, onChange, range, ti
           <LText style={styles.feeLabel} semiBold>
             {t(title)}
           </LText>
-          <View style={[styles.feeAmount, { backgroundColor: colors.lightLive }]}>
+          <View style={[styles.feeAmount, { backgroundColor: colors.opacityPurple.c10 }]}>
             <LText
               style={[
                 styles.currencyUnitText,
                 {
-                  color: colors.live,
+                  color: colors.primary.c80,
                 },
               ]}
             >
@@ -82,10 +82,10 @@ export default function EditFeeUnitEvm({ account, feeAmount, onChange, range, ti
         <View style={styles.container}>
           <FeeSlider value={feeAmount} range={range} onChange={onChangeF} />
           <View style={styles.textContainer}>
-            <LText color="grey" style={styles.currencyUnitText}>
+            <LText color="neutral.c70" style={styles.currencyUnitText}>
               {t("fees.speed.slow")}
             </LText>
-            <LText color="grey" style={styles.currencyUnitText}>
+            <LText color="neutral.c70" style={styles.currencyUnitText}>
               {t("fees.speed.fast")}
             </LText>
           </View>

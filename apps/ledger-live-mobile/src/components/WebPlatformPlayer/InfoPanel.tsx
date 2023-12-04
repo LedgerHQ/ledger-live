@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { StyleSheet, View, TouchableOpacity, Linking, ScrollView } from "react-native";
 import { translateContent } from "@ledgerhq/live-common/platform/logic";
 import type { TranslatableString } from "@ledgerhq/live-common/platform/types";
@@ -32,7 +32,7 @@ export function InfoPanel({ name, icon, description, url, uri, isOpened, setIsOp
   }, []);
   return (
     <QueuedDrawer
-      style={{ ...styles.root, backgroundColor: colors.card }}
+      style={{ ...styles.root, backgroundColor: colors.background.drawer }}
       isRequestingToBeOpened={isOpened}
       onClose={onClose}
     >
@@ -43,7 +43,7 @@ export function InfoPanel({ name, icon, description, url, uri, isOpened, setIsOp
               <AppIcon size={40} name={name} icon={icon} />
             </View>
           ) : null}
-          <LText semiBold style={{ ...styles.title, color: colors.text }}>
+          <LText semiBold style={{ ...styles.title, color: colors.neutral.c100 }}>
             {name}
           </LText>
         </View>
@@ -51,7 +51,7 @@ export function InfoPanel({ name, icon, description, url, uri, isOpened, setIsOp
           style={{
             ...styles.basicFontStyle,
             ...styles.description,
-            color: colors.text,
+            color: colors.neutral.c100,
           }}
         >
           {translateContent(description, settingsLocale)}
@@ -63,11 +63,11 @@ export function InfoPanel({ name, icon, description, url, uri, isOpened, setIsOp
               <Trans i18nKey="platform.webPlatformPlayer.infoPanel.website" />
             </LText>
             <TouchableOpacity style={styles.flexRow} onPress={() => onLinkPress(url)}>
-              <LText semiBold style={{ ...styles.basicFontStyle, color: colors.live }}>
+              <LText semiBold style={{ ...styles.basicFontStyle, color: colors.primary.c80 }}>
                 {url}
               </LText>
               <View style={styles.externalLinkIcon}>
-                <ExternalLinkIcon size={14} color={colors.live} />
+                <ExternalLinkIcon size={14} color={colors.primary.c80} />
               </View>
             </TouchableOpacity>
           </>
@@ -79,11 +79,11 @@ export function InfoPanel({ name, icon, description, url, uri, isOpened, setIsOp
               URI:
             </LText>
             <TouchableOpacity style={styles.flexRow} onPress={() => onLinkPress(uri)}>
-              <LText semiBold style={{ ...styles.basicFontStyle, color: colors.live }}>
+              <LText semiBold style={{ ...styles.basicFontStyle, color: colors.primary.c80 }}>
                 {uri}
               </LText>
               <View style={styles.externalLinkIcon}>
-                <ExternalLinkIcon size={14} color={colors.live} />
+                <ExternalLinkIcon size={14} color={colors.primary.c80} />
               </View>
             </TouchableOpacity>
           </>

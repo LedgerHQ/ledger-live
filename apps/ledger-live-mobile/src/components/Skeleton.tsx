@@ -1,6 +1,6 @@
 import React, { memo, useRef, useEffect, useMemo, ReactElement } from "react";
 import { Animated, StyleProp, ViewStyle } from "react-native";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import styled, { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
 import { BorderProps } from "styled-system";
 import Config from "react-native-config";
@@ -52,14 +52,14 @@ const Skeleton: React.FC<Props> = ({
   const animatedStyle = useMemo(
     () => [
       {
-        backgroundColor: colors.skeletonBg,
+        backgroundColor: colors.neutral.c30,
       },
       style,
       {
         opacity: opacityAnim,
       },
     ],
-    [style, colors.skeletonBg, opacityAnim],
+    [style, colors.neutral.c30, opacityAnim],
   );
 
   return loading ? <StyledView style={animatedStyle} {...props} /> : children;

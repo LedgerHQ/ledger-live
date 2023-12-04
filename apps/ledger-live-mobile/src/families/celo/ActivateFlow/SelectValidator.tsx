@@ -1,4 +1,4 @@
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import invariant from "invariant";
 import React, { useCallback, useMemo } from "react";
 import { FlatList, StyleSheet, View, SafeAreaView, ListRenderItem } from "react-native";
@@ -70,7 +70,7 @@ export default function SelectValidator({ navigation, route }: Props) {
     );
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background.main}]}>
       <TrackScreen
         category="ActivateFlow"
         name="SelectValidator"

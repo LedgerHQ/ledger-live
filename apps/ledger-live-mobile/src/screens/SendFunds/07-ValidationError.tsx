@@ -1,7 +1,8 @@
 import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { CompositeScreenProps, useTheme } from "@react-navigation/native";
+import { CompositeScreenProps } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { useSelector } from "react-redux";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 
@@ -41,7 +42,7 @@ export default function ValidationError({ navigation, route }: Props) {
       style={[
         styles.root,
         {
-          backgroundColor: colors.background,
+          backgroundColor: colors.background.main,
         },
       ]}
     >

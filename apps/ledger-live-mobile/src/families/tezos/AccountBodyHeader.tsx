@@ -140,7 +140,7 @@ export default function TezosAccountBodyHeader({
               </Text>
             </View>
             <View style={styles.row}>
-              <LText style={styles.subtitle} color="grey">
+              <LText style={styles.subtitle} color="neutral.c70">
                 {days ? (
                   <Trans i18nKey="delegation.durationDays" count={days} values={{ count: days }} />
                 ) : (

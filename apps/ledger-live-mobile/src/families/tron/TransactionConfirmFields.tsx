@@ -8,7 +8,7 @@ import {
   formatVotes,
   useTronSuperRepresentatives,
 } from "@ledgerhq/live-common/families/tron/react";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { DataRow, HeaderRow, ValidatorField } from "../../components/ValidateOnDeviceDataRow";
 import LText from "../../components/LText";
 import Info from "../../icons/Info";
@@ -36,8 +36,8 @@ const Warning = ({ transaction }: { transaction: Transaction }) => {
     case "freeze":
       return (
         <DataRow>
-          <Info size={22} color={colors.live} />
-          <LText semiBold style={[styles.text, styles.infoText]} color="live" numberOfLines={2}>
+          <Info size={22} color={colors.primary.c80} />
+          <LText semiBold style={[styles.text, styles.infoText]} color="primary.c70" numberOfLines={2}>
             <Trans
               i18nKey={`ValidateOnDevice.infoWording.${transaction.mode}`}
               values={{

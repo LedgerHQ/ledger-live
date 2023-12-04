@@ -29,7 +29,7 @@ const DataList = ({ data, title, rightComp, colors }: Props) => {
         }}
       >
         {title ? (
-          <LText style={styles.sectionTitle} color="grey">
+          <LText style={styles.sectionTitle} color="neutral.c70">
             {title}
           </LText>
         ) : null}
@@ -44,7 +44,7 @@ const DataList = ({ data, title, rightComp, colors }: Props) => {
             {showAll ? (
               <LText
                 style={{
-                  color: colors.live,
+                  color: colors.primary.c80,
                 }}
               >
                 <Trans i18nKey="operationDetails.seeLess" />
@@ -52,7 +52,7 @@ const DataList = ({ data, title, rightComp, colors }: Props) => {
             ) : (
               <LText
                 style={{
-                  color: colors.live,
+                  color: colors.primary.c80,
                 }}
               >
                 <Trans i18nKey="operationDetails.seeAll" />

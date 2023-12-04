@@ -10,7 +10,7 @@ import { assertUnreachable } from "@ledgerhq/live-common/families/solana/utils";
 import { ValidatorsAppValidator } from "@ledgerhq/live-common/families/solana/validator-app/index";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import { capitalize } from "lodash/fp";
@@ -160,7 +160,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
   const hasErrors = Object.keys(status.errors).length > 0;
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background.main }]}>
       <TrackScreen
         category="DelegationFlow"
         name="Summary"
@@ -183,7 +183,10 @@ export default function DelegationSummary({ navigation, route }: Props) {
           right={
             supportValidatorChange(delegationAction) ? (
               <Touchable event="DelegationFlowSummaryChangeCircleBtn" onPress={onChangeDelegator}>
-                <Circle size={70} style={[styles.validatorCircle, { borderColor: colors.primary }]}>
+                <Circle
+                  size={70}
+                  style={[styles.validatorCircle, { borderColor: colors.primary.c70 }]}
+                >
                   <Animated.View
                     style={{
                       transform: [
@@ -481,12 +484,12 @@ const AccountBalanceTag = ({ account }: { account: AccountLike }) => {
   const unit = getAccountUnit(account);
   const { colors } = useTheme();
   return (
-    <View style={[styles.accountBalanceTag, { backgroundColor: colors.lightFog }]}>
+    <View style={[styles.accountBalanceTag, { backgroundColor: colors.neutral.c20 }]}>
       <Text
         fontWeight="semiBold"
         numberOfLines={1}
         style={styles.accountBalanceTagText}
-        color="smoke"
+        color="neutral.c60"
       >
         <CurrencyUnitValue showCode unit={unit} value={account.balance} />
       </Text>
@@ -497,8 +500,8 @@ const AccountBalanceTag = ({ account }: { account: AccountLike }) => {
 const ChangeDelegator = () => {
   const { colors } = useTheme();
   return (
-    <Circle style={styles.changeDelegator} bg={colors.live} size={26}>
-      <Icon size={13} name="edit-2" color={colors.white} />
+    <Circle style={styles.changeDelegator} bg={colors.primary.c80} size={26}>
+      <Icon size={13} name="edit-2" color={colors.neutral.c20} />
     </Circle>
   );
 };
@@ -520,7 +523,7 @@ const Words = ({
     numberOfLines={1}
     fontWeight={highlighted ? "bold" : "semiBold"}
     style={[styles.summaryWords, style]}
-    color={highlighted ? "live" : "smoke"}
+    color={highlighted ? "primary.c70" : "neutral.c60"}
   >
     {children}
   </Text>
@@ -529,13 +532,18 @@ const Words = ({
 const Selectable = ({ name, readOnly }: { name: string; readOnly?: boolean }) => {
   const { colors } = useTheme();
   return (
-    <View style={[styles.validatorSelection, { backgroundColor: rgba(colors.live, 0.2) }]}>
-      <Text fontWeight="bold" numberOfLines={1} style={styles.validatorSelectionText} color="live">
+    <View style={[styles.validatorSelection, { backgroundColor: rgba(colors.primary.c80, 0.2) }]}>
+      <Text
+        fontWeight="bold"
+        numberOfLines={1}
+        style={styles.validatorSelectionText}
+        color="primary.c70"
+      >
         {name}
       </Text>
       {readOnly ? null : (
-        <View style={[styles.validatorSelectionIcon, { backgroundColor: colors.live }]}>
-          <Icon size={16} name="edit-2" color={colors.white} />
+        <View style={[styles.validatorSelectionIcon, { backgroundColor: colors.primary.c80 }]}>
+          <Icon size={16} name="edit-2" color={colors.neutral.c20} />
         </View>
       )}
     </View>

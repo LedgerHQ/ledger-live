@@ -75,8 +75,8 @@ export default function MainNavigator() {
         ],
         unmountOnBlur: true, // Nb prevents ghost device interactions
         tabBarShowLabel: false,
-        tabBarActiveTintColor: colors.palette.primary.c80,
-        tabBarInactiveTintColor: colors.palette.neutral.c70,
+        tabBarActiveTintColor: colors.primary.c80,
+        tabBarInactiveTintColor: colors.neutral.c70,
         headerShown: false,
       }}
       sceneContainerStyle={[{ backgroundColor: colors.background.main }]}

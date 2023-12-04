@@ -6,7 +6,7 @@ import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 import { CeloValidatorGroup, CeloVote } from "@ledgerhq/live-common/families/celo/types";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import BigNumber from "bignumber.js";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import Touchable from "../../components/Touchable";
@@ -55,7 +55,7 @@ const ValidatorRow = ({
               numberOfLines={1}
               style={[
                 styles.overdelegated,
-                { color: vote.type === "active" ? colors.green : colors.grey },
+                { color: vote.type === "active" ? colors.success.c70 : colors.neutral.c70 },
               ]}
             >
               {vote.type === "active" ? (
@@ -66,7 +66,12 @@ const ValidatorRow = ({
             </Text>
           ) : null}
         </View>
-        <Text fontWeight="semiBold" numberOfLines={1} style={[styles.validatorYield]} color="smoke">
+        <Text
+          fontWeight="semiBold"
+          numberOfLines={1}
+          style={[styles.validatorYield]}
+          color="neutral.c60"
+        >
           <Text fontWeight="semiBold" numberOfLines={1}>
             <CurrencyUnitValue showCode unit={getAccountUnit(account)} value={amount} />
           </Text>

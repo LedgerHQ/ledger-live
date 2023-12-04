@@ -2,7 +2,7 @@ import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { useCallback, useEffect, useState } from "react";
@@ -135,7 +135,7 @@ export default function DelegationSelectAmount({ navigation, route }: Props) {
         action="delegation"
         currency="sol"
       />
-      <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+      <SafeAreaView style={[styles.root, { backgroundColor: colors.background.main }]}>
         <KeyboardView style={styles.container}>
           <TouchableWithoutFeedback onPress={blur}>
             <View style={styles.amountWrapper}>
@@ -160,19 +160,19 @@ export default function DelegationSelectAmount({ navigation, route }: Props) {
                     onPress={() => setInfoModalOpen(true)}
                   >
                     <View>
-                      <Text color="grey">
+                      <Text color="neutral.c70">
                         <Trans i18nKey="send.amount.available" />{" "}
-                        <InfoIcon size={12} color="grey" />
+                        <InfoIcon size={12} color="neutral.c70" />
                       </Text>
                       {maxSpendable > 0 && (
-                        <Text fontWeight="semiBold" color="grey">
+                        <Text fontWeight="semiBold" color="neutral.c70">
                           <CurrencyUnitValue showCode unit={unit} value={maxSpendable} />
                         </Text>
                       )}
                     </View>
                   </Touchable>
                   <View style={styles.availableRight}>
-                    <Text style={styles.maxLabel} color="grey">
+                    <Text style={styles.maxLabel} color="neutral.c70">
                       <Trans i18nKey="send.amount.useMax" />
                     </Text>
                     <Switch

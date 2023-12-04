@@ -1,7 +1,7 @@
 import { getMessageProperties } from "@ledgerhq/coin-evm/logic";
 import { getAccountName, getMainAccount } from "@ledgerhq/live-common/account/index";
 import type { MessageProperties } from "@ledgerhq/types-live";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import invariant from "invariant";
 import React, { memo, useCallback, useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
@@ -32,7 +32,7 @@ const MessageProperty = memo(({ label, value }: MessageProperties[0]) => {
         style={[
           styles.messagePropertyValue,
           {
-            color: colors.grey,
+            color: colors.neutral.c70,
           },
         ]}
       >
@@ -45,7 +45,7 @@ const MessageProperty = memo(({ label, value }: MessageProperties[0]) => {
                 style={[
                   styles.messagePropertyValue,
                   {
-                    color: colors.grey,
+                    color: colors.neutral.c70,
                   },
                 ]}
                 key={i}
@@ -109,7 +109,7 @@ function SignSummary({
       style={[
         styles.root,
         {
-          backgroundColor: colors.background,
+          backgroundColor: colors.background.main,
         },
       ]}
     >
@@ -120,7 +120,7 @@ function SignSummary({
             style={[
               styles.iconContainer,
               {
-                backgroundColor: colors.lightLive,
+                backgroundColor: colors.opacityPurple.c10,
               },
             ]}
           >
@@ -144,7 +144,7 @@ function SignSummary({
           style={[
             styles.separator,
             {
-              backgroundColor: colors.separator,
+              backgroundColor: colors.neutral.c80,
             },
           ]}
         />
@@ -171,7 +171,7 @@ function SignSummary({
                       style={[
                         styles.advancedMessageArea,
                         {
-                          backgroundColor: colors.pillActiveBackground,
+                          backgroundColor: colors.opacityPurple.c10,
                         },
                       ]}
                     >

@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { StyleSheet, View, Platform, TouchableOpacity, Linking } from "react-native";
 import { urls } from "@utils/urls";
 import IconClose from "../../../icons/Close";
@@ -23,11 +23,11 @@ const CatalogTwitterBanner = () => {
       style={[
         styles.twitterBanner,
         {
-          backgroundColor: colors.card,
+          backgroundColor: colors.background.drawer,
           ...Platform.select({
             android: {},
             ios: {
-              shadowColor: colors.black,
+              shadowColor: colors.neutral.c100,
             },
           }),
         },

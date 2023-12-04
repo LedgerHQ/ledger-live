@@ -1,7 +1,7 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 
 import LText from "../../../components/LText";
 
@@ -9,11 +9,11 @@ const EmptyState = () => {
   const { colors } = useTheme();
 
   return (
-    <View style={[styles.root, { backgroundColor: colors.background }]}>
+    <View style={[styles.root, { backgroundColor: colors.background.main}]}>
       <LText secondary style={styles.title}>
         <Trans i18nKey="transfer.swap.history.empty.title" />
       </LText>
-      <LText style={styles.desc} color="grey">
+      <LText style={styles.desc} color="neutral.c70">
         <Trans i18nKey="transfer.swap.history.empty.desc" />
       </LText>
     </View>

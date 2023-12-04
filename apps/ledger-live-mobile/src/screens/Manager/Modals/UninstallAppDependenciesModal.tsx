@@ -74,7 +74,7 @@ const UninstallAppDependenciesModal = ({
         height={LINE_HEIGHT}
       >
         <Flex position="absolute" bottom="20px" left="0">
-          <ListTreeLine color={colors.grey} />
+          <ListTreeLine color={colors.neutral.c70} />
         </Flex>
         <AppIcon app={item} size={22} />
         <Text variant="body" pl={5} fontWeight="semiBold">
@@ -82,7 +82,7 @@ const UninstallAppDependenciesModal = ({
         </Text>
       </Flex>
     ),
-    [colors.grey],
+    [colors.neutral.c70],
   );
 
   return (

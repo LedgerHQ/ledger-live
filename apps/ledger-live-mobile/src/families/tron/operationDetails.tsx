@@ -133,7 +133,7 @@ const AmountCell = ({
         <CurrencyUnitValue showCode unit={unit} value={amount} alwaysShowSign={false} />
       </LText>
 
-      <LText numberOfLines={1} style={styles.amountText} color="grey">
+      <LText numberOfLines={1} style={styles.amountText} color="neutral.c70">
         <CounterValue
           showCode
           date={operation.date}

@@ -42,7 +42,7 @@ export default function VechainFeeRow({ account, status }: Props) {
             <CurrencyUnitValue unit={unit} value={fees} />
           </Text>
         </View>
-        <Text style={styles.countervalue} color="grey">
+        <Text style={styles.countervalue} color="neutral.c70">
           <CounterValue before="≈ " value={fees} currency={currency} />
         </Text>
       </View>

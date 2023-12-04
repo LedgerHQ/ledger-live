@@ -13,7 +13,7 @@ import {
   listSupportedCurrencies,
 } from "@ledgerhq/live-common/currencies/index";
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { ScreenName } from "../../const";
@@ -256,7 +256,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       style={[
         styles.root,
         {
-          backgroundColor: colors.background,
+          backgroundColor: colors.background.main,
         },
       ]}
     >

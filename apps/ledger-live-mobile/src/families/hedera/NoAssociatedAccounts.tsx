@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import i18next from "i18next";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { StyleSheet, Linking, Text } from "react-native";
 import { urls } from "@utils/urls";
 import Touchable, { Props as TouchableProps } from "../../components/Touchable";
@@ -16,7 +16,7 @@ type Props = {
 // "no associated accounts" text when adding/importing accounts
 function NoAssociatedAccounts({ style }: Props) {
   const { colors } = useTheme();
-  const c = colors.live;
+  const c = colors.primary.c80;
   const fontSize = 13;
   const onPress = useCallback(() => Linking.openURL(urls.hedera.supportArticleLink), []);
   return (

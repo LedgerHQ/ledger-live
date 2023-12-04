@@ -12,8 +12,8 @@ import {
   UserRefusedOnDevice,
 } from "@ledgerhq/errors";
 import { useTranslation } from "react-i18next";
-import { ParamListBase, useNavigation, useTheme } from "@react-navigation/native";
-import { useTheme as useThemeFromStyledComponents } from "styled-components/native";
+import { ParamListBase, useNavigation } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { Flex, Text, Icons } from "@ledgerhq/native-ui";
 import type { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -164,13 +164,10 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
 }: Props<H, P> & {
   request?: R;
 }): JSX.Element | null {
-  const { colors, dark } = useTheme();
-  const {
-    colors: { palette },
-  } = useThemeFromStyledComponents();
+  const { colors, palette } = useTheme();
 
   const dispatch = useDispatch();
-  const theme: "dark" | "light" = dark ? "dark" : "light";
+  const theme: "dark" | "light" = palette === "dark" ? "dark" : "light";
   const { t } = useTranslation();
   const navigation = useNavigation<StackNavigationProp<ParamListBase>>();
   const {
@@ -351,7 +348,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
           theme,
           hasExportLogButton: false,
           Icon: Icons.InformationFill,
-          iconColor: palette.primary.c80,
+          iconColor: colors.primary.c80,
           device: device ?? undefined,
         });
       }

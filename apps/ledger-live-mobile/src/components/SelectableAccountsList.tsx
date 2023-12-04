@@ -266,7 +266,7 @@ const SelectableAccount = ({
           AccountSubTitle={
             subAccountCount && !isDisabled ? (
               <Flex marginTop={2}>
-                <Text fontWeight="semiBold" variant="small" color="pillActiveForeground">
+                <Text fontWeight="semiBold" variant="small" color="primary.c80">
                   <Trans
                     i18nKey={`selectableAccountsList.${isToken ? "tokenCount" : "subaccountCount"}`}
                     count={subAccountCount}

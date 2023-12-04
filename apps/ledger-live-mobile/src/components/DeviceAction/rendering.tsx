@@ -971,8 +971,8 @@ export function renderWarningOutdated({
   return (
     <Wrapper>
       <IconContainer>
-        <Circle size={60} bg={lighten(colors.yellow, 0.4)}>
-          <IconsLegacy.WarningMedium size={28} color={colors.yellow} />
+        <Circle size={60} bg={lighten(colors.warning.c80, 0.4)}>
+          <IconsLegacy.WarningMedium size={28} color={colors.warning.c80} />
         </Circle>
       </IconContainer>
       <TitleText>{t("DeviceAction.outdated")}</TitleText>

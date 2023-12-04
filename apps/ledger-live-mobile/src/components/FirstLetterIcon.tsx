@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleProp, StyleSheet, TextStyle, View, ViewStyle } from "react-native";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import LText from "./LText";
 
 type Props = {
@@ -31,7 +31,7 @@ const FirstLetterIcon = ({
       style={[
         styles.root,
         {
-          backgroundColor: colors.lightLive,
+          backgroundColor: colors.opacityPurple.c10,
         },
         style,
         {

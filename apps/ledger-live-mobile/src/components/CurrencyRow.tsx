@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { RectButton } from "react-native-gesture-handler";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 
 import styled from "styled-components/native";
 import { Flex, Tag } from "@ledgerhq/native-ui";
@@ -38,7 +38,7 @@ const CurrencyRow = ({ currency, style, isOK = true, iconSize = 32, onPress }: P
       <CircleCurrencyIcon
         size={iconSize}
         currency={currency}
-        color={!isOK ? colors.lightFog : undefined}
+        color={!isOK ? colors.neutral.c20 : undefined}
       />
       <Flex flexDirection="row" flex={1} alignItems="center" justifyContent="flex-start">
         <LText
@@ -46,7 +46,7 @@ const CurrencyRow = ({ currency, style, isOK = true, iconSize = 32, onPress }: P
           variant="body"
           numberOfLines={1}
           ml={4}
-          color={!isOK ? "neutral.c70" : "neutral.c100"}
+          color={!isOK ? "neutral.c70" : "neutral.c200"}
         >
           {currency.name}
         </LText>

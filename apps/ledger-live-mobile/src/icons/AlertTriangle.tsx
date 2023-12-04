@@ -1,6 +1,6 @@
 import React from "react";
 import Svg, { Path, G } from "react-native-svg";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 
 type Props = {
   size?: number;
@@ -30,7 +30,7 @@ export default function AlertTriangle({ size = 16, color }: Props) {
           <Path
             d="M8.75,10 C8.75,10.4142136 8.41421356,10.75 8,10.75 C7.58578644,10.75 7.25,10.4142136 7.25,10 L7.25,9.99 C7.25,9.57578644 7.58578644,9.24 8,9.24 C8.41421356,9.24 8.75,9.57578644 8.75,9.99 L8.75,10 Z"
             id="path-1-path"
-            fill={color || colors.yellow}
+            fill={color || colors.warning.c80}
           />
         </G>
       </G>

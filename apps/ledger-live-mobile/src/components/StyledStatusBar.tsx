@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { StatusBar, Platform } from "react-native";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 
 type Props = {
   hidden?: boolean;
@@ -19,9 +19,9 @@ function StyledStatusBar({
   backgroundColor = "transparent",
   barStyle = "dark-content",
 }: Props) {
-  const { colors, dark } = useTheme();
-  const newColor = oldAndroid && barStyle === "dark-content" ? colors.live : backgroundColor;
-  const statusBarStyle = dark ? "light-content" : barStyle;
+  const { colors, palette } = useTheme();
+  const newColor = oldAndroid && barStyle === "dark-content" ? colors.primary.c80 : backgroundColor;
+  const statusBarStyle = palette === "dark" ? "light-content" : barStyle;
   return (
     <StatusBar
       backgroundColor={newColor}

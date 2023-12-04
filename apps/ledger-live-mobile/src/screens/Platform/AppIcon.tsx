@@ -68,7 +68,7 @@ function AppIcon({ size = 48, name, icon, isDisabled }: Props) {
                 {
                   width: size,
                   height: size,
-                  tintColor: colors.fog,
+                  tintColor: colors.neutral.c70,
                 },
               ]}
               fadeDuration={200}

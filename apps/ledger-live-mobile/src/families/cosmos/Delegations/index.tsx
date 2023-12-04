@@ -1,7 +1,8 @@
 import { BigNumber } from "bignumber.js";
 import React, { useCallback, useState, useMemo, useEffect } from "react";
 import { View, StyleSheet, Linking } from "react-native";
-import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
 import {
   getAccountCurrency,
@@ -251,7 +252,7 @@ function Delegations({ account }: Props) {
                 semiBold
                 ellipsizeMode="middle"
                 style={[styles.valueText]}
-                color="live"
+                color="primary.c70"
               >
                 {d.validator?.name ?? d.validatorAddress ?? ""}
               </LText>
@@ -269,7 +270,7 @@ function Delegations({ account }: Props) {
                   semiBold
                   ellipsizeMode="middle"
                   style={[styles.valueText]}
-                  color="live"
+                  color="primary.c70"
                 >
                   {d.validatorAddress}
                 </LText>
@@ -284,7 +285,7 @@ function Delegations({ account }: Props) {
                 semiBold
                 ellipsizeMode="middle"
                 style={[styles.valueText]}
-                color="live"
+                color="primary.c70"
               >
                 {account.name}{" "}
               </LText>
@@ -298,7 +299,7 @@ function Delegations({ account }: Props) {
                 semiBold
                 ellipsizeMode="middle"
                 style={[styles.valueText]}
-                color="live"
+                color="primary.c70"
               >
                 {(d as CosmosMappedDelegation).status === "bonded"
                   ? t("cosmos.delegation.drawer.active")
@@ -344,7 +345,7 @@ function Delegations({ account }: Props) {
                         semiBold
                         ellipsizeMode="middle"
                         style={[styles.valueText]}
-                        color="live"
+                        color="primary.c70"
                       >
                         {redelegation.validatorSrcAddress}
                       </LText>
@@ -378,8 +379,8 @@ function Delegations({ account }: Props) {
           {
             label: t("delegation.actions.redelegate"),
             Icon: (props: IconProps) => (
-              <Circle {...props} bg={!redelegateEnabled ? colors.lightFog : colors.fog}>
-                <RedelegateIcon color={!redelegateEnabled ? colors.grey : undefined} />
+              <Circle {...props} bg={!redelegateEnabled ? colors.neutral.c20 : colors.neutral.c70}>
+                <RedelegateIcon color={!redelegateEnabled ? colors.neutral.c70 : undefined} />
               </Circle>
             ),
             disabled: !redelegateEnabled,
@@ -389,8 +390,11 @@ function Delegations({ account }: Props) {
           {
             label: t("delegation.actions.collectRewards"),
             Icon: (props: IconProps) => (
-              <Circle {...props} bg={rewardsDisabled ? colors.lightFog : rgba(colors.yellow, 0.2)}>
-                <ClaimRewardIcon color={rewardsDisabled ? colors.grey : undefined} />
+              <Circle
+                {...props}
+                bg={rewardsDisabled ? colors.neutral.c20 : rgba(colors.warning.c80, 0.2)}
+              >
+                <ClaimRewardIcon color={rewardsDisabled ? colors.neutral.c70 : undefined} />
               </Circle>
             ),
             disabled: rewardsDisabled,
@@ -402,9 +406,9 @@ function Delegations({ account }: Props) {
             Icon: (props: IconProps) => (
               <Circle
                 {...props}
-                bg={!undelegationEnabled ? colors.lightFog : rgba(colors.alert, 0.2)}
+                bg={!undelegationEnabled ? colors.neutral.c20 : rgba(colors.error.c60, 0.2)}
               >
-                <UndelegateIcon color={!undelegationEnabled ? colors.grey : undefined} />
+                <UndelegateIcon color={!undelegationEnabled ? colors.neutral.c70 : undefined} />
               </Circle>
             ),
             disabled: !undelegationEnabled,
@@ -420,11 +424,11 @@ function Delegations({ account }: Props) {
     onRedelegate,
     onCollectRewards,
     onUndelegate,
-    colors.lightFog,
-    colors.fog,
-    colors.grey,
-    colors.yellow,
-    colors.alert,
+    colors.neutral.c20,
+    colors.neutral.c70,
+    colors.neutral.c70,
+    colors.warning.c80,
+    colors.error.c60,
   ]);
 
   const delegationDisabled = delegations.length <= 0 || !canDelegate(account);
@@ -461,7 +465,7 @@ function Delegations({ account }: Props) {
               <Text fontWeight={"semiBold"} variant={"h4"}>
                 <CurrencyUnitValue value={totalRewardsAvailable} unit={unit} />
               </Text>
-              <LText semiBold style={styles.subLabel} color="grey">
+              <LText semiBold style={styles.subLabel} color="neutral.c70">
                 <CounterValue currency={currency} value={totalRewardsAvailable} withPlaceholder />
               </LText>
             </View>
@@ -522,7 +526,7 @@ function Delegations({ account }: Props) {
           {undelegations.map((d, i) => (
             <View
               key={d.validatorAddress}
-              style={[styles.delegationsWrapper, { backgroundColor: colors.card }]}
+              style={[styles.delegationsWrapper, { backgroundColor: colors.background.drawer }]}
             >
               <DelegationRow
                 delegation={d}

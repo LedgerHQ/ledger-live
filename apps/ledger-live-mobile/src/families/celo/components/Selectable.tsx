@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { StyleSheet, View } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 import { Text } from "@ledgerhq/native-ui";
@@ -8,18 +8,18 @@ import { rgba } from "../../../colors";
 const Selectable = ({ name }: { name: string }) => {
   const { colors } = useTheme();
   return (
-    <View style={[styles.validatorSelection, { backgroundColor: rgba(colors.primary, 0.2) }]}>
+    <View style={[styles.validatorSelection, { backgroundColor: rgba(colors.primary.c70, 0.2) }]}>
       <Text
         fontWeight="bold"
         numberOfLines={1}
         style={styles.validatorSelectionText}
-        color={colors.primary}
+        color={colors.primary.c70}
       >
         {name}
       </Text>
 
-      <View style={[styles.validatorSelectionIcon, { backgroundColor: colors.primary }]}>
-        <Icon size={16} name="edit-2" color={colors.text} />
+      <View style={[styles.validatorSelectionIcon, { backgroundColor: colors.primary.c70 }]}>
+        <Icon size={16} name="edit-2" color={colors.neutral.c100} />
       </View>
     </View>
   );

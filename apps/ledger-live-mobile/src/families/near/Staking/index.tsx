@@ -1,7 +1,8 @@
 import { BigNumber } from "bignumber.js";
 import React, { useCallback, useState, useMemo } from "react";
 import { View, StyleSheet, Linking } from "react-native";
-import { useNavigation, useTheme } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
@@ -126,7 +127,7 @@ function StakingPositions({ account }: Props) {
                   semiBold
                   ellipsizeMode="middle"
                   style={[styles.valueText]}
-                  color="live"
+                  color="primary.c70"
                 >
                   {stakingPosition.validatorId}
                 </LText>
@@ -141,7 +142,7 @@ function StakingPositions({ account }: Props) {
                 semiBold
                 ellipsizeMode="middle"
                 style={[styles.valueText]}
-                color="live"
+                color="primary.c70"
               >
                 {stakingPosition.staked.gt(0)
                   ? t("near.staking.drawer.active")
@@ -186,8 +187,11 @@ function StakingPositions({ account }: Props) {
           {
             label: t("near.staking.actions.unstake"),
             Icon: (props: IconProps) => (
-              <Circle {...props} bg={!unstakingEnabled ? colors.lightFog : rgba(colors.alert, 0.2)}>
-                <UndelegateIcon color={!unstakingEnabled ? colors.grey : undefined} />
+              <Circle
+                {...props}
+                bg={!unstakingEnabled ? colors.neutral.c20 : rgba(colors.error.c60, 0.2)}
+              >
+                <UndelegateIcon color={!unstakingEnabled ? colors.neutral.c70 : undefined} />
               </Circle>
             ),
             disabled: !unstakingEnabled,
@@ -199,9 +203,9 @@ function StakingPositions({ account }: Props) {
             Icon: (props: IconProps) => (
               <Circle
                 {...props}
-                bg={!withdrawingEnabled ? colors.lightFog : rgba(colors.yellow, 0.2)}
+                bg={!withdrawingEnabled ? colors.neutral.c20 : rgba(colors.warning.c80, 0.2)}
               >
-                <ClaimRewardIcon color={!withdrawingEnabled ? colors.grey : undefined} />
+                <ClaimRewardIcon color={!withdrawingEnabled ? colors.neutral.c70 : undefined} />
               </Circle>
             ),
             disabled: !withdrawingEnabled,
@@ -215,10 +219,10 @@ function StakingPositions({ account }: Props) {
     t,
     onUnstake,
     onWithdraw,
-    colors.lightFog,
-    colors.grey,
-    colors.yellow,
-    colors.alert,
+    colors.neutral.c20,
+    colors.neutral.c70,
+    colors.warning.c80,
+    colors.error.c60,
   ]);
 
   const stakingDisabled = stakingPositions.length <= 0 || !canStake(account as NearAccount);

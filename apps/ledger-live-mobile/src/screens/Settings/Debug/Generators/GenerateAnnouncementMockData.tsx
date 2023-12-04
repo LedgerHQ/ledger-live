@@ -2,7 +2,7 @@ import React, { useCallback, useState } from "react";
 import { StyleSheet } from "react-native";
 import { getEnv } from "@ledgerhq/live-env";
 import { useAnnouncements } from "@ledgerhq/live-common/notifications/AnnouncementProvider/index";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { addMockAnnouncement } from "../__mocks__/announcements";
 import SettingsRow from "../../../../components/SettingsRow";
@@ -153,7 +153,7 @@ export default function AddMockAnnouncementButton({ title }: { title: string }) 
           style={[
             styles.cta,
             {
-              backgroundColor: colors.live,
+              backgroundColor: colors.primary.c80,
             },
           ]}
         >

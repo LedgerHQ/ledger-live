@@ -47,7 +47,7 @@ const Event: React.FC<Props> = ({
           <Text color="black" fontWeight="bold">
             {eventName}
           </Text>
-          <Text color="grey"> {date?.toLocaleTimeString()}</Text>
+          <Text color="neutral.c70"> {date?.toLocaleTimeString()}</Text>
         </Flex>
         <Text color="black">{propertiesText}</Text>
       </Flex>

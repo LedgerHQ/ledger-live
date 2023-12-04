@@ -3,7 +3,7 @@ import { Trans } from "react-i18next";
 import { StyleSheet, View, FlatList, SafeAreaView, ListRenderItem } from "react-native";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";
 import FilteredSearchBar from "../../components/FilteredSearchBar";
@@ -69,7 +69,7 @@ export default function RequestAccountsSelectCrypto({ navigation, route }: Props
       style={[
         styles.root,
         {
-          backgroundColor: colors.background,
+          backgroundColor: colors.background.main,
         },
       ]}
     >

@@ -18,7 +18,7 @@ export default function LabelRight({ onPress, disabled }: Props) {
   const onCloseModal = useCallback(() => setDisabledModalOpen(false), []);
   return (
     <TouchableOpacity onPress={onClick}>
-      <LText semiBold color={disabled ? "grey" : "live"}>
+      <LText semiBold color={disabled ? "neutral.c70" : "primary.c70"}>
         {t("near.staking.add")}
       </LText>
       <InfoModal

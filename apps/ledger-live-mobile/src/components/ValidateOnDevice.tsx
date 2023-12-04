@@ -18,7 +18,7 @@ import {
 } from "@ledgerhq/live-common/transaction/index";
 import { getDeviceModel } from "@ledgerhq/devices";
 
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import styled from "styled-components/native";
 import { Flex } from "@ledgerhq/native-ui";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -106,8 +106,7 @@ export default function ValidateOnDevice({
   status,
   transaction,
 }: Props) {
-  const { dark } = useTheme();
-  const theme = dark ? "dark" : "light";
+  const { palette } = useTheme();
   const { t } = useTranslation();
   const mainAccount = getMainAccount(account, parentAccount);
   const r =
@@ -179,7 +178,7 @@ export default function ValidateOnDevice({
         <Flex alignItems="center">
           <AnimationContainer>
             <Animation
-              source={getDeviceAnimation({ device, key: "sign", theme })}
+              source={getDeviceAnimation({ device, key: "sign", theme: palette })}
               style={device.modelId === DeviceModelId.stax ? { height: 210 } : {}}
             />
           </AnimationContainer>

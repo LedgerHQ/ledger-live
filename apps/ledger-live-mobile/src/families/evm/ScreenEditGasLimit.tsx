@@ -3,7 +3,7 @@ import React, { useState, useCallback } from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { Keyboard, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import Button from "../../components/Button";
 import KeyboardView from "../../components/KeyboardView";
 import NavigationScrollView from "../../components/NavigationScrollView";
@@ -52,7 +52,7 @@ function EvmEditGasLimit({ navigation, route }: NavigationProps) {
         style={[
           styles.body,
           {
-            backgroundColor: colors.background,
+            backgroundColor: colors.background.main,
           },
         ]}
       >
@@ -62,7 +62,7 @@ function EvmEditGasLimit({ navigation, route }: NavigationProps) {
             style={[
               styles.textInputAS,
               {
-                color: colors.darkBlue,
+                color: colors.neutral.c90,
               },
             ]}
             defaultValue={gasLimit ? gasLimit.toString() : ""}

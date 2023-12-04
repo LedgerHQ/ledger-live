@@ -1,6 +1,7 @@
 import React, { useCallback } from "react";
 import { TouchableOpacity, StyleSheet, View } from "react-native";
-import { useNavigation, useTheme } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { Icon } from "@ledgerhq/native-ui";
 import type { MappedSwapOperation } from "@ledgerhq/live-common/exchange/swap/types";
 import { getAccountUnit, getAccountName } from "@ledgerhq/live-common/account/helpers";
@@ -30,7 +31,10 @@ const OperationRow = ({ item }: { item: MappedSwapOperation }) => {
   return (
     <TouchableOpacity key={swapId} onPress={onOpenOperationDetails}>
       <View
-        style={[styles.root, { backgroundColor: colors.card, borderBottomColor: colors.lightFog }]}
+        style={[
+          styles.root,
+          { backgroundColor: colors.background.drawer, borderBottomColor: colors.neutral.c20 },
+        ]}
       >
         <SwapStatusIndicator small status={status} />
         <View style={[styles.accountWrapper, { marginLeft: 18 }]}>
@@ -48,7 +52,7 @@ const OperationRow = ({ item }: { item: MappedSwapOperation }) => {
           <LText numberOfLines={1} semiBold style={styles.name}>
             {getAccountName(toAccount)}
           </LText>
-          <LText style={styles.amount} color="grey">
+          <LText style={styles.amount} color="neutral.c70">
             <CurrencyUnitValue showCode unit={getAccountUnit(toAccount)} value={toAmount} />
           </LText>
         </View>

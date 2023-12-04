@@ -3,7 +3,8 @@ import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/
 import { TransactionStatus as SolanaTransactionStatus } from "@ledgerhq/live-common/families/solana/types";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
-import { CompositeScreenProps, useTheme } from "@react-navigation/native";
+import { CompositeScreenProps } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { Linking, StyleSheet, View } from "react-native";
@@ -48,7 +49,7 @@ export default function SolanaFeeRow({ account, status }: Props) {
       title={<Trans i18nKey="send.fees.title" />}
       additionalInfo={
         <View>
-          <ExternalLink size={12} color={colors.grey} />
+          <ExternalLink size={12} color={colors.neutral.c70} />
         </View>
       }
     >
@@ -58,7 +59,7 @@ export default function SolanaFeeRow({ account, status }: Props) {
             <CurrencyUnitValue unit={unit} value={fees} />
           </Text>
         </View>
-        <Text style={styles.countervalue} color="grey">
+        <Text style={styles.countervalue} color="neutral.c70">
           <CounterValue before="≈ " value={fees} currency={currency} />
         </Text>
       </View>

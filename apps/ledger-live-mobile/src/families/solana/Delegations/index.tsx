@@ -19,7 +19,8 @@ import {
 } from "@ledgerhq/live-common/families/solana/utils";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Box, Text } from "@ledgerhq/native-ui";
-import { useNavigation, useTheme } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import { capitalize } from "lodash/fp";
@@ -139,7 +140,7 @@ function Delegations({ account }: Props) {
               fontWeight="semiBold"
               ellipsizeMode="middle"
               style={[styles.valueText]}
-              color="live"
+              color="primary.c70"
             >
               {meta.validator?.name ?? stake.delegation?.voteAccAddr ?? "N/A"}
             </Text>
@@ -154,7 +155,7 @@ function Delegations({ account }: Props) {
             fontWeight="semiBold"
             ellipsizeMode="middle"
             style={[styles.valueText]}
-            color="live"
+            color="primary.c70"
           >
             {stake.activation.state}
           </Text>
@@ -168,7 +169,7 @@ function Delegations({ account }: Props) {
             fontWeight="semiBold"
             ellipsizeMode="middle"
             style={[styles.valueText]}
-            color="live"
+            color="primary.c70"
           >
             {stake.delegation === undefined ? 0 : stakeActivePercent(stake).toFixed(2)} %
           </Text>
@@ -182,7 +183,7 @@ function Delegations({ account }: Props) {
             fontWeight="semiBold"
             ellipsizeMode="middle"
             style={[styles.valueText]}
-            color="live"
+            color="primary.c70"
           >
             {formatAmount(stake.withdrawable)}
           </Text>
@@ -205,15 +206,15 @@ function Delegations({ account }: Props) {
     return allStakeActions.map(action => {
       const actionEnabled = availableActions.includes(action);
       const enabledActionCircleBgColor = sweetch(action, {
-        activate: colors.fog,
-        deactivate: rgba(colors.alert, 0.2),
-        reactivate: colors.fog,
-        withdraw: rgba(colors.yellow, 0.2),
+        activate: colors.neutral.c70,
+        deactivate: rgba(colors.error.c60, 0.2),
+        reactivate: colors.neutral.c70,
+        withdraw: rgba(colors.warning.c80, 0.2),
       });
       const drawerAction: DelegationDrawerActions[number] = {
         label: capitalize(action),
         Icon: (props: IconProps) => (
-          <Circle {...props} bg={actionEnabled ? enabledActionCircleBgColor : colors.lightFog}>
+          <Circle {...props} bg={actionEnabled ? enabledActionCircleBgColor : colors.neutral.c20}>
             <DrawerStakeActionIcon stakeAction={action} enabled={actionEnabled} />
           </Circle>
         ),
@@ -235,7 +236,14 @@ function Delegations({ account }: Props) {
       };
       return drawerAction;
     });
-  }, [selectedStakeWithMeta, colors.fog, colors.alert, colors.yellow, colors.lightFog, onNavigate]);
+  }, [
+    selectedStakeWithMeta,
+    colors.neutral.c70,
+    colors.error.c60,
+    colors.warning.c80,
+    colors.neutral.c20,
+    onNavigate,
+  ]);
 
   const onDelegate = () => {
     onNavigate({
@@ -297,7 +305,7 @@ function Delegations({ account }: Props) {
             {stakesWithMeta.map((stakeWithMeta, i) => (
               <View
                 key={stakeWithMeta.stake.stakeAccAddr}
-                style={[styles.delegationsWrapper, { backgroundColor: colors.card }]}
+                style={[styles.delegationsWrapper, { backgroundColor: colors.background.drawer }]}
               >
                 <DelegationRow
                   stakeWithMeta={stakeWithMeta}
@@ -323,7 +331,7 @@ function DrawerStakeActionIcon({
   stakeAction: StakeAction;
 }) {
   const { colors } = useTheme();
-  const iconColor = enabled ? undefined : colors.grey;
+  const iconColor = enabled ? undefined : colors.neutral.c70;
   switch (stakeAction) {
     case "activate":
     case "reactivate":

@@ -3,7 +3,7 @@ import { View, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import invariant from "invariant";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { StackScreenProps } from "@react-navigation/stack";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { TrackScreen } from "../../../analytics";
@@ -38,7 +38,7 @@ export default function ValidationSuccess({ navigation, route }: NavigationProps
       style={[
         styles.root,
         {
-          backgroundColor: colors.background,
+          backgroundColor: colors.background.main,
         },
       ]}
     >

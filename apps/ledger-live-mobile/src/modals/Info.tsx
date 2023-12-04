@@ -35,7 +35,7 @@ export default function InfoModal({ data, isOpened, onClose }: Props) {
               ) : null}
             </View>
             {description ? (
-              <LText color="grey" {...descriptionProps}>
+              <LText color="neutral.c70" {...descriptionProps}>
                 {description}
               </LText>
             ) : null}

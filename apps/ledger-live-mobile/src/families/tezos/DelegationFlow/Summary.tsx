@@ -18,7 +18,7 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import { useDelegation, useBaker, useBakers } from "@ledgerhq/live-common/families/tezos/bakers";
 import whitelist from "@ledgerhq/live-common/families/tezos/bakers.whitelist-default";
 import type { AccountLike } from "@ledgerhq/types-live";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { Alert } from "@ledgerhq/native-ui";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { rgba } from "../../../colors";
@@ -42,8 +42,8 @@ const AccountBalanceTag = ({ account }: { account: AccountLike }) => {
   const unit = getAccountUnit(account);
   const { colors } = useTheme();
   return (
-    <View style={[styles.accountBalanceTag, { backgroundColor: colors.lightFog }]}>
-      <LText semiBold numberOfLines={1} style={styles.accountBalanceTagText} color="smoke">
+    <View style={[styles.accountBalanceTag, { backgroundColor: colors.neutral.c20 }]}>
+      <LText semiBold numberOfLines={1} style={styles.accountBalanceTagText} color="neutral.c60">
         <CurrencyUnitValue showCode unit={unit} value={account.balance} />
       </LText>
     </View>
@@ -53,8 +53,8 @@ const AccountBalanceTag = ({ account }: { account: AccountLike }) => {
 const ChangeDelegator = () => {
   const { colors } = useTheme();
   return (
-    <Circle style={styles.changeDelegator} bg={colors.live} size={26}>
-      <Icon size={13} name="edit-2" color={colors.white} />
+    <Circle style={styles.changeDelegator} bg={colors.primary.c80} size={26}>
+      <Icon size={13} name="edit-2" color={colors.neutral.c20} />
     </Circle>
   );
 };
@@ -77,7 +77,7 @@ const Words = ({
     semiBold={!highlighted}
     bold={highlighted}
     style={[styles.summaryWords, style]}
-    color={highlighted ? "live" : "smoke"}
+    color={highlighted ? "primary.c70" : "neutral.c60"}
   >
     {children}
   </LText>
@@ -86,13 +86,13 @@ const Words = ({
 const BakerSelection = ({ name, readOnly }: { name: string; readOnly?: boolean }) => {
   const { colors } = useTheme();
   return (
-    <View style={[styles.bakerSelection, { backgroundColor: rgba(colors.live, 0.2) }]}>
-      <LText bold numberOfLines={1} style={styles.bakerSelectionText} color="live">
+    <View style={[styles.bakerSelection, { backgroundColor: rgba(colors.primary.c80, 0.2) }]}>
+      <LText bold numberOfLines={1} style={styles.bakerSelectionText} color="primary.c70">
         {name}
       </LText>
       {readOnly ? null : (
-        <View style={[styles.bakerSelectionIcon, { backgroundColor: colors.live }]}>
-          <Icon size={16} name="edit-2" color={colors.white} />
+        <View style={[styles.bakerSelectionIcon, { backgroundColor: colors.primary.c80 }]}>
+          <Icon size={16} name="edit-2" color={colors.neutral.c20} />
         </View>
       )}
     </View>
@@ -207,7 +207,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
   }, [navigation, route.params, account.id, transaction, status]);
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background.main }]}>
       <TrackScreen
         category="DelegationFlow"
         name="Summary"
@@ -230,7 +230,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
           right={
             transaction.mode === "delegate" ? (
               <Touchable event="DelegationFlowSummaryChangeCircleBtn" onPress={onChangeDelegator}>
-                <Circle size={70} style={[styles.bakerCircle, { borderColor: colors.grey }]}>
+                <Circle size={70} style={[styles.bakerCircle, { borderColor: colors.neutral.c70 }]}>
                   <Animated.View
                     style={{
                       transform: [

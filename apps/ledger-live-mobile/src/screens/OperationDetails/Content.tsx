@@ -3,7 +3,8 @@ import { View, StyleSheet, Linking } from "react-native";
 import uniq from "lodash/uniq";
 import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
-import { useNavigation, useTheme } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import type { Account, Operation, AccountLike, NFTMetadataResponse } from "@ledgerhq/types-live";
 import {
   getAccountUnit,
@@ -58,8 +59,8 @@ const HelpLink = ({ title, event, onPress }: HelpLinkProps) => {
   const { colors } = useTheme();
   return (
     <Touchable onPress={onPress} event={event} style={styles.helpLinkRoot}>
-      <ExternalLink size={12} color={colors.smoke} />
-      <LText style={styles.helpLinkText} color="smoke">
+      <ExternalLink size={12} color={colors.neutral.c70} />
+      <LText style={styles.helpLinkText} color="neutral.c60">
         {title}
       </LText>
     </Touchable>
@@ -213,10 +214,10 @@ export default function Content({
               styles.bulletPoint,
               {
                 backgroundColor: hasFailed
-                  ? colors.alert
+                  ? colors.error.c60
                   : isConfirmed
-                  ? colors.green
-                  : colors.grey,
+                  ? colors.success.c70
+                  : colors.neutral.c70,
               },
             ]}
           />
@@ -225,7 +226,7 @@ export default function Content({
               style={[
                 styles.confirmation,
                 {
-                  color: colors.alert,
+                  color: colors.error.c60,
                 },
               ]}
             >
@@ -237,7 +238,7 @@ export default function Content({
               style={[
                 styles.confirmation,
                 {
-                  color: colors.green,
+                  color: colors.success.c70,
                 },
               ]}
             >
@@ -249,7 +250,7 @@ export default function Content({
               style={[
                 styles.confirmation,
                 {
-                  color: colors.grey,
+                  color: colors.neutral.c70,
                 },
               ]}
             >
@@ -263,7 +264,7 @@ export default function Content({
       {subOperations.length > 0 && account.type === "Account" && (
         <>
           <View style={[sectionStyles.wrapper]}>
-            <LText color="grey" semiBold>
+            <LText color="neutral.c70" semiBold>
               <Trans
                 i18nKey={
                   isToken
@@ -274,7 +275,7 @@ export default function Content({
             </LText>
             {isToken ? (
               <Touchable style={styles.info} onPress={onPressInfo} event="TokenOperationsInfo">
-                <Info size={12} color={colors.grey} />
+                <Info size={12} color={colors.neutral.c70} />
               </Touchable>
             ) : null}
           </View>
@@ -383,10 +384,10 @@ export default function Content({
               <LText style={sectionStyles.value} semiBold>
                 <CurrencyUnitValue showCode unit={feeUnit} value={operation.fee} />
               </LText>
-              <LText style={styles.feeCounterValue} color="smoke" semiBold>
+              <LText style={styles.feeCounterValue} color="neutral.c60" semiBold>
                 ≈
               </LText>
-              <LText style={styles.feeCounterValue} color="smoke" semiBold>
+              <LText style={styles.feeCounterValue} color="neutral.c60" semiBold>
                 <CounterValue
                   showCode
                   disableRounding={true}

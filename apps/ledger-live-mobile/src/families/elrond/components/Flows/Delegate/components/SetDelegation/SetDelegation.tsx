@@ -1,6 +1,6 @@
 import React, { useMemo, useEffect, useCallback } from "react";
 import { Image, View, Animated } from "react-native";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { handleTransactionStatus } from "@ledgerhq/live-common/families/elrond/helpers/handleTransactionStatus";
@@ -231,7 +231,7 @@ const SetDelegation = (props: SetDelegationPropsType) => {
    */
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background.main }]}>
       <TrackScreen
         category="DelegationFlow"
         name="Summary"
@@ -247,12 +247,14 @@ const SetDelegation = (props: SetDelegationPropsType) => {
               <CurrencyIcon size={32} currency={currency} />
             </Circle>
 
-            <View style={[styles.accountBalanceTag, { backgroundColor: colors.border }]}>
+            <View
+              style={[styles.accountBalanceTag, { backgroundColor: colors.opacityDefault.c10 }]}
+            >
               <Text
                 fontWeight="semiBold"
                 numberOfLines={1}
                 style={styles.accountBalanceTagText}
-                color="smoke"
+                color="neutral.c60"
               >
                 <CurrencyUnitValue showCode={true} unit={unit} value={account.balance} />
               </Text>
@@ -265,12 +267,12 @@ const SetDelegation = (props: SetDelegationPropsType) => {
           />
 
           <Touchable event="DelegationFlowSummaryChangeCircleBtn" onPress={onChangeValidator}>
-            <Circle size={70} style={[styles.validatorCircle, { borderColor: colors.primary }]}>
+            <Circle size={70} style={[styles.validatorCircle, { borderColor: colors.primary.c70 }]}>
               <Animated.View style={{ transform }}>
                 <Circle crop size={64}>
                   {chosenValidator ? (
                     ELROND_LEDGER_VALIDATOR_ADDRESS === chosenValidator.contract ? (
-                      <LedgerLogo size={64 * 0.7} color={colors.text} />
+                      <LedgerLogo size={64 * 0.7} color={colors.neutral.c100} />
                     ) : (
                       <FirstLetterIcon
                         round={true}
@@ -287,7 +289,7 @@ const SetDelegation = (props: SetDelegationPropsType) => {
                 </Circle>
               </Animated.View>
 
-              <Circle style={styles.changeDelegator} bg={colors.primary} size={26}>
+              <Circle style={styles.changeDelegator} bg={colors.primary.c70} size={26}>
                 <Icon size={13} name="edit-2" />
               </Circle>
             </Circle>
@@ -298,25 +300,35 @@ const SetDelegation = (props: SetDelegationPropsType) => {
       <View style={styles.summary}>
         {summaries.map(summary => (
           <View style={styles.summaryLine} key={summary.i18nKey}>
-            <Text numberOfLines={1} fontWeight="semiBold" style={styles.summaryWords} color="smoke">
+            <Text
+              numberOfLines={1}
+              fontWeight="semiBold"
+              style={styles.summaryWords}
+              color="neutral.c60"
+            >
               <Trans i18nKey={summary.i18nKey} />
             </Text>
 
             <Touchable onPress={summary.callback}>
               <View
-                style={[styles.validatorSelection, { backgroundColor: rgba(colors.primary, 0.2) }]}
+                style={[
+                  styles.validatorSelection,
+                  { backgroundColor: rgba(colors.primary.c70, 0.2) },
+                ]}
               >
                 <Text
                   fontWeight="bold"
                   numberOfLines={1}
                   style={styles.validatorSelectionText}
-                  color={colors.primary}
+                  color={colors.primary.c70}
                 >
                   {summary.name}
                 </Text>
 
-                <View style={[styles.validatorSelectionIcon, { backgroundColor: colors.primary }]}>
-                  <Icon size={16} name="edit-2" color={colors.text} />
+                <View
+                  style={[styles.validatorSelectionIcon, { backgroundColor: colors.primary.c70 }]}
+                >
+                  <Icon size={16} name="edit-2" color={colors.neutral.c100} />
                 </View>
               </View>
             </Touchable>

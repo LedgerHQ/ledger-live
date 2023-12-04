@@ -1,4 +1,4 @@
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import React, { useCallback, useEffect } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
@@ -65,7 +65,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   invariant(transaction.family === "solana", "solana tx expected");
 
   return (
-    <View style={[styles.root, { backgroundColor: colors.background }]}>
+    <View style={[styles.root, { backgroundColor: colors.background.main}]}>
       <TrackScreen
         category="SendFunds"
         name="ValidationSuccess"

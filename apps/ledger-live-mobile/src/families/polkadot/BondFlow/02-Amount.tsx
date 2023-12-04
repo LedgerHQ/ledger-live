@@ -14,7 +14,7 @@ import {
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import invariant from "invariant";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import type { Transaction as PolkadotTransaction } from "@ledgerhq/live-common/families/polkadot/types";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { getAccountUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
@@ -182,7 +182,7 @@ export default function PolkadotBondAmount({ navigation, route }: Props) {
         style={[
           styles.root,
           {
-            backgroundColor: colors.background,
+            backgroundColor: colors.background.main,
           },
         ]}
       >
@@ -190,10 +190,10 @@ export default function PolkadotBondAmount({ navigation, route }: Props) {
           {firstBond ? (
             <View style={styles.topContainer}>
               <TouchableOpacity onPress={openInfoModal} style={styles.info}>
-                <LText semiBold style={styles.infoLabel} color="grey">
+                <LText semiBold style={styles.infoLabel} color="neutral.c70">
                   <Trans i18nKey="polkadot.bond.rewardDestination.label" />
                 </LText>
-                <Info size={16} color={colors.grey} />
+                <Info size={16} color={colors.neutral.c70} />
               </TouchableOpacity>
               <ToggleButton
                 value={rewardDestination}
@@ -207,7 +207,7 @@ export default function PolkadotBondAmount({ navigation, route }: Props) {
               style={[
                 styles.root,
                 {
-                  backgroundColor: colors.background,
+                  backgroundColor: colors.background.main,
                 },
               ]}
             >
@@ -222,7 +222,7 @@ export default function PolkadotBondAmount({ navigation, route }: Props) {
                     <LText
                       semiBold
                       style={[styles.currency]}
-                      color={error ? "alert" : warning ? "orange" : "grey"}
+                      color={error ? "error.c60" : warning ? "warning.c60" : "neutral.c70"}
                     >
                       {unit.code}
                     </LText>
@@ -231,10 +231,10 @@ export default function PolkadotBondAmount({ navigation, route }: Props) {
                   inputStyle={[
                     styles.inputStyle,
                     warning && {
-                      color: colors.orange,
+                      color: colors.warning.c70,
                     },
                     error && {
-                      color: colors.alert,
+                      color: colors.error.c60,
                     },
                   ]}
                   hasError={!!error}
@@ -242,7 +242,7 @@ export default function PolkadotBondAmount({ navigation, route }: Props) {
                 />
                 <LText
                   style={[styles.fieldStatus]}
-                  color={error ? "alert" : warning ? "orange" : "darkBlue"}
+                  color={error ? "error.c60" : warning ? "warning.c60" : "neutral.c80"}
                   numberOfLines={2}
                 >
                   <TranslatedError error={error || warning} />

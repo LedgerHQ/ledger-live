@@ -5,7 +5,8 @@ import Animated, { SlideInDown, SlideInLeft } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button, Flex, IconsLegacy, Text, Link } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
-import { useNavigation, useTheme } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
 import { TrackScreen, track } from "../../analytics";
 import { useCompleteActionCallback } from "../../logic/postOnboarding/useCompleteAction";
@@ -35,7 +36,7 @@ const ClaimNftWelcome = () => {
   const [isFirstVideo, setIsFirstVideo] = useState(true);
   const [firstVideoReadyForDisplay, setFirstVideoReadyForDisplay] = useState(false);
 
-  const theme = useTheme();
+  const { palette } = useTheme();
   const completePostOnboardingAction = useCompleteActionCallback();
 
   const handleGoToQrScan = useCallback(() => {
@@ -84,7 +85,9 @@ const ClaimNftWelcome = () => {
           disableFocus
           paused={isFirstVideo}
           source={
-            theme.dark ? videoSources.infinityPassPart02Dark : videoSources.infinityPassPart02Light
+            palette === "dark"
+              ? videoSources.infinityPassPart02Dark
+              : videoSources.infinityPassPart02Light
           }
           muted
           repeat
@@ -98,7 +101,7 @@ const ClaimNftWelcome = () => {
             }}
             disableFocus
             source={
-              theme.dark
+              palette === "dark"
                 ? videoSources.infinityPassPart01Dark
                 : videoSources.infinityPassPart01Light
             }

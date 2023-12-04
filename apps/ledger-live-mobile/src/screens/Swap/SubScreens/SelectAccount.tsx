@@ -3,7 +3,7 @@ import { StyleSheet, FlatList, TouchableOpacity } from "react-native";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Flex, IconsLegacy, Text, BoxedIcon } from "@ledgerhq/native-ui";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency, flattenAccounts } from "@ledgerhq/live-common/account/index";
 import { accountWithMandatoryTokens } from "@ledgerhq/live-common/account/helpers";
@@ -154,13 +154,13 @@ export function SelectAccount({ navigation, route: { params } }: SelectAccountPa
               >
                 <BoxedIcon
                   size={24}
-                  Icon={<IconsLegacy.PlusMedium size={14} color={colors.primary} />}
+                  Icon={<IconsLegacy.PlusMedium size={14} color={colors.primary.c70} />}
                   variant="circle"
                   backgroundColor="primary.c20"
                   borderColor="transparent"
                 />
 
-                <Text paddingLeft={4} color={colors.primary}>
+                <Text paddingLeft={4} color={colors.primary.c70}>
                   {t("transfer.swap.emptyState.CTAButton")}
                 </Text>
               </Flex>

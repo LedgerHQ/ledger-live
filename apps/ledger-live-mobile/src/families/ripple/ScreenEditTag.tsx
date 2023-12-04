@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { StackScreenProps } from "@react-navigation/stack";
 import { i18n } from "../../context/Locale";
 import KeyboardView from "../../components/KeyboardView";
@@ -74,7 +74,7 @@ function RippleEditTag({ route, navigation }: NavigationProps) {
         style={[
           styles.body,
           {
-            backgroundColor: colors.background,
+            backgroundColor: colors.background.main,
           },
         ]}
       >
@@ -85,7 +85,7 @@ function RippleEditTag({ route, navigation }: NavigationProps) {
             style={[
               styles.textInputAS,
               {
-                color: colors.darkBlue,
+                color: colors.neutral.c90,
               },
             ]}
             defaultValue={tag ? tag.toString() : ""}

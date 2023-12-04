@@ -1,6 +1,6 @@
 import { shortAddressPreview } from "@ledgerhq/live-common/account/index";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { BigNumber } from "bignumber.js";
 import React from "react";
 import { StyleSheet, View } from "react-native";
@@ -60,12 +60,12 @@ export function DataRow({
       style={[
         styles.dataRow,
         {
-          backgroundColor: colors.background,
+          backgroundColor: colors.background.main,
         },
       ]}
     >
       {label ? (
-        <LText numberOfLines={numberOfLines ?? 1} style={styles.dataRowLabel} color="grey">
+        <LText numberOfLines={numberOfLines ?? 1} style={styles.dataRowLabel} color="neutral.c70">
           {label}
         </LText>
       ) : null}
@@ -88,11 +88,11 @@ export function TextValueField({
       style={[
         styles.dataRow,
         {
-          backgroundColor: colors.background,
+          backgroundColor: colors.background.main,
         },
       ]}
     >
-      <LText numberOfLines={numberOfLines} style={styles.dataRowLabel} color="grey">
+      <LText numberOfLines={numberOfLines} style={styles.dataRowLabel} color="neutral.c70">
         {label}
       </LText>
       <LText numberOfLines={numberOfLines} style={styles.dataRowValue}>
@@ -111,11 +111,11 @@ export function HeaderRow({ label, value }: { label: string; value: string }) {
             textAlign: "left",
           },
         ]}
-        color="grey"
+        color="neutral.c70"
       >
         {label}
       </LText>
-      <LText style={[styles.text]} color="grey">
+      <LText style={[styles.text]} color="neutral.c70">
         {value}
       </LText>
     </DataRow>
@@ -134,7 +134,7 @@ export function ValidatorField({
     <DataRow key={address}>
       <View style={styles.lineLabel}>
         <LText semiBold>{shortAddressPreview(address)}</LText>
-        <LText style={styles.validatorLabel} color="grey">
+        <LText style={styles.validatorLabel} color="neutral.c70">
           {name}
         </LText>
       </View>
@@ -159,12 +159,12 @@ export function DataColumn({
       style={[
         styles.dataColumn,
         {
-          backgroundColor: colors.background,
+          backgroundColor: colors.background.main,
         },
       ]}
     >
       {label ? (
-        <LText numberOfLines={numberOfLines ?? 1} style={styles.dataRowLabel} color="grey">
+        <LText numberOfLines={numberOfLines ?? 1} style={styles.dataRowLabel} color="neutral.c70">
           {label}
         </LText>
       ) : null}

@@ -1,7 +1,7 @@
 import React from "react";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { Text } from "@ledgerhq/native-ui";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { Trans } from "react-i18next";
 import { View } from "react-native";
 import BigNumber from "bignumber.js";
@@ -43,7 +43,7 @@ const Item = (props: ItemPropsType) => {
       <View style={styles.validator}>
         <Circle crop={true} size={32}>
           {ELROND_LEDGER_VALIDATOR_ADDRESS === item.contract ? (
-            <LedgerLogo size={32 * 0.7} color={colors.text} />
+            <LedgerLogo size={32 * 0.7} color={colors.neutral.c100} />
           ) : (
             <FirstLetterIcon label={name || "-"} round={true} size={32} fontSize={24} />
           )}
@@ -60,7 +60,12 @@ const Item = (props: ItemPropsType) => {
           </Text>
         </View>
 
-        <Text fontWeight="semiBold" numberOfLines={1} style={styles.validatorYield} color="smoke">
+        <Text
+          fontWeight="semiBold"
+          numberOfLines={1}
+          style={styles.validatorYield}
+          color="neutral.c60"
+        >
           <Text fontWeight="semiBold" numberOfLines={1}>
             <CurrencyUnitValue
               showCode={true}

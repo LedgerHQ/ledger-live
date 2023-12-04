@@ -1,9 +1,10 @@
 import React, { useCallback, useState } from "react";
 import { TouchableOpacity, StyleSheet } from "react-native";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import LText, { Opts as LTextProps } from "./LText";
 import QueuedDrawer from "./QueuedDrawer";
+import { PaletteType } from "~/StyleProvider";
 
 type Props = {
   label: React.ReactNode;
@@ -12,7 +13,7 @@ type Props = {
   style?: LTextProps["style"];
 };
 
-const TooltipLabel = ({ label, tooltip, color = "grey", style }: Props) => {
+const TooltipLabel = ({ label, tooltip, color = "neutral.c70", style }: Props) => {
   const { colors } = useTheme();
   const [isOpened, setIsOpened] = useState<boolean>(false);
   const open = useCallback(() => setIsOpened(true), []);
@@ -23,7 +24,7 @@ const TooltipLabel = ({ label, tooltip, color = "grey", style }: Props) => {
         <LText style={[styles.label, style]} color={color}>
           {label}
         </LText>
-        <Icon size={13} color={colors[color as keyof typeof colors]} name={"info-circle"} />
+        <Icon size={13} color={colors[color as keyof PaletteType] as string} name={"info-circle"} />
       </TouchableOpacity>
       <QueuedDrawer isRequestingToBeOpened={isOpened} onClose={close} style={styles.modal}>
         <LText semiBold style={styles.tooltip}>

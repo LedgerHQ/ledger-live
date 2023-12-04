@@ -1,6 +1,6 @@
 import React from "react";
 import { Svg, Circle, G, Text } from "react-native-svg";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 
 type Props = {
   // float number between 0 and 1
@@ -13,8 +13,8 @@ const R = 26;
 const CENTER = 38;
 export default ({ size = 53, backgroundColor, progressColor, progress }: Props) => {
   const { colors } = useTheme();
-  const stroke = backgroundColor || colors.lightFog;
-  const progColor = progressColor || colors.live;
+  const stroke = backgroundColor || colors.neutral.c20;
+  const progColor = progressColor || colors.primary.c80;
   return (
     <Svg width={size} height={size} viewBox="0 0 76 76">
       <Circle cx={CENTER} cy={CENTER} r={R} fill="none" stroke={stroke} strokeWidth={4} />

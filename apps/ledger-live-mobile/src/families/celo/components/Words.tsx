@@ -15,7 +15,7 @@ const Words = ({
     numberOfLines={1}
     fontWeight={highlighted ? "bold" : "semiBold"}
     style={[styles.summaryWords, style]}
-    color={highlighted ? "live" : "smoke"}
+    color={highlighted ? "primary.c70" : "neutral.c60"}
   >
     {children}
   </Text>

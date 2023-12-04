@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { Alert, Button, Flex, Text } from "@ledgerhq/native-ui";
 import { ScreenName } from "../../../const";
 import LText from "../../../components/LText";
@@ -38,7 +38,7 @@ export default function StakingStarted({ navigation, route }: Props) {
   }, []);
 
   return (
-    <View style={[styles.root, { backgroundColor: colors.background }]}>
+    <View style={[styles.root, { backgroundColor: colors.background.main}]}>
       <NavigationScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
         <TrackScreen
           category="StakingFlow"

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo } from "react";
 import { View } from "react-native";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 
 import { accountScreenSelector } from "../../../../../../../reducers/accounts";
@@ -79,7 +79,7 @@ const ValidationSuccess = ({ navigation, route }: ValidationSuccessPropsType) =>
    */
 
   return (
-    <View style={[styles.root, { backgroundColor: colors.background }]}>
+    <View style={[styles.root, { backgroundColor: colors.background.main}]}>
       <TrackScreen
         category="ElrondDelegation"
         name="ValidationSuccess"

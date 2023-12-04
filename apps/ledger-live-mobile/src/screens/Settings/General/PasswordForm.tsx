@@ -2,7 +2,7 @@ import React, { memo, useCallback, useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import LText from "../../../components/LText";
 import KeyboardView from "../../../components/KeyboardView";
 import TranslatedError from "../../../components/TranslatedError";
@@ -27,7 +27,7 @@ const PasswordForm = ({ onChange, onSubmit, error, placeholder, value }: Props) 
   }, []);
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background.main }]}>
       <KeyboardView>
         <View style={styles.body}>
           <PasswordInput
@@ -44,7 +44,7 @@ const PasswordForm = ({ onChange, onSubmit, error, placeholder, value }: Props) 
           />
         </View>
         {error && (
-          <LText style={styles.errorStyle} color="alert">
+          <LText style={styles.errorStyle} color="error.c60">
             <TranslatedError error={error} />
           </LText>
         )}

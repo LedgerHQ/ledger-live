@@ -1,7 +1,7 @@
 import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import LText from "./LText";
 
 type Props = {
@@ -17,11 +17,11 @@ export default function DelegationInfo({ address, name, formattedAmount, onPress
       style={[
         styles.wrapper,
         {
-          borderLeftColor: colors.fog,
+          borderLeftColor: colors.neutral.c70,
         },
       ]}
     >
-      <LText color="grey">
+      <LText color="neutral.c70">
         <Trans
           i18nKey="operationDetails.extra.delegatedTo"
           values={{
@@ -34,7 +34,7 @@ export default function DelegationInfo({ address, name, formattedAmount, onPress
       </LText>
 
       <TouchableOpacity onPress={() => onPress(address)}>
-        <LText color="grey">{address}</LText>
+        <LText color="neutral.c70">{address}</LText>
       </TouchableOpacity>
     </View>
   );

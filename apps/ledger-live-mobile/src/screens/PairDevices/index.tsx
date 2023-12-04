@@ -10,7 +10,7 @@ import { listApps } from "@ledgerhq/live-common/apps/hw";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { delay } from "@ledgerhq/live-common/promise";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { TransportBleDevice } from "@ledgerhq/live-common/ble/types";
 import TransportBLE from "../../react-native-hw-transport-ble";
 import { GENUINE_CHECK_TIMEOUT } from "@utils/constants";
@@ -48,7 +48,7 @@ export default function PairDevices(props: NavigationProps) {
         style={[
           styles.root,
           {
-            backgroundColor: colors.background,
+            backgroundColor: colors.background.main,
           },
         ]}
       >

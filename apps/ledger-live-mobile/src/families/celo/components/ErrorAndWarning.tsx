@@ -15,19 +15,19 @@ const ErrorAndWarning = ({
     <View style={styles.errorSection}>
       {error ? (
         <>
-          <LText selectable secondary semiBold style={styles.error} color="alert">
+          <LText selectable secondary semiBold style={styles.error} color="error.c60">
             <TranslatedError error={error} field="title" />
           </LText>
-          <LText selectable secondary style={styles.error} color="alert">
+          <LText selectable secondary style={styles.error} color="error.c60">
             <TranslatedError error={error} field="description" />
           </LText>
         </>
       ) : warning ? (
         <>
-          <LText selectable secondary semiBold style={styles.error} color="orange">
+          <LText selectable secondary semiBold style={styles.error} color="warning.c60">
             <TranslatedError error={warning} field="title" />
           </LText>
-          <LText selectable secondary style={styles.error} color="orange">
+          <LText selectable secondary style={styles.error} color="warning.c60">
             <TranslatedError error={warning} field="description" />
           </LText>
         </>

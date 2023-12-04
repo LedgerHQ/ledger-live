@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from "react";
 import { Icon, Text } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import Config from "react-native-config";
 import { ScrollView, StyleSheet, View, Linking, TouchableOpacity } from "react-native";
 import { getDefaultExplorerView, getTransactionExplorer } from "@ledgerhq/live-common/explorers";
@@ -45,12 +45,12 @@ export function OperationDetails({ route }: OperationDetailsParamList) {
 
   const fromCurrency = fromAccount && getAccountCurrency(fromAccount);
   const toCurrency = toAccount && getAccountCurrency(toAccount);
-  const statusColorKey = status && getStatusColor(status, colors, true);
+  const statusColor = status && getStatusColor(status, colors);
   const dotStyles = {
-    backgroundColor: colors[statusColorKey as keyof typeof colors],
+    backgroundColor: statusColor,
   };
   const textColorStyles = {
-    color: colors[statusColorKey as keyof typeof colors],
+    color: statusColor,
   };
 
   const url =
@@ -62,11 +62,11 @@ export function OperationDetails({ route }: OperationDetailsParamList) {
   }, [provider]);
 
   return (
-    <View style={[styles.root, { backgroundColor: colors.background }]}>
+    <View style={[styles.root, { backgroundColor: colors.background.main }]}>
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollViewContent}>
         {status ? <SwapStatusIndicator status={status} /> : null}
         {fromAccount && (
-          <LText style={styles.fromAmount} color="grey">
+          <LText style={styles.fromAmount} color="neutral.c70">
             <CurrencyUnitValue
               alwaysShowSign
               showCode
@@ -78,7 +78,7 @@ export function OperationDetails({ route }: OperationDetailsParamList) {
         <View style={styles.arrow}>
           <Icon name="ArrowBottom" size={30} color="neutral.c70" />
         </View>
-        <LText style={styles.toAmount} color={statusColorKey}>
+        <LText style={styles.toAmount} color={statusColor}>
           {toAccount ? (
             <CurrencyUnitValue
               alwaysShowSign
@@ -93,27 +93,27 @@ export function OperationDetails({ route }: OperationDetailsParamList) {
           <TooltipLabel
             label={status}
             style={{ ...styles.statusText, ...textColorStyles }}
-            color={statusColorKey}
+            color={statusColor}
             tooltip={<Trans i18nKey={`transfer.swap.operationDetails.statusTooltips.${status}`} />}
           />
         </View>
         <View style={styles.fieldsWrapper}>
-          <LText style={styles.label} color="grey">
+          <LText style={styles.label} color="neutral.c70">
             <Trans i18nKey={"transfer.swap.operationDetails.swapId"} />
           </LText>
           <LText selectable style={styles.value}>
             {swapId}
           </LText>
-          <LText style={styles.label} color="grey">
+          <LText style={styles.label} color="neutral.c70">
             <Trans i18nKey={"transfer.swap.operationDetails.provider"} />
           </LText>
           <TouchableOpacity style={styles.providerLinkContainer} onPress={openProvider}>
             <Text paddingRight={2} color="primary.c100">
               {getProviderName(provider)}
             </Text>
-            <ExternalLink size={11} color={colors.live} />
+            <ExternalLink size={11} color={colors.primary.c80} />
           </TouchableOpacity>
-          <LText style={styles.label} color="grey">
+          <LText style={styles.label} color="neutral.c70">
             <Trans i18nKey={"transfer.swap.operationDetails.date"} />
           </LText>
           <LText style={styles.value}>
@@ -122,7 +122,7 @@ export function OperationDetails({ route }: OperationDetailsParamList) {
 
           <SectionSeparator style={{ marginBottom: 32 }} />
 
-          <LText style={styles.label} color="grey">
+          <LText style={styles.label} color="neutral.c70">
             <Trans i18nKey={"transfer.swap.operationDetails.from"} />
           </LText>
           <View style={styles.account}>
@@ -133,7 +133,7 @@ export function OperationDetails({ route }: OperationDetailsParamList) {
               </LText>
             )}
           </View>
-          <LText style={styles.label} color="grey">
+          <LText style={styles.label} color="neutral.c70">
             <Trans i18nKey={"transfer.swap.operationDetails.fromAmount"} />
           </LText>
           {fromAccount && (
@@ -144,7 +144,7 @@ export function OperationDetails({ route }: OperationDetailsParamList) {
 
           <SectionSeparator style={{ marginBottom: 32 }} />
 
-          <LText style={styles.label} color="grey">
+          <LText style={styles.label} color="neutral.c70">
             <Trans i18nKey={"transfer.swap.operationDetails.to"} />
           </LText>
           <View style={styles.account}>
@@ -155,7 +155,7 @@ export function OperationDetails({ route }: OperationDetailsParamList) {
               </LText>
             ) : null}
           </View>
-          <LText style={styles.label} color="grey">
+          <LText style={styles.label} color="neutral.c70">
             <Trans i18nKey={"transfer.swap.operationDetails.toAmount"} />
           </LText>
           <LText style={styles.value}>

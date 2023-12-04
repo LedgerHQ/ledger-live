@@ -3,7 +3,7 @@ import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
 import { NearMappedStakingPosition } from "@ledgerhq/live-common/families/near/types";
 import { Currency } from "@ledgerhq/types-cryptoassets";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { Text } from "@ledgerhq/native-ui";
 import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/near/constants";
 
@@ -28,7 +28,9 @@ export default function StakingRow({ stakingPosition, currency, onPress, isLast 
       style={[
         styles.row,
         styles.wrapper,
-        !isLast ? { ...styles.borderBottom, borderBottomColor: colors.lightGrey } : undefined,
+        !isLast
+          ? { ...styles.borderBottom, borderBottomColor: colors.opacityDefault.c05 }
+          : undefined,
       ]}
       onPress={() => onPress(stakingPosition)}
     >
@@ -46,10 +48,10 @@ export default function StakingRow({ stakingPosition, currency, onPress, isLast 
         </Text>
 
         <View style={styles.row}>
-          <Text variant={"body"} color="live">
+          <Text variant={"body"} color="primary.c70">
             {t("common.seeMore")}
           </Text>
-          <ArrowRight color={colors.live} size={14} />
+          <ArrowRight color={colors.primary.c80} size={14} />
         </View>
       </View>
 
@@ -58,7 +60,7 @@ export default function StakingRow({ stakingPosition, currency, onPress, isLast 
           {formattedAmount}
         </Text>
 
-        <Text color="grey">
+        <Text color="neutral.c70">
           <CounterValue
             currency={currency}
             showCode

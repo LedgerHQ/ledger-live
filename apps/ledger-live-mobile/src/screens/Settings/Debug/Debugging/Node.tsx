@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { StyleSheet, View } from "react-native";
 import { Text, IconsLegacy, Flex } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
@@ -8,11 +8,11 @@ import { State } from "../../../../reducers/types";
 import Touchable from "../../../../components/Touchable";
 
 const StyledTouchable = styled(Touchable)`
-  background-color: ${p => p.theme.colors.palette.background.main};
+  background-color: ${p => p.theme.colors.background.main};
   padding: ${p => p.theme.space[5]}px ${p => p.theme.space[4]}px;
   flex-direction: row;
   align-items: center;
-  border-bottom-color: ${p => p.theme.colors.palette.neutral.c40};
+  border-bottom-color: ${p => p.theme.colors.neutral.c40};
   border-bottom-width: 1px;
 `;
 
@@ -95,7 +95,10 @@ const Node = ({ data = {}, path, onEdit }: Props) => {
         return (
           <View
             key={rowKey}
-            style={[styles.wrapper, { borderColor: colors.black, borderLeftWidth: path ? 5 : 0 }]}
+            style={[
+              styles.wrapper,
+              { borderColor: colors.neutral.c100, borderLeftWidth: path ? 5 : 0 },
+            ]}
           >
             <Leaf
               onPress={isObject ? toggleVisibility : onEdit}

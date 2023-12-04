@@ -1,5 +1,5 @@
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { StackScreenProps } from "@react-navigation/stack";
 import i18next from "i18next";
 import invariant from "invariant";
@@ -49,12 +49,12 @@ function SolanaEditMemo({ navigation, route }: NavigationProps) {
 
   return (
     <SafeAreaView style={styles.root}>
-      <KeyboardView style={[styles.body, { backgroundColor: colors.background }]}>
+      <KeyboardView style={[styles.body, { backgroundColor: colors.background.main}]}>
         <ScrollView contentContainerStyle={styles.root} keyboardShouldPersistTaps="always">
           <TextInput
             allowFontScaling={false}
             autoFocus
-            style={[styles.textInputAS, { color: colors.darkBlue }]}
+            style={[styles.textInputAS, { color: colors.neutral.c90 }]}
             defaultValue={memo}
             keyboardType="default"
             returnKeyType="done"

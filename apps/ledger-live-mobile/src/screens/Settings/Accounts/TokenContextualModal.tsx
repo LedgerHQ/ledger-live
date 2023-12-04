@@ -89,7 +89,7 @@ const TokenContextualModal = ({
         <TokenContractAddress token={account.token} onClose={onCloseModal} url={url || ""} />
       ) : showConfirmation ? (
         <View style={styles.body}>
-          <LText style={styles.confirmationDesc} color="smoke">
+          <LText style={styles.confirmationDesc} color="neutral.c60">
             <Trans i18nKey="settings.accounts.blacklistedTokensModal.desc">
               {"This action will hide all "}
               <LText bold>{account.token && account.token.name}</LText>

@@ -3,7 +3,7 @@ import invariant from "invariant";
 import React, { useState, useCallback } from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { Keyboard, StyleSheet, View, SafeAreaView, ScrollView } from "react-native";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useSelector } from "react-redux";
@@ -64,7 +64,7 @@ function StellarEditCustomFees({ navigation, route }: NavigationProps) {
         style={[
           styles.body,
           {
-            backgroundColor: colors.background,
+            backgroundColor: colors.background.main,
           },
         ]}
       >
@@ -78,7 +78,7 @@ function StellarEditCustomFees({ navigation, route }: NavigationProps) {
                 unit={mainAccount.unit}
                 value={customFee}
                 renderRight={
-                  <LText style={[styles.currency, styles.active]} semiBold color="grey">
+                  <LText style={[styles.currency, styles.active]} semiBold color="neutral.c70">
                     {mainAccount.unit.code}
                   </LText>
                 }
@@ -88,7 +88,7 @@ function StellarEditCustomFees({ navigation, route }: NavigationProps) {
 
           {networkCongestionLevel ? (
             <View style={styles.congestionNote}>
-              <LText style={styles.congestionNoteText} color="grey">
+              <LText style={styles.congestionNoteText} color="neutral.c70">
                 {`${t(`stellar.networkCongestionLevel.${networkCongestionLevel}`)} ${t(
                   "stellar.networkCongestion",
                 )}`}

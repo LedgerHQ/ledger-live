@@ -1,5 +1,5 @@
 import React from "react";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { Stop } from "react-native-svg";
 import { Text } from "@ledgerhq/native-ui";
 import { View } from "react-native-animatable";
@@ -27,7 +27,7 @@ interface PropsCta {
 }
 
 export function Cta({ text }: PropsCta) {
-  const { colors, dark } = useTheme();
+  const { colors, palette } = useTheme();
 
   return (
     <View
@@ -46,11 +46,11 @@ export function Cta({ text }: PropsCta) {
         justifyContent: "center",
       }}
     >
-      <BackgroundGradientHorizontal {...gradientsCta[dark ? "dark" : "light"]} />
+      <BackgroundGradientHorizontal {...gradientsCta[palette]} />
       <Text
         variant="paragraph"
         fontWeight="semiBold"
-        color={colors.text}
+        color={colors.neutral.c100}
         p={0}
         style={{
           color: "white",

@@ -23,7 +23,7 @@ export default function DelegationLabelRight({ onPress, disabled }: Props) {
 
   return (
     <TouchableOpacity onPress={onClick}>
-      <LText semiBold color={disabled ? "grey" : "live"}>
+      <LText semiBold color={disabled ? "neutral.c70" : "primary.c70"}>
         {t("account.delegation.addDelegation")}
       </LText>
       <InfoModal

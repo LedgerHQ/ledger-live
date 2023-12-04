@@ -5,7 +5,8 @@ import { Trans } from "react-i18next";
 import invariant from "invariant";
 import { useTronPowerLoading, getLastVotedDate } from "@ledgerhq/live-common/families/tron/react";
 import { useTimer } from "@ledgerhq/live-common/hooks/useTimer";
-import { CompositeScreenProps, useTheme } from "@react-navigation/native";
+import { CompositeScreenProps } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { TronAccount, Transaction } from "@ledgerhq/live-common/families/tron/types";
 import { accountScreenSelector } from "../../reducers/accounts";
 import { TrackScreen } from "../../analytics";
@@ -55,7 +56,7 @@ export default function ValidationSuccess({ navigation, route }: NavigatorProps)
       style={[
         styles.root,
         {
-          backgroundColor: colors.background,
+          backgroundColor: colors.background.main,
         },
       ]}
     >
@@ -80,7 +81,7 @@ export default function ValidationSuccess({ navigation, route }: NavigatorProps)
                 <LText style={styles.label} semiBold>
                   <Trans i18nKey="freeze.validation.button.pending" />
                 </LText>
-                <LText style={[styles.label]} color="grey">
+                <LText style={[styles.label]} color="neutral.c70">
                   <Trans i18nKey="freeze.validation.button.pendingDesc" />
                 </LText>
               </View>

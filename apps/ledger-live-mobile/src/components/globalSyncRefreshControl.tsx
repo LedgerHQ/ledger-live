@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { RefreshControl, RefreshControlProps } from "react-native";
 import { useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
 import { useCountervaluesPolling } from "@ledgerhq/live-common/countervalues/react";
-import { useIsFocused, useTheme } from "@react-navigation/native";
+import { useIsFocused } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { SYNC_DELAY } from "@utils/constants";
 
 type Props = {
@@ -15,7 +16,7 @@ export default <P,>(
   refreshControlprops?: Partial<RefreshControlProps>,
 ) => {
   function Inner({ forwardedRef, ...scrollListLikeProps }: Props & P) {
-    const { colors, dark } = useTheme();
+    const { colors, palette } = useTheme();
     const [refreshing, setRefreshing] = useState(false);
     const setSyncBehavior = useBridgeSync();
     const { poll } = useCountervaluesPolling();
@@ -47,16 +48,17 @@ export default <P,>(
         clearTimeout(timer);
       };
     }, [refreshing]);
-
     return (
       <ScrollListLike
         {...(scrollListLikeProps as P)}
         ref={forwardedRef}
         refreshControl={
           <RefreshControl
-            progressBackgroundColor={dark ? colors.background : colors.card}
-            colors={[colors.live]}
-            tintColor={colors.live}
+            progressBackgroundColor={
+              palette === "dark" ? colors.background.main : colors.background.drawer
+            }
+            colors={[colors.primary.c80]}
+            tintColor={colors.primary.c80}
             refreshing={refreshing}
             onRefresh={onRefresh}
             {...refreshControlprops}

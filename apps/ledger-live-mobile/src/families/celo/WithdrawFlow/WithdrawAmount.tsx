@@ -5,7 +5,7 @@ import { View, StyleSheet, SafeAreaView } from "react-native";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import invariant from "invariant";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -113,7 +113,7 @@ export default function WithdrawAmount({ navigation, route }: Props) {
     status.warnings && Object.keys(status.warnings).length > 0 && Object.values(status.warnings)[0];
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background.main }]}>
       <TrackScreen
         category="CeloWithdraw"
         name="Amount"
@@ -180,15 +180,15 @@ export default function WithdrawAmount({ navigation, route }: Props) {
       <QueuedDrawer isRequestingToBeOpened={!!infoModalOpen} onClose={closeModal}>
         <View style={styles.modal}>
           <View style={styles.infoIcon}>
-            <InfoIcon bg={colors.lightLive}>
-              <Clock color={colors.live} size={30} />
+            <InfoIcon bg={colors.opacityPurple.c10}>
+              <Clock color={colors.primary.c80} size={30} />
             </InfoIcon>
           </View>
           <View style={styles.infoRow}>
             <LText style={[styles.warnText, styles.title]} semiBold>
               <Trans i18nKey={`celo.withdraw.flow.steps.amount.waitingTitle`} />
             </LText>
-            <LText style={styles.warnText} color="grey">
+            <LText style={styles.warnText} color="neutral.c70">
               <Trans
                 i18nKey={`celo.withdraw.flow.steps.amount.waitingPeriod`}
                 values={{ date: getDate(infoModalOpen.toString()) }}
@@ -204,12 +204,12 @@ export default function WithdrawAmount({ navigation, route }: Props) {
 const CustomSelectable = React.memo(
   ({ name, selected, hasClock }: { name: string; selected: boolean; hasClock: boolean }) => {
     const { colors } = useTheme();
-    const color = selected ? colors.primary : colors.grey;
+    const color = selected ? colors.primary.c70 : colors.neutral.c70;
     return (
       <View style={[styles.validatorSelection, { backgroundColor: rgba(color, 0.2) }]}>
         <View style={styles.clockContainer}>
           <View style={styles.clockIcon}>
-            {!!hasClock && <Clock color={colors.grey} size={18} />}
+            {!!hasClock && <Clock color={colors.neutral.c70} size={18} />}
           </View>
         </View>
         <Text
@@ -222,7 +222,7 @@ const CustomSelectable = React.memo(
         </Text>
 
         <View style={[styles.validatorSelectionIcon, { backgroundColor: color }]}>
-          {!!selected && <Icon size={16} name="check" color={colors.white} />}
+          {!!selected && <Icon size={16} name="check" color={colors.neutral.c20} />}
         </View>
       </View>
     );

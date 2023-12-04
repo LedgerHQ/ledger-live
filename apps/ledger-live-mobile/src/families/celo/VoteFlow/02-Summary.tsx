@@ -11,7 +11,7 @@ import { CeloValidatorGroup } from "@ledgerhq/live-common/families/celo/types";
 import { defaultValidatorGroupAddress } from "@ledgerhq/live-common/families/celo/logic";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
@@ -154,7 +154,7 @@ export default function VoteSummary({ navigation, route }: Props) {
   const hasErrors = Object.keys(status.errors).length > 0;
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background.main }]}>
       <TrackScreen category="VoteFlow" name="Summary" flow="stake" action="vote" currency="celo" />
 
       <View style={styles.body}>
@@ -169,7 +169,10 @@ export default function VoteSummary({ navigation, route }: Props) {
           }
           right={
             <Touchable event="VoteFlowSummaryChangeCircleBtn" onPress={onChangeDelegator}>
-              <Circle size={70} style={[styles.validatorCircle, { borderColor: colors.primary }]}>
+              <Circle
+                size={70}
+                style={[styles.validatorCircle, { borderColor: colors.primary.c70 }]}
+              >
                 <Animated.View
                   style={{
                     transform: [
@@ -312,12 +315,12 @@ const AccountBalanceTag = ({ account }: { account: AccountLike }) => {
   const unit = getAccountUnit(account);
   const { colors } = useTheme();
   return (
-    <View style={[styles.accountBalanceTag, { backgroundColor: colors.border }]}>
+    <View style={[styles.accountBalanceTag, { backgroundColor: colors.opacityDefault.c10 }]}>
       <Text
         fontWeight="semiBold"
         numberOfLines={1}
         style={styles.accountBalanceTagText}
-        color="smoke"
+        color="neutral.c60"
       >
         <CurrencyUnitValue showCode unit={unit} value={account.balance} />
       </Text>
@@ -328,7 +331,7 @@ const AccountBalanceTag = ({ account }: { account: AccountLike }) => {
 const ChangeDelegator = () => {
   const { colors } = useTheme();
   return (
-    <Circle style={styles.changeDelegator} bg={colors.primary} size={26}>
+    <Circle style={styles.changeDelegator} bg={colors.primary.c70} size={26}>
       <Icon size={13} name="edit-2" />
     </Circle>
   );

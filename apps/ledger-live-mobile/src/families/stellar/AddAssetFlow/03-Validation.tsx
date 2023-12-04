@@ -3,7 +3,7 @@ import { View, StyleSheet, ActivityIndicator } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
 import invariant from "invariant";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { Account } from "@ledgerhq/types-live";
 import { useSignWithDevice } from "../../../logic/screenTransactionHooks";
 import { updateAccountWithUpdater } from "../../../actions/accounts";
@@ -47,7 +47,7 @@ export default function Validation({ route }: Props) {
       style={[
         styles.root,
         {
-          backgroundColor: colors.background,
+          backgroundColor: colors.background.main,
         },
       ]}
     >

@@ -1,4 +1,4 @@
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { ReactNode, useCallback } from "react";
@@ -76,7 +76,7 @@ export default function UndelegationSummary({ navigation, route }: Props) {
   }, [status, account, parentAccount, navigation, transaction]);
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background.main }]}>
       <TrackScreen category="DelegationFlow" name="Summary" />
 
       <View style={styles.body}>
@@ -191,14 +191,14 @@ function SummaryWords({ account }: { account: AccountLike; currentDelegation: Ca
   return (
     <>
       <View style={styles.summarySection}>
-        <LText style={styles.labelText} color="smoke">
+        <LText style={styles.labelText} color="neutral.c60">
           {t("cardano.undelegation.undelegationMessage")}
         </LText>
         <View
           style={[
             {
               borderBottomWidth: 1,
-              borderBottomColor: colors.lightFog,
+              borderBottomColor: colors.neutral.c20,
               width: "100%",
               marginVertical: 10,
             },
@@ -230,12 +230,12 @@ const AccountBalanceTag = ({ account }: { account: AccountLike }) => {
   const unit = getAccountUnit(account);
   const { colors } = useTheme();
   return (
-    <View style={[styles.accountBalanceTag, { backgroundColor: colors.border }]}>
+    <View style={[styles.accountBalanceTag, { backgroundColor: colors.opacityDefault.c10 }]}>
       <Text
         fontWeight="semiBold"
         numberOfLines={1}
         style={styles.accountBalanceTagText}
-        color="smoke"
+        color="neutral.c60"
       >
         <CurrencyUnitValue showCode unit={unit} value={account.balance} />
       </Text>
@@ -252,7 +252,7 @@ function DataField({ label, Component }: FieldType) {
   return (
     <View style={styles.row}>
       <View>
-        <LText numberOfLines={1} style={styles.labelText} color="smoke">
+        <LText numberOfLines={1} style={styles.labelText} color="neutral.c60">
           {label}
         </LText>
       </View>

@@ -2,7 +2,7 @@ import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 import Icon from "react-native-vector-icons/Feather";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import LText from "../../components/LText";
 import ResultSection from "./ResultSection";
 import CheckBox from "../../components/CheckBox";
@@ -21,11 +21,11 @@ function DisplayResultSettingsSection({ checked, onSwitch }: Props) {
         style={[
           styles.row,
           {
-            backgroundColor: colors.card,
+            backgroundColor: colors.background.drawer,
           },
         ]}
       >
-        <Icon name="settings" size={20} color={colors.grey} />
+        <Icon name="settings" size={20} color={colors.neutral.c70} />
         <LText style={styles.label} semiBold>
           <Trans i18nKey="account.import.result.includeGeneralSettings" />
         </LText>

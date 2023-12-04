@@ -1,5 +1,5 @@
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 
 import NanoToNanoDark from "./assets/dark/NanoToNano";
 import NanoToStaxDark from "./assets/dark/NanoToStax";
@@ -39,8 +39,8 @@ const RestoreIllustrations = ({ deviceModelId, lastSeenDeviceModelId }: Props) =
   const isFromStax = lastSeenDeviceModelId === DeviceModelId.stax;
   const isToStax = deviceModelId === DeviceModelId.stax;
 
-  const { dark } = useTheme();
-  const selectedTheme = dark ? "dark" : "light";
+  const { palette } = useTheme();
+  const selectedTheme = palette === "dark" ? "dark" : "light";
 
   if (isFromStax) {
     if (isToStax) {

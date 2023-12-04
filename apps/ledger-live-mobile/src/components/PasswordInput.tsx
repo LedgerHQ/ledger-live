@@ -58,9 +58,9 @@ const PasswordInput = ({
   let borderColorOverride = {};
   if (!inline && isFocused) {
     if (error) {
-      borderColorOverride = { borderColor: colors.alert };
+      borderColorOverride = { borderColor: colors.error.c60 };
     } else {
-      borderColorOverride = { borderColor: colors.live };
+      borderColorOverride = { borderColor: colors.primary.c80 };
     }
   }
 
@@ -70,8 +70,8 @@ const PasswordInput = ({
         styles.container,
         !inline && {
           ...styles.nonInlineContainer,
-          backgroundColor: colors.card,
-          borderColor: colors.lightFog,
+          backgroundColor: colors.background.drawer,
+          borderColor: colors.neutral.c20,
         },
         borderColorOverride,
       ]}
@@ -84,10 +84,10 @@ const PasswordInput = ({
           styles.input,
           getFontStyle({ semiBold: true }),
           inline && styles.inlineTextInput,
-          { color: colors.darkBlue },
+          { color: colors.neutral.c90 },
         ]}
         placeholder={placeholder}
-        placeholderTextColor={error ? colors.alert : colors.fog}
+        placeholderTextColor={error ? colors.error.c60 : colors.neutral.c70}
         returnKeyType="done"
         blurOnSubmit={false}
         onChangeText={onChange}
@@ -106,7 +106,7 @@ const PasswordInput = ({
           style={styles.iconInput}
           onPress={toggleSecureTextEntry}
         >
-          <Icon name="eye" size={16} color={inline ? colors.grey : colors.fog} />
+          <Icon name="eye" size={16} color={inline ? colors.neutral.c70 : colors.neutral.c70} />
         </Touchable>
       ) : (
         <Touchable
@@ -114,7 +114,7 @@ const PasswordInput = ({
           style={styles.iconInput}
           onPress={toggleSecureTextEntry}
         >
-          <Icon name="eye-off" size={16} color={inline ? colors.grey : colors.fog} />
+          <Icon name="eye-off" size={16} color={inline ? colors.neutral.c70 : colors.neutral.c70} />
         </Touchable>
       )}
     </View>

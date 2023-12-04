@@ -3,7 +3,7 @@ import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { TrackScreen } from "../../../analytics";
 import { ScreenName } from "../../../const";
@@ -45,7 +45,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   }, [account, route.params, navigation]);
 
   return (
-    <View style={[styles.root, { backgroundColor: colors.background }]}>
+    <View style={[styles.root, { backgroundColor: colors.background.main }]}>
       <TrackScreen category="CardanoUndelegation" name="ValidationSuccess" />
       <PreventNativeBack />
       <ValidateSuccess

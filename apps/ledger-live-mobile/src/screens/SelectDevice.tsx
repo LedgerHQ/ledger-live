@@ -4,7 +4,7 @@ import { useDispatch as useReduxDispatch } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { Flex } from "@ledgerhq/native-ui";
 import { StackScreenProps } from "@react-navigation/stack";
 
@@ -64,7 +64,7 @@ export default function SelectDevice({
       style={[
         styles.root,
         {
-          backgroundColor: colors.background,
+          backgroundColor: colors.background.main,
         },
       ]}
     >

@@ -10,7 +10,8 @@ import {
 } from "react-native";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { useNavigation, useTheme } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { groupAccountOperationsByDay } from "@ledgerhq/live-common/account/index";
 import { Account, DailyOperationsSection, Operation, ProtoNFT } from "@ledgerhq/types-live";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
@@ -152,7 +153,7 @@ const NftCollection = ({ route }: NavigationProps) => {
     <View style={styles.contentContainer} key="SectionList">
       <SectionList
         sections={sections}
-        style={[styles.sectionList, { backgroundColor: colors.background }]}
+        style={[styles.sectionList, { backgroundColor: colors.background.main}]}
         contentContainerStyle={styles.contentContainer}
         keyExtractor={(op: Operation) => op.id}
         renderItem={renderOperationItem}
@@ -173,7 +174,7 @@ const NftCollection = ({ route }: NavigationProps) => {
       />
       <TabBarSafeAreaView
         style={{
-          backgroundColor: colors.background,
+          backgroundColor: colors.background.main,
         }}
       >
         <FlatList

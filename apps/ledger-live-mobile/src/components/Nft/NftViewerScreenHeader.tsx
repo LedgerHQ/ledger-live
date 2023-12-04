@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import { StyleSheet, Animated } from "react-native";
 
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { Text } from "@ledgerhq/native-ui";
 import { useHeaderHeight } from "@react-navigation/elements";
 
@@ -14,9 +14,9 @@ interface Props {
 }
 
 const NftViewerScreenHeader: FC<Props> = ({ title, scrollY }) => {
-  const { dark } = useTheme();
+  const { palette } = useTheme();
   const headerHeight = useHeaderHeight();
-  const color = dark ? "#131214" : "#fff";
+  const color = palette === "dark" ? "#131214" : "#fff";
   const opacity = scrollY.interpolate({
     inputRange: [0, OPACITY_ANIMATION_PERIOD],
     outputRange: [0, 1],

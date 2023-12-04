@@ -1,7 +1,7 @@
 import React, { PureComponent } from "react";
 import { View, StyleSheet, Animated, StyleProp, ViewStyle, TextStyle } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import LText from "./LText";
 import Circle from "./Circle";
 // TODO fade in animation
@@ -13,7 +13,7 @@ export class Bullet extends PureComponent<{
     const { children, big } = this.props;
     return (
       <View style={[styles.bulletContainer, big && styles.bulletContainerBig]}>
-        <LText style={[styles.number, big && styles.numberBig]} color="live">
+        <LText style={[styles.number, big && styles.numberBig]} color="primary.c70">
           {children}
         </LText>
       </View>
@@ -26,7 +26,7 @@ export class BulletItemText extends PureComponent<{
 }> {
   render() {
     return (
-      <LText style={[styles.text, this.props.style]} color="smoke">
+      <LText style={[styles.text, this.props.style]} color="neutral.c60">
         {this.props.children}
       </LText>
     );
@@ -86,21 +86,21 @@ export function BulletChevron() {
   const { colors } = useTheme();
   return (
     <View style={styles.chevron}>
-      <Icon size={16} name="chevron-right" color={colors.grey} />
+      <Icon size={16} name="chevron-right" color={colors.neutral.c70} />
     </View>
   );
 }
 export function BulletGreenCheck() {
   const { colors } = useTheme();
   return (
-    <Circle size={24} bg={colors.ledgerGreen}>
-      <Icon size={16} name="check" color={colors.white} />
+    <Circle size={24} bg={colors.success.c70}>
+      <Icon size={16} name="check" color={colors.neutral.c20} />
     </Circle>
   );
 }
 export function BulletSmallDot() {
   const { colors } = useTheme();
-  return <Circle size={4} bg={colors.live} />;
+  return <Circle size={4} bg={colors.primary.c80} />;
 }
 
 class BulletList extends PureComponent<{

@@ -27,7 +27,7 @@ class AccountNameRow extends PureComponent<Props> {
           })
         }
       >
-        <LText semiBold numberOfLines={1} style={styles.accountName} color="grey">
+        <LText semiBold numberOfLines={1} style={styles.accountName} color="neutral.c70">
           {account.name}
         </LText>
       </SettingsRow>

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Linking } from "react-native";
 import { Trans } from "react-i18next";
 import { Edge, SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { DeviceAlreadySetup } from "@ledgerhq/live-common/errors";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { FirmwareInfo } from "@ledgerhq/types-live";
@@ -141,7 +141,7 @@ export function RedirectToOnboardingRecoverFlowScreen({ navigation }: Navigation
   const savStyle = useMemo(
     () => ({
       flex: 1,
-      backgroundColor: colors.background,
+      backgroundColor: colors.background.main,
     }),
     [colors.background],
   );

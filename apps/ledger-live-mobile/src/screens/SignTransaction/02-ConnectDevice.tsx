@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { accountScreenSelector } from "../../reducers/accounts";
 import DeviceAction from "../../components/DeviceAction";
 import { TrackScreen } from "../../analytics";
@@ -56,7 +56,7 @@ function ConnectDevice({
       style={[
         styles.root,
         {
-          backgroundColor: colors.background,
+          backgroundColor: colors.background.main,
         },
       ]}
     >

@@ -3,7 +3,7 @@ import { StyleSheet, View, Platform } from "react-native";
 import Config from "react-native-config";
 import { useSelector, useDispatch } from "react-redux";
 import { Trans } from "react-i18next";
-import { useNavigation, useRoute, useTheme as useNavTheme } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { discoverDevices } from "@ledgerhq/live-common/hw/index";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -313,21 +313,21 @@ export default function SelectDevice({
 
 const BluetoothHeader = () => (
   <View style={styles.header}>
-    <LText style={styles.headerText} color="grey">
+    <LText style={styles.headerText} color="neutral.c70">
       <Trans i18nKey="common.bluetooth" />
     </LText>
   </View>
 );
 
 const USBHeader = () => (
-  <LText style={styles.headerText} color="grey">
+  <LText style={styles.headerText} color="neutral.c70">
     <Trans i18nKey="common.usb" />
   </LText>
 );
 
 const WithoutDeviceHeader = () => (
   <View style={styles.header}>
-    <LText style={styles.headerText} color="grey">
+    <LText style={styles.headerText} color="neutral.c70">
       <Trans i18nKey="SelectDevice.withoutDeviceHeader" />
     </LText>
   </View>
@@ -335,10 +335,10 @@ const WithoutDeviceHeader = () => (
 
 // Fixme Use the illustration instead of the png
 const UsbPlaceholder = () => {
-  const { dark } = useNavTheme();
+  const { palette } = useTheme();
   return (
     <View style={styles.imageContainer}>
-      <Animation style={styles.image} source={dark ? PairDark : PairLight} />
+      <Animation style={styles.image} source={palette === "dark" ? PairDark : PairLight} />
     </View>
   );
 };

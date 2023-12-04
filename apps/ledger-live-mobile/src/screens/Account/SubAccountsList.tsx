@@ -3,7 +3,8 @@ import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
 import take from "lodash/take";
 import { StyleSheet, View, FlatList, ListRenderItem } from "react-native";
-import { useNavigation, useTheme } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { Account, SubAccount, TokenAccount } from "@ledgerhq/types-live";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { getAccountCurrency, listSubAccounts } from "@ledgerhq/live-common/account/index";
@@ -121,7 +122,7 @@ export default function SubAccountsList({
             style={[
               styles.footer,
               {
-                borderColor: colors.fog,
+                borderColor: colors.neutral.c70,
               },
             ]}
           >

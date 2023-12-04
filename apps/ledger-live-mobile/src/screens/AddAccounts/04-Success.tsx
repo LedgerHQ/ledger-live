@@ -2,7 +2,8 @@ import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { CompositeScreenProps, useTheme } from "@react-navigation/native";
+import { CompositeScreenProps } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/color";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { ScreenName, NavigatorName } from "../../const";
@@ -41,7 +42,7 @@ export default function AddAccountsSuccess({ navigation, route }: Props) {
       style={[
         styles.root,
         {
-          backgroundColor: colors.background,
+          backgroundColor: colors.background.main,
         },
       ]}
     >
@@ -91,7 +92,7 @@ function CurrencySuccess({ currency }: CurrencySuccessProps) {
         style={[
           styles.outer,
           {
-            backgroundColor: colors.card,
+            backgroundColor: colors.background.drawer,
           },
         ]}
       >
@@ -99,7 +100,7 @@ function CurrencySuccess({ currency }: CurrencySuccessProps) {
           style={[
             styles.inner,
             {
-              backgroundColor: colors.green,
+              backgroundColor: colors.success.c70,
             },
           ]}
         >

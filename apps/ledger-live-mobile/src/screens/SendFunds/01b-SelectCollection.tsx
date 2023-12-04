@@ -8,7 +8,8 @@ import {
 } from "@ledgerhq/live-common/nft/index";
 import type { Account, ProtoNFT } from "@ledgerhq/types-live";
 import { useSelector } from "react-redux";
-import { useNavigation, useTheme } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { hiddenNftCollectionsSelector } from "../../reducers/settings";
 import LoadingFooter from "../../components/LoadingFooter";
@@ -72,7 +73,7 @@ const CollectionRow = memo(
           </Skeleton>
         </View>
         <View style={styles.chevronContainer}>
-          <ChevronIcon size={11} color={colors.grey} />
+          <ChevronIcon size={11} color={colors.neutral.c70} />
         </View>
       </TouchableOpacity>
     );
@@ -114,7 +115,7 @@ const SendFundsSelectCollection = ({ route }: Props) => {
   );
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background.main}]}>
       <FlatList
         contentContainerStyle={styles.collections}
         data={collectionsSlice}

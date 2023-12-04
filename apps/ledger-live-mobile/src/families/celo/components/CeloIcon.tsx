@@ -1,6 +1,6 @@
 import React from "react";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 
 type Props = {
@@ -14,7 +14,10 @@ const Icon = (props: Props) => {
 
   if (CeloIcon) {
     return (
-      <CeloIcon color={props.isDisabled ? theme.colors.smoke : theme.colors.white} size={18} />
+      <CeloIcon
+        color={props.isDisabled ? theme.colors.neutral.c70 : theme.colors.neutral.c20}
+        size={18}
+      />
     );
   }
 

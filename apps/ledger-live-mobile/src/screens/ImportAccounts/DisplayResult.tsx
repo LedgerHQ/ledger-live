@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import { View, StyleSheet, SectionList, SectionListData } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useNavigation, useTheme } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { HeaderBackButton } from "@react-navigation/elements";
 import groupBy from "lodash/groupBy";
 import { connect } from "react-redux";
@@ -70,7 +71,7 @@ export function BackButton() {
     >();
   return (
     <HeaderBackButton
-      tintColor={colors.grey}
+      tintColor={colors.neutral.c70}
       onPress={() => {
         if (navigation.replace) navigation.replace(ScreenName.ScanAccounts);
       }}

@@ -51,7 +51,7 @@ const Event: React.FC<Props> = ({ report, date, showExtraProps = false, isLast }
           <Text color="black" fontWeight="bold">
             {report.destinationScreen}
           </Text>
-          <Text color="grey"> {date?.toLocaleTimeString()}</Text>
+          <Text color="neutral.c70"> {date?.toLocaleTimeString()}</Text>
         </Flex>
         <Text color="black">{propertiesText}</Text>
       </Flex>

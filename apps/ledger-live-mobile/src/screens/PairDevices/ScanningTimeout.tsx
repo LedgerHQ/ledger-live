@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, View, Linking } from "react-native";
 import { Trans } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { urls } from "@utils/urls";
 import { TrackScreen } from "../../analytics";
@@ -23,13 +23,13 @@ function ScanningTimeout({ onRetry }: Props) {
     <View style={styles.root}>
       <TrackScreen category="PairDevices" name="ScanningTimeout" />
       <View style={styles.body}>
-        <Circle bg={colors.lightAlert} size={80}>
-          <NanoX color={colors.alert} width={11} height={48} />
+        <Circle bg={colors.opacityDefault.c05} size={80}>
+          <NanoX color={colors.error.c60} width={11} height={48} />
         </Circle>
         <LText secondary semiBold style={styles.titleText}>
           <Trans i18nKey="PairDevices.ScanningTimeout.title" />
         </LText>
-        <LText style={styles.SubtitleText} color="smoke">
+        <LText style={styles.SubtitleText} color="neutral.c60">
           <Trans
             i18nKey="PairDevices.ScanningTimeout.desc"
             values={getDeviceModel("nanoX" as DeviceModelId)}
@@ -50,8 +50,8 @@ function ScanningTimeout({ onRetry }: Props) {
           style={styles.helpContainer}
           onPress={() => Linking.openURL(urls.faq)}
         >
-          <Help size={16} color={colors.live} />
-          <LText style={styles.helpText} color="live" semiBold>
+          <Help size={16} color={colors.primary.c80} />
+          <LText style={styles.helpText} color="primary.c70" semiBold>
             <Trans i18nKey="common.needHelp" />
           </LText>
         </Touchable>

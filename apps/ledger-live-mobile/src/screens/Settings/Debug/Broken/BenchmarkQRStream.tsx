@@ -76,14 +76,14 @@ class BenchmarkQRStream extends PureComponent<Props, State> {
 
     const darkenStyle = {
       ...styles.darken,
-      backgroundColor: rgba(colors.darkBlue, 0.4),
+      backgroundColor: rgba(colors.neutral.c90, 0.4),
     };
     return (
       <View
         style={[
           styles.root,
           {
-            backgroundColor: colors.darkBlue,
+            backgroundColor: colors.neutral.c90,
           },
         ]}
       >

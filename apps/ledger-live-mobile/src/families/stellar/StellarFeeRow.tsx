@@ -6,7 +6,8 @@ import { Trans } from "react-i18next";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { CompositeScreenProps, useTheme } from "@react-navigation/native";
+import { CompositeScreenProps } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
 import LText from "../../components/LText";
 import CheckBox from "../../components/CheckBox";
@@ -86,8 +87,8 @@ export default function StellarFeeRow({
       style={[
         styles.feeButton,
         {
-          borderColor: isSelected ? colors.live : colors.background,
-          backgroundColor: isSelected ? colors.lightLive : colors.lightFog,
+          borderColor: isSelected ? colors.primary.c80 : colors.background.main,
+          backgroundColor: isSelected ? colors.opacityPurple.c10 : colors.neutral.c20,
         },
       ]}
     >
@@ -106,7 +107,7 @@ export default function StellarFeeRow({
               </LText>
             ) : null}
           </View>
-          <LText style={styles.countervalue} color="grey">
+          <LText style={styles.countervalue} color="neutral.c70">
             {fee ? <CounterValue before="≈ " value={fee} currency={currency} /> : null}
           </LText>
         </View>
@@ -116,13 +117,13 @@ export default function StellarFeeRow({
 
   return (
     <View>
-      <SectionSeparator lineColor={colors.lightFog} />
+      <SectionSeparator lineColor={colors.neutral.c20} />
       <SummaryRow
         onPress={extraInfoFees}
         title={<Trans i18nKey="send.fees.title" />}
         additionalInfo={
           <View>
-            <ExternalLink size={12} color={colors.grey} />
+            <ExternalLink size={12} color={colors.neutral.c70} />
           </View>
         }
       >

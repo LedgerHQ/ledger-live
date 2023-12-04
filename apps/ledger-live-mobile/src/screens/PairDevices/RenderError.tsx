@@ -11,7 +11,7 @@ import {
   FirmwareNotRecognized,
 } from "@ledgerhq/errors";
 import { Flex, Button, IconsLegacy } from "@ledgerhq/native-ui";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { TrackScreen } from "../../analytics";
 import Touchable from "../../components/Touchable";
 import LText from "../../components/LText";
@@ -138,10 +138,10 @@ function RenderError({ error, status, onBypassGenuine, onRetry }: Props) {
                 hitSlop={hitSlop}
                 style={styles.linkContainer}
               >
-                <LText color={colors.primary} semiBold>
+                <LText color={colors.primary.c70} semiBold>
                   <Trans i18nKey="common.skip" />{" "}
                 </LText>
-                <IconArrowRight size={16} color={colors.primary} />
+                <IconArrowRight size={16} color={colors.primary.c70} />
               </Touchable>
             ) : (
               <HelpLink url={url} style={styles.linkContainer} />

@@ -3,7 +3,7 @@ import { mappedSwapOperationsToCSV } from "@ledgerhq/live-common/exchange/swap/c
 import getCompleteSwapHistory from "@ledgerhq/live-common/exchange/swap/getCompleteSwapHistory";
 import updateAccountSwapStatus from "@ledgerhq/live-common/exchange/swap/updateAccountSwapStatus";
 import { MappedSwapOperation, SwapHistorySection } from "@ledgerhq/live-common/exchange/swap/types";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import {
@@ -124,7 +124,7 @@ const History = () => {
   };
 
   return (
-    <View style={[styles.root, { backgroundColor: colors.background }]}>
+    <View style={[styles.root, { backgroundColor: colors.background.main}]}>
       <TrackScreen category="Swap" name="Device History" />
       {sections.length ? (
         <View style={styles.alertWrapper}>
@@ -158,7 +158,7 @@ const History = () => {
         }
         renderItem={renderItem}
         renderSectionHeader={({ section }: { section: SwapHistorySection }) => (
-          <LText semiBold style={styles.section} color="grey">
+          <LText semiBold style={styles.section} color="neutral.c70">
             {section.day.toDateString()}
           </LText>
         )}

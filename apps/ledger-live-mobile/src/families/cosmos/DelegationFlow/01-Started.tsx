@@ -3,7 +3,7 @@ import { View, StyleSheet, Linking } from "react-native";
 import { useSelector } from "react-redux";
 import invariant from "invariant";
 import { Trans, useTranslation } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { Alert, Button, Flex, Text } from "@ledgerhq/native-ui";
 import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
@@ -44,7 +44,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
   }, [mainAccount.currency.id]);
 
   return (
-    <View style={[styles.root, { backgroundColor: colors.background }]}>
+    <View style={[styles.root, { backgroundColor: colors.background.main}]}>
       <NavigationScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
         <TrackScreen
           category="DelegationFlow"

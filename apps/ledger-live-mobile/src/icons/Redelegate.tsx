@@ -1,6 +1,6 @@
 import React from "react";
 import Svg, { Path, Polyline } from "react-native-svg";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 
 const Redelegate = ({ size = 24, color }: { size?: number; color?: string }) => {
   const { colors } = useTheme();
@@ -10,7 +10,7 @@ const Redelegate = ({ size = 24, color }: { size?: number; color?: string }) => 
       height={size}
       viewBox="0 0 24 24"
       fill="none"
-      stroke={color || colors.darkBlue}
+      stroke={color || colors.neutral.c90}
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"

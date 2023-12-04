@@ -12,7 +12,7 @@ import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/n
 import { getMaxAmount } from "@ledgerhq/live-common/families/near/logic";
 import { AccountLike } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
@@ -178,7 +178,7 @@ export default function StakingSummary({ navigation, route }: Props) {
   const hasErrors = hasStatusError(status);
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background.main }]}>
       <TrackScreen
         category="DelegationFlow"
         name="Summary"
@@ -199,7 +199,10 @@ export default function StakingSummary({ navigation, route }: Props) {
           }
           right={
             <Touchable event="StakingFlowSummaryChangeCircleBtn" onPress={onChangeValidator}>
-              <Circle size={70} style={[styles.validatorCircle, { borderColor: colors.primary }]}>
+              <Circle
+                size={70}
+                style={[styles.validatorCircle, { borderColor: colors.primary.c70 }]}
+              >
                 <Animated.View
                   style={{
                     transform: [
@@ -233,7 +236,7 @@ export default function StakingSummary({ navigation, route }: Props) {
       <View style={styles.footer}>
         <LText
           style={[styles.fieldStatus]}
-          color={error ? "alert" : warning ? "orange" : "darkBlue"}
+          color={error ? "error.c60" : warning ? "warning.c60" : "neutral.c90"}
           numberOfLines={2}
         >
           <TranslatedError error={error || warning} />
@@ -382,12 +385,12 @@ const AccountBalanceTag = ({ account }: { account: AccountLike }) => {
   const unit = getAccountUnit(account);
   const { colors } = useTheme();
   return (
-    <View style={[styles.accountBalanceTag, { backgroundColor: colors.border }]}>
+    <View style={[styles.accountBalanceTag, { backgroundColor: colors.opacityDefault.c10 }]}>
       <Text
         fontWeight="semiBold"
         numberOfLines={1}
         style={styles.accountBalanceTagText}
-        color="smoke"
+        color="neutral.c60"
       >
         <CurrencyUnitValue showCode unit={unit} value={account.balance} />
       </Text>
@@ -398,7 +401,7 @@ const AccountBalanceTag = ({ account }: { account: AccountLike }) => {
 const ChangeValidator = () => {
   const { colors } = useTheme();
   return (
-    <Circle style={styles.changeValidator} bg={colors.primary} size={26}>
+    <Circle style={styles.changeValidator} bg={colors.primary.c70} size={26}>
       <Icon size={13} name="edit-2" />
     </Circle>
   );
@@ -421,7 +424,7 @@ const Words = ({
     numberOfLines={1}
     fontWeight={highlighted ? "bold" : "semiBold"}
     style={[styles.summaryWords, style]}
-    color={highlighted ? "live" : "smoke"}
+    color={highlighted ? "primary.c70" : "neutral.c60"}
   >
     {children}
   </Text>
@@ -430,18 +433,18 @@ const Words = ({
 const Selectable = ({ name }: { name: string; readOnly?: boolean }) => {
   const { colors } = useTheme();
   return (
-    <View style={[styles.validatorSelection, { backgroundColor: rgba(colors.primary, 0.2) }]}>
+    <View style={[styles.validatorSelection, { backgroundColor: rgba(colors.primary.c70, 0.2) }]}>
       <Text
         fontWeight="bold"
         numberOfLines={1}
         style={styles.validatorSelectionText}
-        color={colors.primary}
+        color={colors.primary.c70}
       >
         {name}
       </Text>
 
-      <View style={[styles.validatorSelectionIcon, { backgroundColor: colors.primary }]}>
-        <Icon size={16} name="edit-2" color={colors.text} />
+      <View style={[styles.validatorSelectionIcon, { backgroundColor: colors.primary.c70 }]}>
+        <Icon size={16} name="edit-2" color={colors.neutral.c100} />
       </View>
     </View>
   );

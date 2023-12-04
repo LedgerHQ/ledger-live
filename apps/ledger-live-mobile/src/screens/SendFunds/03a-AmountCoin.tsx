@@ -12,7 +12,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
@@ -139,7 +139,7 @@ export default function SendAmountCoin({ navigation, route }: Props) {
         style={[
           styles.root,
           {
-            backgroundColor: colors.background,
+            backgroundColor: colors.background.main,
           },
         ]}
       >
@@ -170,12 +170,12 @@ export default function SendAmountCoin({ navigation, route }: Props) {
                     onPress={() => setInfoModalOpen(true)}
                   >
                     <View>
-                      <LText color="grey">
+                      <LText color="neutral.c70">
                         <Trans i18nKey="send.amount.available" />{" "}
-                        <InfoIcon size={12} color="grey" />
+                        <InfoIcon size={12} color="neutral.c70" />
                       </LText>
                       {maxSpendable && (
-                        <LText semiBold color="grey">
+                        <LText semiBold color="neutral.c70">
                           <CurrencyUnitValue showCode unit={unit} value={maxSpendable} />
                         </LText>
                       )}
@@ -183,7 +183,7 @@ export default function SendAmountCoin({ navigation, route }: Props) {
                   </Touchable>
                   {typeof useAllAmount === "boolean" ? (
                     <View style={styles.availableRight}>
-                      <LText style={styles.maxLabel} color="grey">
+                      <LText style={styles.maxLabel} color="neutral.c70">
                         <Trans i18nKey="send.amount.useMax" />
                       </LText>
                       <Switch

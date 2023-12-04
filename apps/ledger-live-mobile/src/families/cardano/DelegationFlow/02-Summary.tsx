@@ -1,4 +1,4 @@
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
@@ -154,7 +154,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
   }, [status]);
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background.main }]}>
       <TrackScreen category="DelegationFlow" name="Summary" />
       <View style={styles.body}>
         <View style={styles.delegatingAccount}>
@@ -372,7 +372,7 @@ function SummaryWords({
         {currentDelegation && currentDelegation.poolId && (
           <View style={[{ flexDirection: "column", marginBottom: 30 }]}>
             <View>
-              <Text numberOfLines={1} fontWeight={"medium"} fontSize={14} color={"smoke"}>
+              <Text numberOfLines={1} fontWeight={"medium"} fontSize={14} color={"neutral.c60"}>
                 <Trans i18nKey={`cardano.delegation.delegatingFrom`} />
               </Text>
             </View>
@@ -388,7 +388,10 @@ function SummaryWords({
             >
               <Circle
                 size={50}
-                style={[styles.poolCircle, { borderColor: colors.primary, borderStyle: "solid" }]}
+                style={[
+                  styles.poolCircle,
+                  { borderColor: colors.primary.c70, borderStyle: "solid" },
+                ]}
               >
                 <PoolImage
                   size={LEDGER_POOL_IDS.includes(currentDelegation?.poolId) ? 40 : 50}
@@ -410,7 +413,7 @@ function SummaryWords({
         )}
         <View style={[{ flexDirection: "column", marginBottom: 10 }]}>
           <View>
-            <Text numberOfLines={1} fontWeight={"medium"} fontSize={14} color={"smoke"}>
+            <Text numberOfLines={1} fontWeight={"medium"} fontSize={14} color={"neutral.c60"}>
               <Trans i18nKey={`cardano.delegation.delegatingTo`} />
             </Text>
           </View>
@@ -438,7 +441,7 @@ function SummaryWords({
                   },
                 ]}
               >
-                <Circle size={50} style={[styles.poolCircle, { borderColor: colors.primary }]}>
+                <Circle size={50} style={[styles.poolCircle, { borderColor: colors.primary.c70 }]}>
                   <Animated.View
                     style={{
                       transform: [
@@ -458,7 +461,7 @@ function SummaryWords({
                       <PoolImage size={50} isLedger={false} name={" "} />
                     )}
                   </Animated.View>
-                  <Circle style={styles.changeDelegator} bg={colors.primary} size={26}>
+                  <Circle style={styles.changeDelegator} bg={colors.primary.c70} size={26}>
                     <Icon size={13} name="edit-2" />
                   </Circle>
                 </Circle>
@@ -480,10 +483,10 @@ function SummaryWords({
                     marginLeft: 10,
                   }}
                 >
-                  <LText style={{ fontSize: 14 }} color="live">
+                  <LText style={{ fontSize: 14 }} color="primary.c70">
                     {chosenPool ? t("cardano.delegation.change") : t("cardano.delegation.select")}
                   </LText>
-                  <ArrowRight color={colors.live} size={14} />
+                  <ArrowRight color={colors.primary.c80} size={14} />
                 </View>
               </View>
             </Touchable>
@@ -496,7 +499,7 @@ function SummaryWords({
           style={[
             {
               borderBottomWidth: 1,
-              borderBottomColor: colors.lightFog,
+              borderBottomColor: colors.neutral.c20,
               width: "100%",
               marginVertical: 10,
             },
@@ -537,12 +540,12 @@ const AccountBalanceTag = ({ account }: { account: AccountLike }) => {
   const unit = getAccountUnit(account);
   const { colors } = useTheme();
   return (
-    <View style={[styles.accountBalanceTag, { backgroundColor: colors.border }]}>
+    <View style={[styles.accountBalanceTag, { backgroundColor: colors.opacityDefault.c10 }]}>
       <Text
         fontWeight="semiBold"
         numberOfLines={1}
         style={styles.accountBalanceTagText}
-        color="smoke"
+        color="neutral.c60"
       >
         <CurrencyUnitValue showCode unit={unit} value={account.balance} />
       </Text>
@@ -559,7 +562,7 @@ function DataField({ label, Component }: FieldType) {
   return (
     <View style={styles.row}>
       <View>
-        <LText numberOfLines={1} style={styles.labelText} color="smoke">
+        <LText numberOfLines={1} style={styles.labelText} color="neutral.c60">
           {label}
         </LText>
       </View>

@@ -3,7 +3,7 @@ import { TouchableOpacity, StyleSheet, View } from "react-native";
 import { useSelector } from "react-redux";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { Trans } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { isAccountBalanceUnconfirmed } from "@ledgerhq/live-common/account/helpers";
 import { areSomeAccountsBalanceUnconfirmedSelector } from "../reducers/accounts";
 import QueuedDrawer from "./QueuedDrawer";
@@ -26,20 +26,20 @@ const TransactionsPendingConfirmationWarningContent = () => {
   return (
     <View style={styles.wrapper}>
       <TouchableOpacity hitSlop={hitSlop} onPress={() => setIsModalOpened(true)}>
-        <ClockIcon color={colors.grey} size={12} />
+        <ClockIcon color={colors.neutral.c70} size={12} />
       </TouchableOpacity>
       <QueuedDrawer
         style={styles.modal}
         isRequestingToBeOpened={isModalOpened}
         onClose={() => setIsModalOpened(false)}
       >
-        <Circle style={styles.circle} bg={rgba(colors.live, 0.1)} size={56}>
-          <IconInfo size={24} color={colors.live} />
+        <Circle style={styles.circle} bg={rgba(colors.primary.c80, 0.1)} size={56}>
+          <IconInfo size={24} color={colors.primary.c80} />
         </Circle>
         <LText secondary semiBold style={styles.modalTitle}>
           <Trans i18nKey={"portfolio.transactionsPendingConfirmation.title"} />
         </LText>
-        <LText style={styles.modalDesc} color="smoke">
+        <LText style={styles.modalDesc} color="neutral.c60">
           <Trans i18nKey={"portfolio.transactionsPendingConfirmation.desc"} />
         </LText>
       </QueuedDrawer>

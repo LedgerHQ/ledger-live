@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { StyleSheet, Linking } from "react-native";
 import { Trans } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import Touchable, { Props as TouchableProps } from "./Touchable";
 import LText from "./LText";
 import { urls } from "@utils/urls";
@@ -13,7 +13,7 @@ type Props = {
   color?: string;
 };
 
-function HelpLink({ url, style, color = "live" }: Props) {
+function HelpLink({ url, style, color = "primary.c70" }: Props) {
   const { colors } = useTheme();
   return (
     <Touchable
@@ -21,7 +21,7 @@ function HelpLink({ url, style, color = "live" }: Props) {
       style={[styles.linkContainer, style]}
       onPress={() => Linking.openURL(url || urls.faq)}
     >
-      <Help size={16} color={color || colors.live} />
+      <Help size={16} color={color || colors.primary.c80} />
       <LText style={[styles.linkText]} color={color} semiBold>
         <Trans i18nKey="common.needHelp" />
       </LText>

@@ -25,7 +25,7 @@ export const notAvailableModalInfo = (onClose?: () => void): ModalInfo[] => {
       ),
       titleProps: { textAlign: "center", paddingLeft: 40, paddingRight: 40 },
       description: (
-        <Text fontWeight="medium" color="grey" textAlign="center">
+        <Text fontWeight="medium" color="neutral.c70" textAlign="center">
           <Trans i18nKey={"nft.modalDisabled.body"} />
         </Text>
       ),

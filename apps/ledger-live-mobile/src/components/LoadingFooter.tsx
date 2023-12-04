@@ -1,6 +1,6 @@
 import React from "react";
 import { ActivityIndicator } from "react-native";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import Config from "react-native-config";
 
 export default () => {
@@ -10,7 +10,7 @@ export default () => {
       style={{
         margin: 40,
       }}
-      color={colors.live}
+      color={colors.primary.c80}
       animating={!Config.MOCK}
     />
   );

@@ -1,7 +1,8 @@
 import React, { useCallback, useState, useEffect, useRef } from "react";
 import { TextInput, StyleSheet, Keyboard, Platform } from "react-native";
 import { EnvName, getEnvDefault } from "@ledgerhq/live-env";
-import { useNavigation, useTheme } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { Box, Flex, Switch } from "@ledgerhq/native-ui";
 import Track from "../../../analytics/Track";
 import getFontStyle from "../../../components/LText/getFontStyle";
@@ -126,8 +127,8 @@ const FeatureInteger = ({
         <TextInput
           ref={inputRef}
           style={[
-            { color: colors.darkBlue },
-            enabled ? { ...styles.input, borderColor: colors.lightFog } : styles.inputHidden,
+            { color: colors.neutral.c90 },
+            enabled ? { ...styles.input, borderColor: colors.neutral.c20 } : styles.inputHidden,
           ]}
           keyboardType="decimal-pad"
           value={enabled ? inputValue : ""}

@@ -10,7 +10,7 @@ import { listTokensForCryptoCurrency } from "@ledgerhq/live-common/currencies/in
 import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
 import type { SubAccount } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { ScreenName } from "../../../const";
 import LText from "../../../components/LText";
 import { accountScreenSelector } from "../../../reducers/accounts";
@@ -46,7 +46,7 @@ const Row = ({
         labelStyle={
           disabled
             ? {
-                color: colors.grey,
+                color: colors.neutral.c70,
               }
             : {}
         }
@@ -57,17 +57,17 @@ const Row = ({
           styles.name,
           disabled
             ? {
-                color: colors.grey,
+                color: colors.neutral.c70,
               }
             : {},
         ]}
       >
         {item.name}
       </LText>
-      <LText style={styles.ticker} color="grey">
+      <LText style={styles.ticker} color="neutral.c70">
         -
       </LText>
-      <LText style={styles.assetId} color="grey" numberOfLines={1} ellipsizeMode="middle">
+      <LText style={styles.assetId} color="neutral.c70" numberOfLines={1} ellipsizeMode="middle">
         {assetIssuer}
       </LText>
     </TouchableOpacity>
@@ -152,7 +152,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
       style={[
         styles.root,
         {
-          backgroundColor: colors.background,
+          backgroundColor: colors.background.main,
         },
       ]}
     >
@@ -171,15 +171,15 @@ export default function DelegationStarted({ navigation, route }: Props) {
       <QueuedDrawer isRequestingToBeOpened={!!infoModalOpen} onClose={closeModal}>
         <View style={styles.modal}>
           <View style={styles.infoIcon}>
-            <InfoIcon bg={colors.lightLive}>
-              <Info size={30} color={colors.live} />
+            <InfoIcon bg={colors.opacityPurple.c10}>
+              <Info size={30} color={colors.primary.c80} />
             </InfoIcon>
           </View>
           <View style={styles.infoRow}>
             <LText style={[styles.warnText, styles.title]} semiBold>
               <Trans i18nKey={`stellar.addAsset.flow.steps.selectToken.warning.title`} />
             </LText>
-            <LText style={styles.warnText} color="grey">
+            <LText style={styles.warnText} color="neutral.c70">
               <Trans
                 i18nKey={`stellar.addAsset.flow.steps.selectToken.warning.description`}
                 values={{

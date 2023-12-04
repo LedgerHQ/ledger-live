@@ -1,4 +1,4 @@
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import Spinning from "../../components/Spinning";
@@ -18,7 +18,7 @@ const PendingContainer = ({ children }: { children: React.ReactNode }) => {
   return (
     <View style={styles.root}>
       <Spinning>
-        <LiveLogo color={colors.grey} size={32} />
+        <LiveLogo color={colors.neutral.c70} size={32} />
       </Spinning>
 
       {children}

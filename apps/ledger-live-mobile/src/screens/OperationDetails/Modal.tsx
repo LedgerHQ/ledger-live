@@ -2,7 +2,7 @@ import React, { memo } from "react";
 import { StyleSheet, View, Linking } from "react-native";
 import { Trans } from "react-i18next";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import QueuedDrawer from "../../components/QueuedDrawer";
 import Circle from "../../components/Circle";
@@ -24,10 +24,10 @@ function Modal({ isOpened, onClose, currency }: Props) {
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpened} onClose={onClose}>
       <SafeAreaView style={styles.modal}>
-        <Circle bg={rgba(colors.live, 0.1)} size={56}>
-          <IconInfo size={24} color={colors.live} />
+        <Circle bg={rgba(colors.primary.c80, 0.1)} size={56}>
+          <IconInfo size={24} color={colors.primary.c80} />
         </Circle>
-        <LText style={styles.modalDesc} color="smoke">
+        <LText style={styles.modalDesc} color="neutral.c60">
           <Trans i18nKey="operationDetails.tokenModal.desc" />
         </LText>
         <View style={styles.buttonContainer}>

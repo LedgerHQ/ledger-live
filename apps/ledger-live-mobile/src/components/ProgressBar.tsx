@@ -1,7 +1,7 @@
 import React, { memo, useEffect } from "react";
 import { View, StyleSheet, StyleProp, ViewStyle } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 
 type Props = {
   style?: StyleProp<ViewStyle>;
@@ -47,7 +47,7 @@ function ProgressBar({
         styles.wrapper,
         {
           height,
-          backgroundColor: backgroundColor ?? colors.lightFog,
+          backgroundColor: backgroundColor ?? colors.neutral.c20,
         },
         style,
       ]}

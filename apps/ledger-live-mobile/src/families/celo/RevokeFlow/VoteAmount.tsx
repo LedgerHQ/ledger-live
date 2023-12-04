@@ -12,7 +12,7 @@ import {
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import invariant from "invariant";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { Transaction as CeloTransaction } from "@ledgerhq/live-common/families/celo/types";
@@ -109,10 +109,10 @@ export default function VoteAmount({ navigation, route }: Props) {
         action="revoke"
         currency="celo"
       />
-      <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+      <SafeAreaView style={[styles.root, { backgroundColor: colors.background.main }]}>
         <KeyboardView style={styles.container}>
           <TouchableWithoutFeedback onPress={blur}>
-            <View style={[styles.root, { backgroundColor: colors.background }]}>
+            <View style={[styles.root, { backgroundColor: colors.background.main }]}>
               <View style={styles.wrapper}>
                 <CurrencyInput
                   editable={!useAllAmount}
@@ -124,7 +124,7 @@ export default function VoteAmount({ navigation, route }: Props) {
                     <LText
                       semiBold
                       style={[styles.currency]}
-                      color={error ? "alert" : warning ? "orange" : "grey"}
+                      color={error ? "error.c60" : warning ? "warning.c60" : "neutral.c70"}
                     >
                       {unit.code}
                     </LText>
@@ -132,15 +132,15 @@ export default function VoteAmount({ navigation, route }: Props) {
                   style={styles.inputContainer}
                   inputStyle={[
                     styles.inputStyle,
-                    warning && { color: colors.orange },
-                    error && { color: colors.alert },
+                    warning && { color: colors.warning.c70 },
+                    error && { color: colors.error.c60 },
                   ]}
                   hasError={!!error}
                   hasWarning={!!warning}
                 />
                 <LText
                   style={[styles.fieldStatus]}
-                  color={error ? "alert" : warning ? "orange" : "darkBlue"}
+                  color={error ? "error.c60" : warning ? "warning.c60" : "neutral.c80"}
                   numberOfLines={2}
                 >
                   <TranslatedError error={error || warning} />

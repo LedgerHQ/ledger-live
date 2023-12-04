@@ -52,7 +52,7 @@ class SummaryTotalSection extends PureComponent<Props, State> {
           title={<Trans i18nKey="send.summary.total" />}
           additionalInfo={
             <Touchable onPress={this.onPress} event="SummaryTotalInfo">
-              <Info size={12} color={colors.grey} />
+              <Info size={12} color={colors.neutral.c70} />
             </Touchable>
           }
           titleProps={{
@@ -64,7 +64,7 @@ class SummaryTotalSection extends PureComponent<Props, State> {
             <LText semiBold style={styles.summaryValueText}>
               <CurrencyUnitValue unit={unit} value={amount} disableRounding />
             </LText>
-            <LText style={styles.summaryCounterValueText} color="grey">
+            <LText style={styles.summaryCounterValueText} color="neutral.c70">
               <CounterValue value={amount} currency={currency} showCode before="≈ " />
             </LText>
           </View>

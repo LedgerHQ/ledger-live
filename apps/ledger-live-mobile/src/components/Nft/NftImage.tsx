@@ -2,14 +2,15 @@ import React, { useState } from "react";
 import FastImage, { OnLoadEvent, FastImageProps, ResizeMode } from "react-native-fast-image";
 import { View, StyleSheet, Animated, StyleProp, ViewStyle } from "react-native";
 import ImageNotFoundIcon from "../../icons/ImageNotFound";
-import { Theme, withTheme } from "../../colors";
+import { withTheme } from "../../colors";
 import Skeleton from "../Skeleton";
+import { PaletteType } from "~/StyleProvider";
 
 const ImageComponent: React.FC<FastImageProps> = props =>
   typeof props?.source === "object" && props?.source?.uri ? <FastImage {...props} /> : null;
 
 const NotFound: React.FC<{
-  colors: { [key: string]: string };
+  colors: PaletteType;
   onLayout: () => void;
 }> = ({ colors, onLayout }) => {
   const [iconWidth, setIconWidth] = useState(40);
@@ -19,7 +20,7 @@ const NotFound: React.FC<{
       style={[
         styles.notFoundView,
         {
-          backgroundColor: colors.skeletonBg,
+          backgroundColor: colors.neutral.c30,
         },
       ]}
       onLayout={e => {
@@ -38,7 +39,7 @@ type Props = {
   src: string;
   srcFallback: string;
   resizeMode?: ResizeMode;
-  colors: Theme["colors"];
+  colors: PaletteType;
   transparency?: boolean;
   children?: React.ReactNode | null;
 };
@@ -140,7 +141,7 @@ class NftImage extends React.PureComponent<Props, State> {
               style={[
                 styles.image,
                 {
-                  backgroundColor: transparency ? undefined : colors.background,
+                  backgroundColor: transparency ? undefined : colors.background.main,
                 },
               ]}
               resizeMode={resizeMode}

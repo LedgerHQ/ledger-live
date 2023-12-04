@@ -13,7 +13,7 @@ export default function DelegationLabelRight({ onPress, disabled }: Props) {
 
   return (
     <TouchableOpacity onPress={onPress}>
-      <Text fontWeight="semiBold" color={disabled ? "grey" : "live"}>
+      <Text fontWeight="semiBold" color={disabled ? "neutral.c70" : "primary.c70"}>
         {t("account.delegation.addDelegation")}
       </Text>
     </TouchableOpacity>

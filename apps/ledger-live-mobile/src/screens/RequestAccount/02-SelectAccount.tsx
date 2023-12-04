@@ -3,7 +3,8 @@ import { View, StyleSheet, FlatList, SafeAreaView, ListRenderItem } from "react-
 import { Trans } from "react-i18next";
 import type { Account, AccountLike, SubAccount } from "@ledgerhq/types-live";
 import { useSelector } from "react-redux";
-import { CompositeScreenProps, useTheme } from "@react-navigation/native";
+import { CompositeScreenProps } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useGetAccountIds } from "@ledgerhq/live-common/wallet-api/react";
 import { accountsByCryptoCurrencyScreenSelector } from "../../reducers/accounts";
@@ -173,7 +174,7 @@ function SelectAccount({ navigation, route }: Props) {
       style={[
         styles.root,
         {
-          backgroundColor: colors.background,
+          backgroundColor: colors.background.main,
         },
       ]}
     >

@@ -3,7 +3,8 @@ import { StyleSheet, SafeAreaView } from "react-native";
 import { useDispatch } from "react-redux";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { useIsFocused, useTheme } from "@react-navigation/native";
+import { useIsFocused } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
 import { Flex } from "@ledgerhq/native-ui";
 import { prepareCurrency } from "../../bridge/cache";
@@ -102,7 +103,7 @@ export default function AddAccountsSelectDevice({ navigation, route }: Props) {
       style={[
         styles.root,
         {
-          backgroundColor: colors.background,
+          backgroundColor: colors.background.main,
         },
       ]}
     >

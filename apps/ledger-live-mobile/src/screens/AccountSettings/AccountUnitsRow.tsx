@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { Trans } from "react-i18next";
 import type { Account } from "@ledgerhq/types-live";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { ScreenName } from "../../const";
 import SettingsRow from "../../components/SettingsRow";
 import LText from "../../components/LText";
@@ -29,7 +29,7 @@ function AccountUnitsRow({ navigation, account }: Props) {
       <LText
         semiBold
         style={{
-          color: colors.grey,
+          color: colors.neutral.c70,
         }}
       >
         {account.unit.code}

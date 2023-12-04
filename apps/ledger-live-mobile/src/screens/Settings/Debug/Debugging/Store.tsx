@@ -6,7 +6,7 @@ import { BigNumber } from "bignumber.js";
 import { StyleSheet, SafeAreaView, ScrollView } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { Alert, Flex } from "@ledgerhq/native-ui";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import Share from "react-native-share";
 import Node from "./Node";
 import logger from "../../../../logger";
@@ -178,7 +178,7 @@ export default function Store() {
           title="Setting an invalid value may corrupt your app state requiring a full app reinstall."
         />
         <TextInput
-          style={[styles.input, { color: colors.darkBlue }]}
+          style={[styles.input, { color: colors.neutral.c90 }]}
           value={String(currentValue)}
           onChangeText={onChangeText}
           autoFocus

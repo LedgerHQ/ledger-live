@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { StyleProp, ViewStyle, TextStyle } from "react-native";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import type { NFTMetadataResponse, Operation } from "@ledgerhq/types-live";
 import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import type { BigNumber } from "bignumber.js";
@@ -38,7 +38,11 @@ const Title = ({
   const { t } = useTranslation();
   const { colors } = useTheme();
   const isNegative = amount.isNegative();
-  const valueColor = isNegative ? colors.smoke : isConfirmed ? colors.green : colors.warning;
+  const valueColor = isNegative
+    ? colors.neutral.c70
+    : isConfirmed
+    ? colors.success.c70
+    : colors.warning.c60;
 
   if (isNftOperation) {
     return (
@@ -57,7 +61,7 @@ const Title = ({
           style={[
             styles.titleTokenId,
             {
-              color: colors.grey,
+              color: colors.neutral.c70,
             },
           ]}
         >

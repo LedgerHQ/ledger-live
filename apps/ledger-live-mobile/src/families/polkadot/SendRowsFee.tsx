@@ -5,7 +5,8 @@ import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { Transaction as PolkadotTransaction } from "@ledgerhq/live-common/families/polkadot/types";
 import { Trans } from "react-i18next";
 import { getAccountUnit, getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { CompositeScreenProps, useTheme } from "@react-navigation/native";
+import { CompositeScreenProps } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
@@ -52,7 +53,7 @@ export default function PolkadotFeeRow({ account, transaction }: Props) {
       title={<Trans i18nKey="send.fees.title" />}
       additionalInfo={
         <View>
-          <ExternalLink size={12} color={colors.grey} />
+          <ExternalLink size={12} color={colors.neutral.c70} />
         </View>
       }
     >
@@ -60,7 +61,7 @@ export default function PolkadotFeeRow({ account, transaction }: Props) {
         <LText style={styles.valueText}>
           {fees ? <CurrencyUnitValue unit={unit} value={fees} /> : " "}
         </LText>
-        <LText style={styles.countervalue} color="grey">
+        <LText style={styles.countervalue} color="neutral.c70">
           {fees ? <CounterValue before="≈ " value={fees} currency={currency} /> : " "}
         </LText>
       </View>

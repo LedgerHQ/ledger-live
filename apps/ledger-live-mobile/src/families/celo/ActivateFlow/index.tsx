@@ -1,4 +1,4 @@
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";

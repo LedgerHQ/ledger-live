@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { Flex } from "@ledgerhq/native-ui";
 import { ScreenName, NavigatorName } from "../../../../const";
 import Button from "../../../../components/Button";
@@ -40,7 +40,7 @@ export default function ClaimRewardsStarted({ navigation, route }: Props) {
       style={[
         styles.root,
         {
-          backgroundColor: colors.background,
+          backgroundColor: colors.background.main,
         },
       ]}
     >
@@ -87,7 +87,7 @@ export default function ClaimRewardsStarted({ navigation, route }: Props) {
           style={[
             styles.howClaimRewardsWorks,
             {
-              borderColor: colors.live,
+              borderColor: colors.primary.c80,
             },
           ]}
         >

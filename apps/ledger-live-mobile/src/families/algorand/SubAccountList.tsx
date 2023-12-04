@@ -1,7 +1,8 @@
 import React, { useCallback } from "react";
 import { StyleSheet, View, Linking } from "react-native";
 import { Trans } from "react-i18next";
-import { useNavigation, useTheme } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { useSelector } from "react-redux";
 import IconPlus from "../../icons/Plus";
 import Button from "../../components/Button";
@@ -25,7 +26,7 @@ const ReceiveButton = ({ accountId }: { accountId: string }) => {
   return (
     <Button
       onPress={onReceiveClick}
-      IconLeft={() => <IconPlus size={16} color={colors.live} />}
+      IconLeft={() => <IconPlus size={16} color={colors.primary.c80} />}
       title={<Trans i18nKey="account.tokens.algorand.addTokens" />}
       containerStyle={{
         width: 120,
@@ -63,7 +64,7 @@ const Placeholder = ({ accountId }: { accountId: string }) => {
       style={[
         styles.placeholder,
         {
-          borderColor: colors.fog,
+          borderColor: colors.neutral.c70,
         },
       ]}
     >
@@ -81,7 +82,7 @@ const Placeholder = ({ accountId }: { accountId: string }) => {
         style={[
           styles.howAsaWorks,
           {
-            borderColor: colors.live,
+            borderColor: colors.primary.c80,
           },
         ]}
       >
@@ -94,7 +95,9 @@ const Placeholder = ({ accountId }: { accountId: string }) => {
       <Button
         event="AccountReceiveASA"
         type="primary"
-        IconLeft={() => <IconPlus size={16} color={disabled ? colors.grey : colors.live} />}
+        IconLeft={() => (
+          <IconPlus size={16} color={disabled ? colors.neutral.c70 : colors.primary.c80} />
+        )}
         onPress={onReceiveClick}
         title={<Trans i18nKey="account.tokens.algorand.addAsa" />}
         disabled={disabled}

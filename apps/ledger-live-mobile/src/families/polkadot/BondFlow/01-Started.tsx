@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { StyleSheet, ScrollView, View, Linking, SafeAreaView } from "react-native";
 import { Trans } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { Flex } from "@ledgerhq/native-ui";
 import { ScreenName } from "../../../const";
 import { TrackScreen } from "../../../analytics";
@@ -32,7 +32,7 @@ export default function PolkadotBondStarted({ navigation, route }: Props) {
       style={[
         styles.root,
         {
-          backgroundColor: colors.background,
+          backgroundColor: colors.background.main,
         },
       ]}
     >

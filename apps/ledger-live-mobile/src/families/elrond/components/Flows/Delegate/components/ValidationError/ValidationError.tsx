@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { View } from "react-native";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 
 import ValidateError from "../../../../../../../components/ValidateError";
 import { TrackScreen } from "../../../../../../../analytics";
@@ -48,7 +48,7 @@ const ValidationError = (props: ValidationErrorPropsType) => {
    */
 
   return (
-    <View style={[styles.root, { backgroundColor: colors.background }]}>
+    <View style={[styles.root, { backgroundColor: colors.background.main}]}>
       <TrackScreen
         category="ElrondDelegate"
         name="ValidationError"

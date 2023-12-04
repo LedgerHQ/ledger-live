@@ -64,7 +64,7 @@ const InfoModal = ({
       ) : null}
 
       {desc ? (
-        <LText style={styles.modalDesc} color="smoke">
+        <LText style={styles.modalDesc} color="neutral.c60">
           {desc}
         </LText>
       ) : null}

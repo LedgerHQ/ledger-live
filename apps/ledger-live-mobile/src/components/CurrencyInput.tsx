@@ -187,21 +187,21 @@ class CurrencyInput extends PureComponent<Props, State> {
           style={[
             styles.input,
             {
-              color: colors.darkBlue,
+              color: colors.neutral.c90,
             },
             hasError
               ? {
-                  color: colors.alert,
+                  color: colors.error.c60,
                 }
               : hasWarning
               ? {
-                  color: colors.orange,
+                  color: colors.warning.c70,
                 }
               : null,
             editable
               ? {}
               : {
-                  color: colors.grey,
+                  color: colors.neutral.c70,
                 },
             {
               fontSize: dynamicFontSize,
@@ -224,7 +224,7 @@ class CurrencyInput extends PureComponent<Props, State> {
               locale,
             })
           }
-          placeholderTextColor={editable ? colors.darkBlue : colors.grey}
+          placeholderTextColor={editable ? colors.neutral.c90 : colors.neutral.c70}
           keyboardType="numeric"
           blurOnSubmit
           testID={testID}

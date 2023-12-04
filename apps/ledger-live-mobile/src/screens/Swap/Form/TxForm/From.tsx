@@ -116,10 +116,10 @@ export function From({ swapTx, provider, swapError, swapWarning, isSendMaxLoadin
 
         {swapError || swapWarning ? (
           <Flex flexDirection="row" columnGap={8} alignItems="center">
-            <WarningSolidMedium size={20} color={swapError ? "error.c50" : "orange"} />
+            <WarningSolidMedium size={20} color={swapError ? "error.c50" : "warning.c60"} />
             <Text
               marginY={4}
-              color={swapError ? "error.c50" : "orange"}
+              color={swapError ? "error.c50" : "warning.c60"}
               textAlign="left"
               fontWeight="medium"
               lineHeight="20.4px"

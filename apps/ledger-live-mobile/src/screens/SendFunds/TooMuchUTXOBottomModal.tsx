@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import QueuedDrawer from "../../components/QueuedDrawer";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
@@ -28,16 +28,16 @@ function ConfirmationModal({ isOpened, onClose, onPress, ...rest }: Props) {
         style={[
           styles.icon,
           {
-            backgroundColor: colors.lightOrange,
+            backgroundColor: colors.warning.c60,
           },
         ]}
       >
-        <Info size={24} color={colors.orange} />
+        <Info size={24} color={colors.warning.c70} />
       </View>
       <LText secondary semiBold style={styles.title}>
         <Trans i18nKey="send.tooMuchUTXOBottomModal.title" />
       </LText>
-      <LText style={styles.description} color="smoke">
+      <LText style={styles.description} color="neutral.c60">
         <Trans i18nKey="send.tooMuchUTXOBottomModal.description" />
       </LText>
       <View style={styles.confirmationFooter}>

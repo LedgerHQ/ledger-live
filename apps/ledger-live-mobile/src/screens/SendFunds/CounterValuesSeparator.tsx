@@ -1,4 +1,4 @@
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
 
@@ -10,7 +10,7 @@ function CounterValuesSeparator() {
         style={[
           styles.line,
           {
-            backgroundColor: colors.fog,
+            backgroundColor: colors.neutral.c70,
           },
         ]}
       />
@@ -19,7 +19,7 @@ function CounterValuesSeparator() {
         style={[
           styles.line,
           {
-            backgroundColor: colors.fog,
+            backgroundColor: colors.neutral.c70,
           },
         ]}
       />

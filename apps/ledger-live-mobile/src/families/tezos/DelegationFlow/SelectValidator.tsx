@@ -21,7 +21,7 @@ import type { Transaction as TezosTransaction } from "@ledgerhq/live-common/fami
 import type { Baker } from "@ledgerhq/live-common/families/tezos/types";
 import { useBakers } from "@ledgerhq/live-common/families/tezos/bakers";
 import whitelist from "@ledgerhq/live-common/families/tezos/bakers.whitelist-default";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import { TrackScreen } from "../../../analytics";
 import { ScreenName } from "../../../const";
@@ -44,11 +44,11 @@ const BakerHead = ({ onPressHelp }: { onPressHelp: () => void }) => {
   const { t } = useTranslation();
   return (
     <View style={styles.bakerHead}>
-      <LText style={styles.bakerHeadText} color="smoke" numberOfLines={1} semiBold>
+      <LText style={styles.bakerHeadText} color="neutral.c60" numberOfLines={1} semiBold>
         {t("delegation.validator")}
       </LText>
       <View style={styles.bakerHeadContainer}>
-        <LText style={styles.bakerHeadText} color="smoke" numberOfLines={1} semiBold>
+        <LText style={styles.bakerHeadText} color="neutral.c60" numberOfLines={1} semiBold>
           {t("delegation.yield")}
         </LText>
         <Touchable
@@ -56,7 +56,7 @@ const BakerHead = ({ onPressHelp }: { onPressHelp: () => void }) => {
           event="StepValidatorShowProvidedBy"
           onPress={onPressHelp}
         >
-          <Info color={colors.smoke} size={14} />
+          <Info color={colors.neutral.c70} size={14} />
         </Touchable>
       </View>
     </View>
@@ -83,8 +83,8 @@ const BakerRow = ({ onPress, baker }: { onPress: (arg0: Baker) => void; baker: B
             style={[
               styles.overdelegatedIndicator,
               {
-                backgroundColor: colors.orange,
-                borderColor: colors.white,
+                backgroundColor: colors.warning.c70,
+                borderColor: colors.neutral.c20,
               },
             ]}
           />
@@ -94,7 +94,7 @@ const BakerRow = ({ onPress, baker }: { onPress: (arg0: Baker) => void; baker: B
             {baker.name}
           </LText>
           {baker.capacityStatus === "full" ? (
-            <LText semiBold numberOfLines={1} style={styles.overdelegated} color="orange">
+            <LText semiBold numberOfLines={1} style={styles.overdelegated} color="warning.c60">
               <Trans i18nKey="delegation.overdelegated" />
             </LText>
           ) : null}
@@ -106,7 +106,7 @@ const BakerRow = ({ onPress, baker }: { onPress: (arg0: Baker) => void; baker: B
             styles.bakerYield,
             baker.capacityStatus === "full" ? styles.bakerYieldFull : null,
           ]}
-          color="smoke"
+          color="neutral.c60"
         >
           {baker.nominalYield}
         </LText>
@@ -117,7 +117,7 @@ const BakerRow = ({ onPress, baker }: { onPress: (arg0: Baker) => void; baker: B
 
 const ModalIcon = () => {
   const { colors } = useTheme();
-  return <Icon name="user-plus" size={24} color={colors.live} />;
+  return <Icon name="user-plus" size={24} color={colors.primary.c80} />;
 };
 
 type Props = StackNavigatorProps<
@@ -230,7 +230,7 @@ export default function SelectValidator({ navigation, route }: Props) {
       style={[
         styles.root,
         {
-          backgroundColor: colors.background,
+          backgroundColor: colors.background.main,
         },
       ]}
     >
@@ -277,15 +277,15 @@ export default function SelectValidator({ navigation, route }: Props) {
       >
         <TextInput
           placeholder="Enter validator address"
-          placeholderTextColor={colors.fog}
+          placeholderTextColor={colors.neutral.c70}
           style={[
             styles.addressInput,
             error
               ? {
-                  color: colors.alert,
+                  color: colors.error.c60,
                 }
               : {
-                  color: colors.darkBlue,
+                  color: colors.neutral.c90,
                 },
           ]}
           onChangeText={onChangeText}
@@ -296,7 +296,7 @@ export default function SelectValidator({ navigation, route }: Props) {
         />
 
         {error && (
-          <LText style={[styles.warningBox]} color="alert">
+          <LText style={[styles.warningBox]} color="error.c60">
             <TranslatedError error={error} />
           </LText>
         )}
@@ -309,7 +309,7 @@ export default function SelectValidator({ navigation, route }: Props) {
         confirmLabel={t("common.close")}
       >
         <View style={styles.providedByContainer}>
-          <LText semiBold style={styles.providedByText} color="grey">
+          <LText semiBold style={styles.providedByText} color="neutral.c70">
             <Trans i18nKey="delegation.yieldInfos" />
           </LText>
           <ExternalLink

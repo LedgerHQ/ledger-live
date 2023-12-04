@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useCallback, useLayoutEffect } from "react";
 import { TextInput, StyleSheet, TouchableOpacity, TouchableOpacityProps } from "react-native";
-import { useTheme, CompositeScreenProps } from "@react-navigation/native";
+import { CompositeScreenProps } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { useLocalLiveAppContext } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import { Box } from "@ledgerhq/native-ui";
 import NavigationScrollView from "../../../components/NavigationScrollView";
@@ -18,7 +19,7 @@ const DebuggerButton: React.ComponentType<{
   const { colors } = useTheme();
   return (
     <TouchableOpacity style={styles.buttons} onPress={onPress}>
-      <ImportIcon size={18} color={colors.grey} />
+      <ImportIcon size={18} color={colors.neutral.c70} />
     </TouchableOpacity>
   );
 };
@@ -30,7 +31,7 @@ const OpenButton: React.ComponentType<{
   const { colors } = useTheme();
   return (
     <TouchableOpacity style={styles.buttons} onPress={onPress} disabled={disabled}>
-      <ArrowRight size={18} color={colors.black} />
+      <ArrowRight size={18} color={colors.neutral.c100} />
     </TouchableOpacity>
   );
 };
@@ -114,8 +115,8 @@ export default function CustomManifest({ navigation }: Props) {
           style={[
             styles.input,
             {
-              color: colors.text,
-              borderColor: colors.border,
+              color: colors.neutral.c100,
+              borderColor: colors.opacityDefault.c10,
             },
           ]}
           value={manifest}

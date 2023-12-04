@@ -1,6 +1,7 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
-import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { Trans } from "react-i18next";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
@@ -48,10 +49,10 @@ export default function RippleTagRow({ account, transaction }: Props) {
             style={[
               styles.link,
               {
-                textDecorationColor: colors.live,
+                textDecorationColor: colors.primary.c80,
               },
             ]}
-            color="live"
+            color="primary.c70"
             onPress={editTag}
           >
             <Trans i18nKey="common.edit" />

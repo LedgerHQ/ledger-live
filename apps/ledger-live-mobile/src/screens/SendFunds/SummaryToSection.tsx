@@ -2,7 +2,7 @@ import React, { memo, useMemo } from "react";
 
 import { StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { isLoaded } from "@ledgerhq/domain-service/hooks/logic";
 import { useDomain } from "@ledgerhq/domain-service/hooks/index";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
@@ -83,7 +83,7 @@ function SummaryToSection({ transaction, currency }: Props) {
     <SummaryRowCustom
       label={t("send.summary.to")}
       iconLeft={
-        <Circle bg={colors.lightLive} size={34}>
+        <Circle bg={colors.opacityPurple.c10} size={34}>
           <QRcode size={16} />
         </Circle>
       }

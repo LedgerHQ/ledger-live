@@ -12,7 +12,7 @@ import {
   getAccountCurrency,
 } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import cosmosBase from "@ledgerhq/live-common/families/cosmos/chain/cosmosBase";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import Button from "../../../components/Button";
@@ -145,32 +145,32 @@ function ClaimRewardsAmount({ navigation, route }: Props) {
       style={[
         styles.root,
         {
-          backgroundColor: colors.background,
+          backgroundColor: colors.background.main,
         },
       ]}
     >
       <View style={styles.main}>
         <ToggleButton value={mode} options={options} onChange={onChangeMode} />
         <TouchableOpacity onPress={openInfoModal} style={styles.info}>
-          <LText semiBold style={styles.infoLabel} color="grey">
+          <LText semiBold style={styles.infoLabel} color="neutral.c70">
             <Trans i18nKey="cosmos.claimRewards.flow.steps.method.compoundOrCashIn" />
           </LText>
-          <Info size={16} color={colors.grey} />
+          <Info size={16} color={colors.neutral.c70} />
         </TouchableOpacity>
         <View style={styles.spacer} />
         <View style={styles.sectionLabel}>
-          <LText semiBold style={styles.subLabel} color="grey">
+          <LText semiBold style={styles.subLabel} color="neutral.c70">
             <Trans i18nKey="cosmos.claimRewards.flow.steps.method.youEarned" />
           </LText>
           <LText semiBold style={[styles.label, styles.value]}>
             <CurrencyUnitValue unit={unit} value={value} showCode />
           </LText>
-          <LText semiBold style={styles.subLabel} color="grey">
+          <LText semiBold style={styles.subLabel} color="neutral.c70">
             <CounterValue currency={currency} showCode value={value} withPlaceholder />
           </LText>
         </View>
         <View style={styles.sectionLabel}>
-          <LText semiBold style={styles.subLabel} color="grey">
+          <LText semiBold style={styles.subLabel} color="neutral.c70">
             <Trans i18nKey="cosmos.claimRewards.flow.steps.method.byDelegationAssetsTo" />
           </LText>
           <View style={styles.row}>
@@ -197,17 +197,17 @@ function ClaimRewardsAmount({ navigation, route }: Props) {
         style={[
           styles.footer,
           {
-            backgroundColor: colors.background,
+            backgroundColor: colors.background.main,
           },
         ]}
       >
         <View style={styles.warningSection}>
           {error && error instanceof Error ? (
-            <LText selectable secondary semiBold style={styles.warning} color="alert">
+            <LText selectable secondary semiBold style={styles.warning} color="error.c60">
               <TranslatedError error={error} />
             </LText>
           ) : warning && warning instanceof Error ? (
-            <LText selectable secondary semiBold style={styles.warning} color="alert">
+            <LText selectable secondary semiBold style={styles.warning} color="error.c60">
               <TranslatedError error={warning} />
             </LText>
           ) : null}

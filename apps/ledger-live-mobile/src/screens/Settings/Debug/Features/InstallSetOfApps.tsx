@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { Button, Flex, SelectableList, Switch, Text, VerticalTimeline } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -76,7 +76,7 @@ export default function DebugMultiAppInstall() {
           </>
         )}
       </Flex>
-      <View style={[styles.root, { backgroundColor: colors.background }]}>
+      <View style={[styles.root, { backgroundColor: colors.background.main}]}>
         {device ? (
           <VerticalTimeline
             steps={[

@@ -2,7 +2,7 @@ import React, { memo, useMemo } from "react";
 
 import { useTranslation } from "react-i18next";
 import { View, StyleSheet } from "react-native";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
@@ -48,7 +48,7 @@ const SummaryNft = ({ transaction, currencyId }: Props) => {
             style={[
               styles.textAlignRight,
               {
-                color: colors.grey,
+                color: colors.neutral.c70,
               },
             ]}
             numberOfLines={1}

@@ -7,7 +7,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { BigNumber } from "bignumber.js";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { useNavigation, useTheme } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
@@ -86,7 +87,7 @@ const SendAmountNFT = ({ route }: Props) => {
     if (quantity?.isFinite()) {
       if (status?.warnings?.amount) {
         return (
-          <LText style={styles.error} color={"orange"} numberOfLines={2}>
+          <LText style={styles.error} color={"warning.c60"} numberOfLines={2}>
             <TranslatedError error={status?.warnings?.amount} />
           </LText>
         );
@@ -94,7 +95,7 @@ const SendAmountNFT = ({ route }: Props) => {
 
       if (status?.errors?.amount) {
         return (
-          <LText style={styles.error} color={"alert"} numberOfLines={2}>
+          <LText style={styles.error} color={"error.c60"} numberOfLines={2}>
             <TranslatedError error={status?.errors?.amount} />
           </LText>
         );
@@ -106,7 +107,7 @@ const SendAmountNFT = ({ route }: Props) => {
 
   return (
     <>
-      <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+      <SafeAreaView style={[styles.root, { backgroundColor: colors.background.main }]}>
         <KeyboardView style={styles.container}>
           <TouchableWithoutFeedback onPress={blur}>
             <View style={{ flex: 1 }}>
@@ -115,7 +116,7 @@ const SendAmountNFT = ({ route }: Props) => {
                   style={[
                     styles.input,
                     {
-                      color: colors.black,
+                      color: colors.neutral.c100,
                     },
                   ]}
                   autoCorrect={false}

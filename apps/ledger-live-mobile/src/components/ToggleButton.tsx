@@ -6,7 +6,7 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import LText from "./LText";
 
 type Props = {
@@ -61,7 +61,7 @@ const ToggleButton = ({ value, options, onChange }: Props) => {
       style={[
         styles.mainContainer,
         {
-          borderColor: colors.live,
+          borderColor: colors.primary.c80,
         },
       ]}
       onLayout={onLayout}
@@ -70,7 +70,7 @@ const ToggleButton = ({ value, options, onChange }: Props) => {
         style={[
           styles.indicator,
           {
-            backgroundColor: colors.live,
+            backgroundColor: colors.primary.c80,
           },
           indicatorStyle,
         ]}
@@ -83,7 +83,7 @@ const ToggleButton = ({ value, options, onChange }: Props) => {
               styles.optionButton,
               disabled
                 ? {
-                    backgroundColor: colors.lightFog,
+                    backgroundColor: colors.neutral.c20,
                   }
                 : undefined,
             ]}
@@ -97,11 +97,11 @@ const ToggleButton = ({ value, options, onChange }: Props) => {
                 styles.label,
                 disabled
                   ? {
-                      color: colors.fog,
+                      color: colors.neutral.c70,
                     }
                   : undefined,
               ]}
-              color={activeIndex === index ? "white" : "live"}
+              color={activeIndex === index ? "white" : "primary.c70"}
             >
               {label}
             </LText>

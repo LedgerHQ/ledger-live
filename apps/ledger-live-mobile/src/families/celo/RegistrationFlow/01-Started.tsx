@@ -1,7 +1,7 @@
 import invariant from "invariant";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { Text } from "@ledgerhq/native-ui";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
@@ -55,7 +55,7 @@ export default function RegisterAccountStarted({ navigation, route }: Props) {
     status.warnings && Object.keys(status.warnings).length > 0 && Object.values(status.warnings)[0];
 
   return (
-    <View style={[styles.root, { backgroundColor: colors.background }]}>
+    <View style={[styles.root, { backgroundColor: colors.background.main }]}>
       <View
         style={styles.scroll}
         // FIXME: PROP DOESN'T EXIST ON View BUT DOES ON ScrollView
@@ -74,11 +74,11 @@ export default function RegisterAccountStarted({ navigation, route }: Props) {
       </View>
       <View style={styles.warningSection}>
         {error && error instanceof Error ? (
-          <LText selectable secondary semiBold style={styles.warning} color="alert">
+          <LText selectable secondary semiBold style={styles.warning} color="error.c60">
             <TranslatedError error={error} />
           </LText>
         ) : warning && warning instanceof Error ? (
-          <LText selectable secondary semiBold style={styles.warning} color="alert">
+          <LText selectable secondary semiBold style={styles.warning} color="error.c60">
             <TranslatedError error={warning} />
           </LText>
         ) : null}

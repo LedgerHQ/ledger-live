@@ -11,7 +11,7 @@ import type {
   AlgorandAccount,
   AlgorandTransaction,
 } from "@ledgerhq/live-common/families/algorand/types";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { Flex } from "@ledgerhq/native-ui";
 import { ScreenName } from "../../../../const";
 import Button from "../../../../components/Button";
@@ -68,7 +68,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
       style={[
         styles.root,
         {
-          backgroundColor: colors.background,
+          backgroundColor: colors.background.main,
         },
       ]}
     >
@@ -104,7 +104,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
       <View style={[styles.footer]}>
         {warning && warning instanceof Error ? (
           <View style={styles.warningSection}>
-            <LText selectable secondary semiBold style={styles.warningText} color="alert">
+            <LText selectable secondary semiBold style={styles.warningText} color="error.c60">
               <TranslatedError error={warning} />
             </LText>
           </View>

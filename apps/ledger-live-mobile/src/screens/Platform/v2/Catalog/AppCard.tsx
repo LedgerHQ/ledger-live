@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, memo } from "react";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { StyleSheet, View, TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
 import { Stop } from "react-native-svg";
@@ -14,33 +14,33 @@ function getBranchStyle(branch: AppBranch, colors: Theme["colors"]) {
   switch (branch) {
     case "soon":
       return {
-        color: colors.grey,
-        badgeColor: colors.grey,
-        borderColor: colors.lightFog,
-        backgroundColor: colors.lightFog,
+        color: colors.neutral.c70,
+        badgeColor: colors.neutral.c70,
+        borderColor: colors.neutral.c20,
+        backgroundColor: colors.neutral.c20,
       };
 
     case "experimental":
       return {
-        color: colors.darkBlue,
-        badgeColor: colors.orange,
-        borderColor: colors.orange,
+        color: colors.neutral.c90,
+        badgeColor: colors.warning.c70,
+        borderColor: colors.warning.c70,
         backgroundColor: "transparent",
       };
 
     case "debug":
       return {
-        color: colors.darkBlue,
-        badgeColor: colors.grey,
-        borderColor: colors.grey,
+        color: colors.neutral.c90,
+        badgeColor: colors.neutral.c70,
+        borderColor: colors.neutral.c70,
         backgroundColor: "transparent",
       };
 
     default:
       return {
-        color: colors.darkBlue,
-        badgeColor: colors.live,
-        borderColor: colors.live,
+        color: colors.neutral.c90,
+        badgeColor: colors.primary.c80,
+        borderColor: colors.primary.c80,
         backgroundColor: "transparent",
       };
   }
@@ -69,7 +69,7 @@ const gradients = {
 };
 
 export const AppCard = memo(({ manifest, onPress }: Props) => {
-  const { colors, dark } = useTheme();
+  const { colors, palette } = useTheme();
   const { t } = useTranslation();
   const isDisabled = manifest.branch === "soon";
   const highlighted = !!manifest.highlight;
@@ -100,7 +100,7 @@ export const AppCard = memo(({ manifest, onPress }: Props) => {
           },
         ]}
       >
-        {highlighted && <BackgroundGradientHorizontal {...gradients[dark ? "dark" : "light"]} />}
+        {highlighted && <BackgroundGradientHorizontal {...gradients[palette]} />}
         <View
           style={[
             styles.wrapper,
@@ -148,7 +148,7 @@ export const AppCard = memo(({ manifest, onPress }: Props) => {
               style={[
                 styles.description,
                 {
-                  color: highlighted ? "white" : colors.smoke,
+                  color: highlighted ? "white" : colors.neutral.c70,
                 },
               ]}
               numberOfLines={1}

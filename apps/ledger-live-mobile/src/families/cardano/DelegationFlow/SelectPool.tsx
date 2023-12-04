@@ -1,4 +1,4 @@
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import invariant from "invariant";
 import React, { useCallback } from "react";
 import { FlatList, StyleSheet, View, SafeAreaView } from "react-native";
@@ -46,7 +46,7 @@ export default function SelectPool({ navigation, route }: Props) {
   );
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background.main }]}>
       <TrackScreen category="DelegationFlow" name="SelectValidator" />
       <SelectPoolSearchBox searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
       <View style={styles.header}>

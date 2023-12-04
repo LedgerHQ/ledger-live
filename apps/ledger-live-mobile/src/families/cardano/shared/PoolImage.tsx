@@ -1,4 +1,4 @@
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import React from "react";
 import Circle from "../../../components/Circle";
 import FirstLetterIcon from "../../../components/FirstLetterIcon";
@@ -16,7 +16,7 @@ const PoolImage = ({ isLedger, size = 64, name }: Props) => {
   return (
     <Circle crop size={size}>
       {isLedger ? (
-        <LedgerLogo size={size * 0.7} color={colors.text} />
+        <LedgerLogo size={size * 0.7} color={colors.neutral.c100} />
       ) : (
         <FirstLetterIcon label={name ?? "-"} round size={size} fontSize={24} />
       )}

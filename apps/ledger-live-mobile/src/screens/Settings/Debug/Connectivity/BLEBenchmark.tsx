@@ -7,7 +7,7 @@ import * as scale from "d3-scale";
 import maxBy from "lodash/maxBy";
 import Svg, { Path } from "react-native-svg";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { Slider } from "@ledgerhq/native-ui";
 import LText from "../../../../components/LText";
 import TranslatedError from "../../../../components/TranslatedError";
@@ -48,7 +48,7 @@ function GraphComponent({ width, height, data }: GraphProps) {
     .curve(shape.curveLinear)(points);
   return (
     <Svg height={height} width={width}>
-      <Path d={line as string} stroke={colors.live} strokeWidth={4} fill="none" />
+      <Path d={line as string} stroke={colors.primary.c80} strokeWidth={4} fill="none" />
     </Svg>
   );
 }

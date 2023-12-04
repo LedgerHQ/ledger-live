@@ -49,7 +49,7 @@ class ConfirmationModal extends PureComponent<Props> {
       iconMarginBottom,
       ...rest
     } = this.props;
-    const iColor = iconColor || colors.live;
+    const iColor = iconColor || colors.primary.c80;
     return (
       <QueuedDrawer
         isRequestingToBeOpened={isOpened}
@@ -81,7 +81,7 @@ class ConfirmationModal extends PureComponent<Props> {
           </LText>
         )}
         {confirmationDesc && (
-          <LText style={styles.confirmationDesc} color="smoke">
+          <LText style={styles.confirmationDesc} color="neutral.c60">
             {confirmationDesc}
           </LText>
         )}

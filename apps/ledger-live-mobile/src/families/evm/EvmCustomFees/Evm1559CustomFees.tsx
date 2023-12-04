@@ -4,7 +4,7 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getGasLimit } from "@ledgerhq/coin-evm/logic";
 import type { EvmTransactionEIP1559 } from "@ledgerhq/coin-evm/types/index";
 import { Account } from "@ledgerhq/types-live";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { memo, useCallback, useMemo, useState } from "react";
@@ -129,7 +129,7 @@ const Evm1559CustomFees = ({
         </LText>
       </LText>
       {maxPriorityFeeWarning ? (
-        <LText style={styles.warning} color="orange">
+        <LText style={styles.warning} color="warning.c60">
           {t(`errors.${maxPriorityFeeWarning.name}.title`)}
         </LText>
       ) : null}
@@ -153,7 +153,7 @@ const Evm1559CustomFees = ({
         <LText color="palette.neutral.c90">{nextBaseFeeValue}</LText>
       </LText>
       {maxFeeWarning ? (
-        <LText style={styles.warning} color="orange">
+        <LText style={styles.warning} color="warning.c60">
           {t(`errors.${maxFeeWarning.name}.title`)}
         </LText>
       ) : null}
@@ -163,7 +163,7 @@ const Evm1559CustomFees = ({
         </LText>
       ) : null}
 
-      <SectionSeparator style={styles.sectionSeparator} lineColor={colors.fog} />
+      <SectionSeparator style={styles.sectionSeparator} lineColor={colors.neutral.c70} />
 
       <View style={styles.container}>
         <EvmGasLimit

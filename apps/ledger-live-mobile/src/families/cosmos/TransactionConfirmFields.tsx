@@ -7,7 +7,7 @@ import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/families/cosmos/types";
 import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
 import { mapDelegationInfo } from "@ledgerhq/live-common/families/cosmos/logic";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import LText from "../../components/LText";
 import { DataRow, TextValueField } from "../../components/ValidateOnDeviceDataRow";
 import Info from "../../icons/Info";
@@ -35,7 +35,7 @@ function CosmosDelegateValidatorsField({ account, transaction }: FieldProps) {
         value={
           <View style={styles.lineLabel}>
             <LText semiBold>{shortAddressPreview(address)}</LText>
-            <LText style={styles.validatorLabel} color="grey">
+            <LText style={styles.validatorLabel} color="neutral.c70">
               {validator?.name ?? null}
             </LText>
           </View>
@@ -77,8 +77,8 @@ function Warning({ transaction }: FieldProps) {
     case "undelegate":
       return (
         <DataRow>
-          <Info size={22} color={colors.live} />
-          <LText semiBold style={[styles.text, styles.infoText]} color="live" numberOfLines={3}>
+          <Info size={22} color={colors.primary.c80} />
+          <LText semiBold style={[styles.text, styles.infoText]} color="primary.c70" numberOfLines={3}>
             {t(`ValidateOnDevice.infoWording.cosmos.${transaction.mode}`)}
           </LText>
         </DataRow>

@@ -48,7 +48,7 @@ function EmptyStatePortfolio({ showHelp = true }: Props) {
     <>
       {showHelp ? (
         <Flex alignSelf="flex-end" mx={6}>
-          <HelpLink url={hasInstalledAnyApp ? urls.addAccount : urls.goToManager} color="grey" />
+          <HelpLink url={hasInstalledAnyApp ? urls.addAccount : urls.goToManager} color="neutral.c70" />
         </Flex>
       ) : null}
       <Flex flex={1} flexDirection="column" justifyContent="center" bg="background.main">

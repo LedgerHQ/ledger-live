@@ -3,7 +3,8 @@ import invariant from "invariant";
 import React, { useState, useCallback } from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { Keyboard, StyleSheet, View, SafeAreaView } from "react-native";
-import { CompositeScreenProps, useTheme } from "@react-navigation/native";
+import { CompositeScreenProps } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useSelector } from "react-redux";
 import Button from "../../components/Button";
@@ -74,7 +75,7 @@ function BitcoinEditCustomFees({ navigation, route }: Props) {
         style={[
           styles.body,
           {
-            backgroundColor: colors.background,
+            backgroundColor: colors.background.main,
           },
         ]}
       >
@@ -85,7 +86,7 @@ function BitcoinEditCustomFees({ navigation, route }: Props) {
               style={[
                 styles.textInputAS,
                 {
-                  color: colors.darkBlue,
+                  color: colors.neutral.c90,
                 },
               ]}
               keyboardType="number-pad"
@@ -99,7 +100,7 @@ function BitcoinEditCustomFees({ navigation, route }: Props) {
               style={[
                 styles.currency,
                 {
-                  color: colors.grey,
+                  color: colors.neutral.c70,
                 },
               ]}
             >

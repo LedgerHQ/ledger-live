@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";

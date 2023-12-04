@@ -22,7 +22,7 @@ export default function NoOpStatePortfolio() {
         <LText secondary semiBold style={styles.title}>
           {<Trans i18nKey="portfolio.noOpState.title" />}
         </LText>
-        <LText style={styles.desc} color="grey">
+        <LText style={styles.desc} color="neutral.c70">
           {<Trans i18nKey="portfolio.noOpState.desc" />}
         </LText>
         <Button

@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import Circle from "./Circle";
 
 type Props = {
@@ -23,7 +23,7 @@ function BluetoothDisabledIcon({ children, bg, floatingIcon, floatingBg, size = 
           style={[
             styles.floating,
             {
-              borderColor: colors.white,
+              borderColor: colors.neutral.c20,
             },
           ]}
         >

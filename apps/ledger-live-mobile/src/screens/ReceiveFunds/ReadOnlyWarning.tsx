@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import TrackScreen from "../../analytics/TrackScreen";
 import LText from "../../components/LText";
 import Button from "../../components/Button";
@@ -18,18 +18,18 @@ function ReadOnlyWarning({ continue: onContinue }: Props) {
       style={[
         styles.root,
         {
-          backgroundColor: colors.card,
+          backgroundColor: colors.background.drawer,
         },
       ]}
     >
       <TrackScreen category="Deposit" name="ReadOnlyNanoX" />
       <View style={styles.alert}>
-        <AlertTriangle size={32} color={colors.live} />
+        <AlertTriangle size={32} color={colors.primary.c80} />
       </View>
       <LText secondary semiBold style={styles.title}>
         <Trans i18nKey="transfer.receive.readOnly.text" />
       </LText>
-      <LText style={styles.desc} color="grey">
+      <LText style={styles.desc} color="neutral.c70">
         <Trans i18nKey="transfer.receive.readOnly.desc" />
       </LText>
       <Button

@@ -2,7 +2,8 @@ import React, { memo } from "react";
 import { RectButton } from "react-native-gesture-handler";
 import { View, StyleSheet, Platform, StyleProp, ViewStyle } from "react-native";
 import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
-import { useTheme, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { NFTMetadata, ProtoNFT } from "@ledgerhq/types-live";
 import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import { useTranslation } from "react-i18next";
@@ -39,7 +40,7 @@ const NftCardView = ({
         style={[
           styles.card,
           {
-            backgroundColor: colors.card,
+            backgroundColor: colors.background.drawer,
           },
         ]}
         onPress={() => {
@@ -61,7 +62,7 @@ const NftCardView = ({
           <Skeleton style={styles.tokenNameSkeleton} loading={loading}>
             <LText
               semiBold
-              color={colors.text}
+              color={colors.neutral.c100}
               ellipsizeMode="tail"
               numberOfLines={2}
               style={styles.tokenName}
@@ -72,7 +73,7 @@ const NftCardView = ({
         </View>
         <View style={styles.footer}>
           <LText
-            style={[styles.tokenId, { color: colors.grey }]}
+            style={[styles.tokenId, { color: colors.neutral.c70 }]}
             ellipsizeMode="middle"
             numberOfLines={1}
           >
@@ -81,7 +82,7 @@ const NftCardView = ({
           {amount > "1" ? (
             <LText
               semiBold
-              style={[styles.amount, { color: colors.grey }]}
+              style={[styles.amount, { color: colors.neutral.c70 }]}
               ellipsizeMode="middle"
               numberOfLines={1}
             >

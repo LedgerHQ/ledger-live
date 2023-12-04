@@ -1,7 +1,8 @@
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View, Linking } from "react-native";
-import { useNavigation, useTheme, ParamListBase, RouteProp } from "@react-navigation/native";
+import { useNavigation, ParamListBase, RouteProp } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { differenceInCalendarDays } from "date-fns";
 import {
   getDefaultExplorerView,
@@ -110,12 +111,12 @@ const Property = ({
       style={[
         styles.propertyRow,
         {
-          borderBottomColor: colors.lightFog,
+          borderBottomColor: colors.neutral.c20,
         },
         last ? styles.propertyRowLast : null,
       ]}
     >
-      <LText semiBold style={styles.propertyLabel} color="smoke">
+      <LText semiBold style={styles.propertyLabel} color="neutral.c60">
         {label}
       </LText>
       <View style={styles.propertyBody}>{children}</View>
@@ -223,7 +224,7 @@ export default function DelegationDetailsModal({
             <CurrencyUnitValue showCode unit={unit} value={amount} />
           </LText>
 
-          <LText semiBold style={styles.counterValue} color="grey">
+          <LText semiBold style={styles.counterValue} color="neutral.c70">
             <CounterValue showCode currency={currency} value={amount} />
           </LText>
         </View>
@@ -245,7 +246,7 @@ export default function DelegationDetailsModal({
               <LText
                 semiBold
                 style={[styles.propertyValueText]}
-                color="live"
+                color="primary.c70"
                 numberOfLines={1}
                 ellipsizeMode="middle"
               >
@@ -283,7 +284,7 @@ export default function DelegationDetailsModal({
               <LText
                 semiBold
                 style={[styles.propertyValueText]}
-                color="live"
+                color="primary.c70"
                 numberOfLines={1}
                 ellipsizeMode="middle"
               >
@@ -299,8 +300,8 @@ export default function DelegationDetailsModal({
               event="DelegationDetailsReceive"
               label={<Trans i18nKey="delegation.receive" />}
               icon={
-                <Circle bg={rgba(colors.live, 0.2)} size={48}>
-                  <IconReceive size={16} color={colors.live} />
+                <Circle bg={rgba(colors.primary.c80, 0.2)} size={48}>
+                  <IconReceive size={16} color={colors.primary.c80} />
                 </Circle>
               }
               onPress={onReceive}
@@ -309,8 +310,8 @@ export default function DelegationDetailsModal({
               event="DelegationDetailsChangeValidator"
               label={<Trans i18nKey="delegation.changeValidator" />}
               icon={
-                <Circle bg={rgba(colors.live, 0.2)} size={48}>
-                  <Icon size={16} name="edit-2" color={colors.live} />
+                <Circle bg={rgba(colors.primary.c80, 0.2)} size={48}>
+                  <Icon size={16} name="edit-2" color={colors.primary.c80} />
                 </Circle>
               }
               onPress={onChangeValidator}
@@ -319,11 +320,11 @@ export default function DelegationDetailsModal({
               event="DelegationDetailsUndelegate"
               label={<Trans i18nKey="delegation.endDelegation" />}
               icon={
-                <Circle bg={rgba(colors.alert, 0.2)} size={48}>
+                <Circle bg={rgba(colors.error.c60, 0.2)} size={48}>
                   <View
                     style={{
                       borderRadius: 4,
-                      backgroundColor: colors.alert,
+                      backgroundColor: colors.error.c60,
                       width: 16,
                       height: 16,
                     }}

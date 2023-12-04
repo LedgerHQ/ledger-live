@@ -3,7 +3,6 @@ import { DefaultTheme } from "styled-components/native";
 import { NavigationHeaderCloseButtonAdvanced } from "../components/NavigationHeaderCloseButton";
 import HeaderTitle, { Props as HeaderTitleProps } from "../components/HeaderTitle";
 import styles from "./styles";
-import { Theme } from "../colors";
 import { NavigationHeaderBackImage } from "../components/NavigationHeaderBackButton";
 
 export const defaultNavigationOptions = {
@@ -14,28 +13,23 @@ export const defaultNavigationOptions = {
   headerTitleAllowFontScaling: false,
 };
 
-type ColorV2 = Theme["colors"];
 type ColorV3 = DefaultTheme["colors"];
 
-export const getStackNavigatorConfig = (
-  c: ColorV2 | ColorV3,
-  closable = false,
-  onClose?: () => void,
-) => ({
+export const getStackNavigatorConfig = (c: ColorV3, closable = false, onClose?: () => void) => ({
   ...defaultNavigationOptions,
   cardStyle: {
-    backgroundColor: (c as ColorV3).background?.main || (c as ColorV2).background,
+    backgroundColor: c.background?.main,
   },
   headerStyle: {
-    backgroundColor: (c as ColorV3).background?.main || (c as ColorV2).background,
-    borderBottomColor: (c as ColorV3).neutral?.c40 || (c as ColorV2).white,
+    backgroundColor: c.background?.main,
+    borderBottomColor: c.neutral?.c40,
     // borderBottomWidth: 1,
     elevation: 0, // remove shadow on Android
     shadowOpacity: 0, // remove shadow on iOS
   },
   headerTitleAlign: "center" as const,
   headerTitleStyle: {
-    color: (c as ColorV3).neutral?.c100 || (c as ColorV2).darkBlue,
+    color: c.neutral?.c100,
   },
   headerRight: closable
     ? () => <NavigationHeaderCloseButtonAdvanced onClose={onClose} />

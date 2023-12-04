@@ -1,4 +1,4 @@
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import React from "react";
 import Svg, { Rect } from "react-native-svg";
 
@@ -8,7 +8,7 @@ type Props = {
 };
 export default function NanoDeviceCheckIcon({ size = 16, color: c }: Props) {
   const { colors } = useTheme();
-  const color = c || colors.live;
+  const color = c || colors.primary.c80;
   return (
     <Svg width={size} height={size} viewBox="0 0 12 12" fill="none">
       <Rect width="12" height="12" rx="1" fill={color} fillOpacity="0.2" />

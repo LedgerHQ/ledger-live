@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { View, StyleSheet } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import TranslatedError from "./TranslatedError";
 import LText from "./LText";
 
@@ -16,14 +16,14 @@ function HeaderErrorTitle({ error, withDescription }: Props) {
     <View style={styles.root}>
       <View style={styles.titleContainer}>
         <LText style={styles.icon}>
-          <Icon name="x-circle" size={16} color={colors.alert} />
+          <Icon name="x-circle" size={16} color={colors.error.c60} />
         </LText>
-        <LText numberOfLines={2} secondary style={styles.title} semiBold color="alert">
+        <LText numberOfLines={2} secondary style={styles.title} semiBold color="error.c60">
           <TranslatedError error={error} />
         </LText>
       </View>
       {withDescription ? (
-        <LText secondary style={styles.description} color="alert" numberOfLines={2}>
+        <LText secondary style={styles.description} color="error.c60" numberOfLines={2}>
           <TranslatedError error={error} field="description" />
         </LText>
       ) : null}

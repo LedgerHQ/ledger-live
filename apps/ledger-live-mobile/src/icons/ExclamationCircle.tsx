@@ -1,6 +1,6 @@
 import React from "react";
 import Svg, { Defs, Mask, Use, Path, G } from "react-native-svg";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 
 type Props = {
   size: number;
@@ -20,7 +20,7 @@ export default function ExclamationCircle({ size = 16, color }: Props) {
         <Mask id="b" fill="#fff">
           <Use xlinkHref="#a" />
         </Mask>
-        <G fill={color || colors.alert} mask="url(#b)">
+        <G fill={color || colors.error.c60} mask="url(#b)">
           <Path d="M0 0h24v24H0z" />
         </G>
       </G>

@@ -1,7 +1,8 @@
 import { BigNumber } from "bignumber.js";
 import React, { useCallback, useState, useMemo } from "react";
 import { View, StyleSheet, Linking } from "react-native";
-import { useNavigation, useTheme } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { Trans, useTranslation } from "react-i18next";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
@@ -147,7 +148,7 @@ function Delegations({ account }: Props) {
                 semiBold
                 ellipsizeMode="middle"
                 style={[styles.valueText]}
-                color="live"
+                color="primary.c70"
               >
                 {getValidatorName(v) ?? ""}
               </LText>
@@ -165,7 +166,7 @@ function Delegations({ account }: Props) {
                   semiBold
                   ellipsizeMode="middle"
                   style={[styles.valueText]}
-                  color="live"
+                  color="primary.c70"
                 >
                   {v.validatorGroup}
                 </LText>
@@ -180,7 +181,7 @@ function Delegations({ account }: Props) {
                 semiBold
                 ellipsizeMode="middle"
                 style={[styles.valueText]}
-                color="live"
+                color="primary.c70"
               >
                 {account.name}{" "}
               </LText>
@@ -194,26 +195,30 @@ function Delegations({ account }: Props) {
                 semiBold
                 ellipsizeMode="middle"
                 style={[styles.valueText]}
-                color="live"
+                color="primary.c70"
               >
                 {!!(status === "active") && (
                   <>
                     {" "}
-                    <CheckCircle color={colors.green} size={14} style={styles.icon} />{" "}
+                    <CheckCircle color={colors.success.c70} size={14} style={styles.icon} />{" "}
                     <Trans i18nKey={"celo.revoke.vote.active"} />{" "}
                   </>
                 )}
                 {!!(status === "awaitingActivation") && (
                   <>
                     {" "}
-                    <Loader color={colors.warning} size={14} style={styles.icon} />{" "}
+                    <Loader color={colors.warning.c60} size={14} style={styles.icon} />{" "}
                     <Trans i18nKey={"celo.revoke.vote.awaitingActivation"} />{" "}
                   </>
                 )}
                 {!!(status === "pending") && (
                   <>
                     {" "}
-                    <Loader color={rgba(colors.grey, 0.8)} size={14} style={styles.icon} />{" "}
+                    <Loader
+                      color={rgba(colors.neutral.c70, 0.8)}
+                      size={14}
+                      style={styles.icon}
+                    />{" "}
                     <Trans i18nKey={"celo.revoke.vote.pending"} />{" "}
                   </>
                 )}
@@ -241,9 +246,9 @@ function Delegations({ account }: Props) {
     t,
     getValidatorName,
     account,
-    colors.green,
-    colors.warning,
-    colors.grey,
+    colors.success.c70,
+    colors.warning.c60,
+    colors.neutral.c70,
     onOpenExplorer,
   ]);
 
@@ -266,10 +271,10 @@ function Delegations({ account }: Props) {
         {
           Icon: (props: IconProps) => (
             <View style={styles.expandedInfo}>
-              <Circle {...props} bg={colors.lightFog}>
-                <Info color={colors.grey} size={24} />
+              <Circle {...props} bg={colors.neutral.c20}>
+                <Info color={colors.neutral.c70} size={24} />
               </Circle>
-              <LText color={colors.grey} style={styles.expandedInfoText}>
+              <LText color={colors.neutral.c70} style={styles.expandedInfoText}>
                 <Trans i18nKey="celo.delegation.manageMultipleVoteWarning" />
               </LText>
             </View>
@@ -288,9 +293,12 @@ function Delegations({ account }: Props) {
           {
             label: t("celo.delegation.actions.activate"),
             Icon: (props: IconProps) => (
-              <Circle {...props} bg={activateEnabled ? colors.lightFog : rgba(colors.grey, 0.2)}>
+              <Circle
+                {...props}
+                bg={activateEnabled ? colors.neutral.c20 : rgba(colors.neutral.c70, 0.2)}
+              >
                 <NominateIcon
-                  color={activateEnabled ? colors.grey : rgba(colors.grey, 0.2)}
+                  color={activateEnabled ? colors.neutral.c70 : rgba(colors.neutral.c70, 0.2)}
                   size={24}
                 />
               </Circle>
@@ -302,9 +310,12 @@ function Delegations({ account }: Props) {
           {
             label: t("celo.delegation.actions.revoke"),
             Icon: (props: IconProps) => (
-              <Circle {...props} bg={revokeEnabled ? colors.lightFog : rgba(colors.grey, 0.2)}>
+              <Circle
+                {...props}
+                bg={revokeEnabled ? colors.neutral.c20 : rgba(colors.neutral.c70, 0.2)}
+              >
                 <RevokeIcon
-                  color={revokeEnabled ? colors.grey : rgba(colors.grey, 0.2)}
+                  color={revokeEnabled ? colors.neutral.c70 : rgba(colors.neutral.c70, 0.2)}
                   size={24}
                 />
               </Circle>
@@ -315,7 +326,7 @@ function Delegations({ account }: Props) {
           },
         ]
       : [];
-  }, [vote, t, onActivate, onRevoke, colors.lightFog, colors.grey]);
+  }, [vote, t, onActivate, onRevoke, colors.neutral.c20, colors.neutral.c70]);
 
   return (
     <View style={styles.root}>

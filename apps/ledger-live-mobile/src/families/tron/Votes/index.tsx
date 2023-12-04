@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { Trans, useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import { getAccountUnit, getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
@@ -111,23 +111,23 @@ const Delegation = ({ account }: Props) => {
                 <View style={{ marginBottom: 24 }}>
                   <TouchableOpacity
                     disabled={true}
-                    style={[styles.warn, { backgroundColor: colors.lightLive }]}
+                    style={[styles.warn, { backgroundColor: colors.opacityPurple.c10 }]}
                   >
                     <ProgressCircle
                       size={60}
                       progress={percentVotesUsed}
-                      backgroundColor={colors.fog}
+                      backgroundColor={colors.neutral.c70}
                     />
                     <View style={styles.warnSection}>
                       <LText semiBold style={[styles.warnText, styles.warnTitle]}>
                         <Trans i18nKey="tron.voting.remainingVotes.title" />
                       </LText>
-                      <LText style={styles.warnText} color="live">
+                      <LText style={styles.warnText} color="primary.c70">
                         <Trans i18nKey="tron.voting.remainingVotes.description" />
                       </LText>
                     </View>
 
-                    <ArrowRight size={16} color={colors.live} />
+                    <ArrowRight size={16} color={colors.primary.c80} />
                   </TouchableOpacity>
                 </View>
               )}

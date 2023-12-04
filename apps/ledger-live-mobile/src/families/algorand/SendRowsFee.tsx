@@ -6,7 +6,8 @@ import type { Transaction as AlgorandTransaction } from "@ledgerhq/live-common/f
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { getAccountUnit, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
-import { CompositeScreenProps, useTheme } from "@react-navigation/native";
+import { CompositeScreenProps } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
 import LText from "../../components/LText";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
@@ -47,7 +48,7 @@ export default function AlgorandFeeRow({ account, parentAccount, transaction }: 
       title={<Trans i18nKey="send.fees.title" />}
       additionalInfo={
         <View>
-          <ExternalLink size={12} color={colors.grey} />
+          <ExternalLink size={12} color={colors.neutral.c70} />
         </View>
       }
     >
@@ -63,7 +64,7 @@ export default function AlgorandFeeRow({ account, parentAccount, transaction }: 
             </LText>
           ) : null}
         </View>
-        <LText style={styles.countervalue} color="grey">
+        <LText style={styles.countervalue} color="neutral.c70">
           {fees ? <CounterValue before="≈ " value={fees} currency={currency} /> : null}
         </LText>
       </View>

@@ -199,7 +199,7 @@ export const lottieAnimations = {
 const recoveryWarningInfoModalProps = [
   {
     Icon: WarningOutline,
-    iconColor: "orange",
+    iconColor: "warning.c60",
     title: <Trans i18nKey="onboarding.warning.recoveryPhrase.title" />,
     desc: <Trans i18nKey="onboarding.warning.recoveryPhrase.desc" />,
     link: {
@@ -217,56 +217,56 @@ const pinCodeInfoModalProps = [
         label: (
           <Trans i18nKey="onboarding.stepSetupDevice.pinCodeSetup.infoModal.bullets.0.label" />
         ),
-        color: "success",
+        color: "success.c60",
       },
       {
         Icon: Check,
         label: (
           <Trans i18nKey="onboarding.stepSetupDevice.pinCodeSetup.infoModal.bullets.1.label" />
         ),
-        color: "success",
+        color: "success.c60",
       },
       {
         Icon: Check,
         label: (
           <Trans i18nKey="onboarding.stepSetupDevice.pinCodeSetup.infoModal.bullets.2.label" />
         ),
-        color: "success",
+        color: "success.c60",
       },
       {
         Icon: Check,
         label: (
           <Trans i18nKey="onboarding.stepSetupDevice.pinCodeSetup.infoModal.bullets.3.label" />
         ),
-        color: "success",
+        color: "success.c60",
       },
       {
         Icon: Check,
         label: (
           <Trans i18nKey="onboarding.stepSetupDevice.pinCodeSetup.infoModal.bullets.4.label" />
         ),
-        color: "success",
+        color: "success.c60",
       },
       {
         Icon: Close,
         label: (
           <Trans i18nKey="onboarding.stepSetupDevice.pinCodeSetup.infoModal.bullets.5.label" />
         ),
-        color: "alert",
+        color: "error.c60",
       },
       {
         Icon: Close,
         label: (
           <Trans i18nKey="onboarding.stepSetupDevice.pinCodeSetup.infoModal.bullets.6.label" />
         ),
-        color: "alert",
+        color: "error.c60",
       },
       {
         Icon: Close,
         label: (
           <Trans i18nKey="onboarding.stepSetupDevice.pinCodeSetup.infoModal.bullets.7.label" />
         ),
-        color: "alert",
+        color: "error.c60",
       },
     ],
   },

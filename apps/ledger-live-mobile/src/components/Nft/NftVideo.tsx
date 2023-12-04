@@ -2,10 +2,11 @@ import React from "react";
 import Video, { OnLoadData, VideoProperties } from "react-native-video";
 import { View, StyleSheet, Animated, StyleProp, ViewStyle, Platform } from "react-native";
 import { ResizeMode } from "react-native-fast-image";
-import { Theme, withTheme } from "../../colors";
+import { withTheme } from "../../colors";
 import Skeleton from "../Skeleton";
 import NftImage from "./NftImage";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { PaletteType } from "~/StyleProvider";
 
 const isAndroid = Platform.OS === "android";
 
@@ -15,7 +16,7 @@ type Props = {
   src: string;
   srcFallback: string;
   resizeMode?: VideoProperties["resizeMode"] & ResizeMode;
-  colors: Theme["colors"];
+  colors: PaletteType;
   children?: React.ReactNode | null;
   transparency?: boolean;
 };
@@ -96,7 +97,7 @@ class NftVideo extends React.PureComponent<Props> {
                   styles.video,
                   !transparency
                     ? {
-                        backgroundColor: colors.white,
+                        backgroundColor: colors.neutral.c20,
                       }
                     : {},
                 ]}

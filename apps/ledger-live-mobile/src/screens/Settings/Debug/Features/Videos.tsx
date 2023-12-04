@@ -2,7 +2,7 @@ import React, { ComponentProps, useState } from "react";
 import { StyleSheet, ScrollView, Pressable } from "react-native";
 import Modal from "react-native-modal";
 import { Edge, SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import Video from "react-native-video";
 import { Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import Button from "../../../../components/Button";
@@ -42,7 +42,7 @@ const DebugVideos = () => {
       style={[
         styles.root,
         {
-          backgroundColor: colors.background,
+          backgroundColor: colors.background.main,
         },
       ]}
     >
@@ -123,7 +123,7 @@ const DebugVideos = () => {
               >
                 {key}
               </Text>
-              {selectedIndex === i && <Check size={16} color={colors.live} />}
+              {selectedIndex === i && <Check size={16} color={colors.primary.c80} />}
             </Touchable>
           ))}
         </ScrollView>

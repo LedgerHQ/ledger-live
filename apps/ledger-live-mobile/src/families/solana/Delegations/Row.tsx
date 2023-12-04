@@ -3,7 +3,7 @@ import { SolanaStakeWithMeta } from "@ledgerhq/live-common/families/solana/types
 import { sweetch } from "@ledgerhq/live-common/families/solana/utils";
 import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { Text } from "@ledgerhq/native-ui";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { BigNumber } from "bignumber.js";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -39,8 +39,10 @@ export default function DelegationRow({
       style={[
         styles.row,
         styles.wrapper,
-        { backgroundColor: colors.card },
-        !isLast ? { ...styles.borderBottom, borderBottomColor: colors.lightGrey } : undefined,
+        { backgroundColor: colors.background.drawer },
+        !isLast
+          ? { ...styles.borderBottom, borderBottomColor: colors.opacityDefault.c05 }
+          : undefined,
       ]}
       onPress={() => onPress(stakeWithMeta)}
     >
@@ -64,18 +66,18 @@ export default function DelegationRow({
           </Text>
 
           {sweetch(stake.activation.state, {
-            activating: <Clock size={12} color={colors.orange} />,
-            deactivating: <Clock size={12} color={colors.orange} />,
-            active: <CheckCircle size={12} color={colors.green} />,
-            inactive: <ExclamationCircle size={14} color={colors.alert} />,
+            activating: <Clock size={12} color={colors.warning.c70} />,
+            deactivating: <Clock size={12} color={colors.warning.c70} />,
+            active: <CheckCircle size={12} color={colors.success.c70} />,
+            inactive: <ExclamationCircle size={14} color={colors.error.c60} />,
           })}
         </View>
 
         <View style={styles.row}>
-          <Text style={styles.seeMore} color="live">
+          <Text style={styles.seeMore} color="primary.c70">
             {t("common.seeMore")}
           </Text>
-          <ArrowRight color={colors.live} size={14} />
+          <ArrowRight color={colors.primary.c80} size={14} />
         </View>
       </View>
 
@@ -91,7 +93,7 @@ export default function DelegationRow({
           )}
         </Text>
 
-        <Text color="grey">
+        <Text color="neutral.c70">
           <CounterValue
             currency={currency}
             showCode={true}

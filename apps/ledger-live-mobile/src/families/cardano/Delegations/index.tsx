@@ -1,6 +1,7 @@
 import React, { useCallback, useState, useMemo } from "react";
 import { View, StyleSheet, Linking } from "react-native";
-import { useNavigation, useTheme } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
 import { getAccountUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
 import type {
@@ -120,7 +121,7 @@ function Delegations({ account }: Props) {
                 semiBold
                 ellipsizeMode="middle"
                 style={[styles.valueText]}
-                color="live"
+                color="primary.c70"
               >
                 {d.name ?? d.poolId ?? ""}
               </LText>
@@ -135,7 +136,7 @@ function Delegations({ account }: Props) {
                   semiBold
                   ellipsizeMode="middle"
                   style={[styles.valueText]}
-                  color="live"
+                  color="primary.c70"
                 >
                   {d.poolId}
                 </LText>
@@ -150,7 +151,7 @@ function Delegations({ account }: Props) {
                 semiBold
                 ellipsizeMode="middle"
                 style={[styles.valueText]}
-                color="live"
+                color="primary.c70"
               >
                 {account.name}{" "}
               </LText>
@@ -164,7 +165,7 @@ function Delegations({ account }: Props) {
                 semiBold
                 ellipsizeMode="middle"
                 style={[styles.valueText]}
-                color="live"
+                color="primary.c70"
               >
                 {d.status
                   ? t("cardano.delegation.drawer.active")
@@ -193,7 +194,7 @@ function Delegations({ account }: Props) {
       {
         label: t("delegation.actions.redelegate"),
         Icon: (props: IconProps) => (
-          <Circle {...props} bg={colors.fog}>
+          <Circle {...props} bg={colors.neutral.c70}>
             <RedelegateIcon color={undefined} />
           </Circle>
         ),
@@ -204,7 +205,7 @@ function Delegations({ account }: Props) {
       {
         label: t("delegation.actions.undelegate"),
         Icon: (props: IconProps) => (
-          <Circle {...props} bg={rgba(colors.alert, 0.2)}>
+          <Circle {...props} bg={rgba(colors.error.c60, 0.2)}>
             <UndelegateIcon />
           </Circle>
         ),
@@ -213,7 +214,7 @@ function Delegations({ account }: Props) {
         event: "DelegationActionUndelegate",
       },
     ];
-  }, [t, onRedelegate, onUndelegate, colors.alert, colors.fog]);
+  }, [t, onRedelegate, onUndelegate, colors.error.c60, colors.neutral.c70]);
 
   return (
     <View style={styles.root}>

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { RefreshControl } from "react-native";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { useBridgeSync, useAccountSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import { useCountervaluesPolling } from "@ledgerhq/live-common/countervalues/react";
 import { SYNC_DELAY } from "@utils/constants";
@@ -17,7 +17,7 @@ export default <P,>(ScrollListLike: React.ComponentType<P>) => {
     const { pending: isPending } = useAccountSyncState({
       accountId,
     });
-    const { colors, dark } = useTheme();
+    const { colors, palette } = useTheme();
     const setSyncBehavior = useBridgeSync();
     const { poll } = useCountervaluesPolling();
     const [lastClickTime, setLastClickTime] = useState(0);
@@ -59,9 +59,11 @@ export default <P,>(ScrollListLike: React.ComponentType<P>) => {
           <RefreshControl
             refreshing={isLoading}
             onRefresh={onPress}
-            progressBackgroundColor={dark ? colors.background : colors.card}
-            colors={[colors.live]}
-            tintColor={colors.live}
+            progressBackgroundColor={
+              palette === "dark" ? colors.background.main : colors.background.drawer
+            }
+            colors={[colors.primary.c80]}
+            tintColor={colors.primary.c80}
           />
         }
       />

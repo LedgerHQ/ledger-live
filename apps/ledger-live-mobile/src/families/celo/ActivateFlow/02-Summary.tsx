@@ -4,7 +4,7 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import { useValidatorGroups } from "@ledgerhq/live-common/families/celo/react";
 import { CeloValidatorGroup, CeloAccount } from "@ledgerhq/live-common/families/celo/types";
 import { activatableVotes } from "@ledgerhq/live-common/families/celo/logic";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import invariant from "invariant";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { Trans } from "react-i18next";
@@ -108,7 +108,7 @@ export default function ActivateSummary({ navigation, route }: Props) {
     status.warnings && Object.keys(status.warnings).length > 0 && Object.values(status.warnings)[0];
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background.main}]}>
       <TrackScreen
         category="ActivateFlow"
         name="Summary"

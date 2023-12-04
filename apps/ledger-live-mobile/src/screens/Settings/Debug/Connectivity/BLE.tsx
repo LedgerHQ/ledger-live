@@ -16,7 +16,7 @@ import type { Log } from "@ledgerhq/logs";
 import { bufferTime, shareReplay } from "rxjs/operators";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import { disconnect } from "@ledgerhq/live-common/hw/index";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { Button, IconsLegacy } from "@ledgerhq/native-ui";
 import BluetoothTransport from "@ledgerhq/react-native-hw-transport-ble";
 import LText from "../../../../components/LText";
@@ -44,11 +44,11 @@ const styles = StyleSheet.create({
 });
 
 const mapLogToColor = (colors: Theme["colors"], log: Log) => {
-  if (log.type.includes("error")) return colors.alert;
-  if (log.type === "verbose") return colors.grey;
-  if (log.type.includes("frame")) return colors.live;
-  if (log.type.includes("apdu")) return colors.success;
-  return colors.darkBlue;
+  if (log.type.includes("error")) return colors.error.c60;
+  if (log.type === "verbose") return colors.neutral.c70;
+  if (log.type.includes("frame")) return colors.primary.c80;
+  if (log.type.includes("apdu")) return colors.success.c50;
+  return colors.neutral.c90;
 };
 
 const mapLogToText = (log: Log) => log.message;
@@ -62,7 +62,7 @@ function LogItemComponent({ log }: { log: Log }) {
       style={{
         padding: 5,
         borderBottomWidth: 1,
-        borderBottomColor: colors.lightFog,
+        borderBottomColor: colors.neutral.c20,
         flexDirection: "row",
       }}
     >

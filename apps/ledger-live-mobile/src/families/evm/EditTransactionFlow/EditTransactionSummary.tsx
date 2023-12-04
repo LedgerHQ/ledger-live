@@ -14,7 +14,7 @@ import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
 import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import invariant from "invariant";
 import React, { Component, useCallback, useState } from "react";
@@ -156,7 +156,7 @@ function EditTransactionSummary({ navigation, route }: Props) {
       style={[
         styles.root,
         {
-          backgroundColor: colors.background,
+          backgroundColor: colors.background.main,
         },
       ]}
     >
@@ -179,13 +179,13 @@ function EditTransactionSummary({ navigation, route }: Props) {
           style={[
             styles.verticalConnector,
             {
-              borderColor: colors.lightFog,
+              borderColor: colors.neutral.c20,
             },
           ]}
         />
         <SummaryToSection transaction={transaction} currency={mainAccount.currency} />
         {warnings.recipient ? (
-          <LText style={styles.warning} color="orange">
+          <LText style={styles.warning} color="warning.c60">
             <TranslatedError error={warnings.recipient} />
           </LText>
         ) : null}
@@ -198,7 +198,7 @@ function EditTransactionSummary({ navigation, route }: Props) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           route={route as any}
         />
-        <SectionSeparator lineColor={colors.lightFog} />
+        <SectionSeparator lineColor={colors.neutral.c20} />
         {isNFTSend ? (
           <SummaryNft transaction={transaction} currencyId={(account as Account).currency.id} />
         ) : (
@@ -231,7 +231,7 @@ function EditTransactionSummary({ navigation, route }: Props) {
 
         {!amount.eq(totalSpent) ? (
           <>
-            <SectionSeparator lineColor={colors.lightFog} />
+            <SectionSeparator lineColor={colors.neutral.c20} />
             <SummaryTotalSection
               account={mainAccount}
               parentAccount={undefined}
@@ -241,7 +241,7 @@ function EditTransactionSummary({ navigation, route }: Props) {
         ) : null}
       </NavigationScrollView>
       <View style={styles.footer}>
-        <LText style={styles.error} color="alert">
+        <LText style={styles.error} color="error.c60">
           <TranslatedError error={firstError} />
         </LText>
         {firstError && firstError instanceof NotEnoughGas ? (
@@ -274,7 +274,7 @@ function EditTransactionSummary({ navigation, route }: Props) {
         confirmationDesc={
           <Trans i18nKey="send.highFeeModal">
             {"Be careful, your fees represent more than "}
-            <LText color="smoke" bold>
+            <LText color="neutral.c60" bold>
               10%
             </LText>
             {" of the amount. Do you want to continue?"}

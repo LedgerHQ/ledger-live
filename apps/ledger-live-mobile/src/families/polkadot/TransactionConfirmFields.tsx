@@ -6,7 +6,7 @@ import type { Account } from "@ledgerhq/types-live";
 import type { PolkadotValidator, Transaction } from "@ledgerhq/live-common/families/polkadot/types";
 import { usePolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/react";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import LText from "../../components/LText";
 import { DataRow, HeaderRow } from "../../components/ValidateOnDeviceDataRow";
 import InfoIcon from "../../icons/Info";
@@ -71,8 +71,13 @@ const Info = ({ transaction }: FieldProps) => {
     case "rebond":
       return (
         <DataRow>
-          <InfoIcon size={22} color={colors.live} />
-          <LText semiBold style={[styles.text, styles.infoText]} color="live" numberOfLines={3}>
+          <InfoIcon size={22} color={colors.primary.c80} />
+          <LText
+            semiBold
+            style={[styles.text, styles.infoText]}
+            color="primary.c70"
+            numberOfLines={3}
+          >
             {t(`polkadot.${transaction.mode}.steps.confirm.info`)}
           </LText>
         </DataRow>
@@ -90,8 +95,8 @@ const EstimatedFees = ({ account, transaction }: FieldProps) => {
       style={[
         styles.feesWrapper,
         {
-          borderColor: colors.grey,
-          backgroundColor: colors.lightGrey,
+          borderColor: colors.neutral.c70,
+          backgroundColor: colors.opacityDefault.c05,
         },
       ]}
     >

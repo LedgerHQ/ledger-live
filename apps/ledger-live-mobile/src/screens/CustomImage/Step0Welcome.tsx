@@ -5,7 +5,7 @@ import Video from "react-native-video";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useWindowDimensions } from "react-native";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 
 import CustomImageBottomModal from "../../components/CustomImage/CustomImageBottomModal";
 import BottomButtonsContainer from "../../components/CustomImage/BottomButtonsContainer";
@@ -54,7 +54,7 @@ const Step0Welcome: React.FC<
           <Video
             disableFocus
             source={
-              theme.dark
+              theme.palette === "dark"
                 ? videoSources.customLockScreenBannerDark
                 : videoSources.customLockScreenBannerLight
             }

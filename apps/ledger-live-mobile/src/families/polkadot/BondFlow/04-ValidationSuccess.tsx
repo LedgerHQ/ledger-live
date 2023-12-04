@@ -7,7 +7,7 @@ import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import type { Operation } from "@ledgerhq/types-live";
 import { isFirstBond } from "@ledgerhq/live-common/families/polkadot/logic";
 import { usePolkadotBondLoading } from "@ledgerhq/live-common/families/polkadot/react";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { accountScreenSelector } from "../../../reducers/accounts";
@@ -65,7 +65,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
       style={[
         styles.root,
         {
-          backgroundColor: colors.background,
+          backgroundColor: colors.background.main,
         },
       ]}
     >
@@ -92,7 +92,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
                   <LText style={styles.label} semiBold>
                     <Trans i18nKey="polkadot.bond.steps.validation.pending.title" />
                   </LText>
-                  <LText style={[styles.label]} color="grey">
+                  <LText style={[styles.label]} color="neutral.c70">
                     <Trans i18nKey="polkadot.bond.steps.validation.pending.description" />
                   </LText>
                 </View>

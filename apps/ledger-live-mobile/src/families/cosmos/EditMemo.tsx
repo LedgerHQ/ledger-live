@@ -4,7 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import i18next from "i18next";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import KeyboardView from "../../components/KeyboardView";
 import Button from "../../components/Button";
 import { ScreenName } from "../../const";
@@ -38,7 +38,7 @@ function CosmosFamilyEditMemo({ navigation, route }: Props) {
         style={[
           styles.body,
           {
-            backgroundColor: colors.background,
+            backgroundColor: colors.background.main,
           },
         ]}
       >
@@ -49,7 +49,7 @@ function CosmosFamilyEditMemo({ navigation, route }: Props) {
             style={[
               styles.textInputAS,
               {
-                color: colors.darkBlue,
+                color: colors.neutral.c90,
               },
             ]}
             defaultValue={memo || ""}

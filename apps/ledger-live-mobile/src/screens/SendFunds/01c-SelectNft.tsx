@@ -2,7 +2,8 @@ import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getNftCapabilities, useNftMetadata } from "@ledgerhq/live-common/nft/index";
 import { Account, ProtoNFT } from "@ledgerhq/types-live";
-import { useNavigation, useTheme } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import BigNumber from "bignumber.js";
 import React, { memo, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -87,14 +88,14 @@ const NftRow = memo(({ account, nft }: { account: Account; nft: ProtoNFT }) => {
         <LText
           numberOfLines={1}
           ellipsizeMode="middle"
-          style={[styles.tokenId, { color: colors.grey }]}
+          style={[styles.tokenId, { color: colors.neutral.c70 }]}
         >
           {t("common.patterns.id", { value: nft?.tokenId })}
         </LText>
       </View>
       {nftCapabilities.hasQuantity ? (
         <View style={styles.amount}>
-          <LText numberOfLines={1} style={{ color: colors.grey }}>
+          <LText numberOfLines={1} style={{ color: colors.neutral.c70 }}>
             {t("common.patterns.times", { value: nft?.amount?.toFixed() })}
           </LText>
         </View>
@@ -132,7 +133,7 @@ const SendFundsSelectNft = ({ route }: Props) => {
   );
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background.main}]}>
       <FlatList
         contentContainerStyle={styles.nfts}
         data={nftsSlice}

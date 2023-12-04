@@ -23,7 +23,7 @@ export default function Section({
   return (
     <SectionWrapper onPress={onPress} style={style}>
       <View style={styles.titleWrapper}>
-        <LText style={styles.title} color="grey">
+        <LText style={styles.title} color="neutral.c70">
           {title}
         </LText>
         {headerRight}

@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import type { Transaction as PolkadotTransaction } from "@ledgerhq/live-common/families/polkadot/types";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { getAccountUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
@@ -122,7 +122,7 @@ export default function PolkadotUnbondAmount({ navigation, route }: Props) {
         style={[
           styles.root,
           {
-            backgroundColor: colors.background,
+            backgroundColor: colors.background.main,
           },
         ]}
       >
@@ -140,7 +140,7 @@ export default function PolkadotUnbondAmount({ navigation, route }: Props) {
                     <LText
                       semiBold
                       style={[styles.currency]}
-                      color={warning ? "orange" : error ? "alert" : "grey"}
+                      color={warning ? "warning.c60" : error ? "error.c60" : "neutral.c70"}
                     >
                       {unit.code}
                     </LText>
@@ -149,10 +149,10 @@ export default function PolkadotUnbondAmount({ navigation, route }: Props) {
                   inputStyle={[
                     styles.inputStyle,
                     warning && {
-                      color: colors.orange,
+                      color: colors.warning.c70,
                     },
                     error && {
-                      color: colors.alert,
+                      color: colors.error.c60,
                     },
                   ]}
                   hasError={!!error}
@@ -160,7 +160,7 @@ export default function PolkadotUnbondAmount({ navigation, route }: Props) {
                 />
                 <LText
                   style={[styles.fieldStatus]}
-                  color={warning ? "orange" : error ? "alert" : "darkBlue"}
+                  color={warning ? "warning.c60" : error ? "error.c60" : "neutral.c80"}
                   numberOfLines={2}
                 >
                   <TranslatedError error={error || warning} />

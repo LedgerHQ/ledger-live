@@ -3,7 +3,7 @@ import React, { useCallback, useState } from "react";
 import { ScrollView } from "react-native";
 import { useTranslation } from "react-i18next";
 import BigNumber from "bignumber.js";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { usePolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/react";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
@@ -131,28 +131,28 @@ function useInfo(account: PolkadotAccount): Record<InfoName, ModalInfo[]> {
     ],
     locked: [
       {
-        Icon: () => <BondedIcon color={colors.darkBlue} size={18} />,
+        Icon: () => <BondedIcon color={colors.neutral.c90} size={18} />,
         title: t("polkadot.info.locked.title"),
         description: t("polkadot.info.locked.description"),
       },
     ],
     unlocking: [
       {
-        Icon: () => <UnbondingIcon color={colors.darkBlue} size={18} />,
+        Icon: () => <UnbondingIcon color={colors.neutral.c90} size={18} />,
         title: t("polkadot.info.unlocking.title"),
         description: t("polkadot.info.unlocking.description"),
       },
     ],
     unlocked: [
       {
-        Icon: () => <Unbonded color={colors.darkBlue} size={18} />,
+        Icon: () => <Unbonded color={colors.neutral.c90} size={18} />,
         title: t("polkadot.info.unlocked.title"),
         description: t("polkadot.info.unlocked.description"),
       },
     ],
     minBondWarning: [
       {
-        Icon: () => <WarningIcon color={colors.orange} size={18} />,
+        Icon: () => <WarningIcon color={colors.warning.c70} size={18} />,
         title: t("polkadot.info.notEnoughBonded"),
         description: t("polkadot.bondedBalanceBelowMinimum", {
           minimumBondBalance: minimumBondBalanceStr,

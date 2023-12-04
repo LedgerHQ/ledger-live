@@ -5,7 +5,8 @@ import { View, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
 import { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/coin-evm/types/index";
-import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { toLocaleString } from "@ledgerhq/live-common/currencies/index";
 import { Navigation, RouteProps } from "./EvmCustomFees/types";
 import SummaryRow from "../../screens/SendFunds/SummaryRow";
@@ -54,8 +55,8 @@ export default function EvmGasLimit({ account, transaction, gasLimit, setGasLimi
             style={[
               styles.link,
               {
-                color: colors.live,
-                textDecorationColor: colors.live,
+                color: colors.primary.c80,
+                textDecorationColor: colors.primary.c80,
               },
             ]}
             onPress={editGasLimit}

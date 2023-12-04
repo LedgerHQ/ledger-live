@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, memo } from "react";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { StyleSheet, View, Platform, TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
 import type { AppBranch, LiveAppManifest } from "@ledgerhq/live-common/platform/types";
@@ -14,33 +14,33 @@ function getBranchStyle(branch: AppBranch, colors: Theme["colors"]) {
   switch (branch) {
     case "soon":
       return {
-        color: colors.grey,
-        badgeColor: colors.grey,
-        borderColor: colors.lightFog,
-        backgroundColor: colors.lightFog,
+        color: colors.neutral.c70,
+        badgeColor: colors.neutral.c70,
+        borderColor: colors.neutral.c20,
+        backgroundColor: colors.neutral.c20,
       };
 
     case "experimental":
       return {
-        color: colors.darkBlue,
-        badgeColor: colors.orange,
-        borderColor: colors.orange,
+        color: colors.neutral.c90,
+        badgeColor: colors.warning.c70,
+        borderColor: colors.warning.c70,
         backgroundColor: "transparent",
       };
 
     case "debug":
       return {
-        color: colors.darkBlue,
-        badgeColor: colors.grey,
-        borderColor: colors.grey,
+        color: colors.neutral.c90,
+        badgeColor: colors.neutral.c70,
+        borderColor: colors.neutral.c70,
         backgroundColor: "transparent",
       };
 
     default:
       return {
-        color: colors.darkBlue,
-        badgeColor: colors.live,
-        borderColor: colors.live,
+        color: colors.neutral.c90,
+        badgeColor: colors.primary.c80,
+        borderColor: colors.primary.c80,
         backgroundColor: "transparent",
       };
   }
@@ -74,11 +74,11 @@ const AppCard = ({ manifest, onPress }: Props) => {
         style={[
           styles.wrapper,
           {
-            backgroundColor: colors.card,
+            backgroundColor: colors.background.drawer,
             ...Platform.select({
               android: {},
               ios: {
-                shadowColor: colors.black,
+                shadowColor: colors.neutral.c100,
               },
             }),
           },
@@ -121,7 +121,7 @@ const AppCard = ({ manifest, onPress }: Props) => {
             style={[
               styles.description,
               {
-                color: colors.smoke,
+                color: colors.neutral.c70,
               },
             ]}
             numberOfLines={2}
@@ -129,7 +129,7 @@ const AppCard = ({ manifest, onPress }: Props) => {
             {description}
           </LText>
         </View>
-        {!isDisabled && <IconChevron size={18} color={colors.smoke} />}
+        {!isDisabled && <IconChevron size={18} color={colors.neutral.c70} />}
       </View>
     </TouchableOpacity>
   );

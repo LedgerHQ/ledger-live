@@ -114,7 +114,7 @@ function StakingAmount({ navigation, route }: Props) {
               />
               <LText
                 style={[styles.fieldStatus]}
-                color={error ? "alert" : warning ? "orange" : "darkBlue"}
+                color={error ? "error.c60" : warning ? "warning.c60" : "neutral.c80"}
                 numberOfLines={2}
               >
                 <TranslatedError error={error || warning} />

@@ -5,7 +5,7 @@ import {
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { Account } from "@ledgerhq/types-live";
 import { Text } from "@ledgerhq/native-ui";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import invariant from "invariant";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
@@ -56,10 +56,10 @@ export default function SolanaSendRowsCustom({ account, transaction, navigation,
             style={[
               styles.link,
               {
-                textDecorationColor: colors.live,
+                textDecorationColor: colors.primary.c80,
               },
             ]}
-            color="live"
+            color="primary.c70"
             onPress={editMemo}
           >
             {t("common.edit")}

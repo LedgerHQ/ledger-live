@@ -1,7 +1,8 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
-import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import type { Account } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { Transaction as StacksTransaction } from "@ledgerhq/live-common/families/stacks/types";
@@ -45,10 +46,10 @@ export default function StacksMemoRow({ account, transaction }: Props) {
             style={[
               styles.link,
               {
-                textDecorationColor: colors.live,
+                textDecorationColor: colors.primary.c80,
               },
             ]}
-            color="live"
+            color="primary.c70"
             onPress={editMemo}
           >
             <Trans i18nKey="common.edit" />

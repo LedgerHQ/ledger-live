@@ -62,7 +62,7 @@ function NormalHeader() {
       <LText semiBold secondary style={styles.title}>
         {t("auth.unlock.title")}
       </LText>
-      <LText style={styles.description} color="grey">
+      <LText style={styles.description} color="neutral.c70">
         {t("auth.unlock.desc")}
       </LText>
     </Flex>
@@ -101,7 +101,7 @@ const FormFooter = ({
     </TouchableWithoutFeedback>
   ) : (
     <Touchable event="ForgetPassword" onPress={onPress}>
-      <LText semiBold style={styles.link} color="live">
+      <LText semiBold style={styles.link} color="primary.c70">
         {t("auth.unlock.forgotPassword")}
       </LText>
     </Touchable>
@@ -211,7 +211,7 @@ class AuthScreen extends PureComponent<Props, State> {
           style={[
             styles.root,
             {
-              backgroundColor: colors.background,
+              backgroundColor: colors.background.main,
             },
           ]}
         >

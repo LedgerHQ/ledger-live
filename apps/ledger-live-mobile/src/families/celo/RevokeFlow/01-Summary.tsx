@@ -6,7 +6,7 @@ import { useValidatorGroups } from "@ledgerhq/live-common/families/celo/react";
 import type { CeloValidatorGroup, CeloAccount } from "@ledgerhq/live-common/families/celo/types";
 import { revokableVotes } from "@ledgerhq/live-common/families/celo/logic";
 import { AccountLike } from "@ledgerhq/types-live";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "styled-components/native";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { useCallback, useEffect, useMemo } from "react";
@@ -132,7 +132,7 @@ export default function RevokeSummary({ navigation, route }: Props) {
   const hasErrors = Object.keys(status.errors).length > 0;
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background.main }]}>
       <TrackScreen
         category="CeloRevoke"
         name="Summary"
