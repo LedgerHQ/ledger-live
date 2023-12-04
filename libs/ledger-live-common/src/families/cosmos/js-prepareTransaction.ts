@@ -8,7 +8,6 @@ import cryptoFactory from "./chain/chain";
 import { txToMessages, buildTransaction } from "./js-buildTransaction";
 import { getMaxEstimatedBalance } from "./logic";
 import { CosmosAccount, Transaction } from "./types";
-import { getValueByKey } from "@ledgerhq/live-config/providers/firebaseRemoteConfig/index";
 
 export const calculateFees: CacheRes<
   Array<{
