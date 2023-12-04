@@ -9,7 +9,7 @@ import {
   convertToNonAtomicUnit,
 } from "@ledgerhq/live-common/exchange/swap/webApp/index";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
@@ -121,7 +121,7 @@ const SwapForm = () => {
   const swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
   const swapWarning = swapTransaction.fromAmountWarning;
   const pageState = usePageState(swapTransaction, swapError);
-  const provider = exchangeRate?.provider;
+  const provider = useMemo(() => exchangeRate?.provider, [exchangeRate?.provider]);
   const idleTimeout = useRef<NodeJS.Timeout | undefined>();
   const [swapWebProps, setSwapWebProps] = useState<SwapWebProps["swapState"] | undefined>(
     undefined,
@@ -134,6 +134,110 @@ const SwapForm = () => {
     pause: pauseRefreshing,
   });
 
+  const getExchangeSDKParams = useCallback(
+    () => {
+      const { swap, transaction } = swapTransaction;
+      const { to, from } = swap;
+      const { account: fromAccount, parentAccount: fromParentAccount } = from;
+      const { account: toAccount, parentAccount: toParentAccount } = to;
+      const { feesStrategy } = transaction || {};
+      const { rate, rateId } = exchangeRate || {};
+
+      const isToAccountValid = totalListedAccounts.some(account => account.id === toAccount?.id);
+      const fromAccountId =
+        fromAccount && accountToWalletAPIAccount(fromAccount, fromParentAccount)?.id;
+      const toAccountId = isToAccountValid
+        ? toAccount && accountToWalletAPIAccount(toAccount, toParentAccount)?.id
+        : toParentAccount && accountToWalletAPIAccount(toParentAccount, undefined)?.id;
+      const toNewTokenId =
+        !isToAccountValid && toAccount?.type === "TokenAccount" ? toAccount.token?.id : undefined;
+      const fromAmount =
+        fromAccount &&
+        convertToNonAtomicUnit({
+          amount: transaction?.amount,
+          account: fromAccount,
+        });
+
+      const customFeeConfig = transaction && getCustomFeesPerFamily(transaction);
+      // The Swap web app will automatically recreate the transaction with "default" fees.
+      // However, if you wish to use a different fee type, you will need to set it as custom.
+      const isCustomFee =
+        feesStrategy === "slow" || feesStrategy === "fast" || feesStrategy === "custom";
+
+      return {
+        fromAccountId,
+        toAccountId,
+        fromAmount: fromAmount?.toString(),
+        quoteId: rateId ? rateId : undefined,
+        rate: rate?.toString(),
+        feeStrategy: (isCustomFee ? "custom" : "medium")?.toUpperCase(),
+        customFeeConfig: customFeeConfig ? JSON.stringify(customFeeConfig) : undefined,
+        toNewTokenId,
+      };
+    },
+    [
+      // provider,
+      // swapTransaction.swap.from,
+      // swapTransaction.swap.to,
+      // // swapTransaction.transaction,
+      // // swapTransaction,
+      // exchangeRate,
+      // totalListedAccounts,
+    ],
+  );
+
+  const generateMoonpayUrl = useCallback(
+    ({ base = "", args = {} }: { base: string; args: { [key: string]: any } }) => {
+      const moonpayURL = new URL(base || "");
+      Object.entries(args).forEach(
+        ([key, value]) =>
+          // customFeeConfig is an object
+          value && moonpayURL.searchParams.append(...[key, JSON.stringify(value)]),
+      );
+      return moonpayURL;
+    },
+    [],
+  );
+
+  const getProviderRedirectURLSearch = useCallback(() => {
+    const { account: fromAccount, parentAccount: fromParentAccount } = swapTransaction.swap.from;
+    const providerRedirectFromAccountId =
+      fromAccount &&
+      provider &&
+      walletApiPartnerList?.enabled &&
+      walletApiPartnerList?.params?.list.includes(provider)
+        ? accountToWalletAPIAccount(fromAccount, fromParentAccount)?.id
+        : fromAccount?.id;
+
+    const providerRedirectURLSearch = new URLSearchParams();
+
+    providerRedirectFromAccountId &&
+      providerRedirectURLSearch.set("accountId", providerRedirectFromAccountId);
+
+    if (provider === "moonpay") {
+      const moonpayURL = generateMoonpayUrl({
+        base: "https://buy.moonpay.com/swaps?apiKey=pk_live_R5Lf25uBfNZyKwccAZpzcxuL3ZdJ3Hc",
+        args: getExchangeSDKParams(),
+      });
+
+      exchangeRate?.providerURL && providerRedirectURLSearch.set("goToURL", moonpayURL.toString());
+    } else {
+      exchangeRate?.providerURL &&
+        providerRedirectURLSearch.set("goToURL", exchangeRate.providerURL || "");
+    }
+
+    providerRedirectURLSearch.set("returnTo", "/swap");
+    return providerRedirectURLSearch;
+  }, [
+    provider,
+    swapTransaction.swap.from,
+    exchangeRate?.providerURL,
+    generateMoonpayUrl,
+    getExchangeSDKParams,
+    walletApiPartnerList?.enabled,
+    walletApiPartnerList?.params?.list,
+  ]);
+
   const refreshIdle = useCallback(() => {
     idleState && setIdleState(false);
     idleTimeout.current && clearInterval(idleTimeout.current);
@@ -143,7 +247,7 @@ const SwapForm = () => {
   }, [idleState]);
 
   const redirectToProviderApp = useCallback(
-    (provider: string): void => {
+    (provider: string = ""): void => {
       const { providerURL } = exchangeRate ?? {};
       const from = swapTransaction.swap.from;
       const fromAccountId = from.parentAccount?.id || from.account?.id;
@@ -168,30 +272,11 @@ const SwapForm = () => {
       };
 
       if (provider === "moonpay") {
-        const fromAccountId = accountToWalletAPIAccount(account, parentAccount)?.id;
-        const transactionTo = swapTransaction.swap.to;
-        const transactionToAccountId = transactionTo.parentAccount?.id || transactionTo.account?.id;
-        const toAccount = accounts.find(a => a.id === transactionToAccountId);
-        const toParentAccount = isTokenAccount(account)
-          ? getParentAccount(account, accounts)
-          : undefined;
-        const toAccountId = accountToWalletAPIAccount(toAccount, toParentAccount)?.id;
-        const moonpayFields = {
-          quoteId: exchangeRate.rateId,
-          toAccountId,
-          fromAccountId,
-          fromAmount: convertToNonAtomicUnit({
-            amount: swapTransaction.transaction?.amount,
-            account: swapTransaction.swap.from.account,
-          }),
-          rate: exchangeRate.rate,
-          feeStrategy: swapTransaction.transaction.feesStrategy.toUpperCase(),
-        };
-
-        const moonpayURL = new URL(
-          "https://buy.moonpay.com/swaps?apiKey=pk_live_R5Lf25uBfNZyKwccAZpzcxuL3ZdJ3Hc",
-        );
-        Object.entries(moonpayFields).forEach(param => moonpayURL.searchParams.append(...param));
+        const webParams = getExchangeSDKParams();
+        const moonpayURL = generateMoonpayUrl({
+          base: "https://buy.moonpay.com/swaps?apiKey=pk_live_R5Lf25uBfNZyKwccAZpzcxuL3ZdJ3Hc",
+          args: webParams,
+        });
         state.goToURL = moonpayURL.toString();
       }
 
@@ -202,13 +287,15 @@ const SwapForm = () => {
         state,
       });
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [
-      swapTransaction.swap.from.account?.id,
-      swapTransaction.swap.to.currency?.id,
-      exchangeRate?.providerType,
-      exchangeRate?.tradeMethod,
-      exchangeRate?.provider,
+      accounts,
+      exchangeRate,
+      generateMoonpayUrl,
+      getExchangeSDKParams,
+      history,
+      swapTransaction.swap.from,
+      walletApiPartnerList?.enabled,
+      walletApiPartnerList?.params?.list,
     ],
   );
 
@@ -259,7 +346,6 @@ const SwapForm = () => {
   const onSubmit = () => {
     if (!exchangeRate) return;
 
-    const { provider } = exchangeRate;
     track("button_clicked", {
       button: "Request",
       page: "Page Swap Form",
@@ -318,85 +404,33 @@ const SwapForm = () => {
 
   useEffect(() => {
     if (isSwapLiveAppEnabled) {
-      const { swap } = swapTransaction;
-      const { to, from } = swap;
-      const transaction = swapTransaction.transaction;
-      const { account: fromAccount, parentAccount: fromParentAccount } = from;
-      const { account: toAccount, parentAccount: toParentAccount } = to;
-      const { feesStrategy } = transaction || {};
-      const { rate, rateId } = exchangeRate || {};
-
-      const isToAccountValid = totalListedAccounts.some(account => account.id === toAccount?.id);
-      const fromAccountId =
-        fromAccount && accountToWalletAPIAccount(fromAccount, fromParentAccount)?.id;
-      const toAccountId = isToAccountValid
-        ? toAccount && accountToWalletAPIAccount(toAccount, toParentAccount)?.id
-        : toParentAccount && accountToWalletAPIAccount(toParentAccount, undefined)?.id;
-      const toNewTokenId =
-        !isToAccountValid && toAccount?.type === "TokenAccount" ? toAccount.token?.id : undefined;
-      const fromAmount =
-        fromAccount &&
-        convertToNonAtomicUnit({
-          amount: transaction?.amount,
-          account: fromAccount,
-        });
-
-      const customFeeConfig = transaction && getCustomFeesPerFamily(transaction);
-      // The Swap web app will automatically recreate the transaction with "default" fees.
-      // However, if you wish to use a different fee type, you will need to set it as custom.
-      const isCustomFee =
-        feesStrategy === "slow" || feesStrategy === "fast" || feesStrategy === "custom";
-
-      const providerRedirectFromAccountId =
-        fromAccount &&
-        provider &&
-        walletApiPartnerList?.enabled &&
-        walletApiPartnerList?.params?.list.includes(provider)
-          ? accountToWalletAPIAccount(fromAccount, fromParentAccount)?.id
-          : fromAccount?.id;
-
-      const providerRedirectURLSearch = new URLSearchParams();
-      providerRedirectFromAccountId &&
-        providerRedirectURLSearch.set("accountId", providerRedirectFromAccountId);
-
-      exchangeRate?.providerURL &&
-        providerRedirectURLSearch.set("customDappUrl", exchangeRate.providerURL);
-      providerRedirectURLSearch.set("returnTo", "/swap");
-
+      const providerRedirectURLSearch = getProviderRedirectURLSearch();
+      const { parentAccount: fromParentAccount } = swapTransaction.swap.from;
+      const fromParentAccountId = fromParentAccount
+        ? accountToWalletAPIAccount(fromParentAccount)?.id
+        : undefined;
+      const providerRedirectURL = `ledgerlive://discover/${getProviderName(
+        provider ?? "",
+      ).toLowerCase()}?${providerRedirectURLSearch.toString()}`;
       setSwapWebProps({
         provider,
-        fromAccountId,
-        toAccountId,
-        fromAmount: fromAmount?.toString(),
-        fromParentAccountId: fromParentAccount
-          ? accountToWalletAPIAccount(fromParentAccount)?.id
-          : undefined,
-        quoteId: rateId ? rateId : undefined,
-        rate: rate?.toString(),
-        feeStrategy: (isCustomFee ? "custom" : "medium")?.toUpperCase(),
-        customFeeConfig: customFeeConfig ? JSON.stringify(customFeeConfig) : undefined,
+        ...getExchangeSDKParams(),
+        fromParentAccountId,
         cacheKey: v4(),
         error: !!swapError,
         loading: swapTransaction.bridgePending || exchangeRatesState.status === "loading",
-        providerRedirectURL: `ledgerlive://discover/${getProviderName(
-          provider ?? "",
-        ).toLowerCase()}?${providerRedirectURLSearch.toString()}`,
-        toNewTokenId,
+        providerRedirectURL,
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    isSwapLiveAppEnabled,
     provider,
-    swapTransaction.swap.from.account?.id,
-    swapTransaction.swap.to.currency?.id,
-    swapTransaction.swap.to.account?.id,
-    exchangeRate?.providerType,
-    exchangeRate?.tradeMethod,
+    isSwapLiveAppEnabled,
+    getExchangeSDKParams,
+    getProviderRedirectURLSearch,
+    swapTransaction.swap.from,
     swapError,
     swapTransaction.bridgePending,
     exchangeRatesState.status,
-    exchangeRate?.providerURL,
   ]);
 
   return (
