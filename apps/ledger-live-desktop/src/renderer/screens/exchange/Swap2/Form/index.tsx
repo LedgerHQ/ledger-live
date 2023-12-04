@@ -216,7 +216,7 @@ const SwapForm = () => {
 
     if (provider === "moonpay") {
       const moonpayURL = generateMoonpayUrl({
-        base: "https://buy.moonpay.com/swaps?apiKey=pk_live_R5Lf25uBfNZyKwccAZpzcxuL3ZdJ3Hc",
+        base: exchangeRate?.providerURL || "",
         args: getExchangeSDKParams(),
       });
 
@@ -272,10 +272,9 @@ const SwapForm = () => {
       };
 
       if (provider === "moonpay") {
-        const webParams = getExchangeSDKParams();
         const moonpayURL = generateMoonpayUrl({
-          base: "https://buy.moonpay.com/swaps?apiKey=pk_live_R5Lf25uBfNZyKwccAZpzcxuL3ZdJ3Hc",
-          args: webParams,
+          base: exchangeRate?.providerURL || "",
+          args: getExchangeSDKParams(),
         });
         state.goToURL = moonpayURL.toString();
       }
