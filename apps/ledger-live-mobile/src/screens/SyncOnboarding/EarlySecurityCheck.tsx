@@ -61,7 +61,10 @@ export type EarlySecurityCheckProps = {
   /**
    * Called when the device is not in a correct state anymore, for ex when a firmware update has completed and the device probably restarted
    */
-  notifyEarlySecurityCheckShouldReset: (currentState: { isAlreadyGenuine: boolean }) => void;
+  notifyEarlySecurityCheckShouldReset: (currentState: {
+    isAlreadyGenuine: boolean;
+    isPreviousUpdateCancelled: boolean;
+  }) => void;
 
   /**
    * To tell the ESC that there is no need to do a genuine check (optional)
@@ -70,6 +73,11 @@ export type EarlySecurityCheckProps = {
    * Only useful when the EarlySecurityCheck component is mounting.
    */
   isAlreadyGenuine?: boolean;
+
+  /**
+   * To tell the ESC that there is no need to re display the FW update drawer (optional)
+   */
+  isPreviousUpdateCancelled?: boolean;
 
   /**
    * Function to cancel the onboarding
@@ -86,6 +94,7 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
   notifyOnboardingEarlyCheckEnded,
   notifyEarlySecurityCheckShouldReset,
   isAlreadyGenuine = false,
+  isPreviousUpdateCancelled = false,
   onCancelOnboarding,
 }) => {
   const navigation = useNavigation<StackNavigationProp<Record<string, object | undefined>>>();
@@ -172,7 +181,10 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
       // - user left the firmware update flow before the end
       // - the fw update was successful
       // - the user returned after an error during the fw update
-      notifyEarlySecurityCheckShouldReset({ isAlreadyGenuine: true });
+      notifyEarlySecurityCheckShouldReset({
+        isAlreadyGenuine: true,
+        isPreviousUpdateCancelled: updateState !== "completed",
+      });
     },
     [navigation, notifyEarlySecurityCheckShouldReset],
   );
@@ -331,6 +343,11 @@ export const EarlySecurityCheck: React.FC<EarlySecurityCheckProps> = ({
         ) {
           setFirmwareUpdateCheckStatus("completed");
           currentDisplayedDrawer = "none";
+        } else if (isPreviousUpdateCancelled) {
+          // When isPreviousUpdateCancelled is true, it indicates that the user is already informed
+          // about the new firmware update, so there's no need to show the drawer again
+          currentDisplayedDrawer = "none";
+          firmwareUpdateUiStepStatus = "firmwareUpdateRefused";
         } else {
           currentDisplayedDrawer = "new-firmware-available";
         }

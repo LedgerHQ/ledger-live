@@ -15,9 +15,7 @@ import BigNumber from "bignumber.js";
 import { ReactNavigationPerformanceView } from "@shopify/react-native-performance-navigation";
 import accountSyncRefreshControl from "../../components/accountSyncRefreshControl";
 import { withDiscreetMode } from "../../context/DiscreetModeContext";
-import TabBarSafeAreaView, {
-  TAB_BAR_SAFE_HEIGHT,
-} from "../../components/TabBar/TabBarSafeAreaView";
+import SafeAreaView from "../../components/SafeAreaView";
 import { flattenAccountsByCryptoCurrencyScreenSelector } from "../../reducers/accounts";
 import SectionContainer from "../WalletCentricSections/SectionContainer";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
@@ -176,7 +174,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
 
   return (
     <ReactNavigationPerformanceView screenName={ScreenName.Asset} interactive>
-      <TabBarSafeAreaView edges={["bottom", "left", "right"]}>
+      <SafeAreaView edges={["bottom", "left", "right"]} isFlex>
         <TrackScreen category="Asset" currency={currency.name} />
         <CurrencyBackgroundGradient
           currentPositionY={currentPositionY}
@@ -184,8 +182,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
           gradientColor={getCurrencyColor(currency) || colors.primary.c80}
         />
         <AnimatedFlatListWithRefreshControl
-          style={{ flex: 1, paddingTop: 48 }}
-          contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
+          style={{ flex: 1 }}
           data={data}
           renderItem={({ item }: ListRenderItemInfo<unknown>) => item as JSX.Element}
           keyExtractor={(_: unknown, index: number) => String(index)}
@@ -198,7 +195,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
           currency={currency}
           currencyBalance={currencyBalance}
         />
-      </TabBarSafeAreaView>
+      </SafeAreaView>
     </ReactNavigationPerformanceView>
   );
 };

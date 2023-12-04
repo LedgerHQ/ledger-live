@@ -501,6 +501,11 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
           renderBody: () => (
             <>
               <TrackScreen category={"Set up device: Step 1 device paired"} />
+              <Text variant="body" color="neutral.c80" mb={6}>
+                {t("syncOnboarding.earlySecurityCheckCompletedStep.subtitle", {
+                  productName,
+                })}
+              </Text>
               <ContinueOnDeviceWithAnim
                 deviceModelId={device.modelId}
                 text={t("syncOnboarding.earlySecurityCheckCompletedStep.description", {
@@ -574,11 +579,28 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                 <BodyText>{t("syncOnboarding.seedStep.recoverSeed")}</BodyText>
               ) : (
                 <Flex>
-                  <BodyText>
+                  <BodyText color="neutral.c80">
                     {t("syncOnboarding.seedStep.selection", {
                       productName,
                     })}
                   </BodyText>
+
+                  <Flex mt={6}>
+                    <Text color="neutral.c100" fontWeight="semiBold" mb={3}>
+                      {t("syncOnboarding.seedStep.selectionNewLedger.title")}
+                    </Text>
+                    <Text color="neutral.c80">
+                      {t("syncOnboarding.seedStep.selectionNewLedger.desc")}
+                    </Text>
+                  </Flex>
+                  <Flex my={6}>
+                    <Text color="neutral.c100" fontWeight="semiBold" mb={3}>
+                      {t("syncOnboarding.seedStep.selectionRestore.title")}
+                    </Text>
+                    <Text color="neutral.c80">
+                      {t("syncOnboarding.seedStep.selectionRestore.desc")}
+                    </Text>
+                  </Flex>
                   <ContinueOnDeviceWithAnim
                     deviceModelId={device.modelId}
                     text={t("syncOnboarding.seedStep.selectionContinueOnDevice", {

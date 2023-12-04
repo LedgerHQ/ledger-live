@@ -60,7 +60,7 @@ function ServicesWidget() {
         {t("servicesWidget.recover.desc")}
       </Text>
 
-      <Button type="main" onPress={onClickFreeTrial} style={{ alignSelf: "flex-start" }}>
+      <Button type="main" onPress={onClickFreeTrial} style={{ alignSelf: "flex-start" }} mb={8}>
         <Text variant="body" fontWeight="semiBold" color="neutral.c00">
           {t("servicesWidget.recover.cta")}
         </Text>

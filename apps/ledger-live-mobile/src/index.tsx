@@ -300,9 +300,9 @@ export default class Root extends Component {
                           <StylesProvider>
                             <StyledStatusBar />
                             <NavBarColorHandler />
-                            <AuthPass>
-                              <I18nextProvider i18n={i18n}>
-                                <LocaleProvider>
+                            <I18nextProvider i18n={i18n}>
+                              <LocaleProvider>
+                                <AuthPass>
                                   <BridgeSyncProvider>
                                     <CounterValuesProvider initialState={initialCountervalues}>
                                       <ButtonUseTouchableContext.Provider value={true}>
@@ -323,9 +323,9 @@ export default class Root extends Component {
                                       </ButtonUseTouchableContext.Provider>
                                     </CounterValuesProvider>
                                   </BridgeSyncProvider>
-                                </LocaleProvider>
-                              </I18nextProvider>
-                            </AuthPass>
+                                </AuthPass>
+                              </LocaleProvider>
+                            </I18nextProvider>
                           </StylesProvider>
                         </PerformanceProvider>
                       </SafeAreaProvider>

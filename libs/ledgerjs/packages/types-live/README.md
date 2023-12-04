@@ -145,6 +145,7 @@ Ledger Live main types.
 *   [PostOnboardingActionId](#postonboardingactionid)
 *   [navigationParams](#navigationparams)
 *   [startAction](#startaction)
+*   [](#)
 *   [PostOnboardingAction](#postonboardingaction)
     *   [disabled](#disabled)
     *   [featureFlagId](#featureflagid)
@@ -1186,7 +1187,11 @@ Type: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global
 
 The function to call when the user presses the button for this action
 
-Type: function (): void
+Type: function (openModalCallback: any, navigationCallback: any): void
+
+###
+
+Optional Redux dispatch function
 
 ### PostOnboardingAction
 

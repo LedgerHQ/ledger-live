@@ -4,7 +4,6 @@ import { useTheme } from "styled-components/native";
 import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
 import { ScreenName } from "../../const";
 import MarketList from "../../screens/Market";
-import MarketDetail from "../../screens/Market/MarketDetail";
 import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
 import { MarketNavigatorStackParamList } from "./types/MarketNavigator";
 
@@ -19,19 +18,16 @@ export default function MarketNavigator() {
         title: "",
         headerRight: undefined,
         headerLeft: () => null,
+        headerTransparent: true,
       }
     : {
         headerShown: false,
+        headerTransparent: true,
       };
 
   return (
     <Stack.Navigator screenOptions={stackNavigationConfig} initialRouteName={ScreenName.MarketList}>
       <Stack.Screen name={ScreenName.MarketList} component={MarketList} options={headerConfig} />
-      <Stack.Screen
-        name={ScreenName.MarketDetail}
-        component={MarketDetail}
-        options={headerConfig}
-      />
     </Stack.Navigator>
   );
 }

@@ -274,7 +274,7 @@ const MainSideBar = () => {
   }, [push, trackEntry]);
   const handleClickDashboard = useCallback(() => {
     push("/");
-    trackEntry("/");
+    trackEntry("/portfolio");
   }, [push, trackEntry]);
   const handleClickMarket = useCallback(() => {
     push("/market");

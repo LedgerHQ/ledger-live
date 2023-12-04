@@ -1,5 +1,45 @@
 # @ledgerhq/coin-polkadot
 
+## 0.4.6
+
+### Patch Changes
+
+- [#5225](https://github.com/LedgerHQ/ledger-live/pull/5225) [`de2e03534a`](https://github.com/LedgerHQ/ledger-live/commit/de2e03534ac831fcb66d1f038d0e90e7f65f2545) Thanks [@lvndry](https://github.com/lvndry)! - Can nominate only if hasMinimumBoundingBalance
+
+- Updated dependencies [[`48487abd29`](https://github.com/LedgerHQ/ledger-live/commit/48487abd297e41629c6725bc0ac9d69bfeaa74d3), [`08dde174fd`](https://github.com/LedgerHQ/ledger-live/commit/08dde174fdeaadbce85dcd914383839f788f21dd), [`771c9d3c1d`](https://github.com/LedgerHQ/ledger-live/commit/771c9d3c1d138ddd68da2e4f9738e2c41ecaf81b), [`c5981ae341`](https://github.com/LedgerHQ/ledger-live/commit/c5981ae3411abc4c8594adf2efcb52aacddac143), [`317685e696`](https://github.com/LedgerHQ/ledger-live/commit/317685e69678e6fe1f489f0c071e7613d329d389), [`a4299c5d62`](https://github.com/LedgerHQ/ledger-live/commit/a4299c5d629cd56e6e6795adaa14978ae2b90f42), [`b4e7201b0b`](https://github.com/LedgerHQ/ledger-live/commit/b4e7201b0b70d146de7d936ff2c9e9e443164243), [`e63205b850`](https://github.com/LedgerHQ/ledger-live/commit/e63205b85071538ed2431157a12818d7a8f0ffa9), [`5964e30bed`](https://github.com/LedgerHQ/ledger-live/commit/5964e30bed11d64a3b7401c6ab51ffc1ad4c427c), [`4a283060bf`](https://github.com/LedgerHQ/ledger-live/commit/4a283060bf2e837d73c6c1cb5d89f890a4e4b931)]:
+  - @ledgerhq/types-live@6.43.0
+  - @ledgerhq/types-cryptoassets@7.8.0
+  - @ledgerhq/cryptoassets@11.2.0
+  - @ledgerhq/errors@6.16.0
+  - @ledgerhq/coin-framework@0.9.0
+  - @ledgerhq/live-env@0.7.0
+  - @ledgerhq/devices@8.1.0
+  - @ledgerhq/logs@6.12.0
+
+## 0.4.6-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`4a283060bf`](https://github.com/LedgerHQ/ledger-live/commit/4a283060bf2e837d73c6c1cb5d89f890a4e4b931)]:
+  - @ledgerhq/cryptoassets@11.2.0-next.1
+  - @ledgerhq/coin-framework@0.9.0-next.1
+
+## 0.4.6-next.0
+
+### Patch Changes
+
+- [#5225](https://github.com/LedgerHQ/ledger-live/pull/5225) [`de2e03534a`](https://github.com/LedgerHQ/ledger-live/commit/de2e03534ac831fcb66d1f038d0e90e7f65f2545) Thanks [@lvndry](https://github.com/lvndry)! - Can nominate only if hasMinimumBoundingBalance
+
+- Updated dependencies [[`48487abd29`](https://github.com/LedgerHQ/ledger-live/commit/48487abd297e41629c6725bc0ac9d69bfeaa74d3), [`08dde174fd`](https://github.com/LedgerHQ/ledger-live/commit/08dde174fdeaadbce85dcd914383839f788f21dd), [`771c9d3c1d`](https://github.com/LedgerHQ/ledger-live/commit/771c9d3c1d138ddd68da2e4f9738e2c41ecaf81b), [`c5981ae341`](https://github.com/LedgerHQ/ledger-live/commit/c5981ae3411abc4c8594adf2efcb52aacddac143), [`317685e696`](https://github.com/LedgerHQ/ledger-live/commit/317685e69678e6fe1f489f0c071e7613d329d389), [`a4299c5d62`](https://github.com/LedgerHQ/ledger-live/commit/a4299c5d629cd56e6e6795adaa14978ae2b90f42), [`b4e7201b0b`](https://github.com/LedgerHQ/ledger-live/commit/b4e7201b0b70d146de7d936ff2c9e9e443164243), [`e63205b850`](https://github.com/LedgerHQ/ledger-live/commit/e63205b85071538ed2431157a12818d7a8f0ffa9), [`5964e30bed`](https://github.com/LedgerHQ/ledger-live/commit/5964e30bed11d64a3b7401c6ab51ffc1ad4c427c)]:
+  - @ledgerhq/types-live@6.43.0-next.0
+  - @ledgerhq/types-cryptoassets@7.8.0-next.0
+  - @ledgerhq/cryptoassets@11.2.0-next.0
+  - @ledgerhq/errors@6.16.0-next.0
+  - @ledgerhq/coin-framework@0.9.0-next.0
+  - @ledgerhq/live-env@0.7.0-next.0
+  - @ledgerhq/devices@8.1.0-next.0
+  - @ledgerhq/logs@6.12.0-next.0
+
 ## 0.4.5
 
 ### Patch Changes

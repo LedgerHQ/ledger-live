@@ -412,6 +412,8 @@ export const DEFAULT_FEATURES: Features = {
   ptxSwapLiveApp: {
     enabled: false,
   },
+
+  ptxSwapMoonpayProvider: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings

@@ -580,7 +580,7 @@ export const renderLockedDeviceError = ({
       </ErrorDescription>
       <ButtonContainer>
         {onRetry && inlineRetry ? (
-          <ButtonV3 variant="main" onClick={onRetry}>
+          <ButtonV3 variant="main" onClick={onRetry} borderRadius={"9999px"}>
             {t("common.retry")}
           </ButtonV3>
         ) : null}
