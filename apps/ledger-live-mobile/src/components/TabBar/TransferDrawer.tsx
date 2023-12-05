@@ -18,7 +18,7 @@ import { track, useAnalytics } from "../../analytics";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import useQuickActions from "../../hooks/useQuickActions";
 import { PTX_SERVICES_TOAST_ID } from "@utils/constants";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import useFeature from "@ledgerhq/live-config/featureFlags/index";
 import { useQuickAccessURI } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 
 type ButtonItem = {
