@@ -3,21 +3,21 @@ import { Value } from "../../LiveConfig";
 
 const defaultEnabledSchema = z.object({ enabled: z.boolean().default(false) });
 
-export const stringParser = (value: unknown) => {
+export const stringParser = (value: unknown): string | undefined => {
   return (value as Value).asString() || undefined;
 };
 
-export const numberParser = (value: unknown) => {
+export const numberParser = (value: unknown): number | undefined => {
   const numberValue = (value as Value).asNumber();
   return numberValue !== 0 ? numberValue : undefined;
 };
 
-export const booleanParser = (value: unknown) => {
+export const booleanParser = (value: unknown): boolean | undefined => {
   const valueExist = (value as Value).asString();
   return valueExist ? (value as Value).asBoolean() : undefined;
 };
 
-export const objectParser = (value: unknown) => {
+export const objectParser = (value: unknown): object | undefined => {
   const stringValue = (value as Value).asString();
   return stringValue ? JSON.parse(stringValue) : undefined;
 };
