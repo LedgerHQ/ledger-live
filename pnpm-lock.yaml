@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: false
+  excludeLinksFromLockfile: false
+
 neverBuiltDependencies:
   - blake2
 
@@ -1953,8 +1957,8 @@ importers:
         specifier: ^3.0.1
         version: 3.0.1
       '@cosmjs/amino':
-        specifier: ^0.31.1
-        version: 0.31.1
+        specifier: ^0.32.0
+        version: 0.32.1
       '@cosmjs/crypto':
         specifier: ^0.31.0
         version: 0.31.0
@@ -11122,13 +11126,13 @@ packages:
       '@cosmjs/utils': 0.26.6
     dev: false
 
-  /@cosmjs/amino@0.31.1:
-    resolution: {integrity: sha512-kkB9IAkNEUFtjp/uwHv95TgM8VGJ4VWfZwrTyLNqBDD1EpSX2dsNrmUe7k8OMPzKlZUFcKmD4iA0qGvIwzjbGA==}
+  /@cosmjs/amino@0.32.1:
+    resolution: {integrity: sha512-5l2xQ2XuAhV/B3kTIMPBcVZ/OQ+9Yyddzw/lIVs4qE5e/oBI0PVNWXw1oyR0wgfGHrMUxgKjsoOOqE2IbXVyCw==}
     dependencies:
-      '@cosmjs/crypto': 0.31.1
-      '@cosmjs/encoding': 0.31.1
-      '@cosmjs/math': 0.31.1
-      '@cosmjs/utils': 0.31.1
+      '@cosmjs/crypto': 0.32.1
+      '@cosmjs/encoding': 0.32.1
+      '@cosmjs/math': 0.32.1
+      '@cosmjs/utils': 0.32.1
     dev: false
 
   /@cosmjs/crypto@0.24.1:
@@ -11190,13 +11194,13 @@ packages:
       libsodium-wrappers-sumo: 0.7.13
     dev: false
 
-  /@cosmjs/crypto@0.31.1:
-    resolution: {integrity: sha512-4R/SqdzdVzd4E5dpyEh1IKm5GbTqwDogutyIyyb1bcOXiX/x3CrvPI9Tb4WSIMDLvlb5TVzu2YnUV51Q1+6mMA==}
+  /@cosmjs/crypto@0.32.1:
+    resolution: {integrity: sha512-AsKucEg5o8evU0wXF/lDwX+ZSwCKF4bbc57nFzraHywlp3sNu4dfPPURoMrT0r7kT7wQZAy4Pdnvmm9nnCCm/Q==}
     dependencies:
-      '@cosmjs/encoding': 0.31.1
-      '@cosmjs/math': 0.31.1
-      '@cosmjs/utils': 0.31.1
-      '@noble/hashes': 1.3.1
+      '@cosmjs/encoding': 0.32.1
+      '@cosmjs/math': 0.32.1
+      '@cosmjs/utils': 0.32.1
+      '@noble/hashes': 1.3.2
       bn.js: 5.2.1
       elliptic: 6.5.4
       libsodium-wrappers-sumo: 0.7.13
@@ -11236,6 +11240,14 @@ packages:
 
   /@cosmjs/encoding@0.31.1:
     resolution: {integrity: sha512-IuxP6ewwX6vg9sUJ8ocJD92pkerI4lyG8J5ynAM3NaX3q+n+uMoPRSQXNeL9bnlrv01FF1kIm8if/f5F7ZPtkA==}
+    dependencies:
+      base64-js: 1.5.1
+      bech32: 1.1.4
+      readonly-date: 1.0.0
+    dev: false
+
+  /@cosmjs/encoding@0.32.1:
+    resolution: {integrity: sha512-x60Lfds+Eq42rVV29NaoIAson3kBhATBI3zPp7X3GJTryBc5HFHQ6L/976tE1WB2DrvkfUdWS3ayCMVOY/qm1g==}
     dependencies:
       base64-js: 1.5.1
       bech32: 1.1.4
@@ -11293,6 +11305,12 @@ packages:
 
   /@cosmjs/math@0.31.1:
     resolution: {integrity: sha512-kiuHV6m6DSB8/4UV1qpFhlc4ul8SgLXTGRlYkYiIIP4l0YNeJ+OpPYaOlEgx4Unk2mW3/O2FWYj7Jc93+BWXng==}
+    dependencies:
+      bn.js: 5.2.1
+    dev: false
+
+  /@cosmjs/math@0.32.1:
+    resolution: {integrity: sha512-sqJgDjPh49rxe06apzwKYLxAw4LLFKmEd4yQtHqH16BxVVUrvK5UH9TEBpUrRErdjqENowekecDCDBZspGXHNA==}
     dependencies:
       bn.js: 5.2.1
     dev: false
@@ -11462,6 +11480,10 @@ packages:
 
   /@cosmjs/utils@0.31.1:
     resolution: {integrity: sha512-n4Se1wu4GnKwztQHNFfJvUeWcpvx3o8cWhSbNs9JQShEuB3nv3R5lqFBtDCgHZF/emFQAP+ZjF8bTfCs9UBGhA==}
+    dev: false
+
+  /@cosmjs/utils@0.32.1:
+    resolution: {integrity: sha512-PV9pa0cVPFCNgfQKEOc6RcNFHr5wMQLcDqWoo/ekIoj1AfzAaqnojdnL80u1C9Qf+vOfRGIXubqiU7Tl7QZuig==}
     dev: false
 
   /@craftamap/esbuild-plugin-html@0.6.1(esbuild@0.19.3):
@@ -20803,7 +20825,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-      webpack: '5'
+      webpack: '*'
     peerDependenciesMeta:
       react:
         optional: true
@@ -57895,7 +57917,6 @@ packages:
     resolution: {directory: libs/ui/packages/crypto-icons, type: directory}
     id: file:libs/ui/packages/crypto-icons
     name: '@ledgerhq/crypto-icons-ui'
-    version: 0.6.1
     peerDependencies:
       '@types/react': '*'
       react: '*'
@@ -57915,7 +57936,6 @@ packages:
     resolution: {directory: libs/ui/packages/icons, type: directory}
     id: file:libs/ui/packages/icons
     name: '@ledgerhq/icons-ui'
-    version: 0.6.2
     peerDependencies:
       '@types/react': '*'
       react: '*'
@@ -57939,7 +57959,3 @@ packages:
     dependencies:
       commander: 2.20.3
     dev: false
-
-settings:
-  autoInstallPeers: false
-  excludeLinksFromLockfile: false
