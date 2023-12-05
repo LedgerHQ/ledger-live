@@ -24,7 +24,7 @@ const specificConfig = {
     // makeMetroConfig adds the "module" field, but we skip it here on purpose
     // because it makes the "react-native-url-polyfill" package consume the
     // es6 version of the "punycode" package and crash (it expects a default export).
-    resolverMainFields: ["react-native", "browser", "main"],
+    resolverMainFields: ["sbmodern", "react-native", "browser", "main"],
   },
 };
 

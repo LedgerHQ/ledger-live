@@ -86,6 +86,8 @@ import {
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import useAccountsWithFundsListener from "@ledgerhq/live-common/hooks/useAccountsWithFundsListener";
 import { updateIdentify } from "./analytics";
+import StorybookUIRoot from "../.storybook";
+import entrypointConfig from "../entrypoint.json";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -270,7 +272,9 @@ export default class Root extends Component {
   };
 
   render() {
-    return (
+    return entrypointConfig?.storybook ? (
+      <StorybookUIRoot />
+    ) : (
       <RebootProvider onRebootStart={this.onRebootStart}>
         <LedgerStoreProvider onInitFinished={this.onInitFinished}>
           {(ready, initialCountervalues) =>
