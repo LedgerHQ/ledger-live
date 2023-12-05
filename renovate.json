@@ -97,12 +97,6 @@
       "reviewers": ["team:live-qa"]
     },
     {
-      "description": "types library are ignored",
-      "matchPackagePatterns": ["^@types"],
-      "groupName": "types",
-      "enabled": false
-    },
-    {
       "extends": "monorepo:expo",
       "groupName": null
     }
