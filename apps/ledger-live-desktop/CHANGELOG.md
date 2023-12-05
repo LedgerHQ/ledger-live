@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.73.0-next.1
+
+### Patch Changes
+
+- [#5658](https://github.com/LedgerHQ/ledger-live/pull/5658) [`8840ed7`](https://github.com/LedgerHQ/ledger-live/commit/8840ed7fd87bf6a353d8ab7092cd0bae2510fac1) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Fix cut notification tag on LLD when minimized navbar
+
 ## 2.73.0-next.0
 
 ### Minor Changes
