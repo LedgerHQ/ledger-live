@@ -153,7 +153,7 @@ const NftCollection = ({ route }: NavigationProps) => {
     <View style={styles.contentContainer} key="SectionList">
       <SectionList
         sections={sections}
-        style={[styles.sectionList, { backgroundColor: colors.background.main}]}
+        style={[styles.sectionList, { backgroundColor: colors.background.main }]}
         contentContainerStyle={styles.contentContainer}
         keyExtractor={(op: Operation) => op.id}
         renderItem={renderOperationItem}

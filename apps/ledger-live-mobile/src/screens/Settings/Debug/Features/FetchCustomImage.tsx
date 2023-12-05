@@ -111,7 +111,7 @@ export default function DebugFetchCustomImage() {
 
   return (
     <NavigationScrollView>
-      <View style={[styles.root, { backgroundColor: colors.background.main}]}>
+      <View style={[styles.root, { backgroundColor: colors.background.main }]}>
         {!device ? (
           newDeviceSelectionFeatureFlag?.enabled ? (
             <SelectDevice2

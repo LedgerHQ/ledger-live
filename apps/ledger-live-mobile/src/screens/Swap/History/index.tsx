@@ -124,7 +124,7 @@ const History = () => {
   };
 
   return (
-    <View style={[styles.root, { backgroundColor: colors.background.main}]}>
+    <View style={[styles.root, { backgroundColor: colors.background.main }]}>
       <TrackScreen category="Swap" name="Device History" />
       {sections.length ? (
         <View style={styles.alertWrapper}>

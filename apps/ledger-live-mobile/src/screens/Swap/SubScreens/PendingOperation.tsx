@@ -40,7 +40,7 @@ export function PendingOperation({ route, navigation }: PendingOperationParamLis
   }, [navigation, route.params.swapOperation]);
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background.main}]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background.main }]}>
       <TrackScreen
         category="Swap Form"
         name="Confirmation Success"
@@ -52,7 +52,7 @@ export function PendingOperation({ route, navigation }: PendingOperationParamLis
         <View style={styles.content}>
           <View style={[styles.iconWrapper, { backgroundColor: rgba(colors.success.c50, 0.1) }]}>
             <IconCheck color={colors.success.c50} size={20} />
-            <View style={[styles.wrapperClock, { backgroundColor: colors.background.main}]}>
+            <View style={[styles.wrapperClock, { backgroundColor: colors.background.main }]}>
               <IconClock color={colors.neutral.c70} size={14} />
             </View>
           </View>

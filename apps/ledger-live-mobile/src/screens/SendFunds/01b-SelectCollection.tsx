@@ -115,7 +115,7 @@ const SendFundsSelectCollection = ({ route }: Props) => {
   );
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background.main}]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background.main }]}>
       <FlatList
         contentContainerStyle={styles.collections}
         data={collectionsSlice}

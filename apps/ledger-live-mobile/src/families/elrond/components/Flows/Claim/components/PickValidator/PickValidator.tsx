@@ -74,7 +74,7 @@ const PickValidator = (props: PickValidatorPropsType) => {
    */
 
   return (
-    <View style={[styles.root, { backgroundColor: colors.background.main}]}>
+    <View style={[styles.root, { backgroundColor: colors.background.main }]}>
       <View style={styles.main}>
         <FlatList
           style={styles.list}

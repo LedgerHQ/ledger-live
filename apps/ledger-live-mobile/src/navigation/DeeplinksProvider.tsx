@@ -24,7 +24,6 @@ import { ScreenName, NavigatorName } from "../const";
 import { setWallectConnectUri } from "../actions/walletconnect";
 import { useGeneralTermsAccepted } from "../logic/terms";
 import { Writeable } from "../types/helpers";
-import { getTheme } from "~/StyleProvider";
 import { useTheme } from "styled-components/native";
 import { track } from "../analytics";
 import { setEarnInfoModal } from "../actions/earn";

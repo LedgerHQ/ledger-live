@@ -81,7 +81,7 @@ class EditAccountName extends PureComponent<
     const initialAccountName = account ? account.name : accountFromAdd?.name;
 
     return (
-      <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background.main}]}>
+      <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background.main }]}>
         <Box px={6} flex={1}>
           <TextInput
             autoFocus

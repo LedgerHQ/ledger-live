@@ -9,7 +9,7 @@ const EmptyState = () => {
   const { colors } = useTheme();
 
   return (
-    <View style={[styles.root, { backgroundColor: colors.background.main}]}>
+    <View style={[styles.root, { backgroundColor: colors.background.main }]}>
       <LText secondary style={styles.title}>
         <Trans i18nKey="transfer.swap.history.empty.title" />
       </LText>

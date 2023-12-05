@@ -49,7 +49,7 @@ function SolanaEditMemo({ navigation, route }: NavigationProps) {
 
   return (
     <SafeAreaView style={styles.root}>
-      <KeyboardView style={[styles.body, { backgroundColor: colors.background.main}]}>
+      <KeyboardView style={[styles.body, { backgroundColor: colors.background.main }]}>
         <ScrollView contentContainerStyle={styles.root} keyboardShouldPersistTaps="always">
           <TextInput
             allowFontScaling={false}

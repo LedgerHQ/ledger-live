@@ -65,7 +65,7 @@ export default function ValidationSuccess({ navigation, route }: Props) {
   invariant(transaction.family === "solana", "solana tx expected");
 
   return (
-    <View style={[styles.root, { backgroundColor: colors.background.main}]}>
+    <View style={[styles.root, { backgroundColor: colors.background.main }]}>
       <TrackScreen
         category="SendFunds"
         name="ValidationSuccess"

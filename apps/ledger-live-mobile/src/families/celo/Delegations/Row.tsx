@@ -39,7 +39,9 @@ export default function DelegationRow({
       style={[
         styles.row,
         styles.wrapper,
-        !isLast ? { ...styles.borderBottom, borderBottomColor: colors.opacityDefault.c05 } : undefined,
+        !isLast
+          ? { ...styles.borderBottom, borderBottomColor: colors.opacityDefault.c05 }
+          : undefined,
       ]}
       onPress={() => onPress(vote)}
     >

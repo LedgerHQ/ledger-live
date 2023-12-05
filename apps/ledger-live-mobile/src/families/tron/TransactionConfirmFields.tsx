@@ -37,7 +37,12 @@ const Warning = ({ transaction }: { transaction: Transaction }) => {
       return (
         <DataRow>
           <Info size={22} color={colors.primary.c80} />
-          <LText semiBold style={[styles.text, styles.infoText]} color="primary.c70" numberOfLines={2}>
+          <LText
+            semiBold
+            style={[styles.text, styles.infoText]}
+            color="primary.c70"
+            numberOfLines={2}
+          >
             <Trans
               i18nKey={`ValidateOnDevice.infoWording.${transaction.mode}`}
               values={{

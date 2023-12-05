@@ -133,7 +133,7 @@ const SendFundsSelectNft = ({ route }: Props) => {
   );
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background.main}]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background.main }]}>
       <FlatList
         contentContainerStyle={styles.nfts}
         data={nftsSlice}

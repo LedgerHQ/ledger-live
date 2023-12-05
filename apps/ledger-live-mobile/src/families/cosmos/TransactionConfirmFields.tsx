@@ -78,7 +78,12 @@ function Warning({ transaction }: FieldProps) {
       return (
         <DataRow>
           <Info size={22} color={colors.primary.c80} />
-          <LText semiBold style={[styles.text, styles.infoText]} color="primary.c70" numberOfLines={3}>
+          <LText
+            semiBold
+            style={[styles.text, styles.infoText]}
+            color="primary.c70"
+            numberOfLines={3}
+          >
             {t(`ValidateOnDevice.infoWording.cosmos.${transaction.mode}`)}
           </LText>
         </DataRow>

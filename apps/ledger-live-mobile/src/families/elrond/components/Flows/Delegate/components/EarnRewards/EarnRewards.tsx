@@ -59,7 +59,7 @@ const EarnRewards = (props: EarnRewardsPropsType) => {
    */
 
   return (
-    <View style={[styles.root, { backgroundColor: colors.background.main}]}>
+    <View style={[styles.root, { backgroundColor: colors.background.main }]}>
       <NavigationScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
         <TrackScreen
           category="DelegationFlow"

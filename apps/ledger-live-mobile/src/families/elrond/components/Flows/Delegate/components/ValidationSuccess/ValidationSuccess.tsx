@@ -79,7 +79,7 @@ const ValidationSuccess = ({ navigation, route }: ValidationSuccessPropsType) =>
    */
 
   return (
-    <View style={[styles.root, { backgroundColor: colors.background.main}]}>
+    <View style={[styles.root, { backgroundColor: colors.background.main }]}>
       <TrackScreen
         category="ElrondDelegation"
         name="ValidationSuccess"

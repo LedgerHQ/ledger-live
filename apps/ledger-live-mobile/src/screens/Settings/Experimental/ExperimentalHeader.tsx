@@ -10,7 +10,6 @@ import Animated, {
 } from "react-native-reanimated";
 import { Trans } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
-import { useTheme } from "styled-components/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Config from "react-native-config";
 import { useHasLocallyOverriddenFeatureFlags } from "@ledgerhq/live-common/featureFlags/useHasOverriddenFeatureFlags";
@@ -28,7 +27,6 @@ export const HEIGHT = 30;
 
 function ExperimentalHeader() {
   const navigation = useNavigation<BaseNavigation>();
-  const { colors } = useTheme();
   const { top } = useSafeAreaInsets();
   const isExperimental = useExperimental();
   const hasLocallyOverriddenFlags = useHasLocallyOverriddenFeatureFlags();

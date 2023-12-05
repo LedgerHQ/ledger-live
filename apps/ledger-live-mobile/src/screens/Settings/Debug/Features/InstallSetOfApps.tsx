@@ -76,7 +76,7 @@ export default function DebugMultiAppInstall() {
           </>
         )}
       </Flex>
-      <View style={[styles.root, { backgroundColor: colors.background.main}]}>
+      <View style={[styles.root, { backgroundColor: colors.background.main }]}>
         {device ? (
           <VerticalTimeline
             steps={[

@@ -108,7 +108,7 @@ export default function ActivateSummary({ navigation, route }: Props) {
     status.warnings && Object.keys(status.warnings).length > 0 && Object.values(status.warnings)[0];
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background.main}]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background.main }]}>
       <TrackScreen
         category="ActivateFlow"
         name="Summary"

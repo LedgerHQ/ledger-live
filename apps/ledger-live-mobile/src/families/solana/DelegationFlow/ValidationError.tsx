@@ -30,7 +30,7 @@ export default function ValidationError({ navigation, route }: Props) {
   const error = route.params?.error;
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background.main}]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background.main }]}>
       <TrackScreen
         category="DelegationFlow"
         name="ValidationError"

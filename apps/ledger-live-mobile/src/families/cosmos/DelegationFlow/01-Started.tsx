@@ -44,7 +44,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
   }, [mainAccount.currency.id]);
 
   return (
-    <View style={[styles.root, { backgroundColor: colors.background.main}]}>
+    <View style={[styles.root, { backgroundColor: colors.background.main }]}>
       <NavigationScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
         <TrackScreen
           category="DelegationFlow"

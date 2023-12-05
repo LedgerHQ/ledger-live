@@ -70,7 +70,7 @@ export default function SelectValidator({ navigation, route }: Props) {
     );
 
   return (
-    <SafeAreaView style={[styles.root, { backgroundColor: colors.background.main}]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background.main }]}>
       <TrackScreen
         category="ActivateFlow"
         name="SelectValidator"

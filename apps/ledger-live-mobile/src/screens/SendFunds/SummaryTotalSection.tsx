@@ -9,7 +9,6 @@ import CounterValue from "../../components/CounterValue";
 import CurrencyUnitValue from "../../components/CurrencyUnitValue";
 import LText from "../../components/LText";
 import QueuedDrawer from "../../components/QueuedDrawer";
-import ModalBottomAction from "../../components/ModalBottomAction";
 import Touchable from "../../components/Touchable";
 import Info from "../../icons/Info";
 import { withTheme, Theme } from "../../colors";

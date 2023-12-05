@@ -426,7 +426,6 @@ function Delegations({ account }: Props) {
     onUndelegate,
     colors.neutral.c20,
     colors.neutral.c70,
-    colors.neutral.c70,
     colors.warning.c80,
     colors.error.c60,
   ]);
