@@ -103,7 +103,7 @@ const swapProviders: Record<string, ProviderConfig> = {
       "hex",
     ),
     needsKYC: true,
-    needsBearerToken: true,
+    needsBearerToken: false,
     type: "CEX",
     version: 2,
   },
