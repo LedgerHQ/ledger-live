@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useCallback } from "react";
 import Button from "~/renderer/components/ButtonV3";
 import { useTranslation } from "react-i18next";
-import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeatureFlags } from "@ledgerhq/live-config/featureFlags/index";
 import { Text, Input, Flex, Switch } from "@ledgerhq/react-ui";
 import { Feature, FeatureId } from "@ledgerhq/types-live";
 import { InputRenderRightContainer } from "@ledgerhq/react-ui/components/form/BaseInput/index";
@@ -20,7 +20,7 @@ const FeatureFlagEdit: React.FC<{ flagName: FeatureId; flagValue: Feature }> = p
     overriddenByEnv, // eslint-disable-line @typescript-eslint/no-unused-vars
     overridesRemote, // eslint-disable-line @typescript-eslint/no-unused-vars
     enabledOverriddenForCurrentLanguage, // eslint-disable-line @typescript-eslint/no-unused-vars
-    enabledOverriddenForCurrentDesktopVersion, // eslint-disable-line @typescript-eslint/no-unused-vars
+    enabledOverriddenForCurrentVersion, // eslint-disable-line @typescript-eslint/no-unused-vars
     ...pureValue
   } = flagValue || {};
 
