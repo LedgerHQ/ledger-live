@@ -2,8 +2,10 @@ import { Provider } from "..";
 import { getValueByKey } from "./helpers";
 import { parser } from "./parser";
 
-export const FirebaseProvder: Provider = {
-  name: "firebaseRemoteConfig",
-  parser,
-  getValueByKey: getValueByKey,
-};
+class FirebaseRemoteConfigProviderFactory extends Provider {
+  constructor() {
+    super("firebaseRemoteConfig", parser, getValueByKey);
+  }
+}
+
+export const FirebaseRemoteConfigProvider = new FirebaseRemoteConfigProviderFactory();
