@@ -2,7 +2,7 @@ import network from "@ledgerhq/live-network/network";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type { Transaction } from "../types";
-import { calculateAmount } from "../utils";
+import { calculateAmount, COUNTERVALUE_URL_HBAR_USD } from "../utils";
 
 // Balance is 1 Hbar
 const account: Account = {
@@ -68,7 +68,7 @@ describe("utils", () => {
     try {
       const { data } = await network({
         method: "GET",
-        url: "https://countervalues.live.ledger.com/latest/direct?pairs=hbar:usd",
+        url: COUNTERVALUE_URL_HBAR_USD,
       });
       estimatedFees = new BigNumber(10000).dividedBy(data[0]).integerValue(BigNumber.ROUND_CEIL);
     } catch {
