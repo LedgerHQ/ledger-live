@@ -96,10 +96,7 @@
       "groupName": "playwright",
       "reviewers": ["team:live-qa"]
     },
-    {
-      "extends": "monorepo:expo",
-      "groupName": null
-    }
+    { "extends": ["monorepo:expo"], "groupName": null }
   ],
   "prConcurrentLimit": 5,
   "separateMinorPatch": true,
