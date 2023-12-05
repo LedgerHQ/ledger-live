@@ -886,6 +886,18 @@
     "FirmwareNotRecognized" : {
       "title" : "Ungültiger Anbieter",
       "description" : "Sie müssen die Einstellung „Mein Ledger-Anbieter“ ändern. Öffnen Sie dazu die Einstellungen in Ledger Live, navigieren Sie zu „Experimentelle Features“ und wählen Sie einen anderen Anbieter aus."
+    },
+    "GasLessThanEstimate": {
+      "title": "Dies ist möglicherweise zu niedrig. Bitte erhöhen"
+    },
+    "SequenseNumberTooNew": {
+      "title": "Sequenznummer zu neu"
+    },
+    "SequenseNumberTooOld": {
+      "title": "Sequenznummer zu alt"
+    },
+    "TransactionExpired": {
+      "title": "Transaktion abgelaufen"
     }
   },
   "crash" : {
@@ -2361,7 +2373,8 @@
       "gasLimit" : "Gaslimit",
       "id" : "ID",
       "autoClaimedRewards" : "Automatisch beanspruchte Prämien",
-      "stakedAmount" : "Betrag gestaked"
+      "stakedAmount" : "Betrag gestaked",
+      "version": "Ausführung"
     },
     "multipleAddresses" : "Warum mehrere Adressen?",
     "tokenName" : "Token-Name",
@@ -3564,7 +3577,15 @@
         "title" : "Einheit wählen"
       },
       "networkInfo" : "Wählen Sie die Höhe der Netzwerkgebühren, die in der Transaktion enthalten sein sollen. Die Höhe der Gebühren beeinflusst die Verarbeitungsgeschwindigkeit der Transaktion",
-      "networkInfoMaxFees" : "Dies ist der Betrag, den Sie maximal für diese Transaktion zahlen müssen. Die Differenz zwischen den maximalen Netzgebühren und den tatsächlichen Gebühren wird zurückerstattet."
+      "networkInfoMaxFees" : "Dies ist der Betrag, den Sie maximal für diese Transaktion zahlen müssen. Die Differenz zwischen den maximalen Netzgebühren und den tatsächlichen Gebühren wird zurückerstattet.","aptos": {
+        "options": "Optionen",
+        "gasLimit": "Gaslimit",
+        "gasPrice": "Gaspreis (OCTAS)",
+        "sequenceNumber": "Sequenznummer",
+        "expTimestamp": "Ablaufzeitstempel",
+        "setOptimalGas": "Optimales Gas einstellen",
+        "resetSettings": "Einstellungen zurücksetzen"
+      }
     },
     "verification" : {
       "streaming" : {

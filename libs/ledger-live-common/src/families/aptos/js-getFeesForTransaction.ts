@@ -1,15 +1,12 @@
 import BigNumber from "bignumber.js";
 import { HexString, TxnBuilderTypes } from "aptos";
 import type { Account } from "@ledgerhq/types-live";
-import { from, firstValueFrom } from "rxjs";
 
 import { AptosAPI } from "./api";
 import buildTransaction from "./js-buildTransaction";
 import { DEFAULT_GAS, DEFAULT_GAS_PRICE, ESTIMATE_GAS_MUL } from "./logic";
 import type { Transaction, TransactionErrors } from "./types";
-import { withDevice } from "../../hw/deviceAccess";
 import { log } from "@ledgerhq/logs";
-import Aptos from "./hw-app-aptos";
 
 type IGetEstimatedGasReturnType = {
   fees: BigNumber;
@@ -51,43 +48,43 @@ export const getFee = async (
     // skip
   }
 
-  try {
-    const fn = (signer: Aptos) => signer.getAddress(account.freshAddressPath);
-    const result = await firstValueFrom(
-      withDevice("")(transport => from(fn(new Aptos(transport)))),
-    );
-    const publickKey = result.publicKey.toString("hex");
-    const pubKeyUint = new HexString(publickKey).toUint8Array();
-    const publicKeyEd = new TxnBuilderTypes.Ed25519PublicKey(pubKeyUint);
-    const tx = await buildTransaction(account, transaction, aptosClient);
-    const simulation = await aptosClient.simulateTransaction(publicKeyEd, tx);
-    const completedTx = simulation[0];
+  if (account.xpub) {
+    try {
+      const publickKey = account.xpub as string;
+      const pubKeyUint = new HexString(publickKey).toUint8Array();
+      const publicKeyEd = new TxnBuilderTypes.Ed25519PublicKey(pubKeyUint);
+      const tx = await buildTransaction(account, transaction, aptosClient);
+      const simulation = await aptosClient.simulateTransaction(publicKeyEd, tx);
+      const completedTx = simulation[0];
 
-    if (!completedTx.success) {
-      switch (true) {
-        case completedTx.vm_status.includes("SEQUENCE_NUMBER"): {
-          res.errors.sequenceNumber = completedTx.vm_status;
-          break;
-        }
-        case completedTx.vm_status.includes("TRANSACTION_EXPIRED"): {
-          res.errors.expirationTimestampSecs = completedTx.vm_status;
-          break;
-        }
-        case completedTx.vm_status.includes("EINSUFFICIENT_BALANCE"): {
-          // skip, processed in getTransactionStatus
-          break;
-        }
-        default: {
-          throw Error(`Simulation failed with following error: ${completedTx.vm_status}`);
+      if (!completedTx.success) {
+        switch (true) {
+          case completedTx.vm_status.includes("SEQUENCE_NUMBER"): {
+            res.errors.sequenceNumber = completedTx.vm_status;
+            break;
+          }
+          case completedTx.vm_status.includes("TRANSACTION_EXPIRED"): {
+            res.errors.expirationTimestampSecs = completedTx.vm_status;
+            break;
+          }
+          case completedTx.vm_status.includes("EINSUFFICIENT_BALANCE"): {
+            // skip, processed in getTransactionStatus
+            break;
+          }
+          default: {
+            throw Error(`Simulation failed with following error: ${completedTx.vm_status}`);
+          }
         }
       }
-    }
 
-    res.estimate.expirationTimestampSecs = completedTx.expiration_timestamp_secs;
-    gasLimit = Number(completedTx.gas_used ?? DEFAULT_GAS);
-  } catch (error: any) {
-    log(error.message);
-    throw error;
+      res.estimate.expirationTimestampSecs = completedTx.expiration_timestamp_secs;
+      gasLimit =
+        Number(completedTx.gas_used) ||
+        Math.floor(Number(transaction.options.maxGasAmount) / ESTIMATE_GAS_MUL);
+    } catch (error: any) {
+      log(error.message);
+      throw error;
+    }
   }
 
   try {
@@ -103,12 +100,12 @@ export const getFee = async (
   res.estimate.sequenceNumber = sequenceNumber.toString();
   res.estimate.maxGasAmount = gasLimit.toString();
 
-  if (transaction.skipEmulation) {
+  if (transaction.firstEmulation) {
+    res.fees = res.fees.plus(BigNumber(gasPrice)).multipliedBy(BigNumber(gasLimit));
+  } else {
     res.fees = res.fees
       .plus(transaction.options.gasUnitPrice)
       .multipliedBy(BigNumber(transaction.options.maxGasAmount));
-  } else {
-    res.fees = res.fees.plus(BigNumber(gasPrice)).multipliedBy(BigNumber(gasLimit));
   }
 
   CACHE.delete(getCacheKey(transaction));

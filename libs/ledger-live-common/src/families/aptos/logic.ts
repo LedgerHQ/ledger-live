@@ -1,6 +1,19 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import BigNumber from "bignumber.js";
-import { Transaction } from "./types";
+
+import type { Types as AptosTypes } from "aptos";
+import type { Operation, OperationType } from "@ledgerhq/types-live";
+import type { AptosTransaction, Transaction } from "./types";
+import { encodeOperationId } from "../../operation";
+
+import {
+  TRANSFER_TYPES,
+  TX_TYPE,
+  APTOS_OBJECT_TRANSFER,
+  APTOS_TRANSFER_FUNCTION_ADDRESS,
+  DIRECTION,
+} from "./constants";
+import { compareAddress } from "./utils";
 
 export const DEFAULT_GAS = 5;
 export const DEFAULT_GAS_PRICE = 100;
@@ -56,3 +69,73 @@ export function normalizeTransactionOptions(
     expirationTimestampSecs: check(options.expirationTimestampSecs),
   };
 }
+
+const getBlankOperation = (
+  tx: AptosTransaction,
+  id: string,
+): Operation<Record<string, string>> => ({
+  id: "",
+  hash: tx.hash,
+  type: "" as OperationType,
+  value: new BigNumber(0),
+  fee: new BigNumber(0),
+  blockHash: tx.block?.hash,
+  blockHeight: tx.block?.height,
+  senders: [] as string[],
+  recipients: [] as string[],
+  accountId: id,
+  date: new Date(parseInt(tx.timestamp) / 1000),
+  extra: { version: tx?.version },
+  transactionSequenceNumber: parseInt(tx.sequence_number),
+  hasFailed: false,
+});
+
+export const txsToOps = (info: any, id: string, txs: (AptosTransaction | null)[]) => {
+  const { address } = info;
+  const ops: Operation[] = [];
+  txs.forEach(tx => {
+    if (tx !== null) {
+      const op: Operation = getBlankOperation(tx, id);
+      op.fee = new BigNumber(tx.gas_used).multipliedBy(BigNumber(tx.gas_unit_price));
+
+      const payload = tx.payload as AptosTypes.EntryFunctionPayload;
+
+      let type;
+      if ("function" in payload) {
+        type = payload.function.split("::").at(-1) as TX_TYPE;
+      } else if ("type" in payload) {
+        type = (payload as any).type as TX_TYPE;
+      }
+
+      // TRANSFER & RECEIVE
+      if (TRANSFER_TYPES.includes(type) && "arguments" in payload) {
+        // avoid v2 parse
+        if ("function" in payload && payload.function === APTOS_OBJECT_TRANSFER) {
+          op.type = DIRECTION.UNKNOWN;
+        } else {
+          op.recipients.push(payload.arguments[0]);
+          op.senders.push(tx.sender);
+          op.value = op.value.plus(payload.arguments[1]);
+          if (compareAddress(op.recipients[0], address)) {
+            op.type = DIRECTION.IN;
+          } else {
+            op.type = DIRECTION.OUT;
+          }
+        }
+
+        if (
+          !payload.type_arguments[0] &&
+          "function" in payload &&
+          payload.function !== APTOS_TRANSFER_FUNCTION_ADDRESS
+        ) {
+          op.type = DIRECTION.UNKNOWN;
+        }
+
+        op.hasFailed = !tx.success;
+        op.id = encodeOperationId(id, tx.hash, op.type);
+        ops.push(op);
+      }
+    }
+  });
+  return ops;
+};

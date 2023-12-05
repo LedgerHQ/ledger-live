@@ -17,10 +17,7 @@ export default class LedgerAccount {
   private publicKey: Buffer = Buffer.from([]);
   private accountAddress: HexString = new HexString("");
 
-  static async fromLedgerConnection(
-    transport: Transport,
-    path: string
-  ): Promise<LedgerAccount> {
+  static async fromLedgerConnection(transport: Transport, path: string): Promise<LedgerAccount> {
     const account = new LedgerAccount(path);
     await account.init(transport);
     return account;
@@ -68,10 +65,7 @@ export default class LedgerAccount {
     if (!this.client) {
       throw new Error("LedgerAccount not initialized");
     }
-    const response = await this.client.signTransaction(
-      this.hdPath,
-      Buffer.from(buffer)
-    );
+    const response = await this.client.signTransaction(this.hdPath, Buffer.from(buffer));
     return HexString.fromBuffer(response.signature);
   }
 
@@ -81,24 +75,20 @@ export default class LedgerAccount {
   }
 
   async rawToSigned(
-    rawTxn: TxnBuilderTypes.RawTransaction
+    rawTxn: TxnBuilderTypes.RawTransaction,
   ): Promise<TxnBuilderTypes.SignedTransaction> {
     const signingMessage = TransactionBuilder.getSigningMessage(rawTxn);
     const sigHexStr = await this.asyncSignBuffer(signingMessage);
-    const signature = new TxnBuilderTypes.Ed25519Signature(
-      sigHexStr.toUint8Array()
-    );
+    const signature = new TxnBuilderTypes.Ed25519Signature(sigHexStr.toUint8Array());
     const authenticator = new TxnBuilderTypes.TransactionAuthenticatorEd25519(
       new TxnBuilderTypes.Ed25519PublicKey(this.publicKey),
-      signature
+      signature,
     );
 
     return new TxnBuilderTypes.SignedTransaction(rawTxn, authenticator);
   }
 
-  async signTransaction(
-    rawTxn: TxnBuilderTypes.RawTransaction
-  ): Promise<Uint8Array> {
+  async signTransaction(rawTxn: TxnBuilderTypes.RawTransaction): Promise<Uint8Array> {
     return BCS.bcsToBytes(await this.rawToSigned(rawTxn));
   }
 }

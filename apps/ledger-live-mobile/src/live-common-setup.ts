@@ -121,6 +121,8 @@ setSupportedCurrencies([
   "casper",
   "neon_evm",
   "lukso",
+  "aptos",
+  "aptos_testnet",
 ]);
 
 if (Config.BLE_LOG_LEVEL) BluetoothTransport.setLogLevel(Config.BLE_LOG_LEVEL);

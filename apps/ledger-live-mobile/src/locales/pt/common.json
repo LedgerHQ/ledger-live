@@ -821,6 +821,18 @@
     },
     "GasEstimationError" : {
       "title" : "Falha em estimar o gás"
+    },
+    "GasLessThanEstimate": {
+      "title": "Isso pode ser muito baixo. Por favor aumente"
+    },
+    "SequenseNumberTooNew": {
+      "title": "Número de sequência muito novo"
+    },
+    "SequenseNumberTooOld": {
+      "title": "Número de sequência muito antigo"
+    },
+    "TransactionExpired": {
+      "title": "A transação expirou"
     }
   },
   "crash" : {
@@ -2206,7 +2218,8 @@
       "gasLimit" : "Limite de gas",
       "id" : "Id",
       "autoClaimedRewards" : "Recompensas automaticamente resgatadas",
-      "stakedAmount" : "Quantia aplicada"
+      "stakedAmount" : "Quantia aplicada",
+      "version": "Versão"
     },
     "multipleAddresses" : "Por que endereços múltiplos?",
     "tokenName" : "Nome do token",
@@ -3435,7 +3448,16 @@
       "edit" : {
         "title" : "Escolha a unidade"
       },
-      "networkInfo" : "Escolha a quantia das taxas de rede a serem incluídas na transação. A quantia das taxas afeta a velocidade de processamento da transação"
+      "networkInfo" : "Escolha a quantia das taxas de rede a serem incluídas na transação. A quantia das taxas afeta a velocidade de processamento da transação",
+      "aptos": {
+        "options": "Opções",
+        "gasLimit": "Limite de Gás",
+        "gasPrice": "Preço do gás (OCTAS)",
+        "sequenceNumber": "Número sequencial",
+        "expTimestamp": "Exp. Timestamp",
+        "setOptimalGas": "Defina o gás ideal",
+        "resetSettings": "Redefinir as configurações"
+      }
     },
     "verification" : {
       "streaming" : {

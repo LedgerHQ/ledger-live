@@ -10,17 +10,14 @@ import type { Account } from "@ledgerhq/types-live";
 import type { TransactionStatus } from "../..//generated/types";
 import type { Transaction } from "./types";
 
-import { isValidAddress, DEFAULT_GAS } from "./logic";
+import { isValidAddress } from "./logic";
 import {
   SequenseNumberTooNewError,
   SequenseNumberTooOldError,
   TransactionExpiredError,
 } from "./errors";
 
-const getTransactionStatus = async (
-  a: Account,
-  t: Transaction
-): Promise<TransactionStatus> => {
+const getTransactionStatus = async (a: Account, t: Transaction): Promise<TransactionStatus> => {
   const errors: Record<string, any> = {};
   const warnings: Record<string, any> = {};
   const useAllAmount = !!t.useAllAmount;
@@ -33,9 +30,7 @@ const getTransactionStatus = async (
 
   const amount = t.amount;
 
-  const totalSpent = useAllAmount
-    ? a.balance
-    : BigNumber(t.amount).plus(estimatedFees);
+  const totalSpent = useAllAmount ? a.balance : BigNumber(t.amount).plus(estimatedFees);
 
   if (totalSpent.gt(a.balance)) {
     errors.amount = new NotEnoughBalance();
@@ -52,11 +47,7 @@ const getTransactionStatus = async (
     t.estimate.maxGasAmount &&
     +t.options.maxGasAmount < +t.estimate.maxGasAmount
   ) {
-    if (+t.options.maxGasAmount >= DEFAULT_GAS) {
-      warnings.maxGasAmount = new GasLessThanEstimate();
-    } else {
-      errors.maxGasAmount = new GasLessThanEstimate();
-    }
+    errors.maxGasAmount = new GasLessThanEstimate();
   }
 
   if (

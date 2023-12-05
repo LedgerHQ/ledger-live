@@ -886,6 +886,18 @@
     "FirmwareNotRecognized" : {
       "title" : "Provedor Inválido",
       "description" : "Você deve mudar a configuração em “Provedor da Minha Ledger”. Para desativá-la, abra as “Configurações” do Ledger Live, selecione “Recursos experimentais” e, em seguida, selecione um provedor diferente."
+    },
+    "GasLessThanEstimate": {
+      "title": "Isso pode ser muito baixo. Por favor aumente"
+    },
+    "SequenseNumberTooNew": {
+      "title": "Número de sequência muito novo"
+    },
+    "SequenseNumberTooOld": {
+      "title": "Número de sequência muito antigo"
+    },
+    "TransactionExpired": {
+      "title": "A transação expirou"
     }
   },
   "crash" : {
@@ -2361,7 +2373,8 @@
       "gasLimit" : "Limite de gas",
       "id" : "Id",
       "autoClaimedRewards" : "Recompensas automaticamente resgatadas",
-      "stakedAmount" : "Quantia aplicada"
+      "stakedAmount" : "Quantia aplicada",
+      "version": "Versão"
     },
     "multipleAddresses" : "Por que múltiplos endereços?",
     "tokenName" : "Nome do token",
@@ -3564,7 +3577,16 @@
         "title" : "Escolha a unidade"
       },
       "networkInfo" : "Escolha o quanto de taxas de rede incluir na transação. A quantia de taxas afeta a velocidade de processamento da transação",
-      "networkInfoMaxFees" : "Esta é a quantia máxima que você pode pagar por esta transação.  Qualquer diferença entre a taxa de rede máxima e a taxa real será reembolsada."
+      "networkInfoMaxFees" : "Esta é a quantia máxima que você pode pagar por esta transação.  Qualquer diferença entre a taxa de rede máxima e a taxa real será reembolsada.",
+      "aptos": {
+        "options": "Opções",
+        "gasLimit": "Limite de Gás",
+        "gasPrice": "Preço do gás (OCTAS)",
+        "sequenceNumber": "Número sequencial",
+        "expTimestamp": "Exp. Timestamp",
+        "setOptimalGas": "Defina o gás ideal",
+        "resetSettings": "Redefinir as configurações"
+      }
     },
     "verification" : {
       "streaming" : {

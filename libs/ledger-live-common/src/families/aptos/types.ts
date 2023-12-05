@@ -32,6 +32,12 @@ export type AptosResource<T extends Record<string, any> = any> = {
   type: string;
 };
 
+export type AptosAddress = {
+  address: string;
+  publicKey: string;
+  path: string;
+};
+
 export interface TransactionEstimate {
   maxGasAmount: string;
   gasUnitPrice: string;
@@ -39,12 +45,12 @@ export interface TransactionEstimate {
   expirationTimestampSecs?: string;
 }
 
-interface TransactionOptions {
+export type TransactionOptions = {
   maxGasAmount: string;
   gasUnitPrice: string;
   sequenceNumber?: string;
   expirationTimestampSecs?: string;
-}
+};
 
 export type TransactionErrors = {
   maxGasAmount?: string;

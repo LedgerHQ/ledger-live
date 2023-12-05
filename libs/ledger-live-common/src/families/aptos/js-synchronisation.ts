@@ -1,99 +1,29 @@
-import BigNumber from "bignumber.js";
-import type { Types as AptosTypes } from "aptos";
-import type { Operation, OperationType, Account } from "@ledgerhq/types-live";
+import { from, firstValueFrom } from "rxjs";
+import { withDevice } from "../../hw/deviceAccess";
 import type { GetAccountShape } from "../../bridge/jsHelpers";
-import type { AptosTransaction } from "./types";
+import type { AptosAccount } from "./types";
 import { makeSync, makeScanAccounts, mergeOps } from "../../bridge/jsHelpers";
 
 import { encodeAccountId } from "../../account";
-import { encodeOperationId } from "../../operation";
 
 import { AptosAPI } from "./api";
-import {
-  TRANSFER_TYPES,
-  TX_TYPE,
-  APTOS_OBJECT_TRANSFER,
-  APTOS_TRANSFER_FUNCTION_ADDRESS,
-  DIRECTION,
-} from "./constants";
-import { compareAddress } from "./utils";
-
-const getBlankOperation = (
-  tx: AptosTransaction,
-  id: string,
-): Operation<Record<string, string>> => ({
-  id: "",
-  hash: tx.hash,
-  type: "" as OperationType,
-  value: new BigNumber(0),
-  fee: new BigNumber(0),
-  blockHash: tx.block?.hash,
-  blockHeight: tx.block?.height,
-  senders: [] as string[],
-  recipients: [] as string[],
-  accountId: id,
-  date: new Date(parseInt(tx.timestamp) / 1000),
-  extra: { version: tx?.version },
-  transactionSequenceNumber: parseInt(tx.sequence_number),
-  hasFailed: false,
-});
-
-const txsToOps = (info: any, id: string, txs: (AptosTransaction | null)[]) => {
-  const { address } = info;
-  const ops: Operation[] = [];
-  txs.forEach(tx => {
-    if (tx !== null) {
-      const op: Operation = getBlankOperation(tx, id);
-      op.fee = new BigNumber(tx.gas_used).multipliedBy(BigNumber(tx.gas_unit_price));
-
-      const payload = tx.payload as AptosTypes.EntryFunctionPayload;
-
-      let type;
-      if ("function" in payload) {
-        type = payload.function.split("::").at(-1) as TX_TYPE;
-        (op.extra as any).entryFunction = payload.function.slice(
-          payload.function.indexOf("::") + 2,
-        );
-      } else if ("type" in payload) {
-        type = (payload as any).type as TX_TYPE;
-      }
-      (op.extra as any).entryFunction = type;
-
-      // TRANSFER & RECEIVE
-      if (TRANSFER_TYPES.includes(type) && "arguments" in payload) {
-        // avoid v2 parse
-        if ("function" in payload && payload.function === APTOS_OBJECT_TRANSFER) {
-          op.type = DIRECTION.UNKNOWN;
-        } else {
-          op.recipients.push(payload.arguments[0]);
-          op.senders.push(tx.sender);
-          op.value = op.value.plus(payload.arguments[1]);
-          if (compareAddress(op.recipients[0], address)) {
-            op.type = DIRECTION.IN;
-          } else {
-            op.type = DIRECTION.OUT;
-          }
-        }
-
-        if (
-          !payload.type_arguments[0] &&
-          "function" in payload &&
-          payload.function !== APTOS_TRANSFER_FUNCTION_ADDRESS
-        ) {
-          op.type = DIRECTION.UNKNOWN;
-        }
-
-        op.hasFailed = !tx.success;
-        op.id = encodeOperationId(id, tx.hash, op.type);
-        ops.push(op);
-      }
-    }
-  });
-  return ops;
-};
+import { txsToOps } from "./logic";
+import Aptos from "./hw-app-aptos";
 
 const getAccountShape: GetAccountShape = async info => {
-  const { address, initialAccount, derivationMode, currency } = info;
+  const { address, initialAccount, derivationMode, currency, deviceId, derivationPath } = info;
+
+  // "xpub" field is used to store publicKey to simulate transaction during sending tokens.
+  // We can't get access to the Nano X via bluetooth on the step of simulation
+  // but we need public key to simulate transaction.
+  // "xpub" field is used because this field exists in ledger operation type
+  let xpub = initialAccount?.xpub;
+  if (!initialAccount?.xpub && typeof deviceId === "string") {
+    const result = await firstValueFrom(
+      withDevice(deviceId)(transport => from(new Aptos(transport).getAddress(derivationPath))),
+    );
+    xpub = Buffer.from(result.publicKey).toString("hex");
+  }
 
   const oldOperations = initialAccount?.operations || [];
   const startAt = (oldOperations[0]?.extra as any)?.version;
@@ -112,9 +42,10 @@ const getAccountShape: GetAccountShape = async info => {
   const newOperations = txsToOps(info, accountId, transactions);
   const operations = mergeOps(oldOperations, newOperations);
 
-  const shape: Partial<Account> = {
+  const shape: Partial<AptosAccount> = {
     type: "Account",
     id: accountId,
+    xpub,
     balance: balance,
     spendableBalance: balance,
     operations,
