@@ -13,6 +13,8 @@ import { Separator, Item, TextLink, AngleDown, Check } from "./common";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { DistributionItem } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { hideEmptyTokenAccountsSelector } from "~/renderer/reducers/settings";
+import { useSelector } from "react-redux";
 
 type ItemShape = {
   key: string;
@@ -22,7 +24,8 @@ type ItemShape = {
 
 export default function AssetCrumb() {
   const { t } = useTranslation();
-  const distribution = useDistribution();
+  const hideEmptyTokenAccount = useSelector(hideEmptyTokenAccountsSelector);
+  const distribution = useDistribution({ hideEmptyTokenAccount });
   const history = useHistory();
   const { assetId } = useParams<{ assetId?: string }>();
   const renderItem = useCallback(
