@@ -102,7 +102,7 @@ const swapProviders: Record<string, ProviderConfig> = {
       "3045022100e35f78bbdf543614fa7db7ccc45622186b727d1d5b0accbdaf220ac54d4cd2fb02200f7decbb5a6e822668af73bf0ddcde822121e29642436aa6de11feabf12cf2f0",
       "hex",
     ),
-    needsKYC: false,
+    needsKYC: true,
     needsBearerToken: false,
     type: "CEX",
     version: 2,
