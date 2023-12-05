@@ -156,12 +156,12 @@ function Delegations({ account }: Props) {
             style={[styles.valueText]}
             color="live"
           >
-            {stake.activation.state}
+            {t(`solana.delegation.states.${stake.activation.state}`)}
           </Text>
         ),
       },
       {
-        label: "Active",
+        label: t("solana.delegation.stakeActivePercent"),
         Component: (
           <Text
             numberOfLines={1}
@@ -175,7 +175,7 @@ function Delegations({ account }: Props) {
         ),
       },
       {
-        label: "Available balance",
+        label: t("solana.delegation.stakeAvailableBalance"),
         Component: (
           <Text
             numberOfLines={1}
@@ -211,7 +211,7 @@ function Delegations({ account }: Props) {
         withdraw: rgba(colors.yellow, 0.2),
       });
       const drawerAction: DelegationDrawerActions[number] = {
-        label: capitalize(action),
+        label: t(`solana.delegation.actions.${action}`),
         Icon: (props: IconProps) => (
           <Circle {...props} bg={actionEnabled ? enabledActionCircleBgColor : colors.lightFog}>
             <DrawerStakeActionIcon stakeAction={action} enabled={actionEnabled} />
@@ -235,7 +235,15 @@ function Delegations({ account }: Props) {
       };
       return drawerAction;
     });
-  }, [selectedStakeWithMeta, colors.fog, colors.alert, colors.yellow, colors.lightFog, onNavigate]);
+  }, [
+    selectedStakeWithMeta,
+    colors.fog,
+    colors.alert,
+    colors.yellow,
+    colors.lightFog,
+    onNavigate,
+    t,
+  ]);
 
   const onDelegate = () => {
     onNavigate({
