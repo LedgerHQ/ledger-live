@@ -7,15 +7,14 @@ import type { Transaction } from "./types";
 
 export const estimatedFeeSafetyRate = 2;
 
-export const COUNTERVALUE_URL_HBAR_USD = `${getEnv(
-  "LEDGER_COUNTERVALUES_API",
-)}/latest/direct?pairs=hbar:usd`;
+export const getHBARCountervaluesURL = () =>
+  `${getEnv("LEDGER_COUNTERVALUES_API")}/latest/direct?pairs=hbar:usd`;
 
 export async function getEstimatedFees(): Promise<BigNumber> {
   try {
     const { data } = await network({
       method: "GET",
-      url: COUNTERVALUE_URL_HBAR_USD,
+      url: getHBARCountervaluesURL(),
     });
 
     return new BigNumber(10000).dividedBy(data[0]).integerValue(BigNumber.ROUND_CEIL);
