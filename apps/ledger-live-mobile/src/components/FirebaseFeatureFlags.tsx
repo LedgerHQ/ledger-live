@@ -6,18 +6,8 @@ import {
   DEFAULT_FEATURES,
   isFeature,
   getFeature,
-<<<<<<< HEAD
-<<<<<<< HEAD
 } from "@ledgerhq/live-config/featureFlags/index";
 import type { FirebaseFeatureFlagsProviderProps as Props } from "@ledgerhq/live-config/featureFlags/index";
-=======
-} from "@ledgerhq/live-config/FeatureFlags/index";
-import type { FirebaseFeatureFlagsProviderProps as Props } from "@ledgerhq/live-config/FeatureFlags/index";
->>>>>>> f8e0133b13 (fix: refactoring)
-=======
-} from "@ledgerhq/live-config/featureFlags/index";
-import type { FirebaseFeatureFlagsProviderProps as Props } from "@ledgerhq/live-config/featureFlags/index";
->>>>>>> 5795ae130c (fix: snackcase for folder name)
 import { FeatureId, Feature, Features } from "@ledgerhq/types-live";
 import { languageSelector, overriddenFeatureFlagsSelector } from "../reducers/settings";
 import { setOverriddenFeatureFlag, setOverriddenFeatureFlags } from "../actions/settings";

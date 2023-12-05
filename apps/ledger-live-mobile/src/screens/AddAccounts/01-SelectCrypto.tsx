@@ -14,15 +14,7 @@ import {
 } from "@ledgerhq/live-common/currencies/index";
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";
 import { useTheme } from "@react-navigation/native";
-<<<<<<< HEAD
-<<<<<<< HEAD
 import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
-=======
-import useFeature from "@ledgerhq/live-config/FeatureFlags/useFeature";
->>>>>>> f8e0133b13 (fix: refactoring)
-=======
-import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
->>>>>>> 5795ae130c (fix: snackcase for folder name)
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { ScreenName } from "../../const";
 import { TrackScreen } from "../../analytics";

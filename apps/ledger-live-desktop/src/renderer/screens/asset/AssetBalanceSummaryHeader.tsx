@@ -17,19 +17,12 @@ import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
-<<<<<<< HEAD
-<<<<<<< HEAD
 import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
-=======
-import { useFeature } from "@ledgerhq/live-config/FeatureFlags/index";
->>>>>>> f8e0133b13 (fix: refactoring)
-=======
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
->>>>>>> 5795ae130c (fix: snackcase for folder name)
 import useStakeFlow from "~/renderer/screens/stake";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import { BalanceHistoryWithCountervalue, ValueChange } from "@ledgerhq/types-live";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
+
 type Props = {
   isAvailable: boolean;
   cryptoChange: ValueChange;
@@ -40,6 +33,7 @@ type Props = {
   currency: CryptoCurrency | TokenCurrency;
   unit: Unit;
 };
+
 export default function AssetBalanceSummaryHeader({
   counterValue,
   isAvailable,

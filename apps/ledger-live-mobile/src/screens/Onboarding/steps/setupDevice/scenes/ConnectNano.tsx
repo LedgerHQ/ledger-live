@@ -3,15 +3,7 @@ import { useDispatch } from "react-redux";
 import { trace } from "@ledgerhq/logs";
 import { Flex } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-<<<<<<< HEAD
-<<<<<<< HEAD
 import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
-=======
-import { useFeature } from "@ledgerhq/live-config/FeatureFlags/index";
->>>>>>> f8e0133b13 (fix: refactoring)
-=======
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
->>>>>>> 5795ae130c (fix: snackcase for folder name)
 import { Result } from "@ledgerhq/live-common/hw/actions/manager";
 import DeviceActionModal from "../../../../../components/DeviceActionModal";
 import SelectDevice from "../../../../../components/SelectDevice";

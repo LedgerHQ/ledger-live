@@ -6,15 +6,7 @@ import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types
 import { Box, Flex, Tag, Text } from "@ledgerhq/native-ui";
 import styled, { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
 import { useTranslation } from "react-i18next";
-<<<<<<< HEAD
-<<<<<<< HEAD
 import { FeatureToggle } from "@ledgerhq/live-config/featureFlags/index";
-=======
-import { FeatureToggle } from "@ledgerhq/live-config/FeatureFlags/index";
->>>>>>> f8e0133b13 (fix: refactoring)
-=======
-import { FeatureToggle } from "@ledgerhq/live-config/featureFlags/index";
->>>>>>> 5795ae130c (fix: snackcase for folder name)
 import { useTheme } from "styled-components/native";
 import { useSelector } from "react-redux";
 

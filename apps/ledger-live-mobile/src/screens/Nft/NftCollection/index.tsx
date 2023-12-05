@@ -13,7 +13,6 @@ import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { groupAccountOperationsByDay } from "@ledgerhq/live-common/account/index";
 import { Account, DailyOperationsSection, Operation, ProtoNFT } from "@ledgerhq/types-live";
-
 import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
 import NoMoreOperationFooter from "../../../components/NoMoreOperationFooter";
 import { accountScreenSelector } from "../../../reducers/accounts";

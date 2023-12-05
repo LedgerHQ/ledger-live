@@ -8,15 +8,6 @@ import { Linking, StyleProp, ViewStyle } from "react-native";
 import { snakeCase } from "lodash";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
-<<<<<<< HEAD
-<<<<<<< HEAD
-import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
-=======
-import useFeature from "@ledgerhq/live-config/FeatureFlags/useFeature";
->>>>>>> f8e0133b13 (fix: refactoring)
-=======
-import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
->>>>>>> 5795ae130c (fix: snackcase for folder name)
 import { NavigatorName } from "../../const";
 import { hasOrderedNanoSelector, readOnlyModeEnabledSelector } from "../../reducers/settings";
 import { Props as ModalProps } from "../QueuedDrawer";
@@ -27,7 +18,7 @@ import { track, useAnalytics } from "../../analytics";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import useQuickActions from "../../hooks/useQuickActions";
 import { PTX_SERVICES_TOAST_ID } from "@utils/constants";
-
+import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { useQuickAccessURI } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 
 type ButtonItem = {

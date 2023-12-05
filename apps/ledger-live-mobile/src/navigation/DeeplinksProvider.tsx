@@ -10,15 +10,7 @@ import { DEFAULT_MULTIBUY_APP_ID } from "@ledgerhq/live-common/wallet-api/consta
 
 import Braze from "@braze/react-native-sdk";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-<<<<<<< HEAD
-<<<<<<< HEAD
 import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
-=======
-import useFeature from "@ledgerhq/live-config/FeatureFlags/useFeature";
->>>>>>> f8e0133b13 (fix: refactoring)
-=======
-import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
->>>>>>> 5795ae130c (fix: snackcase for folder name)
 import * as Sentry from "@sentry/react-native";
 
 import { hasCompletedOnboardingSelector } from "../reducers/settings";

@@ -17,15 +17,7 @@ import Track from "~/renderer/analytics/Track";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import Image from "~/renderer/components/Image";
 import NoResultsFound from "~/renderer/images/no-results-found.png";
-<<<<<<< HEAD
-<<<<<<< HEAD
 import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
-=======
-import { useFeature } from "@ledgerhq/live-config/FeatureFlags/index";
->>>>>>> f8e0133b13 (fix: refactoring)
-=======
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
->>>>>>> 5795ae130c (fix: snackcase for folder name)
 import { FlexProps } from "styled-system";
 import { CurrencyData, MarketListRequestParams } from "@ledgerhq/live-common/market/types";
 import TrackPage from "~/renderer/analytics/TrackPage";

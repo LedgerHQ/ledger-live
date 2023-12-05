@@ -1,15 +1,7 @@
 import React, { useState, useMemo, useCallback } from "react";
 import Button from "~/renderer/components/ButtonV3";
 import { useTranslation } from "react-i18next";
-<<<<<<< HEAD
-<<<<<<< HEAD
 import { useFeatureFlags } from "@ledgerhq/live-config/featureFlags/index";
-=======
-import { useFeatureFlags } from "@ledgerhq/live-config/FeatureFlags/index";
->>>>>>> f8e0133b13 (fix: refactoring)
-=======
-import { useFeatureFlags } from "@ledgerhq/live-config/featureFlags/index";
->>>>>>> 5795ae130c (fix: snackcase for folder name)
 import { Text, Input, Flex, Switch } from "@ledgerhq/react-ui";
 import { Feature, FeatureId } from "@ledgerhq/types-live";
 import { InputRenderRightContainer } from "@ledgerhq/react-ui/components/form/BaseInput/index";

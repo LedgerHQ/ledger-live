@@ -1,16 +1,6 @@
 import { StorylyInstanceID } from "@ledgerhq/types-live";
-<<<<<<< HEAD
-<<<<<<< HEAD
 import { useFeatureFlags } from "@ledgerhq/live-config/featureFlags/index";
 import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
-=======
-import { useFeatureFlags } from "@ledgerhq/live-config/FeatureFlags/index";
-import useFeature from "@ledgerhq/live-config/FeatureFlags/useFeature";
->>>>>>> f8e0133b13 (fix: refactoring)
-=======
-import { useFeatureFlags } from "@ledgerhq/live-config/featureFlags/index";
-import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
->>>>>>> 5795ae130c (fix: snackcase for folder name)
 import React, { useCallback, useState } from "react";
 import { Camera } from "expo-camera";
 import { Flex, Switch, BaseInput, Text, IconsLegacy } from "@ledgerhq/native-ui";

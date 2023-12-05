@@ -12,15 +12,7 @@ import { Trans } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Config from "react-native-config";
-<<<<<<< HEAD
-<<<<<<< HEAD
 import { useHasLocallyOverriddenFeatureFlags } from "@ledgerhq/live-config/featureFlags/useHasOverriddenFeatureFlags";
-=======
-import { useHasLocallyOverriddenFeatureFlags } from "@ledgerhq/live-config/FeatureFlags/useHasOverriddenFeatureFlags";
->>>>>>> f8e0133b13 (fix: refactoring)
-=======
-import { useHasLocallyOverriddenFeatureFlags } from "@ledgerhq/live-config/featureFlags/useHasOverriddenFeatureFlags";
->>>>>>> 5795ae130c (fix: snackcase for folder name)
 import { Flex } from "@ledgerhq/native-ui";
 import { useSelector } from "react-redux";
 import { useExperimental } from "../../../experimental";

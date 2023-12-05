@@ -1,14 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Flex, Text, Alert, Tag, Divider } from "@ledgerhq/native-ui";
-<<<<<<< HEAD
-<<<<<<< HEAD
 import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
-=======
-import { useFeature } from "@ledgerhq/live-config/FeatureFlags/index";
->>>>>>> f8e0133b13 (fix: refactoring)
-=======
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
->>>>>>> 5795ae130c (fix: snackcase for folder name)
 import { ChainwatchAccount, ChainwatchNetwork } from "@ledgerhq/types-live";
 import { SafeAreaView } from "react-native-safe-area-context";
 import NavigationScrollView from "../../../../components/NavigationScrollView";

@@ -6,15 +6,7 @@ import { DeviceInfo } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { AppsDistribution } from "@ledgerhq/live-common/apps/index";
 import { DeviceModel, DeviceModelId } from "@ledgerhq/devices";
-<<<<<<< HEAD
-<<<<<<< HEAD
 import { FeatureToggle } from "@ledgerhq/live-config/featureFlags/index";
-=======
-import { FeatureToggle } from "@ledgerhq/live-config/FeatureFlags/index";
->>>>>>> f8e0133b13 (fix: refactoring)
-=======
-import { FeatureToggle } from "@ledgerhq/live-config/featureFlags/index";
->>>>>>> 5795ae130c (fix: snackcase for folder name)
 import { Flex, Text } from "@ledgerhq/react-ui";
 import ByteSize from "~/renderer/components/ByteSize";
 import { rgba } from "~/renderer/styles/helpers";
