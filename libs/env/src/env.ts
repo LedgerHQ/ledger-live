@@ -591,7 +591,7 @@ const envDefinitions = {
     desc: "Use speculos websocket interface instead of Rest API",
   },
   SWAP_API_BASE: {
-    def: "https://swap.ledger.com/v5",
+    def: "https://swap.aws.stg.ldg-tech.com/v5",
     parser: stringParser,
     desc: "Swap API base",
   },
