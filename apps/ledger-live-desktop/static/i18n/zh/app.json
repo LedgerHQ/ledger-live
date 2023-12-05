@@ -1705,7 +1705,8 @@
       "withdrawUnbondedAmount" : "已提取数额",
       "palletMethod" : "方法",
       "transferAmount" : "转移数额",
-      "validatorsCount" : "验证者 ({{number}})"
+      "validatorsCount" : "验证者 ({{number}})",
+      "version": "版本"
     }
   },
   "operationList" : {

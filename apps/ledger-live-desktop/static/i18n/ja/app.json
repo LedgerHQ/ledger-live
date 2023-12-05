@@ -1705,7 +1705,8 @@
       "withdrawUnbondedAmount" : "引き出し数量",
       "palletMethod" : "方法",
       "transferAmount" : "送付額",
-      "validatorsCount" : "バリデータ（{{number}}）"
+      "validatorsCount" : "バリデータ（{{number}}）",
+      "version": "バージョン"
     }
   },
   "operationList" : {

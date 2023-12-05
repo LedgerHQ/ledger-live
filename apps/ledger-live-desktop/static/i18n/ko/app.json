@@ -1705,7 +1705,8 @@
       "withdrawUnbondedAmount" : "출금된 금액",
       "palletMethod" : "방법",
       "transferAmount" : "이전 금액",
-      "validatorsCount" : "검증인 ({{number}})"
+      "validatorsCount" : "검증인 ({{number}})",
+      "version": "버전"
     }
   },
   "operationList" : {

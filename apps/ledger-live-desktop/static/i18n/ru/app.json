@@ -1705,7 +1705,8 @@
       "withdrawUnbondedAmount" : "Выведенная сумма",
       "palletMethod" : "Метод",
       "transferAmount" : "Сумма",
-      "validatorsCount" : "Валидаторов: {{number}}"
+      "validatorsCount" : "Валидаторов: {{number}}",
+      "version": "Версия"
     }
   },
   "operationList" : {

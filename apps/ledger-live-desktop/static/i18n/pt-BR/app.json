@@ -1705,7 +1705,8 @@
       "withdrawUnbondedAmount" : "Quantia Sacada",
       "palletMethod" : "Método",
       "transferAmount" : "Transferir Quantia",
-      "validatorsCount" : "Validadores ({{number}})"
+      "validatorsCount" : "Validadores ({{number}})",
+      "version": "Versão"
     }
   },
   "operationList" : {

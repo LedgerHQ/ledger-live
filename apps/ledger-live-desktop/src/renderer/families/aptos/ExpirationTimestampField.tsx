@@ -10,7 +10,7 @@ import Label from "~/renderer/components/Label";
 
 import { Account } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import { Result } from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
+import { Result } from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 
 type AptosTransaction = Extract<Transaction, { family: "aptos" }>;
 type Props = {

@@ -1705,7 +1705,8 @@
       "withdrawUnbondedAmount" : "Montant retiré",
       "palletMethod" : "Méthode",
       "transferAmount" : "Montant transféré",
-      "validatorsCount" : "Validateurs ({{number}})"
+      "validatorsCount" : "Validateurs ({{number}})",
+      "version": "Version"
     }
   },
   "operationList" : {

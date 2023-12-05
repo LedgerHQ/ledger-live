@@ -1,6 +1,6 @@
 import React, { useCallback, useState, forwardRef, useImperativeHandle } from "react";
 import { BigNumber } from "bignumber.js";
-import { Result } from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
+import { Result } from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import invariant from "invariant";
 import { Account } from "@ledgerhq/types-live";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -74,7 +74,7 @@ const FeesField = forwardRef(function FeesFieldComponent(
           error={gasPriceError}
           value={gasUnitPrice.toString()}
           onChange={onGasPriceChange}
-          placeholder={DEFAULT_GAS_PRICE.toString()}
+          placeholder={(transaction.estimate.gasUnitPrice || DEFAULT_GAS_PRICE).toString()}
           loading={!transaction.estimate.gasUnitPrice}
         />
       </Box>

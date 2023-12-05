@@ -1705,7 +1705,8 @@
       "withdrawUnbondedAmount" : "المبلغ المسحوب",
       "palletMethod" : "الطريقة",
       "transferAmount" : "مبلغ التحويل",
-      "validatorsCount" : "({{number}}) مدقق"
+      "validatorsCount" : "({{number}}) مدقق",
+      "version": "إصدار"
     }
   },
   "operationList" : {

@@ -1,6 +1,6 @@
 import React, { forwardRef, useCallback, useState, useImperativeHandle } from "react";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import { Result } from "@ledgerhq/live-common/lib/bridge/useBridgeTransaction";
+import { Result } from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { Account, AccountLike } from "@ledgerhq/types-live";
@@ -76,7 +76,7 @@ const MaxGasAmountField = forwardRef(function MaxGasAmountFieldComponent(
           error={maxGasAmountError}
           value={maxGasAmount}
           onChange={onMaxGasAmountChange}
-          placeholder={DEFAULT_GAS.toString()}
+          placeholder={(transaction.estimate.maxGasAmount || DEFAULT_GAS).toString()}
           loading={!transaction.estimate.maxGasAmount}
         />
       </Box>

@@ -1705,7 +1705,8 @@
       "withdrawUnbondedAmount" : "Çekilen Tutar",
       "palletMethod" : "Yöntem",
       "transferAmount" : "Transfer Tutarı",
-      "validatorsCount" : "Doğrulayıcılar ({{number}})"
+      "validatorsCount" : "Doğrulayıcılar ({{number}})",
+      "version": "Sürüm"
     }
   },
   "operationList" : {

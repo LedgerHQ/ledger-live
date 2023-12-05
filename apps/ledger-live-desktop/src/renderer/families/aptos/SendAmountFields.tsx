@@ -95,18 +95,18 @@ const Fields = ({ account, parentAccount, transaction, updateTransaction, status
           </Button>
         </Box>
         <Box mb={2} gap="2rem" horizontal grow alignItems="center" justifyContent="space-between">
-          <GasPriceField
-            ref={gasPriceFieldElement}
-            parentAccount={parentAccount}
-            account={account}
-            transaction={transaction}
-            status={status}
-            updateTransaction={updateTransaction}
-          />
           <MaxGasAmountField
             ref={gasLimitElement}
             account={account}
             parentAccount={parentAccount}
+            transaction={transaction}
+            status={status}
+            updateTransaction={updateTransaction}
+          />
+          <GasPriceField
+            ref={gasPriceFieldElement}
+            parentAccount={parentAccount}
+            account={account}
             transaction={transaction}
             status={status}
             updateTransaction={updateTransaction}
