@@ -1,2 +1,6 @@
+import { LiveConfig } from "./LiveConfig";
+
+export { LiveConfig as default };
+
 export * from "./featureFlags";
-export * from "./providers/firebaseRemoteConfig";
+export { FirebaseProvder } from "./providers/firebaseRemoteConfig";

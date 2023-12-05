@@ -1,11 +1,12 @@
 import { LiveConfig } from "../../LiveConfig";
-import { Config, ConfigKeys, configSchema } from "./schema";
+import { ConfigInfo, ConfigKeys } from "../../schema";
 
 /**  Get value for a given key from Firebase remote config */
-export function getValueByKey<K extends ConfigKeys>(key: K): Config[K] {
+export function getValueByKey<K extends ConfigKeys>(key: K, configInfo: ConfigInfo) {
   const configInstance = LiveConfig.getInstance();
   const value = configInstance.providerGetvalueMethod?.firebaseRemoteConfig?.(key);
 
+  const parsedValue = configInfo.provider.parser(value, configInfo.type);
   // as never is a workaround to be able to correctly infer the returned type
-  return configSchema.shape[key].parse(value) as never;
+  return parsedValue ?? configInfo.default;
 }
