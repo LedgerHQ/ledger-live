@@ -62,9 +62,9 @@ export const getFeature = (args: {
   appLanguage?: string;
   localOverrides?: { [key in FeatureId]?: Feature };
   allowOverride?: boolean;
-}): Feature | null => {
+}): Feature => {
   if (!LiveConfig.getInstance().providerGetvalueMethod) {
-    return null;
+    return { enabled: false };
   }
   const { key, appLanguage, localOverrides, allowOverride = true } = args;
   try {
@@ -114,6 +114,6 @@ export const getFeature = (args: {
     return checkFeatureFlagVersion(feature);
   } catch (error) {
     console.error(`Failed to retrieve feature "${key}"`);
-    return null;
+    return { enabled: false };
   }
 };
