@@ -19,7 +19,8 @@
         "typescript",
         "vite",
         "zx"
-      ]
+      ],
+      "reviewers": ["team:live-hub"]
     },
     {
       "description": "LLD Electron packages",
