@@ -31,8 +31,8 @@ export const checkFeatureFlagVersion = (feature: Feature) => {
     })
   ) {
     return {
-      enabledOverriddenForCurrentVersion: true,
       ...feature,
+      enabledOverriddenForCurrentVersion: true,
       enabled: false,
     };
   }
@@ -44,7 +44,7 @@ export const isFeature = (key: string): boolean => {
     return false;
   }
   try {
-    const value = LiveConfig.getInstance().providerGetvalueMethod!.firebaseRemoteConfig?.(
+    const value = LiveConfig.getInstance().providerGetvalueMethod?.firebaseRemoteConfig!(
       formatToFirebaseFeatureId(key),
     );
     if (!value || !value?.asString()) {
@@ -62,7 +62,7 @@ export const getFeature = (args: {
   appLanguage?: string;
   localOverrides?: { [key in FeatureId]?: Feature };
   allowOverride?: boolean;
-}) => {
+}): Feature | null => {
   if (!LiveConfig.getInstance().providerGetvalueMethod) {
     return null;
   }
@@ -88,9 +88,13 @@ export const getFeature = (args: {
         };
     }
 
-    const value = LiveConfig.getInstance().providerGetvalueMethod!.firebaseRemoteConfig!(
+    const value = LiveConfig.getInstance().providerGetvalueMethod?.firebaseRemoteConfig!(
       formatToFirebaseFeatureId(key),
     );
+
+    if (!value || !value?.asString()) {
+      return { enabled: false };
+    }
 
     const feature = JSON.parse(value.asString());
 
