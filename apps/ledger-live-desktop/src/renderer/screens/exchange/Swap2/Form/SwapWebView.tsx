@@ -24,7 +24,7 @@ import { captureException } from "~/sentry/internal";
 
 const isDevelopment = process.env.NODE_ENV === "development";
 
-class UnableToLoadSwapLiveError extends Error {
+export class UnableToLoadSwapLiveError extends Error {
   constructor(message: string) {
     const name = "UnableToLoadSwapLiveError";
     super(message || name);

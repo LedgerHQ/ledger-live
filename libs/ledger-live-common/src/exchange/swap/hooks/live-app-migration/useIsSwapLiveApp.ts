@@ -11,14 +11,17 @@ type Props = {
 export function useIsSwapLiveApp({ currencyFrom, swapWebManifestId }: Props) {
   const ptxSwapLiveApp = useFeature("ptxSwapLiveApp");
 
-  const enabled = ptxSwapLiveApp?.enabled;
-  const params = ptxSwapLiveApp?.params?.[swapWebManifestId]
-    ? ptxSwapLiveApp.params?.[swapWebManifestId]
-    : {};
+  const flagConfig =
+    ptxSwapLiveApp && ptxSwapLiveApp[swapWebManifestId]
+      ? ptxSwapLiveApp[swapWebManifestId]
+      : ptxSwapLiveApp;
+
+  const { enabled, params } = flagConfig || {};
 
   const isCurrencySupported = useIsCurrencySupported({
     params,
     currencyFrom,
+    defaultValue: enabled,
   });
 
   const [crashed, setHasCrashed] = useState(false);

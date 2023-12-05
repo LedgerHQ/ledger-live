@@ -10,17 +10,9 @@ import { useHistory, useLocation } from "react-router-dom";
 import { WebviewProps } from "~/renderer/components/Web3AppWebview/types";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { captureException } from "~/sentry/internal";
+import { UnableToLoadSwapLiveError } from "~/renderer/screens/exchange/Swap2/Form/SwapWebView";
 
 const DEFAULT_SWAP_APP_ID = "swapWeb";
-
-class UnableToLoadSwapLiveError extends Error {
-  constructor(message: string) {
-    const name = "UnableToLoadSwapLiveError";
-    super(message || name);
-    this.name = name;
-    this.message = message;
-  }
-}
 
 const Swap = () => {
   const history = useHistory();
@@ -66,7 +58,7 @@ const Swap = () => {
     // TODO: Remove @ts-ignore after Card component be compatible with TS
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    <Card grow style={{ overflow: "hidden" }} data-test-id="earn-app-container">
+    <Card grow style={{ overflow: "hidden" }} data-test-id="swap-app-container">
       {manifest ? (
         <WebPlatformPlayer
           config={{

@@ -7,13 +7,14 @@ type UseIsCurrencySupportedProps = {
     families: string;
     currencies: Array<unknown>;
   };
+  defaultValue: boolean;
 };
 
-export function useIsCurrencySupported({ currencyFrom, params }: UseIsCurrencySupportedProps) {
+export function useIsCurrencySupported({ currencyFrom, params, defaultValue }: UseIsCurrencySupportedProps) {
   const { families, currencies } = params || {};
 
   if (!currencyFrom || (!families && !currencies)) {
-    return false;
+    return defaultValue;
   }
 
   const familyOfCurrencyFrom = isCryptoCurrency(currencyFrom)
