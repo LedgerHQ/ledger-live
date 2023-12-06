@@ -1,5 +1,5 @@
+import { Account } from "@ledgerhq/types-live";
 import { PolkadotTransaction as PlatformTransaction } from "@ledgerhq/wallet-api-core";
-import { Transaction } from "@ledgerhq/coin-polkadot/types";
 import BigNumber from "bignumber.js";
 import dot from "./walletApiAdapter";
 
@@ -13,21 +13,29 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
         mode: "send",
       };
 
-      const expectedLiveTx: Partial<Transaction> = {
-        family: dotPlatformTx.family,
-        amount: dotPlatformTx.amount,
-        recipient: dotPlatformTx.recipient,
-        mode: dotPlatformTx.mode,
-      };
+      const { canEditFees, hasFeesProvided, liveTx } = dot.getWalletAPITransactionSignFlowInfos({
+        walletApiTransaction: dotPlatformTx,
+        account: {} as Account,
+      });
 
-      const { canEditFees, hasFeesProvided, liveTx } =
-        dot.getWalletAPITransactionSignFlowInfos(dotPlatformTx);
-
-      expect(canEditFees).toBe(false);
+      expect(canEditFees).toBe(true);
 
       expect(hasFeesProvided).toBe(false);
 
-      expect(liveTx).toEqual(expectedLiveTx);
+      expect(liveTx).toMatchInlineSnapshot(`
+{
+  "amount": "100000",
+  "era": null,
+  "family": "polkadot",
+  "fees": null,
+  "mode": "send",
+  "numSlashingSpans": 0,
+  "recipient": "0xABCDEF",
+  "rewardDestination": null,
+  "useAllAmount": false,
+  "validators": [],
+}
+`);
     });
 
     it("with era provided", () => {
@@ -39,22 +47,97 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
         era: 1,
       };
 
-      const expectedLiveTx: Partial<Transaction> = {
-        family: dotPlatformTx.family,
-        amount: dotPlatformTx.amount,
-        recipient: dotPlatformTx.recipient,
-        mode: dotPlatformTx.mode,
-        era: `${dotPlatformTx.era}`,
-      };
+      const { canEditFees, hasFeesProvided, liveTx } = dot.getWalletAPITransactionSignFlowInfos({
+        walletApiTransaction: dotPlatformTx,
+        account: {} as Account,
+      });
 
-      const { canEditFees, hasFeesProvided, liveTx } =
-        dot.getWalletAPITransactionSignFlowInfos(dotPlatformTx);
-
-      expect(canEditFees).toBe(false);
+      expect(canEditFees).toBe(true);
 
       expect(hasFeesProvided).toBe(false);
 
-      expect(liveTx).toEqual(expectedLiveTx);
+      expect(liveTx).toMatchInlineSnapshot(`
+{
+  "amount": "100000",
+  "era": "1",
+  "family": "polkadot",
+  "fees": null,
+  "mode": "send",
+  "numSlashingSpans": 0,
+  "recipient": "0xABCDEF",
+  "rewardDestination": null,
+  "useAllAmount": false,
+  "validators": [],
+}
+`);
+    });
+
+    it("with mode provided", () => {
+      const dotPlatformTx: PlatformTransaction = {
+        family: "polkadot",
+        amount: new BigNumber(100000),
+        recipient: "0xABCDEF",
+        mode: "bond",
+      };
+
+      const { canEditFees, hasFeesProvided, liveTx } = dot.getWalletAPITransactionSignFlowInfos({
+        walletApiTransaction: dotPlatformTx,
+        account: {} as Account,
+      });
+
+      expect(canEditFees).toBe(true);
+
+      expect(hasFeesProvided).toBe(false);
+
+      expect(liveTx).toMatchInlineSnapshot(`
+{
+  "amount": "100000",
+  "era": null,
+  "family": "polkadot",
+  "fees": null,
+  "mode": "bond",
+  "numSlashingSpans": 0,
+  "recipient": "0xABCDEF",
+  "rewardDestination": null,
+  "useAllAmount": false,
+  "validators": [],
+}
+`);
+    });
+
+    it("with fees provided", () => {
+      const dotPlatformTx: PlatformTransaction = {
+        family: "polkadot",
+        amount: new BigNumber(100000),
+        recipient: "0xABCDEF",
+        mode: "send",
+        fee: new BigNumber(300),
+      };
+
+      const { canEditFees, hasFeesProvided, liveTx } = dot.getWalletAPITransactionSignFlowInfos({
+        walletApiTransaction: dotPlatformTx,
+        account: {} as Account,
+      });
+
+      expect(canEditFees).toBe(true);
+
+      expect(hasFeesProvided).toBe(true);
+
+      expect(liveTx).toMatchInlineSnapshot(`
+{
+  "amount": "100000",
+  "era": null,
+  "family": "polkadot",
+  "fees": "300",
+  "feesStrategy": null,
+  "mode": "send",
+  "numSlashingSpans": 0,
+  "recipient": "0xABCDEF",
+  "rewardDestination": null,
+  "useAllAmount": false,
+  "validators": [],
+}
+`);
     });
   });
 });

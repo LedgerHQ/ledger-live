@@ -15,6 +15,8 @@ export type UpdateFirmwareActionState = FullActionState<{
     | "preparingUpdate"
     // initial step where we retrieve all the necessary information for the update
     | "allowSecureChannelRequested"
+    // the user has refused the allow secure channel that could have been triggered at the initial step
+    | "allowSecureChannelDenied"
     // we need a secure connection to the HSM to install the operating system updater (osu)
     | "installingOsu"
     // step that installs the operating system updater, always happen
@@ -92,6 +94,7 @@ export function updateFirmwareAction({
               progress: event.progress,
             };
           case "allowSecureChannelRequested":
+          case "allowSecureChannelDenied":
           case "installOsuDevicePermissionRequested":
           case "installOsuDevicePermissionGranted":
           case "installOsuDevicePermissionDenied":

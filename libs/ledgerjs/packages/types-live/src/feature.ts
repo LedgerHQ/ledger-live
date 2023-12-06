@@ -24,11 +24,6 @@ export type Feature<T = unknown> = {
   desktop_version?: string;
 
   /**
-   *  Whether the remote value of `enabled` was overriden due to `desktop_version`
-   */
-  enabledOverriddenForCurrentDesktopVersion?: boolean;
-
-  /**
    * The `mobile_version` option is mobile specific, it has no impact on mobile
    * If set, the feature is disabled when the mobile app version does not satisfies this param
    * It should respect the semantic versioning specification (https://semver.org/)
@@ -36,9 +31,9 @@ export type Feature<T = unknown> = {
   mobile_version?: string;
 
   /**
-   * Whether the remote value of `enabled` was overriden due to `mobile_version`
+   *  Whether the remote value of `enabled` was overriden due to `desktop_version` or `mobile_version`
    */
-  enabledOverriddenForCurrentMobileVersion?: boolean;
+  enabledOverriddenForCurrentVersion?: boolean;
 
   /**
    * You can optionnally use one of the two following options (languages_whitelisted and languages_blacklisted) (Only implemented on mobile for now)
@@ -183,6 +178,7 @@ export type Features = CurrencyFeatures & {
   cexDepositEntryPointsMobile: Feature_CexDepositEntryPointsMobile;
   fetchAdditionalCoins: Feature_FetchAdditionalCoins;
   ptxSwapLiveApp: Feature_PtxSwapLiveApp;
+  ptxSwapMoonpayProvider: Feature_PtxSwapMoonpayProvider;
 };
 
 /**
@@ -285,6 +281,7 @@ export type Feature_Learn = Feature<{
 
 export type Feature_PtxEarn = Feature<{
   liveAppId: string;
+  isNew: boolean;
 }>;
 
 export type Feature_Storyly = Feature<{
@@ -304,6 +301,8 @@ export type CompatibleDevice = {
 
 export type Feature_ProtectServicesMobile = Feature<{
   deeplink: string;
+  ledgerliveStorageState: boolean;
+  bannerSubscriptionNotification: boolean;
   compatibleDevices: CompatibleDevice[];
   onboardingRestore: {
     restoreInfoDrawer: {
@@ -330,8 +329,11 @@ export type Feature_ProtectServicesMobile = Feature<{
 
 export type Feature_ProtectServicesDesktop = Feature<{
   availableOnDesktop: boolean;
+  isNew: boolean;
   openRecoverFromSidebar: boolean;
   discoverTheBenefitsLink: string;
+  ledgerliveStorageState: boolean;
+  bannerSubscriptionNotification: boolean;
   compatibleDevices: CompatibleDevice[];
   onboardingRestore: {
     restoreInfoDrawer: {
@@ -488,6 +490,7 @@ export type Feature_ListAppsV2minor1 = DefaultFeature;
 export type Feature_BrazeLearn = DefaultFeature;
 export type Feature_LlmNewDeviceSelection = DefaultFeature;
 export type Feature_LlmWalletQuickActions = DefaultFeature;
+export type Feature_PtxSwapMoonpayProvider = DefaultFeature;
 
 /**
  * Utils types.

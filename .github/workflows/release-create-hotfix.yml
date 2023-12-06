@@ -15,14 +15,12 @@ jobs:
         with:
           app_id: ${{ secrets.GH_BOT_APP_ID }}
           private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: main
           token: ${{ steps.generate-token.outputs.token }}
-      - name: set git user
-        run: |
-          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
-          git config user.name "live-github-bot[bot]"
+      - name: Setup git user
+        uses: ./tools/actions/composites/setup-git-user
       - name: create hotfix branch
         run: |
           git checkout -b hotfix

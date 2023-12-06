@@ -18,6 +18,8 @@ import {
 import { useTheme, useNavigation, useRoute } from "@react-navigation/native";
 import { Item } from "@ledgerhq/native-ui/components/Layout/List/types";
 import { DeviceInfo, FirmwareUpdateContext, languageIds } from "@ledgerhq/types-live";
+import { useBatteryStatuses } from "@ledgerhq/live-common/deviceSDK/hooks/useBatteryStatuses";
+import { BatteryStatusTypes } from "@ledgerhq/live-common/hw/getBatteryStatus";
 
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -55,6 +57,12 @@ import Link from "../../components/wrappedUi/Link";
 import { RestoreStepDenied } from "./RestoreStepDenied";
 import UpdateReleaseNotes from "./UpdateReleaseNotes";
 import { GenericInformationBody } from "../../components/GenericInformationBody";
+import BatteryWarningDrawer from "./BatteryWarningDrawer";
+
+const requiredBatteryStatuses = [
+  BatteryStatusTypes.BATTERY_PERCENTAGE,
+  BatteryStatusTypes.BATTERY_FLAGS,
+];
 
 // Screens/components navigating to this screen shouldn't know the implementation fw update
 // -> re-exporting useful types.
@@ -165,6 +173,20 @@ export const FirmwareUpdate = ({
   const productName = getDeviceModel(device.modelId).productName;
 
   const [fullUpdateComplete, setFullUpdateComplete] = useState(false);
+  const [showBatteryWarningDrawer, setShowBatteryWarningDrawer] = useState<boolean>(false);
+  const [showReleaseNotes, setShowReleaseNotes] = useState<boolean>(true);
+
+  const {
+    requestCompleted: batteryRequestCompleted,
+    batteryStatusesState,
+    triggerRequest: triggerBatteryCheck,
+    cancelRequest: cancelBatteryCheck,
+    isBatteryLow,
+    lowBatteryPercentage,
+  } = useBatteryStatuses({
+    deviceId: device.deviceId,
+    statuses: requiredBatteryStatuses,
+  });
 
   const {
     startUpdate,
@@ -202,12 +224,14 @@ export const FirmwareUpdate = ({
   );
 
   const quitUpdate = useCallback(() => {
+    if (!batteryRequestCompleted) cancelBatteryCheck();
+
     if (onBackFromUpdate) {
       onBackFromUpdate(updateStep);
     } else {
       navigation.goBack();
     }
-  }, [navigation, onBackFromUpdate, updateStep]);
+  }, [batteryRequestCompleted, cancelBatteryCheck, navigation, onBackFromUpdate, updateStep]);
 
   useEffect(() => {
     if (updateStep === "completed") {
@@ -490,7 +514,12 @@ export const FirmwareUpdate = ({
   ]);
 
   const deviceInteractionDisplay = useMemo(() => {
-    if (deviceLockedOrUnresponsive || hasReconnectErrors) {
+    if (
+      deviceLockedOrUnresponsive ||
+      hasReconnectErrors ||
+      batteryStatusesState.error?.name === "CantOpenDevice" ||
+      batteryStatusesState.lockedDevice
+    ) {
       return (
         <Flex>
           {renderConnectYourDevice({
@@ -506,6 +535,17 @@ export const FirmwareUpdate = ({
             {t("FirmwareUpdate.quitUpdate")}
           </Button>
         </Flex>
+      );
+    }
+
+    if (batteryStatusesState.error !== null) {
+      return (
+        <DeviceActionError
+          t={t}
+          device={device}
+          errorName={batteryStatusesState.error?.name ?? "BatteryStatusNotRetrieved"}
+          translationContext="FirmwareUpdate.batteryStatusErrors"
+        />
       );
     }
 
@@ -628,6 +668,7 @@ export const FirmwareUpdate = ({
             t={t}
           />
         );
+      case "allowSecureChannelDenied":
       case "installOsuDevicePermissionDenied":
         return (
           <FirmwareUpdateDenied
@@ -656,6 +697,8 @@ export const FirmwareUpdate = ({
 
     return undefined;
   }, [
+    batteryStatusesState.error,
+    batteryStatusesState.lockedDevice,
     deviceLockedOrUnresponsive,
     hasReconnectErrors,
     staxLoadImageState.imageLoadRequested,
@@ -680,11 +723,27 @@ export const FirmwareUpdate = ({
     deviceInfo.version,
   ]);
 
+  useEffect(() => {
+    if (!batteryRequestCompleted) return;
+
+    isBatteryLow ? setShowBatteryWarningDrawer(true) : startUpdate();
+  }, [batteryRequestCompleted, isBatteryLow, startUpdate]);
+
+  const onContinueOsUpdate = useCallback(() => {
+    triggerBatteryCheck();
+    setShowReleaseNotes(false);
+  }, [triggerBatteryCheck]);
+
+  const onRetryBatteryCheck = useCallback(() => {
+    setShowBatteryWarningDrawer(false);
+    triggerBatteryCheck();
+  }, [triggerBatteryCheck]);
+
   return (
     <>
-      {updateStep === "start" ? (
+      {showReleaseNotes ? (
         <UpdateReleaseNotes
-          onContinue={startUpdate}
+          onContinue={onContinueOsUpdate}
           firmwareNotes={firmwareUpdateContext.osu?.notes}
         />
       ) : fullUpdateComplete ? (
@@ -720,6 +779,14 @@ export const FirmwareUpdate = ({
         </Flex>
       )}
 
+      <BatteryWarningDrawer
+        device={device}
+        state={batteryStatusesState}
+        lowBatteryPercentage={lowBatteryPercentage}
+        isRequestingToBeOpened={showBatteryWarningDrawer}
+        onQuit={quitUpdate}
+        onRetry={onRetryBatteryCheck}
+      />
       <QueuedDrawer isRequestingToBeOpened={Boolean(deviceInteractionDisplay)} noCloseButton>
         <Flex mt={7}>
           <ImageSourceContext.Provider value={staxImageSourceProviderValue}>

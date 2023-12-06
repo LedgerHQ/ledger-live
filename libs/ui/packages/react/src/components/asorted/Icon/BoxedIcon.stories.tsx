@@ -18,31 +18,20 @@ const Story = {
   argTypes: {
     exampleIconName: {
       type: "enum",
-      defaultValue: "Activity",
       description:
         "[Not a BoxedIcon prop, only for this Storybook example] - Icon name. Value is passed to the `Icon` component of this UI library which is then used for the `Icon` prop.",
-      control: {
-        options: iconNames,
-        control: {
-          type: "select",
-        },
-      },
+      options: iconNames,
+      control: { type: "select" },
     },
     exampleBadgeName: {
       type: "enum",
-      defaultValue: "CircledCheckSolid",
       description:
         "[Not a BoxedIcon prop, only for this Storybook example] - Badge icon name. Value is passed to the `Icon` component of this UI library which is then used for the `Badge` prop.",
-      control: {
-        options: iconNames,
-        control: {
-          type: "select",
-        },
-      },
+      options: iconNames,
+      control: { type: "select" },
     },
     exampleBadgeEnabled: {
       type: "boolean",
-      defaultValue: true,
       description:
         "[Not a BoxedIcon prop, only for this Storybook example] - Controls whether a `Badge` prop is passed to the `BoxedIcon` component.",
     },
@@ -54,31 +43,36 @@ const Story = {
     },
     iconColor: {
       type: "string",
-      defaultValue: "hsla(110, 50%, 57%, 1)",
-      control: { control: "color" },
+      control: { type: "color" },
     },
     badgeColor: {
       type: "string",
-      defaultValue: "hsla(110, 50%, 57%, 1)",
-      control: { control: "color" },
+      control: { type: "color" },
     },
     borderColor: {
       type: "string",
-      defaultValue: "success.c40",
-      control: { control: "color" },
+      control: { type: "color" },
     },
     iconSize: {
       type: "number",
-      defaultValue: DEFAULT_ICON_SIZE,
     },
     badgeSize: {
       type: "number",
-      defaultValue: DEFAULT_BADGE_SIZE,
     },
     size: {
       type: "number",
-      defaultValue: DEFAULT_BOX_SIZE,
     },
+  },
+  args: {
+    exampleIconName: "Activity",
+    exampleBadgeName: "CircledCheckSolid",
+    exampleBadgeEnabled: true,
+    iconColor: "hsla(110, 50%, 57%, 1)",
+    badgeColor: "hsla(110, 50%, 57%, 1)",
+    borderColor: "success.c40",
+    iconSize: DEFAULT_ICON_SIZE,
+    badgeSize: DEFAULT_BADGE_SIZE,
+    size: DEFAULT_BOX_SIZE,
   },
 };
 

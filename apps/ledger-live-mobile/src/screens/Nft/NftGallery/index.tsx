@@ -5,8 +5,8 @@ import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Account, ProtoNFT } from "@ledgerhq/types-live";
 import { nftsByCollections } from "@ledgerhq/live-common/nft/index";
-import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
 import { withDiscreetMode } from "../../../context/DiscreetModeContext";
 import LoadingFooter from "../../../components/LoadingFooter";
 import { accountSelector } from "../../../reducers/accounts";
@@ -15,9 +15,6 @@ import { NavigatorName, ScreenName } from "../../../const";
 import Button from "../../../components/Button";
 import SendIcon from "../../../icons/Send";
 import { hiddenNftCollectionsSelector } from "../../../reducers/settings";
-import TabBarSafeAreaView, {
-  TAB_BAR_SAFE_HEIGHT,
-} from "../../../components/TabBar/TabBarSafeAreaView";
 import type { State } from "../../../reducers/types";
 import {
   BaseComposite,
@@ -38,7 +35,6 @@ type NavigationProps = BaseComposite<
 const NftGallery = () => {
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const { t } = useTranslation();
-  const { colors } = useTheme();
   const { params } = useRoute<NavigationProps["route"]>();
   const account = useSelector<State, Account | undefined>(state =>
     accountSelector(state, { accountId: params?.accountId }),
@@ -105,50 +101,36 @@ const NftGallery = () => {
         onClose={onCloseModal}
         data={notAvailableModalInfo(onCloseModal)}
       />
-      <TabBarSafeAreaView
-        edges={["left", "right", "bottom"]}
-        style={[
-          styles.root,
-          {
-            backgroundColor: colors.background,
-          },
-        ]}
-      >
-        <FlatList
-          data={collectionsSlice}
-          contentContainerStyle={styles.collectionsList}
-          renderItem={renderItem}
-          onEndReached={onEndReached}
-          maxToRenderPerBatch={1}
-          initialNumToRender={1}
-          showsVerticalScrollIndicator={false}
-          ListHeaderComponent={
-            <View style={styles.sendButtonContainer}>
-              <Button
-                type="primary"
-                IconLeft={SendIcon}
-                containerStyle={styles.sendButton}
-                title={t("account.send")}
-                onPress={isNFTDisabled ? onOpenModal : goToCollectionSelection}
-              />
-            </View>
-          }
-          ListFooterComponent={() =>
-            collections.length > collectionsCount ? <LoadingFooter /> : null
-          }
-        />
-      </TabBarSafeAreaView>
+      <FlatList
+        data={collectionsSlice}
+        contentContainerStyle={styles.collectionsList}
+        renderItem={renderItem}
+        onEndReached={onEndReached}
+        maxToRenderPerBatch={1}
+        initialNumToRender={1}
+        showsVerticalScrollIndicator={false}
+        ListHeaderComponent={
+          <View style={styles.sendButtonContainer}>
+            <Button
+              type="primary"
+              IconLeft={SendIcon}
+              containerStyle={styles.sendButton}
+              title={t("account.send")}
+              onPress={isNFTDisabled ? onOpenModal : goToCollectionSelection}
+            />
+          </View>
+        }
+        ListFooterComponent={() =>
+          collections.length > collectionsCount ? <LoadingFooter /> : null
+        }
+      />
     </>
   );
 };
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
   collectionsList: {
     paddingTop: 24,
-    paddingBottom: TAB_BAR_SAFE_HEIGHT,
     paddingHorizontal: 16,
   },
   sendButtonContainer: {

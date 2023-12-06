@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -82,6 +82,7 @@ const RecoverRestore = () => {
     if (state && !state.isOnboarded) {
       switch (currentDevice?.modelId) {
         case DeviceModelId.nanoX:
+        case DeviceModelId.nanoSP:
           setDeviceModelId(currentDevice.modelId);
           history.push({
             pathname: `/onboarding/${UseCase.recover}/${ScreenId.pairMyNano}`,

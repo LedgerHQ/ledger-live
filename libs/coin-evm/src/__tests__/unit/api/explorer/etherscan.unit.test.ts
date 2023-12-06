@@ -1,5 +1,5 @@
-import axios from "axios";
 import { AssertionError, fail } from "assert";
+import axios from "axios";
 import { delay } from "@ledgerhq/live-promise";
 import { CryptoCurrency, EthereumLikeInfo } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";

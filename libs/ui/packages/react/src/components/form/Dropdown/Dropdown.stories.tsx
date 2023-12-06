@@ -12,7 +12,10 @@ export default {
     isDisabled: { type: "boolean" },
     error: { type: "string" },
     menuIsOpen: { type: "boolean" },
-    label: { type: "string", defaultValue: "Label" },
+    label: { type: "string" },
+  },
+  args: {
+    label: "Label",
   },
 };
 

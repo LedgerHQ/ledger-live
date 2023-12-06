@@ -80,11 +80,10 @@ function getDeviceTransactionConfig({
         }),
       });
     } else if (account.type === "Account") {
-      const transactionAmount = transaction.useAllAmount ? account.balance : transaction.amount;
       fields.push({
         type: "text",
         label: "Amount",
-        value: formatCurrencyUnit(getAccountUnit(account), transactionAmount, {
+        value: formatCurrencyUnit(getAccountUnit(account), transaction.amount, {
           showCode: true,
           disableRounding: true,
         }),

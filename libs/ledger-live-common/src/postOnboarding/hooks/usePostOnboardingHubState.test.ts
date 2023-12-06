@@ -1,4 +1,4 @@
-import { useFeatureFlags } from "../../featureFlags";
+import { useFeatureFlags } from "@ledgerhq/live-config/featureFlags/index";
 import { hubStateSelector } from "../reducer";
 import { usePostOnboardingContext } from "./usePostOnboardingContext";
 import { getPostOnboardingAction, mockedFeatureIdToTest } from "../mock";
@@ -10,7 +10,7 @@ import { usePostOnboardingHubState } from "./usePostOnboardingHubState";
 jest.mock("react-redux", () => ({
   useSelector: val => val(),
 }));
-jest.mock("../../featureFlags");
+jest.mock("@ledgerhq/live-config/featureFlags/index");
 jest.mock("./usePostOnboardingContext");
 jest.mock("../reducer");
 
@@ -25,7 +25,6 @@ const mockedGetFeatureWithMockFeatureEnabled = enabled => ({
   overrideFeature: () => {},
   resetFeature: () => {},
   resetFeatures: () => {},
-  getAllFlags: () => ({}),
 });
 
 const mockedUsePostOnboardingContext = jest.mocked(usePostOnboardingContext);
@@ -37,6 +36,7 @@ const defaultHubState = {
   actionsToComplete: [],
   actionsCompleted: {},
   lastActionCompleted: null,
+  postOnboardingInProgress: false,
 };
 
 const stateAllCompleted = {
@@ -52,6 +52,7 @@ const stateAllCompleted = {
     [PostOnboardingActionId.migrateAssetsMock]: true,
   },
   lastActionCompleted: PostOnboardingActionId.personalizeMock,
+  postOnboardingInProgress: true,
 };
 
 const stateAllNotCompleted = {
@@ -67,6 +68,7 @@ const stateAllNotCompleted = {
     [PostOnboardingActionId.migrateAssetsMock]: false,
   },
   lastActionCompleted: null,
+  postOnboardingInProgress: true,
 };
 
 describe("usePostOnboardingHubState", () => {
@@ -94,6 +96,7 @@ describe("usePostOnboardingHubState", () => {
       deviceModelId: state.deviceModelId,
       lastActionCompleted: null,
       actionsState: [],
+      postOnboardingInProgress: true,
     });
   });
 
@@ -107,6 +110,7 @@ describe("usePostOnboardingHubState", () => {
       deviceModelId: state.deviceModelId,
       lastActionCompleted: null,
       actionsState: [],
+      postOnboardingInProgress: false,
     });
   });
 

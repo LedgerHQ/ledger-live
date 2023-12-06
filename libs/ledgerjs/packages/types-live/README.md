@@ -57,9 +57,8 @@ Ledger Live main types.
     *   [Properties](#properties-13)
     *   [enabled](#enabled)
     *   [desktop\_version](#desktop_version)
-    *   [enabledOverriddenForCurrentDesktopVersion](#enabledoverriddenforcurrentdesktopversion)
     *   [mobile\_version](#mobile_version)
-    *   [enabledOverriddenForCurrentMobileVersion](#enabledoverriddenforcurrentmobileversion)
+    *   [enabledOverriddenForCurrentVersion](#enabledoverriddenforcurrentversion)
     *   [languages\_whitelisted](#languages_whitelisted)
     *   [languages\_blacklisted](#languages_blacklisted)
     *   [enabledOverriddenForCurrentLanguage](#enabledoverriddenforcurrentlanguage)
@@ -146,6 +145,7 @@ Ledger Live main types.
 *   [PostOnboardingActionId](#postonboardingactionid)
 *   [navigationParams](#navigationparams)
 *   [startAction](#startaction)
+*   [](#)
 *   [PostOnboardingAction](#postonboardingaction)
     *   [disabled](#disabled)
     *   [featureFlagId](#featureflagid)
@@ -166,6 +166,7 @@ Ledger Live main types.
     *   [actionsToComplete](#actionstocomplete)
     *   [actionsCompleted](#actionscompleted)
     *   [lastActionCompleted](#lastactioncompleted)
+    *   [postOnboardingInProgress](#postonboardinginprogress)
 *   [PostOnboardingHubState](#postonboardinghubstate)
     *   [Properties](#properties-44)
 *   [SwapOperation](#swapoperation)
@@ -527,15 +528,14 @@ Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 
 Feature type.
 
-Type: {enabled: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), desktop\_version: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, enabledOverriddenForCurrentDesktopVersion: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, mobile\_version: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, enabledOverriddenForCurrentMobileVersion: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, languages\_whitelisted: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>?, languages\_blacklisted: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>?, enabledOverriddenForCurrentLanguage: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, overridesRemote: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, overriddenByEnv: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, params: T?}
+Type: {enabled: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), desktop\_version: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, mobile\_version: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, enabledOverriddenForCurrentVersion: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, languages\_whitelisted: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>?, languages\_blacklisted: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>?, enabledOverriddenForCurrentLanguage: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, overridesRemote: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, overriddenByEnv: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, params: T?}
 
 #### Properties
 
 *   `enabled` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**&#x20;
 *   `desktop_version` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?**&#x20;
-*   `enabledOverriddenForCurrentDesktopVersion` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?**&#x20;
 *   `mobile_version` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?**&#x20;
-*   `enabledOverriddenForCurrentMobileVersion` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?**&#x20;
+*   `enabledOverriddenForCurrentVersion` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?**&#x20;
 *   `languages_whitelisted` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>?**&#x20;
 *   `languages_blacklisted` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>?**&#x20;
 *   `enabledOverriddenForCurrentLanguage` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?**&#x20;
@@ -557,12 +557,6 @@ It should respect the semantic versioning specification (<https://semver.org/>)
 
 Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
 
-#### enabledOverriddenForCurrentDesktopVersion
-
-Whether the remote value of `enabled` was overriden due to `desktop_version`
-
-Type: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
-
 #### mobile\_version
 
 The `mobile_version` option is mobile specific, it has no impact on mobile
@@ -571,9 +565,9 @@ It should respect the semantic versioning specification (<https://semver.org/>)
 
 Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
 
-#### enabledOverriddenForCurrentMobileVersion
+#### enabledOverriddenForCurrentVersion
 
-Whether the remote value of `enabled` was overriden due to `mobile_version`
+Whether the remote value of `enabled` was overriden due to `desktop_version` or `mobile_version`
 
 Type: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
 
@@ -1193,7 +1187,11 @@ Type: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global
 
 The function to call when the user presses the button for this action
 
-Type: function (): void
+Type: function (openModalCallback: any, navigationCallback: any): void
+
+###
+
+Optional Redux dispatch function
 
 ### PostOnboardingAction
 
@@ -1283,7 +1281,7 @@ To be used for a redux reducer.
 Keeps all necessary information about the state of the post onboarding hub
 and can be persisted in storage.
 
-Type: {deviceModelId: (DeviceModelId | null), walletEntryPointDismissed: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), actionsToComplete: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[PostOnboardingActionId](#postonboardingactionid)>, actionsCompleted: any, lastActionCompleted: ([PostOnboardingActionId](#postonboardingactionid) | null)}
+Type: {deviceModelId: (DeviceModelId | null), walletEntryPointDismissed: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean), actionsToComplete: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[PostOnboardingActionId](#postonboardingactionid)>, actionsCompleted: any, lastActionCompleted: ([PostOnboardingActionId](#postonboardingactionid) | null), postOnboardingInProgress: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)}
 
 #### Properties
 
@@ -1292,6 +1290,7 @@ Type: {deviceModelId: (DeviceModelId | null), walletEntryPointDismissed: [boolea
 *   `actionsToComplete` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[PostOnboardingActionId](#postonboardingactionid)>**&#x20;
 *   `actionsCompleted` **any**&#x20;
 *   `lastActionCompleted` **([PostOnboardingActionId](#postonboardingactionid) | null)**&#x20;
+*   `postOnboardingInProgress` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**&#x20;
 
 #### deviceModelId
 
@@ -1328,18 +1327,25 @@ onboarding hub UI depending on the last action that was completed.
 
 Type: ([PostOnboardingActionId](#postonboardingactionid) | null)
 
+#### postOnboardingInProgress
+
+Did the user started the PostOnboarding without closing or finishing it ?
+
+Type: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+
 ### PostOnboardingHubState
 
 Digest of the store & list of actions into something directly consumable
 by UI. (All UI data will be in there).
 
-Type: {deviceModelId: (DeviceModelId | null), lastActionCompleted: ([PostOnboardingAction](#postonboardingaction) | null), actionsState: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<any>}
+Type: {deviceModelId: (DeviceModelId | null), lastActionCompleted: ([PostOnboardingAction](#postonboardingaction) | null), actionsState: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<any>, postOnboardingInProgress: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)}
 
 #### Properties
 
 *   `deviceModelId` **(DeviceModelId | null)**&#x20;
 *   `lastActionCompleted` **([PostOnboardingAction](#postonboardingaction) | null)**&#x20;
 *   `actionsState` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<any>**&#x20;
+*   `postOnboardingInProgress` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**&#x20;
 
 ### SwapOperation
 

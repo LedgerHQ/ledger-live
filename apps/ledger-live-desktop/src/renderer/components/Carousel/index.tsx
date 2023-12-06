@@ -272,6 +272,8 @@ const Carousel = ({
       ) : null}
       <Slides>
         {transitions.map(({ item, props, key }) => {
+          if (!slides?.[item]) return null;
+
           const { Component } = slides[item];
           return (
             <animated.div key={key} style={{ ...props }}>

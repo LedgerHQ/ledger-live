@@ -1,7 +1,7 @@
-import btc from "./walletApiAdapter";
+import { Account } from "@ledgerhq/types-live";
 import { BitcoinTransaction as WalletAPITransaction } from "@ledgerhq/wallet-api-core";
 import BigNumber from "bignumber.js";
-import { Transaction } from "./types";
+import btc from "./walletApiAdapter";
 
 describe("getPlatformTransactionSignFlowInfos", () => {
   describe("should properly get infos for BTC platform tx", () => {
@@ -12,20 +12,31 @@ describe("getPlatformTransactionSignFlowInfos", () => {
         recipient: "0xABCDEF",
       };
 
-      const expectedLiveTx: Partial<Transaction> = {
-        family: btcPlatformTx.family,
-        amount: btcPlatformTx.amount,
-        recipient: btcPlatformTx.recipient,
-      };
-
-      const { canEditFees, hasFeesProvided, liveTx } =
-        btc.getWalletAPITransactionSignFlowInfos(btcPlatformTx);
+      const { canEditFees, hasFeesProvided, liveTx } = btc.getWalletAPITransactionSignFlowInfos({
+        walletApiTransaction: btcPlatformTx,
+        account: {} as Account,
+      });
 
       expect(canEditFees).toBe(true);
 
       expect(hasFeesProvided).toBe(false);
 
-      expect(liveTx).toEqual(expectedLiveTx);
+      expect(liveTx).toMatchInlineSnapshot(`
+{
+  "amount": "100000",
+  "family": "bitcoin",
+  "feePerByte": null,
+  "feesStrategy": "medium",
+  "networkInfo": null,
+  "rbf": false,
+  "recipient": "0xABCDEF",
+  "useAllAmount": false,
+  "utxoStrategy": {
+    "excludeUTXOs": [],
+    "strategy": 0,
+  },
+}
+`);
     });
 
     test("with fees provided", () => {
@@ -36,22 +47,82 @@ describe("getPlatformTransactionSignFlowInfos", () => {
         feePerByte: new BigNumber(300),
       };
 
-      const expectedLiveTx: Partial<Transaction> = {
-        family: btcPlatformTx.family,
-        amount: btcPlatformTx.amount,
-        recipient: btcPlatformTx.recipient,
-        feePerByte: btcPlatformTx.feePerByte,
-        feesStrategy: null,
-      };
-
-      const { canEditFees, hasFeesProvided, liveTx } =
-        btc.getWalletAPITransactionSignFlowInfos(btcPlatformTx);
+      const { canEditFees, hasFeesProvided, liveTx } = btc.getWalletAPITransactionSignFlowInfos({
+        walletApiTransaction: btcPlatformTx,
+        account: {} as Account,
+      });
 
       expect(canEditFees).toBe(true);
 
       expect(hasFeesProvided).toBe(true);
 
-      expect(liveTx).toEqual(expectedLiveTx);
+      expect(liveTx).toMatchInlineSnapshot(`
+{
+  "amount": "100000",
+  "family": "bitcoin",
+  "feePerByte": "300",
+  "feesStrategy": null,
+  "networkInfo": null,
+  "rbf": false,
+  "recipient": "0xABCDEF",
+  "useAllAmount": false,
+  "utxoStrategy": {
+    "excludeUTXOs": [],
+    "strategy": 0,
+  },
+}
+`);
+    });
+
+    test("with opReturnData provided", () => {
+      const btcPlatformTx: WalletAPITransaction = {
+        family: "bitcoin",
+        amount: new BigNumber(100000),
+        recipient: "0xABCDEF",
+        opReturnData: Buffer.from("hello world"),
+      };
+
+      const { canEditFees, hasFeesProvided, liveTx } = btc.getWalletAPITransactionSignFlowInfos({
+        walletApiTransaction: btcPlatformTx,
+        account: {} as Account,
+      });
+
+      expect(canEditFees).toBe(true);
+
+      expect(hasFeesProvided).toBe(false);
+
+      expect(liveTx).toMatchInlineSnapshot(`
+{
+  "amount": "100000",
+  "family": "bitcoin",
+  "feePerByte": null,
+  "feesStrategy": "medium",
+  "networkInfo": null,
+  "opReturnData": {
+    "data": [
+      104,
+      101,
+      108,
+      108,
+      111,
+      32,
+      119,
+      111,
+      114,
+      108,
+      100,
+    ],
+    "type": "Buffer",
+  },
+  "rbf": false,
+  "recipient": "0xABCDEF",
+  "useAllAmount": false,
+  "utxoStrategy": {
+    "excludeUTXOs": [],
+    "strategy": 0,
+  },
+}
+`);
     });
   });
 });

@@ -1,8 +1,8 @@
+import BigNumber from "bignumber.js";
 import { cryptocurrenciesById } from "@ledgerhq/cryptoassets/currencies";
 import { Account } from "@ledgerhq/types-live";
 import type { Transaction as EvmTransaction } from "../../../types/index";
 import { getFormattedFeeFields } from "../../../editTransaction/getFormattedFeeFields";
-import BigNumber from "bignumber.js";
 
 const dummyType2Transaction = {
   type: 2,

@@ -1,8 +1,11 @@
 import React from "react";
+import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { Button, Link, Flex, Text, IconsLegacy, InfiniteLoader } from "@ledgerhq/react-ui";
 import { Bullet } from "./Bullet";
 import { Status as SoftwareCheckStatus } from "../types";
+import Animation from "~/renderer/animations";
+import ConfettiLottie from "~/renderer/animations/common/confetti.json";
 
 export type Props = {
   genuineCheckStatus: SoftwareCheckStatus;
@@ -19,6 +22,16 @@ export type Props = {
   onClickContinueToSetup: () => void;
   onClickRetryUpdate: () => void;
 };
+
+const ConfettiAnimation = styled(Animation)`
+  position: absolute;
+  top: 80px;
+  left: 30%;
+  width: 40%;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  pointer-events: none;
+`;
 
 const SoftwareCheckContent = ({
   genuineCheckStatus,
@@ -104,7 +117,9 @@ const SoftwareCheckContent = ({
         }
         subtitle={
           firmwareUpdateStatus === SoftwareCheckStatus.completed
-            ? undefined
+            ? t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.subtitle.completed", {
+                modelName,
+              })
             : firmwareUpdateStatus === SoftwareCheckStatus.updateAvailable
             ? t(
                 "syncOnboarding.manual.softwareCheckContent.firmwareUpdate.subtitle.updateAvailable",
@@ -119,7 +134,7 @@ const SoftwareCheckContent = ({
       >
         {firmwareUpdateStatus === SoftwareCheckStatus.updateAvailable ? (
           <Flex flexDirection="row" alignItems="center" columnGap={6}>
-            <Button variant="main" size="small" outline={false} onClick={onClickViewUpdate}>
+            <Button variant="main" size="medium" outline={false} onClick={onClickViewUpdate}>
               {updateSkippable
                 ? t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.resumeUpdateCTA")
                 : t("syncOnboarding.manual.softwareCheckContent.firmwareUpdate.viewUpdateCTA", {
@@ -129,7 +144,7 @@ const SoftwareCheckContent = ({
             {updateSkippable ? (
               <Button
                 variant="shade"
-                size="small"
+                size="medium"
                 outline
                 onClick={onClickSkipUpdate}
                 Icon={loading ? InfiniteLoader : undefined}
@@ -174,18 +189,21 @@ const SoftwareCheckContent = ({
       ) : null}
       {genuineCheckStatus === SoftwareCheckStatus.completed &&
       firmwareUpdateStatus === SoftwareCheckStatus.completed ? (
-        <Flex flexDirection={"column"} mt={12} rowGap={12}>
-          <Button
-            onClick={onClickContinueToSetup}
-            variant="main"
-            size="large"
-            outline={false}
-            Icon={loading ? InfiniteLoader : IconsLegacy.ArrowRightMedium}
-            iconPosition="right"
-          >
-            {t("syncOnboarding.manual.softwareCheckContent.continueCTA")}
-          </Button>
-        </Flex>
+        <>
+          <Flex flexDirection={"column"} mt={12} rowGap={12}>
+            <Button
+              onClick={onClickContinueToSetup}
+              variant="main"
+              size="large"
+              outline={false}
+              Icon={loading ? InfiniteLoader : IconsLegacy.ArrowRightMedium}
+              iconPosition="right"
+            >
+              {t("syncOnboarding.manual.softwareCheckContent.continueCTA")}
+            </Button>
+          </Flex>
+          <ConfettiAnimation animation={ConfettiLottie} loop={false} />
+        </>
       ) : null}
     </Flex>
   );

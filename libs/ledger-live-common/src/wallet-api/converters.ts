@@ -94,7 +94,7 @@ export function currencyToWalletAPICurrency(
 export const getWalletAPITransactionSignFlowInfos: GetWalletAPITransactionSignFlowInfos<
   WalletAPITransaction,
   Transaction
-> = walletApiTransaction => {
+> = ({ walletApiTransaction, account }) => {
   // This is a hack to link WalletAPI "ethereum" family to new "evm" family
   const isEthereumFamily = walletApiTransaction.family === "ethereum";
   const liveFamily = isEthereumFamily ? "evm" : walletApiTransaction.family;
@@ -102,9 +102,18 @@ export const getWalletAPITransactionSignFlowInfos: GetWalletAPITransactionSignFl
   const familyModule = byFamily[liveFamily];
 
   if (familyModule) {
-    return familyModule.getWalletAPITransactionSignFlowInfos(walletApiTransaction);
+    return familyModule.getWalletAPITransactionSignFlowInfos({ walletApiTransaction, account });
   }
 
+  /**
+   * If we don't have an explicit implementation for this family, we fallback
+   * to just returning the transaction as is
+   * This is not ideal and could lead to unforseen issues since we can't make
+   * sure that what is received from the WalletAPI is compatible with the
+   * Ledger Live implementation of the family
+   * Not having an explicit WalletAPI adapter for a family should be considered
+   * an error and thorw an exception
+   */
   return {
     canEditFees: false,
     liveTx: { ...walletApiTransaction } as Partial<Transaction>,
