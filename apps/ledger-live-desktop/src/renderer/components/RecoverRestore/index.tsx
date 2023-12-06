@@ -62,8 +62,9 @@ const RecoverRestore = () => {
             currentOnboardingStep: OnboardingStep.NewDevice,
             currentSeedWordIndex: 0,
           });
+        } else {
+          setError(error);
         }
-        setError(error);
       },
     });
   }, []);
