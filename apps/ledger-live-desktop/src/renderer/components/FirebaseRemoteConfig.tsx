@@ -25,29 +25,32 @@ export const FirebaseRemoteConfigProvider = ({ children }: Props): JSX.Element |
       console.error(`Failed to initialize Firebase SDK with error: ${error}`);
       setLoaded(true);
     }
+    const remoteConfig = getRemoteConfig();
+    remoteConfig.settings.minimumFetchIntervalMillis = 0;
+    remoteConfig.defaultConfig = {
+      ...formatDefaultFeatures(DEFAULT_FEATURES),
+    };
+    setConfig(remoteConfig);
+    LiveConfig.setProviderGetValueMethod({
+      firebaseRemoteConfig: (key: string) => {
+        return getValue(remoteConfig, key);
+      },
+    });
 
-    const fetchConfig = async () => {
+    const fetchAndActivateConfig = async () => {
       try {
-        const remoteConfig = getRemoteConfig();
-        remoteConfig.settings.minimumFetchIntervalMillis = 0;
-        remoteConfig.defaultConfig = {
-          ...formatDefaultFeatures(DEFAULT_FEATURES),
-        };
-        setConfig(remoteConfig);
-        LiveConfig.setProviderGetValueMethod({
-          firebaseRemoteConfig: (key: string) => {
-            return getValue(remoteConfig, key);
-          },
-        });
         await fetchAndActivate(remoteConfig);
       } catch (error) {
         console.error(`Failed to fetch Firebase remote config with error: ${error}`);
+      } finally {
+        setLoaded(true);
       }
-
-      setLoaded(true);
     };
 
-    fetchConfig();
+    fetchAndActivateConfig();
+    // 12 hours fetch interval. TODO: make this configurable
+    const intervalId = window.setInterval(fetchAndActivateConfig, 12 * 60 * 60 * 1000);
+    return () => clearInterval(intervalId);
   }, [setConfig]);
 
   if (!loaded) {

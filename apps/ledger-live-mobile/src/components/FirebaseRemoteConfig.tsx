@@ -9,30 +9,33 @@ export const FirebaseRemoteConfigProvider = ({ children }: Props): JSX.Element |
 
   useEffect(() => {
     let unmounted = false;
+    LiveConfig.setProviderGetValueMethod({
+      firebaseRemoteConfig: (key: string) => {
+        return remoteConfig().getValue(key);
+      },
+    });
     const fetchConfig = async () => {
       try {
         remoteConfig().setConfigSettings({ minimumFetchIntervalMillis: 0 });
         await remoteConfig().setDefaults({
           ...formatDefaultFeatures(DEFAULT_FEATURES),
         });
-        LiveConfig.setProviderGetValueMethod({
-          firebaseRemoteConfig: (key: string) => {
-            return remoteConfig().getValue(key);
-          },
-        });
         await remoteConfig().fetchAndActivate();
       } catch (error) {
         if (!unmounted) {
           console.error(`Failed to fetch Firebase remote config with error: ${error}`);
         }
-      }
-      if (!unmounted) {
-        setLoaded(true);
+      } finally {
+        if (!unmounted) {
+          setLoaded(true);
+        }
       }
     };
     fetchConfig();
-
+    // 12 hours fetch interval. TODO: make this configurable
+    const intervalId = setInterval(fetchConfig, 12 * 60 * 60 * 1000);
     return () => {
+      clearInterval(intervalId);
       unmounted = true;
     };
   }, []);
