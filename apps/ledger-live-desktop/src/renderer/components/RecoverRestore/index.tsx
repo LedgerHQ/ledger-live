@@ -48,7 +48,15 @@ const RecoverRestore = () => {
         try {
           setState(extractOnboardingState(firmware.flags));
         } catch (error: unknown) {
-          if (error instanceof Error) {
+          if (error instanceof DeviceNotOnboarded) {
+            setState({
+              isOnboarded: false,
+              isInRecoveryMode: false,
+              seedPhraseType: SeedPhraseType.TwentyFour,
+              currentOnboardingStep: OnboardingStep.NewDevice,
+              currentSeedWordIndex: 0,
+            });
+          } else if (error instanceof Error) {
             setError(error);
           }
         }
