@@ -1,5 +1,7 @@
 import { ethers } from "ethers";
+import { getEnv } from "@ledgerhq/live-env";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { LoadConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
 import { isEIP712Message } from "@ledgerhq/evm-tools/message/EIP712/index";
 import { Account, AnyMessage, DeviceId, TypedEvmMessage } from "@ledgerhq/types-live";
 import { EvmSignature, EvmSigner } from "./signer";
@@ -46,8 +48,14 @@ export const signMessage =
     rsv: { r: string; s: string; v: string | number };
     signature: string;
   }> => {
+    const loadConfig: LoadConfig = {
+      cryptoassetsBaseURL: getEnv("DYNAMIC_CAL_BASE_URL"),
+      nftExplorerBaseURL: getEnv("NFT_ETH_METADATA_SERVICE") + "/v1/ethereum",
+    };
+
     if (messageOpts.standard === "EIP191") {
       const { r, s, v } = await signerContext(deviceId, signer => {
+        signer.setLoadConfig(loadConfig);
         return signer.signPersonalMessage(
           account.freshAddressPath,
           Buffer.from(messageOpts.message).toString("hex"),
@@ -65,6 +73,8 @@ export const signMessage =
 
     if (messageOpts.standard === "EIP712") {
       const { r, s, v } = await signerContext(deviceId, async signer => {
+        signer.setLoadConfig(loadConfig);
+
         try {
           return await signer.signEIP712Message(account.freshAddressPath, messageOpts.message);
         } catch (e) {
