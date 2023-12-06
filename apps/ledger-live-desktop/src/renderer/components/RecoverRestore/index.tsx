@@ -23,6 +23,7 @@ import {
 import { FirmwareInfo, SeedPhraseType } from "@ledgerhq/types-live";
 import { renderError } from "../DeviceAction/rendering";
 import { useDynamicUrl } from "~/renderer/terms";
+import { TransportStatusError } from "@ledgerhq/errors";
 
 const RecoverRestore = () => {
   const { t } = useTranslation();
@@ -48,7 +49,7 @@ const RecoverRestore = () => {
         try {
           setState(extractOnboardingState(firmware.flags));
         } catch (error: unknown) {
-          if (error instanceof DeviceNotOnboarded) {
+          if (error instanceof TransportStatusError && error.message.includes("0x6d06")) {
             setState({
               isOnboarded: false,
               isInRecoveryMode: false,
@@ -62,7 +63,7 @@ const RecoverRestore = () => {
         }
       },
       error: (error: Error) => {
-        if (error instanceof DeviceNotOnboarded) {
+        if (error instanceof TransportStatusError && error.message.includes("0x6d06")) {
           setState({
             isOnboarded: false,
             isInRecoveryMode: false,
