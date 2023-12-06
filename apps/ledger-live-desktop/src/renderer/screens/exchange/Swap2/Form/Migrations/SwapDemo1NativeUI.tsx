@@ -16,7 +16,7 @@ export type SwapDemo1NativeUIProps = {
   // Demo 1 props
   pageState: ReturnType<typeof usePageState>;
   swapTransaction: SwapTransactionType;
-  provider: any;
+  provider?: string;
   refreshTime: number;
   countdown: boolean;
   // Demo 0 props

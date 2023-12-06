@@ -60,6 +60,7 @@ export const useSwapLiveAppHook = (props: UseSwapLiveAppHookProps) => {
     }
   }, [
     provider,
+    manifestID,
     isSwapLiveAppEnabled,
     getExchangeSDKParams,
     getProviderRedirectURLSearch,
