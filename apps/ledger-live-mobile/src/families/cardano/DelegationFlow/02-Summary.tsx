@@ -6,11 +6,7 @@ import { Trans, useTranslation } from "react-i18next";
 import { Animated, SafeAreaView, StyleSheet, View } from "react-native";
 import { useSelector } from "react-redux";
 import Icon from "react-native-vector-icons/Feather";
-import {
-  getAccountCurrency,
-  getAccountUnit,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
@@ -57,7 +53,6 @@ export default function DelegationSummary({ navigation, route }: Props) {
 
   const { cardanoResources } = account as CardanoAccount;
   const currentDelegation = cardanoResources.delegation;
-  const mainAccount = getMainAccount(account, parentAccount);
   const bridge = getAccountBridge(account, undefined);
 
   const [isFetchingPoolDetails, setIsFetchingPoolDetails] = useState(false);
@@ -92,20 +87,13 @@ export default function DelegationSummary({ navigation, route }: Props) {
     return null;
   }, [ledgerPools, pool]);
 
+  let tx = bridge.createTransaction(account);
+  tx = bridge.updateTransaction(tx, { mode: "delegate" });
+
   const { transaction, updateTransaction, setTransaction, status, bridgePending, bridgeError } =
     useBridgeTransaction(() => {
-      const tx = route.params.transaction;
-
-      if (!tx && chosenPool) {
-        const t = bridge.createTransaction(mainAccount);
-
-        return {
-          account,
-          transaction: bridge.updateTransaction(t, {
-            mode: "delegate",
-            poolId: chosenPool.poolId,
-          }),
-        };
+      if (chosenPool) {
+        tx = bridge.updateTransaction(tx, { poolId: chosenPool.poolId });
       }
 
       return { account, transaction: tx };
@@ -150,7 +138,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
   }, [status, account, parentAccount, navigation, transaction]);
 
   const displayError = useMemo(() => {
-    return status.errors.amount?.message === "CardanoNotEnoughFunds" ? status.errors.amount : "";
+    return status.errors.amount ? status.errors.amount : "";
   }, [status]);
 
   return (

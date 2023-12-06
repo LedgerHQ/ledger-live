@@ -1,15 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`internet_computer currency bridge scanAccounts internet_computer seed 1 1`] = `
-Array [
-  Object {
+[
+  {
     "balance": "1000000",
     "currencyId": "internet_computer",
     "derivationMode": "internet_computer",
     "freshAddress": "e8a1474afbed438be8b019c4293b9e01b33075d72757ac715183ae7c7ba77e37",
     "freshAddressPath": "44'/223'/0'/0/0",
-    "freshAddresses": Array [
-      Object {
+    "freshAddresses": [
+      {
         "address": "e8a1474afbed438be8b019c4293b9e01b33075d72757ac715183ae7c7ba77e37",
         "derivationPath": "44'/223'/0'/0/0",
       },
@@ -19,24 +19,24 @@ Array [
     "name": "Internet Computer 1",
     "nfts": undefined,
     "operationsCount": 1,
-    "pendingOperations": Array [],
+    "pendingOperations": [],
     "seedIdentifier": "046f08828871028b6e3cb5c13b2e2a8fa6e93f0b3ca7379171f6b7b45877955a2430925f76ec69ccb3cd8738859a8e29dcd0f9a357f1d009d2b497c6c8f63aa7cf",
     "spendableBalance": "1000000",
     "starred": false,
-    "swapHistory": Array [],
+    "swapHistory": [],
     "syncHash": undefined,
     "unitMagnitude": 8,
     "used": true,
     "xpub": "046f08828871028b6e3cb5c13b2e2a8fa6e93f0b3ca7379171f6b7b45877955a2430925f76ec69ccb3cd8738859a8e29dcd0f9a357f1d009d2b497c6c8f63aa7cf",
   },
-  Object {
+  {
     "balance": "0",
     "currencyId": "internet_computer",
     "derivationMode": "internet_computer",
     "freshAddress": "1723b9a25b7cb1865caa6e633fc727c95cee6a84c52e5ca0f8752ecf66cdea4b",
     "freshAddressPath": "44'/223'/0'/0/1",
-    "freshAddresses": Array [
-      Object {
+    "freshAddresses": [
+      {
         "address": "1723b9a25b7cb1865caa6e633fc727c95cee6a84c52e5ca0f8752ecf66cdea4b",
         "derivationPath": "44'/223'/0'/0/1",
       },
@@ -46,11 +46,11 @@ Array [
     "name": "Internet Computer 2",
     "nfts": undefined,
     "operationsCount": 0,
-    "pendingOperations": Array [],
+    "pendingOperations": [],
     "seedIdentifier": "046f08828871028b6e3cb5c13b2e2a8fa6e93f0b3ca7379171f6b7b45877955a2430925f76ec69ccb3cd8738859a8e29dcd0f9a357f1d009d2b497c6c8f63aa7cf",
     "spendableBalance": "0",
     "starred": false,
-    "swapHistory": Array [],
+    "swapHistory": [],
     "syncHash": undefined,
     "unitMagnitude": 8,
     "used": false,
@@ -60,24 +60,24 @@ Array [
 `;
 
 exports[`internet_computer currency bridge scanAccounts internet_computer seed 1 2`] = `
-Array [
-  Array [
-    Object {
+[
+  [
+    {
       "accountId": "js:2:internet_computer:046f08828871028b6e3cb5c13b2e2a8fa6e93f0b3ca7379171f6b7b45877955a2430925f76ec69ccb3cd8738859a8e29dcd0f9a357f1d009d2b497c6c8f63aa7cf:internet_computer",
       "blockHash": null,
       "blockHeight": 5432782,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "memo": "0",
       },
       "fee": "10000",
       "hash": "c63c65091a4de0b9aec1b8bd242fa97b96dc8a7349577470f788c1f3df6fd7b8",
       "id": "js:2:internet_computer:046f08828871028b6e3cb5c13b2e2a8fa6e93f0b3ca7379171f6b7b45877955a2430925f76ec69ccb3cd8738859a8e29dcd0f9a357f1d009d2b497c6c8f63aa7cf:internet_computer-c63c65091a4de0b9aec1b8bd242fa97b96dc8a7349577470f788c1f3df6fd7b8-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "e8a1474afbed438be8b019c4293b9e01b33075d72757ac715183ae7c7ba77e37",
       ],
-      "senders": Array [
+      "senders": [
         "fdb7db0d3ae67368cb5010b7de7d98566c072f0a4eda871f45cd6582bf08aeb4",
       ],
       "standard": undefined,
@@ -86,6 +86,6 @@ Array [
       "value": "1000000",
     },
   ],
-  Array [],
+  [],
 ]
 `;

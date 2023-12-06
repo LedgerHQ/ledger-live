@@ -12,7 +12,7 @@ import { PlaceholderLine } from "./Placeholder";
 import Button from "~/renderer/components/ButtonV3";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { useHistory } from "react-router-dom";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 
 type BalanceSinceProps = {
   valueChange: ValueChange;

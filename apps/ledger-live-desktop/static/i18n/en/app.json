@@ -764,6 +764,8 @@
     "energyTooltip": "Freeze assets to gain energy",
     "delegatedTooltip": "Delegated assets are used in the voting process. This represents your total number of votes.",
     "undelegatingTooltip": "Undelegated assets are in a timelock of {{timelockInDays}} days, before being available.",
+    "claimableRewards": "Claimable Rewards",
+    "claimableRewardsTooltip": "Currently, the option to claim USDC rewards is unavailable. Please use a third-party wallet for this purpose",
     "banner": {
       "redelegation": {
         "title": "In case you didn’t know...",
@@ -4103,7 +4105,7 @@
     "accounts": {
       "hideEmptyTokens": {
         "title": "Hide empty token accounts",
-        "desc": "Hide token accounts with zero balance on the Accounts page."
+        "desc": "Hide token accounts with zero balance."
       },
       "tokenBlacklist": {
         "title": "Hidden tokens",
@@ -5748,6 +5750,9 @@
     },
     "CardanoNotEnoughFunds": {
       "title": "Please ensure you have enough funds to pay for fees"
+    },
+    "CardanoStakeKeyDepositError": {
+      "title": "Ensure that you have {{depositAmount}} ADA available for the deposit"
     },
     "StacksMemoTooLong": {
       "title": "Memo length is too long"

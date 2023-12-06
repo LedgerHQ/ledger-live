@@ -35,6 +35,7 @@ listen(log => {
 setGlobalOnBridgeError(e => logger.critical(e));
 setDeviceMode("polling");
 setWalletAPIVersion(WALLET_API_VERSION);
+
 setSupportedCurrencies([
   "avalanche_c_chain",
   "axelar",

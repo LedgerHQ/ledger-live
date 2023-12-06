@@ -1,8 +1,8 @@
-import { DisconnectedDevice } from "@ledgerhq/errors";
+import { DisconnectedDevice, StatusCodes, TransportStatusError } from "@ledgerhq/errors";
 import type { DeviceId } from "@ledgerhq/types-live";
 
-import { Observable, concat } from "rxjs";
-import { filter, map, switchMap } from "rxjs/operators";
+import { Observable, concat, of, throwError } from "rxjs";
+import { catchError, filter, map, switchMap } from "rxjs/operators";
 import { SharedTaskEvent, retryOnErrorsCommandWrapper, sharedLogicTaskWrapper } from "./core";
 import { quitApp } from "../commands/quitApp";
 import { withTransport } from "../transports/core";
@@ -16,7 +16,7 @@ export type GetBatteryStatusesTaskArgs = {
 };
 
 // No taskError for getDeviceInfoTask. Kept for consistency with other tasks.
-export type GetBatteryStatusesTaskError = "None";
+export type GetBatteryStatusesTaskError = "UnknownApdu";
 
 export type GetBatteryStatusesTaskErrorEvent = {
   type: "taskError";
@@ -60,6 +60,12 @@ function internalGetBatteryStatusesTask({
           const { batteryStatus } = value;
 
           return { type: "data" as const, batteryStatus };
+        }),
+        catchError((err: Error) => {
+          if (err instanceof TransportStatusError && err.statusCode === StatusCodes.UNKNOWN_APDU)
+            return of<GetBatteryStatusesTaskEvent>({ type: "taskError", error: "UnknownApdu" });
+
+          return throwError(() => err);
         }),
       ),
     ).subscribe(subscriber);

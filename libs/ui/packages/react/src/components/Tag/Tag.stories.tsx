@@ -86,7 +86,7 @@ Outlined.args = {
   type: "outlined",
 };
 export const OutlinedOpacity = Template.bind({});
-Outlined.args = {
+OutlinedOpacity.args = {
   ...defaultArgs,
   type: "outlinedOpacity",
 };

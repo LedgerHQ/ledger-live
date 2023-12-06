@@ -29,7 +29,7 @@ export const calculateFees: CacheRes<
     return await getEstimatedFees(account as CosmosAccount, transaction);
   },
   ({ account, transaction }) =>
-    `${account.id}_${account.currency.id}_${transaction.amount.toString()}_${
+    `${account.id}_${account.currency.id}_${transaction.amount.toFixed()}_${
       transaction.recipient
     }_${String(transaction.useAllAmount)}_${transaction.mode}_${
       transaction.validators

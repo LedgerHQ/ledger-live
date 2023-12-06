@@ -1,18 +1,30 @@
+import { dirname, join } from "path";
 module.exports = {
   stories: [
     "../storybook/stories/**/*.stories.mdx",
     "../storybook/stories/**/*.stories.@(js|jsx|ts|tsx)",
   ],
+
   addons: [
-    "@storybook/addon-links",
-    "@storybook/addon-essentials",
-    "@storybook/addon-react-native-web",
+    getAbsolutePath("@storybook/addon-links"),
+    getAbsolutePath("@storybook/addon-essentials"),
+    getAbsolutePath("@storybook/addon-react-native-web"),
   ],
+
   typescript: {
-    reactDocgen: false, // FIXME: this is disabled for now due to incompatibilities with TS 5. re-enable when upgrading storybook.
+    reactDocgen: true
   },
-  core: {
-    builder: "webpack5",
+
+  framework: {
+    name: getAbsolutePath("@storybook/react-webpack5"),
+    options: {}
   },
-  framework: "@storybook/react",
+
+  docs: {
+    autodocs: true
+  }
 };
+
+function getAbsolutePath(value) {
+  return dirname(require.resolve(join(value, "package.json")));
+}

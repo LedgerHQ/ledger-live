@@ -6,7 +6,7 @@ import {
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { convertToNonAtomicUnit } from "@ledgerhq/live-common/exchange/swap/webApp/index";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
@@ -16,13 +16,12 @@ import { rateSelector, updateRateAction, updateTransactionAction } from "~/rende
 import { track } from "~/renderer/analytics/segment";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
-import ButtonBase from "~/renderer/components/Button";
 import { context } from "~/renderer/drawers/Provider";
-import { shallowAccountsSelector, flattenAccountsSelector } from "~/renderer/reducers/accounts";
+import { flattenAccountsSelector, shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import { trackSwapError, useGetSwapTrackingProperties } from "../utils/index";
 import ExchangeDrawer from "./ExchangeDrawer/index";
 import SwapFormSelectors from "./FormSelectors";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 import useRefreshRates from "./hooks/useRefreshRates";
 import LoadingState from "./Rates/LoadingState";
@@ -32,11 +31,12 @@ import BigNumber from "bignumber.js";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { SWAP_RATES_TIMEOUT } from "../../config";
 import { OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
-import { v4 } from "uuid";
 import SwapWebView, { SWAP_WEB_MANIFEST_ID, SwapWebProps } from "./SwapWebView";
 import { SwapMigrationNativeUI } from "./Migrations/SwapMigrationNativeUI";
 import SwapFormSummary from "./FormSummary";
 import { useSwapLiveAppHook } from "~/renderer/hooks/swap-migrations/useSwapLiveAppHook";
+
+const DAPP_PROVIDERS = ["paraswap", "oneinch", "moonpay"];
 
 const Wrapper = styled(Box).attrs({
   p: 20,
@@ -53,15 +53,16 @@ const Hide = styled.div`
 const idleTime = 60 * 60000; // 1 hour
 
 const SwapForm = () => {
-  const swapDefaultTrack = useGetSwapTrackingProperties();
   const [idleState, setIdleState] = useState(false);
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { state: locationState } = useLocation();
   const history = useHistory();
+  const totalListedAccounts = useSelector(flattenAccountsSelector);
   const accounts = useSelector(shallowAccountsSelector);
   const exchangeRate = useSelector(rateSelector);
   const walletApiPartnerList = useFeature("swapWalletApiPartnerList");
+  const swapDefaultTrack = useGetSwapTrackingProperties();
 
   const setExchangeRate: SetExchangeRateCallback = useCallback(
     rate => {
@@ -112,7 +113,7 @@ const SwapForm = () => {
   const swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
   const swapWarning = swapTransaction.fromAmountWarning;
   const pageState = usePageState(swapTransaction, swapError);
-  const provider = exchangeRate?.provider;
+  const provider = useMemo(() => exchangeRate?.provider, [exchangeRate?.provider]);
   const idleTimeout = useRef<NodeJS.Timeout | undefined>();
   const [swapWebProps, setSwapWebProps] = useState<SwapWebProps["swapState"] | undefined>(
     undefined,
@@ -125,6 +126,113 @@ const SwapForm = () => {
     pause: pauseRefreshing,
   });
 
+  const getExchangeSDKParams = useCallback(() => {
+    const { swap, transaction } = swapTransaction;
+    const { to, from } = swap;
+    const { account: fromAccount, parentAccount: fromParentAccount } = from;
+    const { account: toAccount, parentAccount: toParentAccount } = to;
+    const { feesStrategy } = transaction || {};
+    const { rate, rateId } = exchangeRate || {};
+
+    const isToAccountValid = totalListedAccounts.some(account => account.id === toAccount?.id);
+    const fromAccountId =
+      fromAccount && accountToWalletAPIAccount(fromAccount, fromParentAccount)?.id;
+    const toAccountId = isToAccountValid
+      ? toAccount && accountToWalletAPIAccount(toAccount, toParentAccount)?.id
+      : toParentAccount && accountToWalletAPIAccount(toParentAccount, undefined)?.id;
+    const toNewTokenId =
+      !isToAccountValid && toAccount?.type === "TokenAccount" ? toAccount.token?.id : undefined;
+    const fromAmount =
+      fromAccount &&
+      convertToNonAtomicUnit({
+        amount: transaction?.amount,
+        account: fromAccount,
+      });
+
+    const customFeeConfig = transaction && getCustomFeesPerFamily(transaction);
+    // The Swap web app will automatically recreate the transaction with "default" fees.
+    // However, if you wish to use a different fee type, you will need to set it as custom.
+    const feeStrategyParam =
+      feesStrategy && ["slow", "fast", "custom"].includes(feesStrategy) ? "CUSTOM" : "MEDIUM";
+
+    return {
+      fromAccountId,
+      toAccountId,
+      fromAmount: fromAmount?.toString(),
+      quoteId: rateId ? rateId : undefined,
+      rate: rate?.toString(),
+      feeStrategy: feeStrategyParam,
+      customFeeConfig: customFeeConfig ? JSON.stringify(customFeeConfig) : undefined,
+      toNewTokenId,
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    provider,
+    swapTransaction.swap.from.account?.id,
+    swapTransaction.swap.to.currency?.id,
+    swapTransaction.swap.to.account?.id,
+    exchangeRate?.providerType,
+    exchangeRate?.tradeMethod,
+    exchangeRate?.providerURL,
+    exchangeRate,
+    totalListedAccounts,
+  ]);
+
+  const generateMoonpayUrl = useCallback(
+    ({ base = "", args = {} }: { base: string; args: { [key: string]: string | undefined } }) => {
+      const moonpayURL = new URL(base || "");
+      Object.entries(args).forEach(
+        ([key, value]) =>
+          // customFeeConfig is an object
+          value &&
+          moonpayURL.searchParams.append(
+            ...[key, typeof value === "object" ? JSON.stringify(value) : value],
+          ),
+      );
+      return moonpayURL;
+    },
+    [],
+  );
+
+  const getProviderRedirectURLSearch = useCallback(() => {
+    const { account: fromAccount, parentAccount: fromParentAccount } = swapTransaction.swap.from;
+    const providerRedirectFromAccountId =
+      fromAccount &&
+      provider &&
+      walletApiPartnerList?.enabled &&
+      walletApiPartnerList?.params?.list.includes(provider)
+        ? accountToWalletAPIAccount(fromAccount, fromParentAccount)?.id
+        : fromAccount?.id;
+
+    const providerRedirectURLSearch = new URLSearchParams();
+
+    providerRedirectFromAccountId &&
+      providerRedirectURLSearch.set("accountId", providerRedirectFromAccountId);
+
+    if (provider === "moonpay") {
+      const moonpayURL = generateMoonpayUrl({
+        base: exchangeRate?.providerURL || "",
+        args: getExchangeSDKParams(),
+      });
+
+      exchangeRate?.providerURL && providerRedirectURLSearch.set("goToURL", moonpayURL.toString());
+    } else {
+      exchangeRate?.providerURL &&
+        providerRedirectURLSearch.set("goToURL", exchangeRate.providerURL || "");
+    }
+
+    providerRedirectURLSearch.set("returnTo", "/swap");
+    return providerRedirectURLSearch;
+  }, [
+    provider,
+    swapTransaction.swap.from,
+    exchangeRate?.providerURL,
+    generateMoonpayUrl,
+    getExchangeSDKParams,
+    walletApiPartnerList?.enabled,
+    walletApiPartnerList?.params?.list,
+  ]);
+
   const refreshIdle = useCallback(() => {
     idleState && setIdleState(false);
     idleTimeout.current && clearInterval(idleTimeout.current);
@@ -134,12 +242,13 @@ const SwapForm = () => {
   }, [idleState]);
 
   const redirectToProviderApp = useCallback(
-    (provider: string): void => {
+    (provider: string = ""): void => {
       const { providerURL } = exchangeRate ?? {};
       const from = swapTransaction.swap.from;
       const fromAccountId = from.parentAccount?.id || from.account?.id;
 
       const pathname = `/platform/${getProviderName(provider).toLowerCase()}`;
+
       const account = accounts.find(a => a.id === fromAccountId);
       if (!account) return;
       const parentAccount = isTokenAccount(account)
@@ -151,25 +260,36 @@ const SwapForm = () => {
           ? accountToWalletAPIAccount(account, parentAccount)?.id
           : fromAccountId;
 
+      const state = {
+        returnTo: "/swap",
+        accountId,
+        goToURL: providerURL,
+      };
+
+      if (provider === "moonpay") {
+        const moonpayURL = generateMoonpayUrl({
+          base: exchangeRate?.providerURL || "",
+          args: getExchangeSDKParams(),
+        });
+        state.goToURL = moonpayURL.toString();
+      }
+
       history.push({
         // This looks like an issue, the proper signature is: push(path, [state]) - (function) Pushes a new entry onto the history stack
         // It seems possible to also pass a LocationDescriptorObject but it does not expect extra properties
-        // @ts-expect-error so customDappUrl is not expected to be here
-        customDappUrl: providerURL,
         pathname,
-        state: {
-          returnTo: "/swap",
-          accountId,
-        },
+        state,
       });
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [
-      swapTransaction.swap.from.account?.id,
-      swapTransaction.swap.to.currency?.id,
-      exchangeRate?.providerType,
-      exchangeRate?.tradeMethod,
-      exchangeRate?.provider,
+      accounts,
+      exchangeRate,
+      generateMoonpayUrl,
+      getExchangeSDKParams,
+      history,
+      swapTransaction.swap.from,
+      walletApiPartnerList?.enabled,
+      walletApiPartnerList?.params?.list,
     ],
   );
 
@@ -220,7 +340,6 @@ const SwapForm = () => {
   const onSubmit = () => {
     if (!exchangeRate) return;
 
-    const { provider, providerType } = exchangeRate;
     track("button_clicked", {
       button: "Request",
       page: "Page Swap Form",
@@ -230,7 +349,7 @@ const SwapForm = () => {
       partner: provider,
     });
 
-    if (providerType === "DEX") {
+    if (provider && DAPP_PROVIDERS.includes(provider)) {
       redirectToProviderApp(provider);
     } else {
       // Fix LIVE-9064, prevent the transaction from being updated when using useAllAmount
@@ -267,17 +386,6 @@ const SwapForm = () => {
 
   const setFromAmount = (amount: BigNumber) => {
     swapTransaction.setFromAmount(amount);
-    const fromAmount =
-      swapTransaction.swap.from.account &&
-      convertToNonAtomicUnit({
-        amount,
-        account: swapTransaction.swap.from.account,
-      });
-    setSwapWebProps(state => ({
-      ...state,
-      cacheKey: v4(),
-      fromAmount: fromAmount?.toString(),
-    }));
   };
 
   const setToCurrency = (currency: TokenCurrency | CryptoCurrency | undefined) => {
@@ -294,6 +402,8 @@ const SwapForm = () => {
     swapTransaction,
     updateSwapWebProps: setSwapWebProps,
     swapError,
+    getExchangeSDKParams,
+    getProviderRedirectURLSearch,
   });
 
   return (
