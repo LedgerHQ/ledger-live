@@ -33,7 +33,7 @@ import { getDeviceAnimation } from "./animations";
 import { DeviceBlocker } from "./DeviceBlocker";
 import ErrorIcon from "~/renderer/components/ErrorIcon";
 import IconTriangleWarning from "~/renderer/icons/TriangleWarning";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 import CurrencyUnitValue from "~/renderer/components/CurrencyUnitValue";
 import ExternalLinkButton from "../ExternalLinkButton";
 import TrackPage, { setTrackingSource } from "~/renderer/analytics/TrackPage";

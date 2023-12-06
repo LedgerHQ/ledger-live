@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { v4 as uuidv4 } from "uuid";
 import { developerModeSelector } from "../../../../reducers/settings";
-import { useDynamicUrl } from "~/config/urls-localized";
+import { useDynamicUrl } from "~/config/urls/urls-localized";
 const SectionHelp = () => {
   const { t } = useTranslation();
   const privacyPolicyUrl = useDynamicUrl("privacyPolicy");

@@ -6,7 +6,7 @@ import Box from "~/renderer/components/Box";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import Text from "~/renderer/components/Text";
 import { openURL } from "~/renderer/linking";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 type Props = {
   isOpen: boolean;
   closeDrawer: () => void;

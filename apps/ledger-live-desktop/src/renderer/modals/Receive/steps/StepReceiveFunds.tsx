@@ -8,7 +8,7 @@ import { DisconnectedDevice } from "@ledgerhq/errors";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import useTheme from "~/renderer/hooks/useTheme";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 import { openURL } from "~/renderer/linking";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";

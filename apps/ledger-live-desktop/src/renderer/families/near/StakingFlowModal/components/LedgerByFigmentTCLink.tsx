@@ -3,7 +3,7 @@ import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/n
 import { Transaction } from "@ledgerhq/live-common/families/near/types";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import { useTranslation } from "react-i18next";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 import { openURL } from "~/renderer/linking";
 
 const LedgerByFigmentTC = ({ transaction }: { transaction: Transaction }) => {

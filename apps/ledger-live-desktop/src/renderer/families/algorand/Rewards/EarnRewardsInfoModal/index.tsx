@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { SubAccount } from "@ledgerhq/types-live";
 import { openModal } from "~/renderer/actions/modals";
 import EarnRewardsInfoModal from "~/renderer/components/EarnRewardsInfoModal";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 import { openURL } from "~/renderer/linking";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import { AlgorandAccount } from "@ledgerhq/live-common/families/algorand/types";

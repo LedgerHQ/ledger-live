@@ -10,7 +10,7 @@ import {
 } from "@ledgerhq/live-common/families/cosmos/react";
 import { mapUnbondings, canDelegate } from "@ledgerhq/live-common/families/cosmos/logic";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 import { openURL } from "~/renderer/linking";
 import { openModal } from "~/renderer/actions/modals";
 import Text from "~/renderer/components/Text";
@@ -28,7 +28,7 @@ import TableContainer, { TableHeader } from "~/renderer/components/TableContaine
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import { DelegationActionsModalName } from "../modals";
 import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
-import { StakingCoin, useStakingUrl } from "~/config/urls-localized";
+import { StakingCoin, useStakingUrl } from "~/config/urls/urls-localized";
 
 const Wrapper = styled(Box).attrs(() => ({
   p: 3,

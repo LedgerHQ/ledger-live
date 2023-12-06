@@ -1,5 +1,5 @@
 import React from "react";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 import TranslatedError from "./TranslatedError";
 import Alert from "./Alert";
 

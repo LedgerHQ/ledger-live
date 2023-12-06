@@ -13,7 +13,7 @@ import Alert from "~/renderer/components/Alert";
 import Text from "~/renderer/components/Text";
 import { openURL } from "~/renderer/linking";
 import Box from "~/renderer/components/Box";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 import { OnChangeExtra } from "~/renderer/components/RecipientAddress";
 
 type Props<T extends Transaction, TS extends TransactionStatus> = {

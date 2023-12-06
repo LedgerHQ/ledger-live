@@ -8,7 +8,7 @@ import { track } from "~/renderer/analytics/segment";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import React from "react";
 import { StakeAccountBannerParams } from "~/renderer/screens/account/types";
-import { StakingCoin, useStakingUrl } from "~/config/urls-localized";
+import { StakingCoin, useStakingUrl } from "~/config/urls/urls-localized";
 
 /**
  * This needs to stay a constant because it serves a different from

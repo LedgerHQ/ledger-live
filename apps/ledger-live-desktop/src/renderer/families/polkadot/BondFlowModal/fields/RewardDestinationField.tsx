@@ -7,7 +7,7 @@ import Text from "~/renderer/components/Text";
 import Popover from "~/renderer/components/Popover";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import { openURL } from "~/renderer/linking";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 const options = [
   {
     value: "Stash",

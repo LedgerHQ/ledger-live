@@ -10,7 +10,7 @@ import GetItOnAppleStoreImage from "./images/get_it_on_apple_store.png";
 import LedgerRecoverLogo from "./images/ledger_recover.png";
 import QrCodeLLMImages from "./images/QRcode_LLM.png";
 import { openURL } from "~/renderer/linking";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 import { track } from "~/renderer/analytics/segment";
 
 type Props = {

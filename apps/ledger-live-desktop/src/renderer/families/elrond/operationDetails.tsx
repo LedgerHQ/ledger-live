@@ -13,7 +13,7 @@ import { Account, Operation } from "@ledgerhq/types-live";
 import React, { Fragment } from "react";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 import Box from "~/renderer/components/Box/Box";
 import CounterValue from "~/renderer/components/CounterValue";
 import { useDiscreetMode } from "~/renderer/components/Discreet";

@@ -10,7 +10,7 @@ import Button from "~/renderer/components/Button";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import ProgressCircle from "~/renderer/components/ProgressCircle";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 import { openURL } from "~/renderer/linking";
 import FlashMCU from "~/renderer/components/FlashMCU";
 import Modal, { ModalBody } from "~/renderer/components/Modal";

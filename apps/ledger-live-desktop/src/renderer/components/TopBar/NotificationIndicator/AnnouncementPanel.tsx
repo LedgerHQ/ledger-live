@@ -14,7 +14,7 @@ import { useDeepLinkHandler } from "~/renderer/hooks/useDeeplinking";
 import { closeInformationCenter } from "~/renderer/actions/UI";
 import { useNotifications } from "~/renderer/hooks/useNotifications";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 import useDateFormatter from "~/renderer/hooks/useDateFormatter";
 
 const DateRowContainer = styled.div`

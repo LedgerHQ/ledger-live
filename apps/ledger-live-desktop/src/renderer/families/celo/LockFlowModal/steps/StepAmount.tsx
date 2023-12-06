@@ -8,7 +8,7 @@ import Button from "~/renderer/components/Button";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import AmountField from "../fields/AmountField";
 import Alert from "~/renderer/components/Alert";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 import { StepProps } from "../types";
 export const StepAmountFooter = ({
   transitionTo,

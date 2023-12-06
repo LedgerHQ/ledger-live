@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import EarnRewardsInfoModal from "~/renderer/components/EarnRewardsInfoModal";
 import WarnBox from "~/renderer/components/WarnBox";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 import { openURL } from "~/renderer/linking";
 import { openModal } from "~/renderer/actions/modals";
 import { DelegationType } from "~/renderer/families/elrond/types";

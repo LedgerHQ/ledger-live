@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { ScrollArea } from "~/renderer/components/Onboarding/ScrollArea";
 import FakeLink from "~/renderer/components/FakeLink";
 import { openURL } from "~/renderer/linking";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 
 const PinHelpContainer = styled(Flex).attrs({
   flexDirection: "column",

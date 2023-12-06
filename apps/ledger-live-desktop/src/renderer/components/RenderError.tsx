@@ -1,7 +1,7 @@
 import React, { PureComponent, useCallback, useState } from "react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 import { openURL } from "~/renderer/linking";
 import Image from "~/renderer/components/Image";
 import OpenUserDataDirectoryBtn from "~/renderer/components/OpenUserDataDirectoryBtn";

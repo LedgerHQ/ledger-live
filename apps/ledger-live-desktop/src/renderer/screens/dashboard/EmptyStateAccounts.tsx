@@ -11,7 +11,7 @@ import { openURL } from "~/renderer/linking";
 import { DefaultTheme, withTheme } from "styled-components";
 import FakeLink from "~/renderer/components/FakeLink";
 import { openModal } from "~/renderer/actions/modals";
-import { useDynamicUrl } from "~/config/urls-localized";
+import { useDynamicUrl } from "~/config/urls/urls-localized";
 
 const EmptyStateAccounts = ({ theme }: { theme: DefaultTheme }) => {
   const { push } = useHistory();

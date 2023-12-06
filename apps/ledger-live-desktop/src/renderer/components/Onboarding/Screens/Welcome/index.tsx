@@ -10,7 +10,7 @@ import { openURL } from "~/renderer/linking";
 import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
 import { acceptTerms } from "~/renderer/terms";
 import BuyNanoX from "./assets/buyNanoX.webm";
-import { useDynamicUrl } from "~/config/urls-localized";
+import { useDynamicUrl } from "~/config/urls/urls-localized";
 
 const StyledLink = styled(Text)`
   text-decoration: underline;

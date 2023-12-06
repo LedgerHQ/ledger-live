@@ -11,7 +11,7 @@ import Logo from "~/renderer/icons/Logo";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import { openURL } from "~/renderer/linking";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 import {
   ELROND_EXPLORER_URL,
   ELROND_LEDGER_VALIDATOR_ADDRESS,

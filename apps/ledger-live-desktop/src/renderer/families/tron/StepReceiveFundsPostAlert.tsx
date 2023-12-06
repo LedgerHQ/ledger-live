@@ -5,7 +5,7 @@ import { Trans } from "react-i18next";
 import styled from "styled-components";
 import Alert from "~/renderer/components/Alert";
 import { StepProps } from "~/renderer/modals/Receive/Body";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 
 const AlertBoxContainer = styled.div`
   margin-top: 20px;

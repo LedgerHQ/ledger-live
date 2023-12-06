@@ -16,7 +16,7 @@ import { usePolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 import { openURL } from "~/renderer/linking";
 import { openModal } from "~/renderer/actions/modals";
 import Text from "~/renderer/components/Text";

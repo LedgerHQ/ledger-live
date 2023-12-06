@@ -6,7 +6,7 @@ import { DeviceSelectorWrapper, Wrapper, Content, Title, Subtitle, Illustration 
 import illustration from "~/renderer/images/USBTroubleshooting/fail.png";
 import { DeviceSelector } from "~/renderer/components/Onboarding/Screens/SelectDevice/DeviceSelector";
 import { openURL } from "~/renderer/linking";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 import RepairDeviceButton from "~/renderer/components/RepairDeviceButton";
 const RepairFunnelSolution = ({
   sendEvent,

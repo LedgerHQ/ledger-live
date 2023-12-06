@@ -6,7 +6,7 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getEnv } from "@ledgerhq/live-env";
 import { getAccountName, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { AppResult, createAction } from "@ledgerhq/live-common/hw/actions/app";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import Modal from "~/renderer/components/Modal";
 import ModalBody from "~/renderer/components/Modal/ModalBody";

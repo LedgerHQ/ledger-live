@@ -9,7 +9,7 @@ import InputPassword from "~/renderer/components/InputPassword";
 import Input from "~/renderer/components/Input";
 import Label from "~/renderer/components/Label";
 import Switch from "~/renderer/components/Switch";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import Tooltip from "~/renderer/components/Tooltip";
 import IconInfoCircle from "~/renderer/icons/InfoCircle";

@@ -19,7 +19,7 @@ import { setDrawer } from "~/renderer/drawers/Provider";
 import { StepProps } from "../types";
 import { useEffect } from "react";
 import { useBaker } from "@ledgerhq/live-common/families/tezos/bakers";
-import { StakingCoin, useStakingUrl } from "~/config/urls-localized";
+import { StakingCoin, useStakingUrl } from "~/config/urls/urls-localized";
 
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",

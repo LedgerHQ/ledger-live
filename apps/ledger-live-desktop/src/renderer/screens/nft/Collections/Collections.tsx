@@ -9,7 +9,7 @@ import { TokenShowMoreIndicator, IconAngleDown } from "~/renderer/screens/accoun
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
 import LabelWithExternalIcon from "~/renderer/components/LabelWithExternalIcon";
 import { hiddenNftCollectionsSelector } from "~/renderer/reducers/settings";
-import { supportLinkByTokenType } from "~/config/urls";
+import { supportLinkByTokenType } from "~/config/urls/urls";
 import { openModal } from "~/renderer/actions/modals";
 import { track } from "~/renderer/analytics/segment";
 import AngleDown from "~/renderer/icons/AngleDown";

@@ -11,7 +11,7 @@ import { FakeLink } from "~/renderer/components/Link";
 import Box from "~/renderer/components/Box";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import { ScrollArea } from "~/renderer/components/Onboarding/ScrollArea";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 import TrackPage from "~/renderer/analytics/TrackPage";
 
 const IncidentContainer = styled(Box)`

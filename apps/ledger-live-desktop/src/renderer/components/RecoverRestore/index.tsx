@@ -22,8 +22,8 @@ import {
 } from "@ledgerhq/live-common/hw/extractOnboardingState";
 import { FirmwareInfo, SeedPhraseType } from "@ledgerhq/types-live";
 import { renderError } from "../DeviceAction/rendering";
-import { useDynamicUrl } from "~/config/urls-localized";
 import { isDeviceNotOnboardedError } from "../DeviceAction/utils";
+import { useDynamicUrl } from "~/config/urls/urls-localized";
 
 const RecoverRestore = () => {
   const { t } = useTranslation();

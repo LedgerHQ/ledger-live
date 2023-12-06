@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 import { darken, lighten } from "~/renderer/styles/helpers";
 import Alert from "~/renderer/components/Alert";
 import Button from "~/renderer/components/Button";

@@ -3,7 +3,7 @@ import { Trans, useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { Flex } from "@ledgerhq/react-ui";
 
-import { vaultSigner } from "~/config/urls";
+import { vaultSigner } from "~/config/urls/urls";
 import Label from "~/renderer/components/Label";
 import Alert from "~/renderer/components/Alert";
 import { vaultSignerSelector } from "~/renderer/reducers/settings";

@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { Account, AccountLike, TransactionCommon } from "@ledgerhq/types-live";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 import Alert from "./Alert";
 import SpendableAmount from "./SpendableAmount";
 

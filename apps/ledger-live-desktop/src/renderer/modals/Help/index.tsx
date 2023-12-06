@@ -15,7 +15,7 @@ import Text from "~/renderer/components/Text";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { SideDrawer } from "~/renderer/components/SideDrawer";
 import Box from "~/renderer/components/Box";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 const ItemContainer = styled.a`
   flex: 1;
   display: flex;

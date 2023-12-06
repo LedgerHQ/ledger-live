@@ -8,11 +8,11 @@ import NanoDeviceCheckIcon from "~/renderer/icons/NanoDeviceCheckIcon";
 
 import { Box, Button, IconsLegacy, Link, Popin, Text } from "@ledgerhq/react-ui";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 import Animation from "~/renderer/animations";
 import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
 import { openURL } from "~/renderer/linking";
-import { useDynamicUrl } from "~/config/urls-localized";
+import { useDynamicUrl } from "~/config/urls/urls-localized";
 import { OnboardingContext } from "../../../index";
 
 export function RecoverHowTo() {

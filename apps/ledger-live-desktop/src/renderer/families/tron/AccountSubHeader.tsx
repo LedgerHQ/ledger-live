@@ -1,6 +1,6 @@
 import React from "react";
 import Box from "~/renderer/components/Box";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 import Alert from "~/renderer/components/Alert";
 import { Trans } from "react-i18next";
 

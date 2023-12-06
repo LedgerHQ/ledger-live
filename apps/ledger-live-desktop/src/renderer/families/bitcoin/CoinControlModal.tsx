@@ -10,7 +10,7 @@ import FormattedVal from "~/renderer/components/FormattedVal";
 import Text from "~/renderer/components/Text";
 import Modal, { ModalBody } from "~/renderer/components/Modal";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 import { openURL } from "~/renderer/linking";
 import { PickingStrategy } from "./PickingStrategy";
 import { CoinControlRow } from "./CoinControlRow";

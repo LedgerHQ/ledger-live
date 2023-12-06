@@ -10,7 +10,7 @@ import { openModal } from "~/renderer/actions/modals";
 import { DeviceShouldStayInApp } from "@ledgerhq/errors";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import uniq from "lodash/uniq";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 import logger from "~/renderer/logger";
 import { prepareCurrency } from "~/renderer/bridge/cache";
 import TrackPage from "~/renderer/analytics/TrackPage";

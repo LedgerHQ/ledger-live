@@ -15,7 +15,7 @@ import Header from "./Header";
 import Row from "./Row";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
 import { TezosAccount } from "@ledgerhq/live-common/families/tezos/types";
-import { StakingCoin, useStakingUrl } from "~/config/urls-localized";
+import { StakingCoin, useStakingUrl } from "~/config/urls/urls-localized";
 
 type Props = {
   account: TezosAccount | SubAccount;

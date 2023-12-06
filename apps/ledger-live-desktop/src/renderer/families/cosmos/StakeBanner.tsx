@@ -10,7 +10,7 @@ import { openModal } from "~/renderer/actions/modals";
 import { useDispatch } from "react-redux";
 import { track } from "~/renderer/analytics/segment";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
-import { StakingCoin, useStakingUrl } from "~/config/urls-localized";
+import { StakingCoin, useStakingUrl } from "~/config/urls/urls-localized";
 
 const StakeBanner: React.FC<{ account: CosmosAccount }> = ({ account }) => {
   const dispatch = useDispatch();

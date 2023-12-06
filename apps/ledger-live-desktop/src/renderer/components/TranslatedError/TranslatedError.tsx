@@ -9,7 +9,7 @@ import logger from "~/renderer/logger";
 import Text from "../Text";
 import ExternalLink from "../ExternalLink";
 import { openURL } from "~/renderer/linking";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 import { useErrorLinks } from "./hooks/useErrorLinks";
 
 type Props = {

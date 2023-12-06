@@ -9,7 +9,7 @@ import ProgressCircle from "~/renderer/components/ProgressCircle";
 import IconCheck from "~/renderer/icons/Check";
 import { CheckWrapper } from "..";
 import { openURL } from "~/renderer/linking";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 import useSatStackStatus from "~/renderer/hooks/useSatStackStatus";
 import { SatStackStatus } from "@ledgerhq/live-common/families/bitcoin/satstack";
 const SatStack = ({ satStackDownloaded }: { satStackDownloaded: boolean }) => {

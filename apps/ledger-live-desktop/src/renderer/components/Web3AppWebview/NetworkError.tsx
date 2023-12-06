@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import ErrorNoBorder from "~/renderer/icons/ErrorNoBorder";
 import { openURL } from "~/renderer/linking";
 import ExportLogsButton from "~/renderer/components/ExportLogsButton";
-import { useDynamicUrl } from "~/config/urls-localized";
+import { useDynamicUrl } from "~/config/urls/urls-localized";
 
 export const NetworkErrorScreen = ({ refresh }: { refresh: () => void }) => {
   const { t } = useTranslation();

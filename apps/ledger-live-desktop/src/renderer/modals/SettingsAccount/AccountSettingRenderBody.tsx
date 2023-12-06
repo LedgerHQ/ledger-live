@@ -10,7 +10,7 @@ import { Unit } from "@ledgerhq/types-cryptoassets";
 import { validateNameEdition } from "@ledgerhq/live-common/account/index";
 import { AccountNameRequiredError } from "@ledgerhq/errors";
 import { getEnv } from "@ledgerhq/live-env";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 import { setDataModal } from "~/renderer/actions/modals";
 import { removeAccount, updateAccount } from "~/renderer/actions/accounts";
 import ModalBody from "~/renderer/components/Modal/ModalBody";

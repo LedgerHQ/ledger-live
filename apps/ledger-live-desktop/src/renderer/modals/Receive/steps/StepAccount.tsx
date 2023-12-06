@@ -21,7 +21,7 @@ import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAle
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import Alert from "~/renderer/components/Alert";
 import { StepProps } from "../Body";
-import { supportLinkByTokenType } from "~/config/urls";
+import { supportLinkByTokenType } from "~/config/urls/urls";
 import { DepositFromCoinbaseButton } from "~/renderer/modals/Receive/steps/DepositFromCoinbaseButton";
 
 type OnChangeAccount = (account?: AccountLike | null, tokenAccount?: Account | null) => void;

@@ -32,7 +32,7 @@ import { Trans, useTranslation } from "react-i18next";
 import { connect, useDispatch } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import styled from "styled-components";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 import { openModal } from "~/renderer/actions/modals";
 import TrackPage, { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";

@@ -2,7 +2,7 @@ import invariant from "invariant";
 import React from "react";
 import { Trans } from "react-i18next";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";

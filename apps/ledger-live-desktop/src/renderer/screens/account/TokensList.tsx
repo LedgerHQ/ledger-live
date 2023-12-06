@@ -12,7 +12,7 @@ import Text from "~/renderer/components/Text";
 import IconPlus from "~/renderer/icons/Plus";
 import TokenRow from "~/renderer/components/TokenRow";
 import Button from "~/renderer/components/Button";
-import { supportLinkByTokenType } from "~/config/urls";
+import { supportLinkByTokenType } from "~/config/urls/urls";
 import LabelWithExternalIcon from "~/renderer/components/LabelWithExternalIcon";
 import { openURL } from "~/renderer/linking";
 import { track } from "~/renderer/analytics/segment";

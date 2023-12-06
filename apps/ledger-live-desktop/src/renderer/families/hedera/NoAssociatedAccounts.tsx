@@ -1,7 +1,7 @@
 import React from "react";
 import { Trans } from "react-i18next";
 import { openURL } from "~/renderer/linking";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import { StepProps } from "~/renderer/modals/AddAccounts/index";
 

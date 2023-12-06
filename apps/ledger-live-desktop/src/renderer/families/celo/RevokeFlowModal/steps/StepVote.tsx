@@ -11,7 +11,7 @@ import { useCeloPreloadData } from "@ledgerhq/live-common/families/celo/react";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { revokableVotes, fallbackValidatorGroup } from "@ledgerhq/live-common/families/celo/logic";
 import Alert from "~/renderer/components/Alert";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 import * as S from "./StepVote.styles";
 import { StepProps } from "../types";
 export const StepVoteFooter = ({

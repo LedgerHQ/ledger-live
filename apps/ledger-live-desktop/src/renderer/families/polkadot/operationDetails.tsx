@@ -21,7 +21,7 @@ import Text from "~/renderer/components/Text";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import CounterValue from "~/renderer/components/CounterValue";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 import { SplitAddress } from "~/renderer/components/OperationsList/AddressCell";
 import { AmountCellExtraProps, OperationDetailsExtraProps } from "../types";
 

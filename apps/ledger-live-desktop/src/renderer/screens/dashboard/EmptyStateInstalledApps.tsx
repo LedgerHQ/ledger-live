@@ -9,7 +9,7 @@ import Text from "~/renderer/components/Text";
 import LinkHelp from "~/renderer/components/LinkHelp";
 import { openURL } from "~/renderer/linking";
 import { DefaultTheme, withTheme } from "styled-components";
-import { useDynamicUrl } from "~/config/urls-localized";
+import { useDynamicUrl } from "~/config/urls/urls-localized";
 
 const EmptyStateInstalledApps = ({ theme }: { theme: DefaultTheme }) => {
   const { push } = useHistory();

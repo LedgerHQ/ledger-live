@@ -2,7 +2,7 @@ import invariant from "invariant";
 import React from "react";
 import { Trans } from "react-i18next";
 import { StepProps } from "../types";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";

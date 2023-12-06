@@ -14,7 +14,7 @@ import BulletRow from "~/renderer/components/BulletRow";
 import Text from "~/renderer/components/Text";
 import { openURL } from "~/renderer/linking";
 import illustration from "~/renderer/images/USBTroubleshooting/illus1.png";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 const UpdateUSBDeviceDriversSolution = ({ number = 1 }: { number?: number }) => {
   const { t } = useTranslation();
   const onClickLink = useCallback(() => {

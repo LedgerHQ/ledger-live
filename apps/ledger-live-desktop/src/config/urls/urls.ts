@@ -1,6 +1,6 @@
 // FIXME live-common
 
-import { LanguageMap } from "./languages";
+import { LanguageMap } from "../languages";
 
 export const supportLinkByTokenType = {
   erc20:

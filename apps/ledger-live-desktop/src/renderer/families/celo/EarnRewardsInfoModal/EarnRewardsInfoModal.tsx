@@ -4,7 +4,7 @@ import { SubAccount } from "@ledgerhq/types-live";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 import { openModal } from "~/renderer/actions/modals";
 
 import EarnRewardsInfoModal from "~/renderer/components/EarnRewardsInfoModal";

@@ -6,7 +6,7 @@ import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 import { openModal } from "~/renderer/actions/modals";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";

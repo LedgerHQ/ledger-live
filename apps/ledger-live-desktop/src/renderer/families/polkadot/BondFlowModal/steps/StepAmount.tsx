@@ -4,7 +4,7 @@ import { Trans } from "react-i18next";
 import { isStash } from "@ledgerhq/live-common/families/polkadot/logic";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";

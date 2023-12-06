@@ -7,7 +7,7 @@ import invariant from "invariant";
 import React, { memo, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 import { track } from "~/renderer/analytics/segment";
 import Box from "~/renderer/components/Box";
 import InputCurrency from "~/renderer/components/InputCurrency";

@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { ModalBody } from "~/renderer/components/Modal";
 import Button from "~/renderer/components/ButtonV3";
 import { openURL } from "~/renderer/linking";
-import { useDynamicUrl } from "~/config/urls-localized";
+import { useDynamicUrl } from "~/config/urls/urls-localized";
 
 type Props = {
   onClose: () => void;

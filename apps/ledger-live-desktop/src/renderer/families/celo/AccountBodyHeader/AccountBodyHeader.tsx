@@ -2,7 +2,7 @@ import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-commo
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { useDispatch } from "react-redux";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 import { openModal } from "~/renderer/actions/modals";
 import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";

@@ -6,7 +6,7 @@ import {
   isCurrencySupported,
 } from "@ledgerhq/live-common/currencies/index";
 import { findTokenAccountByCurrency } from "@ledgerhq/live-common/account/index";
-import { supportLinkByTokenType } from "~/config/urls";
+import { supportLinkByTokenType } from "~/config/urls/urls";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import SelectCurrency from "~/renderer/components/SelectCurrency";
 import Button from "~/renderer/components/Button";

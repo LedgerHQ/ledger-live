@@ -1,6 +1,6 @@
 import React, { useContext, useCallback } from "react";
 import { Trans } from "react-i18next";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 import { openURL } from "~/renderer/linking";
 import IconUpdate from "~/renderer/icons/Update";
 import IconDonjon from "~/renderer/icons/Donjon";

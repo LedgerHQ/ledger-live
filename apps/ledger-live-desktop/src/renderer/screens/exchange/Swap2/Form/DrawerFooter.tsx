@@ -2,7 +2,7 @@ import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-import { urls } from "~/config/urls";
+import { urls } from "~/config/urls/urls";
 import Box from "~/renderer/components/Box/Box";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import Text from "~/renderer/components/Text";
