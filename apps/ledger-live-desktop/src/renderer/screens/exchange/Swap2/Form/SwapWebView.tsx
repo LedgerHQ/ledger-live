@@ -12,7 +12,6 @@ import { WebviewAPI, WebviewProps, WebviewState } from "~/renderer/components/We
 import { initialWebviewState } from "~/renderer/components/Web3AppWebview/helpers";
 import { handlers as loggerHandlers } from "@ledgerhq/live-common/wallet-api/CustomLogger/server";
 import { TopBar } from "~/renderer/components/WebPlatformPlayer/TopBar";
-
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { SwapOperation } from "@ledgerhq/types-live/lib/swap";
 import BigNumber from "bignumber.js";

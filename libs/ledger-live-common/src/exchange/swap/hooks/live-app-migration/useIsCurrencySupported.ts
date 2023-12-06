@@ -10,7 +10,11 @@ type UseIsCurrencySupportedProps = {
   defaultValue: boolean;
 };
 
-export function useIsCurrencySupported({ currencyFrom, params, defaultValue }: UseIsCurrencySupportedProps) {
+export function useIsCurrencySupported({
+  currencyFrom,
+  params,
+  defaultValue,
+}: UseIsCurrencySupportedProps) {
   const { families, currencies } = params || {};
 
   if (!currencyFrom || (!families && !currencies)) {
