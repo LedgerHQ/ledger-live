@@ -31,20 +31,40 @@ const CategoryHeader = ({ title, description, cta, link }: HeaderProps) => {
   );
 };
 
-type Props = {
-  category: CategoryContentCard;
+type CategoryLayoutProps = {
+  category: CategoryContentCard,
+  cards: ContentCard[],
 };
 
-const ContentCardsCategory = ({ category }: Props) => {
-  const { walletCards } = useDynamicContent();
-  const categoryContentCards = walletCards; // TODO : Get all content cards with the categoryId === category.id; Here the walletCards is just a placeholder
-
-  const renderContentCard: ListRenderItem<CategoryContentCard> = useCallback(
+const CategoryLayout = ({ category, cards }: CategoryLayoutProps) => {
+  const renderContentCard: ListRenderItem<ContentCard> = useCallback(
     ({ item }) => (
       <ContentCardsCategory category={item} />
     ),
     [],
   );
+
+  /* TODO : Handle the display depending on the category.layout */
+  return (
+    <FlatList
+      data={cards}
+      renderItem={renderContentCard}
+      keyExtractor={(contentCard: ContentCard) => contentCard.id}
+    // contentContainerStyle={{
+    //   paddingHorizontal: 16,
+    //   paddingBottom: TAB_BAR_SAFE_HEIGHT,
+    // }}
+    />
+  );
+};
+
+type Props = {
+  category: CategoryContentCard;
+};
+
+const ContentCardsCategory = ({ category }: Props) => {
+  const { mobileCards } = useDynamicContent();
+  const categoryContentCards = mobileCards.filter(mobileCard => mobileCard.categoryId === category.id);
 
   return (
     <Flex>
@@ -54,16 +74,7 @@ const ContentCardsCategory = ({ category }: Props) => {
         cta={category.cta}
         link={category.link}
       />
-      {/* TODO : Handle the display depending on the category.layout */}
-      <FlatList
-        data={categoryContentCards}
-        renderItem={renderContentCard}
-        keyExtractor={(contentCard: ContentCard) => contentCard.id}
-      // contentContainerStyle={{
-      //   paddingHorizontal: 16,
-      //   paddingBottom: TAB_BAR_SAFE_HEIGHT,
-      // }}
-      />
+      <CategoryLayout category={category} cards={categoryContentCards} />
     </Flex>
   );
 };

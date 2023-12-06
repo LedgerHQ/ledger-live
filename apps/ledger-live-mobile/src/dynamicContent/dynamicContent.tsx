@@ -6,6 +6,7 @@ import { useBrazeContentCard } from "./brazeContentCard";
 import {
   assetsCardsSelector,
   categoriesCardsSelector,
+  mobileCardsSelector,
   learnCardsSelector,
   notificationsCardsSelector,
   walletCardsSelector,
@@ -130,6 +131,7 @@ const useDynamicContent = () => {
   const walletCards = useSelector(walletCardsSelector);
   const learnCards = useSelector(learnCardsSelector);
   const categoriesCards = useSelector(categoriesCardsSelector);
+  const mobileCards = useSelector(mobileCardsSelector);
   const hiddenCards: string[] = useSelector(dismissedDynamicCardsSelector);
 
   const walletCardsDisplayed = useMemo(
@@ -190,6 +192,7 @@ const useDynamicContent = () => {
     assetsCards,
     learnCards,
     categoriesCards,
+    mobileCards,
     getAssetCardByIdOrTicker,
     logClickCard,
     logDismissCard,

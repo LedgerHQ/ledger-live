@@ -23,6 +23,7 @@ type ContentCard = {
   tag: string;
   createdAt: number;
   order?: number;
+  categoryId?: string;
 };
 
 type CategoryContentCard = {
@@ -34,7 +35,6 @@ type CategoryContentCard = {
   cta?: string;
   link?: string;
   image?: string;
-  tag?: string; // TODO : to remove from this Card and add the missing fields
   createdAt: number;
   order?: number;
 };
