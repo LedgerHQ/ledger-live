@@ -64,11 +64,11 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
       title: "Deregister",
     },
     {
-      title: "staking key",
+      title: "stake key",
       button: SpeculosButton.BOTH,
     },
     {
-      title: "Staking key",
+      title: "Stake key",
       button: SpeculosButton.BOTH,
       expectedValue: ({ account }) => {
         const stakeCred = getAccountStakeCredential(account.xpub as string, account.index);
