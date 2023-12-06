@@ -1,40 +1,41 @@
-import Animated, { useAnimatedStyle, withSpring } from "react-native-reanimated";
+import Animated, { Layout, useAnimatedStyle, withSpring } from "react-native-reanimated";
 import { useTheme } from "styled-components/native";
-
-type BulletType = "active" | "nearby" | "far" | "none";
+import { ItemStatus } from "./types";
 
 const useBulletStyles = () => {
   const { colors } = useTheme();
 
-  const BulletStyle: { [key in BulletType]: any } = {
-    active: {
+  const BulletStyle: { [key in ItemStatus]: any } = {
+    [ItemStatus.active]: {
       width: 16,
       height: 6,
       backgroundColor: colors.opacityDefault.c80,
       borderRadius: 1000,
     },
-    nearby: {
+    [ItemStatus.nearby]: {
       width: 8,
       height: 6,
       backgroundColor: colors.opacityDefault.c30,
       borderRadius: 1000,
     },
-    far: {
+    [ItemStatus.far]: {
       width: 4,
       height: 6,
       backgroundColor: colors.opacityDefault.c10,
       borderRadius: 1000,
     },
-    none: {
+    [ItemStatus.none]: {
       width: 0,
-      height: 0,
+      height: 6,
+      backgroundColor: colors.opacityDefault.c10,
+      borderRadius: 1000,
     },
   };
 
   return BulletStyle;
 };
 
-const Bullet = ({ type }: { type: BulletType }) => {
+const Bullet = ({ type }: { type: ItemStatus }) => {
   const bulletStyles = useBulletStyles();
 
   const animatedStyles = useAnimatedStyle(
@@ -46,7 +47,12 @@ const Bullet = ({ type }: { type: BulletType }) => {
     [type],
   );
 
-  return <Animated.View style={[{ ...bulletStyles[type] }, animatedStyles]} />;
+  return (
+    <Animated.View
+      layout={Layout.duration(100)}
+      style={[{ ...bulletStyles[type] }, animatedStyles]}
+    />
+  );
 };
 
 export default Bullet;
