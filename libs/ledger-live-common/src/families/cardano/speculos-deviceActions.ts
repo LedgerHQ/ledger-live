@@ -48,12 +48,6 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
       expectedValue: ({ account, status }) => formatDeviceAmount(account.currency, status.amount),
     },
     {
-      title: "end", // FIXME: Should be Send but in some case cardano OCR doesn't recognize S : https://github.com/LedgerHQ/speculos/issues/204
-      button: SpeculosButton.BOTH,
-      ignoreAssertionFailure: true,
-      expectedValue: ({ account, status }) => formatDeviceAmount(account.currency, status.amount),
-    },
-    {
       title: "Asset fingerprint",
       button: SpeculosButton.BOTH,
     },
