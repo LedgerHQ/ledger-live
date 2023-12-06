@@ -1,8 +1,8 @@
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
+import React from "react";
 import { Image as NativeImage, Pressable } from "react-native";
 import { useTheme } from "styled-components/native";
 import { ButtonAction } from "~/contentCards/types";
-
 export const Image = ({ uri }: { uri: string }) => {
   return (
     <Flex width={40} height={40}>
