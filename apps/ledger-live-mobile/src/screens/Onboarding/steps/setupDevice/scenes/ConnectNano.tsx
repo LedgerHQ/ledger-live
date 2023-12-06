@@ -37,7 +37,7 @@ const ConnectNanoScene = ({
   const requestToSetHeaderOptions = useCallback(() => undefined, []);
 
   const onSelectDevice = useCallback(
-    async (device: Device) => {
+    (device: Device) => {
       const isUsbDevice = device.deviceId.startsWith("usb|");
       trace({ type: "onboarding", message: "Selected device", data: { isUsbDevice } });
 
@@ -46,15 +46,15 @@ const ConnectNanoScene = ({
       dispatch(setHasOrderedNano(false));
 
       // Goes through an "allow secure connection"/genuine check device action
-      if (isUsbDevice) {
+      if (isUsbDevice || newDeviceSelectionFeatureFlag?.enabled) {
         setDevice(device);
       }
-      // The BLE pairing flow will handle the "allow secure connection"/genuine check device action step
+      // The BLE pairing flow on the old device selection will handle the "allow secure connection"/genuine check device action step
       else {
         onNext();
       }
     },
-    [dispatch, onNext],
+    [dispatch, newDeviceSelectionFeatureFlag?.enabled, onNext],
   );
 
   const onResult = useCallback(
