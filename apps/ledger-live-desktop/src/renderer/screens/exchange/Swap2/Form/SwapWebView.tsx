@@ -51,7 +51,7 @@ export type SwapWebProps = {
 export const SwapWebManifestIDs = {
   Demo0: "swap-live-app-demo-0",
   Demo1: "swap-live-app-demo-1",
-}
+};
 
 export const SWAP_WEB_MANIFEST_ID = SwapWebManifestIDs.Demo1;
 

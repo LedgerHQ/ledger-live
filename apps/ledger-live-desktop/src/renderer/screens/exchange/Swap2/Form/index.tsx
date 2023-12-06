@@ -4,9 +4,7 @@ import {
   useIsSwapLiveApp,
   SetExchangeRateCallback,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
-import {
-  convertToNonAtomicUnit,
-} from "@ledgerhq/live-common/exchange/swap/webApp/index";
+import { convertToNonAtomicUnit } from "@ledgerhq/live-common/exchange/swap/webApp/index";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -295,7 +293,7 @@ const SwapForm = () => {
     manifestID: SWAP_WEB_MANIFEST_ID,
     swapTransaction,
     updateSwapWebProps: setSwapWebProps,
-    swapError
+    swapError,
   });
 
   return (
