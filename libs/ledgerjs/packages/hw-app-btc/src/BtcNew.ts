@@ -445,11 +445,11 @@ function accountTypeFromArg(
 /*
   The new protocol only allows standard path.
   Standard paths are (currently):
-  M/44'/(1|0)'/X'
-  M/49'/(1|0)'/X'
-  M/84'/(1|0)'/X'
-  M/86'/(1|0)'/X'
-  M/48'/(1|0)'/X'/Y'
+  M/44'/(1|0|88)'/X'
+  M/49'/(1|0|88)'/X'
+  M/84'/(1|0|88)'/X'
+  M/86'/(1|0|88)'/X'
+  M/48'/(1|0|88)'/X'/Y'
   followed by "", "(0|1)", or "(0|1)/b", where a and b are 
   non-hardened. For example, the following paths are standard
   M/48'/1'/99'/7'
@@ -474,7 +474,7 @@ function isPathNormal(path: string): boolean {
     pathElems.length >= 3 &&
     pathElems.length <= 5 &&
     [44 + h, 49 + h, 84 + h, 86 + h].some(v => v == pathElems[0]) &&
-    [0 + h, 1 + h].some(v => v == pathElems[1]) &&
+    [0 + h, 1 + h, 88 + h].some(v => v == pathElems[1]) &&
     hard(pathElems[2]) &&
     change(pathElems[3]) &&
     soft(pathElems[4])
@@ -485,7 +485,7 @@ function isPathNormal(path: string): boolean {
     pathElems.length >= 4 &&
     pathElems.length <= 6 &&
     48 + h == pathElems[0] &&
-    [0 + h, 1 + h].some(v => v == pathElems[1]) &&
+    [0 + h, 1 + h, 88 + h].some(v => v == pathElems[1]) &&
     hard(pathElems[2]) &&
     hard(pathElems[3]) &&
     change(pathElems[4]) &&

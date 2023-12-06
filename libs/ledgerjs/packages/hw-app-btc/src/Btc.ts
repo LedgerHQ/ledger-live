@@ -1,3 +1,4 @@
+import semver from "semver";
 import type Transport from "@ledgerhq/hw-transport";
 import BtcNew from "./BtcNew";
 import BtcOld from "./BtcOld";
@@ -49,9 +50,10 @@ export default class Btc {
       ],
       scrambleKey,
     );
-    // new APDU (nano app API) for bitcoin and old APDU for altcoin
-    if (currency === "bitcoin" || currency === "bitcoin_testnet") {
+    // new APDU (nano app API) for currencies using app-bitcoin-new implementation
+    if (currency === "bitcoin" || currency === "bitcoin_testnet" || currency === "qtum") {
       this._impl = new BtcNew(new AppClient(this._transport));
+      // old APDU (legacy API) for currencies using legacy bitcoin app implementation
     } else {
       this._impl = new BtcOld(this._transport);
     }
@@ -281,6 +283,9 @@ export default class Btc {
       // therefore, we use a workaround to distinguish legacy and new versions.
       // This can be removed once Ledger Live enforces minimum bitcoin version >= 2.1.0.
       isBtcLegacy = await checkIsBtcLegacy(this._transport);
+    } else if (appAndVersion.name === "Qtum") {
+      // we use the legacy protocol for versions below 2.1.6 of the Qtum app.
+      isBtcLegacy = semver.lt(appAndVersion.version, "2.1.6");
     }
 
     if (isBtcLegacy) {
