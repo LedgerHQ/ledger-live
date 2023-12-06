@@ -96,24 +96,11 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
       button: SpeculosButton.BOTH,
     },
     {
-      // sometimes the poolId fits on a single screen
-      title: "Delegate stake to",
-      button: SpeculosButton.BOTH,
-    },
-    {
-      title: "Delegate stake to (1/2)",
+      title: "Delegate stake (1/2)",
       button: SpeculosButton.RIGHT,
     },
     {
-      title: "Delegate stake to (2/2)",
-      button: SpeculosButton.BOTH,
-    },
-    {
-      title: "Delegate s...ke to (1/2)",
-      button: SpeculosButton.RIGHT,
-    },
-    {
-      title: "Delegate ...ke to (2/2)",
+      title: "Delegate stake (2/2)",
       button: SpeculosButton.BOTH,
     },
     {
