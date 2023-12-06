@@ -14,7 +14,7 @@ import {
 
 type Props = {
   error: Error;
-  shouldReloadManagerOnCloseIfUpdateRefused: any;
+  shouldReloadManagerOnCloseIfUpdateRefused: boolean;
   onDrawerClose: () => void;
   onRetry: (isRetry?: boolean) => void;
   onSkip: () => void;

@@ -247,38 +247,25 @@ const UpdateModal = ({
     deviceHasPin: !(deviceModelId === DeviceModelId.stax && !props.deviceInfo?.onboarded),
   };
 
-  const deviceModel = getDeviceModel(deviceModelId);
-
-  return (
-    <Flex
-      key={`${nonce}_fwUpdate`}
-      flexDirection="column"
-      rowGap={5}
-      height="100%"
-      overflowY="hidden"
-      width="100%"
-      flex={1}
-      data-test-id="firmware-update-container"
-    >
-      <SideDrawerHeader onRequestClose={onRequestCancel} />
-      <Text alignSelf="center" variant="h5Inter">
-        {t("manager.modal.title", { productName: deviceModel.productName })}
-      </Text>
-      {err ? (
+  const getMainContent = () => {
+    if (err) {
+      return (
         <DeviceCancel
           error={err}
           shouldReloadManagerOnCloseIfUpdateRefused={
-            props.shouldReloadManagerOnCloseIfUpdateRefused
+            !!props.shouldReloadManagerOnCloseIfUpdateRefused
           }
           onDrawerClose={onDrawerClose}
           onRetry={handleReset}
           onSkip={onSkip}
         />
-      ) : cancel ? (
-        <Cancel onContinue={onRequestCancel} onCancel={onRequestClose} />
-      ) : showDisclaimer ? (
-        <Disclaimer onContinue={() => setShowDisclaimer(false)} t={t} firmware={firmware} />
-      ) : (
+      );
+    } else if (cancel) {
+      return <Cancel onContinue={onRequestCancel} onCancel={onRequestClose} />;
+    } else if (showDisclaimer) {
+      return <Disclaimer onContinue={() => setShowDisclaimer(false)} t={t} firmware={firmware} />;
+    } else {
+      return (
         <FlowStepper.Indexed
           activeKey={stateStepId}
           extraStepperContainerProps={{ px: 12, mb: 0 }}
@@ -330,7 +317,28 @@ const UpdateModal = ({
             </FlowStepper.Indexed.Step>
           ))}
         </FlowStepper.Indexed>
-      )}
+      );
+    }
+  };
+
+  const deviceModel = getDeviceModel(deviceModelId);
+
+  return (
+    <Flex
+      key={`${nonce}_fwUpdate`}
+      flexDirection="column"
+      rowGap={5}
+      height="100%"
+      overflowY="hidden"
+      width="100%"
+      flex={1}
+      data-test-id="firmware-update-container"
+    >
+      <SideDrawerHeader onRequestClose={onRequestCancel} />
+      <Text alignSelf="center" variant="h5Inter">
+        {t("manager.modal.title", { productName: deviceModel.productName })}
+      </Text>
+      {getMainContent()}
     </Flex>
   );
 };
