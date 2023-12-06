@@ -184,14 +184,6 @@ export const urls = {
   },
   maxSpendable:
     "https://support.ledger.com/hc/en-us/articles/360012960679?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=max_spendable_alert",
-  stakingEthereum:
-    "https://www.ledger.com/staking-ethereum?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=ethereum",
-  stakingTezos:
-    "https://www.ledger.com/staking-tezos?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=tezos",
-  stakingTron:
-    "https://www.ledger.com/staking-tron?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=tron",
-  stakingCosmos:
-    "https://www.ledger.com/staking-cosmos?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=cosmos",
   stakingPolkadot:
     "https://support.ledger.com/hc/en-us/articles/360018131260?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=polkadot",
   cardanoStakingRewards: "https://support.ledger.com/hc/articles/7880073204253?docs=true",
