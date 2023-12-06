@@ -16,15 +16,25 @@ type Props<P = any> = {
   items: CarouselItem<P>[];
 
   styles?: {
-    gap: number;
+    gap?: number;
+    pagination?: boolean;
   };
+};
+
+const defaultStyles = {
+  gap: 6,
+  pagination: true,
 };
 
 /**
  *
  */
-const Carousel = <P,>({ items: initialItems, styles = { gap: 6 } }: Props<P>) => {
+const Carousel = <P,>({ items: initialItems, styles: _styles = defaultStyles }: Props<P>) => {
   const { width } = useWindowDimensions();
+  const styles = {
+    gap: _styles.gap ?? defaultStyles.gap,
+    pagination: _styles.pagination ?? defaultStyles.pagination,
+  };
   const separatorWidth = useTheme().space[styles.gap];
 
   const carouselRef = useRef<FlatList>(null);
@@ -63,7 +73,6 @@ const Carousel = <P,>({ items: initialItems, styles = { gap: 6 } }: Props<P>) =>
           <Animated.View
             key={item.props.metadata.id}
             entering={SlideInRight}
-            exiting={FadeOut.duration(100)}
             layout={Layout.duration(100)}
             style={{
               width: width - separatorWidth * 2,
@@ -75,7 +84,7 @@ const Carousel = <P,>({ items: initialItems, styles = { gap: 6 } }: Props<P>) =>
         )}
       />
 
-      <Pagination items={carouselItems} carouselIndex={carouselIndex} />
+      {styles.pagination && <Pagination items={carouselItems} carouselIndex={carouselIndex} />}
     </View>
   );
 };
