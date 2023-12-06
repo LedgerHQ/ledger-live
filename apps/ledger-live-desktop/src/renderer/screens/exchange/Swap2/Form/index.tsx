@@ -5,7 +5,6 @@ import {
   SetExchangeRateCallback,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import {
-  getCustomFeesPerFamily,
   convertToNonAtomicUnit,
 } from "@ledgerhq/live-common/exchange/swap/webApp/index";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
@@ -25,8 +24,6 @@ import { shallowAccountsSelector, flattenAccountsSelector } from "~/renderer/red
 import { trackSwapError, useGetSwapTrackingProperties } from "../utils/index";
 import ExchangeDrawer from "./ExchangeDrawer/index";
 import SwapFormSelectors from "./FormSelectors";
-import SwapFormSummary from "./FormSummary";
-import SwapFormRates from "./FormRates";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 import useRefreshRates from "./hooks/useRefreshRates";
@@ -39,6 +36,9 @@ import { SWAP_RATES_TIMEOUT } from "../../config";
 import { OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
 import { v4 } from "uuid";
 import SwapWebView, { SWAP_WEB_MANIFEST_ID, SwapWebProps } from "./SwapWebView";
+import { SwapMigrationNativeUI } from "./Migrations/SwapMigrationNativeUI";
+import SwapFormSummary from "./FormSummary";
+import { useSwapLiveAppHook } from "~/renderer/hooks/swap-migrations/useSwapLiveAppHook";
 
 const Wrapper = styled(Box).attrs({
   p: 20,
@@ -54,10 +54,6 @@ const Hide = styled.div`
 
 const idleTime = 60 * 60000; // 1 hour
 
-const Button = styled(ButtonBase)`
-  justify-content: center;
-`;
-
 const SwapForm = () => {
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const [idleState, setIdleState] = useState(false);
@@ -66,7 +62,6 @@ const SwapForm = () => {
   const { state: locationState } = useLocation();
   const history = useHistory();
   const accounts = useSelector(shallowAccountsSelector);
-  const totalListedAccounts = useSelector(flattenAccountsSelector);
   const exchangeRate = useSelector(rateSelector);
   const walletApiPartnerList = useFeature("swapWalletApiPartnerList");
 
@@ -295,95 +290,13 @@ const SwapForm = () => {
     swapTransaction.toggleMax();
   };
 
-  useEffect(() => {
-    if (isSwapLiveAppEnabled) {
-      const { swap } = swapTransaction;
-      const { to, from } = swap;
-      const transaction = swapTransaction.transaction;
-      const { account: fromAccount, parentAccount: fromParentAccount } = from;
-      const { account: toAccount, parentAccount: toParentAccount } = to;
-      const { feesStrategy } = transaction || {};
-      const { rate, rateId } = exchangeRate || {};
-
-      const isToAccountValid = totalListedAccounts.some(account => account.id === toAccount?.id);
-      const fromAccountId =
-        fromAccount && accountToWalletAPIAccount(fromAccount, fromParentAccount)?.id;
-      const toAccountId = isToAccountValid
-        ? toAccount && accountToWalletAPIAccount(toAccount, toParentAccount)?.id
-        : toParentAccount && accountToWalletAPIAccount(toParentAccount, undefined)?.id;
-      const toNewTokenId =
-        !isToAccountValid && toAccount?.type === "TokenAccount" ? toAccount.token?.id : undefined;
-      const fromAmount =
-        fromAccount &&
-        convertToNonAtomicUnit({
-          amount: transaction?.amount,
-          account: fromAccount,
-        });
-
-      // Currency ids
-      const fromCurrencyId = swapTransaction.swap.from.currency?.id;
-      const toCurrencyId = swapTransaction.swap.to.currency?.id;
-
-      const customFeeConfig = transaction && getCustomFeesPerFamily(transaction);
-      // The Swap web app will automatically recreate the transaction with "default" fees.
-      // However, if you wish to use a different fee type, you will need to set it as custom.
-      const isCustomFee =
-        feesStrategy === "slow" || feesStrategy === "fast" || feesStrategy === "custom";
-
-      const providerRedirectFromAccountId =
-        fromAccount &&
-        provider &&
-        walletApiPartnerList?.enabled &&
-        walletApiPartnerList?.params?.list.includes(provider)
-          ? accountToWalletAPIAccount(fromAccount, fromParentAccount)?.id
-          : fromAccount?.id;
-
-      const providerRedirectURLSearch = new URLSearchParams();
-      providerRedirectFromAccountId &&
-        providerRedirectURLSearch.set("accountId", providerRedirectFromAccountId);
-
-      exchangeRate?.providerURL &&
-        providerRedirectURLSearch.set("customDappUrl", exchangeRate.providerURL);
-      providerRedirectURLSearch.set("returnTo", "/swap");
-
-      setSwapWebProps({
-        provider,
-        fromAccountId,
-        toAccountId,
-        fromAmount: fromAmount?.toString(),
-        fromParentAccountId: fromParentAccount
-          ? accountToWalletAPIAccount(fromParentAccount)?.id
-          : undefined,
-        fromCurrencyId,
-        toCurrencyId,
-        quoteId: rateId ? rateId : undefined,
-        rate: rate?.toString(),
-        feeStrategy: (isCustomFee ? "custom" : "medium")?.toUpperCase(),
-        customFeeConfig: customFeeConfig ? JSON.stringify(customFeeConfig) : undefined,
-        cacheKey: v4(),
-        error: !!swapError,
-        loading: swapTransaction.bridgePending || exchangeRatesState.status === "loading",
-        providerRedirectURL: `ledgerlive://discover/${getProviderName(
-          provider ?? "",
-        ).toLowerCase()}?${providerRedirectURLSearch.toString()}`,
-        toNewTokenId,
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    isSwapLiveAppEnabled,
-    provider,
-    swapTransaction.swap.from.account?.id,
-    swapTransaction.swap.from.currency?.id,
-    swapTransaction.swap.to.currency?.id,
-    swapTransaction.swap.to.account?.id,
-    exchangeRate?.providerType,
-    exchangeRate?.tradeMethod,
-    swapError,
-    swapTransaction.bridgePending,
-    exchangeRatesState.status,
-    exchangeRate?.providerURL,
-  ]);
+  useSwapLiveAppHook({
+    isSwapLiveAppEnabled: isSwapLiveAppEnabled.enabled,
+    manifestID: SWAP_WEB_MANIFEST_ID,
+    swapTransaction,
+    updateSwapWebProps: setSwapWebProps,
+    swapError
+  });
 
   return (
     <Wrapper>
@@ -416,32 +329,26 @@ const SwapForm = () => {
         </Hide>
       )}
 
+      {pageState === "loaded" && (
+        <SwapFormSummary swapTransaction={swapTransaction} provider={provider} />
+      )}
+
       {isSwapLiveAppEnabled ? (
         <SwapWebView swapState={swapWebProps} />
       ) : (
-        <>
-          {pageState === "loaded" && (
-            <>
-              <SwapFormSummary swapTransaction={swapTransaction} provider={provider} />
-              <SwapFormRates
-                swap={swapTransaction.swap}
-                provider={provider}
-                refreshTime={refreshTime}
-                countdown={!pauseRefreshing}
-              />
-            </>
-          )}
-          <Box>
-            <Button
-              primary
-              disabled={!isSwapReady}
-              onClick={onSubmit}
-              data-test-id="exchange-button"
-            >
-              {t("common.exchange")}
-            </Button>
-          </Box>
-        </>
+        // Progressive UI migration based on current swap app id.
+        <SwapMigrationNativeUI
+          manifestID={SWAP_WEB_MANIFEST_ID}
+          // Demo 1 props
+          pageState={pageState}
+          swapTransaction={swapTransaction}
+          provider={provider}
+          refreshTime={refreshTime}
+          countdown={!pauseRefreshing}
+          // Demo 0 props
+          disabled={!isSwapReady}
+          onClick={onSubmit}
+        />
       )}
     </Wrapper>
   );
