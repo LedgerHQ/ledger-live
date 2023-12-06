@@ -12,7 +12,7 @@ import Alert from "~/renderer/components/Alert";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import { openURL } from "~/renderer/linking";
 import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
-import { StakingCoin, useStakingUrl } from "~/config/urls-staking";
+import { StakingCoin, useStakingUrl } from "~/config/urls-localized";
 
 const RewardImg = styled.img.attrs(() => ({
   src: Rewards,

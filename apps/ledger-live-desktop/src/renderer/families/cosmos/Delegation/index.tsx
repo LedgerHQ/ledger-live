@@ -28,7 +28,7 @@ import TableContainer, { TableHeader } from "~/renderer/components/TableContaine
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import { DelegationActionsModalName } from "../modals";
 import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
-import { StakingCoin, useStakingUrl } from "~/config/urls-staking";
+import { StakingCoin, useStakingUrl } from "~/config/urls-localized";
 
 const Wrapper = styled(Box).attrs(() => ({
   p: 3,

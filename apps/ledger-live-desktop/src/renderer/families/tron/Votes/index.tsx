@@ -30,7 +30,7 @@ import { useDiscreetMode } from "~/renderer/components/Discreet";
 import { localeSelector } from "~/renderer/reducers/settings";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
 import { TronAccount } from "@ledgerhq/live-common/families/tron/types";
-import { StakingCoin, useStakingUrl } from "~/config/urls-staking";
+import { StakingCoin, useStakingUrl } from "~/config/urls-localized";
 
 const Wrapper = styled(Box).attrs(() => ({
   p: 3,

@@ -10,7 +10,7 @@ import CleanButton from "./CleanButton";
 import ResetButton from "./ResetButton";
 import RepairDeviceButton from "./RepairDeviceButton";
 import LaunchOnboardingBtn from "./LaunchOnboardingBtn";
-import { useDynamicUrl } from "~/renderer/terms";
+import { useDynamicUrl } from "~/config/urls-localized";
 
 const SectionHelp = () => {
   const { t } = useTranslation();

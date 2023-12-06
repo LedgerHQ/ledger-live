@@ -8,8 +8,9 @@ import { saveSettings } from "~/renderer/actions/settings";
 import LangSwitcher from "~/renderer/components/Onboarding/LangSwitcher";
 import { openURL } from "~/renderer/linking";
 import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
-import { acceptTerms, useDynamicUrl } from "~/renderer/terms";
+import { acceptTerms } from "~/renderer/terms";
 import BuyNanoX from "./assets/buyNanoX.webm";
+import { useDynamicUrl } from "~/config/urls-localized";
 
 const StyledLink = styled(Text)`
   text-decoration: underline;

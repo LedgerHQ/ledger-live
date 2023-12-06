@@ -22,7 +22,7 @@ import {
 } from "@ledgerhq/live-common/hw/extractOnboardingState";
 import { FirmwareInfo, SeedPhraseType } from "@ledgerhq/types-live";
 import { renderError } from "../DeviceAction/rendering";
-import { useDynamicUrl } from "~/renderer/terms";
+import { useDynamicUrl } from "~/config/urls-localized";
 import { isDeviceNotOnboardedError } from "../DeviceAction/utils";
 
 const RecoverRestore = () => {

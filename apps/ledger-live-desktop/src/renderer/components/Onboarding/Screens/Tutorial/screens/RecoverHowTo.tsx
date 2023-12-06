@@ -12,7 +12,7 @@ import { urls } from "~/config/urls";
 import Animation from "~/renderer/animations";
 import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
 import { openURL } from "~/renderer/linking";
-import { useDynamicUrl } from "~/renderer/terms";
+import { useDynamicUrl } from "~/config/urls-localized";
 import { OnboardingContext } from "../../../index";
 
 export function RecoverHowTo() {

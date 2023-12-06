@@ -2,11 +2,11 @@ import { Text } from "@ledgerhq/react-ui";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
+import { useDynamicUrl } from "~/config/urls-localized";
 import FakeLink from "~/renderer/components/FakeLink";
 import { ScrollArea } from "~/renderer/components/Onboarding/ScrollArea";
 import TriangleWarning from "~/renderer/icons/TriangleWarning";
 import { openURL } from "~/renderer/linking";
-import { useDynamicUrl } from "~/renderer/terms";
 
 const PinHelpContainer = styled.div`
   display: flex;

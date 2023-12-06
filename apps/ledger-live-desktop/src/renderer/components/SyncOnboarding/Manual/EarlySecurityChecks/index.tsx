@@ -27,7 +27,7 @@ import { useTranslation } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
 import { log } from "@ledgerhq/logs";
-import { useDynamicUrl } from "~/renderer/terms";
+import { useDynamicUrl } from "~/config/urls-localized";
 import { FinalFirmware } from "@ledgerhq/types-live";
 import { useHistory } from "react-router-dom";
 import { NetworkDown } from "@ledgerhq/errors";
