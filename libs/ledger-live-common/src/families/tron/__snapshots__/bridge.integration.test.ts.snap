@@ -1,8 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`tron currency bridge scanAccounts tron seed 1 1`] = `
-Array [
-  Object {
+[
+  {
     "balance": "27781772",
     "currencyId": "tron",
     "derivationMode": "",
@@ -19,7 +19,7 @@ Array [
     "name": "Tron 1",
     "nfts": undefined,
     "operationsCount": 196,
-    "pendingOperations": Array [],
+    "pendingOperations": [],
     "seedIdentifier": "049fc19cbc6d0f525b1c6947b4a36aec74b48e15f2531c5e7e58d272c9e926786da290eb3505d8fab9c83818c1174d9bc96fd18e0527365cba6b9534d43ad5052b",
     "spendableBalance": "1781772",
     "starred": false,
@@ -31,26 +31,26 @@ Array [
         "bandwidth": undefined,
         "energy": undefined,
       },
-      "frozen": Object {
+      "frozen": {
         "bandwidth": undefined,
         "energy": undefined,
       },
       "lastVotedDate": "2022-05-19T12:43:42.000Z",
       "lastWithdrawnRewardDate": "2022-05-19T12:45:36.000Z",
-      "legacyFrozen": Object {
+      "legacyFrozen": {
         "bandwidth": undefined,
-        "energy": Object {
+        "energy": {
           "amount": "26000000",
           "expiredAt": "2020-02-01T16:04:51.000Z",
         },
       },
       "tronPower": 26,
-      "unFrozen": Object {
-        "bandwidth": Array [],
-        "energy": Array [],
+      "unFrozen": {
+        "bandwidth": [],
+        "energy": [],
       },
-      "votes": Array [
-        Object {
+      "votes": [
+        {
           "address": "TLyqzVGLV1srkB7dToTAEqgDSfPtXRJZYH",
           "voteCount": 15,
         },
@@ -184,7 +184,7 @@ Array [
     "tokenId": "tron/trc20/TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
     "type": "TokenAccountRaw",
   },
-  Object {
+  {
     "balance": "5094000",
     "currencyId": "tron",
     "derivationMode": "",
@@ -201,7 +201,7 @@ Array [
     "name": "Tron 2",
     "nfts": undefined,
     "operationsCount": 24,
-    "pendingOperations": Array [],
+    "pendingOperations": [],
     "seedIdentifier": "049fc19cbc6d0f525b1c6947b4a36aec74b48e15f2531c5e7e58d272c9e926786da290eb3505d8fab9c83818c1174d9bc96fd18e0527365cba6b9534d43ad5052b",
     "spendableBalance": "2094000",
     "starred": false,
@@ -213,28 +213,28 @@ Array [
         "bandwidth": undefined,
         "energy": undefined,
       },
-      "frozen": Object {
+      "frozen": {
         "bandwidth": undefined,
         "energy": undefined,
       },
       "lastVotedDate": undefined,
       "lastWithdrawnRewardDate": undefined,
-      "legacyFrozen": Object {
-        "bandwidth": Object {
+      "legacyFrozen": {
+        "bandwidth": {
           "amount": "2000000",
           "expiredAt": "2022-05-23T08:20:39.000Z",
         },
-        "energy": Object {
+        "energy": {
           "amount": "1000000",
           "expiredAt": "2022-05-22T12:51:12.000Z",
         },
       },
       "tronPower": 3,
-      "unFrozen": Object {
-        "bandwidth": Array [],
-        "energy": Array [],
+      "unFrozen": {
+        "bandwidth": [],
+        "energy": [],
       },
-      "votes": Array [],
+      "votes": [],
     },
     "unitMagnitude": 6,
     "used": true,
@@ -463,22 +463,22 @@ Array [
         "bandwidth": undefined,
         "energy": undefined,
       },
-      "frozen": Object {
+      "frozen": {
         "bandwidth": undefined,
         "energy": undefined,
       },
       "lastVotedDate": undefined,
       "lastWithdrawnRewardDate": undefined,
-      "legacyFrozen": Object {
+      "legacyFrozen": {
         "bandwidth": undefined,
         "energy": undefined,
       },
       "tronPower": 0,
-      "unFrozen": Object {
-        "bandwidth": Array [],
-        "energy": Array [],
+      "unFrozen": {
+        "bandwidth": [],
+        "energy": [],
       },
-      "votes": Array [],
+      "votes": [],
     },
     "unitMagnitude": 6,
     "used": true,
@@ -538,22 +538,22 @@ Array [
         "bandwidth": undefined,
         "energy": undefined,
       },
-      "frozen": Object {
+      "frozen": {
         "bandwidth": undefined,
         "energy": undefined,
       },
       "lastVotedDate": undefined,
       "lastWithdrawnRewardDate": undefined,
-      "legacyFrozen": Object {
+      "legacyFrozen": {
         "bandwidth": undefined,
         "energy": undefined,
       },
       "tronPower": 0,
-      "unFrozen": Object {
-        "bandwidth": Array [],
-        "energy": Array [],
+      "unFrozen": {
+        "bandwidth": [],
+        "energy": [],
       },
-      "votes": Array [],
+      "votes": [],
     },
     "unitMagnitude": 6,
     "used": true,
@@ -600,22 +600,22 @@ Array [
         "bandwidth": undefined,
         "energy": undefined,
       },
-      "frozen": Object {
+      "frozen": {
         "bandwidth": undefined,
         "energy": undefined,
       },
       "lastVotedDate": undefined,
       "lastWithdrawnRewardDate": undefined,
-      "legacyFrozen": Object {
+      "legacyFrozen": {
         "bandwidth": undefined,
         "energy": undefined,
       },
       "tronPower": 0,
-      "unFrozen": Object {
-        "bandwidth": Array [],
-        "energy": Array [],
+      "unFrozen": {
+        "bandwidth": [],
+        "energy": [],
       },
-      "votes": Array [],
+      "votes": [],
     },
     "unitMagnitude": 6,
     "used": true,
@@ -675,22 +675,22 @@ Array [
         "bandwidth": undefined,
         "energy": undefined,
       },
-      "frozen": Object {
+      "frozen": {
         "bandwidth": undefined,
         "energy": undefined,
       },
       "lastVotedDate": undefined,
       "lastWithdrawnRewardDate": undefined,
-      "legacyFrozen": Object {
+      "legacyFrozen": {
         "bandwidth": undefined,
         "energy": undefined,
       },
       "tronPower": 0,
-      "unFrozen": Object {
-        "bandwidth": Array [],
-        "energy": Array [],
+      "unFrozen": {
+        "bandwidth": [],
+        "energy": [],
       },
-      "votes": Array [],
+      "votes": [],
     },
     "unitMagnitude": 6,
     "used": true,
@@ -737,22 +737,22 @@ Array [
         "bandwidth": undefined,
         "energy": undefined,
       },
-      "frozen": Object {
+      "frozen": {
         "bandwidth": undefined,
         "energy": undefined,
       },
       "lastVotedDate": undefined,
       "lastWithdrawnRewardDate": undefined,
-      "legacyFrozen": Object {
+      "legacyFrozen": {
         "bandwidth": undefined,
         "energy": undefined,
       },
       "tronPower": 0,
-      "unFrozen": Object {
-        "bandwidth": Array [],
-        "energy": Array [],
+      "unFrozen": {
+        "bandwidth": [],
+        "energy": [],
       },
-      "votes": Array [],
+      "votes": [],
     },
     "unitMagnitude": 6,
     "used": true,
@@ -798,22 +798,22 @@ Array [
         "bandwidth": undefined,
         "energy": undefined,
       },
-      "frozen": Object {
+      "frozen": {
         "bandwidth": undefined,
         "energy": undefined,
       },
       "lastVotedDate": undefined,
       "lastWithdrawnRewardDate": undefined,
-      "legacyFrozen": Object {
+      "legacyFrozen": {
         "bandwidth": undefined,
         "energy": undefined,
       },
       "tronPower": 0,
-      "unFrozen": Object {
+      "unFrozen": {
         "bandwidth": undefined,
         "energy": undefined,
       },
-      "votes": Array [],
+      "votes": [],
     },
     "unitMagnitude": 6,
     "used": false,
@@ -1142,7 +1142,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 11594376,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "frozenAmount": "20000000",
       },
       "fee": "0",
@@ -1150,8 +1150,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "160f1cbe2435ae6fbf0de2b28a5c3e15b1d9924a25824352b434d05ecf8424c8",
       "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-160f1cbe2435ae6fbf0de2b28a5c3e15b1d9924a25824352b434d05ecf8424c8-FREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
       ],
       "standard": undefined,
@@ -1159,7 +1159,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "FREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
       "blockHeight": 16685272,
@@ -1230,7 +1230,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 16685834,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "frozenAmount": "1000000",
       },
       "fee": "0",
@@ -1238,8 +1238,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "1d5efcdf783523a490e64016b5f794bb37d6caae7e2d082123c17184fcbedd61",
       "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-1d5efcdf783523a490e64016b5f794bb37d6caae7e2d082123c17184fcbedd61-FREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
       ],
       "standard": undefined,
@@ -1247,7 +1247,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "FREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
       "blockHeight": 9293687,
@@ -1318,7 +1318,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 16685884,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "frozenAmount": "1000000",
       },
       "fee": "0",
@@ -1326,8 +1326,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "221777691af4dc4f1c1be1df5ae541803516608c8b38cdcf49d9f35674b8562b",
       "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-221777691af4dc4f1c1be1df5ae541803516608c8b38cdcf49d9f35674b8562b-FREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
       ],
       "standard": undefined,
@@ -1335,12 +1335,12 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "FREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
       "blockHeight": 16685876,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "frozenAmount": "1000000",
       },
       "fee": "0",
@@ -1348,8 +1348,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "226451c6f31badad1478e7dc714805e245598a168aae1692635d859a59f6acd0",
       "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-226451c6f31badad1478e7dc714805e245598a168aae1692635d859a59f6acd0-FREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
       ],
       "standard": undefined,
@@ -1357,7 +1357,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "FREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
       "blockHeight": 16112121,
@@ -1560,7 +1560,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 16685898,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "frozenAmount": "1000000",
       },
       "fee": "0",
@@ -1568,8 +1568,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "2f21a3745cccf0bdb112494887a666cfdcf792d64b3250287d61738555bac936",
       "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-2f21a3745cccf0bdb112494887a666cfdcf792d64b3250287d61738555bac936-FREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
       ],
       "standard": undefined,
@@ -1577,7 +1577,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "FREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
       "blockHeight": 11109635,
@@ -1609,7 +1609,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 16220303,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "unfreezeAmount": "46422359",
       },
       "fee": "0",
@@ -1617,8 +1617,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "302ad39424bc8308ac2a2ed05d833a0e9c39d3c025ca332506962b6ee4cbf605",
       "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-302ad39424bc8308ac2a2ed05d833a0e9c39d3c025ca332506962b6ee4cbf605-LEGACY_UNFREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
       ],
       "standard": undefined,
@@ -1626,7 +1626,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "LEGACY_UNFREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
       "blockHeight": 16378840,
@@ -1653,7 +1653,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 11595257,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "frozenAmount": "3000000",
       },
       "fee": "0",
@@ -1661,8 +1661,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "33fd3d3f2fd014bfcf0ca229e42127d86ca54f175e0690dbdd273ffc787664b3",
       "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-33fd3d3f2fd014bfcf0ca229e42127d86ca54f175e0690dbdd273ffc787664b3-FREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
       ],
       "standard": undefined,
@@ -1670,7 +1670,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "FREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
       "blockHeight": 16107782,
@@ -1883,7 +1883,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 16685810,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "frozenAmount": "1000000",
       },
       "fee": "0",
@@ -1891,8 +1891,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "495e3de0d5db1da60277a58d9447f073e35b273661072a66550ada1bdb06161a",
       "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-495e3de0d5db1da60277a58d9447f073e35b273661072a66550ada1bdb06161a-FREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
       ],
       "standard": undefined,
@@ -1900,7 +1900,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "FREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
       "blockHeight": 11125537,
@@ -1927,7 +1927,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 16685804,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "frozenAmount": "1000000",
       },
       "fee": "0",
@@ -1935,8 +1935,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "4ca046373414d16b3bbf502546486fb94693d0182ca4acc9f7e90a648c5bcf1d",
       "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-4ca046373414d16b3bbf502546486fb94693d0182ca4acc9f7e90a648c5bcf1d-FREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
       ],
       "standard": undefined,
@@ -1944,7 +1944,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "FREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
       "blockHeight": 11294005,
@@ -1971,7 +1971,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 16685843,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "frozenAmount": "1000000",
       },
       "fee": "0",
@@ -1979,8 +1979,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "4e6eaaafa3e11c19476261268658840f71d4bfb3ddbbfb6839a9f580beaf011b",
       "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-4e6eaaafa3e11c19476261268658840f71d4bfb3ddbbfb6839a9f580beaf011b-FREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
       ],
       "standard": undefined,
@@ -1988,12 +1988,12 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "FREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
       "blockHeight": 11109621,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "frozenAmount": "3000000",
       },
       "fee": "0",
@@ -2001,8 +2001,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "4fff9db9c684d3533200290fdd854c101d5b05fbe8c3b6d5bff9e3fdabce0b46",
       "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-4fff9db9c684d3533200290fdd854c101d5b05fbe8c3b6d5bff9e3fdabce0b46-FREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
       ],
       "standard": undefined,
@@ -2010,7 +2010,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "FREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
       "blockHeight": 11834957,
@@ -2218,7 +2218,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 16050543,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "frozenAmount": "12000000",
       },
       "fee": "0",
@@ -2226,8 +2226,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "57a7a5eb1b7a91676419de5e552afdc158adcb139fb739cc1649a4b1e4023891",
       "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-57a7a5eb1b7a91676419de5e552afdc158adcb139fb739cc1649a4b1e4023891-FREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
       ],
       "standard": undefined,
@@ -2235,7 +2235,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "FREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
       "blockHeight": 15044089,
@@ -2284,7 +2284,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 11594100,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "frozenAmount": "3000000",
       },
       "fee": "0",
@@ -2292,8 +2292,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "5a79878e865d5d973ac289026aa8c69a29076134b918c7e917499d1d4d2244ab",
       "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-5a79878e865d5d973ac289026aa8c69a29076134b918c7e917499d1d4d2244ab-FREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
       ],
       "standard": undefined,
@@ -2301,7 +2301,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "FREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
       "blockHeight": 16580362,
@@ -2460,7 +2460,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 16685793,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "frozenAmount": "1000000",
       },
       "fee": "0",
@@ -2468,8 +2468,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "6a599124b5b09e484590c7bef6774e716215c69ba4117d26b8211441c4d75354",
       "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-6a599124b5b09e484590c7bef6774e716215c69ba4117d26b8211441c4d75354-FREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
       ],
       "standard": undefined,
@@ -2477,7 +2477,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "FREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
       "blockHeight": 11977677,
@@ -2548,7 +2548,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 16685880,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "frozenAmount": "1000000",
       },
       "fee": "0",
@@ -2556,8 +2556,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "6fa0c6490643ad5ecb93f781faef2b88f548c0138439d7f37c6cdd94d6477900",
       "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-6fa0c6490643ad5ecb93f781faef2b88f548c0138439d7f37c6cdd94d6477900-FREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
       ],
       "standard": undefined,
@@ -2565,7 +2565,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "FREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
       "blockHeight": 11154297,
@@ -2614,7 +2614,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 10390295,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "frozenAmount": "1000000",
       },
       "fee": "0",
@@ -2622,8 +2622,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "73c26f3998e764261b911da4f2bab5550c2b93e0ccb5b37bc4fbbe0a8360c038",
       "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-73c26f3998e764261b911da4f2bab5550c2b93e0ccb5b37bc4fbbe0a8360c038-FREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
       ],
       "standard": undefined,
@@ -2631,12 +2631,12 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "FREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
       "blockHeight": 12425496,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "unfreezeAmount": "6000000",
       },
       "fee": "0",
@@ -2644,8 +2644,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "764d07b0c11e6bf3bdd702c79d21d5abb0ff8b3eb359a3a55f6a7a4b4384abe4",
       "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-764d07b0c11e6bf3bdd702c79d21d5abb0ff8b3eb359a3a55f6a7a4b4384abe4-LEGACY_UNFREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
       ],
       "standard": undefined,
@@ -2653,7 +2653,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "LEGACY_UNFREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
       "blockHeight": 12265086,
@@ -2724,7 +2724,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 16685857,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "frozenAmount": "1000000",
       },
       "fee": "0",
@@ -2732,8 +2732,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "79714d9111c132972987aa7787384b0a5d871c8ca030dcfc2965c67f082ee120",
       "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-79714d9111c132972987aa7787384b0a5d871c8ca030dcfc2965c67f082ee120-FREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
       ],
       "standard": undefined,
@@ -2741,7 +2741,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "FREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
       "blockHeight": 15044538,
@@ -3052,7 +3052,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 16685816,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "frozenAmount": "1000000",
       },
       "fee": "0",
@@ -3060,8 +3060,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "89f02ef1eb9a9089eab17f9c39e703c077e8f02e5cc2547e566fe9b6b53ebdd0",
       "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-89f02ef1eb9a9089eab17f9c39e703c077e8f02e5cc2547e566fe9b6b53ebdd0-FREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
       ],
       "standard": undefined,
@@ -3069,7 +3069,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "FREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
       "blockHeight": 11519348,
@@ -3123,7 +3123,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 8939043,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "frozenAmount": "10000000",
       },
       "fee": "0",
@@ -3131,8 +3131,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "8efb6a5bf962e17065731b187ada2967f2fc967f14a9039b3a9d8bef6ca03e1c",
       "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-8efb6a5bf962e17065731b187ada2967f2fc967f14a9039b3a9d8bef6ca03e1c-FREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
       ],
       "standard": undefined,
@@ -3140,7 +3140,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "FREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
       "blockHeight": 12293846,
@@ -3189,7 +3189,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 16685799,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "frozenAmount": "1000000",
       },
       "fee": "0",
@@ -3197,8 +3197,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "90e1e8e17973f591c44c40a97d82fd6f99f50bb50222bed8e2c4bd3054e8ac01",
       "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-90e1e8e17973f591c44c40a97d82fd6f99f50bb50222bed8e2c4bd3054e8ac01-FREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
       ],
       "standard": undefined,
@@ -3206,12 +3206,12 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "FREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
       "blockHeight": 16685955,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "frozenAmount": "1000000",
       },
       "fee": "2540",
@@ -3219,8 +3219,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "96f418c4838e19645fed174b731fa02fb5944d4e36c8b91834dee7b0e4c9eda6",
       "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-96f418c4838e19645fed174b731fa02fb5944d4e36c8b91834dee7b0e4c9eda6-FREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
       ],
       "standard": undefined,
@@ -3228,7 +3228,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "FREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
       "blockHeight": 11404683,
@@ -3290,7 +3290,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 11109550,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "unfreezeAmount": "3000000",
       },
       "fee": "0",
@@ -3298,8 +3298,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "9e994037e0bf047923a412cdb720091f4b80ed2e2e3a164e26b1cbdb47ac827f",
       "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-9e994037e0bf047923a412cdb720091f4b80ed2e2e3a164e26b1cbdb47ac827f-LEGACY_UNFREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
       ],
       "standard": undefined,
@@ -3307,7 +3307,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "LEGACY_UNFREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
       "blockHeight": 11376321,
@@ -3334,7 +3334,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 16685946,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "frozenAmount": "1000000",
       },
       "fee": "2540",
@@ -3342,8 +3342,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "a2e09033de76ff7340e8c6602c52f33f5c729447d43e5c063ac4a03514510bbc",
       "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-a2e09033de76ff7340e8c6602c52f33f5c729447d43e5c063ac4a03514510bbc-FREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
       ],
       "standard": undefined,
@@ -3351,7 +3351,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "FREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
       "blockHeight": 16050686,
@@ -3456,7 +3456,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 16050392,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "unfreezeAmount": "20000000",
       },
       "fee": "0",
@@ -3464,8 +3464,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "a6b15154bc5e6addcf9ba5b1ab5f190d58226b546e9b62370f81d85ba4b0b06e",
       "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-a6b15154bc5e6addcf9ba5b1ab5f190d58226b546e9b62370f81d85ba4b0b06e-LEGACY_UNFREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
       ],
       "standard": undefined,
@@ -3473,7 +3473,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "LEGACY_UNFREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
       "blockHeight": 16350083,
@@ -3544,7 +3544,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 16685905,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "frozenAmount": "1000000",
       },
       "fee": "0",
@@ -3552,8 +3552,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "a829b9157198b90f9d05cfd920d2c98aeae40e717e475f89386b31855f50db03",
       "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-a829b9157198b90f9d05cfd920d2c98aeae40e717e475f89386b31855f50db03-FREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
       ],
       "standard": undefined,
@@ -3561,7 +3561,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "FREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
       "blockHeight": 9105626,
@@ -3632,7 +3632,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 16685850,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "frozenAmount": "1000000",
       },
       "fee": "0",
@@ -3640,8 +3640,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "aadfa61d95c9e11afdf8c8b7ad2b34ceb89e3a4e4f9b758749eff7c567ec994d",
       "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-aadfa61d95c9e11afdf8c8b7ad2b34ceb89e3a4e4f9b758749eff7c567ec994d-FREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
       ],
       "standard": undefined,
@@ -3649,12 +3649,12 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "FREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
       "blockHeight": 16220194,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "frozenAmount": "5000000",
       },
       "fee": "0",
@@ -3662,8 +3662,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "ab6d3bb819df63aeed9f26c5f927ed068f0d22d18e5a73a8e925f4ba00d63f74",
       "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-ab6d3bb819df63aeed9f26c5f927ed068f0d22d18e5a73a8e925f4ba00d63f74-FREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
       ],
       "standard": undefined,
@@ -3671,7 +3671,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "FREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
       "blockHeight": 16717041,
@@ -3817,7 +3817,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 10511653,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "frozenAmount": "3000000",
       },
       "fee": "0",
@@ -3825,8 +3825,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "b1d2f12d456663124dacfc419102c4fb9cfe1f0c6804a207450d5486b5055d4d",
       "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-b1d2f12d456663124dacfc419102c4fb9cfe1f0c6804a207450d5486b5055d4d-FREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
       ],
       "standard": undefined,
@@ -3834,7 +3834,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "FREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
       "blockHeight": 12207554,
@@ -3905,7 +3905,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 16107775,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "frozenAmount": "34422359",
       },
       "fee": "0",
@@ -3913,8 +3913,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "b7e87c76570323ca45d9fa9912a4aaaea2cada33e1a9e0d4672b8cab242aef7f",
       "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-b7e87c76570323ca45d9fa9912a4aaaea2cada33e1a9e0d4672b8cab242aef7f-FREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
       ],
       "standard": undefined,
@@ -3922,7 +3922,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "FREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
       "blockHeight": 11892338,
@@ -4233,7 +4233,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 11593944,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "unfreezeAmount": "3000000",
       },
       "fee": "0",
@@ -4241,8 +4241,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "ca05e36bb9546d435346384e7de0c96138c8fac50e0392faaa4ec9170ae22b05",
       "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-ca05e36bb9546d435346384e7de0c96138c8fac50e0392faaa4ec9170ae22b05-LEGACY_UNFREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
       ],
       "standard": undefined,
@@ -4250,12 +4250,12 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "LEGACY_UNFREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
       "blockHeight": 16685962,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "frozenAmount": "1000000",
       },
       "fee": "2540",
@@ -4263,8 +4263,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "d09a30fb669c98a7a66c337f625c4d198247ec68a59ae728935b1402a1653a4c",
       "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-d09a30fb669c98a7a66c337f625c4d198247ec68a59ae728935b1402a1653a4c-FREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
       ],
       "standard": undefined,
@@ -4272,12 +4272,12 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "FREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
       "blockHeight": 16686355,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "unfreezeAmount": "31000000",
       },
       "fee": "0",
@@ -4285,8 +4285,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "d2f56517ced73d6515d1ed053ae3cd244e098a3234166b8c09ed629c65685d7c",
       "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-d2f56517ced73d6515d1ed053ae3cd244e098a3234166b8c09ed629c65685d7c-LEGACY_UNFREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
       ],
       "standard": undefined,
@@ -4294,7 +4294,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "LEGACY_UNFREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
       "blockHeight": 11594357,
@@ -4343,7 +4343,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 16685822,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "frozenAmount": "1000000",
       },
       "fee": "0",
@@ -4351,8 +4351,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "d458b3049d7836594910c89318a3b02ce4a5eb0006630f29a7f98d9203a4c484",
       "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-d458b3049d7836594910c89318a3b02ce4a5eb0006630f29a7f98d9203a4c484-FREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
       ],
       "standard": undefined,
@@ -4360,7 +4360,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "FREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
       "blockHeight": 16666938,
@@ -4409,7 +4409,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 16220341,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "frozenAmount": "26000000",
       },
       "fee": "0",
@@ -4417,8 +4417,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "d943444fe91c3cb8a6f858942da3ca9952d7bbc75037ce6aa7e5e6931c4d8d91",
       "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-d943444fe91c3cb8a6f858942da3ca9952d7bbc75037ce6aa7e5e6931c4d8d91-FREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
       ],
       "standard": undefined,
@@ -4426,12 +4426,12 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "FREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
       "blockHeight": 16685889,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "frozenAmount": "1000000",
       },
       "fee": "0",
@@ -4439,8 +4439,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "d9abf9002c423a55fb69a06518f3166e4d0b2e5b1cd86f4647ac40d9490d9911",
       "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-d9abf9002c423a55fb69a06518f3166e4d0b2e5b1cd86f4647ac40d9490d9911-FREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
       ],
       "standard": undefined,
@@ -4448,7 +4448,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "FREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
       "blockHeight": 11594078,
@@ -4519,7 +4519,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 16685828,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "frozenAmount": "1000000",
       },
       "fee": "0",
@@ -4527,8 +4527,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "e1850acbf0968657c953ad873abc0946afef097cda104d0e9bcca16405af8378",
       "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-e1850acbf0968657c953ad873abc0946afef097cda104d0e9bcca16405af8378-FREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
       ],
       "standard": undefined,
@@ -4536,7 +4536,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "FREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
       "blockHeight": 12121300,
@@ -4603,7 +4603,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 10511409,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "unfreezeAmount": "1000000",
       },
       "fee": "0",
@@ -4611,8 +4611,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "e44b36703e3d83a61753a954f1e3d25d403ee2320f146c32d27b5512438efb73",
       "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-e44b36703e3d83a61753a954f1e3d25d403ee2320f146c32d27b5512438efb73-LEGACY_UNFREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
       ],
       "standard": undefined,
@@ -4620,7 +4620,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "LEGACY_UNFREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
       "blockHeight": 16321258,
@@ -4691,7 +4691,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 16685860,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "frozenAmount": "1000000",
       },
       "fee": "0",
@@ -4699,8 +4699,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "e7365390ecef9b4741406e1e156cc70d7bb5c873cef75d14f3de74e04965adfe",
       "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-e7365390ecef9b4741406e1e156cc70d7bb5c873cef75d14f3de74e04965adfe-FREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
       ],
       "standard": undefined,
@@ -4708,7 +4708,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "FREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
       "blockHeight": 15044447,
@@ -5087,7 +5087,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 16222319,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "frozenAmount": "5000000",
       },
       "fee": "0",
@@ -5095,8 +5095,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "fbe0bc8b3f6dceb519c00ec43d8269b80bbfddb13087736fd6e00108646cd20a",
       "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-fbe0bc8b3f6dceb519c00ec43d8269b80bbfddb13087736fd6e00108646cd20a-FREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
       ],
       "standard": undefined,
@@ -5104,7 +5104,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "FREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
       "blockHeight": 16436440,
@@ -5153,7 +5153,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 9277271,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "unfreezeAmount": "10000000",
       },
       "fee": "0",
@@ -5161,8 +5161,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "ffc5db75fb4f8971ca003c5fc0249c031159d89ceefe042107c91568d622f79f",
       "id": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:-ffc5db75fb4f8971ca003c5fc0249c031159d89ceefe042107c91568d622f79f-LEGACY_UNFREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9",
       ],
       "standard": undefined,
@@ -5170,7 +5170,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "LEGACY_UNFREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9:",
       "blockHash": null,
       "blockHeight": 16206138,
@@ -6141,7 +6141,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 40827068,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "frozenAmount": "1000000",
       },
       "fee": "0",
@@ -6149,8 +6149,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "17be60fac559e202746b2542ff90be3e9787ef463dde855a40deaeccb8f38ad6",
       "id": "js:2:tron:THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi:-17be60fac559e202746b2542ff90be3e9787ef463dde855a40deaeccb8f38ad6-FREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi",
       ],
       "standard": undefined,
@@ -6158,7 +6158,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "FREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi:",
       "blockHash": null,
       "blockHeight": 16112121,
@@ -6185,7 +6185,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 18903817,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "unfreezeAmount": "9400000",
       },
       "fee": "0",
@@ -6193,8 +6193,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "26c2ae426ddee2a81f001daa231104f199ed56453988299656b9612944687a15",
       "id": "js:2:tron:THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi:-26c2ae426ddee2a81f001daa231104f199ed56453988299656b9612944687a15-LEGACY_UNFREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi",
       ],
       "standard": undefined,
@@ -6202,7 +6202,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "LEGACY_UNFREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi:",
       "blockHash": null,
       "blockHeight": 40832955,
@@ -6229,7 +6229,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 40803679,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "frozenAmount": "1000000",
       },
       "fee": "0",
@@ -6237,8 +6237,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "3778ed18baa269f00ea21050c595e38cce5dd0689479d7a8b9a7748df29e9942",
       "id": "js:2:tron:THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi:-3778ed18baa269f00ea21050c595e38cce5dd0689479d7a8b9a7748df29e9942-FREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi",
       ],
       "standard": undefined,
@@ -6246,12 +6246,12 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "FREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi:",
       "blockHash": null,
       "blockHeight": 16113293,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "frozenAmount": "3200000",
       },
       "fee": "0",
@@ -6259,8 +6259,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "37dda5992728764eb4e13e5f17f6925c227fa07e10aa3ca78e16981067aa7c1d",
       "id": "js:2:tron:THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi:-37dda5992728764eb4e13e5f17f6925c227fa07e10aa3ca78e16981067aa7c1d-FREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi",
       ],
       "standard": undefined,
@@ -6268,7 +6268,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "FREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi:",
       "blockHash": null,
       "blockHeight": 16112419,
@@ -6295,7 +6295,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 40803689,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "frozenAmount": "1000000",
       },
       "fee": "0",
@@ -6303,8 +6303,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "4e70396e3e379e1cb6eb4d777761a79a6fd904ce5ab55eca453031447ddf3e11",
       "id": "js:2:tron:THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi:-4e70396e3e379e1cb6eb4d777761a79a6fd904ce5ab55eca453031447ddf3e11-FREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi",
       ],
       "standard": undefined,
@@ -6312,7 +6312,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "FREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi:",
       "blockHash": null,
       "blockHeight": 16112094,
@@ -6383,7 +6383,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 16113270,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "frozenAmount": "5200000",
       },
       "fee": "0",
@@ -6391,8 +6391,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "ac17d892312be09f530435a9e72781676090fc711f97f11a021d173585c8ee63",
       "id": "js:2:tron:THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi:-ac17d892312be09f530435a9e72781676090fc711f97f11a021d173585c8ee63-FREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi",
       ],
       "standard": undefined,
@@ -6400,7 +6400,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "FREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi:",
       "blockHash": null,
       "blockHeight": 16112424,
@@ -6427,7 +6427,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "blockHash": null,
       "blockHeight": 18670033,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "frozenAmount": "1000000",
       },
       "fee": "0",
@@ -6435,8 +6435,8 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "hash": "b53033c937e5323852df2748bc46ebb3be5407233afdab5ff68232e5964fe0ec",
       "id": "js:2:tron:THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi:-b53033c937e5323852df2748bc46ebb3be5407233afdab5ff68232e5964fe0ec-FREEZE",
       "operator": undefined,
-      "recipients": Array [],
-      "senders": Array [
+      "recipients": [],
+      "senders": [
         "THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi",
       ],
       "standard": undefined,
@@ -6444,7 +6444,7 @@ exports[`tron currency bridge scanAccounts tron seed 1 2`] = `
       "type": "FREEZE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:tron:THAe4BNVxp293qgyQEqXEkHMpPcqtG73bi:",
       "blockHash": null,
       "blockHeight": 16112411,
