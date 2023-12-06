@@ -1,4 +1,5 @@
 import { Flex } from "@ledgerhq/native-ui";
+import React from "react";
 import { TouchableOpacity } from "react-native";
 import { useTheme } from "styled-components/native";
 import { Close, Image, Subtitle, Tag, Title } from "~/contentCards/cards/horizontal/elements";
