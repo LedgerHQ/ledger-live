@@ -34,6 +34,14 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
       button: SpeculosButton.BOTH,
     },
     {
+      title: "Send to address (1/2)",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Send to address (2/2)",
+      button: SpeculosButton.BOTH,
+    },
+    {
       title: "end", // FIXME: Should be Send but in some case cardano OCR doesn't recognize S : https://github.com/LedgerHQ/speculos/issues/204
       button: SpeculosButton.BOTH,
       ignoreAssertionFailure: true,
