@@ -21,7 +21,7 @@ import { flattenAccountsSelector, shallowAccountsSelector } from "~/renderer/red
 import { trackSwapError, useGetSwapTrackingProperties } from "../utils/index";
 import ExchangeDrawer from "./ExchangeDrawer/index";
 import SwapFormSelectors from "./FormSelectors";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 import useRefreshRates from "./hooks/useRefreshRates";
 import LoadingState from "./Rates/LoadingState";
@@ -155,9 +155,15 @@ const SwapForm = () => {
     const feeStrategyParam =
       feesStrategy && ["slow", "fast", "custom"].includes(feesStrategy) ? "CUSTOM" : "MEDIUM";
 
+    // Currency ids
+    const fromCurrencyId = swapTransaction.swap.from.currency?.id;
+    const toCurrencyId = swapTransaction.swap.to.currency?.id;
+
     return {
       fromAccountId,
       toAccountId,
+      fromCurrencyId,
+      toCurrencyId,
       fromAmount: fromAmount?.toString(),
       quoteId: rateId ? rateId : undefined,
       rate: rate?.toString(),
