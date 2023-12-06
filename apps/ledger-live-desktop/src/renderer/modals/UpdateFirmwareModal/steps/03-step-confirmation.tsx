@@ -38,6 +38,7 @@ const SubTitle = styled(Box).attrs(() => ({
 const StepConfirmation = ({ deviceModelId, appsToBeReinstalled }: StepProps) => {
   const device = getDeviceModel(deviceModelId);
   const { t } = useTranslation();
+  const deviceName = { deviceName: device ? device.productName : "" };
 
   useEffect(() => () => log("firmware-record-end"), []);
 
@@ -52,13 +53,11 @@ const StepConfirmation = ({ deviceModelId, appsToBeReinstalled }: StepProps) => 
       />
       <Title mt={9}>
         {appsToBeReinstalled
-          ? t("manager.modal.successTitleApps", { deviceName: device ? device.productName : "" })
-          : t("manager.modal.successTitle", { deviceName: device ? device.productName : "" })}
+          ? t("manager.modal.successTitleApps", deviceName)
+          : t("manager.modal.successTitle", deviceName)}
       </Title>
       {appsToBeReinstalled ? (
-        <SubTitle>
-          {t("manager.modal.successSubtitleApps", { deviceName: device ? device.productName : "" })}
-        </SubTitle>
+        <SubTitle>{t("manager.modal.successSubtitleApps", deviceName)}</SubTitle>
       ) : null}
       <Box mx={7} />
     </Container>
