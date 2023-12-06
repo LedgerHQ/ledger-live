@@ -7,7 +7,13 @@ import {
   ExchangeStart,
   ServerError,
 } from "@ledgerhq/wallet-api-core";
-import { getParentAccount, getMainAccount } from "@ledgerhq/coin-framework/account/index";
+import {
+  getParentAccount,
+  getMainAccount,
+  makeEmptyTokenAccount,
+} from "@ledgerhq/coin-framework/account/index";
+import { AccountLike } from "@ledgerhq/types-live";
+import { findTokenById } from "@ledgerhq/cryptoassets";
 import { TrackingAPI } from "./tracking";
 import { AppManifest } from "../types";
 import { Exchange } from "../../exchange/swap/types";
@@ -17,11 +23,12 @@ import {
   getWalletAPITransactionSignFlowInfos,
 } from "../converters";
 import { getAccountBridge } from "../../bridge";
-import { AccountLike } from "@ledgerhq/types-live";
 
 type ESP = ExchangeStart["params"];
 type ESR = ExchangeStart["result"];
-type ECP = ExchangeComplete["params"];
+type ECP = ExchangeComplete["params"] & {
+  tokenCurrency?: string;
+};
 type ECR = ExchangeComplete["result"];
 
 type Handlers = {
@@ -111,6 +118,12 @@ export const handlers = ({
         return Promise.reject(new Error(`accountId ${params.fromAccountId} unknown`));
       }
 
+      const fromAccount = accounts.find(acc => acc.id === realFromAccountId);
+
+      if (!fromAccount) {
+        throw new ServerError(createAccountNotFound(params.fromAccountId));
+      }
+
       let toAccount;
 
       if (params.exchangeType === "SWAP" && params.toAccountId) {
@@ -120,16 +133,17 @@ export const handlers = ({
         }
 
         toAccount = accounts.find(a => a.id === realToAccountId);
-      }
 
-      const fromAccount = accounts.find(acc => acc.id === realFromAccountId);
-
-      if (!fromAccount) {
-        throw new ServerError(createAccountNotFound(realFromAccountId));
+        if (!toAccount) {
+          throw new ServerError(createAccountNotFound(params.toAccountId));
+        }
       }
 
       const fromParentAccount = getParentAccount(fromAccount, accounts);
       const toParentAccount = toAccount ? getParentAccount(toAccount, accounts) : undefined;
+
+      const currency = params.tokenCurrency ? findTokenById(params.tokenCurrency) : null;
+      const newTokenAccount = currency ? makeEmptyTokenAccount(toAccount, currency) : null;
 
       const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
       const mainFromAccountFamily = mainFromAccount.currency.family;
@@ -185,8 +199,8 @@ export const handlers = ({
         exchange: {
           fromAccount,
           fromParentAccount,
-          toAccount,
-          toParentAccount,
+          toAccount: newTokenAccount ? newTokenAccount : toAccount,
+          toParentAccount: newTokenAccount ? toAccount : toParentAccount,
         },
         feesStrategy: params.feeStrategy,
         swapId: params.exchangeType === "SWAP" ? params.swapId : undefined,
