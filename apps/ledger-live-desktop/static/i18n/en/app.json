@@ -3096,7 +3096,7 @@
     },
     "undelegation": {
       "header": "Undelegation(s)",
-      "headerTooltip": "Available after the {{numberOfDays}} day timelock",
+      "headerTooltip": "Available after the {{numberOfDays}}-day timelock",
       "inactiveTooltip": "Undelegated amounts do not generate rewards.",
       "flow": {
         "title": "Undelegate assets",
