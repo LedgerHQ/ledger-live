@@ -11,18 +11,16 @@ export const FirebaseRemoteConfigProvider = ({ children }: Props): JSX.Element |
     let unmounted = false;
     const fetchConfig = async () => {
       try {
-        if (__DEV__) {
-          remoteConfig().setConfigSettings({ minimumFetchIntervalMillis: 0 });
-        }
+        remoteConfig().setConfigSettings({ minimumFetchIntervalMillis: 0 });
         await remoteConfig().setDefaults({
           ...formatDefaultFeatures(DEFAULT_FEATURES),
         });
-        await remoteConfig().fetchAndActivate();
         LiveConfig.setProviderGetValueMethod({
           firebaseRemoteConfig: (key: string) => {
             return remoteConfig().getValue(key);
           },
         });
+        await remoteConfig().fetchAndActivate();
       } catch (error) {
         if (!unmounted) {
           console.error(`Failed to fetch Firebase remote config with error: ${error}`);
