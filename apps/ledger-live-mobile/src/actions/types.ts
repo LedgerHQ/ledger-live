@@ -170,6 +170,7 @@ export enum DynamicContentActionTypes {
   DYNAMIC_CONTENT_SET_LEARN_CARDS = "DYNAMIC_CONTENT_SET_LEARN_CARDS",
   DYNAMIC_CONTENT_SET_NOTIFICATION_CARDS = "DYNAMIC_CONTENT_SET_NOTIFICATION_CARDS",
   DYNAMIC_CONTENT_SET_CATEGORIES_CARDS = "DYNAMIC_CONTENT_SET_CATEGORIES_CARDS",
+  DYNAMIC_CONTENT_SET_MOBILE_CARDS = "DYNAMIC_CONTENT_SET_MOBILE_CARDS",
 }
 
 export type DynamicContentSetWalletCardsPayload = DynamicContentState["walletCards"];
@@ -182,12 +183,15 @@ export type DynamicContentSetNotificationCardsPayload = DynamicContentState["not
 
 export type DynamicContentSetCategoriesCardsPayload = DynamicContentState["categoriesCards"];
 
+export type DynamicContentSetMobileCardsPayload = DynamicContentState["mobileCards"];
+
 export type DynamicContentPayload =
   | DynamicContentSetWalletCardsPayload
   | DynamicContentSetAssetCardsPayload
   | DynamicContentSetLearnCardsPayload
   | DynamicContentSetNotificationCardsPayload
-  | DynamicContentSetCategoriesCardsPayload;
+  | DynamicContentSetCategoriesCardsPayload
+  | DynamicContentSetMobileCardsPayload;
 
 // === RATINGS ACTIONS ===
 

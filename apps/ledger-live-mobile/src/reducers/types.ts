@@ -22,6 +22,7 @@ import {
   LearnContentCard,
   NotificationContentCard,
   CategoryContentCard,
+  ContentCard,
 } from "../dynamicContent/types";
 import { ProtectStateNumberEnum } from "../components/ServicesWidget/types";
 import { ImageType } from "../components/CustomImage/types";
@@ -121,6 +122,8 @@ export type DynamicContentState = {
   notificationCards: NotificationContentCard[];
   /** Dynamic content cards handling flexible categories throughout the app */
   categoriesCards: CategoryContentCard[];
+  /** Dynamic content cards for Ledger Live Mobile */
+  mobileCards: ContentCard[];
 };
 
 // === RATINGS STATE ===
