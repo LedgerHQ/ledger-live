@@ -12,8 +12,7 @@ import {
 } from "~/config/transportChannels";
 import { MessagesMap } from "./types";
 import { LocalTracer, TraceContext, trace } from "@ledgerhq/logs";
-
-const LOG_TYPE = "internal-transport-handler";
+import { LOG_TYPE_INTERNAL } from "./logger";
 
 type APDUMessage =
   | {
@@ -31,7 +30,10 @@ const transportsBulkSubscriptions = new Map<string, { unsubscribe: () => void }>
 
 export const transportOpen = ({ data, requestId }: MessagesMap["transport:open"]) => {
   const { descriptor, timeoutMs, context } = data;
-  const tracer = new LocalTracer(LOG_TYPE, { ipcContext: context, function: "transportOpen" });
+  const tracer = new LocalTracer(LOG_TYPE_INTERNAL, {
+    ipcContext: context,
+    function: "transportOpen",
+  });
   tracer.trace("Received open transport request", { descriptor, timeoutMs });
 
   const subjectExist = transports.get(descriptor);
@@ -233,7 +235,7 @@ export const transportListenUnsubscribe = ({
 
 export const transportClose = ({ data, requestId }: MessagesMap["transport:close"]) => {
   trace({
-    type: LOG_TYPE,
+    type: LOG_TYPE_INTERNAL,
     message: "Received close transport request",
     context: { data, requestId },
   });
@@ -251,7 +253,7 @@ export const transportClose = ({ data, requestId }: MessagesMap["transport:close
   }
   subject.subscribe({
     complete: () => {
-      trace({ type: LOG_TYPE, message: "Close complete", context: { data, requestId } });
+      trace({ type: LOG_TYPE_INTERNAL, message: "Close complete", context: { data, requestId } });
       process.send?.({
         type: transportCloseChannel,
         data,

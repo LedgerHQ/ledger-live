@@ -23,12 +23,15 @@ import {
   transportOpenChannel,
 } from "~/config/transportChannels";
 import { Message } from "./types";
+
 process.on("exit", () => {
   console.debug("exiting process, unsubscribing all...");
   unsubscribeSetup();
   getSentryIfAvailable()?.close(2000);
 });
+
 process.title = "Ledger Live Internal";
+
 process.on("uncaughtException", err => {
   process.send &&
     process.send({

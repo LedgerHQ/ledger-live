@@ -1,5 +1,7 @@
 import { Log } from "@ledgerhq/logs";
 
+export const LOG_TYPE_INTERNAL = "internal";
+
 /**
  * Simple logger sending recorded logs directly to the main process
  *
