@@ -22,11 +22,15 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
       button: SpeculosButton.BOTH,
     },
     {
-      title: "Send to address (1/2)",
+      title: "Send to address (1/3)",
       button: SpeculosButton.RIGHT,
     },
     {
-      title: "Send to address (2/2)",
+      title: "Send to address (2/3)",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Send to address (3/3)",
       button: SpeculosButton.BOTH,
     },
     {
