@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.73.0-next.2
+
+### Patch Changes
+
+- [#5647](https://github.com/LedgerHQ/ledger-live/pull/5647) [`dc065aa`](https://github.com/LedgerHQ/ledger-live/commit/dc065aaefbe3efacc894cdca769362272a559e73) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - allow onboarding restore previous version lns+
+
 ## 2.73.0-next.1
 
 ### Patch Changes
