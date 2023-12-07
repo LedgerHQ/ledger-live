@@ -307,7 +307,8 @@
     "src/jest.d.ts",
     "src/postOnboarding/mock.ts",
     "src/reactNativeSvg.d.ts",
-    "src/currencies/mock.ts"
+    "src/currencies/mock.ts",
+    "src/wallet-api/Exchange/*.ts"
   ],
   "ignoreUnused": [
     "@types/bchaddrjs",
