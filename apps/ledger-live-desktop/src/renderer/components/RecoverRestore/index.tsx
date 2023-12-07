@@ -55,10 +55,7 @@ const RecoverRestore = () => {
         }
       },
       error: (error: Error) => {
-        if (
-          (error instanceof TransportStatusError && error.message.includes("0x6d06")) ||
-          error instanceof DeviceNotOnboarded
-        ) {
+        if (isDeviceNotOnboardedError(error)) {
           setState({
             isOnboarded: false,
             isInRecoveryMode: false,
