@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { Flex, Text } from "@ledgerhq/react-ui";
-import { DeviceAlreadySetup, DeviceNotOnboarded } from "@ledgerhq/live-common/errors";
+import { DeviceAlreadySetup } from "@ledgerhq/live-common/errors";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import OnboardingNavHeader from "../Onboarding/OnboardingNavHeader";
@@ -23,7 +23,7 @@ import {
 import { FirmwareInfo, SeedPhraseType } from "@ledgerhq/types-live";
 import { renderError } from "../DeviceAction/rendering";
 import { useDynamicUrl } from "~/renderer/terms";
-import { TransportStatusError } from "@ledgerhq/errors";
+import { isDeviceNotOnboardedError } from "../DeviceAction/utils";
 
 const RecoverRestore = () => {
   const { t } = useTranslation();

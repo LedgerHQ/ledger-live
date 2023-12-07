@@ -6,7 +6,6 @@ import { Action } from "@ledgerhq/live-common/hw/actions/types";
 import {
   OutdatedApp,
   LatestFirmwareVersionRequired,
-  DeviceNotOnboarded,
   NoSuchAppOnProvider,
   EConnResetError,
   LanguageInstallRefusedOnDevice,
@@ -27,7 +26,6 @@ import useTheme from "~/renderer/hooks/useTheme";
 import {
   ManagerNotEnoughSpaceError,
   UpdateYourApp,
-  TransportStatusError,
   UserRefusedAddress,
   UserRefusedAllowManager,
   UserRefusedFirmwareUpdate,
