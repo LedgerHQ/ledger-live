@@ -269,23 +269,23 @@ const SwapForm = () => {
           ? accountToWalletAPIAccount(account, parentAccount)?.id
           : fromAccountId;
 
-      const state = {
+      const state: { returnTo: string; accountId?: string; goToURL?: string } = {
         returnTo: "/swap",
         accountId,
-        goToURL: providerURL,
       };
-
+      let customDappUrl = providerURL;
       if (provider === "moonpay") {
         const moonpayURL = generateMoonpayUrl({
           base: exchangeRate?.providerURL || "",
           args: getExchangeSDKParams(),
         });
         state.goToURL = moonpayURL.toString();
+        customDappUrl = undefined;
       }
 
       history.push({
         // This looks like an issue, the proper signature is: push(path, [state]) - (function) Pushes a new entry onto the history stack
-        // It seems possible to also pass a LocationDescriptorObject but it does not expect extra properties
+        ...(customDappUrl ? { customDappUrl } : {}),
         pathname,
         state,
       });
