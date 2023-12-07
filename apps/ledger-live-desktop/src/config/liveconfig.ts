@@ -2,6 +2,7 @@ import { LiveConfig, FirebaseRemoteConfigProvider } from "@ledgerhq/live-config"
 import { fetchAndActivate, getRemoteConfig, getValue } from "firebase/remote-config";
 import { getFirebaseConfig } from "~/firebase-setup";
 import { initializeApp } from "firebase/app";
+import { sharedConfig } from "@ledgerhq/live-common/config/sharedConfig";
 
 const firebaseConfig = getFirebaseConfig();
 initializeApp(firebaseConfig);
@@ -20,6 +21,7 @@ export const liveConfig = new LiveConfig({
     },
   }),
   config: {
+    ...sharedConfig,
     feature_learn: {
       type: "object",
       default: { enabled: true },
