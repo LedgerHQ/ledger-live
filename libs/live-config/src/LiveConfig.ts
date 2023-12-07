@@ -22,6 +22,8 @@ type TypeFromSchema<T extends keyof ValidConfigTypes> = T extends keyof ValidCon
   ? ValidConfigTypes[T]
   : never;
 
+export type Config = Record<string, ConfigInfo>;
+
 export class LiveConfig<ConfigType extends Record<string, ConfigInfo>> {
   public appVersion: string;
   public platform: string;
@@ -43,9 +45,9 @@ export class LiveConfig<ConfigType extends Record<string, ConfigInfo>> {
     this.config = config.config;
   }
 
-  getValueByKey<Config extends typeof this.config, Key extends keyof Config>(key: Key) {
+  getValueByKey<Schema extends typeof this.config, Key extends keyof Schema>(key: Key) {
     return this.provider.getValueBykey(key, this.config[key]) as TypeFromSchema<
-      Config[Key]["type"]
+      Schema[Key]["type"]
     >;
   }
 }

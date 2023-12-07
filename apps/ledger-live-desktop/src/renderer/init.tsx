@@ -49,7 +49,6 @@ import { addDevice, removeDevice, resetDevices } from "~/renderer/actions/device
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { listCachedCurrencyIds } from "./bridge/cache";
 import { LogEntry } from "winston";
-import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 
 const rootNode = document.getElementById("react-root");
 const TAB_KEY = 9;
@@ -86,12 +85,6 @@ async function init() {
     React,
     log,
     Transport,
-  });
-
-  LiveConfig.init({
-    appVersion: __APP_VERSION__,
-    platform: "desktop",
-    environment: process.env.NODE_ENV || "development",
   });
 
   expectOperatingSystemSupportStatus();
