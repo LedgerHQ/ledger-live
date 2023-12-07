@@ -1,0 +1,5 @@
+{
+    "developer_mode": true,
+    "app_name": "test app",
+    "requests_per_seconds": 8
+}

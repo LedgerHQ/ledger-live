@@ -1,6 +1,6 @@
 import { ConfigInfo } from "../LiveConfig";
 
-export type SupportedProviders = "firebaseRemoteConfig";
+export type SupportedProviders = "firebaseRemoteConfig" | "firebaseRemoteConfig";
 
 export abstract class Provider {
   name: SupportedProviders;
