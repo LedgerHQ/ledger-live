@@ -1,11 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import { initializeApp } from "firebase/app";
 import { getRemoteConfig, fetchAndActivate, RemoteConfig, getValue } from "firebase/remote-config";
-import {
-  DEFAULT_FEATURES,
-  formatDefaultFeatures,
-  LiveConfig,
-} from "@ledgerhq/live-config/featureFlags/index";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { DEFAULT_FEATURES, formatDefaultFeatures } from "@ledgerhq/live-config/featureFlags/index";
 import type { FirebaseFeatureFlagsProviderProps as Props } from "@ledgerhq/live-config/featureFlags/index";
 import { getFirebaseConfig } from "~/firebase-setup";
 

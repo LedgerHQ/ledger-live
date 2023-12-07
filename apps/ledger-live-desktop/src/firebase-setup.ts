@@ -1,4 +1,6 @@
-export function getFirebaseConfig() {
+import { FirebaseOptions } from "firebase/app";
+
+export function getFirebaseConfig(): FirebaseOptions {
   if (process.env.FIREBASE_API_KEY) {
     return {
       apiKey: process.env.FIREBASE_API_KEY,

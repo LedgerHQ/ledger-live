@@ -3,11 +3,12 @@ import { snakeCase } from "lodash";
 import semver from "semver";
 import { Feature, FeatureId } from "@ledgerhq/types-live";
 import { getEnv } from "@ledgerhq/live-env";
-import { LiveConfig } from "./LiveConfig";
+import { LiveConfig } from "../LiveConfig";
 
 export type FirebaseFeatureFlagsProviderProps = PropsWithChildren<unknown>;
 export const formatToFirebaseFeatureId = (id: string) => `feature_${snakeCase(id)}`;
 
+/*
 export const checkFeatureFlagVersion = (feature: Feature) => {
   const platform = LiveConfig.getInstance().platform;
   if (!feature?.enabled || !platform) {
@@ -113,3 +114,4 @@ export const getFeature = (args: {
     return null;
   }
 };
+*/

@@ -1,5 +1,4 @@
 import React, { useCallback } from "react";
-
 import { Linking } from "react-native";
 import { Text } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
