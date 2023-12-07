@@ -1,7 +1,7 @@
 import { getAvailableProviders } from "../..";
 import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
-import { fetchCurrencyFrom } from "../../api/v5/fetchCurrencyFrom";
 import { useAPI } from "../../../../hooks/useAPI";
+import { fetchCurrencyFrom } from "../../api/v5/fetchCurrencyFrom";
 
 type Props = {
   currencyTo?: string;

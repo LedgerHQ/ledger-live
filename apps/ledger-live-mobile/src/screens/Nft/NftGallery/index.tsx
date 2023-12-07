@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { Account, ProtoNFT } from "@ledgerhq/types-live";
 import { nftsByCollections } from "@ledgerhq/live-common/nft/index";
 import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
-import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { withDiscreetMode } from "../../../context/DiscreetModeContext";
 import LoadingFooter from "../../../components/LoadingFooter";
 import { accountSelector } from "../../../reducers/accounts";

@@ -3,7 +3,7 @@ import { snakeCase } from "lodash";
 import semver from "semver";
 import { Feature, FeatureId } from "@ledgerhq/types-live";
 import { getEnv } from "@ledgerhq/live-env";
-import { LiveConfig } from "../LiveConfig";
+import { LiveConfig } from "./LiveConfig";
 
 export type FirebaseFeatureFlagsProviderProps = PropsWithChildren<unknown>;
 export const formatToFirebaseFeatureId = (id: string) => `feature_${snakeCase(id)}`;
@@ -31,8 +31,8 @@ export const checkFeatureFlagVersion = (feature: Feature) => {
     })
   ) {
     return {
-      ...feature,
       enabledOverriddenForCurrentVersion: true,
+      ...feature,
       enabled: false,
     };
   }
@@ -44,10 +44,10 @@ export const isFeature = (key: string): boolean => {
     return false;
   }
   try {
-    const value = LiveConfig.getInstance().providerGetvalueMethod?.firebaseRemoteConfig!(
+    const value = LiveConfig.getInstance().providerGetvalueMethod!["firebaseRemoteConfig"](
       formatToFirebaseFeatureId(key),
     );
-    if (!value || !value?.asString()) {
+    if (!value || !value.asString()) {
       return false;
     }
     return true;
@@ -62,9 +62,9 @@ export const getFeature = (args: {
   appLanguage?: string;
   localOverrides?: { [key in FeatureId]?: Feature };
   allowOverride?: boolean;
-}): Feature => {
+}) => {
   if (!LiveConfig.getInstance().providerGetvalueMethod) {
-    return { enabled: false };
+    return null;
   }
   const { key, appLanguage, localOverrides, allowOverride = true } = args;
   try {
@@ -88,13 +88,9 @@ export const getFeature = (args: {
         };
     }
 
-    const value = LiveConfig.getInstance().providerGetvalueMethod?.firebaseRemoteConfig!(
+    const value = LiveConfig.getInstance().providerGetvalueMethod!["firebaseRemoteConfig"](
       formatToFirebaseFeatureId(key),
     );
-
-    if (!value || !value?.asString()) {
-      return { enabled: false };
-    }
 
     const feature = JSON.parse(value.asString());
 
@@ -114,6 +110,6 @@ export const getFeature = (args: {
     return checkFeatureFlagVersion(feature);
   } catch (error) {
     console.error(`Failed to retrieve feature "${key}"`);
-    return { enabled: false };
+    return null;
   }
 };

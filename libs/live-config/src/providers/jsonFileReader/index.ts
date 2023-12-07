@@ -8,7 +8,7 @@ export class JsonFileReader extends Provider {
   constructor(config: { filePath: string }) {
     super({ name: "firebaseRemoteConfig" });
     if (!config.filePath.endsWith(".json")) {
-      throw new Error("Only .json can be read by the provider");
+      throw new Error("Only .json files can be read by the provider");
     }
 
     this.filePath = config.filePath;

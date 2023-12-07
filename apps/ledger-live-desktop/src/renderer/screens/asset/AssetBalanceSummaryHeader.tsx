@@ -22,7 +22,6 @@ import useStakeFlow from "~/renderer/screens/stake";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import { BalanceHistoryWithCountervalue, ValueChange } from "@ledgerhq/types-live";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
-
 type Props = {
   isAvailable: boolean;
   cryptoChange: ValueChange;
@@ -33,7 +32,6 @@ type Props = {
   currency: CryptoCurrency | TokenCurrency;
   unit: Unit;
 };
-
 export default function AssetBalanceSummaryHeader({
   counterValue,
   isAvailable,

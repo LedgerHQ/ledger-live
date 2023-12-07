@@ -84,7 +84,6 @@ class AccountsList extends Component<
     const withToggleAll = !!onSelectAll && !!onUnselectAll && accounts.length > 1;
     const isAllSelected =
       !checkedIds || accounts.every(acc => !!checkedIds.find(id => acc.id === id));
-
     return (
       <Box flow={3} mt={4}>
         {(title || withToggleAll) && (

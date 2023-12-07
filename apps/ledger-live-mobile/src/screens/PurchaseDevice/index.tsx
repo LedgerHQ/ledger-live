@@ -6,6 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 import { WebViewMessageEvent } from "react-native-webview";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
+
 import { Adjust, AdjustEvent } from "react-native-adjust";
 import Config from "react-native-config";
 import Button from "../../components/wrappedUi/Button";
