@@ -2,10 +2,10 @@ import { Flex } from "@ledgerhq/native-ui";
 import React from "react";
 import Bullet from "~/contentCards/layouts/carousel/pagination/bullets";
 import { getItemStatus } from "~/contentCards/layouts/carousel/pagination/utilts";
-import { CarouselItem } from "~/contentCards/layouts/carousel/types";
+import { ContentCardItem } from "~/contentCards/layouts/types";
 
 type Props<P> = {
-  items: CarouselItem<P>[];
+  items: ContentCardItem<{ id: string } & P>[];
   carouselIndex: number;
 };
 
@@ -19,7 +19,7 @@ const Pagination = <P,>({ items, carouselIndex }: Props<P>) => (
     overflow="hidden"
   >
     {items.map((item, index) => (
-      <Bullet key={item.props.metadata.id} type={getItemStatus(index, carouselIndex)} />
+      <Bullet key={item.props.id} type={getItemStatus(index, carouselIndex)} />
     ))}
   </Flex>
 );

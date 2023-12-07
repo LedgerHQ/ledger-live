@@ -5,7 +5,7 @@ import {
   LearnContentCard,
   NotificationContentCard,
   CategoryContentCard,
-  ContentCard,
+  BrazeContentCard,
 } from "../dynamicContent/types";
 import {
   DynamicContentActionTypes,
@@ -38,11 +38,12 @@ const setDynamicContentLearnCardsAction = createAction<DynamicContentSetLearnCar
 export const setDynamicContentLearnCards = (learnCards: LearnContentCard[]) =>
   setDynamicContentLearnCardsAction(learnCards);
 
-const setDynamicContentCategoriesCardsAction = createAction<DynamicContentSetCategoriesCardsPayload>(
-  DynamicContentActionTypes.DYNAMIC_CONTENT_SET_CATEGORIES_CARDS,
-);
+const setDynamicContentCategoriesCardsAction =
+  createAction<DynamicContentSetCategoriesCardsPayload>(
+    DynamicContentActionTypes.DYNAMIC_CONTENT_SET_CATEGORIES_CARDS,
+  );
 
-export const setDynamicContentMobileCards = (mobileCards: ContentCard[]) =>
+export const setDynamicContentMobileCards = (mobileCards: BrazeContentCard[]) =>
   setDynamicContentMobileCardsAction(mobileCards);
 
 const setDynamicContentMobileCardsAction = createAction<DynamicContentSetMobileCardsPayload>(
