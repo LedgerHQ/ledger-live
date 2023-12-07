@@ -146,7 +146,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
         <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
       </Flex>,
       <PortfolioGraphCard showAssets={showAssets} key="PortfolioGraphCard" />,
-      <ContentCardsLocation locationId="portfolio" />,
+      <ContentCardsLocation key="contentCardsLocationPortfolio" locationId="portfolio" />,
       showAssets ? (
         <Box background={colors.background.main} px={6} mt={6} key="PortfolioAssets">
           <RecoverBanner />
@@ -158,37 +158,37 @@ function PortfolioScreen({ navigation }: NavigationProps) {
       ) : null,
       ...(showAssets && isAWalletCardDisplayed
         ? [
-          <Box background={colors.background.main} key="CarouselTitle">
-            <SectionContainer px={0} minHeight={240} isFirst>
-              <SectionTitle
-                title={t("portfolio.carousel.title")}
-                containerProps={{ mb: 7, mx: 6 }}
-              />
-              <Carousel />
-            </SectionContainer>
-          </Box>,
-        ]
+            <Box background={colors.background.main} key="CarouselTitle">
+              <SectionContainer px={0} minHeight={240} isFirst>
+                <SectionTitle
+                  title={t("portfolio.carousel.title")}
+                  containerProps={{ mb: 7, mx: 6 }}
+                />
+                <Carousel />
+              </SectionContainer>
+            </Box>,
+          ]
         : []),
       ...(showAssets
         ? [
-          <SectionContainer px={6} isFirst={!isAWalletCardDisplayed} key="AllocationsSection">
-            <SectionTitle title={t("analytics.allocation.title")} />
-            <Flex minHeight={94}>
-              <AllocationsSection />
-            </Flex>
-          </SectionContainer>,
-          <SectionContainer px={6} key="PortfolioOperationsHistorySection">
-            <SectionTitle title={t("analytics.operations.title")} />
-            <PortfolioOperationsHistorySection />
-          </SectionContainer>,
-        ]
+            <SectionContainer px={6} isFirst={!isAWalletCardDisplayed} key="AllocationsSection">
+              <SectionTitle title={t("analytics.allocation.title")} />
+              <Flex minHeight={94}>
+                <AllocationsSection />
+              </Flex>
+            </SectionContainer>,
+            <SectionContainer px={6} key="PortfolioOperationsHistorySection">
+              <SectionTitle title={t("analytics.operations.title")} />
+              <PortfolioOperationsHistorySection />
+            </SectionContainer>,
+          ]
         : [
-          // If the user has no accounts we display an empty state
-          <Flex flexDirection="column" rowGap={30} mx={6} key="PortfolioEmptyState">
-            <RecoverBanner />
-            <PortfolioEmptyState openAddAccountModal={openAddModal} />
-          </Flex>,
-        ]),
+            // If the user has no accounts we display an empty state
+            <Flex flexDirection="column" rowGap={30} mx={6} key="PortfolioEmptyState">
+              <RecoverBanner />
+              <PortfolioEmptyState openAddAccountModal={openAddModal} />
+            </Flex>,
+          ]),
     ],
     [
       onBackFromUpdate,

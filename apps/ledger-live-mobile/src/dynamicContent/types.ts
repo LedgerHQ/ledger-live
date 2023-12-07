@@ -1,3 +1,5 @@
+import { ContentCard as BrazeContentCard } from "@braze/react-native-sdk";
+
 enum ContentCardsType {
   action = "action",
   category = "category",
@@ -21,7 +23,7 @@ enum Background {
   red = "red",
 }
 
-type ContentCard = {
+type ContentCardCommonProperties = {
   id: string;
   categoryId?: string;
   location?: LocationContentCard;
@@ -30,7 +32,7 @@ type ContentCard = {
   order?: number;
 };
 
-type CategoryContentCard = ContentCard & {
+type CategoryContentCard = ContentCardCommonProperties & {
   cardsLayout: ContentCardsLayout;
   cardsType: ContentCardsType;
   type: ContentCardsType.category;
@@ -38,9 +40,10 @@ type CategoryContentCard = ContentCard & {
   description?: string;
   cta?: string;
   link?: string;
+  isDismissable?: boolean;
 };
 
-type WalletContentCard = ContentCard & {
+type WalletContentCard = ContentCardCommonProperties & {
   tag?: string;
   title?: string;
   link?: string;
@@ -48,7 +51,7 @@ type WalletContentCard = ContentCard & {
   background?: Background;
 };
 
-type AssetContentCard = ContentCard & {
+type AssetContentCard = ContentCardCommonProperties & {
   tag?: string;
   title?: string;
   link?: string;
@@ -58,14 +61,14 @@ type AssetContentCard = ContentCard & {
   assets?: string;
 };
 
-type LearnContentCard = ContentCard & {
+type LearnContentCard = ContentCardCommonProperties & {
   tag?: string;
   title?: string;
   link?: string;
   image?: string;
 };
 
-type NotificationContentCard = ContentCard & {
+type NotificationContentCard = ContentCardCommonProperties & {
   tag?: string;
   title?: string;
   link?: string;
@@ -73,12 +76,31 @@ type NotificationContentCard = ContentCard & {
   cta?: string;
 };
 
+type HorizontalContentCard = ContentCardCommonProperties & {
+  tag?: string;
+  title?: string;
+  link?: string;
+  description?: string;
+  image?: string;
+};
+
+type AnyContentCard =
+  | CategoryContentCard
+  | WalletContentCard
+  | AssetContentCard
+  | LearnContentCard
+  | NotificationContentCard
+  | HorizontalContentCard;
+
 export type {
-  ContentCard,
+  ContentCardCommonProperties,
   AssetContentCard,
   WalletContentCard,
   NotificationContentCard,
   LearnContentCard,
   CategoryContentCard,
+  HorizontalContentCard,
+  BrazeContentCard,
+  AnyContentCard,
 };
-export { LocationContentCard, Background, ContentCardsType };
+export { LocationContentCard, Background, ContentCardsLayout, ContentCardsType };

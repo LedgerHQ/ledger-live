@@ -1,8 +1,11 @@
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
-import React from "react";
+import React, { ComponentProps } from "react";
 import { Image as NativeImage, Pressable } from "react-native";
 import { useTheme } from "styled-components/native";
-import { ButtonAction } from "~/contentCards/types";
+import { TouchableOpacity } from "react-native-gesture-handler";
+
+type ButtonAction = ComponentProps<typeof TouchableOpacity>["onPress"];
+
 export const Image = ({ uri }: { uri: string }) => {
   return (
     <Flex width={40} height={40}>
@@ -47,7 +50,7 @@ export const Subtitle = ({ label }: LabelProps) => {
   const { colors } = useTheme();
 
   return (
-    <Text variant="paragraph" fontWeight="medium" color={colors.neutral.c70}>
+    <Text variant="paragraph" fontWeight="medium" color={colors.neutral.c70} numberOfLines={1}>
       {label}
     </Text>
   );

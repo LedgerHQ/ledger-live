@@ -6,14 +6,14 @@ import {
   View,
   useWindowDimensions,
 } from "react-native";
-import Animated, { FadeOut, Layout, SlideInRight } from "react-native-reanimated";
+import Animated, { Layout, SlideInRight } from "react-native-reanimated";
 import { useTheme } from "styled-components/native";
 import Pagination from "./pagination";
-import { CarouselItem } from "~/contentCards/layouts/carousel/types";
+import { ContentCardItem } from "~/contentCards/layouts/types";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type Props<P = any> = {
-  items: CarouselItem<P>[];
+  items: ContentCardItem<{ id: string } & P>[];
 
   styles?: {
     gap?: number;
@@ -26,9 +26,6 @@ const defaultStyles = {
   pagination: true,
 };
 
-/**
- *
- */
 const Carousel = <P,>({ items: initialItems, styles: _styles = defaultStyles }: Props<P>) => {
   const { width } = useWindowDimensions();
   const styles = {
@@ -39,9 +36,7 @@ const Carousel = <P,>({ items: initialItems, styles: _styles = defaultStyles }: 
 
   const carouselRef = useRef<FlatList>(null);
   const [carouselIndex, setCarouselIndex] = useState(0);
-  const [carouselItems, setCarouselItems] = useState(
-    initialItems.filter(({ props }) => props.metadata.displayed),
-  );
+  const [carouselItems, setCarouselItems] = useState(initialItems);
 
   const setIndexOnScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const contentOffsetX = e.nativeEvent.contentOffset.x;
@@ -50,7 +45,7 @@ const Carousel = <P,>({ items: initialItems, styles: _styles = defaultStyles }: 
   };
 
   useEffect(() => {
-    setCarouselItems(() => initialItems.filter(({ props }) => props.metadata.displayed));
+    setCarouselItems(initialItems);
   }, [initialItems]);
 
   return (
@@ -66,12 +61,11 @@ const Carousel = <P,>({ items: initialItems, styles: _styles = defaultStyles }: 
         snapToInterval={width - separatorWidth * 1.5}
         decelerationRate={0}
         contentContainerStyle={{ paddingHorizontal: separatorWidth }}
-        //
         data={carouselItems}
         ItemSeparatorComponent={() => <View style={{ width: separatorWidth / 2 }} />}
         renderItem={({ item }) => (
           <Animated.View
-            key={item.props.metadata.id}
+            key={item.props.id}
             entering={SlideInRight}
             layout={Layout.duration(100)}
             style={{

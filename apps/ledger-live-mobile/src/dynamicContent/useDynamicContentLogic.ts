@@ -19,8 +19,8 @@ import {
   mapAsCategoryContentCard,
   getMobileContentCards,
   compareCards,
-} from "./dynamicContent";
-import { LocationContentCard, ContentCardsType } from "./types";
+} from "../contentCards/cards/utils";
+import { LocationContentCard, ContentCardsType, BrazeContentCard } from "./types";
 
 export const useDynamicContentLogic = () => {
   const dispatch = useDispatch();
@@ -28,7 +28,7 @@ export const useDynamicContentLogic = () => {
 
   const fetchData = useCallback(async () => {
     // Fetch data from Braze
-    const contentCards = await Braze.getContentCards();
+    const contentCards: BrazeContentCard[] = await Braze.getContentCards();
     const mobileContentCards = getMobileContentCards(contentCards);
     // Filtering v0
     const walletCards = filterByPage(mobileContentCards, LocationContentCard.Wallet)

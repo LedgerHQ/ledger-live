@@ -3,23 +3,25 @@ import React from "react";
 import { TouchableOpacity } from "react-native";
 import { useTheme } from "styled-components/native";
 import { Close, Image, Subtitle, Tag, Title } from "~/contentCards/cards/horizontal/elements";
-import { ContentCardMetadata } from "~/contentCards/types";
 
 type Props = {
+  id: string;
   title: string;
-  subtitle: string;
+  description: string;
   image: string;
   tag?: string;
-} & ContentCardMetadata;
+  onDismiss?: () => void;
+  onClick?: () => void;
+};
 
-const HorizontalCard = ({ title, subtitle, image, tag, metadata }: Props) => {
+const HorizontalCard = ({ id, title, description, image, tag, onDismiss, onClick }: Props) => {
   const { colors, space } = useTheme();
 
-  const isDismissable = !!metadata.onDismiss;
+  const isDismissable = !!onDismiss;
   const isTag = !!tag;
 
   return (
-    <TouchableOpacity onPress={metadata.onClick}>
+    <TouchableOpacity onPress={onClick} key={id}>
       <Flex
         bg={colors.opacityDefault.c05}
         p="13px"
@@ -29,7 +31,7 @@ const HorizontalCard = ({ title, subtitle, image, tag, metadata }: Props) => {
         alignItems="center"
         columnGap={13}
       >
-        <Image uri={image} />
+        {image ? <Image uri={image} /> : null}
 
         <Flex flexGrow={1} rowGap={space[2]}>
           <Flex flexDirection="row" justifyContent="space-between" columnGap={space[3]}>
@@ -38,15 +40,11 @@ const HorizontalCard = ({ title, subtitle, image, tag, metadata }: Props) => {
             </Flex>
 
             <Flex alignSelf="center" height="16px">
-              {isDismissable ? (
-                <Close onPress={metadata.onDismiss} />
-              ) : (
-                isTag && <Tag label={tag} />
-              )}
+              {isDismissable ? <Close onPress={onDismiss} /> : isTag && <Tag label={tag} />}
             </Flex>
           </Flex>
 
-          <Subtitle label={subtitle} />
+          {description ? <Subtitle label={description} /> : null}
         </Flex>
       </Flex>
     </TouchableOpacity>
