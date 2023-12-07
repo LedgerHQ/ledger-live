@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { Flex, Text } from "@ledgerhq/react-ui";
-import { DeviceAlreadySetup } from "@ledgerhq/live-common/errors";
+import { DeviceAlreadySetup, DeviceNotOnboarded } from "@ledgerhq/live-common/errors";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import OnboardingNavHeader from "../Onboarding/OnboardingNavHeader";
@@ -55,7 +55,10 @@ const RecoverRestore = () => {
         }
       },
       error: (error: Error) => {
-        if (error instanceof TransportStatusError && error.message.includes("0x6d06")) {
+        if (
+          (error instanceof TransportStatusError && error.message.includes("0x6d06")) ||
+          error instanceof DeviceNotOnboarded
+        ) {
           setState({
             isOnboarded: false,
             isInRecoveryMode: false,
