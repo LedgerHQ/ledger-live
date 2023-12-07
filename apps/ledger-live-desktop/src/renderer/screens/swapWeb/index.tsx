@@ -35,12 +35,6 @@ const Swap = () => {
         "Failed to load swap live app using WebPlatformPlayer in SwapWeb",
       ),
     );
-    /**
-     * TODO:
-     * Should redirect back to the Swap2/Form,
-     * with a parameter to indicate swap live app not available,
-     * then fall back to use native swap flow.
-     */
     history.goBack();
   }, 500);
 
