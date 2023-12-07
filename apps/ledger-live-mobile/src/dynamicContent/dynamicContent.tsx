@@ -35,6 +35,7 @@ export const filterByPage = (array: BrazeContentCard[], page: string) =>
 export const filterByType = (array: BrazeContentCard[], type: ContentCardsType) =>
   array.filter(elem => elem.extras.type === type);
 
+
 export const compareCards = (a: LedgerContentCard, b: LedgerContentCard) => {
   if (a.order && !b.order) {
     return -1;
@@ -106,20 +107,17 @@ export const mapAsNotificationContentCard = (card: BrazeContentCard) =>
 export const mapAsCategoryContentCard = (card: BrazeContentCard) =>
   ({
     id: card.id,
-
+    location: card.extras.location,
+    createdAt: card.created,
+    viewed: card.viewed,
+    order: parseInt(card.extras.order) ? parseInt(card.extras.order) : undefined,
+    cardsLayout: card.extras.cardsLayout,
+    cardsType: card.extras.cardsType,
+    type: card.extras.type,
     title: card.extras.title,
     description: card.extras.description,
     link: card.extras.link,
     cta: card.extras.cta,
-
-    category: ContentCardsType.category,
-
-    createdAt: card.created,
-    viewed: card.viewed,
-    order: parseInt(card.extras.order) ? parseInt(card.extras.order) : undefined,
-
-    location: card.extras.location,
-    tag: card.extras.tag,
   }) as CategoryContentCard;
 
 const useDynamicContent = () => {
@@ -155,8 +153,8 @@ const useDynamicContent = () => {
 
       return assetsCardsDisplayed.find(
         (ac: AssetContentCard) =>
-          ac.assets.toLowerCase().includes(currency.id.toLowerCase()) ||
-          ac.assets.toUpperCase().includes(currency.ticker.toUpperCase()) ||
+          (ac.assets && ac.assets.toLowerCase().includes(currency.id.toLowerCase())) ||
+          (ac.assets && ac.assets.toUpperCase().includes(currency.ticker.toUpperCase())) ||
           ac.displayOnEveryAssets,
       );
     },

@@ -1,5 +1,12 @@
 enum ContentCardsType {
+  action = "action",
   category = "category",
+}
+
+enum ContentCardsLayout {
+  unique = "unique",
+  carousel = "carousel",
+  grid = "grid",
 }
 
 enum LocationContentCard {
@@ -16,45 +23,54 @@ enum Background {
 
 type ContentCard = {
   id: string;
-  location: LocationContentCard;
-  title: string;
-  link?: string;
-  image?: string;
-  tag: string;
-  createdAt: number;
-  order?: number;
   categoryId?: string;
+  location?: LocationContentCard;
+  createdAt: number;
+  viewed: boolean;
+  order?: number;
 };
 
-type CategoryContentCard = {
-  id: string;
-  location: LocationContentCard;
-
+type CategoryContentCard = ContentCard & {
+  cardsLayout: ContentCardsLayout;
+  cardsType: ContentCardsType;
+  type: ContentCardsType.category;
   title?: string;
   description?: string;
   cta?: string;
   link?: string;
-  image?: string;
-  createdAt: number;
-  order?: number;
 };
 
 type WalletContentCard = ContentCard & {
+  tag?: string;
+  title?: string;
+  link?: string;
+  image?: string;
   background?: Background;
 };
 
 type AssetContentCard = ContentCard & {
-  assets: string;
-  cta: string;
+  tag?: string;
+  title?: string;
+  link?: string;
+  image?: string;
+  cta?: string;
   displayOnEveryAssets?: boolean;
+  assets?: string;
 };
 
-type LearnContentCard = ContentCard;
+type LearnContentCard = ContentCard & {
+  tag?: string;
+  title?: string;
+  link?: string;
+  image?: string;
+};
 
 type NotificationContentCard = ContentCard & {
+  tag?: string;
+  title?: string;
+  link?: string;
+  description?: string;
   cta?: string;
-  createdAt: number;
-  viewed: boolean;
 };
 
 export type {
