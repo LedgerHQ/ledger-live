@@ -17,7 +17,7 @@ const currency = getCryptoCurrencyById("cardano");
 const minBalanceRequired = parseCurrencyUnit(currency.units[0], "2.2");
 const minBalanceRequiredForMaxSend = parseCurrencyUnit(currency.units[0], "1");
 const minBalanceRequiredForDelegate = parseCurrencyUnit(currency.units[0], "3");
-const minSpendableRequiredForTokenTx = parseCurrencyUnit(currency.units[0], "3");
+const minSpendableRequiredForTokenTx = parseCurrencyUnit(currency.units[0], "1");
 
 const cardano: AppSpec<Transaction> = {
   name: "cardano",
