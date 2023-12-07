@@ -285,7 +285,8 @@ const SwapForm = () => {
 
       history.push({
         // This looks like an issue, the proper signature is: push(path, [state]) - (function) Pushes a new entry onto the history stack
-        ...(customDappUrl ? { customDappUrl } : {}),
+        // @ts-expect-error so customDappUrl is not expected to be here
+        customDappUrl,
         pathname,
         state,
       });
