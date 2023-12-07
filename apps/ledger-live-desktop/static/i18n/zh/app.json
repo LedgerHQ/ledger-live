@@ -284,7 +284,7 @@
     "lend" : "借出",
     "catalog" : "探索",
     "market" : "市场",
-    "recover" : "Ledger Recover"
+    "recover" : "[L] Recover"
   },
   "stars" : {
     "placeholder" : "星标账户以在此显示。",
@@ -764,6 +764,8 @@
     "energyTooltip" : "冻结资产以获得能量",
     "delegatedTooltip" : "委托资产用于投票流程。这代表您的总得票数。",
     "undelegatingTooltip" : "取消委托的资产在 {{timelockInDays}} 天锁定期后才能使用。",
+    "claimableRewards" : "可领取的奖励",
+    "claimableRewardsTooltip" : "目前，领取 USDC 奖励的选项无法使用。请使用第三方钱包领取。",
     "banner" : {
       "redelegation" : {
         "title" : "您知道吗……",
@@ -1166,11 +1168,13 @@
       },
       "pinContent" : {
         "title" : "识别码",
+        "titleCompleted" : "识别码已设置",
         "description" : "就像其他密码一样，识别码可以让您解锁 {{productName}}，同时防止他人未经许可访问。",
         "continueOnDevice" : "在您的 {{productName}} 上设置识别码"
       },
       "seedContent" : {
         "title" : "秘密恢复短语",
+        "titleCompleted" : "秘密恢复短语已确认",
         "recoverSeed" : "Placeholder: Recover",
         "restoreSeed" : "务必使用 Ledger 设备生成的秘密恢复短语，最大限度提高资产的安全性。\n\n还没有秘密恢复短语？请使用您的 {{productName}} 生成新的短语。",
         "selection" : "选择最适合您的设置选项：",
@@ -1250,12 +1254,14 @@
       },
       "installApplications" : {
         "title" : "在 {{productName}} 上安装应用程序",
+        "titleCompleted" : "{{productName}} 上安装的应用程序",
         "install" : "安装",
         "skip" : "我以后再下载",
         "info" : "{{deviceName}} 上的应用程序用于批准交易。您可以随时添加或删除它们。"
       },
       "endOfSetup" : {
-        "title" : "设置结束"
+        "title" : "设置结束",
+        "titleCompleted" : "{{deviceName}} 已经就绪"
       },
       "softwareCheckAllowSecureChannelDrawer" : {
         "title" : "点按“Allow”（允许）开始正品检查"
@@ -1296,6 +1302,18 @@
       "title" : "使用 Ledger Stax 的下一步操作是什么？",
       "description" : "领取 Infinity NFT，定制其锁屏界面，或将您的资产从其他交易所转出。",
       "link" : "查看后续步骤"
+    },
+    "actions" : {
+      "buyCrypto" : {
+        "title" : "购买加密货币",
+        "description" : "从买入服务提供商根据您的偏好提供的 500 多种币和最佳报价中进行选择",
+        "actionCompletedPopupLabel" : "已购买的加密货币"
+      },
+      "assetsTransfer" : {
+        "title" : "将您的资产转移至 Ledger",
+        "description" : "轻松从比特币基地 (Coinbase) 或任何其他交易所或钱包转移资产。",
+        "actionCompletedPopupLabel" : "资产已转移"
+      }
     }
   },
   "hideNftCollection" : {
@@ -1407,6 +1425,26 @@
       "earn" : {
         "title" : "权益质押",
         "description" : "通过 Ledger 增长加密资产"
+      }
+    },
+    "recoverBanner" : {
+      "subscribeDone" : {
+        "title" : "完成添加支付卡",
+        "description" : "使用 Ledger Recover 可靠地恢复。",
+        "primaryCta" : "添加卡",
+        "secondaryCta" : "以后再说"
+      },
+      "verifyIdentity" : {
+        "title" : "完成身份验证",
+        "description" : "使用 Ledger Recover 可靠地恢复。",
+        "primaryCta" : "验证",
+        "secondaryCta" : "以后再说"
+      },
+      "connectDevice" : {
+        "title" : "连接 Ledger 设备",
+        "description" : "还差一步即可使用 Ledger Recover。",
+        "primaryCta" : "连接",
+        "secondaryCta" : "以后再说"
       }
     }
   },
@@ -1786,7 +1824,7 @@
       "capacity" : "容量",
       "used" : "已用",
       "OSVersion" : "操作系统版本",
-      "genuine" : "设备是正版的",
+      "genuine" : "检验真伪",
       "incomplete" : "部分应用程序没有被识别。请卸载并重新安装。"
     },
     "applist" : {
@@ -1903,10 +1941,12 @@
     "modal" : {
       "title" : "{{productName}} 操作系统更新",
       "steps" : {
-        "preparingUpdate" : "备份您的设置和应用程序",
+        "preparingUpdate" : "备份您的设置\n和应用程序",
         "transferringUpdate" : "正在向 {{productName}} 传输更新",
         "prepare" : "准备更新",
+        "prepareDone" : "更新可供\n安装",
         "install" : "安装更新",
+        "installDone" : "已安装\n更新",
         "restore" : "恢复设置",
         "apps" : "恢复应用程序",
         "updateMCU" : "固件更新",
@@ -1915,12 +1955,13 @@
         "osu" : "正在安装 OSU ……",
         "flash-mcu" : "MCU 更新中……",
         "flash-bootloader" : "正在更新 Bootloader 启动装载程序……",
-        "progress" : "正在安装更新 {{current}}/{{total}}",
+        "progress" : "正在安装更新",
+        "progressStep" : "正在安装更新 {{current}}/{{total}}",
         "firmware" : "正在更新固件……",
         "flash" : "正在准备您的设备……"
       },
       "confirmIdentifier" : "验证标识符",
-      "confirmIdentifierText" : "点按“安装”开始更新操作系统",
+      "confirmIdentifierText" : "点按“安装”开始\n更新操作系统",
       "identifier" : "标识符",
       "newFirmware" : "新固件 {{version}}",
       "confirmUpdate" : "请在您的设备上确认更新",
@@ -1928,10 +1969,11 @@
       "mcuFirst" : "从您的设备上断开 USB 数据线连接",
       "mcuSecond" : "按下左键，长按住的同时重新连接 USB 数据线直到屏幕出现 <1><0>{{repairProcessing}}</0></1>",
       "mcuPin" : "请等待更新完成",
+      "mcuRestart" : "{{device}} 可能会重启几次。",
       "mcuSecondNanoX" : "长按左键，直到 <1><0>{{bootloaderOption}}</0></1> 显示出来。同时按下两个按钮来确认并重新连接您的设备。",
       "mcuBlueFirst" : "持续按住设备侧面按钮10秒来关闭设备。松开按钮。",
       "mcuBlueSecond" : "持续按住设备侧面按钮至少5秒直至设备显示 Boot Options（启动选项）。轻击 Bootloader Mode（启动装载模式）。",
-      "successTitle" : "您的 {{deviceName}} 操作系统是最新的。",
+      "successTitle" : "您的 {{deviceName}} 操作系统\n是最新的。",
       "sucessCTAApps" : "重新安装应用程序",
       "SuccessCTANoApps" : "安装应用程序",
       "cancelReinstallCTA" : "安装更新",
@@ -3554,6 +3596,9 @@
       }
     }
   },
+  "graph" : {
+    "noGraphWarning" : "图表不适用于此代币"
+  },
   "near" : {
     "account" : {
       "stakedBalance" : "已权益质押的余额",
@@ -4099,8 +4144,7 @@
     "updateAvailable" : "Ledger Live 有新版本 {{version}} 可更新",
     "error" : "更新时出错。请重新下载",
     "reDownload" : "重新下载",
-    "nightlyWarning" : "此版本不能自动更新。请手动安装最新版本",
-    "downloadNow" : "下载更新"
+    "nightlyWarning" : "此版本不能自动更新。请手动安装最新版本"
   },
   "crash" : {
     "title" : "出错了",
@@ -5257,6 +5301,18 @@
       "title" : "EGLD 数额不足以支付交易费用",
       "description" : "请向您的账户发送一些 EGLD 以支付交易费用。"
     },
+    "NotEnoughVTHO" : {
+      "title" : "很抱歉，VTHO 资金不足",
+      "description" : "请确保账户内有足够的 VTHO。"
+    },
+    "MustBeVechain" : {
+      "title" : "不是 VeChain 账户",
+      "description" : "请确保币种是 VTHO 或 VET"
+    },
+    "ImpossibleToCalculateAmountAndFees" : {
+      "title" : "无法计算金额和费用",
+      "description" : "无法计算金额和费用"
+    },
     "NotEnoughBalance" : {
       "title" : "抱歉，资金不足",
       "description" : "请确保该账户资金充足。"
@@ -5672,6 +5728,9 @@
     "CardanoNotEnoughFunds" : {
       "title" : "请确保您的资金足够支付费用"
     },
+    "CardanoStakeKeyDepositError" : {
+      "title" : "请确保您有 {{depositAmount}} ADA 可用于该存款"
+    },
     "StacksMemoTooLong" : {
       "title" : "Memo 过长"
     },
@@ -5914,7 +5973,6 @@
     },
     "progress" : {
       "loading" : "正在加载……",
-      "resolving" : "解决依赖关系",
       "progress" : "在安装应用程序时，停留在 Ledger Live 中。",
       "disclaimer" : "随时在 Ledger Live 中添加或删除应用程序。",
       "skippedInfo" : "一些应用程序无法使用。适用于 {{ productName }} 的应用程序有待开发。",
