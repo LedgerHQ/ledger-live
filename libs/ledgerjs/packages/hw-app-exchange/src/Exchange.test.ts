@@ -86,8 +86,9 @@ describe("startNewTransaction", () => {
       type,
       0x00, // Data
     ]).toString("hex");
+    const expectedNonce = btoa(mockNonceResponse);
     expect(recordStore.queue[0][0]).toBe(expectCommand);
-    expect(result).toEqual(btoa(mockNonceResponse));
+    expect(result).toEqual(expectedNonce);
   });
 
   it.each([
