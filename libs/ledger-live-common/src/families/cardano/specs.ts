@@ -31,6 +31,47 @@ const cardano: AppSpec<Transaction> = {
   testTimeout: 5 * 60 * 1000,
   mutations: [
     {
+      name: "move ~10% token",
+      maxRun: 1,
+      transaction: ({ account, siblings, bridge, maxSpendable }) => {
+        invariant(maxSpendable.gte(minSpendableRequiredForTokenTx), "balance is too low");
+        const sibling = pickSiblings(siblings, maxAccounts);
+        const recipient = sibling.freshAddress;
+        const transaction = bridge.createTransaction(account);
+
+        const subAccount = account.subAccounts?.find(subAccount =>
+          subAccount.balance.gt(1),
+        ) as SubAccount;
+        invariant(subAccount, "No token account with balance");
+
+        const updates = [
+          { subAccountId: subAccount.id },
+          { recipient },
+          {
+            amount: new BigNumber(subAccount.balance.dividedBy(10)).dp(0, BigNumber.ROUND_CEIL),
+          },
+        ];
+
+        return {
+          transaction,
+          updates,
+        };
+      },
+      test: ({ operation, transaction }): void => {
+        botTest("subOperations is defined", () => expect(operation.subOperations).toBeTruthy());
+
+        botTest("there's only one subOperation", () =>
+          expect(operation.subOperations?.length).toEqual(1),
+        );
+
+        const subOperation = operation.subOperations && operation.subOperations[0];
+
+        botTest("subOperation have correct tx amount", () =>
+          expect(subOperation?.value).toEqual(transaction.amount),
+        );
+      },
+    },
+    {
       testDestination: genericTestDestination,
       name: "move ~50%",
       maxRun: 1,
@@ -110,47 +151,6 @@ const cardano: AppSpec<Transaction> = {
 
         botTest("remaining balance equals requiredAdaForTokens)", () =>
           expect(account.balance).toEqual(requiredAdaForTokens),
-        );
-      },
-    },
-    {
-      name: "move ~10% token",
-      maxRun: 1,
-      transaction: ({ account, siblings, bridge, maxSpendable }) => {
-        invariant(maxSpendable.gte(minSpendableRequiredForTokenTx), "balance is too low");
-        const sibling = pickSiblings(siblings, maxAccounts);
-        const recipient = sibling.freshAddress;
-        const transaction = bridge.createTransaction(account);
-
-        const subAccount = account.subAccounts?.find(subAccount =>
-          subAccount.balance.gt(1),
-        ) as SubAccount;
-        invariant(subAccount, "No token account with balance");
-
-        const updates = [
-          { subAccountId: subAccount.id },
-          { recipient },
-          {
-            amount: new BigNumber(subAccount.balance.dividedBy(10)).dp(0, BigNumber.ROUND_CEIL),
-          },
-        ];
-
-        return {
-          transaction,
-          updates,
-        };
-      },
-      test: ({ operation, transaction }): void => {
-        botTest("subOperations is defined", () => expect(operation.subOperations).toBeTruthy());
-
-        botTest("there's only one subOperation", () =>
-          expect(operation.subOperations?.length).toEqual(1),
-        );
-
-        const subOperation = operation.subOperations && operation.subOperations[0];
-
-        botTest("subOperation have correct tx amount", () =>
-          expect(subOperation?.value).toEqual(transaction.amount),
         );
       },
     },
