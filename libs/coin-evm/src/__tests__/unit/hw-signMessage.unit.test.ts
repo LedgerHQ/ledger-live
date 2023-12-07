@@ -18,12 +18,14 @@ const signEIP712HashedMessage = jest.fn(async () => ({
   s: "08",
   v: 9,
 }));
+const setLoadConfig = jest.fn();
 
 const signerContextMock: any = async (deviceId: string, fn: any) => {
   return fn({
     signPersonalMessage,
     signEIP712Message,
     signEIP712HashedMessage,
+    setLoadConfig,
   });
 };
 
