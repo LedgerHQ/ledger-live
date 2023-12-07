@@ -168,6 +168,7 @@ export default class OnboardingSteps {
   async addDeviceViaUSB(device: ModelId) {
     const nano = getUSBDevice(device);
     bridge.addDevicesUSB(nano);
+    await waitForElementByText(nano.deviceName);
     await tapByText(nano.deviceName);
     await new DeviceAction(nano).accessManager();
   }
