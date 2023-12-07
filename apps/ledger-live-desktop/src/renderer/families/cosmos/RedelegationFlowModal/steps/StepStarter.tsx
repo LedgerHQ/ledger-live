@@ -12,8 +12,9 @@ import Alert from "~/renderer/components/Alert";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import { openURL } from "~/renderer/linking";
 import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
+import { urls } from "~/config/urls";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 
-import { StakingCoin, useStakingUrl } from "~/config/urls/urls-localized";
 const RewardImg = styled.img.attrs(() => ({
   src: Rewards,
 }))`
@@ -63,7 +64,7 @@ export default function StepStarter({ account, transaction }: StepProps) {
 }
 export function StepStarterFooter({ transitionTo, account, onClose }: StepProps) {
   invariant(account, "account required");
-  const stakingUrl = useStakingUrl(StakingCoin.cosmos);
+  const stakingUrl = useLocalizedUrl(urls.stakingCosmos);
   return (
     <>
       <LinkWithExternalIcon

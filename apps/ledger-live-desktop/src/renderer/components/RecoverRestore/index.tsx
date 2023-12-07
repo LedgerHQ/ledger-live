@@ -22,8 +22,9 @@ import {
 } from "@ledgerhq/live-common/hw/extractOnboardingState";
 import { FirmwareInfo, SeedPhraseType } from "@ledgerhq/types-live";
 import { renderError } from "../DeviceAction/rendering";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { urls } from "~/config/urls";
 import { isDeviceNotOnboardedError } from "../DeviceAction/utils";
-import { useDynamicUrl } from "~/config/urls/urls-localized";
 
 const RecoverRestore = () => {
   const { t } = useTranslation();
@@ -33,7 +34,7 @@ const RecoverRestore = () => {
   const [state, setState] = useState<OnboardingState>();
   const [error, setError] = useState<Error>();
   const { setDeviceModelId } = useContext(OnboardingContext);
-  const buyNew = useDynamicUrl("buyNew");
+  const buyNew = useLocalizedUrl(urls.buyNew);
   const sub = useRef<Subscription>();
   const recoverDiscoverPath = useMemo(() => {
     return `/recover/${recoverFF?.params?.protectId}?redirectTo=disclaimerRestore`;

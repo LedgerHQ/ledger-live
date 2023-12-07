@@ -10,7 +10,8 @@ import Button from "~/renderer/components/Button";
 import Box from "~/renderer/components/Box";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import { StepProps } from "../types";
-import { StakingCoin, useStakingUrl } from "~/config/urls/urls-localized";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { urls } from "~/config/urls";
 const Row = styled(Box).attrs(p => ({
   horizontal: true,
   justifyContent: "flex-start",
@@ -28,7 +29,7 @@ const StepStarter = ({ transitionTo, t, openedWithAccount, eventType }: StepProp
     if (openedWithAccount) transitionTo("summary");
     else transitionTo("account");
   }, [transitionTo, openedWithAccount]);
-  const stakingUrl = useStakingUrl(StakingCoin.tezos);
+  const stakingUrl = useLocalizedUrl(urls.stakingTezos);
   return (
     <Box flow={4} mx={4}>
       <TrackPage

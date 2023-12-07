@@ -10,7 +10,7 @@ import {
 } from "@ledgerhq/live-common/families/cosmos/react";
 import { mapUnbondings, canDelegate } from "@ledgerhq/live-common/families/cosmos/logic";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
-import { urls } from "~/config/urls/urls";
+import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import { openModal } from "~/renderer/actions/modals";
 import Text from "~/renderer/components/Text";
@@ -28,7 +28,7 @@ import TableContainer, { TableHeader } from "~/renderer/components/TableContaine
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import { DelegationActionsModalName } from "../modals";
 import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
-import { StakingCoin, useStakingUrl } from "~/config/urls/urls-localized";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 
 const Wrapper = styled(Box).attrs(() => ({
   p: 3,
@@ -47,7 +47,7 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
     unbondings,
   } = cosmosResources;
 
-  const stakingUrl = useStakingUrl(StakingCoin.cosmos);
+  const stakingUrl = useLocalizedUrl(urls.stakingCosmos);
 
   const delegationEnabled = canDelegate(account);
   const mappedDelegations = useCosmosFamilyMappedDelegations(account);

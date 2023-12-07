@@ -8,11 +8,11 @@ import NanoDeviceCheckIcon from "~/renderer/icons/NanoDeviceCheckIcon";
 
 import { Box, Button, IconsLegacy, Link, Popin, Text } from "@ledgerhq/react-ui";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { urls } from "~/config/urls/urls";
+import { urls } from "~/config/urls";
 import Animation from "~/renderer/animations";
 import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
 import { openURL } from "~/renderer/linking";
-import { useDynamicUrl } from "~/config/urls/urls-localized";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { OnboardingContext } from "../../../index";
 
 export function RecoverHowTo() {
@@ -37,7 +37,7 @@ export function RecoverHowTo() {
 
   const onClickArticleLink = useCallback(() => openURL(urls.howToUpdateNewLedger), []);
 
-  const urlFaq = useDynamicUrl("faq");
+  const urlFaq = useLocalizedUrl(urls.faq);
 
   const onClickSupportLink = () => openURL(urlFaq);
 

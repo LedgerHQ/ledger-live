@@ -4,7 +4,7 @@ import Box from "~/renderer/components/Box/Box";
 import Alert from "~/renderer/components/Alert";
 import Text from "~/renderer/components/Text";
 import { useTranslation } from "react-i18next";
-import { urls } from "~/config/urls/urls";
+import { urls } from "~/config/urls";
 
 const Container = styled(Box).attrs(() => ({
   mb: 24,

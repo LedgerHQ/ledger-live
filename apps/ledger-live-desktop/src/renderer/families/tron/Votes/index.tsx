@@ -30,7 +30,8 @@ import { useDiscreetMode } from "~/renderer/components/Discreet";
 import { localeSelector } from "~/renderer/reducers/settings";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
 import { TronAccount } from "@ledgerhq/live-common/families/tron/types";
-import { StakingCoin, useStakingUrl } from "~/config/urls/urls-localized";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { urls } from "~/config/urls";
 
 const Wrapper = styled(Box).attrs(() => ({
   p: 3,
@@ -42,7 +43,7 @@ const Wrapper = styled(Box).attrs(() => ({
 const Delegation = ({ account }: { account: TronAccount }) => {
   const locale = useSelector(localeSelector);
   const superRepresentatives = useTronSuperRepresentatives();
-  const stakingUrl = useStakingUrl(StakingCoin.tron);
+  const stakingUrl = useLocalizedUrl(urls.stakingTron);
   const lastVoteDate = getLastVotedDate(account);
   const duration = useMemo(
     () => (lastVoteDate ? moment().diff(lastVoteDate, "days") : 0),

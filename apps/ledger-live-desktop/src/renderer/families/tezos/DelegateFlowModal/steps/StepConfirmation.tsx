@@ -19,7 +19,8 @@ import { setDrawer } from "~/renderer/drawers/Provider";
 import { StepProps } from "../types";
 import { useEffect } from "react";
 import { useBaker } from "@ledgerhq/live-common/families/tezos/bakers";
-import { StakingCoin, useStakingUrl } from "~/config/urls/urls-localized";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { urls } from "~/config/urls";
 
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
@@ -121,7 +122,7 @@ export const StepConfirmationFooter = ({
   error,
   onClose,
 }: StepProps) => {
-  const stakingUrl = useStakingUrl(StakingCoin.tezos);
+  const stakingUrl = useLocalizedUrl(urls.stakingTezos);
   const concernedOperation = optimisticOperation
     ? optimisticOperation.subOperations && optimisticOperation.subOperations.length > 0
       ? optimisticOperation.subOperations[0]

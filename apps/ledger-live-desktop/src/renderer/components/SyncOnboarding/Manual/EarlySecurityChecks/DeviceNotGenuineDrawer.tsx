@@ -9,7 +9,7 @@ import { setDrawer } from "~/renderer/drawers/Provider";
 import { openURL } from "~/renderer/linking";
 import { useSelector } from "react-redux";
 import { localeSelector } from "~/renderer/reducers/settings";
-import { urls } from "~/config/urls/urls";
+import { urls } from "~/config/urls";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
 import { ErrorBody } from "~/renderer/components/ErrorBody";

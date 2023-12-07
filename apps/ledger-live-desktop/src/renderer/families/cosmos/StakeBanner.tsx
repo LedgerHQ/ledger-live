@@ -10,11 +10,12 @@ import { openModal } from "~/renderer/actions/modals";
 import { useDispatch } from "react-redux";
 import { track } from "~/renderer/analytics/segment";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
-import { StakingCoin, useStakingUrl } from "~/config/urls/urls-localized";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { urls } from "~/config/urls";
 
 const StakeBanner: React.FC<{ account: CosmosAccount }> = ({ account }) => {
   const dispatch = useDispatch();
-  const stakingUrl = useStakingUrl(StakingCoin.cosmos);
+  const stakingUrl = useLocalizedUrl(urls.stakingCosmos);
   const { t } = useTranslation();
   const stakeAccountBanner = useFeature("stakeAccountBanner");
   const stakeAccountBannerParams: StakeAccountBannerParams | null =

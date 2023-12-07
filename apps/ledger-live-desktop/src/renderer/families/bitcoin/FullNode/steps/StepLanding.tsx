@@ -7,7 +7,7 @@ import { Trans } from "react-i18next";
 import IconCheckFull from "~/renderer/icons/CheckFull";
 import fullnodeIllustration from "~/renderer/images/fullnode.png";
 import Button from "~/renderer/components/Button";
-import { urls } from "~/config/urls/urls";
+import { urls } from "~/config/urls";
 
 const Illustration = styled.div`
   margin-bottom: 24px;

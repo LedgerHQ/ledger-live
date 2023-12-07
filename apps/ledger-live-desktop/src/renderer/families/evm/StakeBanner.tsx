@@ -8,7 +8,8 @@ import { track } from "~/renderer/analytics/segment";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import React from "react";
 import { StakeAccountBannerParams } from "~/renderer/screens/account/types";
-import { StakingCoin, useStakingUrl } from "~/config/urls/urls-localized";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { urls } from "~/config/urls";
 
 /**
  * This needs to stay a constant because it serves a different from
@@ -30,7 +31,7 @@ const StakeBanner: React.FC<{ account: Account }> = ({ account }) => {
     stakeAccountBanner?.params ?? null;
   const { stakeProvider } = getAccountBannerState(account);
 
-  const stakingUrl = useStakingUrl(StakingCoin.ethereum);
+  const stakingUrl = useLocalizedUrl(urls.stakingEthereum);
 
   if (stakeProvider === "lido" && !stakeAccountBannerParams?.eth?.lido) return null;
   if (stakeProvider === "kiln" && !stakeAccountBannerParams?.eth?.kiln) return null;

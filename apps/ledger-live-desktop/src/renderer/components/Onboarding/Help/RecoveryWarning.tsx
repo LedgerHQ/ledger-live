@@ -2,7 +2,8 @@ import { Text } from "@ledgerhq/react-ui";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
-import { useDynamicUrl } from "~/config/urls/urls-localized";
+import { urls } from "~/config/urls";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import FakeLink from "~/renderer/components/FakeLink";
 import { ScrollArea } from "~/renderer/components/Onboarding/ScrollArea";
 import TriangleWarning from "~/renderer/icons/TriangleWarning";
@@ -17,7 +18,7 @@ const PinHelpContainer = styled.div`
 export default function RecoveryWarning() {
   const { t } = useTranslation();
 
-  const urlFaq = useDynamicUrl("faq");
+  const urlFaq = useLocalizedUrl(urls.faq);
 
   const onClickLink = () => openURL(urlFaq);
 

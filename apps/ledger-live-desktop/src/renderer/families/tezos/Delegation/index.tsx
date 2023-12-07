@@ -15,7 +15,8 @@ import Header from "./Header";
 import Row from "./Row";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
 import { TezosAccount } from "@ledgerhq/live-common/families/tezos/types";
-import { StakingCoin, useStakingUrl } from "~/config/urls/urls-localized";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { urls } from "~/config/urls";
 
 type Props = {
   account: TezosAccount | SubAccount;
@@ -33,7 +34,7 @@ const Delegation = ({ account, parentAccount }: Props) => {
   const { t } = useTranslation();
   const delegation = useDelegation(account);
 
-  const stakingUrl = useStakingUrl(StakingCoin.tezos);
+  const stakingUrl = useLocalizedUrl(urls.stakingTezos);
 
   return account.type === "ChildAccount" && !delegation ? null : (
     <TableContainer mb={6}>
