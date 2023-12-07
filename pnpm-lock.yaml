@@ -22240,7 +22240,7 @@ packages:
       react-docgen-typescript: 2.2.2(typescript@5.1.3)
       tslib: 2.6.2
       typescript: 5.1.3
-      webpack: 5.89.0(metro@0.80.0)
+      webpack: 5.89.0(esbuild@0.19.3)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -27166,7 +27166,7 @@ packages:
       '@babel/core': 7.23.2
       find-cache-dir: 4.0.0
       schema-utils: 4.2.0
-      webpack: 5.89.0(@swc/core@1.3.96)(metro@0.80.0)
+      webpack: 5.89.0(@swc/core@1.3.96)(esbuild@0.19.3)
     dev: true
 
   /babel-plugin-add-react-displayname@0.0.5:
@@ -35366,7 +35366,7 @@ packages:
       semver: 7.5.4
       tapable: 2.2.1
       typescript: 5.1.3
-      webpack: 5.89.0(@swc/core@1.3.96)(metro@0.80.0)
+      webpack: 5.89.0(@swc/core@1.3.96)(esbuild@0.19.3)
     dev: true
 
   /form-data@2.3.3:
@@ -51472,7 +51472,7 @@ packages:
       webpack: '>=2'
     dependencies:
       '@swc/core': 1.3.96
-      webpack: 5.89.0(@swc/core@1.3.96)(metro@0.80.0)
+      webpack: 5.89.0(@swc/core@1.3.96)(esbuild@0.19.3)
     dev: true
 
   /swiper@7.4.1:
@@ -55469,7 +55469,7 @@ packages:
       mime-types: 2.1.35
       range-parser: 1.2.1
       schema-utils: 4.2.0
-      webpack: 5.89.0(@swc/core@1.3.96)(metro@0.80.0)
+      webpack: 5.89.0(@swc/core@1.3.96)(esbuild@0.19.3)
     dev: true
 
   /webpack-dev-server@4.12.0(webpack@5.76.1):
@@ -57104,25 +57104,6 @@ packages:
     resolution: {directory: libs/ui/packages/crypto-icons, type: directory}
     id: file:libs/ui/packages/crypto-icons
     name: '@ledgerhq/crypto-icons-ui'
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> 1bd2db7ecd (no need for default config)
-<<<<<<< HEAD
-    version: 0.6.1
-=======
-    version: 0.6.0
->>>>>>> 18ff7a94e5 (fix: build error)
-<<<<<<< HEAD
->>>>>>> 049d6cc765 (fix: build error)
-=======
-=======
->>>>>>> 9435050afb (no need for default config)
->>>>>>> 1bd2db7ecd (no need for default config)
-=======
->>>>>>> 2a2737e5c6 (lockfile)
     peerDependencies:
       '@types/react': '*'
       react: '*'
