@@ -478,7 +478,7 @@ const SwapForm = () => {
         </>
       )}
 
-      {isSwapLiveAppEnabled ? (
+      {isSwapLiveAppEnabled.enabled ? (
         <SwapWebView
           swapState={swapWebProps}
           liveAppUnavailable={isSwapLiveAppEnabled.onLiveAppCrashed}
