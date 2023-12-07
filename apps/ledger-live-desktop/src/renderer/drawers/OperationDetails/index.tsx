@@ -7,8 +7,11 @@ import {
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
 import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
-import { getDefaultExplorerView, getTransactionExplorer } from "@ledgerhq/live-common/explorers";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import {
+  getDefaultExplorerView,
+  getTransactionExplorer as getDefaultTransactionExplorer,
+} from "@ledgerhq/live-common/explorers";
+import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { useNftMetadata } from "@ledgerhq/live-common/nft/NftMetadataProvider/index";
 import {
   findOperationInAccount,
@@ -141,6 +144,7 @@ const OperationD = (props: Props) => {
   const location = useLocation();
   const mainAccount = getMainAccount(account, parentAccount);
   const { hash, date, senders, type, fee, recipients: _recipients, contract, tokenId } = operation;
+  const uniqueSenders = uniq(senders);
   const recipients = _recipients.filter(Boolean);
   const { name } = mainAccount;
   const isNftOperation = ["NFT_IN", "NFT_OUT"].includes(operation.type);
@@ -163,16 +167,22 @@ const OperationD = (props: Props) => {
   const IconElement = confirmationCell ? confirmationCell[operation.type] : null;
   const amountTooltip = specific?.operationDetails?.amountTooltip;
   const AmountTooltip = amountTooltip ? amountTooltip[operation.type] : null;
+
   const getURLWhatIsThis = specific?.operationDetails?.getURLWhatIsThis;
-  const getURLFeesInfo = specific?.operationDetails?.getURLFeesInfo;
   const urlWhatIsThis = getURLWhatIsThis
     ? getURLWhatIsThis({ op: operation, currencyId: cryptoCurrency.id })
     : null;
+
+  const getURLFeesInfo = specific?.operationDetails?.getURLFeesInfo;
   const urlFeesInfo = getURLFeesInfo
     ? getURLFeesInfo({ op: operation, currencyId: cryptoCurrency.id })
     : null;
-  const url = getTransactionExplorer(getDefaultExplorerView(mainAccount.currency), operation.hash);
-  const uniqueSenders = uniq(senders);
+
+  const getTransactionExplorer = specific?.getTransactionExplorer;
+  const url = getTransactionExplorer
+    ? getTransactionExplorer(getDefaultExplorerView(mainAccount.currency), operation)
+    : getDefaultTransactionExplorer(getDefaultExplorerView(mainAccount.currency), operation.hash);
+
   const OpDetailsExtra = specific?.operationDetails?.OperationDetailsExtra || OperationDetailsExtra;
   const { hasFailed } = operation;
   const subOperations: Operation[] = useMemo(
@@ -370,6 +380,7 @@ const OperationD = (props: Props) => {
           <LinkWithExternalIcon
             fontSize={4}
             onClick={() =>
+              url &&
               openURL(url, "viewOperationInExplorer", {
                 currencyId: currencyName,
               })

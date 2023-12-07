@@ -1,4 +1,6 @@
-import { DefaultFeature, Feature, Features } from "@ledgerhq/types-live";
+import { DefaultFeature, Feature, Features, FeatureMap } from "@ledgerhq/types-live";
+import { reduce } from "lodash";
+import { formatToFirebaseFeatureId } from "./firebaseFeatureFlags";
 
 /**
  * Default disabled feature.
@@ -410,4 +412,17 @@ export const DEFAULT_FEATURES: Features = {
   ptxSwapLiveApp: {
     enabled: false,
   },
+
+  ptxSwapMoonpayProvider: DEFAULT_FEATURE,
 };
+
+// Firebase SDK treat JSON values as strings
+export const formatDefaultFeatures = (config: FeatureMap) =>
+  reduce(
+    config,
+    (acc, feature, featureId) => ({
+      ...acc,
+      [formatToFirebaseFeatureId(featureId)]: JSON.stringify(feature),
+    }),
+    {},
+  );

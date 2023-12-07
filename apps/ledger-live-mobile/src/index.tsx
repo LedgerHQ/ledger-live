@@ -86,6 +86,9 @@ import {
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import useAccountsWithFundsListener from "@ledgerhq/live-common/hooks/useAccountsWithFundsListener";
 import { updateIdentify } from "./analytics";
+import { LiveConfig } from "@ledgerhq/live-config/featureFlags/index";
+import VersionNumber from "react-native-version-number";
+import { Platform } from "react-native";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -102,6 +105,12 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
   },
+});
+
+LiveConfig.init({
+  appVersion: VersionNumber.appVersion,
+  platform: Platform.OS,
+  environment: process.env.NODE_ENV ?? "development",
 });
 
 function App() {
@@ -291,9 +300,9 @@ export default class Root extends Component {
                           <StylesProvider>
                             <StyledStatusBar />
                             <NavBarColorHandler />
-                            <AuthPass>
-                              <I18nextProvider i18n={i18n}>
-                                <LocaleProvider>
+                            <I18nextProvider i18n={i18n}>
+                              <LocaleProvider>
+                                <AuthPass>
                                   <BridgeSyncProvider>
                                     <CounterValuesProvider initialState={initialCountervalues}>
                                       <ButtonUseTouchableContext.Provider value={true}>
@@ -314,9 +323,9 @@ export default class Root extends Component {
                                       </ButtonUseTouchableContext.Provider>
                                     </CounterValuesProvider>
                                   </BridgeSyncProvider>
-                                </LocaleProvider>
-                              </I18nextProvider>
-                            </AuthPass>
+                                </AuthPass>
+                              </LocaleProvider>
+                            </I18nextProvider>
                           </StylesProvider>
                         </PerformanceProvider>
                       </SafeAreaProvider>

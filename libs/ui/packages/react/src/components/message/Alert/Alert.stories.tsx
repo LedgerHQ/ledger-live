@@ -18,14 +18,16 @@ export default {
       control: {
         type: "text",
       },
-      defaultValue: "Title",
     },
     showIcon: {
       control: {
         type: "boolean",
       },
-      defaultValue: true,
     },
+  },
+  args: {
+    title: "Title",
+    showIcon: true,
   },
 };
 

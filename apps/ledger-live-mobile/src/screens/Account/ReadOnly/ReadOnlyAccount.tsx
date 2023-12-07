@@ -7,8 +7,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/live-common/currencies/index";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { useFocusEffect } from "@react-navigation/native";
-
-import { TAB_BAR_SAFE_HEIGHT } from "../../../components/TabBar/TabBarSafeAreaView";
 import ReadOnlyGraphCard from "../../../components/ReadOnlyGraphCard";
 import ReadOnlyFabActions from "../../../components/FabActions/ReadOnlyFabActions";
 import GradientContainer from "../../../components/GradientContainer";
@@ -117,7 +115,6 @@ function ReadOnlyAccount({ route }: Props) {
     <SafeAreaView style={{ flex: 1 }} edges={["bottom", "left", "right"]}>
       <TrackScreen category="Account" currency={currency.name} operationsSize={0} source={source} />
       <FlatList
-        contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
         data={data}
         renderItem={renderItem}
         keyExtractor={keyExtractor}

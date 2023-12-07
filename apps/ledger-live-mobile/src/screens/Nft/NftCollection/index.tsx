@@ -13,7 +13,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { groupAccountOperationsByDay } from "@ledgerhq/live-common/account/index";
 import { Account, DailyOperationsSection, Operation, ProtoNFT } from "@ledgerhq/types-live";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
 import NoMoreOperationFooter from "../../../components/NoMoreOperationFooter";
 import { accountScreenSelector } from "../../../reducers/accounts";
 import LoadingFooter from "../../../components/LoadingFooter";
@@ -24,9 +24,7 @@ import NftCard from "../../../components/Nft/NftCard";
 import Button from "../../../components/Button";
 import SendIcon from "../../../icons/Send";
 import { withDiscreetMode } from "../../../context/DiscreetModeContext";
-import TabBarSafeAreaView, {
-  TAB_BAR_SAFE_HEIGHT,
-} from "../../../components/TabBar/TabBarSafeAreaView";
+import TabBarSafeAreaView from "../../../components/TabBar/TabBarSafeAreaView";
 import {
   BaseComposite,
   StackNavigatorProps,
@@ -183,7 +181,6 @@ const NftCollection = ({ route }: NavigationProps) => {
           renderItem={({ item }) => item}
           keyExtractor={(item, index) => String(index)}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
         />
       </TabBarSafeAreaView>
     </>
