@@ -1,39 +1,51 @@
-import { ProviderGetValueMethod } from "./providers";
+import { Provider } from "./providers";
 
-export class LiveConfig {
-  public appVersion?: string;
-  public platform?: string;
-  public environment?: string;
-  public providerGetvalueMethod?: ProviderGetValueMethod;
+type ValidConfigTypes = {
+  string: string;
+  boolean: boolean;
+  number: number;
+  object: object;
+};
 
-  private static instance: LiveConfig; // Singleton instance
+type ConfigInfoShape<Type extends keyof ValidConfigTypes> = {
+  type: Type;
+  default: ValidConfigTypes[Type];
+};
 
-  private constructor() {}
+export type ConfigInfo =
+  | ConfigInfoShape<"string">
+  | ConfigInfoShape<"boolean">
+  | ConfigInfoShape<"number">
+  | ConfigInfoShape<"object">;
 
-  public static init(config: { appVersion: string; platform: string; environment: string }) {
-    if (!LiveConfig.instance) {
-      LiveConfig.instance = new LiveConfig();
-      LiveConfig.instance.appVersion = config.appVersion;
-      LiveConfig.instance.platform = config.platform;
-    }
+type TypeFromSchema<T extends keyof ValidConfigTypes> = T extends keyof ValidConfigTypes
+  ? ValidConfigTypes[T]
+  : never;
+
+export class LiveConfig<ConfigType extends Record<string, ConfigInfo>> {
+  public appVersion: string;
+  public platform: string;
+  public environment: string;
+  public provider: Provider;
+  public config: ConfigType;
+
+  constructor(config: {
+    appVersion: string;
+    platform: string;
+    environment: string;
+    provider: Provider;
+    config: ConfigType;
+  }) {
+    this.appVersion = config.appVersion;
+    this.platform = config.platform;
+    this.environment = config.environment;
+    this.provider = config.provider;
+    this.config = config.config;
   }
 
-  public static getInstance(): LiveConfig {
-    if (!LiveConfig.instance) {
-      throw new Error("LiveConfig instance is not initialized. Call init() first.");
-    }
-
-    return LiveConfig.instance;
-  }
-
-  public static setProviderGetValueMethod(provider2Method: ProviderGetValueMethod) {
-    if (!LiveConfig.getInstance().providerGetvalueMethod) {
-      LiveConfig.instance.providerGetvalueMethod = {};
-    }
-
-    LiveConfig.instance.providerGetvalueMethod = {
-      ...LiveConfig.instance.providerGetvalueMethod,
-      ...provider2Method,
-    };
+  getValueByKey<Config extends typeof this.config, Key extends keyof Config>(key: Key) {
+    return this.provider.getValueBykey(key, this.config[key]) as TypeFromSchema<
+      Config[Key]["type"]
+    >;
   }
 }

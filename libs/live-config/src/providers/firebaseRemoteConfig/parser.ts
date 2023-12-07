@@ -1,5 +1,5 @@
 import { Value } from "firebase/remote-config";
-import { ConfigInfo } from "../../schema";
+import { ConfigInfo } from "../../LiveConfig";
 
 const stringParser = (value: unknown): string | undefined => {
   return (value as Value).asString() || undefined;

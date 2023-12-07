@@ -1,11 +1,20 @@
 import { Provider } from "..";
-import { getValueByKey } from "./helpers";
+import { ConfigInfo } from "../../LiveConfig";
 import { parser } from "./parser";
+import { Value } from "firebase/remote-config";
 
-class FirebaseRemoteConfigProviderFactory extends Provider {
-  constructor() {
-    super("firebaseRemoteConfig", parser, getValueByKey);
+export class FirebaseRemoteConfigProvider extends Provider {
+  getValue: (key: string) => Value;
+
+  constructor(config: { getValue: (key: string) => Value }) {
+    super({ name: "firebaseRemoteConfig" });
+    this.getValue = config.getValue;
+  }
+
+  getValueBykey<K>(key: K, info: ConfigInfo) {
+    const value = this.getValue(key as string);
+    const parsedValue = parser(value, info.type);
+
+    return parsedValue ?? info.default;
   }
 }
-
-export const FirebaseRemoteConfigProvider = new FirebaseRemoteConfigProviderFactory();
