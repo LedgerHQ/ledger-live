@@ -23,6 +23,7 @@ import {
   getWalletAPITransactionSignFlowInfos,
 } from "../converters";
 import { getAccountBridge } from "../../bridge";
+import { ExchangeType } from "./types";
 
 type ESP = ExchangeStart["params"];
 type ESR = ExchangeStart["result"];
@@ -35,12 +36,6 @@ type Handlers = {
   "custom.exchange.start": RPCHandler<ESR, ESP>;
   "custom.exchange.complete": RPCHandler<ECR, ECP>;
 };
-
-export enum ExchangeType {
-  SWAP = 0x00,
-  SELL = 0x01,
-  FUND = 0x02,
-}
 
 export type CompleteExchangeUiRequest = {
   provider: string;
