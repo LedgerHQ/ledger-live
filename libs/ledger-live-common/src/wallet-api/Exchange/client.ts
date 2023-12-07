@@ -1,21 +1,21 @@
+import { CustomModule, Transaction, serializeTransaction } from "@ledgerhq/wallet-api-client";
 import {
-  CustomModule,
-  ExchangeComplete,
-  ExchangeStart,
-  Transaction,
-  serializeTransaction,
-} from "@ledgerhq/wallet-api-client";
+  ExchangeCompleteParams,
+  ExchangeCompleteResult,
+  ExchangeStartParams,
+  ExchangeStartResult,
+} from "./types";
 
+// TODO maybe find a better way to type the available custom requests with correct types
 export class ExchangeModule extends CustomModule {
   /**
-   * @alpha
    * Start the exchange process by generating a nonce on Ledger device
    * @param exchangeType - used by the exchange transport to discern between swap/sell/fund
    *
    * @returns - A transaction ID used to complete the exchange process
    */
-  async start(exchangeType: ExchangeStart["params"]["exchangeType"]) {
-    const result = await this.request<ExchangeStart["params"], ExchangeStart["result"]>(
+  async start(exchangeType: ExchangeStartParams["exchangeType"]) {
+    const result = await this.request<ExchangeStartParams, ExchangeStartResult>(
       "custom.exchange.start",
       {
         exchangeType,
@@ -26,7 +26,6 @@ export class ExchangeModule extends CustomModule {
   }
 
   /**
-   * @alpha
    * Complete an exchange swap process by passing by the exchange content and its signature.
    * User will be prompted on its device to approve the swap exchange operation.
    * If the exchange is validated, the transaction is then signed and broadcasted to the network.
@@ -63,10 +62,10 @@ export class ExchangeModule extends CustomModule {
     transaction: Transaction;
     binaryPayload: Buffer;
     signature: Buffer;
-    feeStrategy: ExchangeComplete["params"]["feeStrategy"];
+    feeStrategy: ExchangeCompleteParams["feeStrategy"];
     tokenCurrency?: string;
   }) {
-    const result = await this.request<ExchangeComplete["params"], ExchangeComplete["result"]>(
+    const result = await this.request<ExchangeCompleteParams, ExchangeCompleteResult>(
       "custom.exchange.complete",
       {
         exchangeType: "SWAP",
@@ -87,7 +86,6 @@ export class ExchangeModule extends CustomModule {
   }
 
   /**
-   * @alpha
    * Complete an exchange sell process by passing by the exchange content and its signature.
    * User will be prompted on its device to approve the sell exchange operation.
    * If the exchange is validated, the transaction is then signed and broadcasted to the network.
@@ -113,9 +111,9 @@ export class ExchangeModule extends CustomModule {
     transaction: Transaction;
     binaryPayload: Buffer;
     signature: Buffer;
-    feeStrategy: ExchangeComplete["params"]["feeStrategy"];
+    feeStrategy: ExchangeCompleteParams["feeStrategy"];
   }): Promise<string> {
-    const result = await this.request<ExchangeComplete["params"], ExchangeComplete["result"]>(
+    const result = await this.request<ExchangeCompleteParams, ExchangeCompleteResult>(
       "custom.exchange.complete",
       {
         exchangeType: "SELL",
@@ -132,7 +130,6 @@ export class ExchangeModule extends CustomModule {
   }
 
   /**
-   * @alpha
    * Complete an exchange fund process by passing by the exchange content and its signature.
    * User will be prompted on its device to approve the fund exchange operation.
    * If the exchange is validated, the transaction is then signed and broadcasted to the network.
@@ -145,7 +142,6 @@ export class ExchangeModule extends CustomModule {
    *
    * @returns - The broadcasted transaction hash.
    */
-
   async completeFund({
     provider,
     fromAccountId,
@@ -160,10 +156,10 @@ export class ExchangeModule extends CustomModule {
     transaction: Transaction;
     binaryPayload: Buffer;
     signature: Buffer;
-    feeStrategy: ExchangeComplete["params"]["feeStrategy"];
+    feeStrategy: ExchangeCompleteParams["feeStrategy"];
     tokenCurrency?: string;
   }): Promise<string> {
-    const result = await this.request<ExchangeComplete["params"], ExchangeComplete["result"]>(
+    const result = await this.request<ExchangeCompleteParams, ExchangeCompleteResult>(
       "custom.exchange.complete",
       {
         exchangeType: "FUND",
