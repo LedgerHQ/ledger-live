@@ -7,12 +7,10 @@ import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import Box from "~/renderer/components/Box";
 import { RowContainer, RowInnerContainer, CurrencyLabel } from "./shared";
-
 type Props = {
   currencies: Currency[];
   onCurrencySelect: (currency: Currency) => void;
 };
-
 const CurrencyListContainer = styled.div`
   flex: 1 1 auto;
   width: 100%;
