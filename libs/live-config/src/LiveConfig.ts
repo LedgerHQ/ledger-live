@@ -24,7 +24,7 @@ type TypeFromSchema<T extends keyof ValidConfigTypes> = T extends keyof ValidCon
 
 export type Config = Record<string, ConfigInfo>;
 
-export class LiveConfig<ConfigType extends Record<string, ConfigInfo>> {
+export class LiveConfig<ConfigType extends Config> {
   public appVersion: string;
   public platform: string;
   public environment: string;
