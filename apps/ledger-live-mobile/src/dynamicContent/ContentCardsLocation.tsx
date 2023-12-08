@@ -3,13 +3,13 @@ import { FlatList, ListRenderItem } from "react-native";
 import { Flex } from "@ledgerhq/native-ui";
 import type { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex/index";
 import useDynamicContent from "./dynamicContent";
-import { BrazeContentCard, CategoryContentCard } from "./types";
+import { BrazeContentCard, CategoryContentCard, LocationContentCard } from "./types";
 import ContentCardsCategory from "./ContentCardsCategory";
 import { FeatureToggle } from "@ledgerhq/live-config/lib/featureFlags/index";
 import { compareCards } from "~/contentCards/cards/utils";
 
 type Props = FlexBoxProps & {
-  locationId: string;
+  locationId: LocationContentCard;
 };
 
 type CategoriesWithCards = {
