@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.73.0-next.3
+
+### Patch Changes
+
+- [#5685](https://github.com/LedgerHQ/ledger-live/pull/5685) [`529db5d`](https://github.com/LedgerHQ/ledger-live/commit/529db5d65ce112957914ba1574e8a877b045188d) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Fix: not redirecting to oneinch paraswap
+
 ## 2.73.0-next.2
 
 ### Patch Changes
