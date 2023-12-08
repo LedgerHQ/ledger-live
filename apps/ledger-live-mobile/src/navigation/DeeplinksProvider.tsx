@@ -24,6 +24,7 @@ import { track } from "../analytics";
 import { setEarnInfoModal } from "../actions/earn";
 import { OptionalFeatureMap } from "@ledgerhq/types-live";
 import { blockPasswordLock } from "../actions/appstate";
+import { useStorylyContext } from "~/components/StorylyStories/StorylyProvider";
 
 const routingInstrumentation = new Sentry.ReactNavigationInstrumentation();
 
@@ -44,6 +45,11 @@ function isWalletConnectLink(url: string) {
     url.substring(0, 26) === "https://ledger.com/wc"
   );
 }
+
+function isStorylyLink(url: string) {
+  return url.startsWith("ledgerlive://storyly?");
+}
+
 // https://docs.walletconnect.com/mobile-linking#wallet-support
 function isValidWalletConnectUrl(_url: string) {
   let url = _url;
@@ -437,6 +443,7 @@ export const DeeplinksProvider = ({
   const manifests = state?.value?.liveAppByIndex || emptyObject;
   // Can be either true, false or null, meaning we don't know yet
   const userAcceptedTerms = useGeneralTermsAccepted();
+  const storylyContext = useStorylyContext();
 
   const linking = useMemo<LinkingOptions<ReactNavigation.RootParamList>>(
     () =>
@@ -464,6 +471,9 @@ export const DeeplinksProvider = ({
                   new URL(url).searchParams.get("uri")!;
               dispatch(setWallectConnectUri(uri));
               return;
+            }
+            if (isStorylyLink(url)) {
+              storylyContext.setUrl(url);
             }
 
             listener(getProxyURL(url));
@@ -559,11 +569,12 @@ export const DeeplinksProvider = ({
       }) as LinkingOptions<ReactNavigation.RootParamList>,
     [
       hasCompletedOnboarding,
+      features,
+      userAcceptedTerms,
       dispatch,
+      storylyContext,
       liveAppProviderInitialized,
       manifests,
-      userAcceptedTerms,
-      features,
     ],
   );
   const [isReady, setIsReady] = React.useState(false);
