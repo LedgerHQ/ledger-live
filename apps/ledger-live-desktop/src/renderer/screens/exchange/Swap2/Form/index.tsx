@@ -189,7 +189,7 @@ const SwapForm = () => {
   const generateMoonpayUrl = useCallback(
     ({ base = "", args = {} }: { base: string; args: { [key: string]: string | undefined } }) => {
       const moonpayURL = new URL(base || "");
-      moonpayURL.searchParams.append("ledgerlive", true);
+      moonpayURL.searchParams.append("ledgerlive", `${true}`);
       Object.entries(args).forEach(
         ([key, value]) =>
           // customFeeConfig is an object
