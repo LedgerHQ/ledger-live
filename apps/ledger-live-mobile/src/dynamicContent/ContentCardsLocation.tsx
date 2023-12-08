@@ -5,7 +5,7 @@ import type { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex/in
 import useDynamicContent from "./dynamicContent";
 import { BrazeContentCard, CategoryContentCard } from "./types";
 import ContentCardsCategory from "./ContentCardsCategory";
-import { FeatureToggle } from "@ledgerhq/live-config/lib/featureFlags";
+import { FeatureToggle } from "@ledgerhq/live-config/lib/featureFlags/index";
 import { compareCards } from "~/contentCards/cards/utils";
 
 type Props = FlexBoxProps & {
