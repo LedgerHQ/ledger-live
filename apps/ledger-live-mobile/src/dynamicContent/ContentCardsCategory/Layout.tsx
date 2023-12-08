@@ -38,7 +38,7 @@ const Layout = ({ category, cards }: LayoutProps) => {
     dismissCard(card.id);
   };
 
-  // TODO : Better type to remove any
+  // TODO : Better type to remove any (maybe use AnyContentCard)
   /* eslint-disable @typescript-eslint/no-explicit-any */
   const contentCardsTypes: Record<
     ContentCardsType,
