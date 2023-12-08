@@ -27,7 +27,7 @@ type ContentCardCommonProperties = {
   id: string;
   categoryId?: string;
   location?: LocationContentCard;
-  createdAt: number;
+  createdAt?: number;
   viewed: boolean;
   order?: number;
 };

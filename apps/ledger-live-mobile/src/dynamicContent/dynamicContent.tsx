@@ -71,8 +71,12 @@ const useDynamicContent = () => {
       params: {
         campaign?: string;
         screen?: string;
+        page?: string;
         link?: string;
         contentcard?: string;
+        type?: string;
+        layout?: string;
+        location?: string;
       },
     ) => {
       track(event, params);

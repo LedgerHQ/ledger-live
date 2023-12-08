@@ -1,5 +1,10 @@
 import React from "react";
-import { BrazeContentCard, CategoryContentCard, ContentCardsLayout } from "../types";
+import {
+  AnyContentCard,
+  BrazeContentCard,
+  CategoryContentCard,
+  ContentCardsLayout,
+} from "../types";
 import HorizontalCard from "../../contentCards/cards/horizontal";
 import { Linking } from "react-native";
 import { contentCardItem } from "../../contentCards/layouts/utils";
@@ -7,7 +12,7 @@ import Carousel from "../../contentCards/layouts/carousel";
 import useDynamicContent from "../dynamicContent";
 import { Flex } from "@ledgerhq/native-ui";
 import { ContentCardsType } from "../types";
-import { mapAsHorizontalContentCard } from "~/contentCards/cards/utils";
+import { compareCards, mapAsHorizontalContentCard } from "~/contentCards/cards/utils";
 
 type LayoutProps = {
   category: CategoryContentCard;
@@ -18,22 +23,32 @@ const Layout = ({ category, cards }: LayoutProps) => {
   // TODO : handle cards impressions with logImpressionCard
   const { logClickCard, dismissCard, trackContentCardEvent } = useDynamicContent();
 
-  const onCardCick = (card: BrazeContentCard) => {
+  const onCardCick = (card: AnyContentCard) => {
     trackContentCardEvent("contentcard_clicked", {
-      screen: card.extras.location,
-      link: card.extras.link,
+      page: card.location,
+      link: card.link,
       campaign: card.id,
+      contentcard: card.title,
+      type: category.cardsType,
+      layout: category.cardsLayout,
+      location: category.location,
     });
 
     logClickCard(card.id);
-    Linking.canOpenURL(card.extras.link).then(() => Linking.openURL(card.extras.link));
+    if (card.link) {
+      Linking.canOpenURL(card.link).then(() => Linking.openURL(card.link as string));
+    }
   };
 
-  const onCardDismiss = (card: BrazeContentCard) => {
+  const onCardDismiss = (card: AnyContentCard) => {
     trackContentCardEvent("contentcard_dismissed", {
-      screen: card.extras.location,
-      link: card.extras.link || undefined,
+      page: card.location,
+      link: card.link || undefined,
       campaign: card.id,
+      contentcard: card.title,
+      type: category.cardsType,
+      layout: category.cardsLayout,
+      location: category.location,
     });
     dismissCard(card.id);
   };
@@ -49,7 +64,7 @@ const Layout = ({ category, cards }: LayoutProps) => {
           onDismiss: (card: BrazeContentCard) => void;
         },
       ) => React.JSX.Element | null;
-      mappingFunction: (card: BrazeContentCard) => any;
+      mappingFunction: (card: BrazeContentCard) => AnyContentCard | null;
     }
   > = {
     [ContentCardsType.action]: {
@@ -59,15 +74,18 @@ const Layout = ({ category, cards }: LayoutProps) => {
     // TODO : To remove once we extract category from ContentCardsType
     [ContentCardsType.category]: {
       contentCardComponent: () => null,
-      mappingFunction: () => { },
+      mappingFunction: () => null,
     },
   };
 
   const contentCardsType = contentCardsTypes[category.cardsType];
-  const items = cards.map(card =>
+  const cardsMapped = cards.map(card => contentCardsType.mappingFunction(card));
+  const cardsSorted = (cardsMapped as AnyContentCard[]).sort(compareCards);
+
+  const items = cardsSorted.map(card =>
     contentCardItem(contentCardsType.contentCardComponent, {
-      ...contentCardsType.mappingFunction(card),
-      onClick: card.extras.link ? () => onCardCick(card) : undefined,
+      ...card,
+      onClick: card.link ? () => onCardCick(card) : undefined,
       onDismiss: category.isDismissable ? () => onCardDismiss(card) : undefined,
     }),
   );

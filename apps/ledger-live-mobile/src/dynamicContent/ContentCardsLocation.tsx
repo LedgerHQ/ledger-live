@@ -6,37 +6,41 @@ import useDynamicContent from "./dynamicContent";
 import { BrazeContentCard, CategoryContentCard } from "./types";
 import ContentCardsCategory from "./ContentCardsCategory";
 import { FeatureToggle } from "@ledgerhq/live-config/lib/featureFlags";
+import { compareCards } from "~/contentCards/cards/utils";
 
 type Props = FlexBoxProps & {
   locationId: string;
 };
 
 type CategoriesWithCards = {
-  category: CategoryContentCard,
-  cards: BrazeContentCard[]
+  category: CategoryContentCard;
+  cards: BrazeContentCard[];
 };
 
 const ContentCardsLocation = ({ locationId, ...containerProps }: Props) => {
   const { categoriesCards, mobileCards } = useDynamicContent();
 
   const renderCategory: ListRenderItem<CategoriesWithCards> = useCallback(
-    ({ item }) => <ContentCardsCategory category={item.category} categoryContentCards={item.cards} />,
+    ({ item }) => (
+      <ContentCardsCategory category={item.category} categoryContentCards={item.cards} />
+    ),
     [],
   );
 
   const categoriesToDisplay = categoriesCards.filter(
     categoryCard => categoryCard.location === locationId,
-  )
+  );
 
   if (categoriesToDisplay.length === 0) return null;
 
-  const categoriesWithCards = categoriesToDisplay.map(category => ({
+  const categoriesSorted = categoriesToDisplay.sort(compareCards);
+  const categoriesWithCards = categoriesSorted.map(category => ({
     category,
-    cards: mobileCards.filter(
-      mobileCard => mobileCard.extras.categoryId === category.categoryId,
-    ),
-  }))
-  const categoriesWithAtLeastOneCard = [...categoriesWithCards.filter(categoryWithCards => categoryWithCards.cards.length > 0), ...categoriesWithCards.filter(categoryWithCards => categoryWithCards.cards.length > 0), ...categoriesWithCards.filter(categoryWithCards => categoryWithCards.cards.length > 0)];
+    cards: mobileCards.filter(mobileCard => mobileCard.extras.categoryId === category.categoryId),
+  }));
+  const categoriesWithAtLeastOneCard = categoriesWithCards.filter(
+    categoryWithCards => categoryWithCards.cards.length > 0,
+  );
 
   return (
     <Flex {...containerProps}>
