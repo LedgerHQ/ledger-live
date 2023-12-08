@@ -48,7 +48,7 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
   } = cosmosResources;
 
   const stakingUrl = useLocalizedUrl(urls.stakingCosmos);
-
+  const validatorUrl = useLocalizedUrl(urls.ledgerValidator);
   const delegationEnabled = canDelegate(account);
   const mappedDelegations = useCosmosFamilyMappedDelegations(account);
   const currencyId = account.currency.id;
@@ -91,13 +91,13 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
   const onExternalLink = useCallback(
     (address: string) => {
       if (cosmosBase.COSMOS_FAMILY_LEDGER_VALIDATOR_ADDRESSES.includes(address)) {
-        openURL(urls.ledgerValidator);
+        openURL(validatorUrl);
       } else {
         const srURL = explorerView && getAddressExplorer(explorerView, address);
         if (srURL) openURL(srURL);
       }
     },
-    [explorerView],
+    [explorerView, validatorUrl],
   );
   const hasDelegations = delegations.length > 0;
   const hasUnbondings = unbondings && unbondings.length > 0;

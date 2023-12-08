@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from "react";
+import React, { useContext } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { AnimationContainer, AsideFooter, Bullet, Column, Title } from "../shared";
 
@@ -35,7 +35,8 @@ export function RecoverHowTo() {
     },
   ];
 
-  const onClickArticleLink = useCallback(() => openURL(urls.howToUpdateNewLedger), []);
+  const howToUpdateNewLedgerUrl = useLocalizedUrl(urls.howToUpdateNewLedger);
+  const onClickArticleLink = () => openURL(howToUpdateNewLedgerUrl);
 
   const urlFaq = useLocalizedUrl(urls.faq);
 
