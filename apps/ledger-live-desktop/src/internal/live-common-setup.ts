@@ -61,6 +61,7 @@ if (getEnv("DEVICE_PROXY_URL")) {
         },
       });
 
+      // No retry in the `internal` process - only the `renderer` process decides to retry
       return TransportNodeHidSingleton.open(id, timeoutMs, context);
     },
     disconnect: () => {

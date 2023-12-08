@@ -190,6 +190,13 @@ function rendererRequest(channel: string, data: unknown): Promise<unknown> {
     // This channel name will be constructed the same way on the main thread to send back a response
     const replyChannel = `${channel}_RESPONSE_${requestId}`;
 
+    trace({
+      type: LOG_TYPE,
+      message: "Sending request",
+      data: { data },
+      context: { requestId, replyChannel },
+    });
+
     const responseHandler = (
       _event: Electron.IpcRendererEvent,
       message: { error?: unknown; data: unknown },

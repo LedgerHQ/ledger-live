@@ -55,14 +55,14 @@ if (INITIAL_SENTRY_TAGS) {
   if (parsed) setTags(parsed);
 }
 
-// Handles messages from the `main` thread
-process.on("message", (m: Message) => {
+// Handles messages from the `main` process
+process.on("message", async (m: Message) => {
   switch (m.type) {
     case transportOpenChannel:
-      transportOpen(m);
+      await transportOpen(m);
       break;
     case transportExchangeChannel:
-      transportExchange(m);
+      await transportExchange(m);
       break;
     case transportExchangeBulkChannel:
       transportExchangeBulk(m);
@@ -77,7 +77,7 @@ process.on("message", (m: Message) => {
       transportListenUnsubscribe(m);
       break;
     case transportCloseChannel:
-      transportClose(m);
+      await transportClose(m);
       break;
     case "sentryLogsChanged": {
       const { payload } = m;
@@ -98,7 +98,7 @@ process.on("message", (m: Message) => {
       break;
     }
     default:
-      log("error", `internal thread: '${(m as { type: string }).type}' event not supported`);
+      log("error", `internal process: '${(m as { type: string }).type}' event not supported`);
   }
 });
 
