@@ -1,8 +1,13 @@
-import React, { PropsWithChildren } from "react";
+import React, { PropsWithChildren, useMemo } from "react";
 import ReactDOM from "react-dom";
 import { CustomLogger } from "@ledgerhq/live-common/wallet-api/CustomLogger/client";
 import { WalletAPIProvider } from "@ledgerhq/wallet-api-client-react";
-import { Transport, WalletAPIClient, WindowMessageTransport } from "@ledgerhq/wallet-api-client";
+import {
+  EventHandlers,
+  Transport,
+  WalletAPIClient,
+  WindowMessageTransport,
+} from "@ledgerhq/wallet-api-client";
 import "./index.css";
 import App from "./App";
 
@@ -35,10 +40,22 @@ function TransportProvider({ children }: PropsWithChildren<object>) {
     return transport;
   }
 
+  const eventHandlers = useMemo<EventHandlers>(() => {
+    return {
+      "event.custom.test": param => {
+        console.log("event handler param:", param);
+      },
+    };
+  }, []);
+
   const transport = getWalletAPITransport();
 
   return (
-    <WalletAPIProvider transport={transport} getCustomModule={getCustomModule}>
+    <WalletAPIProvider
+      transport={transport}
+      getCustomModule={getCustomModule}
+      eventHandlers={eventHandlers}
+    >
       {children}
     </WalletAPIProvider>
   );
