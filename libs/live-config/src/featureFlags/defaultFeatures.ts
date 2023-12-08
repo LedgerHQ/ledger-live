@@ -97,6 +97,7 @@ export const DEFAULT_FEATURES: Features = {
   protectServicesDiscoverDesktop: DEFAULT_FEATURE,
   llmWalletQuickActions: DEFAULT_FEATURE,
   listAppsV2minor1: DEFAULT_FEATURE,
+  flexibleContentCards: DEFAULT_FEATURE,
   ethStakingProviders: initFeature(),
   referralProgramDiscoverCard: initFeature(),
   newsfeedPage: initFeature(),

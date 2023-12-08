@@ -1,99 +1,20 @@
 import { useDispatch, useSelector } from "react-redux";
-import { ContentCard as BrazeContentCard } from "@braze/react-native-sdk";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useCallback, useMemo } from "react";
 import { useBrazeContentCard } from "./brazeContentCard";
 import {
   assetsCardsSelector,
+  categoriesCardsSelector,
+  mobileCardsSelector,
   learnCardsSelector,
   notificationsCardsSelector,
   walletCardsSelector,
 } from "../reducers/dynamicContent";
 import { dismissedDynamicCardsSelector } from "../reducers/settings";
-import {
-  AssetContentCard,
-  Background,
-  LearnContentCard,
-  LocationContentCard,
-  NotificationContentCard,
-  WalletContentCard,
-  ContentCard as LedgerContentCard,
-} from "./types";
+import { AssetContentCard, WalletContentCard } from "./types";
 import { track } from "../analytics";
 import { setDismissedDynamicCards } from "../actions/settings";
-
-export const getMobileContentCards = (array: BrazeContentCard[]) =>
-  array.filter(elem => !elem.extras.platform || elem.extras.platform === "mobile");
-
-export const filterByPage = (array: BrazeContentCard[], page: string) =>
-  array.filter(elem => elem.extras.location === page);
-
-export const compareCards = (a: LedgerContentCard, b: LedgerContentCard) => {
-  if (a.order && !b.order) {
-    return -1;
-  }
-  if (!a.order && b.order) {
-    return 1;
-  }
-  if ((!a.order && !b.order) || a.order === b.order) {
-    return b.createdAt - a.createdAt;
-  }
-  return (a.order || 0) - (b.order || 0);
-};
-
-export const mapAsWalletContentCard = (card: BrazeContentCard) =>
-  ({
-    id: card.id,
-    tag: card.extras.tag,
-    title: card.extras.title,
-    location: LocationContentCard.Wallet,
-    image: card.extras.image,
-    link: card.extras.link,
-    background: Background[card.extras.background as Background] || Background.purple,
-    createdAt: card.created,
-    order: parseInt(card.extras.order) ? parseInt(card.extras.order) : undefined,
-  }) as WalletContentCard;
-
-export const mapAsAssetContentCard = (card: BrazeContentCard) =>
-  ({
-    id: card.id,
-    tag: card.extras.tag,
-    title: card.extras.title,
-    location: LocationContentCard.Asset,
-    image: card.extras.image,
-    link: card.extras.link,
-    cta: card.extras.cta,
-    assets: card.extras.assets ?? "",
-    displayOnEveryAssets: Boolean(card.extras.displayOnEveryAssets) ?? false,
-    createdAt: card.created,
-    order: parseInt(card.extras.order) ? parseInt(card.extras.order) : undefined,
-  }) as AssetContentCard;
-
-export const mapAsLearnContentCard = (card: BrazeContentCard) =>
-  ({
-    id: card.id,
-    tag: card.extras.tag,
-    title: card.extras.title,
-    location: LocationContentCard.Learn,
-    image: card.extras.image,
-    link: card.extras.link,
-    createdAt: card.created,
-    order: parseInt(card.extras.order) ? parseInt(card.extras.order) : undefined,
-  }) as LearnContentCard;
-
-export const mapAsNotificationContentCard = (card: BrazeContentCard) =>
-  ({
-    id: card.id,
-    tag: card.extras.tag,
-    title: card.extras.title,
-    description: card.extras.description,
-    location: LocationContentCard.NotificationCenter,
-    link: card.extras.link,
-    cta: card.extras.cta,
-    createdAt: card.created,
-    viewed: card.viewed,
-    order: parseInt(card.extras.order) ? parseInt(card.extras.order) : undefined,
-  }) as NotificationContentCard;
+import { setDynamicContentMobileCards } from "~/actions/dynamicContent";
 
 const useDynamicContent = () => {
   const dispatch = useDispatch();
@@ -103,6 +24,8 @@ const useDynamicContent = () => {
   const assetsCards = useSelector(assetsCardsSelector);
   const walletCards = useSelector(walletCardsSelector);
   const learnCards = useSelector(learnCardsSelector);
+  const categoriesCards = useSelector(categoriesCardsSelector);
+  const mobileCards = useSelector(mobileCardsSelector);
   const hiddenCards: string[] = useSelector(dismissedDynamicCardsSelector);
 
   const walletCardsDisplayed = useMemo(
@@ -126,8 +49,8 @@ const useDynamicContent = () => {
 
       return assetsCardsDisplayed.find(
         (ac: AssetContentCard) =>
-          ac.assets.toLowerCase().includes(currency.id.toLowerCase()) ||
-          ac.assets.toUpperCase().includes(currency.ticker.toUpperCase()) ||
+          (ac.assets && ac.assets.toLowerCase().includes(currency.id.toLowerCase())) ||
+          (ac.assets && ac.assets.toUpperCase().includes(currency.ticker.toUpperCase())) ||
           ac.displayOnEveryAssets,
       );
     },
@@ -137,18 +60,23 @@ const useDynamicContent = () => {
   const dismissCard = useCallback(
     (cardId: string) => {
       dispatch(setDismissedDynamicCards([...hiddenCards, cardId]));
+      dispatch(setDynamicContentMobileCards(mobileCards.filter(n => n.id !== cardId)));
     },
-    [dispatch, hiddenCards],
+    [dispatch, hiddenCards, mobileCards],
   );
 
   const trackContentCardEvent = useCallback(
     (
       event: "contentcard_clicked" | "contentcard_dismissed",
       params: {
-        campaign: string;
-        screen: string;
-        link: string;
+        campaign?: string;
+        screen?: string;
+        page?: string;
+        link?: string;
         contentcard?: string;
+        type?: string;
+        layout?: string;
+        location?: string;
       },
     ) => {
       track(event, params);
@@ -162,6 +90,8 @@ const useDynamicContent = () => {
     isAWalletCardDisplayed,
     assetsCards,
     learnCards,
+    categoriesCards,
+    mobileCards,
     getAssetCardByIdOrTicker,
     logClickCard,
     logDismissCard,

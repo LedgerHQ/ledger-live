@@ -54,6 +54,7 @@ import PortfolioAssets from "./PortfolioAssets";
 import { internetReachable } from "../../logic/internetReachable";
 import { UpdateStep } from "../FirmwareUpdate";
 import { OnboardingType } from "../../reducers/types";
+import ContentCardsLocation from "~/dynamicContent/ContentCardsLocation";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -145,6 +146,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
         <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
       </Flex>,
       <PortfolioGraphCard showAssets={showAssets} key="PortfolioGraphCard" />,
+      <ContentCardsLocation key="contentCardsLocationPortfolio" locationId="portfolio" mt={7} />,
       showAssets ? (
         <Box background={colors.background.main} px={6} mt={6} key="PortfolioAssets">
           <RecoverBanner />
