@@ -17,11 +17,13 @@ import { first } from "rxjs/operators";
 import { Subscription, from } from "rxjs";
 import {
   OnboardingState,
+  OnboardingStep,
   extractOnboardingState,
 } from "@ledgerhq/live-common/hw/extractOnboardingState";
-import { FirmwareInfo } from "@ledgerhq/types-live";
+import { FirmwareInfo, SeedPhraseType } from "@ledgerhq/types-live";
 import { renderError } from "../DeviceAction/rendering";
 import { useDynamicUrl } from "~/renderer/terms";
+import { isDeviceNotOnboardedError } from "../DeviceAction/utils";
 
 const RecoverRestore = () => {
   const { t } = useTranslation();
@@ -53,7 +55,17 @@ const RecoverRestore = () => {
         }
       },
       error: (error: Error) => {
-        setError(error);
+        if (isDeviceNotOnboardedError(error)) {
+          setState({
+            isOnboarded: false,
+            isInRecoveryMode: false,
+            seedPhraseType: SeedPhraseType.TwentyFour,
+            currentOnboardingStep: OnboardingStep.NewDevice,
+            currentSeedWordIndex: 0,
+          });
+        } else {
+          setError(error);
+        }
       },
     });
   }, []);
