@@ -269,24 +269,28 @@ const SwapForm = () => {
           ? accountToWalletAPIAccount(account, parentAccount)?.id
           : fromAccountId;
 
-      const state: { returnTo: string; accountId?: string; goToURL?: string } = {
+      const state: {
+        returnTo: string;
+        accountId?: string;
+        goToURL?: string;
+        customDappUrl?: string;
+      } = {
         returnTo: "/swap",
         accountId,
+        customDappUrl: providerURL,
       };
-      let customDappUrl = providerURL;
+
       if (provider === "moonpay") {
         const moonpayURL = generateMoonpayUrl({
           base: exchangeRate?.providerURL || "",
           args: getExchangeSDKParams(),
         });
+        state.customDappUrl = undefined;
         state.goToURL = moonpayURL.toString();
-        customDappUrl = undefined;
       }
 
       history.push({
         // This looks like an issue, the proper signature is: push(path, [state]) - (function) Pushes a new entry onto the history stack
-        // @ts-expect-error so customDappUrl is not expected to be here
-        customDappUrl,
         pathname,
         state,
       });
