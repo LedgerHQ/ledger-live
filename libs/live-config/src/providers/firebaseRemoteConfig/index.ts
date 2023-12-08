@@ -1,7 +1,7 @@
 import { Provider } from "..";
 import { ConfigInfo } from "../../LiveConfig";
 import { parser } from "./parser";
-import { Value } from "firebase/remote-config";
+import { type Value } from "firebase/remote-config";
 
 // refer to https://github.com/firebase/firebase-js-sdk/blob/master/packages/remote-config/src/public_types.ts#L71 for the firebase config value interface
 // export interface Value {

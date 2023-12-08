@@ -31,7 +31,9 @@ export function parser(value: unknown, type: ConfigInfo["type"]) {
     case "boolean": {
       return booleanParser(value);
     }
-    case "object": {
+    case "object":
+    case "array":
+    case "enabled": {
       return objectParser(value);
     }
     default:

@@ -14,6 +14,14 @@ describe("LiveConfig", () => {
           type: "boolean",
           default: true,
         },
+        currency_mycoin: {
+          type: "enabled",
+          default: { enabled: true },
+        },
+        highest_market_cap: {
+          type: "array",
+          default: ["btc", "eth"],
+        },
         app_name: {
           type: "string",
           default: "ledger live",

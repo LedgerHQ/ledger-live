@@ -4,7 +4,9 @@ type ValidConfigTypes = {
   string: string;
   boolean: boolean;
   number: number;
-  object: object;
+  object: Record<string, unknown>;
+  array: unknown[];
+  enabled: { enabled: true | false };
 };
 
 type ConfigInfoShape<Type extends keyof ValidConfigTypes> = {
@@ -16,7 +18,9 @@ export type ConfigInfo =
   | ConfigInfoShape<"string">
   | ConfigInfoShape<"boolean">
   | ConfigInfoShape<"number">
-  | ConfigInfoShape<"object">;
+  | ConfigInfoShape<"object">
+  | ConfigInfoShape<"array">
+  | ConfigInfoShape<"enabled">;
 
 type TypeFromSchema<T extends keyof ValidConfigTypes> = T extends keyof ValidConfigTypes
   ? ValidConfigTypes[T]
