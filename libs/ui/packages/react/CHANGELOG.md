@@ -1,5 +1,14 @@
 # @ledgerhq/react-ui
 
+## 0.14.12-nightly.0
+
+### Patch Changes
+
+- [#5595](https://github.com/LedgerHQ/ledger-live/pull/5595) [`c094e4e`](https://github.com/LedgerHQ/ledger-live/commit/c094e4ed0c3220877d13703e20c77a0b013cd3ea) Thanks [@ak-ledger](https://github.com/ak-ledger)! - update react/native libs Storybook to 7.5.3
+
+- Updated dependencies [[`335ce83`](https://github.com/LedgerHQ/ledger-live/commit/335ce8366c8c997cdd77f191262a9dedee9888f6)]:
+  - @ledgerhq/crypto-icons-ui@0.6.2-nightly.0
+
 ## 0.14.11
 
 ### Patch Changes

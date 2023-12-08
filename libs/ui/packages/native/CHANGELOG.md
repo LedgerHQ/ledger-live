@@ -1,5 +1,16 @@
 # @ledgerhq/native-ui
 
+## 0.22.3-nightly.0
+
+### Patch Changes
+
+- [#5630](https://github.com/LedgerHQ/ledger-live/pull/5630) [`ad8f999`](https://github.com/LedgerHQ/ledger-live/commit/ad8f99994341b10d3f7af96543dd2c2028140573) Thanks [@mle-gall](https://github.com/mle-gall)! - New animated input (label morphes from placeholder to fixed label onFocus)
+
+- [#5595](https://github.com/LedgerHQ/ledger-live/pull/5595) [`c094e4e`](https://github.com/LedgerHQ/ledger-live/commit/c094e4ed0c3220877d13703e20c77a0b013cd3ea) Thanks [@ak-ledger](https://github.com/ak-ledger)! - update react/native libs Storybook to 7.5.3
+
+- Updated dependencies [[`335ce83`](https://github.com/LedgerHQ/ledger-live/commit/335ce8366c8c997cdd77f191262a9dedee9888f6)]:
+  - @ledgerhq/crypto-icons-ui@0.6.2-nightly.0
+
 ## 0.22.2
 
 ### Patch Changes

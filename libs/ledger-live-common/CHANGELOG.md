@@ -1,5 +1,53 @@
 # @ledgerhq/live-common
 
+## 33.3.0-nightly.1
+
+### Minor Changes
+
+- [#5341](https://github.com/LedgerHQ/ledger-live/pull/5341) [`1cb527b`](https://github.com/LedgerHQ/ledger-live/commit/1cb527b9a0b03f23a921a446c64f71ab5c9e9013) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - live-config lib setup for featureflag framework
+
+- [#5618](https://github.com/LedgerHQ/ledger-live/pull/5618) [`ed17856`](https://github.com/LedgerHQ/ledger-live/commit/ed17856adc5a6723bc87c409e03a2b832432a1db) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Wait for firebase and analytics to be ready before adding featureflags to segment identity
+
+- [#5548](https://github.com/LedgerHQ/ledger-live/pull/5548) [`d4a17e1`](https://github.com/LedgerHQ/ledger-live/commit/d4a17e177afb3cd6888479b7319ccb1c38011faa) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Fix cardano spendable balance and sendmax amount on confirm screen
+
+- [#5574](https://github.com/LedgerHQ/ledger-live/pull/5574) [`3adea7a`](https://github.com/LedgerHQ/ledger-live/commit/3adea7a7ad66080b5e6e4407071a976644158d04) Thanks [@Wozacosta](https://github.com/Wozacosta)! - introduces the ability to highlight live apps in discover section
+
+- [#5639](https://github.com/LedgerHQ/ledger-live/pull/5639) [`313d52a`](https://github.com/LedgerHQ/ledger-live/commit/313d52a516b911229537d7e50badaedd045ed2a0) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update dydx unbonding period
+
+- [#5632](https://github.com/LedgerHQ/ledger-live/pull/5632) [`95acaec`](https://github.com/LedgerHQ/ledger-live/commit/95acaec69f559295ffbe289abc8cddc598038ca7) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Fix big number transactions on cosmos family
+
+### Patch Changes
+
+- [#5412](https://github.com/LedgerHQ/ledger-live/pull/5412) [`1ccd674`](https://github.com/LedgerHQ/ledger-live/commit/1ccd6746e9ccec5e60ae576d09aca48767da1124) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Allow explorer links to use timestamp instead of hash
+
+- [#5613](https://github.com/LedgerHQ/ledger-live/pull/5613) [`eb5ac4d`](https://github.com/LedgerHQ/ledger-live/commit/eb5ac4dca430654f5f86854025fddddab4261a29) Thanks [@chabroA](https://github.com/chabroA)! - update near explorer views urls
+
+- [#5633](https://github.com/LedgerHQ/ledger-live/pull/5633) [`cc56827`](https://github.com/LedgerHQ/ledger-live/commit/cc56827cc9682049a02d1360683ecdfd9460f4c9) Thanks [@chabroA](https://github.com/chabroA)! - add display of USDC staking rewards for dydx
+
+- [#5655](https://github.com/LedgerHQ/ledger-live/pull/5655) [`a8f82dc`](https://github.com/LedgerHQ/ledger-live/commit/a8f82dc1854eaf75e922d55964905b1fd7da0ba2) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - add moonpay swap provider config
+
+- [#5604](https://github.com/LedgerHQ/ledger-live/pull/5604) [`c8172ab`](https://github.com/LedgerHQ/ledger-live/commit/c8172abc5c052a753b93be8b6c9cfd88ce0dd64a) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - add ptxSwapMoonpayProvider feature flag. Display moonpay quote in swap form and redirect to moonpay web app on moonpay quote selection.
+
+- [#5596](https://github.com/LedgerHQ/ledger-live/pull/5596) [`88fc78a`](https://github.com/LedgerHQ/ledger-live/commit/88fc78a7c1a8fee9102b3c8c907372497425d143) Thanks [@sarneijim](https://github.com/sarneijim)! - Support new token exchange in wallet-api
+
+- [#5138](https://github.com/LedgerHQ/ledger-live/pull/5138) [`9d35080`](https://github.com/LedgerHQ/ledger-live/commit/9d35080944a6a63c78f54a545734f4cf3cbded63) Thanks [@aussedatlo](https://github.com/aussedatlo)! - add low battery warning during early security check
+
+- [#5588](https://github.com/LedgerHQ/ledger-live/pull/5588) [`95ce679`](https://github.com/LedgerHQ/ledger-live/commit/95ce679a9da4e72672903ee63167cca8eea7c910) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add missing account actions for Cardano on LLM + better typing on all families
+
+- Updated dependencies [[`1cb527b`](https://github.com/LedgerHQ/ledger-live/commit/1cb527b9a0b03f23a921a446c64f71ab5c9e9013), [`eb5ac4d`](https://github.com/LedgerHQ/ledger-live/commit/eb5ac4dca430654f5f86854025fddddab4261a29), [`9d35080`](https://github.com/LedgerHQ/ledger-live/commit/9d35080944a6a63c78f54a545734f4cf3cbded63), [`f372d0f`](https://github.com/LedgerHQ/ledger-live/commit/f372d0f02a0f5e18021a9cb49ed3f160552c2791), [`3adea7a`](https://github.com/LedgerHQ/ledger-live/commit/3adea7a7ad66080b5e6e4407071a976644158d04), [`be22d72`](https://github.com/LedgerHQ/ledger-live/commit/be22d724cf5499fe4958bfb3b5f763ffaf0d0446), [`335ce83`](https://github.com/LedgerHQ/ledger-live/commit/335ce8366c8c997cdd77f191262a9dedee9888f6)]:
+  - @ledgerhq/live-config@1.0.0-nightly.0
+  - @ledgerhq/cryptoassets@11.2.1-nightly.0
+  - @ledgerhq/live-env@0.8.0-nightly.0
+  - @ledgerhq/hw-app-exchange@0.4.1-nightly.1
+  - @ledgerhq/coin-framework@0.9.1-nightly.1
+  - @ledgerhq/coin-evm@0.11.1-nightly.1
+  - @ledgerhq/crypto-icons-ui@0.6.2-nightly.0
+  - @ledgerhq/coin-algorand@0.3.7-nightly.1
+  - @ledgerhq/coin-polkadot@0.5.0-nightly.1
+  - @ledgerhq/hw-app-eth@6.35.1-nightly.1
+  - @ledgerhq/hw-app-vet@0.1.0-nightly.5
+  - @ledgerhq/live-network@1.1.10-nightly.1
+
 ## 33.3.0-nightly.0
 
 ### Minor Changes

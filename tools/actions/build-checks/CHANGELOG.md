@@ -1,4 +1,4 @@
-# @actions/desktop-report-build
+# @actions/build-checks
 
 ## 1.0.1-nightly.0
 

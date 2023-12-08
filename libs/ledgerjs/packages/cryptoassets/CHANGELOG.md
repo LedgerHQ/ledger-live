@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 11.2.1-nightly.0
+
+### Patch Changes
+
+- [#5613](https://github.com/LedgerHQ/ledger-live/pull/5613) [`eb5ac4d`](https://github.com/LedgerHQ/ledger-live/commit/eb5ac4dca430654f5f86854025fddddab4261a29) Thanks [@chabroA](https://github.com/chabroA)! - update near explorer views urls
+
 ## 11.2.0
 
 ### Minor Changes
