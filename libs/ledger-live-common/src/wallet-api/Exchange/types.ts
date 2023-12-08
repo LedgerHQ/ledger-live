@@ -75,7 +75,7 @@ export type CompleteExchangeUiRequest = {
 
 export type ExchangeUiHooks = {
   "custom.exchange.start": (params: {
-    exchangeType: "FUND" | "SELL" | "SWAP";
+    exchangeType: ExchangeStartParams["exchangeType"];
     onSuccess: (nonce: string) => void;
     onCancel: (error: Error) => void;
   }) => void;
