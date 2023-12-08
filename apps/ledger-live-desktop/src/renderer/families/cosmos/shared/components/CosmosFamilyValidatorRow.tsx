@@ -14,6 +14,7 @@ import Text from "~/renderer/components/Text";
 import Check from "~/renderer/icons/Check";
 import { openURL } from "~/renderer/linking";
 import CosmosFamilyLedgerValidatorIcon from "~/renderer/families/cosmos/shared/components/CosmosFamilyLedgerValidatorIcon";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 
 type Props = {
   currency: CryptoCurrency;
@@ -25,17 +26,19 @@ type Props = {
 function CosmosFamilyValidatorRow({ validator, active, onClick, unit, currency }: Props) {
   const explorerView = getDefaultExplorerView(currency);
   const currencyName = currency.name.toLowerCase();
+
+  const ledgerValidatorUrl = useLocalizedUrl(urls.ledgerValidator);
   const onExternalLink = useCallback(
     (address: string) => {
       const ledgerValidator = cryptoFactory(currencyName).ledgerValidator;
       if (address === ledgerValidator) {
-        openURL(urls.ledgerValidator);
+        openURL(ledgerValidatorUrl);
       } else {
         const srURL = explorerView && getAddressExplorer(explorerView, address);
         if (srURL) openURL(srURL);
       }
     },
-    [currencyName, explorerView],
+    [currencyName, explorerView, ledgerValidatorUrl],
   );
   return (
     <StyledValidatorRow

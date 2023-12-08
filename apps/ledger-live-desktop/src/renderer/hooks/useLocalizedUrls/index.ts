@@ -1,7 +1,8 @@
 import { useSelector } from "react-redux";
+import { LanguageMap } from "~/config/languages";
 import { languageSelector } from "~/renderer/reducers/settings";
 
-export const SUPPORT_LANG = {
+export const SUPPORT_LANG: LanguageMap<string> = {
   en: "en-us",
   fr: "fr-fr",
   es: "es",
@@ -12,10 +13,9 @@ export const SUPPORT_LANG = {
   pt: "pt-br",
   ja: "ja",
   ko: "ko",
-  ar: "ar",
 };
 
-export const LEDGER_LANG = {
+export const LEDGER_LANG: LanguageMap<string> = {
   en: "en",
   fr: "fr",
   es: "es",
@@ -26,10 +26,9 @@ export const LEDGER_LANG = {
   pt: "pt-br",
   ja: "ja",
   ko: "ko",
-  ar: "ar",
 };
 
-export const SHOP_LANG = {
+export const SHOP_LANG: LanguageMap<string> = {
   en: "en",
   fr: "fr",
   es: "es",
@@ -40,7 +39,6 @@ export const SHOP_LANG = {
   pt: "pt-br",
   ja: "ja",
   ko: "ko",
-  ar: "ar",
 };
 
 export const LEDGER_SUPPORT = "https://support.ledger.com/hc";
