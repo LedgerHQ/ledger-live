@@ -2,7 +2,7 @@ import { Config } from "@ledgerhq/live-config";
 
 export const sharedConfig: Config = {
   feature_app_author_name: {
-    type: "object",
+    type: "enabled",
     default: { enabled: false },
   },
   feature_learn: {
