@@ -33,7 +33,7 @@ const HorizontalCard = ({ id, title, description, image, tag, onDismiss, onClick
       >
         {image ? <Image uri={image} /> : null}
 
-        <Flex flexGrow={1} rowGap={space[2]}>
+        <Flex flex={1} rowGap={space[2]}>
           <Flex flexDirection="row" justifyContent="space-between" columnGap={space[3]}>
             <Flex overflow={"hidden"} flex={1}>
               <Title label={title} />
@@ -43,7 +43,6 @@ const HorizontalCard = ({ id, title, description, image, tag, onDismiss, onClick
               {isDismissable ? <Close onPress={onDismiss} /> : isTag && <Tag label={tag} />}
             </Flex>
           </Flex>
-
           {description ? <Subtitle label={description} /> : null}
         </Flex>
       </Flex>
