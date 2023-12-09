@@ -31,7 +31,7 @@ describe("Receive different currency", () => {
     ["ethereum", "Ethereum"],
     ["bsc"],
     ["ripple"],
-    //["solana"],
+    //["solana"], // TOFIX Error during flow
     ["cardano"],
     ["dogecoin"],
     ["tron"],

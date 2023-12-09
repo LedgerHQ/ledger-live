@@ -23,21 +23,21 @@ let operationDetailsPage: OperationDetailsPage;
 let common: Common;
 let first = true;
 
-let testedCurrencies: CryptoCurrencyId[] = [
+const testedCurrencies: CryptoCurrencyId[] = [
   "bitcoin",
   "ethereum",
   "bsc",
-  //"ripple",
-  //"solana",
-  //"cardano",
+  //"ripple", // TOFIX Error during flow
+  //"solana", // TOFIX Error during flow
+  //"cardano", // TOFIX Error during flow
   "dogecoin",
-  //"tron",
-  //"avalanche_c_chain",
+  //"tron", // TOFIX Error during flow
+  //"avalanche_c_chain", // TOFIX Error during flow
   "polygon",
   "polkadot",
   "cosmos",
 ];
-let testAccounts = testedCurrencies.map(currencyId =>
+const testAccounts = testedCurrencies.map(currencyId =>
   genAccount("mock" + currencyId, { currency: getCryptoCurrencyById(currencyId) }),
 );
 setSupportedCurrencies(testedCurrencies);
@@ -88,9 +88,9 @@ describe("Send flow", () => {
 
       await sendPage.successContinue();
       await portfolioPage.scrollToTransactions();
-      let LastTransaction = portfolioPage.lastTransactionAmount();
-      await expect(LastTransaction).toHaveText(`-${amountWithCode}`);
-      await tapByElement(LastTransaction);
+      const lastTransaction = portfolioPage.lastTransactionAmount();
+      await expect(lastTransaction).toHaveText(`-${amountWithCode}`);
+      await tapByElement(lastTransaction);
       await operationDetailsPage.isOpened();
       await operationDetailsPage.checkAccount(account.name);
       await operationDetailsPage.checkAmount(`-${amountWithCode}`);
