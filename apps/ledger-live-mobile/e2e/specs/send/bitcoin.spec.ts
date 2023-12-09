@@ -7,74 +7,93 @@ import {
 } from "@ledgerhq/live-common/currencies/index";
 import { loadAccounts, loadBleState, loadConfig } from "../../bridge/server";
 import PortfolioPage from "../../models/wallet/portfolioPage";
-import SendPage from "../../models/send";
+import SendPage from "../../models/trade/sendPage";
+import OperationDetailsPage from "../../models/trade/operationDetailsPage";
 import DeviceAction from "../../models/DeviceAction";
 import { knownDevice } from "../../models/devices";
-import { getElementByText } from "../../helpers";
+import { tapByElement } from "../../helpers";
+import { Account } from "@ledgerhq/types-live";
+import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import Common, { formattedAmount } from "../../models/common";
 
 let portfolioPage: PortfolioPage;
 let sendPage: SendPage;
 let deviceAction: DeviceAction;
+let operationDetailsPage: OperationDetailsPage;
+let common: Common;
+let first = true;
 
-setSupportedCurrencies(["bitcoin"]);
+let testedCurrencies: CryptoCurrencyId[] = [
+  "bitcoin",
+  "ethereum",
+  "bsc",
+  //"ripple",
+  //"solana",
+  //"cardano",
+  "dogecoin",
+  //"tron",
+  //"avalanche_c_chain",
+  "polygon",
+  "polkadot",
+  "cosmos",
+];
+let testAccounts = testedCurrencies.map(currencyId =>
+  genAccount("mock" + currencyId, { currency: getCryptoCurrencyById(currencyId) }),
+);
+setSupportedCurrencies(testedCurrencies);
 
-const bitcoinAccount = genAccount("mock1", {
-  currency: getCryptoCurrencyById("bitcoin"),
-});
-
-describe("Bitcoin send flow", () => {
+describe("Send flow", () => {
   beforeAll(async () => {
     loadConfig("onboardingcompleted", true);
     loadBleState({ knownDevices: [knownDevice] });
-    loadAccounts([bitcoinAccount]);
+    loadAccounts(testAccounts);
 
     portfolioPage = new PortfolioPage();
     deviceAction = new DeviceAction(knownDevice);
     sendPage = new SendPage();
+    operationDetailsPage = new OperationDetailsPage();
+    common = new Common();
 
     await portfolioPage.waitForPortfolioPageToLoad();
   });
 
-  it("open account send flow", async () => {
-    await portfolioPage.openTransferMenu();
-    await portfolioPage.navigateToSendFromTransferMenu();
-  });
+  it.each(testAccounts.map(account => [account.currency.name, account]))(
+    "%s: open send flow, sends half balance and displays the new operation",
+    async (_currency, account: Account) => {
+      const halfBalance = account.balance.div(2);
+      const amount =
+        // half of the balance, formatted with the same unit as what the input should use
+        formatCurrencyUnit(account.unit, halfBalance, { useGrouping: false });
 
-  const halfBalance = bitcoinAccount.balance.div(2);
-  const amount =
-    // half of the balance, formatted with the same unit as what the input should use
-    formatCurrencyUnit(bitcoinAccount.unit, halfBalance);
+      const amountWithCode = formattedAmount(account.unit, halfBalance);
 
-  const amountWithCode = formatCurrencyUnit(bitcoinAccount.unit, halfBalance, {
-    showCode: true,
-  });
+      await portfolioPage.openViaDeeplink();
+      await portfolioPage.openTransferMenu();
+      await portfolioPage.navigateToSendFromTransferMenu();
+      await common.performSearch(account.name);
+      await sendPage.selectAccount(account.id);
+      await sendPage.setRecipient(account.freshAddress);
+      await sendPage.recipientContinue();
+      await sendPage.setAmount(amount);
+      await sendPage.amountContinue();
 
-  it("traverse through the send flow", async () => {
-    await sendPage.selectAccount(bitcoinAccount.id);
-    await sendPage.setRecipient(bitcoinAccount.freshAddress);
-    await sendPage.recipientContinue();
+      await expect(sendPage.summaryAmount()).toHaveText(amountWithCode);
+      await sendPage.summaryContinue();
 
-    await sendPage.setAmount(amount);
-    await sendPage.amountContinue();
+      if (first) {
+        await deviceAction.selectMockDevice();
+        first = false;
+      }
+      await deviceAction.openApp();
 
-    await expect(getElementByText(amountWithCode)).toBeVisible();
-    await sendPage.summaryContinue();
-
-    await deviceAction.selectMockDevice();
-    await deviceAction.openApp();
-
-    await sendPage.successContinue();
-  });
-
-  /*
-  // FIXME unclear why it doesn't pass
-  it("displays our new operation in the operation list", async () => {
-    const roundedAmountWithCode = formatCurrencyUnit(bitcoinAccount.unit, halfBalance, {
-      showCode: true,
-      disableRounding: false,
-    });
-    await waitForElementByText(roundedAmountWithCode);
-    await expect(getElementByText(roundedAmountWithCode)).toBeVisible();
-  });
-  */
+      await sendPage.successContinue();
+      await portfolioPage.scrollToTransactions();
+      let LastTransaction = portfolioPage.lastTransactionAmount();
+      await expect(LastTransaction).toHaveText(`-${amountWithCode}`);
+      await tapByElement(LastTransaction);
+      await operationDetailsPage.isOpened();
+      await operationDetailsPage.checkAccount(account.name);
+      await operationDetailsPage.checkAmount(`-${amountWithCode}`);
+    },
+  );
 });

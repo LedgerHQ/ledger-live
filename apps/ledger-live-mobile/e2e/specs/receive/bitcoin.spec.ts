@@ -3,16 +3,17 @@ import PortfolioPage from "../../models/wallet/portfolioPage";
 import ReceivePage from "../../models/trade/receivePage";
 import DeviceAction from "../../models/DeviceAction";
 import { knownDevice } from "../../models/devices";
-import { tapById, tapByText, waitForElementById, waitForElementByText } from "../../helpers";
+import Common from "../../models/common";
+import { waitForElementById } from "../../helpers";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 
 let portfolioPage: PortfolioPage;
 let receivePage: ReceivePage;
 let deviceAction: DeviceAction;
+let common: Common;
+let first = true;
 
-const currency = "bitcoin";
-const accountName = "Bitcoin 2";
-
-describe("Bitcoin 2 account", () => {
+describe("Receive different currency", () => {
   beforeAll(async () => {
     loadConfig("onboardingcompleted", true);
     loadBleState({ knownDevices: [knownDevice] });
@@ -20,27 +21,42 @@ describe("Bitcoin 2 account", () => {
     portfolioPage = new PortfolioPage();
     deviceAction = new DeviceAction(knownDevice);
     receivePage = new ReceivePage();
+    common = new Common();
 
     await portfolioPage.waitForPortfolioPageToLoad();
   });
 
-  it("clicks on receive from portfolio", async () => {
+  it.each([
+    ["bitcoin"],
+    ["ethereum", "Ethereum"],
+    ["bsc"],
+    ["ripple"],
+    //["solana"],
+    ["cardano"],
+    ["dogecoin"],
+    ["tron"],
+    ["avalanche_c_chain"],
+    ["polygon", "Polygon"],
+    ["polkadot"],
+    ["cosmos", "Cosmos"],
+  ])("receive on %p (through scanning)", async (currencyId: string, network: string = "") => {
+    const currency = getCryptoCurrencyById(currencyId);
+    const currencyName = getCryptoCurrencyById(currencyId).name;
+
     await receivePage.openViaDeeplink();
-  });
-
-  it("receive on Bitcoin 2 (through scanning)", async () => {
-    await receivePage.selectCurrency(currency);
-    await deviceAction.selectMockDevice();
+    await common.performSearch(currencyName);
+    await receivePage.selectCurrency(currencyName);
+    if (network) {
+      await receivePage.selectNetwork(network);
+    }
+    if (first) {
+      await deviceAction.selectMockDevice();
+      first = false;
+    }
     await deviceAction.openApp();
-
-    await waitForElementByText(accountName);
-    await tapByText(accountName);
-    await waitForElementById(receivePage.noVerifyAddressButton);
-  });
-
-  it("don't verify the address", async () => {
-    await tapById(receivePage.noVerifyAddressButton);
-    await tapById(receivePage.noVerifyValidateButton);
+    await receivePage.selectAccount(`${currencyName} 2`);
+    await receivePage.doNotVerifyAddress();
     await waitForElementById(receivePage.accountAddress);
+    await receivePage.expectReceivePageIsDisplayed(currency.ticker, `${currencyName} 2`);
   });
 });

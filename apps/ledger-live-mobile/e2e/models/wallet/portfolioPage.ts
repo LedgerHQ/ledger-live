@@ -15,6 +15,9 @@ export default class PortfolioPage {
   readOnlyPortfolioId = "PortfolioReadOnlyList";
   transferScrollListId = "transfer-scroll-list";
   stakeMenuButtonId = "transfer-stake-button";
+  accountsListView = "PortfolioAccountsList";
+  seeAllTransactionButton = "portfolio-seeAll-transaction";
+  transactionAmountId = "portfolio-operation-amount";
   emptyPortfolioComponent = () => getElementById("PortfolioEmptyAccount");
   portfolioSettingsButton = () => getElementById("settings-icon");
   transferButton = () => getElementById("transfer-button");
@@ -25,6 +28,7 @@ export default class PortfolioPage {
   sendMenuButton = () => getElementById("send-button");
   marketTabButton = () => getElementById("tab-bar-market");
   earnButton = () => getElementById("tab-bar-earn");
+  lastTransactionAmount = () => getElementById(this.transactionAmountId, 0);
 
   navigateToSettings() {
     return tapByElement(this.portfolioSettingsButton());
@@ -87,5 +91,9 @@ export default class PortfolioPage {
 
   openEarnApp() {
     return tapByElement(this.earnButton());
+  }
+
+  async scrollToTransactions() {
+    await scrollToId(this.seeAllTransactionButton, this.accountsListView);
   }
 }
