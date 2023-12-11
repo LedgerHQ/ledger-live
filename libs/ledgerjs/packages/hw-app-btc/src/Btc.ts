@@ -290,8 +290,8 @@ export default class Btc {
           // This can be removed once Ledger Live enforces minimum bitcoin version >= 2.1.0.
           return await checkIsBtcLegacy(this._transport);
         case "Qtum":
-          // we use the legacy protocol for versions below 2.1.6 of the Qtum app.
-          return semver.lt(version, "2.1.6");
+          // we use the legacy protocol for versions below 3.0.0 of the Qtum app.
+          return semver.lt(version, "3.0.0");
         default:
           return true;
       }
