@@ -22,7 +22,7 @@ describe("useIsSwapLiveApp hook", () => {
         useIsSwapLiveApp({ currencyFrom: undefined, swapWebManifestId: "swap-live-app-demo-0" }),
       );
 
-      expect(result.current).toBe(true);
+      expect(result.current.enabled).toBe(true);
     });
 
     it("returns the enabled flag when families and currencies are not defined", () => {
@@ -35,7 +35,7 @@ describe("useIsSwapLiveApp hook", () => {
         useIsSwapLiveApp({ currencyFrom: bitcoin, swapWebManifestId: "swap-live-app-demo-0" }),
       );
 
-      expect(result.current).toBe(true);
+      expect(result.current.enabled).toBe(true);
     });
 
     it("returns true when currencyFrom family is in families array and feature is enabled", () => {
@@ -48,7 +48,7 @@ describe("useIsSwapLiveApp hook", () => {
         useIsSwapLiveApp({ currencyFrom: bitcoin, swapWebManifestId: "swap-live-app-demo-0" }),
       );
 
-      expect(result.current).toBe(true);
+      expect(result.current.enabled).toBe(true);
     });
 
     it("returns true when currencyFrom is in currencies array and feature is enabled", () => {
@@ -61,7 +61,7 @@ describe("useIsSwapLiveApp hook", () => {
         useIsSwapLiveApp({ currencyFrom: bitcoin, swapWebManifestId: "swap-live-app-demo-0" }),
       );
 
-      expect(result.current).toBe(true);
+      expect(result.current.enabled).toBe(true);
     });
 
     it("returns false when currencyFrom family is not in families, currencyFrom is not in currencies, and feature is disabled", () => {
@@ -74,7 +74,7 @@ describe("useIsSwapLiveApp hook", () => {
         useIsSwapLiveApp({ currencyFrom: bitcoin, swapWebManifestId: "swap-live-app-demo-0" }),
       );
 
-      expect(result.current).toBe(false);
+      expect(result.current.enabled).toBe(false);
     });
 
     it("returns enabled flag if both families and currencies are empty arrays", () => {
@@ -87,7 +87,7 @@ describe("useIsSwapLiveApp hook", () => {
         useIsSwapLiveApp({ currencyFrom: bitcoin, swapWebManifestId: "swap-live-app-demo-0" }),
       );
 
-      expect(result.current).toBe(true);
+      expect(result.current.enabled).toBe(true);
     });
   });
   describe("flag with nested manifest properties", () => {
@@ -98,7 +98,7 @@ describe("useIsSwapLiveApp hook", () => {
         useIsSwapLiveApp({ currencyFrom: undefined, swapWebManifestId: "swap-live-app-demo-0" }),
       );
 
-      expect(result.current).toBe(true);
+      expect(result.current.enabled).toBe(true);
     });
 
     it("returns the enabled flag when families and currencies are not defined", () => {
@@ -112,7 +112,7 @@ describe("useIsSwapLiveApp hook", () => {
         useIsSwapLiveApp({ currencyFrom: bitcoin, swapWebManifestId: "swap-live-app-demo-0" }),
       );
 
-      expect(result.current).toBe(true);
+      expect(result.current.enabled).toBe(true);
     });
 
     it("returns true when currencyFrom family is in families array and feature is enabled", () => {
@@ -128,7 +128,7 @@ describe("useIsSwapLiveApp hook", () => {
         useIsSwapLiveApp({ currencyFrom: bitcoin, swapWebManifestId: "swap-live-app-demo-0" }),
       );
 
-      expect(result.current).toBe(true);
+      expect(result.current.enabled).toBe(true);
     });
 
     it("returns true when currencyFrom is in currencies array and feature is enabled", () => {
@@ -144,7 +144,7 @@ describe("useIsSwapLiveApp hook", () => {
         useIsSwapLiveApp({ currencyFrom: bitcoin, swapWebManifestId: "swap-live-app-demo-0" }),
       );
 
-      expect(result.current).toBe(true);
+      expect(result.current.enabled).toBe(true);
     });
 
     it("returns false when currencyFrom family is not in families, currencyFrom is not in currencies, and feature is disabled", () => {
@@ -160,7 +160,7 @@ describe("useIsSwapLiveApp hook", () => {
         useIsSwapLiveApp({ currencyFrom: bitcoin, swapWebManifestId: "swap-live-app-demo-0" }),
       );
 
-      expect(result.current).toBe(false);
+      expect(result.current.enabled).toBe(false);
     });
 
     it("returns enabled flag if both families and currencies are empty arrays", () => {
@@ -176,7 +176,7 @@ describe("useIsSwapLiveApp hook", () => {
         useIsSwapLiveApp({ currencyFrom: bitcoin, swapWebManifestId: "swap-live-app-demo-0" }),
       );
 
-      expect(result.current).toBe(true);
+      expect(result.current.enabled).toBe(true);
     });
   });
 });
