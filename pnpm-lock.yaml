@@ -2055,8 +2055,8 @@ importers:
   libs/ledger-live-common:
     dependencies:
       '@cardano-foundation/ledgerjs-hw-app-cardano':
-        specifier: ^5.1.0
-        version: 5.1.0
+        specifier: ^6.0.0
+        version: 6.0.0
       '@celo/connect':
         specifier: ^3.0.1
         version: 3.0.1
@@ -10998,14 +10998,12 @@ packages:
     resolution: {integrity: sha512-i9TxOEnZdK4npHY9rR3VSNG51VErpZ2GTAg5RIwMFmcOb+9/Q2oWyUGg50ZSiflUi0nfnakuodhSpugS96k7pQ==}
     dev: false
 
-  /@cardano-foundation/ledgerjs-hw-app-cardano@5.1.0:
-    resolution: {integrity: sha512-ucuz/XbS/0ZD0Bal/GI/kiTm9jDIl8J+A7ypEqcAcBDGicFsyWmtPotOTwuDovTsiM8+eA/5OGTFX0oRqzxstQ==}
+  /@cardano-foundation/ledgerjs-hw-app-cardano@6.0.0:
+    resolution: {integrity: sha512-aiWlERF5sXMzygE62YH9AXrVePu5ZG+QKGv/ZhvYec35vUhDFJK8qPiLzXmTy6MdoDKSqbYVRPd6jY3KKs5pOg==}
     dependencies:
-      '@ledgerhq/hw-transport': 5.51.1
-      '@types/ledgerhq__hw-transport': 4.21.4
+      '@ledgerhq/hw-transport': 6.28.8
       base-x: 3.0.9
       bech32: 1.1.4
-      blake2: 4.1.1
       int64-buffer: 1.0.1
     dev: false
 
@@ -28483,13 +28481,6 @@ packages:
       readable-stream: 3.6.2
     dev: false
 
-  /blake2@4.1.1:
-    resolution: {integrity: sha512-HUmkY0MUDUVgejJVNrpNKAva8C4IWD/Rd862sdexoSibu86b6iu0gO0/RjovO2lM5+w6JqjIEmkuAgGhfHlnJw==}
-    engines: {node: '>= 8.0.0'}
-    dependencies:
-      nan: 2.17.0
-    dev: false
-
   /blake2b-wasm@1.1.7:
     resolution: {integrity: sha512-oFIHvXhlz/DUgF0kq5B1CqxIDjIJwh9iDeUUGQUcvgiGz7Wdw03McEO7CfLBy7QKGdsydcMCgO9jFNBAFCtFcA==}
     dependencies:
@@ -45110,11 +45101,6 @@ packages:
 
   /nan@2.15.0:
     resolution: {integrity: sha512-8ZtvEnA2c5aYCZYd1cvgdnU6cqwixRoYg70xPLWUws5ORTa/lnw+u4amixRS/Ac5U5mQVgp9pnlSUnbNWFaWZQ==}
-    requiresBuild: true
-    dev: false
-
-  /nan@2.17.0:
-    resolution: {integrity: sha512-2ZTgtl0nJsO0KQCjEpxcIr5D+Yv90plTitZt9JBfQvVJDS5seMl3FOvsh3+9CoYWXf/1l5OaZzzF6nDm4cagaQ==}
     requiresBuild: true
     dev: false
 
