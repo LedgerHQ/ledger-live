@@ -2034,7 +2034,7 @@
         "energyDescription": "Energy points are required to execute smart contracts. If you don't run any smart contracts, there is no need to choose rewards in Energy.",
         "amountLabel": "Amount to freeze",
         "available": "Available: {{amountAvailable}}",
-        "info": "Frozen assets can be unfrozen immediately and accessible after the unfreezing period."
+        "info": "Frozen assets can be unfrozen immediately and accessible after the 14 day unfreezing period."
       },
       "connectDevice": {
         "title": "Device"
