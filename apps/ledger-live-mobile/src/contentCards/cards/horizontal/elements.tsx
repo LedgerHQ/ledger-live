@@ -1,10 +1,8 @@
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
-import React, { ComponentProps } from "react";
+import React from "react";
 import { Image as NativeImage, Pressable } from "react-native";
 import { useTheme } from "styled-components/native";
-import { TouchableOpacity } from "react-native-gesture-handler";
-
-type ButtonAction = ComponentProps<typeof TouchableOpacity>["onPress"];
+import { ButtonAction } from "~/contentCards/cards/types";
 
 export const Image = ({ uri }: { uri: string }) => {
   return (

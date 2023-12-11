@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
   FlatList,
+  ListRenderItemInfo,
   NativeScrollEvent,
   NativeSyntheticEvent,
   View,
@@ -9,11 +10,11 @@ import {
 import Animated, { Layout, SlideInRight } from "react-native-reanimated";
 import { useTheme } from "styled-components/native";
 import Pagination from "./pagination";
-import { ContentCardItem } from "~/contentCards/layouts/types";
+import { ContentCardItem, ContentCardProps } from "~/contentCards/cards/types";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-type Props<P = any> = {
-  items: ContentCardItem<{ id: string } & P>[];
+type Props<P extends ContentCardProps> = {
+  items: ContentCardItem<P>[];
 
   styles?: {
     gap?: number;
@@ -26,27 +27,22 @@ const defaultStyles = {
   pagination: true,
 };
 
-const Carousel = <P,>({ items: initialItems, styles: _styles = defaultStyles }: Props<P>) => {
+const Carousel = <P extends ContentCardProps>({ items, styles = defaultStyles }: Props<P>) => {
   const { width } = useWindowDimensions();
-  const styles = {
-    gap: _styles.gap ?? defaultStyles.gap,
-    pagination: _styles.pagination ?? defaultStyles.pagination,
-  };
+
+  styles.gap = styles.gap ?? defaultStyles.gap;
+  styles.pagination = styles.pagination ?? defaultStyles.pagination;
+
   const separatorWidth = useTheme().space[styles.gap];
 
   const carouselRef = useRef<FlatList>(null);
   const [carouselIndex, setCarouselIndex] = useState(0);
-  const [carouselItems, setCarouselItems] = useState(initialItems);
 
   const setIndexOnScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const contentOffsetX = e.nativeEvent.contentOffset.x;
     const newIndex = Math.round(contentOffsetX / (width - separatorWidth * 1.5));
     if (newIndex !== carouselIndex) setCarouselIndex(newIndex);
   };
-
-  useEffect(() => {
-    setCarouselItems(initialItems);
-  }, [initialItems]);
 
   return (
     <View style={{ flex: 1, gap: 8 }}>
@@ -61,11 +57,11 @@ const Carousel = <P,>({ items: initialItems, styles: _styles = defaultStyles }: 
         snapToInterval={width - separatorWidth * 1.5}
         decelerationRate={0}
         contentContainerStyle={{ paddingHorizontal: separatorWidth }}
-        data={carouselItems}
+        data={items}
         ItemSeparatorComponent={() => <View style={{ width: separatorWidth / 2 }} />}
-        renderItem={({ item }) => (
+        renderItem={({ item }: ListRenderItemInfo<ContentCardItem<P>>) => (
           <Animated.View
-            key={item.props.id}
+            key={item.props.metadata.id}
             entering={SlideInRight}
             layout={Layout.duration(100)}
             style={{
@@ -78,7 +74,7 @@ const Carousel = <P,>({ items: initialItems, styles: _styles = defaultStyles }: 
         )}
       />
 
-      {styles.pagination && <Pagination items={carouselItems} carouselIndex={carouselIndex} />}
+      {styles.pagination && <Pagination items={items} carouselIndex={carouselIndex} />}
     </View>
   );
 };
