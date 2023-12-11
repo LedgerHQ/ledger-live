@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 33.3.0-next.3
+
+### Patch Changes
+
+- [#5647](https://github.com/LedgerHQ/ledger-live/pull/5647) [`18afc73`](https://github.com/LedgerHQ/ledger-live/commit/18afc730b2c40df16af67f95c1061508c13343c8) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fixes icons of testnet coins.
+
 ## 33.3.0-next.2
 
 ### Patch Changes
