@@ -86,6 +86,8 @@ const ignoreErrors = [
   "UnresponsiveDeviceError",
   "PairingFailed",
   "Ledger device: UNKNOWN_ERROR",
+  // wrong My Ledger provider selected for the firmware of the connected device
+  "FirmwareNotRecognized",
   // errors coming from the usage of a Transport implementation
   "HwTransportError",
   // other
