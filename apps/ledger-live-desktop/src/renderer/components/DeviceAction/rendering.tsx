@@ -60,6 +60,7 @@ import FramedImage from "../CustomImage/FramedImage";
 import { Account } from "@ledgerhq/types-live";
 import LinkWithExternalIcon from "../LinkWithExternalIcon";
 import { openURL } from "~/renderer/linking";
+import Installing from "~/renderer/modals/UpdateFirmwareModal/Installing";
 
 export const AnimationWrapper = styled.div`
   width: 600px;
@@ -382,7 +383,7 @@ export const renderInstallingLanguage = ({ progress, t }: { progress: number; t:
             stroke={8}
             infinite={!progress}
             progress={progress * 100}
-            showPercentage={false}
+            showPercentage={true}
           />
         </Flex>
         <Title>{t("deviceLocalization.installingLanguage")}</Title>
@@ -455,7 +456,7 @@ export const renderAllowLanguageInstallation = ({
   >
     <DeviceBlocker />
     <AnimationWrapper>
-      <Animation animation={getDeviceAnimation(modelId, type, "verify")} />
+      <Animation animation={getDeviceAnimation(modelId, type, "allowManager")} />
     </AnimationWrapper>
     <Flex justifyContent="center" mt={2}>
       <Title>{t(`deviceLocalization.allowLanguageInstallation`)}</Title>
@@ -579,7 +580,7 @@ export const renderLockedDeviceError = ({
       </ErrorDescription>
       <ButtonContainer>
         {onRetry && inlineRetry ? (
-          <ButtonV3 variant="main" onClick={onRetry}>
+          <ButtonV3 variant="main" onClick={onRetry} borderRadius={"9999px"}>
             {t("common.retry")}
           </ButtonV3>
         ) : null}
@@ -833,11 +834,13 @@ export const renderConnectYourDevice = ({
 const renderFirmwareUpdatingBase = ({
   modelId,
   type,
-  deviceHasPin = true,
+  deviceHasPin,
+  downloadPhase,
 }: {
   modelId: DeviceModelId;
   type: Theme["theme"];
   deviceHasPin?: boolean;
+  downloadPhase?: { current: number; total: number };
 }) =>
   deviceHasPin ? (
     <Wrapper>
@@ -877,12 +880,12 @@ const renderFirmwareUpdatingBase = ({
       </Footer>
     </Wrapper>
   ) : (
-    <BulletText flex={1}>
-      <Trans
-        i18nKey="DeviceAction.unlockDeviceAfterFirmwareUpdateStep1"
-        values={{ productName: getDeviceModel(modelId).productName }}
-      />
-    </BulletText>
+    <Installing
+      isInstalling={!!(downloadPhase?.current && downloadPhase?.total)}
+      current={downloadPhase?.current}
+      total={downloadPhase?.total}
+      deviceModelId={modelId}
+    />
   );
 
 export const renderFirmwareUpdating = withV3StyleProvider(renderFirmwareUpdatingBase);
@@ -1061,40 +1064,6 @@ export const renderBootloaderStep = ({ onAutoRepair }: { onAutoRepair: () => voi
   </Wrapper>
 );
 
-const ImageLoadingGenericWithoutStyleProvider: React.FC<{
-  title: string;
-  children?: React.ReactNode | undefined;
-  top?: React.ReactNode | undefined;
-  bottom?: React.ReactNode | undefined;
-  pullDown?: boolean; // Nb hack to avoid jump in two line text.
-  testId?: string;
-}> = ({ title, top, bottom, children, pullDown, testId }) => {
-  return (
-    <Flex
-      flexDirection="column"
-      justifyContent="space-between"
-      alignItems="center"
-      flex={1}
-      alignSelf="stretch"
-      data-test-id={testId}
-    >
-      <Flex flex={1} flexDirection="column" alignItems={"center"}>
-        {top}
-      </Flex>
-      <Flex flexDirection={"column"} alignItems="center" alignSelf="stretch">
-        {children}
-        <Text mt={6} mb={pullDown ? "-24px" : undefined} variant="h5Inter" textAlign="center">
-          {title}
-        </Text>
-      </Flex>
-      <Flex flex={1} flexDirection="column" alignItems={"center"}>
-        {bottom}
-      </Flex>
-    </Flex>
-  );
-};
-const ImageLoadingGeneric = withV3StyleProvider(ImageLoadingGenericWithoutStyleProvider);
-
 export const renderImageLoadRequested = ({
   t,
   device,
@@ -1107,26 +1076,27 @@ export const renderImageLoadRequested = ({
   type: Theme["theme"];
 }) => {
   return (
-    <ImageLoadingGeneric
-      title={t(
-        restore
-          ? "customImage.steps.transfer.allowConfirmPreview"
-          : "customImage.steps.transfer.allowPreview",
-        {
-          productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
-        },
-      )}
-      testId="device-action-image-load-requested"
+    <Flex
+      flex={1}
+      flexDirection="column"
+      justifyContent="center"
+      alignItems="center"
+      data-test-id="device-action-image-load-requested"
     >
       <DeviceBlocker />
       <AnimationWrapper>
-        <FramedImage
-          background={
-            <Animation animation={getDeviceAnimation(device.modelId, type, "allowManager")} />
-          }
-        />
+        <Animation animation={getDeviceAnimation(device.modelId, type, "allowManager")} />
       </AnimationWrapper>
-    </ImageLoadingGeneric>
+      <Flex justifyContent="center" mt={2}>
+        <Title>
+          {t(
+            restore
+              ? "customImage.steps.transfer.allowConfirmPreview"
+              : "customImage.steps.transfer.allowPreview",
+          )}
+        </Title>
+      </Flex>
+    </Flex>
   );
 };
 
@@ -1142,21 +1112,29 @@ export const renderLoadingImage = ({
   source?: string | undefined;
 }) => {
   return (
-    <ImageLoadingGeneric
-      title={t(
-        progress && progress > 0.9
-          ? "customImage.steps.transfer.voila"
-          : "customImage.steps.transfer.loadingPicture",
-        {
-          productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
-        },
-      )}
-      testId={`device-action-image-loading-${progress}`}
+    <Flex
+      flex={1}
+      flexDirection="column"
+      justifyContent="center"
+      alignItems="center"
+      data-test-id={`device-action-image-loading-${progress}`}
     >
       <AnimationWrapper>
         <FramedImage source={source} loadingProgress={progress} />
       </AnimationWrapper>
-    </ImageLoadingGeneric>
+      <Flex justifyContent="center" mt={2}>
+        <Title>
+          {t(
+            progress && progress > 0.9
+              ? "customImage.steps.transfer.voila"
+              : "customImage.steps.transfer.loadingPicture",
+            {
+              productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
+            },
+          )}
+        </Title>
+      </Flex>
+    </Flex>
   );
 };
 
@@ -1174,17 +1152,12 @@ export const renderImageCommitRequested = ({
   type: Theme["theme"];
 }) => {
   return (
-    <ImageLoadingGeneric
-      pullDown={!restore}
-      title={t(
-        restore
-          ? "customImage.steps.transfer.confirmRestorePicture"
-          : "customImage.steps.transfer.confirmPicture",
-        {
-          productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
-        },
-      )}
-      testId="device-action-image-commit-requested"
+    <Flex
+      flex={1}
+      flexDirection="column"
+      justifyContent="center"
+      alignItems="center"
+      data-test-id="device-action-image-commit-requested"
     >
       <DeviceBlocker />
       <AnimationWrapper>
@@ -1195,6 +1168,18 @@ export const renderImageCommitRequested = ({
           }
         />
       </AnimationWrapper>
-    </ImageLoadingGeneric>
+      <Flex justifyContent="center" mt={2}>
+        <Title mb={!restore ? "-24px" : undefined}>
+          {t(
+            restore
+              ? "customImage.steps.transfer.confirmRestorePicture"
+              : "customImage.steps.transfer.confirmPicture",
+            {
+              productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
+            },
+          )}
+        </Title>
+      </Flex>
+    </Flex>
   );
 };

@@ -1,8 +1,7 @@
-import { Flex } from "@ledgerhq/native-ui";
 import { useIsFocused, useRoute } from "@react-navigation/native";
 import React, { useContext, useCallback } from "react";
 import { Dimensions, Animated, ScrollView, ScrollViewProps, StatusBar } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import SafeAreaView from "../SafeAreaView";
 import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManager";
 
 const CollapsibleHeaderScrollView = ({
@@ -10,7 +9,7 @@ const CollapsibleHeaderScrollView = ({
   contentContainerStyle,
   ...otherProps
 }: ScrollViewProps) => {
-  const { scrollY, onGetRef, syncScrollOffset, tabBarHeight, headerHeight } = useContext(
+  const { scrollY, onGetRef, syncScrollOffset, headerHeight } = useContext(
     WalletTabNavigatorScrollContext,
   );
   const windowHeight = Dimensions.get("window").height;
@@ -21,17 +20,8 @@ const CollapsibleHeaderScrollView = ({
     syncScrollOffset(route.name);
   }, [route.name, syncScrollOffset]);
 
-  const insets = useSafeAreaInsets();
-
   return (
-    <Flex
-      /**
-       * NB: not using SafeAreaView because it flickers during navigation
-       * https://github.com/th3rdwave/react-native-safe-area-context/issues/219
-       */
-      flex={1}
-      mt={insets.top}
-    >
+    <SafeAreaView isFlex>
       <Animated.ScrollView
         scrollToOverflowEnabled={true}
         ref={(ref: ScrollView) => onGetRef({ key: route.name, value: ref })}
@@ -47,7 +37,7 @@ const CollapsibleHeaderScrollView = ({
         onMomentumScrollEnd={onMomentumScrollEnd}
         contentContainerStyle={[
           {
-            paddingTop: headerHeight + tabBarHeight,
+            paddingTop: headerHeight,
             minHeight: windowHeight + (StatusBar.currentHeight || 0),
           },
           contentContainerStyle,
@@ -59,7 +49,7 @@ const CollapsibleHeaderScrollView = ({
       >
         {children}
       </Animated.ScrollView>
-    </Flex>
+    </SafeAreaView>
   );
 };
 

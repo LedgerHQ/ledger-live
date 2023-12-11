@@ -10,7 +10,6 @@ export default {
   argTypes: {
     text: {
       type: "string",
-      defaultValue: "Ledger Live is Experiencing Issues",
     },
     badge: {
       control: false,
@@ -21,6 +20,9 @@ export default {
     theme: { table: { disable: true } },
     as: { table: { disable: true } },
     forwardedAs: { table: { disable: true } },
+  },
+  args: {
+    text: "Ledger Live is Experiencing Issues",
   },
 };
 

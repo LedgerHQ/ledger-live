@@ -1,0 +1,82 @@
+{
+  "name": "@ledgerhq/live-config",
+  "version": "0.1.0",
+  "description": "Ledger Live configuration tools",
+  "license": "Apache-2.0",
+  "keywords": [
+    "Ledger"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/live-config",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build": "tsc && tsc -m ES6 --outDir lib-es",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch",
+    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx",
+    "lint:fix": "pnpm lint --fix",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@ledgerhq/errors": "workspace:^",
+    "@ledgerhq/live-env": "workspace:^",
+    "@ledgerhq/live-promise": "workspace:^",
+    "@ledgerhq/logs": "workspace:^",
+    "@ledgerhq/types-live": "workspace:^",
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "@testing-library/react": "12",
+    "@testing-library/react-hooks": "^8.0.0",
+    "@types/invariant": "^2.2.35",
+    "@types/jest": "^29.5.4",
+    "@types/lodash": "^4.14.182",
+    "@types/node": "^20.2.5",
+    "jest": "^28.1.1",
+    "jest-environment-jsdom": "28",
+    "react": "^18.2.0",
+    "react-dom": "18.2.0",
+    "semver": "^7.3.5",
+    "ts-jest": "^28.0.5"
+  },
+  "typesVersions": {
+    "*": {
+      "*.json": [
+        "*.json"
+      ],
+      "*": [
+        "lib/*"
+      ],
+      "lib/*": [
+        "lib/*"
+      ],
+      "lib-es/*": [
+        "lib-es/*"
+      ]
+    }
+  },
+  "exports": {
+    "./lib/*": "./lib/*.js",
+    "./lib/*.js": "./lib/*.js",
+    "./lib-es/*": "./lib-es/*.js",
+    "./lib-es/*.js": "./lib-es/*.js",
+    "./*": {
+      "require": "./lib/*.js",
+      "default": "./lib-es/*.js"
+    },
+    "./*.js": {
+      "require": "./lib/*.js",
+      "default": "./lib-es/*.js"
+    },
+    "./package.json": "./package.json"
+  }
+}

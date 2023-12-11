@@ -3,7 +3,13 @@ import React from "react";
 import { TFunction } from "i18next";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { DeviceTransactionField } from "@ledgerhq/live-common/transaction/index";
-import { Unit, CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import {
+  Unit,
+  CryptoCurrency,
+  Currency,
+  TokenCurrency,
+  ExplorerView,
+} from "@ledgerhq/types-cryptoassets";
 import {
   Account,
   AnyMessage,
@@ -297,6 +303,14 @@ export type LLDCoinFamily<
   StakeBanner?: React.ComponentType<{
     account: A;
   }>;
+
+  /**
+   * Customize the way the explorer URL to a transaction is built
+   */
+  getTransactionExplorer?: (
+    explorerView: ExplorerView | null | undefined,
+    operation: Operation,
+  ) => string | null | undefined;
 
   nft?: {
     injectNftIntoTransaction: (

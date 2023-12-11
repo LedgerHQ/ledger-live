@@ -196,11 +196,11 @@
       "description" : "Votre transaction est en cours. Vous pouvez l’accélérer en augmentant les frais de réseau, ou l’annuler.",
       "stuckDescription" : "Votre transaction est bloquée. Accélérez-la en augmentant les frais de réseau, ou annulez-la.",
       "previousFeesInfo" : {
-        "pendingTransactionFeesInfo" : "Info sur les frais des transactions en attente : ",
-        "networkfee" : "Frais de réseau = ",
-        "maxFee" : "Frais maximaux = ",
-        "maxPriorityFee" : "Frais de priorité maximaux = ",
-        "gasPrice" : "Prix du gaz = "
+        "pendingTransactionFeesInfo" : "Info sur les frais des transactions en attente :",
+        "networkfee" : "Frais de réseau = {{amount}}",
+        "maxFee" : "Frais max. = {{amount}}",
+        "maxPriorityFee" : "Frais de priorité maximaux = {{amount}}",
+        "gasPrice" : "Prix du gaz = {{amount}}"
       },
       "learnMore" : "En savoir plus",
       "panel" : {
@@ -213,7 +213,7 @@
       },
       "cancel" : {
         "title" : "Annuler",
-        "description" : "Envoyez 0 {{ticker}} à votre propre adresse. Les frais de réseau doivent être 30 % plus élevés que les frais de la transaction à annuler."
+        "description" : "Envoyez 0 {{ticker}} à votre propre adresse."
       },
       "steps" : {
         "method" : {
@@ -409,13 +409,13 @@
       "sorry" : "Service temporairement indisponible ou non disponible dans votre région"
     },
     "missingApp" : {
-      "title" : "Merci d’installer l’application {{appName}} sur votre appareil.",
-      "subtitle" : "Accédez à My Ledger et installez l’application {{appName}} pour échanger vos actifs.",
+      "title" : "Merci d’installer l’app {{appName}} sur votre appareil.",
+      "subtitle" : "Accédez à My Ledger et installez l’app {{appName}} pour échanger vos actifs.",
       "cta" : "Accéder à My Ledger"
     },
     "outdatedApp" : {
-      "title" : "Merci de mettre à jour l’application {{appName}} sur votre appareil",
-      "subtitle" : "Accédez à My Ledger et mettez à jour l’application {{appName}} pour échanger vos actifs.",
+      "title" : "Veuillez mettre à jour l’app {{appName}} sur votre appareil",
+      "subtitle" : "Accédez à My Ledger et mettez à jour l’app {{appName}} pour échanger vos actifs.",
       "cta" : "Accéder à My Ledger"
     },
     "providers" : {
@@ -465,8 +465,8 @@
       "helpCTA" : "Qu’est-ce que le Swap ?",
       "bubble" : "Nous utilisons un taux fixe. C’est le montant exact que vous allez recevoir.",
       "noAccounts" : "Vous n’avez pas de compte {{currencyName}} avec un solde.",
-      "noApp" : "Application {{currencyName}} non installée",
-      "outdatedApp" : "Mise à jour de l’application {{currencyName}} disponible",
+      "noApp" : "App {{currencyName}} non installée",
+      "outdatedApp" : "Mise à jour de l’app {{currencyName}} disponible",
       "loadingRates" : "Chargement des taux..."
     },
     "modal" : {
@@ -497,7 +497,7 @@
           "title" : "Appareil"
         },
         "dependencies" : {
-          "title" : "Vérifications des applications"
+          "title" : "Vérifications des apps"
         },
         "finished" : {
           "title" : "En attente",
@@ -731,8 +731,8 @@
     "openInExplorer" : "Voir dans l’explorateur",
     "emptyState" : {
       "title" : "Vous n’avez pas encore de crypto-actifs ?",
-      "desc" : "Assurez-vous que l’application <1><0>{{managerAppName}}</0></1> est installée et commencez à recevoir.",
-      "descToken" : "Assurez-vous que l’application <1><0>{{managerAppName}}</0></1> est installée pour recevoir des <3><0>{{ticker}}</0></3> et des tokens <5><0>{{tokenList}}</0></5>.",
+      "desc" : "Assurez-vous que l’app <1><0>{{managerAppName}}</0></1> est installée et commencez à recevoir.",
+      "descToken" : "Assurez-vous que l’app <1><0>{{managerAppName}}</0></1> est installée pour recevoir des <3><0>{{ticker}}</0></3> et des tokens <5><0>{{tokenList}}</0></5>.",
       "buttons" : {
         "receiveFunds" : "Recevoir",
         "buy" : "Acheter"
@@ -1066,7 +1066,7 @@
     },
     "noEthAccount" : {
       "title" : "Merci de créer un compte ETH",
-      "description" : "<0>{{ asset }} ({{ ticker }})</0> est un token Ethereum ERC-20. Pour prêter des {{ ticker }}, installez l’application Ethereum et créez un compte Ethereum.",
+      "description" : "<0>{{ asset }} ({{ ticker }})</0> est un token Ethereum ERC-20. Pour prêter des {{ ticker }}, installez l’app Ethereum et créez un compte Ethereum.",
       "cta" : "Ajouter un compte"
     },
     "emptyAccountDeposit" : {
@@ -1208,7 +1208,7 @@
           "contactSupportCTA" : "Contacter l’Assistance Ledger",
           "notFoundEntityError" : {
             "title" : "Relancer la vérification de l’authenticité",
-            "description" : "Vous devez d’abord désactiver le paramètre « Fournisseur de My Ledger ({{providerNumber}}) ». Pour le désactiver, ouvrez les paramètres de Ledger Live, sélectionnez « Fonctionnalités expérimentales », puis désactivez « Fournisseur de My Ledger »."
+            "description" : "Vous devez d’abord désactiver le paramètre \"Fournisseur de My Ledger ({{providerNumber}})\". Pour le désactiver, ouvrez les Paramètres de Ledger Live, sélectionnez \"Fonctionnalités expérimentales\", puis désactivez \"Fournisseur de My Ledger\"."
           },
           "deviceNotGenuineError" : {
             "title" : "Ce {{productName}} n’est pas authentique",
@@ -1286,7 +1286,8 @@
   "postOnboarding" : {
     "postOnboardingScreen" : {
       "title" : "Utilisez ensuite votre\nLedger Stax pour... ",
-      "titleCompleted" : "Félicitations !"
+      "titleCompleted" : "Parfait !\nVous pouvez maintenant explorer votre wallet.",
+      "exploreCTA" : "Explorer le wallet"
     },
     "postOnboardingContent" : {
       "skipLink" : "Plus tard"
@@ -1420,7 +1421,7 @@
   },
   "emptyState" : {
     "dashboard" : {
-      "title" : "Installer des applications sur votre appareil",
+      "title" : "Installer des apps sur votre appareil",
       "desc" : "Accédez à My Ledger pour installer des applications sur votre Ledger. Vous pouvez ajouter des comptes une fois que vous avez des applications sur votre Ledger.",
       "buttons" : {
         "installApp" : "Accéder à My Ledger",
@@ -1721,15 +1722,15 @@
     "unlockDeviceAfterFirmwareUpdateStep1" : "Attendez la fin de l’installation sur votre {{productName}}",
     "unlockDeviceAfterFirmwareUpdateStep2" : "Déverrouillez votre {{productName}} pour terminer l’installation",
     "quitApp" : "Sortez de l’app sur votre appareil.",
-    "appNotInstalledTitle" : "Application nécessaire manquante",
-    "appNotInstalledTitle_plural" : "Applications nécessaires manquantes",
-    "appNotInstalled" : "L’application {{appName}} est nécessaire pour terminer cette action. Accédez à My Ledger pour l’installer sur votre Ledger.",
-    "appNotInstalled_plural" : "Les applications {{appName}} sont nécessaires pour terminer cette action. Accédez à My Ledger pour les installer sur votre Ledger.",
+    "appNotInstalledTitle" : "App nécessaire manquante",
+    "appNotInstalledTitle_plural" : "Apps nécessaires manquantes",
+    "appNotInstalled" : "L’app {{appName}} est nécessaire pour terminer cette action. Accédez à My Ledger pour l’installer sur votre Ledger.",
+    "appNotInstalled_plural" : "Les apps {{appName}} sont nécessaires pour terminer cette action. Accédez à My Ledger pour les installer sur votre Ledger.",
     "openManager" : "Ouvrir My Ledger",
     "openOnboarding" : "Configurer un appareil",
     "outdated" : "Version de l’app obsolète",
-    "outdatedDesc" : "Une mise à jour importante est disponible pour l’application {{appName}} sur votre Ledger. Veuillez accéder à My Ledger pour la mettre à jour.",
-    "installApp" : "Installation de l’application {{appName}}",
+    "outdatedDesc" : "Une mise à jour importante est disponible pour l’app {{appName}} sur votre Ledger. Veuillez accéder à My Ledger pour la mettre à jour.",
+    "installApp" : "Installation de l’app {{appName}}",
     "installAppDescription" : "Merci d’attendre la fin de l’installation.",
     "listApps" : "Vérification en cours des apps nécessaires",
     "listAppsDescription" : "Patientez pendant que nous vérifions que vous avez toutes les apps requises.",
@@ -1767,7 +1768,7 @@
   },
   "manager" : {
     "tabs" : {
-      "appCatalog" : "Catalogue d’applications",
+      "appCatalog" : "Catalogue d’apps",
       "appCatalogSearch" : "Rechercher une application dans le catalogue",
       "appsOnDevice" : "Applications installées",
       "appOnDeviceSearch" : "Rechercher des applications installées..."
@@ -1786,12 +1787,12 @@
       "used" : "Utilisé",
       "OSVersion" : "Système d’exploitation",
       "genuine" : "Votre appareil est authentique.",
-      "incomplete" : "Certaines applications n’ont pas été reconnues. Merci de les désinstaller puis les réinstaller."
+      "incomplete" : "Certaines apps n’ont pas été reconnues. Veuillez les désinstaller puis les réinstaller."
     },
     "applist" : {
       "placeholder" : "Pas de résultat pour cette recherche avec les filtres choisis",
-      "placeholderNoAppsInstalled" : "Aucune application installée sur votre appareil",
-      "placeholderGoToCatalog" : "Allez dans le Catalogue pour installer des applications.",
+      "placeholderNoAppsInstalled" : "Aucune app installée sur votre appareil",
+      "placeholderGoToCatalog" : "Accédez au Catalogue pour installer des apps.",
       "noResultsFound" : "Aucun résultat",
       "noResultsDesc" : "Veuillez vérifier l’orthographe et réessayer.",
       "filter" : {
@@ -1808,15 +1809,15 @@
         "marketcap_desc" : "Capitalisation"
       },
       "installSuccess" : {
-        "title" : "Application installée. Vous pouvez maintenant ajouter vos comptes {{app}}.",
-        "title_plural" : "Applications installées. Vous pouvez ajouter vos comptes",
+        "title" : "App installée. Vous pouvez maintenant ajouter vos comptes {{app}}.",
+        "title_plural" : "Apps installées. Vous pouvez ajouter vos comptes.",
         "manageAccount" : "Gérer mes comptes"
       },
       "updatable" : {
         "title" : "Mise à jour disponible",
         "title_plural" : "Mises à jour disponibles",
-        "progressTitle" : "{{number}} mise à jour d’application",
-        "progressTitle_plural" : "{{number}} mises à jour d’applications",
+        "progressTitle" : "{{number}} mise à jour d’app",
+        "progressTitle_plural" : "{{number}} mises à jour d’apps",
         "progressWarning" : "Ne sortez pas de My Ledger pendant la mise à jour.",
         "progress" : "Mises à jour..."
       },
@@ -1828,7 +1829,7 @@
         "scheduled" : "En attente",
         "update" : "Mise à jour disponible",
         "updateAll" : "Tout mettre à jour",
-        "updateAllOutOfMemory" : "Espace de stockage insuffisant. Veuillez désinstaller des applications.",
+        "updateAllOutOfMemory" : "Espace de stockage insuffisant. Veuillez désinstaller des apps.",
         "install" : "Installer",
         "installed" : "Installée",
         "updated" : "Mise à jour",
@@ -1843,10 +1844,10 @@
         "learnMoreTooltip" : "En savoir plus sur {{appName}}",
         "removeTooltip" : "Désinstaller {{appName}}",
         "useAppForToken" : "Gestion des tokens {{tokenType}}",
-        "tokenAppDisclaimer" : "Pour gérer des tokens {{tokenName}} {{tokenType}}, <1>installez l’application {{appName}}</1> et vérifiez que vous avez bien la <1>version {{tokenType}}</1> avant d’en envoyer <3>sur votre compte {{appName}}</3>.",
+        "tokenAppDisclaimer" : "Pour gérer des tokens {{tokenName}} {{tokenType}}, <1>installez l’app {{appName}}</1> et vérifiez que vous avez bien la <1>version {{tokenType}}</1> avant d’en envoyer <3>sur votre compte {{appName}}</3>.",
         "tokenAppDisclaimerInstalled" : "Pour gérer <1>des tokens {{tokenName}} {{tokenType}}</1>, vérifiez que vous avez bien la <1>version {{tokenType}}</1> avant d’en envoyer <3>sur votre compte {{appName}}</3>.",
         "goToAccounts" : "Accéder aux Comptes",
-        "intallParentApp" : "Installer l’application {{appName}}",
+        "intallParentApp" : "Installer l’app {{appName}}",
         "plugin" : "Accéder à l’application",
         "swap" : "Swap",
         "tool" : "En savoir plus",
@@ -1854,19 +1855,19 @@
       },
       "uninstall" : {
         "title" : "Tout désinstaller",
-        "subtitle" : "Désinstaller toutes les applications ?",
-        "description" : "Rassurez-vous. Désinstaller des applications n’a pas d’effet sur vos crypto-actifs. Vous pouvez réinstaller vos applications depuis le Catalogue d’applications."
+        "subtitle" : "Désinstaller toutes les apps ?",
+        "description" : "Rassurez-vous. Désinstaller des apps n’a pas d’effet sur vos crypto-actifs. Vous pouvez réinstaller vos apps depuis le Catalogue d’apps."
       }
     },
     "apps" : {
       "dependencyInstall" : {
-        "title" : "Application {{dependency}} requise",
+        "title" : "App {{dependency}} requise",
         "description" : "L’application {{dependency}} sera également installée car elle est requise pour l’application {{app}}.",
-        "confirm" : "Installer des applications"
+        "confirm" : "Installer des apps"
       },
       "dependencyUninstall" : {
         "title" : " Désinstaller {{app}} et les applications associées ?",
-        "showAll" : "Afficher les applications à désinstaller",
+        "showAll" : "Afficher les apps à désinstaller",
         "description" : "Certaines des applications installées sont associées à l’application {{app}}. Elles seront également désinstallées.",
         "confirm" : "Désinstaller {{app}} et les autres applications"
       }
@@ -3151,7 +3152,7 @@
     "unlockedBalance" : "Délié",
     "unlockedTooltip" : "Les actifs déliés peuvent maintenant être déplacés en utilisant l’opération de retrait.",
     "networkFees" : "Les frais de réseau sont automatiquement définis par le consensus de Polkadot. Vous ne pourrez pas les voir sur votre appareil.",
-    "bondedBalanceBelowMinimum" : "Votre solde lié est inférieur au minimum requis ({{minimumBondBalance}}). Vos nominations risquent d’être effacées.",
+    "bondedBalanceBelowMinimum" : "Un minimum de {{minimumBondBalance}} est requis pour pouvoir nommer des validateurs.",
     "nomination" : {
       "emptyState" : {
         "description" : "Vous pouvez obtenir des récompenses en liant des actifs, puis en nommant un ou des validateur(s).",
@@ -3919,9 +3920,9 @@
     },
     "experimental" : {
       "disclaimer" : "Il s’agit de fonctionnalités expérimentales fournies \"telles quelles\" pour notre communauté de passionné(e)s de la tech. Elles peuvent changer, casser ou être retirées à tout moment. En les activant, vous acceptez de les utiliser en toute connaissance de cause.",
-      "provider" : "Le paramètre expérimental « Fournisseur de My Ledger ({{forcedProvider}}) » peut afficher des systèmes d’exploitation et des applications qui n’ont pas encore été publiés, entraînant des problèmes de compatibilité. Vous pouvez le désactiver dans les Paramètres.",
-      "providerDevMode" : "Les paramètres expérimentaux « Fournisseur de My Ledger ({{forcedProvider}}) » et « Mode développeur » peuvent afficher des systèmes d’exploitation et des applications qui n’ont pas encore été publiés, entraînant des problèmes de compatibilité. Vous pouvez les désactiver dans les Paramètres.",
-      "devMode" : "Le paramètre expérimental « Mode développeur » peut afficher des systèmes d’exploitation et des applications qui n’ont pas encore été publiés, entraînant des problèmes de compatibilité. Vous pouvez le désactiver dans les Paramètres.",
+      "provider" : "Le paramètre expérimental \"Fournisseur de My Ledger ({{forcedProvider}})\" peut afficher des systèmes d’exploitation et des applications qui n’ont pas encore été publiés, entraînant des problèmes de compatibilité. Vous pouvez le désactiver dans les Paramètres.",
+      "providerDevMode" : "Les paramètres expérimentaux \"Fournisseur de My Ledger ({{forcedProvider}})\" et \"Mode développeur\" peuvent afficher des systèmes d’exploitation et des applications qui n’ont pas encore été publiés, entraînant des problèmes de compatibilité. Vous pouvez les désactiver dans les Paramètres.",
+      "devMode" : "Le paramètre expérimental \"Mode développeur\" peut afficher des systèmes d’exploitation et des applications qui n’ont pas encore été publiés, entraînant des problèmes de compatibilité. Vous pouvez le désactiver dans les Paramètres.",
       "providerCTA" : "Accéder aux Paramètres",
       "features" : {
         "experimentalCurrencies" : {
@@ -4248,7 +4249,6 @@
         "nextButton" : "Commencer",
         "noDevice" : "Pas encore d’appareil ?",
         "buyLink" : "Pas encore d’appareil ? Achetez un Ledger Nano X.",
-        "recoverSignIn" : "Connectez-vous à Ledger Recover",
         "byTapping" : "En appuyant sur Commencer, vous acceptez nos",
         "termsAndConditions" : "Conditions d’utilisation",
         "and" : "et",
@@ -4906,6 +4906,11 @@
     "cta" : "Continuer"
   },
   "families" : {
+    "casper" : {
+      "transferIdPlaceholder" : "Facultatif",
+      "transferId" : "Identifiant de transfert (mémo)",
+      "transferIdWarningText" : "Lorsque vous utilisez un mémo, vérifiez soigneusement les informations auprès du bénéficiaire."
+    },
     "cardano" : {
       "memoPlaceholder" : "Facultatif",
       "memo" : "Mémo"
@@ -4955,6 +4960,10 @@
     }
   },
   "errors" : {
+    "ReplacementTransactionUnderpriced" : {
+      "title" : "Frais de réseau trop bas",
+      "description" : "Les frais de réseau peuvent être trop bas. Veuillez les augmenter."
+    },
     "NoSuchAppOnProvider" : {
       "title" : "Échec de la localisation de l’application {{appName}} pour votre appareil.",
       "description" : "Veuillez essayer de réinstaller l’application depuis My Ledger."
@@ -5138,8 +5147,8 @@
       "description" : "Mettez à jour le micrologiciel de votre appareil pour accéder à cette fonctionnalité."
     },
     "FirmwareNotRecognized" : {
-      "title" : "Micrologiciel de l’appareil non reconnu",
-      "description" : "Merci de contacter l’Assistance Ledger"
+      "title" : "Prestataire non valide",
+      "description" : "Vous devez modifier le paramètre \"Fournisseur de My Ledger\". Dans Ledger Live, accédez aux Paramètres, sélectionnez \"Fonctionnalités expérimentales\", puis choisissez un autre prestataire."
     },
     "HardResetFail" : {
       "title" : "Échec de la réinitialisation",
@@ -5178,46 +5187,46 @@
       "description" : "Merci de vérifier les apps déjà installées sur votre appareil."
     },
     "ManagerAppDepInstallRequired" : {
-      "title" : "Application {{dependency}} requise",
-      "description" : "Si l’application {{dependency}} est déjà installée, merci de la réinstaller avec la dernière version."
+      "title" : "App {{dependency}} requise",
+      "description" : "Si l’app {{dependency}} est déjà installée, veuillez la réinstaller avec la dernière version."
     },
     "ManagerAppDepUninstallRequired" : {
-      "title" : "Application nécessaire",
-      "description" : "Désinstallez d’abord toutes les applications qui nécessitent l’application {{appName}}."
+      "title" : "App nécessaire",
+      "description" : "Désinstallez d’abord toutes les apps qui nécessitent l’app {{appName}}."
     },
     "ManagerDeviceLocked" : {
       "title" : "Appareil verrouillé",
       "description" : "Merci de déverrouiller votre appareil."
     },
     "ManagerFirmwareNotEnoughSpace" : {
-      "title" : "Désinstaller toutes les applications de votre appareil",
+      "title" : "Désinstaller toutes les apps de votre appareil",
       "description" : "Les clés privées vous permettant d’accéder à vos crypto-actifs resteront en sécurité sur votre appareil. Assurez-vous également qu’elles sont bien sauvegardées sur votre feuille de récupération."
     },
     "ManagerNotEnoughSpace" : {
       "title" : "Espace de stockage insuffisant",
-      "description" : "Désinstallez certaines applications pour libérer de l’espace. Les clés privées vous permettant d’accéder à vos crypto-actifs resteront en sécurité sur votre appareil."
+      "description" : "Désinstallez certaines apps pour libérer de l’espace. Les clés privées vous permettant d’accéder à vos crypto-actifs resteront en sécurité sur votre appareil."
     },
     "ManagerQuitPage" : {
       "install" : {
-        "title" : "Finir l’installation de l’application en cours ?",
-        "description" : "Sortir de My Ledger interrompra l’installation de l’application. Pour installer les applications dans la file d’attente, veuillez rester dans My Ledger et finir l’installation.",
+        "title" : "Finir l’installation de l’app en cours ?",
+        "description" : "Sortir de My Ledger interrompra l’installation de l’app. Pour installer les apps dans la file d’attente, veuillez rester dans My Ledger et finir l’installation.",
         "stay" : "Finir l’installation"
       },
       "uninstall" : {
-        "title" : "Finir la désinstallation de l’application en cours ?",
-        "description" : "Sortir de My Ledger interrompra les désinstallations des applications en cours.",
+        "title" : "Finir la désinstallation de l’app en cours ?",
+        "description" : "Sortir de My Ledger interrompra les désinstallations des apps en cours.",
         "stay" : "Finir la désinstallation"
       },
       "update" : {
-        "title" : "Finir les mises à jour d’applications en cours ?",
-        "description" : "Sortir de My Ledger interrompra les mises à jour des applications en cours.",
+        "title" : "Finir les mises à jour d’apps en cours ?",
+        "description" : "Sortir de My Ledger interrompra les mises à jour des apps en cours.",
         "stay" : "Finir les mises à jour"
       },
       "quit" : "Sortir de My Ledger"
     },
     "ManagerUninstallBTCDep" : {
-      "title" : "Application nécessaire",
-      "description" : "Désinstallez les applications Bitcoin ou Ethereum en dernier."
+      "title" : "App nécessaire",
+      "description" : "Désinstallez les apps Bitcoin ou Ethereum en dernier."
     },
     "NetworkDown" : {
       "title" : "Pas de connexion Internet",
@@ -5329,8 +5338,8 @@
       "description" : "{{message}}"
     },
     "DeviceShouldStayInApp" : {
-      "title" : "Merci d’ouvrir l’application {{appName}}",
-      "description" : "Gardez l’application {{appName}} ouverte pendant la recherche de vos comptes."
+      "title" : "Merci d’ouvrir l’app {{appName}}",
+      "description" : "Gardez l’app {{appName}} ouverte pendant la recherche de vos comptes."
     },
     "UnexpectedBootloader" : {
       "title" : "Votre appareil ne doit pas être en mode Bootloader.",
@@ -5360,8 +5369,8 @@
       "description" : "Veuillez réessayer ou contacter l’Assistance Ledger."
     },
     "UpdateYourApp" : {
-      "title" : "Mise à jour de l’application nécessaire",
-      "description" : "Désinstallez et réinstallez l’application {{managerAppName}} dans My Ledger."
+      "title" : "Mise à jour de l’app nécessaire",
+      "description" : "Désinstallez et réinstallez l’app {{managerAppName}} dans My Ledger."
     },
     "DeviceOnDashboardExpected" : {
       "title" : "Retourner au tableau de bord",
@@ -5380,8 +5389,8 @@
       "description" : "Vérifiez que votre wallet physique est bien configuré avec la phrase de récupération ou la passphrase associée au compte sélectionné."
     },
     "DeviceAppVerifyNotSupported" : {
-      "title" : "Mise à jour de l’application nécessaire",
-      "description" : "Désinstallez et réinstallez l’application {{managerAppName}} dans My Ledger."
+      "title" : "Mise à jour de l’app nécessaire",
+      "description" : "Désinstallez et réinstallez l’app {{managerAppName}} dans My Ledger."
     },
     "InvalidAddress" : {
       "title" : "Adresse {{currencyName}} invalide"
@@ -5402,6 +5411,15 @@
       "title" : "Échec de la connexion",
       "description" : "L’appareil a été détecté mais la connexion a échoué. Veuillez réessayer ou contacter l’Assistance Ledger si le problème persiste."
     },
+    "CasperInvalidTransferId" : {
+      "title" : "L’identifiant de transfert doit être un nombre positif inférieur à {{maxTransferId}}"
+    },
+    "InvalidMinimumAmount" : {
+      "title" : "Le montant minimal doit être de {{minAmount}}"
+    },
+    "MayBlockAccount" : {
+      "title" : "Votre compte sera inférieur à {{minAmount}}, le montant minimal requis pour effectuer un transfert"
+    },
     "ETHAddressNonEIP" : {
       "title" : "Vérification automatique indisponible : vérifiez l’adresse attentivement.",
       "description" : null
@@ -5419,6 +5437,9 @@
     },
     "FeeNotLoaded" : {
       "title" : "Chargement des taux de frais impossible. Merci de définir manuellement les frais."
+    },
+    "FeeNotLoadedSwap" : {
+      "title" : "L’estimation des frais de réseau a échoué en raison de difficultés techniques. Veuillez réessayer ou changer d’actif."
     },
     "FeeRequired" : {
       "title" : "Des frais sont requis."
@@ -5470,7 +5491,7 @@
     },
     "BtcUnmatchedApp" : {
       "title" : "Mauvaise app",
-      "description" : "Ouvrez l’application {{managerAppName}} sur votre appareil."
+      "description" : "Ouvrez l’app {{managerAppName}} sur votre appareil."
     },
     "DeviceNameInvalid" : {
       "title" : "Choisissez un nom d’appareil sans \"{{invalidCharacters}}\"."
@@ -5480,8 +5501,8 @@
       "description" : "Veuillez réessayer ou contacter l’Assistance Ledger."
     },
     "ManagerAppRelyOnBTC" : {
-      "title" : "Applications Bitcoin et Ethereum nécessaires",
-      "description" : "Installez d’abord les dernières applications Bitcoin et Ethereum."
+      "title" : "Apps Bitcoin et Ethereum nécessaires",
+      "description" : "Installez d’abord les dernières apps Bitcoin et Ethereum."
     },
     "UserRefusedDeviceNameChange" : {
       "title" : "Changement de nom annulé sur l’appareil",
@@ -5546,7 +5567,7 @@
       "description" : "Une erreur est survenue. Veuillez réessayer ou contacter l’Assistance Ledger."
     },
     "EthAppPleaseEnableContractData" : {
-      "title" : "Merci d’activer (\"Enable\") la signature aveugle (\"Blind signing\") dans les réglages (\"Settings\") de l’application Ethereum."
+      "title" : "Veuillez activer (\"Enable\") la signature aveugle (\"Blind signing\") ou les Données du contrat dans les réglages (\"Settings\") de l’app Ethereum."
     },
     "InvalidXRPTag" : {
       "title" : "Tag de destination XRP invalide"
@@ -5567,7 +5588,7 @@
       "title" : "Le solde ne peut pas être inférieur à {{minimumAmount}}."
     },
     "WrongAppForCurrency" : {
-      "title" : "Merci d’ouvrir l’application {{expected}}"
+      "title" : "Merci d’ouvrir l’app {{expected}}"
     },
     "FeeTooHigh" : {
       "title" : "Les frais de réseau représentent plus de 10% du montant"

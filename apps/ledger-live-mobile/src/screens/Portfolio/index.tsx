@@ -1,13 +1,13 @@
 import React, { useCallback, useMemo, useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { ListRenderItemInfo, Linking } from "react-native";
+import { ListRenderItemInfo, Linking, Platform } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "@react-navigation/native";
 import { Box, Flex } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { ReactNavigationPerformanceView } from "@shopify/react-native-performance-navigation";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import {
   useAlreadyOnboardedURI,
   usePostOnboardingURI,
@@ -22,7 +22,6 @@ import {
   onboardingTypeSelector,
 } from "../../reducers/settings";
 import { setHasBeenUpsoldProtect } from "../../actions/settings";
-
 import Carousel from "../../components/Carousel";
 import { ScreenName } from "../../const";
 import FirmwareUpdateBanner from "../../components/FirmwareUpdateBanner";
@@ -63,7 +62,7 @@ type NavigationProps = BaseComposite<
 >;
 
 const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl(CollapsibleHeaderFlatList, {
-  progressViewOffset: 64,
+  progressViewOffset: Platform.OS === "android" ? 64 : 0,
 });
 
 function PortfolioScreen({ navigation }: NavigationProps) {
@@ -176,7 +175,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
                 <AllocationsSection />
               </Flex>
             </SectionContainer>,
-            <SectionContainer px={6} mb={8} key="PortfolioOperationsHistorySection">
+            <SectionContainer px={6} key="PortfolioOperationsHistorySection">
               <SectionTitle title={t("analytics.operations.title")} />
               <PortfolioOperationsHistorySection />
             </SectionContainer>,

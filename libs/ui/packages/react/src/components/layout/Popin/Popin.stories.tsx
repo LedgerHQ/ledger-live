@@ -62,7 +62,6 @@ export default {
     width: {
       type: "number",
       description: "Optional popin's width",
-      defaultValue: theme.sizes.drawer.popin.max.width,
       control: {
         type: "number",
         min: theme.sizes.drawer.popin.min.width,
@@ -81,7 +80,6 @@ export default {
     height: {
       type: "number",
       description: "Optional popin's height",
-      defaultValue: theme.sizes.drawer.popin.max.width,
       control: {
         type: "number",
         min: theme.sizes.drawer.popin.min.height,
@@ -99,7 +97,6 @@ export default {
     },
     isOpen: {
       type: "boolean",
-      defaultValue: true,
       description: "Controls if the popin is mounted or not.",
       required: true,
       control: { type: "boolean" },
@@ -116,7 +113,6 @@ export default {
       value: true,
       description: "Controls if the header should be displayed.",
       required: true,
-      defaultValue: true,
       control: { type: "boolean" },
       table: { category: "playground" },
     },
@@ -125,13 +121,11 @@ export default {
       value: true,
       description: "Controls if the footer should be displayed.",
       required: true,
-      defaultValue: true,
       control: { type: "boolean" },
       table: { category: "playground" },
     },
     isCloseDisplayed: {
       type: "boolean",
-      defaultValue: true,
       description: "Controls if the close button should be rendered.",
       required: true,
       control: { type: "boolean" },
@@ -139,7 +133,6 @@ export default {
     },
     isBackDisplayed: {
       type: "boolean",
-      defaultValue: true,
       description: "Controls if the back button should be rendered.",
       required: true,
       control: { type: "boolean" },
@@ -150,7 +143,6 @@ export default {
       description:
         "Any valid text. This parameter is passed to a Text component as children. The Text component is the children of the Header component.",
       required: true,
-      defaultValue: "This is a fake title",
       control: { type: "text" },
       table: { category: "playground" },
     },
@@ -159,10 +151,20 @@ export default {
       description:
         "Any valid text. This parameter is passed to a Text component as children. The Text component is the children of the Body component.",
       required: true,
-      defaultValue: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus dignissim fermentum lectus, eu aliquet arcu tincidunt a. Etiam dapibus dolor at felis pretium, a posuere turpis dapibus. Mauris id felis et quam accumsan congue. Curabitur auctor nunc nec augue suscipit sagittis. Nunc eu eros varius, bibendum ligula id, molestie quam. Nam ac sem et mi pellentesque rhoncus sed eu nisi. Maecenas auctor elit at sollicitudin imperdiet. Sed mollis eros at nunc malesuada posuere. Suspendisse luctus commodo porttitor. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus dignissim fermentum lectus, eu aliquet arcu tincidunt a. Etiam dapibus dolor at felis pretium, a posuere turpis dapibus. Mauris id felis et quam accumsan congue. Curabitur auctor nunc nec augue suscipit sagittis. Nunc eu eros varius, bibendum ligula id, molestie quam. Nam ac sem et mi pellentesque rhoncus sed eu nisi. Maecenas auctor elit at sollicitudin imperdiet. Sed mollis eros at nunc malesuada posuere. Suspendisse luctus commodo porttitor. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus dignissim fermentum lectus, eu aliquet arcu tincidunt a. Etiam dapibus dolor at felis pretium, a posuere turpis dapibus. Mauris id felis et quam accumsan congue. Curabitur auctor nunc nec augue suscipit sagittis. Nunc eu eros varius, bibendum ligula id, molestie quam. Nam ac sem et mi pellentesque rhoncus sed eu nisi. Maecenas auctor elit at sollicitudin imperdiet. Sed mollis eros at nunc malesuada posuere. Suspendisse luctus commodo porttitor. Mauris id felis et quam accumsan congue. Curabitur auctor nunc nec augue suscipit sagittis. Nunc eu eros varius, bibendum ligula id, molestie quam. Nam ac sem et mi pellentesque rhoncus sed eu nisi. Maecenas auctor elit at sollicitudin imperdiet. Sed mollis eros at nunc malesuada posuere. Suspendisse luctus commodo porttitor. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus dignissim fermentum lectus, eu aliquet arcu tincidunt a. Etiam dapibus dolor at felis pretium, a posuere turpis dapibus. Mauris id felis et quam accumsan congue. Curabitur auctor nunc nec augue suscipit sagittis. Nunc eu eros varius, bibendum ligula id, molestie quam. Nam ac sem et mi pellentesque rhoncus sed eu nisi. Maecenas auctor elit at sollicitudin imperdiet. Sed mollis eros at nunc malesuada posuere. Suspendisse luctus commodo porttitor. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus dignissim fermentum lectus, eu aliquet arcu tincidunt a. Etiam dapibus dolor at felis pretium, a posuere turpis dapibus. Mauris id felis et quam accumsan congue. Curabitur auctor nunc nec augue suscipit sagittis. Nunc eu eros varius, bibendum ligula id, molestie quam. Nam ac sem et mi pellentesque rhoncus sed eu nisi. Maecenas auctor elit at sollicitudin imperdiet. Sed mollis eros at nunc malesuada posuere. Suspendisse luctus commodo porttitor. Mauris id felis et quam accumsan congue. Curabitur auctor nunc nec augue suscipit sagittis. Nunc eu eros varius, bibendum ligula id, molestie quam. Nam ac sem et mi pellentesque rhoncus sed eu nisi. Maecenas auctor elit at sollicitudin imperdiet. Sed mollis eros at nunc malesuada posuere. Suspendisse luctus commodo porttitor. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus dignissim fermentum lectus, eu aliquet arcu tincidunt a. Etiam dapibus dolor at felis pretium, a posuere turpis dapibus. Mauris id felis et quam accumsan congue. Curabitur auctor nunc nec augue suscipit sagittis. Nunc eu eros varius, bibendum ligula id, molestie quam. Nam ac sem et mi pellentesque rhoncus sed eu nisi. Maecenas auctor elit at sollicitudin imperdiet. Sed mollis eros at nunc malesuada posuere. Suspendisse luctus commodo porttitor. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus dignissim fermentum lectus, eu aliquet arcu tincidunt a. Etiam dapibus dolor at felis pretium, a posuere turpis dapibus. Mauris id felis et quam accumsan congue. Curabitur auctor nunc nec augue suscipit sagittis. Nunc eu eros varius, bibendum ligula id, molestie quam. Nam ac sem et mi pellentesque rhoncus sed eu nisi. Maecenas auctor elit at sollicitudin imperdiet. Sed mollis eros at nunc malesuada posuere. Suspendisse luctus commodo porttitor.`,
       control: { type: "text" },
       table: { category: "playground" },
     },
+  },
+  args: {
+    width: theme.sizes.drawer.popin.max.width,
+    height: theme.sizes.drawer.popin.max.height,
+    isOpen: true,
+    hasHeader: true,
+    hasFooter: true,
+    isCloseDisplayed: true,
+    isBackDisplayed: true,
+    "Body.Children.Text": `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus dignissim fermentum lectus, eu aliquet arcu tincidunt a. Etiam dapibus dolor at felis pretium, a posuere turpis dapibus. Mauris id felis et quam accumsan congue. Curabitur auctor nunc nec augue suscipit sagittis. Nunc eu eros varius, bibendum ligula id, molestie quam. Nam ac sem et mi pellentesque rhoncus sed eu nisi. Maecenas auctor elit at sollicitudin imperdiet. Sed mollis eros at nunc malesuada posuere. Suspendisse luctus commodo porttitor. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus dignissim fermentum lectus, eu aliquet arcu tincidunt a. Etiam dapibus dolor at felis pretium, a posuere turpis dapibus. Mauris id felis et quam accumsan congue. Curabitur auctor nunc nec augue suscipit sagittis. Nunc eu eros varius, bibendum ligula id, molestie quam. Nam ac sem et mi pellentesque rhoncus sed eu nisi. Maecenas auctor elit at sollicitudin imperdiet. Sed mollis eros at nunc malesuada posuere. Suspendisse luctus commodo porttitor. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus dignissim fermentum lectus, eu aliquet arcu tincidunt a. Etiam dapibus dolor at felis pretium, a posuere turpis dapibus. Mauris id felis et quam accumsan congue. Curabitur auctor nunc nec augue suscipit sagittis. Nunc eu eros varius, bibendum ligula id, molestie quam. Nam ac sem et mi pellentesque rhoncus sed eu nisi. Maecenas auctor elit at sollicitudin imperdiet. Sed mollis eros at nunc malesuada posuere. Suspendisse luctus commodo porttitor. Mauris id felis et quam accumsan congue. Curabitur auctor nunc nec augue suscipit sagittis. Nunc eu eros varius, bibendum ligula id, molestie quam. Nam ac sem et mi pellentesque rhoncus sed eu nisi. Maecenas auctor elit at sollicitudin imperdiet. Sed mollis eros at nunc malesuada posuere. Suspendisse luctus commodo porttitor. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus dignissim fermentum lectus, eu aliquet arcu tincidunt a. Etiam dapibus dolor at felis pretium, a posuere turpis dapibus. Mauris id felis et quam accumsan congue. Curabitur auctor nunc nec augue suscipit sagittis. Nunc eu eros varius, bibendum ligula id, molestie quam. Nam ac sem et mi pellentesque rhoncus sed eu nisi. Maecenas auctor elit at sollicitudin imperdiet. Sed mollis eros at nunc malesuada posuere. Suspendisse luctus commodo porttitor. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus dignissim fermentum lectus, eu aliquet arcu tincidunt a. Etiam dapibus dolor at felis pretium, a posuere turpis dapibus. Mauris id felis et quam accumsan congue. Curabitur auctor nunc nec augue suscipit sagittis. Nunc eu eros varius, bibendum ligula id, molestie quam. Nam ac sem et mi pellentesque rhoncus sed eu nisi. Maecenas auctor elit at sollicitudin imperdiet. Sed mollis eros at nunc malesuada posuere. Suspendisse luctus commodo porttitor. Mauris id felis et quam accumsan congue. Curabitur auctor nunc nec augue suscipit sagittis. Nunc eu eros varius, bibendum ligula id, molestie quam. Nam ac sem et mi pellentesque rhoncus sed eu nisi. Maecenas auctor elit at sollicitudin imperdiet. Sed mollis eros at nunc malesuada posuere. Suspendisse luctus commodo porttitor. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus dignissim fermentum lectus, eu aliquet arcu tincidunt a. Etiam dapibus dolor at felis pretium, a posuere turpis dapibus. Mauris id felis et quam accumsan congue. Curabitur auctor nunc nec augue suscipit sagittis. Nunc eu eros varius, bibendum ligula id, molestie quam. Nam ac sem et mi pellentesque rhoncus sed eu nisi. Maecenas auctor elit at sollicitudin imperdiet. Sed mollis eros at nunc malesuada posuere. Suspendisse luctus commodo porttitor. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus dignissim fermentum lectus, eu aliquet arcu tincidunt a. Etiam dapibus dolor at felis pretium, a posuere turpis dapibus. Mauris id felis et quam accumsan congue. Curabitur auctor nunc nec augue suscipit sagittis. Nunc eu eros varius, bibendum ligula id, molestie quam. Nam ac sem et mi pellentesque rhoncus sed eu nisi. Maecenas auctor elit at sollicitudin imperdiet. Sed mollis eros at nunc malesuada posuere. Suspendisse luctus commodo porttitor.`,
+    "Header.Children.Text": "This is a fake title",
   },
 };
 

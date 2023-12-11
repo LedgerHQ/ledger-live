@@ -38,10 +38,8 @@ jobs:
           ref: ${{ inputs.ref }}
           token: ${{ steps.generate-token.outputs.token }}
 
-      - name: set git user
-        run: |
-          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
-          git config user.name "live-github-bot[bot]"
+      - name: Setup git user
+        uses: ./tools/actions/composites/setup-git-user
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
       - uses: ./tools/actions/get-package-infos

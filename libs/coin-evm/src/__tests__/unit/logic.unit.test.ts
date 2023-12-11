@@ -16,6 +16,7 @@ import {
   legacyTransactionHasFees,
   mergeSubAccounts,
   padHexString,
+  safeEncodeEIP55,
 } from "../../logic";
 
 import {
@@ -679,6 +680,38 @@ describe("EVM Family", () => {
       it("should always return an odd number of characters", () => {
         expect(padHexString("1")).toEqual("01");
         expect(padHexString("01")).toEqual("01");
+      });
+    });
+
+    describe("safeEncodeEIP55", () => {
+      it("Should return encoded address if valid address", () => {
+        const address = "0x9aa99c23f67c81701c772b106b4f83f6e858dd2e";
+        const encodedAddress = safeEncodeEIP55(address);
+        expect(encodedAddress).toBe("0x9AA99C23F67c81701C772B106b4F83f6e858dd2E");
+      });
+
+      it("Should return empty string if empty address", () => {
+        const address = "";
+        const encodedAddress = safeEncodeEIP55(address);
+        expect(encodedAddress).toBe("");
+      });
+
+      it("Should return empty string if 0x0 address", () => {
+        const address = "0x0";
+        const encodedAddress = safeEncodeEIP55(address);
+        expect(encodedAddress).toBe("");
+      });
+
+      it("Should return empty string if 0x address", () => {
+        const address = "0x";
+        const encodedAddress = safeEncodeEIP55(address);
+        expect(encodedAddress).toBe("");
+      });
+
+      it("Should return address if invalid address", () => {
+        const address = "0x00000";
+        const encodedAddress = safeEncodeEIP55(address);
+        expect(encodedAddress).toBe(address);
       });
     });
   });

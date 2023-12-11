@@ -421,6 +421,7 @@ export default function BaseNavigator() {
               <NavigationHeaderCloseButtonAdvanced
                 color={colors.constant.white}
                 preferDismiss={false}
+                rounded
               />
             ),
             headerLeft: () => null,

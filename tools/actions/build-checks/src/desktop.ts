@@ -43,7 +43,7 @@ export async function desktopChecks({ baseBranch, octokit, githubToken, prNumber
   const all = await Promise.all([
     retrieveLocalMetafiles("linux-js-bundle-metafiles"),
     retrieveLocalMetafiles("mac-js-bundle-metafiles"),
-    retrieveLocalMetafiles("windows-js-bundle-metafiles"),
+    retrieveLocalMetafiles("win-js-bundle-metafiles"),
   ]);
 
   const reporter = new Reporter();

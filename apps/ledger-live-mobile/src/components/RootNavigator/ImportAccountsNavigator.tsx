@@ -1,7 +1,6 @@
 import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
-import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "../../const";
 import ScanAccounts from "../../screens/ImportAccounts/Scan";
@@ -22,13 +21,15 @@ export default function ImportAccountsNavigator() {
         component={ScanAccounts}
         options={{
           ...TransparentHeaderNavigationOptions,
-          headerShown: false,
-          headerTitle: () => (
-            <Text variant="h3" uppercase>
-              {t("account.import.scan.title")}
-            </Text>
+          headerShown: true,
+          headerTitle: () => null,
+          headerRight: () => (
+            <NavigationHeaderCloseButtonAdvanced
+              color={colors.constant.white}
+              preferDismiss={false}
+              rounded
+            />
           ),
-          headerRight: props => <NavigationHeaderCloseButtonAdvanced {...props} color={"#fff"} />,
           headerLeft: () => null,
         }}
       />

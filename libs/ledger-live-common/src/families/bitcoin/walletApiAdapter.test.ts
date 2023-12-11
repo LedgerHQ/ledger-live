@@ -22,7 +22,7 @@ describe("getPlatformTransactionSignFlowInfos", () => {
       expect(hasFeesProvided).toBe(false);
 
       expect(liveTx).toMatchInlineSnapshot(`
-Object {
+{
   "amount": "100000",
   "family": "bitcoin",
   "feePerByte": null,
@@ -31,8 +31,8 @@ Object {
   "rbf": false,
   "recipient": "0xABCDEF",
   "useAllAmount": false,
-  "utxoStrategy": Object {
-    "excludeUTXOs": Array [],
+  "utxoStrategy": {
+    "excludeUTXOs": [],
     "strategy": 0,
   },
 }
@@ -57,7 +57,7 @@ Object {
       expect(hasFeesProvided).toBe(true);
 
       expect(liveTx).toMatchInlineSnapshot(`
-Object {
+{
   "amount": "100000",
   "family": "bitcoin",
   "feePerByte": "300",
@@ -66,8 +66,8 @@ Object {
   "rbf": false,
   "recipient": "0xABCDEF",
   "useAllAmount": false,
-  "utxoStrategy": Object {
-    "excludeUTXOs": Array [],
+  "utxoStrategy": {
+    "excludeUTXOs": [],
     "strategy": 0,
   },
 }
@@ -92,14 +92,14 @@ Object {
       expect(hasFeesProvided).toBe(false);
 
       expect(liveTx).toMatchInlineSnapshot(`
-Object {
+{
   "amount": "100000",
   "family": "bitcoin",
   "feePerByte": null,
   "feesStrategy": "medium",
   "networkInfo": null,
-  "opReturnData": Object {
-    "data": Array [
+  "opReturnData": {
+    "data": [
       104,
       101,
       108,
@@ -117,8 +117,8 @@ Object {
   "rbf": false,
   "recipient": "0xABCDEF",
   "useAllAmount": false,
-  "utxoStrategy": Object {
-    "excludeUTXOs": Array [],
+  "utxoStrategy": {
+    "excludeUTXOs": [],
     "strategy": 0,
   },
 }

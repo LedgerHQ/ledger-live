@@ -144,7 +144,7 @@ export default function Content({
   const { EditOperationPanel: SpecificEditOperationPanel = undefined } =
     byFamiliesEditOperationPanel[
       mainAccount.currency.family as keyof typeof byFamiliesEditOperationPanel
-    ];
+    ] || {};
 
   const urlFeesInfo =
     specificOperationDetails &&

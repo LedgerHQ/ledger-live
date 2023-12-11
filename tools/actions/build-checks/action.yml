@@ -1,5 +1,5 @@
 name: build-checks
-description: Perform build checks to compare performance metrics like bundle size,...
+description: Perform build checks to compare performance metrics like bundle size ...
 author: valpinkman
 inputs:
   token:

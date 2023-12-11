@@ -62,11 +62,11 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Cosmos unit (Atom) 1`] = `"12.345.678.900,000000- -ATOM"`;
 
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Cronos POS Chain Croeseid unit (TCRO) 1`] = `"123.456.789,00000000- -tcro"`;
+
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Cronos POS Chain unit (CRO) 1`] = `"123.456.789,00000000- -CRO"`;
+
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Cronos unit (CRO) 1`] = `"0,012345678900000000- -CRO"`;
-
-exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Crypto.org Croeseid unit (TCRO) 1`] = `"123.456.789,00000000- -tcro"`;
-
-exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Crypto.org unit (CRO) 1`] = `"123.456.789,00000000- -CRO"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format DEXON unit (dexon) 1`] = `"12.345.678.900,000000- -DXN"`;
 
@@ -384,11 +384,11 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Cosmos unit (Atom) 1`] = `"12,345,678,900.000000- -ATOM"`;
 
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Cronos POS Chain Croeseid unit (TCRO) 1`] = `"123,456,789.00000000- -tcro"`;
+
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Cronos POS Chain unit (CRO) 1`] = `"123,456,789.00000000- -CRO"`;
+
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Cronos unit (CRO) 1`] = `"0.012345678900000000- -CRO"`;
-
-exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Crypto.org Croeseid unit (TCRO) 1`] = `"123,456,789.00000000- -tcro"`;
-
-exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Crypto.org unit (CRO) 1`] = `"123,456,789.00000000- -CRO"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format DEXON unit (dexon) 1`] = `"12,345,678,900.000000- -DXN"`;
 
@@ -706,11 +706,11 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Cosmos unit (Atom) 1`] = `"12.345.678.900,000000- -ATOM"`;
 
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Cronos POS Chain Croeseid unit (TCRO) 1`] = `"123.456.789,00000000- -tcro"`;
+
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Cronos POS Chain unit (CRO) 1`] = `"123.456.789,00000000- -CRO"`;
+
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Cronos unit (CRO) 1`] = `"0,012345678900000000- -CRO"`;
-
-exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Crypto.org Croeseid unit (TCRO) 1`] = `"123.456.789,00000000- -tcro"`;
-
-exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Crypto.org unit (CRO) 1`] = `"123.456.789,00000000- -CRO"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format DEXON unit (dexon) 1`] = `"12.345.678.900,000000- -DXN"`;
 
@@ -1028,11 +1028,11 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Cosmos unit (Atom) 1`] = `"12 345 678 900,000000- -ATOM"`;
 
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Cronos POS Chain Croeseid unit (TCRO) 1`] = `"123 456 789,00000000- -tcro"`;
+
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Cronos POS Chain unit (CRO) 1`] = `"123 456 789,00000000- -CRO"`;
+
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Cronos unit (CRO) 1`] = `"0,012345678900000000- -CRO"`;
-
-exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Crypto.org Croeseid unit (TCRO) 1`] = `"123 456 789,00000000- -tcro"`;
-
-exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Crypto.org unit (CRO) 1`] = `"123 456 789,00000000- -CRO"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format DEXON unit (dexon) 1`] = `"12 345 678 900,000000- -DXN"`;
 
@@ -1350,11 +1350,11 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Cosmos unit (Atom) 1`] = `"12,345,678,900.000000- -ATOM"`;
 
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Cronos POS Chain Croeseid unit (TCRO) 1`] = `"123,456,789.00000000- -tcro"`;
+
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Cronos POS Chain unit (CRO) 1`] = `"123,456,789.00000000- -CRO"`;
+
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Cronos unit (CRO) 1`] = `"0.012345678900000000- -CRO"`;
-
-exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Crypto.org Croeseid unit (TCRO) 1`] = `"123,456,789.00000000- -tcro"`;
-
-exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Crypto.org unit (CRO) 1`] = `"123,456,789.00000000- -CRO"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format DEXON unit (dexon) 1`] = `"12,345,678,900.000000- -DXN"`;
 
@@ -1672,11 +1672,11 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Cosmos unit (Atom) 1`] = `"12,345,678,900.000000- -ATOM"`;
 
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Cronos POS Chain Croeseid unit (TCRO) 1`] = `"123,456,789.00000000- -tcro"`;
+
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Cronos POS Chain unit (CRO) 1`] = `"123,456,789.00000000- -CRO"`;
+
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Cronos unit (CRO) 1`] = `"0.012345678900000000- -CRO"`;
-
-exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Crypto.org Croeseid unit (TCRO) 1`] = `"123,456,789.00000000- -tcro"`;
-
-exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Crypto.org unit (CRO) 1`] = `"123,456,789.00000000- -CRO"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format DEXON unit (dexon) 1`] = `"12,345,678,900.000000- -DXN"`;
 
@@ -1994,11 +1994,11 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Cosmos unit (Atom) 1`] = `"12.345.678.900,000000- -ATOM"`;
 
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Cronos POS Chain Croeseid unit (TCRO) 1`] = `"123.456.789,00000000- -tcro"`;
+
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Cronos POS Chain unit (CRO) 1`] = `"123.456.789,00000000- -CRO"`;
+
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Cronos unit (CRO) 1`] = `"0,012345678900000000- -CRO"`;
-
-exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Crypto.org Croeseid unit (TCRO) 1`] = `"123.456.789,00000000- -tcro"`;
-
-exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Crypto.org unit (CRO) 1`] = `"123.456.789,00000000- -CRO"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format DEXON unit (dexon) 1`] = `"12.345.678.900,000000- -DXN"`;
 
@@ -2316,11 +2316,11 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Cosmos unit (Atom) 1`] = `"12 345 678 900,000000- -ATOM"`;
 
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Cronos POS Chain Croeseid unit (TCRO) 1`] = `"123 456 789,00000000- -tcro"`;
+
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Cronos POS Chain unit (CRO) 1`] = `"123 456 789,00000000- -CRO"`;
+
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Cronos unit (CRO) 1`] = `"0,012345678900000000- -CRO"`;
-
-exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Crypto.org Croeseid unit (TCRO) 1`] = `"123 456 789,00000000- -tcro"`;
-
-exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Crypto.org unit (CRO) 1`] = `"123 456 789,00000000- -CRO"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format DEXON unit (dexon) 1`] = `"12 345 678 900,000000- -DXN"`;
 
@@ -2638,11 +2638,11 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Cosmos unit (Atom) 1`] = `"12.345.678.900,000000- -ATOM"`;
 
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Cronos POS Chain Croeseid unit (TCRO) 1`] = `"123.456.789,00000000- -tcro"`;
+
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Cronos POS Chain unit (CRO) 1`] = `"123.456.789,00000000- -CRO"`;
+
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Cronos unit (CRO) 1`] = `"0,012345678900000000- -CRO"`;
-
-exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Crypto.org Croeseid unit (TCRO) 1`] = `"123.456.789,00000000- -tcro"`;
-
-exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Crypto.org unit (CRO) 1`] = `"123.456.789,00000000- -CRO"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format DEXON unit (dexon) 1`] = `"12.345.678.900,000000- -DXN"`;
 
@@ -2960,11 +2960,11 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Cosmos unit (Atom) 1`] = `"12,345,678,900.000000- -ATOM"`;
 
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Cronos POS Chain Croeseid unit (TCRO) 1`] = `"123,456,789.00000000- -tcro"`;
+
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Cronos POS Chain unit (CRO) 1`] = `"123,456,789.00000000- -CRO"`;
+
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Cronos unit (CRO) 1`] = `"0.012345678900000000- -CRO"`;
-
-exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Crypto.org Croeseid unit (TCRO) 1`] = `"123,456,789.00000000- -tcro"`;
-
-exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Crypto.org unit (CRO) 1`] = `"123,456,789.00000000- -CRO"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format DEXON unit (dexon) 1`] = `"12,345,678,900.000000- -DXN"`;
 
@@ -3282,11 +3282,11 @@ exports[`formatCurrencyUnit with default options should correctly format Cosmos 
 
 exports[`formatCurrencyUnit with default options should correctly format Cosmos unit (Atom) 1`] = `"12,345,678,900"`;
 
+exports[`formatCurrencyUnit with default options should correctly format Cronos POS Chain Croeseid unit (TCRO) 1`] = `"123,456,789"`;
+
+exports[`formatCurrencyUnit with default options should correctly format Cronos POS Chain unit (CRO) 1`] = `"123,456,789"`;
+
 exports[`formatCurrencyUnit with default options should correctly format Cronos unit (CRO) 1`] = `"0.0123456"`;
-
-exports[`formatCurrencyUnit with default options should correctly format Crypto.org Croeseid unit (TCRO) 1`] = `"123,456,789"`;
-
-exports[`formatCurrencyUnit with default options should correctly format Crypto.org unit (CRO) 1`] = `"123,456,789"`;
 
 exports[`formatCurrencyUnit with default options should correctly format DEXON unit (dexon) 1`] = `"12,345,678,900"`;
 

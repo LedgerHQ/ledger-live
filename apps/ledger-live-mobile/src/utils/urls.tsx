@@ -166,7 +166,7 @@ export const urls = {
     website: "https://elrond.com",
   },
   cryptoOrg: {
-    website: "https://crypto.org",
+    website: "https://cronos-pos.org",
   },
   solana: {
     supportPage: "https://support.ledger.com",

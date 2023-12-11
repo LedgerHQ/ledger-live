@@ -196,11 +196,11 @@
       "description" : "お客様のトランザクションは進行中です。より高いネットワーク手数料で速度を上げるか、キャンセルが可能です。",
       "stuckDescription" : "お客様のトランザクションは進行中です。より高いネットワーク手数料で速度を上げるか、キャンセルが可能です。",
       "previousFeesInfo" : {
-        "pendingTransactionFeesInfo" : "保留中のトランザクション手数料情報： ",
-        "networkfee" : "ネットワーク手数料＝ ",
-        "maxFee" : "最大手数料＝ ",
-        "maxPriorityFee" : "最大優先手数料＝ ",
-        "gasPrice" : "ガス代＝ "
+        "pendingTransactionFeesInfo" : "保留中のトランザクション手数料情報：",
+        "networkfee" : "ネットワーク手数料 = {{amount}}",
+        "maxFee" : "最大手数料 = {{amount}}",
+        "maxPriorityFee" : "最大優先手数料＝{{amount}}",
+        "gasPrice" : "ガス代 = {{amount}}"
       },
       "learnMore" : "詳細を知りたいです",
       "panel" : {
@@ -213,7 +213,7 @@
       },
       "cancel" : {
         "title" : "キャンセル",
-        "description" : "0{{ticker}}をお客様自身のアドレスに送信中です。キャンセルを確定するには、ネットワーク手数料はキャンセルされるトランザクション手数料よりも30%高くなります。"
+        "description" : "0{{ticker}}をお客様のアドレスに送信中です。"
       },
       "steps" : {
         "method" : {
@@ -1208,7 +1208,7 @@
           "contactSupportCTA" : "Ledgerサポートへ問い合わせ",
           "notFoundEntityError" : {
             "title" : "正規品チェックを再開する",
-            "description" : "まず「My Ledger Provider（{{providerNumber}}）」設定を無効化してください。無効にするには、Ledger Liveの「設定」を開き、「試験的機能」を選択して、「マネージャープロバイダー（Manager provider）」をオフに切り替えます。"
+            "description" : "まず「My Ledgerプロバイダー（{{providerNumber}}）」設定を無効化してください。無効にするには、Ledger Liveの「設定」を開き、「試験的機能」を選択して、「My Ledgerプロバイダー」をオフに切り替えます。"
           },
           "deviceNotGenuineError" : {
             "title" : "この{{productName}}は正規品ではありません",
@@ -1286,7 +1286,8 @@
   "postOnboarding" : {
     "postOnboardingScreen" : {
       "title" : "次に、Ledger Staxを\n使用して... ",
-      "titleCompleted" : "はい、\n終わり！"
+      "titleCompleted" : "準備完了！\n引き続きウォレットの使用をお楽しみください。",
+      "exploreCTA" : "ウォレットを探索"
     },
     "postOnboardingContent" : {
       "skipLink" : "後で行う"
@@ -3151,7 +3152,7 @@
     "unlockedBalance" : "ボンド解除済み",
     "unlockedTooltip" : "ボンド解除済み資産が、引き出し可能になりました。",
     "networkFees" : "ネットワーク手数料は、Polkadotのコンセンサスアルゴリズムによって自動的に設定されるため、デバイス上で確認することはできません",
-    "bondedBalanceBelowMinimum" : "ボンド残高が、下限額{{minimumBondBalance}}を下回っています。ノミネートが解除されてしまう可能性があります。",
+    "bondedBalanceBelowMinimum" : "ノミネーターとして、ノミネートの意向を提出するには、少なくとも{{minimumBondBalance}}が必要です",
     "nomination" : {
       "emptyState" : {
         "description" : "資産をボンド後、バリデーターをノミネートすることで報酬を獲得できます。",
@@ -4248,7 +4249,6 @@
         "nextButton" : "はじめに",
         "noDevice" : "デバイスをお持ちでない場合",
         "buyLink" : "デバイスをお持ちですか？Nano Xの購入はこちら",
-        "recoverSignIn" : "Ledger Recoverにログイン",
         "byTapping" : "「はじめる」をタップすることで、お客様が同意したことになります。",
         "termsAndConditions" : "利用規約",
         "and" : "そして",
@@ -4906,6 +4906,11 @@
     "cta" : "続行"
   },
   "families" : {
+    "casper" : {
+      "transferIdPlaceholder" : "任意",
+      "transferId" : "送金ID（メモ）",
+      "transferIdWarningText" : "メモを使用する場合は、受取人と情報をしっかりと確認してください"
+    },
     "cardano" : {
       "memoPlaceholder" : "任意",
       "memo" : "メモ"
@@ -4955,6 +4960,10 @@
     }
   },
   "errors" : {
+    "ReplacementTransactionUnderpriced" : {
+      "title" : "代替トランザクション手数料が低くなっています",
+      "description" : "ネットワーク手数料が低すぎる可能性があります。増額してください"
+    },
     "NoSuchAppOnProvider" : {
       "title" : "特定の設定に必要な{{appName}}アプリが見つかりません。",
       "description" : "My Ledgerからアプリの再インストールを試す"
@@ -5138,8 +5147,8 @@
       "description" : "この機能にアクセスするには、ファームウェアを最新バージョンにアップデートしてください。"
     },
     "FirmwareNotRecognized" : {
-      "title" : "デバイスのファームウェアが認識されません。",
-      "description" : "Ledgerサポートにお問合せください。"
+      "title" : "プロバイダーが無効です",
+      "description" : "「My Ledgerプロバイダー」の設定を変更する必要があります。変更するには、Ledger Live の「設定」を開き、「試験的機能」を選択して、別のプロバイダーを選択します。"
     },
     "HardResetFail" : {
       "title" : "リセットできませんでした。",
@@ -5402,6 +5411,15 @@
       "title" : "接続に失敗しました。",
       "description" : "デバイスが検出されましたが接続できません。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにお問い合わせください。"
     },
+    "CasperInvalidTransferId" : {
+      "title" : "送金IDは、{{maxTransferId}}より小さい正数である必要があります"
+    },
+    "InvalidMinimumAmount" : {
+      "title" : "最低送金額は{{minAmount}}です"
+    },
+    "MayBlockAccount" : {
+      "title" : "アカウントの残高は、送付に必要な{{minAmount}}未満になります"
+    },
     "ETHAddressNonEIP" : {
       "title" : "自動認証が利用できません：アドレスを慎重に確認してください。",
       "description" : null
@@ -5411,7 +5429,7 @@
       "description" : "NFTの送付機能は、Nano XとNano S+でのみご利用いただけます。Nano SでNFTを送付する方法については、当社のカスタマーサポートのプラットフォームをご覧ください。"
     },
     "TransactionHasBeenValidatedError" : {
-      "title" : "速度を上げたりキャンセルすることはできません",
+      "title" : "速度を上げたり、キャンセルすることはできません",
       "description" : "このトランザクションはすでに検証済みです"
     },
     "CantScanQRCode" : {
@@ -5419,6 +5437,9 @@
     },
     "FeeNotLoaded" : {
       "title" : "手数料レートを読み込めませんでした。手動で手数料を設定してください"
+    },
+    "FeeNotLoadedSwap" : {
+      "title" : "技術的な問題のため、ネットワーク手数料の見積もりに失敗しました。再試行するか、資産を変更してください。"
     },
     "FeeRequired" : {
       "title" : "手数料がかかります。"
@@ -5546,7 +5567,7 @@
       "description" : "問題が発生しました。再試行するか、疑わしい場合はLedgerサポートにご連絡ください。"
     },
     "EthAppPleaseEnableContractData" : {
-      "title" : "Ethereumアプリの設定でコントラクトデータを有効にしてください。"
+      "title" : "Ethereumアプリの設定からブラインド署名またはコントラクトデータを有効にしてください"
     },
     "InvalidXRPTag" : {
       "title" : "無効なXRP宛先タグ"
