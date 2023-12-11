@@ -2034,6 +2034,9 @@ importers:
       '@ledgerhq/hw-app-exchange':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-exchange
+      '@ledgerhq/hw-app-icon':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/hw-app-icon
       '@ledgerhq/hw-app-near':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-near
@@ -2163,6 +2166,12 @@ importers:
       '@zondax/ledger-stacks':
         specifier: ^1.0.2
         version: 1.0.2
+      algo-msgpack-with-bigint:
+        specifier: ^2.1.1
+        version: 2.1.1
+      algosdk:
+        specifier: 1.13.0
+        version: 1.13.0
       async:
         specifier: ^3.2.3
         version: 3.2.3
@@ -2241,6 +2250,9 @@ importers:
       fuse.js:
         specifier: ^6.6.2
         version: 6.6.2
+      icon-sdk-js:
+        specifier: 1.2.3
+        version: 1.2.3
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
@@ -2941,6 +2953,22 @@ importers:
       ts-node:
         specifier: ^10.4.0
         version: 10.7.0(@types/node@20.8.10)(source-map-support@0.5.21)(typescript@5.1.3)
+
+  libs/ledgerjs/packages/hw-app-icon:
+    dependencies:
+      '@ledgerhq/errors':
+        specifier: workspace:^
+        version: link:../errors
+      '@ledgerhq/hw-transport':
+        specifier: workspace:^
+        version: link:../hw-transport
+      bip32-path:
+        specifier: ^0.4.2
+        version: 0.4.2
+    devDependencies:
+      '@ledgerhq/hw-transport-mocker':
+        specifier: workspace:^
+        version: link:../hw-transport-mocker
 
   libs/ledgerjs/packages/hw-app-near:
     dependencies:
@@ -25945,6 +25973,23 @@ packages:
     engines: {node: '>= 10'}
     dev: false
 
+  /algosdk@1.13.0:
+    resolution: {integrity: sha512-0hknXiP3sc/KxRUvoI1d14x2H/hM7LJZ1zA9DmEUX76z508QPgzjxyQag7THHu5rAW0VuzCgWcFlwI0lsTJMoQ==}
+    dependencies:
+      algo-msgpack-with-bigint: 2.1.1
+      buffer: 6.0.3
+      hi-base32: 0.5.1
+      js-sha256: 0.9.0
+      js-sha3: 0.8.0
+      js-sha512: 0.8.0
+      json-bigint: 1.0.0
+      superagent: 6.1.0
+      tweetnacl: 1.0.3
+      url-parse: 1.5.10
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
   /algosdk@1.13.1:
     resolution: {integrity: sha512-htyJI1/zVcOzpNZVT8PHn4K0yXXTS+b7RXplc7nmFqGVThbM8+ufbnBLChxVPh3BVxqqpqS13VTsQcNArK10jg==}
     dependencies:
@@ -27690,7 +27735,7 @@ packages:
     resolution: {integrity: sha512-HUmkY0MUDUVgejJVNrpNKAva8C4IWD/Rd862sdexoSibu86b6iu0gO0/RjovO2lM5+w6JqjIEmkuAgGhfHlnJw==}
     engines: {node: '>= 8.0.0'}
     dependencies:
-      nan: 2.17.0
+      nan: 2.18.0
     dev: false
 
   /blake2b-wasm@1.1.7:
@@ -32022,6 +32067,15 @@ packages:
       find-up: 3.0.0
       minimatch: 3.1.2
     dev: true
+
+  /drbg.js@1.0.1:
+    resolution: {integrity: sha512-F4wZ06PvqxYLFEZKkFxTDcns9oFNk34hvmJSEwdzsxVQ8YI5YaxtACgQatkYgv2VI2CFkUd2Y+xosPQnHv809g==}
+    engines: {node: '>=0.10'}
+    dependencies:
+      browserify-aes: 1.2.0
+      create-hash: 1.2.0
+      create-hmac: 1.1.7
+    dev: false
 
   /dtrace-provider@0.8.8:
     resolution: {integrity: sha512-b7Z7cNtHPhH9EJhNNbbeqTcXB8LGFFZhq1PGgEvpeHlzd36bhbdTWoE/Ba/YguqpBSlAPKnARWhVlhunCMwfxg==}
@@ -37094,6 +37148,19 @@ packages:
     resolution: {integrity: sha512-+c9B0txp/x1m5zn+QlwHaCS9vyFtmIAEXbVSFzwCX7vupm5V7va8F9cJGNJZ46X9ZtoGzhIiRC7eTIIh93TxPA==}
     dependencies:
       '@babel/runtime': 7.22.10
+    dev: false
+
+  /icon-sdk-js@1.2.3:
+    resolution: {integrity: sha512-QklxjmRKydoelYL3X6J19zN4weJ9IJaNdqU3UH0JAjdst/mrzhT0VIWeanDrhI4tAAih8Uqx55K8KWWi+Goi3Q==}
+    engines: {node: '>=14.0.0', yarn: ^1.22.10}
+    dependencies:
+      bignumber.js: 7.2.1
+      bip66: 1.1.5
+      js-sha3: 0.8.0
+      secp256k1: 3.5.2
+      utf8: 3.0.0
+      uuid: 3.4.0
+      xmlhttprequest: 1.8.0
     dev: false
 
   /iconv-corefoundation@1.1.7:
@@ -44152,15 +44219,9 @@ packages:
     requiresBuild: true
     dev: false
 
-  /nan@2.17.0:
-    resolution: {integrity: sha512-2ZTgtl0nJsO0KQCjEpxcIr5D+Yv90plTitZt9JBfQvVJDS5seMl3FOvsh3+9CoYWXf/1l5OaZzzF6nDm4cagaQ==}
-    requiresBuild: true
-    dev: false
-
   /nan@2.18.0:
     resolution: {integrity: sha512-W7tfG7vMOGtD30sHoZSSc/JVYiyDPEyQVso/Zz+/uQd0B0L46gtC+pHha5FFMRpil6fm/AoEcRWyOVi4+E/f8w==}
     requiresBuild: true
-    optional: true
 
   /nano-json-stream-parser@0.1.2:
     resolution: {integrity: sha512-9MqxMH/BSJC7dnLsEMPyfN5Dvoo49IsPFYMcHw3Bcfc2kN0lpHRBSzlMSVx4HGyJ7s9B31CyBTVehWJoQ8Ctew==}
@@ -50257,6 +50318,21 @@ packages:
 
   /scrypt-js@3.0.1:
     resolution: {integrity: sha512-cdwTTnqPu0Hyvf5in5asVdZocVDTNRmR7XEcJuIzMjJeSHybHl7vpB66AzwTaIg6CLSbtjcxc8fqcySfnTkccA==}
+
+  /secp256k1@3.5.2:
+    resolution: {integrity: sha512-iin3kojdybY6NArd+UFsoTuapOF7bnJNf2UbcWXaY3z+E1sJDipl60vtzB5hbO/uquBu7z0fd4VC4Irp+xoFVQ==}
+    engines: {node: '>=4.0.0'}
+    requiresBuild: true
+    dependencies:
+      bindings: 1.5.0
+      bip66: 1.1.5
+      bn.js: 4.12.0
+      create-hash: 1.2.0
+      drbg.js: 1.0.1
+      elliptic: 6.5.4
+      nan: 2.18.0
+      safe-buffer: 5.2.1
+    dev: false
 
   /secp256k1@4.0.2:
     resolution: {integrity: sha512-UDar4sKvWAksIlfX3xIaQReADn+WFnHvbVujpcbr+9Sf/69odMwy2MUsz5CKLQgX9nsIyrjuxL2imVyoNHa3fg==}
