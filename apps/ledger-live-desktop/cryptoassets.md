@@ -36,6 +36,7 @@
 | Flare | FLR | YES | flare |
 | Hedera | HBAR | YES | hedera |
 | Horizen | ZEN | YES | zencash |
+| ICON | ICX | YES | icon |
 | Injective | INJ | YES | injective |
 | Internet Computer | ICP | YES | internet_computer |
 | Klaytn | KLAY | YES | klaytn |
@@ -105,7 +106,6 @@
 | Helium | HNT | NO | helium |
 | High Performance Blockchain | HPB | NO | hpb |
 | Hycon | HYC | NO | hycon |
-| ICON | ICX | NO | icon |
 | IOTA | MIOTA | NO | iota |
 | IOV | IOV | NO | iov |
 | Kin | KIN | NO | kin |
