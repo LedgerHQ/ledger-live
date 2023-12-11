@@ -2,6 +2,8 @@ import type { BigNumber } from "bignumber.js";
 import {
   Account,
   AccountRaw,
+  Operation,
+  OperationRaw,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
@@ -120,3 +122,17 @@ export type IconAccountRaw = AccountRaw & {
 export type TransactionStatus = TransactionStatusCommon;
 
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
+
+export type IconOperation = Operation<IconGridExtraTxInfo>;
+export type IconOperationRaw = OperationRaw<IconGridExtraTxInfoRaw>;
+
+export type IconGridExtraTxInfo = {
+  frozenAmount?: BigNumber;
+  unfreezeAmount?: BigNumber;
+  votes?: Vote[];
+};
+export type IconGridExtraTxInfoRaw = {
+  frozenAmount?: string;
+  unfreezeAmount?: string;
+  votes?: Vote[];
+};

@@ -2,9 +2,14 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import {
   SR_MAX_VOTES,
-  SR_THRESHOLD, useIconPublicRepresentatives, useSortedSr
+  SR_THRESHOLD,
+  useIconPublicRepresentatives,
+  useSortedSr,
 } from "@ledgerhq/live-common/families/icon/react";
-import { IconAccount, Transaction as IconTransaction } from "@ledgerhq/live-common/families/icon/types";
+import {
+  IconAccount,
+  Transaction as IconTransaction,
+} from "@ledgerhq/live-common/families/icon/types";
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
 import React, { useCallback, useMemo, useState } from "react";
@@ -25,10 +30,7 @@ import SelectValidatorFooter from "./Footer";
 import Item from "./Item";
 import SelectValidatorSearchBox from "./SearchBox";
 
-type Props = StackNavigatorProps<
-  IconVoteFlowParamList,
-  ScreenName.IconVoteSelectValidator
->;
+type Props = StackNavigatorProps<IconVoteFlowParamList, ScreenName.IconVoteSelectValidator>;
 export default function SelectValidator({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
@@ -37,15 +39,12 @@ export default function SelectValidator({ navigation, route }: Props) {
   invariant(account.type === "Account", "not main account");
 
   const bridge = getAccountBridge(account, undefined);
-  const iconResources = useMemo(
-    () => (account as IconAccount).iconResources || null,
-    [account],
-  );
+  const iconResources = useMemo(() => (account as IconAccount).iconResources || null, [account]);
   invariant(iconResources, "Icon resources required");
   const { votingPower } = iconResources;
 
   const { transaction, setTransaction } = useBridgeTransaction(() => {
-    const tx = route.params.transaction;;
+    const tx = route.params.transaction;
     if (!tx) {
       const t = bridge.createTransaction(account);
       const { votes } = iconResources;
@@ -53,8 +52,10 @@ export default function SelectValidator({ navigation, route }: Props) {
         account,
         transaction: bridge.updateTransaction(t, {
           mode: "vote",
-          votes: votes.map((item)=>{ return {...item, value:Number(item?.value || 0)}}),
+          votes: votes.map(item => {
+            return { ...item, value: Number(item?.value || 0) };
           }),
+        }),
       };
     }
     return {
@@ -62,103 +63,83 @@ export default function SelectValidator({ navigation, route }: Props) {
       transaction: tx,
     };
   });
-invariant(transaction, "transaction is required");
-invariant(
-  (transaction as IconTransaction).votes,
-  "transaction.votes is required",
-);
-const [searchQuery, setSearchQuery] = useState("");
-const publicRepresentatives = useIconPublicRepresentatives(account.currency);
-const { votes } = transaction as IconTransaction;
-const sortedPublicRepresentatives = useSortedSr(
-  searchQuery,
-  publicRepresentatives,
-  votes || [],
-);
-const onSelectPublicRepresentative = useCallback(
-  ({ address }, selected) => {
-    const newVotes = selected
-      ? votes.filter(v => v.address !== address)
-      : [
-        ...votes,
-        {
-          address,
-          value: 0,
-        },
-      ];
-    const tx = bridge.updateTransaction(transaction, {
-      votes: newVotes,
-    });
-    setTransaction(tx);
-  },
-  [bridge, setTransaction, transaction, votes],
-);
-const onContinue = useCallback(() => {
+  invariant(transaction, "transaction is required");
+  invariant((transaction as IconTransaction).votes, "transaction.votes is required");
+  const [searchQuery, setSearchQuery] = useState("");
+  const publicRepresentatives = useIconPublicRepresentatives(account.currency);
   const { votes } = transaction as IconTransaction;
-  const tx =
-    votes.length === 1 && Number(votes[0].value) === 0
-      ? bridge.updateTransaction(transaction, {
-        votes: [{ ...votes[0], value: Number(votingPower) }],
-      })
-      : transaction;
+  const sortedPublicRepresentatives = useSortedSr(searchQuery, publicRepresentatives, votes || []);
+  const onSelectPublicRepresentative = useCallback(
+    ({ address }, selected) => {
+      const newVotes = selected
+        ? votes.filter(v => v.address !== address)
+        : [
+            ...votes,
+            {
+              address,
+              value: 0,
+            },
+          ];
+      const tx = bridge.updateTransaction(transaction, {
+        votes: newVotes,
+      });
+      setTransaction(tx);
+    },
+    [bridge, setTransaction, transaction, votes],
+  );
+  const onContinue = useCallback(() => {
+    const { votes } = transaction as IconTransaction;
+    const tx =
+      votes.length === 1 && Number(votes[0].value) === 0
+        ? bridge.updateTransaction(transaction, {
+            votes: [{ ...votes[0], value: Number(votingPower) }],
+          })
+        : transaction;
 
-  if (route.params.fromStep2) {
-    navigation.pop(2);
-  }
+    if (route.params.fromStep2) {
+      navigation.pop(2);
+    }
 
-  navigation.navigate(ScreenName.IconVoteCast, {
-    accountId: account.id,
-    transaction: tx,
-  });
-}, [
-  account,
-  navigation,
-  transaction,
-  votingPower,
-  bridge,
-  route.params.fromStep2,
-]);
-const remainingCount = SR_MAX_VOTES - votes.length;
-const disabled = useMemo(
-  () => votes.length === 0 || votes.length > SR_MAX_VOTES,
-  [votes],
-);
-const renderItem = useCallback(
-  ({ item }) => (
-    <Item
-      item={item}
-      selected={votes.some(v => v.address === item.address)}
-      disabled={remainingCount === 0}
-      onSelectPublicRepresentative={onSelectPublicRepresentative}
-    />
-  ),
-  [onSelectPublicRepresentative, remainingCount, votes],
-);
-return (
-  <>
-    <TrackScreen category="Vote" name="SelectValidator" />
-    <SafeAreaView
-      style={[
-        styles.root,
-        {
-          backgroundColor: colors.background,
-        },
-      ]}
-    >
-      <SelectValidatorSearchBox
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
+    navigation.navigate(ScreenName.IconVoteCast, {
+      accountId: account.id,
+      transaction: tx,
+    });
+  }, [account, navigation, transaction, votingPower, bridge, route.params.fromStep2]);
+  const remainingCount = SR_MAX_VOTES - votes.length;
+  const disabled = useMemo(() => votes.length === 0 || votes.length > SR_MAX_VOTES, [votes]);
+  const renderItem = useCallback(
+    ({ item }) => (
+      <Item
+        item={item}
+        selected={votes.some(v => v.address === item.address)}
+        disabled={remainingCount === 0}
+        onSelectPublicRepresentative={onSelectPublicRepresentative}
       />
-      <FlatList
-        keyExtractor={({ address }) => address}
-        initialNumToRender={SR_THRESHOLD}
-        data={sortedPublicRepresentatives}
-        renderItem={renderItem}
-      />
-      <SelectValidatorFooter onContinue={onContinue} disabled={disabled} />
-    </SafeAreaView>
-  </>
-);
+    ),
+    [onSelectPublicRepresentative, remainingCount, votes],
+  );
+  return (
+    <>
+      <TrackScreen category="Vote" name="SelectValidator" />
+      <SafeAreaView
+        style={[
+          styles.root,
+          {
+            backgroundColor: colors.background,
+          },
+        ]}
+      >
+        <SelectValidatorSearchBox searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+        <FlatList
+          keyExtractor={({ address }) => address}
+          initialNumToRender={SR_THRESHOLD}
+          data={sortedPublicRepresentatives}
+          renderItem={renderItem}
+        />
+        <SelectValidatorFooter onContinue={onContinue} disabled={disabled} />
+      </SafeAreaView>
+    </>
+  );
 }
 export function SelectValidatorHeaderLeft() {
   const { colors } = useTheme();
@@ -173,9 +154,7 @@ export function SelectValidatorHeaderLeft() {
     {
       Icon: () => <Trophy size={18} color={colors.live} />,
       title: <Trans i18nKey="icon.info.publicRepresentative.title" />,
-      description: (
-        <Trans i18nKey="icon.info.publicRepresentative.description" />
-      ),
+      description: <Trans i18nKey="icon.info.publicRepresentative.description" />,
     },
     {
       Icon: () => <Medal size={18} color={colors.grey} />,
@@ -188,11 +167,7 @@ export function SelectValidatorHeaderLeft() {
       <TouchableOpacity style={styles.headerButton} onPress={openInfoModal}>
         <Info size={16} color={colors.grey} />
       </TouchableOpacity>
-      <InfoModal
-        isOpened={!!infoModalOpen}
-        onClose={closeInfoModal}
-        data={infoModalData}
-      />
+      <InfoModal isOpened={!!infoModalOpen} onClose={closeInfoModal} data={infoModalData} />
     </>
   );
 }

@@ -312,12 +312,8 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "ledgerlivemobile" */;
 			buildPhases = (
-<<<<<<< HEAD
-				EF7967689477A6C7D237B754 /* [CP] Check Pods Manifest.lock */,
-=======
 				4DF9F9E3531CD6D92E72B140 /* [CP] Check Pods Manifest.lock */,
 				7707F4C7A182655B8C8EE1E6 /* [Expo] Configure project */,
->>>>>>> develop
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
@@ -422,11 +418,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */ = {
 			isa = PBXShellScriptBuildPhase;
-<<<<<<< HEAD
-			buildActionMask = 8;
-=======
 			buildActionMask = 12;
->>>>>>> develop
 			files = (
 			);
 			inputPaths = (
