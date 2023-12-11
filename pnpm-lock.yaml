@@ -807,8 +807,8 @@ importers:
         specifier: ^0.2.6
         version: 0.2.6(react-native@0.72.6)(react@18.2.0)
       '@react-native/gradle-plugin':
-        specifier: 0.72.11
-        version: 0.72.11
+        specifier: 0.73.4
+        version: 0.73.4
       '@react-native/metro-config':
         specifier: 0.72.11
         version: 0.72.11(@babel/core@7.23.2)
@@ -18850,6 +18850,11 @@ packages:
 
   /@react-native/gradle-plugin@0.72.11:
     resolution: {integrity: sha512-P9iRnxiR2w7EHcZ0mJ+fmbPzMby77ZzV6y9sJI3lVLJzF7TLSdbwcQyD3lwMsiL+q5lKUHoZJS4sYmih+P2HXw==}
+
+  /@react-native/gradle-plugin@0.73.4:
+    resolution: {integrity: sha512-PMDnbsZa+tD55Ug+W8CfqXiGoGneSSyrBZCMb5JfiB3AFST3Uj5e6lw8SgI/B6SKZF7lG0BhZ6YHZsRZ5MlXmg==}
+    engines: {node: '>=18'}
+    dev: false
 
   /@react-native/js-polyfills@0.72.1:
     resolution: {integrity: sha512-cRPZh2rBswFnGt5X5EUEPs0r+pAsXxYsifv/fgy9ZLQokuT52bPH+9xjDR+7TafRua5CttGW83wP4TntRcWNDA==}
