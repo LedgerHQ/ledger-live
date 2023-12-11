@@ -7,16 +7,32 @@ import {
 } from "../types";
 import HorizontalCard from "../../contentCards/cards/horizontal";
 import { Linking } from "react-native";
-import { contentCardItem } from "../../contentCards/layouts/utils";
 import Carousel from "../../contentCards/layouts/carousel";
 import useDynamicContent from "../dynamicContent";
 import { Flex } from "@ledgerhq/native-ui";
 import { ContentCardsType } from "../types";
-import { compareCards, mapAsHorizontalContentCard } from "~/contentCards/cards/utils";
+import { compareCards, mapAsHorizontalContentCard } from "~/dynamicContent/utils";
+import { contentCardItem } from "~/contentCards/cards/utils";
 
 type LayoutProps = {
   category: CategoryContentCard;
   cards: BrazeContentCard[];
+};
+
+const contentCardsTypes: {
+  [key in ContentCardsType]: {
+    contentCardComponent: (_: any) => React.JSX.Element | null;
+    mappingFunction: (card: BrazeContentCard) => AnyContentCard | null;
+  };
+} = {
+  [ContentCardsType.action]: {
+    contentCardComponent: HorizontalCard,
+    mappingFunction: mapAsHorizontalContentCard,
+  },
+  [ContentCardsType.category]: {
+    contentCardComponent: () => null,
+    mappingFunction: () => null,
+  },
 };
 
 const Layout = ({ category, cards }: LayoutProps) => {
@@ -55,28 +71,6 @@ const Layout = ({ category, cards }: LayoutProps) => {
 
   // TODO : Better type to remove any (maybe use AnyContentCard)
   /* eslint-disable @typescript-eslint/no-explicit-any */
-  const contentCardsTypes: Record<
-    ContentCardsType,
-    {
-      contentCardComponent: (
-        _: any & {
-          onClick: (card: BrazeContentCard) => void;
-          onDismiss: (card: BrazeContentCard) => void;
-        },
-      ) => React.JSX.Element | null;
-      mappingFunction: (card: BrazeContentCard) => AnyContentCard | null;
-    }
-  > = {
-    [ContentCardsType.action]: {
-      contentCardComponent: HorizontalCard,
-      mappingFunction: mapAsHorizontalContentCard,
-    },
-    // TODO : To remove once we extract category from ContentCardsType
-    [ContentCardsType.category]: {
-      contentCardComponent: () => null,
-      mappingFunction: () => null,
-    },
-  };
 
   const contentCardsType = contentCardsTypes[category.cardsType];
   const cardsMapped = cards.map(card => contentCardsType.mappingFunction(card));
@@ -85,8 +79,14 @@ const Layout = ({ category, cards }: LayoutProps) => {
   const items = cardsSorted.map(card =>
     contentCardItem(contentCardsType.contentCardComponent, {
       ...card,
-      onClick: card.link ? () => onCardCick(card) : undefined,
-      onDismiss: category.isDismissable ? () => onCardDismiss(card) : undefined,
+
+      metadata: {
+        id: card.id,
+        actions: {
+          onClick: card.link ? () => onCardCick(card) : undefined,
+          onDismiss: category.isDismissable ? () => onCardDismiss(card) : undefined,
+        },
+      },
     }),
   );
 

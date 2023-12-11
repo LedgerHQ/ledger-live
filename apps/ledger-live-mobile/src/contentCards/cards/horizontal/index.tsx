@@ -1,27 +1,29 @@
 import { Flex } from "@ledgerhq/native-ui";
-import React from "react";
+import React, { useEffect } from "react";
 import { TouchableOpacity } from "react-native";
 import { useTheme } from "styled-components/native";
 import { Close, Image, Subtitle, Tag, Title } from "~/contentCards/cards/horizontal/elements";
+import { ContentCardProps } from "~/contentCards/cards/types";
+import { ContentCardBuilder } from "~/contentCards/cards/utils";
 
-type Props = {
-  id: string;
+type Props = ContentCardProps & {
   title: string;
   description: string;
   image: string;
   tag?: string;
-  onDismiss?: () => void;
-  onClick?: () => void;
 };
 
-const HorizontalCard = ({ id, title, description, image, tag, onDismiss, onClick }: Props) => {
+const HorizontalCard = ContentCardBuilder<Props>(({ title, description, image, tag, metadata }) => {
   const { colors, space } = useTheme();
+  console.log(metadata);
 
-  const isDismissable = !!onDismiss;
+  const isDismissable = !!metadata.actions?.onDismiss;
   const isTag = !!tag;
 
+  useEffect(() => metadata.actions?.onView?.(), []);
+
   return (
-    <TouchableOpacity onPress={onClick} key={id}>
+    <TouchableOpacity onPress={metadata.actions?.onClick} key={metadata.id}>
       <Flex
         bg={colors.opacityDefault.c05}
         p="13px"
@@ -40,7 +42,11 @@ const HorizontalCard = ({ id, title, description, image, tag, onDismiss, onClick
             </Flex>
 
             <Flex alignSelf="center" height="16px">
-              {isDismissable ? <Close onPress={onDismiss} /> : isTag && <Tag label={tag} />}
+              {isDismissable ? (
+                <Close onPress={metadata.actions?.onDismiss} />
+              ) : (
+                isTag && <Tag label={tag} />
+              )}
             </Flex>
           </Flex>
           {description ? <Subtitle label={description} /> : null}
@@ -48,6 +54,6 @@ const HorizontalCard = ({ id, title, description, image, tag, onDismiss, onClick
       </Flex>
     </TouchableOpacity>
   );
-};
+});
 
 export default HorizontalCard;

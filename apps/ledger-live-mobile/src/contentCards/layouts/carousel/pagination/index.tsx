@@ -1,15 +1,18 @@
 import { Flex } from "@ledgerhq/native-ui";
 import React from "react";
+import { ContentCardItem, ContentCardProps } from "~/contentCards/cards/types";
 import Bullet from "~/contentCards/layouts/carousel/pagination/bullets";
 import { getItemStatus } from "~/contentCards/layouts/carousel/pagination/utils";
-import { ContentCardItem } from "~/contentCards/layouts/types";
 
-type Props<P> = {
-  items: ContentCardItem<{ id: string } & P>[];
+type Props<P extends ContentCardProps> = {
+  items: ContentCardItem<P>[];
   carouselIndex: number;
 };
 
-const Pagination = <P,>({ items, carouselIndex }: Props<P>) => (
+/**
+ *
+ */
+const Pagination = <P extends ContentCardProps>({ items, carouselIndex }: Props<P>) => (
   <Flex
     alignSelf="center"
     flexDirection="row"
@@ -19,7 +22,7 @@ const Pagination = <P,>({ items, carouselIndex }: Props<P>) => (
     overflow="hidden"
   >
     {items.map((item, index) => (
-      <Bullet key={item.props.id} type={getItemStatus(index, carouselIndex)} />
+      <Bullet key={item.props.metadata.id} type={getItemStatus(index, carouselIndex)} />
     ))}
   </Flex>
 );
