@@ -41,8 +41,11 @@ export const useBatteryStatuses = ({
     useState<GetBatteryStatusesActionState>(initialState);
   const [requestCompleted, setRequestCompleted] = useState<boolean>(false);
   const [nonce, setNonce] = useState(0);
-  const [cancelRequest, setCancelRequest] = useState(() => () => {}); // when passing a function to useState, the function is used as an initializer, i.e its return value will be the initial state value, cf. https://react.dev/reference/react/useState#parameters
 
+  // when passing a function to useState, the function is used as an initializer,
+  // i.e its return value will be the initial state value,
+  // cf. https://react.dev/reference/react/useState#parameters
+  const [cancelRequest, setCancelRequest] = useState(() => () => {});
   const [isBatteryLow, setIsBatteryLow] = useState<boolean>(false);
   const lowBatteryPercentage = useEnv("LOW_BATTERY_PERCENTAGE");
 
