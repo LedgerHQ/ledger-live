@@ -43,12 +43,6 @@ if (getEnv("DEVICE_PROXY_URL")) {
   registerTransportModule({
     id: "hid",
     open: (id: string, timeoutMs?: number, context?: TraceContext) => {
-      // TODO: remove retry here or on renderer IPC side ? We are multiplying retries
-      // retry(() => TransportNodeHidSingleton.open(id, timeoutMs, context), {
-      //   maxRetry: 4,
-      //   context: JSON.stringify(context),
-      // }),
-
       trace({
         type: LOG_TYPE_INTERNAL,
         message: "Open called on registered module",
@@ -61,13 +55,13 @@ if (getEnv("DEVICE_PROXY_URL")) {
         },
       });
 
-      // No retry in the `internal` process - only the `renderer` process decides to retry
+      // No retry in the `internal` process to avoid multiplying retries. Retries are done in the `renderer` process.
       return TransportNodeHidSingleton.open(id, timeoutMs, context);
     },
     disconnect: () => {
       trace({
         type: LOG_TYPE_INTERNAL,
-        message: "Disconnect called on registered module. Not doing anything",
+        message: "Disconnect called on registered module. Not doing anything for HID USB.",
         data: {
           transport: "TransportNodeHidSingleton",
         },

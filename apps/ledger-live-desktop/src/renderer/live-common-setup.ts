@@ -47,10 +47,8 @@ registerTransportModule({
       },
     });
 
-    // TODO: is it retrying on the renderer side and on the internal side ?
-    // Yes: for each retry here, 4 retries on the internal thread so 16 retries ?
+    // Retries in the `renderer` process if the open failed. No retry is done in the `internal` process to avoid multiplying retries.
     return retry(() => IPCTransport.open(id, timeoutMs, context));
-    // return IPCTransport.open(id, timeoutMs, context);
   },
   disconnect: () => Promise.resolve(),
 });

@@ -1,6 +1,6 @@
 import { ipcRenderer } from "electron";
 import Transport from "@ledgerhq/hw-transport";
-import { TraceContext, log, trace } from "@ledgerhq/logs";
+import { TraceContext, trace } from "@ledgerhq/logs";
 import { deserializeError } from "@ledgerhq/errors";
 import { v4 as uuidv4 } from "uuid";
 import {
@@ -18,7 +18,7 @@ import { DescriptorEvent } from "@ledgerhq/types-devices";
 const LOG_TYPE = "ipc-transport";
 
 /**
- * Transport implementation communicating via IPC to an actual Transport implementation in the internal thread.
+ * Transport implementation communicating via IPC to an actual Transport implementation in the internal process.
  */
 export class IPCTransport extends Transport {
   static isSupported = (): Promise<boolean> => Promise.resolve(typeof ipcRenderer === "function");
@@ -58,13 +58,13 @@ export class IPCTransport extends Transport {
   };
 
   /**
-   * Sends an `open` IPC message to open a transport on the internal thread
+   * Sends an `open` IPC message to open a transport on the internal process
    *
    * @param id id representing the device and how it is connected
    * @param timeoutMs optional timeout that limits in time the open attempt of the matching registered transport.
    * @param context optional context to be used in logs
-   * @returns an instance of the IPCTransport once a transport on the internal thread has been successfully opened.
-   *  Rejects with an Error (TODO: `CantOpenDevice`) if no transport implementation on the internal thread can open the device
+   * @returns an instance of the IPCTransport once a transport on the internal process has been successfully opened.
+   *  Rejects with an Error if no transport implementation on the internal process can open the device
    */
   static async open(id: string, timeoutMs?: number, context?: TraceContext): Promise<Transport> {
     try {
@@ -95,7 +95,7 @@ export class IPCTransport extends Transport {
   }
 
   /**
-   * Sends an `exchange` IPC message to a transport on the internal thread and waits for a response
+   * Sends an `exchange` IPC message to a transport on the internal process and waits for a response
    *
    * @param apdu
    * @param options Contains optional options for the exchange function
@@ -122,14 +122,17 @@ export class IPCTransport extends Transport {
 
   exchangeBulk(apdus: Buffer[], observer: Observer<Buffer>) {
     const apdusHex = apdus.map(apdu => apdu.toString("hex"));
-    log("ipc-apdu-info", "bulk of " + apdusHex.length + " apdus");
+    this.tracer.trace("Bulk exchange", { apdusLength: apdusHex.length });
+
     const requestId = uuidv4();
     const replyChannel = `${transportExchangeBulkChannel}_RESPONSE_${requestId}`;
+
     const handler = (
       _event: Electron.IpcRendererEvent,
       message: { error?: unknown; data: unknown },
     ) => {
       if (message.error) {
+        this.tracer.trace(`Error on bulk exchange: ${message.error}`, { error: message.error });
         observer.error(deserializeError(message.error));
       } else {
         const { data } = message;
@@ -140,7 +143,9 @@ export class IPCTransport extends Transport {
         }
       }
     };
+
     ipcRenderer.on(replyChannel, handler);
+
     ipcRenderer.send(transportExchangeBulkChannel, {
       data: {
         descriptor: this.id,
@@ -148,6 +153,7 @@ export class IPCTransport extends Transport {
       },
       requestId,
     });
+
     return {
       unsubscribe: () => {
         ipcRenderer.removeListener(replyChannel, handler);
@@ -165,29 +171,30 @@ export class IPCTransport extends Transport {
     // empty fn
   }
 
-  close(): Promise<void> {
+  async close(): Promise<void> {
     return rendererRequest(transportCloseChannel, {
       descriptor: this.id,
-    }).then(() => {
+    }).then(response => {
+      this.tracer.trace("Received response from close request message", { response });
       /* close() must return a Promise<void> */
     });
   }
 }
 
 /**
- * Send a request from the renderer thread to the main thread.
+ * Sends a request from the renderer process to the main process.
  *
  * It waits for a response before resolving.
  * This is a classic request/response communication: one request then one response.
  *
- * @param channel name of the IPC channel to communicate with the main thread
+ * @param channel name of the IPC channel to communicate with the main process
  * @param data
  * @returns a Promise that will resolve when a response (error or message) is received
  */
 function rendererRequest(channel: string, data: unknown): Promise<unknown> {
   return new Promise((resolve, reject) => {
     const requestId = uuidv4();
-    // This channel name will be constructed the same way on the main thread to send back a response
+    // This channel name will be constructed the same way on the main process to send back a response
     const replyChannel = `${channel}_RESPONSE_${requestId}`;
 
     trace({
