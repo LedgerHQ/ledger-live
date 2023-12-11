@@ -12,6 +12,7 @@ type Answer = {
   correct: boolean;
   title?: string;
   desc: string;
+  testID?: string;
 };
 
 type Props = {
@@ -66,7 +67,12 @@ export default function OnboardingQuizItem({
         </Flex>
 
         {selectedAnswer ? (
-          <Button type="main" size="large" onPress={() => onNext(selectedAnswer.correct)}>
+          <Button
+            type="main"
+            size="large"
+            onPress={() => onNext(selectedAnswer.correct)}
+            testID="onboarding-quizz-cta"
+          >
             {cta}
           </Button>
         ) : (
@@ -81,7 +87,13 @@ export default function OnboardingQuizItem({
               }}
               mt={6}
             >
-              <Text variant="body" flex={1} textAlign="center" color="constant.black">
+              <Text
+                variant="body"
+                flex={1}
+                textAlign="center"
+                color="constant.black"
+                testID={answer.testID}
+              >
                 {answer.answer}
               </Text>
             </BaseButton>

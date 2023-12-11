@@ -76,7 +76,7 @@ function PostWelcomeSelection() {
             eventProperties: {
               button: "Setup your Ledger",
             },
-            testID: `Onboarding PostWelcome - Selection|Setup your Ledger`,
+            testID: `onboarding-setupLedger`,
             onPress: setupLedger,
             icon: <Icons.PlusCircle color={colors.primary.c80} size="M" />,
           },
@@ -87,7 +87,7 @@ function PostWelcomeSelection() {
             eventProperties: {
               button: "Access an existing wallet",
             },
-            testID: `Onboarding PostWelcome - Selection|Access an existing wallet`,
+            testID: `onboarding-accessWallet`,
             onPress: accessExistingWallet,
             icon: <Icons.WalletInput color={colors.primary.c80} />,
           },

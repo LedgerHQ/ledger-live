@@ -36,7 +36,7 @@ const OnboardingPreQuizModal = () => {
         </Text>
       </Flex>
 
-      <Button type="main" size="large" onPress={handlePress}>
+      <Button type="main" size="large" onPress={handlePress} testID="onboarding-quizz-start">
         {t("onboarding.stepSetupDevice.hideRecoveryPhrase.warning.cta")}
       </Button>
     </Flex>
