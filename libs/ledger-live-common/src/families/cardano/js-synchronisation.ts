@@ -9,7 +9,7 @@ import { encodeAccountId, inferSubOperations } from "@ledgerhq/coin-framework/ac
 
 import BigNumber from "bignumber.js";
 import Ada, { ExtendedPublicKey } from "@cardano-foundation/ledgerjs-hw-app-cardano";
-import { str_to_path } from "@cardano-foundation/ledgerjs-hw-app-cardano/dist/utils";
+import { str_to_path } from "@cardano-foundation/ledgerjs-hw-app-cardano/dist/utils/address";
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
 import { APITransaction, HashType } from "./api/api-types";
 import {
