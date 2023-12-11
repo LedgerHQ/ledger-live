@@ -1,4 +1,5 @@
 import { Action, handleActions, ReducerMap } from "redux-actions";
+import { getRatesExpirationThreshold } from "@ledgerhq/live-common/config/quotesRate";
 import { AvailableProviderV3, Pair } from "@ledgerhq/live-common/exchange/swap/types";
 import { SwapStateType } from "./types";
 import {
@@ -18,7 +19,7 @@ export const INITIAL_STATE: SwapStateType = {
   exchangeRateExpiration: undefined,
 };
 
-export const ratesExpirationThreshold = 30000;
+export const ratesExpirationThreshold = getRatesExpirationThreshold();
 
 export const flattenPairs = (acc: Array<Pair>, value: AvailableProviderV3): Pair[] => [
   ...acc,

@@ -1,6 +1,7 @@
 import { handleActions } from "redux-actions";
 import { AvailableProviderV3, Pair, ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
+import { getRatesExpirationThreshold } from "@ledgerhq/live-common/config/quotesRate";
 import { Handlers } from "./types";
 
 export type SwapStateType = {
@@ -26,7 +27,8 @@ type HandlersPayloads = {
 };
 type SwapHandlers<PreciseKey = true> = Handlers<SwapStateType, HandlersPayloads, PreciseKey>;
 
-export const ratesExpirationThreshold = 60000;
+export const ratesExpirationThreshold = getRatesExpirationThreshold();
+
 export const flattenPairs = (acc: Array<Pair>, value: AvailableProviderV3) => [
   ...acc,
   ...value.pairs,
