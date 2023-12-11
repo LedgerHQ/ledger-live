@@ -21,6 +21,7 @@
     "build:js": "cross-env NODE_ENV=production node ./tools/main.js build",
     "build:testing": "cross-env NODE_ENV=production TESTING=1 node ./tools/main.js build",
     "lint": "eslint src static tools tests --ext .js,.jsx,.json,.ts,.tsx --cache",
+    "lint:ci": "./scripts/ci-lint.sh",
     "lint:fix": "eslint src tools static tests --ext .js,.jsx,.json,.ts,.tsx --fix",
     "prettier": "prettier --write \"{src,tools,tests}/**/*.{js,jsx,json,ts,tsx}\"",
     "prettier:check": "prettier -c \"{src,tools}/**/*.{js,jsx,json,ts,tsx}\"",
