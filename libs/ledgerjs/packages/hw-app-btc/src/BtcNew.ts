@@ -461,7 +461,7 @@ function accountTypeFromArg(
   M/199'/0'/1'/0/88      // Not a known purpose 199
   M/86'/1'/99'/2         // Change path item must be 0 or 1
 */
-function isPathNormal(path: string): boolean {
+export function isPathNormal(path: string): boolean {
   //path is not deepest hardened node of a standard path or deeper, use BtcOld
   const h = 0x80000000; //HARDENED from bip32
   const pathElems = pathStringToArray(path);
