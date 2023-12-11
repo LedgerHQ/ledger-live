@@ -2884,6 +2884,9 @@ importers:
       '@ledgerhq/hw-app-exchange':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-exchange
+      '@ledgerhq/hw-app-icon':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/hw-app-icon
       '@ledgerhq/hw-app-near':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-near
@@ -3813,6 +3816,22 @@ importers:
       ts-node:
         specifier: ^10.4.0
         version: 10.9.2(@types/node@20.12.12)(source-map-support@0.5.21)(typescript@5.4.3)
+
+  libs/ledgerjs/packages/hw-app-icon:
+    dependencies:
+      '@ledgerhq/errors':
+        specifier: workspace:^
+        version: link:../errors
+      '@ledgerhq/hw-transport':
+        specifier: workspace:^
+        version: link:../hw-transport
+      bip32-path:
+        specifier: ^0.4.2
+        version: 0.4.2
+    devDependencies:
+      '@ledgerhq/hw-transport-mocker':
+        specifier: workspace:^
+        version: link:../hw-transport-mocker
 
   libs/ledgerjs/packages/hw-app-near:
     dependencies:
@@ -25428,6 +25447,23 @@ packages:
     engines: {node: '>= 10'}
     dev: false
 
+  /algosdk@1.13.0:
+    resolution: {integrity: sha512-0hknXiP3sc/KxRUvoI1d14x2H/hM7LJZ1zA9DmEUX76z508QPgzjxyQag7THHu5rAW0VuzCgWcFlwI0lsTJMoQ==}
+    dependencies:
+      algo-msgpack-with-bigint: 2.1.1
+      buffer: 6.0.3
+      hi-base32: 0.5.1
+      js-sha256: 0.9.0
+      js-sha3: 0.8.0
+      js-sha512: 0.8.0
+      json-bigint: 1.0.0
+      superagent: 6.1.0
+      tweetnacl: 1.0.3
+      url-parse: 1.5.10
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
   /algosdk@1.13.1:
     resolution: {integrity: sha512-htyJI1/zVcOzpNZVT8PHn4K0yXXTS+b7RXplc7nmFqGVThbM8+ufbnBLChxVPh3BVxqqpqS13VTsQcNArK10jg==}
     dependencies:
@@ -30540,6 +30576,15 @@ packages:
     engines: {node: '>=4'}
     dev: false
 
+  /drbg.js@1.0.1:
+    resolution: {integrity: sha512-F4wZ06PvqxYLFEZKkFxTDcns9oFNk34hvmJSEwdzsxVQ8YI5YaxtACgQatkYgv2VI2CFkUd2Y+xosPQnHv809g==}
+    engines: {node: '>=0.10'}
+    dependencies:
+      browserify-aes: 1.2.0
+      create-hash: 1.2.0
+      create-hmac: 1.1.7
+    dev: false
+
   /dtrace-provider@0.8.8:
     resolution: {integrity: sha512-b7Z7cNtHPhH9EJhNNbbeqTcXB8LGFFZhq1PGgEvpeHlzd36bhbdTWoE/Ba/YguqpBSlAPKnARWhVlhunCMwfxg==}
     engines: {node: '>=0.10'}
@@ -35389,6 +35434,19 @@ packages:
     resolution: {integrity: sha512-NDiIzFbcs3O9PXpfhkjyf7WdqFn5Vq6mhzhtkXzj51aOcNuPNcTwuYNuXCpHsanZGHlHKL35G7huoFeVic1hng==}
     dependencies:
       '@babel/runtime': 7.24.1
+    dev: false
+
+  /icon-sdk-js@1.2.3:
+    resolution: {integrity: sha512-QklxjmRKydoelYL3X6J19zN4weJ9IJaNdqU3UH0JAjdst/mrzhT0VIWeanDrhI4tAAih8Uqx55K8KWWi+Goi3Q==}
+    engines: {node: '>=14.0.0', yarn: ^1.22.10}
+    dependencies:
+      bignumber.js: 7.2.1
+      bip66: 1.1.5
+      js-sha3: 0.8.0
+      secp256k1: 3.5.2
+      utf8: 3.0.0
+      uuid: 3.4.0
+      xmlhttprequest: 1.8.0
     dev: false
 
   /iconv-corefoundation@1.1.7:
