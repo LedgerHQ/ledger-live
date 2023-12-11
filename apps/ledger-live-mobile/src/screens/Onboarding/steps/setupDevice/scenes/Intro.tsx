@@ -46,7 +46,12 @@ const Next = ({ onNext }: { onNext: () => void }) => {
 
   return (
     <>
-      <Button type="main" size="large" onPress={() => setOpen(true)}>
+      <Button
+        type="main"
+        size="large"
+        onPress={() => setOpen(true)}
+        testID="onboarding-stepSetupDevice-start"
+      >
         {t("onboarding.stepSetupDevice.start.cta")}
       </Button>
 
