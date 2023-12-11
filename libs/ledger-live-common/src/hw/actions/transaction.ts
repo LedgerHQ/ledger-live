@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { log } from "@ledgerhq/logs";
 import { TransportStatusError } from "@ledgerhq/errors";
 import type { Transaction, TransactionStatus } from "../../generated/types";
+import { toTransactionRaw } from "../../transaction";
 import { TransactionRefusedOnDevice } from "../../errors";
 import { getMainAccount } from "../../account";
 import { getAccountBridge } from "../../bridge";
@@ -18,6 +19,7 @@ import type {
   SignOperationEvent,
 } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+
 type State = {
   signedOperation: SignedOperation | null | undefined;
   deviceSignatureRequested: boolean;
@@ -110,7 +112,7 @@ export const createAction = (
     reduxDevice: Device | null | undefined,
     txRequest: TransactionRequest,
   ): TransactionState => {
-    const { transaction, appName, dependencies, requireLatestFirmware } = txRequest;
+    const { account, transaction, appName, dependencies, requireLatestFirmware } = txRequest;
     const mainAccount = getMainAccount(txRequest.account, txRequest.parentAccount);
     const appState = createAppAction(connectAppExec).useHook(reduxDevice, {
       account: mainAccount,
@@ -125,6 +127,13 @@ export const createAction = (
         setState(initialState);
         return;
       }
+
+      log(
+        "debug",
+        `Signing ${
+          account.type === "TokenAccount" ? account.token.id : account.currency.id
+        } transaction: ${JSON.stringify(toTransactionRaw(transaction))}`,
+      );
 
       const bridge = getAccountBridge(mainAccount);
       const sub = bridge
