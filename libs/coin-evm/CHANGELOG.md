@@ -1,5 +1,11 @@
 # @ledgerhq/coin-evm
 
+## 0.11.1-next.1
+
+### Patch Changes
+
+- [#5709](https://github.com/LedgerHQ/ledger-live/pull/5709) [`0fb6cb3`](https://github.com/LedgerHQ/ledger-live/commit/0fb6cb3cb0085b71dfadfd3a92602511cb7e9928) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Fix improper filtering for logging of invalid dates
+
 ## 0.11.1-next.0
 
 ### Patch Changes
