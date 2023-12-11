@@ -4,8 +4,9 @@ import network from "@ledgerhq/live-network/network";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import defaultConfig from "./defaultConfig";
 import { CurrencyConfigCommon } from "./types";
+import { getRatesExpirationThreshold } from "./quotesRate";
 
-export const getCurrencyConfiguration = makeLRUCache(
+const getCurrencyConfiguration = makeLRUCache(
   async (currency: CryptoCurrency): Promise<CurrencyConfigCommon | undefined> => {
     const currencyConfigUrl = getEnv("CURRENCY_CONFIG_BASE_URL");
     try {
@@ -37,3 +38,5 @@ export const getCurrencyConfiguration = makeLRUCache(
   currency => currency.id,
   { ttl: 1 * 60 * 60 * 1000 }, // 1 hour
 );
+
+export { getRatesExpirationThreshold, getCurrencyConfiguration };
