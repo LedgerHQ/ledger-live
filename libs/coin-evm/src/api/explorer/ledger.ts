@@ -118,7 +118,7 @@ export const getLastOperations: ExplorerApi["getLastOperations"] = async (
 
     // -- THIS CAN BE REMOVED ONCE THE DATE ERROR HAS BEEN FIGURED OUT
     for (const coinOp of coinOps) {
-      if (coinOp.date instanceof Date && !isNaN(coinOp.date as unknown as number)) {
+      if (coinOp.date instanceof Date && isNaN(coinOp.date as unknown as number)) {
         log("Ethereum Date Error", "Date fetched while getting all txs from explorer is invalid", {
           coinOp,
           date: coinOp.date,
