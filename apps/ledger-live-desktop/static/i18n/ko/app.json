@@ -5576,7 +5576,7 @@
       "title" : "동결 해제할 자산 없음",
       "description" : "동결 해제할 에너지와 관련 자산이 없습니다"
     },
-    "TronUnfreezeNotExpired" : {
+    "TronLegacyUnfreezeNotExpired" : {
       "title" : "아직 동결 해제할 수 없습니다",
       "description" : "최종 동결 거래 후 3일을 기다려야 합니다"
     },

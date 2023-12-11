@@ -10,7 +10,7 @@ import sumBy from "lodash/sumBy";
 import take from "lodash/take";
 import TronWeb from "tronweb";
 import { getEnv } from "@ledgerhq/live-env";
-import { TronTransactionExpired } from "../../../errors";
+import { TronTransactionExpired } from "../errors";
 import { promiseAllBatched } from "../../../promise";
 import type {
   BandwidthInfo,

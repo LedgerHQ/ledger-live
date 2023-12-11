@@ -568,7 +568,7 @@
       "title": "No assets to unfreeze",
       "description": "You don't have Energy assets to unfreeze."
     },
-    "TronUnfreezeNotExpired": {
+    "TronLegacyUnfreezeNotExpired": {
       "title": "Unfreeze is not available yet",
       "description": "Please wait 3 days after your last Freeze operation."
     },
@@ -605,6 +605,16 @@
     },
     "TronNotEnoughEnergy": {
       "title": "Energy is lower than necessary. You might pay up to 50TRX in fees."
+    },
+    "TronNoUnfrozenResource": {
+      "title": "No unfrozen resources to withdraw"
+    },
+    "TronInvalidUnDelegateResourceAmount": {
+      "title": "Not enough delegated resources"
+    },
+    "TronUnfreezeNotExpired": {
+      "title": "Resources not unfrozen yet",
+      "description": "You need to wait until {{time}} to withdraw"
     },
     "UpdateYourApp": {
       "title": "App update needed",

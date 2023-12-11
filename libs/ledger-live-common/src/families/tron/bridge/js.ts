@@ -66,7 +66,8 @@ import {
   TronNotEnoughEnergy,
   TronNoUnfrozenResource,
   TronInvalidUnDelegateResourceAmount,
-} from "../../../errors";
+  TronLegacyUnfreezeNotExpired,
+} from "../errors";
 import {
   broadcastTron,
   claimRewardTronTransaction,
@@ -660,9 +661,7 @@ const getTransactionStatus = async (a: TronAccount, t: Transaction): Promise<Tra
         errors.resource = new TronNoFrozenForEnergy();
       }
     } else if (now.getTime() < expirationDate.getTime()) {
-      errors.resource = new TronUnfreezeNotExpired(undefined, {
-        until: expirationDate.toISOString(),
-      });
+      errors.resource = new TronLegacyUnfreezeNotExpired();
     }
   }
 
@@ -670,17 +669,30 @@ const getTransactionStatus = async (a: TronAccount, t: Transaction): Promise<Tra
     const now = new Date();
     if (!a.tronResources.unFrozen.bandwidth && !a.tronResources.unFrozen.energy) {
       errors.resource = new TronNoUnfrozenResource();
-    } else if (
-      a.tronResources.unFrozen.bandwidth &&
-      a.tronResources.unFrozen.bandwidth.every(
-        unfrozen => unfrozen.expireTime.getTime() > now.getTime(),
-      ) &&
-      a.tronResources.unFrozen.energy &&
-      a.tronResources.unFrozen.energy.every(
-        unfrozen => +unfrozen.expireTime.getTime() > now.getTime(),
-      )
-    ) {
-      errors.resource = new TronUnfreezeNotExpired();
+    } else {
+      const unfreezingResources = [
+        ...(a.tronResources.unFrozen.bandwidth ?? []),
+        ...(a.tronResources.unFrozen.energy ?? []),
+      ];
+
+      const hasNoExpiredResource = !unfreezingResources.some(
+        unfrozen => unfrozen.expireTime.getTime() <= now.getTime(),
+      );
+
+      if (hasNoExpiredResource) {
+        const closestExpireTime = unfreezingResources.reduce((closest, current) => {
+          if (!closest) {
+            return current;
+          }
+          const closestTimeDifference = Math.abs(closest.expireTime.getTime() - now.getTime());
+          const currentTimeDifference = Math.abs(current.expireTime.getTime() - now.getTime());
+
+          return currentTimeDifference < closestTimeDifference ? current : closest;
+        });
+        errors.resource = new TronUnfreezeNotExpired(undefined, {
+          time: closestExpireTime.expireTime.toISOString(),
+        });
+      }
     }
   }
 

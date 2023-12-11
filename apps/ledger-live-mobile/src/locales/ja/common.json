@@ -556,7 +556,7 @@
       "title" : "凍結解除する資産がありません。",
       "description" : "凍結を解除できるエネルギー資産がありません。"
     },
-    "TronUnfreezeNotExpired" : {
+    "TronLegacyUnfreezeNotExpired" : {
       "title" : "凍結解除はまだ利用できません。",
       "description" : "前回の凍結から3日後にご利用ください。"
     },

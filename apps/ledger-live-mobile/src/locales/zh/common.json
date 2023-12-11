@@ -556,7 +556,7 @@
       "title" : "没有可解冻的资产",
       "description" : "您没有可解冻的能量资产。"
     },
-    "TronUnfreezeNotExpired" : {
+    "TronLegacyUnfreezeNotExpired" : {
       "title" : "暂时无法解冻",
       "description" : "上次解冻操作后，需要等待 3 天。"
     },

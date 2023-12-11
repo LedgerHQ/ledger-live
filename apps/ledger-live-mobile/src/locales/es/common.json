@@ -556,7 +556,7 @@
       "title" : "No hay activos a desinmovilizar",
       "description" : "No tienes activos de Energía para desinmovilizar."
     },
-    "TronUnfreezeNotExpired" : {
+    "TronLegacyUnfreezeNotExpired" : {
       "title" : "La desinmovilización todavía no está disponible",
       "description" : "Espera 3 días a partir de tu última operación de inmovilización."
     },

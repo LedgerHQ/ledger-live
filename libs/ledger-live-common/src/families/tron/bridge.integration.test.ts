@@ -20,7 +20,7 @@ import {
   TronUnexpectedFees,
   TronUnfreezeNotExpired,
   TronVoteRequired,
-} from "../../errors";
+} from "./errors";
 import { testBridge } from "../../__tests__/test-helpers/bridge";
 import "../../__tests__/test-helpers/setup";
 import { activationFees } from "./constants";
