@@ -804,8 +804,8 @@ importers:
         specifier: ^14.11.1
         version: 14.11.1(@react-native-firebase/app@14.11.1)
       '@react-native-masked-view/masked-view':
-        specifier: ^0.2.6
-        version: 0.2.6(react-native@0.72.6)(react@18.2.0)
+        specifier: ^0.3.0
+        version: 0.3.1(react-native@0.72.6)(react@18.2.0)
       '@react-native/gradle-plugin':
         specifier: 0.72.11
         version: 0.72.11
@@ -18806,10 +18806,10 @@ packages:
       '@react-native-firebase/app': 14.11.1(react-native@0.72.6)(react@18.2.0)
     dev: false
 
-  /@react-native-masked-view/masked-view@0.2.6(react-native@0.72.6)(react@18.2.0):
-    resolution: {integrity: sha512-303CxmetUmgiX9NSUxatZkNh9qTYYdiM8xkGf9I3Uj20U3eGY3M78ljeNQ4UVCJA+FNGS5nC1dtS9GjIqvB4dg==}
+  /@react-native-masked-view/masked-view@0.3.1(react-native@0.72.6)(react@18.2.0):
+    resolution: {integrity: sha512-uVm8U6nwFIlUd1iDIB5cS+lDadApKR+l8k4k84d9hn+GN4lzAIJhUZ9syYX7c022MxNgAlbxoFLt0pqKoyaAGg==}
     peerDependencies:
-      react: 16 || 17
+      react: '>=16'
       react-native: '>=0.57'
     dependencies:
       react: 18.2.0
