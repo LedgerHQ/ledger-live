@@ -1,5 +1,14 @@
 # live-mobile
 
+## 3.36.0-next.1
+
+### Patch Changes
+
+- [#5701](https://github.com/LedgerHQ/ledger-live/pull/5701) [`2287d6a`](https://github.com/LedgerHQ/ledger-live/commit/2287d6a04c4737de6aed696e18e29edf06780ab0) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add "FirmwareNotRecognized" to errors ignored by Sentry
+
+- Updated dependencies [[`2287d6a`](https://github.com/LedgerHQ/ledger-live/commit/2287d6a04c4737de6aed696e18e29edf06780ab0)]:
+  - @ledgerhq/live-common@33.3.0-next.1
+
 ## 3.36.0-next.0
 
 ### Minor Changes

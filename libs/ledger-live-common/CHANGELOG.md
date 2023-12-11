@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 33.3.0-next.1
+
+### Patch Changes
+
+- [#5701](https://github.com/LedgerHQ/ledger-live/pull/5701) [`2287d6a`](https://github.com/LedgerHQ/ledger-live/commit/2287d6a04c4737de6aed696e18e29edf06780ab0) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Catch and return error in useAvailableLanguagesForDevice
+
 ## 33.3.0-next.0
 
 ### Minor Changes
