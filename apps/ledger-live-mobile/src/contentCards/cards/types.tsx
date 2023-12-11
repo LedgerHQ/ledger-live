@@ -27,7 +27,7 @@ export type ContentCardMetadata = {
  * Defines a content card item.
  */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export interface ContentCardItem<P extends ContentCardProps> {
-  component: React.FC<P>;
-  props: P;
+export interface ContentCardItem<P extends ContentCardProps = ContentCardProps> {
+  component: React.FC<P & ContentCardProps>;
+  props: P & ContentCardProps;
 }

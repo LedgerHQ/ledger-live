@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   FlatList,
   ListRenderItemInfo,
@@ -9,13 +9,12 @@ import {
 } from "react-native";
 import Animated, { Layout, SlideInRight } from "react-native-reanimated";
 import { useTheme } from "styled-components/native";
+import { ContentLayoutBuilder } from "~/contentCards/layouts/utils";
 import Pagination from "./pagination";
-import { ContentCardItem, ContentCardProps } from "~/contentCards/cards/types";
+import { ContentCardItem } from "~/contentCards/cards/types";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-type Props<P extends ContentCardProps> = {
-  items: ContentCardItem<P>[];
-
+type Props = {
   styles?: {
     gap?: number;
     pagination?: boolean;
@@ -27,7 +26,7 @@ const defaultStyles = {
   pagination: true,
 };
 
-const Carousel = <P extends ContentCardProps>({ items, styles = defaultStyles }: Props<P>) => {
+const Carousel = ContentLayoutBuilder<Props>(({ items, styles = defaultStyles }) => {
   const { width } = useWindowDimensions();
 
   styles.gap = styles.gap ?? defaultStyles.gap;
@@ -59,7 +58,7 @@ const Carousel = <P extends ContentCardProps>({ items, styles = defaultStyles }:
         contentContainerStyle={{ paddingHorizontal: separatorWidth }}
         data={items}
         ItemSeparatorComponent={() => <View style={{ width: separatorWidth / 2 }} />}
-        renderItem={({ item }: ListRenderItemInfo<ContentCardItem<P>>) => (
+        renderItem={({ item }: ListRenderItemInfo<ContentCardItem>) => (
           <Animated.View
             key={item.props.metadata.id}
             entering={SlideInRight}
@@ -77,6 +76,6 @@ const Carousel = <P extends ContentCardProps>({ items, styles = defaultStyles }:
       {styles.pagination && <Pagination items={items} carouselIndex={carouselIndex} />}
     </View>
   );
-};
+});
 
 export default Carousel;

@@ -3,10 +3,9 @@ import React, { useEffect } from "react";
 import { TouchableOpacity } from "react-native";
 import { useTheme } from "styled-components/native";
 import { Close, Image, Subtitle, Tag, Title } from "~/contentCards/cards/horizontal/elements";
-import { ContentCardProps } from "~/contentCards/cards/types";
 import { ContentCardBuilder } from "~/contentCards/cards/utils";
 
-type Props = ContentCardProps & {
+type Props = {
   title: string;
   description: string;
   image: string;
@@ -15,7 +14,6 @@ type Props = ContentCardProps & {
 
 const HorizontalCard = ContentCardBuilder<Props>(({ title, description, image, tag, metadata }) => {
   const { colors, space } = useTheme();
-  console.log(metadata);
 
   const isDismissable = !!metadata.actions?.onDismiss;
   const isTag = !!tag;

@@ -5,8 +5,8 @@ import { ContentCardProps, ContentCardItem } from "~/contentCards/cards/types";
  *
  */
 export const ContentCardBuilder =
-  <P extends ContentCardProps>(ContentCardComponent: React.FC<P>) =>
-  (props: P) => <ContentCardComponent {...props} />;
+  <P extends {}>(ContentCardComponent: React.FC<P & ContentCardProps>) =>
+  (props: P & ContentCardProps) => <ContentCardComponent {...props} />;
 
 /**
  * Util function to create a content card item with proper typings that will be used in a layout.
