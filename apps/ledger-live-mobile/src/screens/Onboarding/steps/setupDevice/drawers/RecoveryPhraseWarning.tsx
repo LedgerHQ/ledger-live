@@ -24,7 +24,13 @@ const OnboardingRecoveryPhraseWarning = ({
         description={t("onboarding.stepRecoveryPhrase.importRecoveryPhrase.warning.desc")}
       />
 
-      <Button type="main" size="large" onPress={onPress} mt={4}>
+      <Button
+        type="main"
+        size="large"
+        onPress={onPress}
+        mt={4}
+        testID="onboarding-importRecoveryPhrase-warning"
+      >
         {t("onboarding.stepRecoveryPhrase.importRecoveryPhrase.warning.cta")}
       </Button>
     </QueuedDrawer>

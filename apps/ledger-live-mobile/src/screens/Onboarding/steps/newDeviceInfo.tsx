@@ -49,7 +49,14 @@ const Card = ({ index /* , deviceModelId */ }: CardType) => {
           lightSource={images.light[index]}
         />
       </Flex>
-      <Text variant="h2" mb={3} textAlign="center" color="constant.black" lineHeight="34.8px">
+      <Text
+        variant="h2"
+        mb={3}
+        textAlign="center"
+        color="constant.black"
+        lineHeight="34.8px"
+        testID={`onboarding-stepNewDevice-title${index}`}
+      >
         {t(`onboarding.stepNewDevice.${index}.title`)}
       </Text>
       <Text textAlign="center" variant="bodyLineHeight" color="constant.black">
@@ -84,7 +91,12 @@ const Footer = ({ index }: { index: number }) => {
   if (!Component) return null;
 
   return (
-    <Animatable.View style={styles.animatable} animation="fadeIn" useNativeDriver>
+    <Animatable.View
+      style={styles.animatable}
+      animation="fadeIn"
+      useNativeDriver
+      testID="onboarding-stepNewDevice-cta"
+    >
       <Component label={t(`onboarding.stepNewDevice.cta`)} />
     </Animatable.View>
   );

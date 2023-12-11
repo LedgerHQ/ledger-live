@@ -31,7 +31,12 @@ const OnboardingSetupDeviceInformation = ({
             {t("onboarding.stepSetupDevice.start.warning.desc")}
           </Text>
         </Flex>
-        <Button type="main" size="large" onPress={onPress}>
+        <Button
+          type="main"
+          size="large"
+          onPress={onPress}
+          testID="onboarding-stepSetupDevice-warning"
+        >
           {t("onboarding.stepSetupDevice.start.warning.ctaText")}
         </Button>
       </Flex>

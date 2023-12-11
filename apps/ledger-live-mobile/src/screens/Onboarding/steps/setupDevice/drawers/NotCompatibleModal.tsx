@@ -21,7 +21,7 @@ export function NotCompatibleModal({ onClose, isOpen }: Props) {
         </Circle>
       </Flex>
 
-      <Flex alignItems="center" mt={7}>
+      <Flex alignItems="center" mt={7} testID="onboarding-deviceNotCompatible-modal">
         <Text variant="h4" fontWeight="semiBold" color="neutral.c100">
           {t("syncOnboarding.deviceSelection.modal.title")}
         </Text>
@@ -30,7 +30,13 @@ export function NotCompatibleModal({ onClose, isOpen }: Props) {
         </Text>
       </Flex>
       <Flex mx={16} flexDirection={"row"} mt={8}>
-        <Button onPress={onClose} type="main" size={"large"} flex={1}>
+        <Button
+          onPress={onClose}
+          type="main"
+          size={"large"}
+          flex={1}
+          testID="onboarding-deviceNotCompatible-close"
+        >
           {t("common.close")}
         </Button>
       </Flex>

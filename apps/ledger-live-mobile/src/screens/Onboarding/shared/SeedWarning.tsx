@@ -34,7 +34,7 @@ const SeedWarning = ({ deviceModelId }: { deviceModelId: DeviceModelId }) => {
       <Alert type="info" title={<Trans i18nKey="onboarding.warning.seed.warning" />} />
       <Button
         type="main"
-        testID={"Onboarding - Seed warning"}
+        testID={"onboarding-seed-warning"}
         onPress={() => setIsOpened(false)}
         mt={8}
         mb={6}

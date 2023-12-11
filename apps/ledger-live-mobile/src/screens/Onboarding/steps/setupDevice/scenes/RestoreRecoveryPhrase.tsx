@@ -32,7 +32,12 @@ const Next = ({ onNext }: { onNext: () => void }) => {
 
   return (
     <>
-      <Button type="main" size="large" onPress={() => setOpen(true)}>
+      <Button
+        type="main"
+        size="large"
+        onPress={() => setOpen(true)}
+        testID="onboarding-importRecoveryPhrase-cta"
+      >
         {t("onboarding.stepRecoveryPhrase.importRecoveryPhrase.cta")}
       </Button>
 
