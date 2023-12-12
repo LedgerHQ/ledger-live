@@ -1,8 +1,8 @@
 {
   "id": "dummy",
   "name": "Dummy Wallet App",
-  "url": "http://localhost:3002",
-  "homepageUrl": "http://localhost:3000",
+  "url": "http://localhost:5173",
+  "homepageUrl": "http://localhost:5173",
   "icon": "",
   "platform": "all",
   "apiVersion": "^2.0.0 || ~0.0.1",
