@@ -5718,6 +5718,20 @@
       "totalStake": "Total stake",
       "commission": "Commission",
       "stakeActivationState": "State",
+      "stakeActivePercent": "Active",
+      "stakeAvailableBalance": "Available balance",
+      "actions": {
+        "activate": "Activate",
+        "deactivate": "Deactivate",
+        "reactivate": "Reactivate",
+        "withdraw": "Withdraw"
+      },
+      "states": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "activating": "Activating",
+        "deactivating": "Deactivating"
+      },
       "delegationEarn": "You can earn SOL rewards by delegating your assets.",
       "info": "How Delegation works",
       "broadcastSuccessTitle": "Operation sent",
