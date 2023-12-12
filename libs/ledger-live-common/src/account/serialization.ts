@@ -37,26 +37,6 @@ import {
   fromOperationRaw as commonFromOperationRaw,
 } from "@ledgerhq/coin-framework/account/serialization";
 import { getAccountBridge } from "../bridge";
-import { fromPolkadotResourcesRaw, toPolkadotResourcesRaw } from "@ledgerhq/coin-polkadot/lib/serialization";
-import { fromBitcoinResourcesRaw, toBitcoinResourcesRaw } from "../families/bitcoin/serialization";
-import { BitcoinAccountRaw, BitcoinAccount } from "../families/bitcoin/types";
-import { fromCeloResourcesRaw, toCeloResourcesRaw } from "../families/celo/serialization";
-import { CeloAccountRaw, CeloAccount } from "../families/celo/types";
-import { fromCosmosResourcesRaw, toCosmosResourcesRaw } from "../families/cosmos/serialization";
-import { CosmosAccountRaw, CosmosAccount } from "../families/cosmos/types";
-import { fromCryptoOrgResourcesRaw, toCryptoOrgResourcesRaw } from "../families/crypto_org/serialization";
-import { CryptoOrgAccountRaw, CryptoOrgAccount } from "../families/crypto_org/types";
-import { fromElrondResourcesRaw, toElrondResourcesRaw } from "../families/elrond/serialization";
-import { ElrondAccountRaw, ElrondAccount } from "../families/elrond/types";
-import { fromIconResourcesRaw, toIconResourcesRaw } from "../families/icon/serialization";
-import { IconAccountRaw, IconAccount } from "../families/icon/types";
-import { PolkadotAccountRaw, PolkadotAccount } from "../families/polkadot/types";
-import { fromSolanaResourcesRaw, toSolanaResourcesRaw } from "../families/solana/serialization";
-import { SolanaAccountRaw, SolanaAccount } from "../families/solana/types";
-import { fromTezosResourcesRaw, toTezosResourcesRaw } from "../families/tezos/serialization";
-import { TezosAccountRaw, TezosAccount } from "../families/tezos/types";
-import { fromTronResourcesRaw, toTronResourcesRaw } from "../families/tron/serialization";
-import { TronAccountRaw, TronAccount } from "../families/tron/types";
 
 export function toBalanceHistoryRaw(b: BalanceHistory): BalanceHistoryRaw {
   return b.map(({ date, value }) => [date.toISOString(), value.toString()]);
@@ -425,7 +405,6 @@ export function fromAccountRaw(rawAccount: AccountRaw): Account {
         assignFromAccountRaw(rawAccount, res);
       }
     }
-
   }
 
   if (swapHistory) {
@@ -518,7 +497,6 @@ export function toAccountRaw(account: Account): AccountRaw {
         assignToAccountRaw(account, res);
       }
     }
-
   }
 
   if (swapHistory) {

@@ -451,8 +451,10 @@ const OperationD = (props: Props) => {
                     fontSize={3}
                     currency={feesCurrency}
                     value={fee}
-                    subMagnitude={5}
-                    style={{ width: "auto" }}
+                    subMagnitude={1}
+                    style={{
+                      width: "auto",
+                    }}
                     prefix={
                       <Box
                         mr={1}
