@@ -6,7 +6,6 @@ type ValidConfigTypes = {
   number: number;
   object: Record<string, unknown>;
   array: unknown[];
-  enabled: { enabled: true | false };
 };
 
 type ConfigInfoShape<Type extends keyof ValidConfigTypes> = {
@@ -19,8 +18,7 @@ export type ConfigInfo =
   | ConfigInfoShape<"boolean">
   | ConfigInfoShape<"number">
   | ConfigInfoShape<"object">
-  | ConfigInfoShape<"array">
-  | ConfigInfoShape<"enabled">;
+  | ConfigInfoShape<"array">;
 
 type TypeFromSchema<T extends keyof ValidConfigTypes> = T extends keyof ValidConfigTypes
   ? ValidConfigTypes[T]
@@ -29,22 +27,10 @@ type TypeFromSchema<T extends keyof ValidConfigTypes> = T extends keyof ValidCon
 export type Config = Record<string, ConfigInfo>;
 
 export class LiveConfig<ConfigType extends Config> {
-  public appVersion: string;
-  public platform: string;
-  public environment: string;
   public provider: Provider;
   public config: ConfigType;
 
-  constructor(config: {
-    appVersion: string;
-    platform: string;
-    environment: string;
-    provider: Provider;
-    config: ConfigType;
-  }) {
-    this.appVersion = config.appVersion;
-    this.platform = config.platform;
-    this.environment = config.environment;
+  constructor(config: { provider: Provider; config: ConfigType }) {
     this.provider = config.provider;
     this.config = config.config;
   }

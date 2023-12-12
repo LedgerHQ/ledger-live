@@ -2,15 +2,13 @@ import fs from "fs";
 import { Provider } from "..";
 import { ConfigInfo } from "../../LiveConfig";
 
-export class JsonFileReader extends Provider {
+export class JsonFileReader implements Provider {
   filePath: string;
 
   constructor(config: { filePath: string }) {
-    super({ name: "jsonFileReader" });
     if (!config.filePath.endsWith(".json")) {
       throw new Error("Only .json files can be read by the provider");
     }
-
     this.filePath = config.filePath;
   }
 

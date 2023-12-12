@@ -1,4 +1,4 @@
-import { Value } from "firebase/remote-config";
+import { Value } from "../firebaseRemoteConfig";
 import { ConfigInfo } from "../../LiveConfig";
 
 const stringParser = (value: unknown): string | undefined => {
@@ -32,8 +32,7 @@ export function parser(value: unknown, type: ConfigInfo["type"]) {
       return booleanParser(value);
     }
     case "object":
-    case "array":
-    case "enabled": {
+    case "array": {
       return objectParser(value);
     }
     default:
