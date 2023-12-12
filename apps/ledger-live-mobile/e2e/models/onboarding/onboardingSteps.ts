@@ -90,7 +90,6 @@ export default class OnboardingSteps {
   // Accessing existing Wallet
   async chooseToAccessYourWallet() {
     await tapByElement(this.accessWalletButton());
-
   }
 
   async chooseToConnectYourLedger() {
