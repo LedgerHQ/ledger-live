@@ -43,7 +43,7 @@ PinCodeInstructionsScene.id = "PinCodeInstructionsScene";
 const Next = ({ onNext }: { onNext: () => void }) => {
   const { t } = useTranslation();
   return (
-    <Button type="main" size="large" onPress={onNext}>
+    <Button type="main" size="large" onPress={onNext} testID="onboarding-pinCodeSetup-cta">
       {t("onboarding.stepSetupDevice.pinCodeSetup.cta")}
     </Button>
   );

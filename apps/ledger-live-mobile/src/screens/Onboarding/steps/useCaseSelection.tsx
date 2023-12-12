@@ -102,7 +102,7 @@ const OnboardingStepUseCaseSelection = () => {
             eventProperties: {
               button: "Create a new wallet",
             },
-            testID: `Onboarding UseCase - Selection|New Wallet`,
+            testID: `onboarding-useCase-newWallet`,
             onPress: onPressNew,
             icon: <Icons.PlusCircle color={colors.primary.c80} />,
           },
@@ -113,7 +113,7 @@ const OnboardingStepUseCaseSelection = () => {
             eventProperties: {
               button: "Restore with your secret phrase",
             },
-            testID: `Onboarding UseCase - Selection|Recovery phrase`,
+            testID: `onboarding-useCase-recoveryPhrase`,
             onPress: onPressRecoveryPhrase,
             icon: <Icons.Note color={colors.primary.c80} />,
           },

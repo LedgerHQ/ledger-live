@@ -8,6 +8,7 @@ import { useTheme } from "styled-components/native";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { ReactNavigationPerformanceView } from "@shopify/react-native-performance-navigation";
 import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import WalletTabSafeAreaView from "../../components/WalletTab/WalletTabSafeAreaView";
 import {
   useAlreadyOnboardedURI,
   usePostOnboardingURI,
@@ -141,10 +142,12 @@ function PortfolioScreen({ navigation }: NavigationProps) {
 
   const data = useMemo(
     () => [
-      <Flex px={6} py={4} key="FirmwareUpdateBanner">
-        <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
-      </Flex>,
-      <PortfolioGraphCard showAssets={showAssets} key="PortfolioGraphCard" />,
+      <WalletTabSafeAreaView key="portfolioHeaderElements" edges={["left", "right"]}>
+        <Flex px={6} key="FirmwareUpdateBanner">
+          <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
+        </Flex>
+        <PortfolioGraphCard showAssets={showAssets} key="PortfolioGraphCard" />
+      </WalletTabSafeAreaView>,
       showAssets ? (
         <Box background={colors.background.main} px={6} mt={6} key="PortfolioAssets">
           <RecoverBanner />
@@ -182,7 +185,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
           ]
         : [
             // If the user has no accounts we display an empty state
-            <Flex flexDirection="column" rowGap={30} mx={6} key="PortfolioEmptyState">
+            <Flex flexDirection="column" mt={30} mx={6} key="PortfolioEmptyState">
               <RecoverBanner />
               <PortfolioEmptyState openAddAccountModal={openAddModal} />
             </Flex>,

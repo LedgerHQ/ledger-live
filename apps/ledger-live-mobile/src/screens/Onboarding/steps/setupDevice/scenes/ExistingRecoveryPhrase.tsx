@@ -35,8 +35,16 @@ const Next = ({ onNext }: { onNext: () => void }) => {
         checked={checked}
         onChange={onChange}
         label={t("onboarding.stepRecoveryPhrase.existingRecoveryPhrase.checkboxDesc")}
+        testID="onboarding-existingRecoveryPhrase-switch"
       />
-      <Button mt={6} disabled={!checked} type="main" size="large" onPress={onNext}>
+      <Button
+        mt={6}
+        disabled={!checked}
+        type="main"
+        size="large"
+        onPress={onNext}
+        testID="onboarding-existingRecoveryPhrase-cta"
+      >
         {t("onboarding.stepRecoveryPhrase.existingRecoveryPhrase.nextStep")}
       </Button>
     </>

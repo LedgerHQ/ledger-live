@@ -7,7 +7,7 @@ import { loadAccounts, loadBleState, loadConfig } from "../../bridge/server";
 import PortfolioPage from "../../models/wallet/portfolioPage";
 import StakePage from "../../models/stake";
 import DeviceAction from "../../models/DeviceAction";
-import { DeviceModelId } from "@ledgerhq/devices";
+import { knownDevice } from "../../models/devices";
 import { BigNumber } from "bignumber.js";
 import { Unit } from "@ledgerhq/types-cryptoassets";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
@@ -15,12 +15,6 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 let portfolioPage: PortfolioPage;
 let stakePage: StakePage;
 let deviceAction: DeviceAction;
-
-const knownDevice = {
-  name: "Nano X de test",
-  id: "mock_1",
-  modelId: DeviceModelId.nanoX,
-};
 
 const testedCurrency = "cosmos";
 const id = "cosmosid";
