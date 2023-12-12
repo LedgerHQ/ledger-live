@@ -7,6 +7,7 @@ import { reducer, initState, isOutOfMemoryState, predictOptimisticState } from "
 import { runAllWithProgress } from "./runner";
 import { InlineAppInstallEvent } from "./types";
 import { mergeMap, map, throttleTime } from "rxjs/operators";
+import { LocalTracer } from "@ledgerhq/logs";
 
 /**
  * Tries to install a list of apps
@@ -28,13 +29,22 @@ const inlineAppInstall = ({
   appNames: string[];
   onSuccessObs?: () => Observable<any>;
   allowPartialDependencies?: boolean;
-}): Observable<InlineAppInstallEvent | ConnectAppEvent> =>
-  concat(
+}): Observable<InlineAppInstallEvent | ConnectAppEvent> => {
+  const tracer = new LocalTracer("hw", {
+    ...transport.getTraceContext(),
+    function: "inlineAppInstall",
+  });
+  tracer.trace("Starting inline app install");
+
+  return concat(
     of({
       type: "listing-apps",
     }),
     from(getDeviceInfo(transport)).pipe(
-      mergeMap(deviceInfo => listApps(transport, deviceInfo)),
+      mergeMap(deviceInfo => {
+        tracer.trace("Got device info", { deviceInfo });
+        return listApps(transport, deviceInfo);
+      }),
       mergeMap(e => {
         // Bubble up events
         if (e.type === "device-permission-granted" || e.type === "device-permission-requested") {
@@ -71,6 +81,12 @@ const inlineAppInstall = ({
             // In this case we can't install either by lack of storage, or permissions,
             // we fallback to the error case listing the missing apps.
             const missingAppNames: string[] = state.installQueue;
+
+            tracer.trace("Out of memory", {
+              appNames: missingAppNames,
+              appName: missingAppNames[0] || appNames[0],
+            });
+
             return of({
               type: "app-not-installed",
               appNames: missingAppNames,
@@ -103,5 +119,6 @@ const inlineAppInstall = ({
       }),
     ),
   );
+};
 
 export default inlineAppInstall;

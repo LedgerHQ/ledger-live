@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { AccountLike } from "@ledgerhq/types-live";
-import { useCurrenciesByMarketcap } from "../../../currencies/sortByMarketcap";
+import { useCurrenciesByMarketcap } from "../../../currencies/hooks";
 import { listCryptoCurrencies, listTokens } from "../../../currencies";
 import { getAvailableAccountsById } from "../utils";
 

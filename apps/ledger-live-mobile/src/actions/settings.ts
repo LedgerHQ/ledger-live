@@ -33,6 +33,7 @@ import {
   SettingsSetMarketFilterByStarredAccountsPayload,
   SettingsSetMarketRequestParamsPayload,
   SettingsSetNotificationsPayload,
+  SettingsSetNeverClickedOnAllowNotificationsButton,
   SettingsSetOrderAccountsPayload,
   SettingsSetOsThemePayload,
   SettingsSetPrivacyBiometricsPayload,
@@ -234,6 +235,10 @@ export const setOnboardingType = createAction<SettingsSetOnboardingTypePayload>(
 export const setNotifications = createAction<SettingsSetNotificationsPayload>(
   SettingsActionTypes.SET_NOTIFICATIONS,
 );
+export const setNeverClickedOnAllowNotificationsButton =
+  createAction<SettingsSetNeverClickedOnAllowNotificationsButton>(
+    SettingsActionTypes.SET_NEVER_CLICKED_ON_ALLOW_NOTIFICATIONS_BUTTON,
+  );
 export const setCloseNetworkBanner = createAction<SettingsSetClosedWithdrawBannerPayload>(
   SettingsActionTypes.SET_CLOSED_NETWORK_BANNER,
 );

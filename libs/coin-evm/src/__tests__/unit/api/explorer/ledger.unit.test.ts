@@ -1,7 +1,7 @@
+import { AssertionError, fail } from "assert";
 import eip55 from "eip55";
 import axios from "axios";
 import BigNumber from "bignumber.js";
-import { AssertionError, fail } from "assert";
 import { delay } from "@ledgerhq/live-promise";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";

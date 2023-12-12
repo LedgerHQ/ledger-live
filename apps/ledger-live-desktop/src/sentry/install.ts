@@ -76,6 +76,7 @@ const ignoreErrors = [
   "DisconnectedDevice",
   "DisconnectedDeviceDuringOperation",
   "EthAppPleaseEnableContractData",
+  "VechainAppPleaseEnableContractDataAndMultiClause",
   "failed with status code",
   "GetAppAndVersionUnsupportedFormat",
   "Invalid channel",
@@ -85,6 +86,8 @@ const ignoreErrors = [
   "UnresponsiveDeviceError",
   "PairingFailed",
   "Ledger device: UNKNOWN_ERROR",
+  // wrong My Ledger provider selected for the firmware of the connected device
+  "FirmwareNotRecognized",
   // errors coming from the usage of a Transport implementation
   "HwTransportError",
   // other

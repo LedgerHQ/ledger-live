@@ -13,7 +13,6 @@ export const LatestFirmwareVersionRequired = createCustomErrorClass(
 );
 
 export const FeeEstimationFailed = createCustomErrorClass("FeeEstimationFailed");
-export const LowerThanMinimumRelayFee = createCustomErrorClass("LowerThanMinimumRelayFee");
 export const TransactionRefusedOnDevice = createCustomErrorClass("TransactionRefusedOnDevice");
 
 export const LanguageInstallRefusedOnDevice = createCustomErrorClass(

@@ -60,6 +60,7 @@ import FramedImage from "../CustomImage/FramedImage";
 import { Account } from "@ledgerhq/types-live";
 import LinkWithExternalIcon from "../LinkWithExternalIcon";
 import { openURL } from "~/renderer/linking";
+import Installing from "~/renderer/modals/UpdateFirmwareModal/Installing";
 
 export const AnimationWrapper = styled.div`
   width: 600px;
@@ -579,7 +580,7 @@ export const renderLockedDeviceError = ({
       </ErrorDescription>
       <ButtonContainer>
         {onRetry && inlineRetry ? (
-          <ButtonV3 variant="main" onClick={onRetry}>
+          <ButtonV3 variant="main" onClick={onRetry} borderRadius={"9999px"}>
             {t("common.retry")}
           </ButtonV3>
         ) : null}
@@ -833,11 +834,13 @@ export const renderConnectYourDevice = ({
 const renderFirmwareUpdatingBase = ({
   modelId,
   type,
-  deviceHasPin = true,
+  deviceHasPin,
+  downloadPhase,
 }: {
   modelId: DeviceModelId;
   type: Theme["theme"];
   deviceHasPin?: boolean;
+  downloadPhase?: { current: number; total: number };
 }) =>
   deviceHasPin ? (
     <Wrapper>
@@ -877,12 +880,12 @@ const renderFirmwareUpdatingBase = ({
       </Footer>
     </Wrapper>
   ) : (
-    <BulletText flex={1}>
-      <Trans
-        i18nKey="DeviceAction.unlockDeviceAfterFirmwareUpdateStep1"
-        values={{ productName: getDeviceModel(modelId).productName }}
-      />
-    </BulletText>
+    <Installing
+      isInstalling={!!(downloadPhase?.current && downloadPhase?.total)}
+      current={downloadPhase?.current}
+      total={downloadPhase?.total}
+      deviceModelId={modelId}
+    />
   );
 
 export const renderFirmwareUpdating = withV3StyleProvider(renderFirmwareUpdatingBase);

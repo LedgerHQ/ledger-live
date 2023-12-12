@@ -284,7 +284,7 @@
     "lend" : "Prêter",
     "catalog" : "Discover",
     "market" : "Marché",
-    "recover" : "Ledger Recover"
+    "recover" : "[L] Recover"
   },
   "stars" : {
     "placeholder" : "Mettez une étoile sur un compte pour l’afficher ici.",
@@ -764,6 +764,8 @@
     "energyTooltip" : "Gelez des actifs pour gagner de l’Énergie.",
     "delegatedTooltip" : "Les actifs délégués sont utilisés pour voter. Cela représente votre nombre total de votes.",
     "undelegatingTooltip" : "Les actifs retirés de la délégation sont disponibles après {{timelockInDays}} jours.",
+    "claimableRewards" : "Récompenses à demander",
+    "claimableRewardsTooltip" : "L’option permettant de demander des récompenses en USDC est actuellement indisponible. Veuillez utiliser un wallet tiers.",
     "banner" : {
       "redelegation" : {
         "title" : "Bon à savoir",
@@ -1166,11 +1168,13 @@
       },
       "pinContent" : {
         "title" : "Code PIN",
+        "titleCompleted" : "Code PIN configuré",
         "description" : "Comme tout mot de passe ou code d’accès, le code PIN vous permet de déverrouiller votre {{productName}} et de le protéger contre tout accès indésirable.",
         "continueOnDevice" : "Définissez votre code PIN sur votre {{productName}}"
       },
       "seedContent" : {
         "title" : "Phrase de récupération secrète",
+        "titleCompleted" : "Phrase de récupération secrète confirmée",
         "recoverSeed" : "Placeholder : Ledger Recover",
         "restoreSeed" : "Pour une sécurité optimale, utilisez une phrase de récupération secrète générée par un appareil Ledger.\n\nVous n’en n’avez pas ? Générez une nouvelle phrase avec votre {{productName}}.",
         "selection" : "Choisissez votre option de configuration :",
@@ -1250,12 +1254,14 @@
       },
       "installApplications" : {
         "title" : "Installez des apps sur votre {{productName}}",
+        "titleCompleted" : "Apps installées sur votre {{productName}}",
         "install" : "Installer",
         "skip" : "Plus tard",
         "info" : "Les apps sur votre {{deviceName}} vous permettent de valider vos opérations. Vous pouvez les ajouter ou supprimer à tout moment."
       },
       "endOfSetup" : {
-        "title" : "Configuration terminée"
+        "title" : "Configuration terminée",
+        "titleCompleted" : "Votre {{deviceName}} est prêt"
       },
       "softwareCheckAllowSecureChannelDrawer" : {
         "title" : "Touchez Autoriser pour lancer la vérification de l’authenticité"
@@ -1296,6 +1302,18 @@
       "title" : "Que faire ensuite avec votre Ledger Stax ?",
       "description" : "Demandez votre NFT Infinity Pass, personnalisez\n le fond d’écran ou transférez vos actifs.",
       "link" : "Découvrir la suite"
+    },
+    "actions" : {
+      "buyCrypto" : {
+        "title" : "Acheter des cryptos",
+        "description" : "Choisissez parmi plus de 500 cryptos et bénéficiez des meilleures offres des prestataires d’achat, en fonction de vos préférences.",
+        "actionCompletedPopupLabel" : "Crypto achetée"
+      },
+      "assetsTransfer" : {
+        "title" : "Transférer vos actifs vers votre wallet Ledger",
+        "description" : "Transférez facilement des actifs depuis Coinbase ou la plateforme d’échange/wallet de votre choix.",
+        "actionCompletedPopupLabel" : "Actifs transférés"
+      }
     }
   },
   "hideNftCollection" : {
@@ -1408,6 +1426,26 @@
         "title" : "Staker",
         "description" : "Faites fructifier vos crypto-actifs via Ledger."
       }
+    },
+    "recoverBanner" : {
+      "subscribeDone" : {
+        "title" : "Ajoutez votre carte de paiement",
+        "description" : "Restaurez en toute confiance avec Ledger Recover.",
+        "primaryCta" : "Ajouter une carte",
+        "secondaryCta" : "Pas maintenant"
+      },
+      "verifyIdentity" : {
+        "title" : "Terminez la vérification d’identité",
+        "description" : "Restaurez en toute confiance avec Ledger Recover.",
+        "primaryCta" : "Vérifier",
+        "secondaryCta" : "Pas maintenant"
+      },
+      "connectDevice" : {
+        "title" : "Connectez votre appareil Ledger",
+        "description" : "Dernière étape pour profiter de Ledger Recover.",
+        "primaryCta" : "Connecter",
+        "secondaryCta" : "Pas maintenant"
+      }
     }
   },
   "currentAddress" : {
@@ -1422,7 +1460,7 @@
   "emptyState" : {
     "dashboard" : {
       "title" : "Installer des apps sur votre appareil",
-      "desc" : "Accédez à My Ledger pour installer des applications sur votre Ledger. Vous pouvez ajouter des comptes une fois que vous avez des applications sur votre Ledger.",
+      "desc" : "Accédez à My Ledger pour installer des apps sur votre appareil Ledger. Vous pouvez ajouter des comptes une fois que vous avez des apps sur votre appareil.",
       "buttons" : {
         "installApp" : "Accéder à My Ledger",
         "help" : "Aide"
@@ -1433,7 +1471,7 @@
       "desc" : "Ajoutez un compte pour commencer à gérer vos crypto-actifs. Vous devez avoir installé l’application correspondant au crypto-actif de votre choix sur votre appareil.",
       "buttons" : {
         "addAccount" : "Ajouter un compte",
-        "installApp" : "Accédez à My Ledger pour installer des applications",
+        "installApp" : "Accédez à My Ledger pour installer des apps",
         "help" : "Aide"
       }
     }
@@ -1770,8 +1808,8 @@
     "tabs" : {
       "appCatalog" : "Catalogue d’apps",
       "appCatalogSearch" : "Rechercher une application dans le catalogue",
-      "appsOnDevice" : "Applications installées",
-      "appOnDeviceSearch" : "Rechercher des applications installées..."
+      "appsOnDevice" : "Apps installées",
+      "appOnDeviceSearch" : "Rechercher des apps installées..."
     },
     "disconnected" : {
       "title" : "Une application est ouverte sur votre appareil ?",
@@ -1782,11 +1820,11 @@
     "deviceStorage" : {
       "freeSpace" : "<0>{{space}}</0> disponibles",
       "noFreeSpace" : "Plus d’espace disponible",
-      "installed" : "Applications",
+      "installed" : "Apps",
       "capacity" : "Capacité",
       "used" : "Utilisé",
       "OSVersion" : "Système d’exploitation",
-      "genuine" : "Votre appareil est authentique.",
+      "genuine" : "Vérification de l’authenticité",
       "incomplete" : "Certaines apps n’ont pas été reconnues. Veuillez les désinstaller puis les réinstaller."
     },
     "applist" : {
@@ -1866,10 +1904,10 @@
         "confirm" : "Installer des apps"
       },
       "dependencyUninstall" : {
-        "title" : " Désinstaller {{app}} et les applications associées ?",
+        "title" : " Désinstaller {{app}} et les apps associées ?",
         "showAll" : "Afficher les apps à désinstaller",
-        "description" : "Certaines des applications installées sont associées à l’application {{app}}. Elles seront également désinstallées.",
-        "confirm" : "Désinstaller {{app}} et les autres applications"
+        "description" : "Certaines des apps installées sont associées à l’app {{app}}. Elles seront également désinstallées.",
+        "confirm" : "Désinstaller {{app}} et les autres apps"
       }
     },
     "firmware" : {
@@ -1877,7 +1915,7 @@
       "seedReady" : "J’ai ma phrase de récupération.",
       "dontHaveSeed" : "Vous n’avez pas votre phrase de récupération ? ",
       "followTheGuide" : "Laissez-vous guider",
-      "removeApps" : "Désinstaller toutes les applications avant de mettre à jour",
+      "removeApps" : "Désinstaller toutes les apps avant de mettre à jour",
       "update" : "Mise à jour de votre {{productName}}",
       "updateBtn" : "Mettre à jour le micrologiciel",
       "installUpdate" : "Installation",
@@ -1897,16 +1935,18 @@
       "disclaimerTitle" : "Vous êtes sur le point d’installer la <1>version {{version}} du micrologiciel</1>.",
       "cancelUpdate" : "Annuler la mise à jour",
       "continueUpdate" : "Continuer la mise à jour",
-      "cancelUpdateWarning" : "Vos paramètres et applications risquent de ne pas être restaurés correctement si vous annulez la mise à jour maintenant.",
+      "cancelUpdateWarning" : "Vos paramètres et apps risquent de ne pas être restaurés correctement si vous annulez la mise à jour maintenant.",
       "updateInProgress" : "Mise à jour en cours"
     },
     "modal" : {
       "title" : "Mise à jour de votre {{productName}}",
       "steps" : {
-        "preparingUpdate" : "Sauvegarde de vos paramètres et apps",
+        "preparingUpdate" : "Sauvegarde de vos réglages et apps",
         "transferringUpdate" : "Transfert de la mise à jour vers votre {{productName}}",
         "prepare" : "Préparation",
+        "prepareDone" : "Mise à jour prête\nà être installée",
         "install" : "Installation",
+        "installDone" : "Mise à jour\ninstallée",
         "restore" : "Restauration réglages",
         "apps" : "Restauration apps",
         "updateMCU" : "Mise à jour du micrologiciel",
@@ -1915,12 +1955,13 @@
         "osu" : "Installation de l’OSU...",
         "flash-mcu" : "Mise à jour du MCU...",
         "flash-bootloader" : "Mise à jour du Bootloader...",
-        "progress" : "Installation de la mise à jour {{current}}/{{total}}",
+        "progress" : "Installation de la mise à jour",
+        "progressStep" : "Installation de la mise à jour {{current}}/{{total}}",
         "firmware" : "Mise à jour du micrologiciel...",
         "flash" : "Préparation de votre appareil..."
       },
       "confirmIdentifier" : "Vérifier l’identifiant",
-      "confirmIdentifierText" : "Appuyez sur Installer pour lancer la mise à jour",
+      "confirmIdentifierText" : "Appuyez sur Installer\npour lancer la mise à jour",
       "identifier" : "Identifiant",
       "newFirmware" : "Nouveau micrologiciel {{version}}",
       "confirmUpdate" : "Confirmez la mise à jour sur votre appareil.",
@@ -1928,12 +1969,13 @@
       "mcuFirst" : "Déconnectez le câble USB de votre appareil.",
       "mcuSecond" : "Maintenez le bouton gauche enfoncé tout en reconnectant le câble USB jusqu’à ce que l’écran <1><0>{{repairProcessing}}</0></1> apparaisse.",
       "mcuPin" : "Veuillez attendre que la mise à jour soit terminée.",
+      "mcuRestart" : "Votre {{device}} pourrait redémarrer plusieurs fois.",
       "mcuSecondNanoX" : "Maintenez le bouton gauche enfoncé jusqu’à ce que <1><0>{{bootloaderOption}}</0></1> apparaisse. Appuyez sur les deux boutons pour confirmer et reconnecter votre appareil.",
       "mcuBlueFirst" : "Appuyez sur le bouton latéral pendant 10 secondes pour éteindre l’appareil. Relâchez le bouton.",
       "mcuBlueSecond" : "Faites un appui long sur le bouton pendant au moins 5 secondes jusqu’à ce que les options de Boot apparaissent. Sélectionnez le mode Bootloader.",
-      "successTitle" : "Le système d’exploitation de votre {{deviceName}} est à jour.",
+      "successTitle" : "Votre {{deviceName}}\nest à jour.",
       "sucessCTAApps" : "Réinstaller les apps",
-      "SuccessCTANoApps" : "Installer des applications",
+      "SuccessCTANoApps" : "Installer des apps",
       "cancelReinstallCTA" : "Installer la mise à jour",
       "resetSteps" : {
         "first" : "1. Réinitialiser votre appareil",
@@ -1945,9 +1987,9 @@
         "second" : "2. Démarrer en mode {{mode}}",
         "boot" : "Faites un appui long sur le bouton latéral jusqu’à ce que {{option}} apparaisse.",
         "recoveryMode" : "Appuyez sur le Mode {{mode}}. Patientez jusqu’à ce que le tableau de bord apparaisse.",
-        "third" : "3. Désinstaller toutes les applications",
+        "third" : "3. Désinstaller toutes les apps",
         "openLive" : "Ouvrez My Ledger dans Ledger Live.",
-        "uninstall" : "Appuyez sur l’icône grise de la corbeille pour supprimer toutes les applications actuellement installées sur votre {{deviceName}}. Cela permet de faire de la place pour le programme d’installation du micrologiciel.",
+        "uninstall" : "Appuyez sur l’icône grise de la corbeille pour supprimer toutes les apps actuellement installées sur votre {{deviceName}}. Cela permet de faire de la place pour le programme d’installation du micrologiciel.",
         "disclaimer" : "Remarque : vos fonds ne sont pas affectés par cette opération. Vos clés privées vous permettant d’accéder à vos crypto-actifs sont notées en toute sécurité sur votre feuille de récupération."
       }
     }
@@ -3544,7 +3586,7 @@
         "title" : "Staker avec un validateur Kiln",
         "tag" : "32 ETH minimum",
         "description" : "Stakez avec un validateur personnalisé. Minimum de 32 ETH (ou un multiple) requis. Récompenses à demander manuellement. Quittez à tout moment.",
-        "supportLink" : "En savoir plus sur le validateur Kiln"
+        "supportLink" : "En savoir plus sur les validateurs Kiln"
       },
       "kiln_pooling" : {
         "title" : "Staker avec un pool sur Kiln",
@@ -3553,6 +3595,9 @@
         "supportLink" : "En savoir plus sur les pools sur Kiln"
       }
     }
+  },
+  "graph" : {
+    "noGraphWarning" : "Graphique non disponible pour ce token"
   },
   "near" : {
     "account" : {
@@ -3844,7 +3889,7 @@
       "debugAppsDesc" : "Affichez et autorisez l’ouverture des Platform Apps \"Debug\".",
       "experimentalApps" : "Autoriser les Apps Expérimentales",
       "experimentalAppsDesc" : "Affichez et autorisez l’ouverture des Platform Apps \"Expérimentales\".",
-      "catalogUrl" : "Définir le fournisseur du Catalogue d’applications",
+      "catalogUrl" : "Définir le fournisseur du Catalogue d’apps",
       "catalogUrlDesc" : "Saisissez l’URL de votre fournisseur du Catalogue personnalisé.",
       "enablePlatformDevTools" : "Activer les Outils de développement Platform",
       "enablePlatformDevToolsDesc" : "Autorisez la fenêtre Outils de développement Platform.",
@@ -3901,7 +3946,7 @@
       "hardResetDesc" : "Effacez toutes les données de Ledger Live stockées sur votre ordinateur, y compris vos comptes, l’historique de vos transactions et vos paramètres.",
       "hardReset" : "Réinitialiser",
       "analytics" : "Statistiques",
-      "analyticsDesc" : "Autoriser les statistiques pour aider Ledger à améliorer l’expérience utilisateur. Ces statistiques comprennent les clics, les visites de pages, les redirections, les actions (envoyer, recevoir, verrouiller, etc.), les défilements en bas de page, les installations, désinstallations et mises à jour des applications, les versions des applications, le nombre de comptes, de crypto-actifs et d’opérations, la durée des sessions, le type d’appareil Ledger et de micrologiciel.",
+      "analyticsDesc" : "Autoriser les statistiques pour aider Ledger à améliorer l’expérience utilisateur. Ces statistiques comprennent les clics, les visites de pages, les redirections, les actions (envoyer, recevoir, verrouiller, etc.), les défilements en bas de page, les installations, désinstallations et mises à jour des apps, les versions des apps, le nombre de comptes, de crypto-actifs et d’opérations, la durée des sessions, le type d’appareil Ledger et de micrologiciel.",
       "reportErrors" : "Rapports de bugs",
       "reportErrorsDesc" : "Envoyer automatiquement des rapports pour aider Ledger à améliorer ses produits.",
       "launchOnboarding" : "Configurer un appareil Ledger",
@@ -3920,9 +3965,9 @@
     },
     "experimental" : {
       "disclaimer" : "Il s’agit de fonctionnalités expérimentales fournies \"telles quelles\" pour notre communauté de passionné(e)s de la tech. Elles peuvent changer, casser ou être retirées à tout moment. En les activant, vous acceptez de les utiliser en toute connaissance de cause.",
-      "provider" : "Le paramètre expérimental \"Fournisseur de My Ledger ({{forcedProvider}})\" peut afficher des systèmes d’exploitation et des applications qui n’ont pas encore été publiés, entraînant des problèmes de compatibilité. Vous pouvez le désactiver dans les Paramètres.",
-      "providerDevMode" : "Les paramètres expérimentaux \"Fournisseur de My Ledger ({{forcedProvider}})\" et \"Mode développeur\" peuvent afficher des systèmes d’exploitation et des applications qui n’ont pas encore été publiés, entraînant des problèmes de compatibilité. Vous pouvez les désactiver dans les Paramètres.",
-      "devMode" : "Le paramètre expérimental \"Mode développeur\" peut afficher des systèmes d’exploitation et des applications qui n’ont pas encore été publiés, entraînant des problèmes de compatibilité. Vous pouvez le désactiver dans les Paramètres.",
+      "provider" : "Le paramètre expérimental \"Fournisseur de My Ledger ({{forcedProvider}})\" peut afficher des systèmes d’exploitation et des apps qui n’ont pas encore été publiés, entraînant des problèmes de compatibilité. Vous pouvez le désactiver dans les Paramètres.",
+      "providerDevMode" : "Les paramètres expérimentaux \"Fournisseur de My Ledger ({{forcedProvider}})\" et \"Mode développeur\" peuvent afficher des systèmes d’exploitation et des apps qui n’ont pas encore été publiés, entraînant des problèmes de compatibilité. Vous pouvez les désactiver dans les Paramètres.",
+      "devMode" : "Le paramètre expérimental \"Mode développeur\" peut afficher des systèmes d’exploitation et des apps qui n’ont pas encore été publiés, entraînant des problèmes de compatibilité. Vous pouvez le désactiver dans les Paramètres.",
       "providerCTA" : "Accéder aux Paramètres",
       "features" : {
         "experimentalCurrencies" : {
@@ -3935,7 +3980,7 @@
         },
         "managerDevMode" : {
           "title" : "Mode développeur",
-          "description" : "Affichez les applications développeurs et testnet dans My Ledger."
+          "description" : "Affichez les apps développeurs et testnet dans My Ledger."
         },
         "listAppsV2" : {
           "title" : "Listage expérimental des apps pour My Ledger",
@@ -3955,7 +4000,7 @@
         },
         "forceProvider" : {
           "title" : "Fournisseur de My Ledger",
-          "description" : "Changer le fournisseur d’applications dans My Ledger peut bloquer l’installation ou désinstallation d’applications sur votre appareil Ledger."
+          "description" : "Changer le fournisseur d’apps dans My Ledger peut bloquer l’installation ou désinstallation d’apps sur votre appareil Ledger."
         },
         "testAnimations" : {
           "title" : "Tester les animations Lottie",
@@ -3981,7 +4026,7 @@
         },
         "1559CustomPriorityLowerGate" : {
           "title" : "Définir un seuil minimal pour les frais de priorité",
-          "description" : "Personnalisez le percentage de notre estimation des frais de priorité minimum autorisés pour une transaction avancée (EIP-1559)."
+          "description" : "Personnalisez le pourcentage de notre estimation des frais de priorité minimum autorisés pour une transaction avancée (EIP-1559)."
         },
         "1559CustomBaseFeeMultiplier" : {
           "title" : "Coefficient personnalisé pour les frais de base",
@@ -4099,8 +4144,7 @@
     "updateAvailable" : "Mise à jour disponible vers la version Ledger Live {{version}}",
     "error" : "Erreur lors de la mise à jour. Merci de recommencer le téléchargement.",
     "reDownload" : "Recommencer le téléchargement",
-    "nightlyWarning" : "Cette version ne peut pas être mise à jour automatiquement. Merci d’installer la dernière version manuellement.",
-    "downloadNow" : "Télécharger la mise à jour"
+    "nightlyWarning" : "Cette version ne peut pas être mise à jour automatiquement. Merci d’installer la dernière version manuellement."
   },
   "crash" : {
     "title" : "Une erreur est survenue.",
@@ -4271,7 +4315,7 @@
             "desc" : "Ledger Live vous permet d’acheter, vendre, échanger, gérer et gagner des cryptos en toute sécurité.\nVous devrez valider chaque transaction avec votre wallet Ledger."
           },
           "4" : {
-            "title" : "Configurez votre Nano",
+            "title" : "Configurez votre wallet",
             "desc" : "Commencez par configurer votre nouveau Ledger Nano."
           }
         }
@@ -4298,7 +4342,7 @@
           },
           "4" : {
             "title" : "Restaurer avec Ledger Recover",
-            "description" : "Vous devez avoir un abonnement Ledger Recover."
+            "description" : "Vous devez avoir un abonnement Ledger Recover."
           }
         }
       },
@@ -4488,7 +4532,7 @@
             },
             "writeDownWords" : {
               "title" : "Notez vos 24 mots",
-              "descr" : "Écrivez en position 1 sur la feuille de récupération le mot n°1 (\"Word #1\") affiché en gras sur votre Nano. Puis appuyez sur le bouton droit de votre Nano pour voir le mot n°2 (\"Word #2\") et écrivez-le en position 2.\n\nFaites cela pour tous les mots affichés en gras en respectant scrupuleusement l’ordre et l’orthographe. Appuyez sur le bouton gauche de votre Nano pour vérifier et ne pas faire d’erreur."
+              "descr" : "Écrivez en position 1 sur la feuille de récupération le mot n°1 (\"Word #1\") affiché en gras sur votre Ledger Nano. Puis appuyez sur le bouton droit de votre Ledger Nano pour voir le mot n°2 (\"Word #2\") et écrivez-le en position 2.\n\nFaites cela pour tous les mots affichés en gras en respectant scrupuleusement l’ordre et l’orthographe. Appuyez sur le bouton gauche de votre Ledger Nano pour vérifier et ne pas faire d’erreur."
             },
             "buttons" : {
               "next" : "Étape suivante",
@@ -4575,7 +4619,7 @@
           },
           "hideRecoveryPhrase" : {
             "title" : "Cachez votre phrase de récupération",
-            "paragraph" : "Votre phrase de récupération est votre seule façon d’accéder à vos cryptos si vous ne pouvez plus utiliser votre Nano. La garder en lieu sûr est crucial.",
+            "paragraph" : "Votre phrase de récupération est votre seule façon d’accéder à vos cryptos si vous ne pouvez plus utiliser votre Ledger Nano. La garder en lieu sûr est crucial.",
             "keepItOffline" : "Saisissez ces mots uniquement sur un wallet physique, pas sur un ordinateur ni sur un téléphone.",
             "neverShowToAnyone" : "Ne partagez jamais vos 24 mots avec qui que ce soit. Pas même Ledger.",
             "buttons" : {
@@ -4625,7 +4669,7 @@
           "description" : "Ledger Live vous permet d’acheter, vendre, échanger, gérer et gagner des cryptos en toute sécurité. Vous devrez valider chaque transaction avec votre wallet Ledger."
         },
         "setUpNanoWallet" : {
-          "title" : "Configurez votre Nano",
+          "title" : "Configurez votre wallet",
           "description" : "Commencez par configurer votre nouveau Ledger Nano.",
           "CTA" : "Configurer"
         }
@@ -4684,11 +4728,11 @@
           "results" : {
             "success" : {
               "title" : "Félicitations !",
-              "text" : "Votre clé privée reste hors ligne au sein de votre wallet physique. Même connectée à votre Nano, l’application Ledger Live ne peut pas accéder à votre clé privée. Vous devez autoriser personnellement chaque transaction sur votre appareil."
+              "text" : "Votre clé privée reste hors ligne au sein de votre wallet physique. Même connectée à votre Ledger Nano, l’application Ledger Live ne peut pas accéder à votre clé privée. Vous devez autoriser personnellement chaque transaction sur votre appareil."
             },
             "fail" : {
               "title" : "Incorrect",
-              "text" : "Votre clé privée reste hors ligne au sein de votre wallet physique. Même connectée à votre Nano, l’application Ledger Live ne peut pas accéder à votre clé privée. Vous devez autoriser personnellement chaque transaction sur votre appareil."
+              "text" : "Votre clé privée reste hors ligne au sein de votre wallet physique. Même connectée à votre Ledger Nano, l’application Ledger Live ne peut pas accéder à votre clé privée. Vous devez autoriser personnellement chaque transaction sur votre appareil."
             }
           }
         }
@@ -5140,7 +5184,7 @@
     },
     "FirmwareOrAppUpdateRequired" : {
       "title" : "Mise à jour du micrologiciel ou de l’application nécessaire",
-      "description" : "Utilisez My Ledger pour désinstaller toutes les applications. Vérifiez ensuite si une mise à jour du micrologiciel est disponible avant de les réinstaller."
+      "description" : "Utilisez My Ledger pour désinstaller toutes les apps. Vérifiez ensuite si une mise à jour du micrologiciel est disponible avant de les réinstaller."
     },
     "LatestFirmwareVersionRequired" : {
       "title" : "Mettre à jour le micrologiciel du Nano",
@@ -5256,6 +5300,18 @@
     "NotEnoughEGLDForFees" : {
       "title" : "Solde d’EGLD insuffisant pour payer les frais de transaction",
       "description" : "Envoyez des EGLD sur votre compte pour régler vos transactions."
+    },
+    "NotEnoughVTHO" : {
+      "title" : "Solde en VTHO insuffisant",
+      "description" : "Votre compte doit avoir un solde en VTHO suffisant."
+    },
+    "MustBeVechain" : {
+      "title" : "Ce n’est pas un compte VeChain",
+      "description" : "La crypto doit être le VTHO ou le VET."
+    },
+    "ImpossibleToCalculateAmountAndFees" : {
+      "title" : "Impossible de calculer le montant et les frais",
+      "description" : "Impossible de calculer le montant et les frais"
     },
     "NotEnoughBalance" : {
       "title" : "Solde insuffisant",
@@ -5672,6 +5728,9 @@
     "CardanoNotEnoughFunds" : {
       "title" : "Vérifiez que votre solde est suffisant pour couvrir les frais"
     },
+    "CardanoStakeKeyDepositError" : {
+      "title" : "Assurez-vous d’avoir {{depositAmount}} ADA disponibles pour ce dépôt"
+    },
     "StacksMemoTooLong" : {
       "title" : "Mémo trop long"
     },
@@ -5914,7 +5973,6 @@
     },
     "progress" : {
       "loading" : "Chargement...",
-      "resolving" : "Installation des apps requises",
       "progress" : "Restez dans Ledger Live pendant l’installation.",
       "disclaimer" : "Ajoutez ou supprimez des apps à tout moment depuis Ledger Live.",
       "skippedInfo" : "Certaines apps ne sont pas disponibles. Elles doivent encore être développées pour le {{ productName }}.",

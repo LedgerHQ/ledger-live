@@ -1,6 +1,6 @@
 {
   "name": "actions-root",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "devDependencies": {
     "@types/node": "^20.8.10"

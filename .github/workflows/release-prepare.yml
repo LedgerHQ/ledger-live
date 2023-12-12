@@ -22,15 +22,13 @@ jobs:
           app_id: ${{ secrets.GH_BOT_APP_ID }}
           private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - name: Checkout Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref }}
           token: ${{ steps.generate-token.outputs.token }}
 
-      - name: set git user
-        run: |
-          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
-          git config user.name "live-github-bot[bot]"
+      - name: Setup git user
+        uses: ./tools/actions/composites/setup-git-user
 
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
@@ -63,7 +61,7 @@ jobs:
       - name: merge into main
         run: |
           git checkout main
-          git merge ${{ inputs.ref }}
+          git merge ${{ inputs.ref }} --no-ff
           git push origin main
 
       - name: create PR to develop

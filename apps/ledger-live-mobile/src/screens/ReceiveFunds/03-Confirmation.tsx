@@ -32,7 +32,7 @@ import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigat
 import styled, { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
 import Clipboard from "@react-native-clipboard/clipboard";
 import ConfirmationHeaderTitle from "./ConfirmationHeaderTitle";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
 import { BankMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { hasClosedWithdrawBannerSelector } from "../../reducers/settings";
@@ -283,6 +283,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
                   fontWeight={"semiBold"}
                   textAlign={"center"}
                   numberOfLines={1}
+                  testID={"receive-account-name-" + mainAccount.name}
                 >
                   {mainAccount.name}
                 </Text>
@@ -382,7 +383,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
       </NavigationScrollView>
       <Flex m={6}>
         <Flex>
-          <Button type="main" size="large" onPress={onRetry}>
+          <Button type="main" size="large" onPress={onRetry} testID="button-receive-confirmation">
             {t("transfer.receive.receiveConfirmation.verifyAddress")}
           </Button>
 

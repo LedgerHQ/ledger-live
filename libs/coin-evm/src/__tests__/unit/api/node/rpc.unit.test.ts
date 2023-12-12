@@ -1,6 +1,6 @@
+import { AssertionError, fail } from "assert";
 import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
-import { AssertionError, fail } from "assert";
 import { delay } from "@ledgerhq/live-promise";
 import { CryptoCurrency, CryptoCurrencyId, EthereumLikeInfo } from "@ledgerhq/types-cryptoassets";
 import { EvmTransactionLegacy, Transaction as EvmTransaction } from "../../../../types";

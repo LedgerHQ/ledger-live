@@ -4,7 +4,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelInfo } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
 import DefaultAppsIllustration from "./DefaultAppsIllustration";
 import RestoreAppsIllustration from "./RestoreAppsIllustration";
 import CancelModal from "./CancelModal";
@@ -22,6 +22,7 @@ type Props = {
    * Optional prop that will override the apps to install if present
    */
   deviceToRestore?: DeviceModelInfo | null | undefined;
+  setHeaderLoader: (hasLoader: boolean) => void;
   onComplete: () => void;
   onError: (error: Error) => void;
 };
@@ -31,7 +32,13 @@ type Props = {
  * dependencies, the display of modals and the mounting of InstallSetOfApps which
  * will then start the installation directly
  */
-const OnboardingAppInstallStep = ({ device, deviceToRestore, onComplete, onError }: Props) => {
+const OnboardingAppInstallStep = ({
+  device,
+  deviceToRestore,
+  setHeaderLoader,
+  onComplete,
+  onError,
+}: Props) => {
   const { t } = useTranslation();
   const deviceInitialApps = useFeature("deviceInitialApps");
   const [dependencies, setDependencies] = useState<string[]>([]);
@@ -148,6 +155,7 @@ const OnboardingAppInstallStep = ({ device, deviceToRestore, onComplete, onError
         <InstallSetOfApps
           device={device}
           dependencies={dependencies}
+          setHeaderLoader={setHeaderLoader}
           onComplete={handleInstallComplete}
           onCancel={handleCancel}
           onLocked={handleLocked}
@@ -172,7 +180,7 @@ const OnboardingAppInstallStep = ({ device, deviceToRestore, onComplete, onError
           </Text>
           <Flex pt={8} pb={2} justifyContent="space-between">
             <Button
-              variant="main"
+              variant="shade"
               outline
               flex={1}
               onClick={handlePressSkip}

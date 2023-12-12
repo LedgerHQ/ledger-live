@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/crypto-icons-ui",
   "description": "Crypto icons used by Ledger Live.",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "license": "MIT",
   "files": [
     "react",

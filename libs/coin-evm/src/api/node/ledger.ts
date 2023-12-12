@@ -11,9 +11,9 @@ import { GasEstimationError, LedgerNodeUsedIncorrectly } from "../../errors";
 import OptimismGasPriceOracleAbi from "../../abis/optimismGasPriceOracle.abi.json";
 import { getSerializedTransaction } from "../../transaction";
 import { LedgerExplorerOperation } from "../../types";
-import { NodeApi, isLedgerNodeConfig } from "./types";
 import { getGasOptions } from "../gasTracker/ledger";
 import { padHexString } from "../../logic";
+import { NodeApi, isLedgerNodeConfig } from "./types";
 
 export const LEDGER_TIMEOUT = 10_000; // 10_000ms (10s) for network call timeout
 export const LEDGER_TIME_BETWEEN_TRIES = 200; // 200ms between 2 calls

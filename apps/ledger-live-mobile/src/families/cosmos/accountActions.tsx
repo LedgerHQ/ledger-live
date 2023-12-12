@@ -8,9 +8,7 @@ import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import { Account } from "@ledgerhq/types-live";
 
 import { NavigatorName, ScreenName } from "../../const";
-import { ActionButtonEvent } from "../../components/FabActions";
-
-type NavigationParamsType = readonly [name: string, options: object];
+import { ActionButtonEvent, NavigationParamsType } from "../../components/FabActions";
 
 const getMainActions = ({
   account,
@@ -20,9 +18,9 @@ const getMainActions = ({
   account: CosmosAccount;
   parentAccount?: Account;
   parentRoute: RouteProp<ParamListBase, ScreenName>;
-}): ActionButtonEvent[] | null | undefined => {
+}): ActionButtonEvent[] => {
   const delegationDisabled = !canDelegate(account);
-  const navigationParams = delegationDisabled
+  const navigationParams: NavigationParamsType = delegationDisabled
     ? [
         NavigatorName.NoFundsFlow,
         {
@@ -48,7 +46,7 @@ const getMainActions = ({
   return [
     {
       id: "stake",
-      navigationParams: navigationParams as unknown as NavigationParamsType,
+      navigationParams,
       label: <Trans i18nKey="account.stake" />,
       Icon: IconsLegacy.CoinsMedium,
       event: "button_clicked",

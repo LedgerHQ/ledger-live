@@ -21,7 +21,6 @@ const CONTENT_BY_STATUS = (
   quitAndInstall: () => void,
   reDownload: () => void,
   progress: number,
-  downloadUpdate: () => void,
   version: string,
 ): {
   [x: string]: Content;
@@ -65,11 +64,6 @@ const CONTENT_BY_STATUS = (
         }}
       />
     ),
-    right: (
-      <FakeLink onClick={downloadUpdate}>
-        <Trans i18nKey="update.downloadNow" />
-      </FakeLink>
-    ),
   },
   error: {
     Icon: IconWarning,
@@ -87,13 +81,12 @@ const UpdaterTopBanner = () => {
     openURL(urls.liveHome);
   }, []);
   if (context && context.version) {
-    const { status, quitAndInstall, downloadProgress, version, downloadUpdate } = context;
+    const { status, quitAndInstall, downloadProgress, version } = context;
     if (!VISIBLE_STATUS.includes(status)) return null;
     const content: Content | undefined | null = CONTENT_BY_STATUS(
       quitAndInstall,
       reDownload,
       downloadProgress,
-      downloadUpdate,
       version,
     )[status];
     if (!content) return null;

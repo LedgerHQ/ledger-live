@@ -104,8 +104,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        address: "https://explorer.near.org/accounts/$address",
-        tx: "https://explorer.near.org/transactions/$hash",
+        address: "https://nearblocks.io/address/$address",
+        tx: "https://nearblocks.io/txns/$hash",
       },
     ],
     keywords: ["near"],
@@ -3002,22 +3002,18 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     type: "CryptoCurrency",
     id: "vechain",
     coinType: CoinType.VECHAIN,
-    name: "VeChain",
+    name: "Vechain",
     managerAppName: "VeChain",
     ticker: "VET",
     scheme: "vechain",
-    color: "#00C2FF",
+    color: "#82BE00",
     family: "vechain",
-    units: [
-      {
-        name: "VET",
-        code: "VET",
-        magnitude: 8,
-      },
-    ],
+    blockAvgTime: 10,
+    units: ethereumUnits("VET", "VET"),
     explorerViews: [
       {
-        tx: "https://explore.veforge.com/transactions/$hash",
+        tx: "https://explore.vechain.org/transactions/$hash",
+        address: "https://explore.vechain.org/accounts/$address",
       },
     ],
   },
@@ -3290,11 +3286,12 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  // Cronos POS Chain (formerly Crypto.org)
   crypto_org: {
     type: "CryptoCurrency",
     id: "crypto_org",
     coinType: CoinType.CRYPTO_ORG,
-    name: "Crypto.org",
+    name: "Cronos POS Chain",
     managerAppName: "Crypto.org Chain",
     ticker: "CRO",
     scheme: "crypto_org",
@@ -3314,8 +3311,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx: "https://crypto.org/explorer/tx/$hash",
-        address: "https://crypto.org/explorer/account/$address",
+        tx: "https://cronos-pos.org/explorer/tx/$hash",
+        address: "https://cronos-pos.org/explorer/account/$address",
       },
     ],
   },
@@ -3438,11 +3435,12 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  // Cronos POS Chain Croeseid (formerly Crypto.org Croeseid)
   crypto_org_croeseid: {
     type: "CryptoCurrency",
     id: "crypto_org_croeseid",
     coinType: CoinType.CRYPTO_ORG,
-    name: "Crypto.org Croeseid",
+    name: "Cronos POS Chain Croeseid",
     managerAppName: "Crypto.org Chain",
     ticker: "CRO",
     scheme: "crypto_org_croeseid",
@@ -3464,8 +3462,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     disableCountervalue: true,
     explorerViews: [
       {
-        tx: "https://crypto.org/explorer/croeseid/tx/$hash",
-        address: "https://crypto.org/explorer/croeseid/account/$address",
+        tx: "https://cronos-pos.org/explorer/croeseid/tx/$hash",
+        address: "https://cronos-pos.org/explorer/croeseid/account/$address",
       },
     ],
   },
@@ -3704,6 +3702,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  // Cronos EVM blockchain
   cronos: {
     type: "CryptoCurrency",
     id: "cronos",
@@ -4531,11 +4530,7 @@ export function findCryptoCurrencyByTicker(ticker: string): CryptoCurrency | nul
   return cryptocurrenciesByTicker[ticker];
 }
 
-/**
- *
- * @param {*} id
- */
-export function findCryptoCurrencyById(id: string): CryptoCurrency | null | undefined {
+export function findCryptoCurrencyById(id: string): CryptoCurrency | undefined {
   return cryptocurrenciesById[id];
 }
 
@@ -4592,13 +4587,8 @@ export const findCryptoCurrencyByManagerAppName = (
  */
 export const hasCryptoCurrencyId = (id: string): boolean => id in cryptocurrenciesById;
 
-// TODO: signature should be getCryptoCurrencyById(id: CryptoCurrencyId)
-/**
- *
- * @param {*} id
- */
-export function getCryptoCurrencyById(id: string | undefined): CryptoCurrency {
-  const currency = id && findCryptoCurrencyById(id);
+export function getCryptoCurrencyById(id: string): CryptoCurrency {
+  const currency = findCryptoCurrencyById(id);
 
   if (!currency) {
     throw new Error(`currency with id "${id}" not found`);

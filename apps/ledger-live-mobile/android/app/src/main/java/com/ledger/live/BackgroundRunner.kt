@@ -31,11 +31,7 @@ class BackgroundRunner(var context: ReactApplicationContext) : ReactContextBaseJ
             0
         })
 
-        var builder = NotificationCompat.Builder(context, if (requiresUserInput) {
-            MainApplication.HI_NOTIFICATION_CHANNEL
-        } else {
-            MainApplication.LO_NOTIFICATION_CHANNEL
-        })
+        var builder = NotificationCompat.Builder(context)
                 .setPriority(if (requiresUserInput) {
                     NotificationCompat.PRIORITY_HIGH
                 } else {

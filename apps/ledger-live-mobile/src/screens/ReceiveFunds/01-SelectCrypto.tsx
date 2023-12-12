@@ -44,6 +44,10 @@ const renderEmptyList = () => (
 export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const paramsCurrency = route?.params?.currency;
   const filterCurrencyIds = route?.params?.filterCurrencyIds;
+  const filterCurrencyIdsSet = useMemo(
+    () => (filterCurrencyIds ? new Set(filterCurrencyIds) : null),
+    [filterCurrencyIds],
+  );
 
   const { t } = useTranslation();
   const accounts = useSelector(flattenAccountsSelector);
@@ -129,10 +133,10 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
 
   const list = useMemo(
     () =>
-      filterCurrencyIds
-        ? sortedCryptoCurrencies.filter(crypto => filterCurrencyIds.includes(crypto.id))
+      filterCurrencyIdsSet
+        ? sortedCryptoCurrencies.filter(crypto => filterCurrencyIdsSet.has(crypto.id))
         : sortedCryptoCurrencies,
-    [filterCurrencyIds, sortedCryptoCurrencies],
+    [filterCurrencyIdsSet, sortedCryptoCurrencies],
   );
 
   return (

@@ -104,6 +104,7 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   casper: "02030d18d5bed9f5015824D89367EF448041E912F358655184412E48557491aAdB85",
   neon_evm: EVM_DEAD_ADDRESS,
   dydx: "dydx19rl4cm2hmr8afy4kldpxz3fka4jguq0a4erelz",
+  vechain: EVM_DEAD_ADDRESS,
   lukso: EVM_DEAD_ADDRESS,
 };
 

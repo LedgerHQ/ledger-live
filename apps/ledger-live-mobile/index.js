@@ -51,6 +51,7 @@ const excludedErrorName = [
   // bad usage of device
   "BleError",
   "EthAppPleaseEnableContractData",
+  "VechainAppPleaseEnableContractDataAndMultiClause",
   "CantOpenDevice",
   "DisconnectedDevice",
   "DisconnectedDeviceDuringOperation",
@@ -61,6 +62,8 @@ const excludedErrorName = [
   "ManagerDeviceLocked",
   "LockedDeviceError",
   "UnresponsiveDeviceError",
+  // wrong My Ledger provider selected for the firmware of the connected device
+  "FirmwareNotRecognized",
   // errors coming from the usage of a Transport implementation
   "HwTransportError",
   // other

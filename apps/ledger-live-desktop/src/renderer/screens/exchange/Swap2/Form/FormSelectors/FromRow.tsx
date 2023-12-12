@@ -21,7 +21,7 @@ import {
 } from "@ledgerhq/live-common/exchange/swap/types";
 import { track } from "~/renderer/analytics/segment";
 import { useGetSwapTrackingProperties } from "../../utils/index";
-import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/sortByMarketcap";
+import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";
 import { listCryptoCurrencies, listTokens } from "@ledgerhq/live-common/currencies/index";
 import { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";

@@ -2,10 +2,8 @@ import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, FlatList, Linking } from "react-native";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import {
-  useCurrenciesByMarketcap,
-  findCryptoCurrencyById,
-} from "@ledgerhq/live-common/currencies/index";
+import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";
 
 import { BannerCard, Flex, Text } from "@ledgerhq/native-ui";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,7 +17,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Animatable from "react-native-animatable";
 import { setCloseNetworkBanner } from "../../actions/settings";
 import { hasClosedNetworkBannerSelector } from "../../reducers/settings";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
 import BigCurrencyRow from "../../components/BigCurrencyRow";
 import { findAccountByCurrency } from "../../logic/deposit";
 import { AccountLike } from "@ledgerhq/types-live";
