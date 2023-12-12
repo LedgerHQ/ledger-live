@@ -1,4 +1,4 @@
-import { ScreenName } from "../../../const";
+import { ScreenName } from "~/const";
 
 export type ExploreTabNavigatorStackParamList = {
   [ScreenName.Learn]: undefined;

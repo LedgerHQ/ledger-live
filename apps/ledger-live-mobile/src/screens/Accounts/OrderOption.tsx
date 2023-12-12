@@ -3,10 +3,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components/native";
 import { Checkbox, Text } from "@ledgerhq/native-ui";
-import { useRefreshAccountsOrdering } from "../../actions/general";
-import { setOrderAccounts } from "../../actions/settings";
-import { orderAccountsSelector } from "../../reducers/settings";
-import Touchable from "../../components/Touchable";
+import { useRefreshAccountsOrdering } from "~/actions/general";
+import { setOrderAccounts } from "~/actions/settings";
+import { orderAccountsSelector } from "~/reducers/settings";
+import Touchable from "~/components/Touchable";
 
 type Props = {
   id: string;

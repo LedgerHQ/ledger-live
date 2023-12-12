@@ -23,12 +23,12 @@ import { includes, lowerCase, trim } from "lodash";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Keyboard } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import NavigationScrollView from "../../components/NavigationScrollView";
+import NavigationScrollView from "~/components/NavigationScrollView";
 import FeatureFlagDetails, { TagDisabled, TagEnabled } from "./FeatureFlagDetails";
-import Alert from "../../components/Alert";
+import Alert from "~/components/Alert";
 import GroupedFeatures from "./GroupedFeatures";
-import { featureFlagsBannerVisibleSelector } from "../../reducers/settings";
-import { setFeatureFlagsBannerVisible } from "../../actions/settings";
+import { featureFlagsBannerVisibleSelector } from "~/reducers/settings";
+import { setFeatureFlagsBannerVisible } from "~/actions/settings";
 
 const addFlagHint = `\
 If a feature flag is defined in the Firebase project \

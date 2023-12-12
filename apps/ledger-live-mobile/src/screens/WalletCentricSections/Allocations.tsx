@@ -8,11 +8,11 @@ import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import { chunk } from "lodash";
 import { ensureContrast } from "../../colors";
-import { ScreenName } from "../../const";
-import { useDistribution } from "../../actions/general";
+import { ScreenName } from "~/const";
+import { useDistribution } from "~/actions/general";
 import RingChart, { ColorableDistributionItem } from "../Analytics/RingChart";
-import { track } from "../../analytics";
-import { blacklistedTokenIdsSelector } from "../../reducers/settings";
+import { track } from "~/analytics";
+import { blacklistedTokenIdsSelector } from "~/reducers/settings";
 
 const NUMBER_MAX_ALLOCATION_ASSETS_TO_DISPLAY = 4;
 

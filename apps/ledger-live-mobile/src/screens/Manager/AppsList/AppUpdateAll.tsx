@@ -7,7 +7,7 @@ import { App } from "@ledgerhq/types-live";
 import UpdateAllModal from "../Modals/UpdateAllModal";
 import AppUpdateStepper from "./AppUpdateStepper";
 
-import Button from "../../../components/Button";
+import Button from "~/components/Button";
 
 type Props = {
   state: State;

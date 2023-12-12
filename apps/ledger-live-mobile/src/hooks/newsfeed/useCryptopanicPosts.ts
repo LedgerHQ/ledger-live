@@ -7,7 +7,7 @@ import {
   CryptopanicNewsWithMetadata,
   getPosts,
 } from "./cryptopanicApi";
-import { useLocale } from "../../context/Locale";
+import { useLocale } from "~/context/Locale";
 
 type LoadingStateType = null | "initial" | "refreshing" | "loadingMore";
 

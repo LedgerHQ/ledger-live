@@ -1,7 +1,7 @@
 import React from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Alert, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
-import { TrackScreen } from "../../analytics";
+import { TrackScreen } from "~/analytics";
 
 const PendingGenuineCheck = () => {
   const { t } = useTranslation();

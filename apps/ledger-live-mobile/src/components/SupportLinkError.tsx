@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { Linking } from "react-native";
 import { Trans } from "react-i18next";
-import { urls } from "@utils/urls";
+import { urls } from "~/utils/urls";
 import ExternalLink from "./ExternalLink";
 import { LearnMoreLink } from "./Alert";
 

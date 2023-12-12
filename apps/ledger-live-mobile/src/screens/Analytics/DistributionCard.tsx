@@ -5,13 +5,13 @@ import styled, { useTheme } from "styled-components/native";
 import { Text, Flex } from "@ledgerhq/native-ui";
 import { TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import ProgressBar from "../../components/ProgressBar";
-import CounterValue from "../../components/CounterValue";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import ProgressBar from "~/components/ProgressBar";
+import CounterValue from "~/components/CounterValue";
 import { ensureContrast } from "../../colors";
-import CurrencyIcon from "../../components/CurrencyIcon";
-import { withDiscreetMode } from "../../context/DiscreetModeContext";
-import { NavigatorName, ScreenName } from "../../const";
+import CurrencyIcon from "~/components/CurrencyIcon";
+import { withDiscreetMode } from "~/context/DiscreetModeContext";
+import { NavigatorName, ScreenName } from "~/const";
 
 export type DistributionItem = {
   currency: CryptoCurrency | TokenCurrency;

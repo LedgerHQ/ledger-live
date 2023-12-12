@@ -4,8 +4,8 @@ import { useTranslation } from "react-i18next";
 import { Flex, BannerCard } from "@ledgerhq/native-ui";
 import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { CexDepositEntryPointsLocationsMobile } from "@ledgerhq/types-live/lib/cexDeposit";
-import { track } from "../../analytics";
-import CoinbaseIcon from "../../icons/Coinbase";
+import { track } from "~/analytics";
+import CoinbaseIcon from "~/icons/Coinbase";
 
 type Props = {
   location: CexDepositEntryPointsLocationsMobile;

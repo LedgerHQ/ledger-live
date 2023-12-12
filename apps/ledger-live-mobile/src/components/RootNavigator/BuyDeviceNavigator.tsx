@@ -3,10 +3,10 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "styled-components/native";
 import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 
-import { ScreenName } from "../../const";
-import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
-import GetDevice from "../../screens/GetDeviceScreen";
-import PurchaseDevice from "../../screens/PurchaseDevice";
+import { ScreenName } from "~/const";
+import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import GetDevice from "~/screens/GetDeviceScreen";
+import PurchaseDevice from "~/screens/PurchaseDevice";
 import { BuyDeviceNavigatorParamList } from "./types/BuyDeviceNavigator";
 
 const Stack = createStackNavigator<BuyDeviceNavigatorParamList>();

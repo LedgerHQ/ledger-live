@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
-import LText from "../../components/LText";
+import LText from "~/components/LText";
 
 type Props = FieldWrapperProps & {
   title: string;

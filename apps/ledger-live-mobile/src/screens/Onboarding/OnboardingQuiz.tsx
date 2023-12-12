@@ -6,16 +6,16 @@ import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { StackScreenProps } from "@react-navigation/stack";
-import { TrackScreen } from "../../analytics";
-import { ScreenName } from "../../const";
+import { TrackScreen } from "~/analytics";
+import { ScreenName } from "~/const";
 
-import quizImage1 from "../../images/illustration/Light/_056.png";
-import quizImage2 from "../../images/illustration/Light/_021.png";
-import quizImage3 from "../../images/illustration/Light/_055.png";
+import quizImage1 from "~/images/illustration/Light/_056.png";
+import quizImage2 from "~/images/illustration/Light/_021.png";
+import quizImage3 from "~/images/illustration/Light/_055.png";
 
 import OnboardingQuizItem from "./OnboardingQuizItem";
-import { OnboardingNavigatorParamList } from "../../components/RootNavigator/types/OnboardingNavigator";
-import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 
 const transitionStyles = [StyleSheet.absoluteFill, { flex: 1 }];
 

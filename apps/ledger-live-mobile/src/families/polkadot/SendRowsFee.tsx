@@ -6,18 +6,18 @@ import type { Transaction as PolkadotTransaction } from "@ledgerhq/live-common/f
 import { Trans } from "react-i18next";
 import { getAccountUnit, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
-import SummaryRow from "../../screens/SendFunds/SummaryRow";
-import LText from "../../components/LText";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import CounterValue from "../../components/CounterValue";
-import ExternalLink from "../../icons/ExternalLink";
-import { urls } from "@utils/urls";
-import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
-import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import type { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
-import { ScreenName } from "../../const";
-import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
-import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
+import SummaryRow from "~/screens/SendFunds/SummaryRow";
+import LText from "~/components/LText";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import CounterValue from "~/components/CounterValue";
+import ExternalLink from "~/icons/ExternalLink";
+import { urls } from "~/utils/urls";
+import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import type { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
+import { ScreenName } from "~/const";
+import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
+import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 import { PolkadotBondFlowParamList } from "./BondFlow/types";
 
 type Navigation = CompositeScreenProps<

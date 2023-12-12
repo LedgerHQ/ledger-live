@@ -2,8 +2,8 @@ import React, { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Alert } from "@ledgerhq/native-ui";
 import QueuedDrawer from "./QueuedDrawer";
-import { setDebugAppLevelDrawerOpened } from "../actions/settings";
-import { debugAppLevelDrawerOpenedSelector } from "../reducers/settings";
+import { setDebugAppLevelDrawerOpened } from "~/actions/settings";
+import { debugAppLevelDrawerOpenedSelector } from "~/reducers/settings";
 
 /**
  * Only for debug purposes. This drawer is called at the App level (= above the react-navigation system).

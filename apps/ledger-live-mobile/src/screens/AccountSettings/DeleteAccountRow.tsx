@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
-import SettingsRow from "../../components/SettingsRow";
+import SettingsRow from "~/components/SettingsRow";
 
 type Props = {
   onPress: () => void;

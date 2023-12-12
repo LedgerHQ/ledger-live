@@ -6,7 +6,7 @@ import {
 } from "@ledgerhq/types-cryptoassets";
 import { Device, DeviceModelId } from "@ledgerhq/types-devices";
 import { AccountLike } from "@ledgerhq/types-live";
-import type { ScreenName } from "../../../const";
+import type { ScreenName } from "~/const";
 
 export type ReceiveFundsStackParamList = {
   [ScreenName.ReceiveSelectCrypto]:
