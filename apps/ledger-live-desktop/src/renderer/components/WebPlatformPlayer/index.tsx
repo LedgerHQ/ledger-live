@@ -67,7 +67,7 @@ export default function WebPlatformPlayer({ manifest, inputs, onClose, config, .
           webviewState={webviewState}
           config={config?.topBarConfig}
         />
-        <Web3ApptWebview
+        <Web3AppWebview
           manifest={manifest}
           inputs={inputs}
           onStateChange={onStateChange}
