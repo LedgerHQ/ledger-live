@@ -1,5 +1,22 @@
 # ledger-live-desktop
 
+## 2.73.0-nightly.2
+
+### Minor Changes
+
+- [#5669](https://github.com/LedgerHQ/ledger-live/pull/5669) [`aa110c2`](https://github.com/LedgerHQ/ledger-live/commit/aa110c2077a95758bddfcd6c48636348fdcda20c) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Fix cosmos static unbonding periods
+
+- [#5383](https://github.com/LedgerHQ/ledger-live/pull/5383) [`3e46bd1`](https://github.com/LedgerHQ/ledger-live/commit/3e46bd1c8b1baccdce1a5d4a2b0adc81cdbd2e41) Thanks [@cng-ledger](https://github.com/cng-ledger)! - feat(LIVE-9451): capture swap live app load failure & use native flow
+
+### Patch Changes
+
+- [#5710](https://github.com/LedgerHQ/ledger-live/pull/5710) [`4a05b3a`](https://github.com/LedgerHQ/ledger-live/commit/4a05b3a1a6b4e91ed43299c48580798b98660ef9) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Added stax image on Manager Disconnected screen
+
+- [#5451](https://github.com/LedgerHQ/ledger-live/pull/5451) [`b2f5aba`](https://github.com/LedgerHQ/ledger-live/commit/b2f5aba4e08a3a82070aee145591fa8bb3b84d66) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - change staking flow start tracking to use step starter name
+
+- Updated dependencies [[`6c139d7`](https://github.com/LedgerHQ/ledger-live/commit/6c139d7a6431fb87b8711bdeb7b7ffa9882e7723), [`a01636a`](https://github.com/LedgerHQ/ledger-live/commit/a01636a0c14e66d20bb853be1e13b48d6036639e), [`db13ef2`](https://github.com/LedgerHQ/ledger-live/commit/db13ef214190fe79b889d6b72a8dbb2be4ed6d5a), [`3e46bd1`](https://github.com/LedgerHQ/ledger-live/commit/3e46bd1c8b1baccdce1a5d4a2b0adc81cdbd2e41)]:
+  - @ledgerhq/live-common@33.3.0-nightly.2
+
 ## 2.73.0-nightly.1
 
 ### Minor Changes

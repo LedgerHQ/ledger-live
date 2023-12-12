@@ -1,5 +1,19 @@
 # @ledgerhq/live-common
 
+## 33.3.0-nightly.2
+
+### Minor Changes
+
+- [#5616](https://github.com/LedgerHQ/ledger-live/pull/5616) [`db13ef2`](https://github.com/LedgerHQ/ledger-live/commit/db13ef214190fe79b889d6b72a8dbb2be4ed6d5a) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update cardano hw-app
+
+- [#5383](https://github.com/LedgerHQ/ledger-live/pull/5383) [`3e46bd1`](https://github.com/LedgerHQ/ledger-live/commit/3e46bd1c8b1baccdce1a5d4a2b0adc81cdbd2e41) Thanks [@cng-ledger](https://github.com/cng-ledger)! - feat(LIVE-9451): capture swap live app load failure & use native flow
+
+### Patch Changes
+
+- [#5703](https://github.com/LedgerHQ/ledger-live/pull/5703) [`6c139d7`](https://github.com/LedgerHQ/ledger-live/commit/6c139d7a6431fb87b8711bdeb7b7ffa9882e7723) Thanks [@gre](https://github.com/gre)! - Fixes icons of testnet coins.
+
+- [#5691](https://github.com/LedgerHQ/ledger-live/pull/5691) [`a01636a`](https://github.com/LedgerHQ/ledger-live/commit/a01636a0c14e66d20bb853be1e13b48d6036639e) Thanks [@gre](https://github.com/gre)! - deposit flow: fixes currencies sorting ('2049' bug)
+
 ## 33.3.0-nightly.1
 
 ### Minor Changes
