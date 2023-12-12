@@ -882,8 +882,8 @@ importers:
         specifier: ~13.4.2
         version: 13.4.4(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
       expo-file-system:
-        specifier: ~15.4.3
-        version: 15.4.4(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
+        specifier: ~15.6.0
+        version: 15.6.0(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
       expo-image-loader:
         specifier: ~4.3.0
         version: 4.3.0(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
@@ -34231,8 +34231,8 @@ packages:
       react-native: 0.72.6(@babel/core@7.23.2)(react@18.2.0)
       uuid: 3.4.0
 
-  /expo-file-system@15.4.4(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0):
-    resolution: {integrity: sha512-F0xS88D85F7qVQ61r0qBnzh6VW/s6iIl+VaQEEi2nAIOQHw1JIEj4yCXPLTtbyn5VmArbe2dSL3KYz1V+BLkKA==}
+  /expo-file-system@15.6.0(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0):
+    resolution: {integrity: sha512-a2hvSWPQLgzw6/u7QuVjVs44Zqgkq3EQJ94tUpw9GbAxj2RsdS3tPnzakBb3Mc6VoQ2Aop6FIgSKeYCeYJAzsg==}
     peerDependencies:
       expo: '*'
       expo-constants: '*'
