@@ -1,6 +1,9 @@
 import { app, Menu, MenuItemConstructorOptions, OpenDevToolsOptions } from "electron";
 import { getMainWindow } from "./window-lifecycle";
-const { DEV_TOOLS, DEV_TOOLS_MODE } = process.env;
+const { DEV_TOOLS } = process.env;
+
+const DEV_TOOLS_MODE = true;
+
 const template: MenuItemConstructorOptions[] = [
   {
     label: app.name,

@@ -13,7 +13,10 @@ export const DEFAULT_WINDOW_WIDTH = intFromEnv("LEDGER_DEFAULT_WINDOW_WIDTH", 10
 export const DEFAULT_WINDOW_HEIGHT = intFromEnv("LEDGER_DEFAULT_WINDOW_HEIGHT", 768);
 export const MIN_WIDTH = intFromEnv("LEDGER_MIN_WIDTH", 1024);
 export const MIN_HEIGHT = intFromEnv("LEDGER_MIN_HEIGHT", 700);
-const { DEV_TOOLS, DISABLE_DEV_TOOLS, BYPASS_CORS, IGNORE_CERTIFICATE_ERRORS } = process.env;
+const { BYPASS_CORS, IGNORE_CERTIFICATE_ERRORS } = process.env;
+
+const DEV_TOOLS = true;
+const DISABLE_DEV_TOOLS = false;
 
 // Used for minirecover (recover local dev env)
 if (__DEV__ && IGNORE_CERTIFICATE_ERRORS) {
