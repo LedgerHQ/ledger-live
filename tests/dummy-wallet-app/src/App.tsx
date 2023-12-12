@@ -1,25 +1,21 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useE2EInjection } from "./hooks";
 import "./App.css";
-import { CustomLogger } from "@ledgerhq/live-common/wallet-api/CustomLogger/client";
 import { useWalletAPIClient } from "@ledgerhq/wallet-api-client-react";
-import { WalletAPIClient } from "@ledgerhq/wallet-api-client";
 
 export default function App() {
   useE2EInjection();
-  const { client } = useWalletAPIClient() as { client: WalletAPIClient<CustomLogger> };
+  const { client } = useWalletAPIClient();
   useEffect(() => {
     console.log(client?.custom);
   });
 
-  const [res, setRes] = useState();
+  const [res, setRes] = useState<unknown>();
 
   const testLogger = async () => {
     try {
-      // @ts-expect-error: need to fix it in wallet-api by removing the Record
-      setRes(await client?.custom.log("test"));
+      await client?.custom.log("test");
     } catch (err) {
-      // @ts-expect-error: err is unknown and we don't check it
       setRes(err);
     }
   };
