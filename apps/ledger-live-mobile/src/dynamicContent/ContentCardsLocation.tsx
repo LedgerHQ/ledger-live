@@ -20,6 +20,7 @@ type CategoriesWithCards = {
 const ContentCardsLocation = ({ locationId, ...containerProps }: Props) => {
   const { categoriesCards, mobileCards } = useDynamicContent();
 
+  // TODO : extract in a component above
   const renderCategory: ListRenderItem<CategoriesWithCards> = useCallback(
     ({ item }) => (
       <ContentCardsCategory category={item.category} categoryContentCards={item.cards} />
