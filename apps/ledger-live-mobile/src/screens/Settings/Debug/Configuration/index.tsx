@@ -1,18 +1,18 @@
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import { IconsLegacy, Alert, Flex } from "@ledgerhq/native-ui";
-import SettingsRow from "../../../../components/SettingsRow";
-import { ScreenName } from "../../../../const";
+import SettingsRow from "~/components/SettingsRow";
+import { ScreenName } from "~/const";
 
 import ReadOnlyModeRow from "./ReadOnlyModeRow";
 import AnalyticsConsoleRow from "./AnalyticsConsoleRow";
 import ThemeToggleRow from "./ThemeToggleRow";
-import SkipLock from "../../../../components/behaviour/SkipLock";
+import SkipLock from "~/components/behaviour/SkipLock";
 import SettingsNavigationScrollView from "../../SettingsNavigationScrollView";
 import MockModeRow from "../../General/MockModeRow";
 import HasOrderedNanoRow from "./HasOrderedNanoRow";
-import { StackNavigatorNavigation } from "../../../../components/RootNavigator/types/helpers";
-import { SettingsNavigatorStackParamList } from "../../../../components/RootNavigator/types/SettingsNavigator";
+import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
+import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
 import ResetOnboardingStateRow from "./ResetOnboardingStateRow";
 import NftMetadataServiceRow from "./NftMetadataServiceRow";
 import HasStaxRow from "./HasStaxRow";

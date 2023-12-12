@@ -7,10 +7,8 @@ import {
 } from "@ledgerhq/live-common/families/tezos/bakers";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
 import { IconsLegacy } from "@ledgerhq/native-ui";
-import { NavigatorName, ScreenName } from "../../const";
-import { ActionButtonEvent } from "../../components/FabActions";
-
-type NavigationParamsType = readonly [name: string, options: object];
+import { NavigatorName, ScreenName } from "~/const";
+import { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
 
 const getExtraSendActionParams = ({ account }: { account: AccountLike }) => {
   const delegation = getAccountDelegationSync(account);
@@ -50,9 +48,9 @@ const getMainActions = ({
   account: Account;
   parentAccount: Account;
   parentRoute?: RouteProp<ParamListBase, ScreenName>;
-}): ActionButtonEvent[] | null | undefined => {
+}): ActionButtonEvent[] => {
   const delegationDisabled = isAccountDelegating(account) || account.type !== "Account";
-  const navigationParams = delegationDisabled
+  const navigationParams: NavigationParamsType = delegationDisabled
     ? [
         NavigatorName.NoFundsFlow,
         {
@@ -78,7 +76,7 @@ const getMainActions = ({
   return [
     {
       id: "stake",
-      navigationParams: navigationParams as unknown as NavigationParamsType,
+      navigationParams,
       label: <Trans i18nKey="account.stake" />,
       Icon: IconsLegacy.CoinsMedium,
       event: "button_clicked",

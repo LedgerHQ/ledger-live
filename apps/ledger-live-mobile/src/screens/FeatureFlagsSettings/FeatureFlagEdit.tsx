@@ -1,12 +1,12 @@
 import React, { useCallback, useState, useMemo } from "react";
 import { ScrollView } from "react-native";
 import { useTranslation } from "react-i18next";
-import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeatureFlags } from "@ledgerhq/live-config/featureFlags/index";
 import type { FeatureId, Feature } from "@ledgerhq/types-live";
 
 import { BaseInput, Text, Flex, Button, Switch } from "@ledgerhq/native-ui";
 import { InputRenderRightContainer } from "@ledgerhq/native-ui/components/Form/Input/BaseInput/index";
-import Alert from "../../components/Alert";
+import Alert from "~/components/Alert";
 
 const FeatureFlagEdit: React.FC<{
   flagName: FeatureId;
@@ -24,7 +24,7 @@ const FeatureFlagEdit: React.FC<{
     overriddenByEnv,
     overridesRemote,
     enabledOverriddenForCurrentLanguage,
-    enabledOverriddenForCurrentMobileVersion,
+    enabledOverriddenForCurrentVersion,
     ...pureValue
   } = flagValue || {};
 

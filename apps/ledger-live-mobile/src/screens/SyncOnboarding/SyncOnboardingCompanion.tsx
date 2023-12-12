@@ -18,12 +18,12 @@ import { useTranslation } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useDispatch } from "react-redux";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
 
 import { SeedPhraseType, StorylyInstanceID } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { addKnownDevice } from "../../actions/ble";
-import { NavigatorName, ScreenName } from "../../const";
+import { addKnownDevice } from "~/actions/ble";
+import { NavigatorName, ScreenName } from "~/const";
 import HelpDrawer from "./HelpDrawer";
 import DesyncOverlay from "./DesyncOverlay";
 import {
@@ -31,10 +31,10 @@ import {
   setHasOrderedNano,
   setLastConnectedDevice,
   setReadOnlyMode,
-} from "../../actions/settings";
-import InstallSetOfApps from "../../components/DeviceAction/InstallSetOfApps";
-import Stories from "../../components/StorylyStories";
-import { TrackScreen, screen } from "../../analytics";
+} from "~/actions/settings";
+import InstallSetOfApps from "~/components/DeviceAction/InstallSetOfApps";
+import Stories from "~/components/StorylyStories";
+import { TrackScreen, screen } from "~/analytics";
 import ContinueOnStax from "./assets/ContinueOnStax";
 import type { SyncOnboardingScreenProps } from ".";
 

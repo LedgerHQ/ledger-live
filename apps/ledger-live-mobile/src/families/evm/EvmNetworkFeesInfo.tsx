@@ -4,7 +4,7 @@ import { Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/Feather";
-import LText from "../../components/LText";
+import LText from "~/components/LText";
 
 export const EvmNetworkFeeInfo = () => {
   const { colors } = useTheme();

@@ -10,20 +10,20 @@ import { DEFAULT_MULTIBUY_APP_ID } from "@ledgerhq/live-common/wallet-api/consta
 
 import Braze from "@braze/react-native-sdk";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
 import * as Sentry from "@sentry/react-native";
 
-import { hasCompletedOnboardingSelector } from "../reducers/settings";
+import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import { navigationRef, isReadyRef } from "../rootnavigation";
-import { ScreenName, NavigatorName } from "../const";
-import { setWallectConnectUri } from "../actions/walletconnect";
-import { useGeneralTermsAccepted } from "../logic/terms";
-import { Writeable } from "../types/helpers";
+import { ScreenName, NavigatorName } from "~/const";
+import { setWallectConnectUri } from "~/actions/walletconnect";
+import { useGeneralTermsAccepted } from "~/logic/terms";
+import { Writeable } from "~/types/helpers";
 import { lightTheme, darkTheme, Theme } from "../colors";
-import { track } from "../analytics";
-import { setEarnInfoModal } from "../actions/earn";
+import { track } from "~/analytics";
+import { setEarnInfoModal } from "~/actions/earn";
 import { OptionalFeatureMap } from "@ledgerhq/types-live";
-import { blockPasswordLock } from "../actions/appstate";
+import { blockPasswordLock } from "~/actions/appstate";
 
 const routingInstrumentation = new Sentry.ReactNavigationInstrumentation();
 

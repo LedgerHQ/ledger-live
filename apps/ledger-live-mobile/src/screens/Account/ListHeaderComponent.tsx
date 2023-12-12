@@ -18,7 +18,7 @@ import { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
 import { NearAccount } from "@ledgerhq/live-common/families/near/types";
 import { isEditableOperation, isStuckOperation } from "@ledgerhq/live-common/operation";
 import Header from "./Header";
-import AccountGraphCard from "../../components/AccountGraphCard";
+import AccountGraphCard from "~/components/AccountGraphCard";
 import SubAccountsList from "./SubAccountsList";
 import NftCollectionsList from "./NftCollectionsList";
 import perFamilyAccountHeader from "../../generated/AccountHeader";
@@ -30,9 +30,9 @@ import SectionContainer from "../WalletCentricSections/SectionContainer";
 import {
   FabAccountActions,
   FabAccountMainActions,
-} from "../../components/FabActions/actionsList/account";
-import { ActionButtonEvent } from "../../components/FabActions";
-import { EditOperationCard } from "../../components/EditOperationCard";
+} from "~/components/FabActions/actionsList/account";
+import { ActionButtonEvent } from "~/components/FabActions";
+import { EditOperationCard } from "~/components/EditOperationCard";
 
 type Props = {
   account?: AccountLike;

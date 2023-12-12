@@ -30,7 +30,7 @@ import { Box, Button, IconsLegacy, Text, Flex } from "@ledgerhq/native-ui";
 import { useTranslation, Trans } from "react-i18next";
 import Clipboard from "@react-native-clipboard/clipboard";
 import { FloorPrice, Account } from "@ledgerhq/types-live";
-import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { FeatureToggle, useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import {
   CompositeNavigationProp,
@@ -40,34 +40,34 @@ import {
 } from "@react-navigation/native";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import styled from "styled-components/native";
-import { accountSelector } from "../../reducers/accounts";
-import { ScreenName, NavigatorName } from "../../const";
+import { accountSelector } from "~/reducers/accounts";
+import { ScreenName, NavigatorName } from "~/const";
 import NftLinksPanel from "./NftLinksPanel";
 import Skeleton from "../Skeleton";
 import NftMedia from "./NftMedia";
-import { getMetadataMediaType } from "../../logic/nft";
+import { getMetadataMediaType } from "~/logic/nft";
 import NftPropertiesList from "./NftPropertiesList";
 import CurrencyIcon from "../CurrencyIcon";
-import { State } from "../../reducers/types";
+import { State } from "~/reducers/types";
 import type { NftNavigatorParamList } from "../RootNavigator/types/NftNavigator";
 import type { StackNavigatorNavigation, StackNavigatorProps } from "../RootNavigator/types/helpers";
 import type { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { AccountsNavigatorParamList } from "../RootNavigator/types/AccountsNavigator";
-import InfoModal from "../../modals/Info";
-import { notAvailableModalInfo } from "../../screens/Nft/NftInfoNotAvailable";
-import { track, TrackScreen } from "../../analytics";
+import InfoModal from "~/modals/Info";
+import { notAvailableModalInfo } from "~/screens/Nft/NftInfoNotAvailable";
+import { track, TrackScreen } from "~/analytics";
 import { DesignedForStaxDrawer, DesignedForStaxText } from "./DesignedForStax";
 import {
   discreetModeSelector,
   hasSeenStaxEnabledNftsPopupSelector,
   knownDeviceModelIdsSelector,
-} from "../../reducers/settings";
-import { setHasSeenStaxEnabledNftsPopup } from "../../actions/settings";
+} from "~/reducers/settings";
+import { setHasSeenStaxEnabledNftsPopup } from "~/actions/settings";
 import { useHeaderHeight } from "@react-navigation/elements";
 import NftViewerBackground from "./NftViewerBackground";
 import NftViewerScreenHeader from "./NftViewerScreenHeader";
 import invariant from "invariant";
-import DiscreetModeContext, { withDiscreetMode } from "../../context/DiscreetModeContext";
+import DiscreetModeContext, { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { EvmNftTransaction, Transaction } from "@ledgerhq/coin-evm/types/index";
 
 type Props = CompositeScreenProps<

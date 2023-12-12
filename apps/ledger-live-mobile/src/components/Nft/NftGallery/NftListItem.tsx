@@ -6,7 +6,7 @@ import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types
 import { Box, Flex, Tag, Text } from "@ledgerhq/native-ui";
 import styled, { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
 import { useTranslation } from "react-i18next";
-import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
+import { FeatureToggle } from "@ledgerhq/live-config/featureFlags/index";
 import { useTheme } from "styled-components/native";
 import { useSelector } from "react-redux";
 
@@ -15,7 +15,7 @@ import Skeleton from "../../Skeleton";
 import { NftSelectionCheckbox } from "../NftSelectionCheckbox";
 import NftListItemFloorPriceRow from "./NftListItemFloorPriceRow";
 import { DesignedForStaxText } from "../DesignedForStax";
-import { knownDeviceModelIdsSelector } from "../../../reducers/settings";
+import { knownDeviceModelIdsSelector } from "~/reducers/settings";
 
 type Props = {
   nft: ProtoNFT;

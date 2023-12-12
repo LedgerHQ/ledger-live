@@ -4,7 +4,7 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import { CurrencyData } from "@ledgerhq/live-common/market/types";
 import { Image } from "react-native";
 import { TFunction } from "i18next";
-import CircleCurrencyIcon from "../../components/CircleCurrencyIcon";
+import CircleCurrencyIcon from "~/components/CircleCurrencyIcon";
 import DeltaVariation from "./DeltaVariation";
 import { counterValueFormatter } from "./utils";
 

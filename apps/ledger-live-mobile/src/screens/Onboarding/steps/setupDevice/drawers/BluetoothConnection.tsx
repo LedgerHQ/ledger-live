@@ -11,7 +11,7 @@ import {
   Link as TextLink,
   ScrollListContainer,
 } from "@ledgerhq/native-ui";
-import { urls } from "@utils/urls";
+import { urls } from "~/utils/urls";
 
 const bullets = [
   "onboarding.stepPairNew.infoModal.bullets.0.label",

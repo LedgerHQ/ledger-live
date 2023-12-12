@@ -7,20 +7,17 @@ import Video from "react-native-video";
 import { Linking, StyleSheet } from "react-native";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { useDispatch } from "react-redux";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { NavigatorName, ScreenName } from "../../../const";
-import StyledStatusBar from "../../../components/StyledStatusBar";
-import { urls } from "@utils/urls";
-import { useAcceptGeneralTerms } from "../../../logic/terms";
-import { setAnalytics } from "../../../actions/settings";
-import useIsAppInBackground from "../../../components/useIsAppInBackground";
-import ForceTheme from "../../../components/theme/ForceTheme";
-import Button from "../../../components/wrappedUi/Button";
-import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
+import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+import { NavigatorName, ScreenName } from "~/const";
+import StyledStatusBar from "~/components/StyledStatusBar";
+import { urls } from "~/utils/urls";
+import { useAcceptGeneralTerms } from "~/logic/terms";
+import { setAnalytics } from "~/actions/settings";
+import useIsAppInBackground from "~/components/useIsAppInBackground";
+import ForceTheme from "~/components/theme/ForceTheme";
+import Button from "~/components/wrappedUi/Button";
+import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 
 import videoSources from "../../../../assets/videos";
 import LanguageSelect from "../../SyncOnboarding/LanguageSelect";

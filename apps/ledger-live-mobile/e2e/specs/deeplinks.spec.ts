@@ -106,7 +106,8 @@ describe("DeepLinks Tests", () => {
     await expect(getElementByText("Discover")).toBeVisible();
   });
 
-  it("should open a live app and be able to navigate to and from crypto select screen", async () => {
+  // FIXME site unavailable on Android CI
+  it.skip("should open a live app and be able to navigate to and from crypto select screen", async () => {
     if (!isAndroid()) return;
     await discoverPage.openViaDeeplink(mercuryoDL.name);
     await discoverPage.waitForSelectCrypto();

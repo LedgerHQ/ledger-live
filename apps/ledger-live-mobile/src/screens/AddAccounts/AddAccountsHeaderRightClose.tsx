@@ -1,7 +1,7 @@
 import React from "react";
 import { Trans } from "react-i18next";
 import { useRoute } from "@react-navigation/native";
-import { NavigationHeaderCloseButtonAdvanced } from "../../components/NavigationHeaderCloseButton";
+import { NavigationHeaderCloseButtonAdvanced } from "~/components/NavigationHeaderCloseButton";
 
 const routesWithConfirmation = ["AddAccountsAccounts"];
 export default function AddAccountsHeaderRightClose() {

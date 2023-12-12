@@ -7,7 +7,7 @@ import type {
   ElrondProvider,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/elrond/types";
-import type { ScreenName } from "../../../../../const";
+import type { ScreenName } from "~/const";
 
 export type ElrondUndelegationFlowParamList = {
   [ScreenName.ElrondUndelegationAmount]: {

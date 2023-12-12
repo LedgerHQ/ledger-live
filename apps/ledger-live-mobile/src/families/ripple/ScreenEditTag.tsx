@@ -7,16 +7,16 @@ import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useTheme } from "@react-navigation/native";
 import { StackScreenProps } from "@react-navigation/stack";
-import { i18n } from "../../context/Locale";
-import KeyboardView from "../../components/KeyboardView";
-import Button from "../../components/Button";
-import NavigationScrollView from "../../components/NavigationScrollView";
-import { accountScreenSelector } from "../../reducers/accounts";
-import { ScreenName } from "../../const";
-import { track } from "../../analytics";
-import TextInput from "../../components/FocusedTextInput";
-import { BaseComposite } from "../../components/RootNavigator/types/helpers";
-import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
+import { i18n } from "~/context/Locale";
+import KeyboardView from "~/components/KeyboardView";
+import Button from "~/components/Button";
+import NavigationScrollView from "~/components/NavigationScrollView";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { ScreenName } from "~/const";
+import { track } from "~/analytics";
+import TextInput from "~/components/FocusedTextInput";
+import { BaseComposite } from "~/components/RootNavigator/types/helpers";
+import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
 
 type NavigationProps = BaseComposite<
   StackScreenProps<SendFundsNavigatorStackParamList, ScreenName.RippleEditTag>

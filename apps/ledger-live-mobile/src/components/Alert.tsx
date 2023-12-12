@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import styled from "styled-components/native";
 import { IconsLegacy, Alert as BaseAlert, Flex } from "@ledgerhq/native-ui";
 import { AlertProps as BaseAlertProps } from "@ledgerhq/native-ui/components/message/Alert/index";
-import { dismissedBannersSelector } from "../reducers/settings";
+import { dismissedBannersSelector } from "~/reducers/settings";
 
 type AlertType =
   | "primary"

@@ -1,7 +1,7 @@
 import React from "react";
 import { Image } from "react-native";
 import type { Baker } from "@ledgerhq/live-common/families/tezos/types";
-import Circle from "../../components/Circle";
+import Circle from "~/components/Circle";
 
 type Props = {
   size?: number;

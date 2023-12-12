@@ -6,7 +6,7 @@ import type {
 import type { Operation } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import BigNumber from "bignumber.js";
-import { ScreenName } from "../../../const";
+import { ScreenName } from "~/const";
 
 export type CosmosClaimRewardsFlowParamList = {
   [ScreenName.CosmosClaimRewardsValidator]: {

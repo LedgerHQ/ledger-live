@@ -8,8 +8,8 @@ import type { Action, State } from "@ledgerhq/live-common/apps/index";
 import { useAppInstallNeedsDeps } from "@ledgerhq/live-common/apps/react";
 import styled from "styled-components/native";
 import { IconsLegacy, Box } from "@ledgerhq/native-ui";
-import { hasInstalledAnyAppSelector } from "../../../reducers/settings";
-import { setHasInstalledAnyApp } from "../../../actions/settings";
+import { hasInstalledAnyAppSelector } from "~/reducers/settings";
+import { setHasInstalledAnyApp } from "~/actions/settings";
 import { useSetAppsWithDependenciesToInstallUninstall } from "../AppsInstallUninstallWithDependenciesContext";
 
 type Props = {

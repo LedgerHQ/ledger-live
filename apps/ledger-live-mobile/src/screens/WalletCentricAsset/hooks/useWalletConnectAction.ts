@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/core";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useCallback } from "react";
 import { track } from "../../../analytics";
-import { NavigatorName, ScreenName } from "../../../const";
+import { NavigatorName, ScreenName } from "~/const";
 
 type Props = {
   currency: CryptoOrTokenCurrency;

@@ -4,17 +4,17 @@ import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import type { Transaction as TronTransaction } from "@ledgerhq/live-common/families/tron/types";
-import { accountScreenSelector } from "../../reducers/accounts";
-import { TrackScreen } from "../../analytics";
-import { ScreenName } from "../../const";
-import PreventNativeBack from "../../components/PreventNativeBack";
-import ValidateSuccess from "../../components/ValidateSuccess";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { TrackScreen } from "~/analytics";
+import { ScreenName } from "~/const";
+import PreventNativeBack from "~/components/PreventNativeBack";
+import ValidateSuccess from "~/components/ValidateSuccess";
 import type {
   StackNavigatorNavigation,
   StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
-import { UnfreezeNavigatorParamList } from "../../components/RootNavigator/types/UnfreezeNavigator";
-import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
+} from "~/components/RootNavigator/types/helpers";
+import { UnfreezeNavigatorParamList } from "~/components/RootNavigator/types/UnfreezeNavigator";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 
 type Props = CompositeScreenProps<
   StackNavigatorProps<UnfreezeNavigatorParamList, ScreenName.UnfreezeValidationSuccess>,

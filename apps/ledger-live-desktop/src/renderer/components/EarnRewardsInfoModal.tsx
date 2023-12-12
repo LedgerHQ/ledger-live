@@ -20,6 +20,7 @@ type Props<Name extends keyof ModalData> = {
   bullets: string[];
   additional: React.ReactNode;
   footerLeft?: React.ReactNode;
+  currency: string;
 };
 
 export default function EarnRewardsInfoModal<Name extends keyof ModalData>({
@@ -30,6 +31,7 @@ export default function EarnRewardsInfoModal<Name extends keyof ModalData>({
   bullets,
   additional,
   footerLeft,
+  currency,
 }: Props<Name>) {
   const dispatch = useDispatch();
   const onNextFn = useCallback(() => {
@@ -46,7 +48,15 @@ export default function EarnRewardsInfoModal<Name extends keyof ModalData>({
           onClose={onClose}
           render={() => (
             <Box flow={4} mx={4}>
-              <TrackPage category="Delegation Flow" name="Step Starter" />
+              <TrackPage
+                category="Delegation Flow"
+                name="Step Starter"
+                type="modal"
+                flow="stake"
+                action="delegation"
+                page="Earn Rewards Info"
+                currency={currency}
+              />
               <Box flow={1} alignItems="center">
                 <Box mb={4}>
                   <RewardImg />

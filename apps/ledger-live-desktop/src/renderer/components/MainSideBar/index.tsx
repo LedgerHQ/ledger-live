@@ -6,7 +6,7 @@ import { Transition } from "react-transition-group";
 import styled from "styled-components";
 import { useManagerBlueDot } from "@ledgerhq/live-common/manager/hooks";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { FeatureToggle, useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { IconsLegacy, Tag as TagComponent } from "@ledgerhq/react-ui";
 import { accountsSelector, starredAccountsSelector } from "~/renderer/reducers/accounts";
 import {
@@ -72,7 +72,6 @@ const Tag = styled(Link)`
 `;
 
 const CustomTag = styled(TagComponent)`
-  margin: 0px;
   border-radius: 6px;
   padding: 2px 6px 2px 6px;
 `;

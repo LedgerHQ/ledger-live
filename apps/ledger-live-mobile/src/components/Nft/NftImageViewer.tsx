@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
-import { ScreenName } from "../../const";
+import { ScreenName } from "~/const";
 import type { NftNavigatorParamList } from "../RootNavigator/types/NftNavigator";
 import type { StackNavigatorProps } from "../RootNavigator/types/helpers";
 import { ImageZoom } from "@likashefqet/react-native-image-zoom";
 import Spinning from "../Spinning";
-import BigSpinner from "../../icons/BigSpinner";
-import ImageNotFoundIcon from "../../icons/ImageNotFound";
+import BigSpinner from "~/icons/BigSpinner";
+import ImageNotFoundIcon from "~/icons/ImageNotFound";
 
 type Props = StackNavigatorProps<NftNavigatorParamList, ScreenName.NftImageViewer>;
 

@@ -13,6 +13,7 @@ import {
 } from "@stricahq/typhonjs";
 
 import {
+  CardanoAccount,
   BipPath,
   PaymentChain,
   PaymentCredential,
@@ -38,7 +39,7 @@ import {
   TxOutputDestination,
   TxOutputDestinationType,
 } from "@cardano-foundation/ledgerjs-hw-app-cardano";
-import { str_to_path } from "@cardano-foundation/ledgerjs-hw-app-cardano/dist/utils";
+import { str_to_path } from "@cardano-foundation/ledgerjs-hw-app-cardano/dist/utils/address";
 
 /**
  *  returns BipPath object with account, chain and index field for cardano
@@ -56,6 +57,14 @@ export function getBipPathFromString(path: string): BipPath {
     chain: parseInt(result[2]),
     index: parseInt(result[3]),
   });
+}
+
+/**
+ *
+ * @returns true if the account can stake, false otherwise
+ */
+export function canStake(account: CardanoAccount): boolean {
+  return !!account?.cardanoResources?.delegation?.poolId && !account.balance.isZero();
 }
 
 /**

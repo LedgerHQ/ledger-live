@@ -10,18 +10,18 @@ import {
 } from "@ledgerhq/live-common/explorers";
 import { createStructuredSelector } from "reselect";
 import { useNavigation } from "@react-navigation/native";
-import LText from "../../../components/LText";
-import { blacklistToken } from "../../../actions/settings";
+import LText from "~/components/LText";
+import { blacklistToken } from "~/actions/settings";
 import TokenContractAddress from "../../Account/TokenContractAddress";
-import Button from "../../../components/Button";
-import { parentAccountSelector } from "../../../reducers/accounts";
-import ParentCurrencyIcon from "../../../components/ParentCurrencyIcon";
-import BottomModalChoice from "../../../components/BottomModalChoice";
-import { NavigatorName } from "../../../const";
-import { StackNavigatorNavigation } from "../../../components/RootNavigator/types/helpers";
-import { PortfolioNavigatorStackParamList } from "../../../components/RootNavigator/types/PortfolioNavigator";
-import { State } from "../../../reducers/types";
-import QueuedDrawer from "../../../components/QueuedDrawer";
+import Button from "~/components/Button";
+import { parentAccountSelector } from "~/reducers/accounts";
+import ParentCurrencyIcon from "~/components/ParentCurrencyIcon";
+import BottomModalChoice from "~/components/BottomModalChoice";
+import { NavigatorName } from "~/const";
+import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
+import { PortfolioNavigatorStackParamList } from "~/components/RootNavigator/types/PortfolioNavigator";
+import { State } from "~/reducers/types";
+import QueuedDrawer from "~/components/QueuedDrawer";
 
 const mapDispatchToProps = {
   blacklistToken,

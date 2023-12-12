@@ -3,10 +3,10 @@ import { useTranslation } from "react-i18next";
 import { Flex, Button, Text } from "@ledgerhq/native-ui";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Image } from "react-native";
-import { StackNavigatorProps } from "../../../../../components/RootNavigator/types/helpers";
-import { OnboardingPreQuizModalNavigatorParamList } from "../../../../../components/RootNavigator/types/OnboardingNavigator";
-import { ScreenName } from "../../../../../const";
-import quizImage3 from "../../../../../images/illustration/Light/_060.png";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { OnboardingPreQuizModalNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
+import { ScreenName } from "~/const";
+import quizImage3 from "~/images/illustration/Light/_060.png";
 
 type NavigationProps = StackNavigatorProps<
   OnboardingPreQuizModalNavigatorParamList,
@@ -36,7 +36,7 @@ const OnboardingPreQuizModal = () => {
         </Text>
       </Flex>
 
-      <Button type="main" size="large" onPress={handlePress}>
+      <Button type="main" size="large" onPress={handlePress} testID="onboarding-quizz-start">
         {t("onboarding.stepSetupDevice.hideRecoveryPhrase.warning.cta")}
       </Button>
     </Flex>

@@ -10,7 +10,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { space, layout, position, PositionProps, LayoutProps, SpaceProps } from "styled-system";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { Account, FloorPrice, NFTMetadata, ProtoNFT } from "@ledgerhq/types-live";
-import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
+import { FeatureToggle } from "@ledgerhq/live-config/featureFlags/index";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";

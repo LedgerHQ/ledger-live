@@ -4,11 +4,11 @@ import { Trans, useTranslation } from "react-i18next";
 import { Alert, Button, Text, Switch } from "@ledgerhq/native-ui";
 import { GraphGrowAltMedium } from "@ledgerhq/native-ui/assets/icons";
 import { View } from "react-native";
-import SettingsRow from "../../../components/SettingsRow";
-import { setAnalytics } from "../../../actions/settings";
-import { analyticsEnabledSelector } from "../../../reducers/settings";
-import Track from "../../../analytics/Track";
-import QueuedDrawer from "../../../components/QueuedDrawer";
+import SettingsRow from "~/components/SettingsRow";
+import { setAnalytics } from "~/actions/settings";
+import { analyticsEnabledSelector } from "~/reducers/settings";
+import Track from "~/analytics/Track";
+import QueuedDrawer from "~/components/QueuedDrawer";
 
 const AnalyticsRow = () => {
   const { t } = useTranslation();

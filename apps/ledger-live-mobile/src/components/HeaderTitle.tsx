@@ -3,8 +3,8 @@ import { TouchableWithoutFeedback } from "react-native";
 import { Text } from "@ledgerhq/native-ui";
 import { HeaderTitleProps } from "@react-navigation/elements";
 import { BaseTextProps } from "@ledgerhq/native-ui/components/Text/index";
-import { scrollToTop } from "../navigation/utils";
-import { Merge } from "../types/helpers";
+import { scrollToTop } from "~/navigation/utils";
+import { Merge } from "~/types/helpers";
 
 export type Props = Merge<
   HeaderTitleProps,

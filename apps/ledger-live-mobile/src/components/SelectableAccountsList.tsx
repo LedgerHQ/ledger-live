@@ -18,11 +18,11 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import Swipeable from "react-native-gesture-handler/Swipeable";
 
 import { StackNavigationProp } from "@react-navigation/stack";
-import { ScreenName } from "../const";
-import { track } from "../analytics";
+import { ScreenName } from "~/const";
+import { track } from "~/analytics";
 import AccountCard from "./AccountCard";
 import CheckBox from "./CheckBox";
-import swipedAccountSubject from "../screens/AddAccounts/swipedAccountSubject";
+import swipedAccountSubject from "~/screens/AddAccounts/swipedAccountSubject";
 import Button from "./Button";
 import TouchHintCircle from "./TouchHintCircle";
 import Touchable from "./Touchable";

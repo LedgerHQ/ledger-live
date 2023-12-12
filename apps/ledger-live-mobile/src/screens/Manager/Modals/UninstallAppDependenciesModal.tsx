@@ -5,14 +5,14 @@ import { App } from "@ledgerhq/types-live";
 
 import styled, { DefaultTheme, useTheme } from "styled-components/native";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
-import AppTree from "../../../icons/AppTree";
+import AppTree from "~/icons/AppTree";
 import AppIcon from "../AppsList/AppIcon";
 
-import QueuedDrawer from "../../../components/QueuedDrawer";
-import CollapsibleList from "../../../components/CollapsibleList";
-import ListTreeLine from "../../../icons/ListTreeLine";
+import QueuedDrawer from "~/components/QueuedDrawer";
+import CollapsibleList from "~/components/CollapsibleList";
+import ListTreeLine from "~/icons/ListTreeLine";
 
-import getWindowDimensions from "../../../logic/getWindowDimensions";
+import getWindowDimensions from "~/logic/getWindowDimensions";
 import { Theme } from "../../../colors";
 import { AppWithDependents } from "../AppsInstallUninstallWithDependenciesContext";
 

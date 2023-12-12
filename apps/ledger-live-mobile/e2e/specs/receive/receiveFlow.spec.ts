@@ -2,7 +2,7 @@ import PortfolioPage from "../../models/wallet/portfolioPage";
 import ReceivePage from "../../models/trade/receivePage";
 import { loadBleState, loadConfig } from "../../bridge/server";
 import DeviceAction from "../../models/DeviceAction";
-import { DeviceModelId } from "@ledgerhq/devices";
+import { knownDevice } from "../../models/devices";
 import Common from "../../models/common";
 
 let portfolioPage: PortfolioPage;
@@ -10,12 +10,6 @@ let deviceAction: DeviceAction;
 let receivePage: ReceivePage;
 let common: Common;
 const btcReceiveAddress = "173ej2furpaB8mTtN5m9829MPGMD7kCgSPx";
-
-const knownDevice = {
-  name: "Nano X de test",
-  id: "mock_1",
-  modelId: DeviceModelId.nanoX,
-};
 
 describe("Receive Flow", () => {
   beforeAll(async () => {

@@ -11,7 +11,7 @@ import manager from "@ledgerhq/live-common/manager/index";
 import AppIcon from "./AppIcon";
 
 import AppStateButton from "./AppStateButton";
-import ByteSize from "../../../components/ByteSize";
+import ByteSize from "~/components/ByteSize";
 
 type Props = {
   app: App;

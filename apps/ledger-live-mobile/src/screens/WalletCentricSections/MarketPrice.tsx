@@ -6,11 +6,11 @@ import { useNavigation } from "@react-navigation/native";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { SingleCoinProviderData } from "@ledgerhq/live-common/market/MarketDataProvider";
-import { withDiscreetMode } from "../../context/DiscreetModeContext";
-import { ScreenName } from "../../const";
-import { localeSelector } from "../../reducers/settings";
+import { withDiscreetMode } from "~/context/DiscreetModeContext";
+import { ScreenName } from "~/const";
+import { localeSelector } from "~/reducers/settings";
 import DeltaVariation from "../Market/DeltaVariation";
-import Touchable from "../../components/Touchable";
+import Touchable from "~/components/Touchable";
 
 type Props = {
   currency: CryptoOrTokenCurrency;
