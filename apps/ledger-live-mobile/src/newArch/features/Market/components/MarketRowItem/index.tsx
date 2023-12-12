@@ -1,34 +1,23 @@
-import React, { memo } from "react";
-import styled from "styled-components/native";
+import React from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { CurrencyData } from "@ledgerhq/live-common/market/types";
 import { Image } from "react-native";
-import { TFunction } from "i18next";
+import { useTranslation } from "react-i18next";
 import CircleCurrencyIcon from "~/components/CircleCurrencyIcon";
-import DeltaVariation from "./DeltaVariation";
-import { counterValueFormatter } from "./utils";
-
-export const IconContainer = styled(Flex).attrs({
-  width: 32,
-  height: 32,
-  bg: "neutral.c30",
-  flexDirection: "row",
-  alignItems: "center",
-  justifyContent: "center",
-})`
-  border-radius: 32px;
-  overflow: hidden;
-`;
+import { StyledIconContainer } from "./MarketRowItem.styled";
+import { useLocale } from "~/context/Locale";
+import DeltaVariation from "LLM/features/Market/components/DeltaVariation";
+import { counterValueFormatter } from "LLM/features/Market/utils";
 
 type Props = {
   index: number;
   item: CurrencyData;
   counterCurrency?: string;
-  locale: string;
-  t: TFunction;
 };
 
-function MarketRowItem({ item, index, counterCurrency, locale, t }: Props) {
+function MarketRowItem({ item, index, counterCurrency }: Props) {
+  const { locale } = useLocale();
+  const { t } = useTranslation();
   const {
     internalCurrency,
     image,
@@ -63,9 +52,9 @@ function MarketRowItem({ item, index, counterCurrency, locale, t }: Props) {
         />
       ) : (
         image && (
-          <IconContainer>
+          <StyledIconContainer>
             <Image source={{ uri: image }} style={{ width: 30, height: 30 }} resizeMode="contain" />
-          </IconContainer>
+          </StyledIconContainer>
         )
       )}
       <Flex mx="4" flexDirection="column" justifyContent="center" alignItems="flex-start" flex={1}>
@@ -122,4 +111,4 @@ function MarketRowItem({ item, index, counterCurrency, locale, t }: Props) {
   );
 }
 
-export default memo<Props>(MarketRowItem, () => true);
+export default MarketRowItem;

@@ -51,7 +51,8 @@ import RequestAccountNavigator from "./RequestAccountNavigator";
 import VerifyAccount from "~/screens/VerifyAccount";
 import { LiveApp } from "~/screens/Platform";
 import AccountsNavigator from "./AccountsNavigator";
-import MarketCurrencySelect from "~/screens/Market/MarketCurrencySelect";
+import MarketCurrencySelect from "LLM/features/Market/screens/MarketCurrencySelect/MarketCurrencySelectCont";
+import MarketDetail from "LLM/features/Market/screens//MarketDetail/MarketDetailCont";
 import {
   BleDevicePairingFlow,
   bleDevicePairingFlowHeaderOptions,
@@ -61,7 +62,6 @@ import PostBuyDeviceScreen from "~/screens/PostBuyDeviceScreen";
 import LearnWebView from "~/screens/Learn/index";
 import { useNoNanoBuyNanoWallScreenOptions } from "~/context/NoNanoBuyNanoWall";
 import PostBuyDeviceSetupNanoWallScreen from "~/screens/PostBuyDeviceSetupNanoWallScreen";
-import MarketDetail from "~/screens/Market/MarketDetail";
 import CurrencySettings from "~/screens/Settings/CryptoAssets/Currencies/CurrencySettings";
 import WalletConnectLiveAppNavigator from "./WalletConnectLiveAppNavigator";
 import CustomImageNavigator from "./CustomImageNavigator";
@@ -399,6 +399,13 @@ export default function BaseNavigator() {
           }}
         />
         <Stack.Screen
+          name={ScreenName.MarketDetail}
+          component={MarketDetail}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
           name={ScreenName.PortfolioOperationHistory}
           component={PortfolioHistory}
           options={{
@@ -451,13 +458,6 @@ export default function BaseNavigator() {
           name={NavigatorName.Accounts}
           component={AccountsNavigator}
           options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name={ScreenName.MarketDetail}
-          component={MarketDetail}
-          options={{
-            headerShown: false,
-          }}
         />
         <Stack.Screen
           name={NavigatorName.CustomImage}

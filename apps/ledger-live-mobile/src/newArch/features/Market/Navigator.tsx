@@ -1,29 +1,25 @@
 import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "styled-components/native";
-import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
 import { ScreenName } from "~/const";
-import MarketList from "~/screens/Market";
+import MarketList from "LLM/features/Market/screens/MarketList/MarketListCont";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
-import { MarketNavigatorStackParamList } from "./types/MarketNavigator";
+
+export type MarketNavigatorStackParamList = {
+  [ScreenName.MarketList]: { top100?: boolean };
+};
 
 export default function MarketNavigator() {
   const { colors } = useTheme();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
-  const ptxEarnFeature = useFeature("ptxEarn");
-  const headerConfig = ptxEarnFeature?.enabled
-    ? {
-        headerShown: true,
-        title: "",
-        headerRight: undefined,
-        headerLeft: () => null,
-        headerTransparent: true,
-      }
-    : {
-        headerShown: false,
-        headerTransparent: true,
-      };
+  const headerConfig = {
+    headerShown: true,
+    title: "",
+    headerRight: undefined,
+    headerLeft: () => null,
+    headerTransparent: true,
+  };
 
   return (
     <Stack.Navigator screenOptions={stackNavigationConfig} initialRouteName={ScreenName.MarketList}>

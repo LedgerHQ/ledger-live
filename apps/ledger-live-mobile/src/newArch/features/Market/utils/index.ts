@@ -1,3 +1,4 @@
+import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
 import { TFunction } from "i18next";
 
 const indexes: [string, number][] = [
@@ -95,3 +96,17 @@ export const counterValueFormatter = ({
   // PLEASE FIX
   return formatter ? formatter.format(value) : value + "";
 };
+
+export function getAnalyticsProperties<P extends object>(
+  requestParams: MarketListRequestParams,
+  otherProperties?: P,
+) {
+  return {
+    ...otherProperties,
+    access: false,
+    sort: `${requestParams.orderBy}_${requestParams.order}`,
+    "%change": requestParams.range,
+    countervalue: requestParams.counterCurrency,
+    view: requestParams.liveCompatible ? "Only Live Supported" : "All coins",
+  };
+}

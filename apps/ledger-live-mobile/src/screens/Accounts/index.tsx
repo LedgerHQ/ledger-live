@@ -91,7 +91,6 @@ function Accounts({ navigation, route }: NavigationProps) {
   const renderItem = useCallback(
     ({ item, index }: ListRenderItemInfo<AccountLike>) => (
       <AccountRow
-        navigation={navigation}
         account={item}
         accountId={item.id}
         onSetAccount={setAccount}
@@ -101,7 +100,7 @@ function Accounts({ navigation, route }: NavigationProps) {
         sourceScreenName={ScreenName.Accounts}
       />
     ),
-    [navigation, flattenedAccounts, params?.currencyId],
+    [flattenedAccounts, params?.currencyId],
   );
 
   return (

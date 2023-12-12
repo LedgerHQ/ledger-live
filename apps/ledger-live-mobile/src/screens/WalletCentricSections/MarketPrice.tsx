@@ -9,7 +9,7 @@ import { SingleCoinProviderData } from "@ledgerhq/live-common/market/MarketDataP
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { ScreenName } from "~/const";
 import { localeSelector } from "~/reducers/settings";
-import DeltaVariation from "../Market/DeltaVariation";
+import DeltaVariation from "LLM/features/Market/components/DeltaVariation";
 import Touchable from "~/components/Touchable";
 
 type Props = {

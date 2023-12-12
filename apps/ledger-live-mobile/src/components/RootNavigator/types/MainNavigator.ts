@@ -2,7 +2,7 @@ import { NavigatorScreenParams } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
 import { DiscoverNavigatorStackParamList } from "./DiscoverNavigator";
 import { ManagerNavigatorStackParamList } from "./ManagerNavigator";
-import { MarketNavigatorStackParamList } from "./MarketNavigator";
+import { MarketNavigatorStackParamList } from "LLM/features/Market/Navigator";
 import { PortfolioNavigatorStackParamList } from "./PortfolioNavigator";
 import { EarnLiveAppNavigatorParamList } from "./EarnLiveAppNavigator";
 

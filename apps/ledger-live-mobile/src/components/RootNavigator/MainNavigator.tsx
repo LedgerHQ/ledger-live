@@ -10,7 +10,7 @@ import { ScreenName, NavigatorName } from "~/const";
 import { PortfolioTabIcon } from "~/screens/Portfolio";
 import Transfer, { TransferTabIcon } from "../TabBar/Transfer";
 import TabIcon from "../TabIcon";
-import MarketNavigator from "./MarketNavigator";
+import MarketNavigator from "LLM/features/Market/Navigator";
 import PortfolioNavigator from "./PortfolioNavigator";
 import { hasOrderedNanoSelector, readOnlyModeEnabledSelector } from "~/reducers/settings";
 import ManagerNavigator, { ManagerTabIcon } from "./ManagerNavigator";

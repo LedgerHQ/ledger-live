@@ -23,7 +23,7 @@ import WalletTabHeader from "../WalletTab/WalletTabHeader";
 import WalletTabNavigatorTabBarDisabled from "../WalletTab/WalletTabNavigatorTabBarDisabled";
 import { WalletTabNavigatorStackParamList } from "./types/WalletTabNavigator";
 import { ScreenName, NavigatorName } from "~/const/navigation";
-import MarketNavigator from "./MarketNavigator";
+import MarketNavigator from "LLM/features/Market/Navigator";
 
 const WalletTab = createMaterialTopTabNavigator<WalletTabNavigatorStackParamList>();
 

@@ -1,58 +1,25 @@
 import React, { useMemo } from "react";
-import styled from "styled-components/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { CurrencyData } from "@ledgerhq/live-common/market/types";
 import { useLocale } from "~/context/Locale";
-import { counterValueFormatter } from "../utils";
-import DeltaVariation from "../DeltaVariation";
-
-const StatRowContainer = styled(Flex).attrs({
-  flexDirection: "row",
-  justifyContent: "space-between",
-  alignItems: "center",
-  my: 4,
-})``;
-
-const Separator = styled(Flex).attrs({
-  width: "100%",
-  my: 24,
-  height: 1,
-  bg: "neutral.c40",
-})``;
-
-const Title = styled(Text).attrs({
-  variant: "h3",
-  color: "neutral.c100",
-})``;
-
-const Label = styled(Text).attrs({
-  variant: "body",
-  color: "neutral.c70",
-})``;
-
-const TextLabel = styled(Text).attrs({
-  variant: "body",
-  color: "neutral.c100",
-})``;
-
-const SubLabel = styled(Text).attrs({
-  variant: "small",
-  color: "neutral.c70",
-})``;
-
-const StatValue = styled(Flex).attrs({
-  flex: 1,
-  flexDirection: "column",
-  justifyContent: "center",
-  alignItems: "flex-end",
-})``;
+import { counterValueFormatter } from "LLM/features/Market/utils";
+import DeltaVariation from "LLM/features/Market/components/DeltaVariation";
+import {
+  StyledStatRowContainer,
+  StyledSeparator,
+  StyledTitle,
+  StyledTextLabel,
+  StyledLabel,
+  StyledStatValue,
+  StyledSubLabel,
+} from "./MarketStats.styled";
 
 const StatRow = ({ label, children }: { label: string; children?: React.ReactNode }) => (
-  <StatRowContainer>
-    <Label>{label}</Label>
-    <StatValue>{children}</StatValue>
-  </StatRowContainer>
+  <StyledStatRowContainer>
+    <StyledLabel>{label}</StyledLabel>
+    <StyledStatValue>{children}</StyledStatValue>
+  </StyledStatRowContainer>
 );
 
 export default function MarketStats({
@@ -103,16 +70,16 @@ export default function MarketStats({
 
   return (
     <Flex bg="neutral.c30" m={16} px={16} py={24} borderRadius={8}>
-      <Title>{t("market.detailsPage.priceStatistics")}</Title>
+      <StyledTitle>{t("market.detailsPage.priceStatistics")}</StyledTitle>
       <StatRow label={t("market.detailsPage.price")}>
-        <TextLabel>
+        <StyledTextLabel>
           {counterValueFormatter({
             currency: counterCurrency,
             value: price,
             locale: loc,
             t,
           })}
-        </TextLabel>
+        </StyledTextLabel>
         {priceChangePercentage !== null && !isNaN(priceChangePercentage) ? (
           <DeltaVariation percent value={priceChangePercentage} />
         ) : (
@@ -123,17 +90,17 @@ export default function MarketStats({
         )}
       </StatRow>
       <StatRow label={t("market.detailsPage.tradingVolume")}>
-        <TextLabel>
+        <StyledTextLabel>
           {counterValueFormatter({
             currency: counterCurrency,
             value: totalVolume,
             locale: loc,
             t,
           })}
-        </TextLabel>
+        </StyledTextLabel>
       </StatRow>
       <StatRow label={t("market.detailsPage.24hLowHight")}>
-        <TextLabel>
+        <StyledTextLabel>
           {counterValueFormatter({
             currency: counterCurrency,
             value: low24h,
@@ -147,77 +114,77 @@ export default function MarketStats({
             locale: loc,
             t,
           })}
-        </TextLabel>
+        </StyledTextLabel>
       </StatRow>
       <StatRow label={t("market.detailsPage.allTimeHigh")}>
-        <TextLabel>
+        <StyledTextLabel>
           {counterValueFormatter({
             currency: counterCurrency,
             value: ath,
             locale: loc,
             t,
           })}{" "}
-        </TextLabel>
-        <SubLabel>{athDate ? dateFormatter.format(athDate) : "-"}</SubLabel>
+        </StyledTextLabel>
+        <StyledSubLabel>{athDate ? dateFormatter.format(athDate) : "-"}</StyledSubLabel>
       </StatRow>
       <StatRow label={t("market.detailsPage.allTimeLow")}>
-        <TextLabel>
+        <StyledTextLabel>
           {counterValueFormatter({
             currency: counterCurrency,
             value: atl,
             locale: loc,
             t,
           })}{" "}
-        </TextLabel>
-        <SubLabel>{atlDate ? dateFormatter.format(atlDate) : "-"}</SubLabel>
+        </StyledTextLabel>
+        <StyledSubLabel>{atlDate ? dateFormatter.format(atlDate) : "-"}</StyledSubLabel>
       </StatRow>
-      <Separator />
-      <Title>{t("market.marketList.marketCap")}</Title>
+      <StyledSeparator />
+      <StyledTitle>{t("market.marketList.marketCap")}</StyledTitle>
       <StatRow label={t("market.marketList.marketCap")}>
         {typeof marketcap === "number" ? (
-          <TextLabel>
+          <StyledTextLabel>
             {counterValueFormatter({
               currency: counterCurrency,
               value: marketcap,
               locale: loc,
               t,
             })}
-          </TextLabel>
+          </StyledTextLabel>
         ) : null}
       </StatRow>
       <StatRow label={t("market.detailsPage.marketCapRank")}>
-        <TextLabel bg="neutral.c40" px={2} py={1} overflow="hidden" borderRadius={4}>
+        <StyledTextLabel bg="neutral.c40" px={2} py={1} overflow="hidden" borderRadius={4}>
           {marketcapRank}
-        </TextLabel>
+        </StyledTextLabel>
       </StatRow>
-      <Separator />
-      <Title>{t("market.detailsPage.supply")}</Title>
+      <StyledSeparator />
+      <StyledTitle>{t("market.detailsPage.supply")}</StyledTitle>
       <StatRow label={t("market.detailsPage.circulatingSupply")}>
-        <TextLabel>
+        <StyledTextLabel>
           {counterValueFormatter({
             value: circulatingSupply,
             locale: loc,
             t,
           })}
-        </TextLabel>
+        </StyledTextLabel>
       </StatRow>
       <StatRow label={t("market.detailsPage.totalSupply")}>
-        <TextLabel>
+        <StyledTextLabel>
           {counterValueFormatter({
             value: totalSupply,
             locale: loc,
             t,
           })}
-        </TextLabel>
+        </StyledTextLabel>
       </StatRow>
       <StatRow label={t("market.detailsPage.maxSupply")}>
-        <TextLabel>
+        <StyledTextLabel>
           {counterValueFormatter({
             value: maxSupply,
             locale: loc,
             t,
           })}
-        </TextLabel>
+        </StyledTextLabel>
       </StatRow>
     </Flex>
   );

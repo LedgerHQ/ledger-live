@@ -13,6 +13,7 @@
     "rootDir": ".",
     "paths": {
       "~/*": ["src/*"],
+      "LLM/*": ["src/newArch/*"],
       "@tests/*": ["src/__tests__/*"]
     }
   },

@@ -1,38 +1,15 @@
 import React, { memo, useState, useCallback } from "react";
 import { TouchableOpacity } from "react-native";
-import styled from "styled-components/native";
 import { Flex, Text, Icon as IconUI } from "@ledgerhq/native-ui";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
 import QueuedDrawer from "~/components/QueuedDrawer";
-
-export const Badge = styled(Flex).attrs((p: { bg?: string }) => ({
-  bg: p.bg ?? "neutral.c30",
-  flexDirection: "row",
-  mx: "6px",
-  px: 4,
-  py: 1,
-  justifyContent: " center",
-  alignItems: "center",
-  height: 32,
-}))`
-  border-radius: 32px;
-`;
-
-const CheckIconContainer = styled(Flex).attrs({
-  bg: "primary.c80",
-  flexDirection: "row",
-  justifyContent: " center",
-  alignItems: "center",
-  height: 24,
-  width: 24,
-})`
-  border-radius: 24px;
-`;
+import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
+import { StyledBadge, StyledCheckIconContainer } from "./SortBadge.styled";
 
 type Option = {
   label: string;
   value: unknown;
-  requestParam: unknown;
+  requestParam: MarketListRequestParams;
 };
 
 type Props = {
@@ -42,7 +19,7 @@ type Props = {
   Icon?: IconType;
   options: Option[];
   disabled?: boolean;
-  onChange: (_: unknown) => void;
+  onChange: (_: MarketListRequestParams) => void;
 };
 
 function SortBadge({ label, valueLabel, value, Icon, options, disabled, onChange }: Props) {
@@ -55,7 +32,7 @@ function SortBadge({ label, valueLabel, value, Icon, options, disabled, onChange
   return (
     <>
       <TouchableOpacity disabled={disabled} onPress={openDrawer}>
-        <Badge>
+        <StyledBadge>
           <Text mr={2} fontWeight="semiBold" variant="body">
             {label}
           </Text>
@@ -67,7 +44,7 @@ function SortBadge({ label, valueLabel, value, Icon, options, disabled, onChange
               <Icon size={14} color="primary.c80" />
             </Flex>
           ) : null}
-        </Badge>
+        </StyledBadge>
       </TouchableOpacity>
       <QueuedDrawer isRequestingToBeOpened={isDrawerOpen} onClose={closeDrawer} title={label}>
         {options.map(({ label, value: optValue, requestParam }: Option, index) => (
@@ -93,9 +70,9 @@ function SortBadge({ label, valueLabel, value, Icon, options, disabled, onChange
                 {label}
               </Text>
               {value === optValue ? (
-                <CheckIconContainer>
+                <StyledCheckIconContainer>
                   <IconUI name="CheckAlone" size={12} color="background.main" />
-                </CheckIconContainer>
+                </StyledCheckIconContainer>
               ) : null}
             </Flex>
           </TouchableOpacity>

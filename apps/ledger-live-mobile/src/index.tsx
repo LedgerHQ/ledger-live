@@ -67,7 +67,7 @@ import SnackbarContainer from "~/screens/NotificationCenter/Snackbar/SnackbarCon
 import NavBarColorHandler from "~/components/NavBarColorHandler";
 import { FirebaseRemoteConfigProvider } from "~/components/FirebaseRemoteConfig";
 import { FirebaseFeatureFlagsProvider } from "~/components/FirebaseFeatureFlags";
-import MarketDataProvider from "~/screens/Market/MarketDataProviderWrapper";
+import MarketDataProvider from "LLM/features/Market/components//MarketDataProviderWrapper";
 import AdjustSetup from "~/components/AdjustSetup";
 import PostOnboardingProviderWrapped from "~/logic/postOnboarding/PostOnboardingProviderWrapped";
 import { TermsAndConditionMigrateLegacyData } from "~/logic/terms";

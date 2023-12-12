@@ -1,5 +1,5 @@
 import { Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
-import React, { memo } from "react";
+import React from "react";
 
 type Props = {
   value: number;
@@ -32,4 +32,4 @@ function DeltaVariation({ value, percent, ...props }: Props) {
   );
 }
 
-export default memo(DeltaVariation);
+export default DeltaVariation;
