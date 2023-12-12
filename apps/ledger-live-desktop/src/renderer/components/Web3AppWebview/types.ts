@@ -26,4 +26,4 @@ export type WebviewState = {
 export type WebviewAPI = Pick<
   Electron.WebviewTag,
   "reload" | "goBack" | "goForward" | "openDevTools" | "loadURL" | "clearHistory"
-> & { notify: (method: string, params: string) => void };
+> & { notify: (method: `event.${string}`, params: string) => void };

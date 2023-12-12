@@ -40,7 +40,7 @@ type UseWebviewStateReturn = {
 export function useWebviewState(
   params: UseWebviewStateParams,
   webviewAPIRef: React.ForwardedRef<WebviewAPI>,
-  serverRef: React.MutableRefObject<WalletAPIServer | undefined>,
+  serverRef?: React.MutableRefObject<WalletAPIServer | undefined>,
 ): UseWebviewStateReturn {
   const webviewRef = useRef<WebviewTag>(null);
   const { manifest, inputs } = params;
@@ -82,9 +82,8 @@ export function useWebviewState(
           webview.clearHistory();
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        notify: (method: string, params: any) => {
-          // @ts-expect-error - string can't be coerced as const
-          serverRef.current?.sendMessage(method, params);
+        notify: (method: `event.${string}`, params: any) => {
+          serverRef?.current?.sendMessage(method, params);
         },
       };
     },
