@@ -32,9 +32,16 @@ const estimateMaxSpendableWithAPI = async (
       switch (txKind) {
         case "stake.createAccount": {
           const stakeAccRentExempt = await getStakeAccountMinimumBalanceForRentExemption(api);
+          const unstakeReserve =
+            (await estimateTxFee(api, mainAccount, "stake.undelegate")) +
+            (await estimateTxFee(api, mainAccount, "stake.withdraw"));
 
           return BigNumber.max(
-            account.spendableBalance.minus(txFee).minus(rentExemptMin).minus(stakeAccRentExempt),
+            account.spendableBalance
+              .minus(txFee)
+              .minus(rentExemptMin)
+              .minus(stakeAccRentExempt)
+              .minus(unstakeReserve),
             0,
           );
         }
