@@ -22,9 +22,5 @@ export const liveConfig = new LiveConfig({
   }),
   config: {
     ...sharedConfig,
-    feature_learn: {
-      type: "object",
-      default: { enabled: true },
-    },
   },
 });
