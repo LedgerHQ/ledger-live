@@ -16,6 +16,7 @@ import { track } from "../analytics";
 import { setDismissedDynamicCards } from "../actions/settings";
 import { setDynamicContentMobileCards } from "~/actions/dynamicContent";
 
+// TODO : rename file => use...
 const useDynamicContent = () => {
   const dispatch = useDispatch();
   const { logClickCard, logDismissCard, logImpressionCard, refreshDynamicContent } =

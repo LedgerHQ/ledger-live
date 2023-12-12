@@ -1,7 +1,7 @@
 import { Flex } from "@ledgerhq/native-ui";
 import React from "react";
 import Bullet from "~/contentCards/layouts/carousel/pagination/bullets";
-import { getItemStatus } from "~/contentCards/layouts/carousel/pagination/utilts";
+import { getItemStatus } from "~/contentCards/layouts/carousel/pagination/utils";
 import { ContentCardItem } from "~/contentCards/layouts/types";
 
 type Props<P> = {
