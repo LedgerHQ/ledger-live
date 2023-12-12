@@ -365,14 +365,18 @@ async function deriveStakeCreateAccountCommandDescriptor(
   }
 
   const txFee = await estimateTxFee(api, mainAccount, "stake.createAccount");
-
   const stakeAccRentExemptAmount = await getStakeAccountMinimumBalanceForRentExemption(api);
-
   const fee = txFee + stakeAccRentExemptAmount;
 
-  const amount = tx.useAllAmount ? BigNumber.max(maxSpendableBalance.minus(fee), 0) : tx.amount;
+  const unstakeReserve =
+    (await estimateTxFee(api, mainAccount, "stake.undelegate")) +
+    (await estimateTxFee(api, mainAccount, "stake.withdraw"));
 
-  if (!errors.amount && maxSpendableBalance.lt(amount.plus(fee))) {
+  const amount = tx.useAllAmount
+    ? BigNumber.max(maxSpendableBalance.minus(fee).minus(unstakeReserve), 0)
+    : tx.amount;
+
+  if (!errors.amount && maxSpendableBalance.lt(amount.plus(fee).plus(unstakeReserve))) {
     errors.amount = new NotEnoughBalance();
   }
 
