@@ -68,8 +68,7 @@ describe("Send flow", () => {
       const amountWithCode = formattedAmount(account.unit, halfBalance);
 
       await portfolioPage.openViaDeeplink();
-      await portfolioPage.openTransferMenu();
-      await portfolioPage.navigateToSendFromTransferMenu();
+      await sendPage.openViaDeeplink();
       await common.performSearch(account.name);
       await sendPage.selectAccount(account.id);
       await sendPage.setRecipient(account.freshAddress);
