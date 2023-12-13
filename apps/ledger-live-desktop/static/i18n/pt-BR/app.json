@@ -284,7 +284,7 @@
     "lend" : "Emprestar",
     "catalog" : "Explorar",
     "market" : "Mercado",
-    "recover" : "Ledger Recover"
+    "recover" : "[L] Recover"
   },
   "stars" : {
     "placeholder" : "Veja suas contas favoritas aqui",
@@ -764,6 +764,8 @@
     "energyTooltip" : "Congele ativos para ganhar Energia",
     "delegatedTooltip" : "Ativos delegados são utilizados no processo de votação. Isso representa seu número total de votos.",
     "undelegatingTooltip" : "Ativos desdelegados ficam bloqueados por um período de {{timelockInDays}} dias, antes de ficarem disponíveis.",
+    "claimableRewards" : "Recompensas a reivindicar",
+    "claimableRewardsTooltip" : "Atualmente, não é possível reivindicar recompensas em USDC. Para isso, utilize uma carteira externa",
     "banner" : {
       "redelegation" : {
         "title" : "Caso você não saiba...",
@@ -1166,11 +1168,13 @@
       },
       "pinContent" : {
         "title" : "PIN",
+        "titleCompleted" : "PIN definido",
         "description" : "Assim como qualquer senha ou código de acesso, o PIN permite que você desbloqueie sua {{productName}} e evite acessos indesejados.",
         "continueOnDevice" : "Definir PIN em sua {{productName}}"
       },
       "seedContent" : {
         "title" : "Frase de Recuperação Secreta",
+        "titleCompleted" : "Frase de Recuperação Secreta confirmada",
         "recoverSeed" : "Placeholder: Recover",
         "restoreSeed" : "Certifique-se de usar uma Frase de Recuperação Secreta gerada por um dispositivo Ledger para garantir segurança máxima sobre seus ativos. \n\n Não possui uma? Use a sua {{productName}} para gerar uma nova Frase.",
         "selection" : "Escolha a opção de configuração que for melhor para você:",
@@ -1250,12 +1254,14 @@
       },
       "installApplications" : {
         "title" : "Instalando aplicativos em {{productName}}",
+        "titleCompleted" : "Aplicativos instalados na {{productName}}",
         "install" : "Instalar",
         "skip" : "Farei isso mais tarde",
         "info" : "Aplicativos da {{deviceName}} são usados para aprovar transações. Você pode adicioná-los ou removê-los a qualquer momento."
       },
       "endOfSetup" : {
-        "title" : "Fim da configuração"
+        "title" : "Fim da configuração",
+        "titleCompleted" : "A {{deviceName}} está pronta"
       },
       "softwareCheckAllowSecureChannelDrawer" : {
         "title" : "Toque em “Permitir” para iniciar a Verificação de Autenticidade"
@@ -1296,6 +1302,18 @@
       "title" : "O que vem por aí para a sua Ledger Stax?",
       "description" : "Resgate o Infinity NFT, personalize sua tela de bloqueio ou\ntransfira seus ativos de outras corretoras.",
       "link" : "Veja os próximos passos"
+    },
+    "actions" : {
+      "buyCrypto" : {
+        "title" : "Comprar cripto",
+        "description" : "Escolha entre mais de 500 moedas e as melhores cotações de provedores, personalizadas de acordo com suas preferências.",
+        "actionCompletedPopupLabel" : "Cripto comprada"
+      },
+      "assetsTransfer" : {
+        "title" : "Transfira seus ativos para a Ledger",
+        "description" : "Transfira facilmente ativos da Coinbase ou de qualquer outra corretora ou carteira.",
+        "actionCompletedPopupLabel" : "Ativos transferidos"
+      }
     }
   },
   "hideNftCollection" : {
@@ -1407,6 +1425,26 @@
       "earn" : {
         "title" : "Aplicar",
         "description" : "Multiplique suas criptos com a Ledger"
+      }
+    },
+    "recoverBanner" : {
+      "subscribeDone" : {
+        "title" : "Termine de adicionar seu cartão para pagamento",
+        "description" : "Use o Ledger Recover para restaurar de forma confiável",
+        "primaryCta" : "Adicionar cartão",
+        "secondaryCta" : "Talvez mais tarde"
+      },
+      "verifyIdentity" : {
+        "title" : "Termine de verificar sua identidade",
+        "description" : "Use o Ledger Recover para restaurar de forma confiável",
+        "primaryCta" : "Verificar",
+        "secondaryCta" : "Talvez mais tarde"
+      },
+      "connectDevice" : {
+        "title" : "Conectar sua Ledger",
+        "description" : "Você está a um passo do Ledger Recover.",
+        "primaryCta" : "Conectar",
+        "secondaryCta" : "Talvez mais tarde"
       }
     }
   },
@@ -1786,7 +1824,7 @@
       "capacity" : "Capacidade",
       "used" : "Usado",
       "OSVersion" : "Versão do Sistema Operacional",
-      "genuine" : "O dispositivo é autêntico",
+      "genuine" : "Verificação de Autenticidade",
       "incomplete" : "Alguns aplicativos não foram reconhecidos. Desinstale-os e depois os reinstale."
     },
     "applist" : {
@@ -1906,7 +1944,9 @@
         "preparingUpdate" : "Fazendo backup de suas configurações e aplicativos",
         "transferringUpdate" : "Transferindo atualização à {{productName}}",
         "prepare" : "Preparar atualização",
+        "prepareDone" : "Atualização pronta para ser instalada",
         "install" : "Instalar atualização",
+        "installDone" : "Atualização instalada",
         "restore" : "Restaurar configurações",
         "apps" : "Restaurar aplicativos",
         "updateMCU" : "Atualização de firmware",
@@ -1915,7 +1955,8 @@
         "osu" : "Instalando OSU...",
         "flash-mcu" : "Atualizando MCU...",
         "flash-bootloader" : "Atualizando Bootloader...",
-        "progress" : "Instalando atualização {{current}}/{{total}}",
+        "progress" : "Instalando atualização",
+        "progressStep" : "Instalando atualização {{current}}/{{total}}",
         "firmware" : "Atualizando Firmware...",
         "flash" : "Preparando seu dispositivo..."
       },
@@ -1928,6 +1969,7 @@
       "mcuFirst" : "Desconecte o cabo USB do seu dispositivo",
       "mcuSecond" : "Pressione e segure o botão esquerdo enquanto reconecta o cabo USB até que a tela <1><0>{{repairProcessing}}</0></1> seja exibida",
       "mcuPin" : "Aguarde a atualização terminar",
+      "mcuRestart" : "A {{device}} pode reiniciar várias vezes.",
       "mcuSecondNanoX" : "Mantenha pressionado o botão esquerdo até que <1><0>{{bootloaderOption}}</0></1> seja exibido. Pressione ambos os botões para confirmar e reconectar seu dispositivo.",
       "mcuBlueFirst" : "Mantenha pressionado o botão lateral por 10 segundos para desligar seu dispositivo. Solte o botão.",
       "mcuBlueSecond" : "Pressione e segure o botão por pelo menos 5 segundos até que as opções de inicialização sejam exibidas. Selecione o modo bootloader",
@@ -3554,6 +3596,9 @@
       }
     }
   },
+  "graph" : {
+    "noGraphWarning" : "O gráfico não está disponível para esse token"
+  },
   "near" : {
     "account" : {
       "stakedBalance" : "Saldo aplicado",
@@ -4099,8 +4144,7 @@
     "updateAvailable" : "Atualização para a versão {{version}} do Ledger Live disponível",
     "error" : "Erro durante a atualização. Baixe Novamente",
     "reDownload" : "Baixar Novamente",
-    "nightlyWarning" : "Esta versão não pode ser atualizada automaticamente. Instale a versão mais recente manualmente",
-    "downloadNow" : "Baixar Atualização"
+    "nightlyWarning" : "Esta versão não pode ser atualizada automaticamente. Instale a versão mais recente manualmente"
   },
   "crash" : {
     "title" : "Algo deu errado",
@@ -5257,6 +5301,18 @@
       "title" : "EGLD insuficientes para pagar as taxas de transação",
       "description" : "Envie um pouco de EGLD para a sua conta para pagar pelas transações."
     },
+    "NotEnoughVTHO" : {
+      "title" : "Fundos VTHO insuficientes",
+      "description" : "Certifique-se de que a conta tenha VTHO suficiente."
+    },
+    "MustBeVechain" : {
+      "title" : "Não é uma conta vechain",
+      "description" : "Certifique-se de que a moeda seja VTHO ou VET"
+    },
+    "ImpossibleToCalculateAmountAndFees" : {
+      "title" : "Impossível calcular quantia e taxas",
+      "description" : "Impossível calcular quantia e taxas"
+    },
     "NotEnoughBalance" : {
       "title" : "Fundos Insuficientes",
       "description" : "Certifique-se de que a conta tem fundos suficientes."
@@ -5672,6 +5728,9 @@
     "CardanoNotEnoughFunds" : {
       "title" : "Certifique-se de ter fundos suficientes para pagar as taxas"
     },
+    "CardanoStakeKeyDepositError" : {
+      "title" : "Certifique-se de que você tem {{depositAmount}} ADA disponível para o depósito"
+    },
     "StacksMemoTooLong" : {
       "title" : "O memo é muito longo"
     },
@@ -5914,7 +5973,6 @@
     },
     "progress" : {
       "loading" : "Carregando...",
-      "resolving" : "Resolvendo dependências",
       "progress" : "Permaneça no Ledger Live enquanto os aplicativos estão sendo instalados.",
       "disclaimer" : "Adicione ou remova aplicativos a qualquer hora com o Ledger Live.",
       "skippedInfo" : "Alguns aplicativos não estão disponíveis. Eles ainda serão desenvolvidos para {{ productName }}.",

@@ -1,5 +1,33 @@
 # @ledgerhq/cryptoassets
 
+## 11.3.0
+
+### Minor Changes
+
+- [#5543](https://github.com/LedgerHQ/ledger-live/pull/5543) [`0f5292a`](https://github.com/LedgerHQ/ledger-live/commit/0f5292af8feaa517f36ec35155d813b17c4f66e9) Thanks [@chabroA](https://github.com/chabroA)! - rename Crypto.org to Cronos POS Chain
+
+- [#4947](https://github.com/LedgerHQ/ledger-live/pull/4947) [`2edfa53`](https://github.com/LedgerHQ/ledger-live/commit/2edfa533bccafbfd8a61aea0f5422c0db79825ea) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - vechain integration
+
+### Patch Changes
+
+- [#5477](https://github.com/LedgerHQ/ledger-live/pull/5477) [`618307f`](https://github.com/LedgerHQ/ledger-live/commit/618307f92899af07f4c8ad97c67df483492e3d9d) Thanks [@lvndry](https://github.com/lvndry)! - Only add tokens in ledger live if parent currency is supported
+
+- [#5613](https://github.com/LedgerHQ/ledger-live/pull/5613) [`eb5ac4d`](https://github.com/LedgerHQ/ledger-live/commit/eb5ac4dca430654f5f86854025fddddab4261a29) Thanks [@chabroA](https://github.com/chabroA)! - update near explorer views urls
+
+## 11.3.0-next.0
+
+### Minor Changes
+
+- [#5543](https://github.com/LedgerHQ/ledger-live/pull/5543) [`0f5292a`](https://github.com/LedgerHQ/ledger-live/commit/0f5292af8feaa517f36ec35155d813b17c4f66e9) Thanks [@chabroA](https://github.com/chabroA)! - rename Crypto.org to Cronos POS Chain
+
+- [#4947](https://github.com/LedgerHQ/ledger-live/pull/4947) [`2edfa53`](https://github.com/LedgerHQ/ledger-live/commit/2edfa533bccafbfd8a61aea0f5422c0db79825ea) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - vechain integration
+
+### Patch Changes
+
+- [#5477](https://github.com/LedgerHQ/ledger-live/pull/5477) [`618307f`](https://github.com/LedgerHQ/ledger-live/commit/618307f92899af07f4c8ad97c67df483492e3d9d) Thanks [@lvndry](https://github.com/lvndry)! - Only add tokens in ledger live if parent currency is supported
+
+- [#5613](https://github.com/LedgerHQ/ledger-live/pull/5613) [`eb5ac4d`](https://github.com/LedgerHQ/ledger-live/commit/eb5ac4dca430654f5f86854025fddddab4261a29) Thanks [@chabroA](https://github.com/chabroA)! - update near explorer views urls
+
 ## 11.2.0
 
 ### Minor Changes
