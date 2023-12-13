@@ -1,6 +1,6 @@
 import { ConfigSchema } from "@ledgerhq/live-config/LiveConfig";
 
-export const sharedConfig: ConfigSchema = {
+const liveConfig: ConfigSchema = {
   cosmos: {
     type: "object",
     default: {
@@ -74,3 +74,5 @@ export const sharedConfig: ConfigSchema = {
     },
   },
 };
+
+export default liveConfig;
