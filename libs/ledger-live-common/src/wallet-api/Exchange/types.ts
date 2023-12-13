@@ -6,6 +6,9 @@ export enum ExchangeType {
   SWAP = 0x00,
   SELL = 0x01,
   FUND = 0x02,
+  SWAP_NG = 0x03,
+  SELL_NG = 0x04,
+  FUND_NG = 0x05,
 }
 
 export type ExchangeStartParams = {
