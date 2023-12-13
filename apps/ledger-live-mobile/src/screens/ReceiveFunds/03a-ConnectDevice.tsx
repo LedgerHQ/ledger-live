@@ -6,7 +6,7 @@ import {
   getMainAccount,
   getReceiveFlowError,
 } from "@ledgerhq/live-common/account/index";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Flex } from "@ledgerhq/native-ui";
 

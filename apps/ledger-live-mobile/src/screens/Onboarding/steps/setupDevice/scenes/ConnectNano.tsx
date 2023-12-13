@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { trace } from "@ledgerhq/logs";
 import { Flex } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Result } from "@ledgerhq/live-common/hw/actions/manager";
 import DeviceActionModal from "~/components/DeviceActionModal";
 import SelectDevice from "~/components/SelectDevice";

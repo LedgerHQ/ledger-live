@@ -10,7 +10,7 @@ import {
 } from "@ledgerhq/live-common/currencies/index";
 import { Account } from "@ledgerhq/types-live";
 import { InvalidAddress } from "@ledgerhq/errors";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import RecipientField from "./RecipientField";
@@ -25,7 +25,7 @@ jest.mock("axios");
 
 const mockedAxios = jest.mocked(axios);
 
-jest.mock("@ledgerhq/live-config/featureFlags/index", () => ({
+jest.mock("@ledgerhq/live-common/featureFlags/index", () => ({
   useFeature: jest.fn(),
 }));
 

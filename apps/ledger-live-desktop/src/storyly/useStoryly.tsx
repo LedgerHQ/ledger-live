@@ -1,4 +1,4 @@
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { StorylyInstanceID } from "@ledgerhq/types-live";
 import { useLayoutEffect, useRef } from "react";
 import { useSelector } from "react-redux";

@@ -3,7 +3,7 @@ import { StyleSheet, SafeAreaView } from "react-native";
 import { useDispatch } from "react-redux";
 import { Flex } from "@ledgerhq/native-ui";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useIsFocused, useTheme } from "@react-navigation/native";
 import { prepareCurrency } from "~/bridge/cache";
 import { ScreenName } from "~/const";

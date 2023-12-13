@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { FeatureToggle } from "@ledgerhq/live-config/featureFlags/index";
+import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import { useNavigation } from "@react-navigation/native";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import SettingsRow from "~/components/SettingsRow";

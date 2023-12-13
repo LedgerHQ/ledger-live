@@ -6,7 +6,7 @@ import type { TFunction } from "i18next";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import RecipientFieldBase from "./RecipientFieldBase";
 import RecipientFieldDomainService from "./RecipientFieldDomainService";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { OnChangeExtra } from "~/renderer/components/RecipientAddress";
 
 type Props<T extends Transaction, TS extends TransactionStatus> = {

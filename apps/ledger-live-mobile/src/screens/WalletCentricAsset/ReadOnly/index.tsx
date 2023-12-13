@@ -4,7 +4,7 @@ import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Flex } from "@ledgerhq/native-ui";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
 import BigNumber from "bignumber.js";

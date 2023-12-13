@@ -1,5 +1,5 @@
 import { getDeviceModel } from "@ledgerhq/devices/index";
-import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { useNavigation } from "@react-navigation/native";
 import React, { useMemo, useState } from "react";

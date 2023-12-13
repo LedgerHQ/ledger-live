@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import Config from "react-native-config";
 import { createStackNavigator } from "@react-navigation/stack";
-import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { NavigatorName } from "~/const";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import BaseNavigator from "./BaseNavigator";

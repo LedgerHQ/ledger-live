@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Flex, Text, Alert, Tag, Divider } from "@ledgerhq/native-ui";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { ChainwatchAccount, ChainwatchNetwork } from "@ledgerhq/types-live";
 import { SafeAreaView } from "react-native-safe-area-context";
 import NavigationScrollView from "~/components/NavigationScrollView";

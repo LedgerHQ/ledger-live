@@ -5,8 +5,8 @@ import {
   FeatureFlagsProvider,
   isFeature,
   getFeature,
-} from "@ledgerhq/live-config/featureFlags/index";
-import type { FirebaseFeatureFlagsProviderProps as Props } from "@ledgerhq/live-config/featureFlags/index";
+} from "@ledgerhq/live-common/featureFlags/index";
+import type { FirebaseFeatureFlagsProviderProps as Props } from "@ledgerhq/live-common/featureFlags/index";
 import { Feature, FeatureId, Features } from "@ledgerhq/types-live";
 import { useFirebaseRemoteConfig } from "./FirebaseRemoteConfig";
 import { overriddenFeatureFlagsSelector } from "../reducers/settings";

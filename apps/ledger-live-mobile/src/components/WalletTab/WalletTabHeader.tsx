@@ -1,6 +1,6 @@
 import { Box, Flex } from "@ledgerhq/native-ui";
 import React, { useContext } from "react";
-import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Animated } from "react-native";
 import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManager";

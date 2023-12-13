@@ -1,4 +1,4 @@
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useIsFocused } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
