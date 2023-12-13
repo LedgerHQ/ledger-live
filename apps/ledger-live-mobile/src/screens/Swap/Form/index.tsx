@@ -246,6 +246,7 @@ export function SwapForm({
         customDappURL: providerURL,
       });
     } else {
+      swapTransaction.transaction ? (swapTransaction.transaction.useAllAmount = false) : null;
       setConfirmed(true);
     }
   }, [
