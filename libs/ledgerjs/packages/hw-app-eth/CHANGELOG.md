@@ -1,5 +1,31 @@
 # @ledgerhq/hw-app-eth
 
+## 6.35.1
+
+### Patch Changes
+
+- Updated dependencies [[`1cb527b`](https://github.com/LedgerHQ/ledger-live/commit/1cb527b9a0b03f23a921a446c64f71ab5c9e9013), [`b7d58b4`](https://github.com/LedgerHQ/ledger-live/commit/b7d58b4cf3aa041b7b794d9af6f0b89bbc0df633), [`44ee889`](https://github.com/LedgerHQ/ledger-live/commit/44ee88944571c73afb105349f5f28b82e8be262d), [`13d9cbe`](https://github.com/LedgerHQ/ledger-live/commit/13d9cbe9a4afbf3ccd532a33e4ada3685d9d646a), [`618307f`](https://github.com/LedgerHQ/ledger-live/commit/618307f92899af07f4c8ad97c67df483492e3d9d), [`0f5292a`](https://github.com/LedgerHQ/ledger-live/commit/0f5292af8feaa517f36ec35155d813b17c4f66e9), [`52a3732`](https://github.com/LedgerHQ/ledger-live/commit/52a373273dee3b2cb5a3e8d2d4b05f90616d71a2), [`4d1aade`](https://github.com/LedgerHQ/ledger-live/commit/4d1aade53cd33f8e7548ce340f54fbb834bdcdcb), [`eb5ac4d`](https://github.com/LedgerHQ/ledger-live/commit/eb5ac4dca430654f5f86854025fddddab4261a29), [`c8172ab`](https://github.com/LedgerHQ/ledger-live/commit/c8172abc5c052a753b93be8b6c9cfd88ce0dd64a), [`5d03bf5`](https://github.com/LedgerHQ/ledger-live/commit/5d03bf514fcf7aea91dc8beae0cd503ed6b4ab3c), [`2edfa53`](https://github.com/LedgerHQ/ledger-live/commit/2edfa533bccafbfd8a61aea0f5422c0db79825ea), [`6dea540`](https://github.com/LedgerHQ/ledger-live/commit/6dea54057f67162a1f556661afae16e0422f7ac3)]:
+  - @ledgerhq/types-live@6.43.1
+  - @ledgerhq/cryptoassets@11.3.0
+  - @ledgerhq/hw-transport@6.30.1
+  - @ledgerhq/errors@6.16.1
+  - @ledgerhq/domain-service@1.1.16
+  - @ledgerhq/evm-tools@1.0.12
+  - @ledgerhq/hw-transport-mocker@6.28.1
+
+## 6.35.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`1cb527b`](https://github.com/LedgerHQ/ledger-live/commit/1cb527b9a0b03f23a921a446c64f71ab5c9e9013), [`b7d58b4`](https://github.com/LedgerHQ/ledger-live/commit/b7d58b4cf3aa041b7b794d9af6f0b89bbc0df633), [`44ee889`](https://github.com/LedgerHQ/ledger-live/commit/44ee88944571c73afb105349f5f28b82e8be262d), [`13d9cbe`](https://github.com/LedgerHQ/ledger-live/commit/13d9cbe9a4afbf3ccd532a33e4ada3685d9d646a), [`618307f`](https://github.com/LedgerHQ/ledger-live/commit/618307f92899af07f4c8ad97c67df483492e3d9d), [`0f5292a`](https://github.com/LedgerHQ/ledger-live/commit/0f5292af8feaa517f36ec35155d813b17c4f66e9), [`52a3732`](https://github.com/LedgerHQ/ledger-live/commit/52a373273dee3b2cb5a3e8d2d4b05f90616d71a2), [`4d1aade`](https://github.com/LedgerHQ/ledger-live/commit/4d1aade53cd33f8e7548ce340f54fbb834bdcdcb), [`eb5ac4d`](https://github.com/LedgerHQ/ledger-live/commit/eb5ac4dca430654f5f86854025fddddab4261a29), [`c8172ab`](https://github.com/LedgerHQ/ledger-live/commit/c8172abc5c052a753b93be8b6c9cfd88ce0dd64a), [`5d03bf5`](https://github.com/LedgerHQ/ledger-live/commit/5d03bf514fcf7aea91dc8beae0cd503ed6b4ab3c), [`2edfa53`](https://github.com/LedgerHQ/ledger-live/commit/2edfa533bccafbfd8a61aea0f5422c0db79825ea), [`6dea540`](https://github.com/LedgerHQ/ledger-live/commit/6dea54057f67162a1f556661afae16e0422f7ac3)]:
+  - @ledgerhq/types-live@6.43.1-next.0
+  - @ledgerhq/cryptoassets@11.3.0-next.0
+  - @ledgerhq/hw-transport@6.30.1-next.0
+  - @ledgerhq/errors@6.16.1-next.0
+  - @ledgerhq/domain-service@1.1.16-next.0
+  - @ledgerhq/evm-tools@1.0.12-next.0
+  - @ledgerhq/hw-transport-mocker@6.28.1-next.0
+
 ## 6.35.0
 
 ### Minor Changes

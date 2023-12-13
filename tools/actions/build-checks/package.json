@@ -1,6 +1,6 @@
 {
   "name": "@actions/build-checks",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Performs various checks on bundle and comment on pull request",
   "author": "Valentin D. Pinkman <valentin.d.pinkman@icloud.com>",
   "license": "MIT",

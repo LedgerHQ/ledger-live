@@ -1,3 +1,17 @@
+# 2.73.0
+
+### 🌷 Improvements
+
+Ledger Live will now display the fiat value of your TRC20/TRC10 tokens.
+
+### 🐛 Fixes
+
+Using the Max toggle to swap the entire balance would block the transaction. The issue has been resolved.
+
+We've fixed a few search bar glitches in the Discover section. 
+
+Some users reported issues when importing legacy Ethereum accounts or accounts with the legacy derivation path from MetaMask to Ledger Live. This has been fixed.
+
 # 2.71.1
 
 ### 🐛 Fixes
