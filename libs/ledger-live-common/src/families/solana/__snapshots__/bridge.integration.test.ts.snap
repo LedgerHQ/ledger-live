@@ -24,7 +24,7 @@ exports[`solana currency bridge scanAccounts solana seed 1 1`] = `
     "solanaResources": {
       "stakes": "[]",
     },
-    "spendableBalance": "83389840",
+    "spendableBalance": "82498960",
     "starred": false,
     "swapHistory": [],
     "syncHash": undefined,
