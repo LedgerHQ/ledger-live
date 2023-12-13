@@ -10,11 +10,13 @@ import {
   etherscanERC20EventToOperations,
   etherscanERC721EventToOperations,
   etherscanERC1155EventToOperations,
+  etherscanInternalTransactionToOperations,
 } from "../../adapters";
 import {
   EtherscanERC1155Event,
   EtherscanERC20Event,
   EtherscanERC721Event,
+  EtherscanInternalTransaction,
   EtherscanOperation,
 } from "../../types";
 import { ExplorerApi, isEtherscanLikeExplorerConfig } from "./types";
@@ -53,7 +55,7 @@ export async function fetchWithRetries<T>(
 }
 
 /**
- * Get all the last "normal" transactions (no tokens / NFTs)
+ * Get all the latest "normal" transactions (no tokens / NFTs)
  */
 export const getLastCoinOperations = async (
   currency: CryptoCurrency,
@@ -83,7 +85,7 @@ export const getLastCoinOperations = async (
 };
 
 /**
- * Get all the last ERC20 transactions
+ * Get all the latest ERC20 transactions
  */
 export const getLastTokenOperations = async (
   currency: CryptoCurrency,
@@ -134,7 +136,7 @@ export const getLastTokenOperations = async (
 };
 
 /**
- * Get all the last ERC721 transactions
+ * Get all the latest ERC721 transactions
  */
 export const getLastERC721Operations = async (
   currency: CryptoCurrency,
@@ -185,7 +187,7 @@ export const getLastERC721Operations = async (
 };
 
 /**
- * Get all the last ERC1155 transactions
+ * Get all the latest ERC1155 transactions
  */
 export const getLastERC1155Operations = async (
   currency: CryptoCurrency,
@@ -261,6 +263,57 @@ export const getLastNftOperations = async (
 };
 
 /**
+ * Get all the latest internal transactions
+ */
+
+export const getLastInternalOperations = async (
+  currency: CryptoCurrency,
+  address: string,
+  accountId: string,
+  fromBlock: number,
+  toBlock?: number,
+): Promise<Operation[]> => {
+  const { explorer } = currency.ethereumLikeInfo || /* istanbul ignore next */ {};
+  if (!isEtherscanLikeExplorerConfig(explorer)) {
+    throw new EtherscanLikeExplorerUsedIncorrectly();
+  }
+
+  const ops = await fetchWithRetries<EtherscanInternalTransaction[]>({
+    method: "GET",
+    url: `${explorer.uri}/api?module=account&action=txlistinternal&address=${address}`,
+    params: {
+      tag: "latest",
+      page: 1,
+      sort: "desc",
+      startBlock: fromBlock,
+      endBlock: toBlock,
+    },
+  });
+
+  // Why this thing ?
+  // Multiple internal transactions can be executed from
+  // a single "normal" transaction with a same hash.
+  // Grouping them here helps differenciate the
+  // `Operation` ids which would be identical
+  // otherwise without a notion of index.
+  const opsByHash: Record<string, EtherscanInternalTransaction[]> = {};
+  for (const op of ops) {
+    if (!opsByHash[op.hash]) {
+      opsByHash[op.hash] = [];
+    }
+    opsByHash[op.hash].push(op);
+  }
+
+  return Object.values(opsByHash)
+    .map(internalTxs =>
+      internalTxs.map((internalTx, index) =>
+        etherscanInternalTransactionToOperations(accountId, internalTx, index),
+      ),
+    )
+    .flat(2);
+};
+
+/**
  * Wrapper around all operation types' requests
  *
  * ⚠ The lack of parallelization is on purpose,
@@ -279,10 +332,19 @@ export const getLastOperations: ExplorerApi["getLastOperations"] = makeLRUCache<
     lastCoinOperations: Operation[];
     lastTokenOperations: Operation[];
     lastNftOperations: Operation[];
+    lastInternalOperations: Operation[];
   }
 >(
   async (currency, address, accountId, fromBlock, toBlock) => {
     const lastCoinOperations = await getLastCoinOperations(
+      currency,
+      address,
+      accountId,
+      fromBlock,
+      toBlock,
+    );
+
+    const lastInternalOperations = await getLastInternalOperations(
       currency,
       address,
       accountId,
@@ -306,6 +368,7 @@ export const getLastOperations: ExplorerApi["getLastOperations"] = makeLRUCache<
       lastCoinOperations,
       lastTokenOperations,
       lastNftOperations,
+      lastInternalOperations,
     };
   },
   (currency, address, accountId, fromBlock, toBlock) => accountId + fromBlock + toBlock,
