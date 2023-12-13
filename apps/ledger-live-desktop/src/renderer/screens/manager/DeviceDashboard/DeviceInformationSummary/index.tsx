@@ -62,6 +62,11 @@ type Props = {
   uninstallQueue: string[];
 };
 
+/**
+ * Component rendering a box containing information about the device
+ * and some controls: Device illustration, name and renaming button, storage
+ * information etc.
+ */
 const DeviceInformationSummary = ({
   deviceModel,
   deviceInfo,

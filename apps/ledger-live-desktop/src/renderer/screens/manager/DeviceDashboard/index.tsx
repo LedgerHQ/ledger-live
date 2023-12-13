@@ -67,9 +67,9 @@ type Props = {
 const shouldBlockNavigation = (l: { pathname: string }) => l.pathname !== "/manager";
 
 /**
- * Component rendering a box containing information about the device
- * and some controls: Device illustration, name and renaming button, storage
- * information etc.
+ * Component meant to be displayed on an entire page.
+ * Renders all the main information available about the device,
+ * a catalog of apps and the apps installed.
  */
 const DeviceDashboard = ({
   firmware,
