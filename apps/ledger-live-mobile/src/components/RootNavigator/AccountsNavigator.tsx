@@ -2,27 +2,27 @@ import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "styled-components/native";
 import { useSelector } from "react-redux";
-import { readOnlyModeEnabledSelector } from "../../reducers/settings";
-import { ScreenName } from "../../const";
-import Accounts from "../../screens/Accounts";
-import Account from "../../screens/Account";
-import NftCollection from "../../screens/Nft/NftCollection";
-import NftGallery from "../../screens/Nft/NftGallery";
+import { readOnlyModeEnabledSelector } from "~/reducers/settings";
+import { ScreenName } from "~/const";
+import Accounts from "~/screens/Accounts";
+import Account from "~/screens/Account";
+import NftCollection from "~/screens/Nft/NftCollection";
+import NftGallery from "~/screens/Nft/NftGallery";
 import NftViewer from "../Nft/NftViewer";
-import NftCollectionHeaderTitle from "../../screens/Nft/NftCollection/NftCollectionHeaderTitle";
-import NftGalleryHeaderTitle from "../../screens/Nft/NftGallery/NftGalleryHeaderTitle";
-import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
-import ReadOnlyAccounts from "../../screens/Accounts/ReadOnly/ReadOnlyAccounts";
-import ReadOnlyAssets from "../../screens/Portfolio/ReadOnlyAssets";
+import NftCollectionHeaderTitle from "~/screens/Nft/NftCollection/NftCollectionHeaderTitle";
+import NftGalleryHeaderTitle from "~/screens/Nft/NftGallery/NftGalleryHeaderTitle";
+import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import ReadOnlyAccounts from "~/screens/Accounts/ReadOnly/ReadOnlyAccounts";
+import ReadOnlyAssets from "~/screens/Portfolio/ReadOnlyAssets";
 
-import Asset from "../../screens/WalletCentricAsset";
-import ReadOnlyAsset from "../../screens/WalletCentricAsset/ReadOnly";
-import Assets from "../../screens/Assets";
+import Asset from "~/screens/WalletCentricAsset";
+import ReadOnlyAsset from "~/screens/WalletCentricAsset/ReadOnly";
+import Assets from "~/screens/Assets";
 
-import ReadOnlyAccount from "../../screens/Account/ReadOnly/ReadOnlyAccount";
+import ReadOnlyAccount from "~/screens/Account/ReadOnly/ReadOnlyAccount";
 
 import type { AccountsNavigatorParamList } from "./types/AccountsNavigator";
-import { hasNoAccountsSelector } from "../../reducers/accounts";
+import { hasNoAccountsSelector } from "~/reducers/accounts";
 
 const Stack = createStackNavigator<AccountsNavigatorParamList>();
 

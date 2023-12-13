@@ -40,6 +40,7 @@ export default function CosmosEarnRewardsInfoModal({ account }: Props) {
       additional={
         <WarnBox>{t("cosmos.delegation.flow.steps.starter.warning.description")}</WarnBox>
       }
+      currency="cosmos"
       footerLeft={
         <LinkWithExternalIcon
           label={t("delegation.howItWorks")}

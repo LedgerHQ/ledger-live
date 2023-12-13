@@ -4,9 +4,9 @@ import { StyleSheet, View, Platform, TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
 import type { AppBranch, LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { translateContent } from "@ledgerhq/live-common/platform/logic";
-import { useLocale } from "../../../context/Locale";
-import LText from "../../../components/LText";
-import IconChevron from "../../../icons/ArrowRight";
+import { useLocale } from "~/context/Locale";
+import LText from "~/components/LText";
+import IconChevron from "~/icons/ArrowRight";
 import AppIcon from "../AppIcon";
 import { Theme } from "../../../colors";
 

@@ -13,14 +13,14 @@ import {
   SubAccount,
 } from "@ledgerhq/types-live";
 import { isAddressPoisoningOperation } from "@ledgerhq/live-common/operation";
-import OperationRow from "../../components/OperationRow";
-import SectionHeader from "../../components/SectionHeader";
-import { withDiscreetMode } from "../../context/DiscreetModeContext";
-import { ScreenName } from "../../const";
-import { parentAccountSelector } from "../../reducers/accounts";
-import { track } from "../../analytics";
-import { State } from "../../reducers/types";
-import { filterTokenOperationsZeroAmountEnabledSelector } from "../../reducers/settings";
+import OperationRow from "~/components/OperationRow";
+import SectionHeader from "~/components/SectionHeader";
+import { withDiscreetMode } from "~/context/DiscreetModeContext";
+import { ScreenName } from "~/const";
+import { parentAccountSelector } from "~/reducers/accounts";
+import { track } from "~/analytics";
+import { State } from "~/reducers/types";
+import { filterTokenOperationsZeroAmountEnabledSelector } from "~/reducers/settings";
 
 type Props = {
   accounts: AccountLikeArray;

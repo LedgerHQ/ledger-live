@@ -4,10 +4,10 @@ import { StyleSheet, View, TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
 import { Stop } from "react-native-svg";
 import type { AppBranch, LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import LText from "../../../../components/LText";
+import LText from "~/components/LText";
 import { AppIcon } from "../AppIcon";
 import { Theme } from "../../../../colors";
-import { BackgroundGradientHorizontal } from "../../../../components/TabBar/BackgroundGradient";
+import { BackgroundGradientHorizontal } from "~/components/TabBar/BackgroundGradient";
 import { Cta } from "./Cta";
 
 function getBranchStyle(branch: AppBranch, colors: Theme["colors"]) {

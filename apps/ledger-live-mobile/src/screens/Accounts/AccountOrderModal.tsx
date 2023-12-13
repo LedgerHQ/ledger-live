@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import OrderOption from "./OrderOption";
-import QueuedDrawer from "../../components/QueuedDrawer";
+import QueuedDrawer from "~/components/QueuedDrawer";
 
 const choices = ["balance|desc", "balance|asc", "name|asc", "name|desc"];
 

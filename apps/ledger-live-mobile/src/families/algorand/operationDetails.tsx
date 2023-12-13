@@ -6,9 +6,9 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { useSelector } from "react-redux";
 import { IconsLegacy } from "@ledgerhq/native-ui";
-import Section from "../../screens/OperationDetails/Section";
-import OperationStatusIcon from "../../icons/OperationStatusIcon";
-import { discreetModeSelector, localeSelector } from "../../reducers/settings";
+import Section from "~/screens/OperationDetails/Section";
+import OperationStatusIcon from "~/icons/OperationStatusIcon";
+import { discreetModeSelector, localeSelector } from "~/reducers/settings";
 import {
   AlgorandOperation,
   AlgorandAccount,

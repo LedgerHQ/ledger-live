@@ -5,7 +5,7 @@ import type { Account } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
-import { renderVerifyAddress } from "../../components/DeviceAction/rendering";
+import { renderVerifyAddress } from "~/components/DeviceAction/rendering";
 
 function VerifyAddress({
   account,

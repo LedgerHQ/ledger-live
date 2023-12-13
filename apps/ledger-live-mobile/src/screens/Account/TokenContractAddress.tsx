@@ -8,8 +8,8 @@ import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { shortAddressPreview } from "@ledgerhq/live-common/account/helpers";
 
 import { useTheme } from "@react-navigation/native";
-import LText from "../../components/LText";
-import Button from "../../components/Button";
+import LText from "~/components/LText";
+import Button from "~/components/Button";
 
 type Props = {
   onClose: () => void;

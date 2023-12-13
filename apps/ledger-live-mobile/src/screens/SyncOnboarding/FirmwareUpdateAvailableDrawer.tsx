@@ -1,8 +1,8 @@
 import React from "react";
 import { Button, Flex, Icons, IconsLegacy, Link } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
-import QueuedDrawer from "../../components/QueuedDrawer";
-import { GenericInformationBody } from "../../components/GenericInformationBody";
+import QueuedDrawer from "~/components/QueuedDrawer";
+import { GenericInformationBody } from "~/components/GenericInformationBody";
 
 export type Props = {
   isOpen: boolean;

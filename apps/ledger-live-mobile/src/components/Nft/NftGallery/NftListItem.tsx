@@ -15,7 +15,7 @@ import Skeleton from "../../Skeleton";
 import { NftSelectionCheckbox } from "../NftSelectionCheckbox";
 import NftListItemFloorPriceRow from "./NftListItemFloorPriceRow";
 import { DesignedForStaxText } from "../DesignedForStax";
-import { knownDeviceModelIdsSelector } from "../../../reducers/settings";
+import { knownDeviceModelIdsSelector } from "~/reducers/settings";
 
 type Props = {
   nft: ProtoNFT;

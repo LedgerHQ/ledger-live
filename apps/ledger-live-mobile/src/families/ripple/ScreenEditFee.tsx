@@ -5,10 +5,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import type { Transaction } from "@ledgerhq/live-common/families/ripple/types";
 import { useTheme } from "@react-navigation/native";
-import { i18n } from "../../context/Locale";
-import { accountScreenSelector } from "../../reducers/accounts";
-import KeyboardView from "../../components/KeyboardView";
-import EditFeeUnit from "../../components/EditFeeUnit";
+import { i18n } from "~/context/Locale";
+import { accountScreenSelector } from "~/reducers/accounts";
+import KeyboardView from "~/components/KeyboardView";
+import EditFeeUnit from "~/components/EditFeeUnit";
 
 const options = {
   title: i18n.t("send.fees.title"),

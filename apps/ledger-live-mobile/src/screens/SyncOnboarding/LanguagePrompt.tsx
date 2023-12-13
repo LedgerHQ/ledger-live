@@ -5,13 +5,13 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Flex } from "@ledgerhq/native-ui";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 
-import { track } from "../../analytics";
-import { useLocale } from "../../context/Locale";
+import { track } from "~/analytics";
+import { useLocale } from "~/context/Locale";
 import { localeIdToDeviceLanguage } from "../../languages";
 import { Language, idsToLanguage } from "@ledgerhq/types-live";
-import QueuedDrawer from "../../components/QueuedDrawer";
-import ChangeDeviceLanguageAction from "../../components/ChangeDeviceLanguageAction";
-import ChangeDeviceLanguagePrompt from "../../components/ChangeDeviceLanguagePrompt";
+import QueuedDrawer from "~/components/QueuedDrawer";
+import ChangeDeviceLanguageAction from "~/components/ChangeDeviceLanguageAction";
+import ChangeDeviceLanguagePrompt from "~/components/ChangeDeviceLanguagePrompt";
 
 export type LanguagePromptProps = {
   /**

@@ -1,9 +1,9 @@
 import React, { memo } from "react";
 import { StyleSheet, View } from "react-native";
-import type { BaseButtonProps } from "../../../components/Button";
-import Button from "../../../components/Button";
-import QueuedDrawer from "../../../components/QueuedDrawer";
-import getWindowDimensions from "../../../logic/getWindowDimensions";
+import type { BaseButtonProps } from "~/components/Button";
+import Button from "~/components/Button";
+import QueuedDrawer from "~/components/QueuedDrawer";
+import getWindowDimensions from "~/logic/getWindowDimensions";
 
 const { height } = getWindowDimensions();
 type Props = {

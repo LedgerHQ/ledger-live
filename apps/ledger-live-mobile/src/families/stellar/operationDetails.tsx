@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import Section from "../../screens/OperationDetails/Section";
+import Section from "~/screens/OperationDetails/Section";
 import { StellarOperation } from "@ledgerhq/live-common/families/stellar/types";
 
 type Props = {

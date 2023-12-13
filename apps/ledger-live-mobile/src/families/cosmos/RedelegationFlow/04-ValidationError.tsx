@@ -4,17 +4,17 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { accountScreenSelector } from "../../../reducers/accounts";
-import { TrackScreen } from "../../../analytics";
-import ValidateError from "../../../components/ValidateError";
-import { ScreenName } from "../../../const";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { TrackScreen } from "~/analytics";
+import ValidateError from "~/components/ValidateError";
+import { ScreenName } from "~/const";
 import type {
   BaseComposite,
   StackNavigatorNavigation,
   StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
+} from "~/components/RootNavigator/types/helpers";
 import type { CosmosRedelegationFlowParamList } from "./types";
-import type { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
+import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 
 type Props = BaseComposite<
   StackNavigatorProps<CosmosRedelegationFlowParamList, ScreenName.CosmosRedelegationValidationError>

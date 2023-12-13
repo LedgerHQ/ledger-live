@@ -7,13 +7,13 @@ import { TouchableOpacity, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
-import { counterValueCurrencySelector } from "../reducers/settings";
-import { useTrackingPairs, addExtraSessionTrackingPair } from "../actions/general";
+import { counterValueCurrencySelector } from "~/reducers/settings";
+import { useTrackingPairs, addExtraSessionTrackingPair } from "~/actions/general";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import type { CurrencyUnitValueProps } from "./CurrencyUnitValue";
 import LText from "./LText";
 import Circle from "./Circle";
-import IconHelp from "../icons/Info";
+import IconHelp from "~/icons/Info";
 import QueuedDrawer from "./QueuedDrawer";
 
 type Props = {

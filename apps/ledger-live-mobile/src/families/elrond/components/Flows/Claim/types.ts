@@ -5,7 +5,7 @@ import type {
   Transaction,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/elrond/types";
-import type { ScreenName } from "../../../../../const";
+import type { ScreenName } from "~/const";
 import type { DelegationType } from "../../../types";
 
 export type ElrondClaimRewardsFlowParamList = {

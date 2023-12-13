@@ -5,14 +5,14 @@ import { Trans } from "react-i18next";
 import i18next from "i18next";
 import { StellarMemoType } from "@ledgerhq/live-common/families/stellar/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import LText from "../../components/LText";
-import type { State } from "../../reducers/types";
-import { ScreenName } from "../../const";
-import makeGenericSelectScreen from "../../screens/makeGenericSelectScreen";
-import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
-import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
-import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
+import LText from "~/components/LText";
+import type { State } from "~/reducers/types";
+import { ScreenName } from "~/const";
+import makeGenericSelectScreen from "~/screens/makeGenericSelectScreen";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
+import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
+import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 
 const items = StellarMemoType.map(type => ({
   label: type,

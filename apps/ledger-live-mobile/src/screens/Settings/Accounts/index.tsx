@@ -5,24 +5,24 @@ import { TouchableOpacity, View, StyleSheet, SectionList } from "react-native";
 import { findTokenById } from "@ledgerhq/live-common/currencies/index";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { DefaultTheme, useTheme } from "styled-components/native";
-import SettingsRow from "../../../components/SettingsRow";
-import { showToken } from "../../../actions/settings";
+import SettingsRow from "~/components/SettingsRow";
+import { showToken } from "~/actions/settings";
 import {
   blacklistedTokenIdsSelector,
   // TODO: hiddenNftCollection is never used 😱 is it safe to remove
   // hiddenNftCollectionsSelector,
-} from "../../../reducers/settings";
-import { cryptoCurrenciesSelector } from "../../../reducers/accounts";
-import LText from "../../../components/LText";
-import CurrencyIcon from "../../../components/CurrencyIcon";
-import { TrackScreen } from "../../../analytics";
+} from "~/reducers/settings";
+import { cryptoCurrenciesSelector } from "~/reducers/accounts";
+import LText from "~/components/LText";
+import CurrencyIcon from "~/components/CurrencyIcon";
+import { TrackScreen } from "~/analytics";
 import HideEmptyTokenAccountsRow from "./HideEmptyTokenAccountsRow";
 import FilterTokenOperationsZeroAmountRow from "./FilterTokenOperationsZeroAmountRow";
-import Close from "../../../icons/Close";
-import { ScreenName } from "../../../const";
-import { SettingsNavigatorStackParamList } from "../../../components/RootNavigator/types/SettingsNavigator";
+import Close from "~/icons/Close";
+import { ScreenName } from "~/const";
+import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
 import type { Theme } from "../../../colors";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 
 export default function AccountsSettings({
   navigation,

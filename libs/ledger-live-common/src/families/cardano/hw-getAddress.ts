@@ -1,6 +1,6 @@
 import type { Resolver } from "../../hw/getAddress/types";
 import Ada, { Networks, AddressType } from "@cardano-foundation/ledgerjs-hw-app-cardano";
-import { str_to_path } from "@cardano-foundation/ledgerjs-hw-app-cardano/dist/utils";
+import { str_to_path } from "@cardano-foundation/ledgerjs-hw-app-cardano/dist/utils/address";
 import { getBipPathFromString, getBipPathString } from "./logic";
 import { StakeChain } from "./types";
 import { STAKING_ADDRESS_INDEX } from "./constants";
