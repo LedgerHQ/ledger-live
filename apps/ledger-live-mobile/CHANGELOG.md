@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.37.0-next.1
+
+### Patch Changes
+
+- [#5741](https://github.com/LedgerHQ/ledger-live/pull/5741) [`2a7e906`](https://github.com/LedgerHQ/ledger-live/commit/2a7e9061b4c51f1ca02bd4bd6c72e123b231f4bb) Thanks [@CremaFR](https://github.com/CremaFR)! - bugfix: LIVE-10633
+
 ## 3.37.0-next.0
 
 ### Minor Changes
