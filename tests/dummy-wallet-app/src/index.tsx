@@ -6,9 +6,16 @@ import { Transport, WalletAPIClient, WindowMessageTransport } from "@ledgerhq/wa
 import "./index.css";
 import App from "./App";
 
+// Register things for type safety
+declare module "@ledgerhq/wallet-api-client-react" {
+  interface Register {
+    client: WalletAPIClient<typeof getCustomModule>;
+  }
+}
+
 function getCustomModule(client: WalletAPIClient) {
   return new CustomLogger(client);
-  // We need to improve the types to make this work better
+  // You can also return an object with many modules
   // return {
   //   logger: new CustomLogger(client),
   // };
