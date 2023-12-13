@@ -13,7 +13,7 @@ import Card from "~/renderer/components/Box/Card";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import TabBar from "~/renderer/components/TabBar";
-import AppRow from "./Item";
+import Item from "./Item";
 import Filter from "./Filter";
 import Sort from "./Sort";
 import UninstallAllButton from "./UninstallAllButton";
@@ -128,7 +128,7 @@ const AppsList = ({
   const mapApp = useCallback(
     (app: App, appStoreView: boolean, onlyUpdate?: boolean, showActions?: boolean) => {
       return (
-        <AppRow
+        <Item
           optimisticState={optimisticState}
           state={state}
           key={`${appStoreView ? "APP_STORE" : "DEVICE_TAB"}_${app.name}`}
