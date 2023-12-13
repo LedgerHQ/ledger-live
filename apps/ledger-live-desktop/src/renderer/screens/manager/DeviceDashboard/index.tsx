@@ -14,7 +14,7 @@ import NavigationGuard from "~/renderer/components/NavigationGuard";
 import Quit from "~/renderer/icons/Quit";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import AppList from "./AppsList";
-import DeviceStorage from "../DeviceStorage/index";
+import DeviceInformationSummary from "./DeviceInformationSummary";
 import ProviderWarning from "../ProviderWarning";
 import AppDepsInstallModal from "./AppDepsInstallModal";
 import AppDepsUnInstallModal from "./AppDepsUnInstallModal";
@@ -64,7 +64,8 @@ type Props = {
 }; // workaround until we fix LL-4458
 
 const shouldBlockNavigation = (l: { pathname: string }) => l.pathname !== "/manager";
-const AppsList = ({
+
+const DeviceDashboard = ({
   firmware,
   deviceInfo,
   onRefreshDeviceInfo,
@@ -189,7 +190,7 @@ const AppsList = ({
           cancelText={t(`errors.ManagerQuitPage.quit`)}
           centered
         />
-        <DeviceStorage
+        <DeviceInformationSummary
           uninstallQueue={uninstallQueue}
           installQueue={installQueue}
           distribution={distribution}
@@ -226,5 +227,5 @@ const AppsList = ({
     </>
   );
 };
-const AppsListScreen = memo<Props>(AppsList);
+const AppsListScreen = memo<Props>(DeviceDashboard);
 export default withTranslation()(AppsListScreen);

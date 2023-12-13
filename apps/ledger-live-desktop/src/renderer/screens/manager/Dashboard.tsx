@@ -8,7 +8,7 @@ import { AppOp, ListAppsResult } from "@ledgerhq/live-common/apps/types";
 import { distribute, initState } from "@ledgerhq/live-common/apps/logic";
 import { mockExecWithInstalledContext } from "@ledgerhq/live-common/apps/mock";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import AppsList from "./AppsList";
+import DeviceDashboard from "./DeviceDashboard";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import FirmwareUpdate from "./FirmwareUpdate";
@@ -89,7 +89,7 @@ const Dashboard = ({
         appLength={result ? result.installed.length : 0}
       />
       {result ? (
-        <AppsList
+        <DeviceDashboard
           device={device}
           deviceInfo={deviceInfo}
           onRefreshDeviceInfo={onRefreshDeviceInfo}

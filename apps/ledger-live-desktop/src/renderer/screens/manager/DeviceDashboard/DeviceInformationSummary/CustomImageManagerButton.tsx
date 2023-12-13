@@ -4,9 +4,9 @@ import { useTranslation } from "react-i18next";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import CustomImage from "~/renderer/screens/customImage";
-import RemoveCustomImage from "./RemoveCustomImage";
 import { useSelector } from "react-redux";
 import { lastSeenCustomImageSelector } from "~/renderer/reducers/settings";
+import ToolTip from "~/renderer/components/Tooltip";
 
 type Props = {
   disabled?: boolean;
@@ -22,10 +22,6 @@ const CustomImageManagerButton = (props: Props) => {
     setDrawer(CustomImage, {}, { forceDisableFocusTrap: true });
   }, []);
 
-  const onRemove = useCallback(() => {
-    setDrawer<{ onClose?: () => void }>(RemoveCustomImage);
-  }, []);
-
   return (
     <Flex flexDirection="row" columnGap={3} alignItems="center">
       <Text variant="h5Inter" fontSize={4} color="neutral.c70">
@@ -33,21 +29,27 @@ const CustomImageManagerButton = (props: Props) => {
       </Text>
       <Link
         onClick={disabled ? undefined : onAdd}
-        Icon={IconsLegacy.ChevronRightMedium}
+        Icon={
+          disabled
+            ? props => (
+                <ToolTip
+                  content={
+                    <Text color="neutral.c00" variant="small">
+                      {t("appsInstallingDisabledTooltip")}
+                    </Text>
+                  }
+                  placement="top"
+                >
+                  <IconsLegacy.InfoAltFillMedium {...props} />
+                </ToolTip>
+              )
+            : IconsLegacy.ChevronRightMedium
+        }
         disabled={disabled}
         data-test-id="manager-custom-image-button"
       >
-        {t("common.add")}
+        {lastSeenCustomImage.size ? t("changeCustomLockscreen.cta") : t("common.add")}
       </Link>
-      {lastSeenCustomImage.size ? (
-        <Link
-          onClick={onRemove}
-          Icon={IconsLegacy.ChevronRightMedium}
-          data-test-id="manager-custom-image-button"
-        >
-          {t("removeCustomLockscreen.cta")}
-        </Link>
-      ) : null}
     </Flex>
   );
 };

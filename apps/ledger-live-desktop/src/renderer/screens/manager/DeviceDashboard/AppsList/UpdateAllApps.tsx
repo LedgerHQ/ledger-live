@@ -15,7 +15,7 @@ import Box from "~/renderer/components/Box/Box";
 import FadeInOutBox from "~/renderer/components/FadeInOutBox";
 import Button from "~/renderer/components/Button";
 import IconLoader from "~/renderer/icons/Loader";
-import Item from "./Item";
+import AppRow from "./Item";
 import Progress from "~/renderer/components/Progress";
 import ToolTip from "~/renderer/components/Tooltip";
 import { useLocation } from "react-router";
@@ -161,7 +161,7 @@ const UpdateAllApps = ({ update, state, optimisticState, dispatch, isIncomplete 
     );
   const mapApp = useCallback(
     (app: App, i: number) => (
-      <Item
+      <AppRow
         optimisticState={optimisticState}
         state={state}
         installed={state.installed.find(({ name }) => name === app.name)}
