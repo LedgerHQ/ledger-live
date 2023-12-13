@@ -30,7 +30,6 @@ import {
   hasInstalledAppsSelector,
   lastSeenCustomImageSelector,
 } from "~/renderer/reducers/settings";
-import { TFunction } from "i18next";
 
 const Container = styled.div`
   display: flex;
