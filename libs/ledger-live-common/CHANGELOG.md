@@ -1,5 +1,29 @@
 # @ledgerhq/live-common
 
+## 33.4.0-next.0
+
+### Minor Changes
+
+- [#5616](https://github.com/LedgerHQ/ledger-live/pull/5616) [`db13ef2`](https://github.com/LedgerHQ/ledger-live/commit/db13ef214190fe79b889d6b72a8dbb2be4ed6d5a) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update cardano hw-app
+
+- [#5383](https://github.com/LedgerHQ/ledger-live/pull/5383) [`3e46bd1`](https://github.com/LedgerHQ/ledger-live/commit/3e46bd1c8b1baccdce1a5d4a2b0adc81cdbd2e41) Thanks [@cng-ledger](https://github.com/cng-ledger)! - feat(LIVE-9451): capture swap live app load failure & use native flow
+
+### Patch Changes
+
+- [#5703](https://github.com/LedgerHQ/ledger-live/pull/5703) [`6c139d7`](https://github.com/LedgerHQ/ledger-live/commit/6c139d7a6431fb87b8711bdeb7b7ffa9882e7723) Thanks [@gre](https://github.com/gre)! - Fixes icons of testnet coins.
+
+- [#5662](https://github.com/LedgerHQ/ledger-live/pull/5662) [`efe1ed0`](https://github.com/LedgerHQ/ledger-live/commit/efe1ed0493b343165ade674ca8c6badfff6ce065) Thanks [@mle-gall](https://github.com/mle-gall)! - Fix post onboarding not clearing it's active state if no actions
+
+- [#5680](https://github.com/LedgerHQ/ledger-live/pull/5680) [`8929ea0`](https://github.com/LedgerHQ/ledger-live/commit/8929ea01acb6aa3d2949a16077a02d1c7b37f527) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix new firmware update flow not exitable (over USB)
+
+- [#5691](https://github.com/LedgerHQ/ledger-live/pull/5691) [`a01636a`](https://github.com/LedgerHQ/ledger-live/commit/a01636a0c14e66d20bb853be1e13b48d6036639e) Thanks [@gre](https://github.com/gre)! - deposit flow: fixes currencies sorting ('2049' bug)
+
+- [#5655](https://github.com/LedgerHQ/ledger-live/pull/5655) [`a8f82dc`](https://github.com/LedgerHQ/ledger-live/commit/a8f82dc1854eaf75e922d55964905b1fd7da0ba2) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - add moonpay swap provider config
+
+- Updated dependencies [[`f372d0f`](https://github.com/LedgerHQ/ledger-live/commit/f372d0f02a0f5e18021a9cb49ed3f160552c2791), [`0e2287b`](https://github.com/LedgerHQ/ledger-live/commit/0e2287b1ce4200004ed2c06f3e74cd3b03100784)]:
+  - @ledgerhq/hw-app-exchange@0.4.2-next.0
+  - @ledgerhq/crypto-icons-ui@1.0.0-next.0
+
 ## 33.3.0
 
 ### Minor Changes
