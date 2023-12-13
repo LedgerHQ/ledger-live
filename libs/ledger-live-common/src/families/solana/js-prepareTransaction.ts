@@ -11,7 +11,6 @@ import { findSubAccountById } from "../../account";
 import type { Account } from "@ledgerhq/types-live";
 import { ChainAPI } from "./api";
 import {
-  getAccountMinimumBalanceForRentExemption,
   getMaybeTokenAccount,
   getMaybeVoteAccount,
   getStakeAccountAddressWithSeed,
@@ -69,46 +68,27 @@ async function deriveCommandDescriptor(
   api: ChainAPI,
 ): Promise<CommandDescriptor> {
   const { model } = tx;
-  const maxSpendableBalance = await estimateMaxSpendableBalance(mainAccount, api);
 
   switch (model.kind) {
     case "transfer":
-      return deriveTransferCommandDescriptor(mainAccount, tx, model, api, maxSpendableBalance);
+      return deriveTransferCommandDescriptor(mainAccount, tx, model, api);
     case "token.transfer":
       return deriveTokenTransferCommandDescriptor(mainAccount, tx, model, api);
     case "token.createATA":
       return deriveCreateAssociatedTokenAccountCommandDescriptor(mainAccount, model, api);
     case "stake.createAccount":
-      return deriveStakeCreateAccountCommandDescriptor(
-        mainAccount,
-        tx,
-        model,
-        api,
-        maxSpendableBalance,
-      );
+      return deriveStakeCreateAccountCommandDescriptor(mainAccount, tx, model, api);
     case "stake.delegate":
-      return deriveStakeDelegateCommandDescriptor(mainAccount, model, api, maxSpendableBalance);
+      return deriveStakeDelegateCommandDescriptor(mainAccount, model, api);
     case "stake.undelegate":
-      return deriveStakeUndelegateCommandDescriptor(mainAccount, model, api, maxSpendableBalance);
+      return deriveStakeUndelegateCommandDescriptor(mainAccount, model, api);
     case "stake.withdraw":
-      return deriveStakeWithdrawCommandDescriptor(mainAccount, tx, model, api, maxSpendableBalance);
+      return deriveStakeWithdrawCommandDescriptor(mainAccount, tx, model, api);
     case "stake.split":
       return deriveStakeSplitCommandDescriptor(mainAccount, tx, model, api);
     default:
       return assertUnreachable(model);
   }
-}
-
-async function estimateMaxSpendableBalance(
-  mainAccount: SolanaAccount,
-  api: ChainAPI,
-): Promise<BigNumber> {
-  const rentExemptMin = await getAccountMinimumBalanceForRentExemption(
-    api,
-    mainAccount.freshAddress,
-  );
-
-  return BigNumber.max(mainAccount.spendableBalance.minus(rentExemptMin), 0);
 }
 
 const prepareTransaction = async (
@@ -305,7 +285,6 @@ async function deriveTransferCommandDescriptor(
   tx: Transaction,
   model: TransactionModel & { kind: TransferTransaction["kind"] },
   api: ChainAPI,
-  maxSpendableBalance: BigNumber,
 ): Promise<CommandDescriptor> {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
@@ -320,7 +299,9 @@ async function deriveTransferCommandDescriptor(
 
   const fee = await estimateTxFee(api, mainAccount, "transfer");
 
-  const txAmount = tx.useAllAmount ? BigNumber.max(maxSpendableBalance.minus(fee), 0) : tx.amount;
+  const txAmount = tx.useAllAmount
+    ? BigNumber.max(mainAccount.spendableBalance.minus(fee), 0)
+    : tx.amount;
 
   if (tx.useAllAmount) {
     if (txAmount.eq(0)) {
@@ -329,7 +310,7 @@ async function deriveTransferCommandDescriptor(
   } else {
     if (txAmount.lte(0)) {
       errors.amount = new AmountRequired();
-    } else if (txAmount.plus(fee).gt(maxSpendableBalance)) {
+    } else if (txAmount.plus(fee).gt(mainAccount.spendableBalance)) {
       errors.amount = new NotEnoughBalance();
     }
   }
@@ -355,7 +336,6 @@ async function deriveStakeCreateAccountCommandDescriptor(
   tx: Transaction,
   model: TransactionModel & { kind: StakeCreateAccountTransaction["kind"] },
   api: ChainAPI,
-  maxSpendableBalance: BigNumber,
 ): Promise<CommandDescriptor> {
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
@@ -373,10 +353,10 @@ async function deriveStakeCreateAccountCommandDescriptor(
     (await estimateTxFee(api, mainAccount, "stake.withdraw"));
 
   const amount = tx.useAllAmount
-    ? BigNumber.max(maxSpendableBalance.minus(fee).minus(unstakeReserve), 0)
+    ? BigNumber.max(mainAccount.spendableBalance.minus(fee).minus(unstakeReserve), 0)
     : tx.amount;
 
-  if (!errors.amount && maxSpendableBalance.lt(amount.plus(fee).plus(unstakeReserve))) {
+  if (!errors.amount && mainAccount.spendableBalance.lt(amount.plus(fee).plus(unstakeReserve))) {
     errors.amount = new NotEnoughBalance();
   }
 
@@ -412,7 +392,6 @@ async function deriveStakeDelegateCommandDescriptor(
   mainAccount: SolanaAccount,
   model: TransactionModel & { kind: StakeDelegateTransaction["kind"] },
   api: ChainAPI,
-  maxSpendableBalance: BigNumber,
 ): Promise<CommandDescriptor> {
   const errors: Record<string, Error> = {};
 
@@ -446,7 +425,7 @@ async function deriveStakeDelegateCommandDescriptor(
 
   const txFee = await estimateTxFee(api, mainAccount, "stake.delegate");
 
-  if (maxSpendableBalance.lt(txFee)) {
+  if (mainAccount.spendableBalance.lt(txFee)) {
     errors.fee = new NotEnoughBalance();
   }
 
@@ -467,7 +446,6 @@ async function deriveStakeUndelegateCommandDescriptor(
   mainAccount: SolanaAccount,
   model: TransactionModel & { kind: StakeUndelegateTransaction["kind"] },
   api: ChainAPI,
-  maxSpendableBalance: BigNumber,
 ): Promise<CommandDescriptor> {
   const errors: Record<string, Error> = {};
 
@@ -495,7 +473,7 @@ async function deriveStakeUndelegateCommandDescriptor(
 
   const txFee = await estimateTxFee(api, mainAccount, "stake.undelegate");
 
-  if (maxSpendableBalance.lt(txFee)) {
+  if (mainAccount.spendableBalance.lt(txFee)) {
     errors.fee = new NotEnoughBalance();
   }
 
@@ -516,7 +494,6 @@ async function deriveStakeWithdrawCommandDescriptor(
   tx: Transaction,
   model: TransactionModel & { kind: StakeWithdrawTransaction["kind"] },
   api: ChainAPI,
-  maxSpendableBalance: BigNumber,
 ): Promise<CommandDescriptor> {
   const errors: Record<string, Error> = {};
   const { uiState } = model;
@@ -533,7 +510,7 @@ async function deriveStakeWithdrawCommandDescriptor(
 
   const txFee = await estimateTxFee(api, mainAccount, "stake.withdraw");
 
-  if (maxSpendableBalance.lt(txFee)) {
+  if (mainAccount.spendableBalance.lt(txFee)) {
     errors.fee = new NotEnoughBalance();
   }
 

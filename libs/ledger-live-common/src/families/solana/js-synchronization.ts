@@ -3,6 +3,7 @@ import BigNumber from "bignumber.js";
 
 import { emptyHistoryCache, encodeAccountId } from "../../account";
 import {
+  getAccountMinimumBalanceForRentExemption,
   getTransactions,
   ParsedOnChainStakeAccountWithInfo,
   toStakeAccountWithInfo,
@@ -211,6 +212,8 @@ export const getAccountShapeWithAPI = async (
 
   const totalStakedBalance = sum(stakes.map(s => s.stakeAccBalance));
 
+  const mainAccountRentExempt = await getAccountMinimumBalanceForRentExemption(api, mainAccAddress);
+
   const shape: Partial<SolanaAccount> = {
     // uncomment when tokens are supported
     // subAccounts as undefined makes TokenList disappear in desktop
@@ -218,7 +221,7 @@ export const getAccountShapeWithAPI = async (
     id: mainAccountId,
     blockHeight,
     balance: mainAccBalance.plus(totalStakedBalance),
-    spendableBalance: mainAccBalance,
+    spendableBalance: BigNumber.max(mainAccBalance.minus(mainAccountRentExempt), 0),
     operations: mainAccTotalOperations,
     operationsCount: mainAccTotalOperations.length,
     solanaResources: {
