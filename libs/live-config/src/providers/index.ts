@@ -1,5 +1,7 @@
 import { ConfigInfo } from "../LiveConfig";
 
 export interface Provider {
-  getValueBykey<K>(key: K, info: ConfigInfo): string | number | boolean | object;
+  getValueBykey<K>(key: K, info: ConfigInfo);
 }
+
+export * from "./firebaseRemoteConfig";

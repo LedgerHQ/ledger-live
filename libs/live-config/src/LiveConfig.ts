@@ -20,24 +20,53 @@ export type ConfigInfo =
   | ConfigInfoShape<"object">
   | ConfigInfoShape<"array">;
 
-type TypeFromSchema<T extends keyof ValidConfigTypes> = T extends keyof ValidConfigTypes
-  ? ValidConfigTypes[T]
-  : never;
+export type ConfigSchema = Record<string, ConfigInfo>;
 
-export type Config = Record<string, ConfigInfo>;
+export class LiveConfig {
+  public provider?: Provider;
+  public config!: ConfigSchema;
+  public appVersion?: string;
+  public platform?: string;
+  public environment?: string;
+  public static configInstance: LiveConfig | null = null;
 
-export class LiveConfig<ConfigType extends Config> {
-  public provider: Provider;
-  public config: ConfigType;
-
-  constructor(config: { provider: Provider; config: ConfigType }) {
-    this.provider = config.provider;
-    this.config = config.config;
+  constructor(params: { appVersion?: string; platform?: string; environment?: string }) {
+    this.appVersion = params.appVersion;
+    this.platform = params.platform;
+    this.environment = params.environment;
   }
 
-  getValueByKey<Schema extends typeof this.config, Key extends keyof Schema>(key: Key) {
-    return this.provider.getValueBykey(key, this.config[key]) as TypeFromSchema<
-      Schema[Key]["type"]
-    >;
+  static init(params: { appVersion?: string; platform?: string; environment?: string }) {
+    if (LiveConfig.configInstance) {
+      throw new Error("Config instance already created");
+    }
+    LiveConfig.configInstance = new LiveConfig(params);
+  }
+
+  static setProvider(provider: Provider) {
+    if (!LiveConfig.configInstance) {
+      throw new Error("Config instance not created");
+    }
+    LiveConfig.configInstance.provider = provider;
+  }
+
+  static setConfig(config: ConfigSchema) {
+    if (!LiveConfig.configInstance) {
+      throw new Error("Config instance not created");
+    }
+    LiveConfig.configInstance.config = config;
+  }
+
+  static getValueByKey(key: string) {
+    if (!LiveConfig.configInstance) {
+      throw new Error("Config instance not created");
+    }
+    if (!LiveConfig.configInstance.provider) {
+      throw new Error("Provider not set");
+    }
+    return LiveConfig.configInstance.provider.getValueBykey(
+      key,
+      LiveConfig.configInstance.config[key],
+    );
   }
 }

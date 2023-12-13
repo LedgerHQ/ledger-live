@@ -1,4 +1,4 @@
-import { LiveConfig, Config } from "../LiveConfig";
+import { LiveConfig, ConfigSchema } from "../LiveConfig";
 import { JsonFileReader } from "../providers/jsonFileReader";
 import path from "path";
 
@@ -6,7 +6,7 @@ describe("LiveConfig", () => {
   it("get correct config", () => {
     const filePath = path.join(__dirname, "config.json");
     const jsonFileReader = new JsonFileReader({ filePath });
-    const config: Config = {
+    const config: ConfigSchema = {
       app_name: { type: "string", default: "test app" },
       developer_mode: { type: "boolean", default: false },
       requests_per_seconds: { type: "number", default: 8 },
@@ -27,14 +27,14 @@ describe("LiveConfig", () => {
         },
       },
     };
-
-    const liveConfig = new LiveConfig({ provider: jsonFileReader, config: config });
-
-    const developer_mode = liveConfig.getValueByKey("developer_mode");
-    const app_name = liveConfig.getValueByKey("app_name");
-    const requests_per_seconds = liveConfig.getValueByKey("requests_per_seconds");
-    const explorer = liveConfig.getValueByKey("explorer");
-    const cosmos_config = liveConfig.getValueByKey("cosmos_config");
+    LiveConfig.init({ appVersion: "1.0.0", platform: "mac", environment: "test" });
+    LiveConfig.setConfig(config);
+    LiveConfig.setProvider(jsonFileReader);
+    const developer_mode = LiveConfig.getValueByKey("developer_mode");
+    const app_name = LiveConfig.getValueByKey("app_name");
+    const requests_per_seconds = LiveConfig.getValueByKey("requests_per_seconds");
+    const explorer = LiveConfig.getValueByKey("explorer");
+    const cosmos_config = LiveConfig.getValueByKey("cosmos_config");
 
     expect(app_name).toBe("test app");
     expect(developer_mode).toBe(true);

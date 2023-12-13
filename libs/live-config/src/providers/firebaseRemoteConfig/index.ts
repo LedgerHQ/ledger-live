@@ -10,7 +10,7 @@ export interface Value {
 }
 
 export class FirebaseRemoteConfigProvider implements Provider {
-  getValue: (key: string) => Value;
+  public getValue: (key: string) => Value;
 
   constructor(config: { getValue: (key: string) => Value }) {
     this.getValue = config.getValue;
@@ -18,8 +18,7 @@ export class FirebaseRemoteConfigProvider implements Provider {
 
   getValueBykey<K>(key: K, info: ConfigInfo) {
     const value = this.getValue(key as string);
-    const parsedValue = parser(value, info.type);
-
-    return parsedValue ?? info.default;
+    const parsedValue = parser(value, info?.type);
+    return parsedValue ?? info?.default;
   }
 }

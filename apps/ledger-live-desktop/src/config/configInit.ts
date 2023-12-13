@@ -1,0 +1,10 @@
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { sharedConfig } from "@ledgerhq/live-common/config/sharedConfig";
+
+LiveConfig.init({
+  appVersion: __APP_VERSION__,
+  platform: "desktop",
+  environment: process.env.NODE_ENV || "developement",
+});
+
+LiveConfig.setConfig(sharedConfig);

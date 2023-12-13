@@ -32,10 +32,9 @@ export function parser(value: unknown, type: ConfigInfo["type"]) {
       return booleanParser(value);
     }
     case "object":
-    case "array": {
+    case "array":
+    default: {
       return objectParser(value);
     }
-    default:
-      throw new Error("Unexpected type");
   }
 }

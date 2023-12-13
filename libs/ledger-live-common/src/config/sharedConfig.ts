@@ -1,8 +1,8 @@
-import { Config } from "@ledgerhq/live-config";
+import { ConfigSchema } from "@ledgerhq/live-config/LiveConfig";
 
-export const sharedConfig: Config = {
+export const sharedConfig: ConfigSchema = {
   feature_app_author_name: {
-    type: "enabled",
+    type: "object",
     default: { enabled: false },
   },
   feature_learn: {
