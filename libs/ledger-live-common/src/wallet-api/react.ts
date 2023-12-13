@@ -157,7 +157,7 @@ export interface UiHook {
     onCancel: () => void;
   }) => void;
   "exchange.start": (params: {
-    exchangeType: "FUND" | "SELL" | "SWAP";
+    exchangeType: "SWAP" | "FUND" | "SELL" | "SWAP_NG" | "SELL_NG" | "FUND_NG";
     onSuccess: (nonce: string) => void;
     onCancel: (error: Error) => void;
   }) => void;
@@ -694,7 +694,7 @@ export function useWalletAPIServer({
       return startExchangeLogic(
         { manifest, accounts, tracking },
         exchangeType,
-        (exchangeType: "SWAP" | "FUND" | "SELL") =>
+        exchangeType =>
           new Promise((resolve, reject) =>
             uiExchangeStart({
               exchangeType,
