@@ -252,6 +252,7 @@ export function SwapForm({
   }, [
     exchangeRate,
     track,
+    swapTransaction.transaction,
     swapTransaction.swap.from,
     swapTransaction.swap.to.currency?.name,
     navigation,
