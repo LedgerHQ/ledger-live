@@ -1,6 +1,6 @@
 import React, { memo, useRef, useState, useCallback, useMemo, useEffect } from "react";
 import styled from "styled-components";
-import { withTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { App, DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { Exec, InstalledItem, ListAppsResult } from "@ledgerhq/live-common/apps/types";
 import {
@@ -15,7 +15,7 @@ import Quit from "~/renderer/icons/Quit";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import AppList from "./AppsList";
 import DeviceInformationSummary from "./DeviceInformationSummary";
-import ProviderWarning from "../ProviderWarning";
+import ProviderWarning from "./ProviderWarning";
 import AppDepsInstallModal from "./AppDepsInstallModal";
 import AppDepsUnInstallModal from "./AppDepsUnInstallModal";
 import ErrorModal from "~/renderer/modals/ErrorModal/index";
@@ -58,8 +58,10 @@ type Props = {
   result: ListAppsResult;
   onRefreshDeviceInfo: () => void;
   exec: Exec;
-  t: TFunction;
-  render?: (a: { disableFirmwareUpdate: boolean; installed: InstalledItem[] }) => React.ReactNode;
+  renderFirmwareUpdateBanner?: (a: {
+    disableFirmwareUpdate: boolean;
+    installed: InstalledItem[];
+  }) => React.ReactNode;
   appsToRestore?: string[];
 }; // workaround until we fix LL-4458
 
@@ -71,11 +73,11 @@ const DeviceDashboard = ({
   onRefreshDeviceInfo,
   result,
   exec,
-  t,
-  render,
+  renderFirmwareUpdateBanner: render,
   appsToRestore = [],
   device,
 }: Props) => {
+  const { t } = useTranslation();
   const { deviceName } = result;
   const [state, dispatch] = useAppsRunner(result, exec, appsToRestore);
   const optimisticState = useMemo(() => predictOptimisticState(state), [state]);
@@ -227,5 +229,4 @@ const DeviceDashboard = ({
     </>
   );
 };
-const AppsListScreen = memo<Props>(DeviceDashboard);
-export default withTranslation()(AppsListScreen);
+export default memo<Props>(DeviceDashboard);

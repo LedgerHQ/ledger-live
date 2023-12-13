@@ -97,7 +97,7 @@ const Dashboard = ({
           result={result}
           appsToRestore={appsToRestore}
           exec={exec}
-          render={({ disableFirmwareUpdate, installed }) => (
+          renderFirmwareUpdateBanner={({ disableFirmwareUpdate, installed }) => (
             <FirmwareUpdate
               device={device}
               deviceInfo={deviceInfo}
