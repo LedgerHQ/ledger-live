@@ -8,22 +8,35 @@ inputs:
     description: "dotnet setup for Windows"
     required: false
   skip_pnpm_cache:
-    description: "true to skip pnpm caching"
+    description: "true to skip pnpm caching, false by default"
     required: false
+    default: "false"
   skip_pod_cache:
+    description: "false to get cache, true by default"
+    required: false
+    default: "true"
+  skip_turbo_cache:
     description: "false to get cache, true by default"
     required: false
     default: "true"
   accountId:
     description: "aws cache account id"
-    required: true
+    required: false
   roleName:
     description: "aws cache role name"
-    required: true
+    required: false
   region:
     description: "aws cache region"
     required: false
     default: "eu-west-1"
+  turbo-server-token:
+    description: "custom token for local s3 server"
+    required: false
+    default: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+outputs:
+  port:
+    description: "The port the local server runs on"
+    value: ${{ steps.turborepo-cache-server.outputs.port }}
 
 runs:
   using: "composite"
@@ -45,7 +58,7 @@ runs:
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v3
-      if: inputs.skip_pnpm_cache == '' && inputs.accountId != '' && inputs.roleName != ''
+      if: inputs.accountId != '' && inputs.roleName != ''
       id: aws
       with:
         role-to-assume: arn:aws:iam::${{ inputs.accountId }}:role/${{ inputs.roleName }}
@@ -53,7 +66,7 @@ runs:
 
     - name: Cache pnpm store
       uses: tespkg/actions-cache@v1
-      if: steps.aws.conclusion == 'success'
+      if: steps.aws.conclusion == 'success' && inputs.skip_pnpm_cache != 'true'
       with:
         path: ${{ env.STORE_PATH }}
         key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
@@ -76,6 +89,28 @@ runs:
       run: |
         npm i -g npm
       shell: bash
+
+    - name: TurboRepo local caching server
+      id: turborepo-cache-server
+      if: steps.aws.conclusion == 'success' && inputs.skip_turbo_cache != 'true'
+      uses: ./tools/actions/turborepo-s3-cache
+      with:
+        server-token: "${{ secrets.TURBOREPO_SERVER_TOKEN }}"
+        cleanup-cache-folder: "true"
+        aws-access-key: ${{ env.AWS_ACCESS_KEY_ID }}
+        aws-secret-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+        aws-session-token: ${{ env.AWS_SESSION_TOKEN }}
+        region: ${{ inputs.region }}
+
+    - name: Cache LLM pods
+      uses: actions/cache@v3
+      if: inputs.skip_pod_cache != 'true'
+      with:
+        path: |
+          apps/ledger-live-mobile/ios/Pods
+          ~/Library/Caches/CocoaPods
+          ~/.cocoapods
+        key: ${{ runner.os }}-pods-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock') }}
 
     # Using the proto toolchain manager:
     # - name: Setup proto

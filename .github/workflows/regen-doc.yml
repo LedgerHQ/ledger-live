@@ -22,6 +22,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event.inputs.ref || github.event.inputs.number }}
   cancel-in-progress: true
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   regen-doc:
     runs-on: ubuntu-latest
@@ -50,13 +54,17 @@ jobs:
         uses: ./tools/actions/composites/setup-git-user
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
+        id: toolchain
         with:
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          skip_turbo_cache: "false"
       - name: Install dependencies
         run: pnpm i --filter="!./apps/**"
       - name: run doc
-        run: pnpm doc:ljs
+        run: pnpm doc:ljs --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
       - name: status
         id: check-status
         run: echo "status=$(git status --porcelain | wc -l)" >> $GITHUB_OUTPUT

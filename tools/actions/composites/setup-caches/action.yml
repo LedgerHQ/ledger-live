@@ -2,9 +2,14 @@ name: "Setup Caches"
 description: "Setup caches for faster running time"
 inputs:
   skip_pnpm_cache:
-    description: "true to skip pnpm caching"
+    description: "true to skip pnpm caching, false by default"
     required: false
+    default: "false"
   skip_pod_cache:
+    description: "false to get cache, true by default"
+    required: false
+    default: "true"
+  skip_turbo_cache:
     description: "false to get cache, true by default"
     required: false
     default: "true"
@@ -33,7 +38,7 @@ runs:
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v3
-      if: inputs.skip_pnpm_cache == '' && inputs.accountId != '' && inputs.roleName != ''
+      if: inputs.accountId != '' && inputs.roleName != ''
       id: aws
       with:
         role-to-assume: arn:aws:iam::${{ inputs.accountId }}:role/${{ inputs.roleName }}
@@ -41,7 +46,7 @@ runs:
 
     - name: Cache pnpm store
       uses: tespkg/actions-cache@v1
-      if: steps.aws.conclusion == 'success'
+      if: steps.aws.conclusion == 'success' && inputs.skip_pnpm_cache != 'false'
       with:
         path: ${{ env.STORE_PATH }}
         key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
@@ -56,10 +61,22 @@ runs:
 
     - name: Cache LLM pods
       uses: actions/cache@v3
-      if: inputs.skip_pod_cache == 'false'
+      if: inputs.skip_pod_cache != 'true'
       with:
         path: |
           apps/ledger-live-mobile/ios/Pods
           ~/Library/Caches/CocoaPods
           ~/.cocoapods
         key: ${{ runner.os }}-pods-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock') }}
+
+    - name: TurboRepo local caching server
+      id: turborepo-cache-server
+      if: steps.aws.conclusion == 'success' && inputs.skip_turbo_cache != 'true'
+      uses: ./tools/actions/turborepo-s3-cache
+      with:
+        server-token: "${{ secrets.TURBOREPO_SERVER_TOKEN }}"
+        cleanup-cache-folder: "true"
+        aws-access-key: ${{ env.AWS_ACCESS_KEY_ID }}
+        aws-secret-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+        aws-session-token: ${{ env.AWS_SESSION_TOKEN }}
+        region: ${{ inputs.region }}
