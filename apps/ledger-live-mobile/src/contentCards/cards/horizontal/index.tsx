@@ -18,7 +18,7 @@ const HorizontalCard = ContentCardBuilder<Props>(({ title, description, image, t
   const isDismissable = !!metadata.actions?.onDismiss;
   const isTag = !!tag;
 
-  useEffect(() => metadata.actions?.onView?.(), []);
+  useEffect(() => metadata.actions?.onView?.());
 
   return (
     <TouchableOpacity onPress={metadata.actions?.onClick} key={metadata.id}>

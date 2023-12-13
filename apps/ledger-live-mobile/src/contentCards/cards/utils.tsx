@@ -5,7 +5,7 @@ import { ContentCardProps, ContentCardItem } from "~/contentCards/cards/types";
  *
  */
 export const ContentCardBuilder =
-  <P extends {}>(ContentCardComponent: React.FC<P & ContentCardProps>) =>
+  <P extends object>(ContentCardComponent: React.FC<P & ContentCardProps>) =>
   (props: P & ContentCardProps) => <ContentCardComponent {...props} />;
 
 /**
