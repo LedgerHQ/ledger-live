@@ -23,7 +23,7 @@ const blinkOpacity = keyframes`
 	}
 `;
 
-export const StorageBarWrapper = styled.div`
+const StorageBarWrapper = styled.div`
   width: 100%;
   border-radius: 3px;
   height: 23px;
@@ -31,7 +31,8 @@ export const StorageBarWrapper = styled.div`
   overflow: hidden;
   position: relative;
 `;
-export const StorageBarGraph = styled.div`
+
+const StorageBarGraph = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
@@ -64,7 +65,7 @@ const transitionStyles = {
 };
 
 /** each device storage bar will grow of 0.5% if the space is available or just fill its given percent basis if the bar is filled */
-export const StorageBarItem = styled.div.attrs<{
+const StorageBarItem = styled.div.attrs<{
   installing?: boolean;
   state: TransitionStatus;
   ratio: number;
@@ -109,7 +110,8 @@ const TooltipContentWrapper = styled.div`
     text-align: center;
   }
 `;
-export const TooltipContent = ({
+
+const TooltipContent = ({
   name,
   bytes,
   deviceModel,
@@ -132,7 +134,8 @@ export const TooltipContent = ({
 const appDataColors = {
   Exchange: "#39D2F3",
 };
-export const getAppStorageBarColor = ({
+
+const getAppStorageBarColor = ({
   name,
   currency,
 }: {
@@ -140,7 +143,11 @@ export const getAppStorageBarColor = ({
   name: string;
 }) => (name in appDataColors ? appDataColors[name as keyof typeof appDataColors] : currency?.color);
 
-export const StorageBar = ({
+/**
+ * Component rendering a bar that graphically displays the distribution of
+ * installed apps and their storage usage.
+ */
+const StorageBar = ({
   deviceInfo,
   distribution,
   deviceModel,
@@ -196,3 +203,5 @@ export const StorageBar = ({
     )}
   </StorageBarWrapper>
 );
+
+export default StorageBar;

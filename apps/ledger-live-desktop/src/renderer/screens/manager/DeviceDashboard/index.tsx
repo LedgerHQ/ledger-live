@@ -66,13 +66,18 @@ type Props = {
 
 const shouldBlockNavigation = (l: { pathname: string }) => l.pathname !== "/manager";
 
+/**
+ * Component rendering a box containing information about the device
+ * and some controls: Device illustration, name and renaming button, storage
+ * information etc.
+ */
 const DeviceDashboard = ({
   firmware,
   deviceInfo,
   onRefreshDeviceInfo,
   result,
   exec,
-  renderFirmwareUpdateBanner: render,
+  renderFirmwareUpdateBanner,
   appsToRestore = [],
   device,
 }: Props) => {
@@ -164,8 +169,8 @@ const DeviceDashboard = ({
   const disableFirmwareUpdate = state.installQueue.length > 0 || state.uninstallQueue.length > 0;
   return (
     <>
-      {render
-        ? render({
+      {renderFirmwareUpdateBanner
+        ? renderFirmwareUpdateBanner({
             disableFirmwareUpdate,
             installed: state.installed,
           })

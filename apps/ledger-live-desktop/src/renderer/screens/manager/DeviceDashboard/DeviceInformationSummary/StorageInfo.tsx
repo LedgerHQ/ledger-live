@@ -41,6 +41,10 @@ const FreeInfo = styled.div<{ danger?: boolean }>`
   color: ${p => (p.danger ? p.theme.colors.warning : p.theme.colors.palette.text.shade100)};
 `;
 
+/**
+ * Component rendering a breakdown of information about the device storage:
+ * used space, capacity, number of apps, free space.
+ */
 const StorageInfo: React.FC<Props> = ({ deviceModel, distribution, deviceInfo, isIncomplete }) => {
   const shouldWarn = distribution.shouldWarnMemory || isIncomplete;
   return (

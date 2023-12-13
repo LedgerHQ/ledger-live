@@ -15,7 +15,7 @@ import Certificate from "~/renderer/icons/Certificate";
 import { Device } from "@ledgerhq/types-devices";
 import { isNavigationLocked } from "~/renderer/reducers/application";
 import { useSelector } from "react-redux";
-import { StorageBar } from "./StorageBar";
+import StorageBar from "./StorageBar";
 import StorageInfo from "./StorageInfo";
 import { DeviceIllustration } from "./DeviceIllustration";
 
