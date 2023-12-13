@@ -8,7 +8,7 @@ import {
   troubleshootOverObservable,
   troubleshootOverObservableReducer,
 } from "@ledgerhq/live-common/network-troubleshooting/index";
-import NavigationScrollView from "../../../../components/NavigationScrollView";
+import NavigationScrollView from "~/components/NavigationScrollView";
 
 const Bullet = styled(Flex).attrs((p: { backgroundColor: string }) => ({
   backgroundColor: p.backgroundColor,

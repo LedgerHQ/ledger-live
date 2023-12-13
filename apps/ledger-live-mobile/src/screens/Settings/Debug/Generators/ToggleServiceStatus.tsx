@@ -1,9 +1,9 @@
 import React from "react";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { useServiceStatus } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/index";
-import Switch from "../../../../components/Switch";
+import Switch from "~/components/Switch";
 import { toggleMockIncident } from "../__mocks__/serviceStatus";
-import SettingsRow from "../../../../components/SettingsRow";
+import SettingsRow from "~/components/SettingsRow";
 
 export default function ToggleServiceStatusIncident() {
   const { updateData, incidents } = useServiceStatus();

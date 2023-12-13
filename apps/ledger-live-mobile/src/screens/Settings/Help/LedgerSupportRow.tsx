@@ -2,8 +2,8 @@ import React, { memo } from "react";
 import { Trans } from "react-i18next";
 import { Linking } from "react-native";
 import { ExternalLinkMedium } from "@ledgerhq/native-ui/assets/icons";
-import { urls } from "@utils/urls";
-import SettingsRow from "../../../components/SettingsRow";
+import { urls } from "~/utils/urls";
+import SettingsRow from "~/components/SettingsRow";
 
 function LedgerSupportRow() {
   return (

@@ -10,10 +10,10 @@ import { Account } from "@ledgerhq/types-live";
 import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
 import { Unit } from "@ledgerhq/types-cryptoassets";
 import invariant from "invariant";
-import InfoModal from "../../modals/Info";
-import type { ModalInfo } from "../../modals/Info";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import InfoItem from "../../components/BalanceSummaryInfoItem";
+import InfoModal from "~/modals/Info";
+import type { ModalInfo } from "~/modals/Info";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import InfoItem from "~/components/BalanceSummaryInfoItem";
 
 type Props = {
   account: CosmosAccount;

@@ -6,10 +6,10 @@ import { App } from "@ledgerhq/types-live";
 import styled from "styled-components/native";
 import { Flex, IconsLegacy, Text, Button } from "@ledgerhq/native-ui";
 
-import QueuedDrawer from "../../../components/QueuedDrawer";
+import QueuedDrawer from "~/components/QueuedDrawer";
 
 import AppIcon from "../AppsList/AppIcon";
-import ByteSize from "../../../components/ByteSize";
+import ByteSize from "~/components/ByteSize";
 
 const keyExtractor = (item: App, index: number) => String(item.id) + index;
 

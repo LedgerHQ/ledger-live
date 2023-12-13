@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { Base as BaseButton } from "@ledgerhq/native-ui/components/cta/Button/index";
 import { Image, ImageSourcePropType } from "react-native";
-import Button from "../../components/PreventDoubleClickButton";
+import Button from "~/components/PreventDoubleClickButton";
 
-import successImage from "../../images/illustration/Light/_053.png";
-import failImage from "../../images/illustration/Light/_054.png";
+import successImage from "~/images/illustration/Light/_053.png";
+import failImage from "~/images/illustration/Light/_054.png";
 
 type Answer = {
   answer: string;

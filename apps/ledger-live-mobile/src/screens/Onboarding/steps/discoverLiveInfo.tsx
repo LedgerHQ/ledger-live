@@ -7,18 +7,18 @@ import styled, { useTheme } from "styled-components/native";
 import { useDispatch } from "react-redux";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { Image, ImageProps } from "react-native";
-import { completeOnboarding, setReadOnlyMode } from "../../../actions/settings";
+import { completeOnboarding, setReadOnlyMode } from "~/actions/settings";
 
-import { NavigatorName, ScreenName } from "../../../const";
-import { screen, track } from "../../../analytics";
+import { NavigatorName, ScreenName } from "~/const";
+import { screen, track } from "~/analytics";
 
-import { AnalyticsContext } from "../../../analytics/AnalyticsContext";
+import { AnalyticsContext } from "~/analytics/AnalyticsContext";
 import {
   RootNavigationComposite,
   StackNavigatorNavigation,
-} from "../../../components/RootNavigator/types/helpers";
-import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
-import { BaseOnboardingNavigatorParamList } from "../../../components/RootNavigator/types/BaseOnboardingNavigator";
+} from "~/components/RootNavigator/types/helpers";
+import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
+import { BaseOnboardingNavigatorParamList } from "~/components/RootNavigator/types/BaseOnboardingNavigator";
 import Config from "react-native-config";
 
 const slidesImages = [

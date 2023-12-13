@@ -24,10 +24,10 @@ import { useTheme } from "@react-navigation/native";
 import SelectValidatorSearchBox from "../../tron/VoteFlow/01-SelectValidator/SearchBox";
 import ValidatorRow from "../shared/ValidatorRow";
 import ValidatorHead from "../shared/ValidatorHead";
-import { accountScreenSelector } from "../../../reducers/accounts";
-import { ScreenName } from "../../../const";
-import LText from "../../../components/LText";
-import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { ScreenName } from "~/const";
+import LText from "~/components/LText";
+import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { CosmosRedelegationFlowParamList } from "./types";
 
 type Props = StackNavigatorProps<

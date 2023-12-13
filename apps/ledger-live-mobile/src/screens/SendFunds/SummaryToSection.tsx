@@ -10,9 +10,9 @@ import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 import SummaryRowCustom from "./SummaryRowCustom";
-import Circle from "../../components/Circle";
-import LText from "../../components/LText";
-import QRcode from "../../icons/QRcode";
+import Circle from "~/components/Circle";
+import LText from "~/components/LText";
+import QRcode from "~/icons/QRcode";
 
 type Props = {
   transaction: Transaction;

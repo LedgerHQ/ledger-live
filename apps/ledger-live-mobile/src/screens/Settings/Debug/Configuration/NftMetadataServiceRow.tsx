@@ -3,7 +3,7 @@ import { Switch } from "@ledgerhq/native-ui";
 import { setEnvUnsafe, getEnv } from "@ledgerhq/live-env";
 import { useNftAPI } from "@ledgerhq/live-common/nft/NftMetadataProvider/index";
 
-import SettingsRow from "../../../../components/SettingsRow";
+import SettingsRow from "~/components/SettingsRow";
 
 const PRODUCTION_URL = "https://nft.api.live.ledger.com";
 const STAGING_URL = "https://nft.api.live.ledger-stg.com";

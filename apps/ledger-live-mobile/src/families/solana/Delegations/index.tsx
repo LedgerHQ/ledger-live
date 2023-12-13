@@ -28,17 +28,17 @@ import { useTranslation } from "react-i18next";
 import { Linking, StyleSheet, View } from "react-native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { rgba } from "../../../colors";
-import AccountDelegationInfo from "../../../components/AccountDelegationInfo";
-import AccountSectionLabel from "../../../components/AccountSectionLabel";
-import Circle from "../../../components/Circle";
-import DelegationDrawer, { IconProps } from "../../../components/DelegationDrawer";
-import Touchable from "../../../components/Touchable";
-import { urls } from "@utils/urls";
-import { NavigatorName, ScreenName } from "../../../const";
-import ClaimRewardIcon from "../../../icons/ClaimReward";
-import DelegateIcon from "../../../icons/Delegate";
-import IlluRewards from "../../../icons/images/Rewards";
-import UndelegateIcon from "../../../icons/Undelegate";
+import AccountDelegationInfo from "~/components/AccountDelegationInfo";
+import AccountSectionLabel from "~/components/AccountSectionLabel";
+import Circle from "~/components/Circle";
+import DelegationDrawer, { IconProps } from "~/components/DelegationDrawer";
+import Touchable from "~/components/Touchable";
+import { urls } from "~/utils/urls";
+import { NavigatorName, ScreenName } from "~/const";
+import ClaimRewardIcon from "~/icons/ClaimReward";
+import DelegateIcon from "~/icons/Delegate";
+import IlluRewards from "~/icons/images/Rewards";
+import UndelegateIcon from "~/icons/Undelegate";
 import ValidatorImage from "../shared/ValidatorImage";
 import DelegationLabelRight from "./LabelRight";
 import DelegationRow from "./Row";
@@ -156,12 +156,12 @@ function Delegations({ account }: Props) {
             style={[styles.valueText]}
             color="live"
           >
-            {stake.activation.state}
+            {t(`solana.delegation.states.${stake.activation.state}`)}
           </Text>
         ),
       },
       {
-        label: "Active",
+        label: t("solana.delegation.stakeActivePercent"),
         Component: (
           <Text
             numberOfLines={1}
@@ -175,7 +175,7 @@ function Delegations({ account }: Props) {
         ),
       },
       {
-        label: "Available balance",
+        label: t("solana.delegation.stakeAvailableBalance"),
         Component: (
           <Text
             numberOfLines={1}
@@ -211,7 +211,7 @@ function Delegations({ account }: Props) {
         withdraw: rgba(colors.yellow, 0.2),
       });
       const drawerAction: DelegationDrawerActions[number] = {
-        label: capitalize(action),
+        label: t(`solana.delegation.actions.${action}`),
         Icon: (props: IconProps) => (
           <Circle {...props} bg={actionEnabled ? enabledActionCircleBgColor : colors.lightFog}>
             <DrawerStakeActionIcon stakeAction={action} enabled={actionEnabled} />
@@ -235,7 +235,15 @@ function Delegations({ account }: Props) {
       };
       return drawerAction;
     });
-  }, [selectedStakeWithMeta, colors.fog, colors.alert, colors.yellow, colors.lightFog, onNavigate]);
+  }, [
+    selectedStakeWithMeta,
+    colors.fog,
+    colors.alert,
+    colors.yellow,
+    colors.lightFog,
+    onNavigate,
+    t,
+  ]);
 
   const onDelegate = () => {
     onNavigate({

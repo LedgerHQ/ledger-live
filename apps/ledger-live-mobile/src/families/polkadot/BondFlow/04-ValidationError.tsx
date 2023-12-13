@@ -3,8 +3,8 @@ import { StyleSheet, SafeAreaView } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { TrackScreen } from "../../../analytics";
-import ValidateError from "../../../components/ValidateError";
+import { TrackScreen } from "~/analytics";
+import ValidateError from "~/components/ValidateError";
 
 type Props = {
   navigation: StackNavigationProp<Record<string, object | undefined>>;

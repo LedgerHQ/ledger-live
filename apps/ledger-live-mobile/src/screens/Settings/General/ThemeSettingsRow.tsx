@@ -3,12 +3,12 @@ import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Checkbox, Text } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
-import { themeSelector } from "../../../reducers/settings";
-import SettingsRow from "../../../components/SettingsRow";
-import Touchable from "../../../components/Touchable";
-import { setTheme } from "../../../actions/settings";
-import { Theme } from "../../../reducers/types";
-import QueuedDrawer from "../../../components/QueuedDrawer";
+import { themeSelector } from "~/reducers/settings";
+import SettingsRow from "~/components/SettingsRow";
+import Touchable from "~/components/Touchable";
+import { setTheme } from "~/actions/settings";
+import { Theme } from "~/reducers/types";
+import QueuedDrawer from "~/components/QueuedDrawer";
 
 const StyledTouchableThemeRow = styled(Touchable)`
   align-items: center;

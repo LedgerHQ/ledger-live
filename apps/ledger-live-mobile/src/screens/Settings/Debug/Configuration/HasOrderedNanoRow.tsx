@@ -1,9 +1,9 @@
 import React, { useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Switch } from "@ledgerhq/native-ui";
-import SettingsRow from "../../../../components/SettingsRow";
-import { setHasOrderedNano, setSensitiveAnalytics } from "../../../../actions/settings";
-import { hasOrderedNanoSelector } from "../../../../reducers/settings";
+import SettingsRow from "~/components/SettingsRow";
+import { setHasOrderedNano, setSensitiveAnalytics } from "~/actions/settings";
+import { hasOrderedNanoSelector } from "~/reducers/settings";
 
 const HasOrderedNanoRow = () => {
   const dispatch = useDispatch();

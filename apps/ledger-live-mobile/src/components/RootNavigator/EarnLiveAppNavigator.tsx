@@ -7,13 +7,13 @@ import { useRoute } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 
-import { ScreenName, NavigatorName } from "../../const";
-import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
+import { ScreenName, NavigatorName } from "~/const";
+import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import type { EarnLiveAppNavigatorParamList } from "./types/EarnLiveAppNavigator";
 import type { BaseComposite, StackNavigatorProps } from "./types/helpers";
-import { EarnScreen } from "../../screens/PTX/Earn";
-import { shallowAccountsSelector } from "../../reducers/accounts";
-import { EarnInfoDrawer } from "../../screens/PTX/Earn/EarnInfoDrawer";
+import { EarnScreen } from "~/screens/PTX/Earn";
+import { shallowAccountsSelector } from "~/reducers/accounts";
+import { EarnInfoDrawer } from "~/screens/PTX/Earn/EarnInfoDrawer";
 import { useStakingDrawer } from "../Stake/useStakingDrawer";
 
 const Stack = createStackNavigator<EarnLiveAppNavigatorParamList>();

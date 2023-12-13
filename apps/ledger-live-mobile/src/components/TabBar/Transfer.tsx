@@ -12,7 +12,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { useExperimental } from "../../experimental";
 import Config from "react-native-config";
-import { HEIGHT as ExperimentalHeaderHeight } from "../../screens/Settings/Experimental/ExperimentalHeader";
+import { HEIGHT as ExperimentalHeaderHeight } from "~/screens/Settings/Experimental/ExperimentalHeader";
 import proxyStyled, { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import styled, { useTheme } from "styled-components/native";
@@ -21,12 +21,12 @@ import Touchable from "../Touchable";
 import TransferDrawer from "./TransferDrawer";
 import { lockSubject } from "../RootNavigator/CustomBlockRouterNavigator";
 import { MAIN_BUTTON_BOTTOM, MAIN_BUTTON_SIZE } from "./shared";
-import { useTrack } from "../../analytics";
-import { readOnlyModeEnabledSelector } from "../../reducers/settings";
+import { useTrack } from "~/analytics";
+import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 
-import lightAnimSource from "../../animations/mainButton/light.json";
-import darkAnimSource from "../../animations/mainButton/dark.json";
-import { AnalyticsContext } from "../../analytics/AnalyticsContext";
+import lightAnimSource from "~/animations/mainButton/light.json";
+import darkAnimSource from "~/animations/mainButton/dark.json";
+import { AnalyticsContext } from "~/analytics/AnalyticsContext";
 
 const MainButton = proxyStyled(Touchable).attrs({
   backgroundColor: "primary.c80",

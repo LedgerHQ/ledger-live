@@ -8,8 +8,8 @@ import {
   learnCardsSelector,
   notificationsCardsSelector,
   walletCardsSelector,
-} from "../reducers/dynamicContent";
-import { dismissedDynamicCardsSelector } from "../reducers/settings";
+} from "~/reducers/dynamicContent";
+import { dismissedDynamicCardsSelector } from "~/reducers/settings";
 import {
   AssetContentCard,
   Background,
@@ -19,8 +19,8 @@ import {
   WalletContentCard,
   ContentCard as LedgerContentCard,
 } from "./types";
-import { track } from "../analytics";
-import { setDismissedDynamicCards } from "../actions/settings";
+import { track } from "~/analytics";
+import { setDismissedDynamicCards } from "~/actions/settings";
 
 export const getMobileContentCards = (array: BrazeContentCard[]) =>
   array.filter(elem => !elem.extras.platform || elem.extras.platform === "mobile");

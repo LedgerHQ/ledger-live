@@ -7,12 +7,12 @@ import { BigNumber } from "bignumber.js";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 import { ELROND_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/elrond/constants";
 
-import CounterValue from "../../../../../../../../components/CounterValue";
-import ArrowRight from "../../../../../../../../icons/ArrowRight";
-import LText from "../../../../../../../../components/LText";
-import LedgerLogo from "../../../../../../../../icons/LiveLogo";
-import FirstLetterIcon from "../../../../../../../../components/FirstLetterIcon";
-import Circle from "../../../../../../../../components/Circle";
+import CounterValue from "~/components/CounterValue";
+import ArrowRight from "~/icons/ArrowRight";
+import LText from "~/components/LText";
+import LedgerLogo from "~/icons/LiveLogo";
+import FirstLetterIcon from "~/components/FirstLetterIcon";
+import Circle from "~/components/Circle";
 
 import type { DelegationPropsType } from "./types";
 

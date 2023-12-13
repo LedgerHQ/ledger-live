@@ -8,18 +8,15 @@ import { isLiveSupportedApp } from "@ledgerhq/live-common/apps/logic";
 import styled from "styled-components/native";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
 import { App } from "@ledgerhq/types-live";
-import { urls } from "@utils/urls";
+import { urls } from "~/utils/urls";
 
-import { NavigatorName, ScreenName } from "../../../const";
+import { NavigatorName, ScreenName } from "~/const";
 
 import AppIcon from "../AppsList/AppIcon";
 
-import QueuedDrawer from "../../../components/QueuedDrawer";
-import type {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
-import { ManagerNavigatorStackParamList } from "../../../components/RootNavigator/types/ManagerNavigator";
+import QueuedDrawer from "~/components/QueuedDrawer";
+import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { ManagerNavigatorStackParamList } from "~/components/RootNavigator/types/ManagerNavigator";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<ManagerNavigatorStackParamList, ScreenName.ManagerMain>

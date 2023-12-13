@@ -1,8 +1,8 @@
 import { ListAppsResult } from "@ledgerhq/live-common/apps/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
-import { ScreenName } from "../../../const";
-import { ManagerTab } from "../../../const/manager";
+import { ScreenName } from "~/const";
+import { ManagerTab } from "~/const/manager";
 import type { FirmwareUpdateProps } from "../../../screens/FirmwareUpdate";
 
 export type ManagerNavigatorStackParamList = {

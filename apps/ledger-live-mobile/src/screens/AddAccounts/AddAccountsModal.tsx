@@ -3,18 +3,18 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { Text } from "@ledgerhq/native-ui";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { NavigatorName } from "../../const";
-import { readOnlyModeEnabledSelector } from "../../reducers/settings";
+import { NavigatorName } from "~/const";
+import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 
-import QueuedDrawer from "../../components/QueuedDrawer";
-import { track, TrackScreen } from "../../analytics";
+import QueuedDrawer from "~/components/QueuedDrawer";
+import { track, TrackScreen } from "~/analytics";
 import AddAccountsModalCard from "./AddAccountsModalCard";
-import { BaseNavigation } from "../../components/RootNavigator/types/helpers";
+import { BaseNavigation } from "~/components/RootNavigator/types/helpers";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const setupLedgerImg = require("../../images/illustration/Shared/_SetupLedger.png");
+const setupLedgerImg = require("~/images/illustration/Shared/_SetupLedger.png");
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const syncCryptoImg = require("../../images/illustration/Shared/_SyncFromDesktop.png");
+const syncCryptoImg = require("~/images/illustration/Shared/_SyncFromDesktop.png");
 
 type Props = {
   navigation: BaseNavigation;
