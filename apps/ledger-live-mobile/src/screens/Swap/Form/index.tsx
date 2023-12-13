@@ -246,11 +246,13 @@ export function SwapForm({
         customDappURL: providerURL,
       });
     } else {
+      swapTransaction.transaction ? (swapTransaction.transaction.useAllAmount = false) : null;
       setConfirmed(true);
     }
   }, [
     exchangeRate,
     track,
+    swapTransaction.transaction,
     swapTransaction.swap.from,
     swapTransaction.swap.to.currency?.name,
     navigation,
