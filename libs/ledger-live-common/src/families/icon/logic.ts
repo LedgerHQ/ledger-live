@@ -7,8 +7,8 @@ import type { IconAccount, PRep, Transaction } from "./types";
 const { IconAmount } = IconService;
 import {
   BERLIN_TESTNET_NID,
-  ICON_API_ENDPOINT,
-  ICON_RPC_ENDPOINT,
+  ICON_INDEXER_ENDPOINT,
+  ICON_NODE_ENDPOINT,
   ICON_TESTNET_API_ENDPOINT,
   ICON_TESTNET_RPC_ENDPOINT,
   IISS_SCORE_ADDRESS,
@@ -54,7 +54,7 @@ export const getNonce = (a: IconAccount): number => {
     a.iconResources?.nonce || 0,
     lastPendingOp && typeof lastPendingOp.transactionSequenceNumber === "number"
       ? lastPendingOp.transactionSequenceNumber + 1
-      : 0
+      : 0,
   );
 
   return nonce;
@@ -75,7 +75,7 @@ export function isTestnet(currency: CryptoCurrency): boolean {
  * @param {currency} CryptoCurrency
  */
 export function getRpcUrl(currency: CryptoCurrency): string {
-  let rpcUrl = ICON_RPC_ENDPOINT;
+  let rpcUrl = ICON_NODE_ENDPOINT;
   if (isTestnet(currency)) {
     rpcUrl = ICON_TESTNET_RPC_ENDPOINT;
   }
@@ -88,7 +88,7 @@ export function getRpcUrl(currency: CryptoCurrency): string {
  * @param {currency} CryptoCurrency
  */
 export function getApiUrl(currency: CryptoCurrency): string {
-  let apiUrl = ICON_API_ENDPOINT;
+  let apiUrl = ICON_INDEXER_ENDPOINT;
   if (isTestnet(currency)) {
     apiUrl = ICON_TESTNET_API_ENDPOINT;
   }
@@ -106,13 +106,13 @@ export function getNid(currency: CryptoCurrency): number {
 export function formatPRepData(pRep: PRep): PRep {
   const iconUnit = IconAmount.Unit.ICX.toString();
   const prType = {
-    '0x0': PREP_TYPE.MAIN,
-    '0x1': PREP_TYPE.SUB,
-    '0x2': PREP_TYPE.CANDIDATE
+    "0x0": PREP_TYPE.MAIN,
+    "0x1": PREP_TYPE.SUB,
+    "0x2": PREP_TYPE.CANDIDATE,
   };
   return {
     ...pRep,
-    grade: prType[pRep.grade || ''],
+    grade: prType[pRep.grade || ""],
     bonded: new BigNumber(IconAmount.fromLoop(pRep.bonded as string, iconUnit)),
     delegated: new BigNumber(IconAmount.fromLoop(pRep.delegated as string, iconUnit)),
     power: new BigNumber(IconAmount.fromLoop(pRep.power as string, iconUnit)),
@@ -123,5 +123,4 @@ export function formatPRepData(pRep: PRep): PRep {
   };
 }
 
-export const defaultIISSContractAddress = (): string =>
-  IISS_SCORE_ADDRESS;
+export const defaultIISSContractAddress = (): string => IISS_SCORE_ADDRESS;

@@ -13,10 +13,7 @@ import type { IconAccount, Transaction, TransactionStatus } from "./types";
 import { isSelfTransaction, isValidAddress } from "./logic";
 import { IconNotEnoughVotingPower, IconVoteRequired } from "../../errors";
 
-const getTransactionStatus = async (
-  a: IconAccount,
-  t: Transaction
-): Promise<TransactionStatus> => {
+const getTransactionStatus = async (a: IconAccount, t: Transaction): Promise<TransactionStatus> => {
   const errors: any = {};
   const warnings: any = {};
   const useAllAmount = !!t.useAllAmount;
@@ -32,21 +29,17 @@ const getTransactionStatus = async (
     errors.amount = new NotEnoughBalance();
   }
 
-  const totalSpent = useAllAmount
-    ? a.balance
-    : new BigNumber(t.amount).plus(estimatedFees);
+  const totalSpent = useAllAmount ? a.balance : new BigNumber(t.amount).plus(estimatedFees);
 
-  const amount = useAllAmount
-    ? a.balance.minus(estimatedFees)
-    : new BigNumber(t.amount);
+  const amount = useAllAmount ? a.balance.minus(estimatedFees) : new BigNumber(t.amount);
 
-  if (t.mode === 'freeze' || t.mode === 'unfreeze' || t.mode === 'send') {
+  if (t.mode === "freeze" || t.mode === "unfreeze" || t.mode === "send") {
     if (amount.lte(0) && !t.useAllAmount) {
       errors.amount = new AmountRequired();
     }
   }
 
-  if (t.mode === 'send') {
+  if (t.mode === "send") {
     if (totalSpent.gt(a.balance)) {
       errors.amount = new NotEnoughBalance();
     }
@@ -60,18 +53,18 @@ const getTransactionStatus = async (
     }
   }
 
-  if (t.mode === 'freeze') {
+  if (t.mode === "freeze") {
     if (totalSpent.gt(a.balance.plus(unstake))) {
       errors.amount = new NotEnoughBalance();
     }
   }
-  if (t.mode === 'unfreeze') {
+  if (t.mode === "unfreeze") {
     if (t.amount.gt(a.iconResources.votingPower)) {
       errors.amount = new NotEnoughBalance();
     }
   }
 
-  if (t.mode === 'vote') {
+  if (t.mode === "vote") {
     if (t.votes?.length === 0) {
       errors.vote = new IconVoteRequired();
     }
@@ -81,7 +74,6 @@ const getTransactionStatus = async (
       errors.vote = new IconNotEnoughVotingPower();
     }
   }
-
 
   return Promise.resolve({
     errors,

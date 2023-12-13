@@ -3,14 +3,9 @@ import IconService from "icon-sdk-js";
 import type { PRep, Transaction } from "../types";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import { encodeOperationId } from "../../../operation";
-import { getAccountDetails, getHistory, submit, getLatestBlock } from "./apiCalls";
+import { getAccountBalance, getHistory, submit, getLatestBlockHeight } from "./apiCalls";
 import { formatPRepData, getRpcUrl } from "../logic";
-import {
-  GOVERNANCE_SCORE_ADDRESS,
-  IISS_SCORE_ADDRESS,
-  I_SCORE_UNIT,
-  STEP_LIMIT,
-} from "../constants";
+import { GOVERNANCE_SCORE_ADDRESS, IISS_SCORE_ADDRESS, STEP_LIMIT } from "../constants";
 const { HttpProvider } = IconService;
 const { IconBuilder, IconAmount } = IconService;
 const iconUnit = IconAmount.Unit.ICX.toString();
@@ -18,8 +13,8 @@ const iconUnit = IconAmount.Unit.ICX.toString();
  * Get account balances and nonce
  */
 export const getAccount = async (addr: string, url: string) => {
-  const { balance } = await getAccountDetails(addr, url);
-  const blockHeight = await getLatestBlock(url);
+  const balance = await getAccountBalance(addr, url);
+  const blockHeight = await getLatestBlockHeight(url);
   return {
     blockHeight: Number(blockHeight) || undefined,
     balance: new BigNumber(balance).decimalPlaces(2),

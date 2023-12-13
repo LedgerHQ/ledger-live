@@ -21,29 +21,20 @@ export const submit = async (txObj, currency) => {
   };
 };
 
-export const getAccountDetails = async (addr: string, url: string) => {
-  let balance = 0;
-  try {
-    const resp = await network({
-      method: "GET",
-      url: `${url}/addresses/details/${addr.toString()}?address=${addr.toString()}`,
-    });
-    const { status, data } = resp;
-    if (data?.balance) {
-      balance = data?.balance;
-    }
-    if (status !== 200) {
-      throw Error("Cannot get account details");
-    }
-  } catch (error) {
-    console.error(error);
+export const getAccountBalance = async (addr: string, url: string): Promise<string> => {
+  const resp = await network({
+    method: "GET",
+    url: `${url}/addresses/details/${addr.toString()}?address=${addr.toString()}`,
+  });
+  const { status, data } = resp;
+  const balance = data?.balance;
+  if (status !== 200) {
+    throw Error("Cannot get account details");
   }
-  return {
-    balance,
-  };
+  return balance;
 };
 
-export const getLatestBlock = async (url: string) => {
+export const getLatestBlockHeight = async (url: string) => {
   const resp = await network({
     method: "GET",
     url: `${url}/blocks`,

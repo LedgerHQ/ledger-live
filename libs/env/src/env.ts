@@ -239,7 +239,7 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Cardano API url",
   },
-  ICON_RPC_ENDPOINT: {
+  ICON_NODE_ENDPOINT: {
     parser: stringParser,
     def: "https://icon.coin.ledger.com/node/api/v3",
     desc: "ICON RPC url",
@@ -249,7 +249,7 @@ const envDefinitions = {
     def: "https://berlin.net.solidwallet.io/api/v3",
     desc: "ICON Berlin Testnet API url",
   },
-  ICON_API_ENDPOINT: {
+  ICON_INDEXER_ENDPOINT: {
     parser: stringParser,
     def: "https://tracker.icon.community/api/v1",
     desc: "ICON API url",
