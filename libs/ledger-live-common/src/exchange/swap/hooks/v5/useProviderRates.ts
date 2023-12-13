@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import { OnNoRatesCallback, RatesReducerState, SwapSelectorStateType } from "../../types";
 import { useFetchRates } from "./useFetchRates";
 import { SetExchangeRateCallback } from "../useSwapTransaction";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "../../../../featureFlags";
 import { useCallback } from "react";
 
 type Props = {

@@ -1,5 +1,5 @@
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "../../../../featureFlags";
 import { useIsCurrencySupported } from "./useIsCurrencySupported";
 import { useCallback, useState } from "react";
 
