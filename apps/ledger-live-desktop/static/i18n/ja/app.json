@@ -284,7 +284,7 @@
     "lend" : "レンディング",
     "catalog" : "アプリ一覧",
     "market" : "マーケット",
-    "recover" : "Ledger Recover"
+    "recover" : "[L] Recover"
   },
   "stars" : {
     "placeholder" : "お気に入りに登録したアカウントは、こちらに表示されます。",
@@ -764,6 +764,8 @@
     "energyTooltip" : "資産を凍結して、エネルギーを獲得",
     "delegatedTooltip" : "デリゲートされた資産は、投票プロセスで使用されます。これは、投票の総数を表します。",
     "undelegatingTooltip" : "デリゲートを解除した資産は、{{timelockInDays}}日間のロック期間後に再び利用可能になります。",
+    "claimableRewards" : "獲得可能な報酬",
+    "claimableRewardsTooltip" : "現在、USDC報酬の獲得申請は利用できません。サードパーティのウォレットを使用してください。",
     "banner" : {
       "redelegation" : {
         "title" : "ご存知でしたか？",
@@ -1166,11 +1168,13 @@
       },
       "pinContent" : {
         "title" : "PINコード",
+        "titleCompleted" : "PINコード設定済み",
         "description" : "他のパスワードやパスコードと同様に、PINを使用すると、{{productName}}のロックを解除し、不要なアクセスを防ぐことができます。",
         "continueOnDevice" : "{{productName}}にPINを設定"
       },
       "seedContent" : {
         "title" : "秘密のリカバリーフレーズ",
+        "titleCompleted" : "シークレットリカバリーフレーズ確認済み",
         "recoverSeed" : "Placeholder：Recover",
         "restoreSeed" : "資産のセキュリティを最大限に高めるため、必ずLedgerデバイスで生成したシークレットリカバリーフレーズを使用してください。\n\nシークレットリカバリーフレーズを持っていませんか？{{productName}}を使用して、新しいフレーズを生成してください。",
         "selection" : "最適な設定オプションを選択してください：",
@@ -1250,12 +1254,14 @@
       },
       "installApplications" : {
         "title" : "{{productName}}にアプリをインストール",
+        "titleCompleted" : "{{productName}}にアプリインストール済み",
         "install" : "インストール",
         "skip" : "後で",
         "info" : "{{deviceName}}のアプリはトランザクションの承認に使用されます。これはいつでも追加、または削除できます。"
       },
       "endOfSetup" : {
-        "title" : "セットアップの終了"
+        "title" : "セットアップの終了",
+        "titleCompleted" : "{{deviceName}}の準備完了"
       },
       "softwareCheckAllowSecureChannelDrawer" : {
         "title" : "「許可（Allow）」をタップして正規品チェックを開始"
@@ -1296,6 +1302,18 @@
       "title" : "Ledger Staxの次は何ですか？",
       "description" : "Infinity NFTを獲得したり、ロック画面をカスタマイズしたり、\n他の取引所から資産を転送したりできます。",
       "link" : "次のステップを見る"
+    },
+    "actions" : {
+      "buyCrypto" : {
+        "title" : "暗号資産を購入する",
+        "description" : "500種類以上のコインと、購入プロバイダーによる見積もりから、お好みに合わせて選択できます。",
+        "actionCompletedPopupLabel" : "購入済み暗号資産"
+      },
+      "assetsTransfer" : {
+        "title" : "資産をLedgerに転送する",
+        "description" : "Coinbaseやその他の取引所、またはウォレットから資産を簡単に転送できます。",
+        "actionCompletedPopupLabel" : "転送済み資産"
+      }
     }
   },
   "hideNftCollection" : {
@@ -1407,6 +1425,26 @@
       "earn" : {
         "title" : "ステーキング",
         "description" : "Ledgerで暗号資産を運用"
+      }
+    },
+    "recoverBanner" : {
+      "subscribeDone" : {
+        "title" : "お支払いカードの追加を完了する",
+        "description" : "Ledger Recoverを使用して確実に復元する。",
+        "primaryCta" : "カードを追加する",
+        "secondaryCta" : "後で"
+      },
+      "verifyIdentity" : {
+        "title" : "本人認証を完了する",
+        "description" : "Ledger Recoverを使用して確実に復元する。",
+        "primaryCta" : "認証する",
+        "secondaryCta" : "後で"
+      },
+      "connectDevice" : {
+        "title" : "Ledgerを接続する",
+        "description" : "Ledger Recoverまであと1歩です。",
+        "primaryCta" : "接続",
+        "secondaryCta" : "後で"
       }
     }
   },
@@ -1786,7 +1824,7 @@
       "capacity" : "容量",
       "used" : "使用中",
       "OSVersion" : "OSバージョン",
-      "genuine" : "お使いのデバイスは正規品です。",
+      "genuine" : "正規品チェック",
       "incomplete" : "一部のアプリが認識されませんでした。アンインストールしてから、再インストールしてください。"
     },
     "applist" : {
@@ -1903,10 +1941,12 @@
     "modal" : {
       "title" : "{{productName}}OSアップデート",
       "steps" : {
-        "preparingUpdate" : "設定とアプリのバックアップ",
+        "preparingUpdate" : "設定とアプリの\nバックアップ",
         "transferringUpdate" : "アップデートを{{productName}}に転送中",
         "prepare" : "アップデートの準備",
+        "prepareDone" : "アップデートの\nインストール準備が完了",
         "install" : "アップデートをインストール",
+        "installDone" : "アップデートが\nインストール済み",
         "restore" : "設定の復元",
         "apps" : "アプリの復元",
         "updateMCU" : "ファームウェアをアップデート",
@@ -1915,12 +1955,13 @@
         "osu" : "OSUをインストール中...",
         "flash-mcu" : "MCUをアップデート中...",
         "flash-bootloader" : "Bootloaderをアップデート中...",
-        "progress" : "アップデートをインストール中{{current}}/{{total}}",
+        "progress" : "アップデートをインストール中",
+        "progressStep" : "アップデートをインストール中{{current}}/{{total}}",
         "firmware" : "ファームウェアのアップデート中...",
         "flash" : "デバイスの準備中..."
       },
       "confirmIdentifier" : "識別子を確認する",
-      "confirmIdentifierText" : "「Install（インストール）」をタップするとOSのアップデートが始まります",
+      "confirmIdentifierText" : "「Install（インストール）」をタップして\nOSアップデートを開始",
       "identifier" : "識別子",
       "newFirmware" : "新しいファームウェア{{version}}",
       "confirmUpdate" : "アップデートをデバイスで確定してください。",
@@ -1928,10 +1969,11 @@
       "mcuFirst" : "デバイスからUSBケーブルを外す",
       "mcuSecond" : "USBケーブルを再接続し、{{repairProcessing}}画面が表示されるまで左ボタンを<1><0>長押し</0></1>",
       "mcuPin" : "アップデートが完了するまでお待ちください",
+      "mcuRestart" : "{{device}}は複数回再起動する場合があります。",
       "mcuSecondNanoX" : "<1><0> {{bootloaderOption}}</0></1>が表示されるまで左ボタンを長押しする。両方のボタンを押して、デバイスを確認して再接続します。",
       "mcuBlueFirst" : "ボタンを10秒間長押しして、デバイスの電源をオフにする。ボタンから指を離す。",
       "mcuBlueSecond" : "ブートオプションが表示されるまで、少なくとも5秒間ボタンを押し続けます。Bootloaderモードをタップしてください。",
-      "successTitle" : "{{deviceName}} OSは最新の状態です",
+      "successTitle" : "{{deviceName}} のOSは\n最新の状態です",
       "sucessCTAApps" : "アプリを再インストール",
       "SuccessCTANoApps" : "アプリをインストール",
       "cancelReinstallCTA" : "アップデートをインストール",
@@ -3554,6 +3596,9 @@
       }
     }
   },
+  "graph" : {
+    "noGraphWarning" : "このトークンでは、グラフを使用できません"
+  },
   "near" : {
     "account" : {
       "stakedBalance" : "ステーキング済み残高",
@@ -4099,8 +4144,7 @@
     "updateAvailable" : "Ledger Liveバージョン {{version}} へのアップデートが利用可能です。",
     "error" : "更新中にエラーが発生再度ダウンロードしてください",
     "reDownload" : "再度ダウンロード",
-    "nightlyWarning" : "このバージョンは自動更新できません。手動で最新バージョンをインストールしてください。",
-    "downloadNow" : "アップデートをダウンロード"
+    "nightlyWarning" : "このバージョンは自動更新できません。手動で最新バージョンをインストールしてください。"
   },
   "crash" : {
     "title" : "問題が発生しました。",
@@ -5257,6 +5301,18 @@
       "title" : "トランザクション手数料の支払いに十分なEGLDがありません",
       "description" : "EGLDをアカウントに送付し、トランザクションの支払いを行ってください。"
     },
+    "NotEnoughVTHO" : {
+      "title" : "VTHO資金が不足しています",
+      "description" : "アカウントに十分なVTHO資金があることをご確認ください。"
+    },
+    "MustBeVechain" : {
+      "title" : "VeChainアカウントではありません",
+      "description" : "コインがVTHOまたはVETであることをご確認ください"
+    },
+    "ImpossibleToCalculateAmountAndFees" : {
+      "title" : "金額と手数料を算出できません",
+      "description" : "金額と手数料を算出できません"
+    },
     "NotEnoughBalance" : {
       "title" : "資金が不足しています。",
       "description" : "アカウントに十分な資金があることを確認してください。"
@@ -5672,6 +5728,9 @@
     "CardanoNotEnoughFunds" : {
       "title" : "お支払いに十分な資金があることをご確認ください"
     },
+    "CardanoStakeKeyDepositError" : {
+      "title" : "デポジット用に{{depositAmount}}ADAを所有していることを確認してください"
+    },
     "StacksMemoTooLong" : {
       "title" : "メモの長さが長すぎます"
     },
@@ -5914,7 +5973,6 @@
     },
     "progress" : {
       "loading" : "読み込み中...",
-      "resolving" : "依存関係を解決しています",
       "progress" : "アプリのインストール中でもLedger Liveをお使いいただけます。",
       "disclaimer" : "Ledger Liveからいつでもアプリを追加または削除できます。",
       "skippedInfo" : "一部のアプリはご利用いただけません。{{ productName }}は今後開発予定です。",
