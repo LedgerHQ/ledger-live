@@ -29,7 +29,7 @@ import { useWebviewState } from "./helpers";
 import { getStoreValue, setStoreValue } from "~/renderer/store";
 import { NetworkErrorScreen } from "./NetworkError";
 import getUser from "~/helpers/user";
-import { openExchangeDrawer } from "~/renderer/actions/UI";
+import { openExchangeDrawer, closePlatformAppDrawer } from "~/renderer/actions/UI";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { TrackFunction } from "@ledgerhq/live-common/platform/tracking";
 
@@ -163,9 +163,11 @@ function useUiHook(
             exchangeType: ExchangeType[exchangeType],
             onResult: (nonce: string) => {
               onSuccess(nonce);
+              dispatch(closePlatformAppDrawer());
             },
             onCancel: (error: Error) => {
               onCancel(error);
+              dispatch(closePlatformAppDrawer());
             },
           }),
         );
