@@ -224,7 +224,7 @@ export const getOperationStatus = async (
     const date = new Date(timestamp);
 
     // -- THIS CAN BE REMOVED ONCE THE DATE ERROR HAS BEEN FIGURED OUT
-    if (date instanceof Date && !isNaN(date as unknown as number)) {
+    if (date instanceof Date && isNaN(date as unknown as number)) {
       log("Ethereum Date Error", "Date fetched from single operation with explorer is invalid", {
         blockHeight,
         blockHash,

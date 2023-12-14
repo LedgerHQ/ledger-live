@@ -2,4 +2,4 @@
 "live-mobile": patch
 ---
 
-update design recover banner
+bugfix: LIVE-10633
