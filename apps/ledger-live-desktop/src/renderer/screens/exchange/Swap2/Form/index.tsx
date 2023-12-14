@@ -227,7 +227,7 @@ const SwapForm = () => {
       exchangeRate?.providerURL && providerRedirectURLSearch.set("goToURL", moonpayURL.toString());
     } else {
       exchangeRate?.providerURL &&
-        providerRedirectURLSearch.set("goToURL", exchangeRate.providerURL || "");
+        providerRedirectURLSearch.set("customDappUrl", exchangeRate.providerURL || "");
     }
 
     providerRedirectURLSearch.set("returnTo", "/swap");
