@@ -19,24 +19,21 @@ const minBalanceNewAccount = parseCurrencyUnit(currency.units[0], "0.1");
 function expectCorrectBalanceChange(input: TransactionTestInput<Transaction>) {
   const { account, operation, accountBeforeTransaction } = input;
   expect(account.balance.toNumber()).toBe(
-    accountBeforeTransaction.balance.minus(operation.value).toNumber()
+    accountBeforeTransaction.balance.minus(operation.value).toNumber(),
   );
 }
 
 const checkSendableToEmptyAccount = (amount, recipient) => {
   if (isAccountEmpty(recipient) && amount.lte(minBalanceNewAccount)) {
-    invariant(
-      amount.gt(minBalanceNewAccount),
-      "not enough funds to send to new account"
-    );
+    invariant(amount.gt(minBalanceNewAccount), "not enough funds to send to new account");
   }
 };
 const iconSpec: AppSpec<Transaction> = {
   name: "Icon",
   currency: getCryptoCurrencyById("icon"),
   appQuery: {
-    model: DeviceModelId.nanoS,
-    appName: "Icon",
+    model: DeviceModelId.nanoSP,
+    appName: "ICON",
   },
   genericDeviceAction: acceptTransaction,
   testTimeout: 2 * 60 * 1000,
@@ -55,7 +52,7 @@ const iconSpec: AppSpec<Transaction> = {
     delete opExpected.blockHeight;
     delete opExpected.transactionSequenceNumber;
     botTest("optimistic operation matches", () =>
-      expect(toOperationRaw(operation)).toMatchObject(opExpected)
+      expect(toOperationRaw(operation)).toMatchObject(opExpected),
     );
   },
   mutations: [
@@ -65,14 +62,12 @@ const iconSpec: AppSpec<Transaction> = {
       transaction: ({ account, siblings, bridge }) => {
         invariant(account.spendableBalance.gt(0), "balance is 0");
         const sibling = pickSiblings(siblings, maxAccounts);
-        let amount = account.spendableBalance
-          .div(1.9 + 0.2 * Math.random())
-          .integerValue();
+        let amount = account.spendableBalance.div(1.9 + 0.2 * Math.random()).integerValue();
         checkSendableToEmptyAccount(amount, sibling);
         if (!sibling.used && amount.lt(ICON_MIN_SAFE)) {
           invariant(
             account.spendableBalance.gt(ICON_MIN_SAFE),
-            "send is too low to activate account"
+            "send is too low to activate account",
           );
           amount = ICON_MIN_SAFE;
         }
@@ -89,7 +84,7 @@ const iconSpec: AppSpec<Transaction> = {
           ],
         };
       },
-      test: (input) => {
+      test: input => {
         expectCorrectBalanceChange(input);
       },
     },

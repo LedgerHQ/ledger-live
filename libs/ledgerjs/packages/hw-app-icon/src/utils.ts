@@ -16,29 +16,28 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  ********************************************************************************/
-//@flow
 
-type Defer<T> = {
-  promise: Promise<T>;
-  resolve: T;
-  reject: any;
-};
+// type Defer<T> = {
+//   promise: Promise<T>;
+//   resolve: T;
+//   reject: any;
+// };
 
-export function defer<T>(): Defer<T> {
-  let resolve, reject;
-  const promise = new Promise(function (success, failure) {
-    resolve = success;
-    reject = failure;
-  }) as any;
-  if (!resolve || !reject) throw "defer() error"; // this never happens and is just to make flow happy
-  return { promise, resolve, reject };
-}
+// export function defer<T>(): Defer<T> {
+//   let resolve, reject;
+//   const promise = new Promise(function (success, failure) {
+//     resolve = success;
+//     reject = failure;
+//   }) as any;
+//   if (!resolve || !reject) throw "defer() error"; // this never happens and is just to make flow happy
+//   return { promise, resolve, reject };
+// }
 
 // TODO use bip32-path library
 export function splitPath(path: string): number[] {
   const result: any = [];
   const components = path.split("/");
-  components.forEach((element) => {
+  components.forEach(element => {
     let number = parseInt(element, 10);
     if (isNaN(number)) {
       return; // FIXME shouldn't it throws instead?
@@ -51,10 +50,7 @@ export function splitPath(path: string): number[] {
   return result;
 }
 
-export function foreach<T, A>(
-  arr: T[],
-  callback: (T, number) => Promise<A>
-): Promise<A[]> {
+export function foreach<T, A>(arr: T[], callback: (T, number) => Promise<A>): Promise<A[]> {
   function iterate(index, array, result) {
     if (index >= array.length) {
       return result;
@@ -67,33 +63,30 @@ export function foreach<T, A>(
   return Promise.resolve().then(() => iterate(0, arr, []));
 }
 
-export function doIf(
-  condition: boolean,
-  callback: () => any | Promise<any>
-): Promise<void> {
-  return Promise.resolve().then(() => {
-    if (condition) {
-      return callback();
-    }
-  });
-}
+// export function doIf(condition: boolean, callback: () => any | Promise<any>): Promise<void> {
+//   return Promise.resolve().then(() => {
+//     if (condition) {
+//       return callback();
+//     }
+//   });
+// }
 
-export function asyncWhile<T>(
-  predicate: () => boolean,
-  callback: () => Promise<T>
-): Promise<Array<T>> {
-  function iterate(result) {
-    if (!predicate()) {
-      return result;
-    } else {
-      return callback().then((res) => {
-        result.push(res);
-        return iterate(result);
-      });
-    }
-  }
-  return Promise.resolve([]).then(iterate);
-}
+// export function asyncWhile<T>(
+//   predicate: () => boolean,
+//   callback: () => Promise<T>,
+// ): Promise<Array<T>> {
+//   function iterate(result) {
+//     if (!predicate()) {
+//       return result;
+//     } else {
+//       return callback().then(res => {
+//         result.push(res);
+//         return iterate(result);
+//       });
+//     }
+//   }
+//   return Promise.resolve([]).then(iterate);
+// }
 
 export function hexToBase64(hexString: string) {
   return btoa(
@@ -101,6 +94,6 @@ export function hexToBase64(hexString: string) {
       .map(function (a) {
         return String.fromCharCode(parseInt(a, 16));
       })
-      .join("")
+      .join(""),
   );
 }

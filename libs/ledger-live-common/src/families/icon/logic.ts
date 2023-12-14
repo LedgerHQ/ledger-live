@@ -1,20 +1,12 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { getEnv } from "@ledgerhq/live-env";
 import { BigNumber } from "bignumber.js";
 import IconService from "icon-sdk-js";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
 import type { IconAccount, PRep, Transaction } from "./types";
 const { IconAmount } = IconService;
-import {
-  BERLIN_TESTNET_NID,
-  ICON_INDEXER_ENDPOINT,
-  ICON_NODE_ENDPOINT,
-  ICON_TESTNET_API_ENDPOINT,
-  ICON_TESTNET_RPC_ENDPOINT,
-  IISS_SCORE_ADDRESS,
-  MAINNET_NID,
-  PREP_TYPE,
-} from "./constants";
+import { BERLIN_TESTNET_NID, IISS_SCORE_ADDRESS, MAINNET_NID, PREP_TYPE } from "./constants";
 
 export const MAX_AMOUNT = 5000;
 
@@ -29,17 +21,14 @@ export const isValidAddress = (address: string): boolean => {
   return !!address.match(/^[a-z0-9]{42}$/);
 };
 
+/**
+ * Returns true if transaction is a self transaction
+ *
+ * @param {Account} a
+ * @param {Transaction} t
+ */
 export const isSelfTransaction = (a: Account, t: Transaction): boolean => {
   return t.recipient === a.freshAddress;
-};
-
-/**
- * Returns true if transaction amount is less than MAX AMOUNT and > 0
- *
- * @param {BigNumber} amount
- */
-export const specificCheck = (amount: BigNumber): boolean => {
-  return amount.gt(0) && amount.lte(MAX_AMOUNT);
 };
 
 /**
@@ -75,9 +64,9 @@ export function isTestnet(currency: CryptoCurrency): boolean {
  * @param {currency} CryptoCurrency
  */
 export function getRpcUrl(currency: CryptoCurrency): string {
-  let rpcUrl = ICON_NODE_ENDPOINT;
+  let rpcUrl = getEnv("ICON_NODE_ENDPOINT");
   if (isTestnet(currency)) {
-    rpcUrl = ICON_TESTNET_RPC_ENDPOINT;
+    rpcUrl = getEnv("ICON_TESTNET_RPC_ENDPOINT");
   }
   return rpcUrl;
 }
@@ -88,9 +77,9 @@ export function getRpcUrl(currency: CryptoCurrency): string {
  * @param {currency} CryptoCurrency
  */
 export function getApiUrl(currency: CryptoCurrency): string {
-  let apiUrl = ICON_INDEXER_ENDPOINT;
+  let apiUrl = getEnv("ICON_INDEXER_ENDPOINT");
   if (isTestnet(currency)) {
-    apiUrl = ICON_TESTNET_API_ENDPOINT;
+    apiUrl = getEnv("ICON_TESTNET_API_ENDPOINT");
   }
   return apiUrl;
 }

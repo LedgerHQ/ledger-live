@@ -70,11 +70,7 @@ function transactionToOperation(
     date: new Date(transaction.block_timestamp ? transaction.block_timestamp / 1000 : 0),
     senders: [transaction.from_address ?? ""],
     recipients: transaction.to_address ? [transaction.to_address] : [],
-    extra: {
-      method: transaction.method,
-      data: transaction.data,
-      txType: transaction.transaction_type,
-    },
+    extra: {},
     transactionSequenceNumber: isSender(transaction, addr) ? transaction.nonce : undefined,
     hasFailed: transaction.status !== "0x1",
   };
