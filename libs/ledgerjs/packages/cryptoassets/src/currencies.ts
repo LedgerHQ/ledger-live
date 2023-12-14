@@ -1480,7 +1480,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   icon_berlin_testnet: {
     type: "CryptoCurrency",
     id: "icon_berlin_testnet",
-    coinType: 4801368,
+    coinType: CoinType.ICON,
     name: "ICON Berlin Testnet",
     managerAppName: "ICON",
     ticker: "ICX",

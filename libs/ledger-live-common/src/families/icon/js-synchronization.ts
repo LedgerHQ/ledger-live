@@ -8,8 +8,7 @@ import { getApiUrl } from "./logic";
 import { getDelegation, getIScore, getStake } from "./api/sdk";
 import { IconResources } from "./types";
 
-
-const getAccountShape: GetAccountShape = async (info) => {
+const getAccountShape: GetAccountShape = async info => {
   const { address, initialAccount, currency, derivationMode } = info;
   const accountId = encodeAccountId({
     type: "js",
@@ -25,10 +24,7 @@ const getAccountShape: GetAccountShape = async (info) => {
   const url = getApiUrl(currency);
 
   // get the current account balance state depending your api implementation
-  const { blockHeight, balance, additionalBalance } = await getAccount(
-    address,
-    url
-  );
+  const { blockHeight, balance, additionalBalance } = await getAccount(address, url);
 
   // Merge new operations with the previously synced ones
   const newOperations = await getOperations(accountId, address, skip, url);
@@ -50,6 +46,7 @@ const getAccountShape: GetAccountShape = async (info) => {
   const shape = {
     id: accountId,
     balance: new BigNumber(balance),
+    spendableBalance: balance,
     operationsCount: operations.length,
     blockHeight,
     iconResources,

@@ -1,4 +1,5 @@
 import network from "@ledgerhq/live-network/network";
+import { BigNumber } from "bignumber.js";
 import IconService from "icon-sdk-js";
 import { LIMIT } from "../constants";
 import { getRpcUrl } from "../logic";
@@ -26,27 +27,19 @@ export const getAccountBalance = async (addr: string, url: string): Promise<stri
     method: "GET",
     url: `${url}/addresses/details/${addr.toString()}?address=${addr.toString()}`,
   });
-  const { status, data } = resp;
+  const { data } = resp;
   const balance = data?.balance;
-  if (status !== 200) {
-    throw Error("Cannot get account details");
-  }
   return balance;
 };
 
-export const getLatestBlockHeight = async (url: string) => {
+export const getLatestBlockHeight = async (url: string): Promise<BigNumber> => {
   const resp = await network({
     method: "GET",
     url: `${url}/blocks`,
   });
-  const { status, data } = resp;
-  let blockHeight = null;
+  const { data } = resp;
+  const blockHeight = data[0]?.number;
 
-  blockHeight = data[0]?.number;
-
-  if (status !== 200) {
-    throw Error("Cannot get account details");
-  }
   return blockHeight;
 };
 
