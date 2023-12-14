@@ -2292,6 +2292,13 @@
     "confirmation": "Confirm removal of image on your Ledger Stax",
     "success": "Lock screen picture removed"
   },
+  "changeCustomLockscreen": {
+    "cta": "Change"
+  },
+  "removeCurrentPicture": {
+    "cta": "Remove current picture"
+  },
+  "appsInstallingDisabledTooltip": "Disabled until apps finish installing",
   "deviceLocalization": {
     "language": "Language",
     "deviceLanguage": "Change Device Language",
