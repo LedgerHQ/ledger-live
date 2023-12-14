@@ -6,7 +6,7 @@ import useDynamicContent from "./dynamicContent";
 import { BrazeContentCard, CategoryContentCard, LocationContentCard } from "./types";
 import ContentCardsCategory from "./ContentCardsCategory";
 import { FeatureToggle } from "@ledgerhq/live-config/lib/featureFlags/index";
-import { compareCards } from "~/dynamicContent/utils";
+import { compareCards } from "./utils";
 
 type Props = FlexBoxProps & {
   locationId: LocationContentCard;

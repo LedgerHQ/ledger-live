@@ -19,7 +19,7 @@ import {
   mapAsCategoryContentCard,
   getMobileContentCards,
   compareCards,
-} from "./utils";
+} from "../contentCards/cards/utils";
 import { LocationContentCard, ContentCardsType, BrazeContentCard } from "./types";
 
 export const useDynamicContentLogic = () => {
