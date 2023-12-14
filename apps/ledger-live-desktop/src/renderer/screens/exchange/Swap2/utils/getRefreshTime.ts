@@ -1,5 +1,5 @@
+import { DEFAULT_SWAP_RATES_INTERVAL_MS } from "@ledgerhq/live-common/exchange/swap/const/timeout";
 import { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
-import { ratesExpirationThreshold } from "~/renderer/reducers/swap";
 
 const getMinimumExpirationTime = (rates: ExchangeRate[]): number => {
   return rates.reduce((acc, rate) => {
@@ -12,8 +12,8 @@ export const getRefreshTime = (rates: ExchangeRate[] | undefined) => {
   const minimumExpirationTime = rates ? getMinimumExpirationTime(rates) : null;
   if (minimumExpirationTime) {
     const timeMs = minimumExpirationTime - Date.now();
-    return Math.min(timeMs, ratesExpirationThreshold);
+    return Math.min(timeMs, DEFAULT_SWAP_RATES_INTERVAL_MS);
   } else {
-    return ratesExpirationThreshold;
+    return DEFAULT_SWAP_RATES_INTERVAL_MS;
   }
 };
