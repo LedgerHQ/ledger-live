@@ -1,6 +1,6 @@
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
-import { reduce, filter, map } from "rxjs/operators";
+import { reduce, filter, map, delay } from "rxjs/operators";
 import flatMap from "lodash/flatMap";
 import omit from "lodash/omit";
 import { InvalidAddress, RecipientRequired, AmountRequired } from "@ledgerhq/errors";
@@ -32,6 +32,47 @@ import type {
 } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { firstValueFrom } from "rxjs";
+const { createHash } = require("crypto");
+const fs = require("fs");
+const nock = require("nock");
+
+import { EntryType, PerformanceObserver, PerformanceObserverCallback } from "node:perf_hooks";
+import { createMock, initBackendMocks, StdRequest } from "./bridgeMocker";
+
+const useBackendMocks = true;
+
+const requests: any = [];
+
+function reqToStdRequest(nodeRequest: any, nodeResponse: any): StdRequest {
+  return {
+    method: nodeRequest.method,
+    url: nodeRequest.url,
+    headers: nodeRequest.headers,
+    body: nodeRequest.body || {},
+    fileName: sha256(`${nodeRequest.method}${nodeRequest.url}`),
+    response: nodeResponse,
+  };
+}
+
+function sha256(str) {
+  return createHash("sha256").update(str).digest("hex");
+}
+
+const onPerformanceEntry: PerformanceObserverCallback = (items, _observer) => {
+  const entries = items.getEntries();
+  for (const entry of entries) {
+    if (entry.entryType === "http") {
+      const req = (entry as any).detail?.req;
+      const res = (entry as any).detail?.res;
+      if (res && req) {
+        if (req.url !== "http://localhost/apdu") {
+          console.log(entry.toJSON());
+          requests.push(reqToStdRequest(req, res));
+        }
+      }
+    }
+  }
+};
 
 const warnDev = process.env.CI ? (..._args) => {} : (...msg) => console.warn(...msg);
 // FIXME move out into DatasetTest to be defined in
@@ -55,11 +96,43 @@ export function syncAccount<T extends TransactionCommon>(
   account: Account,
   syncConfig: SyncConfig = defaultSyncConfig,
 ): Promise<Account> {
-  return firstValueFrom(
-    bridge
-      .sync(account, syncConfig)
-      .pipe(reduce((a, f: (arg0: Account) => Account) => f(a), account)),
+  if (useBackendMocks) {
+    //initBackendMocks();
+  }
+
+  delay(5000);
+
+  const promise = initBackendMocks().then(() =>
+    firstValueFrom(
+      bridge
+        .sync(account, syncConfig)
+        .pipe(reduce((a, f: (arg0: Account) => Account) => f(a), account)),
+    ),
   );
+  if (useBackendMocks) {
+    // nock.disableNetConnect();
+    promise.finally(() => {
+      console.log(nock.activeMocks());
+    });
+  }
+
+  if (!useBackendMocks) {
+    const performanceObserver = new PerformanceObserver(onPerformanceEntry);
+    performanceObserver.observe({ entryTypes: ["http", "http2"] });
+    promise.finally(() => {
+      performanceObserver.disconnect();
+      for (const request of requests) {
+        const dir =
+          __dirname + "/bridgeMocks/" + account.currency.family + "/" + account.currency.id;
+        if (!fs.existsSync(dir)) {
+          fs.mkdirSync(dir, { recursive: true });
+        }
+        createMock(request, `${dir}/${request.fileName}.json`).then(() => {});
+        // fs.writeFileSync(dir + "/" + request.fileName + ".json", JSON.stringify(request));
+      }
+    });
+  }
+  return promise;
 }
 
 export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): void {

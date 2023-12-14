@@ -1,0 +1,31 @@
+{
+  "method": "GET",
+  "url": "https://stargaze-api.polkachu.com/cosmos/staking/v1beta1/delegations/stars1gyauvl44q2apn3u3aujm36q8zrj74vrypyf2yc",
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "x-ledger-client-version": "ll-ci/0.0.0",
+    "user-agent": "axios/0.26.1",
+    "host": "stargaze-api.polkachu.com"
+  },
+  "body": {},
+  "fileName": "1a3295201b2e5ecd55e23b58f28199557e79557daf387611ab124eca6dd62535",
+  "response": {
+    "statusCode": 200,
+    "statusMessage": "OK",
+    "headers": {
+      "date": "Wed, 13 Dec 2023 14:08:22 GMT",
+      "content-type": "application/json",
+      "content-length": "97",
+      "connection": "keep-alive",
+      "grpc-metadata-x-cosmos-block-height": "11343558",
+      "x-server-time": "1702476502",
+      "cf-cache-status": "DYNAMIC",
+      "report-to": "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=Y8JKI6FmhIRs8hRH470exZ2uca7WvZvqd9BnbLCFBicondHSL4mFKSjGFOQdYUlXLvNPgw0HGqJndT5qTTnrAmbkG673y0cnFJRETO4sdlK3fF7ojMPghGDBF0Sy1EwyWR6mepWqdFGYrHzK%2F86N7Slcn5JsVMyg\"}],\"group\":\"cf-nel\",\"max_age\":604800}",
+      "nel": "{\"success_fraction\":0,\"report_to\":\"cf-nel\",\"max_age\":604800}",
+      "server": "cloudflare",
+      "cf-ray": "834ec75a5a49016d-CDG",
+      "alt-svc": "h3=\":443\"; ma=86400"
+    },
+    "body": { "delegation_responses": [], "pagination": { "next_key": null, "total": "0" } }
+  }
+}
