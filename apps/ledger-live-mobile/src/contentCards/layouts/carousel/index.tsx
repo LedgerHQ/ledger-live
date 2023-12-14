@@ -13,24 +13,34 @@ import { ContentLayoutBuilder } from "~/contentCards/layouts/utils";
 import Pagination from "./pagination";
 import { ContentCardItem } from "~/contentCards/cards/types";
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
+export enum WidthFactor {
+  Full = 1,
+  Quarter = 0.72,
+  Half = 0.5,
+}
+
 type Props = {
   styles?: {
     gap?: number;
     pagination?: boolean;
+    widthFactor?: 1 | 0.725 | 0.5;
   };
 };
 
 const defaultStyles = {
   gap: 6,
   pagination: true,
+  widthFactor: 1,
 };
 
-const Carousel = ContentLayoutBuilder<Props>(({ items, styles = defaultStyles }) => {
-  const { width } = useWindowDimensions();
+const Carousel = ContentLayoutBuilder<Props>(({ items, styles: _styles = defaultStyles }) => {
+  const styles = {
+    gap: _styles.gap ?? defaultStyles.gap,
+    pagination: _styles.pagination ?? defaultStyles.pagination,
+    widthFactor: _styles.widthFactor ?? defaultStyles.widthFactor,
+  };
 
-  styles.gap = styles.gap ?? defaultStyles.gap;
-  styles.pagination = styles.pagination ?? defaultStyles.pagination;
+  const width = useWindowDimensions().width * styles.widthFactor;
 
   const separatorWidth = useTheme().space[styles.gap];
 
@@ -42,6 +52,8 @@ const Carousel = ContentLayoutBuilder<Props>(({ items, styles = defaultStyles })
     const newIndex = Math.round(contentOffsetX / (width - separatorWidth * 1.5));
     if (newIndex !== carouselIndex) setCarouselIndex(newIndex);
   };
+
+  console.log(styles.widthFactor < 0.725);
 
   return (
     <View style={{ flex: 1, gap: 8 }}>
@@ -73,7 +85,9 @@ const Carousel = ContentLayoutBuilder<Props>(({ items, styles = defaultStyles })
         )}
       />
 
-      {styles.pagination && <Pagination items={items} carouselIndex={carouselIndex} />}
+      {styles.pagination && styles.widthFactor >= WidthFactor.Quarter && (
+        <Pagination items={items} carouselIndex={carouselIndex} />
+      )}
     </View>
   );
 });
