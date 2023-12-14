@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.37.0-next.2
+
+### Patch Changes
+
+- [#5757](https://github.com/LedgerHQ/ledger-live/pull/5757) [`6acc636`](https://github.com/LedgerHQ/ledger-live/commit/6acc636c081002909330e27385821f4fd68c41f3) Thanks [@KVNLS](https://github.com/KVNLS)! - Fix Recover banner margin
+
 ## 3.37.0-next.1
 
 ### Patch Changes
