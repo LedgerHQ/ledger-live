@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 33.4.0-nightly.0
+
+### Minor Changes
+
+- [#5697](https://github.com/LedgerHQ/ledger-live/pull/5697) [`78e7aa2`](https://github.com/LedgerHQ/ledger-live/commit/78e7aa26e4d35091abbb32084b0fa748085b38e3) Thanks [@Justkant](https://github.com/Justkant)! - feat(wallet-api): add new optional fields for polkadot
+
 ## 33.3.0
 
 ### Minor Changes

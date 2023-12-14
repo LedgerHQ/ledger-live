@@ -1,5 +1,14 @@
 # live-mobile
 
+## 3.36.1-nightly.0
+
+### Patch Changes
+
+- [#5735](https://github.com/LedgerHQ/ledger-live/pull/5735) [`0c40675`](https://github.com/LedgerHQ/ledger-live/commit/0c40675b6cb62fbf8d200cd0043d6e4a4edd94e3) Thanks [@CremaFR](https://github.com/CremaFR)! - bugfix: LIVE-10633
+
+- Updated dependencies [[`78e7aa2`](https://github.com/LedgerHQ/ledger-live/commit/78e7aa26e4d35091abbb32084b0fa748085b38e3)]:
+  - @ledgerhq/live-common@33.4.0-nightly.0
+
 ## 3.36.0
 
 ### Minor Changes
