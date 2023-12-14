@@ -8,7 +8,7 @@ import { listenDevices } from "./listenDevices";
 
 const LOG_TYPE = "hid-verbose";
 
-let transportInstance;
+let transportInstance: TransportNodeHidSingleton | null = null;
 
 const DISCONNECT_TIMEOUT = 5000;
 let disconnectTimeout;
