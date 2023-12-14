@@ -25,7 +25,7 @@ Previous versions and pre-releases can be downloaded on here from the [Releases]
 
 ### Compatibility
 
-Ledger Live System Requirements can be found [on this page](https://support.ledger.com/hc/en-us/articles/4403310017041-Ledger-Live-system-requirements-?docs=true)
+Ledger Live System Requirements can be found [on this page](https://support.ledger.com/hc/en-us/articles/4403310017041-Ledger-Live-system-requirements-?docs=true).
 
 ## Signed hashes
 
