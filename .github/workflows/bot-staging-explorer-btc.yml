@@ -31,7 +31,7 @@ jobs:
         id: bot
         timeout-minutes: 120
         with:
-          EXPLORER: https://explorers.api-01.live.ledger-stg.com
+          EXPLORER: https://atlas-stg.ledger-test.com
           SHOW_LEGACY_NEW_ACCOUNT: "1"
           SEED: ${{ secrets.SEED2 }}
           SLACK_API_TOKEN: ${{secrets.SLACK_API_TOKEN}}
