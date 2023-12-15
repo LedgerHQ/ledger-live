@@ -143,7 +143,7 @@ The applications are user-facing programs which depend on one or more libraries.
 
 ### `/libs` - Libraries
 
-Libraries are public packages which purpose is to be consumed by other libraries or applications.
+Libraries serve as publicly available packages to be consumed by other libraries or applications.
 They are deployed to the official npm repository under the `@ledgerhq` organization.
 
 <details><summary><b>Ledger Live Libraries</b></summary>
