@@ -136,6 +136,12 @@ describe("EVM Family", () => {
     });
 
     describe("getStuckAccountAndOperation", () => {
+      it("should return undefined for non evm account", () => {
+        const account = genAccount("myAccount", { currency: cardano });
+
+        expect(getStuckAccountAndOperation(account, undefined)).toBe(undefined);
+      });
+
       it("should return undefined if the pending transaction is not older than 5 minutes", () => {
         const account = genAccount("myAccount", { currency: ethereum });
         const tokenAccount = genTokenAccount(0, account, usdc);
@@ -155,57 +161,130 @@ describe("EVM Family", () => {
         expect(getStuckAccountAndOperation(account, undefined)).toBe(undefined);
       });
 
-      it("should return pending transaction if the pending transaction is older than 5 minutes", () => {
-        const account = genAccount("myAccount", { currency: ethereum });
-        const tokenAccount = genTokenAccount(0, account, usdc);
-        const transactionRaw = {
-          family: "evm",
-          amount: "1",
-          recipient: "MockRecipient",
-        };
-        const pendingOperation = {
-          ...genOperation(account, tokenAccount, account.operations, new Prando("")),
-          transactionRaw,
-          blockHeight: null,
-          value: new BigNumber(0),
-          date: new Date(1986, 0, 1),
-          transactionSequenceNumber: 0,
-        };
-        account.pendingOperations.push(pendingOperation);
-        expect(
-          getStuckAccountAndOperation(account, undefined)?.operation.transactionSequenceNumber,
-        ).toBe(0);
+      describe("pending transaction is a coin transaction", () => {
+        it("should return pending transaction if the pending transaction is older than 5 minutes", () => {
+          const account = genAccount("myAccount", { currency: ethereum });
+          const tokenAccount = genTokenAccount(0, account, usdc);
+          const transactionRaw = {
+            family: "evm",
+            amount: "1",
+            recipient: "MockRecipient",
+          };
+          const pendingOperation = {
+            ...genOperation(account, tokenAccount, account.operations, new Prando("")),
+            transactionRaw,
+            blockHeight: null,
+            value: new BigNumber(0),
+            date: new Date(1986, 0, 1),
+            transactionSequenceNumber: 0,
+          };
+          account.pendingOperations.push(pendingOperation);
+
+          const res = getStuckAccountAndOperation(account, undefined);
+
+          expect(res?.operation.transactionSequenceNumber).toBe(0);
+          expect(res?.account?.id).toBe(account.id);
+          expect(res?.parentAccount).toBe(undefined);
+        });
+
+        it("should return the oldest pending transaction if there are multiple pending transactions. The transactions are sorted by transactionSequenceNumber", () => {
+          const account = genAccount("myAccount", { currency: ethereum });
+          const tokenAccount = genTokenAccount(0, account, usdc);
+          const transactionRaw = {
+            family: "evm",
+            amount: "1",
+            recipient: "MockRecipient",
+          };
+          const pendingOperation1 = {
+            ...genOperation(account, tokenAccount, account.operations, new Prando("")),
+            transactionRaw,
+            blockHeight: null,
+            value: new BigNumber(0),
+            date: new Date(1986, 0, 1),
+            transactionSequenceNumber: 1,
+          };
+          const pendingOperation2 = {
+            ...pendingOperation1,
+            transactionSequenceNumber: 0,
+          };
+          const pendingOperation3 = {
+            ...pendingOperation1,
+            transactionSequenceNumber: 2,
+          };
+          account.pendingOperations.push(pendingOperation1, pendingOperation2, pendingOperation3);
+
+          expect(account.pendingOperations.length).toBe(3);
+
+          const res = getStuckAccountAndOperation(account, undefined);
+
+          expect(res?.operation.transactionSequenceNumber).toBe(0);
+          expect(res?.account.id).toBe(account.id);
+          expect(res?.parentAccount).toBe(undefined);
+        });
       });
 
-      it("should return the oldest pending transaction if there are multiple pending transactions. The transactions are sorted by transactionSequenceNumber", () => {
-        const account = genAccount("myAccount", { currency: ethereum });
-        const tokenAccount = genTokenAccount(0, account, usdc);
-        const transactionRaw = {
-          family: "evm",
-          amount: "1",
-          recipient: "MockRecipient",
-        };
-        const pendingOperation1 = {
-          ...genOperation(account, tokenAccount, account.operations, new Prando("")),
-          transactionRaw,
-          blockHeight: null,
-          value: new BigNumber(0),
-          date: new Date(1986, 0, 1),
-          transactionSequenceNumber: 1,
-        };
-        const pendingOperation2 = {
-          ...pendingOperation1,
-          transactionSequenceNumber: 0,
-        };
-        const pendingOperation3 = {
-          ...pendingOperation1,
-          transactionSequenceNumber: 2,
-        };
-        account.pendingOperations.push(pendingOperation1, pendingOperation2, pendingOperation3);
-        expect(account.pendingOperations.length).toBe(3);
-        expect(
-          getStuckAccountAndOperation(account, undefined)?.operation.transactionSequenceNumber,
-        ).toBe(0);
+      describe("pending transaction is a token transaction", () => {
+        it("should return pending transaction if the pending transaction is older than 5 minutes", () => {
+          const account = genAccount("myAccount", { currency: ethereum });
+          const tokenAccount = genTokenAccount(0, account, usdc);
+          const transactionRaw = {
+            family: "evm",
+            amount: "1",
+            recipient: "MockRecipient",
+            subAccountId: tokenAccount.id,
+          };
+          const pendingOperation = {
+            ...genOperation(account, tokenAccount, account.operations, new Prando("")),
+            transactionRaw,
+            blockHeight: null,
+            value: new BigNumber(0),
+            date: new Date(1986, 0, 1),
+            transactionSequenceNumber: 0,
+          };
+          account.pendingOperations.push(pendingOperation);
+
+          const res = getStuckAccountAndOperation(tokenAccount, account);
+
+          expect(res?.operation.transactionSequenceNumber).toBe(0);
+          expect(res?.account?.id).toBe(tokenAccount.id);
+          expect(res?.parentAccount?.id).toBe(account.id);
+        });
+
+        it("should return the oldest pending transaction if there are multiple pending transactions. The transactions are sorted by transactionSequenceNumber", () => {
+          const account = genAccount("myAccount", { currency: ethereum });
+          const tokenAccount = genTokenAccount(0, account, usdc);
+          const transactionRaw = {
+            family: "evm",
+            amount: "1",
+            recipient: "MockRecipient",
+            subAccountId: tokenAccount.id,
+          };
+          const pendingOperation1 = {
+            ...genOperation(account, tokenAccount, account.operations, new Prando("")),
+            transactionRaw,
+            blockHeight: null,
+            value: new BigNumber(0),
+            date: new Date(1986, 0, 1),
+            transactionSequenceNumber: 1,
+          };
+          const pendingOperation2 = {
+            ...pendingOperation1,
+            transactionSequenceNumber: 0,
+          };
+          const pendingOperation3 = {
+            ...pendingOperation1,
+            transactionSequenceNumber: 2,
+          };
+          account.pendingOperations.push(pendingOperation1, pendingOperation2, pendingOperation3);
+
+          expect(account.pendingOperations.length).toBe(3);
+
+          const res = getStuckAccountAndOperation(tokenAccount, account);
+
+          expect(res?.operation.transactionSequenceNumber).toBe(0);
+          expect(res?.account?.id).toBe(tokenAccount.id);
+          expect(res?.parentAccount?.id).toBe(account.id);
+        });
       });
     });
   });
