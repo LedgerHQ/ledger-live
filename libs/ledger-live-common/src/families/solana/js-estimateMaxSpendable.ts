@@ -12,7 +12,7 @@ export const estimateFeeAndSpendable = async (
   transaction?: Transaction | undefined | null,
 ): Promise<{ fee: number; spendable: BigNumber }> => {
   const txKind = transaction?.model.kind ?? "transfer";
-  const txFee = await estimateTxFee(api, account, txKind);
+  const txFee = await estimateTxFee(api, account.freshAddress, txKind);
 
   const spendableBalance = BigNumber.max(account.spendableBalance.minus(txFee), 0);
 
@@ -28,8 +28,8 @@ export const estimateFeeAndSpendable = async (
     case "stake.createAccount": {
       const stakeAccRentExempt = await getStakeAccountMinimumBalanceForRentExemption(api);
       const unstakeReserve =
-        (await estimateTxFee(api, account, "stake.undelegate")) +
-        (await estimateTxFee(api, account, "stake.withdraw"));
+        (await estimateTxFee(api, account.freshAddress, "stake.undelegate")) +
+        (await estimateTxFee(api, account.freshAddress, "stake.withdraw"));
 
       return {
         fee: txFee + stakeAccRentExempt,
