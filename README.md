@@ -211,7 +211,7 @@ While you explore these projects, here are some key points to keep in mind:
 
 - Follow the git workflow, prefix your branches and do not create unnecessary merge commits.
 - Be mindful when creating Pull Requests, clearly specify the purpose of your changes and include tests where applicable.
-- Ledger Applications are mostly accepting bugfix contributions. Feature contributions are subject to review; they may be declined if they do not fit our roadmap or our long-term goals.
+- Ledger Applications are mostly accepting bugfix contributions. Feature contributions are subject to review; they may be declined if they don't align with our roadmap or our long-term goals.
 
 ## Nightly Releases
 
