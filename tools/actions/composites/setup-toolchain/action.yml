@@ -32,7 +32,7 @@ inputs:
   turbo-server-token:
     description: "custom token for local s3 server"
     required: false
-    default: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+    default: "yolo"
 outputs:
   port:
     description: "The port the local server runs on"
