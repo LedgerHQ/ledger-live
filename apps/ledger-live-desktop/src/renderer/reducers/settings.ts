@@ -313,9 +313,9 @@ const handlers: SettingsHandlers = {
     ...state,
     lastSeenDevice: state.lastSeenDevice
       ? {
-        ...state.lastSeenDevice,
-        deviceInfo: payload.deviceInfo,
-      }
+          ...state.lastSeenDevice,
+          deviceInfo: payload.deviceInfo,
+        }
       : undefined,
   }),
 
@@ -421,13 +421,13 @@ export type CurrencySettings = {
 
 type ConfirmationDefaults = {
   confirmationsNb:
-  | {
-    min: number;
-    def: number;
-    max: number;
-  }
-  | undefined
-  | null;
+    | {
+        min: number;
+        def: number;
+        max: number;
+      }
+    | undefined
+    | null;
 };
 
 export const currencySettingsDefaults = (c: Currency): ConfirmationDefaults => {

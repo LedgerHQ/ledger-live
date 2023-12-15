@@ -207,21 +207,23 @@ export const useDefaultSlides = (): {
     [portfolioCards, cachedContentCards],
   );
 
-  const dismissCard = useCallback((index: number) => {
-    if (portfolioCards && portfolioCards.length > index) {
-      const slide = portfolioCards[index];
-      if (slide?.id) {
-        const currentCard = cachedContentCards.find(card => card.id === slide.id);
+  const dismissCard = useCallback(
+    (index: number) => {
+      if (portfolioCards && portfolioCards.length > index) {
+        const slide = portfolioCards[index];
+        if (slide?.id) {
+          const currentCard = cachedContentCards.find(card => card.id === slide.id);
 
-        if (currentCard) {
-          braze.logCardDismissal(currentCard);
-          setCachedContentCards(cachedContentCards.filter(n => n.id !== currentCard.id));
-          dispatch(setPortfolioCards(portfolioCards.filter(n => n.id !== slide.id)));
+          if (currentCard) {
+            braze.logCardDismissal(currentCard);
+            setCachedContentCards(cachedContentCards.filter(n => n.id !== currentCard.id));
+            dispatch(setPortfolioCards(portfolioCards.filter(n => n.id !== slide.id)));
+          }
         }
       }
-    }
-  }, [portfolioCards, cachedContentCards]);
-
+    },
+    [portfolioCards, cachedContentCards, dispatch],
+  );
 
   const logSlideClick = useCallback(
     (cardId: string) => {

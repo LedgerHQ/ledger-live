@@ -176,13 +176,12 @@ const Carousel = ({
   );
 
   const onDismiss = useCallback(() => {
-    console.log("ON DISMISS", index, slides[index]);
-    dismissCard(index);
-    track("contentcards_dismissed", {
+    track("contentcard_dismissed", {
       card: slides[index].id,
       page: "Portfolio",
     });
-  }, [index, slides]);
+    dismissCard(index);
+  }, [index, slides, dismissCard]);
 
   const onNext = useCallback(() => {
     setReverse(false);
