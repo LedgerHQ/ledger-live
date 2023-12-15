@@ -19,9 +19,10 @@ import Transport from "@ledgerhq/hw-transport";
 // Subscriptions to bulk exchanges
 const exchangeBulkSubscriptions = new Map<string, { unsubscribe: () => void }>();
 
+// Subscriptions to Transport listen
 const transportListenListeners = new Map<string, { unsubscribe: () => void }>();
 
-const cachedTransports = new Map<DeviceId, Transport>();
+const transportForDevices = new Map<DeviceId, Transport>();
 
 export const transportOpen = async ({ data, requestId }: MessagesMap["transport:open"]) => {
   const { descriptor, timeoutMs, context } = data;
@@ -33,7 +34,7 @@ export const transportOpen = async ({ data, requestId }: MessagesMap["transport:
   // TODO: device what to put in tracer context
   tracer.trace("Received open transport request", { descriptor, timeoutMs });
 
-  const existingTransport = cachedTransports.get(descriptor);
+  const existingTransport = transportForDevices.get(descriptor);
 
   const onEnd = () => {
     process.send?.({
@@ -54,17 +55,17 @@ export const transportOpen = async ({ data, requestId }: MessagesMap["transport:
   // the IPCTransport in the renderer process, and the opened transport instance here in the internal process.
   try {
     const transport = await open(descriptor, timeoutMs, tracer.getContext());
-    // TODO: listen to disconnect and other events from transport ?
     transport.on("disconnect", () => {
       tracer.trace("Event disconnect on transport instance. Cleaning cached transport", {
         descriptor,
       });
 
-      cachedTransports.delete(descriptor);
-      // TODO: should we do more ?
+      // A disconnect event means the transport has been closed
+      // We only need to clear the transport from the mapping
+      transportForDevices.delete(descriptor);
     });
 
-    cachedTransports.set(data.descriptor, transport);
+    transportForDevices.set(data.descriptor, transport);
     onEnd();
   } catch (error) {
     tracer.trace(`Error while opening transport: ${error}`, { error });
@@ -85,7 +86,7 @@ export const transportExchange = async ({ data, requestId }: MessagesMap["transp
   tracer.trace("transport:exchange message received", { data });
 
   const { descriptor, apduHex, abortTimeoutMs, context } = data;
-  const transport = cachedTransports.get(descriptor);
+  const transport = transportForDevices.get(descriptor);
 
   if (!transport) {
     tracer.trace("No open transport for the given descriptor");
@@ -105,8 +106,6 @@ export const transportExchange = async ({ data, requestId }: MessagesMap["transp
 
   try {
     const response = await transport.exchange(Buffer.from(apduHex, "hex"), { abortTimeoutMs });
-
-    tracer.trace(`exchange: response`, { response });
 
     process.send?.({
       type: transportExchangeChannel,
@@ -134,7 +133,7 @@ export const transportExchangeBulk = ({
   });
   tracer.trace("transport:exchangeBulk message received", { data });
 
-  const transport = cachedTransports.get(data.descriptor);
+  const transport = transportForDevices.get(data.descriptor);
   if (!transport) {
     tracer.trace("No open transport for the given descriptor");
 
@@ -199,7 +198,7 @@ export const transportExchangeBulkUnsubscribe = ({
   });
   tracer.trace("transport:exchangeBulk:unsubscribe message received", { data });
 
-  const transport = cachedTransports.get(data.descriptor);
+  const transport = transportForDevices.get(data.descriptor);
   if (!transport) {
     tracer.trace("No open transport for the given descriptor");
 
@@ -269,7 +268,7 @@ export const transportClose = async ({ data, requestId }: MessagesMap["transport
   });
   tracer.trace("transport:close message received", { data });
 
-  const transport = cachedTransports.get(data.descriptor);
+  const transport = transportForDevices.get(data.descriptor);
   if (!transport) {
     tracer.trace("No open transport for the given descriptor");
 
@@ -290,7 +289,7 @@ export const transportClose = async ({ data, requestId }: MessagesMap["transport
     tracer.trace(`Error while closing transport: ${error}`, { error });
   }
 
-  cachedTransports.delete(data.descriptor);
+  transportForDevices.delete(data.descriptor);
 
   process.send?.({
     type: transportCloseChannel,
