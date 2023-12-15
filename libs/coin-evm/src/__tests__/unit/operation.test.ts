@@ -40,6 +40,38 @@ describe("EVM Family", () => {
           expect(isEditableOperation(account, operation)).toBe(false);
         });
 
+        it("if the operation is the FEES operation associated to a token operation", () => {
+          const account = genAccount("myAccount", { currency: ethereum });
+          const tokenAccount = genTokenAccount(0, account, usdc);
+          const operation: Operation = {
+            ...genOperation(account, tokenAccount, account.operations, new Prando("")),
+            type: "FEES",
+            subOperations: [
+              genOperation(account, tokenAccount, account.operations, new Prando("")),
+            ],
+            value: new BigNumber(0),
+            blockHeight: 1,
+          };
+
+          expect(isEditableOperation(account, operation)).toBe(false);
+        });
+
+        it("if the operation is the FEES operation associated to a nft operation", () => {
+          const account = genAccount("myAccount", { currency: ethereum });
+          const tokenAccount = genTokenAccount(0, account, usdc);
+          const operation: Operation = {
+            ...genOperation(account, tokenAccount, account.operations, new Prando("")),
+            type: "FEES",
+            nftOperations: [
+              genOperation(account, tokenAccount, account.operations, new Prando("")),
+            ],
+            value: new BigNumber(0),
+            blockHeight: 1,
+          };
+
+          expect(isEditableOperation(account, operation)).toBe(false);
+        });
+
         it("if the transactionRaw is not filled", () => {
           const account = genAccount("myAccount", { currency: ethereum });
           const tokenAccount = genTokenAccount(0, account, usdc);
