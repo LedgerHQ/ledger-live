@@ -45,18 +45,6 @@ export default function WebPlatformPlayer({ manifest, inputs, onClose, config, .
     props.onStateChange?.(state);
   };
 
-  useEffect(() => {
-    const i = setInterval(
-      () => webviewAPIRef.current?.notify("event.custom.test", "random message"),
-      2000,
-    );
-
-    return () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      clearInterval(i as any);
-    };
-  }, [webviewAPIRef]);
-
   return (
     <Container>
       <Wrapper>
