@@ -2,7 +2,7 @@ import { captureException, getSentryIfAvailable } from "../sentry/internal";
 import { unsubscribeSetup } from "./live-common-setup";
 import { setEnvUnsafe } from "@ledgerhq/live-env";
 import { serializeError } from "@ledgerhq/errors";
-import { log } from "@ledgerhq/logs";
+import { log, trace } from "@ledgerhq/logs";
 import sentry, { setTags } from "~/sentry/internal";
 import {
   transportClose,
@@ -23,6 +23,7 @@ import {
   transportOpenChannel,
 } from "~/config/transportChannels";
 import { Message } from "./types";
+import { LOG_TYPE_INTERNAL } from "./logger";
 
 process.on("exit", () => {
   console.debug("exiting process, unsubscribing all...");
@@ -59,13 +60,69 @@ if (INITIAL_SENTRY_TAGS) {
 process.on("message", async (m: Message) => {
   switch (m.type) {
     case transportOpenChannel:
-      await transportOpen(m);
+      transportOpen(m).subscribe({
+        next: response => {
+          process.send?.({
+            type: transportOpenChannel,
+            requestId: m.requestId,
+            ...response,
+          });
+        },
+        error: error => {
+          trace({
+            type: LOG_TYPE_INTERNAL,
+            message: `Unhandled error: ${error}`,
+            data: { error },
+            context: { function: "transportOpen" },
+          });
+        },
+      });
       break;
     case transportExchangeChannel:
-      await transportExchange(m);
+      transportExchange(m).subscribe({
+        next: response => {
+          process.send?.({
+            type: transportExchangeChannel,
+            requestId: m.requestId,
+            ...response,
+          });
+        },
+        error: error => {
+          trace({
+            type: LOG_TYPE_INTERNAL,
+            message: `Unhandled error: ${error}`,
+            data: { error },
+            context: { function: "transportExchangeChannel" },
+          });
+        },
+      });
+
       break;
     case transportExchangeBulkChannel:
-      transportExchangeBulk(m);
+      transportExchangeBulk(m).subscribe({
+        next: response => {
+          process.send?.({
+            type: transportExchangeBulkChannel,
+            requestId: m.requestId,
+            ...response,
+          });
+        },
+        error: error => {
+          trace({
+            type: LOG_TYPE_INTERNAL,
+            message: `Unhandled error: ${error}`,
+            data: { error },
+            context: { function: "transportExchangeChannel" },
+          });
+        },
+        complete: () => {
+          process.send?.({
+            type: transportExchangeBulkChannel,
+            requestId: m.requestId,
+          });
+        },
+      });
+
       break;
     case transportExchangeBulkUnsubscribeChannel:
       transportExchangeBulkUnsubscribe(m);

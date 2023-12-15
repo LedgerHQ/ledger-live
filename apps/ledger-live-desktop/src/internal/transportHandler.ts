@@ -4,9 +4,6 @@ import { open } from "@ledgerhq/live-common/hw/index";
 import { DisconnectedDeviceDuringOperation, serializeError } from "@ledgerhq/errors";
 import {
   transportCloseChannel,
-  transportExchangeChannel,
-  transportExchangeBulkChannel,
-  transportOpenChannel,
   transportExchangeBulkUnsubscribeChannel,
   transportListenChannel,
 } from "~/config/transportChannels";
@@ -24,165 +21,185 @@ const transportListenListeners = new Map<string, { unsubscribe: () => void }>();
 
 const transportForDevices = new Map<DeviceId, Transport>();
 
-export const transportOpen = async ({ data, requestId }: MessagesMap["transport:open"]) => {
-  const { descriptor, timeoutMs, context } = data;
-  const tracer = new LocalTracer(LOG_TYPE_INTERNAL, {
-    ipcContext: context,
-    requestId,
-    function: "transportOpen",
-  });
-  // TODO: device what to put in tracer context
-  tracer.trace("Received open transport request", { descriptor, timeoutMs });
-
-  const existingTransport = transportForDevices.get(descriptor);
-
-  const onEnd = () => {
-    process.send?.({
-      type: transportOpenChannel,
-      data,
+export type TransportOpenResponse =
+  | {
+      data: MessagesMap["transport:open"]["data"];
+    }
+  | {
+      error: ReturnType<typeof serializeError>;
+    };
+export const transportOpen = ({
+  data,
+  requestId,
+}: MessagesMap["transport:open"]): Observable<TransportOpenResponse> => {
+  return new Observable(subscriber => {
+    const { descriptor, timeoutMs, context } = data;
+    const tracer = new LocalTracer(LOG_TYPE_INTERNAL, {
+      ipcContext: context,
       requestId,
+      function: "transportOpen",
     });
-  };
+    // TODO: device what to put in tracer context
+    tracer.trace("Received open transport request", { descriptor, timeoutMs });
 
-  // If already exists simply return success
-  if (existingTransport) {
-    tracer.trace("Transport instance already exists for the given descriptor", { descriptor });
-    return onEnd();
-  }
+    const existingTransport = transportForDevices.get(descriptor);
 
-  // No withDevice or withTransport in the internal process, the transport management
-  // is handled in the renderer process. We have a 1 <-> 1 relationship between
-  // the IPCTransport in the renderer process, and the opened transport instance here in the internal process.
-  try {
-    const transport = await open(descriptor, timeoutMs, tracer.getContext());
-    transport.on("disconnect", () => {
-      tracer.trace("Event disconnect on transport instance. Cleaning cached transport", {
-        descriptor,
+    const onEnd = () => {
+      subscriber.next({
+        data,
       });
 
-      // A disconnect event means the transport has been closed
-      // We only need to clear the transport from the mapping
-      transportForDevices.delete(descriptor);
-    });
+      subscriber.complete();
+    };
 
-    transportForDevices.set(data.descriptor, transport);
-    onEnd();
-  } catch (error) {
-    tracer.trace(`Error while opening transport: ${error}`, { error });
+    // If already exists simply return success
+    if (existingTransport) {
+      tracer.trace("Transport instance already exists for the given descriptor", { descriptor });
+      return onEnd();
+    }
 
-    process.send?.({
-      type: transportOpenChannel,
-      error: serializeError(error as Parameters<typeof serializeError>[0]),
-      requestId,
-    });
-  }
-};
+    // No withDevice or withTransport in the internal process, the transport management
+    // is handled in the renderer process. We have a 1 <-> 1 relationship between
+    // the IPCTransport in the renderer process, and the opened transport instance here in the internal process.
+    open(descriptor, timeoutMs, tracer.getContext())
+      .then(transport => {
+        transport.on("disconnect", () => {
+          tracer.trace("Event disconnect on transport instance. Cleaning cached transport", {
+            descriptor,
+          });
 
-export const transportExchange = async ({ data, requestId }: MessagesMap["transport:exchange"]) => {
-  const tracer = new LocalTracer(LOG_TYPE_INTERNAL, {
-    requestId,
-    function: "transportExchange",
+          // A disconnect event means the transport has been closed
+          // We only need to clear the transport from the mapping
+          transportForDevices.delete(descriptor);
+        });
+
+        transportForDevices.set(data.descriptor, transport);
+        onEnd();
+      })
+      .catch(error => {
+        tracer.trace(`Error while opening transport: ${error}`, { error });
+
+        subscriber.next({
+          error: serializeError(error as Parameters<typeof serializeError>[0]),
+        });
+        subscriber.complete();
+      });
   });
-  tracer.trace("transport:exchange message received", { data });
-
-  const { descriptor, apduHex, abortTimeoutMs, context } = data;
-  const transport = transportForDevices.get(descriptor);
-
-  if (!transport) {
-    tracer.trace("No open transport for the given descriptor");
-
-    process.send?.({
-      type: transportExchangeChannel,
-      error: serializeError(
-        new DisconnectedDeviceDuringOperation("No open transport for the given descriptor"),
-      ),
-      requestId,
-    });
-    return;
-  }
-
-  // TODO: is it a good place to update the transport context ?
-  transport.updateTraceContext({ ipcContext: { context }, requestId });
-
-  try {
-    const response = await transport.exchange(Buffer.from(apduHex, "hex"), { abortTimeoutMs });
-
-    process.send?.({
-      type: transportExchangeChannel,
-      data: response.toString("hex"),
-      requestId,
-    });
-  } catch (error) {
-    tracer.trace(`exchange: error - ${error}`, { error });
-
-    process.send?.({
-      type: transportExchangeChannel,
-      error: serializeError(error as Parameters<typeof serializeError>[0]),
-      requestId,
-    });
-  }
 };
 
+export type TransportExchange =
+  | {
+      data: string;
+    }
+  | {
+      error: ReturnType<typeof serializeError>;
+    };
+export const transportExchange = ({
+  data,
+  requestId,
+}: MessagesMap["transport:exchange"]): Observable<TransportExchange> => {
+  return new Observable(subscriber => {
+    const tracer = new LocalTracer(LOG_TYPE_INTERNAL, {
+      requestId,
+      function: "transportExchange",
+    });
+    tracer.trace("transport:exchange message received", { data });
+
+    const { descriptor, apduHex, abortTimeoutMs, context } = data;
+    const transport = transportForDevices.get(descriptor);
+
+    if (!transport) {
+      tracer.trace("No open transport for the given descriptor");
+
+      subscriber.next({
+        error: serializeError(
+          new DisconnectedDeviceDuringOperation("No open transport for the given descriptor"),
+        ),
+      });
+      subscriber.complete();
+      return;
+    }
+
+    // TODO: is it a good place to update the transport context ?
+    transport.updateTraceContext({ ipcContext: { context }, requestId });
+
+    transport
+      .exchange(Buffer.from(apduHex, "hex"), { abortTimeoutMs })
+      .then(response => {
+        subscriber.next({
+          data: response.toString("hex"),
+        });
+      })
+      .catch(error => {
+        tracer.trace(`exchange: error - ${error}`, { error });
+
+        subscriber.next({
+          error: serializeError(error as Parameters<typeof serializeError>[0]),
+        });
+      });
+  });
+};
+
+export type TransportExchangeBulk =
+  | {
+      data: string;
+    }
+  | {
+      error: ReturnType<typeof serializeError>;
+    };
 export const transportExchangeBulk = ({
   data,
   requestId,
-}: MessagesMap["transport:exchangeBulk"]) => {
-  const tracer = new LocalTracer(LOG_TYPE_INTERNAL, {
-    requestId,
-    function: "transportExchangeBulk",
-  });
-  tracer.trace("transport:exchangeBulk message received", { data });
-
-  const transport = transportForDevices.get(data.descriptor);
-  if (!transport) {
-    tracer.trace("No open transport for the given descriptor");
-
-    process.send?.({
-      type: transportExchangeBulkChannel,
-      error: serializeError(
-        new DisconnectedDeviceDuringOperation("No open transport for the given descriptor"),
-      ),
+}: MessagesMap["transport:exchangeBulk"]): Observable<TransportExchangeBulk> => {
+  return new Observable(subscriber => {
+    const tracer = new LocalTracer(LOG_TYPE_INTERNAL, {
       requestId,
+      function: "transportExchangeBulk",
+    });
+    tracer.trace("transport:exchangeBulk message received", { data });
+
+    const transport = transportForDevices.get(data.descriptor);
+    if (!transport) {
+      tracer.trace("No open transport for the given descriptor");
+
+      subscriber.next({
+        error: serializeError(
+          new DisconnectedDeviceDuringOperation("No open transport for the given descriptor"),
+        ),
+      });
+
+      return;
+    }
+    // apduHex isn't used for bulk case
+    // subject.next({ type: "exchangeBulk", apdusHex: data.apdusHex, requestId });
+    // transport.exchangeBulk();
+    const { apdusHex } = data;
+
+    const apdus = apdusHex.map(apduHex => Buffer.from(apduHex, "hex"));
+    const subscription = transport.exchangeBulk(apdus, {
+      next: response => {
+        tracer.trace("exchangeBulk: next", { response: response.toString("hex") });
+
+        subscriber.next({
+          data: response.toString("hex"),
+        });
+      },
+      error: error => {
+        tracer.trace(`exchangeBulk: error - ${error}`, { error });
+
+        subscriber.next({
+          error: serializeError(error as Parameters<typeof serializeError>[0]),
+        });
+      },
+      complete: () => {
+        tracer.trace("exchangeBulk: complete");
+
+        subscriber.complete();
+      },
     });
 
-    return;
-  }
-  // apduHex isn't used for bulk case
-  // subject.next({ type: "exchangeBulk", apdusHex: data.apdusHex, requestId });
-  // transport.exchangeBulk();
-  const { apdusHex } = data;
-
-  const apdus = apdusHex.map(apduHex => Buffer.from(apduHex, "hex"));
-  const subscription = transport.exchangeBulk(apdus, {
-    next: response => {
-      tracer.trace("exchangeBulk: next", { response: response.toString("hex") });
-
-      process.send?.({
-        type: transportExchangeBulkChannel,
-        data: response.toString("hex"),
-        requestId,
-      });
-    },
-    error: error => {
-      tracer.trace(`exchangeBulk: error - ${error}`, { error });
-
-      process.send?.({
-        type: transportExchangeBulkChannel,
-        error: serializeError(error as Parameters<typeof serializeError>[0]),
-        requestId,
-      });
-    },
-    complete: () => {
-      tracer.trace("exchangeBulk: complete");
-
-      process.send?.({
-        type: transportExchangeBulkChannel,
-        requestId,
-      });
-    },
+    exchangeBulkSubscriptions.set(requestId, subscription);
   });
-
-  exchangeBulkSubscriptions.set(requestId, subscription);
 };
 
 /**
