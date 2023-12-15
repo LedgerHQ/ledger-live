@@ -327,7 +327,10 @@ export default class Transport {
    * @returns a Promise resolving with the output of the given job
    */
   async exchangeAtomicImpl<Output>(f: () => Promise<Output>): Promise<Output> {
-    const tracer = this.tracer.withUpdatedContext({ function: "exchangeAtomicImpl" });
+    const tracer = this.tracer.withUpdatedContext({
+      function: "exchangeAtomicImpl",
+      unresponsiveTimeout: this.unresponsiveTimeout,
+    });
 
     if (this.exchangeBusyPromise) {
       tracer.trace("Atomic exchange is already busy");
