@@ -34,7 +34,7 @@ cd ledger-live
 
 ### Proto
 
-**⚠️ Important**: In order to use install the right version of the tools you will need to install the [`proto`](https://moonrepo.dev/proto) toolchain manager.
+**⚠️ Important**: In order to install the right version of the tools you will need to install the [`proto`](https://moonrepo.dev/proto) toolchain manager.
 Please follow the instructions on the [**proto**](https://moonrepo.dev/docs/proto/install) website to install it.
 
 Once you have installed `proto`, please run the following command:
