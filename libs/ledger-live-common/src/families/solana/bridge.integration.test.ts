@@ -1051,6 +1051,7 @@ async function runStakeTest(stakeTestSpec: StakeTestSpec) {
           },
         } as SolanaStake,
       ],
+      unstakeReserve: BigNumber(0),
     },
   };
 

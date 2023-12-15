@@ -1,3 +1,4 @@
+import BigNumber from "bignumber.js";
 import {
   Account,
   AccountRaw,
@@ -212,10 +213,12 @@ export type SolanaStakeWithMeta = {
 
 export type SolanaResources = {
   stakes: SolanaStake[];
+  unstakeReserve: BigNumber;
 };
 
 export type SolanaResourcesRaw = {
   stakes: string;
+  unstakeReserve: BigNumber;
 };
 
 export type SolanaValidator = {

@@ -215,8 +215,7 @@ export const getAccountShapeWithAPI = async (
 
   const mainAccountRentExempt = await getAccountMinimumBalanceForRentExemption(api, mainAccAddress);
 
-  let unstakeReserves = 0;
-
+  let unstakeReserve = 0;
   if (stakes.length > 0) {
     const undelegateFee = await estimateTxFee(api, mainAccAddress, "stake.undelegate");
     const withdrawFee = await estimateTxFee(api, mainAccAddress, "stake.withdraw");
@@ -227,7 +226,7 @@ export const getAccountShapeWithAPI = async (
 
     // "active" and "activating" stakes require "deactivating" + "withdrawing" steps
     // "inactive" and "deactivating" stakes require withdrawing only
-    unstakeReserves = stakes.length * withdrawFee + activeStakes.length * undelegateFee;
+    unstakeReserve = stakes.length * withdrawFee + activeStakes.length * undelegateFee;
   }
 
   const shape: Partial<SolanaAccount> = {
@@ -238,13 +237,17 @@ export const getAccountShapeWithAPI = async (
     blockHeight,
     balance: mainAccBalance.plus(totalStakedBalance),
     spendableBalance: BigNumber.max(
-      mainAccBalance.minus(mainAccountRentExempt).minus(unstakeReserves),
+      mainAccBalance.minus(mainAccountRentExempt).minus(unstakeReserve),
       0,
     ),
     operations: mainAccTotalOperations,
     operationsCount: mainAccTotalOperations.length,
     solanaResources: {
       stakes: sortedStakes,
+      unstakeReserve: BigNumber.min(
+        unstakeReserve,
+        BigNumber.max(mainAccBalance.minus(mainAccountRentExempt), 0),
+      ),
     },
   };
 
