@@ -48,6 +48,7 @@ import {
   toTokenAccountWithInfo,
 } from "./api/chain/web3";
 import { drainSeq } from "./utils";
+import { estimateTxFee } from "./tx-fees";
 import { SolanaAccount, SolanaOperationExtra, SolanaStake } from "./types";
 import { Account, Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
 
@@ -214,6 +215,21 @@ export const getAccountShapeWithAPI = async (
 
   const mainAccountRentExempt = await getAccountMinimumBalanceForRentExemption(api, mainAccAddress);
 
+  let unstakeReserves = 0;
+
+  if (stakes.length > 0) {
+    const undelegateFee = await estimateTxFee(api, mainAccAddress, "stake.undelegate");
+    const withdrawFee = await estimateTxFee(api, mainAccAddress, "stake.withdraw");
+
+    const activeStakes = stakes.filter(
+      s => s.activation.state == "active" || s.activation.state == "activating",
+    );
+
+    // "active" and "activating" stakes require "deactivating" + "withdrawing" steps
+    // "inactive" and "deactivating" stakes require withdrawing only
+    unstakeReserves = stakes.length * withdrawFee + activeStakes.length * undelegateFee;
+  }
+
   const shape: Partial<SolanaAccount> = {
     // uncomment when tokens are supported
     // subAccounts as undefined makes TokenList disappear in desktop
@@ -221,7 +237,10 @@ export const getAccountShapeWithAPI = async (
     id: mainAccountId,
     blockHeight,
     balance: mainAccBalance.plus(totalStakedBalance),
-    spendableBalance: BigNumber.max(mainAccBalance.minus(mainAccountRentExempt), 0),
+    spendableBalance: BigNumber.max(
+      mainAccBalance.minus(mainAccountRentExempt).minus(unstakeReserves),
+      0,
+    ),
     operations: mainAccTotalOperations,
     operationsCount: mainAccTotalOperations.length,
     solanaResources: {
