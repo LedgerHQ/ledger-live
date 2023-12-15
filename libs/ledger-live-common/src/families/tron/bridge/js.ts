@@ -667,7 +667,10 @@ const getTransactionStatus = async (a: TronAccount, t: Transaction): Promise<Tra
 
   if (mode === "withdrawExpireUnfreeze") {
     const now = new Date();
-    if (!a.tronResources.unFrozen.bandwidth && !a.tronResources.unFrozen.energy) {
+    if (
+      (!a.tronResources.unFrozen.bandwidth || a.tronResources.unFrozen.bandwidth.length === 0) &&
+      (!a.tronResources.unFrozen.energy || a.tronResources.unFrozen.energy.length === 0)
+    ) {
       errors.resource = new TronNoUnfrozenResource();
     } else {
       const unfreezingResources = [
