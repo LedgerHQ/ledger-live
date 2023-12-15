@@ -14,14 +14,19 @@ import {
   PriorityFeeTooHigh,
   PriorityFeeTooLow,
   RecipientRequired,
+  ReplacementTransactionUnderpriced,
 } from "@ledgerhq/errors";
 import { ProtoNFT } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import fc from "fast-check";
 import { NotEnoughNftOwned, NotOwnedNft, QuantityNeedsToBePositive } from "../../errors";
-import getTransactionStatus from "../../getTransactionStatus";
+import getTransactionStatus, { validateEditTransaction } from "../../getTransactionStatus";
 import { EvmTransactionEIP1559, EvmTransactionLegacy, GasOptions, Transaction } from "../../types";
 import { makeAccount, makeTokenAccount } from "../fixtures/common.fixtures";
+import {
+  getMinEip1559Fees,
+  getMinLegacyFees,
+} from "../../editTransaction/getMinEditTransactionFees";
 
 const recipient = "0xe2ca7390e76c5A992749bB622087310d2e63ca29"; // rambo.eth
 const testData = Buffer.from("testBufferString").toString("hex");
@@ -861,7 +866,273 @@ describe("EVM Family", () => {
       });
     });
 
-    describe("validateEditTransaction", () => {});
+    describe("validateEditTransaction", () => {
+      describe("Transaction Type: Legacy", () => {
+        const updatedLegacyTx: EvmTransactionLegacy = {
+          ...legacyTx,
+          gasPrice: legacyTx.gasPrice.plus(100),
+        };
+
+        describe("when no editType provided", () => {
+          it("should not have error or warning", () => {
+            const res = validateEditTransaction({
+              transaction: updatedLegacyTx,
+              transactionToUpdate: legacyTx,
+            });
+
+            expect(res.errors).toEqual({});
+            expect(res.warnings).toEqual({});
+          });
+        });
+
+        describe("when no gasPrice provided in original transaction", () => {
+          it("should throw error", () => {
+            const originalTx: EvmTransactionLegacy = {
+              ...legacyTx,
+              gasPrice: undefined,
+            } as any;
+
+            expect(() => {
+              validateEditTransaction({
+                transaction: updatedLegacyTx,
+                transactionToUpdate: originalTx,
+                editType: "speedup",
+              });
+            }).toThrow("gasPrice");
+          });
+        });
+
+        describe("when no gasPrice provided in updated transaction", () => {
+          it("should not have error and warning", () => {
+            const invalidUpdatedTx: EvmTransactionLegacy = {
+              ...updatedLegacyTx,
+              gasPrice: undefined,
+            } as any;
+
+            const res = validateEditTransaction({
+              transaction: invalidUpdatedTx,
+              transactionToUpdate: legacyTx,
+              editType: "speedup",
+            });
+
+            expect(res.errors).toEqual({});
+            expect(res.warnings).toEqual({});
+          });
+        });
+
+        describe("min fees", () => {
+          const { gasPrice: minGasPrice } = getMinLegacyFees({ gasPrice: legacyTx.gasPrice });
+
+          const cases = [
+            { label: "<", value: minGasPrice.minus(1), hasError: true },
+            { label: "=", value: minGasPrice, hasError: false },
+            { label: ">", value: minGasPrice.plus(1), hasError: false },
+          ];
+
+          describe.each(cases)(
+            "when new gasPrice is $label minimum gasPrice",
+            ({ value, hasError }) => {
+              it(`should ${hasError ? "" : "not"} have error`, () => {
+                const newUpdatedLegacyTx: EvmTransactionLegacy = {
+                  ...updatedLegacyTx,
+                  gasPrice: new BigNumber(value),
+                };
+
+                const res = validateEditTransaction({
+                  transaction: newUpdatedLegacyTx,
+                  transactionToUpdate: legacyTx,
+                  editType: "speedup",
+                });
+
+                if (hasError) {
+                  expect(res.errors).toEqual(
+                    expect.objectContaining({
+                      replacementTransactionUnderpriced: new ReplacementTransactionUnderpriced(),
+                    }),
+                  );
+                } else {
+                  expect(res.errors).toEqual({});
+                }
+              });
+            },
+          );
+        });
+      });
+      describe("Transaction Type: EIP1559", () => {
+        const updatedEip1559Tx: EvmTransactionEIP1559 = {
+          ...eip1559Tx,
+          maxFeePerGas: eip1559Tx.maxFeePerGas.plus(100),
+          maxPriorityFeePerGas: eip1559Tx.maxPriorityFeePerGas.plus(50),
+        };
+
+        describe("when no editType provided", () => {
+          it("should not have error or warning", () => {
+            const res = validateEditTransaction({
+              transaction: updatedEip1559Tx,
+              transactionToUpdate: eip1559Tx,
+            });
+
+            expect(res.errors).toEqual({});
+            expect(res.warnings).toEqual({});
+          });
+        });
+
+        describe("when no maxFeePerGas provided in original transaction", () => {
+          it("should throw error", () => {
+            const originalTx: EvmTransactionEIP1559 = {
+              ...eip1559Tx,
+              maxFeePerGas: undefined,
+            } as any;
+
+            expect(() => {
+              validateEditTransaction({
+                transaction: updatedEip1559Tx,
+                transactionToUpdate: originalTx,
+                editType: "speedup",
+              });
+            }).toThrow("maxFeePerGas");
+          });
+        });
+
+        describe("when no maxPriorityFeePerGas provided in original transaction", () => {
+          it("should throw error", () => {
+            const originalTx: EvmTransactionEIP1559 = {
+              ...eip1559Tx,
+              maxPriorityFeePerGas: undefined,
+            } as any;
+
+            expect(() => {
+              validateEditTransaction({
+                transaction: updatedEip1559Tx,
+                transactionToUpdate: originalTx,
+                editType: "speedup",
+              });
+            }).toThrow("maxPriorityFeePerGas");
+          });
+        });
+
+        describe("when no maxFeePerGas provided in updated transaction", () => {
+          it("should not have error and warning", () => {
+            const invalidUpdatedTx: EvmTransactionEIP1559 = {
+              ...eip1559Tx,
+              maxFeePerGas: undefined,
+            } as any;
+
+            const res = validateEditTransaction({
+              transaction: invalidUpdatedTx,
+              transactionToUpdate: eip1559Tx,
+              editType: "speedup",
+            });
+
+            expect(res.errors).toEqual({});
+            expect(res.warnings).toEqual({});
+          });
+        });
+
+        describe("when no maxPriorityFeePerGas provided in updated transaction", () => {
+          it("should not have error and warning", () => {
+            const invalidUpdatedTx: EvmTransactionEIP1559 = {
+              ...eip1559Tx,
+              maxPriorityFeePerGas: undefined,
+            } as any;
+
+            const res = validateEditTransaction({
+              transaction: invalidUpdatedTx,
+              transactionToUpdate: eip1559Tx,
+              editType: "speedup",
+            });
+
+            expect(res.errors).toEqual({});
+            expect(res.warnings).toEqual({});
+          });
+        });
+
+        describe("min fees", () => {
+          const { maxFeePerGas: minMaxFeePerGas, maxPriorityFeePerGas: minMaxPriorityFeePerGas } =
+            getMinEip1559Fees({
+              maxFeePerGas: eip1559Tx.maxFeePerGas,
+              maxPriorityFeePerGas: eip1559Tx.maxPriorityFeePerGas,
+            });
+
+          const cases = [
+            {
+              maxFeePerGas: { label: "<", value: minMaxFeePerGas.minus(1) },
+              maxPriorityFeePerGas: { label: "<", value: minMaxPriorityFeePerGas.minus(1) },
+              hasError: true,
+            },
+            {
+              maxFeePerGas: { label: "<", value: minMaxFeePerGas.minus(1) },
+              maxPriorityFeePerGas: { label: "=", value: minMaxPriorityFeePerGas },
+              hasError: true,
+            },
+            {
+              maxFeePerGas: { label: "<", value: minMaxFeePerGas.minus(1) },
+              maxPriorityFeePerGas: { label: ">", value: minMaxPriorityFeePerGas.plus(1) },
+              hasError: true,
+            },
+            {
+              maxFeePerGas: { label: "=", value: minMaxFeePerGas },
+              maxPriorityFeePerGas: { label: "<", value: minMaxPriorityFeePerGas.minus(1) },
+              hasError: true,
+            },
+            {
+              maxFeePerGas: { label: "=", value: minMaxFeePerGas },
+              maxPriorityFeePerGas: { label: "=", value: minMaxPriorityFeePerGas },
+              hasError: false,
+            },
+            {
+              maxFeePerGas: { label: "=", value: minMaxFeePerGas },
+              maxPriorityFeePerGas: { label: ">", value: minMaxPriorityFeePerGas.plus(1) },
+              hasError: false,
+            },
+            {
+              maxFeePerGas: { label: ">", value: minMaxFeePerGas.plus(1) },
+              maxPriorityFeePerGas: { label: "<", value: minMaxPriorityFeePerGas.minus(1) },
+              hasError: true,
+            },
+            {
+              maxFeePerGas: { label: ">", value: minMaxFeePerGas.plus(1) },
+              maxPriorityFeePerGas: { label: "=", value: minMaxPriorityFeePerGas },
+              hasError: false,
+            },
+            {
+              maxFeePerGas: { label: ">", value: minMaxFeePerGas.plus(1) },
+              maxPriorityFeePerGas: { label: ">", value: minMaxPriorityFeePerGas.plus(1) },
+              hasError: false,
+            },
+          ];
+
+          describe.each(cases)(
+            "when new maxFeePerGas is $maxFeePerGas.label minimum maxFeePerGas and new maxPriorityFeePerGas is $maxPriorityFeePerGas.label minimum maxPriorityFeePerGas",
+            ({ maxFeePerGas, maxPriorityFeePerGas, hasError }) => {
+              it(`should ${hasError ? "" : "not"} have error`, () => {
+                const newUpdatedEip1559Tx: EvmTransactionEIP1559 = {
+                  ...updatedEip1559Tx,
+                  maxFeePerGas: new BigNumber(maxFeePerGas.value),
+                  maxPriorityFeePerGas: new BigNumber(maxPriorityFeePerGas.value),
+                };
+
+                const res = validateEditTransaction({
+                  transaction: newUpdatedEip1559Tx,
+                  transactionToUpdate: eip1559Tx,
+                  editType: "speedup",
+                });
+
+                if (hasError) {
+                  expect(res.errors).toEqual(
+                    expect.objectContaining({
+                      replacementTransactionUnderpriced: new ReplacementTransactionUnderpriced(),
+                    }),
+                  );
+                } else {
+                  expect(res.errors).toEqual({});
+                }
+              });
+            },
+          );
+        });
+      });
+    });
 
     describe("getEditTransactionStatus", () => {});
   });
