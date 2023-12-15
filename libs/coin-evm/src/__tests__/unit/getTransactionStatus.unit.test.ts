@@ -20,13 +20,25 @@ import { ProtoNFT } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import fc from "fast-check";
 import { NotEnoughNftOwned, NotOwnedNft, QuantityNeedsToBePositive } from "../../errors";
-import getTransactionStatus, { validateEditTransaction } from "../../getTransactionStatus";
-import { EvmTransactionEIP1559, EvmTransactionLegacy, GasOptions, Transaction } from "../../types";
+import * as getTransactionStatusModule from "../../getTransactionStatus";
+import {
+  EvmTransactionEIP1559,
+  EvmTransactionLegacy,
+  GasOptions,
+  Transaction,
+  TransactionStatus,
+} from "../../types";
 import { makeAccount, makeTokenAccount } from "../fixtures/common.fixtures";
 import {
   getMinEip1559Fees,
   getMinLegacyFees,
 } from "../../editTransaction/getMinEditTransactionFees";
+
+const {
+  default: getTransactionStatus,
+  validateEditTransaction,
+  getEditTransactionStatus,
+} = getTransactionStatusModule;
 
 const recipient = "0xe2ca7390e76c5A992749bB622087310d2e63ca29"; // rambo.eth
 const testData = Buffer.from("testBufferString").toString("hex");
@@ -1134,6 +1146,165 @@ describe("EVM Family", () => {
       });
     });
 
-    describe("getEditTransactionStatus", () => {});
+    describe("getEditTransactionStatus", () => {
+      jest.mock("../../getTransactionStatus");
+      const mockedGetTransactionStatusModule = jest.mocked(getTransactionStatusModule);
+
+      const updatedTx = { ...eip1559Tx, maxFeePerGas: eip1559Tx.maxFeePerGas.plus(100) };
+
+      const originalStatus: TransactionStatus = {
+        errors: {},
+        warnings: {},
+        estimatedFees: new BigNumber(2100000),
+        amount: eip1559Tx.amount,
+        totalSpent: new BigNumber(2100000).plus(eip1559Tx.amount),
+      };
+
+      const editTxErrors = {
+        replacementTransactionUnderpriced: new ReplacementTransactionUnderpriced(),
+      };
+
+      afterAll(() => {
+        jest.restoreAllMocks();
+      });
+
+      describe("when original transaction does not have errors", () => {
+        describe("when edit transaction checks return errors", () => {
+          beforeEach(() => {
+            jest
+              .spyOn(mockedGetTransactionStatusModule, "validateEditTransaction")
+              .mockReturnValue({
+                errors: editTxErrors,
+                warnings: {},
+              });
+          });
+
+          it("should add edit transaction checks error to status", () => {
+            const res = getEditTransactionStatus({
+              transaction: updatedTx,
+              transactionToUpdate: eip1559Tx,
+              status: originalStatus,
+              editType: "speedup",
+            });
+
+            expect(mockedGetTransactionStatusModule.validateEditTransaction).toHaveBeenCalled();
+
+            expect(res).toEqual({
+              ...originalStatus,
+              errors: {
+                ...originalStatus.errors,
+                ...editTxErrors,
+              },
+            });
+          });
+        });
+
+        describe("when edit transaction checks does not return errors", () => {
+          beforeEach(() => {
+            jest
+              .spyOn(mockedGetTransactionStatusModule, "validateEditTransaction")
+              .mockReturnValue({ errors: {}, warnings: {} });
+          });
+
+          it("should not update the status", async () => {
+            const res = getEditTransactionStatus({
+              transaction: updatedTx,
+              transactionToUpdate: eip1559Tx,
+              status: originalStatus,
+              editType: "speedup",
+            });
+
+            expect(res).toEqual(originalStatus);
+          });
+        });
+      });
+
+      describe("when original transaction has errors", () => {
+        const originalStatusWithErrors: TransactionStatus = {
+          ...originalStatus,
+          errors: {
+            recipient: new RecipientRequired(),
+          },
+        };
+
+        describe("when edit transaction checks return errors", () => {
+          beforeEach(() => {
+            jest
+              .spyOn(mockedGetTransactionStatusModule, "validateEditTransaction")
+              .mockReturnValue({
+                errors: editTxErrors,
+                warnings: {},
+              });
+          });
+
+          it("should add edit transaction checks error to status", () => {
+            const res = getEditTransactionStatus({
+              transaction: updatedTx,
+              transactionToUpdate: eip1559Tx,
+              status: originalStatusWithErrors,
+              editType: "speedup",
+            });
+
+            expect(mockedGetTransactionStatusModule.validateEditTransaction).toHaveBeenCalled();
+
+            expect(res).toEqual({
+              ...originalStatusWithErrors,
+              errors: {
+                ...originalStatusWithErrors.errors,
+                ...editTxErrors,
+              },
+            });
+          });
+        });
+
+        describe("when edit transaction checks does not return errors", () => {
+          beforeEach(() => {
+            jest
+              .spyOn(mockedGetTransactionStatusModule, "validateEditTransaction")
+              .mockReturnValue({ errors: {}, warnings: {} });
+          });
+
+          it("should not update the status", async () => {
+            const res = getEditTransactionStatus({
+              transaction: updatedTx,
+              transactionToUpdate: eip1559Tx,
+              status: originalStatusWithErrors,
+              editType: "speedup",
+            });
+
+            expect(res).toEqual(originalStatusWithErrors);
+          });
+        });
+
+        describe("when original transaction has amount errors", () => {
+          const cases = [
+            { name: "ERROR_NOT_OWNED_NFT", error: new NotOwnedNft() },
+            { name: "ERROR_NOT_ENOUGH_NFT_OWNED", error: new NotEnoughNftOwned() },
+            { name: "ERROR_AMOUNT_REQUIRED", error: new AmountRequired() },
+          ];
+
+          describe.each(cases)("when has $name error", ({ error }) => {
+            it("should remove the amount error", () => {
+              const originalStatusWithAmountError: TransactionStatus = {
+                ...originalStatusWithErrors,
+                errors: {
+                  ...originalStatusWithErrors.errors,
+                  amount: error,
+                },
+              };
+
+              const res = getEditTransactionStatus({
+                transaction: updatedTx,
+                transactionToUpdate: eip1559Tx,
+                status: originalStatusWithAmountError,
+                editType: "speedup",
+              });
+
+              expect(res).toEqual(originalStatusWithErrors);
+            });
+          });
+        });
+      });
+    });
   });
 });
