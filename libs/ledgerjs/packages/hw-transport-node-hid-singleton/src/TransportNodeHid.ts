@@ -8,7 +8,7 @@ import { listenDevices } from "./listenDevices";
 
 const LOG_TYPE = "hid-verbose";
 
-let transportInstance;
+let transportInstance: TransportNodeHidSingleton | null = null;
 
 const DISCONNECT_TIMEOUT = 5000;
 let disconnectTimeout;
@@ -55,7 +55,7 @@ export default class TransportNodeHidSingleton extends TransportNodeHidNoEvents 
   /**
    */
   static listen = (observer: Observer<ListenDescriptorEvent>): Subscription => {
-    let unsubscribed;
+    let unsubscribed: boolean;
     Promise.resolve(getDevices()).then(devices => {
       // this needs to run asynchronously so the subscription is defined during this phase
       for (const device of devices) {

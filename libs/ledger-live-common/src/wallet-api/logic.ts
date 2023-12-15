@@ -223,8 +223,10 @@ export const bitcoinFamillyAccountGetXPubLogic = (
 
 export function startExchangeLogic(
   { manifest, tracking }: WalletAPIContext,
-  exchangeType: "SWAP" | "SELL" | "FUND",
-  uiNavigation: (exchangeType: "SWAP" | "SELL" | "FUND") => Promise<string>,
+  exchangeType: "SWAP" | "FUND" | "SELL" | "SWAP_NG" | "SELL_NG" | "FUND_NG",
+  uiNavigation: (
+    exchangeType: "SWAP" | "FUND" | "SELL" | "SWAP_NG" | "SELL_NG" | "FUND_NG",
+  ) => Promise<string>,
 ): Promise<string> {
   tracking.startExchangeRequested(manifest);
 

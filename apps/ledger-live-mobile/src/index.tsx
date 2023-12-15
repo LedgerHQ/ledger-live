@@ -87,6 +87,7 @@ import {
 import useAccountsWithFundsListener from "@ledgerhq/live-common/hooks/useAccountsWithFundsListener";
 import { updateIdentify } from "./analytics";
 import "./config/configInit";
+import { StorylyProvider } from "./components/StorylyStories/StorylyProvider";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -289,36 +290,38 @@ export default class Root extends Component {
                     <FirebaseFeatureFlagsProvider>
                       <SafeAreaProvider>
                         <PerformanceProvider>
-                          <StylesProvider>
-                            <StyledStatusBar />
-                            <NavBarColorHandler />
-                            <I18nextProvider i18n={i18n}>
-                              <LocaleProvider>
-                                <AuthPass>
-                                  <BridgeSyncProvider>
-                                    <CounterValuesProvider initialState={initialCountervalues}>
-                                      <ButtonUseTouchableContext.Provider value={true}>
-                                        <OnboardingContextProvider>
-                                          <PostOnboardingProviderWrapped>
-                                            <ToastProvider>
-                                              <NotificationsProvider>
-                                                <SnackbarContainer />
-                                                <NftMetadataProvider>
-                                                  <MarketDataProvider>
-                                                    <App />
-                                                  </MarketDataProvider>
-                                                </NftMetadataProvider>
-                                              </NotificationsProvider>
-                                            </ToastProvider>
-                                          </PostOnboardingProviderWrapped>
-                                        </OnboardingContextProvider>
-                                      </ButtonUseTouchableContext.Provider>
-                                    </CounterValuesProvider>
-                                  </BridgeSyncProvider>
-                                </AuthPass>
-                              </LocaleProvider>
-                            </I18nextProvider>
-                          </StylesProvider>
+                          <StorylyProvider>
+                            <StylesProvider>
+                              <StyledStatusBar />
+                              <NavBarColorHandler />
+                              <I18nextProvider i18n={i18n}>
+                                <LocaleProvider>
+                                  <AuthPass>
+                                    <BridgeSyncProvider>
+                                      <CounterValuesProvider initialState={initialCountervalues}>
+                                        <ButtonUseTouchableContext.Provider value={true}>
+                                          <OnboardingContextProvider>
+                                            <PostOnboardingProviderWrapped>
+                                              <ToastProvider>
+                                                <NotificationsProvider>
+                                                  <SnackbarContainer />
+                                                  <NftMetadataProvider>
+                                                    <MarketDataProvider>
+                                                      <App />
+                                                    </MarketDataProvider>
+                                                  </NftMetadataProvider>
+                                                </NotificationsProvider>
+                                              </ToastProvider>
+                                            </PostOnboardingProviderWrapped>
+                                          </OnboardingContextProvider>
+                                        </ButtonUseTouchableContext.Provider>
+                                      </CounterValuesProvider>
+                                    </BridgeSyncProvider>
+                                  </AuthPass>
+                                </LocaleProvider>
+                              </I18nextProvider>
+                            </StylesProvider>
+                          </StorylyProvider>
                         </PerformanceProvider>
                       </SafeAreaProvider>
                     </FirebaseFeatureFlagsProvider>
