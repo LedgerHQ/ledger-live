@@ -27,7 +27,6 @@ describe("LiveConfig", () => {
         },
       },
     };
-    LiveConfig.init({ appVersion: "1.0.0", platform: "mac", environment: "test" });
     LiveConfig.setConfig(config);
     LiveConfig.setProvider(jsonFileReader);
     const developer_mode = LiveConfig.getValueByKey("developer_mode");
