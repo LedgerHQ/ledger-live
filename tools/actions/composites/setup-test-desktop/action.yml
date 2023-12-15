@@ -16,6 +16,10 @@ inputs:
   turborepo-server-port:
     description: "turborepo server port"
     required: false
+  turbo-server-token:
+    description: "custom token for local s3 server"
+    required: false
+    default: "yolo"
 
 runs:
   using: "composite"
@@ -41,7 +45,7 @@ runs:
     - name: Build dependencies
       if: inputs.turborepo-server-port != ''
       run: |
-        pnpm build:lld:deps --api="http://127.0.0.1:${{ inputs.turborepo-server-port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+        pnpm build:lld:deps --api="http://127.0.0.1:${{ inputs.turborepo-server-port }}" --token="${{ inputs.turbo-server-token }}" --team="foo"
       shell: bash
     - name: Build dependencies
       if: inputs.turborepo-server-port == ''

@@ -23,6 +23,10 @@ inputs:
     description: "aws cache region"
     required: false
     default: "eu-west-1"
+  turbo-server-token:
+    description: "custom token for local s3 server"
+    required: false
+    default: "yolo"
 
 runs:
   using: "composite"
@@ -74,7 +78,7 @@ runs:
       if: steps.aws.conclusion == 'success' && inputs.skip_turbo_cache != 'true'
       uses: ./tools/actions/turborepo-s3-cache
       with:
-        server-token: "${{ secrets.TURBOREPO_SERVER_TOKEN }}"
+        server-token: "${{ inputs.turbo-server-token }}"
         cleanup-cache-folder: "true"
         aws-access-key: ${{ env.AWS_ACCESS_KEY_ID }}
         aws-secret-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
