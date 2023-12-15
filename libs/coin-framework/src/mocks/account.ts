@@ -371,7 +371,15 @@ export function genAccount(
   };
 
   if (
-    ["ethereum", "ethereum_ropsten", "ethereum_goerli", "tron", "algorand"].includes(currency.id)
+    [
+      "ethereum",
+      "ethereum_ropsten",
+      "ethereum_goerli",
+      "ethereum_sepolia",
+      "ethereum_holesky",
+      "tron",
+      "algorand",
+    ].includes(currency.id)
   ) {
     const tokenCount =
       typeof opts.subAccountsCount === "number" ? opts.subAccountsCount : rng.nextInt(0, 8);

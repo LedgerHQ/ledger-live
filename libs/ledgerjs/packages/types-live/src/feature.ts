@@ -3,7 +3,7 @@ import {
   CexDepositEntryPointsLocationsMobile,
 } from "./cexDeposit";
 import { ChainwatchNetwork } from "./chainwatch";
-import { StorylyInstanceID } from "./storyly";
+import { StorylyInstanceID, StorylyInstanceType } from "./storyly";
 
 /**
  * Feature type.
@@ -285,7 +285,9 @@ export type Feature_PtxEarn = Feature<{
 }>;
 
 export type Feature_Storyly = Feature<{
-  stories: { [key in StorylyInstanceID]: { testingEnabled: boolean; token: string } };
+  stories: {
+    [key in StorylyInstanceID]: StorylyInstanceType;
+  };
 }>;
 
 export type Feature_NewsfeedPage = Feature<{

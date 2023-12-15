@@ -7,6 +7,7 @@ import { track } from "~/renderer/analytics/segment";
 import { useTranslation } from "react-i18next";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import { setDrawer } from "~/renderer/drawers/Provider";
+import ToolTip from "~/renderer/components/Tooltip";
 
 type Props = {
   // this makes sure that this component is only rendered if languageId is present in deviceInfo
@@ -54,7 +55,22 @@ const DeviceLanguage: React.FC<Props> = ({
       <Link
         type="main"
         disabled={disabled}
-        Icon={IconsLegacy.ChevronRightMedium}
+        Icon={
+          disabled
+            ? props => (
+                <ToolTip
+                  content={
+                    <Text color="neutral.c00" variant="small">
+                      {t("appsInstallingDisabledTooltip")}
+                    </Text>
+                  }
+                  placement="top"
+                >
+                  <IconsLegacy.InfoAltFillMedium {...props} />
+                </ToolTip>
+              )
+            : IconsLegacy.ChevronRightMedium
+        }
         onClick={disabled ? undefined : openLanguageInstallation}
         data-test-id="manager-change-language-button"
       >
