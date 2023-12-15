@@ -22,18 +22,6 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
       button: SpeculosButton.BOTH,
     },
     {
-      title: "Send to address (1/3)",
-      button: SpeculosButton.RIGHT,
-    },
-    {
-      title: "Send to address (2/3)",
-      button: SpeculosButton.RIGHT,
-    },
-    {
-      title: "Send to address (3/3)",
-      button: SpeculosButton.BOTH,
-    },
-    {
       title: "Send to address (1/2)",
       button: SpeculosButton.RIGHT,
     },
@@ -42,7 +30,7 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
       button: SpeculosButton.BOTH,
     },
     {
-      title: "Send",
+      title: "end", // FIXME: Should be Send but in some case cardano OCR doesn't recognize S : https://github.com/LedgerHQ/speculos/issues/204
       button: SpeculosButton.BOTH,
       ignoreAssertionFailure: true,
       expectedValue: ({ account, status }) => formatDeviceAmount(account.currency, status.amount),
@@ -76,11 +64,11 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
       title: "Deregister",
     },
     {
-      title: "stake key",
+      title: "staking key",
       button: SpeculosButton.BOTH,
     },
     {
-      title: "Stake key",
+      title: "Staking key",
       button: SpeculosButton.BOTH,
       expectedValue: ({ account }) => {
         const stakeCred = getAccountStakeCredential(account.xpub as string, account.index);
@@ -108,11 +96,24 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
       button: SpeculosButton.BOTH,
     },
     {
-      title: "Delegate stake (1/2)",
+      // sometimes the poolId fits on a single screen
+      title: "Delegate stake to",
+      button: SpeculosButton.BOTH,
+    },
+    {
+      title: "Delegate stake to (1/2)",
       button: SpeculosButton.RIGHT,
     },
     {
-      title: "Delegate stake (2/2)",
+      title: "Delegate stake to (2/2)",
+      button: SpeculosButton.BOTH,
+    },
+    {
+      title: "Delegate s...ke to (1/2)",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Delegate ...ke to (2/2)",
       button: SpeculosButton.BOTH,
     },
     {
