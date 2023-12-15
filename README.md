@@ -209,7 +209,7 @@ Each individual project may include its own specific guidelines, located within 
 
 While you explore these projects, here are some key points to keep in mind:
 
-- Follow the git workflow, prefix your branches and do not create unneeded merge commits.
+- Follow the git workflow, prefix your branches and do not create unnecessary merge commits.
 - Be mindful when creating Pull Requests, specify the reason of the change clearly and write tests if needed.
 - Ledger Applications are mostly accepting bugfix contributions. For features we may reject them based on the fact that they do not fit our roadmap or our long-term goals.
 
