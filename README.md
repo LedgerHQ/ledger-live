@@ -17,7 +17,7 @@
 
 `ledger-live` is a **monorepository** whose purpose is to centralize all the JavaScript code related to the [**Ledger Live**](https://www.ledger.com/ledger-live) applications in one place.
 
-[**Ledger Live**](https://www.ledger.com/ledger-live) is our platform of apps and services designed specifically for seamless integration with your Nano device. It functions as a secure gateway to the crypto ecosystem. This means accessing a variety of crypto, NFT and DeFi based services directly and seamlessly from your hardware wallet – a better, simpler user experience that bypasses a major security concern known as blind signing.
+[**Ledger Live**](https://www.ledger.com/ledger-live) is our platform of apps and services designed specifically for seamless integration with your Ledger device. It functions as a secure gateway to the crypto ecosystem. This means accessing a variety of crypto, NFT and DeFi based services directly and seamlessly from your hardware wallet – a better, simpler user experience that bypasses a major security concern known as blind signing.
 
 Developers looking to integrate their blockchain in Ledger Live are invited to head to the [**Developer Portal**](https://developers.ledger.com) where they will find the section [**Blockchain Support**](https://developers.ledger.com/docs/coin/general-process).
 
