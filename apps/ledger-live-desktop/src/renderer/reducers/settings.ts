@@ -75,7 +75,6 @@ export type SettingsState = {
   filterTokenOperationsZeroAmount: boolean;
   sidebarCollapsed: boolean;
   discreetMode: boolean;
-  carouselVisibility: number;
   starredAccountIds?: string[];
   blacklistedTokenIds: string[];
   hiddenNftCollections: string[];
@@ -158,7 +157,6 @@ const INITIAL_STATE: SettingsState = {
   discreetMode: false,
   preferredDeviceModel: DeviceModelId.nanoS,
   hasInstalledApps: true,
-  carouselVisibility: 0,
   lastSeenDevice: null,
   devicesModelList: [],
   lastSeenCustomImage: {
@@ -315,9 +313,9 @@ const handlers: SettingsHandlers = {
     ...state,
     lastSeenDevice: state.lastSeenDevice
       ? {
-          ...state.lastSeenDevice,
-          deviceInfo: payload.deviceInfo,
-        }
+        ...state.lastSeenDevice,
+        deviceInfo: payload.deviceInfo,
+      }
       : undefined,
   }),
 
@@ -423,13 +421,13 @@ export type CurrencySettings = {
 
 type ConfirmationDefaults = {
   confirmationsNb:
-    | {
-        min: number;
-        def: number;
-        max: number;
-      }
-    | undefined
-    | null;
+  | {
+    min: number;
+    def: number;
+    max: number;
+  }
+  | undefined
+  | null;
 };
 
 export const currencySettingsDefaults = (c: Currency): ConfirmationDefaults => {
@@ -626,7 +624,6 @@ export const autoLockTimeoutSelector = (state: State) => state.settings.autoLock
 export const shareAnalyticsSelector = (state: State) => state.settings.shareAnalytics;
 export const selectedTimeRangeSelector = (state: State) => state.settings.selectedTimeRange;
 export const hasInstalledAppsSelector = (state: State) => state.settings.hasInstalledApps;
-export const carouselVisibilitySelector = (state: State) => state.settings.carouselVisibility;
 export const USBTroubleshootingIndexSelector = (state: State) =>
   state.settings.USBTroubleshootingIndex;
 export const allowDebugAppsSelector = (state: State) => state.settings.allowDebugApps;

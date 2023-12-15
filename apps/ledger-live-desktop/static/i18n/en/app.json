@@ -3893,9 +3893,7 @@
       "region": "Region",
       "regionDesc": "Choose your region to update formats of dates, time and currencies.",
       "stock": "Regional market indicator",
-      "stockDesc": "Choose Western to display market increases in blue or Eastern to display them in red.",
-      "carouselVisibility": "Carousel visibility",
-      "carouselVisibilityDesc": "Enable visibility of the carousel on Portfolio"
+      "stockDesc": "Choose Western to display market increases in blue or Eastern to display them in red."
     },
     "developer": {
       "search": "Search",

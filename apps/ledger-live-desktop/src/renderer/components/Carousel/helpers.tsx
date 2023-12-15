@@ -16,9 +16,10 @@ import SwapSmallCoin1Image from "./banners/Swap/images/smallcoin1.png";
 import SwapSmallCoin2Image from "./banners/Swap/images/smallcoin2.png";
 import SwapSmallCoin3Image from "./banners/Swap/images/smallcoin3.png";
 import { portfolioContentCardSelector } from "~/renderer/reducers/dynamicContent";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import * as braze from "@braze/web-sdk";
 import { ContentCard } from "~/types/dynamicContent";
+import { setPortfolioCards } from "~/renderer/actions/dynamicContent";
 
 export const getTransitions = (transition: "slide" | "flip", reverse = false) => {
   const mult = reverse ? -1 : 1;
@@ -179,9 +180,11 @@ type SlideRes = {
 export const useDefaultSlides = (): {
   slides: SlideRes[];
   logSlideImpression: (index: number) => void;
+  dismissCard: (index: number) => void;
 } => {
   const [cachedContentCards, setCachedContentCards] = useState<braze.Card[]>([]);
   const portfolioCards = useSelector(portfolioContentCardSelector);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const cards = braze.getCachedContentCards().cards;
@@ -203,6 +206,22 @@ export const useDefaultSlides = (): {
     },
     [portfolioCards, cachedContentCards],
   );
+
+  const dismissCard = useCallback((index: number) => {
+    if (portfolioCards && portfolioCards.length > index) {
+      const slide = portfolioCards[index];
+      if (slide?.id) {
+        const currentCard = cachedContentCards.find(card => card.id === slide.id);
+
+        if (currentCard) {
+          braze.logCardDismissal(currentCard);
+          setCachedContentCards(cachedContentCards.filter(n => n.id !== currentCard.id));
+          dispatch(setPortfolioCards(portfolioCards.filter(n => n.id !== slide.id)));
+        }
+      }
+    }
+  }, [portfolioCards, cachedContentCards]);
+
 
   const logSlideClick = useCallback(
     (cardId: string) => {
@@ -235,5 +254,6 @@ export const useDefaultSlides = (): {
   return {
     slides,
     logSlideImpression,
+    dismissCard,
   };
 };
