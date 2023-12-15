@@ -11,6 +11,10 @@ import { fromTransactionRaw } from "../filecoin/transaction";
 
 const SEED_IDENTIFIER = "f1p74d4mlmeyc4agflhjqsnvoyzyfdai7fmkyso2a";
 const ACCOUNT_1 = "f1p74d4mlmeyc4agflhjqsnvoyzyfdai7fmkyso2a";
+const ACCOUNT_2 = "f410fncojwmrseefktoco6rcnb3zv2eiqfli7muhvqma";
+const ACCOUNT_3 = "0x689c9b3232210aa9b84ef444d0ef35d11102ad1f";
+const ACCOUNT_4 = "f01840380";
+const ACCOUNT_5 = "0x689c9b3232210aa9b84ef444d0ef35d11102ad1f";
 
 const filecoin: CurrenciesData<Transaction> = {
   scanAccounts: [
@@ -61,7 +65,7 @@ const filecoin: CurrenciesData<Transaction> = {
       },
       transactions: [
         {
-          name: "Not a valid address",
+          name: "Not a valid address (fil)",
           transaction: fromTransactionRaw({
             family: "filecoin",
             method: 1,
@@ -71,6 +75,26 @@ const filecoin: CurrenciesData<Transaction> = {
             gasLimit: 100,
             gasPremium: "200",
             recipient: "novalidaddress",
+            amount: "100000000",
+          }),
+          expectedStatus: {
+            errors: {
+              recipient: new InvalidAddress(),
+            },
+            warnings: {},
+          },
+        },
+        {
+          name: "Not a valid address (eth)",
+          transaction: fromTransactionRaw({
+            family: "filecoin",
+            method: 1,
+            version: 1,
+            nonce: 100,
+            gasFeeCap: "1000",
+            gasLimit: 100,
+            gasPremium: "200",
+            recipient: ACCOUNT_3 + "rr",
             amount: "100000000",
           }),
           expectedStatus: {
@@ -121,7 +145,7 @@ const filecoin: CurrenciesData<Transaction> = {
           },
         },
         {
-          name: "New account and sufficient amount",
+          name: "New account and sufficient amount (f1)",
           transaction: fromTransactionRaw({
             family: "filecoin",
             method: 1,
@@ -131,6 +155,63 @@ const filecoin: CurrenciesData<Transaction> = {
             gasLimit: 10,
             gasPremium: "10000",
             recipient: ACCOUNT_1,
+            amount: "1",
+          }),
+          expectedStatus: {
+            amount: new BigNumber("1"),
+            errors: {},
+            warnings: {},
+          },
+        },
+        {
+          name: "New account and sufficient amount (f0)",
+          transaction: fromTransactionRaw({
+            family: "filecoin",
+            method: 1,
+            version: 1,
+            nonce: 100,
+            gasFeeCap: "1000",
+            gasLimit: 10,
+            gasPremium: "10000",
+            recipient: ACCOUNT_4,
+            amount: "1",
+          }),
+          expectedStatus: {
+            amount: new BigNumber("1"),
+            errors: {},
+            warnings: {},
+          },
+        },
+        {
+          name: "New account and sufficient amount (0x eth)",
+          transaction: fromTransactionRaw({
+            family: "filecoin",
+            method: 1,
+            version: 1,
+            nonce: 100,
+            gasFeeCap: "1000",
+            gasLimit: 10,
+            gasPremium: "10000",
+            recipient: ACCOUNT_3,
+            amount: "1",
+          }),
+          expectedStatus: {
+            amount: new BigNumber("1"),
+            errors: {},
+            warnings: {},
+          },
+        },
+        {
+          name: "New account and sufficient amount (f4)",
+          transaction: fromTransactionRaw({
+            family: "filecoin",
+            method: 1,
+            version: 1,
+            nonce: 100,
+            gasFeeCap: "1000",
+            gasLimit: 10,
+            gasPremium: "10000",
+            recipient: ACCOUNT_2,
             amount: "1",
           }),
           expectedStatus: {
