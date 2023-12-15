@@ -1,5 +1,40 @@
 # @ledgerhq/live-common
 
+## 33.4.0-nightly.1
+
+### Minor Changes
+
+- [#5722](https://github.com/LedgerHQ/ledger-live/pull/5722) [`2358e87`](https://github.com/LedgerHQ/ledger-live/commit/2358e8748d9ae9398cfc05a0ec20a6b191fc7324) Thanks [@chabroA](https://github.com/chabroA)! - Add Ethereum Sepolia and Holesky
+
+### Patch Changes
+
+- Updated dependencies [[`2358e87`](https://github.com/LedgerHQ/ledger-live/commit/2358e8748d9ae9398cfc05a0ec20a6b191fc7324), [`69bbdce`](https://github.com/LedgerHQ/ledger-live/commit/69bbdce5c88d69248cbddb94ac4627334c1df626), [`16b4d7a`](https://github.com/LedgerHQ/ledger-live/commit/16b4d7ab4702022d4967f3c054d3c62a76716947)]:
+  - @ledgerhq/cryptoassets@11.4.0-nightly.0
+  - @ledgerhq/coin-framework@0.11.0-nightly.0
+  - @ledgerhq/coin-evm@0.12.0-nightly.0
+  - @ledgerhq/live-env@0.9.0-nightly.0
+  - @ledgerhq/live-config@1.0.1-nightly.0
+  - @ledgerhq/hw-transport@6.30.2-nightly.0
+  - @ledgerhq/coin-algorand@0.3.8-nightly.0
+  - @ledgerhq/coin-polkadot@0.5.1-nightly.0
+  - @ledgerhq/hw-app-eth@6.35.2-nightly.0
+  - @ledgerhq/hw-app-vet@0.1.1-nightly.0
+  - @ledgerhq/live-network@1.1.11-nightly.0
+  - @ledgerhq/hw-app-algorand@6.28.2-nightly.0
+  - @ledgerhq/hw-app-btc@10.1.2-nightly.0
+  - @ledgerhq/hw-app-cosmos@6.29.2-nightly.0
+  - @ledgerhq/hw-app-exchange@0.4.2-nightly.0
+  - @ledgerhq/hw-app-near@6.28.2-nightly.0
+  - @ledgerhq/hw-app-polkadot@6.28.2-nightly.0
+  - @ledgerhq/hw-app-solana@7.1.2-nightly.0
+  - @ledgerhq/hw-app-str@6.28.2-nightly.0
+  - @ledgerhq/hw-app-tezos@6.28.2-nightly.0
+  - @ledgerhq/hw-app-trx@6.28.2-nightly.0
+  - @ledgerhq/hw-app-xrp@6.28.2-nightly.0
+  - @ledgerhq/hw-transport-mocker@6.28.2-nightly.0
+  - @ledgerhq/hw-transport-node-speculos@6.28.2-nightly.0
+  - @ledgerhq/hw-transport-node-speculos-http@6.28.2-nightly.0
+
 ## 33.4.0-nightly.0
 
 ### Minor Changes

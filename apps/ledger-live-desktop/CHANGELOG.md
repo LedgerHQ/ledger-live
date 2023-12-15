@@ -1,5 +1,32 @@
 # ledger-live-desktop
 
+## 2.74.0-nightly.1
+
+### Minor Changes
+
+- [#5722](https://github.com/LedgerHQ/ledger-live/pull/5722) [`2358e87`](https://github.com/LedgerHQ/ledger-live/commit/2358e8748d9ae9398cfc05a0ec20a6b191fc7324) Thanks [@chabroA](https://github.com/chabroA)! - Add Ethereum Sepolia and Holesky
+
+### Patch Changes
+
+- [#5734](https://github.com/LedgerHQ/ledger-live/pull/5734) [`496bcc3`](https://github.com/LedgerHQ/ledger-live/commit/496bcc3067eedeef5412a76d2578868ef9e1dcbf) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Refactor file structure and component break down of My Ledger
+
+- [#5734](https://github.com/LedgerHQ/ledger-live/pull/5734) [`7b08584`](https://github.com/LedgerHQ/ledger-live/commit/7b08584c17f1bbd21033949e5385340a2ab653fa) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - My Ledger: improve UX of adding/remove custom lock screen, improve disabled buttons when apps are (un)installing
+
+- Updated dependencies [[`2358e87`](https://github.com/LedgerHQ/ledger-live/commit/2358e8748d9ae9398cfc05a0ec20a6b191fc7324), [`69bbdce`](https://github.com/LedgerHQ/ledger-live/commit/69bbdce5c88d69248cbddb94ac4627334c1df626), [`16b4d7a`](https://github.com/LedgerHQ/ledger-live/commit/16b4d7ab4702022d4967f3c054d3c62a76716947)]:
+  - @ledgerhq/types-cryptoassets@7.9.0-nightly.0
+  - @ledgerhq/live-common@33.4.0-nightly.1
+  - @ledgerhq/coin-framework@0.11.0-nightly.0
+  - @ledgerhq/coin-evm@0.12.0-nightly.0
+  - @ledgerhq/live-env@0.9.0-nightly.0
+  - @ledgerhq/types-live@6.43.2-nightly.0
+  - @ledgerhq/live-config@1.0.1-nightly.0
+  - @ledgerhq/hw-transport-node-hid-singleton@6.30.2-nightly.0
+  - @ledgerhq/hw-transport@6.30.2-nightly.0
+  - @ledgerhq/domain-service@1.1.17-nightly.0
+  - @ledgerhq/live-network@1.1.11-nightly.0
+  - @ledgerhq/hw-transport-http@6.29.2-nightly.0
+  - @ledgerhq/hw-transport-vault@1.2.2-nightly.0
+
 ## 2.73.1-nightly.0
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 11.4.0-nightly.0
+
+### Minor Changes
+
+- [#5722](https://github.com/LedgerHQ/ledger-live/pull/5722) [`2358e87`](https://github.com/LedgerHQ/ledger-live/commit/2358e8748d9ae9398cfc05a0ec20a6b191fc7324) Thanks [@chabroA](https://github.com/chabroA)! - Add Ethereum Sepolia and Holesky
+
 ## 11.3.0
 
 ### Minor Changes
