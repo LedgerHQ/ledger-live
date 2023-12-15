@@ -11,8 +11,8 @@ type Props = {
   description: string;
   image: string;
   price: string;
+  size: Size;
   tag?: string;
-  size?: Size;
 };
 
 export const SIZES: {
@@ -52,7 +52,7 @@ export const SIZES: {
 };
 
 const VerticalCard = ContentCardBuilder<Props>(
-  ({ title, description: subtitle, price, image, tag, size = "L", metadata }) => {
+  ({ title, description: subtitle, price, image, tag, size, metadata }) => {
     const { colors } = useTheme();
 
     const styles = SIZES[size];
