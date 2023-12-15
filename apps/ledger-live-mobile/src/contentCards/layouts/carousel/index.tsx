@@ -23,7 +23,7 @@ type Props = {
   styles?: {
     gap?: number;
     pagination?: boolean;
-    widthFactor?: 1 | 0.725 | 0.5;
+    widthFactor?: WidthFactor;
   };
 };
 
@@ -52,8 +52,6 @@ const Carousel = ContentLayoutBuilder<Props>(({ items, styles: _styles = default
     const newIndex = Math.round(contentOffsetX / (width - separatorWidth * 1.5));
     if (newIndex !== carouselIndex) setCarouselIndex(newIndex);
   };
-
-  console.log(styles.widthFactor < 0.725);
 
   return (
     <View style={{ flex: 1, gap: 8 }}>

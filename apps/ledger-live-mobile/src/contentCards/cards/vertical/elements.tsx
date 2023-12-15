@@ -74,11 +74,13 @@ export const SubtitleSizes: {
     variant: "body",
     fontWeight: "medium",
     numberOfLine: 1,
+    paddingTop: 2,
   },
   M: {
     variant: "paragraph",
     fontWeight: "medium",
     numberOfLine: 1,
+    paddingTop: 2,
   },
   S: {
     variant: "paragraph",
