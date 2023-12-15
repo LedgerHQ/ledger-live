@@ -26,7 +26,7 @@ type LabelProps = {
   size: Size;
 };
 
-export const Tag = ({ label, size }: LabelProps) => {
+export const Tag = ({ label }: LabelProps) => {
   const { colors } = useTheme();
 
   return (
@@ -41,7 +41,7 @@ export const Tag = ({ label, size }: LabelProps) => {
 };
 
 export const TitleSizes: {
-  [key in Size]: {};
+  [key in Size]: object;
 } = {
   L: {
     variant: "large",
@@ -68,7 +68,7 @@ export const Title = ({ label, size }: LabelProps) => {
 };
 
 export const SubtitleSizes: {
-  [key in Size]: {};
+  [key in Size]: object;
 } = {
   L: {
     variant: "body",
@@ -101,7 +101,7 @@ export const Subtitle = ({ label, size }: LabelProps) => {
 };
 
 export const PriceSizes: {
-  [key in Size]: {};
+  [key in Size]: object;
 } = {
   L: {
     variant: "large",
