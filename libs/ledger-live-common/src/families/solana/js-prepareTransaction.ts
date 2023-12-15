@@ -476,8 +476,7 @@ async function deriveStakeUndelegateCommandDescriptor(
   }
 
   const { fee } = await estimateFeeAndSpendable(api, mainAccount, tx);
-
-  if (mainAccount.spendableBalance.lt(fee)) {
+  if (mainAccount.solanaResources.unstakeReserve.lt(fee)) {
     errors.fee = new NotEnoughBalance();
   }
 
@@ -513,8 +512,7 @@ async function deriveStakeWithdrawCommandDescriptor(
   }
 
   const { fee } = await estimateFeeAndSpendable(api, mainAccount, tx);
-
-  if (mainAccount.spendableBalance.lt(fee)) {
+  if (mainAccount.solanaResources.unstakeReserve.lt(fee)) {
     errors.fee = new NotEnoughBalance();
   }
 
