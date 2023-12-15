@@ -153,17 +153,16 @@ src
 │   ├── fonts
 │   ├── hooks
 │   ├── i18n : all translation files
-│   ├── index.html : html point point
+|   ├── logger : internal logging library. Can be exported through the "save logs" feature.
+│   ├── index.html : html entry point
 │   ├── index.ts : js entry point
-│   ├── init.js : initialize the rendering
-│   ├── live-common-setup.js : set up live-common for renderer specific parts
+│   ├── init.tsx : initialize rendering
+│   ├── live-common-setup.ts : set up live-common for renderer specific parts
 │   └── ... other files related to renderer
-├── config : constants files. DEPRECATED. will be moved to live-common.
-├── helpers : helpers. DEPRECATED. will be moved to live-common or in relevant places.
-├── live-common-set-supported-currencies.js : generic set up of supported coins
-├── live-common-setup.js : generic set up of live-common
-├── logger : internal logging library. used by all thread. produces the "export logs".
-├── network.js : network implementation. will eventually move back to live-common.
+├── config : constants files. DEPRECATED. Will be moved to live-common.
+├── helpers : helpers. DEPRECATED. Will be moved to live-common or in relevant places.
+├── live-common-set-supported-currencies.ts : generic set up of supported coins
+├── live-common-setup-base.ts : generic set up of live-common
 └── sentry : related to bug report API
 ```
 
