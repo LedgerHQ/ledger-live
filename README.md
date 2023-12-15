@@ -207,7 +207,7 @@ Please check the general guidelines for contributing to Ledger Live projects: [`
 
 Each individual project may include its own specific guidelines, located within its respective folder.
 
-While you explore:
+While you explore these projects:
 
 - Follow the git workflow, prefix your branches and do not create unneeded merge commits.
 - Be mindful when creating Pull Requests, specify the reason of the change clearly and write tests if needed.
