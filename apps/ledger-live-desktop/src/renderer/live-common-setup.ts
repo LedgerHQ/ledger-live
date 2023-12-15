@@ -48,7 +48,10 @@ registerTransportModule({
     });
 
     // Retries in the `renderer` process if the open failed. No retry is done in the `internal` process to avoid multiplying retries.
-    return retry(() => IPCTransport.open(id, timeoutMs, context));
+    return retry(() => IPCTransport.open(id, timeoutMs, context), {
+      interval: 500,
+      maxRetry: 4,
+    });
   },
   disconnect: () => Promise.resolve(),
 });
