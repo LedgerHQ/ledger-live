@@ -24,7 +24,7 @@ We also share core business logic with Ledger Live mobile through [@ledgerhq/liv
 
 ## Signed hashes
 
-Ledger Live releases are signed. The automatic update mechanism makes use of the signature to verify that each subsequent update is authentic. Instructions for verifying the hash and signatures of the installation packages are available [on this page](https://ledger-live-tools.now.sh/lld-signatures), which will be integrated into the [official download page](https://www.ledger.com/ledger-live/download).
+Ledger Live releases are signed. The automatic update mechanism makes use of the signature to verify that each subsequent update is authentic. Instructions for verifying the hash and signatures of the installation packages are available [on this page](https://live.ledger.tools/lld-signatures), which will be integrated into the [official download page](https://www.ledger.com/ledger-live).
 
 # Development
 
