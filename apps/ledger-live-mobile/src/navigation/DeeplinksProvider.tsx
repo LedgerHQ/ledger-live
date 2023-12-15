@@ -188,20 +188,22 @@ const linkingOptions = (featureFlags: OptionalFeatureMap) => ({
               /**
                * ie: "ledgerlive://portfolio" -> will redirect to the portfolio
                */
+
               [NavigatorName.Portfolio]: {
                 screens: {
+                  [NavigatorName.PortfolioAccounts]: {
+                    screens: {
+                      /**
+                       * "ledgerlive://accounts" opens the main portfolio screen of accounts.
+                       */
+                      [ScreenName.Accounts]: "accounts",
+                    },
+                  },
                   [NavigatorName.WalletTab]: {
                     screens: {
                       [ScreenName.Portfolio]: "portfolio",
                       [ScreenName.WalletNftGallery]: "nftgallery",
-                      [NavigatorName.PortfolioAccounts]: {
-                        screens: {
-                          /**
-                           * "ledgerlive://accounts" opens the main portfolio screen of accounts.
-                           */
-                          [ScreenName.Accounts]: "accounts",
-                        },
-                      },
+
                       ...(featureFlags?.ptxEarn?.enabled && {
                         [NavigatorName.Market]: {
                           screens: {
