@@ -74,30 +74,6 @@ pnpm build:lld
 
 If you are using [Visual Studio Code](https://code.visualstudio.com/) IDE, we provide a [default debug configuration](https://github.com/LedgerHQ/ledger-live/tree/develop/.vscode/launch.json) that you can use to debug the main and renderer processes of the application.
 
-```json
-{
-  "version": "0.2.0",
-  "configurations": [
-    {
-      // Start live desktop with:
-      //ELECTRON_ARGS=--remote-debugging-port=8315 pnpm dev:lld
-      "name": "Attach Electron Renderer",
-      "type": "chrome",
-      "request": "attach",
-      "port": 8315
-    },
-    {
-      // Start live desktop with:
-      //LEDGER_INTERNAL_ARGS=--inspect pnpm dev:lld
-      "name": "Attach Electron Main",
-      "type": "node",
-      "request": "attach",
-      "skipFiles": ["<node_internals>/**"]
-    }
-  ]
-}
-```
-
 ### Tips
 
 - #### **Can't find Node.js binary "pnpm": path does not exist. Make sure Node.js is installed and in your PATH, or set the "runtimeExecutable" in your launch.json\***
