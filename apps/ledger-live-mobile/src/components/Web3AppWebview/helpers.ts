@@ -169,7 +169,7 @@ export function useWebviewState(
   params: Pick<WebviewProps, "manifest" | "inputs">,
   WebviewAPIRef: React.ForwardedRef<WebviewAPI>,
   onStateChange: WebviewProps["onStateChange"],
-  serverRef: React.MutableRefObject<WalletAPIServer | undefined>,
+  serverRef?: React.MutableRefObject<WalletAPIServer | undefined>,
 ) {
   const webviewRef = useRef<WebView>(null);
   const { manifest, inputs } = params;
