@@ -6,7 +6,6 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
-import BigNumber from "bignumber.js";
 import { findSubAccountById } from "../../account";
 import type { Account } from "@ledgerhq/types-live";
 import { ChainAPI } from "./api";
@@ -41,7 +40,6 @@ import {
   isValidBase58Address,
   MAX_MEMO_LENGTH,
 } from "./logic";
-import { estimateTxFee } from "./tx-fees";
 import type {
   CommandDescriptor,
   SolanaAccount,
@@ -62,7 +60,6 @@ import type {
 import { assertUnreachable } from "./utils";
 import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { estimateFeeAndSpendable } from "./js-estimateMaxSpendable";
-import { Fee } from "@keplr-wallet/proto-types/cosmos/tx/v1beta1/tx";
 
 async function deriveCommandDescriptor(
   mainAccount: SolanaAccount,
