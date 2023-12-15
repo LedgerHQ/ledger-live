@@ -3700,7 +3700,7 @@
       "description": "Freeze TRX to earn rewards securely, keeping control of your assets.",
       "steps": {
         "0": "Delegated assets remain yours.",
-        "1": "You can unfreeze your assets at any time.",
+        "1": "You can unfreeze your assets at any time, and they will be accessible after the 14-day unfreezing period.",
         "2": "Freeze and vote securely with your Ledger device."
       },
       "howVotingWorks": "How voting works",
@@ -5355,7 +5355,7 @@
             "description": "Delegate TRX to a third party candidate to earn rewards. Click on continue to freeze assets and vote.",
             "bullet": {
               "delegate": "Delegated assets remain yours.",
-              "access": "You can unfreeze your assets immediately and access your assets after the unfreezing period.",
+              "access": "Frozen assets can be unfrozen immediately and will become accessible after the 14-day unfreezing period.",
               "ledger": "Delegate securely with your Ledger device."
             },
             "button": {
@@ -5373,7 +5373,7 @@
       },
       "unfreeze": {
         "title": "Unfreeze",
-        "description": "Unfreeze TRX to add them back to your available balance. You will no longer earn rewards. The assets will be available after the unfreezing period"
+        "description": "Unfreeze TRX to add them back to your available balance. You will no longer earn rewards. The assets will be available after the 14-day unfreezing period"
       },
       "vote": {
         "title": "Vote",
