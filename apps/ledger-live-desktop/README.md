@@ -102,7 +102,7 @@ If you are using [Visual Studio Code](https://code.visualstudio.com/) IDE, we pr
 
 - #### **Can't find Node.js binary "pnpm": path does not exist. Make sure Node.js is installed and in your PATH, or set the "runtimeExecutable" in your launch.json\***
 
-  Add your terminal PATH as enviroment variable.
+  Add your terminal PATH as environment variable.
 
   ```json
     "env": {
@@ -111,7 +111,7 @@ If you are using [Visual Studio Code](https://code.visualstudio.com/) IDE, we pr
     }
   ```
 
-  To get the PATH run in your terminal
+  To get the PATH, run in your terminal
 
   ```bash
   echo $PATH
@@ -137,7 +137,7 @@ NO_DEBUG_DEVICE=1
 NO_DEBUG_COUNTERVALUES=1
 ```
 
-other envs can be seen in [libs/src/env.ts](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/env/src/env.ts)
+Other environment variables can be found in [libs/src/env.ts](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/env/src/env.ts)
 
 ### Run tests
 
