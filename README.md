@@ -197,7 +197,7 @@ These packages are deployed to the official npm repository under the `@ledgerhq`
 
 ### `/tools` - Tools
 
-> ⚠️ Tools are primarily intended to be used internally and are undocumented for the most part.
+> ⚠️ Tools are primarily intended for internal use and are largely undocumented.
 
 A tool can be a github action, a shell script or a piece of JavaScript code that is used throughout this repository.
 
