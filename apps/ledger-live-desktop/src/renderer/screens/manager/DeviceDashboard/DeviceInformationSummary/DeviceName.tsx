@@ -1,6 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { Flex, IconsLegacy } from "@ledgerhq/react-ui";
-import Text from "~/renderer/components/Text";
+import { Flex, IconsLegacy, Text } from "@ledgerhq/react-ui";
 import EditDeviceName from "./EditDeviceName";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { identifyTargetId, DeviceModelId } from "@ledgerhq/devices";
@@ -9,6 +8,8 @@ import { track } from "~/renderer/analytics/segment";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import styled from "styled-components";
+import ToolTip from "~/renderer/components/Tooltip";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   deviceInfo: DeviceInfo;
@@ -58,17 +59,32 @@ const DeviceName: React.FC<Props> = ({
     track("Page Manager RenameDeviceEntered");
   }, [device, deviceInfo, name, onSuccess]);
 
+  const { t } = useTranslation();
+
   return (
     <Flex alignItems="center">
       <Flex onClick={!disabled ? openDeviceRename : undefined}>
         <Flex mb={2} alignItems="center">
-          <Text ff="Inter|SemiBold" color="palette.text.shade100" fontSize={6} mr={3}>
+          <Text variant="large" fontWeight="semiBold" mr={3}>
             {name || deviceInfo.version}
           </Text>
           {editSupported ? (
-            <PenIcon>
-              <IconsLegacy.PenMedium color={disabled ? "neutral.c50" : "neutral.c100"} size={17} />
-            </PenIcon>
+            <ToolTip
+              enabled={disabled}
+              content={
+                <Text color="neutral.c00" variant="small">
+                  {t("appsInstallingDisabledTooltip")}
+                </Text>
+              }
+              placement="top"
+            >
+              <PenIcon>
+                <IconsLegacy.PenMedium
+                  color={disabled ? "neutral.c50" : "neutral.c100"}
+                  size={17}
+                />
+              </PenIcon>
+            </ToolTip>
           ) : null}
         </Flex>
       </Flex>

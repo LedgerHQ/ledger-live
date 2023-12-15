@@ -1,6 +1,6 @@
 import React, { memo, useRef, useState, useCallback, useMemo, useEffect } from "react";
 import styled from "styled-components";
-import { withTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { App, DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { Exec, InstalledItem, ListAppsResult } from "@ledgerhq/live-common/apps/types";
 import {
@@ -14,8 +14,8 @@ import NavigationGuard from "~/renderer/components/NavigationGuard";
 import Quit from "~/renderer/icons/Quit";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import AppList from "./AppsList";
-import DeviceStorage from "../DeviceStorage/index";
-import ProviderWarning from "../ProviderWarning";
+import DeviceInformationSummary from "./DeviceInformationSummary";
+import ProviderWarning from "./ProviderWarning";
 import AppDepsInstallModal from "./AppDepsInstallModal";
 import AppDepsUnInstallModal from "./AppDepsUnInstallModal";
 import ErrorModal from "~/renderer/modals/ErrorModal/index";
@@ -30,7 +30,6 @@ import {
   hasInstalledAppsSelector,
   lastSeenCustomImageSelector,
 } from "~/renderer/reducers/settings";
-import { TFunction } from "i18next";
 
 const Container = styled.div`
   display: flex;
@@ -58,23 +57,31 @@ type Props = {
   result: ListAppsResult;
   onRefreshDeviceInfo: () => void;
   exec: Exec;
-  t: TFunction;
-  render?: (a: { disableFirmwareUpdate: boolean; installed: InstalledItem[] }) => React.ReactNode;
+  renderFirmwareUpdateBanner?: (a: {
+    disableFirmwareUpdate: boolean;
+    installed: InstalledItem[];
+  }) => React.ReactNode;
   appsToRestore?: string[];
 }; // workaround until we fix LL-4458
 
 const shouldBlockNavigation = (l: { pathname: string }) => l.pathname !== "/manager";
-const AppsList = ({
+
+/**
+ * Component meant to be displayed on an entire page.
+ * Renders all the main information available about the device,
+ * a catalog of apps and the apps installed.
+ */
+const DeviceDashboard = ({
   firmware,
   deviceInfo,
   onRefreshDeviceInfo,
   result,
   exec,
-  t,
-  render,
+  renderFirmwareUpdateBanner,
   appsToRestore = [],
   device,
 }: Props) => {
+  const { t } = useTranslation();
   const { deviceName } = result;
   const [state, dispatch] = useAppsRunner(result, exec, appsToRestore);
   const optimisticState = useMemo(() => predictOptimisticState(state), [state]);
@@ -162,8 +169,8 @@ const AppsList = ({
   const disableFirmwareUpdate = state.installQueue.length > 0 || state.uninstallQueue.length > 0;
   return (
     <>
-      {render
-        ? render({
+      {renderFirmwareUpdateBanner
+        ? renderFirmwareUpdateBanner({
             disableFirmwareUpdate,
             installed: state.installed,
           })
@@ -189,7 +196,7 @@ const AppsList = ({
           cancelText={t(`errors.ManagerQuitPage.quit`)}
           centered
         />
-        <DeviceStorage
+        <DeviceInformationSummary
           uninstallQueue={uninstallQueue}
           installQueue={installQueue}
           distribution={distribution}
@@ -226,5 +233,4 @@ const AppsList = ({
     </>
   );
 };
-const AppsListScreen = memo<Props>(AppsList);
-export default withTranslation()(AppsListScreen);
+export default memo<Props>(DeviceDashboard);

@@ -9,7 +9,7 @@ import { Trans } from "react-i18next";
 import Text from "~/renderer/components/Text";
 import Tooltip from "~/renderer/components/Tooltip";
 import Button from "~/renderer/components/Button";
-import Progress from "~/renderer/screens/manager/AppsList/Progress";
+import Progress from "./Progress";
 import Box from "~/renderer/components/Box/Box";
 import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
