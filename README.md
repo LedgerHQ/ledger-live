@@ -117,7 +117,7 @@ pnpm typecheck --filter="live-mobile"
 ## Documentation
 
 Each project folder has a `README.md` file which contains basic documentation.
-It includes background info about the project and how to setup, run and build it.
+It includes background information about the project and how to setup, run and build it.
 
 Please check the [**wiki**](https://github.com/LedgerHQ/ledger-live/wiki) for additional documentation.
 
