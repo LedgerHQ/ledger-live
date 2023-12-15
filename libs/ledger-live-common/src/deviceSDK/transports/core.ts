@@ -13,7 +13,7 @@ import {
   TransportStatusError,
   TransportWebUSBGestureRequired,
 } from "@ledgerhq/errors";
-import { open, close, setAllowAutoDisconnect } from "../../hw/index";
+import { open, close, setEnableDisconnectAfterInactivityForTransport } from "../../hw/index";
 import { DeviceQueuedJobsManager } from "../../hw/deviceAccess";
 
 export { Transport };
@@ -90,7 +90,7 @@ export const withTransport = (deviceId: string, options?: { openTimeoutMs?: numb
       const finalize = (transport, cleanups) => {
         tracer.trace("Closing and cleaning transport");
 
-        setAllowAutoDisconnect(transport, deviceId, true);
+        setEnableDisconnectAfterInactivityForTransport({ transport, deviceId, isEnabled: true });
         return close(transport, deviceId)
           .catch(() => {})
           .then(() => {
@@ -104,7 +104,7 @@ export const withTransport = (deviceId: string, options?: { openTimeoutMs?: numb
       // Setups a given transport
       const setupTransport = async (transport: Transport) => {
         tracer.trace("Setting up the transport instance");
-        setAllowAutoDisconnect(transport, deviceId, false);
+        setEnableDisconnectAfterInactivityForTransport({ transport, deviceId, isEnabled: false });
 
         if (unsubscribed) {
           tracer.trace("Unsubscribed (1) while processing job");

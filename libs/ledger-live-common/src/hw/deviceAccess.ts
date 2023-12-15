@@ -17,7 +17,7 @@ import {
 } from "@ledgerhq/errors";
 import { LocalTracer, TraceContext, trace } from "@ledgerhq/logs";
 import { getEnv } from "@ledgerhq/live-env";
-import { open, close, setAllowAutoDisconnect } from ".";
+import { open, close, setEnableDisconnectAfterInactivityForTransport } from ".";
 
 const LOG_TYPE = "hw";
 
@@ -196,7 +196,7 @@ export const withDevice =
       const finalize = async (transport: Transport, cleanups: Array<() => void>) => {
         tracer.trace("Closing and cleaning transport", { function: "finalize" });
 
-        setAllowAutoDisconnect(transport, deviceId, true);
+        setEnableDisconnectAfterInactivityForTransport({ transport, deviceId, isEnabled: true });
         try {
           await close(transport, deviceId);
         } catch (error) {
@@ -231,7 +231,7 @@ export const withDevice =
             // It was unsubscribed prematurely
             return finalize(transport, [resolveQueuedJob]);
           }
-          setAllowAutoDisconnect(transport, deviceId, false);
+          setEnableDisconnectAfterInactivityForTransport({ transport, deviceId, isEnabled: false });
 
           if (needsCleanup[identifyTransport(transport)]) {
             delete needsCleanup[identifyTransport(transport)];

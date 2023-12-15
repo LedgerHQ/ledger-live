@@ -10,23 +10,23 @@ const LOG_TYPE = "hid-verbose";
 
 let transportInstance: TransportNodeHidSingleton | null = null;
 
-const DISCONNECT_TIMEOUT = 5000;
-let disconnectTimeout;
-const clearDisconnectTimeout = () => {
-  if (disconnectTimeout) {
-    clearTimeout(disconnectTimeout);
+const DISCONNECT_AFTER_INACTIVITY_TIMEOUT_MS = 5000;
+let disconnectAfterInactivityTimeout: ReturnType<typeof setTimeout> | undefined;
+const clearDisconnectAfterInactivityTimeout = () => {
+  if (disconnectAfterInactivityTimeout) {
+    clearTimeout(disconnectAfterInactivityTimeout);
   }
 };
 
-const setDisconnectTimeout = () => {
-  clearDisconnectTimeout();
-  disconnectTimeout = setTimeout(
-    () => TransportNodeHidSingleton.autoDisconnect(),
-    DISCONNECT_TIMEOUT,
+const setDisconnectAfterInactivityTimeout = () => {
+  clearDisconnectAfterInactivityTimeout();
+  disconnectAfterInactivityTimeout = setTimeout(
+    () => TransportNodeHidSingleton.disconnectAfterInactivity(),
+    DISCONNECT_AFTER_INACTIVITY_TIMEOUT_MS,
   );
 };
 
-export type ListenDescriptorEvent = DescriptorEvent<any>;
+export type ListenDescriptorEvent = DescriptorEvent<string>;
 
 /**
  * node-hid Transport implementation
@@ -36,7 +36,8 @@ export type ListenDescriptorEvent = DescriptorEvent<any>;
  * TransportNodeHid.create().then(transport => ...)
  */
 export default class TransportNodeHidSingleton extends TransportNodeHidNoEvents {
-  preventAutoDisconnect = false;
+  isDisconnectAfterInactivityEnabled = true;
+  // preventAutoDisconnect = false;
 
   constructor(device: HID.HID, { context }: { context?: TraceContext } = {}) {
     super(device, { context, logType: LOG_TYPE });
@@ -110,53 +111,64 @@ export default class TransportNodeHidSingleton extends TransportNodeHidNoEvents 
   };
 
   /**
-   * Disconnects singleton instance, if it exist and is not prevented from disconnecting.
+   * Disconnects singleton instance if it is not prevented from disconnecting,
+   * otherwise try again after DISCONNECT_AFTER_INACTIVITY_TIMEOUT_MS.
    *
    * The prevention is handled by `preventAutoDisconnect`.
-   * If it is prevented from disconnection, this function is retried in DISCONNECT_TIMEOUT.
-   * Used in pair with `setDisconnectTimeout`.
+   * Currently, there is only one transport instance (for only one device connected via USB).
+   *
+   * Used in pair with `setDisconnectAfterInactivityTimeout`.
+   *
+   * Hence, once called once, the disconnection is tried at a frequency of DISCONNECT_TIMEOUT (or until `clearDisconnectAfterInactivityTimeout` is called)
    */
-  static async autoDisconnect(): Promise<void> {
+  static async disconnectAfterInactivity(): Promise<void> {
     trace({
       type: LOG_TYPE,
-      message: "Starting auto disconnect",
+      message: "Auto Disconnecting, if not prevented",
       data: {
         hasInstance: Boolean(transportInstance),
-        preventAutoDisconnect: Boolean(transportInstance?.preventAutoDisconnect),
+        isDisconnectAfterInactivityEnabled: transportInstance?.isDisconnectAfterInactivityEnabled,
       },
     });
 
-    if (transportInstance && !transportInstance.preventAutoDisconnect) {
+    if (transportInstance && !transportInstance.isDisconnectAfterInactivityEnabled) {
       TransportNodeHidSingleton.disconnect();
     } else if (transportInstance) {
-      // If we have disabled the auto-disconnect, try again in DISCONNECT_TIMEOUT
-      clearDisconnectTimeout();
-      setDisconnectTimeout();
+      // If the auto-disconnect is prevented, try again in DISCONNECT_TIMEOUT
+      clearDisconnectAfterInactivityTimeout();
+      setDisconnectAfterInactivityTimeout();
     }
   }
 
   /**
-   * TODO: OK this is not called from no event <- check
+   * Disconnects from the HID device associated to the transport singleton.
    *
-   * globally disconnect the transport singleton
+   * If you want to try to re-use the same transport instance at the next operations (exchange for ex), you can use
+   * the transport instance `close` method: it will only enable a disconnect after some inactivity.
+   *
+   * `disconnectAfterInactivity` will be called at a fixed frequency, and when the disconnect after some inactivity is enabled
+   * it will call this `disconnect` function.
    */
   static async disconnect() {
     trace({
       type: LOG_TYPE,
-      message: `Disconnecting from static disconnect function call: current transport instance ? ${!!transportInstance}`,
+      message: "Disconnecting from HID device",
+      data: {
+        hasInstance: Boolean(transportInstance),
+      },
     });
+
+    clearDisconnectAfterInactivityTimeout();
 
     if (transportInstance) {
       transportInstance.device.close();
-      transportInstance = null;
-
       trace({
         type: LOG_TYPE,
-        message: `Emitting "disconnect" event from static disconnect`,
+        message: `Closed HID communication with device. Emitting "disconnect" event from static disconnect and clearing singleton instance.`,
       });
       transportInstance.emit("disconnect");
+      transportInstance = null;
     }
-    clearDisconnectTimeout();
   }
 
   /**
@@ -167,13 +179,13 @@ export default class TransportNodeHidSingleton extends TransportNodeHidNoEvents 
    *
    * Legacy: `_descriptor` is needed to follow the Transport definition
    */
-  static open(
+  static async open(
     _descriptor: string,
     _timeoutMs?: number,
     context?: TraceContext,
   ): Promise<TransportNodeHidSingleton> {
     const tracer = new LocalTracer(LOG_TYPE, context);
-    clearDisconnectTimeout();
+    clearDisconnectAfterInactivityTimeout();
 
     return Promise.resolve().then(() => {
       if (transportInstance) {
@@ -187,7 +199,7 @@ export default class TransportNodeHidSingleton extends TransportNodeHidNoEvents 
       });
 
       const device = devicesDetectedDuringOpen[0];
-      if (!device) throw new CantOpenDevice("no device found");
+      if (!device) throw new CantOpenDevice("No device found");
 
       tracer.trace("Found a device, creating HID transport instance ...", { device });
 
@@ -203,7 +215,7 @@ export default class TransportNodeHidSingleton extends TransportNodeHidNoEvents 
         context,
       });
 
-      const unlisten = listenDevices(
+      const clearDeviceEventsListener = listenDevices(
         () => {},
         () => {
           // Assumes any ledger disconnection concerns current transport
@@ -214,18 +226,21 @@ export default class TransportNodeHidSingleton extends TransportNodeHidNoEvents 
         },
       );
 
+      /**
+       * Disconnect event received from the transport instance.
+       *
+       * It could be after a disconnection coming from the HID library (e.g. device unplugged) or from the transport instance itself (e.g. close).
+       * Clearing the singleton instance.
+       * Currently, only 1 device at a time is supported.
+       */
       const onDisconnect = () => {
         if (!transportInstance) {
           tracer.trace("disconnect event without transport instance, ignoring ...");
           return;
         }
-        // TODO: not here ? Should we call `disconnect` ?
         transportInstance.off("disconnect", onDisconnect);
-        // TransportNodeHidSingleton.disconnect();
-        // tracer.trace("Device was disconnected, clearing transport singleton instance ...");
-
         transportInstance = null;
-        unlisten();
+        clearDeviceEventsListener();
       };
 
       transportInstance.on("disconnect", onDisconnect);
@@ -233,13 +248,16 @@ export default class TransportNodeHidSingleton extends TransportNodeHidNoEvents 
     });
   }
 
-  setAllowAutoDisconnect(allow: boolean): void {
-    this.tracer.trace("Setting allow auto-disconnect", { allow });
-    this.preventAutoDisconnect = !allow;
+  /**
+   * Enables or disables the disconnection from the current HID device after some inactivity (DISCONNECT_TIMEOUT)
+   */
+  setEnableDisconnectAfterInactivity(isEnabled: boolean): void {
+    this.tracer.trace("Setting allow disconnect after inactivity", { isEnabled });
+    this.isDisconnectAfterInactivityEnabled = isEnabled;
   }
 
   /**
-   * Exchange with the device using APDU protocol.
+   * Exchanges with the device using APDU protocol
    *
    * @param apdu
    * @returns a promise of apdu response
@@ -248,26 +266,29 @@ export default class TransportNodeHidSingleton extends TransportNodeHidNoEvents 
     apdu: Buffer,
     { abortTimeoutMs }: { abortTimeoutMs?: number } = {},
   ): Promise<Buffer> {
-    clearDisconnectTimeout();
+    clearDisconnectAfterInactivityTimeout();
     const result = await super.exchange(apdu, { abortTimeoutMs });
-    setDisconnectTimeout();
+    setDisconnectAfterInactivityTimeout();
     return result;
   }
 
-  // TODO: understand and document this
+  /**
+   * Closes the transport instance by not preventing an auto-disconnection (see `disconnectAfterInactivity`).
+   *
+   * Intentionally not disconnecting the device/closing the hid connection directly:
+   * The HID connection will only be closed after some inactivity.
+   */
   async close(): Promise<void> {
     this.tracer.trace(
-      "Calling close on HID Transport instance, brut forcing auto disconnect. Not doing anything.",
+      "Closing transport instance by enabling the next disconnect after inactivity attempt",
       {
-        oldPreventAutoDisconnect: this.preventAutoDisconnect,
+        previousIsDisconnectAfterInactivityEnabled: this.isDisconnectAfterInactivityEnabled,
         hasInstance: !!transportInstance,
       },
     );
-    // intentionally, a close will not effectively close the hid connection but
-    // will allow an auto-disconnection after some inactivity
-    this.preventAutoDisconnect = false;
-    // TODO: brut force ?
-    // return await TransportNodeHidSingleton.autoDisconnect();
+
+    this.isDisconnectAfterInactivityEnabled = true;
+
     return Promise.resolve();
   }
 }

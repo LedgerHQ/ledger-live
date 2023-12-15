@@ -43,15 +43,13 @@ export type TransportModule = {
   disconnect: (id: string) => Promise<void> | null | undefined;
 
   /**
-   * Determines whether an auto-disconnect can happen at this time or not.
-   *
-   * Currently only used by TransportNodeHid
+   * Sets whether the transport can disconnect with the associated device after a period of inactivity.
    */
-  setAllowAutoDisconnect?: (
-    transport: Transport,
-    id: string,
-    allow: boolean,
-  ) => Promise<void> | null | undefined;
+  setEnableDisconnectAfterInactivity?: (params: {
+    transport: Transport;
+    deviceId: string;
+    isEnabled: boolean;
+  }) => "ok" | "not-supported";
 
   // optional observable that allows to discover a transport
   discovery?: Discovery;
@@ -188,24 +186,37 @@ export const close = (
 };
 
 /**
- * TODO: fix this, or remove comments.
+ * On the registered transport modules, find the 1st module with matching transport instance and device
+ * that supports `setEnableDisconnectAfterInactivity` and execute it.
  *
- * Currently only used by TransportNodeHid.
- * But the logic seems wrong to find the module to call `setAllowAutoDisconnect` on:
- * the 1st registered module that defines `setAllowAutoDisconnect` will be chosen, while
- * it could be another module that can handle the transport.
+ * @return if no matching module is found, returns "not-supported". Otherwise returns "ok".
  */
-export const setAllowAutoDisconnect = (
-  transport: Transport,
-  deviceId: string,
-  allow: boolean,
-): Promise<void> | null | undefined => {
+export function setEnableDisconnectAfterInactivityForTransport({
+  transport,
+  deviceId,
+  isEnabled,
+}: {
+  transport: Transport;
+  deviceId: string;
+  isEnabled: boolean;
+}): "ok" | "not-supported" {
   for (let i = 0; i < modules.length; i++) {
     const m = modules[i];
-    const p = m.setAllowAutoDisconnect && m.setAllowAutoDisconnect(transport, deviceId, allow);
-    if (p) return p;
+
+    if (m.setEnableDisconnectAfterInactivity) {
+      if (m.setEnableDisconnectAfterInactivity({ transport, deviceId, isEnabled }) === "ok") {
+        trace({
+          type: LOG_TYPE,
+          message: `Set enable disconnect after inactivity called on ${m.id}`,
+          data: { moduleId: m.id, isEnabled },
+        });
+        return "ok";
+      }
+    }
   }
-};
+
+  return "not-supported";
+}
 
 export const disconnect = (deviceId: string): Promise<void> => {
   for (let i = 0; i < modules.length; i++) {

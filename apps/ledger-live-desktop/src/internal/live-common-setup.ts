@@ -68,8 +68,15 @@ if (getEnv("DEVICE_PROXY_URL")) {
       });
       return Promise.resolve();
     },
-    setAllowAutoDisconnect: async (transport, _, allow) =>
-      (transport as TransportNodeHidSingleton).setAllowAutoDisconnect(allow),
+
+    setEnableDisconnectAfterInactivity: ({ transport, isEnabled }): "ok" | "not-supported" => {
+      if (transport instanceof TransportNodeHidSingleton) {
+        transport.setEnableDisconnectAfterInactivity(isEnabled);
+        return "ok";
+      }
+
+      return "not-supported";
+    },
   });
 }
 
