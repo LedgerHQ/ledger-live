@@ -4,6 +4,9 @@ import BigNumber from "bignumber.js";
 import * as jsPrepareTransaction from "./js-prepareTransaction";
 import { calculateFees, getEstimatedFees } from "./js-prepareTransaction";
 import { CosmosAccount, Transaction } from "./types";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import liveConfig from "../../config/sharedConfig";
+
 jest.mock("@ledgerhq/live-network/network");
 
 const account = {
@@ -19,6 +22,8 @@ const transaction = {
   memo: "test memo",
   useAllAmount: false,
 } as unknown as Transaction;
+
+LiveConfig.setConfig(liveConfig);
 
 describe("getEstimatedFees", () => {
   it("should return gas higher than estimate", async () => {

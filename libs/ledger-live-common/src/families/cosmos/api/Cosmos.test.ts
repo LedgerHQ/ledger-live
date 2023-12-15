@@ -3,8 +3,13 @@ import { AxiosResponse } from "axios";
 import BigNumber from "bignumber.js";
 import cryptoFactory from "../chain/chain";
 import { CosmosAPI } from "./Cosmos";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import liveConfig from "../../../config/sharedConfig";
+
 jest.mock("@ledgerhq/live-network/network");
 const mockedNetwork = jest.mocked(network);
+
+LiveConfig.setConfig(liveConfig);
 
 describe("CosmosApi", () => {
   let cosmosApi: CosmosAPI;
