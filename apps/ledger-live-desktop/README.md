@@ -5,7 +5,10 @@
 - Related: [ledger-live-mobile](https://github.com/LedgerHQ/ledger-live/tree/develop/apps/ledger-live-mobile)
 - Backed by: [ledger-live-common](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledger-live-common)
 
-> Ledger Live is a new generation wallet desktop application providing a unique interface to maintain multiple cryptocurrencies for your Ledger Nano S / Blue. Manage your device, create accounts, receive and send cryptoassets, [...and many more](https://www.ledger.com/ledger-launches-ledger-live-the-all-in-one-companion-app-to-your-ledger-device).
+> Ledger Live is a desktop companion app for Ledger hardware wallets. It allows users to manage their crypto assets securely, such as Bitcoin, Ethereum, XRP and many others. Ledger Live desktop is available for Mac, Windows (x64) and Linux (x64). It can be downloaded from [ledger.com/ledger-live](https://www.ledger.com/ledger-live/).
+
+Minimum system requirements can be found [on this page](https://support.ledger.com/hc/en-us/articles/4403310017041-Ledger-Live-system-requirements-?docs=true).
+
 
 <a href="https://github.com/LedgerHQ/ledger-live-desktop/releases">
   <p align="center">
@@ -15,17 +18,7 @@
 
 ## Architecture
 
-Ledger Live desktop is an hybrid application built using Electron, React, Redux, RxJS. It is compatible with macOS, Windows (x64) and Linux (x64). It communicates to Ledger hardware wallet devices (Nano X / Nano S / Blue) to verify address and sign transactions with [ledgerjs](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs). Some logic is shared with [live-common](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledger-live-common).
-
-## Download
-
-The latest stable release is available on [ledger.com/ledger-live](https://www.ledger.com/ledger-live/).
-
-Previous versions and pre-releases can be downloaded on here from the [Releases](https://github.com/LedgerHQ/ledger-live/releases) section.
-
-### Compatibility
-
-Ledger Live System Requirements can be found [on this page](https://support.ledger.com/hc/en-us/articles/4403310017041-Ledger-Live-system-requirements-?docs=true).
+Ledger Live desktop is an hybrid application built using Electron, React, Redux, RxJS. It communicates with Ledger hardware wallet devices (Nano X / Nano S / Blue) to verify address and sign transactions with [ledgerjs](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs). Some logic is shared with [live-common](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledger-live-common).
 
 ## Signed hashes
 
