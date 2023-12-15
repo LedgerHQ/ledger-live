@@ -205,7 +205,7 @@ A tool can be a github action, a shell script or a piece of JavaScript code that
 
 Please check the general guidelines for contributing to Ledger Live projects: [`CONTRIBUTING.md`](https://github.com/LedgerHQ/ledger-live/blob/develop/CONTRIBUTING.md).
 
-Each individual project may include specific guidelines inside its own folder.
+Each individual project may include its own specific guidelines inside its own folder.
 
 In the meantime here are some important highlights:
 
