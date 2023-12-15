@@ -144,7 +144,7 @@ The applications are user-facing programs which depend on one or more libraries.
 ### `/libs` - Libraries
 
 Libraries serve as publicly available packages, designed for integration with other libraries or applications.
-They are deployed to the official npm repository under the `@ledgerhq` organization.
+These packages are deployed to the official npm repository under the `@ledgerhq` organization.
 
 <details><summary><b>Ledger Live Libraries</b></summary>
 <br/>
@@ -197,7 +197,7 @@ They are deployed to the official npm repository under the `@ledgerhq` organizat
 
 ### `/tools` - Tools
 
-> ⚠️ Tools are meant to be used internally and are undocumented for the most part.
+> ⚠️ Tools are primarily intended to be used internally and are undocumented for the most part.
 
 A tool can be a github action, a shell script or a piece of JavaScript code that is used throughout this repository.
 
