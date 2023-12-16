@@ -58,32 +58,6 @@ export function isTestnet(currency: CryptoCurrency): boolean {
   return getCryptoCurrencyById(currency.id).isTestnetFor ? true : false;
 }
 
-/**
- * Returns Testnet RPC URL if the current currency is testnet
- *
- * @param {currency} CryptoCurrency
- */
-export function getRpcUrl(currency: CryptoCurrency): string {
-  let rpcUrl = getEnv("ICON_NODE_ENDPOINT");
-  if (isTestnet(currency)) {
-    rpcUrl = getEnv("ICON_TESTNET_RPC_ENDPOINT");
-  }
-  return rpcUrl;
-}
-
-/**
- * Returns Testnet API URL if the current currency is testnet
- *
- * @param {currency} CryptoCurrency
- */
-export function getApiUrl(currency: CryptoCurrency): string {
-  let apiUrl = getEnv("ICON_INDEXER_ENDPOINT");
-  if (isTestnet(currency)) {
-    apiUrl = getEnv("ICON_TESTNET_API_ENDPOINT");
-  }
-  return apiUrl;
-}
-
 export function getNid(currency: CryptoCurrency): number {
   let nid = MAINNET_NID;
   if (isTestnet(currency)) {

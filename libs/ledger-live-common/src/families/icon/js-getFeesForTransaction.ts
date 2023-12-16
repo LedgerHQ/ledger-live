@@ -1,8 +1,8 @@
 import { BigNumber } from "bignumber.js";
 import type { IconAccount, Transaction } from "./types";
-import { getFees } from "./api";
+import { getFees } from "./api/node";
 import { buildTransaction } from "./js-buildTransaction";
-import { getStepPrice } from "./api/sdk";
+import { getStepPrice } from "./api/node";
 
 /**
  * Fetch the transaction fees for a transaction

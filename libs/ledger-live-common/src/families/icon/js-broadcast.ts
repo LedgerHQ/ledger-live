@@ -1,7 +1,7 @@
 import type { Operation } from "@ledgerhq/types-live";
 import { patchOperationWithHash } from "../../operation";
 
-import { broadcastTransaction } from "./api";
+import { broadcastTransaction } from "./api/node";
 
 /**
  * Broadcast the signed transaction

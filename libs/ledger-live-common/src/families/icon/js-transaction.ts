@@ -22,17 +22,6 @@ export const createTransaction = (): Transaction => ({
 });
 
 /**
- * Apply patch to transaction
- *
- * @param {*} t
- * @param {*} patch
- */
-export const updateTransaction = (t: Transaction, patch: Transaction) => ({
-  ...t,
-  ...patch,
-});
-
-/**
  * Prepare transaction before checking status
  *
  * @param {IconAccount} a
