@@ -2,10 +2,9 @@ import { encodeAccountId } from "../../account";
 import type { GetAccountShape } from "../../bridge/jsHelpers";
 import { makeSync, makeScanAccounts, mergeOps } from "../../bridge/jsHelpers";
 
-import { getAccount, getOperations } from "./api";
+import { getAccount, getOperations } from "./api/node";
 import BigNumber from "bignumber.js";
-import { getApiUrl } from "./logic";
-import { getDelegation, getIScore, getStake } from "./api/sdk";
+import { getDelegation, getIScore, getStake } from "./api/node";
 import { IconResources } from "./types";
 
 const getAccountShape: GetAccountShape = async info => {
@@ -21,13 +20,11 @@ const getAccountShape: GetAccountShape = async info => {
   // Needed for incremental synchronisation
   const skip = 0;
 
-  const url = getApiUrl(currency);
-
   // get the current account balance state depending your api implementation
-  const { blockHeight, balance, additionalBalance } = await getAccount(address, url);
+  const { blockHeight, balance, additionalBalance } = await getAccount(address, currency);
 
   // Merge new operations with the previously synced ones
-  const newOperations = await getOperations(accountId, address, skip, url);
+  const newOperations = await getOperations(accountId, address, skip, currency);
   const operations = mergeOps(oldOperations, newOperations);
   const delegationData = await getDelegation(address, currency);
   const { unstake } = await getStake(address, currency);
@@ -43,16 +40,17 @@ const getAccountShape: GetAccountShape = async info => {
     unwithdrawnReward: iscore,
   };
 
-  const shape = {
+
+
+  return {
     id: accountId,
     balance: new BigNumber(balance),
     spendableBalance: balance,
     operationsCount: operations.length,
     blockHeight,
     iconResources,
+    operations
   };
-
-  return { ...shape, operations };
 };
 
 export const scanAccounts = makeScanAccounts({ getAccountShape });

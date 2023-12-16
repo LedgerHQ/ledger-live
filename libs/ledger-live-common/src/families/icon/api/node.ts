@@ -1,18 +1,22 @@
 import { BigNumber } from "bignumber.js";
 import IconService from "icon-sdk-js";
-import type { PRep, Transaction } from "../types";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { getEnv } from "@ledgerhq/live-env";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
+import type { PRep, Transaction } from "../types";
 import { encodeOperationId } from "../../../operation";
-import { getAccountBalance, getHistory, submit, getLatestBlockHeight } from "./apiCalls";
-import { formatPRepData, getRpcUrl } from "../logic";
+import { getAccountBalance, getApiUrl, getHistory, getLatestBlockHeight } from "./indexer";
+import { formatPRepData, isTestnet } from "../logic";
 import { GOVERNANCE_SCORE_ADDRESS, IISS_SCORE_ADDRESS, STEP_LIMIT } from "../constants";
+
 const { HttpProvider } = IconService;
 const { IconBuilder, IconAmount } = IconService;
 const iconUnit = IconAmount.Unit.ICX.toString();
 /**
  * Get account balances and nonce
  */
-export const getAccount = async (addr: string, url: string) => {
+export const getAccount = async (addr: string, currency: CryptoCurrency) => {
+  const url = getApiUrl(currency);
   const balance = await getAccountBalance(addr, url);
   const blockHeight = await getLatestBlockHeight(url);
   return {
@@ -28,6 +32,19 @@ export const getAccount = async (addr: string, url: string) => {
  */
 function isSender(transaction: Transaction, addr: string): boolean {
   return transaction.from_address === addr;
+}
+
+/**
+ * Returns Testnet RPC URL if the current currency is testnet
+ *
+ * @param {currency} CryptoCurrency
+ */
+export function getRpcUrl(currency: CryptoCurrency): string {
+  let rpcUrl = getEnv("ICON_NODE_ENDPOINT");
+  if (isTestnet(currency)) {
+    rpcUrl = getEnv("ICON_TESTNET_RPC_ENDPOINT");
+  }
+  return rpcUrl;
 }
 
 /**
@@ -83,8 +100,9 @@ export const getOperations = async (
   accountId: string,
   addr: string,
   skip: number,
-  url: string,
+  currency: CryptoCurrency,
 ): Promise<Operation[]> => {
+  const url = getApiUrl(currency);
   const rawTransactions = await getHistory(addr, skip, url);
   if (!rawTransactions) return rawTransactions;
   return rawTransactions.map(transaction => transactionToOperation(accountId, addr, transaction));
@@ -99,16 +117,34 @@ export const broadcastTransaction = async (transaction, currency) => {
   return { hash };
 };
 
+
+export const submit = async (txObj, currency) => {
+  const rpcURL = getRpcUrl(currency);
+
+  const httpProvider = new HttpProvider(rpcURL);
+  const iconService = new IconService(httpProvider);
+
+  const signedTransaction: any = {
+    getProperties: () => txObj.rawTransaction,
+    getSignature: () => txObj.signature,
+  };
+
+  const response = await iconService.sendTransaction(signedTransaction).execute();
+  return {
+    hash: response,
+  };
+};
+
+
+
+
 /**
  * Obtain fees from blockchain
  */
 export const getFees = async (unsigned, account): Promise<BigNumber> => {
   const rpcURL = getRpcUrl(account.currency);
-  /* eslint-disable no-useless-escape */
-  const debugRpcUrl = rpcURL
-    .split(/\/([^\/]+)$/)
-    .slice(0, 2)
-    .join("/debug/");
+  // d mean debug, only get estimate step with debug enpoint
+  const debugRpcUrl = rpcURL + 'd';
   const httpProvider = new HttpProvider(debugRpcUrl);
   const iconService = new IconService(httpProvider);
   let res;

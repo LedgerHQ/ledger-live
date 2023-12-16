@@ -3,7 +3,7 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import { BigNumber } from "bignumber.js";
 import type { PRep, IconAccount, Vote } from "./types";
 import { useBridgeSync } from "../../bridge/react";
-import { getPreps } from "./api/sdk";
+import { getPreps } from "./api/node";
 
 export type Action = {
   type: "updateVote" | "resetVotes" | "clearVotes";

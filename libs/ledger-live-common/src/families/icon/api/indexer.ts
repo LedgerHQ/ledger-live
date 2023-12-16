@@ -1,26 +1,24 @@
-import network from "@ledgerhq/live-network/network";
 import { BigNumber } from "bignumber.js";
-import IconService from "icon-sdk-js";
+import network from "@ledgerhq/live-network/network";
+import { getEnv } from "@ledgerhq/live-env";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { LIMIT } from "../constants";
-import { getRpcUrl } from "../logic";
-const { HttpProvider } = IconService;
+import { isTestnet } from "../logic";
 
-export const submit = async (txObj, currency) => {
-  const rpcURL = getRpcUrl(currency);
 
-  const httpProvider = new HttpProvider(rpcURL);
-  const iconService = new IconService(httpProvider);
+/**
+ * Returns Testnet API URL if the current currency is testnet
+ *
+ * @param {currency} CryptoCurrency
+ */
+export function getApiUrl(currency: CryptoCurrency): string {
+  let apiUrl = getEnv("ICON_INDEXER_ENDPOINT");
+  if (isTestnet(currency)) {
+    apiUrl = getEnv("ICON_TESTNET_API_ENDPOINT");
+  }
+  return apiUrl;
+}
 
-  const signedTransaction: any = {
-    getProperties: () => txObj.rawTransaction,
-    getSignature: () => txObj.signature,
-  };
-
-  const response = await iconService.sendTransaction(signedTransaction).execute();
-  return {
-    hash: response,
-  };
-};
 
 export const getAccountBalance = async (addr: string, url: string): Promise<string> => {
   const resp = await network({

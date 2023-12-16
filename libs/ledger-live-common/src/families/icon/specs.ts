@@ -13,7 +13,7 @@ import { isAccountEmpty } from "../../account";
 const ICON_MIN_SAFE = new BigNumber(1);
 const maxAccounts = 6;
 const currency = getCryptoCurrencyById("icon");
-// Minimum balance required for a new non-ASA account
+
 const minBalanceNewAccount = parseCurrencyUnit(currency.units[0], "0.1");
 
 function expectCorrectBalanceChange(input: TransactionTestInput<Transaction>) {
@@ -62,7 +62,7 @@ const iconSpec: AppSpec<Transaction> = {
       transaction: ({ account, siblings, bridge }) => {
         invariant(account.spendableBalance.gt(0), "balance is 0");
         const sibling = pickSiblings(siblings, maxAccounts);
-        let amount = account.spendableBalance.div(1.9 + 0.2 * Math.random()).integerValue();
+        let amount = account.spendableBalance.div(2).integerValue();
         checkSendableToEmptyAccount(amount, sibling);
         if (!sibling.used && amount.lt(ICON_MIN_SAFE)) {
           invariant(
@@ -85,6 +85,28 @@ const iconSpec: AppSpec<Transaction> = {
         };
       },
       test: input => {
+        expectCorrectBalanceChange(input);
+      },
+    },
+    {
+      name: "send max",
+      maxRun: 1,
+      transaction: ({ account, siblings, bridge }) => {
+        invariant(account.spendableBalance.gt(0), "balance is 0");
+        const sibling = pickSiblings(siblings, maxAccounts);
+        return {
+          transaction: bridge.createTransaction(account),
+          updates: [
+            {
+              recipient: sibling.freshAddress,
+            },
+            {
+              useAllAmount: true,
+            },
+          ],
+        };
+      },
+      test: (input) => {
         expectCorrectBalanceChange(input);
       },
     },
