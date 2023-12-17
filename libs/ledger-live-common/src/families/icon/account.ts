@@ -19,11 +19,6 @@ function formatAccountSpecifics(account: IconAccount): string {
 
   str += formatCurrencyUnit(unit, account.spendableBalance, formatConfig) + " spendable. ";
 
-  if (iconResources.additionalBalance.gt(0)) {
-    str +=
-      formatCurrencyUnit(unit, iconResources.additionalBalance, formatConfig) + " additional. ";
-  }
-
   if (iconResources.nonce) {
     str += "\nonce : " + iconResources.nonce;
   }

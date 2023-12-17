@@ -43,7 +43,7 @@ const buildOptimisticOperation = (
 /**
  * Adds signature to unsigned transaction. Will likely be a call to Icon SDK
  */
-const signTx = (rawTransaction: any, signature: any) => {
+const addSignature = (rawTransaction: any, signature: any) => {
   rawTransaction.signature = signature;
   return {
     rawTransaction,
@@ -64,7 +64,7 @@ const signOperation = ({
   transaction: Transaction;
 }): Observable<SignOperationEvent> =>
   withDevice(deviceId)(transport =>
-    Observable.create(o => {
+    new Observable(o => {
       async function main() {
         o.next({
           type: "device-signature-requested",
@@ -84,7 +84,7 @@ const signOperation = ({
         const icon = new Icon(transport);
         const r = await icon.signTransaction(account.freshAddressPath, unsigned);
 
-        const signed = signTx(rawTransaction, r.signedRawTxBase64);
+        const signed = addSignature(rawTransaction, r.signedRawTxBase64);
 
         o.next({ type: "device-signature-granted" });
 
@@ -98,8 +98,7 @@ const signOperation = ({
           type: "signed",
           signedOperation: {
             operation,
-            signature: signed,
-            expirationDate: null,
+            signature: signed.signature,
           },
         });
       }

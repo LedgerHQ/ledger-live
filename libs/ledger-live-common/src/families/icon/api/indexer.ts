@@ -26,7 +26,7 @@ export const getAccountBalance = async (addr: string, url: string): Promise<stri
     url: `${url}/addresses/details/${addr.toString()}?address=${addr.toString()}`,
   });
   const { data } = resp;
-  const balance = data?.balance;
+  const balance = data?.balance || '0';
   return balance;
 };
 

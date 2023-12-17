@@ -1,11 +1,9 @@
 import { BigNumber } from "bignumber.js";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
 import { getMainAccount } from "../../account";
-
 import type { IconAccount, Transaction } from "./types";
-
 import { createTransaction } from "./js-transaction";
-import getEstimatedFees from "./js-getFeesForTransaction";
+import { TRANSACTION_FEE } from "./constants";
 
 /**
  * Returns the maximum possible amount for transaction
@@ -26,12 +24,9 @@ const estimateMaxSpendable = async ({
     ...createTransaction(),
     ...transaction,
     // spendable balance should be minus a bit of fee to prevent out of balance error from the SDK
-    amount: a.spendableBalance.minus(1),
+    amount: a.spendableBalance.minus(TRANSACTION_FEE),
   };
-
-  const fees = await getEstimatedFees({ a, t });
-
-  return a.spendableBalance.minus(fees);
+  return a.spendableBalance.minus(TRANSACTION_FEE);
 };
 
 export default estimateMaxSpendable;
