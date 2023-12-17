@@ -43,7 +43,7 @@ export default class Icx {
     this.transport = transport;
     transport.decorateAppAPIMethods(
       this,
-      ["getAddress", "signTransaction", "getAppConfiguration", "setTestPrivateKey"],
+      ["getAddress", "signTransaction", "getAppConfiguration"],
       "ICON",
     );
   }

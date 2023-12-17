@@ -3,10 +3,9 @@ import type { IconResourcesRaw, IconResources, IconAccount, IconAccountRaw } fro
 import { AccountRaw, Account } from "@ledgerhq/types-live";
 
 export function toIconResourcesRaw(r: IconResources): IconResourcesRaw {
-  const { nonce, additionalBalance, votes, votingPower, totalDelegated, unwithdrawnReward, unstake } = r;
+  const { nonce, votes, votingPower, totalDelegated, unwithdrawnReward, unstake } = r;
   return {
     nonce,
-    additionalBalance: additionalBalance.toString(),
     votes,
     votingPower: votingPower.toString(),
     totalDelegated: totalDelegated.toString(),
@@ -16,10 +15,9 @@ export function toIconResourcesRaw(r: IconResources): IconResourcesRaw {
 }
 
 export function fromIconResourcesRaw(r: IconResourcesRaw): IconResources {
-  const { nonce, additionalBalance, votes, votingPower, totalDelegated, unwithdrawnReward, unstake } = r;
+  const { nonce, votes, votingPower, totalDelegated, unwithdrawnReward, unstake } = r;
   return {
     nonce,
-    additionalBalance: new BigNumber(additionalBalance),
     votes,
     votingPower: new BigNumber(votingPower || 0),
     totalDelegated: new BigNumber(totalDelegated || 0),

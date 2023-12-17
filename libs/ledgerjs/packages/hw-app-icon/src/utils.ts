@@ -17,22 +17,6 @@
  *  limitations under the License.
  ********************************************************************************/
 
-// type Defer<T> = {
-//   promise: Promise<T>;
-//   resolve: T;
-//   reject: any;
-// };
-
-// export function defer<T>(): Defer<T> {
-//   let resolve, reject;
-//   const promise = new Promise(function (success, failure) {
-//     resolve = success;
-//     reject = failure;
-//   }) as any;
-//   if (!resolve || !reject) throw "defer() error"; // this never happens and is just to make flow happy
-//   return { promise, resolve, reject };
-// }
-
 // TODO use bip32-path library
 export function splitPath(path: string): number[] {
   const result: any = [];
@@ -62,31 +46,6 @@ export function foreach<T, A>(arr: T[], callback: (T, number) => Promise<A>): Pr
   }
   return Promise.resolve().then(() => iterate(0, arr, []));
 }
-
-// export function doIf(condition: boolean, callback: () => any | Promise<any>): Promise<void> {
-//   return Promise.resolve().then(() => {
-//     if (condition) {
-//       return callback();
-//     }
-//   });
-// }
-
-// export function asyncWhile<T>(
-//   predicate: () => boolean,
-//   callback: () => Promise<T>,
-// ): Promise<Array<T>> {
-//   function iterate(result) {
-//     if (!predicate()) {
-//       return result;
-//     } else {
-//       return callback().then(res => {
-//         result.push(res);
-//         return iterate(result);
-//       });
-//     }
-//   }
-//   return Promise.resolve([]).then(iterate);
-// }
 
 export function hexToBase64(hexString: string) {
   return btoa(

@@ -1,5 +1,4 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import { getEnv } from "@ledgerhq/live-env";
 import { BigNumber } from "bignumber.js";
 import IconService from "icon-sdk-js";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -9,6 +8,16 @@ const { IconAmount } = IconService;
 import { BERLIN_TESTNET_NID, IISS_SCORE_ADDRESS, MAINNET_NID, PREP_TYPE } from "./constants";
 
 export const MAX_AMOUNT = 5000;
+
+
+/**
+ * @param {string|number|BigNumber} value value as loop
+ * @returns {BigNumber} value as ICX
+ */
+export const convertLoopToIcx = (value: any): BigNumber => {
+  return new BigNumber(IconAmount.of(value, IconAmount.Unit.LOOP).convertUnit(IconAmount.Unit.ICX).value);
+};
+
 
 /**
  * Returns true if address is a valid md5

@@ -21,7 +21,7 @@ const getAccountShape: GetAccountShape = async info => {
   const skip = 0;
 
   // get the current account balance state depending your api implementation
-  const { blockHeight, balance, additionalBalance } = await getAccount(address, currency);
+  const { blockHeight, balance } = await getAccount(address, currency);
 
   // Merge new operations with the previously synced ones
   const newOperations = await getOperations(accountId, address, skip, currency);
@@ -32,7 +32,6 @@ const getAccountShape: GetAccountShape = async info => {
 
   const iconResources: IconResources = {
     nonce: 0,
-    additionalBalance: new BigNumber(additionalBalance),
     votes: delegationData.delegations,
     totalDelegated: delegationData.totalDelegated,
     votingPower: delegationData.votingPower,
@@ -45,7 +44,7 @@ const getAccountShape: GetAccountShape = async info => {
   return {
     id: accountId,
     balance: new BigNumber(balance),
-    spendableBalance: balance,
+    spendableBalance: balance.minus(iconResources.unstake).minus(iconResources.totalDelegated).minus(iconResources.votingPower),
     operationsCount: operations.length,
     blockHeight,
     iconResources,

@@ -1,3 +1,5 @@
+import { convertLoopToIcx } from "./logic";
+
 export const GOVERNANCE_SCORE_ADDRESS = "cx0000000000000000000000000000000000000001";
 export const IISS_SCORE_ADDRESS = "cx0000000000000000000000000000000000000000";
 export const LIMIT = 20;
@@ -12,3 +14,5 @@ export const PREP_TYPE = {
   SUB: "Sub P-Rep",
   CANDIDATE: "Candidate",
 };
+
+export const TRANSACTION_FEE = convertLoopToIcx(Math.pow(10, 15));

@@ -46,7 +46,6 @@ export type Vote = {
  */
 export type IconResources = {
   nonce: number;
-  additionalBalance: BigNumber;
   votes: Vote[];
   votingPower: string | BigNumber;
   totalDelegated: string | BigNumber;
@@ -59,7 +58,6 @@ export type IconResources = {
  */
 export type IconResourcesRaw = {
   nonce: number;
-  additionalBalance: string;
   votes: Vote[];
   votingPower: string | BigNumber;
   totalDelegated: string | BigNumber;
@@ -74,20 +72,6 @@ export type Transaction = TransactionCommon & {
   mode: string;
   family: "icon";
   fees?: BigNumber | null | undefined;
-  value?: BigNumber | null | undefined;
-  value_decimal?: BigNumber | null | undefined;
-  method?: string | null | undefined;
-  transaction_fee?: BigNumber | null | undefined;
-  status?: string | null | undefined;
-  hash?: string | null | undefined;
-  from_address?: string | null | undefined;
-  to_address?: string | null | undefined;
-  nonce?: number | undefined;
-  data?: string | null | undefined;
-  block_number?: number | null | undefined;
-  block_timestamp?: number | null | undefined;
-  transaction_type?: string | null | undefined;
-  id?: string | null | undefined;
   votes: Vote[];
   stepLimit?: BigNumber;
 };
@@ -100,17 +84,10 @@ export type TransactionRaw = TransactionCommonRaw & {
   mode: string;
   fees?: string | null | undefined;
   votes: Vote[];
+  stepLimit?: BigNumber;
   // also the transaction fields as raw JSON data
 };
 
-/**
- * Icon currency data that will be preloaded.
- * You can for instance add a list of validators for Proof-of-Stake blockchains,
- * or any volatile data that could not be set as constants in the code (staking progress, fee estimation variables, etc.)
- */
-export type IconPreloadData = {
-  somePreloadedData: Record<any, any>;
-};
 
 export type IconAccount = Account & { iconResources: IconResources };
 

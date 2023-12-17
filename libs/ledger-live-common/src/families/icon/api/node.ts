@@ -8,6 +8,7 @@ import { encodeOperationId } from "../../../operation";
 import { getAccountBalance, getApiUrl, getHistory, getLatestBlockHeight } from "./indexer";
 import { formatPRepData, isTestnet } from "../logic";
 import { GOVERNANCE_SCORE_ADDRESS, IISS_SCORE_ADDRESS, STEP_LIMIT } from "../constants";
+import { APITransaction } from "./api-type";
 
 const { HttpProvider } = IconService;
 const { IconBuilder, IconAmount } = IconService;
@@ -22,7 +23,6 @@ export const getAccount = async (addr: string, currency: CryptoCurrency) => {
   return {
     blockHeight: Number(blockHeight) || undefined,
     balance: new BigNumber(balance).decimalPlaces(2),
-    additionalBalance: 0,
     nonce: 0,
   };
 };
@@ -30,7 +30,7 @@ export const getAccount = async (addr: string, currency: CryptoCurrency) => {
 /**
  * Returns true if account is the signer
  */
-function isSender(transaction: Transaction, addr: string): boolean {
+function isSender(transaction: APITransaction, addr: string): boolean {
   return transaction.from_address === addr;
 }
 
@@ -50,14 +50,14 @@ export function getRpcUrl(currency: CryptoCurrency): string {
 /**
  * Map transaction to an Operation Type
  */
-function getOperationType(transaction: Transaction, addr: string): OperationType {
+function getOperationType(transaction: APITransaction, addr: string): OperationType {
   return isSender(transaction, addr) ? "OUT" : "IN";
 }
 
 /**
  * Map transaction to a correct Operation Value (affecting account balance)
  */
-function getOperationValue(transaction: Transaction, addr: string): BigNumber {
+function getOperationValue(transaction: APITransaction, addr: string): BigNumber {
   return isSender(transaction, addr)
     ? new BigNumber(transaction.value_decimal ?? 0).plus(transaction.transaction_fee ?? 0)
     : new BigNumber(transaction.value_decimal ?? 0);
@@ -69,7 +69,7 @@ function getOperationValue(transaction: Transaction, addr: string): BigNumber {
 function transactionToOperation(
   accountId: string,
   addr: string,
-  transaction: Transaction,
+  transaction: APITransaction,
 ): Operation {
   const type = getOperationType(transaction, addr);
   transaction.transaction_fee = new BigNumber(
