@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { beforeAll, describe, expect, jest, test } from "@jest/globals";
 import {
+  transportClose,
   transportExchange,
   transportExchangeBulk,
   transportListen,
@@ -12,7 +13,7 @@ import { registerTransportModule } from "@ledgerhq/live-common/hw/index";
 import { aTransportBuilder } from "@ledgerhq/hw-transport-mocker";
 import { beforeEach } from "node:test";
 import Transport from "@ledgerhq/hw-transport";
-import { Observer, Subject, firstValueFrom, interval } from "rxjs";
+import { Observer, Subject, firstValueFrom } from "rxjs";
 import { DisconnectedDeviceDuringOperation } from "@ledgerhq/errors";
 import TransportNodeHidSingleton, {
   ListenDescriptorEvent,
@@ -473,6 +474,126 @@ describe("transportHandler", () => {
       });
 
       triggerEvent.next(eventCount);
+    });
+  });
+
+  describe("transportClose", () => {
+    test("When no transport associated to the device has been opened, it should return an error", done => {
+      const params: MessagesMap["transport:close"] = {
+        data: { descriptor: "device_close_test" },
+        requestId: "request_close_test",
+      };
+
+      transportClose(params).subscribe({
+        next: response => {
+          try {
+            expect(response).toEqual(
+              expect.objectContaining({
+                error: expect.objectContaining({ name: "DisconnectedDeviceDuringOperation" }),
+              }),
+            );
+            done();
+          } catch (expectError) {
+            done(expectError as Error);
+          }
+        },
+        error: error => {
+          done(error);
+        },
+      });
+    });
+    describe("When a transport associated to the device has been opened", () => {
+      let aTransport: Transport;
+      const mockedExchange = jest.fn() as any;
+      const mockedClose = jest.fn() as any;
+
+      beforeAll(async () => {
+        aTransport = aTransportBuilder({ exchange: mockedExchange, close: mockedClose });
+
+        registerTransportModule({
+          id: "device_close_test",
+          open: (id: string) => {
+            // Needed to easily have several tests suites which register their own transport module
+            if (id.startsWith("device_close_test")) {
+              return Promise.resolve(aTransport);
+            }
+          },
+          disconnect: () => Promise.resolve(),
+        });
+
+        const params: MessagesMap["transport:open"] = {
+          data: { descriptor: "device_close_test" },
+          requestId: "request_open_test",
+        };
+        await firstValueFrom(transportOpen(params));
+      });
+
+      beforeEach(() => {
+        mockedExchange.mockClear();
+      });
+
+      test("When it is then closed, it should not be able to run an exchange", done => {
+        mockedExchange.mockImplementation(() => {
+          done("It should not be able to send an exchange");
+        });
+
+        let closeHasBeenCalled = false;
+        mockedClose.mockImplementation(() => {
+          closeHasBeenCalled = true;
+          return Promise.resolve();
+        });
+
+        const params: MessagesMap["transport:close"] = {
+          data: { descriptor: "device_close_test" },
+          requestId: "request_close_test",
+        };
+
+        transportClose(params).subscribe({
+          next: response => {
+            if (response.type === "ok") {
+              expect(response.data).toEqual(params.data);
+            } else {
+              done(`transportClose should not return an error: ${JSON.stringify(response.error)}`);
+              return;
+            }
+          },
+          error: error => {
+            done(error);
+          },
+          complete: () => {
+            const exchangeParams: MessagesMap["transport:exchange"] = {
+              data: { descriptor: "device_close_test", apduHex: "0xBEEF" },
+              requestId: "request_exchange_test",
+            };
+
+            // The exchange should fail
+            transportExchange(exchangeParams).subscribe({
+              next: response => {
+                try {
+                  expect(response).toEqual(
+                    expect.objectContaining({
+                      error: expect.objectContaining({ name: "DisconnectedDeviceDuringOperation" }),
+                    }),
+                  );
+
+                  // Also checks that the transport's `close` method has been called
+                  if (closeHasBeenCalled) {
+                    done();
+                  } else {
+                    done("The `close` method has not been closed on the opened transport");
+                  }
+                } catch (expectError) {
+                  done(expectError as Error);
+                }
+              },
+              error: error => {
+                console.log(`🔥 error: ${error}`, { error });
+                done(error);
+              },
+            });
+          },
+        });
+      });
     });
   });
 });

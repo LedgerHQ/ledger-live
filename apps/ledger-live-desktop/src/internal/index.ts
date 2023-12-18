@@ -177,7 +177,23 @@ process.on("message", async (m: Message) => {
       });
       break;
     case transportCloseChannel:
-      await transportClose(m);
+      transportClose(m).subscribe({
+        next: ({ type, ...response }) => {
+          process.send?.({
+            type: transportCloseChannel,
+            requestId: m.requestId,
+            ...response,
+          });
+        },
+        error: error => {
+          trace({
+            type: LOG_TYPE_INTERNAL,
+            message: `Unhandled error: ${error}`,
+            data: { error },
+            context: { function: "transportClose" },
+          });
+        },
+      });
       break;
     case "sentryLogsChanged": {
       const { payload } = m;

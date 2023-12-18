@@ -4,7 +4,6 @@ import TransportNodeHidSingleton, {
 } from "@ledgerhq/hw-transport-node-hid-singleton";
 import { open } from "@ledgerhq/live-common/hw/index";
 import { DisconnectedDeviceDuringOperation, serializeError } from "@ledgerhq/errors";
-import { transportCloseChannel } from "~/config/transportChannels";
 import { MessagesMap } from "./types";
 import { LocalTracer, trace } from "@ledgerhq/logs";
 import { LOG_TYPE_INTERNAL } from "./logger";
@@ -298,42 +297,58 @@ export const transportListenUnsubscribe = ({
   });
 };
 
+export type TransportCloseResponse =
+  | {
+      type: "ok";
+      data: MessagesMap["transport:close"]["data"];
+    }
+  | {
+      type: "error";
+      error: ReturnType<typeof serializeError>;
+    };
 /**
  * Handles request messages to close an opened transport for a given descriptor/device id
  */
-export const transportClose = async ({ data, requestId }: MessagesMap["transport:close"]) => {
-  const tracer = new LocalTracer(LOG_TYPE_INTERNAL, {
-    requestId,
-    function: "transportClose",
-  });
-  tracer.trace("transport:close message received", { data });
-
-  const transport = transportForDevices.get(data.descriptor);
-  if (!transport) {
-    tracer.trace("No open transport for the given descriptor");
-
-    process.send?.({
-      type: transportCloseChannel,
-      error: serializeError(
-        new DisconnectedDeviceDuringOperation("No open transport for the given descriptor"),
-      ),
+export const transportClose = ({
+  data,
+  requestId,
+}: MessagesMap["transport:close"]): Observable<TransportCloseResponse> => {
+  return new Observable(subscriber => {
+    const tracer = new LocalTracer(LOG_TYPE_INTERNAL, {
       requestId,
+      function: "transportClose",
     });
-    return;
-  }
+    tracer.trace("transport:close message received", { data });
 
-  try {
-    await transport.close();
-    tracer.trace("Successfully closed transport");
-  } catch (error) {
-    tracer.trace(`Error while closing transport: ${error}`, { error });
-  }
+    const transport = transportForDevices.get(data.descriptor);
+    if (!transport) {
+      tracer.trace("No open transport for the given descriptor");
 
-  transportForDevices.delete(data.descriptor);
+      subscriber.next({
+        type: "error",
+        error: serializeError(
+          new DisconnectedDeviceDuringOperation("No open transport for the given descriptor"),
+        ),
+      });
+      return;
+    }
 
-  process.send?.({
-    type: transportCloseChannel,
-    requestId,
-    data,
+    transport
+      .close()
+      .then(() => {
+        tracer.trace("Successfully closed transport");
+
+        subscriber.next({
+          type: "ok",
+          data,
+        });
+      })
+      .catch(error => {
+        tracer.trace(`Error while closing transport: ${error}`, { error });
+      })
+      .finally(() => {
+        transportForDevices.delete(data.descriptor);
+        subscriber.complete();
+      });
   });
 };
