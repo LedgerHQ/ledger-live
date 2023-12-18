@@ -159,7 +159,7 @@ export default function DelegationSummary({ navigation, route }: Props) {
   ]);
 
   const hasErrors = Object.keys(status.errors).length > 0;
-  const error = hasErrors && Object.values(status.errors)[0];
+  const error = Object.values(status.errors)[0];
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
