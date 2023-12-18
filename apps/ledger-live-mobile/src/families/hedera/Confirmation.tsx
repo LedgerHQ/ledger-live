@@ -12,32 +12,32 @@ import {
   getAccountName,
 } from "@ledgerhq/live-common/account/index";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
-import getWindowDimensions from "../../logic/getWindowDimensions";
-import { accountScreenSelector } from "../../reducers/accounts";
-import { TrackScreen } from "../../analytics";
-import PreventNativeBack from "../../components/PreventNativeBack";
-import LText from "../../components/LText/index";
-import DisplayAddress from "../../components/DisplayAddress";
-import Alert from "../../components/Alert";
-import QueuedDrawer from "../../components/QueuedDrawer";
-import Close from "../../icons/Close";
-import QRcodeZoom from "../../icons/QRcodeZoom";
-import Touchable from "../../components/Touchable";
-import Button from "../../components/Button";
-import CurrencyIcon from "../../components/CurrencyIcon";
-import CopyLink from "../../components/CopyLink";
-import ShareLink from "../../components/ShareLink";
-import NavigationScrollView from "../../components/NavigationScrollView";
-import SkipLock from "../../components/behaviour/SkipLock";
-import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
-import GenericErrorView from "../../components/GenericErrorView";
-import { ReceiveFundsStackParamList } from "../../components/RootNavigator/types/ReceiveFundsNavigator";
-import { ScreenName } from "../../const";
-import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
+import getWindowDimensions from "~/logic/getWindowDimensions";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { TrackScreen } from "~/analytics";
+import PreventNativeBack from "~/components/PreventNativeBack";
+import LText from "~/components/LText/index";
+import DisplayAddress from "~/components/DisplayAddress";
+import Alert from "~/components/Alert";
+import QueuedDrawer from "~/components/QueuedDrawer";
+import Close from "~/icons/Close";
+import QRcodeZoom from "~/icons/QRcodeZoom";
+import Touchable from "~/components/Touchable";
+import Button from "~/components/Button";
+import CurrencyIcon from "~/components/CurrencyIcon";
+import CopyLink from "~/components/CopyLink";
+import ShareLink from "~/components/ShareLink";
+import NavigationScrollView from "~/components/NavigationScrollView";
+import SkipLock from "~/components/behaviour/SkipLock";
+import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import GenericErrorView from "~/components/GenericErrorView";
+import { ReceiveFundsStackParamList } from "~/components/RootNavigator/types/ReceiveFundsNavigator";
+import { ScreenName } from "~/const";
+import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type {
   StackNavigatorNavigation,
   StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
+} from "~/components/RootNavigator/types/helpers";
 
 type ScreenProps = CompositeScreenProps<
   StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveConfirmation>,

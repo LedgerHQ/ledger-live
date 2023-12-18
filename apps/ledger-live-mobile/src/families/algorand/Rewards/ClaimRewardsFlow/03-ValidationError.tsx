@@ -2,16 +2,16 @@ import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
-import { TrackScreen } from "../../../../analytics";
-import ValidateError from "../../../../components/ValidateError";
-import { ScreenName } from "../../../../const";
+import { TrackScreen } from "~/analytics";
+import ValidateError from "~/components/ValidateError";
+import { ScreenName } from "~/const";
 import type {
   BaseComposite,
   StackNavigatorNavigation,
   StackNavigatorProps,
-} from "../../../../components/RootNavigator/types/helpers";
+} from "~/components/RootNavigator/types/helpers";
 import type { AlgorandClaimRewardsFlowParamList } from "./type";
-import { BaseNavigatorStackParamList } from "../../../../components/RootNavigator/types/BaseNavigator";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 
 type Props = BaseComposite<
   StackNavigatorProps<

@@ -3,18 +3,12 @@ import { loadBleState, loadConfig } from "../bridge/server";
 import PortfolioPage from "../models/wallet/portfolioPage";
 import DeviceAction from "../models/DeviceAction";
 import ManagerPage from "../models/manager/managerPage";
-import { DeviceModelId } from "@ledgerhq/devices";
+import { knownDevice } from "../models/devices";
 import { getElementByText, waitForElementByText } from "../helpers";
 
 let portfolioPage: PortfolioPage;
 let deviceAction: DeviceAction;
 let managerPage: ManagerPage;
-
-const knownDevice = {
-  name: "Nano X de test",
-  id: "mock_1",
-  modelId: DeviceModelId.nanoX,
-};
 
 describe("Bitcoin Account", () => {
   beforeAll(async () => {

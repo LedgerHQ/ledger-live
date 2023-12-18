@@ -14,11 +14,11 @@ import { WarningSolidMedium } from "@ledgerhq/native-ui/assets/icons";
 import { Selector } from "./Selector";
 import { AmountInput } from "./AmountInput";
 import { SwapFormParamList } from "../../types";
-import TranslatedError from "../../../../components/TranslatedError";
-import { ScreenName } from "../../../../const";
-import { useAnalytics } from "../../../../analytics";
+import TranslatedError from "~/components/TranslatedError";
+import { ScreenName } from "~/const";
+import { useAnalytics } from "~/analytics";
 import { sharedSwapTracking } from "../../utils";
-import { flattenAccountsSelector } from "../../../../reducers/accounts";
+import { flattenAccountsSelector } from "~/reducers/accounts";
 import { useSelector } from "react-redux";
 
 interface Props {

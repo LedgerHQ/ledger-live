@@ -8,9 +8,9 @@ import { ButtonProps } from "@ledgerhq/native-ui/components/cta/Button/index";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
 import { StackNavigationProp } from "@react-navigation/stack";
 import InfoModal from "../InfoModal";
-import { useAnalytics } from "../../analytics";
+import { useAnalytics } from "~/analytics";
 import { WrappedButtonProps } from "../wrappedUi/Button";
-import { NavigatorName } from "../../const";
+import { NavigatorName } from "~/const";
 
 export type ModalOnDisabledClickComponentProps = {
   account?: AccountLike;

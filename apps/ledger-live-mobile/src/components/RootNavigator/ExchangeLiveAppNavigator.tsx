@@ -3,13 +3,13 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "styled-components/native";
 import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
 import { DEFAULT_MULTIBUY_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
-import { ScreenName } from "../../const";
-import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
+import { ScreenName } from "~/const";
+import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 
-import styles from "../../navigation/styles";
+import styles from "~/navigation/styles";
 import type { ExchangeLiveAppNavigatorParamList } from "./types/ExchangeLiveAppNavigator";
 import type { StackNavigatorProps } from "./types/helpers";
-import { BuyAndSellScreen } from "../../screens/PTX/BuyAndSell";
+import { BuyAndSellScreen } from "~/screens/PTX/BuyAndSell";
 
 const Stack = createStackNavigator<ExchangeLiveAppNavigatorParamList>();
 

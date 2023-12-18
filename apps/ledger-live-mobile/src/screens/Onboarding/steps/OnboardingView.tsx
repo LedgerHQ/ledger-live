@@ -1,8 +1,8 @@
 import { Box, ScrollListContainer, Text } from "@ledgerhq/native-ui";
 import React from "react";
 import { useTheme } from "styled-components/native";
-import { TrackScreen } from "../../../analytics";
-import StyledStatusBar from "../../../components/StyledStatusBar";
+import { TrackScreen } from "~/analytics";
+import StyledStatusBar from "~/components/StyledStatusBar";
 
 type OnboardingViewProps = {
   title: string;

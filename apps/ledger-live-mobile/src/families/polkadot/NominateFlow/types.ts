@@ -2,7 +2,7 @@ import { ParamListBase, RouteProp } from "@react-navigation/native";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/families/polkadot/types";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { Operation } from "@ledgerhq/types-live";
-import { ScreenName } from "../../../const";
+import { ScreenName } from "~/const";
 
 export type PolkadotNominateFlowParamList = {
   [ScreenName.PolkadotNominateSelectValidators]: {

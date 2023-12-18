@@ -3,9 +3,9 @@ import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
-import { NavigatorName, ScreenName } from "../../const";
-import Alert from "../../components/Alert";
-import { BaseNavigation } from "../../components/RootNavigator/types/helpers";
+import { NavigatorName, ScreenName } from "~/const";
+import Alert from "~/components/Alert";
+import { BaseNavigation } from "~/components/RootNavigator/types/helpers";
 
 const ProviderWarning = () => {
   const forcedProvider = useEnv("FORCE_PROVIDER");

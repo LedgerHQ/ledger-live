@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import { useCallback } from "react";
-import { RootNavigation } from "../../components/RootNavigator/types/helpers";
-import { NavigatorName, ScreenName } from "../../const";
+import { RootNavigation } from "~/components/RootNavigator/types/helpers";
+import { NavigatorName, ScreenName } from "~/const";
 
 export function useNavigateToPostOnboardingHubCallback() {
   const navigation = useNavigation();

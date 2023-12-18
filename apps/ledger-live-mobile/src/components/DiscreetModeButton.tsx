@@ -2,9 +2,9 @@ import React, { useCallback } from "react";
 import { TouchableOpacity, StyleSheet } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { EyeMedium, EyeNoneMedium } from "@ledgerhq/native-ui/assets/icons";
-import { discreetModeSelector } from "../reducers/settings";
-import { setDiscreetMode } from "../actions/settings";
-import { track } from "../analytics";
+import { discreetModeSelector } from "~/reducers/settings";
+import { setDiscreetMode } from "~/actions/settings";
+import { track } from "~/analytics";
 
 export default function DiscreetModeButton({ size = 24 }: { size?: number }) {
   const discreetMode = useSelector(discreetModeSelector);

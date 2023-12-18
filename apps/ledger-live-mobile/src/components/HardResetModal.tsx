@@ -3,7 +3,7 @@ import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import ModalBottomAction from "./ModalBottomAction";
 import Alert from "./Alert";
-import Trash from "../icons/Trash";
+import Trash from "~/icons/Trash";
 import Circle from "./Circle";
 
 // FIXME this is not a modal \o/

@@ -42,6 +42,7 @@ const ElrondEarnRewardsInfoModal = (props: Props) => {
       additional={
         <WarnBox>{t("elrond.delegation.flow.steps.starter.warning.description")}</WarnBox>
       }
+      currency="elrond"
       footerLeft={
         <LinkWithExternalIcon
           label={t("elrond.delegation.emptyState.info")}

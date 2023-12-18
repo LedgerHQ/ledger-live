@@ -2,7 +2,7 @@ import React from "react";
 import { ScrollView } from "react-native";
 import { Flex, Link, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
-import Button from "../../components/wrappedUi/Button";
+import Button from "~/components/wrappedUi/Button";
 import type { Step, UiCheckStatus } from "./EarlySecurityCheck";
 import CheckCard from "./CheckCard";
 import { useTheme } from "styled-components/native";

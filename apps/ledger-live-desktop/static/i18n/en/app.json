@@ -2292,6 +2292,13 @@
     "confirmation": "Confirm removal of image on your Ledger Stax",
     "success": "Lock screen picture removed"
   },
+  "changeCustomLockscreen": {
+    "cta": "Change"
+  },
+  "removeCurrentPicture": {
+    "cta": "Remove current picture"
+  },
+  "appsInstallingDisabledTooltip": "Disabled until apps finish installing",
   "deviceLocalization": {
     "language": "Language",
     "deviceLanguage": "Change Device Language",
@@ -3222,7 +3229,7 @@
         "steps": {
           "starter": {
             "title": "Redelegation",
-            "description": "Use redelegation to easily change from one validator to another. But if you change your mind again, you will then have to wait because redelegation triggers a 21-day timelock.",
+            "description": "Use redelegation to easily change from one validator to another. But if you change your mind again, you will then have to wait because redelegation triggers a {{ numberOfDays }}-day timelock.",
             "warning": "Choose your validator wisely: Part of your delegated assets may be irrevocably lost if the validator does not behave appropriately. You can have a maximum of <0>7 pending redelegations</0>.",
             "howDelegationWorks": "How delegation works?"
           },
@@ -3251,7 +3258,7 @@
     },
     "undelegation": {
       "header": "Undelegation(s)",
-      "headerTooltip": "Available after the 21-day timelock",
+      "headerTooltip": "Available after the {{numberOfDays}}-day timelock",
       "inactiveTooltip": "Undelegated amounts do not generate rewards.",
       "flow": {
         "title": "Undelegate assets",

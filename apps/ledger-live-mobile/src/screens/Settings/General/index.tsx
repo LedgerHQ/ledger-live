@@ -1,5 +1,5 @@
 import React from "react";
-import { TrackScreen } from "../../../analytics";
+import { TrackScreen } from "~/analytics";
 import CountervalueSettingsRow from "./CountervalueSettingsRow";
 import ThemeSettingsRow from "./ThemeSettingsRow";
 import AuthSecurityToggle from "./AuthSecurityToggle";

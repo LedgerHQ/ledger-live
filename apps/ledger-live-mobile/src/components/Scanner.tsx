@@ -5,7 +5,7 @@ import { BarCodeScanner } from "expo-barcode-scanner";
 import { Flex } from "@ledgerhq/native-ui";
 import StyledStatusBar from "./StyledStatusBar";
 import CameraScreen from "./CameraScreen";
-import getWindowDimensions from "../logic/getWindowDimensions";
+import getWindowDimensions from "~/logic/getWindowDimensions";
 import RequiresCameraPermissions from "./RequiresCameraPermissions";
 import CameraPermissionContext from "./RequiresCameraPermissions/CameraPermissionContext";
 import ForceTheme from "./theme/ForceTheme";

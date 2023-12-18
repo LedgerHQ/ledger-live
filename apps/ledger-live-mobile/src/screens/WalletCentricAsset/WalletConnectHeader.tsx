@@ -1,7 +1,7 @@
 import React from "react";
 import { WalletConnectMedium } from "@ledgerhq/native-ui/assets/icons";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import Touchable from "../../components/Touchable";
+import Touchable from "~/components/Touchable";
 import { useWalletConnectAction } from "./hooks/useWalletConnectAction";
 
 type Props = {

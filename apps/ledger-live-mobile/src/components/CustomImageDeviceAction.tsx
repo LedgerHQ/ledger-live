@@ -6,16 +6,16 @@ import { useTranslation } from "react-i18next";
 import withRemountableWrapper from "@ledgerhq/live-common/hoc/withRemountableWrapper";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { ImageLoadRefusedOnDevice, ImageCommitRefusedOnDevice } from "@ledgerhq/live-common/errors";
-import { setLastSeenCustomImage, clearLastSeenCustomImage } from "../actions/settings";
+import { setLastSeenCustomImage, clearLastSeenCustomImage } from "~/actions/settings";
 import { DeviceActionDefaultRendering } from "./DeviceAction";
 import { ImageSourceContext } from "./CustomImage/StaxFramedImage";
 import { renderError } from "./DeviceAction/rendering";
 import CustomImageBottomModal from "./CustomImage/CustomImageBottomModal";
 import Button from "./wrappedUi/Button";
 import Link from "./wrappedUi/Link";
-import { screen, TrackScreen } from "../analytics";
-import { useStaxLoadImageDeviceAction } from "../hooks/deviceActions";
-import { SettingsSetLastSeenCustomImagePayload } from "../actions/types";
+import { screen, TrackScreen } from "~/analytics";
+import { useStaxLoadImageDeviceAction } from "~/hooks/deviceActions";
+import { SettingsSetLastSeenCustomImagePayload } from "~/actions/types";
 
 type Props = {
   device: Device;

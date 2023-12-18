@@ -3,9 +3,10 @@ import { useNavigation } from "@react-navigation/native";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
-import WalletCoinsSupported from "../../icons/WalletCoinsSupported";
-import { NavigatorName, ScreenName } from "../../const";
-import { track, TrackScreen } from "../../analytics";
+import WalletCoinsSupported from "~/icons/WalletCoinsSupported";
+import WalletTabSafeAreaView from "~/components/WalletTab/WalletTabSafeAreaView";
+import { NavigatorName, ScreenName } from "~/const";
+import { track, TrackScreen } from "~/analytics";
 
 const PortfolioEmptyState = ({ openAddAccountModal }: { openAddAccountModal: () => void }) => {
   const { t } = useTranslation();
@@ -27,7 +28,7 @@ const PortfolioEmptyState = ({ openAddAccountModal }: { openAddAccountModal: () 
   }, [navigation]);
 
   return (
-    <>
+    <WalletTabSafeAreaView edges={["left", "right"]}>
       <TrackScreen category="Start CTAs" />
       <Flex alignItems="center" justifyContent="center">
         <WalletCoinsSupported moreAssetsBackgroundColor={colors.neutral.c100} />
@@ -84,7 +85,7 @@ const PortfolioEmptyState = ({ openAddAccountModal }: { openAddAccountModal: () 
       >
         {t("account.emptyState.addAccountCta")}
       </Button>
-    </>
+    </WalletTabSafeAreaView>
   );
 };
 

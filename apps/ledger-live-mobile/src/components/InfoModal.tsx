@@ -7,10 +7,10 @@ import { IconsLegacy, IconBox, Flex } from "@ledgerhq/native-ui";
 import type { Props as IconBoxProps } from "@ledgerhq/native-ui/components/Icon/IconBox";
 import QueuedDrawer from "./QueuedDrawer";
 import LText from "./LText";
-import IconArrowRight from "../icons/ArrowRight";
+import IconArrowRight from "~/icons/ArrowRight";
 import type { Props as ModalProps } from "./QueuedDrawer";
 import Button, { WrappedButtonProps } from "./wrappedUi/Button";
-import { Merge } from "../types/helpers";
+import { Merge } from "~/types/helpers";
 
 type BulletItem = {
   key: string;

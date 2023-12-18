@@ -4,8 +4,8 @@ import { StyleSheet, View } from "react-native";
 import { Text, IconsLegacy, Flex } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
 import { isEmpty } from "lodash";
-import { State } from "../../../../reducers/types";
-import Touchable from "../../../../components/Touchable";
+import { State } from "~/reducers/types";
+import Touchable from "~/components/Touchable";
 
 const StyledTouchable = styled(Touchable)`
   background-color: ${p => p.theme.colors.palette.background.main};

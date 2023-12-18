@@ -51,6 +51,7 @@ const CeloEarnRewardsInfoModal = ({ account, parentAccount }: Props) => {
         t("celo.delegation.earnRewards.bullet.1"),
         t("celo.delegation.earnRewards.bullet.2"),
       ]}
+      currency="celo"
       additional={<WarnBox>{t("celo.delegation.earnRewards.warning")}</WarnBox>}
       footerLeft={<LinkWithExternalIcon label={t("delegation.howItWorks")} onClick={onLearnMore} />}
     />

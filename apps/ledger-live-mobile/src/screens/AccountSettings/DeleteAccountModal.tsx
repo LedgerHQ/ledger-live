@@ -3,8 +3,8 @@ import { Trans, useTranslation } from "react-i18next";
 import { Account } from "@ledgerhq/types-live";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { InfoMedium } from "@ledgerhq/native-ui/assets/icons";
-import Button from "../../components/wrappedUi/Button";
-import QueuedDrawer from "../../components/QueuedDrawer";
+import Button from "~/components/wrappedUi/Button";
+import QueuedDrawer from "~/components/QueuedDrawer";
 
 type Props = {
   onRequestClose: () => void;

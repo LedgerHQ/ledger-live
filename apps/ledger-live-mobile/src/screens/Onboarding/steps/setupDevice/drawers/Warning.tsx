@@ -1,7 +1,7 @@
 import { Button, Flex, IconBox, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import QueuedDrawer from "../../../../../components/QueuedDrawer";
+import QueuedDrawer from "~/components/QueuedDrawer";
 
 const OnboardingSetupDeviceInformation = ({
   open,
@@ -31,7 +31,12 @@ const OnboardingSetupDeviceInformation = ({
             {t("onboarding.stepSetupDevice.start.warning.desc")}
           </Text>
         </Flex>
-        <Button type="main" size="large" onPress={onPress}>
+        <Button
+          type="main"
+          size="large"
+          onPress={onPress}
+          testID="onboarding-stepSetupDevice-warning"
+        >
           {t("onboarding.stepSetupDevice.start.warning.ctaText")}
         </Button>
       </Flex>

@@ -5,10 +5,10 @@ import { Edge, SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
 import Video from "react-native-video";
 import { Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
-import Button from "../../../../components/Button";
-import QueuedDrawer from "../../../../components/QueuedDrawer";
-import Touchable from "../../../../components/Touchable";
-import Check from "../../../../icons/Check";
+import Button from "~/components/Button";
+import QueuedDrawer from "~/components/QueuedDrawer";
+import Touchable from "~/components/Touchable";
+import Check from "~/icons/Check";
 import videos from "../../../../../assets/videos";
 
 const entries = Object.entries(videos);
