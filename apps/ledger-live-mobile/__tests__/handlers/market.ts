@@ -1,7 +1,7 @@
 import { http, HttpResponse } from "msw";
-import marketsMock from "../../__mocks__/market/markets.json";
-import supportedVsCurrenciesMock from "../../__mocks__/market/supportedVsCurrencies.json";
-import coinsListMock from "../../__mocks__/market/coinsList.json";
+import marketsMock from "@mocks/api/market/markets.json";
+import supportedVsCurrenciesMock from "@mocks/api/market/supportedVsCurrencies.json";
+import coinsListMock from "@mocks/api/market/coinsList.json";
 
 const handlers = [
   http.get("https://proxycg.api.live.ledger.com/api/v3/coins/markets", ({ request }) => {
