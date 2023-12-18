@@ -99,6 +99,7 @@ const signOperation = ({
           signedOperation: {
             operation,
             signature: signed.signature,
+            rawData: signed.rawTransaction
           },
         });
       }

@@ -185,7 +185,7 @@
     "@zondax/ledger-casper": "^2.6.1",
     "@zondax/ledger-cosmos-js": "^3.0.3",
     "@zondax/ledger-filecoin": "^0.11.2",
-    "icon-sdk-js":"1.2.3",
+    "icon-sdk-js":"1.5.2",
     "@zondax/ledger-icp": "^0.7.0",
     "@zondax/ledger-stacks": "^1.0.2",
     "async": "^3.2.3",

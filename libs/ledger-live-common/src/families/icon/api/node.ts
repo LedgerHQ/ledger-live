@@ -3,14 +3,14 @@ import IconService from "icon-sdk-js";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "@ledgerhq/live-env";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
-import type { PRep, Transaction } from "../types";
+import type { PRep } from "../types";
 import { encodeOperationId } from "../../../operation";
 import { getAccountBalance, getApiUrl, getHistory, getLatestBlockHeight } from "./indexer";
 import { formatPRepData, isTestnet } from "../logic";
 import { GOVERNANCE_SCORE_ADDRESS, IISS_SCORE_ADDRESS, STEP_LIMIT } from "../constants";
 import { APITransaction } from "./api-type";
 
-const { HttpProvider } = IconService;
+const { HttpProvider, SignedTransaction } = IconService;
 const { IconBuilder, IconAmount } = IconService;
 const iconUnit = IconAmount.Unit.ICX.toString();
 /**
@@ -124,8 +124,9 @@ export const submit = async (txObj, currency) => {
   const httpProvider = new HttpProvider(rpcURL);
   const iconService = new IconService(httpProvider);
 
+  SignedTransaction
   const signedTransaction: any = {
-    getProperties: () => txObj.rawTransaction,
+    getProperties: () => txObj.rawData,
     getSignature: () => txObj.signature,
   };
 
