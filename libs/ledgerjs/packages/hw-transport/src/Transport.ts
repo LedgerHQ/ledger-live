@@ -328,9 +328,6 @@ export default class Transport {
    */
   async exchangeAtomicImpl<Output>(f: () => Promise<Output>): Promise<Output> {
     const tracer = this.tracer.withUpdatedContext({ function: "exchangeAtomicImpl" });
-    tracer.trace("Starting an atomic APDU exchange", {
-      unresponsiveTimeout: this.unresponsiveTimeout,
-    });
 
     if (this.exchangeBusyPromise) {
       tracer.trace("Atomic exchange is already busy");

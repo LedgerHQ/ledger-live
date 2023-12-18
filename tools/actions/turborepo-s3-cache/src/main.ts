@@ -23,6 +23,7 @@ saveState("cleanupCacheFolder", cleanupCacheFolder);
       ...process.env,
       AWS_ACCESS_KEY_ID: getInput("aws-access-key"),
       AWS_SECRET_ACCESS_KEY: getInput("aws-secret-key"),
+      AWS_SESSION_TOKEN: getInput("aws-session-token"),
     },
   });
 

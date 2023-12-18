@@ -1,7 +1,8 @@
-### Deep Linking 🔗
+# Deep Linking Ledger Live Mobile 🔗
 
-Several URI schemes are available for deep linking from external sources
-They all are prefixed by **_ledgerlive://_**
+Please refer to the exhaustive list on the [Github Wiki](https://github.com/LedgerHQ/ledger-live/wiki/LLM:DeepLinking)
+
+When working on deeplinks, please update the **Wiki** accordingly.
 
 - **_portfolio_** 🠒 Portfolio page (default landing)
 

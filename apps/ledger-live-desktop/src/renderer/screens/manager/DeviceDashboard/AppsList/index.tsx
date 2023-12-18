@@ -20,7 +20,7 @@ import UninstallAllButton from "./UninstallAllButton";
 import { openModal } from "~/renderer/actions/modals";
 import debounce from "lodash/debounce";
 import InstallSuccessBanner from "./InstallSuccessBanner";
-import SearchBox from "../../accounts/AccountList/SearchBox";
+import SearchBox from "../../../accounts/AccountList/SearchBox";
 import { App } from "@ledgerhq/types-live";
 import { AppType, SortOptions } from "@ledgerhq/live-common/apps/filtering";
 import NoResults from "~/renderer/icons/NoResults";
