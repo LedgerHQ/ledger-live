@@ -21,13 +21,17 @@ export function getApiUrl(currency: CryptoCurrency): string {
 
 
 export const getAccountBalance = async (addr: string, url: string): Promise<string> => {
-  const resp = await network({
-    method: "GET",
-    url: `${url}/addresses/details/${addr.toString()}?address=${addr.toString()}`,
-  });
-  const { data } = resp;
-  const balance = data?.balance || '0';
-  return balance;
+  try {
+    const resp = await network({
+      method: "GET",
+      url: `${url}/addresses/details/${addr.toString()}?address=${addr.toString()}`,
+    });
+    const { data } = resp;
+    const balance = data?.balance;
+    return balance;
+  } catch (error) {
+    return '0'
+  }
 };
 
 export const getLatestBlockHeight = async (url: string): Promise<BigNumber> => {
