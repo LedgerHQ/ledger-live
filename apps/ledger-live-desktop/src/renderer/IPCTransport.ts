@@ -114,6 +114,7 @@ export class IPCTransport extends Transport {
       descriptor: this.id,
       apduHex,
       abortTimeoutMs,
+      context: this.tracer.getContext(),
     });
 
     this.tracer.withType("ipc-apdu").trace(`<= ${responseHex}`);
@@ -150,6 +151,7 @@ export class IPCTransport extends Transport {
       data: {
         descriptor: this.id,
         apdusHex,
+        context: this.tracer.getContext(),
       },
       requestId,
     });
@@ -199,7 +201,7 @@ function rendererRequest(channel: string, data: unknown): Promise<unknown> {
 
     trace({
       type: LOG_TYPE,
-      message: "Sending request",
+      message: "Sending IPC request",
       data: { data },
       context: { requestId, replyChannel },
     });

@@ -38,11 +38,11 @@ export const transportOpen = ({
     const { descriptor, timeoutMs, context } = data;
     const tracer = new LocalTracer(LOG_TYPE_INTERNAL, {
       ipcContext: context,
+      descriptor,
       requestId,
       function: "transportOpen",
     });
-    // TODO: device what to put in tracer context
-    tracer.trace("Received open transport request", { descriptor, timeoutMs });
+    tracer.trace("Received open transport request", { timeoutMs });
 
     const existingTransport = transportForDevices.get(descriptor);
 
@@ -57,19 +57,17 @@ export const transportOpen = ({
 
     // If already exists simply return success
     if (existingTransport) {
-      tracer.trace("Transport instance already exists for the given descriptor", { descriptor });
+      tracer.trace("Transport instance already exists for the given descriptor");
       return onEnd();
     }
 
     // No withDevice or withTransport in the internal process, the transport management
     // is handled in the renderer process. We have a 1 <-> 1 relationship between
     // the IPCTransport in the renderer process, and the opened transport instance here in the internal process.
-    open(descriptor, timeoutMs, tracer.getContext())
+    open(descriptor, timeoutMs, { descriptor })
       .then(transport => {
         transport.on("disconnect", () => {
-          tracer.trace("Event disconnect on transport instance. Cleaning cached transport", {
-            descriptor,
-          });
+          tracer.trace("Event disconnect on transport instance. Cleaning cached transport");
 
           // A disconnect event means the transport has been closed
           // We only need to clear the transport from the mapping
@@ -126,9 +124,7 @@ export const transportExchange = ({
       subscriber.complete();
       return;
     }
-
-    // TODO: is it a good place to update the transport context ?
-    transport.updateTraceContext({ ipcContext: { context }, requestId });
+    transport.updateTraceContext({ ipcContext: { context, requestId } });
 
     transport
       .exchange(Buffer.from(apduHex, "hex"), { abortTimeoutMs })
@@ -145,6 +141,9 @@ export const transportExchange = ({
           type: "error",
           error: serializeError(error as Parameters<typeof serializeError>[0]),
         });
+      })
+      .finally(() => {
+        transport.updateTraceContext({ ipcContext: null });
       });
   });
 };
@@ -182,9 +181,10 @@ export const transportExchangeBulk = ({
 
       return;
     }
-
-    const { apdusHex } = data;
+    const { apdusHex, context } = data;
     const apdus = apdusHex.map(apduHex => Buffer.from(apduHex, "hex"));
+
+    transport.updateTraceContext({ ipcContext: { context, requestId } });
 
     const subscription = transport.exchangeBulk(apdus, {
       next: response => {
@@ -205,7 +205,7 @@ export const transportExchangeBulk = ({
       },
       complete: () => {
         tracer.trace("exchangeBulk: complete");
-
+        transport.updateTraceContext({ ipcContext: null });
         subscriber.complete();
       },
     });

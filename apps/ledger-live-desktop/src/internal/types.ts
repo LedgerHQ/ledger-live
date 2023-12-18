@@ -28,7 +28,7 @@ export type MessagesMap = {
     requestId: string;
   };
   "transport:exchangeBulk": {
-    data: { descriptor: string; apdusHex: string[] };
+    data: { descriptor: string; apdusHex: string[]; context?: TraceContext };
     requestId: string;
   };
   "transport:exchangeBulk:unsubscribe": {
