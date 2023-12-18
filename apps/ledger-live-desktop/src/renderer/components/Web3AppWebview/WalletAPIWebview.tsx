@@ -171,7 +171,6 @@ function useUiHook(
             exchangeType: ExchangeType[exchangeType],
             onResult: (nonce: string) => {
               onSuccess(nonce);
-              dispatch(closePlatformAppDrawer());
             },
             onCancel: (error: Error) => {
               onCancel(error);

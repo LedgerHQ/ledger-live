@@ -123,7 +123,6 @@ export const createAction = (
       )
         .pipe(
           tap(e => {
-            console.log("DEEEEEBBBBUUUUUGGGGG Action pipe:", e);
             log("actions-startExchange-event", JSON.stringify(e));
           }),
           scan(reducer, initialState),
