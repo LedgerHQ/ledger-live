@@ -7,7 +7,7 @@
 
 > Ledger Live is a desktop companion app for Ledger hardware wallets. It allows users to manage their crypto assets securely, such as Bitcoin, Ethereum, XRP and many others. Ledger Live desktop is available for Mac, Windows (x64) and Linux (x64). It can be downloaded from [ledger.com/ledger-live](https://www.ledger.com/ledger-live/).
 
-Minimum system requirements can be found [on this page](https://support.ledger.com/hc/en-us/articles/4403310017041-Ledger-Live-system-requirements-?docs=true).
+Minimum system requirements can be found on [Ledger Support website](https://support.ledger.com/hc/en-us/articles/4403310017041-Ledger-Live-system-requirements-?docs=true).
 
 
 <a href="https://github.com/LedgerHQ/ledger-live-desktop/releases">
@@ -24,7 +24,7 @@ We also share core business logic with Ledger Live mobile through [@ledgerhq/liv
 
 ## Signed hashes
 
-Ledger Live releases are signed. The automatic update mechanism makes use of the signature to verify that each subsequent update is authentic. Instructions for verifying the hash and signatures of the installation packages are available [on this page](https://live.ledger.tools/lld-signatures), which will be integrated into the [official download page](https://www.ledger.com/ledger-live).
+Ledger Live releases are signed. The automatic update mechanism makes use of the signature to verify that each subsequent update is authentic. Instructions for verifying the hash and signatures of the installation packages are available on [Ledger Live tools website](https://live.ledger.tools/lld-signatures), which will be integrated into the [official download page](https://www.ledger.com/ledger-live).
 
 # Development
 
