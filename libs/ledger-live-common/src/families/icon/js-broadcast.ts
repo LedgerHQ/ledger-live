@@ -1,18 +1,22 @@
-import type { Operation } from "@ledgerhq/types-live";
+import { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { patchOperationWithHash } from "../../operation";
 
 import { broadcastTransaction } from "./api/node";
+import operation from "@ledgerhq/coin-evm/lib/operation";
+import account from "./account";
 
 /**
  * Broadcast the signed transaction
- * @param {signature: any, operation: any} signedOperation
  */
-const broadcast = async ({
-  signedOperation: { signature, operation },
+export default async function broadcast({
   account,
-}): Promise<Operation> => {
-  const { hash } = await broadcastTransaction(signature, account.currency);
+  signedOperation,
+}: {
+  account: Account;
+  signedOperation: SignedOperation;
+}): Promise<Operation> {
+  const { signature, rawData, operation } = signedOperation;
+  const { hash } = await broadcastTransaction({ signature, rawData }, account.currency);
   return patchOperationWithHash(operation, hash);
 };
 
-export default broadcast;
