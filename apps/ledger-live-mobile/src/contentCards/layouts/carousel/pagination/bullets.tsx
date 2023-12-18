@@ -1,7 +1,8 @@
 import React from "react";
-import Animated, { FadeOut, Layout, useAnimatedStyle, withSpring } from "react-native-reanimated";
+import Animated, { Layout, useAnimatedStyle, withSpring } from "react-native-reanimated";
 import { useTheme } from "styled-components/native";
 import { ItemStatus } from "./types";
+import { Platform } from "react-native";
 
 const useBulletStyles = () => {
   const { colors } = useTheme();
@@ -51,9 +52,8 @@ const Bullet = ({ type }: { type: ItemStatus }) => {
 
   return (
     <Animated.View
-      layout={Layout.duration(100)}
-      exiting={FadeOut.duration(100)}
-      style={[{ ...bulletStyles[type] }, animatedStyles]}
+      layout={Platform.OS === "ios" ? Layout.duration(100) : undefined}
+      style={[bulletStyles[type], animatedStyles]}
     />
   );
 };
