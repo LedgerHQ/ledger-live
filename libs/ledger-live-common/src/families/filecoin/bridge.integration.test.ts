@@ -14,7 +14,6 @@ const ACCOUNT_1 = "f1p74d4mlmeyc4agflhjqsnvoyzyfdai7fmkyso2a";
 const ACCOUNT_2 = "f410fncojwmrseefktoco6rcnb3zv2eiqfli7muhvqma";
 const ACCOUNT_3 = "0x689c9b3232210aa9b84ef444d0ef35d11102ad1f";
 const ACCOUNT_4 = "f01840380";
-const ACCOUNT_5 = "0x689c9b3232210aa9b84ef444d0ef35d11102ad1f";
 
 const filecoin: CurrenciesData<Transaction> = {
   scanAccounts: [
@@ -94,7 +93,7 @@ const filecoin: CurrenciesData<Transaction> = {
             gasFeeCap: "1000",
             gasLimit: 100,
             gasPremium: "200",
-            recipient: ACCOUNT_3 + "rr",
+            recipient: "0x689c9b3232210tt9b84ef444d0ef35d11102adjj",
             amount: "100000000",
           }),
           expectedStatus: {
