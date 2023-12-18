@@ -1,13 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { beforeAll, describe, expect, jest, test } from "@jest/globals";
-import { transportExchange, transportExchangeBulk, transportOpen } from "./transportHandler";
+import {
+  transportExchange,
+  transportExchangeBulk,
+  transportListen,
+  transportListenUnsubscribe,
+  transportOpen,
+} from "./transportHandler";
 import { MessagesMap } from "./types";
 import { registerTransportModule } from "@ledgerhq/live-common/hw/index";
 import { aTransportBuilder } from "@ledgerhq/hw-transport-mocker";
 import { beforeEach } from "node:test";
 import Transport from "@ledgerhq/hw-transport";
-import { Observer, firstValueFrom } from "rxjs";
+import { Observer, Subject, firstValueFrom, interval } from "rxjs";
 import { DisconnectedDeviceDuringOperation } from "@ledgerhq/errors";
+import TransportNodeHidSingleton, {
+  ListenDescriptorEvent,
+} from "@ledgerhq/hw-transport-node-hid-singleton";
 
 describe("transportHandler", () => {
   describe("transportOpen", () => {
@@ -336,6 +345,134 @@ describe("transportHandler", () => {
           },
         });
       });
+    });
+  });
+
+  describe("transportListen", () => {
+    test("When a device event is received, it should be emitted", done => {
+      const maxEvents = 3;
+
+      jest
+        .spyOn(TransportNodeHidSingleton, "listen")
+        .mockImplementation((observer: Observer<ListenDescriptorEvent>) => {
+          for (let i = 0; i < maxEvents; i++) {
+            observer.next({
+              type: i % 2 === 0 ? "add" : "remove",
+              descriptor: "",
+            });
+          }
+
+          return {
+            unsubscribe: () => {},
+          };
+        });
+
+      let eventCount = 0;
+      transportListen({ requestId: "request_listen_test" }).subscribe({
+        next: event => {
+          try {
+            expect(event).toEqual(
+              expect.objectContaining({
+                data: expect.objectContaining({
+                  type: eventCount % 2 === 0 ? "add" : "remove",
+                  descriptor: "",
+                }),
+              }),
+            );
+
+            eventCount++;
+
+            if (eventCount === maxEvents) {
+              done();
+            }
+          } catch (expectError) {
+            done(expectError as Error);
+          }
+        },
+        error: error => {
+          done(error);
+        },
+      });
+    });
+  });
+
+  describe("transportListenUnsubscribe", () => {
+    test("When a transport:listen:unsubscribe message is received, it should stop listening and emitting device events", done => {
+      const maxEventsBeforeUnsubscribe = 3;
+      const triggerEvent = new Subject<number>();
+
+      jest
+        .spyOn(TransportNodeHidSingleton, "listen")
+        .mockImplementation((observer: Observer<ListenDescriptorEvent>) => {
+          triggerEvent.subscribe({
+            next: () => {
+              observer.next({
+                type: "add",
+                descriptor: "",
+              });
+            },
+          });
+
+          return {
+            unsubscribe: () => {},
+          };
+        });
+
+      let eventCount = 0;
+      transportListen({ requestId: "request_listen_test" }).subscribe({
+        next: event => {
+          try {
+            expect(event).toEqual(
+              expect.objectContaining({
+                data: expect.objectContaining({
+                  type: "add",
+                  descriptor: "",
+                }),
+              }),
+            );
+
+            eventCount++;
+
+            if (eventCount === maxEventsBeforeUnsubscribe) {
+              transportListenUnsubscribe({ requestId: "request_listen_test" }).subscribe({
+                next: () => {
+                  done("It should not emit anything");
+                },
+                error: error => {
+                  done(`It should not emit an error: ${error}`);
+                },
+                complete: () => {
+                  // Tries to emit another event to check that the listener has been unsubscribed
+                  triggerEvent.next(eventCount);
+                },
+              });
+            } else if (eventCount > maxEventsBeforeUnsubscribe) {
+              done(
+                `eventCount (${eventCount}) > maxEventsBeforeUnsubscribe (${maxEventsBeforeUnsubscribe}))`,
+              );
+            } else {
+              triggerEvent.next(eventCount);
+            }
+          } catch (expectError) {
+            done(expectError as Error);
+          }
+        },
+        error: error => {
+          done(error);
+        },
+        // `complete` is called if the listener has been unsubscribed
+        complete: () => {
+          if (eventCount === maxEventsBeforeUnsubscribe) {
+            done();
+          } else {
+            done(
+              `eventCount (${eventCount}) !== maxEventsBeforeUnsubscribe (${maxEventsBeforeUnsubscribe}))`,
+            );
+          }
+        },
+      });
+
+      triggerEvent.next(eventCount);
     });
   });
 });

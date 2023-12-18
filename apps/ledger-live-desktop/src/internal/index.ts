@@ -112,7 +112,7 @@ process.on("message", async (m: Message) => {
             type: LOG_TYPE_INTERNAL,
             message: `Unhandled error: ${error}`,
             data: { error },
-            context: { function: "transportExchangeChannel" },
+            context: { function: "transportExchangeBulk" },
           });
         },
         complete: () => {
@@ -145,10 +145,36 @@ process.on("message", async (m: Message) => {
 
       break;
     case transportListenChannel:
-      transportListen(m);
+      transportListen(m).subscribe({
+        next: response => {
+          process.send?.({
+            type: transportListenChannel,
+            requestId: m.requestId,
+            ...response,
+          });
+        },
+        error: error => {
+          trace({
+            type: LOG_TYPE_INTERNAL,
+            message: `Unhandled error: ${error}`,
+            data: { error },
+            context: { function: "transportListenChannel" },
+          });
+        },
+      });
+
       break;
     case transportListenUnsubscribeChannel:
-      transportListenUnsubscribe(m);
+      transportListenUnsubscribe(m).subscribe({
+        error: error => {
+          trace({
+            type: LOG_TYPE_INTERNAL,
+            message: `Unhandled error: ${error}`,
+            data: { error },
+            context: { function: "transportListenUnsubscribe" },
+          });
+        },
+      });
       break;
     case transportCloseChannel:
       await transportClose(m);

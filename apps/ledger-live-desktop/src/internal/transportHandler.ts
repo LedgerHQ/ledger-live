@@ -1,13 +1,12 @@
-import { Observable } from "rxjs";
-import TransportNodeHidSingleton from "@ledgerhq/hw-transport-node-hid-singleton";
+import { Observable, ReplaySubject, catchError, map, of, takeUntil } from "rxjs";
+import TransportNodeHidSingleton, {
+  ListenDescriptorEvent,
+} from "@ledgerhq/hw-transport-node-hid-singleton";
 import { open } from "@ledgerhq/live-common/hw/index";
 import { DisconnectedDeviceDuringOperation, serializeError } from "@ledgerhq/errors";
-import {
-  transportCloseChannel,
-  transportListenChannel,
-} from "~/config/transportChannels";
+import { transportCloseChannel } from "~/config/transportChannels";
 import { MessagesMap } from "./types";
-import { LocalTracer } from "@ledgerhq/logs";
+import { LocalTracer, trace } from "@ledgerhq/logs";
 import { LOG_TYPE_INTERNAL } from "./logger";
 import { DeviceId } from "@ledgerhq/types-live";
 import Transport from "@ledgerhq/hw-transport";
@@ -15,8 +14,8 @@ import Transport from "@ledgerhq/hw-transport";
 // Subscriptions to bulk exchanges
 const exchangeBulkSubscriptions = new Map<string, { unsubscribe: () => void }>();
 
-// Subscriptions to Transport listen
-const transportListenListeners = new Map<string, { unsubscribe: () => void }>();
+// Clean-up functions to stop listening to a Transport listen
+const transportListenCleanups = new Map<string, ReplaySubject<void>>();
 
 const transportForDevices = new Map<DeviceId, Transport>();
 
@@ -242,36 +241,61 @@ export const transportExchangeBulkUnsubscribe = ({
     subscriber.complete();
   });
 };
-  const observable = new Observable(TransportNodeHidSingleton.listen);
 
-  const subscription = observable.subscribe({
-    next: e => {
-      process.send?.({
-        type: transportListenChannel,
-        data: e,
-        requestId,
-      });
-    },
-    error: error => {
-      process.send?.({
-        type: transportListenChannel,
-        error: serializeError(error),
-        requestId,
-      });
-    },
+export type TransportListen =
+  | {
+      data: ListenDescriptorEvent;
+    }
+  | {
+      error: ReturnType<typeof serializeError>;
+    };
+/**
+ * Handles request messages to listen to device events
+ *
+ * Current implementation: only listens to TransportNodeHidSingleton events
+ */
+export const transportListen = ({
+  requestId,
+}: MessagesMap["transport:listen"]): Observable<TransportListen> => {
+  trace({
+    type: LOG_TYPE_INTERNAL,
+    message: "transport:listen message received",
+    context: { requestId },
   });
+  const observable = new Observable(TransportNodeHidSingleton.listen);
+  const clearListener = new ReplaySubject<void>();
+  transportListenCleanups.set(requestId, clearListener);
 
-  transportListenListeners.set(requestId, subscription);
+  return observable.pipe(
+    takeUntil(clearListener),
+    map(e => ({
+      data: e,
+    })),
+    catchError(error => of({ error: serializeError(error) })),
+  );
 };
 
+/**
+ * Handles request messages to unsubscribe from listening to device events
+ */
 export const transportListenUnsubscribe = ({
   requestId,
-}: MessagesMap["transport:listen:unsubscribe"]) => {
-  const listener = transportListenListeners.get(requestId);
-  if (listener) {
-    listener.unsubscribe();
-    transportListenListeners.delete(requestId);
-  }
+}: MessagesMap["transport:listen:unsubscribe"]): Observable<void> => {
+  return new Observable(subscriber => {
+    trace({
+      type: LOG_TYPE_INTERNAL,
+      message: "transport:listen:unsubscribe message received",
+      context: { requestId },
+    });
+
+    const cleanup = transportListenCleanups.get(requestId);
+    if (cleanup) {
+      cleanup.next();
+      transportListenCleanups.delete(requestId);
+    }
+
+    subscriber.complete();
+  });
 };
 
 /**
