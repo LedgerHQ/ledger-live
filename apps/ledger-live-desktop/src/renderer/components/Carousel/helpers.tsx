@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import map from "lodash/map";
 import { Trans } from "react-i18next";
-import { getEnv } from "@ledgerhq/live-env";
 import Slide from "./Slide";
 import BuyCryptoBgImage from "./banners/BuyCrypto/images/bg.png";
 import BuyCryptoCartImage from "./banners/BuyCrypto/images/cart.png";
@@ -243,7 +242,7 @@ export const useDefaultSlides = (): {
   const slides = useMemo(
     () =>
       map<ContentCard, SlideRes>(
-        getEnv("PLAYWRIGHT_RUN") ? [swapSlide, exchangeSlide] : portfolioCards,
+        portfolioCards,
         (slide): SlideRes => ({
           id: slide.id,
           // eslint-disable-next-line react/display-name
