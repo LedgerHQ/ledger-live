@@ -58,6 +58,9 @@ Exchange with the device using APDU protocol.
 ##### Parameters
 
 *   `apdu` **[Buffer](https://nodejs.org/api/buffer.html)**&#x20;
+*   `$1` **{abortTimeoutMs: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?}**  (optional, default `{}`)
+
+    *   `$1.abortTimeoutMs` &#x20;
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[Buffer](https://nodejs.org/api/buffer.html)>** a promise of apdu response
 
