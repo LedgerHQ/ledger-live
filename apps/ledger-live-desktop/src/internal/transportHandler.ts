@@ -170,12 +170,10 @@ export const transportExchangeBulk = ({
 
       return;
     }
-    // apduHex isn't used for bulk case
-    // subject.next({ type: "exchangeBulk", apdusHex: data.apdusHex, requestId });
-    // transport.exchangeBulk();
-    const { apdusHex } = data;
 
+    const { apdusHex } = data;
     const apdus = apdusHex.map(apduHex => Buffer.from(apduHex, "hex"));
+
     const subscription = transport.exchangeBulk(apdus, {
       next: response => {
         tracer.trace("exchangeBulk: next", { response: response.toString("hex") });
@@ -203,7 +201,7 @@ export const transportExchangeBulk = ({
 };
 
 /**
- * Handles request messages to unsubscribe from a bulk exchange
+ * Handles request messages to unsubscribe from listening to a bulk exchange
  */
 export const transportExchangeBulkUnsubscribe = ({
   data,
