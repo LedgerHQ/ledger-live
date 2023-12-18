@@ -50,10 +50,10 @@ const filecoin: CurrenciesData<Transaction> = {
   accounts: [
     {
       raw: {
-        id: `js:2:filecoin:${SEED_IDENTIFIER}:glif`,
+        id: `js:2:filecoin:${SEED_IDENTIFIER}:`,
         seedIdentifier: SEED_IDENTIFIER,
         name: "Filecoin 1",
-        derivationMode: "glif" as const,
+        derivationMode: "" as const,
         index: 0,
         freshAddress: SEED_IDENTIFIER,
         freshAddressPath: "44'/461'/0'/0/0",
