@@ -9,14 +9,14 @@ import { StorylyStyleProps, useStorylyDefaultStyleProps } from "./style";
 /**
  * Storyly Options
  */
-type StorylyOptions = {
+export type StorylyOptions = {
   layout: "classic" | "modern";
 
   token: string;
 
   // Internationalization
   lang?: Language;
-  segments: string[];
+  segments?: string[];
 
   // Styles
   props?: StorylyStyleProps;
