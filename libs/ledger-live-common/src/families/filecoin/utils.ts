@@ -21,8 +21,9 @@ export const isError = (r: { return_code: number; error_message: string }) => {
 export const methodToString = (method: number): string => {
   switch (method) {
     case Methods.Transfer:
-    case Methods.InvokeEVM:
       return "Transfer";
+    case Methods.InvokeEVM:
+      return "InvokeEVM (3844450837)";
     default:
       return "Unknown";
   }
