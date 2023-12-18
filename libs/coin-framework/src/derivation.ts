@@ -168,12 +168,12 @@ const modes = Object.freeze({
   polkadotbip44: {
     overridesDerivation: "44'/354'/<account>'/0'/<address>'",
   },
-  gliflegacy: {
-    overridesDerivation: "44'/1'/0'/0/<account>",
+  glifLegacy: {
+    overridesDerivation: "44'/1'/0'/0/<address>",
     tag: "legacy",
   },
-  glif: {
-    overridesDerivation: "44'/461'/0'/0/<account>",
+  ledgerLiveStandard: {
+    overridesDerivation: "44'/<coin_type>'/<address>'/<node>/<account>",
     startsAt: 1,
     tag: "third-party",
   },
@@ -221,7 +221,7 @@ const legacyDerivations: Partial<Record<CryptoCurrency["id"], DerivationMode[]>>
   stellar: ["sep5"],
   polkadot: ["polkadotbip44"],
   hedera: ["hederaBip44"],
-  filecoin: ["gliflegacy", "glif"],
+  filecoin: ["glifLegacy", "ledgerLiveStandard"],
   internet_computer: ["internet_computer"],
   casper: ["casper_wallet"],
   cardano: ["cardano"],
