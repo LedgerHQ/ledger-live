@@ -20,11 +20,16 @@ const transportForDevices = new Map<DeviceId, Transport>();
 
 export type TransportOpenResponse =
   | {
+      type: "ok";
       data: MessagesMap["transport:open"]["data"];
     }
   | {
+      type: "error";
       error: ReturnType<typeof serializeError>;
     };
+/**
+ * Handles request messages to open a transport for a given descriptor/device id
+ */
 export const transportOpen = ({
   data,
   requestId,
@@ -43,6 +48,7 @@ export const transportOpen = ({
 
     const onEnd = () => {
       subscriber.next({
+        type: "ok",
         data,
       });
 
@@ -77,6 +83,7 @@ export const transportOpen = ({
         tracer.trace(`Error while opening transport: ${error}`, { error });
 
         subscriber.next({
+          type: "error",
           error: serializeError(error as Parameters<typeof serializeError>[0]),
         });
         subscriber.complete();
@@ -86,9 +93,11 @@ export const transportOpen = ({
 
 export type TransportExchange =
   | {
+      type: "ok";
       data: string;
     }
   | {
+      type: "error";
       error: ReturnType<typeof serializeError>;
     };
 export const transportExchange = ({
@@ -109,6 +118,7 @@ export const transportExchange = ({
       tracer.trace("No open transport for the given descriptor");
 
       subscriber.next({
+        type: "error",
         error: serializeError(
           new DisconnectedDeviceDuringOperation("No open transport for the given descriptor"),
         ),
@@ -124,6 +134,7 @@ export const transportExchange = ({
       .exchange(Buffer.from(apduHex, "hex"), { abortTimeoutMs })
       .then(response => {
         subscriber.next({
+          type: "ok",
           data: response.toString("hex"),
         });
       })
@@ -131,6 +142,7 @@ export const transportExchange = ({
         tracer.trace(`exchange: error - ${error}`, { error });
 
         subscriber.next({
+          type: "error",
           error: serializeError(error as Parameters<typeof serializeError>[0]),
         });
       });
@@ -139,9 +151,11 @@ export const transportExchange = ({
 
 export type TransportExchangeBulk =
   | {
+      type: "ok";
       data: string;
     }
   | {
+      type: "error";
       error: ReturnType<typeof serializeError>;
     };
 export const transportExchangeBulk = ({
@@ -160,6 +174,7 @@ export const transportExchangeBulk = ({
       tracer.trace("No open transport for the given descriptor");
 
       subscriber.next({
+        type: "error",
         error: serializeError(
           new DisconnectedDeviceDuringOperation("No open transport for the given descriptor"),
         ),
@@ -176,6 +191,7 @@ export const transportExchangeBulk = ({
         tracer.trace("exchangeBulk: next", { response: response.toString("hex") });
 
         subscriber.next({
+          type: "ok",
           data: response.toString("hex"),
         });
       },
@@ -183,6 +199,7 @@ export const transportExchangeBulk = ({
         tracer.trace(`exchangeBulk: error - ${error}`, { error });
 
         subscriber.next({
+          type: "error",
           error: serializeError(error as Parameters<typeof serializeError>[0]),
         });
       },
@@ -198,6 +215,7 @@ export const transportExchangeBulk = ({
 };
 
 export type TransportExchangeBulkUnsubscribe = {
+  type: "error";
   error: ReturnType<typeof serializeError>;
 };
 /**
@@ -219,6 +237,7 @@ export const transportExchangeBulkUnsubscribe = ({
       tracer.trace("No open transport for the given descriptor");
 
       subscriber.next({
+        type: "error",
         error: serializeError(
           new DisconnectedDeviceDuringOperation("No open transport for the given descriptor"),
         ),
@@ -243,9 +262,11 @@ export const transportExchangeBulkUnsubscribe = ({
 
 export type TransportListen =
   | {
+      type: "ok";
       data: ListenDescriptorEvent;
     }
   | {
+      type: "error";
       error: ReturnType<typeof serializeError>;
     };
 /**
@@ -268,9 +289,10 @@ export const transportListen = ({
   return observable.pipe(
     takeUntil(clearListener),
     map(e => ({
+      type: "ok" as const,
       data: e,
     })),
-    catchError(error => of({ error: serializeError(error) })),
+    catchError(error => of({ type: "error" as const, error: serializeError(error) })),
   );
 };
 

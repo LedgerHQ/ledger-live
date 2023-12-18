@@ -61,7 +61,7 @@ process.on("message", async (m: Message) => {
   switch (m.type) {
     case transportOpenChannel:
       transportOpen(m).subscribe({
-        next: response => {
+        next: ({ type, ...response }) => {
           process.send?.({
             type: transportOpenChannel,
             requestId: m.requestId,
@@ -80,7 +80,7 @@ process.on("message", async (m: Message) => {
       break;
     case transportExchangeChannel:
       transportExchange(m).subscribe({
-        next: response => {
+        next: ({ type, ...response }) => {
           process.send?.({
             type: transportExchangeChannel,
             requestId: m.requestId,
@@ -100,7 +100,7 @@ process.on("message", async (m: Message) => {
       break;
     case transportExchangeBulkChannel:
       transportExchangeBulk(m).subscribe({
-        next: response => {
+        next: ({ type, ...response }) => {
           process.send?.({
             type: transportExchangeBulkChannel,
             requestId: m.requestId,
@@ -126,7 +126,7 @@ process.on("message", async (m: Message) => {
       break;
     case transportExchangeBulkUnsubscribeChannel:
       transportExchangeBulkUnsubscribe(m).subscribe({
-        next: response => {
+        next: ({ type, ...response }) => {
           process.send?.({
             type: transportExchangeBulkChannel,
             requestId: m.requestId,
@@ -146,7 +146,7 @@ process.on("message", async (m: Message) => {
       break;
     case transportListenChannel:
       transportListen(m).subscribe({
-        next: response => {
+        next: ({ type, ...response }) => {
           process.send?.({
             type: transportListenChannel,
             requestId: m.requestId,
