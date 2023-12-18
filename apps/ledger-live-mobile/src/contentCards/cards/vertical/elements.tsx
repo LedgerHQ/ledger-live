@@ -1,5 +1,5 @@
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
-import React from "react";
+import React, { PropsWithChildren } from "react";
 import { Image as NativeImage, Pressable, StyleProp, View, ViewStyle } from "react-native";
 import { useTheme } from "styled-components/native";
 import { ButtonAction } from "~/contentCards/cards/types";
@@ -40,7 +40,7 @@ export const Tag = ({ label }: LabelProps) => {
   );
 };
 
-export const TitleSizes: {
+export const TitleStyles: {
   [key in Size]: object;
 } = {
   L: {
@@ -64,10 +64,10 @@ export const TitleSizes: {
 };
 
 export const Title = ({ label, size }: LabelProps) => {
-  return <Text {...TitleSizes[size]}>{label}</Text>;
+  return <Text {...TitleStyles[size]}>{label}</Text>;
 };
 
-export const SubtitleSizes: {
+export const SubtitleStyles: {
   [key in Size]: object;
 } = {
   L: {
@@ -94,13 +94,13 @@ export const Subtitle = ({ label, size }: LabelProps) => {
   const { colors } = useTheme();
 
   return (
-    <Text {...SubtitleSizes[size]} color={colors.neutral.c70}>
+    <Text {...SubtitleStyles[size]} color={colors.neutral.c70}>
       {label}
     </Text>
   );
 };
 
-export const PriceSizes: {
+export const PriceStyles: {
   [key in Size]: object;
 } = {
   L: {
@@ -127,8 +127,50 @@ export const Price = ({ label, size }: LabelProps) => {
   const { colors } = useTheme();
 
   return (
-    <Text {...PriceSizes[size]} color={colors.neutral.c70} style={PriceSizes[size]}>
+    <Text {...PriceStyles[size]} color={colors.neutral.c70} style={PriceStyles[size]}>
       {label}
     </Text>
+  );
+};
+
+export const ContainerStyles: {
+  [key in Size]: object;
+} = {
+  L: {
+    height: 306,
+    paddingTop: 24,
+    paddingBottom: 24,
+    borderRadius: 12,
+  },
+  M: {
+    height: 206,
+    paddingTop: 16,
+    paddingBottom: 8,
+    borderRadius: 16,
+  },
+  S: {
+    height: 156,
+    paddingTop: 16,
+    paddingBottom: 8,
+    borderRadius: 16,
+  },
+};
+
+export const Container = ({ size, children }: { size: Size } & PropsWithChildren) => {
+  const { colors } = useTheme();
+
+  return (
+    <View
+      style={{
+        position: "relative",
+        justifyContent: "space-between",
+        alignItems: "center",
+        backgroundColor: colors.opacityDefault.c05,
+
+        ...ContainerStyles[size],
+      }}
+    >
+      {children}
+    </View>
   );
 };
