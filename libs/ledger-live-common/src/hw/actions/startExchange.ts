@@ -18,7 +18,7 @@ type State = {
 
 type StartExchangeState = AppState & State;
 type StartExchangeRequest = { exchangeType: ExchangeType };
-type Result =
+export type Result =
   | {
       startExchangeResult: string;
     }
@@ -85,6 +85,7 @@ export const createAction = (
   startExchangeExec: (arg0: {
     deviceId: string;
     exchangeType: ExchangeType;
+    appVersion?: string;
   }) => Observable<ExchangeRequestEvent>,
 ): StartExchangeAction => {
   const useHook = (
@@ -100,7 +101,8 @@ export const createAction = (
       appName: "Exchange",
     });
 
-    const { device, opened, error } = appState;
+    const { device, opened, error, appAndVersion } = appState;
+
     const hasError = error || state.error;
     useEffect(() => {
       if (!opened || !device) {
@@ -113,10 +115,15 @@ export const createAction = (
         of(<ExchangeRequestEvent>{
           type: "start-exchange",
         }),
-        startExchangeExec({ deviceId: device.deviceId, exchangeType }),
+        startExchangeExec({
+          deviceId: device.deviceId,
+          exchangeType,
+          appVersion: appAndVersion?.version,
+        }),
       )
         .pipe(
           tap(e => {
+            console.log("DEEEEEBBBBUUUUUGGGGG Action pipe:", e);
             log("actions-startExchange-event", JSON.stringify(e));
           }),
           scan(reducer, initialState),
@@ -125,7 +132,7 @@ export const createAction = (
       return () => {
         sub.unsubscribe();
       };
-    }, [device, opened, exchangeType, hasError]);
+    }, [device, opened, exchangeType, hasError, appAndVersion]);
 
     return {
       ...appState,
