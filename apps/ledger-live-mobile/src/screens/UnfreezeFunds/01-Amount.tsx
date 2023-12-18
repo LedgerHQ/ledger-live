@@ -1,4 +1,3 @@
-import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { useCallback, useMemo, useEffect, useState } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
@@ -28,8 +27,7 @@ import Info from "~/icons/Info";
 import CheckBox from "~/components/CheckBox";
 import Bandwidth from "~/icons/Bandwidth";
 import Bolt from "~/icons/Bolt";
-import ClockIcon from "~/icons/Clock";
-import DateFromNow from "~/components/DateFromNow";
+
 import {
   StackNavigatorNavigation,
   StackNavigatorProps,
