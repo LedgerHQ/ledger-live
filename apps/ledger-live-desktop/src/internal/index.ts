@@ -125,7 +125,24 @@ process.on("message", async (m: Message) => {
 
       break;
     case transportExchangeBulkUnsubscribeChannel:
-      transportExchangeBulkUnsubscribe(m);
+      transportExchangeBulkUnsubscribe(m).subscribe({
+        next: response => {
+          process.send?.({
+            type: transportExchangeBulkChannel,
+            requestId: m.requestId,
+            ...response,
+          });
+        },
+        error: error => {
+          trace({
+            type: LOG_TYPE_INTERNAL,
+            message: `Unhandled error: ${error}`,
+            data: { error },
+            context: { function: "transportExchangeBulkUnsubscribe" },
+          });
+        },
+      });
+
       break;
     case transportListenChannel:
       transportListen(m);

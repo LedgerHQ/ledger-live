@@ -4,7 +4,6 @@ import { open } from "@ledgerhq/live-common/hw/index";
 import { DisconnectedDeviceDuringOperation, serializeError } from "@ledgerhq/errors";
 import {
   transportCloseChannel,
-  transportExchangeBulkUnsubscribeChannel,
   transportListenChannel,
 } from "~/config/transportChannels";
 import { MessagesMap } from "./types";
@@ -200,47 +199,49 @@ export const transportExchangeBulk = ({
   });
 };
 
+export type TransportExchangeBulkUnsubscribe = {
+  error: ReturnType<typeof serializeError>;
+};
 /**
  * Handles request messages to unsubscribe from listening to a bulk exchange
  */
 export const transportExchangeBulkUnsubscribe = ({
   data,
   requestId,
-}: MessagesMap["transport:exchangeBulk:unsubscribe"]) => {
-  const tracer = new LocalTracer(LOG_TYPE_INTERNAL, {
-    requestId,
-    function: "transportExchangeBulkUnsubscribe",
-  });
-  tracer.trace("transport:exchangeBulk:unsubscribe message received", { data });
-
-  const transport = transportForDevices.get(data.descriptor);
-  if (!transport) {
-    tracer.trace("No open transport for the given descriptor");
-
-    process.send?.({
-      type: transportExchangeBulkUnsubscribeChannel,
-      error: serializeError(
-        new DisconnectedDeviceDuringOperation("No open transport for the given descriptor"),
-      ),
+}: MessagesMap["transport:exchangeBulk:unsubscribe"]): Observable<TransportExchangeBulkUnsubscribe> => {
+  return new Observable(subscriber => {
+    const tracer = new LocalTracer(LOG_TYPE_INTERNAL, {
       requestId,
+      function: "transportExchangeBulkUnsubscribe",
     });
-    return;
-  }
+    tracer.trace("transport:exchangeBulk:unsubscribe message received", { data });
 
-  const subscription = exchangeBulkSubscriptions.get(requestId);
+    const transport = transportForDevices.get(data.descriptor);
+    if (!transport) {
+      tracer.trace("No open transport for the given descriptor");
 
-  if (subscription) {
-    subscription.unsubscribe();
-    exchangeBulkSubscriptions.delete(requestId);
+      subscriber.next({
+        error: serializeError(
+          new DisconnectedDeviceDuringOperation("No open transport for the given descriptor"),
+        ),
+      });
+      return;
+    }
 
-    tracer.trace("Successfully unsubscribed from bulk exchange");
-  } else {
-    tracer.trace("No exchange bulk subscription to unsubscribe from");
-  }
+    const subscription = exchangeBulkSubscriptions.get(requestId);
+
+    if (subscription) {
+      subscription.unsubscribe();
+      exchangeBulkSubscriptions.delete(requestId);
+
+      tracer.trace("Successfully unsubscribed from bulk exchange");
+    } else {
+      tracer.trace("No exchange bulk subscription to unsubscribe from");
+    }
+
+    subscriber.complete();
+  });
 };
-
-// Only listens to NodeHIDSingleton event - so USB event in this archi
-export const transportListen = ({ requestId }: MessagesMap["transport:listen"]) => {
   const observable = new Observable(TransportNodeHidSingleton.listen);
 
   const subscription = observable.subscribe({
