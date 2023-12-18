@@ -44,6 +44,8 @@ const Carousel = ContentLayoutBuilder<Props>(({ items, styles: _styles = default
 
   const separatorWidth = useTheme().space[styles.gap];
 
+  const isPaginationEnabled = styles.pagination && styles.widthFactor >= WidthFactor.Quarter;
+
   const carouselRef = useRef<FlatList>(null);
   const [carouselIndex, setCarouselIndex] = useState(0);
 
@@ -83,9 +85,7 @@ const Carousel = ContentLayoutBuilder<Props>(({ items, styles: _styles = default
         )}
       />
 
-      {styles.pagination && styles.widthFactor >= WidthFactor.Quarter && (
-        <Pagination items={items} carouselIndex={carouselIndex} />
-      )}
+      {isPaginationEnabled && <Pagination items={items} carouselIndex={carouselIndex} />}
     </View>
   );
 });
