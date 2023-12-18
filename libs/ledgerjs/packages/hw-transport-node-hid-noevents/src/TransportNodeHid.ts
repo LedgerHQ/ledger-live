@@ -119,13 +119,13 @@ export default class TransportNodeHidNoEvents extends Transport {
     try {
       this.device.write(data);
       return Promise.resolve();
-    } catch (e: any) {
-      // TODO: here: should we retry ? in exchange catch this error and retry ?
-      // Error: TypeError: Cannot write to hid device
-      this.tracer.trace(`Received an error during HID write: ${e}`, { e });
+    } catch (error: unknown) {
+      this.tracer.trace(`Received an error during HID write: ${error}`, { error });
 
-      const maybeMappedError =
-        e && e.message ? new DisconnectedDeviceDuringOperation(e.message) : e;
+      let maybeMappedError = error;
+      if (error instanceof Error) {
+        maybeMappedError = new DisconnectedDeviceDuringOperation(error.message);
+      }
 
       if (maybeMappedError instanceof DisconnectedDeviceDuringOperation) {
         this.tracer.trace("Disconnected during HID write");
