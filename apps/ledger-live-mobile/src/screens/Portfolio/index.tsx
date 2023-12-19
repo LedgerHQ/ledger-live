@@ -149,11 +149,13 @@ function PortfolioScreen({ navigation }: NavigationProps) {
           <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
         </Flex>
         <PortfolioGraphCard showAssets={showAssets} key="PortfolioGraphCard" />
-        <ContentCardsLocation
-          key="contentCardsLocationPortfolio"
-          locationId={ContentCardLocation.Wallet}
-          mt={7}
-        />
+        {showAssets ? (
+          <ContentCardsLocation
+            key="contentCardsLocationPortfolio"
+            locationId={ContentCardLocation.Wallet}
+            mt={7}
+          />
+        ) : null}
       </WalletTabSafeAreaView>,
       showAssets ? (
         <Box background={colors.background.main} px={6} mt={6} key="PortfolioAssets">
