@@ -1237,11 +1237,12 @@
         "firmwareUpdate" : {
           "title" : {
             "active" : "Verificación de actualización del SO",
-            "completed" : "El SO de tu {{modelName}} está actualizado",
+            "completed" : "El SO de tu {{modelName}} está actualizado.",
             "updateAvailable" : "Actualización del SO {{firmwareVersion}} disponible"
           },
           "subtitle" : {
             "active" : "Se verificará si el sistema operativo de tu {{modelName}} está actualizado o no.",
+            "completed" : "Para iniciar la restauración de la aplicación en tu {{modelName}}, selecciona el botón “Restaurar aplicaciones” a continuación.",
             "updateAvailable" : "Actualízalo para disfrutar de una seguridad óptima y acceder a las funciones más recientes."
           },
           "viewUpdateCTA" : "Actualizar SO del {{modelName}}",
@@ -1757,8 +1758,8 @@
     "loading" : "Cargando...",
     "connectAndUnlockDevice" : "Conecta y desbloquea tu dispositivo",
     "unlockDevice" : "Desbloquea tu dispositivo",
-    "unlockDeviceAfterFirmwareUpdateStep1" : "Espera a que finalice la instalación en {{productName}}",
-    "unlockDeviceAfterFirmwareUpdateStep2" : "Desbloquear {{productName}} para finalizar la instalación",
+    "unlockDeviceAfterFirmwareUpdateStep1" : "Espera a que finalice la instalación en tu {{productName}}.",
+    "unlockDeviceAfterFirmwareUpdateStep2" : "Desbloquea {{productName}} con tu PIN para terminar de completar la actualización.",
     "quitApp" : "Cierra la aplicación en tu dispositivo",
     "appNotInstalledTitle" : "Falta una aplicación necesaria",
     "appNotInstalledTitle_plural" : "Faltan aplicaciones necesarias",
@@ -1931,10 +1932,12 @@
       "latest" : "La versión {{version}} del firmware está disponible",
       "contactSupport" : "Ponte en contacto con Soporte",
       "deprecated" : "La versión de firmware del dispositivo es demasiado antigua para poder actualizarla. Contacta al Soporte de Ledger para obtener un reemplazo.",
-      "prepareSeed" : "Como precaución, asegúrate de que la Frase de recuperación de 24 Palabras esté escrita en la Hoja de recuperación y de tener fácil acceso a ella.",
+      "prepareSeed" : "Como precaución, asegúrate de que la Frase de recuperación de 24 palabras esté escrita en la Hoja de recuperación y de tener fácil acceso a ella.",
       "disclaimerTitle" : "Estás a punto de instalar <1>la versión de firmware {{version}}</1>.",
-      "cancelUpdate" : "Cancelar actualización",
-      "continueUpdate" : "Continuar con la actualización",
+      "cancelUpdate" : "Cancelar actualización del SO",
+      "continueUpdate" : "Continuar con actualización del SO",
+      "restartUpdate" : "Reiniciar actualización de SO",
+      "skipRestore" : "Omitir restauración",
       "cancelUpdateWarning" : "Si cancelas la actualización ahora, tus ajustes y aplicaciones podrían no restaurarse correctamente.",
       "updateInProgress" : "Actualización del SO en curso"
     },
@@ -1974,9 +1977,10 @@
       "mcuBlueFirst" : "Mantén presionado el botón lateral durante 10 segundos para apagar el dispositivo. Suelta el botón.",
       "mcuBlueSecond" : "Mantén presionado el botón durante al menos 5 segundos hasta que se muestren las “Boot Options” (\"Opciones de arranque\"). Toca en Bootloader Mode",
       "successTitle" : "El SO de tu {{deviceName}} está actualizado.",
-      "sucessCTAApps" : "Volver a instalar las aplicaciones",
-      "SuccessCTANoApps" : "Instalar aplicaciones",
-      "cancelReinstallCTA" : "Instalar actualización",
+      "successTitleApps" : "El SO de tu {{deviceName}}\nestá actualizado. Una última cosa...",
+      "successSubtitleApps" : "Para iniciar la restauración de la aplicación en tu Ledger Stax, selecciona\nel botón “Restaurar aplicaciones” a continuación.",
+      "sucessCTAApps" : "Restaurando aplicaciones",
+      "SuccessCTANoApps" : "Finalizar",
       "resetSteps" : {
         "first" : "1. Restablece tu dispositivo",
         "connect" : "Conecta el {{deviceName}} a tu PC utilizando el cable USB.",
@@ -2288,6 +2292,13 @@
     "confirmation" : "Confirmar eliminación de imagen en tu Ledger Stax",
     "success" : "Imagen de pantalla de bloqueo eliminada"
   },
+  "changeCustomLockscreen" : {
+    "cta" : "Cambiar"
+  },
+  "removeCurrentPicture" : {
+    "cta" : "Eliminar imagen actual"
+  },
+  "appsInstallingDisabledTooltip" : "Disabled until apps finish installing",
   "deviceLocalization" : {
     "language" : "Idioma",
     "deviceLanguage" : "Cambiar el idioma del dispositivo",
@@ -2302,7 +2313,7 @@
       "title" : "¿Cambiar tu {{deviceName}} a {{language}}?",
       "description" : "Ya está disponible el idioma {{language}} para tu {{deviceName}}. Puedes cambiar el idioma de tu dispositivo ahora o en cualquier momento desde My Ledger."
     },
-    "allowLanguageInstallation" : "Permitir instalación de idioma",
+    "allowLanguageInstallation" : "Pulsa “Allow” (Permitir) para\ninstalar el idioma",
     "languageInstalled" : "Idioma cambiado al {{language}}",
     "installingLanguage" : "Instalando idioma",
     "languages" : {
@@ -3057,7 +3068,7 @@
         "steps" : {
           "starter" : {
             "title" : "Redelegación",
-            "description" : "Utiliza la redelagación para cambiar fácilmente de un validador a otro. No obstante, si cambias de idea de nuevo, tendrás que esperar porque la redelegación activa un bloqueo temporal de 21 días.",
+            "description" : "Utiliza la redelegación para cambiar con facilidad de un validador a otro. Aunque debes tener en cuenta de que si cambias de opinión de nuevo, deberás esperar ya que la redelegación genera un bloqueo de {{ numberOfDays }} días.",
             "warning" : "Elige tu validador con cuidado: Puedes perder definitivamente parte de tus activos delegados si el validador no se comporta apropiadamente. Puedes tener un máximo de <0>7 redelegaciones pendientes</0>.",
             "howDelegationWorks" : "¿Cómo funciona la delegación?"
           },
@@ -3086,7 +3097,7 @@
     },
     "undelegation" : {
       "header" : "Desdelegaciones",
-      "headerTooltip" : "Disponible después de un bloqueo temporal de 21 días",
+      "headerTooltip" : "Disponible después de un bloqueo temporal de {{numberOfDays}} días",
       "inactiveTooltip" : "Los importes desdelegados no generan recompensas.",
       "flow" : {
         "title" : "Desdelegar activos",
@@ -4085,7 +4096,7 @@
     "accounts" : {
       "hideEmptyTokens" : {
         "title" : "Ocultar cuentas de tokens sin saldo",
-        "desc" : "Oculta las cuentas de tokens sin saldo en la página de Cuentas."
+        "desc" : "Ocultar cuentas de tokens sin saldo."
       },
       "tokenBlacklist" : {
         "title" : "Tokens ocultos",
@@ -5199,8 +5210,8 @@
       "description" : "Inténtalo de nuevo o contacta a Soporte de Ledger si persiste el problema."
     },
     "LanguageInstallRefusedOnDevice" : {
-      "title" : "Se ha rechazado la instalación del idioma en el dispositivo",
-      "description" : "Inténtalo de nuevo. Si el problema persiste, guarda los registros con el botón que aparece a continuación y envíalos al Soporte de Ledger."
+      "title" : "Restauración de idioma\ncancelada en el dispositivo",
+      "description" : "Si hubo un error, inténtalo de nuevo."
     },
     "RestoreLanguageInstallRefusedOnDevice" : {
       "title" : "La restauración del idioma se canceló en Ledger Stax",
@@ -5405,8 +5416,8 @@
       "title" : "Mi Ledger denegado en el dispositivo"
     },
     "UserRefusedFirmwareUpdate" : {
-      "title" : "La actualización se canceló en el dispositivo",
-      "description" : "Se ha rechazado la instalación de la actualización del SO en tu dispositivo. Si se trata de un error, vuelve a iniciar la actualización."
+      "title" : "Instalación de actualización de SO\ncancelada en el dispositivo",
+      "description" : "Si se trata de un error, vuelve a iniciar la actualización."
     },
     "UserRefusedOnDevice" : {
       "title" : "Acción rechazada",
@@ -5812,12 +5823,12 @@
       "description" : "Vuelve a intentarlo con otra imagen"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "Pantalla de bloqueo cancelada en Ledger Stax",
-      "description" : "Si la imagen no era la adecuada, puedes intentarlo de nuevo con una diferente."
+      "title" : "Instalación de la imagen de pantalla de bloqueo\ncancelada en Ledger Stax",
+      "description" : "Si ha sido un error, inténtalo de nuevo."
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "Pantalla de bloqueo cancelada en Ledger Stax",
-      "description" : "Si la imagen no era la adecuada, puedes intentarlo de nuevo con una diferente."
+      "title" : "Instalación de la imagen de pantalla de bloqueo\ncancelada en Ledger Stax",
+      "description" : "Si ha sido un error, inténtalo de nuevo."
     },
     "ImageDoesNotExistOnDevice" : {
       "title" : "Tu Ledger Stax no tiene una imagen de pantalla de bloqueo que quitar",
@@ -5861,11 +5872,9 @@
       "descriptionWithProductName" : "Desbloquea tu {{ productName }} e inténtalo de nuevo."
     },
     "DeviceNotOnboardedError" : {
-      "title" : "Tu dispositivo aún no está listo para usar",
-      "titleWithProductName" : "{{ productName }} aún no está listo para que lo uses.",
-      "description" : "Primero debes configurar tu dispositivo.\nTe guiaremos a lo largo del proceso de configuración.",
-      "descriptionWithProductName" : "Primero debes configurar tu {{ productName }}.\nTe guiaremos a lo largo del proceso de configuración.",
-      "goToOnboardingButton" : "Configurar mi dispositivo",
+      "title" : "Your Ledger is not set up",
+      "description" : "Set it up to start using it. We will guide you through the setup process.",
+      "goToOnboardingButton" : "Set up my Ledger",
       "goToOnboardingButtonWithProductName" : "Configurar mi {{ productName }}"
     },
     "EtherscanAPIError" : {
@@ -5939,13 +5948,13 @@
       "transfer" : {
         "stepLabel" : "Cargar",
         "useAnotherPicture" : "Cargar otra imagen",
-        "allowPreview" : "Toca “Cargar imagen” para personalizar la pantalla de bloqueo.",
-        "allowConfirmPreview" : "Permitir la restauración de la imagen de pantalla de bloqueo en {{productName}}",
-        "loadingPicture" : "Cargando...",
+        "allowPreview" : "Toca “Cargar imagen” para\npersonalizar la imagen de pantalla de bloqueo",
+        "allowConfirmPreview" : "Toca “Cargar imagen” para\nrestaurar la imagen de pantalla de bloqueo",
+        "loadingPicture" : "Instalando...",
         "voila" : "¡Voilà!",
         "imageLoaded" : "Imagen cargada en {{productName}}",
         "confirmPicture" : "¿Te gusta lo que ves?\n¡Pues consérvalo!",
-        "confirmRestorePicture" : "Confirmar la restauración de la imagen de pantalla de bloqueo",
+        "confirmRestorePicture" : "Toca \"Conservar\" para\nconfirmar la selección de tu imagen de pantalla de bloqueo",
         "doThisLater" : "Quizás más tarde"
       }
     },
