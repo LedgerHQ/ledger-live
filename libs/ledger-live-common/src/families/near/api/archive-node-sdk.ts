@@ -298,5 +298,5 @@ export const getCommission = makeLRUCache(
     return null;
   },
   () => "",
-  { ttl: 10 * 60 * 1000 },
+  { ttl: 30 * 60 * 1000 },
 );
