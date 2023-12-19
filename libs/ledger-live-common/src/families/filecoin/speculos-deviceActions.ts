@@ -1,5 +1,5 @@
 import { Address } from "@zondax/izari-filecoin/address";
-import { NetworkPrefix } from "@zondax/izari-filecoin/artifacts";
+import { Methods, NetworkPrefix } from "@zondax/izari-filecoin/artifacts";
 import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
 import { deviceActionFlow, formatDeviceAmount, SpeculosButton } from "../../bot/specs";
@@ -12,11 +12,6 @@ export const generateDeviceActionFlow = (scenario: BotScenario): DeviceAction<Tr
     data.steps.push({
       title: "To",
       button: SpeculosButton.RIGHT,
-      expectedValue: ({ transaction }) => transaction.recipient,
-    });
-    data.steps.push({
-      title: "To 0x",
-      button: SpeculosButton.RIGHT,
       expectedValue: ({ transaction }) => {
         const addr = Address.fromString(transaction.recipient);
         if (Address.isFilEthAddress(addr)) {
@@ -25,7 +20,17 @@ export const generateDeviceActionFlow = (scenario: BotScenario): DeviceAction<Tr
         return transaction.recipient;
       },
     });
+    data.steps.push({
+      title: "To",
+      button: SpeculosButton.RIGHT,
+      expectedValue: ({ transaction }) => transaction.recipient,
+    });
   } else if (scenario == BotScenario.ETH_RECIPIENT) {
+    data.steps.push({
+      title: "To",
+      button: SpeculosButton.RIGHT,
+      expectedValue: ({ transaction }) => transaction.recipient,
+    });
     data.steps.push({
       title: "To",
       button: SpeculosButton.RIGHT,
@@ -33,11 +38,6 @@ export const generateDeviceActionFlow = (scenario: BotScenario): DeviceAction<Tr
         const addr = Address.fromEthAddress(NetworkPrefix.Mainnet, transaction.recipient);
         return addr.toString();
       },
-    });
-    data.steps.push({
-      title: "To 0x",
-      button: SpeculosButton.RIGHT,
-      expectedValue: ({ transaction }) => transaction.recipient,
     });
   } else {
     data.steps.push({
@@ -92,11 +92,11 @@ export const generateDeviceActionFlow = (scenario: BotScenario): DeviceAction<Tr
     },
   ]);
 
-  if (scenario == "f4-recipient" || scenario == "eth-recipient") {
+  if (scenario == BotScenario.ETH_RECIPIENT || scenario == BotScenario.F4_RECIPIENT) {
     data.steps.push({
       title: "Method",
       button: SpeculosButton.RIGHT,
-      expectedValue: () => "3844450837",
+      expectedValue: () => Methods.InvokeEVM.toString(),
     });
   } else {
     data.steps.push({
