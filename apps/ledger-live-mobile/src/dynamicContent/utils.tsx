@@ -35,15 +35,19 @@ export const compareCards = (a: ContentCardCommonProperties, b: ContentCardCommo
   return (a.order || 0) - (b.order || 0);
 };
 
-export const filterCategoriesByLocation = (categories: CategoryContentCard[], locationId: ContentCardLocation) => {
-  const categoriesToDisplay = categories.filter(
-    category => category.location === locationId,
-  );
+export const filterCategoriesByLocation = (
+  categories: CategoryContentCard[],
+  locationId: ContentCardLocation,
+) => {
+  const categoriesToDisplay = categories.filter(category => category.location === locationId);
 
   return categoriesToDisplay;
 };
 
-export const formatCategories = (categories: CategoryContentCard[], mobileCards: BrazeContentCard[]) => {
+export const formatCategories = (
+  categories: CategoryContentCard[],
+  mobileCards: BrazeContentCard[],
+) => {
   const categoriesSorted = categories.sort(compareCards);
   const categoriesWithCards = categoriesSorted.map(category => ({
     category,

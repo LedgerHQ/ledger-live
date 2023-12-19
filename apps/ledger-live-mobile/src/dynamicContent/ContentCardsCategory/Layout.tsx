@@ -12,7 +12,7 @@ import { ContentCardMetadata } from "~/contentCards/cards/types";
 import { contentCardItem } from "~/contentCards/cards/utils";
 import { compareCards, mapAsHorizontalContentCard } from "~/dynamicContent/utils";
 import Carousel from "../../contentCards/layouts/carousel";
-import useDynamicContent from "../dynamicContent";
+import useDynamicContent from "../useDynamicContent";
 import { ContentCardsType } from "../types";
 
 // TODO : Better type to remove any (maybe use AnyContentCard)
