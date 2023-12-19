@@ -340,6 +340,7 @@ export default function Content({
           title={t("operationDetails.account")}
           value={getAccountName(account)}
           onPress={onPress}
+          testID="operationDetails-account"
         />
       ) : null}
 
