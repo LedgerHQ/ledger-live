@@ -117,14 +117,13 @@ export const broadcastTransaction = async (transaction, currency) => {
   return { hash };
 };
 
-
 export const submit = async (txObj, currency) => {
   const rpcURL = getRpcUrl(currency);
 
   const httpProvider = new HttpProvider(rpcURL);
   const iconService = new IconService(httpProvider);
 
-  SignedTransaction
+  SignedTransaction;
   const signedTransaction: any = {
     getProperties: () => txObj.rawData,
     getSignature: () => txObj.signature,
@@ -136,16 +135,13 @@ export const submit = async (txObj, currency) => {
   };
 };
 
-
-
-
 /**
  * Obtain fees from blockchain
  */
 export const getFees = async (unsigned, account): Promise<BigNumber> => {
   const rpcURL = getRpcUrl(account.currency);
   // d mean debug, only get estimate step with debug enpoint
-  const debugRpcUrl = rpcURL + 'd';
+  const debugRpcUrl = rpcURL + "d";
   const httpProvider = new HttpProvider(debugRpcUrl);
   const iconService = new IconService(httpProvider);
   let res;

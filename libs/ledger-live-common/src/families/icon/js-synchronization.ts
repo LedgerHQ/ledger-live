@@ -39,16 +39,14 @@ const getAccountShape: GetAccountShape = async info => {
     unwithdrawnReward: iscore,
   };
 
-
-
   return {
     id: accountId,
     balance: new BigNumber(balance),
-    spendableBalance: balance.minus(iconResources.unstake).minus(iconResources.totalDelegated).minus(iconResources.votingPower),
+    spendableBalance: balance.minus(iconResources.totalDelegated).minus(iconResources.votingPower),
     operationsCount: operations.length,
     blockHeight,
     iconResources,
-    operations
+    operations,
   };
 };
 

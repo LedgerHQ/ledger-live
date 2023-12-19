@@ -31,7 +31,7 @@ const prepareTransaction = async (a, t) => t;
 const estimateMaxSpendable = ({ account, parentAccount, transaction }) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const estimatedFees = transaction?.fees || new BigNumber(5000);
-  return Promise.resolve(BigNumber.max(0, mainAccount.balance.minus(estimatedFees)));
+  return Promise.resolve(BigNumber.max(0, mainAccount.spendableBalance.minus(estimatedFees)));
 };
 
 const getTransactionStatus = (account, t) => {

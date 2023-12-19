@@ -4,7 +4,7 @@ import { Vote } from "../types";
 /**
  * Icon transaction
  */
-export type APITransaction ={
+export type APITransaction = {
   fees?: BigNumber | null | undefined;
   value?: BigNumber | null | undefined;
   value_decimal?: BigNumber | null | undefined;

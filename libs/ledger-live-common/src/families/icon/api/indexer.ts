@@ -5,7 +5,6 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { LIMIT } from "../constants";
 import { isTestnet } from "../logic";
 
-
 /**
  * Returns Testnet API URL if the current currency is testnet
  *
@@ -19,7 +18,6 @@ export function getApiUrl(currency: CryptoCurrency): string {
   return apiUrl;
 }
 
-
 export const getAccountBalance = async (addr: string, url: string): Promise<string> => {
   try {
     const resp = await network({
@@ -30,7 +28,7 @@ export const getAccountBalance = async (addr: string, url: string): Promise<stri
     const balance = data?.balance;
     return balance;
   } catch (error) {
-    return '0'
+    return "0";
   }
 };
 
