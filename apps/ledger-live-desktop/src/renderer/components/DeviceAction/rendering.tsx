@@ -62,6 +62,7 @@ import { Account } from "@ledgerhq/types-live";
 import LinkWithExternalIcon from "../LinkWithExternalIcon";
 import { openURL } from "~/renderer/linking";
 import Installing from "~/renderer/modals/UpdateFirmwareModal/Installing";
+import { ErrorBody } from "../ErrorBody";
 
 export const AnimationWrapper = styled.div`
   width: 600px;
@@ -156,6 +157,10 @@ export const SubTitle = styled(Text).attrs({
   margin-top: 8px;
 `;
 
+/**
+ * @deprecated use ErrorBody or its exported
+ * ErrorTitle instead (up to date v3 design)
+ * */
 const ErrorTitle = styled(Text).attrs({
   variant: "paragraph",
   fontWeight: "semiBold",
@@ -168,6 +173,10 @@ const ErrorTitle = styled(Text).attrs({
   margin-top: 20px;
 `;
 
+/**
+ * @deprecated use ErrorBody or its exported
+ * ErrorTitle instead (up to date v3 design)
+ * */
 const ErrorDescription = styled(Text).attrs({
   variant: "paragraph",
   color: "palette.text.shade60",
@@ -568,20 +577,20 @@ export const renderLockedDeviceError = ({
 
   return (
     <Wrapper id="error-locked-device">
-      <Flex mb={5}>
-        <BoxedIcon size={64} Icon={LockAltMedium} iconSize={24} iconColor="neutral.c100" />
-      </Flex>
-      <ErrorTitle>{t("errors.LockedDeviceError.title")}</ErrorTitle>
-      <ErrorDescription>
-        {productName
-          ? t("errors.LockedDeviceError.descriptionWithProductName", {
-              productName,
-            })
-          : t("errors.LockedDeviceError.description")}
-      </ErrorDescription>
+      <ErrorBody
+        Icon={LockAltMedium}
+        title={t("errors.LockedDeviceError.title")}
+        description={
+          productName
+            ? t("errors.LockedDeviceError.descriptionWithProductName", {
+                productName,
+              })
+            : t("errors.LockedDeviceError.description")
+        }
+      />
       <ButtonContainer>
         {onRetry && inlineRetry ? (
-          <ButtonV3 variant="main" onClick={onRetry} borderRadius={"9999px"}>
+          <ButtonV3 size="large" variant="main" onClick={onRetry} borderRadius={"9999px"}>
             {t("common.retry")}
           </ButtonV3>
         ) : null}
@@ -606,23 +615,11 @@ export const DeviceNotOnboardedError = withV3StyleProvider(
 
     return (
       <Wrapper id="error-device-not-onboarded">
-        {device ? (
-          <Flex mb={10}>
-            <DeviceIllustration size={120} deviceId={device.modelId} />
-          </Flex>
-        ) : null}
-        <Text color="neutral.c100" variant="h5Inter" fontWeight="semiBold" mb={6}>
-          {t("errors.DeviceNotOnboardedError.title")}
-        </Text>
-        <Text
-          variant="body"
-          fontWeight="medium"
-          color="neutral.c80"
-          whiteSpace="pre-wrap"
-          textAlign="center"
-        >
-          {t("errors.DeviceNotOnboardedError.description")}
-        </Text>
+        <ErrorBody
+          top={<DeviceIllustration size={120} deviceId={device.modelId} />}
+          title={t("errors.DeviceNotOnboardedError.title")}
+          description={t("errors.DeviceNotOnboardedError.description")}
+        />
         <ButtonV3
           variant="main"
           size="large"
@@ -641,23 +638,6 @@ export const DeviceNotOnboardedError = withV3StyleProvider(
     );
   },
 );
-
-/** Renders an error icon, title and description */
-export const ErrorBody: React.FC<{
-  Icon: (props: { color?: string | undefined; size?: number | undefined }) => JSX.Element;
-  title: string | React.ReactNode;
-  description: string | React.ReactNode;
-  list?: string | React.ReactNode;
-}> = ({ Icon, title, description, list }) => {
-  return (
-    <>
-      <BoxedIcon Icon={Icon} size={64} iconSize={24} />
-      <ErrorTitle>{title}</ErrorTitle>
-      <ErrorDescription>{description}</ErrorDescription>
-      {list ? <ErrorDescription>{list}</ErrorDescription> : null}
-    </>
-  );
-};
 
 export const renderError = ({
   error,
