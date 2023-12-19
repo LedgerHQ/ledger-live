@@ -73,7 +73,7 @@ const spawnCoreProcess = () => {
   internal.configure(path.resolve(__dirname, "main.bundle.js"), [], {
     silent: true,
     env,
-    // Passes a list of env variables set on `LEDGER_INTERNAL_ARGS` to the internal thread
+    // Passes a list of env variables set on `LEDGER_INTERNAL_ARGS` to the internal process
     execArgv: (process.env.LEDGER_INTERNAL_ARGS || "").split(/[ ]+/).filter(Boolean),
   });
   internal.start();
@@ -212,29 +212,29 @@ ipcMain.on("setEnv", async (event, env) => {
 });
 
 /**
- * Factory creating a request/response handler on requests from the renderer thread that are sent to the internal thread.
+ * Factory creating a request/response handler on requests from the renderer process that are sent to the internal process.
  *
  * The handler routes a (request) message from the renderer process to the internal process,
- * and sets a handler to receive the response from the internal thread and reply it to the renderer process
+ * and sets a handler to receive the response from the internal process and reply it to the renderer process
  * Only 1 response from the internal process is expected.
  *
  * @param channel the channel name to create the handler for
  */
 const internalHandlerPromise = (channel: string) => {
   ipcMain.on(channel, (event, { data, requestId }) => {
-    // Channel to send response to the renderer thread
+    // Channel to send response to the renderer process
     const replyChannel = `${channel}_RESPONSE_${requestId}`;
 
     const responseHandler = (message: FromInternalMessage) => {
       // Only handles a response associated to the current request
       if (message.type === channel && message.requestId === requestId) {
         if (message.error) {
-          // Sends back the error to the renderer thread which will trigger a reject
+          // Sends back the error to the renderer process which will trigger a reject
           event.reply(replyChannel, {
             error: message.error,
           });
         } else {
-          // Sends back the response to the renderer thread which will trigger a resolve
+          // Sends back the response to the renderer process which will trigger a resolve
           event.reply(replyChannel, {
             data: message.data,
           });
@@ -244,7 +244,7 @@ const internalHandlerPromise = (channel: string) => {
       }
     };
 
-    // Listens to response from the internal thread
+    // Listens to response from the internal process
     internal.process?.on("message", responseHandler);
 
     internal.send({
@@ -256,31 +256,31 @@ const internalHandlerPromise = (channel: string) => {
 };
 
 /**
- * Factory creating an "observable" handler on requests from the renderer thread that are sent to the internal thread.
+ * Factory creating an "observable" handler on requests from the renderer process that are sent to the internal process.
  *
  * Multi events version of `internalHandlerPromise`:
  * One request and listening to several response/event until an error or a complete is received from the internal process.
  */
 const internalHandlerObservable = (channel: string) => {
   ipcMain.on(channel, (event, { data, requestId }) => {
-    // Channel to send response to the renderer thread
+    // Channel to send response to the renderer process
     const replyChannel = `${channel}_RESPONSE_${requestId}`;
 
     const responsesHandler = (message: FromInternalMessage) => {
       // Only handles responses associated to the current request
       if (message.type === channel && message.requestId === requestId) {
         if (message.error) {
-          // Sends back the error to the renderer thread which will be considered an error event
+          // Sends back the error to the renderer process which will be considered an error event
           event.reply(replyChannel, {
             error: message.error,
           });
         } else if (message.data) {
-          // Sends back the response to the renderer thread which will be considered a next event
+          // Sends back the response to the renderer process which will be considered a next event
           event.reply(replyChannel, {
             data: message.data,
           });
         } else {
-          // Sends back an empty response to the renderer thread which will be considered a complete event
+          // Sends back an empty response to the renderer process which will be considered a complete event
           event.reply(replyChannel, {});
 
           internal.process?.removeListener("message", responsesHandler);
@@ -288,7 +288,7 @@ const internalHandlerObservable = (channel: string) => {
       }
     };
 
-    // Listens to responses from the internal thread
+    // Listens to responses from the internal process
     internal.process?.on("message", responsesHandler);
 
     internal.send({
@@ -300,7 +300,7 @@ const internalHandlerObservable = (channel: string) => {
 };
 
 /**
- * Factory creating an handler on one-way message from the renderer thread that are sent to the internal thread.
+ * Factory creating an handler on one-way message from the renderer process that are sent to the internal process.
  *
  * Only routes a (request) message from the renderer process to the internal process.
  * No response from the internal process is expected.

@@ -19,7 +19,7 @@ for (const k in process.env) {
 
 const forwardToMainLogger = ForwardToMainLogger.getLogger();
 
-// Listens to logs from the internal threads, and forwards them to the main thread
+// Listens to logs from the internal process, and forwards them to the main process
 listenLogs(log => {
   forwardToMainLogger.log(log);
 });

@@ -5,7 +5,7 @@ export const LOG_TYPE_INTERNAL = "internal";
 /**
  * Simple logger sending recorded logs directly to the main process
  *
- * Usage: records logs coming from `@ledgerhq/logs` in the internal thread
+ * Usage: records logs coming from `@ledgerhq/logs` in the internal process
  *
  * If performance issues are seen because of this direct send to the main process, several ideas could be implemented:
  * - a filtering on the `type` (or/and a level if it is implemented in `@ledgerhq/logs`) set from an env variable

@@ -17,7 +17,7 @@ setEnvOnAllThreads("USER_ID", getUserId());
 const originalDeviceMode = currentMode;
 const vaultTransportPrefixID = "vault-transport:";
 
-// Listens to logs from `@ledgerhq/logs` (happening on the renderer thread) and transfers them to the LLD logger system
+// Listens to logs from `@ledgerhq/logs` (happening on the renderer process) and transfers them to the LLD logger system
 listenLogs(({ id, date, ...log }) => {
   if (log.type === "hid-frame") return;
 
