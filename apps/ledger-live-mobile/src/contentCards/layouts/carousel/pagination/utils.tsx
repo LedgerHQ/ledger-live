@@ -3,12 +3,15 @@ import { ItemStatus } from "./types";
 /**
  * Returns the status of an indexed item from the carousel index.
  */
-export const getItemStatus = (itemIndex: number, carouselIndex: number) => {
-  return itemIndex === carouselIndex
-    ? ItemStatus.active
-    : Math.abs(itemIndex - carouselIndex) === 1
-    ? ItemStatus.nearby
-    : Math.abs(itemIndex - carouselIndex) === 2
-    ? ItemStatus.far
-    : ItemStatus.none;
+export const getItemStatus = (itemIndex: number, activeIndex: number) => {
+  const itemDistanceFromActiveIndex = Math.abs(itemIndex - activeIndex);
+
+  if (itemDistanceFromActiveIndex === 0) {
+    return ItemStatus.active;
+  } else if (itemDistanceFromActiveIndex === 1) {
+    return ItemStatus.nearby;
+  } else if (itemDistanceFromActiveIndex === 2) {
+    return ItemStatus.far;
+  }
+  return ItemStatus.none;
 };

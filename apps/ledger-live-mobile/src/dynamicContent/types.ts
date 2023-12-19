@@ -11,7 +11,7 @@ enum ContentCardsLayout {
   grid = "grid",
 }
 
-enum LocationContentCard {
+enum ContentCardLocation {
   Wallet = "wallet",
   Asset = "asset",
   Learn = "learn",
@@ -26,7 +26,7 @@ enum Background {
 type ContentCardCommonProperties = {
   id: string;
   categoryId?: string;
-  location?: LocationContentCard;
+  location?: ContentCardLocation;
   createdAt: number;
   viewed: boolean;
   order?: number;
@@ -103,4 +103,4 @@ export type {
   BrazeContentCard,
   AnyContentCard,
 };
-export { LocationContentCard, Background, ContentCardsLayout, ContentCardsType };
+export { ContentCardLocation, Background, ContentCardsLayout, ContentCardsType };

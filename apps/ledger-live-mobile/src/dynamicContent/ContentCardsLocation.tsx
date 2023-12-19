@@ -3,13 +3,13 @@ import { FlatList, ListRenderItem } from "react-native";
 import { Flex } from "@ledgerhq/native-ui";
 import type { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex/index";
 import useDynamicContent from "./dynamicContent";
-import { BrazeContentCard, CategoryContentCard, LocationContentCard } from "./types";
+import { BrazeContentCard, CategoryContentCard, ContentCardLocation } from "./types";
 import ContentCardsCategory from "./ContentCardsCategory";
 import { FeatureToggle } from "@ledgerhq/live-config/lib/featureFlags/index";
-import { compareCards } from "./utils";
+import { filterCategoriesByLocation, formatCategories } from "./utils";
 
 type Props = FlexBoxProps & {
-  locationId: LocationContentCard;
+  locationId: ContentCardLocation;
 };
 
 type CategoriesWithCards = {
@@ -28,25 +28,16 @@ const ContentCardsLocation = ({ locationId, ...containerProps }: Props) => {
     [],
   );
 
-  const categoriesToDisplay = categoriesCards.filter(
-    categoryCard => categoryCard.location === locationId,
-  );
+  const categoriesToDisplay = filterCategoriesByLocation(categoriesCards, locationId);
 
   if (categoriesToDisplay.length === 0) return null;
 
-  const categoriesSorted = categoriesToDisplay.sort(compareCards);
-  const categoriesWithCards = categoriesSorted.map(category => ({
-    category,
-    cards: mobileCards.filter(mobileCard => mobileCard.extras.categoryId === category.categoryId),
-  }));
-  const categoriesWithAtLeastOneCard = categoriesWithCards.filter(
-    categoryWithCards => categoryWithCards.cards.length > 0,
-  );
+  const categoriesFormatted = formatCategories(categoriesToDisplay, mobileCards);
 
   return (
     <Flex {...containerProps}>
       <FlatList
-        data={categoriesWithAtLeastOneCard}
+        data={categoriesFormatted}
         renderItem={renderCategory}
         keyExtractor={(item: CategoriesWithCards) => item.category.id}
         ItemSeparatorComponent={() => <Flex height={8} />}

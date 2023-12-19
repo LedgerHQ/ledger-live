@@ -3,7 +3,7 @@ import {
   AssetContentCard,
   Background,
   LearnContentCard,
-  LocationContentCard,
+  ContentCardLocation,
   NotificationContentCard,
   WalletContentCard,
   CategoryContentCard,
@@ -35,10 +35,31 @@ export const compareCards = (a: ContentCardCommonProperties, b: ContentCardCommo
   return (a.order || 0) - (b.order || 0);
 };
 
+export const filterCategoriesByLocation = (categories: CategoryContentCard[], locationId: ContentCardLocation) => {
+  const categoriesToDisplay = categories.filter(
+    category => category.location === locationId,
+  );
+
+  return categoriesToDisplay;
+};
+
+export const formatCategories = (categories: CategoryContentCard[], mobileCards: BrazeContentCard[]) => {
+  const categoriesSorted = categories.sort(compareCards);
+  const categoriesWithCards = categoriesSorted.map(category => ({
+    category,
+    cards: mobileCards.filter(mobileCard => mobileCard.extras.categoryId === category.categoryId),
+  }));
+  const categoriesWithAtLeastOneCard = categoriesWithCards.filter(
+    categoryWithCards => categoryWithCards.cards.length > 0,
+  );
+
+  return categoriesWithAtLeastOneCard;
+};
+
 export const mapAsCategoryContentCard = (card: BrazeContentCard): CategoryContentCard => ({
   id: card.id,
   categoryId: card.extras.id,
-  location: card.extras.location as LocationContentCard,
+  location: card.extras.location as ContentCardLocation,
   createdAt: card.created,
   viewed: card.viewed,
   order: parseInt(card.extras.order) ? parseInt(card.extras.order) : undefined,
@@ -56,7 +77,7 @@ export const mapAsWalletContentCard = (card: BrazeContentCard): WalletContentCar
   id: card.id,
   tag: card.extras.tag,
   title: card.extras.title,
-  location: LocationContentCard.Wallet,
+  location: ContentCardLocation.Wallet,
   image: card.extras.image,
   link: card.extras.link,
   background: Background[card.extras.background as Background] || Background.purple,
@@ -69,7 +90,7 @@ export const mapAsAssetContentCard = (card: BrazeContentCard): AssetContentCard 
   id: card.id,
   tag: card.extras.tag,
   title: card.extras.title,
-  location: LocationContentCard.Asset,
+  location: ContentCardLocation.Asset,
   image: card.extras.image,
   link: card.extras.link,
   cta: card.extras.cta,
@@ -84,7 +105,7 @@ export const mapAsLearnContentCard = (card: BrazeContentCard): LearnContentCard 
   id: card.id,
   tag: card.extras.tag,
   title: card.extras.title,
-  location: LocationContentCard.Learn,
+  location: ContentCardLocation.Learn,
   image: card.extras.image,
   link: card.extras.link,
   createdAt: card.created,
@@ -97,7 +118,7 @@ export const mapAsNotificationContentCard = (card: BrazeContentCard): Notificati
   tag: card.extras.tag,
   title: card.extras.title,
   description: card.extras.description,
-  location: LocationContentCard.NotificationCenter,
+  location: ContentCardLocation.NotificationCenter,
   link: card.extras.link,
   cta: card.extras.cta,
   createdAt: card.created,
