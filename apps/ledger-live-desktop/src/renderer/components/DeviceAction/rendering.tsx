@@ -1001,9 +1001,11 @@ export const renderSecureTransferDeviceConfirmation = ({
   type: Theme["theme"];
 }) => (
   <>
-    <Alert type="primary" learnMoreUrl={urls.swap.learnMore} horizontal={false}>
-      <Trans i18nKey={`DeviceAction.${exchangeType}.notice`} />
-    </Alert>
+    <Box flex={0}>
+      <Alert type="primary" learnMoreUrl={urls.swap.learnMore} horizontal={false}>
+        <Trans i18nKey={`DeviceAction.${exchangeType}.notice`} />
+      </Alert>
+    </Box>
     {renderVerifyUnwrapped({ modelId, type })}
     <Box alignItems={"center"}>
       <Text textAlign="center" fontWeight="semiBold" color="palette.text.shade100" fontSize={5}>
