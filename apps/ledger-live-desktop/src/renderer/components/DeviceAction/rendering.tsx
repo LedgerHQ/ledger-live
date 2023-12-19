@@ -599,7 +599,7 @@ export const renderLockedDeviceError = ({
   );
 };
 
-export const DeviceNotOnboardedError = withV3StyleProvider(
+export const DeviceNotOnboardedErrorComponent = withV3StyleProvider(
   ({ t, device }: { t: TFunction; device?: Device | null }) => {
     const productName = device ? getDeviceModel(device.modelId).productName : null;
     const history = useHistory();
@@ -679,7 +679,7 @@ export const renderError = ({
   if (error instanceof LockedDeviceError) {
     return renderLockedDeviceError({ t, onRetry, device, inlineRetry });
   } else if (error instanceof DeviceNotOnboarded) {
-    return <DeviceNotOnboardedError t={t} device={device} />;
+    return <DeviceNotOnboardedErrorComponent t={t} device={device} />;
   }
 
   // if no supportLink is provided, we fallback on the related url linked to
@@ -1001,11 +1001,9 @@ export const renderSecureTransferDeviceConfirmation = ({
   type: Theme["theme"];
 }) => (
   <>
-    <Box flex={0}>
-      <Alert type="primary" learnMoreUrl={urls.swap.learnMore} horizontal={false}>
-        <Trans i18nKey={`DeviceAction.${exchangeType}.notice`} />
-      </Alert>
-    </Box>
+    <Alert type="primary" learnMoreUrl={urls.swap.learnMore} horizontal={false}>
+      <Trans i18nKey={`DeviceAction.${exchangeType}.notice`} />
+    </Alert>
     {renderVerifyUnwrapped({ modelId, type })}
     <Box alignItems={"center"}>
       <Text textAlign="center" fontWeight="semiBold" color="palette.text.shade100" fontSize={5}>
