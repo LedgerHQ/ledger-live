@@ -43,7 +43,7 @@ export type ExchangeSellRaw = {
 
 export type StartExchangeInput = {
   deviceId: string;
-  exchangeType: ExchangeTypes;
+  exchangeType: number;
   appVersion?: string;
 };
 
