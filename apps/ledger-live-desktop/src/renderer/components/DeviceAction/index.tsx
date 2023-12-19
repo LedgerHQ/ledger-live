@@ -51,7 +51,7 @@ import {
   renderInstallingLanguage,
   renderAllowRemoveCustomLockscreen,
   renderLockedDeviceError,
-  RenderDeviceNotOnboardedError,
+  DeviceNotOnboardedError,
 } from "./rendering";
 import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils";
 import {
@@ -433,7 +433,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     // NB Until we find a better way, remap the error if it's 6d06 (LNS, LNSP, LNX) or 6d07 (Stax) and we haven't fallen
     // into another handled case.
     if (isDeviceNotOnboardedError(e)) {
-      return <RenderDeviceNotOnboardedError t={t} device={device} />;
+      return <DeviceNotOnboardedError t={t} device={device} />;
     }
 
     if (e instanceof NoSuchAppOnProvider) {
