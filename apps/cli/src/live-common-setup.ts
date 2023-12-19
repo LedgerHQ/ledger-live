@@ -13,6 +13,8 @@ import { registerTransportModule, disconnect } from "@ledgerhq/live-common/hw/in
 import { retry } from "@ledgerhq/live-common/promise";
 import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
 import { closeAllSpeculosDevices } from "@ledgerhq/live-common/load/speculos";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import liveConfigSchema from "@ledgerhq/live-common/config/sharedConfig";
 
 checkLibs({
   NotEnoughBalance,
@@ -193,6 +195,8 @@ async function init() {
     disconnect: () => Promise.resolve(),
   });
 }
+
+LiveConfig.setConfig(liveConfigSchema);
 
 if (!process.env.CI) {
   init();
