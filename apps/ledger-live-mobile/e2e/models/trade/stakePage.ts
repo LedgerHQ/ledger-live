@@ -1,4 +1,4 @@
-import { getTextOfElement, tapById, waitForElementById } from "../helpers";
+import { getTextOfElement, tapById, waitForElementById } from "../../helpers";
 
 export default class StakePage {
   cosmosDelegationSummaryValidatorId = "cosmos-delegation-summary-validator";

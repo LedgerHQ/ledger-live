@@ -3,7 +3,7 @@ import semver from "semver";
 import { formatDistanceToNow } from "date-fns";
 import { Account, AccountLike, AnyMessage, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { WalletHandlers, ServerConfig } from "@ledgerhq/wallet-api-server";
+import { WalletHandlers, ServerConfig, WalletAPIServer } from "@ledgerhq/wallet-api-server";
 import { useWalletAPIServer as useWalletAPIServerRaw } from "@ledgerhq/wallet-api-server/lib/react";
 import {
   ServerError,
@@ -296,10 +296,11 @@ export function useWalletAPIServer({
   customHandlers,
 }: useWalletAPIServerOptions): {
   onMessage: (event: string) => void;
-  widgetLoaded: boolean;
+  server: WalletAPIServer;
   onLoad: () => void;
   onReload: () => void;
   onLoadError: () => void;
+  widgetLoaded: boolean;
 } {
   const permission = usePermission(manifest);
   const transport = useTransport(webviewHook.postMessage);
@@ -760,6 +761,7 @@ export function useWalletAPIServer({
     onLoad,
     onReload,
     onLoadError,
+    server,
   };
 }
 

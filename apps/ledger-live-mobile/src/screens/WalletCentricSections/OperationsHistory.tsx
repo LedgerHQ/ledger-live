@@ -105,7 +105,14 @@ const OperationsHistory = ({ accounts }: Props) => {
         stickySectionHeadersEnabled={false}
       />
       {!completed ? (
-        <Button type="shade" size="large" outline mt={6} onPress={goToAnalyticsOperations}>
+        <Button
+          type="shade"
+          size="large"
+          outline
+          mt={6}
+          onPress={goToAnalyticsOperations}
+          testID="portfolio-seeAll-transaction"
+        >
           {t("common.seeAll")}
         </Button>
       ) : null}

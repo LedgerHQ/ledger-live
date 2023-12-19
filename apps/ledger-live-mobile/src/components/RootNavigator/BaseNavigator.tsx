@@ -308,6 +308,7 @@ export default function BaseNavigator() {
                         ? t(`operations.types.${route.params.operation.type}`)
                         : ""
                     }
+                    testID="operationDetails-title"
                   />
                 ),
                 headerLeft: () => <NavigationHeaderBackButton />,
@@ -324,6 +325,7 @@ export default function BaseNavigator() {
                       ? t(`operations.types.${route.params.operation.type}`)
                       : ""
                   }
+                  testID="operationDetails-title"
                 />
               ),
               headerLeft: () => <NavigationHeaderBackButton />,
