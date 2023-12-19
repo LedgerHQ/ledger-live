@@ -189,7 +189,7 @@ const envDefinitions = {
   },
   SOLANA_VALIDATORS_APP_BASE_URL: {
     parser: stringParser,
-    def: "https://earn-dashboard.aws.prd.ldg-tech.com/v0/network/solana/validator-details",
+    def: "https://earn.api.live.ledger.com/v0/network/solana/validator-details",
     desc: "base url for validators.app validator list",
   },
   SOLANA_TESTNET_VALIDATORS_APP_BASE_URL: {
