@@ -106,6 +106,7 @@
     "@react-navigation/material-top-tabs": "^6.3.0",
     "@react-navigation/native": "^6.0.13",
     "@react-navigation/stack": "^6.3.1",
+    "@reduxjs/toolkit": "^2.0.1",
     "@segment/analytics-react-native": "^2.9.1",
     "@segment/sovran-react-native": "^0.4.5",
     "@sentry/react-native": "^5.12.0",

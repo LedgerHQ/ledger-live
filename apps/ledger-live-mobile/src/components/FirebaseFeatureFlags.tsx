@@ -5,9 +5,8 @@ import {
   FeatureFlagsProvider,
   DEFAULT_FEATURES,
   isFeature,
-  getFeature,
+  getFeature as getFeatureFlag,
 } from "@ledgerhq/live-config/featureFlags/index";
-import type { FirebaseFeatureFlagsProviderProps as Props } from "@ledgerhq/live-config/featureFlags/index";
 import { FeatureId, Feature, Features } from "@ledgerhq/types-live";
 import { languageSelector, overriddenFeatureFlagsSelector } from "~/reducers/settings";
 import { setOverriddenFeatureFlag, setOverriddenFeatureFlags } from "~/actions/settings";
@@ -22,7 +21,7 @@ export const getAllDivergedFlags = (
   const res: Partial<{ [key in FeatureId]: boolean }> = {};
   Object.keys(DEFAULT_FEATURES).forEach(k => {
     const key = k as keyof typeof DEFAULT_FEATURES;
-    const value = getFeature({ key, appLanguage });
+    const value = getFeatureFlag({ key, appLanguage });
     if (value && value.enabled !== DEFAULT_FEATURES[key]?.enabled) {
       res[key] = value.enabled;
     }
@@ -30,7 +29,20 @@ export const getAllDivergedFlags = (
   return res;
 };
 
-export const FirebaseFeatureFlagsProvider: React.FC<Props> = ({ children }) => {
+interface FirebaseFeatureFlagsProviderProps {
+  getFeature: <T extends FeatureId>(param: {
+    key: T;
+    appLanguage: string;
+    allowOverride?: boolean;
+    localOverrides?: { [key in FeatureId]?: Feature | undefined };
+  }) => Features[T];
+  children: React.ReactElement;
+}
+
+export const FirebaseFeatureFlagsProvider = ({
+  children,
+  getFeature,
+}: FirebaseFeatureFlagsProviderProps) => {
   const localOverrides = useSelector(overriddenFeatureFlagsSelector);
   const dispatch = useDispatch();
 
@@ -51,7 +63,7 @@ export const FirebaseFeatureFlagsProvider: React.FC<Props> = ({ children }) => {
         dispatch(setOverriddenFeatureFlag({ id: key, value: undefined }));
       }
     },
-    [appLanguage, dispatch],
+    [appLanguage, dispatch, getFeature],
   );
 
   const resetFeature = useCallback(
@@ -67,7 +79,7 @@ export const FirebaseFeatureFlagsProvider: React.FC<Props> = ({ children }) => {
 
   const wrappedGetFeature = useCallback(
     <T extends FeatureId>(key: T): Features[T] => getFeature({ key, appLanguage, localOverrides }),
-    [localOverrides, appLanguage],
+    [localOverrides, appLanguage, getFeature],
   );
 
   useEffect(() => {

@@ -13,6 +13,9 @@ const handlers = [
     }
     return HttpResponse.json(marketsMock);
   }),
+  http.get("https://proxycg.api.live.ledger.com/api/v3/coins/:coin/market_chart", ({ params }) => {
+    return HttpResponse.json(marketsMock.find(({ id }) => id === params.coin));
+  }),
   http.get("https://proxycg.api.live.ledger.com/api/v3/simple/supported_vs_currencies", () => {
     return HttpResponse.json(supportedVsCurrenciesMock);
   }),

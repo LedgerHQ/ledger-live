@@ -120,7 +120,6 @@ function MarketList({
       />
     ),
   };
-
   if (!ptxEarnFeature?.enabled) {
     return (
       <TabBarSafeAreaView>

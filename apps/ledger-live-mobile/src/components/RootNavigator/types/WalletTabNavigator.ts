@@ -1,6 +1,6 @@
 import { NavigatorScreenParams } from "@react-navigation/native";
 import { ScreenName, NavigatorName } from "~/const";
-import { MarketNavigatorStackParamList } from "LLM/features/Market/Navigator";
+import { MarketNavigatorStackParamList } from "./MarketNavigator";
 
 export type WalletTabNavigatorStackParamList = {
   [ScreenName.Portfolio]: undefined;

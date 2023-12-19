@@ -1,7 +1,7 @@
 import React, { useCallback, useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { MarketNavigatorStackParamList } from "LLM/features/Market/Navigator";
+import { MarketNavigatorStackParamList } from "~/components/RootNavigator/types/MarketNavigator";
 import { ScreenName } from "~/const";
 import { useRoute } from "@react-navigation/native";
 import {

@@ -14,7 +14,6 @@ import { useCountervaluesExport } from "@ledgerhq/live-common/countervalues/reac
 import { pairId } from "@ledgerhq/live-common/countervalues/helpers";
 import { NftMetadataProvider } from "@ledgerhq/live-common/nft/index";
 import { ToastProvider } from "@ledgerhq/live-common/notifications/ToastProvider/index";
-
 import { isEqual } from "lodash";
 import { postOnboardingSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import Config from "react-native-config";
@@ -42,6 +41,7 @@ import RebootProvider from "~/context/Reboot";
 import ButtonUseTouchableContext from "~/context/ButtonUseTouchableContext";
 import AuthPass from "~/context/AuthPass";
 import LedgerStoreProvider from "~/context/LedgerStore";
+import { store } from "~/context/store";
 import LoadingApp from "~/components/LoadingApp";
 import StyledStatusBar from "~/components/StyledStatusBar";
 import AnalyticsConsole from "~/components/AnalyticsConsole";
@@ -86,7 +86,7 @@ import {
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import useAccountsWithFundsListener from "@ledgerhq/live-common/hooks/useAccountsWithFundsListener";
 import { updateIdentify } from "./analytics";
-import { LiveConfig } from "@ledgerhq/live-config/featureFlags/index";
+import { LiveConfig, getFeature } from "@ledgerhq/live-config/featureFlags/index";
 import VersionNumber from "react-native-version-number";
 import { Platform } from "react-native";
 import { StorylyProvider } from "./components/StorylyStories/StorylyProvider";
@@ -282,7 +282,7 @@ export default class Root extends Component {
   render() {
     return (
       <RebootProvider onRebootStart={this.onRebootStart}>
-        <LedgerStoreProvider onInitFinished={this.onInitFinished}>
+        <LedgerStoreProvider onInitFinished={this.onInitFinished} store={store}>
           {(ready, initialCountervalues) =>
             ready ? (
               <>
@@ -295,7 +295,7 @@ export default class Root extends Component {
                 <TermsAndConditionMigrateLegacyData />
                 <PlatformAppProviderWrapper>
                   <FirebaseRemoteConfigProvider>
-                    <FirebaseFeatureFlagsProvider>
+                    <FirebaseFeatureFlagsProvider getFeature={getFeature}>
                       <SafeAreaProvider>
                         <PerformanceProvider>
                           <StorylyProvider>

@@ -2,7 +2,7 @@ import "@testing-library/jest-native/extend-expect";
 import "@testing-library/react-native/extend-expect";
 import "react-native-gesture-handler/jestSetup";
 import "@mocks/console";
-import handlers from "./handlers";
+import handlers, { IGNORED_REQUESTS } from "./handlers";
 import { NativeModules } from "react-native";
 import { setupServer } from "msw/node";
 
@@ -12,7 +12,16 @@ jest.runAllTimers();
 
 const server = setupServer(...handlers);
 
-beforeAll(() => server.listen());
+beforeAll(() =>
+  server.listen({
+    onUnhandledRequest(request, print) {
+      if (IGNORED_REQUESTS.some(ignoredUrl => request.url.includes(ignoredUrl))) {
+        return;
+      }
+      print.warning();
+    },
+  }),
+);
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
@@ -21,9 +30,6 @@ NativeModules.RNAnalytics = {};
 const mockAnalytics = jest.genMockFromModule("@segment/analytics-react-native");
 
 jest.mock("@segment/analytics-react-native", () => mockAnalytics);
-
-/*jest.mock("@segment/analytics-react-native", () => jest.fn());
-segment.mockImplementation(() => segmentMock);*/
 
 // Mock of Native Modules
 jest.mock("react-native-localize", () => ({
@@ -66,3 +72,22 @@ jest.mock("react-native-reanimated", () => {
 
 // Silence the warning: Animated: `useNativeDriver` is not supported because the native animated module is missing
 jest.mock("react-native/Libraries/Animated/NativeAnimatedHelper");
+
+jest.mock("@react-native-firebase/messaging", () => ({
+  messaging: jest.fn(() => ({
+    hasPermission: jest.fn(() => Promise.resolve(true)),
+    subscribeToTopic: jest.fn(),
+    unsubscribeFromTopic: jest.fn(),
+    requestPermission: jest.fn(() => Promise.resolve(true)),
+    getToken: jest.fn(() => Promise.resolve("myMockToken")),
+  })),
+  notifications: jest.fn(() => ({
+    onNotification: jest.fn(),
+    onNotificationDisplayed: jest.fn(),
+  })),
+  analytics: jest.fn(() => ({
+    logEvent: jest.fn(),
+  })),
+}));
+
+jest.mock("@braze/react-native-sdk", () => ({}));
