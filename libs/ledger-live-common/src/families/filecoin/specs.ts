@@ -6,8 +6,11 @@ import type { Transaction } from "../../families/filecoin/types";
 import { getCryptoCurrencyById } from "../../currencies";
 import { genericTestDestination, pickSiblings } from "../../bot/specs";
 import type { AppSpec } from "../../bot/types";
-import { acceptTransaction } from "./speculos-deviceActions";
+import { generateDeviceActionFlow } from "./speculos-deviceActions";
+import { BotScenario } from "./utils";
 
+const F4_RECIPIENT = "f410fncojwmrseefktoco6rcnb3zv2eiqfli7muhvqma";
+const ETH_RECIPIENT = "0x689c9b3232210aa9b84ef444d0ef35d11102ad1f";
 const MIN_SAFE = new BigNumber(100000);
 const maxAccount = 6;
 
@@ -18,13 +21,55 @@ const filecoinSpecs: AppSpec<Transaction> = {
     model: DeviceModelId.nanoS,
     appName: "Filecoin",
   },
-  genericDeviceAction: acceptTransaction,
+  genericDeviceAction: generateDeviceActionFlow(BotScenario.DEFAULT),
   testTimeout: 6 * 60 * 1000,
   minViableAmount: MIN_SAFE,
   transactionCheck: ({ maxSpendable }) => {
     invariant(maxSpendable.gt(MIN_SAFE), "balance is too low");
   },
   mutations: [
+    {
+      name: "Send small to f4 address",
+      maxRun: 1,
+      deviceAction: generateDeviceActionFlow(BotScenario.F4_RECIPIENT),
+      testDestination: genericTestDestination,
+      transaction: ({ account, bridge }) => {
+        const amount = new BigNumber("100");
+
+        return {
+          transaction: bridge.createTransaction(account),
+          updates: [
+            {
+              recipient: F4_RECIPIENT,
+            },
+            {
+              amount,
+            },
+          ],
+        };
+      },
+    },
+    {
+      name: "Send small to eth address",
+      maxRun: 1,
+      deviceAction: generateDeviceActionFlow(BotScenario.ETH_RECIPIENT),
+      testDestination: genericTestDestination,
+      transaction: ({ account, bridge }) => {
+        const amount = new BigNumber("100");
+
+        return {
+          transaction: bridge.createTransaction(account),
+          updates: [
+            {
+              recipient: ETH_RECIPIENT,
+            },
+            {
+              amount,
+            },
+          ],
+        };
+      },
+    },
     {
       name: "Send 50%~",
       maxRun: 1,

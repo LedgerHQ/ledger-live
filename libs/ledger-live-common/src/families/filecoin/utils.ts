@@ -1,6 +1,12 @@
 import { BigNumber } from "bignumber.js";
 import { Methods } from "@zondax/izari-filecoin/artifacts";
 
+export enum BotScenario {
+  DEFAULT = "default",
+  ETH_RECIPIENT = "eth-recipient",
+  F4_RECIPIENT = "f4-recipient",
+}
+
 const validHexRegExp = new RegExp(/[0-9A-Fa-f]{6}/g);
 const validBase64RegExp = new RegExp(
   /^(?:[A-Za-z\d+/]{4})*(?:[A-Za-z\d+/]{3}=|[A-Za-z\d+/]{2}==)?$/,
