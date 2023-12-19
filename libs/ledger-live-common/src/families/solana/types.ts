@@ -218,7 +218,7 @@ export type SolanaResources = {
 
 export type SolanaResourcesRaw = {
   stakes: string;
-  unstakeReserve: BigNumber;
+  unstakeReserve: string;
 };
 
 export type SolanaValidator = {
