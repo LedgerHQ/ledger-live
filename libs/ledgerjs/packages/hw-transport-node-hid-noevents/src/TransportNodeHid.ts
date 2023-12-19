@@ -168,14 +168,11 @@ export default class TransportNodeHidNoEvents extends Transport {
    * @param apdu
    * @returns a promise of apdu response
    */
-  async exchange(
-    apdu: Buffer,
-    { abortTimeoutMs }: { abortTimeoutMs?: number } = {},
-  ): Promise<Buffer> {
+  async exchange(apdu: Buffer): Promise<Buffer> {
     const tracer = this.tracer.withUpdatedContext({
       function: "exchange",
     });
-    tracer.trace("Exchanging APDU ...", { abortTimeoutMs });
+    tracer.trace("Exchanging APDU ...");
 
     const b = await this.exchangeAtomicImpl(async () => {
       const { channel, packetSize } = this;
