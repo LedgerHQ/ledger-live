@@ -1,6 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
+import { log } from "@ledgerhq/logs";
 
 import type {
   CardanoAccount,
@@ -306,6 +307,12 @@ const signOperation: SignOperationFnSignature<Transaction> = ({ account, deviceI
             },
             additionalWitnessPaths: [],
           };
+
+          try {
+            log("debug", `Signing cardano transaction: ${JSON.stringify(trxOptions)}`);
+          } catch (e) {
+            log("debug", `Signing cardano transaction: could not log:`, e);
+          }
 
           // Sign by device
           const appAda = new Ada(transport);
