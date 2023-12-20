@@ -174,13 +174,14 @@ const modes = Object.freeze({
     mandatoryEmptyAccountSkip: 5,
   },
   glif: {
-    overridesDerivation: "44'/<coin_type>'/<address>'/<node>/<account>",
+    overridesDerivation: "44'/461'/0'/0/<account>",
+    tag: "third-party",
     mandatoryEmptyAccountSkip: 5,
   },
   filecoinBIP44: {
     overridesDerivation: "44'/<coin_type>'/<account>'/<node>/<address>",
     startsAt: 1,
-    tag: "third-party",
+    tag: "bip44",
     mandatoryEmptyAccountSkip: 5,
   },
   casper_wallet: {
