@@ -158,11 +158,6 @@ export const SubTitle = styled(Text).attrs({
   margin-top: 8px;
 `;
 
-const ButtonContainer = styled(Box).attrs(() => ({
-  mt: 25,
-  horizontal: true,
-}))``;
-
 const TroubleshootingWrapper = styled.div`
   margin-top: auto;
   margin-bottom: 16px;
@@ -549,14 +544,14 @@ export const LockedDeviceErrorComponent = ({
               })
             : t("errors.LockedDeviceError.description")
         }
+        buttons={
+          onRetry && inlineRetry ? (
+            <ButtonV3 size="large" variant="main" onClick={onRetry} borderRadius={"9999px"}>
+              {t("common.retry")}
+            </ButtonV3>
+          ) : null
+        }
       />
-      <ButtonContainer>
-        {onRetry && inlineRetry ? (
-          <ButtonV3 size="large" variant="main" onClick={onRetry} borderRadius={"9999px"}>
-            {t("common.retry")}
-          </ButtonV3>
-        ) : null}
-      </ButtonContainer>
     </Wrapper>
   );
 };
@@ -601,7 +596,9 @@ export const DeviceNotOnboardedErrorComponent = withV3StyleProvider(
   },
 );
 
-const FirmwareNotRecognizedErrorComponent: React.FC<{ onRetry?: () => void }> = ({ onRetry }) => {
+const FirmwareNotRecognizedErrorComponent: React.FC<{
+  onRetry?: (() => void) | null | undefined;
+}> = ({ onRetry }) => {
   const { t } = useTranslation();
   const history = useHistory();
   const goToExperimentalSettings = () => {
@@ -677,7 +674,7 @@ export const DeviceActionErrorComponent = ({
   } else if (error instanceof DeviceNotOnboarded) {
     return <DeviceNotOnboardedErrorComponent t={t} device={device} />;
   } else if (error instanceof FirmwareNotRecognized) {
-    return <FirmwareNotRecognizedErrorComponent onRetry={onRetry} inlineRetry={inlineRetry} />;
+    return <FirmwareNotRecognizedErrorComponent onRetry={onRetry} />;
   }
 
   // if no supportLink is provided, we fallback on the related url linked to
