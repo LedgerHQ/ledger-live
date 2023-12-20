@@ -1,4 +1,4 @@
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
+import { findSubAccountById, getFeesUnit } from "@ledgerhq/coin-framework/account/index";
 import {
   AmountRequired,
   ETHAddressNonEIP,
@@ -19,6 +19,7 @@ import {
 import { Account, AccountBridge, SubAccount, TransactionStatusCommon } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { NotEnoughNftOwned, NotOwnedNft, QuantityNeedsToBePositive } from "./errors";
 import { getMinEip1559Fees, getMinLegacyFees } from "./editTransaction/getMinEditTransactionFees";
 import { eip1559TransactionHasFees, getEstimatedFees, legacyTransactionHasFees } from "./logic";
@@ -158,7 +159,16 @@ const validateGas = (
   ) {
     errors.gasPrice = new FeeNotLoaded(); // "Could not load fee rates. Please set manual fees"
   } else if (tx.recipient && estimatedFees.gt(account.balance)) {
-    errors.gasPrice = new NotEnoughGas(); // "The parent account balance is insufficient for network fees"
+    const query = new URLSearchParams({
+      ...(account?.id ? { account: account.id } : {}),
+    });
+    errors.gasPrice = new NotEnoughGas(undefined, {
+      // "You need {{fees}} {{ticker}} for network fees to swap as you are on {{cryptoName}} network. <link0>Buy {{ticker}}</link0>"
+      fees: formatCurrencyUnit(getFeesUnit(account.currency), estimatedFees),
+      ticker: account.currency.ticker,
+      cryptoName: account.currency.name,
+      links: [`ledgerlive://platform/multibuy?${query.toString()}`],
+    });
   }
 
   // Gas Price for EIP-1559
