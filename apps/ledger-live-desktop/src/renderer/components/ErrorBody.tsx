@@ -5,6 +5,7 @@ import styled from "styled-components";
 
 export const ErrorTitle = styled(Text).attrs({
   color: "neutral.c100",
+  textAlign: "center",
 })``;
 
 export const ErrorDescription = styled(Text).attrs({

@@ -429,24 +429,27 @@ export const renderAllowManager = ({
   modelId: DeviceModelId;
   type: Theme["theme"];
   requestType?: "manager" | "rename";
-}) => (
-  <Wrapper>
-    <DeviceBlocker />
-    <Header />
-    <AnimationWrapper>
-      <Animation animation={getDeviceAnimation(modelId, type, "allowManager")} />
-    </AnimationWrapper>
-    <Footer>
-      <Title>
-        {requestType === "rename" ? (
-          <Trans i18nKey="DeviceAction.allowRenaming" />
-        ) : (
-          <Trans i18nKey="DeviceAction.allowManagerPermission" />
-        )}
-      </Title>
-    </Footer>
-  </Wrapper>
-);
+}) => {
+  const productName = getDeviceModel(modelId).productName;
+  return (
+    <Wrapper>
+      <DeviceBlocker />
+      <Header />
+      <AnimationWrapper>
+        <Animation animation={getDeviceAnimation(modelId, type, "allowManager")} />
+      </AnimationWrapper>
+      <Footer>
+        <Title>
+          {requestType === "rename" ? (
+            <Trans i18nKey="DeviceAction.allowRenaming" />
+          ) : (
+            <Trans i18nKey="DeviceAction.allowManagerPermission" values={{ productName }} />
+          )}
+        </Title>
+      </Footer>
+    </Wrapper>
+  );
+};
 
 export const renderAllowLanguageInstallation = ({
   modelId,
