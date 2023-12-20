@@ -49,7 +49,6 @@ import {
   Button as ButtonV3,
   Flex,
   Text,
-  BoxedIcon,
   ProgressLoader,
   InfiniteLoader,
   IconsLegacy,
