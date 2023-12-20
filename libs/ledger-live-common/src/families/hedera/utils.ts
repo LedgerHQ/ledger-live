@@ -21,7 +21,9 @@ export async function getEstimatedFees(account: Account): Promise<BigNumber> {
         .dividedBy(new BigNumber(data[0]))
         .integerValue(BigNumber.ROUND_CEIL);
     }
+    // eslint-disable-next-line no-empty
   } catch {}
+
   // as fees are based on a currency conversion, we stay
   // on the safe side here and double the estimate for "max spendable"
   return new BigNumber("150200").multipliedBy(estimatedFeeSafetyRate); // 0.001502 ℏ (as of 2023-03-14)

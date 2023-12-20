@@ -1,4 +1,3 @@
-import network from "@ledgerhq/live-network/network";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type { Transaction } from "../types";

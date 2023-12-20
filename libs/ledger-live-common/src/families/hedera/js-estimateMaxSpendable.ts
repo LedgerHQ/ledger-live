@@ -7,6 +7,7 @@ import { getEstimatedFees } from "./utils";
 export default async function estimateMaxSpendable({
   account,
   parentAccount,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   transaction,
 }: {
   account: AccountLike;
