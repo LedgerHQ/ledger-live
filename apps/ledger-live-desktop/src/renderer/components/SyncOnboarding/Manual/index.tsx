@@ -21,7 +21,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import ExitChecksDrawer, {
   Props as ExitChecksDrawerProps,
 } from "./EarlySecurityChecks/ExitChecksDrawer";
-import { renderError } from "../../DeviceAction/rendering";
+import { DeviceActionErrorComponent } from "../../DeviceAction/rendering";
 import { useTranslation } from "react-i18next";
 import { useChangeLanguagePrompt } from "./EarlySecurityChecks/useChangeLanguagePrompt";
 import DeviceAction from "../../DeviceAction";
@@ -273,12 +273,11 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
   if (currentStep !== "companion" && error !== null) {
     stepContent = (
       <Flex height="100%" width="100%" justifyContent="center" alignItems="center">
-        {renderError({
-          t,
-          device,
-          error,
-          onRetry: isPollingOn ? undefined : notifyOnboardingEarlyCheckShouldReset,
-        })}
+        <DeviceActionErrorComponent
+          device={device}
+          error={error}
+          onRetry={isPollingOn ? undefined : notifyOnboardingEarlyCheckShouldReset}
+        />
       </Flex>
     );
   } else if (currentStep === "early-security-check" && lastSeenDevice) {

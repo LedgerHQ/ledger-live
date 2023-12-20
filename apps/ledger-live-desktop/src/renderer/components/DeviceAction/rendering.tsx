@@ -2,8 +2,8 @@ import React, { useCallback, useContext, useEffect } from "react";
 import { BigNumber } from "bignumber.js";
 import map from "lodash/map";
 import { TFunction } from "i18next";
-import { Trans } from "react-i18next";
-import { connect, useDispatch } from "react-redux";
+import { Trans, useTranslation } from "react-i18next";
+import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -11,7 +11,12 @@ import ProviderIcon from "~/renderer/components/ProviderIcon";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { ExchangeRate, Exchange } from "@ledgerhq/live-common/exchange/swap/types";
 import { getProviderName, getNoticeType } from "@ledgerhq/live-common/exchange/swap/utils/index";
-import { WrongDeviceForAccount, UpdateYourApp, LockedDeviceError } from "@ledgerhq/errors";
+import {
+  WrongDeviceForAccount,
+  UpdateYourApp,
+  LockedDeviceError,
+  FirmwareNotRecognized,
+} from "@ledgerhq/errors";
 import { LatestFirmwareVersionRequired, DeviceNotOnboarded } from "@ledgerhq/live-common/errors";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -32,16 +37,13 @@ import ExportLogsButton from "~/renderer/components/ExportLogsButton";
 import { getDeviceAnimation } from "./animations";
 import { DeviceBlocker } from "./DeviceBlocker";
 import ErrorIcon from "~/renderer/components/ErrorIcon";
-import IconTriangleWarning from "~/renderer/icons/TriangleWarning";
 import { urls } from "~/config/urls";
 import CurrencyUnitValue from "~/renderer/components/CurrencyUnitValue";
-import ExternalLinkButton from "../ExternalLinkButton";
 import TrackPage, { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { Rotating } from "~/renderer/components/Spinner";
 import ProgressCircle from "~/renderer/components/ProgressCircle";
-import CrossCircle from "~/renderer/icons/CrossCircle";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
-import { context } from "~/renderer/drawers/Provider";
+import { context, setDrawer } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
 import { DrawerFooter } from "~/renderer/screens/exchange/Swap2/Form/DrawerFooter";
 import {
@@ -52,13 +54,13 @@ import {
   ProgressLoader,
   InfiniteLoader,
   IconsLegacy,
+  Link,
 } from "@ledgerhq/react-ui";
 import { LockAltMedium } from "@ledgerhq/react-ui/assets/icons";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import DeviceIllustration from "~/renderer/components/DeviceIllustration";
 import FramedImage from "../CustomImage/FramedImage";
 import { Account } from "@ledgerhq/types-live";
-import LinkWithExternalIcon from "../LinkWithExternalIcon";
 import { openURL } from "~/renderer/linking";
 import Installing from "~/renderer/modals/UpdateFirmwareModal/Installing";
 import { ErrorBody } from "../ErrorBody";
@@ -156,36 +158,6 @@ export const SubTitle = styled(Text).attrs({
   margin-top: 8px;
 `;
 
-/**
- * @deprecated use ErrorBody or its exported
- * ErrorTitle instead (up to date v3 design)
- * */
-const ErrorTitle = styled(Text).attrs({
-  variant: "paragraph",
-  fontWeight: "semiBold",
-  color: "palette.text.shade100",
-  textAlign: "center",
-  fontSize: 6,
-})`
-  user-select: text;
-  margin-bottom: 10px;
-  margin-top: 20px;
-`;
-
-/**
- * @deprecated use ErrorBody or its exported
- * ErrorTitle instead (up to date v3 design)
- * */
-const ErrorDescription = styled(Text).attrs({
-  variant: "paragraph",
-  color: "palette.text.shade60",
-  textAlign: "center",
-  fontSize: 4,
-  whiteSpace: "pre-wrap",
-})`
-  user-select: text;
-`;
-
 const ButtonContainer = styled(Box).attrs(() => ({
   mt: 25,
   horizontal: true,
@@ -247,24 +219,19 @@ export const renderVerifyUnwrapped = ({
   </AnimationWrapper>
 );
 
-const OpenManagerBtn = ({
-  closeAllModal,
+const OpenManagerButton = ({
   appName,
   updateApp,
   firmwareUpdate,
-  mt = 2,
-  ml = 0,
 }: {
-  closeAllModal: () => void;
   appName?: string;
   updateApp?: boolean;
   firmwareUpdate?: boolean;
-  mt?: number;
-  ml?: number;
 }) => {
   const history = useHistory();
   const { setDrawer } = useContext(context);
 
+  const dispatch = useDispatch();
   const onClick = useCallback(() => {
     const urlParams = new URLSearchParams({
       updateApp: updateApp ? "true" : "false",
@@ -277,14 +244,14 @@ const OpenManagerBtn = ({
       pathname: "/manager",
       search: search ? `?${search}` : "",
     });
-    closeAllModal();
+    dispatch(closeAllModal());
     setDrawer(undefined);
-  }, [updateApp, firmwareUpdate, appName, history, closeAllModal, setDrawer]);
+  }, [updateApp, firmwareUpdate, dispatch, appName, history, setDrawer]);
 
   return (
-    <Button mt={mt} ml={ml} primary onClick={onClick}>
+    <ButtonV3 size="large" variant="main" onClick={onClick}>
       <Trans i18nKey="DeviceAction.openManager" />
-    </Button>
+    </ButtonV3>
   );
 };
 
@@ -301,34 +268,29 @@ const OpenOnboardingBtn = () => {
   }, [dispatch, history, setDrawer]);
 
   return (
-    <Button primary onClick={onClick}>
+    <ButtonV3 size="large" variant="main" onClick={onClick}>
       <Trans i18nKey="DeviceAction.openOnboarding" />
-    </Button>
+    </ButtonV3>
   );
 };
-
-const OpenManagerButton = connect(null, { closeAllModal })(OpenManagerBtn);
 
 export const renderRequiresAppInstallation = ({ appNames }: { appNames: string[] }) => {
   const appNamesCSV = appNames.join(", ");
   return (
     <Wrapper>
-      <Logo>
-        <CrossCircle size={44} />
-      </Logo>
-      <ErrorTitle>
-        <Trans i18nKey="DeviceAction.appNotInstalledTitle" count={appNames.length} />
-      </ErrorTitle>
-      <ErrorDescription>
-        <Trans
-          i18nKey="DeviceAction.appNotInstalled"
-          values={{ appName: appNamesCSV }}
-          count={appNames.length}
-        />
-      </ErrorDescription>
-      <Box mt={24}>
-        <OpenManagerButton appName={appNamesCSV} />
-      </Box>
+      <ErrorBody
+        Icon={IconsLegacy.CircledCrossMedium}
+        buttons={<OpenManagerButton appName={appNamesCSV} />}
+        title={<Trans i18nKey="DeviceAction.appNotInstalledTitle" count={appNames.length} />}
+        description={
+          <Trans
+            i18nKey="DeviceAction.appNotInstalled"
+            values={{ appName: appNamesCSV }}
+            count={appNames.length}
+          />
+        }
+        iconColor="error.c60"
+      />
     </Wrapper>
   );
 };
@@ -541,21 +503,20 @@ export const renderWarningOutdated = ({
   appName: string;
 }) => (
   <Wrapper id={`warning-outdated-app`}>
-    <Logo warning>
-      <IconTriangleWarning size={44} />
-    </Logo>
-    <ErrorTitle>
-      <Trans i18nKey="DeviceAction.outdated" />
-    </ErrorTitle>
-    <ErrorDescription>
-      <Trans i18nKey="DeviceAction.outdatedDesc" values={{ appName }} />
-    </ErrorDescription>
-    <ButtonContainer>
-      <Button secondary onClick={passWarning}>
-        <Trans i18nKey="common.continue" />
-      </Button>
-      <OpenManagerButton ml={4} mt={0} appName={appName} updateApp />
-    </ButtonContainer>
+    <ErrorBody
+      Icon={IconsLegacy.WarningMedium}
+      iconColor="warning.c60"
+      title={<Trans i18nKey="DeviceAction.outdated" />}
+      description={<Trans i18nKey="DeviceAction.outdatedDesc" values={{ appName }} />}
+      buttons={
+        <>
+          <ButtonV3 size="large" variant="shade" outline onClick={passWarning}>
+            <Trans i18nKey="common.continue" />
+          </ButtonV3>
+          <OpenManagerButton appName={appName} updateApp />
+        </>
+      }
+    />
   </Wrapper>
 );
 
@@ -564,17 +525,16 @@ export const renderWarningOutdated = ({
 // With this fix, we can catch all the device action error that were not catched upstream.
 // If LockedDeviceError is thrown from outside a device action and renderError was not called
 // it is still handled by GenericErrorView.
-export const renderLockedDeviceError = ({
-  t,
+export const LockedDeviceErrorComponent = ({
   device,
   onRetry,
   inlineRetry,
 }: {
-  t: TFunction;
   device?: Device | null;
   onRetry?: (() => void) | null | undefined;
   inlineRetry?: boolean;
 }) => {
+  const { t } = useTranslation();
   const productName = device ? getDeviceModel(device.modelId).productName : null;
 
   return (
@@ -641,9 +601,8 @@ export const DeviceNotOnboardedErrorComponent = withV3StyleProvider(
   },
 );
 
-export const renderError = ({
+export const DeviceActionErrorComponent = ({
   error,
-  t,
   withOpenManager,
   onRetry,
   withExportLogs,
@@ -661,7 +620,6 @@ export const renderError = ({
   Icon,
 }: {
   error: Error | ErrorConstructor;
-  t: TFunction;
   withOpenManager?: boolean;
   onRetry?: (() => void) | null | undefined;
   withExportLogs?: boolean;
@@ -678,10 +636,13 @@ export const renderError = ({
   withDescription?: boolean;
   Icon?: (props: { color?: string | undefined; size?: number | undefined }) => JSX.Element;
 }) => {
+  const { t } = useTranslation();
   // Redirects from renderError and not from DeviceActionDefaultRendering because renderError
   // can be used directly by other component
   if (error instanceof LockedDeviceError) {
-    return renderLockedDeviceError({ t, onRetry, device, inlineRetry });
+    return (
+      <LockedDeviceErrorComponent onRetry={onRetry} device={device} inlineRetry={inlineRetry} />
+    );
   } else if (error instanceof DeviceNotOnboarded) {
     return <DeviceNotOnboardedErrorComponent t={t} device={device} />;
   }
@@ -715,64 +676,69 @@ export const renderError = ({
             </ol>
           ) : undefined
         }
-      />
-      <ButtonContainer>
-        {managerAppName || requireFirmwareUpdate ? (
-          <OpenManagerButton
-            appName={managerAppName}
-            updateApp={error instanceof UpdateYourApp}
-            firmwareUpdate={error instanceof LatestFirmwareVersionRequired}
-          />
-        ) : (
+        buttons={
           <>
-            {supportLinkUrl ? (
-              <ExternalLinkButton label={t("common.getSupport")} url={supportLinkUrl} />
-            ) : null}
-            {withExportLogs ? (
-              <ExportLogsButton
-                title={t("settings.exportLogs.title")}
-                small={false}
-                primary={false}
-                outlineGrey
-                mx={1}
+            {managerAppName || requireFirmwareUpdate ? (
+              <OpenManagerButton
+                appName={managerAppName}
+                updateApp={error instanceof UpdateYourApp}
+                firmwareUpdate={error instanceof LatestFirmwareVersionRequired}
               />
-            ) : null}
-            {withOpenManager ? (
-              <OpenManagerButton mt={0} ml={withExportLogs ? 4 : 0} />
-            ) : onRetry && inlineRetry ? (
-              <Button primary ml={withExportLogs ? 4 : 0} onClick={onRetry}>
-                {t("common.retry")}
-              </Button>
-            ) : null}
-            {withOnboardingCTA ? <OpenOnboardingBtn /> : null}
-            {buyLedger ? (
-              <LinkWithExternalIcon
-                label={t("common.buyLedger")}
-                onClick={() => openURL(buyLedger)}
-              />
-            ) : null}
+            ) : (
+              <>
+                {supportLinkUrl ? (
+                  <Link type="shade" onClick={() => openURL(supportLinkUrl)}>
+                    {t("common.getSupport")}
+                  </Link>
+                ) : null}
+                {withExportLogs ? (
+                  <ExportLogsButton
+                    customComponent={exportLogs => (
+                      <ButtonV3 size="large" variant="shade" outline onClick={exportLogs}>
+                        {t("settings.exportLogs.title")}
+                      </ButtonV3>
+                    )}
+                  />
+                ) : null}
+                {withOpenManager ? (
+                  <OpenManagerButton />
+                ) : onRetry && inlineRetry ? (
+                  <ButtonV3 size="large" variant="main" onClick={onRetry}>
+                    {t("common.retry")}
+                  </ButtonV3>
+                ) : null}
+                {withOnboardingCTA ? <OpenOnboardingBtn /> : null}
+                {buyLedger ? (
+                  <Link
+                    type="color"
+                    onClick={() => openURL(buyLedger)}
+                    Icon={IconsLegacy.ExternalLinkMedium}
+                  >
+                    {t("common.buyLedger")}
+                  </Link>
+                ) : null}
+              </>
+            )}
           </>
-        )}
-      </ButtonContainer>
+        }
+      />
     </Wrapper>
   );
 };
 
 export const renderInWrongAppForAccount = ({
-  t,
   onRetry,
   accountName,
 }: {
-  t: TFunction;
   onRetry?: (() => void) | null | undefined;
   accountName: string;
-}) =>
-  renderError({
-    t,
-    error: new WrongDeviceForAccount("", { accountName }),
-    withExportLogs: true,
-    onRetry,
-  });
+}) => (
+  <DeviceActionErrorComponent
+    error={new WrongDeviceForAccount("", { accountName })}
+    withExportLogs
+    onRetry={onRetry}
+  />
+);
 
 export const renderConnectYourDevice = ({
   modelId,
