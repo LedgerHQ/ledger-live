@@ -7,7 +7,6 @@ export class SettingsPage {
   readonly helpTab: Locator;
   readonly experimentalTab: Locator;
   readonly experimentalDevModeToggle: Locator;
-  readonly carouselSwitchButton: Locator;
   readonly counterValueSelector: Locator;
   readonly counterValueSearchBar: Locator;
   readonly counterValueropdownChoiceEuro: Locator;
@@ -26,7 +25,6 @@ export class SettingsPage {
     this.experimentalTab = page.locator("data-test-id=settings-experimental-tab");
     this.developerTab = page.locator("data-test-id=settings-developer-tab");
     this.experimentalDevModeToggle = page.locator("data-test-id=MANAGER_DEV_MODE-button");
-    this.carouselSwitchButton = page.locator("data-test-id=settings-carousel-switch-button");
     this.counterValueSelector = page.locator(
       "[data-test-id='setting-countervalue-dropDown'] .select__value-container",
     );

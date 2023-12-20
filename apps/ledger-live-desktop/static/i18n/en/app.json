@@ -3900,9 +3900,7 @@
       "region": "Region",
       "regionDesc": "Choose your region to update formats of dates, time and currencies.",
       "stock": "Regional market indicator",
-      "stockDesc": "Choose Western to display market increases in blue or Eastern to display them in red.",
-      "carouselVisibility": "Carousel visibility",
-      "carouselVisibilityDesc": "Enable visibility of the carousel on Portfolio"
+      "stockDesc": "Choose Western to display market increases in blue or Eastern to display them in red."
     },
     "developer": {
       "search": "Search",
@@ -5895,11 +5893,9 @@
       "descriptionWithProductName": "Unlock your {{ productName }} and try again."
     },
     "DeviceNotOnboardedError": {
-      "title": "Your device is not ready to use yet",
-      "titleWithProductName": "{{ productName }} is not ready to use yet",
-      "description": "You need to setup your device first.\nWe will guide you through the setup process.",
-      "descriptionWithProductName": "You need to setup your {{ productName }} first.\nWe will guide you through the setup process.",
-      "goToOnboardingButton": "Set up my device",
+      "title": "Your Ledger is not set up",
+      "description": "Set it up to start using it. We will guide you through the setup process.",
+      "goToOnboardingButton": "Set up my Ledger",
       "goToOnboardingButtonWithProductName": "Set up my {{ productName }}"
     },
     "EtherscanAPIError": {

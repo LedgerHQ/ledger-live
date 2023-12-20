@@ -55,10 +55,6 @@ export const setDiscreetMode = (discreetMode: boolean) =>
   saveSettings({
     discreetMode,
   });
-export const setCarouselVisibility = (carouselVisibility: number) =>
-  saveSettings({
-    carouselVisibility,
-  });
 export const setSentryLogs = (sentryLogs: boolean) =>
   saveSettings({
     sentryLogs,
