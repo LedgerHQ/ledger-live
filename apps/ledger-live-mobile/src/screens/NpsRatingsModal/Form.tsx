@@ -9,12 +9,9 @@ import { TrackScreen } from "~/analytics";
 import useNpsRatings from "~/logic/npsRatings";
 import getWindowDimensions from "~/logic/getWindowDimensions";
 import { screen } from "~/analytics/segment";
-import {
-  languageSelector,
-  lastSeenDeviceSelector,
-  notificationsSelector,
-} from "~/reducers/settings";
+import { lastSeenDeviceSelector, notificationsSelector } from "~/reducers/settings";
 import { knownDevicesSelector } from "~/reducers/ble";
+import { useSystem } from "~/hooks";
 
 const { height } = getWindowDimensions();
 
@@ -74,7 +71,7 @@ type Props = {
 
 const Form = ({ setStep }: Props) => {
   const { ratingsHappyMoment, ratingsFeatureParams, updateNpsRating } = useNpsRatings();
-  const language = useSelector(languageSelector);
+  const { i18 } = useSystem();
   const devices = useSelector(knownDevicesSelector);
   const lastDevice = useSelector(lastSeenDeviceSelector) || devices[devices.length - 1];
   const [selectedRate, setSelectedRate] = useState<number>();
@@ -123,7 +120,7 @@ const Form = ({ setStep }: Props) => {
   const formUrl =
     formUrlSplitted?.[0] +
     `#app_version=${appVersion}` +
-    `&app_language=${language}` +
+    `&app_language=${i18.language}` +
     `&platform_os=${Platform.OS}` +
     `&platform_version=${Platform.Version}` +
     `&model_id=${lastDevice?.modelId}` +

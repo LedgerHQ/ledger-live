@@ -1,9 +1,8 @@
 import React, { ForwardedRef, forwardRef, useCallback, useMemo, useState } from "react";
-import { useSelector } from "react-redux";
 import { Storyly } from "storyly-react-native";
 import { StorylyInstanceID } from "@ledgerhq/types-live";
 import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
-import { languageSelector } from "~/reducers/settings";
+import { useSystem } from "~/hooks";
 
 export type Props = {
   instanceID: StorylyInstanceID;
@@ -33,15 +32,15 @@ const StorylyLocalizedWrapper = forwardRef((props: Props, ref: ForwardedRef<Stor
   const storyConfig = stories[instanceID] || {};
   const storylyInstanceId = storyConfig.token;
 
-  const language = useSelector(languageSelector);
+  const { i18 } = useSystem();
 
   const segments = useMemo(() => {
     const languageSegments = [
-      language,
-      ...(fallbackToEnglish && language !== "en" ? ["en"] : []),
+      i18.language,
+      ...(fallbackToEnglish && i18.language !== "en" ? ["en"] : []),
     ].map(l => `lang_${l}`);
     return [...languageSegments, ...(storylySegments ?? [])];
-  }, [language, storylySegments, fallbackToEnglish]);
+  }, [i18.language, storylySegments, fallbackToEnglish]);
 
   const handleLoad = useCallback(
     (event: Storyly.StoryLoadEvent) => {

@@ -4,9 +4,8 @@ import { initReactI18next } from "react-i18next";
 import type { TFunction } from "react-i18next";
 import { getTimeZone } from "react-native-localize";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useSelector } from "react-redux";
 import { DEFAULT_LANGUAGE_LOCALE, getDefaultLanguageLocale, locales } from "../languages";
-import { languageSelector } from "~/reducers/settings";
+import { useSystem } from "~/hooks";
 
 try {
   if ("__setDefaultTimeZone" in Intl.DateTimeFormat) {
@@ -56,17 +55,17 @@ function getLocaleState(i18n: typeof i18next): LocaleState {
 
 const LocaleContext = React.createContext(getLocaleState(i18next));
 export default function LocaleProvider({ children }: Props) {
-  const language = useSelector(languageSelector);
+  const { i18 } = useSystem();
   useEffect(() => {
-    i18next.changeLanguage(language);
-  }, [language]);
+    i18next.changeLanguage(i18.language);
+  }, [i18.language]);
   const value: LocaleState = useMemo(
     () => ({
       i18n: i18next,
       t: i18next.getFixedT(DEFAULT_LANGUAGE_LOCALE),
-      locale: language as SupportedLanguages,
+      locale: i18.language as SupportedLanguages,
     }),
-    [language],
+    [i18.language],
   );
   return <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>;
 }
