@@ -618,7 +618,7 @@ export const DeviceNotOnboardedErrorComponent = withV3StyleProvider(
     return (
       <Wrapper id="error-device-not-onboarded">
         <ErrorBody
-          top={<DeviceIllustration size={120} deviceId={device.modelId} />}
+          top={device ? <DeviceIllustration size={120} deviceId={device.modelId} /> : null}
           title={t("errors.DeviceNotOnboardedError.title")}
           description={t("errors.DeviceNotOnboardedError.description")}
         />
