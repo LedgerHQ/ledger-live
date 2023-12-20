@@ -1,13 +1,12 @@
 import BigNumber from "bignumber.js";
-import { getEstimatedFees } from "./utils";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
+import { getMainAccount } from "../../account/index";
 import type { Transaction } from "./types";
+import { getEstimatedFees } from "./utils";
 
 export default async function estimateMaxSpendable({
   account,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   parentAccount,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   transaction,
 }: {
   account: AccountLike;
@@ -16,7 +15,8 @@ export default async function estimateMaxSpendable({
 }): Promise<BigNumber> {
   const balance = account.balance;
 
-  const estimatedFees = await getEstimatedFees();
+  const mainAccount = getMainAccount(account, parentAccount);
+  const estimatedFees = await getEstimatedFees(mainAccount);
 
   let maxSpendable = balance.minus(estimatedFees);
 
