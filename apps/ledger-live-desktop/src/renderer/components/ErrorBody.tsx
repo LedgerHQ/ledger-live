@@ -3,16 +3,16 @@ import { BoxedIcon, Text } from "@ledgerhq/react-ui";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import styled from "styled-components";
 
-export const ErrorTitle = styled(Text).attrs({
-  color: "neutral.c100",
-  textAlign: "center",
-})``;
+export const ErrorTitle = styled(Text)`
+  color: ${p => p.theme.colors.neutral.c100};
+  text-align: center;
+`;
 
-export const ErrorDescription = styled(Text).attrs({
-  color: "neutral.c80",
-  whiteSpace: "pre-wrap",
-  textAlign: "center",
-})``;
+export const ErrorDescription = styled(Text)`
+  color: ${p => p.theme.colors.neutral.c80};
+  white-space: pre-wrap;
+  text-align: center;
+`;
 
 /** Renders an error icon, title and description */
 export const ErrorBody: React.FC<{
