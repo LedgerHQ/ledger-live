@@ -4,7 +4,6 @@ import { IconsLegacy } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
-import { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
 import { NavigatorName, ScreenName } from "~/const";
 
 type Props = {
@@ -13,7 +12,7 @@ type Props = {
   parentRoute: RouteProp<ParamListBase, ScreenName>;
 };
 
-function getNavigatorParams({ parentRoute, account, parentAccount }: Props): NavigationParamsType {
+function getNavigatorParams({ parentRoute, account, parentAccount }: Props) {
   if (isAccountEmpty(account)) {
     return [
       NavigatorName.NoFundsFlow,
@@ -55,7 +54,7 @@ function getNavigatorParams({ parentRoute, account, parentAccount }: Props): Nav
   }
 }
 
-const getMainActions = ({ account, parentAccount, parentRoute }: Props): ActionButtonEvent[] => {
+const getMainActions = ({ account, parentAccount, parentRoute }: Props) => {
   if (account.type === "Account" && account.currency.id === "ethereum") {
     const navigationParams = getNavigatorParams({
       account,

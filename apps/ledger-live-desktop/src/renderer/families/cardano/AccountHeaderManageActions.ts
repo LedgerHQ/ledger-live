@@ -1,6 +1,5 @@
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { CardanoAccount } from "@ledgerhq/live-common/families/cardano/types";
-import { canStake } from "@ledgerhq/live-common/families/cardano/logic";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import { useCallback } from "react";
@@ -19,9 +18,12 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   const dispatch = useDispatch();
   const mainAccount = getMainAccount(account, parentAccount);
   const { cardanoResources } = mainAccount as CardanoAccount;
+
   invariant(cardanoResources, "cardano account expected");
 
-  const disableStakeButton = !canStake(account as CardanoAccount);
+  const disableStakeButton =
+    (cardanoResources.delegation && !!cardanoResources.delegation.poolId) ||
+    mainAccount.balance.isZero();
 
   const disabledLabel =
     cardanoResources.delegation && cardanoResources.delegation.poolId

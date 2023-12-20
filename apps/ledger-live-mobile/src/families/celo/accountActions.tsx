@@ -5,7 +5,6 @@ import invariant from "invariant";
 import type { Account } from "@ledgerhq/types-live";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import CeloIcon from "./components/CeloIcon";
-import { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
 import { NavigatorName, ScreenName } from "~/const";
 
 const getMainActions = ({
@@ -14,11 +13,12 @@ const getMainActions = ({
 }: {
   account: CeloAccount;
   parentAccount: Account;
-}): ActionButtonEvent[] => {
+}) => {
+  invariant(account, "celo account not found");
   const { celoResources } = account;
   invariant(celoResources, "celo resources not parsed");
 
-  const navigationParams: NavigationParamsType = isAccountEmpty(account)
+  const navigationParams = isAccountEmpty(account)
     ? [
         NavigatorName.NoFundsFlow,
         {

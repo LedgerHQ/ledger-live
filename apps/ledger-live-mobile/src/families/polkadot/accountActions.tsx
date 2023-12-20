@@ -1,6 +1,5 @@
 import React from "react";
 import { Trans } from "react-i18next";
-import invariant from "invariant";
 import type { Account } from "@ledgerhq/types-live";
 import {
   canNominate,
@@ -29,7 +28,7 @@ const getMainActions = (args: {
   parentRoute?: RouteProp<ParamListBase, ScreenName>;
 }): ActionButtonEvent[] | null => {
   const { account, parentAccount, parentRoute } = args;
-  invariant(account.polkadotResources, "polkadot resources required");
+  if (!account.polkadotResources) return null;
   const accountId = account.id;
   const { lockedBalance } = account.polkadotResources || {};
   const electionOpen = isElectionOpen();
@@ -43,7 +42,7 @@ const getMainActions = (args: {
     return null;
   }
 
-  const getNavigationParams = (): NavigationParamsType => {
+  const getNavigationParams = () => {
     if (!earnRewardsEnabled && !nominationEnabled) {
       return [
         NavigatorName.NoFundsFlow,
@@ -84,7 +83,7 @@ const getMainActions = (args: {
   return [
     {
       id: "stake",
-      navigationParams,
+      navigationParams: navigationParams as unknown as NavigationParamsType,
       label: <Trans i18nKey="account.stake" />,
       Icon: IconsLegacy.CoinsMedium,
       event: "button_clicked",

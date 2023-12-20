@@ -48,9 +48,9 @@ const getMainActions = ({
   account: Account;
   parentAccount: Account;
   parentRoute?: RouteProp<ParamListBase, ScreenName>;
-}): ActionButtonEvent[] => {
+}): ActionButtonEvent[] | null | undefined => {
   const delegationDisabled = isAccountDelegating(account) || account.type !== "Account";
-  const navigationParams: NavigationParamsType = delegationDisabled
+  const navigationParams = delegationDisabled
     ? [
         NavigatorName.NoFundsFlow,
         {
@@ -76,7 +76,7 @@ const getMainActions = ({
   return [
     {
       id: "stake",
-      navigationParams,
+      navigationParams: navigationParams as unknown as NavigationParamsType,
       label: <Trans i18nKey="account.stake" />,
       Icon: IconsLegacy.CoinsMedium,
       event: "button_clicked",

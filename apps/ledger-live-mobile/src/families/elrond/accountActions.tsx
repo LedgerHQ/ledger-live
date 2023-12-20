@@ -23,6 +23,8 @@ export interface getActionsType {
 }
 export type getActionsReturnType = ActionButtonEvent[] | null | undefined;
 
+type NavigationParamsType = readonly [name: string, options: object];
+
 /*
  * Declare the function that will return the actions' settings array.
  */
@@ -56,7 +58,7 @@ const getMainActions = ({
   /*
    * Return the array of actions.
    */
-  const navigationParams: NavigationParamsType = delegationEnabled
+  const navigationParams = delegationEnabled
     ? [
         NavigatorName.ElrondDelegationFlow,
         { screen, params: { account, validators, source: parentRoute } },
@@ -76,7 +78,7 @@ const getMainActions = ({
       id: "stake",
       label: <Trans i18nKey="account.stake" />,
       Icon: IconsLegacy.CoinsMedium,
-      navigationParams,
+      navigationParams: navigationParams as unknown as NavigationParamsType,
       event: "button_clicked",
       eventProperties: {
         button: "stake",
