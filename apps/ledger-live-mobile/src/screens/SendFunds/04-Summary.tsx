@@ -8,7 +8,7 @@ import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/accoun
 import type { Account } from "@ledgerhq/types-live";
 import type { TransactionStatus as BitcoinTransactionStatus } from "@ledgerhq/live-common/families/bitcoin/types";
 import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
-import { NotEnoughGas } from "@ledgerhq/errors";
+import { NotEnoughBalance, NotEnoughGas } from "@ledgerhq/errors";
 import { useTheme } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import invariant from "invariant";
@@ -260,7 +260,7 @@ function SendSummary({ navigation, route }: Props) {
         <LText style={styles.error} color="alert">
           <TranslatedError error={transactionError} />
         </LText>
-        {error && error instanceof NotEnoughGas ? (
+        {error && (error instanceof NotEnoughGas || error instanceof NotEnoughBalance) ? (
           // If the user does not enough funds for gas, he needs to buy
           // the main account currency (which is not necessarily ETH depending
           // on the EVM network used)
