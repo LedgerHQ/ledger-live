@@ -4,7 +4,6 @@ import { Layout } from "../../models/Layout";
 import { Drawer } from "../../models/Drawer";
 import { SendModal } from "../../models/SendModal";
 import { ReceiveModal } from "../../models/ReceiveModal";
-import { PortfolioPage } from "../../models/PortfolioPage";
 import { SettingsPage } from "../../models/SettingsPage";
 
 test.use({ userdata: "1AccountBTC1AccountETHStarred" });
@@ -14,7 +13,6 @@ test("Layout @smoke", async ({ page }) => {
   const drawer = new Drawer(page);
   const sendModal = new SendModal(page);
   const receiveModal = new ReceiveModal(page);
-  const portfolioPage = new PortfolioPage(page);
   const settingsPage = new SettingsPage(page);
 
   await test.step("can open send modal", async () => {
