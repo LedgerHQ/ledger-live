@@ -8,11 +8,9 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
 
-import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Flex, Icon, Text } from "@ledgerhq/native-ui";
-import { AppManifest, WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
+import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 import {
@@ -20,16 +18,12 @@ import {
   INTERNAL_APP_IDS,
 } from "@ledgerhq/live-common/wallet-api/constants";
 import { safeUrl } from "@ledgerhq/live-common/wallet-api/helpers";
-import trackingWrapper from "@ledgerhq/live-common/wallet-api/Exchange/tracking";
-import { handlers as exchangeHandlers } from "@ledgerhq/live-common/wallet-api/Exchange/server";
-import { ExchangeType } from "@ledgerhq/live-common/wallet-api/Exchange/types";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 
 import { useTheme } from "styled-components/native";
 
-import { flattenAccountsSelector } from "~/reducers/accounts";
 import { WebviewAPI, WebviewState } from "../Web3AppWebview/types";
 import { Web3AppWebview } from "../Web3AppWebview";
 import { RootNavigationComposite, StackNavigatorNavigation } from "../RootNavigator/types/helpers";
@@ -39,7 +33,7 @@ import { track } from "~/analytics";
 import { NavigationHeaderCloseButtonAdvanced } from "../NavigationHeaderCloseButton";
 import { NavigatorName, ScreenName } from "~/const";
 import { Loading } from "../Loading";
-import { currentRouteNameRef } from "~/analytics/screenRefs";
+import { usePTXCustomHandlers } from "./CustomHandlers";
 
 type BackToInternalDomainProps = {
   manifest: AppManifest;
@@ -117,96 +111,6 @@ function HeaderRight({ onClose }: { onClose?: () => void }) {
   const { colors } = useTheme();
 
   return <NavigationHeaderCloseButtonAdvanced onClose={onClose} color={colors.neutral.c100} />;
-}
-
-function usePTXCustomHandlers(manifest: Props["manifest"]) {
-  const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
-  const [device, setDevice] = useState<Device>();
-  const accounts = useSelector(flattenAccountsSelector);
-
-  const tracking = useMemo(
-    () =>
-      trackingWrapper(
-        (
-          eventName: string,
-          properties?: Record<string, unknown> | null,
-          mandatory?: boolean | null,
-        ) =>
-          track(
-            eventName,
-            {
-              ...properties,
-              flowInitiatedFrom:
-                currentRouteNameRef.current === "Platform Catalog"
-                  ? "Discover"
-                  : currentRouteNameRef.current,
-            },
-            mandatory,
-          ),
-      ),
-    [],
-  );
-
-  return useMemo<WalletAPICustomHandlers>(() => {
-    return {
-      ...exchangeHandlers({
-        accounts,
-        tracking,
-        manifest,
-        uiHooks: {
-          "custom.exchange.start": ({ exchangeType, onSuccess, onCancel }) => {
-            navigation.navigate(NavigatorName.PlatformExchange, {
-              screen: ScreenName.PlatformStartExchange,
-              params: {
-                request: {
-                  exchangeType: ExchangeType[exchangeType],
-                },
-                onResult: result => {
-                  if (result.startExchangeError) {
-                    onCancel(result.startExchangeError);
-                  }
-
-                  if (result.startExchangeResult) {
-                    setDevice(result.device);
-                    onSuccess(result.startExchangeResult);
-                  }
-
-                  navigation.pop();
-                },
-              },
-            });
-          },
-          "custom.exchange.complete": ({ exchangeParams, onSuccess, onCancel }) => {
-            navigation.navigate(NavigatorName.PlatformExchange, {
-              screen: ScreenName.PlatformCompleteExchange,
-              params: {
-                request: {
-                  exchangeType: exchangeParams.exchangeType,
-                  provider: exchangeParams.provider,
-                  exchange: exchangeParams.exchange,
-                  transaction: exchangeParams.transaction,
-                  binaryPayload: exchangeParams.binaryPayload,
-                  signature: exchangeParams.signature,
-                  feesStrategy: exchangeParams.feesStrategy,
-                },
-                device,
-                onResult: result => {
-                  if (result.error) {
-                    onCancel(result.error);
-                  }
-                  if (result.operation) {
-                    onSuccess(result.operation.id);
-                  }
-                  setDevice(undefined);
-                  navigation.pop();
-                },
-              },
-            });
-          },
-        },
-      }),
-    };
-  }, [accounts, device, manifest, navigation, tracking]);
 }
 
 type Props = {
