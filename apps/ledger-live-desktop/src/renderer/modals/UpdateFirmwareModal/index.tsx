@@ -9,13 +9,14 @@ import logger from "~/renderer/logger";
 import StepResetDevice, { StepResetFooter } from "./steps/00-step-reset-device";
 import StepPrepare from "./steps/01-step-prepare";
 import StepFlashMcu from "./steps/02-step-flash-mcu";
-import StepRestore, { StepRestoreFooter } from "./steps/02-step-restore";
+import StepRestore from "./steps/02-step-restore";
 import StepUpdating from "./steps/02-step-updating";
 import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/manager/localization";
 import StepConfirmation, { StepConfirmFooter } from "./steps/03-step-confirmation";
 import { Divider, Flex, FlowStepper, Text } from "@ledgerhq/react-ui";
 import Disclaimer from "./Disclaimer";
-import Cancel from "./Cancel";
+import Cancel from "./errors/Cancel";
+import DeviceCancel from "./errors/DeviceError";
 import SideDrawerHeader from "~/renderer/components/SideDrawerHeader";
 
 type MaybeError = Error | undefined | null;
@@ -111,6 +112,9 @@ const UpdateModal = ({
 
   const createSteps = useCallback(
     ({ withResetStep }: { withResetStep: boolean }) => {
+      const hasRestoreStep =
+        firmware && isDeviceLocalizationSupported(firmware.final.name, deviceModelId);
+      const restoreStepLabel = t("manager.modal.steps.restore");
       const installUpdateLabel =
         stateStepId === "finish"
           ? t("manager.modal.steps.installDone")
@@ -147,14 +151,13 @@ const UpdateModal = ({
 
       const restoreStep: Step = {
         id: "restore",
-        label: installUpdateLabel,
+        label: restoreStepLabel,
         component: StepRestore,
-        footer: StepRestoreFooter,
       };
 
       const finalStep: Step = {
         id: "finish",
-        label: installUpdateLabel,
+        label: hasRestoreStep ? restoreStepLabel : installUpdateLabel,
         component: StepConfirmation,
         footer: StepConfirmFooter,
       };
@@ -170,7 +173,7 @@ const UpdateModal = ({
         steps.push(updatingStep);
       }
 
-      if (firmware && isDeviceLocalizationSupported(firmware.final.name, deviceModelId)) {
+      if (hasRestoreStep) {
         steps.push(restoreStep);
       }
 
@@ -190,11 +193,19 @@ const UpdateModal = ({
     [setErr],
   );
 
-  const handleReset = useCallback(() => {
-    setErr(null);
-    setStateStepId(steps[0].id);
-    setNonce(curr => curr++);
-  }, [steps]);
+  const handleReset = useCallback(
+    (isRetry?: boolean) => {
+      !isRetry && setStateStepId(steps[0].id);
+      setNonce(curr => curr++);
+      setErr(null);
+    },
+    [steps],
+  );
+
+  const onSkip = useCallback(() => {
+    setCompletedRestoreSteps([...completedRestoreSteps, currentRestoreStep]);
+    setError(null);
+  }, [completedRestoreSteps, currentRestoreStep, setCompletedRestoreSteps, setError]);
 
   useEffect(() => {
     log("firmware-record-start");
@@ -233,34 +244,31 @@ const UpdateModal = ({
     setIsLanguagePromptOpen,
     confirmedPrompt,
     setConfirmedPrompt,
-    deviceHasPin: deviceModelId !== DeviceModelId.stax,
+    deviceHasPin: !(deviceModelId === DeviceModelId.stax && !props.deviceInfo?.onboarded),
   };
 
-  const deviceModel = getDeviceModel(deviceModelId);
-
-  return (
-    <Flex
-      key={`${nonce}_fwUpdate`}
-      flexDirection="column"
-      rowGap={5}
-      height="100%"
-      overflowY="hidden"
-      width="100%"
-      flex={1}
-      data-test-id="firmware-update-container"
-    >
-      <SideDrawerHeader onRequestClose={onRequestCancel} />
-      <Text alignSelf="center" variant="h5Inter">
-        {t("manager.modal.title", { productName: deviceModel.productName })}
-      </Text>
-      {cancel ? (
-        <Cancel onContinue={onRequestCancel} onCancel={onRequestClose} />
-      ) : showDisclaimer ? (
-        <Disclaimer onContinue={() => setShowDisclaimer(false)} t={t} firmware={firmware} />
-      ) : (
+  const getMainContent = () => {
+    if (err) {
+      return (
+        <DeviceCancel
+          error={err}
+          shouldReloadManagerOnCloseIfUpdateRefused={
+            !!props.shouldReloadManagerOnCloseIfUpdateRefused
+          }
+          onDrawerClose={onDrawerClose}
+          onRetry={handleReset}
+          onSkip={onSkip}
+        />
+      );
+    } else if (cancel) {
+      return <Cancel onContinue={onRequestCancel} onCancel={onRequestClose} />;
+    } else if (showDisclaimer) {
+      return <Disclaimer onContinue={() => setShowDisclaimer(false)} t={t} firmware={firmware} />;
+    } else {
+      return (
         <FlowStepper.Indexed
           activeKey={stateStepId}
-          extraStepperContainerProps={{ px: 12 }}
+          extraStepperContainerProps={{ px: 12, mb: 0 }}
           extraStepperProps={{
             errored: !!error,
             filterDuplicate: true,
@@ -291,16 +299,16 @@ const UpdateModal = ({
                 </Flex>
                 {step.footer ? (
                   <Flex flexDirection="column" alignSelf="stretch">
-                    <Divider />
+                    <Divider color={"neutral.c30"} />
                     <Flex
+                      flex={1}
                       px={12}
                       alignSelf="stretch"
                       flexDirection="row"
                       justifyContent="space-between"
-                      pt={4}
+                      pt={6}
                       pb={1}
                     >
-                      <Flex flex={1} />
                       <step.footer {...additionalProps} />
                     </Flex>
                   </Flex>
@@ -309,7 +317,28 @@ const UpdateModal = ({
             </FlowStepper.Indexed.Step>
           ))}
         </FlowStepper.Indexed>
-      )}
+      );
+    }
+  };
+
+  const deviceModel = getDeviceModel(deviceModelId);
+
+  return (
+    <Flex
+      key={`${nonce}_fwUpdate`}
+      flexDirection="column"
+      rowGap={5}
+      height="100%"
+      overflowY="hidden"
+      width="100%"
+      flex={1}
+      data-test-id="firmware-update-container"
+    >
+      <SideDrawerHeader onRequestClose={onRequestCancel} />
+      <Text alignSelf="center" variant="h5Inter">
+        {t("manager.modal.title", { productName: deviceModel.productName })}
+      </Text>
+      {getMainContent()}
     </Flex>
   );
 };

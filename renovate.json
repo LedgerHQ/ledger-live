@@ -6,9 +6,14 @@
   "automerge": false,
   "detectGlobalManagerConfig": true,
   "ignoreScripts": false,
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "labels": ["security"],
+    "prPriority": 999
+  },
   "packageRules": [
     {
-      "description": "Monorepo core packages",
+      "description": "Core Ownership Rules",
       "matchPackagePatterns": [
         "changesets",
         "commitlint",
@@ -19,10 +24,11 @@
         "typescript",
         "vite",
         "zx"
-      ]
+      ],
+      "reviewers": ["team:@ledgerhq/live-eng-core"]
     },
     {
-      "description": "LLD Electron packages",
+      "description": "Electron linked updates",
       "matchPackagePatterns": ["electron", "^@electron"],
       "excludePackageNames": [
         "@sentry/electron",
@@ -31,16 +37,10 @@
         "vite-plugin-electron"
       ],
       "groupName": "electron",
-      "reviewers": ["team:live-hub"]
+      "reviewers": ["team:@ledgerhq/live-eng-core", "team:@ledgerhq/live-hub"]
     },
     {
-      "description": "LLM React Native and libraries",
-      "matchPackagePatterns": ["react-native"],
-      "groupName": "react-native",
-      "reviewers": ["team:live-hub"]
-    },
-    {
-      "description": "LLM Metro updates",
+      "description": "Metro linked updates",
       "matchPackageNames": [
         "metro",
         "metro-core",
@@ -51,55 +51,7 @@
         "metro-transform-worker"
       ],
       "groupName": "metro",
-      "reviewers": ["team:live-hub"]
-    },
-    {
-      "description": "Polkadot dependencies",
-      "matchPackagePatterns": ["^@polkadot"],
-      "groupName": "polkadot",
-      "reviewers": ["team:blockchain-support"]
-    },
-    {
-      "description": "Cosmos dependencies",
-      "matchPackagePatterns": ["^@cosmjs"],
-      "groupName": "cosmos",
-      "reviewers": ["team:blockchain-support"]
-    },
-    {
-      "description": "Ethereum dependencies",
-      "matchPackagePatterns": ["^@ethersproject"],
-      "groupName": "ethereum",
-      "reviewers": ["team:blockchain-support"]
-    },
-    {
-      "description": "Celo dependencies",
-      "matchPackagePatterns": ["^@celo"],
-      "groupName": "celo",
-      "reviewers": ["team:blockchain-support"]
-    },
-    {
-      "description": "Helium dependencies",
-      "matchPackagePatterns": ["^@helium"],
-      "groupName": "helium",
-      "reviewers": ["team:blockchain-support"]
-    },
-    {
-      "description": "Wallet API dependencies",
-      "matchPackagePatterns": ["^@ledgerhq/wallet-api"],
-      "groupName": "wallet-api",
-      "reviewers": ["team:wallet-api"]
-    },
-    {
-      "description": "Playwright",
-      "matchPackagePatterns": ["^@playwright"],
-      "groupName": "playwright",
-      "reviewers": ["team:live-qa"]
-    },
-    {
-      "description": "types library are ignored",
-      "matchPackagePatterns": ["^@types"],
-      "groupName": "types",
-      "enabled": false
+      "reviewers": ["team:@ledgerhq/live-eng-core", "team:@ledgerhq/live-hub"]
     },
     {
       "extends": "monorepo:expo",

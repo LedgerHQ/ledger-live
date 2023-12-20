@@ -9,11 +9,11 @@ import { DescriptorEvent } from "@ledgerhq/hw-transport";
 import { Device as DeviceMeta } from "@ledgerhq/live-common/hw/actions/types";
 import { TransportBleDevice } from "@ledgerhq/live-common/ble/types";
 import logger from "../../logger";
-import { BLE_SCANNING_NOTHING_TIMEOUT } from "@utils/constants";
-import { knownDevicesSelector } from "../../reducers/ble";
+import { BLE_SCANNING_NOTHING_TIMEOUT } from "~/utils/constants";
+import { knownDevicesSelector } from "~/reducers/ble";
 import TransportBLE from "../../react-native-hw-transport-ble";
-import { TrackScreen } from "../../analytics";
-import DeviceItem from "../../components/SelectDevice/DeviceItem";
+import { TrackScreen } from "~/analytics";
+import DeviceItem from "~/components/SelectDevice/DeviceItem";
 import ScanningHeader from "./ScanningHeader";
 import Config from "react-native-config";
 

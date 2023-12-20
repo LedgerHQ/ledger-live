@@ -16,13 +16,13 @@ import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks
 import { useTheme } from "@react-navigation/native";
 import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
-import { ScreenName } from "../../const";
-import { TrackScreen } from "../../analytics";
-import FilteredSearchBar from "../../components/FilteredSearchBar";
-import CurrencyRow from "../../components/CurrencyRow";
-import LText from "../../components/LText";
-import { AddAccountsNavigatorParamList } from "../../components/RootNavigator/types/AddAccountsNavigator";
-import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import { ScreenName } from "~/const";
+import { TrackScreen } from "~/analytics";
+import FilteredSearchBar from "~/components/FilteredSearchBar";
+import CurrencyRow from "~/components/CurrencyRow";
+import LText from "~/components/LText";
+import { AddAccountsNavigatorParamList } from "~/components/RootNavigator/types/AddAccountsNavigator";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { getEnv } from "@ledgerhq/live-env";
 import { Feature } from "@ledgerhq/types-live";
 

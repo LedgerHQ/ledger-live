@@ -21,32 +21,32 @@ import {
 import { useNftCollectionMetadata, useNftMetadata } from "@ledgerhq/live-common/nft/index";
 import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { NavigatorName, ScreenName } from "../../const";
-import LText from "../../components/LText";
-import OperationIcon from "../../components/OperationIcon";
-import OperationRow from "../../components/OperationRow";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import CounterValue from "../../components/CounterValue";
-import Touchable from "../../components/Touchable";
-import { urls } from "@utils/urls";
-import Info from "../../icons/Info";
-import ExternalLink from "../../icons/ExternalLink";
-import { currencySettingsForAccountSelector } from "../../reducers/settings";
+import { NavigatorName, ScreenName } from "~/const";
+import LText from "~/components/LText";
+import OperationIcon from "~/components/OperationIcon";
+import OperationRow from "~/components/OperationRow";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import CounterValue from "~/components/CounterValue";
+import Touchable from "~/components/Touchable";
+import { urls } from "~/utils/urls";
+import Info from "~/icons/Info";
+import ExternalLink from "~/icons/ExternalLink";
+import { currencySettingsForAccountSelector } from "~/reducers/settings";
 import DataList from "./DataList";
 import Modal from "./Modal";
 import Section, { styles as sectionStyles } from "./Section";
 import byFamiliesOperationDetails from "../../generated/operationDetails";
 import byFamiliesEditOperationPanel from "../../generated/EditOperationPanel";
 import DefaultOperationDetailsExtra from "./Extra";
-import Skeleton from "../../components/Skeleton";
-import type { State } from "../../reducers/types";
+import Skeleton from "~/components/Skeleton";
+import type { State } from "~/reducers/types";
 import Title from "./Title";
-import FormatDate from "../../components/DateFormat/FormatDate";
+import FormatDate from "~/components/DateFormat/FormatDate";
 import type {
   RootNavigationComposite,
   StackNavigatorNavigation,
-} from "../../components/RootNavigator/types/helpers";
-import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
+} from "~/components/RootNavigator/types/helpers";
+import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 
 type HelpLinkProps = {
   event: string;
@@ -340,6 +340,7 @@ export default function Content({
           title={t("operationDetails.account")}
           value={getAccountName(account)}
           onPress={onPress}
+          testID="operationDetails-account"
         />
       ) : null}
 

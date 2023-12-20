@@ -6,16 +6,16 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ImageCropper, {
   Props as ImageCropperProps,
   CropResult,
-} from "../../components/CustomImage/ImageCropper";
-import { ImageDimensions } from "../../components/CustomImage/types";
+} from "~/components/CustomImage/ImageCropper";
+import { ImageDimensions } from "~/components/CustomImage/types";
 import { targetDisplayDimensions } from "./shared";
-import Button from "../../components/wrappedUi/Button";
-import { ScreenName } from "../../const";
-import BottomContainer from "../../components/CustomImage/BottomButtonsContainer";
-import Touchable from "../../components/Touchable";
-import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { CustomImageNavigatorParamList } from "../../components/RootNavigator/types/CustomImageNavigator";
-import { TrackScreen } from "../../analytics";
+import Button from "~/components/wrappedUi/Button";
+import { ScreenName } from "~/const";
+import BottomContainer from "~/components/CustomImage/BottomButtonsContainer";
+import Touchable from "~/components/Touchable";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { CustomImageNavigatorParamList } from "~/components/RootNavigator/types/CustomImageNavigator";
+import { TrackScreen } from "~/analytics";
 import { LayoutChangeEvent } from "react-native";
 
 type NavigationProps = BaseComposite<

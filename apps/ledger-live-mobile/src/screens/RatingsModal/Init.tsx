@@ -3,8 +3,8 @@ import { TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
 import styled from "styled-components/native";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
-import { track, TrackScreen, updateIdentify } from "../../analytics";
-import useRatings from "../../logic/ratings";
+import { track, TrackScreen, updateIdentify } from "~/analytics";
+import useRatings from "~/logic/ratings";
 
 const NotNowButton = styled(TouchableOpacity)`
   align-items: center;

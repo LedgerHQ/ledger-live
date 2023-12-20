@@ -17,8 +17,8 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import { useSearch } from "@ledgerhq/live-common/hooks/useSearch";
 import { useDB } from "../../../db";
-import { ScreenName } from "../../../const";
-import { useBanner } from "../../../components/banners/hooks";
+import { ScreenName } from "~/const";
+import { useBanner } from "~/components/banners/hooks";
 import { readOnlyModeEnabledSelector } from "../../../reducers/settings";
 import { NavigationProps } from "./types";
 

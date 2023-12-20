@@ -7,14 +7,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
 import { StyleSheet } from "react-native";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { ScreenName } from "../../../const";
-import Illustration from "../../../images/illustration/Illustration";
+import { ScreenName } from "~/const";
+import Illustration from "~/images/illustration/Illustration";
 
-import { normalize } from "../../../helpers/normalizeSize";
+import { normalize } from "~/helpers/normalizeSize";
 
-import ForceTheme from "../../../components/theme/ForceTheme";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
-import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
+import ForceTheme from "~/components/theme/ForceTheme";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 
 const StyledSafeAreaView = styled(SafeAreaView)`
   flex: 1;
@@ -24,11 +24,11 @@ const StyledSafeAreaView = styled(SafeAreaView)`
 
 const images = {
   light: [
-    require("../../../images/illustration/Light/_049.png"),
-    require("../../../images/illustration/Light/_073.png"),
-    require("../../../images/illustration/Light/_070.png"),
-    require("../../../images/illustration/Light/_069.png"),
-    require("../../../images/illustration/Light/_066.png"),
+    require("~/images/illustration/Light/_049.png"),
+    require("~/images/illustration/Light/_073.png"),
+    require("~/images/illustration/Light/_070.png"),
+    require("~/images/illustration/Light/_069.png"),
+    require("~/images/illustration/Light/_066.png"),
   ],
 };
 
@@ -49,7 +49,14 @@ const Card = ({ index /* , deviceModelId */ }: CardType) => {
           lightSource={images.light[index]}
         />
       </Flex>
-      <Text variant="h2" mb={3} textAlign="center" color="constant.black" lineHeight="34.8px">
+      <Text
+        variant="h2"
+        mb={3}
+        textAlign="center"
+        color="constant.black"
+        lineHeight="34.8px"
+        testID={`onboarding-stepNewDevice-title${index}`}
+      >
         {t(`onboarding.stepNewDevice.${index}.title`)}
       </Text>
       <Text textAlign="center" variant="bodyLineHeight" color="constant.black">
@@ -84,7 +91,12 @@ const Footer = ({ index }: { index: number }) => {
   if (!Component) return null;
 
   return (
-    <Animatable.View style={styles.animatable} animation="fadeIn" useNativeDriver>
+    <Animatable.View
+      style={styles.animatable}
+      animation="fadeIn"
+      useNativeDriver
+      testID="onboarding-stepNewDevice-cta"
+    >
       <Component label={t(`onboarding.stepNewDevice.cta`)} />
     </Animatable.View>
   );

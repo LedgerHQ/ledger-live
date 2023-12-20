@@ -11,8 +11,8 @@ import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-commo
 import type { ElrondPreloadData } from "@ledgerhq/live-common/families/elrond/types";
 import type { DetailsPropsType } from "./types";
 
-import Section from "../../../../screens/OperationDetails/Section";
-import { discreetModeSelector, localeSelector } from "../../../../reducers/settings";
+import Section from "~/screens/OperationDetails/Section";
+import { discreetModeSelector, localeSelector } from "~/reducers/settings";
 
 /*
  * Handle the component declaration.

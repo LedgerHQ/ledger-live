@@ -47,10 +47,12 @@ export default function StepDelegation({
     <Box flow={1}>
       <TrackPage
         category="Delegation Flow"
-        name="Step Validator"
+        name="Step Starter"
+        page="Step Validator"
         flow="stake"
         action="delegation"
         currency={account.currency.id}
+        type="modal"
       />
       {error && <ErrorBanner error={error} />}
       <ValidatorField

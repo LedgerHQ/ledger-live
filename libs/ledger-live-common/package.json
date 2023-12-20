@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "33.2.0",
+  "version": "33.3.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -156,14 +156,14 @@
     "@ledgerhq/hw-transport-node-speculos": "workspace:^",
     "@ledgerhq/hw-transport-node-speculos-http": "workspace:^",
     "@ledgerhq/live-app-sdk": "^0.8.1",
+    "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
-    "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-promise": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
-    "@ledgerhq/wallet-api-client": "^1.3.0",
-    "@ledgerhq/wallet-api-core": "^1.4.0",
-    "@ledgerhq/wallet-api-server": "^1.4.0",
+    "@ledgerhq/wallet-api-client": "^1.5.0",
+    "@ledgerhq/wallet-api-core": "^1.6.0",
+    "@ledgerhq/wallet-api-server": "^1.5.0",
     "@solana/spl-token": "^0.3.7",
     "@solana/web3.js": "1.77.3",
     "@stacks/network": "1.2.2",

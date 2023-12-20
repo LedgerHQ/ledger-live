@@ -1,6 +1,6 @@
 import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
 import { cryptopanicAvailableRegions, CryptopanicAvailableRegionsType } from "./cryptopanicApi";
-import { useLocale } from "../../context/Locale";
+import { useLocale } from "~/context/Locale";
 
 export function useIsNewsfeedAvailable() {
   const { locale } = useLocale();

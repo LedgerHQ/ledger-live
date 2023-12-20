@@ -5,15 +5,15 @@ import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { Pressable, StyleSheet } from "react-native";
 import { ModalHeaderCloseButton } from "@ledgerhq/native-ui/components/Layout/Modals/BaseModal/index";
-import Button from "../components/wrappedUi/Button";
-import { NavigatorName, ScreenName } from "../const";
+import Button from "~/components/wrappedUi/Button";
+import { NavigatorName, ScreenName } from "~/const";
 import { useNavigationInterceptor } from "./Onboarding/onboardingContext";
-import { TrackScreen } from "../analytics";
+import { TrackScreen } from "~/analytics";
 import {
   RootNavigationComposite,
   StackNavigatorNavigation,
-} from "../components/RootNavigator/types/helpers";
-import { BaseNavigatorStackParamList } from "../components/RootNavigator/types/BaseNavigator";
+} from "~/components/RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 
 type NavigationProp = RootNavigationComposite<
   StackNavigatorNavigation<BaseNavigatorStackParamList, ScreenName.NoDeviceWallScreen>

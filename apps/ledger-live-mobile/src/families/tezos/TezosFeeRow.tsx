@@ -5,12 +5,12 @@ import { Trans } from "react-i18next";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { getAccountUnit, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useTheme } from "@react-navigation/native";
-import SummaryRow from "../../screens/SendFunds/SummaryRow";
-import LText from "../../components/LText";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import CounterValue from "../../components/CounterValue";
-import ExternalLink from "../../icons/ExternalLink";
-import { urls } from "@utils/urls";
+import SummaryRow from "~/screens/SendFunds/SummaryRow";
+import LText from "~/components/LText";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import CounterValue from "~/components/CounterValue";
+import ExternalLink from "~/icons/ExternalLink";
+import { urls } from "~/utils/urls";
 
 type Props = {
   account: AccountLike;

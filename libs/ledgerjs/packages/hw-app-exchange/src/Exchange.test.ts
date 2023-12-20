@@ -32,7 +32,7 @@ describe("startNewTransaction", () => {
     recordStore.queue = [];
   });
 
-  it("sends a correct sequence of APDU", async () => {
+  it("sends a correct sequence of APDU when Swap", async () => {
     // Given
     const mockNonceResponse = "2ac38f187c"; // Response of length 10
     const mockTransport = new MockTransport(
@@ -59,7 +59,44 @@ describe("startNewTransaction", () => {
     expect(result).toEqual(mockNonceResponse);
   });
 
-  it("returns a 32 bytes nonce when NG", async () => {
+  it.each([
+    { name: "Sell", type: ExchangeTypes.Sell },
+    { name: "Fund", type: ExchangeTypes.Fund },
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  ])("returns a base64 nonce when $name", async ({ name, type }) => {
+    // Given
+    const mockNonceResponse = "2ac38f187c2ac38f187c2ac38f187c7c"; // Response of length 10
+    const mockTransport = new MockTransport(
+      Buffer.concat([
+        Buffer.from(mockNonceResponse),
+        Buffer.from([0x90, 0x00]), // StatusCodes.OK
+      ]),
+    );
+    const transport = createTransportRecorder(mockTransport, recordStore);
+    const exchange = new Exchange(new transport(mockTransport), type);
+
+    // When
+    const result = await exchange.startNewTransaction();
+
+    // Then
+    const expectCommand = Buffer.from([
+      0xe0,
+      0x03, // Start Exchance
+      RateTypes.Fixed,
+      type,
+      0x00, // Data
+    ]).toString("hex");
+    const expectedNonce = btoa(mockNonceResponse);
+    expect(recordStore.queue[0][0]).toBe(expectCommand);
+    expect(result).toEqual(expectedNonce);
+  });
+
+  it.each([
+    { name: "Swap NG", type: ExchangeTypes.SwapNg },
+    { name: "Sell NG", type: ExchangeTypes.SellNg },
+    { name: "Fund NG", type: ExchangeTypes.FundNg },
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  ])("returns a 32 bytes nonce when $name", async ({ name, type }) => {
     // Given
     const mockNonceResponse = Buffer.from("2ac38f187c2ac38f187c2ac38f187c7c"); // Response of 32 bytes
     const mockTransport = new MockTransport(
@@ -209,7 +246,6 @@ describe("processTransaction", () => {
     const tx = Buffer.from(value, "hex");
     const fee = new BigNumber("10");
     // <ENC_TX_FORMAT><TX_LENGTH><TX><FEE_LENGTH><FEE>
-    console.log("LENGTH", value.length);
     const hexEncodedInfoExpected = "00" + "012c" + value + "01" + "0a";
 
     // When

@@ -18,6 +18,10 @@ on:
   schedule:
     - cron: "30 5 * * *"
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   portfolio:
     runs-on: [ledger-live-medium-linux]
@@ -39,8 +43,9 @@ jobs:
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
         with:
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
       - name: install and build
         run: |
           pnpm i --filter="live-cli..." --filter="ledger-live"

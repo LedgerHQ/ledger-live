@@ -1,7 +1,7 @@
 import { NavigatorScreenParams } from "@react-navigation/native";
 import { Device, DeviceModelId } from "@ledgerhq/types-devices";
 import { DeviceInfo } from "@ledgerhq/types-live";
-import { NavigatorName, ScreenName } from "../../../const";
+import { NavigatorName, ScreenName } from "~/const";
 import { OnboardingNavigatorParamList } from "./OnboardingNavigator";
 import { BuyDeviceNavigatorParamList } from "./BuyDeviceNavigator";
 import { ImportAccountsNavigatorParamList } from "./ImportAccountsNavigator";

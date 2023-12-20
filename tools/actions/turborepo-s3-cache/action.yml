@@ -14,10 +14,17 @@ inputs:
   aws-secret-key:
     description: "aws secret key"
     required: true
+  aws-session-token:
+    description: "generated session token"
+    required: true
   bucket-name:
     description: "aws bucket name"
     required: false
     default: "ll-gha-s3-cache"
+  region:
+    description: "aws bucket region"
+    required: false
+    default: "eu-west-1"
 outputs:
   port:
     description: "The port the local server runs on"

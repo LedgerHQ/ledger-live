@@ -25,7 +25,7 @@ const StepAmount = ({
   return (
     <Box flow={4}>
       <TrackPage
-        category="Stake NEAR"
+        category="Delegation Flow"
         name="Step Amount"
         flow="stake"
         action="staking"

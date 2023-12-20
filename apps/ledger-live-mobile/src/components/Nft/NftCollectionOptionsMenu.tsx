@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { Text, IconsLegacy, BoxedIcon, Button, Flex } from "@ledgerhq/native-ui";
 import { Account, ProtoNFT } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
-import { hideNftCollection } from "../../actions/settings";
+import { hideNftCollection } from "~/actions/settings";
 import QueuedDrawer from "../QueuedDrawer";
 
 type Props = {

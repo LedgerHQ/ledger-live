@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
-import Illustration from "../../images/illustration/Illustration";
+import Illustration from "~/images/illustration/Illustration";
 
 interface EmptyStateProps {
   illustrationSource: {

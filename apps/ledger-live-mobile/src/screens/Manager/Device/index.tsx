@@ -20,12 +20,12 @@ import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/manager/loc
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { lastSeenCustomImageSelector } from "../../../reducers/settings";
+import { lastSeenCustomImageSelector } from "~/reducers/settings";
 import DeviceAppStorage from "./DeviceAppStorage";
 
-import NanoS from "../../../images/devices/NanoS";
-import Stax from "../../../images/devices/Stax";
-import NanoX from "../../../images/devices/NanoX";
+import NanoS from "~/images/devices/NanoS";
+import Stax from "~/images/devices/Stax";
+import NanoX from "~/images/devices/NanoX";
 
 import DeviceName from "./DeviceName";
 import InstalledAppsModal from "../Modals/InstalledAppsModal";

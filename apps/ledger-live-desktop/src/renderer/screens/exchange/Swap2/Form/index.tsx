@@ -189,6 +189,7 @@ const SwapForm = () => {
   const generateMoonpayUrl = useCallback(
     ({ base = "", args = {} }: { base: string; args: { [key: string]: string | undefined } }) => {
       const moonpayURL = new URL(base || "");
+      moonpayURL.searchParams.append("ledgerlive", `${true}`);
       Object.entries(args).forEach(
         ([key, value]) =>
           // customFeeConfig is an object
@@ -226,7 +227,7 @@ const SwapForm = () => {
       exchangeRate?.providerURL && providerRedirectURLSearch.set("goToURL", moonpayURL.toString());
     } else {
       exchangeRate?.providerURL &&
-        providerRedirectURLSearch.set("goToURL", exchangeRate.providerURL || "");
+        providerRedirectURLSearch.set("customDappUrl", exchangeRate.providerURL || "");
     }
 
     providerRedirectURLSearch.set("returnTo", "/swap");
@@ -268,10 +269,15 @@ const SwapForm = () => {
           ? accountToWalletAPIAccount(account, parentAccount)?.id
           : fromAccountId;
 
-      const state = {
+      const state: {
+        returnTo: string;
+        accountId?: string;
+        goToURL?: string;
+        customDappUrl?: string;
+      } = {
         returnTo: "/swap",
         accountId,
-        goToURL: providerURL,
+        customDappUrl: providerURL,
       };
 
       if (provider === "moonpay") {
@@ -279,12 +285,12 @@ const SwapForm = () => {
           base: exchangeRate?.providerURL || "",
           args: getExchangeSDKParams(),
         });
+        state.customDappUrl = undefined;
         state.goToURL = moonpayURL.toString();
       }
 
       history.push({
         // This looks like an issue, the proper signature is: push(path, [state]) - (function) Pushes a new entry onto the history stack
-        // It seems possible to also pass a LocationDescriptorObject but it does not expect extra properties
         pathname,
         state,
       });
@@ -405,7 +411,7 @@ const SwapForm = () => {
   };
 
   useEffect(() => {
-    if (isSwapLiveAppEnabled) {
+    if (isSwapLiveAppEnabled.enabled) {
       const providerRedirectURLSearch = getProviderRedirectURLSearch();
       const { parentAccount: fromParentAccount } = swapTransaction.swap.from;
       const fromParentAccountId = fromParentAccount
@@ -426,7 +432,7 @@ const SwapForm = () => {
     }
   }, [
     provider,
-    isSwapLiveAppEnabled,
+    isSwapLiveAppEnabled.enabled,
     getExchangeSDKParams,
     getProviderRedirectURLSearch,
     swapTransaction.swap.from,
@@ -478,8 +484,11 @@ const SwapForm = () => {
         </>
       )}
 
-      {isSwapLiveAppEnabled ? (
-        <SwapWebView swapState={swapWebProps} />
+      {isSwapLiveAppEnabled.enabled ? (
+        <SwapWebView
+          swapState={swapWebProps}
+          liveAppUnavailable={isSwapLiveAppEnabled.onLiveAppCrashed}
+        />
       ) : (
         <Box>
           <Button primary disabled={!isSwapReady} onClick={onSubmit} data-test-id="exchange-button">

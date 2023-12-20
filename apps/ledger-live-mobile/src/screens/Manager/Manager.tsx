@@ -10,19 +10,19 @@ import isFirmwareUpdateVersionSupported from "@ledgerhq/live-common/hw/isFirmwar
 import useLatestFirmware from "@ledgerhq/live-common/hooks/useLatestFirmware";
 import { useApps } from "./shared";
 import AppsScreen from "./AppsScreen";
-import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
-import { TrackScreen } from "../../analytics";
+import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
+import { TrackScreen } from "~/analytics";
 import QuitManagerModal from "./Modals/QuitManagerModal";
 import StorageWarningModal from "./Modals/StorageWarningModal";
 import InstallAppDependenciesModal from "./Modals/InstallAppDependenciesModal";
 import UninstallAppDependenciesModal from "./Modals/UninstallAppDependenciesModal";
-import { useLockNavigation } from "../../components/RootNavigator/CustomBlockRouterNavigator";
-import { setHasInstalledAnyApp, setLastSeenDeviceInfo } from "../../actions/settings";
-import { ScreenName } from "../../const";
-import FirmwareUpdateScreen from "../../components/FirmwareUpdate";
-import { ManagerNavigatorStackParamList } from "../../components/RootNavigator/types/ManagerNavigator";
-import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { lastConnectedDeviceSelector } from "../../reducers/settings";
+import { useLockNavigation } from "~/components/RootNavigator/CustomBlockRouterNavigator";
+import { setHasInstalledAnyApp, setLastSeenDeviceInfo } from "~/actions/settings";
+import { ScreenName } from "~/const";
+import FirmwareUpdateScreen from "~/components/FirmwareUpdate";
+import { ManagerNavigatorStackParamList } from "~/components/RootNavigator/types/ManagerNavigator";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { lastConnectedDeviceSelector } from "~/reducers/settings";
 import { UpdateStep } from "../FirmwareUpdate";
 import {
   AppWithDependencies,

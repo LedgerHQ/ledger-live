@@ -2,8 +2,8 @@ import React, { useCallback } from "react";
 import { Linking } from "react-native";
 import { Trans } from "react-i18next";
 import { Flex, Text, Button, Link } from "@ledgerhq/native-ui";
-import useNpsRatings from "../../logic/npsRatings";
-import { track, TrackScreen } from "../../analytics";
+import useNpsRatings from "~/logic/npsRatings";
+import { track, TrackScreen } from "~/analytics";
 
 type Props = {
   closeModal: () => void;

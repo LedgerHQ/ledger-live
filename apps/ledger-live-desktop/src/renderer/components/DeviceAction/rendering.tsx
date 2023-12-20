@@ -52,6 +52,7 @@ import {
   BoxedIcon,
   ProgressLoader,
   InfiniteLoader,
+  IconsLegacy,
 } from "@ledgerhq/react-ui";
 import { LockAltMedium } from "@ledgerhq/react-ui/assets/icons";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
@@ -383,7 +384,7 @@ export const renderInstallingLanguage = ({ progress, t }: { progress: number; t:
             stroke={8}
             infinite={!progress}
             progress={progress * 100}
-            showPercentage={false}
+            showPercentage={true}
           />
         </Flex>
         <Title>{t("deviceLocalization.installingLanguage")}</Title>
@@ -456,7 +457,7 @@ export const renderAllowLanguageInstallation = ({
   >
     <DeviceBlocker />
     <AnimationWrapper>
-      <Animation animation={getDeviceAnimation(modelId, type, "verify")} />
+      <Animation animation={getDeviceAnimation(modelId, type, "allowManager")} />
     </AnimationWrapper>
     <Flex justifyContent="center" mt={2}>
       <Title>{t(`deviceLocalization.allowLanguageInstallation`)}</Title>
@@ -589,62 +590,57 @@ export const renderLockedDeviceError = ({
   );
 };
 
-export const RenderDeviceNotOnboardedError = ({
-  t,
-  device,
-}: {
-  t: TFunction;
-  device?: Device | null;
-}) => {
-  const productName = device ? getDeviceModel(device.modelId).productName : null;
-  const history = useHistory();
-  const { setDrawer } = useContext(context);
-  const dispatch = useDispatch();
+export const DeviceNotOnboardedError = withV3StyleProvider(
+  ({ t, device }: { t: TFunction; device?: Device | null }) => {
+    const productName = device ? getDeviceModel(device.modelId).productName : null;
+    const history = useHistory();
+    const { setDrawer } = useContext(context);
+    const dispatch = useDispatch();
 
-  const redirectToOnboarding = useCallback(() => {
-    setTrackingSource("device action open onboarding button");
-    dispatch(closeAllModal());
-    setDrawer(undefined);
-    history.push(device?.modelId === "stax" ? "/sync-onboarding/manual" : "/onboarding");
-  }, [device?.modelId, dispatch, history, setDrawer]);
+    const redirectToOnboarding = useCallback(() => {
+      setTrackingSource("device action open onboarding button");
+      dispatch(closeAllModal());
+      setDrawer(undefined);
+      history.push(device?.modelId === "stax" ? "/sync-onboarding/manual" : "/onboarding");
+    }, [device?.modelId, dispatch, history, setDrawer]);
 
-  return (
-    <Wrapper id="error-device-not-onboarded">
-      {device ? (
-        <Flex mb={5}>
-          <DeviceIllustration deviceId={device.modelId} />
-        </Flex>
-      ) : null}
-      <Text color="neutral.c100" fontSize={7} mb={2}>
-        {productName
-          ? t("errors.DeviceNotOnboardedError.titleWithProductName", {
-              productName,
-            })
-          : t("errors.DeviceNotOnboardedError.title")}
-      </Text>
-      <Text
-        variant="paragraph"
-        color="neutral.c80"
-        fontSize={6}
-        whiteSpace="pre-wrap"
-        textAlign="center"
-      >
-        {productName
-          ? t("errors.DeviceNotOnboardedError.descriptionWithProductName", {
-              productName,
-            })
-          : t("errors.DeviceNotOnboardedError.description")}
-      </Text>
-      <ButtonV3 variant="main" borderRadius="9999px" mt={5} onClick={redirectToOnboarding}>
-        {productName
-          ? t("errors.DeviceNotOnboardedError.goToOnboardingButtonWithProductName", {
-              productName,
-            })
-          : t("errors.DeviceNotOnboardedError.goToOnboardingButton")}
-      </ButtonV3>
-    </Wrapper>
-  );
-};
+    return (
+      <Wrapper id="error-device-not-onboarded">
+        {device ? (
+          <Flex mb={10}>
+            <DeviceIllustration size={120} deviceId={device.modelId} />
+          </Flex>
+        ) : null}
+        <Text color="neutral.c100" variant="h5Inter" fontWeight="semiBold" mb={6}>
+          {t("errors.DeviceNotOnboardedError.title")}
+        </Text>
+        <Text
+          variant="body"
+          fontWeight="medium"
+          color="neutral.c80"
+          whiteSpace="pre-wrap"
+          textAlign="center"
+        >
+          {t("errors.DeviceNotOnboardedError.description")}
+        </Text>
+        <ButtonV3
+          variant="main"
+          size="large"
+          borderRadius="9999px"
+          mt={10}
+          onClick={redirectToOnboarding}
+          Icon={IconsLegacy.ArrowRightMedium}
+        >
+          {productName
+            ? t("errors.DeviceNotOnboardedError.goToOnboardingButtonWithProductName", {
+                productName,
+              })
+            : t("errors.DeviceNotOnboardedError.goToOnboardingButton")}
+        </ButtonV3>
+      </Wrapper>
+    );
+  },
+);
 
 /** Renders an error icon, title and description */
 export const ErrorBody: React.FC<{
@@ -703,7 +699,7 @@ export const renderError = ({
   if (error instanceof LockedDeviceError) {
     return renderLockedDeviceError({ t, onRetry, device, inlineRetry });
   } else if (error instanceof DeviceNotOnboarded) {
-    return <RenderDeviceNotOnboardedError t={t} device={device} />;
+    return <DeviceNotOnboardedError t={t} device={device} />;
   }
 
   // if no supportLink is provided, we fallback on the related url linked to
@@ -1025,9 +1021,11 @@ export const renderSecureTransferDeviceConfirmation = ({
   type: Theme["theme"];
 }) => (
   <>
-    <Alert type="primary" learnMoreUrl={urls.swap.learnMore} horizontal={false}>
-      <Trans i18nKey={`DeviceAction.${exchangeType}.notice`} />
-    </Alert>
+    <Box flex={0}>
+      <Alert type="primary" learnMoreUrl={urls.swap.learnMore} horizontal={false}>
+        <Trans i18nKey={`DeviceAction.${exchangeType}.notice`} />
+      </Alert>
+    </Box>
     {renderVerifyUnwrapped({ modelId, type })}
     <Box alignItems={"center"}>
       <Text textAlign="center" fontWeight="semiBold" color="palette.text.shade100" fontSize={5}>
@@ -1064,40 +1062,6 @@ export const renderBootloaderStep = ({ onAutoRepair }: { onAutoRepair: () => voi
   </Wrapper>
 );
 
-const ImageLoadingGenericWithoutStyleProvider: React.FC<{
-  title: string;
-  children?: React.ReactNode | undefined;
-  top?: React.ReactNode | undefined;
-  bottom?: React.ReactNode | undefined;
-  pullDown?: boolean; // Nb hack to avoid jump in two line text.
-  testId?: string;
-}> = ({ title, top, bottom, children, pullDown, testId }) => {
-  return (
-    <Flex
-      flexDirection="column"
-      justifyContent="space-between"
-      alignItems="center"
-      flex={1}
-      alignSelf="stretch"
-      data-test-id={testId}
-    >
-      <Flex flex={1} flexDirection="column" alignItems={"center"}>
-        {top}
-      </Flex>
-      <Flex flexDirection={"column"} alignItems="center" alignSelf="stretch">
-        {children}
-        <Text mt={6} mb={pullDown ? "-24px" : undefined} variant="h5Inter" textAlign="center">
-          {title}
-        </Text>
-      </Flex>
-      <Flex flex={1} flexDirection="column" alignItems={"center"}>
-        {bottom}
-      </Flex>
-    </Flex>
-  );
-};
-const ImageLoadingGeneric = withV3StyleProvider(ImageLoadingGenericWithoutStyleProvider);
-
 export const renderImageLoadRequested = ({
   t,
   device,
@@ -1110,26 +1074,27 @@ export const renderImageLoadRequested = ({
   type: Theme["theme"];
 }) => {
   return (
-    <ImageLoadingGeneric
-      title={t(
-        restore
-          ? "customImage.steps.transfer.allowConfirmPreview"
-          : "customImage.steps.transfer.allowPreview",
-        {
-          productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
-        },
-      )}
-      testId="device-action-image-load-requested"
+    <Flex
+      flex={1}
+      flexDirection="column"
+      justifyContent="center"
+      alignItems="center"
+      data-test-id="device-action-image-load-requested"
     >
       <DeviceBlocker />
       <AnimationWrapper>
-        <FramedImage
-          background={
-            <Animation animation={getDeviceAnimation(device.modelId, type, "allowManager")} />
-          }
-        />
+        <Animation animation={getDeviceAnimation(device.modelId, type, "allowManager")} />
       </AnimationWrapper>
-    </ImageLoadingGeneric>
+      <Flex justifyContent="center" mt={2}>
+        <Title>
+          {t(
+            restore
+              ? "customImage.steps.transfer.allowConfirmPreview"
+              : "customImage.steps.transfer.allowPreview",
+          )}
+        </Title>
+      </Flex>
+    </Flex>
   );
 };
 
@@ -1145,21 +1110,29 @@ export const renderLoadingImage = ({
   source?: string | undefined;
 }) => {
   return (
-    <ImageLoadingGeneric
-      title={t(
-        progress && progress > 0.9
-          ? "customImage.steps.transfer.voila"
-          : "customImage.steps.transfer.loadingPicture",
-        {
-          productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
-        },
-      )}
-      testId={`device-action-image-loading-${progress}`}
+    <Flex
+      flex={1}
+      flexDirection="column"
+      justifyContent="center"
+      alignItems="center"
+      data-test-id={`device-action-image-loading-${progress}`}
     >
       <AnimationWrapper>
         <FramedImage source={source} loadingProgress={progress} />
       </AnimationWrapper>
-    </ImageLoadingGeneric>
+      <Flex justifyContent="center" mt={2}>
+        <Title>
+          {t(
+            progress && progress > 0.9
+              ? "customImage.steps.transfer.voila"
+              : "customImage.steps.transfer.loadingPicture",
+            {
+              productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
+            },
+          )}
+        </Title>
+      </Flex>
+    </Flex>
   );
 };
 
@@ -1177,17 +1150,12 @@ export const renderImageCommitRequested = ({
   type: Theme["theme"];
 }) => {
   return (
-    <ImageLoadingGeneric
-      pullDown={!restore}
-      title={t(
-        restore
-          ? "customImage.steps.transfer.confirmRestorePicture"
-          : "customImage.steps.transfer.confirmPicture",
-        {
-          productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
-        },
-      )}
-      testId="device-action-image-commit-requested"
+    <Flex
+      flex={1}
+      flexDirection="column"
+      justifyContent="center"
+      alignItems="center"
+      data-test-id="device-action-image-commit-requested"
     >
       <DeviceBlocker />
       <AnimationWrapper>
@@ -1198,6 +1166,18 @@ export const renderImageCommitRequested = ({
           }
         />
       </AnimationWrapper>
-    </ImageLoadingGeneric>
+      <Flex justifyContent="center" mt={2}>
+        <Title mb={!restore ? "-24px" : undefined}>
+          {t(
+            restore
+              ? "customImage.steps.transfer.confirmRestorePicture"
+              : "customImage.steps.transfer.confirmPicture",
+            {
+              productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
+            },
+          )}
+        </Title>
+      </Flex>
+    </Flex>
   );
 };

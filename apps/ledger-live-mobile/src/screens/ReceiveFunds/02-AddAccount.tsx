@@ -11,27 +11,27 @@ import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { makeEmptyTokenAccount } from "@ledgerhq/live-common/account/index";
-import { replaceAccounts } from "../../actions/accounts";
+import { replaceAccounts } from "~/actions/accounts";
 import logger from "../../logger";
-import { ScreenName } from "../../const";
-import { TrackScreen } from "../../analytics";
-import Button from "../../components/Button";
-import PreventNativeBack from "../../components/PreventNativeBack";
-import LText from "../../components/LText";
-import RetryButton from "../../components/RetryButton";
-import CancelButton from "../../components/CancelButton";
-import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
-import { prepareCurrency } from "../../bridge/cache";
-import AccountCard from "../../components/AccountCard";
-import { ReceiveFundsStackParamList } from "../../components/RootNavigator/types/ReceiveFundsNavigator";
+import { ScreenName } from "~/const";
+import { TrackScreen } from "~/analytics";
+import Button from "~/components/Button";
+import PreventNativeBack from "~/components/PreventNativeBack";
+import LText from "~/components/LText";
+import RetryButton from "~/components/RetryButton";
+import CancelButton from "~/components/CancelButton";
+import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
+import { prepareCurrency } from "~/bridge/cache";
+import AccountCard from "~/components/AccountCard";
+import { ReceiveFundsStackParamList } from "~/components/RootNavigator/types/ReceiveFundsNavigator";
 import {
   StackNavigatorNavigation,
   StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
-import { RootStackParamList } from "../../components/RootNavigator/types/RootNavigator";
-import Animation from "../../components/Animation";
+} from "~/components/RootNavigator/types/helpers";
+import { RootStackParamList } from "~/components/RootNavigator/types/RootNavigator";
+import Animation from "~/components/Animation";
 import lottie from "./assets/lottie.json";
-import GradientContainer from "../../components/GradientContainer";
+import GradientContainer from "~/components/GradientContainer";
 import { useTheme } from "styled-components/native";
 
 type Props = StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveAddAccount>;

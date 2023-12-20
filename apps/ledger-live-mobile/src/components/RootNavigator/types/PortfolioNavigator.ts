@@ -1,5 +1,5 @@
 import { NavigatorScreenParams } from "@react-navigation/native";
-import { NavigatorName } from "../../../const";
+import { NavigatorName } from "~/const";
 import { AccountsNavigatorParamList } from "./AccountsNavigator";
 
 export type PortfolioNavigatorStackParamList = {

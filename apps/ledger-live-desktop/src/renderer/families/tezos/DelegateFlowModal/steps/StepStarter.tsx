@@ -31,11 +31,13 @@ const StepStarter = ({ transitionTo, t, openedWithAccount, eventType }: StepProp
   return (
     <Box flow={4} mx={4}>
       <TrackPage
-        category={`Delegation Flow${eventType ? ` (${eventType})` : ""}`}
+        category={`Delegation Flow`}
         name="Step Starter"
         flow="stake"
         action="delegation"
         currency="xtz"
+        page={`Step Starter ${eventType ? `(${eventType})` : ""}`}
+        type="modal"
       />
       <Box flow={1} alignItems="center">
         <Box mb={4}>

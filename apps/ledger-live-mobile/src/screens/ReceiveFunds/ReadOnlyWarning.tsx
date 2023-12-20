@@ -2,10 +2,10 @@ import React, { memo } from "react";
 import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
-import TrackScreen from "../../analytics/TrackScreen";
-import LText from "../../components/LText";
-import Button from "../../components/Button";
-import AlertTriangle from "../../icons/AlertTriangle";
+import TrackScreen from "~/analytics/TrackScreen";
+import LText from "~/components/LText";
+import Button from "~/components/Button";
+import AlertTriangle from "~/icons/AlertTriangle";
 
 type Props = {
   continue: () => void;

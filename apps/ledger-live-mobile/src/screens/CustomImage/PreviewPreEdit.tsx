@@ -19,29 +19,29 @@ import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types
 import { NFTMetadata } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/types-devices";
 
-import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { CustomImageNavigatorParamList } from "../../components/RootNavigator/types/CustomImageNavigator";
-import { NavigatorName, ScreenName } from "../../const";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { CustomImageNavigatorParamList } from "~/components/RootNavigator/types/CustomImageNavigator";
+import { NavigatorName, ScreenName } from "~/const";
 import {
   downloadImageToFile,
   extractImageUrlFromNftMetadata,
   importImageFromPhoneGallery,
-} from "../../components/CustomImage/imageUtils";
-import { ImageFileUri } from "../../components/CustomImage/types";
+} from "~/components/CustomImage/imageUtils";
+import { ImageFileUri } from "~/components/CustomImage/types";
 import { targetDisplayDimensions } from "./shared";
-import StaxFramedImage, { previewConfig } from "../../components/CustomImage/StaxFramedImage";
+import StaxFramedImage, { previewConfig } from "~/components/CustomImage/StaxFramedImage";
 import ImageProcessor, {
   Props as ImageProcessorProps,
   ProcessorPreviewResult,
   ProcessorRawResult,
-} from "../../components/CustomImage/ImageProcessor";
+} from "~/components/CustomImage/ImageProcessor";
 import useCenteredImage, {
   Params as ImageCentererParams,
   CenteredResult,
-} from "../../components/CustomImage/useCenteredImage";
-import Button from "../../components/wrappedUi/Button";
-import { TrackScreen } from "../../analytics";
-import Link from "../../components/wrappedUi/Link";
+} from "~/components/CustomImage/useCenteredImage";
+import Button from "~/components/wrappedUi/Button";
+import { TrackScreen } from "~/analytics";
+import Link from "~/components/wrappedUi/Link";
 
 const DEFAULT_CONTRAST = 1;
 

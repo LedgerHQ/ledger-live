@@ -6,25 +6,25 @@ import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { RefreshMedium } from "@ledgerhq/native-ui/assets/icons";
-import SafeAreaView from "../../components/SafeAreaView";
+import SafeAreaView from "~/components/SafeAreaView";
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import { useTranslation } from "react-i18next";
 import { useGlobalSyncState } from "@ledgerhq/live-common/bridge/react/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
-import { useRefreshAccountsOrdering } from "../../actions/general";
-import { accountsSelector, isUpToDateSelector } from "../../reducers/accounts";
-import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
-import TrackScreen from "../../analytics/TrackScreen";
+import { useRefreshAccountsOrdering } from "~/actions/general";
+import { accountsSelector, isUpToDateSelector } from "~/reducers/accounts";
+import globalSyncRefreshControl from "~/components/globalSyncRefreshControl";
+import TrackScreen from "~/analytics/TrackScreen";
 
 import AccountRow from "./AccountRow";
 import TokenContextualModal from "../Settings/Accounts/TokenContextualModal";
-import { ScreenName } from "../../const";
-import { withDiscreetMode } from "../../context/DiscreetModeContext";
+import { ScreenName } from "~/const";
+import { withDiscreetMode } from "~/context/DiscreetModeContext";
 
-import Spinning from "../../components/Spinning";
+import Spinning from "~/components/Spinning";
 import AccountsNavigationHeader from "./AccountsNavigationHeader";
-import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { AccountsNavigatorParamList } from "../../components/RootNavigator/types/AccountsNavigator";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
 
 const List = globalSyncRefreshControl(FlatList as React.ComponentType<FlatListProps<AccountLike>>);
 

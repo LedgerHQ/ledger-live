@@ -7,9 +7,9 @@ import { useNavigation } from "@react-navigation/core";
 import React, { memo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
-import LText from "../../../components/LText";
-import Link from "../../../components/wrappedUi/Link";
-import { NavigatorName, ScreenName } from "../../../const";
+import LText from "~/components/LText";
+import Link from "~/components/wrappedUi/Link";
+import { NavigatorName, ScreenName } from "~/const";
 
 type EditOperationPanelProps = {
   isOperationStuck: boolean;

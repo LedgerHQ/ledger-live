@@ -15,7 +15,7 @@ import {
   InfoMedium,
   WarningMedium,
 } from "@ledgerhq/native-ui/assets/icons";
-import getWindowDimensions from "../../../logic/getWindowDimensions";
+import getWindowDimensions from "~/logic/getWindowDimensions";
 
 const { width } = getWindowDimensions();
 

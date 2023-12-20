@@ -1,11 +1,14 @@
-**[We are hiring, join us! 👨‍💻👩‍💻](https://jobs.lever.co/ledger/?department=Engineering)**
+**[We are hiring, join us! 👨‍💻👩‍💻](https://jobs.lever.co/ledger/?department=Tech)**
 
 # Ledger Live (desktop)
 
 - Related: [ledger-live-mobile](https://github.com/LedgerHQ/ledger-live/tree/develop/apps/ledger-live-mobile)
 - Backed by: [ledger-live-common](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledger-live-common)
 
-> Ledger Live is a new generation wallet desktop application providing a unique interface to maintain multiple cryptocurrencies for your Ledger Nano S / Blue. Manage your device, create accounts, receive and send cryptoassets, [...and many more](https://www.ledger.com/ledger-launches-ledger-live-the-all-in-one-companion-app-to-your-ledger-device).
+> Ledger Live is a desktop companion app for Ledger hardware wallets. It allows users to manage their crypto assets securely, such as Bitcoin, Ethereum, XRP and many others. Ledger Live desktop is available for Mac, Windows (x64) and Linux (x64). It can be downloaded from [ledger.com/ledger-live](https://www.ledger.com/ledger-live/).
+
+Minimum system requirements can be found on [Ledger Support website](https://support.ledger.com/hc/en-us/articles/4403310017041-Ledger-Live-system-requirements-?docs=true).
+
 
 <a href="https://github.com/LedgerHQ/ledger-live-desktop/releases">
   <p align="center">
@@ -15,23 +18,13 @@
 
 ## Architecture
 
-Ledger Live desktop is an hybrid application built using Electron, React, Redux, RxJS. It is compatible with macOS 10.10+, Windows 8+ (x64) and Linux (x64). It communicates to Ledger hardware wallet devices (Nano X / Nano S / Blue) to verify address and sign transactions with [ledgerjs](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs). Some logic is shared with [live-common](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledger-live-common).
+Ledger Live desktop is an hybrid application built using Electron, React, Redux, RxJS. It communicates with [Ledger hardware wallet devices](https://shop.ledger.com/pages/hardware-wallets-comparison) to manage installed applications, update the device firmware, verify public addresses and sign transactions with [ledgerjs](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs).
 
-## Download
-
-The latest stable release is available on [ledger.com/ledger-live](https://www.ledger.com/ledger-live/).
-
-Previous versions and pre-releases can be downloaded on here from the [Releases](https://github.com/LedgerHQ/ledger-live/releases) section.
-
-### Compatibility
-
-- macOS 10.14+
-- Windows 8.1+ (x64)
-- Linux (x64)
+We also share core business logic with Ledger Live mobile through [@ledgerhq/live-common](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledger-live-common) package.
 
 ## Signed hashes
 
-Ledger Live releases are signed. The automatic update mechanism makes use of the signature to verify that each subsequent update is authentic. Instructions for verifying the hash and signatures of the installation packages are available [on this page](https://ledger-live-tools.now.sh/lld-signatures), which will be integrated into the [official download page](https://www.ledger.com/ledger-live/download).
+Ledger Live releases are signed. The automatic update mechanism makes use of the signature to verify that each subsequent update is authentic. Instructions for verifying the hash and signatures of the installation packages are available on [Ledger Live tools website](https://live.ledger.tools/lld-signatures), which will be integrated into the [official download page](https://www.ledger.com/ledger-live).
 
 # Development
 
@@ -81,35 +74,11 @@ pnpm build:lld
 
 If you are using [Visual Studio Code](https://code.visualstudio.com/) IDE, we provide a [default debug configuration](https://github.com/LedgerHQ/ledger-live/tree/develop/.vscode/launch.json) that you can use to debug the main and renderer processes of the application.
 
-```json
-{
-  "version": "0.2.0",
-  "configurations": [
-    {
-      // Start live desktop with:
-      //ELECTRON_ARGS=--remote-debugging-port=8315 pnpm dev:lld
-      "name": "Attach Electron Renderer",
-      "type": "chrome",
-      "request": "attach",
-      "port": 8315
-    },
-    {
-      // Start live desktop with:
-      //LEDGER_INTERNAL_ARGS=--inspect pnpm dev:lld
-      "name": "Attach Electron Main",
-      "type": "node",
-      "request": "attach",
-      "skipFiles": ["<node_internals>/**"]
-    }
-  ]
-}
-```
-
 ### Tips
 
 - #### **Can't find Node.js binary "pnpm": path does not exist. Make sure Node.js is installed and in your PATH, or set the "runtimeExecutable" in your launch.json\***
 
-  Add your terminal PATH as enviroment variable.
+  Add your terminal PATH as environment variable.
 
   ```json
     "env": {
@@ -118,7 +87,7 @@ If you are using [Visual Studio Code](https://code.visualstudio.com/) IDE, we pr
     }
   ```
 
-  To get the PATH run in your terminal
+  To get the PATH, run in your terminal
 
   ```bash
   echo $PATH
@@ -144,7 +113,7 @@ NO_DEBUG_DEVICE=1
 NO_DEBUG_COUNTERVALUES=1
 ```
 
-other envs can be seen in [libs/src/env.ts](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/env/src/env.ts)
+Other environment variables can be found in [libs/src/env.ts](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/env/src/env.ts)
 
 ### Run tests
 
@@ -184,17 +153,16 @@ src
 │   ├── fonts
 │   ├── hooks
 │   ├── i18n : all translation files
-│   ├── index.html : html point point
+|   ├── logger : internal logging library. Can be exported through the "save logs" feature.
+│   ├── index.html : html entry point
 │   ├── index.ts : js entry point
-│   ├── init.js : initialize the rendering
-│   ├── live-common-setup.js : set up live-common for renderer specific parts
+│   ├── init.tsx : initialize rendering
+│   ├── live-common-setup.ts : set up live-common for renderer specific parts
 │   └── ... other files related to renderer
-├── config : constants files. DEPRECATED. will be moved to live-common.
-├── helpers : helpers. DEPRECATED. will be moved to live-common or in relevant places.
-├── live-common-set-supported-currencies.js : generic set up of supported coins
-├── live-common-setup.js : generic set up of live-common
-├── logger : internal logging library. used by all thread. produces the "export logs".
-├── network.js : network implementation. will eventually move back to live-common.
+├── config : constants files. DEPRECATED. Will be moved to live-common.
+├── helpers : helpers. DEPRECATED. Will be moved to live-common or in relevant places.
+├── live-common-set-supported-currencies.ts : generic set up of supported coins
+├── live-common-setup-base.ts : generic set up of live-common
 └── sentry : related to bug report API
 ```
 

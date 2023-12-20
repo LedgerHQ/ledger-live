@@ -1,23 +1,24 @@
 {
   "name": "dummy-wallet-app",
-  "version": "0.1.28",
+  "version": "0.1.29",
   "private": true,
   "dependencies": {
     "@ledgerhq/hw-app-eth": "workspace:*",
     "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/live-common": "workspace:*",
-    "@ledgerhq/wallet-api-client": "^1.3.0",
-    "@ledgerhq/wallet-api-client-react": "^1.1.3",
-    "@ledgerhq/wallet-api-simulator": "^1.1.2",
+    "@ledgerhq/wallet-api-client": "^1.5.0",
+    "@ledgerhq/wallet-api-client-react": "^1.3.0",
+    "@ledgerhq/wallet-api-simulator": "^1.1.4",
     "bignumber.js": "^9.1.2",
     "buffer": "^6.0.3",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-scripts": "5.0.1"
+    "react-dom": "^18.2.0"
   },
   "scripts": {
-    "start": "cross-env DISABLE_ESLINT_PLUGIN=true react-scripts start",
-    "build": "cross-env DISABLE_ESLINT_PLUGIN=true react-scripts build"
+    "start": "vite",
+    "build": "tsc && vite build",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
   },
   "browserslist": {
     "production": [
@@ -36,6 +37,13 @@
     "@types/node": "^20.8.10",
     "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.13",
-    "cross-env": "^7.0.3"
+    "@typescript-eslint/eslint-plugin": "^6.14.0",
+    "@typescript-eslint/parser": "^6.14.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "eslint": "^8.55.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.5",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.8"
   }
 }

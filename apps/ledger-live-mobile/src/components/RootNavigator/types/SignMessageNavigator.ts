@@ -1,7 +1,7 @@
 import { AnyMessage } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { Device } from "@ledgerhq/types-devices";
-import { ScreenName } from "../../../const";
+import { ScreenName } from "~/const";
 
 export type CommonParams = {
   accountId: string;

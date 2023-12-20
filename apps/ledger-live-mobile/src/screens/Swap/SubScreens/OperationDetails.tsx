@@ -12,15 +12,15 @@ import {
   getAccountCurrency,
 } from "@ledgerhq/live-common/account/helpers";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
-import { flattenAccountsSelector } from "../../../reducers/accounts";
-import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
-import LText from "../../../components/LText";
-import SectionSeparator from "../../../components/SectionSeparator";
-import TooltipLabel from "../../../components/TooltipLabel";
-import CurrencyIcon from "../../../components/CurrencyIcon";
-import { urls } from "@utils/urls";
-import ExternalLink from "../../../icons/ExternalLink";
-import FormatDate from "../../../components/DateFormat/FormatDate";
+import { flattenAccountsSelector } from "~/reducers/accounts";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import LText from "~/components/LText";
+import SectionSeparator from "~/components/SectionSeparator";
+import TooltipLabel from "~/components/TooltipLabel";
+import CurrencyIcon from "~/components/CurrencyIcon";
+import { urls } from "~/utils/urls";
+import ExternalLink from "~/icons/ExternalLink";
+import FormatDate from "~/components/DateFormat/FormatDate";
 import { SwapStatusIndicator, getStatusColor } from "../SwapStatusIndicator";
 import Footer from "../../OperationDetails/Footer";
 import { OperationDetailsParamList } from "../types";

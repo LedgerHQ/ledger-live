@@ -22,6 +22,8 @@ import { CompleteExchangeRequestEvent } from "@ledgerhq/live-common/exchange/pla
 import { RemoveImageEvent } from "@ledgerhq/live-common/hw/staxRemoveImage";
 import { RenameDeviceEvent } from "@ledgerhq/live-common/hw/renameDevice";
 import { LaunchArguments } from "react-native-launch-arguments";
+import { DeviceEventEmitter } from "react-native";
+import { DeviceUSB } from "../models/devices";
 
 export type MockDeviceEvent =
   | ConnectAppEvent
@@ -72,6 +74,7 @@ export type MessageData =
       payload: MockDeviceEvent[];
     }
   | { type: "acceptTerms" }
+  | { type: "addUSB"; payload: DeviceUSB }
   | { type: "navigate"; payload: string }
   | { type: "importSettings"; payload: Partial<SettingsState> }
   | {
@@ -149,6 +152,8 @@ function onMessage(event: WebSocketMessageEvent) {
     case "navigate":
       navigate(msg.payload, {});
       break;
+    case "addUSB":
+      DeviceEventEmitter.emit("onDeviceConnect", msg.payload);
     default:
       break;
   }

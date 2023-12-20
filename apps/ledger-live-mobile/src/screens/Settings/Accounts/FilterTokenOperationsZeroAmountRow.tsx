@@ -3,9 +3,9 @@ import { Trans } from "react-i18next";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { Switch } from "@ledgerhq/native-ui";
-import { setFilterTokenOperationsZeroAmount } from "../../../actions/settings";
-import SettingsRow from "../../../components/SettingsRow";
-import withEnv from "../../../logic/withEnv";
+import { setFilterTokenOperationsZeroAmount } from "~/actions/settings";
+import SettingsRow from "~/components/SettingsRow";
+import withEnv from "~/logic/withEnv";
 
 type Props = {
   filterTokenOperationsZeroAmountEnabled: boolean;
