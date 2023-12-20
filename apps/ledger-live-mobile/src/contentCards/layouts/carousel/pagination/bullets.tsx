@@ -2,7 +2,6 @@ import React from "react";
 import Animated, { FadeOut, Layout, useAnimatedStyle, withSpring } from "react-native-reanimated";
 import { useTheme } from "styled-components/native";
 import { ItemStatus } from "./types";
-import { ImageStyle, TextStyle, ViewStyle } from "react-native";
 
 const useBulletStyles = () => {
   const { colors } = useTheme();
