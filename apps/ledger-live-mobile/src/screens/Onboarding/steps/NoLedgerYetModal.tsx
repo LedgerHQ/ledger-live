@@ -90,7 +90,13 @@ export function NoLedgerYetModal({ onClose, isOpen }: Props) {
         </Text>
       </Flex>
       <Flex mx={16} flexDirection={"row"} mt={8}>
-        <Button onPress={buyLedger} type="main" size={"large"} flex={1}>
+        <Button
+          onPress={buyLedger}
+          type="main"
+          size={"large"}
+          flex={1}
+          testID="onboarding-noLedgerYetModal-buy"
+        >
           {t("onboarding.postWelcomeStep.noLedgerYetModal.buy")}
         </Button>
       </Flex>

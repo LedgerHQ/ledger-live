@@ -52,6 +52,7 @@ import {
   BoxedIcon,
   ProgressLoader,
   InfiniteLoader,
+  IconsLegacy,
 } from "@ledgerhq/react-ui";
 import { LockAltMedium } from "@ledgerhq/react-ui/assets/icons";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
@@ -589,62 +590,57 @@ export const renderLockedDeviceError = ({
   );
 };
 
-export const RenderDeviceNotOnboardedError = ({
-  t,
-  device,
-}: {
-  t: TFunction;
-  device?: Device | null;
-}) => {
-  const productName = device ? getDeviceModel(device.modelId).productName : null;
-  const history = useHistory();
-  const { setDrawer } = useContext(context);
-  const dispatch = useDispatch();
+export const DeviceNotOnboardedError = withV3StyleProvider(
+  ({ t, device }: { t: TFunction; device?: Device | null }) => {
+    const productName = device ? getDeviceModel(device.modelId).productName : null;
+    const history = useHistory();
+    const { setDrawer } = useContext(context);
+    const dispatch = useDispatch();
 
-  const redirectToOnboarding = useCallback(() => {
-    setTrackingSource("device action open onboarding button");
-    dispatch(closeAllModal());
-    setDrawer(undefined);
-    history.push(device?.modelId === "stax" ? "/sync-onboarding/manual" : "/onboarding");
-  }, [device?.modelId, dispatch, history, setDrawer]);
+    const redirectToOnboarding = useCallback(() => {
+      setTrackingSource("device action open onboarding button");
+      dispatch(closeAllModal());
+      setDrawer(undefined);
+      history.push(device?.modelId === "stax" ? "/sync-onboarding/manual" : "/onboarding");
+    }, [device?.modelId, dispatch, history, setDrawer]);
 
-  return (
-    <Wrapper id="error-device-not-onboarded">
-      {device ? (
-        <Flex mb={5}>
-          <DeviceIllustration deviceId={device.modelId} />
-        </Flex>
-      ) : null}
-      <Text color="neutral.c100" fontSize={7} mb={2}>
-        {productName
-          ? t("errors.DeviceNotOnboardedError.titleWithProductName", {
-              productName,
-            })
-          : t("errors.DeviceNotOnboardedError.title")}
-      </Text>
-      <Text
-        variant="paragraph"
-        color="neutral.c80"
-        fontSize={6}
-        whiteSpace="pre-wrap"
-        textAlign="center"
-      >
-        {productName
-          ? t("errors.DeviceNotOnboardedError.descriptionWithProductName", {
-              productName,
-            })
-          : t("errors.DeviceNotOnboardedError.description")}
-      </Text>
-      <ButtonV3 variant="main" borderRadius="9999px" mt={5} onClick={redirectToOnboarding}>
-        {productName
-          ? t("errors.DeviceNotOnboardedError.goToOnboardingButtonWithProductName", {
-              productName,
-            })
-          : t("errors.DeviceNotOnboardedError.goToOnboardingButton")}
-      </ButtonV3>
-    </Wrapper>
-  );
-};
+    return (
+      <Wrapper id="error-device-not-onboarded">
+        {device ? (
+          <Flex mb={10}>
+            <DeviceIllustration size={120} deviceId={device.modelId} />
+          </Flex>
+        ) : null}
+        <Text color="neutral.c100" variant="h5Inter" fontWeight="semiBold" mb={6}>
+          {t("errors.DeviceNotOnboardedError.title")}
+        </Text>
+        <Text
+          variant="body"
+          fontWeight="medium"
+          color="neutral.c80"
+          whiteSpace="pre-wrap"
+          textAlign="center"
+        >
+          {t("errors.DeviceNotOnboardedError.description")}
+        </Text>
+        <ButtonV3
+          variant="main"
+          size="large"
+          borderRadius="9999px"
+          mt={10}
+          onClick={redirectToOnboarding}
+          Icon={IconsLegacy.ArrowRightMedium}
+        >
+          {productName
+            ? t("errors.DeviceNotOnboardedError.goToOnboardingButtonWithProductName", {
+                productName,
+              })
+            : t("errors.DeviceNotOnboardedError.goToOnboardingButton")}
+        </ButtonV3>
+      </Wrapper>
+    );
+  },
+);
 
 /** Renders an error icon, title and description */
 export const ErrorBody: React.FC<{
@@ -703,7 +699,7 @@ export const renderError = ({
   if (error instanceof LockedDeviceError) {
     return renderLockedDeviceError({ t, onRetry, device, inlineRetry });
   } else if (error instanceof DeviceNotOnboarded) {
-    return <RenderDeviceNotOnboardedError t={t} device={device} />;
+    return <DeviceNotOnboardedError t={t} device={device} />;
   }
 
   // if no supportLink is provided, we fallback on the related url linked to
@@ -1025,9 +1021,11 @@ export const renderSecureTransferDeviceConfirmation = ({
   type: Theme["theme"];
 }) => (
   <>
-    <Alert type="primary" learnMoreUrl={urls.swap.learnMore} horizontal={false}>
-      <Trans i18nKey={`DeviceAction.${exchangeType}.notice`} />
-    </Alert>
+    <Box flex={0}>
+      <Alert type="primary" learnMoreUrl={urls.swap.learnMore} horizontal={false}>
+        <Trans i18nKey={`DeviceAction.${exchangeType}.notice`} />
+      </Alert>
+    </Box>
     {renderVerifyUnwrapped({ modelId, type })}
     <Box alignItems={"center"}>
       <Text textAlign="center" fontWeight="semiBold" color="palette.text.shade100" fontSize={5}>

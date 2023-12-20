@@ -27,7 +27,7 @@ const BigCurrencyRow = ({ currency, iconSize = 48, onPress, subTitle }: Props) =
   }, [onPress, currency]);
 
   return (
-    <RowContainer onPress={onPressAction} testID={"big-currency-row-" + currency.id}>
+    <RowContainer onPress={onPressAction} testID={`big-currency-row-${currency.id}`}>
       <CircleCurrencyIcon size={iconSize} sizeRatio={0.7} currency={currency} />
       <Flex flex={1} justifyContent="center" alignItems="flex-start" ml={6}>
         <Text
@@ -35,7 +35,7 @@ const BigCurrencyRow = ({ currency, iconSize = 48, onPress, subTitle }: Props) =
           fontWeight="semiBold"
           numberOfLines={1}
           color="neutral.c100"
-          testID={"currency-row-" + currency.name}
+          testID={`big-currency-name-${currency.name}`}
         >
           {currency.name}
         </Text>
@@ -46,7 +46,7 @@ const BigCurrencyRow = ({ currency, iconSize = 48, onPress, subTitle }: Props) =
             numberOfLines={1}
             color="neutral.c70"
             mt={2}
-            testID={"subtitle-row-" + subTitle}
+            testID={`big-currency-subtitle-${subTitle}`}
           >
             {subTitle}
           </Text>
