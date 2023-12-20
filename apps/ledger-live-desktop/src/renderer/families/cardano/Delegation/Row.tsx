@@ -48,6 +48,7 @@ const Row = ({ account, delegation }: Props) => {
       ? delegation.ticker + " - " + delegation.name
       : shortAddressPreview(delegation.poolId);
   }
+  const totalStaked = account.balance.plus(delegation.rewards);
   return (
     <Wrapper>
       <Value>
@@ -58,7 +59,7 @@ const Row = ({ account, delegation }: Props) => {
       <Value>
         <FormattedVal
           ff="Inter|SemiBold"
-          val={account.balance}
+          val={totalStaked}
           unit={unit}
           showCode
           fontSize={3}

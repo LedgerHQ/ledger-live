@@ -205,7 +205,7 @@ export type SignerContext = (
   fn: (signer: Ada) => Promise<ExtendedPublicKey>,
 ) => Promise<ExtendedPublicKey>;
 
-export const makeGetAccountShape =
+const makeGetAccountShape =
   (signerContext: SignerContext): GetAccountShape =>
   async (info, { blacklistedTokenIds }) => {
     const {
@@ -295,7 +295,7 @@ export const makeGetAccountShape =
     );
 
     const utxos = prepareUtxos(newTransactions, stableUtxos, accountCredentialsMap);
-    const utxosSum = utxos.reduce((total, u) => total.plus(u.amount), new BigNumber(0));
+    let accountBalance = utxos.reduce((total, u) => total.plus(u.amount), new BigNumber(0));
     const tokenBalance = mergeTokens(utxos.map(u => u.tokens).flat());
     const subAccounts = buildSubAccounts({
       initialAccount,
@@ -320,8 +320,9 @@ export const makeGetAccountShape =
       }));
     const cardanoNetworkInfo = await getNetworkInfo(initialAccount as CardanoAccount, currency);
     const delegationInfo = await getDelegationInfo(currency, stakeCredential.key);
-
-    const totalBalance = delegationInfo?.rewards ? utxosSum.plus(delegationInfo.rewards) : utxosSum;
+    if (delegationInfo?.rewards) {
+      accountBalance = accountBalance.plus(delegationInfo.rewards);
+    }
 
     const minAdaBalanceForTokens = tokenBalance.length
       ? calculateMinUtxoAmount(
@@ -348,8 +349,8 @@ export const makeGetAccountShape =
     return {
       id: accountId,
       xpub,
-      balance: totalBalance,
-      spendableBalance: utxosSum.minus(minAdaBalanceForTokens),
+      balance: accountBalance,
+      spendableBalance: accountBalance.minus(minAdaBalanceForTokens),
       operations: operations,
       syncHash,
       subAccounts,
