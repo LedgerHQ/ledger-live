@@ -6,12 +6,16 @@ import styled from "styled-components";
 export const ErrorTitle = styled(Text)`
   color: ${p => p.theme.colors.neutral.c100};
   text-align: center;
+  max-width: 400px;
+  user-select: text;
 `;
 
 export const ErrorDescription = styled(Text)`
   color: ${p => p.theme.colors.neutral.c80};
   white-space: pre-wrap;
   text-align: center;
+  max-width: 400px;
+  user-select: text;
 `;
 
 /** Renders an error icon, title and description */
@@ -49,7 +53,7 @@ export const ErrorBody: React.FC<{
       ) : null}
       {list ? <ErrorDescription>{list}</ErrorDescription> : null}
       {buttons ? (
-        <Flex flexGrow={0} alignSelf="center" mt={10} flexDirection="row" columnGap={6}>
+        <Flex alignSelf="center" mt={10} flexDirection="row" columnGap={6}>
           {buttons}
         </Flex>
       ) : null}
