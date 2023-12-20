@@ -1,5 +1,17 @@
 # live-mobile
 
+## 3.37.0-nightly.3
+
+### Patch Changes
+
+- [#5761](https://github.com/LedgerHQ/ledger-live/pull/5761) [`5af473e`](https://github.com/LedgerHQ/ledger-live/commit/5af473ea77df7aa56bf74d3438e3f70c019aeaef) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - fix account wallet parameter not passed to dapp
+
+- [#5772](https://github.com/LedgerHQ/ledger-live/pull/5772) [`14653ef`](https://github.com/LedgerHQ/ledger-live/commit/14653ef4ea7d216c24d98a22373a719371c9f8e6) Thanks [@gre](https://github.com/gre)! - Fixes Android limits of 2MB per sqlite window cursor silently crashing for many users.
+
+- Updated dependencies [[`e494a2b`](https://github.com/LedgerHQ/ledger-live/commit/e494a2b984fb0406fe9225bb4eccde3d9585efe1)]:
+  - @ledgerhq/coin-evm@0.12.0-nightly.1
+  - @ledgerhq/live-common@33.4.0-nightly.3
+
 ## 3.37.0-nightly.2
 
 ### Patch Changes

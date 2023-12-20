@@ -1,5 +1,11 @@
 # @ledgerhq/coin-evm
 
+## 0.12.0-nightly.1
+
+### Patch Changes
+
+- [#5743](https://github.com/LedgerHQ/ledger-live/pull/5743) [`e494a2b`](https://github.com/LedgerHQ/ledger-live/commit/e494a2b984fb0406fe9225bb4eccde3d9585efe1) Thanks [@chabroA](https://github.com/chabroA)! - remove unreachable statement
+
 ## 0.12.0-nightly.0
 
 ### Minor Changes

@@ -1,5 +1,17 @@
 # ledger-live-desktop
 
+## 2.74.0-nightly.3
+
+### Patch Changes
+
+- [#5761](https://github.com/LedgerHQ/ledger-live/pull/5761) [`5af473e`](https://github.com/LedgerHQ/ledger-live/commit/5af473ea77df7aa56bf74d3438e3f70c019aeaef) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - fix account wallet parameter not passed to dapp
+
+- [#5774](https://github.com/LedgerHQ/ledger-live/pull/5774) [`6373b5d`](https://github.com/LedgerHQ/ledger-live/commit/6373b5db7eedd8185758716eec8a18d3a3762dcd) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Pixel polish of the "device not onboarded" device action state
+
+- Updated dependencies [[`e494a2b`](https://github.com/LedgerHQ/ledger-live/commit/e494a2b984fb0406fe9225bb4eccde3d9585efe1)]:
+  - @ledgerhq/coin-evm@0.12.0-nightly.1
+  - @ledgerhq/live-common@33.4.0-nightly.3
+
 ## 2.74.0-nightly.2
 
 ### Patch Changes
