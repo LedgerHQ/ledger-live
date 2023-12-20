@@ -601,6 +601,37 @@ export const DeviceNotOnboardedErrorComponent = withV3StyleProvider(
   },
 );
 
+const FirmwareNotRecognizedErrorComponent: React.FC<{ onRetry?: () => void }> = ({ onRetry }) => {
+  const { t } = useTranslation();
+  const history = useHistory();
+  const goToExperimentalSettings = () => {
+    setDrawer();
+    history.push("/settings/experimental");
+  };
+  return (
+    <Wrapper>
+      <ErrorBody
+        Icon={IconsLegacy.InfoAltFillMedium}
+        iconColor="primary.c80"
+        title={t("errors.FirmwareNotRecognized.title")}
+        description={t("errors.FirmwareNotRecognized.description")}
+        buttons={
+          <>
+            <ButtonV3 size="large" variant="main" onClick={goToExperimentalSettings}>
+              {t("errors.FirmwareNotRecognized.goToSettingsCTA")}
+            </ButtonV3>
+            {onRetry ? (
+              <ButtonV3 size="large" variant="shade" onClick={onRetry}>
+                {t("common.retry")}
+              </ButtonV3>
+            ) : null}
+          </>
+        }
+      />
+    </Wrapper>
+  );
+};
+
 export const DeviceActionErrorComponent = ({
   error,
   withOpenManager,
@@ -645,6 +676,8 @@ export const DeviceActionErrorComponent = ({
     );
   } else if (error instanceof DeviceNotOnboarded) {
     return <DeviceNotOnboardedErrorComponent t={t} device={device} />;
+  } else if (error instanceof FirmwareNotRecognized) {
+    return <FirmwareNotRecognizedErrorComponent onRetry={onRetry} inlineRetry={inlineRetry} />;
   }
 
   // if no supportLink is provided, we fallback on the related url linked to

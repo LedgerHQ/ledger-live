@@ -5224,7 +5224,8 @@
     },
     "FirmwareNotRecognized": {
       "title": "Invalid Provider",
-      "description": "You have to change \"My Ledger provider\" setting. To change it, open Ledger Live \"Settings\", select \"Experimental features\", and then select a different provider."
+      "description": "You have to change \"My Ledger provider\" setting. To change it, open Ledger Live \"Settings\", select \"Experimental features\", and then select a different provider.",
+      "goToSettingsCTA": "Go to settings"
     },
     "HardResetFail": {
       "title": "Sorry, could not reset",
