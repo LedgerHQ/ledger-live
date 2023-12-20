@@ -81,44 +81,51 @@ export default function EvmFeesStrategy({
   const [customStrategyTransactionPatch, setCustomStrategyTransactionPatch] =
     useState<Partial<Transaction>>();
 
-  useEffect(() => {
-    if (!customStrategyTransactionPatch) {
-      return;
-    }
-    const bridge = getAccountBridge<Transaction>(account, parentAccount);
+  /**
+   * Commenting out this useEffect because it is causing an infinite
+   * rerender of the summary screen in the swap flow.
+   * This hook has been added originally to have the custom fees strategy
+   * selected by default when the user comes back to the summary screen after having
+   * customized the fees in the custom fees screen.
+   */
+  /**
+   * If the customStrategyTransactionPatch is present, this means the custom
+   * fee has been edited by the user. In this case, we need to update the
+   * transaction with the new fee data.
+   * This also selects the new "custom" strategy in the fees strategy list.
+   */
+  // useEffect(() => {
+  //   if (!customStrategyTransactionPatch) {
+  //     return;
+  //   }
 
-    /**
-     * If the customStrategyTransactionPatch is present, this means the custom
-     * fee has been edited by the user. In this case, we need to update the
-     * transaction with the new fee data.
-     * This also selects the new "custom" strategy in the fees strategy list.
-     */
-    const updatedTransaction = bridge.updateTransaction(transaction, {
-      ...customStrategyTransactionPatch,
-    });
+  //   const updatedTransaction = bridge.updateTransaction(transaction, {
+  //     ...customStrategyTransactionPatch,
+  //   });
 
-    setTransaction(updatedTransaction);
-  }, [
-    setTransaction,
-    account,
-    parentAccount,
-    transaction,
-    customStrategyTransactionPatch,
-    gasOptions,
-  ]);
+  //   setTransaction(updatedTransaction);
+  // }, [
+  //   setTransaction,
+  //   account,
+  //   parentAccount,
+  //   transaction,
+  //   customStrategyTransactionPatch,
+  //   gasOptions,
+  //   bridge,
+  // ]);
 
+  /**
+   * If the feesStrategy is "custom" but no customStrategyTransactionPatch is
+   * present, this means the custom fee has been selected by default ahead in
+   * the flow (e.g. if the tx comes from a live-app or from the edit tx flow).
+   * In this case, we need to create the customStrategyTransactionPatch from
+   * the transaction fee data.
+   */
   useEffect(() => {
     if (customStrategyTransactionPatch || transaction.feesStrategy !== "custom") {
       return;
     }
 
-    /**
-     * If the feesStrategy is "custom" but no customStrategyTransactionPatch is
-     * present, this means the custom fee has been selected by default ahead in
-     * the flow (e.g. if the tx comes from a live-app or from the edit tx flow).
-     * In this case, we need to create the customStrategyTransactionPatch from
-     * the transaction fee data.
-     */
     const patchCommon: Partial<Transaction> = {
       feesStrategy: "custom",
       gasLimit: transaction.gasLimit,
