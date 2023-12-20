@@ -38,7 +38,7 @@ import {
   renderAllowOpeningApp,
   renderBootloaderStep,
   renderConnectYourDevice,
-  renderError,
+  DeviceActionErrorComponent,
   renderInWrongAppForAccount,
   renderLoading,
   renderRequestQuitApp,
@@ -50,7 +50,7 @@ import {
   renderAllowLanguageInstallation,
   renderInstallingLanguage,
   renderAllowRemoveCustomLockscreen,
-  renderLockedDeviceError,
+  LockedDeviceErrorComponent,
   DeviceNotOnboardedErrorComponent,
 } from "./rendering";
 import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils";
@@ -300,13 +300,14 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     const noImage = error instanceof ImageDoesNotExistOnDevice;
     if (error) {
       if (refused || noImage) {
-        return renderError({
-          t,
-          inlineRetry,
-          error,
-          onRetry: refused ? onRetry : undefined,
-          info: true,
-        });
+        return (
+          <DeviceActionErrorComponent
+            inlineRetry={inlineRetry}
+            error={error}
+            onRetry={refused ? onRetry : undefined}
+            info
+          />
+        );
       }
     } else {
       return renderAllowRemoveCustomLockscreen({ modelId, type });
@@ -402,7 +403,6 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
 
   if (inWrongDeviceForAccount) {
     return renderInWrongAppForAccount({
-      t,
       onRetry,
       accountName: inWrongDeviceForAccount.accountName,
     });
@@ -415,19 +415,11 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
       e instanceof OutdatedApp ||
       e instanceof UpdateYourApp
     ) {
-      return renderError({
-        t,
-        error,
-        managerAppName: error.managerAppName,
-      });
+      return <DeviceActionErrorComponent error={error} managerAppName={error.managerAppName} />;
     }
 
     if (e instanceof LatestFirmwareVersionRequired) {
-      return renderError({
-        t,
-        error,
-        requireFirmwareUpdate: true,
-      });
+      return <DeviceActionErrorComponent error={error} requireFirmwareUpdate />;
     }
 
     // NB Until we find a better way, remap the error if it's 6d06 (LNS, LNSP, LNX) or 6d07 (Stax) and we haven't fallen
@@ -437,22 +429,18 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     }
 
     if (e instanceof NoSuchAppOnProvider) {
-      return renderError({
-        t,
-        error,
-        withOpenManager: true,
-        withExportLogs: true,
-      });
+      return <DeviceActionErrorComponent error={error} withOpenManager withExportLogs />;
     }
 
     // workaround to catch ECONNRESET error and show better message
     if (error?.message?.includes("ECONNRESET")) {
-      return renderError({
-        t,
-        error: new EConnResetError(),
-        onRetry,
-        withExportLogs: true,
-      });
+      return (
+        <DeviceActionErrorComponent
+          error={new EConnResetError()}
+          onRetry={onRetry}
+          withExportLogs
+        />
+      );
     }
 
     let withExportLogs = true;
@@ -477,21 +465,24 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
       withDescription = false;
     }
 
-    return renderError({
-      t,
-      error,
-      warning,
-      onRetry,
-      withExportLogs,
-      device: device ?? undefined,
-      inlineRetry,
-      withDescription,
-    });
+    return (
+      <DeviceActionErrorComponent
+        error={error}
+        warning={warning}
+        onRetry={onRetry}
+        withExportLogs={withExportLogs}
+        device={device ?? undefined}
+        inlineRetry={inlineRetry}
+        withDescription={withDescription}
+      />
+    );
   }
 
   // Renders an error as long as LLD is using the "event" implementation of device actions
   if (isLocked) {
-    return renderLockedDeviceError({ t, device, onRetry, inlineRetry });
+    return (
+      <LockedDeviceErrorComponent device={device} onRetry={onRetry} inlineRetry={inlineRetry} />
+    );
   }
 
   if ((!isLoading && !device) || unresponsive) {

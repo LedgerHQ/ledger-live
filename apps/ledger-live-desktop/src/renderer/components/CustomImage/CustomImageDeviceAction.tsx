@@ -12,7 +12,7 @@ import useTheme from "~/renderer/hooks/useTheme";
 import { DeviceActionDefaultRendering } from "../DeviceAction";
 import Button from "../ButtonV3";
 import {
-  renderError,
+  DeviceActionErrorComponent,
   renderImageCommitRequested,
   renderImageLoadRequested,
   renderLoadingImage,
@@ -118,14 +118,13 @@ const CustomImageDeviceAction: React.FC<Props> = withRemountableWrapper(props =>
         renderImageCommitRequested({ t, device, source, type, restore })
       ) : isError ? (
         <Flex flexDirection="column" alignItems="center">
-          {renderError({
-            t,
-            error,
-            device: device ?? undefined,
-            ...(isRefusedOnStaxError
+          <DeviceActionErrorComponent
+            error={error}
+            device={device ?? undefined}
+            {...(isRefusedOnStaxError
               ? { Icon: IconsLegacy.CircledAlertMedium, iconColor: "warning.c50" }
-              : {}),
-          })}
+              : {})}
+          />
           {inlineRetry ? (
             <Button size="large" variant="main" outline={false} onClick={handleRetry}>
               {isRefusedOnStaxError

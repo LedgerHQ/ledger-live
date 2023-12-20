@@ -1,5 +1,5 @@
-import { useTranslation } from "react-i18next";
-import { renderError } from "~/renderer/components/DeviceAction/rendering";
+import React from "react";
+import { DeviceActionErrorComponent } from "~/renderer/components/DeviceAction/rendering";
 
 export type ErrorDisplayProps = {
   error: Error;
@@ -11,18 +11,6 @@ export type ErrorDisplayProps = {
   Icon?: (props: { color?: string | undefined; size?: number | undefined }) => JSX.Element;
 };
 
-const ErrorDisplay = ({
-  error,
-  onRetry,
-  withExportLogs,
-  list,
-  supportLink,
-  warning,
-  Icon,
-}: ErrorDisplayProps) => {
-  const { t } = useTranslation();
-
-  return renderError({ t, error, onRetry, withExportLogs, list, supportLink, warning, Icon });
-};
+const ErrorDisplay = (props: ErrorDisplayProps) => <DeviceActionErrorComponent {...props} />;
 
 export default ErrorDisplay;

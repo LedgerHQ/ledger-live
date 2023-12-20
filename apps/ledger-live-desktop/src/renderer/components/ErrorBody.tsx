@@ -1,5 +1,5 @@
 import React from "react";
-import { BoxedIcon, Text } from "@ledgerhq/react-ui";
+import { Box, BoxedIcon, Flex, Text } from "@ledgerhq/react-ui";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import styled from "styled-components";
 
@@ -27,14 +27,18 @@ export const ErrorBody: React.FC<{
    * icon to render inside a box
    */
   Icon?: React.ComponentType<{ color?: string | undefined; size?: number | undefined }> | undefined;
-}> = withV3StyleProvider(({ top, Icon, title, description, list }) => {
+  iconColor?: string;
+  buttons?: React.ReactNode;
+}> = withV3StyleProvider(({ top, Icon, iconColor, title, description, list, buttons }) => {
   return (
     <>
-      {top ? (
-        top
-      ) : Icon ? (
-        <BoxedIcon Icon={Icon} size={64} iconSize={24} iconColor="neutral.c100" />
-      ) : null}
+      <Box alignSelf="center">
+        {top ? (
+          top
+        ) : Icon ? (
+          <BoxedIcon Icon={Icon} size={64} iconSize={24} iconColor={iconColor || "neutral.c100"} />
+        ) : null}
+      </Box>
       <ErrorTitle variant="h5Inter" fontWeight="semiBold" mt={top || Icon ? 10 : 0}>
         {title}
       </ErrorTitle>
@@ -44,6 +48,11 @@ export const ErrorBody: React.FC<{
         </ErrorDescription>
       ) : null}
       {list ? <ErrorDescription>{list}</ErrorDescription> : null}
+      {buttons ? (
+        <Flex flexGrow={0} alignSelf="center" mt={10} flexDirection="row" columnGap={6}>
+          {buttons}
+        </Flex>
+      ) : null}
     </>
   );
 });
