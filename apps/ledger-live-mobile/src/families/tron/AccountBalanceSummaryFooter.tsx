@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { ScrollView } from "react-native";
-import { useSelector } from "react-redux";
 import { useTranslation, Trans } from "react-i18next";
 import { getCryptoCurrencyById, toLocaleString } from "@ledgerhq/live-common/currencies/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
@@ -15,9 +14,9 @@ import BandwidthIcon from "~/icons/Bandwidth";
 import EnergyIcon from "~/icons/Energy";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import InfoItem from "~/components/BalanceSummaryInfoItem";
-import { localeSelector } from "~/reducers/settings";
 import Alert from "~/components/Alert";
 import { urls } from "~/utils/urls";
+import { useSystem } from "~/hooks";
 
 type Props = {
   account: Account;
@@ -26,7 +25,7 @@ type InfoName = "available" | "frozen" | "bandwidth" | "energy";
 
 function AccountBalanceSummaryFooter({ account }: Props) {
   const { t } = useTranslation();
-  const locale = useSelector(localeSelector);
+  const { i18 } = useSystem();
   const [infoName, setInfoName] = useState<InfoName | typeof undefined>();
   const infoCandidates = useInfoCandidates();
   const {
@@ -74,12 +73,12 @@ function AccountBalanceSummaryFooter({ account }: Props) {
         <InfoItem
           title={t("account.bandwidth")}
           onPress={onPressInfoCreator("bandwidth")}
-          value={formattedBandwidth.isZero() ? "-" : toLocaleString(formattedBandwidth, locale)}
+          value={formattedBandwidth.isZero() ? "-" : toLocaleString(formattedBandwidth, i18.locale)}
         />
         <InfoItem
           title={t("account.energy")}
           onPress={onPressInfoCreator("energy")}
-          value={formattedEnergy.isZero() ? "-" : toLocaleString(formattedEnergy, locale)}
+          value={formattedEnergy.isZero() ? "-" : toLocaleString(formattedEnergy, i18.locale)}
           isLast={true}
         />
       </ScrollView>

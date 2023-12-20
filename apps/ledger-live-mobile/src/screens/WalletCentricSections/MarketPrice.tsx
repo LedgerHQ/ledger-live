@@ -1,6 +1,5 @@
 import React, { memo, useCallback } from "react";
 import { Flex, Text, IconsLegacy } from "@ledgerhq/native-ui";
-import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
@@ -8,9 +7,9 @@ import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { SingleCoinProviderData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { ScreenName } from "~/const";
-import { localeSelector } from "~/reducers/settings";
 import DeltaVariation from "../Market/DeltaVariation";
 import Touchable from "~/components/Touchable";
+import { useSystem } from "~/hooks";
 
 type Props = {
   currency: CryptoOrTokenCurrency;
@@ -20,12 +19,12 @@ type Props = {
 
 const MarketPrice = ({ currency, selectedCoinData, counterCurrency }: Props) => {
   const { t } = useTranslation();
-  const locale = useSelector(localeSelector);
+  const { i18 } = useSystem();
   const navigation = useNavigation();
 
-  let loc = locale;
+  let loc = i18.locale;
   // TEMPORARY : quick win to transform arabic to english
-  if (locale === "ar") {
+  if (i18.locale === "ar") {
     loc = "en";
   }
 
