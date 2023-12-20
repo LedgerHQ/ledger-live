@@ -10,8 +10,13 @@ import {
 } from "react-native";
 import { useTranslation } from "react-i18next";
 import { getMainAccount, getFeesCurrency, getFeesUnit } from "@ledgerhq/live-common/account/index";
-import { useTheme } from "@react-navigation/native";
-import type { Account, AccountLike, FeeStrategy } from "@ledgerhq/types-live";
+import { useTheme } from "styled-components/native";
+import type {
+  Account,
+  AccountLike,
+  FeeStrategy,
+  TransactionStatusCommon,
+} from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import BigNumber from "bignumber.js";
 import LText from "./LText";
@@ -27,6 +32,11 @@ import TachometerFast from "~/icons/TachometerFast";
 import NetworkFeeInfo from "./NetworkFeeInfo";
 import { useAnalytics } from "~/analytics";
 import { sharedSwapTracking } from "~/screens/Swap/utils";
+import Alert from "./Alert";
+import TranslatedError from "./TranslatedError";
+import { useNavigation } from "@react-navigation/core";
+import { NavigatorName, ScreenName } from "~/const";
+import { Flex, Text } from "@ledgerhq/native-ui";
 
 export type SelectFeeStrategy = FeeStrategy & {
   userGasLimit?: BigNumber;
@@ -44,6 +54,7 @@ type Props = {
   forceValueLabel?: string;
   onStrategySelect: (stategy: SelectFeeStrategy) => void;
   onCustomFeesPress: TouchableOpacityProps["onPress"];
+  status?: TransactionStatusCommon;
 };
 
 const CVWrapper = ({ children }: { children?: React.ReactNode }) => (
@@ -62,6 +73,7 @@ export default function SelectFeesStrategy({
   NetworkFeesInfoComponent,
   onStrategySelect,
   onCustomFeesPress,
+  status,
 }: Props) {
   const { track } = useAnalytics();
   const { t } = useTranslation();
@@ -75,6 +87,10 @@ export default function SelectFeesStrategy({
     () => setNetworkFeeHelpOpened(!isNetworkFeeHelpOpened),
     [isNetworkFeeHelpOpened],
   );
+  const navigation = useNavigation();
+
+  const errors = status?.errors;
+  const insufficuentError = Object.values(errors || {})[0] || null;
 
   const closeNetworkFeeHelpModal = () => setNetworkFeeHelpOpened(false);
 
@@ -97,8 +113,22 @@ export default function SelectFeesStrategy({
     [onStrategySelect, track],
   );
 
+  const onBuy = useCallback(
+    (account: Account) => {
+      navigation.navigate(NavigatorName.Exchange, {
+        screen: ScreenName.ExchangeBuy,
+        params: {
+          defaultAccountId: account.id,
+          defaultCurrencyId: account.currency.id,
+        },
+      });
+    },
+    [navigation],
+  );
+
   const renderItem = ({ item }: ListRenderItemInfo<SelectFeeStrategy>) => {
     const isDisabled = disabledStrategies?.includes(item.label);
+    const isSelected = feesStrategy === item.label && !isDisabled;
 
     return (
       <TouchableOpacity
@@ -107,8 +137,12 @@ export default function SelectFeesStrategy({
         style={[
           styles.feeButton,
           {
-            borderColor: feesStrategy === item.label ? colors.live : colors.background,
-            backgroundColor: feesStrategy === item.label ? colors.lightLive : colors.lightFog,
+            borderColor: isSelected
+              ? insufficuentError
+                ? colors.warning.c70
+                : colors.primary.c80
+              : "transparent",
+            backgroundColor: isSelected ? colors.opacityPurple.c10 : colors.opacityDefault.c05,
           },
         ]}
       >
@@ -122,11 +156,11 @@ export default function SelectFeesStrategy({
         >
           <View style={styles.leftBox}>
             {item.label === "slow" ? (
-              <TachometerSlow size={16} color={colors.grey} />
+              <TachometerSlow size={16} color={colors.opacityDefault.c60} />
             ) : item.label === "medium" ? (
-              <TachometerMedium size={16} color={colors.grey} />
+              <TachometerMedium size={16} color={colors.opacityDefault.c60} />
             ) : (
-              <TachometerFast size={16} color={colors.grey} />
+              <TachometerFast size={16} color={colors.opacityDefault.c60} />
             )}
             <LText semiBold style={styles.feeLabel}>
               {t(`fees.speed.${item.label}`)}
@@ -169,19 +203,29 @@ export default function SelectFeesStrategy({
       </QueuedDrawer>
 
       <View>
-        <SectionSeparator lineColor={colors.lightFog} />
+        <SectionSeparator lineColor={colors.opacityDefault.c10} />
         <SummaryRow
           onPress={toggleNetworkFeeHelpModal}
           title={t("send.summary.maxEstimatedFee")}
           additionalInfo={
             <View>
-              <Info size={12} color={colors.grey} />
+              <Info size={12} color={colors.neutral.c70} />
             </View>
           }
         >
           {null}
         </SummaryRow>
-
+        {insufficuentError && (
+          <TouchableOpacity onPress={() => onBuy(mainAccount)}>
+            <Alert type="warning">
+              <Flex width={"90%"}>
+                <Text>
+                  <TranslatedError error={insufficuentError} />
+                </Text>
+              </Flex>
+            </Alert>
+          </TouchableOpacity>
+        )}
         <SafeAreaView style={styles.strategiesContainer}>
           <FlatList
             data={strategies}
@@ -194,7 +238,7 @@ export default function SelectFeesStrategy({
           style={[
             styles.customizeFeesButton,
             {
-              backgroundColor: colors.lightLive,
+              backgroundColor: colors.opacityPurple.c10,
             },
           ]}
           onPress={onCustomFeesPress}
@@ -228,7 +272,7 @@ const styles = StyleSheet.create({
   },
   feeButton: {
     width: "100%",
-    borderRadius: 4,
+    borderRadius: 12,
     borderWidth: 1,
     marginVertical: 4,
     padding: 16,
@@ -246,7 +290,7 @@ const styles = StyleSheet.create({
   customizeFeesButton: {
     flex: 1,
     padding: 8,
-    borderRadius: 4,
+    borderRadius: 12,
     justifyContent: "center",
     alignItems: "center",
     marginTop: 4,

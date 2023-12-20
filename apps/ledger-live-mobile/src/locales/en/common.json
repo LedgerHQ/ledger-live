@@ -492,7 +492,7 @@
       "description": "Try reinstalling the app from My Ledger"
     },
     "NotEnoughGas": {
-      "title": "The parent account balance is insufficient for network fees",
+      "title": "You need {{fees}} {{ticker}} for network fees to swap as you are on {{cryptoName}} network. <link0>Buy {{ticker}}</link0>",
       "description": "Please send some coins to your account to pay for token transactions."
     },
     "NotEnoughGasSwap": {
