@@ -2,12 +2,19 @@ import React from "react";
 import Animated, { FadeOut, Layout, useAnimatedStyle, withSpring } from "react-native-reanimated";
 import { useTheme } from "styled-components/native";
 import { ItemStatus } from "./types";
+import { ImageStyle, TextStyle, ViewStyle } from "react-native";
 
 const useBulletStyles = () => {
   const { colors } = useTheme();
 
-  /* eslint-disable @typescript-eslint/no-explicit-any */
-  const BulletStyle: { [key in ItemStatus]: any } = {
+  const BulletStyle: {
+    [key in ItemStatus]: {
+      width: number;
+      height: number;
+      backgroundColor: string;
+      borderRadius: number;
+    };
+  } = {
     [ItemStatus.active]: {
       width: 16,
       height: 6,
