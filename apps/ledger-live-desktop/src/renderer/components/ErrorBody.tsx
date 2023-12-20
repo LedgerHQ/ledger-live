@@ -16,6 +16,9 @@ export const ErrorDescription = styled(Text).attrs({
 
 /** Renders an error icon, title and description */
 export const ErrorBody: React.FC<{
+  title: string | React.ReactNode;
+  description: string | React.ReactNode;
+  list?: string | React.ReactNode;
   /**
    * react node to render instead of the icon, at the top
    * */
@@ -23,12 +26,7 @@ export const ErrorBody: React.FC<{
   /**
    * icon to render inside a box
    */
-  Icon?:
-    | ((props: { color?: string | undefined; size?: number | undefined }) => JSX.Element)
-    | undefined;
-  title: string | React.ReactNode;
-  description: string | React.ReactNode;
-  list?: string | React.ReactNode;
+  Icon?: React.ComponentType<{ color?: string | undefined; size?: number | undefined }> | undefined;
 }> = withV3StyleProvider(({ top, Icon, title, description, list }) => {
   return (
     <>
