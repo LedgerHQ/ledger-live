@@ -51,9 +51,6 @@ test("Updater", async ({ page }) => {
   });
 
   await test.step("[error] state (any) should be visible, without the carousel", async () => {
-    await layout.goToSettings();
-    await settingsPage.carouselSwitchButton.click();
-    await expect(settingsPage.carouselSwitchButton.locator("input")).not.toBeChecked();
     await layout.goToPortfolio();
     await layout.appUpdateBanner.isVisible();
     await expect.soft(page).toHaveScreenshot("app-updater-error-without-carousel.png", {

@@ -80,16 +80,6 @@ test("Layout @smoke", async ({ page }) => {
       .toHaveScreenshot("collapse-sidebar.png", { mask: [page.locator("canvas")] });
   });
 
-  await test.step("shows the carousel and can dismiss it", async () => {
-    await layout.goToPortfolio();
-    await portfolioPage.carousel.waitFor({ state: "visible" });
-    await portfolioPage.carouselCloseButton.click();
-    await portfolioPage.carouselConfirmButton.click();
-    await expect
-      .soft(page)
-      .toHaveScreenshot("dismiss-carousel.png", { mask: [page.locator("canvas")] });
-  });
-
   await test.step("can display the help modal", async () => {
     await layout.topbarHelpButton.click();
     await expect.soft(drawer.content).toHaveScreenshot("help-drawer.png");
