@@ -132,18 +132,14 @@ export class StepAmountFooter extends PureComponent<StepProps> {
     const isTerminated = mainAccount.currency.terminated;
     const hasErrors = Object.keys(errors).length;
     const canNext = !bridgePending && !hasErrors && !isTerminated;
-    const {
-      gasPrice: gasPriceError,
-      maxPriorityFee: maxPriorityFeeError,
-      maxFee: maxFeeError,
-    } = errors;
+    const { maxPriorityFee: maxPriorityFeeError, maxFee: maxFeeError } = errors;
 
     return (
       <>
         {!isNFTSend ? (
           <AccountFooter parentAccount={parentAccount} account={account} status={status} />
         ) : null}
-        {gasPriceError || maxPriorityFeeError || maxFeeError ? (
+        {maxPriorityFeeError || maxFeeError ? (
           <BuyButton currency={mainAccount.currency} account={mainAccount} />
         ) : null}
         <Button

@@ -19,6 +19,7 @@ import Clock from "~/renderer/icons/Clock";
 import TachometerHigh from "~/renderer/icons/TachometerHigh";
 import TachometerLow from "~/renderer/icons/TachometerLow";
 import TachometerMedium from "~/renderer/icons/TachometerMedium";
+import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 
 type Props = {
   onClick: (_: { feesStrategy: Strategy }) => void;
@@ -26,9 +27,10 @@ type Props = {
   account: Account;
   gasOptions: GasOptions;
   transactionToUpdate?: EvmTransaction;
+  status: TransactionStatus;
 };
 
-const FeesWrapper = styled(Tabbable)`
+const FeesWrapper = styled(Tabbable)<{ error?: boolean }>`
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
@@ -36,7 +38,11 @@ const FeesWrapper = styled(Tabbable)`
 
   border: ${p =>
     `1px solid ${
-      p?.selected ? p.theme.colors.palette.primary.main : p.theme.colors.palette.divider
+      p?.selected
+        ? p?.error
+          ? p.theme.colors.palette.warning.c70
+          : p.theme.colors.palette.primary.main
+        : p.theme.colors.palette.divider
     }`};
   padding: 20px 16px;
   font-family: "Inter";
@@ -49,10 +55,12 @@ const FeesWrapper = styled(Tabbable)`
   }
 `;
 
-const FeesHeader = styled(Box)<{ selected?: boolean; disabled?: boolean }>`
+const FeesHeader = styled(Box)<{ selected?: boolean; disabled?: boolean; error?: boolean }>`
   color: ${p =>
     p.selected
-      ? p.theme.colors.palette.primary.main
+      ? p?.error
+        ? p.theme.colors.palette.warning.c70
+        : p.theme.colors.palette.primary.main
       : p.disabled
       ? p.theme.colors.palette.text.shade20
       : p.theme.colors.palette.text.shade50};
@@ -63,12 +71,16 @@ const FeesValue = styled(Box)`
   text-align: center;
 `;
 
-const ApproximateTransactionTime = styled(Box)<{ selected?: boolean }>`
+const ApproximateTransactionTime = styled(Box)<{ selected?: boolean; error?: boolean }>`
   flex-direction: row;
   align-items: center;
   border-radius: 3px;
   background-color: ${p =>
-    p.selected ? p.theme.colors.palette.primary.main : p.theme.colors.palette.text.shade20};
+    p.selected
+      ? p?.error
+        ? p.theme.colors.palette.warning.c70
+        : p.theme.colors.palette.primary.main
+      : p.theme.colors.palette.text.shade20};
   padding: 5px 6px;
 `;
 
@@ -80,9 +92,12 @@ const SelectFeeStrategy = ({
   onClick,
   gasOptions,
   transactionToUpdate,
+  status,
 }: Props) => {
   const accountUnit = getAccountUnit(account);
   const feesCurrency = getAccountCurrency(account);
+  const { errors } = status;
+  const { gasPrice: messageGas } = errors;
 
   const feeStrategies = useMemo(
     () =>
@@ -103,6 +118,7 @@ const SelectFeeStrategy = ({
             key={strategy}
             selected={selected}
             disabled={disabled}
+            error={!!messageGas}
             onClick={() => {
               !disabled &&
                 onClick({
@@ -111,7 +127,13 @@ const SelectFeeStrategy = ({
             }}
           >
             <>
-              <FeesHeader horizontal alignItems="center" selected={selected} disabled={disabled}>
+              <FeesHeader
+                horizontal
+                alignItems="center"
+                selected={selected}
+                disabled={disabled}
+                error={!!messageGas}
+              >
                 {strategy === "medium" ? (
                   <TachometerMedium size={13} />
                 ) : strategy === "slow" ? (
@@ -152,9 +174,17 @@ const SelectFeeStrategy = ({
                 />
               </FeesValue>
               {feesCurrency.id === "ethereum" && (
-                <ApproximateTransactionTime selected={selected}>
-                  <Clock size={12} />
-                  <Text fontSize={2} fontWeight="500" ml={1}>
+                <ApproximateTransactionTime selected={selected} error={!!messageGas}>
+                  <Clock
+                    size={12}
+                    color={messageGas ? "palette.neutral.c00" : "palette.neutral.c100"}
+                  />
+                  <Text
+                    fontSize={2}
+                    fontWeight="500"
+                    ml={1}
+                    color={messageGas ? "palette.neutral.c00" : "palette.neutral.c100"}
+                  >
                     {strategy === "medium" ? (
                       <>
                         ≈ 30 <Trans i18nKey={"time.second_short"} />
@@ -175,7 +205,7 @@ const SelectFeeStrategy = ({
           </FeesWrapper>
         );
       }),
-    [accountUnit, feesCurrency, gasOptions, onClick, transaction, transactionToUpdate],
+    [accountUnit, feesCurrency, gasOptions, messageGas, onClick, transaction, transactionToUpdate],
   );
 
   return (
