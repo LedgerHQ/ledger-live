@@ -2,7 +2,7 @@ import { useSelector } from "react-redux";
 import { LanguageMap } from "~/config/languages";
 import { languageSelector } from "~/renderer/reducers/settings";
 
-export const SUPPORT_LANG: LanguageMap<string> = {
+export const SUPPORT_LANG: LanguageMap = {
   en: "en-us",
   fr: "fr-fr",
   es: "es",
@@ -15,7 +15,7 @@ export const SUPPORT_LANG: LanguageMap<string> = {
   ko: "ko",
 };
 
-export const LEDGER_LANG: LanguageMap<string> = {
+export const LEDGER_LANG: LanguageMap = {
   en: "en",
   fr: "fr",
   es: "es",
@@ -28,7 +28,7 @@ export const LEDGER_LANG: LanguageMap<string> = {
   ko: "ko",
 };
 
-export const SHOP_LANG: LanguageMap<string> = {
+export const SHOP_LANG: LanguageMap = {
   en: "en",
   fr: "fr",
   es: "es",
