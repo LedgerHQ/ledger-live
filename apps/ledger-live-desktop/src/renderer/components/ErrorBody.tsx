@@ -17,7 +17,7 @@ export const ErrorDescription = styled(Text)`
 /** Renders an error icon, title and description */
 export const ErrorBody: React.FC<{
   title: string | React.ReactNode;
-  description: string | React.ReactNode;
+  description?: string | React.ReactNode;
   list?: string | React.ReactNode;
   /**
    * react node to render instead of the icon, at the top
@@ -38,9 +38,11 @@ export const ErrorBody: React.FC<{
       <ErrorTitle variant="h5Inter" fontWeight="semiBold" mt={top || Icon ? 10 : 0}>
         {title}
       </ErrorTitle>
-      <ErrorDescription variant="body" fontWeight="medium" mt={6}>
-        {description}
-      </ErrorDescription>
+      {description ? (
+        <ErrorDescription variant="body" fontWeight="medium" mt={6}>
+          {description}
+        </ErrorDescription>
+      ) : null}
       {list ? <ErrorDescription>{list}</ErrorDescription> : null}
     </>
   );

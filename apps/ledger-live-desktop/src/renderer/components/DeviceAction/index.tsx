@@ -457,6 +457,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
 
     let withExportLogs = true;
     let warning = false;
+    let withDescription = true;
     // User rejections, should be rendered as warnings and not export logs.
     // All the error rendering needs to be unified, the same way we do for ErrorIcon
     // not handled here.
@@ -472,6 +473,10 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
       warning = true;
     }
 
+    if ((error as unknown) instanceof UserRefusedDeviceNameChange) {
+      withDescription = false;
+    }
+
     return renderError({
       t,
       error,
@@ -480,6 +485,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
       withExportLogs,
       device: device ?? undefined,
       inlineRetry,
+      withDescription,
     });
   }
 
