@@ -15,6 +15,7 @@ type Props = {
   deviceInfo: DeviceInfo;
   deviceName: string;
   onRefreshDeviceInfo: () => void;
+  setPreventResetOnDeviceChange: (state: boolean) => void;
   device: Device;
   disabled?: boolean;
 };
@@ -32,6 +33,7 @@ const DeviceName: React.FC<Props> = ({
   device,
   disabled,
   onRefreshDeviceInfo,
+  setPreventResetOnDeviceChange,
 }: Props) => {
   const model = identifyTargetId(deviceInfo.targetId as number);
   const editSupported = model?.id && [DeviceModelId.stax, DeviceModelId.nanoX].includes(model.id);
@@ -48,16 +50,28 @@ const DeviceName: React.FC<Props> = ({
   );
 
   const openDeviceRename = useCallback(() => {
+    // Prevents manager from reacting to device changes
+    setPreventResetOnDeviceChange(true);
+
     name &&
-      setDrawer(EditDeviceName, {
-        key: name,
-        device,
-        onSetName: onSuccess,
-        deviceName: name,
-        deviceInfo,
-      });
+      setDrawer(
+        EditDeviceName,
+        {
+          key: name,
+          device,
+          onSetName: onSuccess,
+          deviceName: name,
+          deviceInfo,
+        },
+        {
+          onRequestClose: () => {
+            setPreventResetOnDeviceChange(false);
+            setDrawer();
+          },
+        },
+      );
     track("Page Manager RenameDeviceEntered");
-  }, [device, deviceInfo, name, onSuccess]);
+  }, [device, deviceInfo, name, onSuccess, setPreventResetOnDeviceChange]);
 
   const { t } = useTranslation();
 
