@@ -1,5 +1,5 @@
 import "@ledgerhq/react-ui/assets/fonts";
-import React, { useMemo } from "react";
+import React, { useContext, useMemo } from "react";
 import { DefaultTheme, ThemeProvider, useTheme } from "styled-components";
 import defaultTheme from "./theme";
 import v2Palettes from "./palettes";
@@ -8,6 +8,7 @@ import {
   defaultTheme as v3DefaultTheme,
   palettes as v3Palettes,
 } from "@ledgerhq/react-ui/styles/index";
+import { StyleProviderVersionContext } from "./StyleProviderVersionContext";
 
 type Props = {
   children: React.ReactNode;
@@ -31,11 +32,26 @@ const StyleProviderV3 = ({ children, selectedPalette }: Props) => {
     [selectedPalette],
   );
 
+  /**
+   * Because we have 2 design systems cohabitating,
+   * some screens are wrapped in style providers of v2/v3 to ensure that their
+   * content renders properly, and some more atomic components also are wrapped
+   * in style providers of v2/v3. In case a "v3 wrapped" screen renders a
+   * "v3 wrapped", component, their is a redundancy as several ThemeProvider
+   * will be mounted, while only one was necessary, which can have an expensive
+   * rendering cost.
+   * This trick avoids such redundancy.
+   */
+  const styleProviderVersionFromContext = useContext(StyleProviderVersionContext);
+  if (styleProviderVersionFromContext === "v3") return children;
+
   return (
-    <ThemeProvider theme={theme}>
-      <GlobalStyle />
-      {children}
-    </ThemeProvider>
+    <StyleProviderVersionContext.Provider value="v3">
+      <ThemeProvider theme={theme}>
+        <GlobalStyle />
+        {children}
+      </ThemeProvider>
+    </StyleProviderVersionContext.Provider>
   );
 };
 
