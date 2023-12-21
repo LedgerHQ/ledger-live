@@ -1,7 +1,7 @@
 import React from "react";
 import userEvent from "@testing-library/user-event";
 import { Provider } from "react-redux";
-import StyleProvider from "~/renderer/styles/StyleProvider";
+import StyleProviderV2 from "~/renderer/styles/StyleProviderV2";
 import { HashRouter as Router } from "react-router-dom";
 import { render as rtlRender } from "@testing-library/react";
 import { type State } from "~/renderer/reducers";
@@ -39,9 +39,9 @@ function render(
   function Wrapper({ children }: ChildrenProps) {
     return (
       <Provider store={store}>
-        <StyleProvider selectedPalette="dark">
+        <StyleProviderV2 selectedPalette="dark">
           <Router>{children}</Router>
-        </StyleProvider>
+        </StyleProviderV2>
       </Provider>
     );
   }

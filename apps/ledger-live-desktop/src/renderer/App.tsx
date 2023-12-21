@@ -9,7 +9,7 @@ import "tippy.js/animations/shift-away.css";
 import "tippy.js/animations/shift-toward.css";
 import "tippy.js/dist/svg-arrow.css";
 import { State } from "~/renderer/reducers";
-import StyleProvider from "~/renderer/styles/StyleProvider";
+import StyleProviderV2 from "~/renderer/styles/StyleProviderV2";
 import { UpdaterProvider } from "~/renderer/components/Updater/UpdaterContext";
 import ThrowBlock from "~/renderer/components/ThrowBlock";
 import LiveStyleSheetManager from "~/renderer/styles/LiveStyleSheetManager";
@@ -52,7 +52,7 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
   }, [reloadEnabled]);
   const selectedPalette = useSelector(themeSelector) || "light";
   return (
-    <StyleProvider selectedPalette={selectedPalette}>
+    <StyleProviderV2 selectedPalette={selectedPalette}>
       <ThrowBlock
         onError={() => {
           if (!__DEV__) {
@@ -87,7 +87,7 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
           </FirebaseFeatureFlagsProvider>
         </FirebaseRemoteConfigProvider>
       </ThrowBlock>
-    </StyleProvider>
+    </StyleProviderV2>
   );
 };
 const App = ({ store, initialCountervalues }: Props) => {

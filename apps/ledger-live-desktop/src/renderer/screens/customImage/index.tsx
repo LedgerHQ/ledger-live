@@ -18,7 +18,6 @@ import { CropParams } from "~/renderer/components/CustomImage/ImageCropper";
 import { urlContentToDataUri } from "~/renderer/components/CustomImage/shared";
 import { ProcessorResult } from "~/renderer/components/CustomImage/ImageGrayscalePreview";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
-import { withV2StyleProvider } from "~/renderer/styles/StyleProvider";
 import StepChooseImage from "./Step1ChooseImage";
 import StepAdjustImage from "./Step2AdjustImage";
 import StepChooseContrast from "./Step3ChooseContrast";
@@ -45,8 +44,6 @@ const orderedSteps: Step[] = [
   Step.chooseContrast,
   Step.transferImage,
 ];
-
-const ErrorDisplayV2 = withV2StyleProvider(ErrorDisplay);
 
 const CustomImage: React.FC<Props> = props => {
   const { imageUri, isFromNFTEntryPoint, reopenPreviousDrawer, isFromPostOnboardingEntryPoint } =
@@ -204,7 +201,7 @@ const CustomImage: React.FC<Props> = props => {
                   flow={analyticsFlowName}
                   refreshSource={false}
                 />
-                <ErrorDisplayV2 error={error} onRetry={handleErrorRetryClicked} />
+                <ErrorDisplay error={error} onRetry={handleErrorRetryClicked} />
               </StepContainer>
             );
           }

@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import Modal from "~/renderer/components/Modal";
-import StyleProvider from "~/renderer/styles/StyleProvider";
+import StyleProviderV2 from "~/renderer/styles/StyleProviderV2";
 import ProtectDiscoverBody from "./ProtectDiscoverBody";
 import LedgerRecoverBackground from "./images/background.png";
 
@@ -19,9 +19,9 @@ const ProtectDiscoverModal = () => {
   );
 
   return (
-    <StyleProvider selectedPalette="dark">
+    <StyleProviderV2 selectedPalette="dark">
       <Modal name="MODAL_PROTECT_DISCOVER" centered render={renderBody} bodyStyle={bodyStyle} />
-    </StyleProvider>
+    </StyleProviderV2>
   );
 };
 
