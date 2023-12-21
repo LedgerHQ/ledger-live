@@ -6,10 +6,8 @@ import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
-import { BigNumber } from "bignumber.js";
-import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";
+import { useDiscreetMode } from "~/renderer/components/Discreet";
 import { IconAccount } from "@ledgerhq/live-common/families/icon/types";
-import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 
 import Box from "~/renderer/components/Box/Box";
 import Text from "~/renderer/components/Text";
@@ -17,7 +15,7 @@ import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
 import { localeSelector } from "~/renderer/reducers/settings";
 
-const Wrapper: ThemedComponent = styled(Box).attrs(() => ({
+const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
   mt: 4,
   p: 5,
@@ -58,7 +56,7 @@ type Props = {
   countervalue: number;
 };
 
-const AccountBalanceSummaryFooter = ({ account, countervalue }: Props) => {
+const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   if (!account.iconResources) return null;
@@ -71,23 +69,7 @@ const AccountBalanceSummaryFooter = ({ account, countervalue }: Props) => {
     subMagnitude: 2,
   };
 
-  const { votingPower, totalDelegated, unstake } = account.iconResources;
-
   const spendableBalance = formatCurrencyUnit(unit, account.spendableBalance, formatConfig);
-
-  const votingPowerAmount = formatCurrencyUnit(
-    account.unit,
-    BigNumber(votingPower || 0),
-    formatConfig,
-  );
-
-  const votedAmount = formatCurrencyUnit(
-    account.unit,
-    BigNumber(totalDelegated || 0),
-    formatConfig,
-  );
-
-  const unstakeAmount = formatCurrencyUnit(account.unit, BigNumber(unstake || 0), formatConfig);
 
   return (
     <Wrapper>
@@ -101,43 +83,6 @@ const AccountBalanceSummaryFooter = ({ account, countervalue }: Props) => {
           </TitleWrapper>
         </ToolTip>
         <AmountValue>{spendableBalance}</AmountValue>
-      </BalanceDetail>
-      <BalanceDetail>
-        <ToolTip content={<Trans i18nKey="icon.account.votingPowerTooltip" />}>
-          <TitleWrapper>
-            <Title>
-              <Trans i18nKey="icon.account.votingPower" />
-            </Title>
-            <InfoCircle size={13} />
-          </TitleWrapper>
-        </ToolTip>
-        <AmountValue>{votingPowerAmount}</AmountValue>
-      </BalanceDetail>
-      <BalanceDetail>
-        <ToolTip content={<Trans i18nKey="account.delegatedTooltip" />}>
-          <TitleWrapper>
-            <Title>
-              <Trans i18nKey="icon.account.voted" />
-            </Title>
-            <InfoCircle size={13} />
-          </TitleWrapper>
-        </ToolTip>
-        <AmountValue>
-          <Discreet>{`${votedAmount || "–"}`}</Discreet>
-        </AmountValue>
-      </BalanceDetail>
-      <BalanceDetail>
-        <ToolTip content={<Trans i18nKey="icon.account.unstakeTooltip" />}>
-          <TitleWrapper>
-            <Title>
-              <Trans i18nKey="icon.account.unstake" />
-            </Title>
-            <InfoCircle size={13} />
-          </TitleWrapper>
-        </ToolTip>
-        <AmountValue>
-          <Discreet>{`${unstakeAmount || "–"}`}</Discreet>
-        </AmountValue>
       </BalanceDetail>
     </Wrapper>
   );
