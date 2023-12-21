@@ -1,5 +1,19 @@
 # ledger-live-desktop
 
+## 2.74.0-nightly.4
+
+### Minor Changes
+
+- [#5767](https://github.com/LedgerHQ/ledger-live/pull/5767) [`4dbe280`](https://github.com/LedgerHQ/ledger-live/commit/4dbe280434d1f2577d2cd211e35a792bf724ee30) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Carousel visibility toggle removed from the settings and we can now dismiss carousel cards individually
+
+### Patch Changes
+
+- [#5781](https://github.com/LedgerHQ/ledger-live/pull/5781) [`b719767`](https://github.com/LedgerHQ/ledger-live/commit/b719767f964570abb08dc7b70b8fc0a7dd3007db) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix "locked device" device action state rendering
+  Rework `ErrorBody` component used by device actions so that it works everywhere even in v2 style provider
+  Use `ErrorBody` for "device not onboarded" device action state
+- Updated dependencies [[`714f15e`](https://github.com/LedgerHQ/ledger-live/commit/714f15e3ec3acf5048dd014d018595ac6a1eb8fb)]:
+  - @ledgerhq/live-common@33.4.0-nightly.4
+
 ## 2.74.0-nightly.3
 
 ### Patch Changes

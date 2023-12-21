@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 33.4.0-nightly.4
+
+### Patch Changes
+
+- [#5714](https://github.com/LedgerHQ/ledger-live/pull/5714) [`714f15e`](https://github.com/LedgerHQ/ledger-live/commit/714f15e3ec3acf5048dd014d018595ac6a1eb8fb) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Log Cardano raw transactions about to be signed
+
 ## 33.4.0-nightly.3
 
 ### Patch Changes
