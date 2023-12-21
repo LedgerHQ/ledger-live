@@ -166,23 +166,23 @@ export async function getDelegatedResource(
     toAddress: decode58Check(t.recipient),
   });
 
-  const { frozen_balance_for_bandwidth, frozen_balance_for_energy } =
-    delegatedResource ??
-    [].reduce(
-      (
-        accum: { frozen_balance_for_bandwidth: number; frozen_balance_for_energy: number },
-        cur: { frozen_balance_for_bandwidth: number; frozen_balance_for_energy: number },
-      ) => {
-        if (cur.frozen_balance_for_bandwidth) {
-          accum.frozen_balance_for_bandwidth += cur.frozen_balance_for_bandwidth;
-        }
-        if (cur.frozen_balance_for_energy) {
-          accum.frozen_balance_for_energy += cur.frozen_balance_for_energy;
-        }
-        return accum;
-      },
-      { frozen_balance_for_bandwidth: 0, frozen_balance_for_energy: 0 },
-    );
+  const { frozen_balance_for_bandwidth, frozen_balance_for_energy } = (
+    delegatedResource ?? []
+  ).reduce(
+    (
+      accum: { frozen_balance_for_bandwidth: number; frozen_balance_for_energy: number },
+      cur: { frozen_balance_for_bandwidth: number; frozen_balance_for_energy: number },
+    ) => {
+      if (cur.frozen_balance_for_bandwidth) {
+        accum.frozen_balance_for_bandwidth += cur.frozen_balance_for_bandwidth;
+      }
+      if (cur.frozen_balance_for_energy) {
+        accum.frozen_balance_for_energy += cur.frozen_balance_for_energy;
+      }
+      return accum;
+    },
+    { frozen_balance_for_bandwidth: 0, frozen_balance_for_energy: 0 },
+  );
 
   const amount =
     resource === "BANDWIDTH" ? frozen_balance_for_bandwidth : frozen_balance_for_energy;
