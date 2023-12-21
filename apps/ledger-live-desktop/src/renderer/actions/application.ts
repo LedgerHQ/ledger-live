@@ -14,12 +14,6 @@ export const setHasPassword = createAction(
     hasPassword,
   }),
 );
-export const setDismissedCarousel = createAction(
-  "APPLICATION_SET_DATA",
-  (dismissedCarousel: boolean) => ({
-    dismissedCarousel,
-  }),
-);
 export const setOSDarkMode = createAction(
   "APPLICATION_SET_DATA",
   (osDarkMode: boolean | undefined) => ({
