@@ -5,7 +5,6 @@ import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
 import { MIN_DELEGATION_AMOUNT } from "@ledgerhq/live-common/families/elrond/constants";
 import estimateMaxSpendable from "@ledgerhq/live-common/families/elrond/js-estimateMaxSpendable";
@@ -22,7 +21,7 @@ import Check from "~/icons/Check";
 import KeyboardView from "~/components/KeyboardView";
 
 import styles from "./styles";
-import { useSystem } from "~/hooks";
+import useFormat from "~/hooks/useFormat";
 
 /*
  * Handle the component declaration.
@@ -34,7 +33,7 @@ const PickAmount = (props: PickAmountPropsType) => {
   const { account, validators } = route.params;
 
   const unit = getAccountUnit(account);
-  const { i18 } = useSystem();
+  const { formatCurrency } = useFormat();
   const bridge = getAccountBridge(account);
   const transaction = route.params.transaction as Transaction;
 
@@ -224,9 +223,8 @@ const PickAmount = (props: PickAmountPropsType) => {
                     <Trans
                       i18nKey="elrond.delegation.flow.steps.amount.assetsRemaining"
                       values={{
-                        amount: formatCurrencyUnit(unit, maxSpendable.minus(amount), {
-                          showCode: true,
-                          locale: i18.locale,
+                        amount: formatCurrency(unit, maxSpendable.minus(amount), {
+                          disableRounding: false,
                         }),
                       }}
                     >

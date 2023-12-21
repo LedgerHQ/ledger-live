@@ -4,15 +4,12 @@ import { useTranslation } from "react-i18next";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
 import type { OperationType, Operation } from "@ledgerhq/types-live";
 import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { BigNumber } from "bignumber.js";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import type { CosmosAccount, CosmosOperation } from "@ledgerhq/live-common/families/cosmos/types";
-import { useSelector } from "react-redux";
 import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
 import Section from "~/screens/OperationDetails/Section";
-import { discreetModeSelector } from "~/reducers/settings";
-import { useSystem } from "~/hooks";
+import useFormat from "~/hooks/useFormat";
 
 function getURLFeesInfo(op: Operation, currencyId: string): string | null | undefined {
   return op.fee.gt(200000) ? cryptoFactory(currencyId).stakingDocUrl : undefined;
@@ -32,8 +29,7 @@ type Props = {
 
 function OperationDetailsExtra({ operation, type, account }: Props) {
   const { t } = useTranslation();
-  const discreet = useSelector(discreetModeSelector);
-  const { i18 } = useSystem();
+  const { formatCurrency } = useFormat();
   const unit = getAccountUnit(account);
   const currencyId = account.currency.id;
   const { extra } = operation;
@@ -65,13 +61,7 @@ function OperationDetailsExtra({ operation, type, account }: Props) {
     case "DELEGATE": {
       const validator = extra.validators[0];
       const formattedValidator = getValidatorName(validator.address);
-      const formattedAmount = formatCurrencyUnit(unit, new BigNumber(validator.amount), {
-        disableRounding: true,
-        alwaysShowSign: false,
-        showCode: true,
-        discreet,
-        locale: i18.locale,
-      });
+      const formattedAmount = formatCurrency(unit, new BigNumber(validator.amount));
       ret = (
         <>
           <Section title={t("operationDetails.extra.delegatedTo")} value={formattedValidator} />
@@ -84,13 +74,7 @@ function OperationDetailsExtra({ operation, type, account }: Props) {
     case "UNDELEGATE": {
       const validator = extra.validators[0];
       const formattedValidator = getValidatorName(validator.address);
-      const formattedAmount = formatCurrencyUnit(unit, new BigNumber(validator.amount), {
-        disableRounding: true,
-        alwaysShowSign: false,
-        showCode: true,
-        discreet,
-        locale: i18.locale,
-      });
+      const formattedAmount = formatCurrency(unit, new BigNumber(validator.amount));
       ret = (
         <>
           <Section
@@ -112,13 +96,7 @@ function OperationDetailsExtra({ operation, type, account }: Props) {
       const validator = extra.validators[0];
       const formattedValidator = getValidatorName(validator.address);
       const formattedSourceValidator = getValidatorName(sourceValidator);
-      const formattedAmount = formatCurrencyUnit(unit, new BigNumber(validator.amount), {
-        disableRounding: true,
-        alwaysShowSign: false,
-        showCode: true,
-        discreet,
-        locale: i18.locale,
-      });
+      const formattedAmount = formatCurrency(unit, new BigNumber(validator.amount));
       ret = (
         <>
           <Section
@@ -149,17 +127,7 @@ function OperationDetailsExtra({ operation, type, account }: Props) {
             <Section
               key={v.address}
               title={t("operationDetails.extra.rewardFrom")}
-              value={
-                getValidatorName(v.address) +
-                " " +
-                formatCurrencyUnit(unit, new BigNumber(v.amount), {
-                  disableRounding: true,
-                  alwaysShowSign: false,
-                  showCode: true,
-                  discreet,
-                  locale: i18.locale,
-                })
-              }
+              value={getValidatorName(v.address) + " " + formatCurrency(unit, v.amount)}
               onPress={() => {
                 redirectAddressCreator(v.address);
               }}

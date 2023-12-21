@@ -1,10 +1,8 @@
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { SolanaStakeWithMeta } from "@ledgerhq/live-common/families/solana/types";
 import { sweetch } from "@ledgerhq/live-common/families/solana/utils";
 import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { Text } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
-import { BigNumber } from "bignumber.js";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
@@ -14,6 +12,7 @@ import CheckCircle from "~/icons/CheckCircle";
 import Clock from "~/icons/Clock";
 import ExclamationCircle from "~/icons/ExclamationCircle";
 import ValidatorImage from "../shared/ValidatorImage";
+import useFormat from "~/hooks/useFormat";
 
 type Props = {
   stakeWithMeta: SolanaStakeWithMeta;
@@ -32,6 +31,7 @@ export default function DelegationRow({
 }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
+  const { formatCurrency } = useFormat();
   const { stake, meta } = stakeWithMeta;
 
   return (
@@ -81,14 +81,7 @@ export default function DelegationRow({
 
       <View style={styles.rightWrapper}>
         <Text fontWeight="semiBold">
-          {formatCurrencyUnit(
-            unit,
-            new BigNumber((stake.delegation?.stake ?? 0) || stake.withdrawable),
-            {
-              showCode: true,
-              disableRounding: true,
-            },
-          )}
+          {formatCurrency(unit, (stake.delegation?.stake ?? 0) || stake.withdrawable)}
         </Text>
 
         <Text color="grey">

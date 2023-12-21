@@ -4,12 +4,10 @@ import { Trans, useTranslation } from "react-i18next";
 import startCase from "lodash/startCase";
 import { BigNumber } from "bignumber.js";
 
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
 import { usePolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/react";
 import { Operation, OperationType } from "@ledgerhq/types-live";
 import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
-import { useSelector } from "react-redux";
 import { Text } from "@ledgerhq/native-ui";
 import {
   PolkadotAccount,
@@ -19,7 +17,6 @@ import {
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import CounterValue from "~/components/CounterValue";
 import Section from "~/screens/OperationDetails/Section";
-import { discreetModeSelector } from "~/reducers/settings";
 import { urls } from "~/utils/urls";
 
 import BondIcon from "~/icons/LinkIcon";
@@ -33,7 +30,7 @@ import SetControllerIcon from "~/icons/Manager";
 import OperationStatusWrapper from "~/icons/OperationStatusIcon/Wrapper";
 
 import NominationInfo from "./components/NominationInfo";
-import { useSystem } from "~/hooks";
+import useFormat from "~/hooks/useFormat";
 
 function getURLWhatIsThis(op: PolkadotOperation): string | undefined {
   if (op.type !== "IN" && op.type !== "OUT") {
@@ -56,19 +53,13 @@ type OperationDetailsExtraProps = {
 
 function OperationDetailsExtra({ operation, type, account }: OperationDetailsExtraProps) {
   const { t } = useTranslation();
-  const discreet = useSelector(discreetModeSelector);
-  const { i18 } = useSystem();
+  const { formatCurrency } = useFormat();
   const { extra } = operation;
 
   switch (type) {
     case "OUT":
     case "IN": {
-      const value = formatCurrencyUnit(account.unit, extra.transferAmount ?? new BigNumber(0), {
-        showCode: true,
-        discreet,
-        disableRounding: true,
-        locale: i18.locale,
-      });
+      const value = formatCurrency(account.unit, extra.transferAmount ?? new BigNumber(0));
       return (
         <>
           <OperationDetailsPalletMethod palletMethod={extra.palletMethod} />
@@ -88,12 +79,7 @@ function OperationDetailsExtra({ operation, type, account }: OperationDetailsExt
       );
     }
     case "BOND": {
-      const value = formatCurrencyUnit(account.unit, extra.bondedAmount ?? new BigNumber(0), {
-        showCode: true,
-        discreet,
-        disableRounding: true,
-        locale: i18.locale,
-      });
+      const value = formatCurrency(account.unit, extra.bondedAmount ?? new BigNumber(0));
       return (
         <>
           <OperationDetailsPalletMethod palletMethod={extra.palletMethod} />
@@ -102,12 +88,7 @@ function OperationDetailsExtra({ operation, type, account }: OperationDetailsExt
       );
     }
     case "UNBOND": {
-      const value = formatCurrencyUnit(account.unit, extra.unbondedAmount ?? new BigNumber(0), {
-        showCode: true,
-        discreet,
-        disableRounding: true,
-        locale: i18.locale,
-      });
+      const value = formatCurrency(account.unit, extra.unbondedAmount ?? new BigNumber(0));
       return (
         <>
           <OperationDetailsPalletMethod palletMethod={extra.palletMethod} />
@@ -116,16 +97,7 @@ function OperationDetailsExtra({ operation, type, account }: OperationDetailsExt
       );
     }
     case "WITHDRAW_UNBONDED": {
-      const value = formatCurrencyUnit(
-        account.unit,
-        extra.withdrawUnbondedAmount ?? new BigNumber(0),
-        {
-          showCode: true,
-          discreet,
-          disableRounding: true,
-          locale: i18.locale,
-        },
-      );
+      const value = formatCurrency(account.unit, extra.withdrawUnbondedAmount ?? new BigNumber(0));
       return (
         <>
           <OperationDetailsPalletMethod palletMethod={extra.palletMethod} />

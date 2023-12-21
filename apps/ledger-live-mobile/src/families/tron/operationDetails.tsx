@@ -2,7 +2,6 @@ import React, { useCallback } from "react";
 import { StyleSheet, Linking } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
 import {
   formatVotes,
@@ -11,14 +10,13 @@ import {
 import type { TronOperation, Vote } from "@ledgerhq/live-common/families/tron/types";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
-import { useSelector } from "react-redux";
 import LText from "~/components/LText";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import CounterValue from "~/components/CounterValue";
 import DelegationInfo from "~/components/DelegationInfo";
 import Section from "~/screens/OperationDetails/Section";
-import { discreetModeSelector } from "~/reducers/settings";
 import { useSystem } from "~/hooks";
+import useFormat from "~/hooks/useFormat";
 
 const helpURL = "https://support.ledger.com/hc/en-us/articles/360013062139";
 
@@ -42,8 +40,7 @@ type OperationDetailsExtraProps = {
 
 function OperationDetailsExtra({ operation, type, account }: OperationDetailsExtraProps) {
   const { t } = useTranslation();
-  const discreet = useSelector(discreetModeSelector);
-  const { i18 } = useSystem();
+  const { formatCurrency } = useFormat();
   const {
     extra: { votes, frozenAmount, unfreezeAmount },
   } = operation;
@@ -55,19 +52,17 @@ function OperationDetailsExtra({ operation, type, account }: OperationDetailsExt
     }
 
     case "FREEZE": {
-      const value = formatCurrencyUnit(account.unit, frozenAmount || new BigNumber(0), {
+      const value = formatCurrency(account.unit, frozenAmount || 0, {
         showCode: true,
-        discreet,
-        locale: i18.locale,
+        disableRounding: false,
       });
       return <Section title={t("operationDetails.extra.frozenAmount")} value={value} />;
     }
 
     case "UNFREEZE": {
-      const value = formatCurrencyUnit(account.unit, unfreezeAmount || new BigNumber(0), {
+      const value = formatCurrency(account.unit, unfreezeAmount || 0, {
         showCode: true,
-        discreet,
-        locale: i18.locale,
+        disableRounding: false,
       });
       return <Section title={t("operationDetails.extra.unfreezeAmount")} value={value} />;
     }

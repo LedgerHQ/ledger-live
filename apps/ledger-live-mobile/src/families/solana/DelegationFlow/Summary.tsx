@@ -1,6 +1,6 @@
 import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
+import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useValidators } from "@ledgerhq/live-common/families/solana/react";
 import {
   Transaction as SolanaTransaction,
@@ -33,6 +33,7 @@ import DelegatingContainer from "../../tezos/DelegatingContainer";
 import ValidatorImage from "../shared/ValidatorImage";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { DelegationAction, SolanaDelegationFlowParamList } from "./types";
+import useFormat from "~/hooks/useFormat";
 
 type Props = StackNavigatorProps<SolanaDelegationFlowParamList, ScreenName.DelegationSummary>;
 
@@ -438,11 +439,8 @@ function SummaryWords({
     delegationAction.kind === "new" ? "iDelegate" : `i${capitalize(delegationAction.stakeAction)}`;
 
   const unit = getAccountUnit(account);
-  const formattedAmount = formatCurrencyUnit(unit, new BigNumber(amount), {
-    disableRounding: true,
-    alwaysShowSign: false,
-    showCode: true,
-  });
+  const { formatCurrency } = useFormat();
+  const formattedAmount = formatCurrency(unit, new BigNumber(amount));
   return (
     <>
       <Line>

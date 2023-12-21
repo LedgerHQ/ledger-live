@@ -3,7 +3,11 @@ import React, { useCallback, useState, useMemo } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { Trans, useTranslation } from "react-i18next";
-import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
+import {
+  getAccountCurrency,
+  getAccountUnit,
+  getMainAccount,
+} from "@ledgerhq/live-common/account/index";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
 import type { Account } from "@ledgerhq/types-live";
 import { useCeloPreloadData } from "@ledgerhq/live-common/families/celo/react";
@@ -34,9 +38,9 @@ import Info from "~/icons/Info";
 import DelegationRow from "./Row";
 import DelegationLabelRight from "./LabelRight";
 import ValidatorImage from "../../cosmos/shared/ValidatorImage";
-import { formatAmount } from "./utils";
 import CheckCircle from "~/icons/CheckCircle";
 import Loader from "~/icons/Loader";
+import useFormat from "~/hooks/useFormat";
 
 type Props = {
   account: Account;
@@ -54,6 +58,7 @@ function Delegations({ account }: Props) {
   const { validatorGroups } = useCeloPreloadData();
   const { celoResources } = mainAccount as CeloAccount;
   const { votes, lockedBalance } = celoResources;
+  const { formatCurrency } = useFormat();
 
   const withdrawEnabled = availablePendingWithdrawals(account as CeloAccount).length;
   const activatingEnabled = activatableVotes(account as CeloAccount).length;
@@ -227,7 +232,7 @@ function Delegations({ account }: Props) {
                   Component: (
                     <>
                       <LText numberOfLines={1} semiBold style={[styles.valueText]}>
-                        {formatAmount(account as CeloAccount, vote.amount ?? 0)}
+                        {formatCurrency(getAccountUnit(account), vote.amount ?? 0)}
                       </LText>
                     </>
                   ),
@@ -245,6 +250,7 @@ function Delegations({ account }: Props) {
     colors.warning,
     colors.grey,
     onOpenExplorer,
+    formatCurrency,
   ]);
 
   const actions = useMemo<DelegationDrawerActions>(() => {

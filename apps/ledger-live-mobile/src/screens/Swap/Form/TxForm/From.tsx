@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { getAccountName, getAccountUnit } from "@ledgerhq/live-common/account/index";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import {
   useFetchCurrencyFrom,
   usePickDefaultAccount,
@@ -20,6 +19,7 @@ import { useAnalytics } from "~/analytics";
 import { sharedSwapTracking } from "../../utils";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 import { useSelector } from "react-redux";
+import useFormat from "~/hooks/useFormat";
 
 interface Props {
   provider?: string;
@@ -31,6 +31,7 @@ interface Props {
 
 export function From({ swapTx, provider, swapError, swapWarning, isSendMaxLoading }: Props) {
   const { track } = useAnalytics();
+  const { formatCurrency } = useFormat();
   const { t } = useTranslation();
   const navigation = useNavigation<SwapFormParamList>();
   const { data: currenciesFrom } = useFetchCurrencyFrom();
@@ -42,16 +43,10 @@ export function From({ swapTx, provider, swapError, swapWarning, isSendMaxLoadin
     return {
       account,
       name: account && getAccountName(account),
-      balance:
-        (account &&
-          currency &&
-          formatCurrencyUnit(currency.units[0], account.balance, {
-            showCode: true,
-          })) ??
-        "",
+      balance: (account && currency && formatCurrency(currency.units[0], account.balance)) ?? "",
       unit: account && getAccountUnit(account),
     };
-  }, [swapTx.swap.from]);
+  }, [swapTx.swap.from, formatCurrency]);
 
   usePickDefaultAccount(accounts, swapTx.swap.from.account, swapTx.setFromAccount);
 

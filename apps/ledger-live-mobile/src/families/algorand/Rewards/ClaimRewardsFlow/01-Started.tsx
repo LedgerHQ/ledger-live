@@ -4,7 +4,6 @@ import { View, StyleSheet, SafeAreaView } from "react-native";
 import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
 import { getAccountUnit, getMainAccount } from "@ledgerhq/live-common/account/helpers";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import type {
@@ -24,7 +23,7 @@ import TranslatedError from "~/components/TranslatedError";
 import Illustration from "~/images/illustration/Illustration";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { AlgorandClaimRewardsFlowParamList } from "./type";
-import { useSystem } from "~/hooks";
+import useFormat from "~/hooks/useFormat";
 
 type Props = StackNavigatorProps<
   AlgorandClaimRewardsFlowParamList,
@@ -34,7 +33,7 @@ type Props = StackNavigatorProps<
 export default function DelegationStarted({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
-  const { i18 } = useSystem();
+  const { formatCurrency } = useFormat();
   invariant(account, "Account required");
   const mainAccount = getMainAccount(account, undefined) as AlgorandAccount;
   const bridge = getAccountBridge(mainAccount, undefined);
@@ -50,11 +49,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
       }),
     };
   });
-  const formattedRewards = formatCurrencyUnit(unit, rewards, {
-    showCode: true,
-    disableRounding: true,
-    locale: i18.locale,
-  });
+  const formattedRewards = formatCurrency(unit, rewards);
   const onNext = useCallback(() => {
     navigation.navigate(ScreenName.AlgorandClaimRewardsSelectDevice, {
       ...route.params,

@@ -10,7 +10,8 @@ import CounterValue from "~/components/CounterValue";
 import ArrowRight from "~/icons/ArrowRight";
 import LText from "~/components/LText";
 import ValidatorImage from "../../cosmos/shared/ValidatorImage";
-import { formatAmount } from "./utils";
+import useFormat from "~/hooks/useFormat";
+import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 
 type Props = {
   account: CeloAccount;
@@ -33,6 +34,7 @@ export default function DelegationRow({
   const { t } = useTranslation();
   const { validatorGroup, amount } = vote;
   const validatorName = getValidatorName(vote) ?? "";
+  const { formatCurrency } = useFormat();
 
   return (
     <TouchableOpacity
@@ -66,7 +68,7 @@ export default function DelegationRow({
 
       <View style={styles.rightWrapper}>
         <Text variant={"body"} fontWeight={"semiBold"}>
-          {formatAmount(account, vote.amount ?? 0)}
+          {formatCurrency(getAccountUnit(account), vote.amount ?? 0)}
         </Text>
 
         <LText color="grey">

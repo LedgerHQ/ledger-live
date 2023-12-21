@@ -38,9 +38,9 @@ import {
 import { ScreenName } from "~/const";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { SwapFormNavigatorParamList } from "~/components/RootNavigator/types/SwapFormNavigator";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import type { DetailsSwapParamList } from "../types";
 import { getAvailableProviders } from "@ledgerhq/live-common/exchange/swap/index";
+import useFormat from "~/hooks/useFormat";
 
 type Navigation = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.Account>;
 
@@ -48,6 +48,7 @@ export function SwapForm({
   route: { params },
 }: MaterialTopTabNavigatorProps<SwapFormNavigatorParamList, ScreenName.SwapForm>) {
   const { track } = useAnalytics();
+  const { formatCurrency } = useFormat();
   const trackSwapError = useTrackSwapError();
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -114,12 +115,12 @@ export function SwapForm({
           partnersList: [...new Set([...prev.partnersList, curr.provider])],
           exchangeRateList: [
             ...prev.exchangeRateList,
-            formatCurrencyUnit(getFeesUnit(swapTransaction.swap.to.currency!), curr.toAmount),
+            formatCurrency(getFeesUnit(swapTransaction.swap.to.currency!), curr.toAmount),
           ],
         };
       }, partnerAndExchangeRateDefault) ?? partnerAndExchangeRateDefault
     );
-  }, [exchangeRatesState.value, swapTransaction.swap.to.currency]);
+  }, [exchangeRatesState.value, swapTransaction.swap.to.currency, formatCurrency]);
 
   const swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
   const swapWarning = swapTransaction.fromAmountWarning;

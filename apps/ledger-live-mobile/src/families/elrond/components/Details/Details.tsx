@@ -3,17 +3,14 @@ import { Linking, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useElrondPreloadData } from "@ledgerhq/live-common/families/elrond/react";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { BigNumber } from "bignumber.js";
-import { useSelector } from "react-redux";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 
 import type { ElrondPreloadData } from "@ledgerhq/live-common/families/elrond/types";
 import type { DetailsPropsType } from "./types";
 
 import Section from "~/screens/OperationDetails/Section";
-import { discreetModeSelector } from "~/reducers/settings";
-import { useSystem } from "~/hooks";
+import useFormat from "~/hooks/useFormat";
 
 /*
  * Handle the component declaration.
@@ -23,8 +20,7 @@ const Details = (props: DetailsPropsType) => {
   const { type, account, operation } = props;
   const { t } = useTranslation();
 
-  const discreet = useSelector(discreetModeSelector);
-  const { i18 } = useSystem();
+  const { formatCurrency } = useFormat();
   const unit = getAccountUnit(account);
 
   const { extra } = operation;
@@ -33,13 +29,7 @@ const Details = (props: DetailsPropsType) => {
   const validator = data.validators.find(validator => contract === validator.contract);
 
   const name = validator ? validator.identity.name || validator.contract : "";
-  const amount = formatCurrencyUnit(unit, extra.amount ?? new BigNumber(0), {
-    disableRounding: true,
-    alwaysShowSign: false,
-    showCode: true,
-    discreet,
-    locale: i18.locale,
-  });
+  const amount = formatCurrency(unit, extra.amount ?? new BigNumber(0));
 
   /*
    * Upon requesting to open the explorer, retrieve the dynamic address, and open the link.

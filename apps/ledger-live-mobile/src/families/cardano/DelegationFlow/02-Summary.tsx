@@ -1,5 +1,4 @@
 import { useTheme } from "@react-navigation/native";
-import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
@@ -9,7 +8,7 @@ import Icon from "react-native-vector-icons/Feather";
 import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
+import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import type {
   APIGetPoolsDetail,
   StakePool,
@@ -39,6 +38,7 @@ import { rgba } from "../../../colors";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CardanoDelegationFlowParamList } from "./types";
 import TranslatedError from "~/components/TranslatedError";
+import useFormat from "~/hooks/useFormat";
 
 type Props = StackNavigatorProps<
   CardanoDelegationFlowParamList,
@@ -286,6 +286,7 @@ function SummaryWords({
 }) {
   const unit = getAccountUnit(account);
   const { t } = useTranslation();
+  const { formatCurrency } = useFormat();
   const { colors } = useTheme();
   const [rotateAnim] = useState(() => new Animated.Value(0));
 
@@ -320,12 +321,6 @@ function SummaryWords({
     outputRange: ["0deg", "30deg"],
   });
 
-  const formatConfig = {
-    disableRounding: true,
-    alwaysShowSign: false,
-    showCode: true,
-  };
-
   const toDelegationPoolData = useMemo(() => {
     return chosenPool
       ? [
@@ -333,11 +328,7 @@ function SummaryWords({
             label: t("cardano.delegation.cost"),
             Component: (
               <LText numberOfLines={1} semiBold ellipsizeMode="middle" style={[styles.valueText]}>
-                {formatCurrencyUnit(
-                  unit,
-                  new BigNumber(chosenPool?.cost || new BigNumber(0)),
-                  formatConfig,
-                )}
+                {formatCurrency(unit, chosenPool?.cost || 0)}
               </LText>
             ),
           },
@@ -494,7 +485,7 @@ function SummaryWords({
           label={t("cardano.delegation.networkFees")}
           Component={
             <LText numberOfLines={1} semiBold ellipsizeMode="middle" style={[styles.valueText]}>
-              {formatCurrencyUnit(unit, new BigNumber(status.estimatedFees), formatConfig)}
+              {formatCurrency(unit, status.estimatedFees)}
             </LText>
           }
         />
@@ -503,12 +494,9 @@ function SummaryWords({
             label={t("cardano.delegation.stakeKeyRegistrationDeposit")}
             Component={
               <LText numberOfLines={1} semiBold ellipsizeMode="middle" style={[styles.valueText]}>
-                {formatCurrencyUnit(
+                {formatCurrency(
                   unit,
-                  new BigNumber(
-                    (account as CardanoAccount).cardanoResources.protocolParams.stakeKeyDeposit,
-                  ),
-                  formatConfig,
+                  (account as CardanoAccount).cardanoResources.protocolParams.stakeKeyDeposit,
                 )}
               </LText>
             }

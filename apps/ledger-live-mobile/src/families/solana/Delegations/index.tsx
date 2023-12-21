@@ -3,7 +3,6 @@ import {
   getAccountUnit,
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import { stakeActions, stakeActivePercent } from "@ledgerhq/live-common/families/solana/logic";
 import { useSolanaStakesWithMeta } from "@ledgerhq/live-common/families/solana/react";
@@ -42,6 +41,7 @@ import UndelegateIcon from "~/icons/Undelegate";
 import ValidatorImage from "../shared/ValidatorImage";
 import DelegationLabelRight from "./LabelRight";
 import DelegationRow from "./Row";
+import useFormat from "~/hooks/useFormat";
 
 type Props = {
   account: SolanaAccount;
@@ -55,6 +55,7 @@ function Delegations({ account }: Props) {
   const { t } = useTranslation();
   const mainAccount = getMainAccount(account, undefined) as SolanaAccount;
   const currency = getAccountCurrency(mainAccount);
+  const { formatCurrency } = useFormat();
 
   invariant(currency.type === "CryptoCurrency", "expected crypto currency");
 
@@ -110,13 +111,8 @@ function Delegations({ account }: Props) {
   );
 
   const formatAmount = useCallback(
-    (amount: number) =>
-      formatCurrencyUnit(unit, new BigNumber(amount), {
-        disableRounding: true,
-        alwaysShowSign: false,
-        showCode: true,
-      }),
-    [unit],
+    (amount: number) => formatCurrency(unit, new BigNumber(amount)),
+    [unit, formatCurrency],
   );
 
   const data = useMemo<DelegationDrawerProps["data"]>(() => {

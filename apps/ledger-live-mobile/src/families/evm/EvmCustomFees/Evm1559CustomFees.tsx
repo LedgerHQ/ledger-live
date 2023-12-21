@@ -1,6 +1,5 @@
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getGasLimit } from "@ledgerhq/coin-evm/logic";
 import type { EvmTransactionEIP1559 } from "@ledgerhq/coin-evm/types/index";
 import { Account } from "@ledgerhq/types-live";
@@ -16,6 +15,7 @@ import SectionSeparator from "~/components/SectionSeparator";
 import EditFeeUnitEvm from "../EditFeeUnitEvm";
 import EvmGasLimit from "../SendRowGasLimit";
 import { inferMaxFeeRange, inferMaxPriorityFeeRange } from "./utils";
+import useFormat from "~/hooks/useFormat";
 
 type Props = {
   account: Account;
@@ -30,6 +30,7 @@ const Evm1559CustomFees = ({
 }: Props) => {
   const { colors } = useTheme();
   const { t } = useTranslation();
+  const { formatCurrency } = useFormat();
 
   invariant(originalTransaction.family === "evm", "not evm family");
   invariant(account, "no account found");
@@ -77,19 +78,15 @@ const Evm1559CustomFees = ({
 
   const [lowPriorityFeeValue, highPriorityFeeValue] = useMemo(
     () => [
-      formatCurrencyUnit(unit, gasOptions.slow.maxPriorityFeePerGas!),
-      formatCurrencyUnit(unit, gasOptions.fast.maxPriorityFeePerGas!),
+      formatCurrency(unit, gasOptions.slow.maxPriorityFeePerGas!),
+      formatCurrency(unit, gasOptions.fast.maxPriorityFeePerGas!),
     ],
-    [gasOptions.slow, gasOptions.fast, unit],
+    [gasOptions.slow, gasOptions.fast, unit, formatCurrency],
   );
 
   const nextBaseFeeValue = useMemo(
-    () =>
-      formatCurrencyUnit(unit, transaction.gasOptions?.medium.nextBaseFee || new BigNumber(0), {
-        showCode: true,
-        disableRounding: true,
-      }),
-    [transaction.gasOptions?.medium.nextBaseFee, unit],
+    () => formatCurrency(unit, transaction.gasOptions?.medium.nextBaseFee || 0),
+    [transaction.gasOptions?.medium.nextBaseFee, unit, formatCurrency],
   );
 
   // Final patch that will be applied to the original transaction

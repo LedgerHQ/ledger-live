@@ -9,7 +9,6 @@ import { useTheme } from "@react-navigation/native";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { rgba, Text } from "@ledgerhq/native-ui";
 import { CeloAccount } from "@ledgerhq/live-common/families/celo/types";
@@ -29,6 +28,7 @@ import Words from "../components/Words";
 import ErrorAndWarning from "../components/ErrorAndWarning";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { CeloWithdrawFlowParamList } from "./types";
+import useFormat from "~/hooks/useFormat";
 
 type Props = BaseComposite<
   StackNavigatorProps<CeloWithdrawFlowParamList, ScreenName.CeloWithdrawAmount>
@@ -39,6 +39,7 @@ export default function WithdrawAmount({ navigation, route }: Props) {
   const openModal = useCallback((time: boolean) => setInfoModalOpen(time), [setInfoModalOpen]);
   const closeModal = useCallback(() => setInfoModalOpen(false), [setInfoModalOpen]);
   const { colors } = useTheme();
+  const { formatCurrency } = useFormat();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   invariant(account, "account is required");
 
@@ -91,11 +92,7 @@ export default function WithdrawAmount({ navigation, route }: Props) {
   }
   const unit = getAccountUnit(account);
   const formatAmount = (val: BigNumber) => {
-    return formatCurrencyUnit(unit, val, {
-      disableRounding: true,
-      alwaysShowSign: false,
-      showCode: true,
-    });
+    return formatCurrency(unit, val);
   };
 
   // Note: if we want to mimick the same behavior as LLD, we'll need MomentJS to handle all date edge cases

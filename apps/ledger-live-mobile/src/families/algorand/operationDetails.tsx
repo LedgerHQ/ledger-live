@@ -2,19 +2,16 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
-import { useSelector } from "react-redux";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import Section from "~/screens/OperationDetails/Section";
 import OperationStatusIcon from "~/icons/OperationStatusIcon";
-import { discreetModeSelector } from "~/reducers/settings";
 import {
   AlgorandOperation,
   AlgorandAccount,
   AlgorandOperationExtra,
 } from "@ledgerhq/live-common/families/algorand/types";
-import { useSystem } from "~/hooks";
+import useFormat from "~/hooks/useFormat";
 
 type Props = {
   operation: AlgorandOperation;
@@ -24,16 +21,9 @@ type Props = {
 function OperationDetailsExtra({ operation, account }: Props) {
   const { t } = useTranslation();
   const unit = getAccountUnit(account);
-  const discreet = useSelector(discreetModeSelector);
-  const { i18 } = useSystem();
+  const { formatCurrency } = useFormat();
   const formattedRewards = operation.extra.rewards?.gt(0)
-    ? formatCurrencyUnit(unit, operation.extra.rewards, {
-        locale: i18.locale,
-        disableRounding: true,
-        alwaysShowSign: false,
-        showCode: true,
-        discreet,
-      })
+    ? formatCurrency(unit, operation.extra.rewards)
     : null;
   return (
     <>

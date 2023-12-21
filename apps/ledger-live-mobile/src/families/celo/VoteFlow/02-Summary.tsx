@@ -5,7 +5,7 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
+import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useValidatorGroups } from "@ledgerhq/live-common/families/celo/react";
 import { CeloValidatorGroup } from "@ledgerhq/live-common/families/celo/types";
 import { defaultValidatorGroupAddress } from "@ledgerhq/live-common/families/celo/logic";
@@ -35,6 +35,7 @@ import Line from "../components/Line";
 import Words from "../components/Words";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CeloVoteFlowParamList } from "./types";
+import useFormat from "~/hooks/useFormat";
 
 type Props = StackNavigatorProps<CeloVoteFlowParamList, ScreenName.CeloVoteSummary>;
 
@@ -281,11 +282,8 @@ function SummaryWords({
   onChangeAmount: () => void;
 }) {
   const unit = getAccountUnit(account);
-  const formattedAmount = formatCurrencyUnit(unit, new BigNumber(amount), {
-    disableRounding: true,
-    alwaysShowSign: false,
-    showCode: true,
-  });
+  const { formatCurrency } = useFormat();
+  const formattedAmount = formatCurrency(unit, amount);
   return (
     <>
       <Line>

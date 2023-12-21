@@ -20,7 +20,6 @@ import type {
 } from "@ledgerhq/live-common/families/polkadot/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import {
@@ -54,7 +53,7 @@ import type {
 import type { PolkadotNominateFlowParamList } from "./types";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import FirstLetterIcon from "~/components/FirstLetterIcon";
-import { useSystem } from "~/hooks";
+import useFormat from "~/hooks/useFormat";
 
 type Props = BaseComposite<
   StackNavigatorProps<PolkadotNominateFlowParamList, ScreenName.PolkadotNominateSelectValidators>
@@ -64,7 +63,7 @@ function NominateSelectValidator({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
-  const { i18 } = useSystem();
+  const { formatCurrency } = useFormat();
   invariant(account, "account required");
   const mainAccount = getMainAccount(account, parentAccount) as PolkadotAccount;
   const bridge = getAccountBridge(account, parentAccount);
@@ -116,13 +115,7 @@ function NominateSelectValidator({ navigation, route }: Props) {
   const { staking, validators: polkadotValidators } = preloaded;
   const minimumBondBalance = BigNumber(preloaded.minimumBondBalance);
   const hasMinBondBalance = hasMinimumBondBalance(mainAccount);
-  const minBondBalance = formatCurrencyUnit(mainAccount.unit, minimumBondBalance, {
-    disableRounding: true,
-    alwaysShowSign: false,
-    showCode: true,
-    discreet: false,
-    locale: i18.locale,
-  });
+  const minBondBalance = formatCurrency(mainAccount.unit, minimumBondBalance, { discreet: false });
   const maxNominatorRewardedPerValidator = staking?.maxNominatorRewardedPerValidator || 300;
   const sorted = useSortedValidators(searchQuery, polkadotValidators, nominations);
   const sections = useMemo(

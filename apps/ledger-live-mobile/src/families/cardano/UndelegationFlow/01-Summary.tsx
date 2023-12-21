@@ -1,5 +1,4 @@
 import { useTheme } from "@react-navigation/native";
-import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { ReactNode, useCallback } from "react";
 import { Trans, useTranslation } from "react-i18next";
@@ -12,7 +11,7 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
+import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import type {
   CardanoAccount,
   CardanoDelegation,
@@ -30,6 +29,7 @@ import { TrackScreen } from "~/analytics";
 import { rgba } from "../../../colors";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CardanoUndelegationFlowParamList } from "./types";
+import useFormat from "~/hooks/useFormat";
 
 type Props = StackNavigatorProps<
   CardanoUndelegationFlowParamList,
@@ -181,12 +181,7 @@ function SummaryWords({ account }: { account: AccountLike; currentDelegation: Ca
   const unit = getAccountUnit(account);
   const { t } = useTranslation();
   const { colors } = useTheme();
-
-  const formatConfig = {
-    disableRounding: true,
-    alwaysShowSign: false,
-    showCode: true,
-  };
+  const { formatCurrency } = useFormat();
 
   return (
     <>
@@ -208,7 +203,7 @@ function SummaryWords({ account }: { account: AccountLike; currentDelegation: Ca
           label={t("cardano.delegation.networkFees")}
           Component={
             <LText numberOfLines={1} semiBold ellipsizeMode="middle" style={[styles.valueText]}>
-              {formatCurrencyUnit(unit, new BigNumber(170000), formatConfig)}
+              {formatCurrency(unit, 170000)}
             </LText>
           }
         />
@@ -217,7 +212,7 @@ function SummaryWords({ account }: { account: AccountLike; currentDelegation: Ca
           label={t("cardano.delegation.stakeKeyRegistrationDepositRefund")}
           Component={
             <LText numberOfLines={1} semiBold ellipsizeMode="middle" style={[styles.valueText]}>
-              {formatCurrencyUnit(unit, new BigNumber(2000000), formatConfig)}
+              {formatCurrency(unit, 2000000)}
             </LText>
           }
         />

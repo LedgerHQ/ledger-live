@@ -5,7 +5,6 @@ import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { MIN_DELEGATION_AMOUNT } from "@ledgerhq/live-common/families/elrond/constants";
@@ -21,7 +20,7 @@ import Check from "~/icons/Check";
 import KeyboardView from "~/components/KeyboardView";
 
 import styles from "./styles";
-import { useSystem } from "~/hooks";
+import useFormat from "~/hooks/useFormat";
 
 /*
  * Handle the component declaration.
@@ -34,7 +33,7 @@ const PickAmount = (props: PickAmountPropsType) => {
 
   const unit = getAccountUnit(account);
   const bridge = getAccountBridge(account, undefined);
-  const { i18 } = useSystem();
+  const { formatCurrency } = useFormat();
 
   const [value, setValue] = useState(new BigNumber(amount));
 
@@ -237,9 +236,9 @@ const PickAmount = (props: PickAmountPropsType) => {
                     <Trans
                       i18nKey="elrond.undelegation.flow.steps.amount.assetsRemaining"
                       values={{
-                        amount: formatCurrencyUnit(unit, amount.minus(value), {
+                        amount: formatCurrency(unit, amount.minus(value), {
                           showCode: true,
-                          locale: i18.locale,
+                          disableRounding: false,
                         }),
                       }}
                     >

@@ -5,7 +5,7 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { formatCurrencyUnit, getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
+import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useLedgerFirstShuffledValidatorsNear } from "@ledgerhq/live-common/families/near/react";
 import { NearValidatorItem, NearAccount } from "@ledgerhq/live-common/families/near/types";
 import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/near/constants";
@@ -36,6 +36,7 @@ import TranslatedError from "~/components/TranslatedError";
 import { getFirstStatusError, hasStatusError } from "../../helpers";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { NearStakingFlowParamList } from "./types";
+import useFormat from "~/hooks/useFormat";
 
 type Props = BaseComposite<
   StackNavigatorProps<NearStakingFlowParamList, ScreenName.NearStakingValidator>
@@ -348,11 +349,8 @@ function SummaryWords({
   onChangeAmount: () => void;
 }) {
   const unit = getAccountUnit(account);
-  const formattedAmount = formatCurrencyUnit(unit, amount, {
-    disableRounding: true,
-    alwaysShowSign: false,
-    showCode: true,
-  });
+  const { formatCurrency } = useFormat();
+  const formattedAmount = formatCurrency(unit, amount);
   return (
     <>
       <Line>

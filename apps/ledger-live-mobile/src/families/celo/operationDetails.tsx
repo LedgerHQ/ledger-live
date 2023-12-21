@@ -1,21 +1,17 @@
 import React, { useCallback } from "react";
 import { Linking } from "react-native";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
-import { BigNumber } from "bignumber.js";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
 import { OperationType } from "@ledgerhq/types-live";
 import { useCeloPreloadData } from "@ledgerhq/live-common/families/celo/react";
 import { CeloAccount, CeloOperation } from "@ledgerhq/live-common/families/celo/types";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { useRoute } from "@react-navigation/native";
 import Section from "~/screens/OperationDetails/Section";
-import { discreetModeSelector } from "~/reducers/settings";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { ScreenName } from "~/const";
-import { useSystem } from "~/hooks";
+import useFormat from "~/hooks/useFormat";
 
 type Props = {
   operation: CeloOperation;
@@ -27,8 +23,7 @@ type Navigation = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.Op
 
 const OperationDetailsExtra = ({ operation, type, account }: Props) => {
   const { t } = useTranslation();
-  const discreet = useSelector(discreetModeSelector);
-  const { i18 } = useSystem();
+  const { formatCurrency } = useFormat();
   const unit = getAccountUnit(account);
   const { validatorGroups: celoValidators } = useCeloPreloadData();
   const { extra } = operation;
@@ -58,13 +53,7 @@ const OperationDetailsExtra = ({ operation, type, account }: Props) => {
     opValue = optimisticOperation.value.toString();
   }
 
-  const formattedAmount = formatCurrencyUnit(unit, new BigNumber(opValue), {
-    disableRounding: true,
-    alwaysShowSign: false,
-    showCode: true,
-    discreet,
-    locale: i18.locale,
-  });
+  const formattedAmount = formatCurrency(unit, opValue);
 
   switch (type) {
     case "ACTIVATE":

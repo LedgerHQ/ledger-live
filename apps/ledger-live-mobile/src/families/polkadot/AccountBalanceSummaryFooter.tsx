@@ -5,7 +5,6 @@ import { useTranslation } from "react-i18next";
 import BigNumber from "bignumber.js";
 import { useTheme } from "@react-navigation/native";
 import { usePolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/react";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
 import { hasMinimumBondBalance } from "@ledgerhq/live-common/families/polkadot/logic";
@@ -18,6 +17,7 @@ import BondedIcon from "~/icons/LinkIcon";
 import UnbondingIcon from "~/icons/Clock";
 import Unbonded from "~/icons/Undelegate";
 import WarningIcon from "~/icons/Warning";
+import useFormat from "~/hooks/useFormat";
 
 type Props = {
   account: PolkadotAccount;
@@ -110,12 +110,8 @@ function useInfo(account: PolkadotAccount): Record<InfoName, ModalInfo[]> {
   const preloaded = usePolkadotPreloadData();
   const minimumBondBalance = new BigNumber(preloaded.minimumBondBalance);
   const unit = getAccountUnit(account);
-  const minimumBondBalanceStr = formatCurrencyUnit(unit, minimumBondBalance, {
-    disableRounding: true,
-    alwaysShowSign: false,
-    showCode: true,
-    discreet: false,
-  });
+  const { formatCurrency } = useFormat();
+  const minimumBondBalanceStr = formatCurrency(unit, minimumBondBalance, { discreet: false });
 
   const { currency } = account;
   const PolkadotIcon = getCryptoCurrencyIcon(currency);
