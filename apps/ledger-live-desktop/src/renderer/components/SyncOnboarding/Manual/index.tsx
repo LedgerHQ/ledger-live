@@ -22,7 +22,6 @@ import ExitChecksDrawer, {
   Props as ExitChecksDrawerProps,
 } from "./EarlySecurityChecks/ExitChecksDrawer";
 import { DeviceActionErrorComponent } from "../../DeviceAction/rendering";
-import { useTranslation } from "react-i18next";
 import { useChangeLanguagePrompt } from "./EarlySecurityChecks/useChangeLanguagePrompt";
 import DeviceAction from "../../DeviceAction";
 import TroubleshootingDrawer, {
@@ -58,8 +57,6 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
   deviceModelId: strDeviceModelId,
 }) => {
   const history = useHistory<RecoverState>();
-  const { t } = useTranslation();
-
   const device = useSelector(getCurrentDevice);
   const deviceModelId = stringToDeviceModelId(strDeviceModelId, DeviceModelId.stax);
 
