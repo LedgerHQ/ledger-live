@@ -51,6 +51,18 @@ type Props = Navigation;
 
 const WARN_FROM_UTXO_COUNT = 50;
 
+const shouldDispayBuyCta = (error?: unknown): boolean => {
+  if (!error) {
+    return false;
+  }
+
+  if (error instanceof NotEnoughGas || error instanceof NotEnoughBalance) {
+    return true;
+  }
+
+  return false;
+};
+
 function SendSummary({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { nextNavigation, overrideAmountLabel, hideTotal } = route.params;
@@ -260,7 +272,7 @@ function SendSummary({ navigation, route }: Props) {
         <LText style={styles.error} color="alert">
           <TranslatedError error={transactionError} />
         </LText>
-        {error && (error instanceof NotEnoughGas || error instanceof NotEnoughBalance) ? (
+        {shouldDispayBuyCta(error) ? (
           // If the user does not enough funds for gas, he needs to buy
           // the main account currency (which is not necessarily ETH depending
           // on the EVM network used)
