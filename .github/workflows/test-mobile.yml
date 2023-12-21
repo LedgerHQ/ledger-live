@@ -57,9 +57,7 @@ jobs:
       - name: Install dependencies
         run: pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
       - name: Run linter
-        run: |
-          pnpm lint --filter="live-mobile" --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo" -- --format="json" -o="lint.json"
-          node -p "require('./node_modules/eslint/lib/cli-engine/formatters/stylish.js')(require('./apps/ledger-live-mobile/lint.json'))"
+        run: pnpm lint --filter="live-mobile" --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo" -- --format="json" -o="lint.json"
       - name: check for dead code
         run: pnpm mobile unimported
         shell: bash
