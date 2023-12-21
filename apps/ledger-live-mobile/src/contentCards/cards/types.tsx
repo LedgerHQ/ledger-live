@@ -3,16 +3,10 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 
 export type ButtonAction = ComponentProps<typeof TouchableOpacity>["onPress"];
 
-/**
- *
- */
 export type ContentCardProps = {
   metadata: ContentCardMetadata;
 };
 
-/**
- *
- */
 export type ContentCardMetadata = {
   id: string;
 

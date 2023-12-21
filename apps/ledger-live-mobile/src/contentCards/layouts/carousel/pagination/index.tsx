@@ -9,9 +9,6 @@ type Props<P extends ContentCardProps> = {
   carouselIndex: number;
 };
 
-/**
- *
- */
 const Pagination = <P extends ContentCardProps>({ items, carouselIndex }: Props<P>) => (
   <Flex
     alignSelf="center"

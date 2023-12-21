@@ -1,9 +1,6 @@
 import React from "react";
 import { ContentCardProps, ContentCardItem } from "~/contentCards/cards/types";
 
-/**
- *
- */
 export const ContentCardBuilder =
   <P extends object>(ContentCardComponent: React.FC<P & ContentCardProps>) =>
   (props: P & ContentCardProps) => <ContentCardComponent {...props} />;
