@@ -16,7 +16,7 @@ import { useDispatch } from "react-redux";
 import { Swipeable } from "react-native-gesture-handler";
 import { TrashMedium } from "@ledgerhq/native-ui/assets/icons";
 
-import useDynamicContent from "~/dynamicContent/dynamicContent";
+import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import SettingsNavigationScrollView from "../Settings/SettingsNavigationScrollView";
 import { NotificationContentCard } from "~/dynamicContent/types";
 import { getTime } from "./helper";
