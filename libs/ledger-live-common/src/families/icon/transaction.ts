@@ -13,7 +13,7 @@ import { formatCurrencyUnit } from "../../currencies";
 
 export const formatTransaction = (
   { mode, amount, recipient, useAllAmount }: Transaction,
-  account: Account
+  account: Account,
 ): string =>
   `
 ${mode.toUpperCase()} ${
@@ -35,7 +35,6 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     family: tr.family,
     mode: tr.mode,
     fees: tr.fees ? new BigNumber(tr.fees) : null,
-    votes: tr.votes
   };
 };
 
@@ -46,7 +45,6 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     family: t.family,
     mode: t.mode,
     fees: t.fees?.toString() || null,
-    votes: t.votes,
   };
 };
 

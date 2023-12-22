@@ -63,52 +63,53 @@ const signOperation = ({
   deviceId: any;
   transaction: Transaction;
 }): Observable<SignOperationEvent> =>
-  withDevice(deviceId)(transport =>
-    new Observable(o => {
-      async function main() {
-        o.next({
-          type: "device-signature-requested",
-        });
+  withDevice(deviceId)(
+    transport =>
+      new Observable(o => {
+        async function main() {
+          o.next({
+            type: "device-signature-requested",
+          });
 
-        if (!transaction.fees) {
-          throw new FeeNotLoaded();
+          if (!transaction.fees) {
+            throw new FeeNotLoaded();
+          }
+
+          const { unsigned, rawTransaction } = await buildTransaction(
+            account as IconAccount,
+            transaction,
+            transaction.stepLimit,
+          );
+
+          // Sign by device
+          const icon = new Icon(transport);
+          const r = await icon.signTransaction(account.freshAddressPath, unsigned);
+
+          const signed = addSignature(rawTransaction, r.signedRawTxBase64);
+
+          o.next({ type: "device-signature-granted" });
+
+          const operation = buildOptimisticOperation(
+            account,
+            transaction,
+            transaction.fees ?? new BigNumber(0),
+          );
+
+          o.next({
+            type: "signed",
+            signedOperation: {
+              operation,
+              signature: signed.signature,
+              rawData: signed.rawTransaction,
+            },
+          });
         }
 
-        const { unsigned, rawTransaction } = await buildTransaction(
-          account as IconAccount,
-          transaction,
-          transaction.stepLimit,
+        main().then(
+          () => o.complete(),
+          e => o.error(e),
         );
-
-        // Sign by device
-        const icon = new Icon(transport);
-        const r = await icon.signTransaction(account.freshAddressPath, unsigned);
-
-        const signed = addSignature(rawTransaction, r.signedRawTxBase64);
-
-        o.next({ type: "device-signature-granted" });
-
-        const operation = buildOptimisticOperation(
-          account,
-          transaction,
-          transaction.fees ?? new BigNumber(0),
-        );
-
-        o.next({
-          type: "signed",
-          signedOperation: {
-            operation,
-            signature: signed.signature,
-            rawData: signed.rawTransaction
-          },
-        });
-      }
-
-      main().then(
-        () => o.complete(),
-        e => o.error(e),
-      );
-    }),
+      }),
   );
 
 export default signOperation;

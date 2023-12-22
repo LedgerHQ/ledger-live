@@ -106,7 +106,7 @@ const iconSpec: AppSpec<Transaction> = {
           ],
         };
       },
-      test: (input) => {
+      test: input => {
         expectCorrectBalanceChange(input);
       },
     },

@@ -1,5 +1,4 @@
 import BigNumber from "bignumber.js";
-import { Vote } from "../types";
 
 /**
  * Icon transaction
@@ -20,6 +19,5 @@ export type APITransaction = {
   block_timestamp?: number | null | undefined;
   transaction_type?: string | null | undefined;
   id?: string | null | undefined;
-  votes: Vote[];
   stepLimit?: BigNumber;
 };
