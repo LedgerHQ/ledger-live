@@ -70,7 +70,7 @@ import type { NoFundsNavigatorParamList } from "./NoFundsNavigator";
 import type { StakeNavigatorParamList } from "./StakeNavigator";
 import type { ExploreTabNavigatorStackParamList } from "./ExploreTabNavigator";
 import { AnalyticsOptInPromptNavigatorParamList } from "./AnalyticsOptInPromptNavigator";
-import type { IconFreezeFlowParamList } from "../../../families/icon/FreezeFlow/type";
+import type { IconFreezeFlowParamList } from "../../../families/icon/FreezeFlow/types";
 
 export type NavigateInput<
   ParamList extends ParamListBase = ParamListBase,
