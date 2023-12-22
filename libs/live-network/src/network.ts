@@ -99,6 +99,10 @@ export const errorInterceptor = (error: InterceptedError): InterceptedError => {
 axios.interceptors.request.use(requestInterceptor);
 axios.interceptors.response.use(responseInterceptor, errorInterceptor);
 
+/**
+ * We only allow HTTPS agent on platforms other than LLM because
+ * https library is not compatible with react native
+ */
 const NETWORK_USE_HTTPS_KEEP_ALIVE = !getEnv("LEDGER_CLIENT_VERSION").startsWith("llm-");
 if (NETWORK_USE_HTTPS_KEEP_ALIVE) {
   // the keepAlive is necessary when we make a lot of request in in parallel, especially for bitcoin sync. Otherwise, it may raise "connect ETIMEDOUT" error
