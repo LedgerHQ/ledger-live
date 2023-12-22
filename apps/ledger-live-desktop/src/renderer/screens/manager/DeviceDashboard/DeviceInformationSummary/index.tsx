@@ -4,7 +4,7 @@ import { Trans } from "react-i18next";
 import { DeviceInfo } from "@ledgerhq/types-live";
 import { AppsDistribution } from "@ledgerhq/live-common/apps/index";
 import { DeviceModel, DeviceModelId } from "@ledgerhq/devices";
-import { FeatureToggle } from "@ledgerhq/live-config/featureFlags/index";
+import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import Card from "~/renderer/components/Box/Card";
 import Box from "~/renderer/components/Box";
