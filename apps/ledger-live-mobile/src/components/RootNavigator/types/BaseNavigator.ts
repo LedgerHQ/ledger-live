@@ -59,7 +59,6 @@ import type { StellarAddAssetFlowParamList } from "../../../families/stellar/Add
 import type { TezosDelegationFlowParamList } from "../../../families/tezos/DelegationFlow/types";
 import type { EditTransactionParamList } from "../../../families/evm/EditTransactionFlow/EditTransactionParamList";
 import type { TronVoteFlowParamList } from "../../../families/tron/VoteFlow/types";
-import type { IconFreezeFlowParamList } from "../../../families/icon/FreezeFlow/type";
 
 import type { NoFundsNavigatorParamList } from "./NoFundsNavigator";
 import type { StakeNavigatorParamList } from "./StakeNavigator";
@@ -274,9 +273,6 @@ export type BaseNavigatorStackParamList = {
 
   // Tron
   [NavigatorName.TronVoteFlow]: NavigatorScreenParams<TronVoteFlowParamList>;
-
-  // Icon
-  [NavigatorName.IconFreezeFlow]: NavigatorScreenParams<IconFreezeFlowParamList>;
 
   [NavigatorName.ExploreTab]: NavigatorScreenParams<ExploreTabNavigatorStackParamList>;
 

@@ -483,27 +483,6 @@ export enum ScreenName {
   NearWithdrawingValidationError = "NearWithdrawingValidationError",
   NearWithdrawingValidationSuccess = "NearWithdrawingValidationSuccess",
 
-  //ICON
-  IconFreezeInfo = 'IconFreezeInfo',
-  IconFreezeAmount = 'IconFreezeAmount',
-  IconFreezeSelectDevice = 'IconFreezeSelectDevice',
-  IconFreezeConnectDevice = 'IconFreezeConnectDevice',
-  IconFreezeValidationError = 'IconFreezeValidationError',
-  IconFreezeValidationSuccess = 'IconFreezeValidationSuccess',
-
-  IconUnfreezeAmount = 'IconUnfreezeAmount',
-  IconUnfreezeConnectDevice = 'IconUnfreezeConnectDevice',
-  IconUnfreezeSelectDevice = 'IconUnfreezeSelectDevice',
-  IconUnfreezeValidationError = 'IconUnfreezeValidationError',
-  IconUnfreezeValidationSuccess = 'IconUnfreezeValidationSuccess',
-
-  IconVoteStarted = 'IconVoteStarted',
-  IconVoteSelectValidator = 'IconVoteSelectValidator',
-  IconVoteCast = 'IconVoteCast',
-  IconVoteConnectDevice = 'IconVoteConnectDevice',
-  IconVoteSelectDevice = 'IconVoteSelectDevice',
-  IconVoteValidationSuccess = 'IconVoteValidationSuccess',
-  IconVoteValidationError = 'IconVoteValidationError',
   Newsfeed = "Newsfeed",
 
   CustomImageStep0Welcome = "CustomImageStep0Welcome",
