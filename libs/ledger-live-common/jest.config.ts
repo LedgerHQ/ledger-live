@@ -30,7 +30,7 @@ const defaultConfig = {
       isolatedModules: true,
     },
   },
-  testEnvironment: "jsdom",
+  testEnvironment: "node",
   reporters,
   coveragePathIgnorePatterns: ["src/__tests__/test-helpers"],
   modulePathIgnorePatterns: [
