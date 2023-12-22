@@ -196,7 +196,7 @@ test("withoutToken tron", () => {
     "tron/trc10/1002000",
     "tron/trc10/1002398",
     "tron/trc10/1000226",
-    "tron/trc20/TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
+    "tron/trc20/tla2f6vpqdgre67v1736s7bj8ray5wyju7",
   ];
   const currency = getCryptoCurrencyById("tron");
   const account = genAccount("", {
