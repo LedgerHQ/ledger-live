@@ -55,7 +55,6 @@ const icon: CurrenciesData<Transaction> = {
             amount: "100000000",
             mode: "send",
             fees: "0.00125",
-            votes: [],
           }),
           expectedStatus: {
             amount: new BigNumber("100000000"),
@@ -73,7 +72,6 @@ const icon: CurrenciesData<Transaction> = {
             amount: "100000000",
             mode: "send",
             fees: null,
-            votes: [],
           }),
           expectedStatus: {
             errors: {
@@ -86,12 +84,10 @@ const icon: CurrenciesData<Transaction> = {
           name: "Not enough balance",
           transaction: fromTransactionRaw({
             family: "icon",
-            recipient:
-              "hxedaf3b2027fbbc0a31f589299c0b34533cd8edac",
+            recipient: "hxedaf3b2027fbbc0a31f589299c0b34533cd8edac",
             amount: "1000000000000000000000000",
             mode: "send",
             fees: null,
-            votes: [],
           }),
           expectedStatus: {
             errors: {

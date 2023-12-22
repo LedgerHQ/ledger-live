@@ -18,7 +18,6 @@ export const createTransaction = (): Transaction => ({
   recipient: "",
   useAllAmount: false,
   fees: null,
-  votes: [],
 });
 
 /**

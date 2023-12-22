@@ -12,36 +12,35 @@ const expectedAmount = ({ account, status }) => {
   );
 };
 
-export const acceptTransaction: DeviceAction<Transaction, any> =
-  deviceActionFlow({
-    steps: [
-      {
-        title: "Confirm",
-        button: SpeculosButton.RIGHT,
+export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
+  steps: [
+    {
+      title: "Confirm",
+      button: SpeculosButton.RIGHT,
+    },
+    {
+      title: "Amount",
+      button: SpeculosButton.RIGHT,
+      expectedValue: expectedAmount,
+    },
+    {
+      title: "Address",
+      button: SpeculosButton.RIGHT,
+      expectedValue: ({ transaction }) => {
+        return transaction.recipient;
       },
-      {
-        title: "Amount",
-        button: SpeculosButton.RIGHT,
-        expectedValue: expectedAmount,
-      },
-      {
-        title: "Address",
-        button: SpeculosButton.RIGHT,
-        expectedValue: ({ transaction }) => {
-          return transaction.recipient;
-        },
-      },
-      {
-        title: "Fees",
-        button: SpeculosButton.RIGHT,
-        expectedValue: ({ account, status }) =>
-          formatCurrencyUnit(account.unit, status.estimatedFees, {
-            disableRounding: true,
-          }),
-      },
-      {
-        title: "Accept",
-        button: SpeculosButton.BOTH,
-      },
-    ],
-  });
+    },
+    {
+      title: "Fees",
+      button: SpeculosButton.RIGHT,
+      expectedValue: ({ account, status }) =>
+        formatCurrencyUnit(account.unit, status.estimatedFees, {
+          disableRounding: true,
+        }),
+    },
+    {
+      title: "Accept",
+      button: SpeculosButton.BOTH,
+    },
+  ],
+});

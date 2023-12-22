@@ -3,15 +3,10 @@ import type { Transaction, TransactionStatus } from "./types";
 import type { DeviceTransactionField } from "../../transaction";
 import { getMainAccount } from "../../account";
 
-export type ExtraDeviceTransactionField =
-  | {
-      type: "icon.votes";
-      label: string;
-    }
-  | {
-      type: "icon.fees";
-      label: string;
-    };
+export type ExtraDeviceTransactionField = {
+  type: "icon.fees";
+  label: string;
+};
 
 function getDeviceTransactionConfig({
   transaction,
@@ -26,14 +21,7 @@ function getDeviceTransactionConfig({
 }): Array<DeviceTransactionField> {
   const fields: Array<DeviceTransactionField> = [];
   const mainAccount = getMainAccount(account, parentAccount);
-  const { mode, votes } = transaction;
-  if (votes && votes.length > 0) {
-    // NB in future if we unify UI with other coin, we could converge to a "votes" top level
-    fields.push({
-      type: "icon.votes",
-      label: "Votes",
-    });
-  }
+  const { mode } = transaction;
 
   if (!estimatedFees.isZero()) {
     fields.push({
@@ -47,26 +35,6 @@ function getDeviceTransactionConfig({
       type: "amount",
       label: "Amount",
     });
-  }
-
-  switch (mode) {
-    case "freeze":
-      fields.push({
-        type: "address",
-        label: "Stake to",
-        address: transaction.recipient,
-      });
-      break;
-
-    case "unfreeze":
-      fields.push({
-        type: "address",
-        label: "Unstake From",
-        address: transaction.recipient,
-      });
-      break;
-    default:
-      break;
   }
 
   if (mode !== "send") {

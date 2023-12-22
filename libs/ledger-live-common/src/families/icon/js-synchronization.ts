@@ -32,7 +32,6 @@ const getAccountShape: GetAccountShape = async info => {
 
   const iconResources: IconResources = {
     nonce: 0,
-    votes: delegationData.delegations,
     totalDelegated: delegationData.totalDelegated,
     votingPower: delegationData.votingPower,
     unstake,

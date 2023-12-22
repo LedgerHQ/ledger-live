@@ -10,11 +10,6 @@ import {
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
 
-export type PublicRepresentativeData = {
-  delegations: PRep[];
-  totalDelegated: BigNumber;
-};
-
 export type PRep = {
   grade: string | null | undefined;
   status: string | null | undefined;
@@ -37,16 +32,11 @@ export type PRep = {
   p2pEndpoint: string | null | undefined;
 };
 
-export type Vote = {
-  address: string | null | undefined;
-  value: BigNumber | string | null | undefined;
-};
 /**
  * Icon account resources
  */
 export type IconResources = {
   nonce: number;
-  votes: Vote[];
   votingPower: string | BigNumber;
   totalDelegated: string | BigNumber;
   unwithdrawnReward: string | BigNumber;
@@ -58,7 +48,6 @@ export type IconResources = {
  */
 export type IconResourcesRaw = {
   nonce: number;
-  votes: Vote[];
   votingPower: string | BigNumber;
   totalDelegated: string | BigNumber;
   unwithdrawnReward: string | BigNumber;
@@ -72,7 +61,6 @@ export type Transaction = TransactionCommon & {
   mode: string;
   family: "icon";
   fees?: BigNumber | null | undefined;
-  votes: Vote[];
   stepLimit?: BigNumber;
 };
 
@@ -83,11 +71,9 @@ export type TransactionRaw = TransactionCommonRaw & {
   family: "icon";
   mode: string;
   fees?: string | null | undefined;
-  votes: Vote[];
   stepLimit?: BigNumber;
   // also the transaction fields as raw JSON data
 };
-
 
 export type IconAccount = Account & { iconResources: IconResources };
 
@@ -105,10 +91,8 @@ export type IconOperationRaw = OperationRaw<IconGridExtraTxInfoRaw>;
 export type IconGridExtraTxInfo = {
   frozenAmount?: BigNumber;
   unfreezeAmount?: BigNumber;
-  votes?: Vote[];
 };
 export type IconGridExtraTxInfoRaw = {
   frozenAmount?: string;
   unfreezeAmount?: string;
-  votes?: Vote[];
 };

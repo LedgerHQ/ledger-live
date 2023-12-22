@@ -21,7 +21,6 @@ const createTransaction = (): Transaction => ({
   recipient: "",
   useAllAmount: false,
   fees: null,
-  votes: [],
 });
 
 const updateTransaction = (t, patch) => ({ ...t, ...patch });
