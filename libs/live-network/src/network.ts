@@ -99,8 +99,8 @@ export const errorInterceptor = (error: InterceptedError): InterceptedError => {
 axios.interceptors.request.use(requestInterceptor);
 axios.interceptors.response.use(responseInterceptor, errorInterceptor);
 
-const NETWORK_USE_HTTPS_KEEP_ALIVE = getEnv("LEDGER_CLIENT_VERSION").startsWith("llm-");
-if (!NETWORK_USE_HTTPS_KEEP_ALIVE) {
+const NETWORK_USE_HTTPS_KEEP_ALIVE = !getEnv("LEDGER_CLIENT_VERSION").startsWith("llm-");
+if (NETWORK_USE_HTTPS_KEEP_ALIVE) {
   // the keepAlive is necessary when we make a lot of request in in parallel, especially for bitcoin sync. Otherwise, it may raise "connect ETIMEDOUT" error
   // refer to https://stackoverflow.com/questions/63064393/getting-axios-error-connect-etimedout-when-making-high-volume-of-calls
   // eslint-disable-next-line global-require,@typescript-eslint/no-var-requires
