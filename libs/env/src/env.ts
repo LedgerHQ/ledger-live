@@ -300,7 +300,7 @@ const envDefinitions = {
     desc: "enable a mechanism that send a 0x00 apdu to force device to awake from its 'Processing' UI state",
   },
   DEVICE_PROXY_URL: {
-    def: "ws://192.168.51.8:8435",
+    def: "",
     parser: stringParser,
     desc: "enable a proxy to use instead of a physical device",
   },
