@@ -85,14 +85,8 @@ const BottomSection = ({ navigation }: { navigation: NavigationProps["navigation
   const { range, orderBy, order, top100 } = requestParams;
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
   const filterByStarredAccount: boolean = useSelector(marketFilterByStarredAccountsSelector);
-  const firstMount = useRef(true); // To known if this is the first mount of the page
 
   useEffect(() => {
-    if (firstMount.current) {
-      // We don't want to refresh the market data directly on mount, the data is already refreshed with wanted parameters from MarketDataProviderWrapper
-      firstMount.current = false;
-      return;
-    }
     if (filterByStarredAccount) {
       refresh({ starred: starredMarketCoins });
     } else {
