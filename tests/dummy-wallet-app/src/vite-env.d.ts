@@ -1,5 +1,5 @@
-/// <reference types="react-scripts" />
-//
+/// <reference types="vite/client" />
+
 interface Window {
   ledger: {
     e2e: {

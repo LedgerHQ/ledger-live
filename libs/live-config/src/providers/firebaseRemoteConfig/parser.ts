@@ -1,35 +1,22 @@
 import { Value } from "../firebaseRemoteConfig";
 import { ConfigInfo } from "../../LiveConfig";
 
-const stringParser = (value: unknown): string | undefined => {
-  return (value as Value).asString() || undefined;
-};
-
-const numberParser = (value: unknown): number | undefined => {
-  const numberValue = (value as Value).asNumber();
-  return numberValue !== 0 ? numberValue : undefined;
-};
-
-const booleanParser = (value: unknown): boolean | undefined => {
-  const valueExist = (value as Value).asString();
-  return valueExist ? (value as Value).asBoolean() : undefined;
-};
-
 const objectParser = (value: unknown): object | undefined => {
   const stringValue = (value as Value).asString();
   return stringValue ? JSON.parse(stringValue) : undefined;
 };
 
 export function parser(value: unknown, type: ConfigInfo["type"]) {
+  if ((value as Value).getSource() === "static") return undefined; // config value is not set in firebase remote config
   switch (type) {
     case "string": {
-      return stringParser(value);
+      return (value as Value).asString();
     }
     case "number": {
-      return numberParser(value);
+      return (value as Value).asNumber();
     }
     case "boolean": {
-      return booleanParser(value);
+      return (value as Value).asBoolean();
     }
     case "object":
     case "array":

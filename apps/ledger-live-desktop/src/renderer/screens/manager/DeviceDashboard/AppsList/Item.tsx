@@ -18,7 +18,7 @@ import AppIcon from "./AppIcon";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
-const AppRow = styled.div`
+const AppRowContainer = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -102,7 +102,7 @@ const Item = ({
   );
 
   return (
-    <AppRow id={`managerAppsList-${name}`}>
+    <AppRowContainer id={`managerAppsList-${name}`}>
       <Box flex="0.7" horizontal>
         <AppIcon app={app} />
         <AppName>
@@ -163,7 +163,7 @@ const Item = ({
         addAccount={onAddAccount}
         featureFlagActivated={currencyFlagEnabled}
       />
-    </AppRow>
+    </AppRowContainer>
   );
 };
 

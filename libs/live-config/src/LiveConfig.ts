@@ -24,45 +24,35 @@ export type ConfigSchema = Record<string, ConfigInfo>;
 
 export class LiveConfig {
   public provider?: Provider;
-  public config!: ConfigSchema;
+  public config: ConfigSchema = {};
   public appVersion?: string;
   public platform?: string;
   public environment?: string;
-  public static configInstance: LiveConfig | null = null;
+  public static configInstance: LiveConfig = new LiveConfig();
 
-  constructor(params: { appVersion?: string; platform?: string; environment?: string }) {
-    this.appVersion = params.appVersion;
-    this.platform = params.platform;
-    this.environment = params.environment;
-  }
+  private constructor() {}
 
-  static init(params: { appVersion?: string; platform?: string; environment?: string }) {
-    if (LiveConfig.configInstance) {
-      throw new Error("Config instance already created");
-    }
-    LiveConfig.configInstance = new LiveConfig(params);
+  static setAppinfo(params: { appVersion?: string; platform?: string; environment?: string }) {
+    LiveConfig.configInstance.appVersion = params.appVersion;
+    LiveConfig.configInstance.platform = params.platform;
+    LiveConfig.configInstance.environment = params.environment;
   }
 
   static setProvider(provider: Provider) {
-    if (!LiveConfig.configInstance) {
-      throw new Error("Config instance not created");
-    }
     LiveConfig.configInstance.provider = provider;
   }
 
   static setConfig(config: ConfigSchema) {
-    if (!LiveConfig.configInstance) {
-      throw new Error("Config instance not created");
-    }
     LiveConfig.configInstance.config = config;
   }
 
   static getValueByKey(key: string) {
-    if (!LiveConfig.configInstance) {
-      throw new Error("Config instance not created");
+    if (Object.keys(LiveConfig.configInstance.config).length === 0) {
+      throw new Error("Config not set");
     }
     if (!LiveConfig.configInstance.provider) {
-      throw new Error("Provider not set");
+      // return default value if no provider is set
+      return LiveConfig.configInstance.config[key]?.default;
     }
     return LiveConfig.configInstance.provider.getValueBykey(
       key,
