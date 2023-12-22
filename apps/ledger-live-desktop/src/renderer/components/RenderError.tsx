@@ -15,7 +15,6 @@ import Space from "~/renderer/components/Space";
 import TranslatedError from "~/renderer/components/TranslatedError";
 import Button from "~/renderer/components/Button";
 import ConfirmModal from "~/renderer/modals/ConfirmModal";
-import { useLocalizedUrl } from "../hooks/useLocalizedUrls";
 
 type Props = {
   error: Error;
@@ -25,7 +24,7 @@ type Props = {
 export default function RenderError({ error, withoutAppData, children }: Props) {
   const { t } = useTranslation();
   const hardReset = useHardReset();
-  const troubleshootingCrashUrl = useLocalizedUrl(urls.troubleshootingCrash);
+  const troubleshootingCrashUrl = urls.troubleshootingCrash;
   const [isHardResetting, setIsHardResetting] = useState(false);
   const [isHardResetModalOpened, setIsHardResetModalOpened] = useState(false);
   const handleOpenHardResetModal = useCallback(() => {
