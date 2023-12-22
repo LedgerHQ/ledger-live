@@ -239,14 +239,16 @@ export const attachOperations = (
   _coinOperations: Operation[],
   _tokenOperations: Operation[],
   _nftOperations: Operation[],
+  _internalOperations: Operation[],
 ): Operation[] => {
   // Creating deep copies of each Operation[] to prevent mutating the originals
   const coinOperations = _coinOperations.map(op => ({ ...op }));
   const tokenOperations = _tokenOperations.map(op => ({ ...op }));
   const nftOperations = _nftOperations.map(op => ({ ...op }));
+  const internalOperations = _internalOperations.map(op => ({ ...op }));
 
   type OperationWithRequiredChildren = Operation &
-    Required<Pick<Operation, "nftOperations" | "subOperations">>;
+    Required<Pick<Operation, "nftOperations" | "subOperations" | "internalOperations">>;
 
   // Helper to create a coin operation with type NONE as a parent of an orphan child operation
   const makeCoinOpForOrphanChildOp = (childOp: Operation): OperationWithRequiredChildren => {
@@ -267,6 +269,7 @@ export const attachOperations = (
       transactionSequenceNumber: childOp.transactionSequenceNumber,
       subOperations: [],
       nftOperations: [],
+      internalOperations: [],
       accountId: "",
       date: childOp.date,
       extra: {},
@@ -284,6 +287,7 @@ export const attachOperations = (
     // by the adapters so it should never be needed
     op.subOperations = [];
     op.nftOperations = [];
+    op.internalOperations = [];
     coinOperationsByHash[op.hash].push(op as OperationWithRequiredChildren);
   });
 
@@ -314,6 +318,21 @@ export const attachOperations = (
     // Ugly loop in loop but in theory, this can only be a 2 elements array maximum in the case of a self send
     for (const mainOperation of mainOperations) {
       mainOperation.nftOperations.push(nftOperation);
+    }
+  }
+
+  // Looping through internal operations to potentially copy them as a child operation of a coin operation
+  for (const internalOperation of internalOperations) {
+    let mainOperations = coinOperationsByHash[internalOperation.hash];
+    if (!mainOperations?.length) {
+      const noneOperation = makeCoinOpForOrphanChildOp(internalOperation);
+      mainOperations = [noneOperation];
+      coinOperations.push(noneOperation);
+    }
+
+    // Ugly loop in loop but in theory, this can only be a 2 elements array maximum in the case of a self send
+    for (const mainOperation of mainOperations) {
+      mainOperation.internalOperations.push(internalOperation);
     }
   }
 
