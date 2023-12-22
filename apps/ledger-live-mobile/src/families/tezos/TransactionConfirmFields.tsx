@@ -9,7 +9,7 @@ import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-commo
 import { toLocaleString } from "@ledgerhq/live-common/currencies/index";
 import { DataRow } from "~/components/ValidateOnDeviceDataRow";
 import LText from "~/components/LText";
-import { useSystem } from "~/hooks";
+import { useSettings } from "~/hooks";
 
 const styles = StyleSheet.create({
   text: {
@@ -20,12 +20,12 @@ const styles = StyleSheet.create({
 });
 
 const TezosStorageLimit = ({ transaction }: { transaction: Transaction }) => {
-  const { i18 } = useSystem();
+  const { locale } = useSettings();
   invariant(transaction.family === "tezos", "tezos transaction");
   return (
     <DataRow label="Storage Limit">
       <LText semiBold style={styles.text}>
-        {transaction.storageLimit ? toLocaleString(transaction.storageLimit, i18.locale) : ""}
+        {transaction.storageLimit ? toLocaleString(transaction.storageLimit, locale) : ""}
       </LText>
     </DataRow>
   );

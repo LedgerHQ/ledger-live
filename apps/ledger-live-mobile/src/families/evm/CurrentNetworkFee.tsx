@@ -8,7 +8,7 @@ import type { Account, AccountLike, TransactionCommonRaw } from "@ledgerhq/types
 import React, { memo } from "react";
 import { useTranslation } from "react-i18next";
 import LText from "~/components/LText";
-import { useSystem } from "~/hooks";
+import { useSettings } from "~/hooks";
 
 const CurrentNetworkFeeComponent = ({
   account,
@@ -21,7 +21,7 @@ const CurrentNetworkFeeComponent = ({
   advancedMode?: boolean;
 }) => {
   const { t } = useTranslation();
-  const { i18 } = useSystem();
+  const { locale } = useSettings();
 
   if (!transactionRaw) {
     return null;
@@ -43,7 +43,7 @@ const CurrentNetworkFeeComponent = ({
     formattedMaxPriorityFeePerGas,
     formattedMaxFeePerGas,
     formattedGasPrice,
-  } = getFormattedFeeFields({ transaction, mainAccount, locale: i18.locale });
+  } = getFormattedFeeFields({ transaction, mainAccount, locale: locale });
 
   return (
     <Alert type="info">

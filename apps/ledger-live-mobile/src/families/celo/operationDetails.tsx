@@ -15,7 +15,7 @@ import { discreetModeSelector } from "~/reducers/settings";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { ScreenName } from "~/const";
-import { useSystem } from "~/hooks";
+import { useSettings } from "~/hooks";
 
 type Props = {
   operation: CeloOperation;
@@ -28,7 +28,7 @@ type Navigation = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.Op
 const OperationDetailsExtra = ({ operation, type, account }: Props) => {
   const { t } = useTranslation();
   const discreet = useSelector(discreetModeSelector);
-  const { i18 } = useSystem();
+  const { locale } = useSettings();
   const unit = getAccountUnit(account);
   const { validatorGroups: celoValidators } = useCeloPreloadData();
   const { extra } = operation;
@@ -63,7 +63,7 @@ const OperationDetailsExtra = ({ operation, type, account }: Props) => {
     alwaysShowSign: false,
     showCode: true,
     discreet,
-    locale: i18.locale,
+    locale: locale,
   });
 
   switch (type) {

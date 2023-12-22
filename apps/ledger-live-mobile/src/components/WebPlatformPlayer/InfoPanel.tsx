@@ -8,7 +8,7 @@ import ExternalLinkIcon from "~/icons/ExternalLink";
 import AppIcon from "~/screens/Platform/AppIcon";
 import QueuedDrawer from "../QueuedDrawer";
 import LText from "../LText";
-import { useSystem } from "~/hooks";
+import { useSettings } from "~/hooks";
 
 type Props = {
   name: string;
@@ -21,7 +21,7 @@ type Props = {
 };
 
 export function InfoPanel({ name, icon, description, url, uri, isOpened, setIsOpened }: Props) {
-  const { i18 } = useSystem();
+  const { language } = useSettings();
   const { colors } = useTheme();
   const onClose = useCallback(() => {
     setIsOpened(false);
@@ -53,7 +53,7 @@ export function InfoPanel({ name, icon, description, url, uri, isOpened, setIsOp
             color: colors.text,
           }}
         >
-          {translateContent(description, i18.language)}
+          {translateContent(description, language)}
         </LText>
         {url ? (
           <>

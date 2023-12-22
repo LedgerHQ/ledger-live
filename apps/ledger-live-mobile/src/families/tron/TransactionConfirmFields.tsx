@@ -11,7 +11,7 @@ import { useTheme } from "@react-navigation/native";
 import { DataRow, HeaderRow, ValidatorField } from "~/components/ValidateOnDeviceDataRow";
 import LText from "~/components/LText";
 import Info from "~/icons/Info";
-import { useSystem } from "~/hooks";
+import { useSettings } from "~/hooks";
 
 const styles = StyleSheet.create({
   infoText: {
@@ -69,7 +69,7 @@ const TronResourceField = ({ transaction }: { transaction: Transaction }) => {
 function TronVotesField({ transaction }: { transaction: Transaction }) {
   invariant(transaction.family === "tron", "tron transaction");
   const { t } = useTranslation();
-  const { i18 } = useSystem();
+  const { locale } = useSettings();
   const { votes } = transaction;
   const sp = useTronSuperRepresentatives();
   const formattedVotes = votes && votes.length > 0 ? formatVotes(votes, sp) : null;
@@ -81,7 +81,7 @@ function TronVotesField({ transaction }: { transaction: Transaction }) {
         <ValidatorField
           address={address}
           name={validator?.name ?? address}
-          amount={voteCount.toLocaleString(i18.locale)}
+          amount={voteCount.toLocaleString(locale)}
           key={`${address}-${i}`}
         />
       ))}

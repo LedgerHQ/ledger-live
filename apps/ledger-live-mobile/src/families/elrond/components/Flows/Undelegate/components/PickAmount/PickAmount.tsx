@@ -21,7 +21,7 @@ import Check from "~/icons/Check";
 import KeyboardView from "~/components/KeyboardView";
 
 import styles from "./styles";
-import { useSystem } from "~/hooks";
+import { useSettings } from "~/hooks";
 
 /*
  * Handle the component declaration.
@@ -34,7 +34,7 @@ const PickAmount = (props: PickAmountPropsType) => {
 
   const unit = getAccountUnit(account);
   const bridge = getAccountBridge(account, undefined);
-  const { i18 } = useSystem();
+  const { locale } = useSettings();
 
   const [value, setValue] = useState(new BigNumber(amount));
 
@@ -239,7 +239,7 @@ const PickAmount = (props: PickAmountPropsType) => {
                       values={{
                         amount: formatCurrencyUnit(unit, amount.minus(value), {
                           showCode: true,
-                          locale: i18.locale,
+                          locale: locale,
                         }),
                       }}
                     >

@@ -12,7 +12,7 @@ import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
 import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
-import { useSystem } from "~/hooks";
+import { useSettings } from "~/hooks";
 
 type Navigation = BaseComposite<
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
@@ -28,7 +28,7 @@ export default function RippleTagRow({ account, transaction }: Props) {
   const { colors } = useTheme();
   const navigation = useNavigation<Navigation["navigation"]>();
   const route = useRoute<Navigation["route"]>();
-  const { i18 } = useSystem();
+  const { locale } = useSettings();
   const editTag = useCallback(() => {
     navigation.navigate(ScreenName.RippleEditTag, {
       ...route.params,
@@ -42,7 +42,7 @@ export default function RippleTagRow({ account, transaction }: Props) {
     <View>
       <SummaryRow title={<Trans i18nKey="send.summary.tag" />}>
         <View style={styles.tagContainer}>
-          {tag && <LText style={styles.tagText}>{tag.toLocaleString(i18.locale)}</LText>}
+          {tag && <LText style={styles.tagText}>{tag.toLocaleString(locale)}</LText>}
           <LText
             style={[
               styles.link,

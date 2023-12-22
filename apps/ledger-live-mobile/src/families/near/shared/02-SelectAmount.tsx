@@ -30,7 +30,7 @@ import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpe
 import { NearStakingFlowParamList } from "../StakingFlow/types";
 import { NearUnstakingFlowParamList } from "../UnstakingFlow/types";
 import { NearWithdrawingFlowParamList } from "../WithdrawingFlow/types";
-import { useSystem } from "~/hooks";
+import { useSettings } from "~/hooks";
 
 type Props =
   | StackNavigatorProps<NearStakingFlowParamList, ScreenName.NearStakingAmount>
@@ -40,7 +40,7 @@ type Props =
 function StakingAmount({ navigation, route }: Props) {
   const { colors } = useTheme();
   const account = useSelector(accountScreenSelector(route)).account as NearAccount;
-  const { i18 } = useSystem();
+  const { locale } = useSettings();
 
   invariant(
     account && account.nearResources && route.params.transaction,
@@ -174,7 +174,7 @@ function StakingAmount({ navigation, route }: Props) {
                       values={{
                         amount: formatCurrencyUnit(unit, remaining, {
                           showCode: true,
-                          locale: i18.locale,
+                          locale: locale,
                         }),
                       }}
                     >

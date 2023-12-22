@@ -10,7 +10,7 @@ import useRatings from "~/logic/ratings";
 import getWindowDimensions from "~/logic/getWindowDimensions";
 import { lastSeenDeviceSelector, notificationsSelector } from "~/reducers/settings";
 import { knownDevicesSelector } from "~/reducers/ble";
-import { useSystem } from "~/hooks";
+import { useSettings } from "~/hooks";
 
 const { height } = getWindowDimensions();
 
@@ -57,7 +57,7 @@ type Props = {
 
 const DisappointedForm = ({ setStep }: Props) => {
   const { ratingsHappyMoment, ratingsFeatureParams } = useRatings();
-  const { i18 } = useSystem();
+  const { language } = useSettings();
   const devices = useSelector(knownDevicesSelector);
   const lastDevice = useSelector(lastSeenDeviceSelector) || devices[devices.length - 1];
 
@@ -98,7 +98,7 @@ const DisappointedForm = ({ setStep }: Props) => {
   const formUrl =
     formUrlSplitted?.[0] +
     `#app_version=${appVersion}` +
-    `&app_language=${i18.language}` +
+    `&app_language=${language}` +
     `&platform_os=${Platform.OS}` +
     `&platform_version=${Platform.Version}` +
     `&model_id=${lastDevice?.modelId}` +

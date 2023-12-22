@@ -16,7 +16,7 @@ import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import InfoItem from "~/components/BalanceSummaryInfoItem";
 import Alert from "~/components/Alert";
 import { urls } from "~/utils/urls";
-import { useSystem } from "~/hooks";
+import { useSettings } from "~/hooks";
 
 type Props = {
   account: Account;
@@ -25,7 +25,7 @@ type InfoName = "available" | "frozen" | "bandwidth" | "energy";
 
 function AccountBalanceSummaryFooter({ account }: Props) {
   const { t } = useTranslation();
-  const { i18 } = useSystem();
+  const { locale } = useSettings();
   const [infoName, setInfoName] = useState<InfoName | typeof undefined>();
   const infoCandidates = useInfoCandidates();
   const {
@@ -73,12 +73,12 @@ function AccountBalanceSummaryFooter({ account }: Props) {
         <InfoItem
           title={t("account.bandwidth")}
           onPress={onPressInfoCreator("bandwidth")}
-          value={formattedBandwidth.isZero() ? "-" : toLocaleString(formattedBandwidth, i18.locale)}
+          value={formattedBandwidth.isZero() ? "-" : toLocaleString(formattedBandwidth, locale)}
         />
         <InfoItem
           title={t("account.energy")}
           onPress={onPressInfoCreator("energy")}
-          value={formattedEnergy.isZero() ? "-" : toLocaleString(formattedEnergy, i18.locale)}
+          value={formattedEnergy.isZero() ? "-" : toLocaleString(formattedEnergy, locale)}
           isLast={true}
         />
       </ScrollView>

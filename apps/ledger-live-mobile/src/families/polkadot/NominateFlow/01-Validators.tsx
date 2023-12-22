@@ -54,7 +54,7 @@ import type {
 import type { PolkadotNominateFlowParamList } from "./types";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import FirstLetterIcon from "~/components/FirstLetterIcon";
-import { useSystem } from "~/hooks";
+import { useSettings } from "~/hooks";
 
 type Props = BaseComposite<
   StackNavigatorProps<PolkadotNominateFlowParamList, ScreenName.PolkadotNominateSelectValidators>
@@ -64,7 +64,7 @@ function NominateSelectValidator({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
-  const { i18 } = useSystem();
+  const { locale } = useSettings();
   invariant(account, "account required");
   const mainAccount = getMainAccount(account, parentAccount) as PolkadotAccount;
   const bridge = getAccountBridge(account, parentAccount);
@@ -121,7 +121,7 @@ function NominateSelectValidator({ navigation, route }: Props) {
     alwaysShowSign: false,
     showCode: true,
     discreet: false,
-    locale: i18.locale,
+    locale: locale,
   });
   const maxNominatorRewardedPerValidator = staking?.maxNominatorRewardedPerValidator || 300;
   const sorted = useSortedValidators(searchQuery, polkadotValidators, nominations);

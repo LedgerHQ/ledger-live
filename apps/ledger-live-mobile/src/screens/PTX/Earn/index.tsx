@@ -16,7 +16,7 @@ import { ScreenName } from "~/const";
 import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
 import { useSelector } from "react-redux";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { useSystem } from "~/hooks";
+import { useSettings } from "~/hooks";
 
 export type Props = StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenName.Earn>;
 
@@ -27,7 +27,7 @@ export const EarnScreen = memo(Earn);
 
 function Earn({ route }: Props) {
   const { theme } = useTheme();
-  const { i18 } = useSystem();
+  const { language } = useSettings();
   const { ticker: currencyTicker } = useSelector(counterValueCurrencySelector);
   const discreet = useSelector(discreetModeSelector);
   const { platform: appId, ...params } = route.params || {};
@@ -54,8 +54,8 @@ function Earn({ route }: Props) {
         disableHeader
         inputs={{
           theme,
-          lang: i18.language,
-          locale: i18.language, // LLM doesn't support different locales. By doing this we don't have to have specific LLM/LLD logic in earn, and in future if LLM supports locales we will change this from `language` to `locale`
+          lang: language,
+          locale: language, // LLM doesn't support different locales. By doing this we don't have to have specific LLM/LLD logic in earn, and in future if LLM supports locales we will change this from `language` to `locale`
           currencyTicker,
           discreetMode: discreet ? "true" : "false",
           ...params,

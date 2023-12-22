@@ -24,7 +24,7 @@ import TranslatedError from "~/components/TranslatedError";
 import Illustration from "~/images/illustration/Illustration";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { AlgorandClaimRewardsFlowParamList } from "./type";
-import { useSystem } from "~/hooks";
+import { useSettings } from "~/hooks";
 
 type Props = StackNavigatorProps<
   AlgorandClaimRewardsFlowParamList,
@@ -34,7 +34,7 @@ type Props = StackNavigatorProps<
 export default function DelegationStarted({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
-  const { i18 } = useSystem();
+  const { locale } = useSettings();
   invariant(account, "Account required");
   const mainAccount = getMainAccount(account, undefined) as AlgorandAccount;
   const bridge = getAccountBridge(mainAccount, undefined);
@@ -53,7 +53,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
   const formattedRewards = formatCurrencyUnit(unit, rewards, {
     showCode: true,
     disableRounding: true,
-    locale: i18.locale,
+    locale: locale,
   });
   const onNext = useCallback(() => {
     navigation.navigate(ScreenName.AlgorandClaimRewardsSelectDevice, {

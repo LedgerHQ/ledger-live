@@ -10,7 +10,7 @@ import { Navigation, RouteProps } from "./EvmCustomFees/types";
 import SummaryRow from "~/screens/SendFunds/SummaryRow";
 import LText from "~/components/LText";
 import { ScreenName } from "~/const";
-import { useSystem } from "~/hooks";
+import { useSettings } from "~/hooks";
 
 type Props = {
   account: Account;
@@ -24,7 +24,7 @@ export default function EvmGasLimit({ account, transaction, gasLimit, setGasLimi
   const navigation = useNavigation<Navigation>();
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const { i18 } = useSystem();
+  const { locale } = useSettings();
   const editGasLimit = useCallback(() => {
     navigation.navigate(ScreenName.EvmEditGasLimit, {
       ...route.params,
@@ -46,7 +46,7 @@ export default function EvmGasLimit({ account, transaction, gasLimit, setGasLimi
         <View style={styles.gasLimitContainer}>
           {gasLimit && (
             <LText semiBold style={styles.gasLimitText}>
-              {toLocaleString(gasLimit, i18.locale)}
+              {toLocaleString(gasLimit, locale)}
             </LText>
           )}
           <LText

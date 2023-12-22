@@ -14,7 +14,7 @@ import {
   AlgorandAccount,
   AlgorandOperationExtra,
 } from "@ledgerhq/live-common/families/algorand/types";
-import { useSystem } from "~/hooks";
+import { useSettings } from "~/hooks";
 
 type Props = {
   operation: AlgorandOperation;
@@ -25,10 +25,10 @@ function OperationDetailsExtra({ operation, account }: Props) {
   const { t } = useTranslation();
   const unit = getAccountUnit(account);
   const discreet = useSelector(discreetModeSelector);
-  const { i18 } = useSystem();
+  const { locale } = useSettings();
   const formattedRewards = operation.extra.rewards?.gt(0)
     ? formatCurrencyUnit(unit, operation.extra.rewards, {
-        locale: i18.locale,
+        locale: locale,
         disableRounding: true,
         alwaysShowSign: false,
         showCode: true,

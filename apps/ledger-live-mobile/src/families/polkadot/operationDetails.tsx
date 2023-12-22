@@ -33,7 +33,7 @@ import SetControllerIcon from "~/icons/Manager";
 import OperationStatusWrapper from "~/icons/OperationStatusIcon/Wrapper";
 
 import NominationInfo from "./components/NominationInfo";
-import { useSystem } from "~/hooks";
+import { useSettings } from "~/hooks";
 
 function getURLWhatIsThis(op: PolkadotOperation): string | undefined {
   if (op.type !== "IN" && op.type !== "OUT") {
@@ -57,7 +57,7 @@ type OperationDetailsExtraProps = {
 function OperationDetailsExtra({ operation, type, account }: OperationDetailsExtraProps) {
   const { t } = useTranslation();
   const discreet = useSelector(discreetModeSelector);
-  const { i18 } = useSystem();
+  const { locale } = useSettings();
   const { extra } = operation;
 
   switch (type) {
@@ -67,7 +67,7 @@ function OperationDetailsExtra({ operation, type, account }: OperationDetailsExt
         showCode: true,
         discreet,
         disableRounding: true,
-        locale: i18.locale,
+        locale: locale,
       });
       return (
         <>
@@ -92,7 +92,7 @@ function OperationDetailsExtra({ operation, type, account }: OperationDetailsExt
         showCode: true,
         discreet,
         disableRounding: true,
-        locale: i18.locale,
+        locale: locale,
       });
       return (
         <>
@@ -106,7 +106,7 @@ function OperationDetailsExtra({ operation, type, account }: OperationDetailsExt
         showCode: true,
         discreet,
         disableRounding: true,
-        locale: i18.locale,
+        locale: locale,
       });
       return (
         <>
@@ -123,7 +123,7 @@ function OperationDetailsExtra({ operation, type, account }: OperationDetailsExt
           showCode: true,
           discreet,
           disableRounding: true,
-          locale: i18.locale,
+          locale: locale,
         },
       );
       return (

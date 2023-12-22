@@ -9,7 +9,7 @@ import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { ScreenName } from "~/const";
 import DeltaVariation from "../Market/DeltaVariation";
 import Touchable from "~/components/Touchable";
-import { useSystem } from "~/hooks";
+import { useSettings } from "~/hooks";
 
 type Props = {
   currency: CryptoOrTokenCurrency;
@@ -19,12 +19,12 @@ type Props = {
 
 const MarketPrice = ({ currency, selectedCoinData, counterCurrency }: Props) => {
   const { t } = useTranslation();
-  const { i18 } = useSystem();
+  const { locale } = useSettings();
   const navigation = useNavigation();
 
-  let loc = i18.locale;
+  let loc = locale;
   // TEMPORARY : quick win to transform arabic to english
-  if (i18.locale === "ar") {
+  if (locale === "ar") {
     loc = "en";
   }
 

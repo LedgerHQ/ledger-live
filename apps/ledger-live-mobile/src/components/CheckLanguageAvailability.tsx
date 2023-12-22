@@ -12,14 +12,14 @@ import { getDefaultLanguageLocale } from "../languages";
 import { useLanguageAvailableChecked } from "~/context/Locale";
 import { Track, updateIdentify } from "~/analytics";
 import Button from "./wrappedUi/Button";
-import { useSystem } from "~/hooks";
+import { useSettings } from "~/hooks";
 
 export default function CheckLanguageAvailability() {
   const { t } = useTranslation();
+  const { language } = useSettings();
   const [modalOpened, setModalOpened] = useState(true);
   const dispatch = useDispatch();
   const defaultLanguage = getDefaultLanguageLocale();
-  const { i18 } = useSystem();
   const [hasAnswered, answer] = useLanguageAvailableChecked();
   const isLanguageSetByUser = useSelector(languageIsSetByUserSelector);
 
@@ -43,8 +43,8 @@ export default function CheckLanguageAvailability() {
     modalOpened &&
     !isLanguageSetByUser &&
     !hasAnswered &&
-    i18.language !== defaultLanguage &&
-    i18.language === "en";
+    language !== defaultLanguage &&
+    language === "en";
 
   if (!toShow) {
     return null;

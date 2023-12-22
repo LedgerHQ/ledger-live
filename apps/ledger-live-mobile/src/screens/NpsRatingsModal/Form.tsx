@@ -11,7 +11,7 @@ import getWindowDimensions from "~/logic/getWindowDimensions";
 import { screen } from "~/analytics/segment";
 import { lastSeenDeviceSelector, notificationsSelector } from "~/reducers/settings";
 import { knownDevicesSelector } from "~/reducers/ble";
-import { useSystem } from "~/hooks";
+import { useSettings } from "~/hooks";
 
 const { height } = getWindowDimensions();
 
@@ -71,7 +71,7 @@ type Props = {
 
 const Form = ({ setStep }: Props) => {
   const { ratingsHappyMoment, ratingsFeatureParams, updateNpsRating } = useNpsRatings();
-  const { i18 } = useSystem();
+  const { language } = useSettings();
   const devices = useSelector(knownDevicesSelector);
   const lastDevice = useSelector(lastSeenDeviceSelector) || devices[devices.length - 1];
   const [selectedRate, setSelectedRate] = useState<number>();
@@ -120,7 +120,7 @@ const Form = ({ setStep }: Props) => {
   const formUrl =
     formUrlSplitted?.[0] +
     `#app_version=${appVersion}` +
-    `&app_language=${i18.language}` +
+    `&app_language=${language}` +
     `&platform_os=${Platform.OS}` +
     `&platform_version=${Platform.Version}` +
     `&model_id=${lastDevice?.modelId}` +

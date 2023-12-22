@@ -22,7 +22,7 @@ import Check from "~/icons/Check";
 import KeyboardView from "~/components/KeyboardView";
 
 import styles from "./styles";
-import { useSystem } from "~/hooks";
+import { useSettings } from "~/hooks";
 
 /*
  * Handle the component declaration.
@@ -34,7 +34,7 @@ const PickAmount = (props: PickAmountPropsType) => {
   const { account, validators } = route.params;
 
   const unit = getAccountUnit(account);
-  const { i18 } = useSystem();
+  const { locale } = useSettings();
   const bridge = getAccountBridge(account);
   const transaction = route.params.transaction as Transaction;
 
@@ -226,7 +226,7 @@ const PickAmount = (props: PickAmountPropsType) => {
                       values={{
                         amount: formatCurrencyUnit(unit, maxSpendable.minus(amount), {
                           showCode: true,
-                          locale: i18.locale,
+                          locale: locale,
                         }),
                       }}
                     >

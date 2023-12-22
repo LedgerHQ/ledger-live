@@ -12,7 +12,7 @@ import { useSelector } from "react-redux";
 import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
 import Section from "~/screens/OperationDetails/Section";
 import { discreetModeSelector } from "~/reducers/settings";
-import { useSystem } from "~/hooks";
+import { useSettings } from "~/hooks";
 
 function getURLFeesInfo(op: Operation, currencyId: string): string | null | undefined {
   return op.fee.gt(200000) ? cryptoFactory(currencyId).stakingDocUrl : undefined;
@@ -33,7 +33,7 @@ type Props = {
 function OperationDetailsExtra({ operation, type, account }: Props) {
   const { t } = useTranslation();
   const discreet = useSelector(discreetModeSelector);
-  const { i18 } = useSystem();
+  const { locale } = useSettings();
   const unit = getAccountUnit(account);
   const currencyId = account.currency.id;
   const { extra } = operation;
@@ -70,7 +70,7 @@ function OperationDetailsExtra({ operation, type, account }: Props) {
         alwaysShowSign: false,
         showCode: true,
         discreet,
-        locale: i18.locale,
+        locale: locale,
       });
       ret = (
         <>
@@ -89,7 +89,7 @@ function OperationDetailsExtra({ operation, type, account }: Props) {
         alwaysShowSign: false,
         showCode: true,
         discreet,
-        locale: i18.locale,
+        locale: locale,
       });
       ret = (
         <>
@@ -117,7 +117,7 @@ function OperationDetailsExtra({ operation, type, account }: Props) {
         alwaysShowSign: false,
         showCode: true,
         discreet,
-        locale: i18.locale,
+        locale: locale,
       });
       ret = (
         <>
@@ -157,7 +157,7 @@ function OperationDetailsExtra({ operation, type, account }: Props) {
                   alwaysShowSign: false,
                   showCode: true,
                   discreet,
-                  locale: i18.locale,
+                  locale: locale,
                 })
               }
               onPress={() => {

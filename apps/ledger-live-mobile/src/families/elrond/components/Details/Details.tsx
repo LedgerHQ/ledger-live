@@ -13,7 +13,7 @@ import type { DetailsPropsType } from "./types";
 
 import Section from "~/screens/OperationDetails/Section";
 import { discreetModeSelector } from "~/reducers/settings";
-import { useSystem } from "~/hooks";
+import { useSettings } from "~/hooks";
 
 /*
  * Handle the component declaration.
@@ -24,7 +24,7 @@ const Details = (props: DetailsPropsType) => {
   const { t } = useTranslation();
 
   const discreet = useSelector(discreetModeSelector);
-  const { i18 } = useSystem();
+  const { locale } = useSettings();
   const unit = getAccountUnit(account);
 
   const { extra } = operation;
@@ -38,7 +38,7 @@ const Details = (props: DetailsPropsType) => {
     alwaysShowSign: false,
     showCode: true,
     discreet,
-    locale: i18.locale,
+    locale: locale,
   });
 
   /*

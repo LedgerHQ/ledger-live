@@ -7,7 +7,7 @@ import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { useSelector } from "react-redux";
 import Section from "~/screens/OperationDetails/Section";
 import { discreetModeSelector } from "~/reducers/settings";
-import { useSystem } from "~/hooks";
+import { useSettings } from "~/hooks";
 
 type Props = {
   account: Account;
@@ -17,7 +17,7 @@ type Props = {
 function OperationDetailsExtra({ account, operation }: Props) {
   const { t } = useTranslation();
   const discreet = useSelector(discreetModeSelector);
-  const { i18 } = useSystem();
+  const { locale } = useSettings();
 
   if (operation.type !== "STAKE") {
     return null;
@@ -29,7 +29,7 @@ function OperationDetailsExtra({ account, operation }: Props) {
     alwaysShowSign: false,
     showCode: true,
     discreet,
-    locale: i18.locale,
+    locale: locale,
   });
 
   return (
