@@ -1,5 +1,14 @@
 # live-mobile
 
+## 3.37.0-nightly.5
+
+### Patch Changes
+
+- [#5790](https://github.com/LedgerHQ/ledger-live/pull/5790) [`4416813`](https://github.com/LedgerHQ/ledger-live/commit/4416813ea419498aaf94b1581903dc8d6d738195) Thanks [@chabroA](https://github.com/chabroA)! - Remove infinite rerender on live apps sign eth tx summary
+
+- Updated dependencies [[`241cdac`](https://github.com/LedgerHQ/ledger-live/commit/241cdace43c9e6b6394617d8a63c60a7505f6a53)]:
+  - @ledgerhq/live-common@33.4.0-nightly.5
+
 ## 3.37.0-nightly.4
 
 ### Patch Changes
