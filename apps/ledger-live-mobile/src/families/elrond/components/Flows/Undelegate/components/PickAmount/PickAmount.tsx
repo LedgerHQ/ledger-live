@@ -2,7 +2,6 @@ import React, { useCallback, useMemo, useState } from "react";
 import { View, Keyboard, TouchableOpacity, TouchableWithoutFeedback, Platform } from "react-native";
 import { Trans } from "react-i18next";
 import { BigNumber } from "bignumber.js";
-import { useSelector } from "react-redux";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
@@ -13,7 +12,6 @@ import { MIN_DELEGATION_AMOUNT } from "@ledgerhq/live-common/families/elrond/con
 
 import type { PickAmountPropsType, RatioType } from "./types";
 
-import { localeSelector } from "~/reducers/settings";
 import { ScreenName } from "~/const";
 import Button from "~/components/Button";
 import CurrencyInput from "~/components/CurrencyInput";
@@ -23,6 +21,7 @@ import Check from "~/icons/Check";
 import KeyboardView from "~/components/KeyboardView";
 
 import styles from "./styles";
+import { useSettings } from "~/hooks";
 
 /*
  * Handle the component declaration.
@@ -35,7 +34,7 @@ const PickAmount = (props: PickAmountPropsType) => {
 
   const unit = getAccountUnit(account);
   const bridge = getAccountBridge(account, undefined);
-  const locale = useSelector(localeSelector);
+  const { locale } = useSettings();
 
   const [value, setValue] = useState(new BigNumber(amount));
 
@@ -240,7 +239,7 @@ const PickAmount = (props: PickAmountPropsType) => {
                       values={{
                         amount: formatCurrencyUnit(unit, amount.minus(value), {
                           showCode: true,
-                          locale,
+                          locale: locale,
                         }),
                       }}
                     >
