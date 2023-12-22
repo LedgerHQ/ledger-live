@@ -1361,6 +1361,9 @@ importers:
       '@ledgerhq/live-common':
         specifier: workspace:^
         version: link:../../libs/ledger-live-common
+      '@ledgerhq/live-config':
+        specifier: workspace:^
+        version: link:../../libs/live-config
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../libs/env
