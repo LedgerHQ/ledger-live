@@ -19,7 +19,6 @@ import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
 import { accountScreenSelector } from "~/reducers/accounts";
-import { localeSelector } from "~/reducers/settings";
 import Button from "~/components/Button";
 import CurrencyInput from "~/components/CurrencyInput";
 import LText from "~/components/LText";
@@ -31,6 +30,7 @@ import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpe
 import type { CosmosDelegationFlowParamList } from "../DelegationFlow/types";
 import type { CosmosRedelegationFlowParamList } from "../RedelegationFlow/types";
 import { CosmosUndelegationFlowParamList } from "../UndelegationFlow/types";
+import { useSettings } from "~/hooks";
 
 type Props =
   | StackNavigatorProps<CosmosDelegationFlowParamList, ScreenName.CosmosDelegationAmount>
@@ -43,7 +43,7 @@ type Props =
 function DelegationAmount({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
-  const locale = useSelector(localeSelector);
+  const { locale } = useSettings();
   invariant(
     account && (account as CosmosAccount).cosmosResources && route.params.transaction,
     "account and cosmos transaction required",
@@ -201,12 +201,12 @@ function DelegationAmount({ navigation, route }: Props) {
                         min: formatCurrencyUnit(unit, min, {
                           showCode: true,
                           showAllDigits: true,
-                          locale,
+                          locale: locale,
                         }),
                         max: formatCurrencyUnit(unit, initialMax, {
                           showCode: true,
                           showAllDigits: true,
-                          locale,
+                          locale: locale,
                         }),
                       }}
                     >
@@ -235,7 +235,7 @@ function DelegationAmount({ navigation, route }: Props) {
                       values={{
                         amount: formatCurrencyUnit(unit, max, {
                           showCode: true,
-                          locale,
+                          locale: locale,
                         }),
                       }}
                     >
@@ -252,7 +252,7 @@ function DelegationAmount({ navigation, route }: Props) {
                       values={{
                         amount: formatCurrencyUnit(unit, redelegatedBalance.plus(value), {
                           showCode: true,
-                          locale,
+                          locale: locale,
                         }),
                         name: route.params.validator?.name ?? "",
                       }}

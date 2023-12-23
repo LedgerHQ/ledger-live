@@ -17,6 +17,7 @@ import {
   tokenAccount,
   tokenCurrencies,
   tokenOperations,
+  internalOperations,
 } from "../fixtures/synchronization.fixtures";
 import { UnknownNode } from "../../errors";
 import { getEnv } from "../../../../env";
@@ -105,6 +106,7 @@ describe("EVM Family", () => {
               lastCoinOperations: [],
               lastTokenOperations: [],
               lastNftOperations: [],
+              lastInternalOperations: [],
             }),
           );
           jest.spyOn(etherscanAPI?.default, "getLastOperations").mockImplementation(() =>
@@ -112,6 +114,7 @@ describe("EVM Family", () => {
               lastCoinOperations: [],
               lastTokenOperations: [],
               lastNftOperations: [],
+              lastInternalOperations: [],
             }),
           );
         });
@@ -247,6 +250,15 @@ describe("EVM Family", () => {
               ]),
             );
           jest
+            .spyOn(etherscanAPI, "getLastInternalOperations")
+            .mockImplementation(() =>
+              Promise.resolve([
+                { ...internalOperations[0] },
+                { ...internalOperations[1] },
+                { ...internalOperations[2] },
+              ]),
+            );
+          jest
             .spyOn(nodeApi, "getTokenBalance")
             .mockImplementation(async (a, b, contractAddress) => {
               if (contractAddress === tokenCurrencies[0].contractAddress) {
@@ -273,6 +285,7 @@ describe("EVM Family", () => {
             {
               ...coinOperations[1],
               nftOperations: [erc721Operations[1], erc721Operations[2], erc1155Operations[1]],
+              internalOperations: [internalOperations[1]],
             },
             {
               ...tokenOperations[1],
@@ -290,6 +303,25 @@ describe("EVM Family", () => {
               ...coinOperations[0],
               subOperations: [tokenOperations[0]],
               nftOperations: [erc721Operations[0], erc1155Operations[0]],
+              internalOperations: [internalOperations[0]],
+            },
+            {
+              id: `js:2:ethereum:0xkvn:-${internalOperations[2].hash}-NONE`,
+              type: "NONE",
+              hash: internalOperations[2].hash,
+              value: new BigNumber(0),
+              fee: new BigNumber(0),
+              recipients: [],
+              senders: [],
+              accountId: "",
+              blockHash: null,
+              blockHeight: internalOperations[2].blockHeight,
+              subOperations: [],
+              nftOperations: [],
+              internalOperations: [internalOperations[2]],
+              date: internalOperations[2].date,
+              transactionSequenceNumber: 0,
+              extra: {},
             },
           ]);
 
@@ -316,6 +348,7 @@ describe("EVM Family", () => {
             lastTokenOperations: [],
             lastNftOperations: [],
             lastCoinOperations: [coinOperations[2]],
+            lastInternalOperations: [],
           }));
           const operations = [
             {
@@ -361,6 +394,7 @@ describe("EVM Family", () => {
               lastCoinOperations: [],
               lastTokenOperations: [],
               lastNftOperations: [],
+              lastInternalOperations: [],
             }),
           );
           jest

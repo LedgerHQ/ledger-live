@@ -11,7 +11,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import DiscreetModeButton from "~/components/DiscreetModeButton";
 import { track } from "~/analytics";
-import useDynamicContent from "~/dynamicContent/dynamicContent";
+import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import Notifications from "~/icons/Notifications";
 
 const NotificationsButton = () => {
