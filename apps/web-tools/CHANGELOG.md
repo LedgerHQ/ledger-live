@@ -1,5 +1,12 @@
 # web-tools
 
+## 0.3.0-nightly.6
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@33.4.0-nightly.6
+
 ## 0.3.0-nightly.5
 
 ### Patch Changes

@@ -1,5 +1,15 @@
 # live-mobile
 
+## 3.37.0-nightly.6
+
+### Patch Changes
+
+- [#5795](https://github.com/LedgerHQ/ledger-live/pull/5795) [`c495b5b`](https://github.com/LedgerHQ/ledger-live/commit/c495b5b19adead323ebf5ae4b31b11301cb218b8) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Add `useSystem` & `useSettings` hooks
+
+- Updated dependencies [[`ed23f46`](https://github.com/LedgerHQ/ledger-live/commit/ed23f4680d4ed1020bf34ac05b064ff659a282f5)]:
+  - @ledgerhq/coin-evm@0.12.0-nightly.2
+  - @ledgerhq/live-common@33.4.0-nightly.6
+
 ## 3.37.0-nightly.5
 
 ### Patch Changes

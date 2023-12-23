@@ -1,5 +1,11 @@
 # @ledgerhq/coin-evm
 
+## 0.12.0-nightly.2
+
+### Minor Changes
+
+- [#5744](https://github.com/LedgerHQ/ledger-live/pull/5744) [`ed23f46`](https://github.com/LedgerHQ/ledger-live/commit/ed23f4680d4ed1020bf34ac05b064ff659a282f5) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for internal transactions in transactions' history
+
 ## 0.12.0-nightly.1
 
 ### Patch Changes
