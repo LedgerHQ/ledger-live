@@ -4,11 +4,13 @@ import liveConfig from "./sharedConfig";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 
 describe("getCurrencyConfiguration", () => {
+  beforeAll(() => {
+    LiveConfig.setConfig(liveConfig);
+  });
   const cosmosCurrencyMock = {
     family: "cosmos",
     id: "cosmos",
   } as CryptoCurrency;
-  LiveConfig.setConfig(liveConfig);
   describe("when config fetching is successful", () => {
     it("should return the related currency config", async () => {
       const config = getCurrencyConfiguration(cosmosCurrencyMock);
