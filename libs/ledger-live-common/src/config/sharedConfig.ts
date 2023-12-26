@@ -1,6 +1,6 @@
 import { ConfigSchema } from "@ledgerhq/live-config/LiveConfig";
 import cosmosConfig from "../families/cosmos/config";
 
-const liveConfig: ConfigSchema = {};
+const liveCommonConfig: ConfigSchema = {};
 
-export default { ...liveConfig, ...cosmosConfig } as ConfigSchema;
+export default { ...liveCommonConfig, ...cosmosConfig } as ConfigSchema;

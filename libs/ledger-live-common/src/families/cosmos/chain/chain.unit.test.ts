@@ -1,10 +1,10 @@
 import cryptoFactory from "./chain";
-import liveConfig from "../../../config/sharedConfig";
-import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import cosmosConfig from "../config";
+import { LiveConfig, ConfigSchema } from "@ledgerhq/live-config/LiveConfig";
 
 describe("cryptoFactory test", () => {
   beforeAll(() => {
-    LiveConfig.setConfig(liveConfig);
+    LiveConfig.setConfig(cosmosConfig as ConfigSchema);
   });
   it("should not return null with currencies in cosmos family", () => {
     const currencies = [
