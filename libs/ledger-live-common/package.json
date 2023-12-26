@@ -278,7 +278,7 @@
     "react": "^18.2.0",
     "react-dom": "18.2.0",
     "react-native": "0.72.6",
-    "react-native-svg": "13.4.0",
+    "react-native-svg": "13.14.0",
     "react-redux": "^7.2.9",
     "react-test-renderer": "^18.2.0",
     "redux-actions": "2.6.5",
