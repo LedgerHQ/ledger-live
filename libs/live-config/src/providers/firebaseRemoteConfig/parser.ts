@@ -3,7 +3,12 @@ import { ConfigInfo } from "../../LiveConfig";
 
 const objectParser = (value: unknown): object | undefined => {
   const stringValue = (value as Value).asString();
-  return stringValue ? JSON.parse(stringValue) : undefined;
+  try {
+    return stringValue ? JSON.parse(stringValue) : undefined;
+  } catch (error) {
+    console.error(`JSON.parse error: ${error}. Original string: ${stringValue}`);
+    return undefined;
+  }
 };
 
 export function parser(value: unknown, type: ConfigInfo["type"]) {
