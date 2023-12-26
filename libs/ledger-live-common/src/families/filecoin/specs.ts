@@ -18,7 +18,7 @@ const filecoinSpecs: AppSpec<Transaction> = {
   name: "Filecoin",
   currency: getCryptoCurrencyById("filecoin"),
   appQuery: {
-    model: DeviceModelId.nanoS,
+    model: DeviceModelId.nanoSP,
     appName: "Filecoin",
   },
   genericDeviceAction: generateDeviceActionFlow(BotScenario.DEFAULT),
