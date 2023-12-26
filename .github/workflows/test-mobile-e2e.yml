@@ -104,12 +104,11 @@ jobs:
           echo "id=$ID" >> $GITHUB_OUTPUT
       - name: Build iOS app for Detox test run
         if: steps.detox-build.outputs.cache-hit != 'true'
-        run: pnpm mobile e2e:build -c ios.sim.release
+        run: pnpm mobile e2e:ci -p ios -b
 
       - name: Build JS Bundle app for Detox test run
         if: steps.detox-build.outputs.cache-hit == 'true'
-        run: |
-          pnpm mobile e2e:ci -p ios -b
+        run: pnpm mobile e2e:ci -p ios --bundle
       - name: Test iOS app
         id: detox
         timeout-minutes: 45
