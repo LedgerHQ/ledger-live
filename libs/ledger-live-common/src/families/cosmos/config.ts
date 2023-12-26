@@ -109,6 +109,7 @@ export default {
     default: {
       lcd: "https://injective-api.polkachu.com",
       minGasPrice: 900000000,
+      ledgerValidator: "injvaloper1ntn4j2lsu3k60g8xj9pqshqvdj2q5tygyvczpy",
     },
   },
 };
