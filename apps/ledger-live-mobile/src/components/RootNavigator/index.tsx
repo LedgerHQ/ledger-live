@@ -2,13 +2,13 @@ import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import Config from "react-native-config";
 import { createStackNavigator } from "@react-navigation/stack";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { NavigatorName } from "../../const";
-import { hasCompletedOnboardingSelector } from "../../reducers/settings";
+import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+import { NavigatorName } from "~/const";
+import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import BaseNavigator from "./BaseNavigator";
 import BaseOnboardingNavigator from "./BaseOnboardingNavigator";
 import { RootStackParamList } from "./types/RootNavigator";
-import { AnalyticsContextProvider } from "../../analytics/AnalyticsContext";
+import { AnalyticsContextProvider } from "~/analytics/AnalyticsContext";
 import { StartupTimeMarker } from "../../StartupTimeMarker";
 import { enableListAppsV2 } from "@ledgerhq/live-common/apps/hw";
 

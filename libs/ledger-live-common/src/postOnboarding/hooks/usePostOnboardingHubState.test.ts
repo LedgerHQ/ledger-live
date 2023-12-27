@@ -1,4 +1,4 @@
-import { useFeatureFlags } from "../../featureFlags";
+import { useFeatureFlags } from "@ledgerhq/live-config/featureFlags/index";
 import { hubStateSelector } from "../reducer";
 import { usePostOnboardingContext } from "./usePostOnboardingContext";
 import { getPostOnboardingAction, mockedFeatureIdToTest } from "../mock";
@@ -10,7 +10,7 @@ import { usePostOnboardingHubState } from "./usePostOnboardingHubState";
 jest.mock("react-redux", () => ({
   useSelector: val => val(),
 }));
-jest.mock("../../featureFlags");
+jest.mock("@ledgerhq/live-config/featureFlags/index");
 jest.mock("./usePostOnboardingContext");
 jest.mock("../reducer");
 
@@ -25,7 +25,6 @@ const mockedGetFeatureWithMockFeatureEnabled = enabled => ({
   overrideFeature: () => {},
   resetFeature: () => {},
   resetFeatures: () => {},
-  getAllFlags: () => ({}),
 });
 
 const mockedUsePostOnboardingContext = jest.mocked(usePostOnboardingContext);

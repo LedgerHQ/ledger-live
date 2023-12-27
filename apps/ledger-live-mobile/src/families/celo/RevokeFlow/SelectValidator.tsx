@@ -10,12 +10,12 @@ import {
 } from "@ledgerhq/live-common/families/celo/types";
 import { useCeloPreloadData } from "@ledgerhq/live-common/families/celo/react";
 import { fallbackValidatorGroup, revokableVotes } from "@ledgerhq/live-common/families/celo/logic";
-import { TrackScreen } from "../../../analytics";
-import { ScreenName } from "../../../const";
-import { accountScreenSelector } from "../../../reducers/accounts";
+import { TrackScreen } from "~/analytics";
+import { ScreenName } from "~/const";
+import { accountScreenSelector } from "~/reducers/accounts";
 import ValidatorHead from "../ValidatorHead";
 import ValidatorRow from "../ValidatorRow";
-import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { CeloRevokeFlowFlowParamList } from "./types";
 
 type Props = StackNavigatorProps<CeloRevokeFlowFlowParamList, ScreenName.CeloRevokeValidatorSelect>;

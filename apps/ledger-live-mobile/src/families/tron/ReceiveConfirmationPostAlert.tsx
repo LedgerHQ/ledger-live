@@ -1,8 +1,8 @@
 import type { Account } from "@ledgerhq/types-live";
 import React from "react";
 import { Trans } from "react-i18next";
-import Alert from "../../components/Alert";
-import { urls } from "@utils/urls";
+import Alert from "~/components/Alert";
+import { urls } from "~/utils/urls";
 
 type Props = {
   mainAccount: Account;

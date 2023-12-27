@@ -1,7 +1,7 @@
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import type { Operation } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/types-devices";
-import { ScreenName } from "../../../const";
+import { ScreenName } from "~/const";
 
 export type ClaimRewardsNavigatorParamList = {
   [ScreenName.ClaimRewardsSelectDevice]: object;

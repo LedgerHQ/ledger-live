@@ -1,5 +1,25 @@
 # @ledgerhq/icons-ui
 
+## 0.7.0
+
+### Minor Changes
+
+- [#4947](https://github.com/LedgerHQ/ledger-live/pull/4947) [`2edfa53`](https://github.com/LedgerHQ/ledger-live/commit/2edfa533bccafbfd8a61aea0f5422c0db79825ea) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - vechain integration
+
+### Patch Changes
+
+- [#5640](https://github.com/LedgerHQ/ledger-live/pull/5640) [`335ce83`](https://github.com/LedgerHQ/ledger-live/commit/335ce8366c8c997cdd77f191262a9dedee9888f6) Thanks [@chabroA](https://github.com/chabroA)! - Update telos logo
+
+## 0.7.0-next.0
+
+### Minor Changes
+
+- [#4947](https://github.com/LedgerHQ/ledger-live/pull/4947) [`2edfa53`](https://github.com/LedgerHQ/ledger-live/commit/2edfa533bccafbfd8a61aea0f5422c0db79825ea) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - vechain integration
+
+### Patch Changes
+
+- [#5640](https://github.com/LedgerHQ/ledger-live/pull/5640) [`335ce83`](https://github.com/LedgerHQ/ledger-live/commit/335ce8366c8c997cdd77f191262a9dedee9888f6) Thanks [@chabroA](https://github.com/chabroA)! - Update telos logo
+
 ## 0.6.1
 
 ### Patch Changes

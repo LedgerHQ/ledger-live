@@ -9,15 +9,15 @@ import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceModelInfo } from "@ledgerhq/types-live";
 
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { TrackScreen, track } from "../../../analytics";
+import { TrackScreen, track } from "~/analytics";
 import { DeviceActionDefaultRendering } from "..";
 import QueuedDrawer from "../../QueuedDrawer";
 
 import Item, { ItemState } from "./Item";
 import Confirmation from "./Confirmation";
 import Restore from "./Restore";
-import { lastSeenDeviceSelector } from "../../../reducers/settings";
-import { useAppDeviceAction } from "../../../hooks/deviceActions";
+import { lastSeenDeviceSelector } from "~/reducers/settings";
+import { useAppDeviceAction } from "~/hooks/deviceActions";
 import { UserRefusedAllowManager } from "@ledgerhq/errors";
 
 type Props = {

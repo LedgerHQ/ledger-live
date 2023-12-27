@@ -1,10 +1,10 @@
 import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "styled-components/native";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { ScreenName } from "../../const";
-import MarketList from "../../screens/Market";
-import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
+import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+import { ScreenName } from "~/const";
+import MarketList from "~/screens/Market";
+import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import { MarketNavigatorStackParamList } from "./types/MarketNavigator";
 
 export default function MarketNavigator() {

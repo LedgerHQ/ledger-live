@@ -1,5 +1,5 @@
 import { PostOnboardingActionId } from "@ledgerhq/types-live";
-import { ScreenName } from "../../../const";
+import { ScreenName } from "~/const";
 
 export type PostOnboardingNavigatorParamList = {
   [ScreenName.PostOnboardingHub]: Record<string, never> | undefined;

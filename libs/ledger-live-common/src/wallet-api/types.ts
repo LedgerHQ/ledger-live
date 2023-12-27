@@ -15,6 +15,8 @@ export type {
   ERC20TokenCurrency as WalletAPIERC20TokenCurrency,
 } from "@ledgerhq/wallet-api-core";
 
+export type { WalletAPIServer } from "@ledgerhq/wallet-api-server";
+
 export {
   CurrencyType as WalletAPICurrencyType,
   TokenStandard as WalletAPITokenStandard,

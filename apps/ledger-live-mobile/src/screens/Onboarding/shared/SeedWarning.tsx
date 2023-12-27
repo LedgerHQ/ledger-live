@@ -4,8 +4,8 @@ import { Linking } from "react-native";
 import { Trans } from "react-i18next";
 import { getDeviceModel, DeviceModelId } from "@ledgerhq/devices";
 import { Text, Button, Alert, Flex, IconBox, IconsLegacy } from "@ledgerhq/native-ui";
-import { urls } from "@utils/urls";
-import QueuedDrawer from "../../../components/QueuedDrawer";
+import { urls } from "~/utils/urls";
+import QueuedDrawer from "~/components/QueuedDrawer";
 
 const SeedWarning = ({ deviceModelId }: { deviceModelId: DeviceModelId }) => {
   const deviceName = getDeviceModel(deviceModelId).productName;
@@ -34,7 +34,7 @@ const SeedWarning = ({ deviceModelId }: { deviceModelId: DeviceModelId }) => {
       <Alert type="info" title={<Trans i18nKey="onboarding.warning.seed.warning" />} />
       <Button
         type="main"
-        testID={"Onboarding - Seed warning"}
+        testID={"onboarding-seed-warning"}
         onPress={() => setIsOpened(false)}
         mt={8}
         mb={6}

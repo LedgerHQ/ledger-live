@@ -55,10 +55,6 @@ export const setDiscreetMode = (discreetMode: boolean) =>
   saveSettings({
     discreetMode,
   });
-export const setCarouselVisibility = (carouselVisibility: number) =>
-  saveSettings({
-    carouselVisibility,
-  });
 export const setSentryLogs = (sentryLogs: boolean) =>
   saveSettings({
     sentryLogs,
@@ -317,11 +313,14 @@ export const toggleStarredMarketCoins = (payload: string) => ({
   type: "TOGGLE_STARRED_MARKET_COINS",
   payload,
 });
-export const setOverriddenFeatureFlag = (key: FeatureId, value: Feature | undefined) => ({
+export const setOverriddenFeatureFlag = (featureFlag: {
+  key: FeatureId;
+  value: Feature | undefined;
+}) => ({
   type: "SET_OVERRIDDEN_FEATURE_FLAG",
   payload: {
-    key,
-    value,
+    key: featureFlag.key,
+    value: featureFlag.value,
   },
 });
 export const setOverriddenFeatureFlags = (

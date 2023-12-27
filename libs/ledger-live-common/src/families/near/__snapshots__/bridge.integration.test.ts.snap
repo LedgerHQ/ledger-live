@@ -1,15 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`near currency bridge scanAccounts near seed 1 1`] = `
-Array [
-  Object {
+[
+  {
     "balance": "67162281393064900000001",
     "currencyId": "near",
     "derivationMode": "nearbip44h",
     "freshAddress": "18d68decb70d4d4fd267d19a0d25edc06ad079e69ded41233a10976cf36391ec",
     "freshAddressPath": "44'/397'/0'/0'/0'",
-    "freshAddresses": Array [
-      Object {
+    "freshAddresses": [
+      {
         "address": "18d68decb70d4d4fd267d19a0d25edc06ad079e69ded41233a10976cf36391ec",
         "derivationPath": "44'/397'/0'/0'/0'",
       },
@@ -17,12 +17,12 @@ Array [
     "id": "js:2:near:18d68decb70d4d4fd267d19a0d25edc06ad079e69ded41233a10976cf36391ec:nearbip44h",
     "index": 0,
     "name": "NEAR 1",
-    "nearResources": Object {
+    "nearResources": {
       "availableBalance": "10000000000000000001",
       "pendingBalance": "0",
       "stakedBalance": "0",
-      "stakingPositions": Array [
-        Object {
+      "stakingPositions": [
+        {
           "available": "10000000000000000001",
           "pending": "0",
           "rewards": "1",
@@ -34,23 +34,23 @@ Array [
     },
     "nfts": undefined,
     "operationsCount": 6,
-    "pendingOperations": Array [],
+    "pendingOperations": [],
     "seedIdentifier": "ed25519:2fxYBxPh3sP1KeqraqSNcUBx8chZ4RHpVAnQ1rFK9xNF",
     "spendableBalance": "15332281393064900000000",
     "starred": false,
-    "swapHistory": Array [],
+    "swapHistory": [],
     "syncHash": undefined,
     "unitMagnitude": 24,
     "used": true,
   },
-  Object {
+  {
     "balance": "0",
     "currencyId": "near",
     "derivationMode": "nearbip44h",
     "freshAddress": "6cbf3b0f8d8b4667bf64bf44b4fefa830e4cef0e5da1e5cfb4015b5a755c4ac0",
     "freshAddressPath": "44'/397'/0'/0'/1'",
-    "freshAddresses": Array [
-      Object {
+    "freshAddresses": [
+      {
         "address": "6cbf3b0f8d8b4667bf64bf44b4fefa830e4cef0e5da1e5cfb4015b5a755c4ac0",
         "derivationPath": "44'/397'/0'/0'/1'",
       },
@@ -58,32 +58,32 @@ Array [
     "id": "js:2:near:6cbf3b0f8d8b4667bf64bf44b4fefa830e4cef0e5da1e5cfb4015b5a755c4ac0:nearbip44h",
     "index": 1,
     "name": "NEAR 2",
-    "nearResources": Object {
+    "nearResources": {
       "availableBalance": "0",
       "pendingBalance": "0",
       "stakedBalance": "0",
-      "stakingPositions": Array [],
+      "stakingPositions": [],
       "storageUsageBalance": "5e+22",
     },
     "nfts": undefined,
     "operationsCount": 0,
-    "pendingOperations": Array [],
+    "pendingOperations": [],
     "seedIdentifier": "ed25519:2fxYBxPh3sP1KeqraqSNcUBx8chZ4RHpVAnQ1rFK9xNF",
     "spendableBalance": "0",
     "starred": false,
-    "swapHistory": Array [],
+    "swapHistory": [],
     "syncHash": undefined,
     "unitMagnitude": 24,
     "used": false,
   },
-  Object {
+  {
     "balance": "0",
     "currencyId": "near",
     "derivationMode": "nearbip44h",
     "freshAddress": "59dff1cf9185758c0c2f878c37a175280f3967dca8fee6e4ad0c4aa26daf8e5c",
     "freshAddressPath": "44'/397'/0'/0'/2'",
-    "freshAddresses": Array [
-      Object {
+    "freshAddresses": [
+      {
         "address": "59dff1cf9185758c0c2f878c37a175280f3967dca8fee6e4ad0c4aa26daf8e5c",
         "derivationPath": "44'/397'/0'/0'/2'",
       },
@@ -91,20 +91,20 @@ Array [
     "id": "js:2:near:59dff1cf9185758c0c2f878c37a175280f3967dca8fee6e4ad0c4aa26daf8e5c:nearbip44h",
     "index": 2,
     "name": "NEAR 3",
-    "nearResources": Object {
+    "nearResources": {
       "availableBalance": "0",
       "pendingBalance": "0",
       "stakedBalance": "0",
-      "stakingPositions": Array [],
+      "stakingPositions": [],
       "storageUsageBalance": "5e+22",
     },
     "nfts": undefined,
     "operationsCount": 0,
-    "pendingOperations": Array [],
+    "pendingOperations": [],
     "seedIdentifier": "ed25519:2fxYBxPh3sP1KeqraqSNcUBx8chZ4RHpVAnQ1rFK9xNF",
     "spendableBalance": "0",
     "starred": false,
-    "swapHistory": Array [],
+    "swapHistory": [],
     "syncHash": undefined,
     "unitMagnitude": 24,
     "used": false,
@@ -113,23 +113,23 @@ Array [
 `;
 
 exports[`near currency bridge scanAccounts near seed 1 2`] = `
-Array [
-  Array [
-    Object {
+[
+  [
+    {
       "accountId": "js:2:near:18d68decb70d4d4fd267d19a0d25edc06ad079e69ded41233a10976cf36391ec:nearbip44h",
       "blockHash": "7WHwSyz5KfmMTCTGLqwX8NymbQG9uc42Mto4siAivjAK",
       "blockHeight": 72146430,
       "contract": undefined,
-      "extra": Object {},
+      "extra": {},
       "fee": "84911012500000000000",
       "hasFailed": false,
       "hash": "13gLnmysNkb1iQVgaRrQPjEZqg3jj9BxLP2MCANR8trf",
       "id": "js:2:near:18d68decb70d4d4fd267d19a0d25edc06ad079e69ded41233a10976cf36391ec:nearbip44h-13gLnmysNkb1iQVgaRrQPjEZqg3jj9BxLP2MCANR8trf-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "18d68decb70d4d4fd267d19a0d25edc06ad079e69ded41233a10976cf36391ec",
       ],
-      "senders": Array [
+      "senders": [
         "abdd03656c69dd2c51b054b4d3e0db7864c34f5ae07b27b558f0fe14f5ff76c3",
       ],
       "standard": undefined,
@@ -137,21 +137,21 @@ Array [
       "type": "IN",
       "value": "39900000000000000000000",
     },
-    Object {
+    {
       "accountId": "js:2:near:18d68decb70d4d4fd267d19a0d25edc06ad079e69ded41233a10976cf36391ec:nearbip44h",
       "blockHash": "B3ypiCETyhVaT41ci6L53G2zEjRcTv4DTRiSqTNzd5fa",
       "blockHeight": 72146378,
       "contract": undefined,
-      "extra": Object {},
+      "extra": {},
       "fee": "84911012500000000000",
       "hasFailed": false,
       "hash": "6YxdoR3gd67SPXx3dNMgttiDGn9zdPU3CkMTNUnMkEqx",
       "id": "js:2:near:18d68decb70d4d4fd267d19a0d25edc06ad079e69ded41233a10976cf36391ec:nearbip44h-6YxdoR3gd67SPXx3dNMgttiDGn9zdPU3CkMTNUnMkEqx-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "18d68decb70d4d4fd267d19a0d25edc06ad079e69ded41233a10976cf36391ec",
       ],
-      "senders": Array [
+      "senders": [
         "abdd03656c69dd2c51b054b4d3e0db7864c34f5ae07b27b558f0fe14f5ff76c3",
       ],
       "standard": undefined,
@@ -159,21 +159,21 @@ Array [
       "type": "IN",
       "value": "10000000000000000000000",
     },
-    Object {
+    {
       "accountId": "js:2:near:18d68decb70d4d4fd267d19a0d25edc06ad079e69ded41233a10976cf36391ec:nearbip44h",
       "blockHash": "48sfbBd7Hrf5EeAGL1nT4qaHca5EWMciznaYR35AwNan",
       "blockHeight": 72147875,
       "contract": undefined,
-      "extra": Object {},
+      "extra": {},
       "fee": "1.2655252013085e+21",
       "hasFailed": false,
       "hash": "71eNXoNJNcWMGs4UJaM1rgSuYWxs7gdY4Aqu1gUUvvLx",
       "id": "js:2:near:18d68decb70d4d4fd267d19a0d25edc06ad079e69ded41233a10976cf36391ec:nearbip44h-71eNXoNJNcWMGs4UJaM1rgSuYWxs7gdY4Aqu1gUUvvLx-UNSTAKE",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "figment.poolv1.near",
       ],
-      "senders": Array [
+      "senders": [
         "18d68decb70d4d4fd267d19a0d25edc06ad079e69ded41233a10976cf36391ec",
       ],
       "standard": undefined,
@@ -181,21 +181,21 @@ Array [
       "type": "UNSTAKE",
       "value": "0",
     },
-    Object {
+    {
       "accountId": "js:2:near:18d68decb70d4d4fd267d19a0d25edc06ad079e69ded41233a10976cf36391ec:nearbip44h",
       "blockHash": "HZ3qynQ1uy4MEDjCbHsDbuFQsB4nPdBKqp4jcJTj3x5J",
       "blockHeight": 72146695,
       "contract": undefined,
-      "extra": Object {},
+      "extra": {},
       "fee": "1.2872823931266e+21",
       "hasFailed": false,
       "hash": "7fW6S2Qi9CCRjuAF2soVwtC5XX7zhxci9nHUV7wA6uJh",
       "id": "js:2:near:18d68decb70d4d4fd267d19a0d25edc06ad079e69ded41233a10976cf36391ec:nearbip44h-7fW6S2Qi9CCRjuAF2soVwtC5XX7zhxci9nHUV7wA6uJh-STAKE",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "figment.poolv1.near",
       ],
-      "senders": Array [
+      "senders": [
         "18d68decb70d4d4fd267d19a0d25edc06ad079e69ded41233a10976cf36391ec",
       ],
       "standard": undefined,
@@ -203,21 +203,21 @@ Array [
       "type": "STAKE",
       "value": "10000000000000000000",
     },
-    Object {
+    {
       "accountId": "js:2:near:18d68decb70d4d4fd267d19a0d25edc06ad079e69ded41233a10976cf36391ec:nearbip44h",
       "blockHash": "HNXaANGQiwhRR96JzpBVKGEXmUxEyzxnx9WvjSHW1cf1",
       "blockHeight": 74277054,
       "contract": undefined,
-      "extra": Object {},
+      "extra": {},
       "fee": "84911012500000000000",
       "hasFailed": false,
       "hash": "CXkpUV26wytDrGdJ17pZPNmzauXxCtiiGwA7WcC7Rahi",
       "id": "js:2:near:18d68decb70d4d4fd267d19a0d25edc06ad079e69ded41233a10976cf36391ec:nearbip44h-CXkpUV26wytDrGdJ17pZPNmzauXxCtiiGwA7WcC7Rahi-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "18d68decb70d4d4fd267d19a0d25edc06ad079e69ded41233a10976cf36391ec",
       ],
-      "senders": Array [
+      "senders": [
         "3cfb4df771c29cf040e2534b71b4df08b6232e7248aefc7decf45d2b40f80ad5",
       ],
       "standard": undefined,
@@ -225,21 +225,21 @@ Array [
       "type": "IN",
       "value": "20000000000000000000000",
     },
-    Object {
+    {
       "accountId": "js:2:near:18d68decb70d4d4fd267d19a0d25edc06ad079e69ded41233a10976cf36391ec:nearbip44h",
       "blockHash": "Pk1rPkGYpM4N97seT4A5799Nrk41sGY3bLcgXGr7FKt",
       "blockHeight": 72146634,
       "contract": undefined,
-      "extra": Object {},
+      "extra": {},
       "fee": "84911012500000000000",
       "hasFailed": false,
       "hash": "FNW5wQhaVDUqyczfB2nj2Rq2RGVifAbnjVT6Yabdey9m",
       "id": "js:2:near:18d68decb70d4d4fd267d19a0d25edc06ad079e69ded41233a10976cf36391ec:nearbip44h-FNW5wQhaVDUqyczfB2nj2Rq2RGVifAbnjVT6Yabdey9m-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "abdd03656c69dd2c51b054b4d3e0db7864c34f5ae07b27b558f0fe14f5ff76c3",
       ],
-      "senders": Array [
+      "senders": [
         "18d68decb70d4d4fd267d19a0d25edc06ad079e69ded41233a10976cf36391ec",
       ],
       "standard": undefined,
@@ -248,7 +248,7 @@ Array [
       "value": "184911012500000000000",
     },
   ],
-  Array [],
-  Array [],
+  [],
+  [],
 ]
 `;

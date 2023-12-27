@@ -7,21 +7,21 @@ import { useSelector } from "react-redux";
 import { Alert, Text, Flex, Icons } from "@ledgerhq/native-ui";
 import { DownloadMedium, UsbMedium } from "@ledgerhq/native-ui/assets/icons";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { StackNavigationProp } from "@react-navigation/stack";
 import isFirmwareUpdateVersionSupported from "@ledgerhq/live-common/hw/isFirmwareUpdateVersionSupported";
 import useLatestFirmware from "@ledgerhq/live-common/hooks/useLatestFirmware";
 
-import { ScreenName, NavigatorName } from "../const";
+import { ScreenName, NavigatorName } from "~/const";
 import {
   lastSeenDeviceSelector,
   hasCompletedOnboardingSelector,
   lastConnectedDeviceSelector,
-} from "../reducers/settings";
-import { hasConnectedDeviceSelector } from "../reducers/appstate";
+} from "~/reducers/settings";
+import { hasConnectedDeviceSelector } from "~/reducers/appstate";
 import Button from "./Button";
 import QueuedDrawer from "./QueuedDrawer";
-import { UpdateStep } from "../screens/FirmwareUpdate";
+import { UpdateStep } from "~/screens/FirmwareUpdate";
 
 export type FirmwareUpdateBannerProps = {
   onBackFromUpdate: (updateState: UpdateStep) => void;

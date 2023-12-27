@@ -6,18 +6,18 @@ import { Keyboard, StyleSheet, View, SafeAreaView } from "react-native";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useSelector } from "react-redux";
-import Button from "../../components/Button";
-import KeyboardView from "../../components/KeyboardView";
-import NavigationScrollView from "../../components/NavigationScrollView";
-import LText from "../../components/LText";
-import { accountScreenSelector } from "../../reducers/accounts";
-import TextInput from "../../components/FocusedTextInput";
-import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
-import { ScreenName } from "../../const";
-import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
-import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
-import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
+import Button from "~/components/Button";
+import KeyboardView from "~/components/KeyboardView";
+import NavigationScrollView from "~/components/NavigationScrollView";
+import LText from "~/components/LText";
+import { accountScreenSelector } from "~/reducers/accounts";
+import TextInput from "~/components/FocusedTextInput";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
+import { ScreenName } from "~/const";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
+import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 
 const options = {
   title: <Trans i18nKey="send.summary.fees" />,

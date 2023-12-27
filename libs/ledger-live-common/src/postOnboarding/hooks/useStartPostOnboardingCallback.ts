@@ -2,8 +2,8 @@ import { useDispatch } from "react-redux";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { usePostOnboardingContext } from "./usePostOnboardingContext";
 import { useCallback } from "react";
-import { useFeatureFlags } from "../../featureFlags";
-import { initPostOnboarding } from "../actions";
+import { useFeatureFlags } from "@ledgerhq/live-config/featureFlags/index";
+import { initPostOnboarding, postOnboardingSetFinished } from "../actions";
 
 type StartPostOnboardingOptions = {
   deviceModelId: DeviceModelId;
@@ -44,6 +44,7 @@ export function useStartPostOnboardingCallback(): (options: StartPostOnboardingO
 
       if (actions.length === 0) {
         if (fallbackIfNoAction) {
+          dispatch(postOnboardingSetFinished());
           fallbackIfNoAction();
         }
         return;

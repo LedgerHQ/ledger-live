@@ -2,7 +2,7 @@ import React from "react";
 import { Trans } from "react-i18next";
 import { Text, Flex } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
-import DAppsIcons from "../../../icons/DAppsIcons";
+import DAppsIcons from "~/icons/DAppsIcons";
 
 const Container = styled(Flex).attrs({
   width: "100%",

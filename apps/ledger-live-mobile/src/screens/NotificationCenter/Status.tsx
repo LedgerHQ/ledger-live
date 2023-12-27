@@ -7,7 +7,7 @@ import styled, { useTheme } from "styled-components/native";
 import { Incident } from "@ledgerhq/live-common/notifications/ServiceStatusProvider/types";
 
 import { FlatList } from "react-native";
-import { TrackScreen } from "../../analytics";
+import { TrackScreen } from "~/analytics";
 import SettingsNavigationScrollView from "../Settings/SettingsNavigationScrollView";
 
 const DATA_TRACKING_DRAWER_NAME = "Notification Center Status";

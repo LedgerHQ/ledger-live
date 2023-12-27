@@ -21,9 +21,9 @@ import Animated, {
 } from "react-native-reanimated";
 import * as Animatable from "react-native-animatable";
 import { space } from "@ledgerhq/native-ui/styles/theme";
-import Styles from "../navigation/styles";
+import Styles from "~/navigation/styles";
 import LText from "./LText";
-import { width } from "../helpers/normalizeSize";
+import { width } from "~/helpers/normalizeSize";
 import { NavigationHeaderBackButton } from "./NavigationHeaderBackButton";
 import { NavigationHeaderCloseButton } from "./NavigationHeaderCloseButton";
 

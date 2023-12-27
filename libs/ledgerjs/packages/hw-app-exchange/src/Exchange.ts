@@ -117,14 +117,16 @@ export default class Exchange {
     );
     maybeThrowProtocolError(result);
 
+    // Leave the deprecated warning and don't update to `subarray` method as
+    // the output on LLM will not be the expected one (cf. LIVE-10430)
     switch (this.transactionType) {
       case ExchangeTypes.Sell:
       case ExchangeTypes.Fund:
-        return result.subarray(0, 32).toString("base64");
+        return result.slice(0, 32).toString("base64");
       case ExchangeTypes.Swap:
         return result.toString("ascii", 0, 10);
       default:
-        return result.subarray(0, 32).toString("hex");
+        return result.slice(0, 32).toString("hex");
     }
   }
 

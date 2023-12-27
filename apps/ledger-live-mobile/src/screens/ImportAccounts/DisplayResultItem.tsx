@@ -3,9 +3,9 @@ import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import { Account } from "@ledgerhq/types-live";
 import React from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
-import { track } from "../../analytics";
-import AccountCard from "../../components/AccountCard";
-import CheckBox from "../../components/CheckBox";
+import { track } from "~/analytics";
+import AccountCard from "~/components/AccountCard";
+import CheckBox from "~/components/CheckBox";
 
 const selectableModes = ["create", "update"];
 

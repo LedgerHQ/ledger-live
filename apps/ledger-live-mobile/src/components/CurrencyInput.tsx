@@ -9,7 +9,7 @@ import { formatCurrencyUnit, sanitizeValueString } from "@ledgerhq/live-common/c
 import noop from "lodash/noop";
 import clamp from "lodash/clamp";
 
-import { localeSelector } from "../reducers/settings";
+import { localeSelector } from "~/reducers/settings";
 import getFontStyle from "./LText/getFontStyle";
 import { Theme, withTheme } from "../colors";
 import TextInput from "./FocusedTextInput";

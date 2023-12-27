@@ -1,15 +1,10 @@
 import React, { useRef } from "react";
-import {
-  StyleSheet,
-  Animated,
-  PanResponder,
-  TouchableWithoutFeedback,
-  useWindowDimensions,
-} from "react-native";
+import { StyleSheet, Animated, PanResponder, TouchableWithoutFeedback } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { IconOrElementType } from "@ledgerhq/native-ui/components/Icon/type";
 import { Flex } from "@ledgerhq/native-ui";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex/index";
+import { useSystem } from "~/hooks";
 
 type Props = {
   onPress: () => void;
@@ -28,7 +23,7 @@ const FloatingDebugButton: React.FC<Props> = ({
   boxWidth = 30,
   boxHeight = 30,
 }) => {
-  const { height, width } = useWindowDimensions();
+  const { screen } = useSystem();
   const { top, left, right, bottom } = useSafeAreaInsets();
   const pan = useRef(new Animated.ValueXY({ x: 10000, y: top + 2 * boxHeight })).current;
 
@@ -54,15 +49,15 @@ const FloatingDebugButton: React.FC<Props> = ({
           transform: [
             {
               translateX: pan.x.interpolate({
-                inputRange: [left, width - right - boxWidth],
-                outputRange: [left, width - right - boxWidth],
+                inputRange: [left, screen.width - right - boxWidth],
+                outputRange: [left, screen.width - right - boxWidth],
                 extrapolate: "clamp",
               }),
             },
             {
               translateY: pan.y.interpolate({
-                inputRange: [top, height - bottom - boxHeight],
-                outputRange: [top, height - bottom - boxHeight],
+                inputRange: [top, screen.height - bottom - boxHeight],
+                outputRange: [top, screen.height - bottom - boxHeight],
                 extrapolate: "clamp",
               }),
             },

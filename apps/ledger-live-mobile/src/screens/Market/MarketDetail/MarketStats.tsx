@@ -3,7 +3,7 @@ import styled from "styled-components/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { CurrencyData } from "@ledgerhq/live-common/market/types";
-import { useLocale } from "../../../context/Locale";
+import { useLocale } from "~/context/Locale";
 import { counterValueFormatter } from "../utils";
 import DeltaVariation from "../DeltaVariation";
 

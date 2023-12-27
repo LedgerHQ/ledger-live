@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeatureFlags } from "@ledgerhq/live-config/featureFlags/index";
 import { Text, Flex, Tag } from "@ledgerhq/react-ui";
 import { FeatureId } from "@ledgerhq/types-live";
 import Box from "~/renderer/components/Box";
@@ -36,7 +36,7 @@ const FeatureFlagDetails: React.FC<Props> = props => {
     overriddenByEnv,
     overridesRemote,
     enabledOverriddenForCurrentLanguage,
-    enabledOverriddenForCurrentDesktopVersion,
+    enabledOverriddenForCurrentVersion,
   } = flagValue || {};
 
   const handleClick = useCallback(() => {
@@ -71,7 +71,7 @@ const FeatureFlagDetails: React.FC<Props> = props => {
               {t("settings.developer.overridden.disableForLanguage")}
             </Tag>
           ) : null}
-          {enabledOverriddenForCurrentDesktopVersion ? (
+          {enabledOverriddenForCurrentVersion ? (
             <Tag active mx={1} type="outlinedOpacity" size="small">
               {t("settings.developer.overridden.disableForVersion")}
             </Tag>

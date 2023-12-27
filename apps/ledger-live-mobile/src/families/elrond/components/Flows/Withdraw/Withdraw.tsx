@@ -4,12 +4,12 @@ import { useTranslation } from "react-i18next";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "@react-navigation/native";
 
-import StepHeader from "../../../../../components/StepHeader";
-import WithdrawSelectDevice from "../../../../../screens/SelectDevice";
-import WithdrawConnectDevice from "../../../../../screens/ConnectDevice";
+import StepHeader from "~/components/StepHeader";
+import WithdrawSelectDevice from "~/screens/SelectDevice";
+import WithdrawConnectDevice from "~/screens/ConnectDevice";
 
-import { getStackNavigatorConfig } from "../../../../../navigation/navigatorConfig";
-import { ScreenName } from "../../../../../const";
+import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import { ScreenName } from "~/const";
 
 import WithdrawFunds from "./components/WithdrawFunds";
 import ValidationError from "./components/ValidationError";

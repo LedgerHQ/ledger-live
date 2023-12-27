@@ -11,7 +11,6 @@ import PasswordButton from "./PasswordButton";
 import PasswordAutoLockSelect from "./PasswordAutoLockSelect";
 import SentryLogsButton from "./SentryLogsButton";
 import ShareAnalyticsButton from "./ShareAnalyticsButton";
-import CarouselVisibility from "./CarouselVisibility";
 import { hasPasswordSelector } from "~/renderer/reducers/application";
 import { useInitSupportedCounterValues } from "~/renderer/hooks/useInitSupportedCounterValues";
 
@@ -71,12 +70,6 @@ const SectionGeneral = () => {
         </Row>
         <Row title={t("settings.profile.analytics")} desc={t("settings.profile.analyticsDesc")}>
           <ShareAnalyticsButton />
-        </Row>
-        <Row
-          title={t("settings.display.carouselVisibility")}
-          desc={t("settings.display.carouselVisibilityDesc")}
-        >
-          <CarouselVisibility />
         </Row>
       </Body>
     </>

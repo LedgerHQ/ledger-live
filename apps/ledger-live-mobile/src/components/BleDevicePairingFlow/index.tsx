@@ -5,10 +5,10 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import RequiresBLE from "../RequiresBLE";
 import BleDevicesScanning from "./BleDevicesScanning";
 import BleDevicePairing from "./BleDevicePairing";
-import { addKnownDevice } from "../../actions/ble";
+import { addKnownDevice } from "~/actions/ble";
 import type { BleDevicesScanningProps } from "./BleDevicesScanning";
 import type { BleDevicePairingProps } from "./BleDevicePairing";
-import { track } from "../../analytics";
+import { track } from "~/analytics";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import { NavigationHeaderCloseButton } from "../NavigationHeaderCloseButton";
 

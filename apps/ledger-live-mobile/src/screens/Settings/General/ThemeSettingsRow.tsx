@@ -1,14 +1,14 @@
 import React, { useCallback, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Checkbox, Text } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
-import { themeSelector } from "../../../reducers/settings";
-import SettingsRow from "../../../components/SettingsRow";
-import Touchable from "../../../components/Touchable";
-import { setTheme } from "../../../actions/settings";
-import { Theme } from "../../../reducers/types";
-import QueuedDrawer from "../../../components/QueuedDrawer";
+import SettingsRow from "~/components/SettingsRow";
+import Touchable from "~/components/Touchable";
+import { setTheme } from "~/actions/settings";
+import { Theme } from "~/reducers/types";
+import QueuedDrawer from "~/components/QueuedDrawer";
+import { useSettings } from "~/hooks";
 
 const StyledTouchableThemeRow = styled(Touchable)`
   align-items: center;
@@ -19,7 +19,7 @@ const StyledTouchableThemeRow = styled(Touchable)`
 
 export default function ThemeSettingsRow() {
   const { t } = useTranslation();
-  const currentTheme = useSelector(themeSelector);
+  const { theme: currentTheme } = useSettings();
   const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(false);
   const selectTheme = (theme: Theme) => () => {

@@ -1,8 +1,9 @@
-**[We are hiring, join us! 👨‍💻👩‍💻](https://jobs.lever.co/ledger/?department=Engineering)**
+**[We are hiring, join us! 👨‍💻👩‍💻](https://jobs.lever.co/ledger/?department=Tech)**
 
 # ledger-live-mobile
 
 - Related: [ledger-live-desktop](https://github.com/LedgerHQ/ledger-live/tree/develop/apps/ledger-live-desktop)
+- Backed by: [ledger-live-common](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledger-live-common)
 
 > Ledger Live is a mobile companion app for Ledger hardware wallets. It allows users to manage their crypto assets securely, such as Bitcoin, Ethereum, XRP and many others. Ledger Live mobile is available for [iOS](https://itunes.apple.com/fr/app/id1361671700) and [Android](https://play.google.com/store/apps/details?id=com.ledger.live).
 
@@ -10,7 +11,9 @@
 
 ## Architecture
 
-Ledger Live mobile is a native mobile application built using React Native, React, Redux, RxJS. It is compatible with iOS and Android. It communicates with the [Ledger Nano X](https://www.ledger.com/pages/ledger-nano-x) via Bluetooth (or USB for using the Ledger Nano S on Android) to manage installed applications, update the device firmware, verify public addresses and sign transactions with [ledgerjs](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs). We also share some logic in [live-common](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledger-live-common).
+Ledger Live mobile is a native mobile application built using React Native, React, Redux, RxJS. It is compatible with iOS and Android. It communicates with [Ledger hardware wallet devices](https://shop.ledger.com/pages/hardware-wallets-comparison) via Bluetooth (when compatible) or USB to manage installed applications, update the device firmware, verify public addresses and sign transactions with [ledgerjs](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledgerjs).
+
+We also share core business logic with Ledger Live mobile through [@ledgerhq/live-common library](https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledger-live-common) package.
 
 # Developing on ledger-live-mobile
 
@@ -163,8 +166,12 @@ It is possible to run Ledger Live Mobile on an emulator and connect to a Nano th
   DEVICE_PROXY_URL=ws://192.168.1.14:8435
   Nano S proxy started on 192.168.1.14
   ```
-- Either do `export DEVICE_PROXY_URL=the_adress_given_by_the_server` or paste this variable environment in the `.env` file at the root of the project (create it if it doesn't exist)
-- Build & run Ledger Live Mobile `pnpm mobile ios` or `pnpm mobile android`
+- Either
+  - First, do `export DEVICE_PROXY_URL=the_adress_given_by_the_server` or paste this variable environment in the `.env` file at the root of the project (create it if it doesn't exist)
+  - Then, build & run Ledger Live Mobile `pnpm mobile ios` or `pnpm mobile android`
+  - OR
+  - First, build & run Ledger Live Mobile `pnpm mobile ios` or `pnpm mobile android`
+  - Then, go to the settings tab, then *debug* > *connectivity* > *http transport* and paste the IP (ex: 192.168.1.14)
 - When prompted to choose a Nano device in Ledger Live Mobile, you will see your Nano available with the adress from above, just select it and it should work normally.
 
 ### Extra Docs 📄

@@ -5,20 +5,20 @@ import { Trans, withTranslation, useTranslation } from "react-i18next";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { Box, Flex, Slider, Text } from "@ledgerhq/native-ui";
-import SettingsRow from "../../../../components/SettingsRow";
-import { confirmationsNbForCurrencySelector } from "../../../../reducers/settings";
-import { State } from "../../../../reducers/types";
-import { updateCurrencySettings } from "../../../../actions/settings";
+import SettingsRow from "~/components/SettingsRow";
+import { confirmationsNbForCurrencySelector } from "~/reducers/settings";
+import { State } from "~/reducers/types";
+import { updateCurrencySettings } from "~/actions/settings";
 import { withTheme } from "../../../../colors";
-import { TrackScreen } from "../../../../analytics";
-import { currencySettingsDefaults } from "../../../../helpers/CurrencySettingsDefaults";
-import CurrencyIcon from "../../../../components/CurrencyIcon";
-import { ScreenName } from "../../../../const";
-import { SettingsNavigatorStackParamList } from "../../../../components/RootNavigator/types/SettingsNavigator";
-import { ConfirmationDefaults } from "../../../../types/common";
-import { StackNavigatorProps } from "../../../../components/RootNavigator/types/helpers";
-import { BaseNavigatorStackParamList } from "../../../../components/RootNavigator/types/BaseNavigator";
-import { AccountSettingsNavigatorParamList } from "../../../../components/RootNavigator/types/AccountSettingsNavigator";
+import { TrackScreen } from "~/analytics";
+import { currencySettingsDefaults } from "~/helpers/CurrencySettingsDefaults";
+import CurrencyIcon from "~/components/CurrencyIcon";
+import { ScreenName } from "~/const";
+import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
+import { ConfirmationDefaults } from "~/types/common";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { AccountSettingsNavigatorParamList } from "~/components/RootNavigator/types/AccountSettingsNavigator";
 
 type NavigationProps =
   | StackNavigatorProps<SettingsNavigatorStackParamList, ScreenName.CurrencySettings>

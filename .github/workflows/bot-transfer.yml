@@ -19,6 +19,10 @@ on:
         description: "a comma separated list of currencies to transfer. If not specified, all currencies will be transferred."
         required: false
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   run-bot:
     runs-on: [ledger-live-medium-linux]
@@ -40,8 +44,10 @@ jobs:
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
         with:
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - name: pull docker image
         run: docker pull ghcr.io/ledgerhq/speculos
       - name: install and build

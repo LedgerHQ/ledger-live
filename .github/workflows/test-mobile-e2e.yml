@@ -31,6 +31,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
   cancel-in-progress: true
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   detox-tests-ios:
     name: "Ledger Live Mobile - iOS Detox Tests"
@@ -48,9 +52,14 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
+        id: toolchain
         with:
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          skip_pod_cache: "false"
+          skip_turbo_cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - name: Install applesimutils
         run: |
           brew update
@@ -78,21 +87,12 @@ jobs:
           bucket: ll-gha-s3-cache
           region: eu-west-1
           use-fallback: false
-
-      - name: TurboRepo local caching server
-        id: turborepo-cache-server
-        uses: ./tools/actions/turborepo-s3-cache
-        with:
-          server-token: "yolo"
-          cleanup-cache-folder: "true"
-          aws-access-key: ${{ secrets.ACCESS_KEY_BUCKET }}
-          aws-secret-key: ${{ secrets.SECRET_KEY_BUCKET }}
       - name: install dependencies
         run: |
           pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="dummy-*-app..." --no-frozen-lockfile --unsafe-perm
       - name: Build dependencies
         run: |
-          pnpm build:llm:deps --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+          pnpm build:llm:deps --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
       - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
         run: |
           pnpm build:dummy-apps
@@ -104,23 +104,15 @@ jobs:
           echo "id=$ID" >> $GITHUB_OUTPUT
       - name: Build iOS app for Detox test run
         if: steps.detox-build.outputs.cache-hit != 'true'
-        run: |
-          pnpm mobile e2e:build -c ios.sim.release
+        run: pnpm mobile e2e:ci -p ios -b
 
       - name: Build JS Bundle app for Detox test run
         if: steps.detox-build.outputs.cache-hit == 'true'
-        run: |
-          pnpm mobile bundle:ios --dev false --minify false
-          pnpm mobile exec detox clean-framework-cache
-          pnpm mobile exec detox build-framework-cache
-          cd apps/ledger-live-mobile
-          cp main.jsbundle ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app/main.jsbundle
-          mv main.jsbundle ios/build/Build/Products/Release-iphonesimulator/main.jsbundle
+        run: pnpm mobile e2e:ci -p ios --bundle
       - name: Test iOS app
         id: detox
         timeout-minutes: 45
-        run: |
-          pnpm mobile e2e:test -c ios.sim.release --loglevel error --record-logs all --take-screenshots all --headless --retries 1 --cleanup --record-performance all
+        run: pnpm mobile e2e:ci -p ios -t
       - name: Delete iOS simulator
         if: always()
         run: |
@@ -169,10 +161,14 @@ jobs:
         with:
           ref: ${{ inputs.ref || github.sha }}
       - name: Setup the toolchain
+        id: toolchain
         uses: ./tools/actions/composites/setup-toolchain
         with:
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          skip_turbo_cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - name: setup JDK 11
         uses: actions/setup-java@v3
         with:
@@ -191,27 +187,19 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
-      - name: TurboRepo local caching server
-        id: turborepo-cache-server
-        uses: ./tools/actions/turborepo-s3-cache
-        with:
-          server-token: "yolo"
-          cleanup-cache-folder: "true"
-          aws-access-key: ${{ secrets.ACCESS_KEY_BUCKET }}
-          aws-secret-key: ${{ secrets.SECRET_KEY_BUCKET }}
       - name: Install dependencies
         run: |
           pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="dummy-*-app..." --no-frozen-lockfile --unsafe-perm
       - name: Build dependencies
         run: |
-          pnpm build:llm:deps --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+          pnpm build:llm:deps --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
       - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
         run: |
-          pnpm build:dummy-apps
+          pnpm build:dummy-apps --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
         shell: bash
       - name: Build Android app for Detox test run
         run: |
-          pnpm mobile e2e:build -c android.emu.release
+          pnpm mobile e2e:ci -p android -b
       - name: cache android emulator
         uses: tespkg/actions-cache@v1
         id: detox-avd
@@ -222,10 +210,13 @@ jobs:
           key: ${{ runner.os }}-detox-avd-${{ hashFiles('~/.android/avd/*/config.ini') }}
           restore-keys: |
             ${{ runner.os }}-detox-avd-
-          accessKey: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          secretKey: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+
+          # envs set by setup-toolchain
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
           bucket: ll-gha-s3-cache
-          region: eu-west-1
+          region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
       - name: create AVD and generate snapshot for caching
         if: steps.detox-avd.outputs.cache-hit != 'true'
@@ -259,7 +250,7 @@ jobs:
           ram-size: 8192M
           disable-linux-hw-accel: false
           emulator-options: -read-only -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          script: pnpm mobile e2e:test -c android.emu.release --loglevel error --record-logs all --take-screenshots all --forceExit --headless --retries 1 --cleanup
+          script: pnpm mobile e2e:ci -p android -t
       - name: Upload test artifacts
         if: always()
         uses: actions/upload-artifact@v3

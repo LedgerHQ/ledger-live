@@ -32,6 +32,7 @@ export default function AlgorandEarnRewardsInfoModal({ account }: Props) {
         t("algorand.claimRewards.flow.steps.starter.bullet.access"),
         t("algorand.claimRewards.flow.steps.starter.bullet.ledger"),
       ]}
+      currency="algo"
       additional={null}
       footerLeft={
         <LinkWithExternalIcon

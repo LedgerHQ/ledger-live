@@ -39,6 +39,18 @@ const convertToLiveTransaction: ConvertToLiveTransaction<
     liveTx.era = `${walletApiTransaction.era}`;
   }
 
+  if (walletApiTransaction.rewardDestination) {
+    liveTx.rewardDestination = walletApiTransaction.rewardDestination;
+  }
+
+  if (walletApiTransaction.validators) {
+    liveTx.validators = walletApiTransaction.validators;
+  }
+
+  if (walletApiTransaction.numOfSlashingSpans) {
+    liveTx.numSlashingSpans = walletApiTransaction.numOfSlashingSpans;
+  }
+
   if (hasFeesProvided) {
     liveTx.feesStrategy = null;
   }

@@ -8,11 +8,18 @@ import Row from "./Row";
 import Header from "./Header";
 import { useDistribution } from "~/renderer/actions/general";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
-import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
+import {
+  blacklistedTokenIdsSelector,
+  hideEmptyTokenAccountsSelector,
+} from "~/renderer/reducers/settings";
 import { useSelector } from "react-redux";
 
 export default function AssetDistribution() {
-  const distribution = useDistribution();
+  const hideEmptyTokenAccount = useSelector(hideEmptyTokenAccountsSelector);
+
+  const distribution = useDistribution({
+    hideEmptyTokenAccount,
+  });
   const cardRef = useRef(null);
   const [showAll, setShowAll] = useState(false);
   const [isVisible, setVisible] = useState(false);

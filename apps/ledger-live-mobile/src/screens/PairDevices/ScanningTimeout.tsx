@@ -4,14 +4,14 @@ import { Trans } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { useTheme } from "@react-navigation/native";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { urls } from "@utils/urls";
-import { TrackScreen } from "../../analytics";
-import Touchable from "../../components/Touchable";
-import Button from "../../components/Button";
-import LText from "../../components/LText";
-import Circle from "../../components/Circle";
-import NanoX from "../../icons/NanoX";
-import Help from "../../icons/Help";
+import { urls } from "~/utils/urls";
+import { TrackScreen } from "~/analytics";
+import Touchable from "~/components/Touchable";
+import Button from "~/components/Button";
+import LText from "~/components/LText";
+import Circle from "~/components/Circle";
+import NanoX from "~/icons/NanoX";
+import Help from "~/icons/Help";
 
 type Props = {
   onRetry: () => void;

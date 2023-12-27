@@ -1,13 +1,13 @@
 import { getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { SideImageCard } from "@ledgerhq/native-ui";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
 import { useNavigation } from "@react-navigation/core";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { NavigatorName, ScreenName } from "../const";
-import SectionContainer from "../screens/WalletCentricSections/SectionContainer";
+import { NavigatorName, ScreenName } from "~/const";
+import SectionContainer from "~/screens/WalletCentricSections/SectionContainer";
 
 type EditOperationCardProps = {
   oldestEditableOperation: Operation;

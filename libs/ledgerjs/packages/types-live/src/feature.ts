@@ -3,7 +3,7 @@ import {
   CexDepositEntryPointsLocationsMobile,
 } from "./cexDeposit";
 import { ChainwatchNetwork } from "./chainwatch";
-import { StorylyInstanceID } from "./storyly";
+import { StorylyInstanceID, StorylyInstanceType } from "./storyly";
 
 /**
  * Feature type.
@@ -24,11 +24,6 @@ export type Feature<T = unknown> = {
   desktop_version?: string;
 
   /**
-   *  Whether the remote value of `enabled` was overriden due to `desktop_version`
-   */
-  enabledOverriddenForCurrentDesktopVersion?: boolean;
-
-  /**
    * The `mobile_version` option is mobile specific, it has no impact on mobile
    * If set, the feature is disabled when the mobile app version does not satisfies this param
    * It should respect the semantic versioning specification (https://semver.org/)
@@ -36,9 +31,9 @@ export type Feature<T = unknown> = {
   mobile_version?: string;
 
   /**
-   * Whether the remote value of `enabled` was overriden due to `mobile_version`
+   *  Whether the remote value of `enabled` was overriden due to `desktop_version` or `mobile_version`
    */
-  enabledOverriddenForCurrentMobileVersion?: boolean;
+  enabledOverriddenForCurrentVersion?: boolean;
 
   /**
    * You can optionnally use one of the two following options (languages_whitelisted and languages_blacklisted) (Only implemented on mobile for now)
@@ -184,6 +179,7 @@ export type Features = CurrencyFeatures & {
   fetchAdditionalCoins: Feature_FetchAdditionalCoins;
   ptxSwapLiveApp: Feature_PtxSwapLiveApp;
   ptxSwapMoonpayProvider: Feature_PtxSwapMoonpayProvider;
+  flexibleContentCards: Feature_FlexibleContentCards;
 };
 
 /**
@@ -290,7 +286,9 @@ export type Feature_PtxEarn = Feature<{
 }>;
 
 export type Feature_Storyly = Feature<{
-  stories: { [key in StorylyInstanceID]: { testingEnabled: boolean; token: string } };
+  stories: {
+    [key in StorylyInstanceID]: StorylyInstanceType;
+  };
 }>;
 
 export type Feature_NewsfeedPage = Feature<{
@@ -496,6 +494,7 @@ export type Feature_BrazeLearn = DefaultFeature;
 export type Feature_LlmNewDeviceSelection = DefaultFeature;
 export type Feature_LlmWalletQuickActions = DefaultFeature;
 export type Feature_PtxSwapMoonpayProvider = DefaultFeature;
+export type Feature_FlexibleContentCards = DefaultFeature;
 
 /**
  * Utils types.

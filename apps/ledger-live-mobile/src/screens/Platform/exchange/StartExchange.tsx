@@ -1,20 +1,20 @@
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useIsFocused } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
 import React, { useCallback, useMemo, useState } from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import DeviceActionModal from "../../../components/DeviceActionModal";
-import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import DeviceActionModal from "~/components/DeviceActionModal";
+import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import {
   PlatformExchangeNavigatorParamList,
   ResultStart,
-} from "../../../components/RootNavigator/types/PlatformExchangeNavigator";
-import SelectDevice from "../../../components/SelectDevice";
-import SelectDevice2 from "../../../components/SelectDevice2";
-import { ScreenName } from "../../../const";
-import { useStartExchangeDeviceAction } from "../../../hooks/deviceActions";
+} from "~/components/RootNavigator/types/PlatformExchangeNavigator";
+import SelectDevice from "~/components/SelectDevice";
+import SelectDevice2 from "~/components/SelectDevice2";
+import { ScreenName } from "~/const";
+import { useStartExchangeDeviceAction } from "~/hooks/deviceActions";
 
 type Props = StackNavigatorProps<
   PlatformExchangeNavigatorParamList,
