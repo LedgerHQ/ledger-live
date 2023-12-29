@@ -76,7 +76,7 @@ export function formatReportForConsole<T extends Transaction>({
     if (account && !account.used) {
       detail = "account is empty";
     } else {
-      const byErrorMessage = groupBy(unavailableMutationReasons, "message");
+      const byErrorMessage = groupBy(unavailableMutationReasons, r => r.error.message);
       const keys = Object.keys(byErrorMessage);
 
       if (keys.length === 1) {
