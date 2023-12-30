@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.74.0-nightly.7
+
+### Patch Changes
+
+- [#5779](https://github.com/LedgerHQ/ledger-live/pull/5779) [`1a9d88f`](https://github.com/LedgerHQ/ledger-live/commit/1a9d88f92265e8805ab4e2e55aefd9739308be82) Thanks [@stephane-lieumont-ledger](https://github.com/stephane-lieumont-ledger)! - add icon usb on connect device recover restore flow
+
 ## 2.74.0-nightly.6
 
 ### Patch Changes
