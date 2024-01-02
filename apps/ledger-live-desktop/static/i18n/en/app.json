@@ -5593,8 +5593,7 @@
       "description": "Install the latest Bitcoin and Ethereum apps first."
     },
     "UserRefusedDeviceNameChange": {
-      "title": "Rename cancelled on device",
-      "description": "Try again and allow renaming on your device"
+      "title": "Renaming cancelled on device"
     },
     "SyncError": {
       "title": "Synchronization error",

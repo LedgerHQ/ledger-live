@@ -57,6 +57,7 @@ type Props = {
   device: Device;
   distribution: AppsDistribution;
   onRefreshDeviceInfo: () => void;
+  setPreventResetOnDeviceChange: (value: boolean) => void;
   isIncomplete: boolean;
   installQueue: string[];
   uninstallQueue: string[];
@@ -74,6 +75,7 @@ const DeviceInformationSummary = ({
   deviceName,
   distribution,
   onRefreshDeviceInfo,
+  setPreventResetOnDeviceChange,
   isIncomplete,
   installQueue,
   uninstallQueue,
@@ -97,6 +99,7 @@ const DeviceInformationSummary = ({
                 deviceName={deviceName}
                 deviceInfo={deviceInfo}
                 device={device}
+                setPreventResetOnDeviceChange={setPreventResetOnDeviceChange}
                 onRefreshDeviceInfo={onRefreshDeviceInfo}
                 disabled={navigationLocked}
               />

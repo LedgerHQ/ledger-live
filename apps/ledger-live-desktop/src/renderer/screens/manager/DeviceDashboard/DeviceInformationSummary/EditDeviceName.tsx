@@ -12,7 +12,6 @@ import { createAction } from "@ledgerhq/live-common/hw/actions/renameDevice";
 import getDeviceNameMaxLength from "@ledgerhq/live-common/hw/getDeviceNameMaxLength";
 import renameDevice from "@ledgerhq/live-common/hw/renameDevice";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
-import styled from "styled-components";
 import { DeviceInfo } from "@ledgerhq/types-live";
 
 const action = createAction(renameDevice);
@@ -24,12 +23,6 @@ type Props = {
   onSetName: (name: string) => void;
   device: Device;
 };
-
-const TextEllipsis = styled.div`
-  flex-shrink: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-`;
 
 const EditDeviceName: React.FC<Props> = ({
   onClose,
@@ -136,13 +129,11 @@ const EditDeviceName: React.FC<Props> = ({
               size={64}
               iconSize={24}
             />
-            <Text variant="large" alignSelf="stretch" mt={9} textAlign="center">
-              <TextEllipsis>
-                {t("deviceRename.renamed", {
-                  productName,
-                  name,
-                })}
-              </TextEllipsis>
+            <Text variant="large" mt={9} textAlign="center" whiteSpace="pre-line">
+              {t("deviceRename.renamed", {
+                productName,
+                name,
+              })}
             </Text>
           </Flex>
         ) : running ? (

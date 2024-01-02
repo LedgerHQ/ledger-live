@@ -56,6 +56,7 @@ type Props = {
   deviceInfo: DeviceInfo & { languageId: number };
   result: ListAppsResult;
   onRefreshDeviceInfo: () => void;
+  setPreventResetOnDeviceChange: (value: boolean) => void;
   exec: Exec;
   renderFirmwareUpdateBanner?: (a: {
     disableFirmwareUpdate: boolean;
@@ -75,6 +76,7 @@ const DeviceDashboard = ({
   firmware,
   deviceInfo,
   onRefreshDeviceInfo,
+  setPreventResetOnDeviceChange,
   result,
   exec,
   renderFirmwareUpdateBanner,
@@ -202,6 +204,7 @@ const DeviceDashboard = ({
           distribution={distribution}
           deviceModel={state.deviceModel}
           onRefreshDeviceInfo={onRefreshDeviceInfo}
+          setPreventResetOnDeviceChange={setPreventResetOnDeviceChange}
           deviceInfo={deviceInfo}
           device={device}
           deviceName={deviceName}
