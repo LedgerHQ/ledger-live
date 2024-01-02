@@ -20,7 +20,7 @@ const MAX_VTHO_FEE_FOR_VET_TRANSACTION = 420000000000000000;
 const vechainTest = {
   currency: getCryptoCurrencyById("vechain"),
   appQuery: {
-    model: DeviceModelId.nanoX,
+    model: DeviceModelId.nanoSP,
     appName: "VeChain",
     appVersion: "1.1.1",
   },
