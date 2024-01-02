@@ -141,14 +141,18 @@ class BitcoinLikeExplorer implements IExplorer {
   async getTxsSinceBlockheight(
     batchSize: number,
     address: Address,
-    startingBlockheight: number,
+    startBlockheight: number,
+    toBlockheight: number | undefined,
     isPending: boolean,
   ): Promise<TX[]> {
     const params: ExplorerParams = {
       batch_size: batchSize,
     };
     if (!isPending) {
-      params.from_height = startingBlockheight;
+      if (toBlockheight && startBlockheight > toBlockheight) {
+        return [];
+      }
+      params.from_height = startBlockheight;
       params.order = "ascending";
     }
     const txs = isPending

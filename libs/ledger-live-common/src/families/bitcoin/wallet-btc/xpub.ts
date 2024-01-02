@@ -32,6 +32,10 @@ class Xpub {
   // need to be bigger than the number of tx from the same address that can be in the same block
   txsSyncArraySize = 1000;
 
+  syncedBlockHeight = 0;
+
+  currentBlockHeight = 0;
+
   constructor({
     storage,
     explorer,
@@ -112,6 +116,9 @@ class Xpub {
       if (highestBlockFromExplorer?.hash === highestBlockFromStorage.hash) {
         needReorg = false;
       }
+    }
+    if (needReorg) {
+      this.syncedBlockHeight = 0;
     }
     await Promise.all([
       this.syncAccount(0, needReorg), // for receive addresses
@@ -311,16 +318,18 @@ class Xpub {
     let txs: TX[] = [];
     let inserted = 0;
     do {
-      const lastTxBlockheight =
+      let lastTxBlockheight =
         this.storage.getLastConfirmedTxBlock({
           account,
           index,
         })?.height || 0;
+      lastTxBlockheight = Math.max(lastTxBlockheight, this.syncedBlockHeight + 1);
       if (pendingTxs.length > 0) {
         txs = await this.explorer.getTxsSinceBlockheight(
           this.txsSyncArraySize,
           { address, account, index },
           lastTxBlockheight,
+          this.currentBlockHeight,
           false,
         );
         inserted += this.storage.appendTxs(txs); // insert not pending tx
@@ -330,12 +339,14 @@ class Xpub {
             this.txsSyncArraySize,
             { address, account, index },
             0,
+            this.currentBlockHeight,
             true,
           ),
           this.explorer.getTxsSinceBlockheight(
             this.txsSyncArraySize,
             { address, account, index },
             lastTxBlockheight,
+            this.currentBlockHeight,
             false,
           ),
         ]);
