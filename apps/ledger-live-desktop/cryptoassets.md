@@ -19,7 +19,7 @@
 | Cardano | ADA | YES | cardano |
 | Casper | CSPR | YES | casper |
 | Celo | CELO | YES | celo |
-| Coreum | CORE | YES | coreum |
+| Coreum | COREUM | YES | coreum |
 | Cosmos | ATOM | YES | cosmos |
 | Cronos | CRO | YES | cronos |
 | Cronos POS Chain | CRO | YES | crypto_org |
