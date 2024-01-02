@@ -11,7 +11,6 @@ import {
   DangerouslyOverrideStatePayload,
 } from "../actions/types";
 
-
 export const INITIAL_STATE: SwapStateType = {
   providers: undefined,
   pairs: undefined,
