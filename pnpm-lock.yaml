@@ -1960,8 +1960,8 @@ importers:
         specifier: ^0.31.1
         version: 0.31.1
       '@cosmjs/crypto':
-        specifier: ^0.31.0
-        version: 0.31.0
+        specifier: ^0.32.0
+        version: 0.32.2
       '@cosmjs/stargate':
         specifier: ^0.26.5
         version: 0.26.6
@@ -11356,8 +11356,8 @@ packages:
       sha.js: 2.4.11
     dev: false
 
-  /@cosmjs/crypto@0.31.0:
-    resolution: {integrity: sha512-UaqCe6Tgh0pe1QlZ66E13t6FlIF86QrnBXXq+EN7Xe1Rouza3fJ1ojGlPleJZkBoq3tAyYVIOOqdZIxtVj/sIQ==}
+  /@cosmjs/crypto@0.31.1:
+    resolution: {integrity: sha512-4R/SqdzdVzd4E5dpyEh1IKm5GbTqwDogutyIyyb1bcOXiX/x3CrvPI9Tb4WSIMDLvlb5TVzu2YnUV51Q1+6mMA==}
     dependencies:
       '@cosmjs/encoding': 0.31.1
       '@cosmjs/math': 0.31.1
@@ -11368,13 +11368,13 @@ packages:
       libsodium-wrappers-sumo: 0.7.13
     dev: false
 
-  /@cosmjs/crypto@0.31.1:
-    resolution: {integrity: sha512-4R/SqdzdVzd4E5dpyEh1IKm5GbTqwDogutyIyyb1bcOXiX/x3CrvPI9Tb4WSIMDLvlb5TVzu2YnUV51Q1+6mMA==}
+  /@cosmjs/crypto@0.32.2:
+    resolution: {integrity: sha512-RuxrYKzhrPF9g6NmU7VEq++Hn1vZJjqqJpZ9Tmw9lOYOV8BUsv+j/0BE86kmWi7xVJ7EwxiuxYsKuM8IR18CIA==}
     dependencies:
-      '@cosmjs/encoding': 0.31.1
-      '@cosmjs/math': 0.31.1
-      '@cosmjs/utils': 0.31.1
-      '@noble/hashes': 1.3.1
+      '@cosmjs/encoding': 0.32.2
+      '@cosmjs/math': 0.32.2
+      '@cosmjs/utils': 0.32.2
+      '@noble/hashes': 1.3.2
       bn.js: 5.2.1
       elliptic: 6.5.4
       libsodium-wrappers-sumo: 0.7.13
@@ -11414,6 +11414,14 @@ packages:
 
   /@cosmjs/encoding@0.31.1:
     resolution: {integrity: sha512-IuxP6ewwX6vg9sUJ8ocJD92pkerI4lyG8J5ynAM3NaX3q+n+uMoPRSQXNeL9bnlrv01FF1kIm8if/f5F7ZPtkA==}
+    dependencies:
+      base64-js: 1.5.1
+      bech32: 1.1.4
+      readonly-date: 1.0.0
+    dev: false
+
+  /@cosmjs/encoding@0.32.2:
+    resolution: {integrity: sha512-WX7m1wLpA9V/zH0zRcz4EmgZdAv1F44g4dbXOgNj1eXZw1PIGR12p58OEkLN51Ha3S4DKRtCv5CkhK1KHEvQtg==}
     dependencies:
       base64-js: 1.5.1
       bech32: 1.1.4
@@ -11471,6 +11479,12 @@ packages:
 
   /@cosmjs/math@0.31.1:
     resolution: {integrity: sha512-kiuHV6m6DSB8/4UV1qpFhlc4ul8SgLXTGRlYkYiIIP4l0YNeJ+OpPYaOlEgx4Unk2mW3/O2FWYj7Jc93+BWXng==}
+    dependencies:
+      bn.js: 5.2.1
+    dev: false
+
+  /@cosmjs/math@0.32.2:
+    resolution: {integrity: sha512-b8+ruAAY8aKtVKWSft2IvtCVCUH1LigIlf9ALIiY8n9jtM4kMASiaRbQ/27etnSAInV88IaezKK9rQZrtxTjcw==}
     dependencies:
       bn.js: 5.2.1
     dev: false
@@ -11640,6 +11654,10 @@ packages:
 
   /@cosmjs/utils@0.31.1:
     resolution: {integrity: sha512-n4Se1wu4GnKwztQHNFfJvUeWcpvx3o8cWhSbNs9JQShEuB3nv3R5lqFBtDCgHZF/emFQAP+ZjF8bTfCs9UBGhA==}
+    dev: false
+
+  /@cosmjs/utils@0.32.2:
+    resolution: {integrity: sha512-Gg5t+eR7vPJMAmhkFt6CZrzPd0EKpAslWwk5rFVYZpJsM8JG5KT9XQ99hgNM3Ov6ScNoIWbXkpX27F6A9cXR4Q==}
     dev: false
 
   /@craftamap/esbuild-plugin-html@0.6.1(esbuild@0.19.3):
@@ -34577,6 +34595,7 @@ packages:
       is-hex-prefixed: 1.0.0
       strip-hex-prefix: 1.0.0
     dev: false
+    bundledDependencies: false
 
   /ev-emitter@1.1.1:
     resolution: {integrity: sha512-ipiDYhdQSCZ4hSbX4rMW+XzNKMD1prg/sTvoVmSLkuQ1MVlwjJQQA+sW8tMYR3BLUr9KjodFV4pvzunvRhd33Q==}
