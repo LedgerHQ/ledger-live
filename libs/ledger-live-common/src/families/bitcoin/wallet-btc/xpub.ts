@@ -323,12 +323,12 @@ class Xpub {
           account,
           index,
         })?.height || 0;
-      lastTxBlockheight = Math.max(lastTxBlockheight, this.syncedBlockHeight + 1);
+      lastTxBlockheight = Math.max(lastTxBlockheight, this.syncedBlockHeight);
       if (pendingTxs.length > 0) {
         txs = await this.explorer.getTxsSinceBlockheight(
           this.txsSyncArraySize,
           { address, account, index },
-          lastTxBlockheight,
+          lastTxBlockheight + 1,
           this.currentBlockHeight,
           false,
         );
@@ -345,7 +345,7 @@ class Xpub {
           this.explorer.getTxsSinceBlockheight(
             this.txsSyncArraySize,
             { address, account, index },
-            lastTxBlockheight,
+            lastTxBlockheight + 1,
             this.currentBlockHeight,
             false,
           ),

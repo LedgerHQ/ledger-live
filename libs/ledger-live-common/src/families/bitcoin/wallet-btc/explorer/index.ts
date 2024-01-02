@@ -142,14 +142,14 @@ class BitcoinLikeExplorer implements IExplorer {
     batchSize: number,
     address: Address,
     startBlockheight: number,
-    toBlockheight: number | undefined,
+    toBlockheight: number,
     isPending: boolean,
   ): Promise<TX[]> {
     const params: ExplorerParams = {
       batch_size: batchSize,
     };
     if (!isPending) {
-      if (toBlockheight && startBlockheight > toBlockheight) {
+      if (startBlockheight > toBlockheight) {
         return [];
       }
       params.from_height = startBlockheight;
