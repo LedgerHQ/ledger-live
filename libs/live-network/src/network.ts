@@ -162,7 +162,7 @@ const implementation = <T = any>(arg: AxiosRequestConfig): AxiosPromise<T> => {
   let promise: AxiosPromise;
 
   if (arg.method === "GET") {
-    if (!arg.timeout) {
+    if (!("timeout" in arg)) {
       arg.timeout = getEnv("GET_CALLS_TIMEOUT");
     }
 
