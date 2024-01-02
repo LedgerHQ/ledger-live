@@ -7,6 +7,7 @@ import { blockchainBaseURL } from "../../../../explorer";
 type ExplorerParams = {
   batch_size?: number;
   from_height?: number;
+  to_height?: number;
   order?: "ascending" | "descending";
 };
 
@@ -148,12 +149,21 @@ class BitcoinLikeExplorer implements IExplorer {
     const params: ExplorerParams = {
       batch_size: batchSize,
     };
+    // when isPending = false,
+    // we use https://explorers.api.live.ledger.com/blockchain/v4/btc/address/{address}/txs?batch_size={batch_size}&from_height={startBlockheight}&order=ascending&to_height={toBlockheight} to fetch confirmed txs
+    // when isPending = true,
+    // we use https://explorers.api.live.ledger.com/blockchain/v4/btc/address/{address}/txs/pending?batch_size={batch_size} to fetch pending txs
     if (!isPending) {
-      if (startBlockheight > toBlockheight) {
+      // toBlockheight is height of the current block
+      // but in some cases, we don't set this value (e.g. integration tests), so toBlockheight = 0 and we skip this optimization
+      if (startBlockheight > toBlockheight && toBlockheight > 0) {
         return [];
       }
       params.from_height = startBlockheight;
       params.order = "ascending";
+      if (toBlockheight > 0) {
+        params.to_height = toBlockheight;
+      }
     }
     const txs = isPending
       ? await this.fetchPendingTxs(address, params)
