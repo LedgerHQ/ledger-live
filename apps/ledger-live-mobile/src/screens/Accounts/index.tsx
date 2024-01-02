@@ -119,8 +119,8 @@ function Accounts({ navigation, route }: NavigationProps) {
             </Text>
           </Flex>
         )}
-        {/* If params contains account address, this page will redirect, so show a loading spinner instead */}
-        {params?.address ? (
+        {/* If params contains account address or currency, this page will redirect, so show a loading spinner instead */}
+        {params?.address || params?.currency ? (
           <Flex flex={1} p={10} justifyContent="center" alignItems="center">
             <InfiniteLoader />
           </Flex>
