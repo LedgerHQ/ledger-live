@@ -9,7 +9,7 @@ export type FirebaseFeatureFlagsProviderProps = PropsWithChildren<unknown>;
 export const formatToFirebaseFeatureId = (id: string) => `feature_${snakeCase(id)}`;
 
 export const checkFeatureFlagVersion = (feature: Feature) => {
-  const platform = LiveConfig.configInstance!.platform;
+  const platform = LiveConfig.instance.platform;
   if (!feature?.enabled || !platform) {
     return feature;
   }
@@ -26,7 +26,7 @@ export const checkFeatureFlagVersion = (feature: Feature) => {
   })();
   if (
     featureSpecificVersion &&
-    !semver.satisfies(LiveConfig.configInstance!.appVersion, featureSpecificVersion, {
+    !semver.satisfies(LiveConfig.instance.appVersion, featureSpecificVersion, {
       includePrerelease: true,
     })
   ) {
@@ -40,7 +40,7 @@ export const checkFeatureFlagVersion = (feature: Feature) => {
 };
 
 export const isFeature = (key: string): boolean => {
-  if (!LiveConfig.configInstance?.provider?.getValueBykey) {
+  if (!LiveConfig.instance?.provider?.getValueByKey) {
     return false;
   }
   try {
@@ -61,7 +61,7 @@ export const getFeature = (args: {
   localOverrides?: { [key in FeatureId]?: Feature };
   allowOverride?: boolean;
 }) => {
-  if (!LiveConfig.configInstance?.provider?.getValueBykey) {
+  if (!LiveConfig.instance?.provider?.getValueByKey) {
     return null;
   }
   const { key, appLanguage, localOverrides, allowOverride = true } = args;
