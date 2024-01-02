@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
 import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
-import { Flex, Text } from "@ledgerhq/native-ui";
+import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { RefreshMedium } from "@ledgerhq/native-ui/assets/icons";
 import SafeAreaView from "~/components/SafeAreaView";
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
@@ -119,26 +119,33 @@ function Accounts({ navigation, route }: NavigationProps) {
             </Text>
           </Flex>
         )}
-        <List
-          testID="accounts-list"
-          data={flattenedAccounts}
-          renderItem={renderItem}
-          keyExtractor={(i: AccountLike) => i.id}
-          ListHeaderComponent={
-            <Flex mt={3} mb={3}>
-              <Text testID="accounts-list-title" variant="h4">
-                {params?.currencyTicker
-                  ? t("accounts.cryptoAccountsTitle", {
-                      currencyTicker: params?.currencyTicker,
-                    })
-                  : t("accounts.title")}
-              </Text>
-            </Flex>
-          }
-          contentContainerStyle={{
-            paddingHorizontal: 16,
-          }}
-        />
+        {/* If params contains account address, this page will redirect, so show a loading spinner instead */}
+        {params?.address ? (
+          <Flex flex={1} p={10} justifyContent="center" alignItems="center">
+            <InfiniteLoader />
+          </Flex>
+        ) : (
+          <List
+            testID="accounts-list"
+            data={flattenedAccounts}
+            renderItem={renderItem}
+            keyExtractor={(i: AccountLike) => i.id}
+            ListHeaderComponent={
+              <Flex mt={3} mb={3}>
+                <Text testID="accounts-list-title" variant="h4">
+                  {params?.currencyTicker
+                    ? t("accounts.cryptoAccountsTitle", {
+                        currencyTicker: params?.currencyTicker,
+                      })
+                    : t("accounts.title")}
+                </Text>
+              </Flex>
+            }
+            contentContainerStyle={{
+              paddingHorizontal: 16,
+            }}
+          />
+        )}
         <TokenContextualModal
           onClose={() => setAccount(undefined)}
           isOpened={!!account}
