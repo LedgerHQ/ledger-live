@@ -142,7 +142,7 @@ class BitcoinLikeExplorer implements IExplorer {
   async getTxsSinceBlockheight(
     batchSize: number,
     address: Address,
-    startBlockheight: number,
+    fromBlockheight: number,
     toBlockheight: number,
     isPending: boolean,
   ): Promise<TX[]> {
@@ -150,16 +150,16 @@ class BitcoinLikeExplorer implements IExplorer {
       batch_size: batchSize,
     };
     // when isPending = false,
-    // we use https://explorers.api.live.ledger.com/blockchain/v4/btc/address/{address}/txs?batch_size={batch_size}&from_height={startBlockheight}&order=ascending&to_height={toBlockheight} to fetch confirmed txs
+    // we use https://explorers.api.live.ledger.com/blockchain/v4/btc/address/{address}/txs?batch_size={batch_size}&from_height={fromBlockheight}&order=ascending&to_height={toBlockheight} to fetch confirmed txs
     // when isPending = true,
     // we use https://explorers.api.live.ledger.com/blockchain/v4/btc/address/{address}/txs/pending?batch_size={batch_size} to fetch pending txs
     if (!isPending) {
       // toBlockheight is height of the current block
       // but in some cases, we don't set this value (e.g. integration tests), so toBlockheight = 0 and we skip this optimization
-      if (startBlockheight > toBlockheight && toBlockheight > 0) {
+      if (fromBlockheight > toBlockheight && toBlockheight > 0) {
         return [];
       }
-      params.from_height = startBlockheight;
+      params.from_height = fromBlockheight;
       params.order = "ascending";
       if (toBlockheight > 0) {
         params.to_height = toBlockheight;

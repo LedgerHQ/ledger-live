@@ -12,7 +12,7 @@ export interface IExplorer {
   getTxsSinceBlockheight(
     batchSize: number,
     address: Address,
-    startBlockheight: number,
+    fromBlockheight: number,
     toBlockheight: number,
     isPending: boolean,
   ): Promise<TX[]>;
