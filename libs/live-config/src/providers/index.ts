@@ -1,7 +1,7 @@
 import { ConfigInfo } from "../LiveConfig";
 
 export interface Provider {
-  getValueBykey<K>(key: K, info: ConfigInfo);
+  getValueByKey(key: string, info: ConfigInfo);
 }
 
 export * from "./firebaseRemoteConfig";

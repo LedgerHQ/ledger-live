@@ -28,35 +28,32 @@ export class LiveConfig {
   public appVersion?: string;
   public platform?: string;
   public environment?: string;
-  public static configInstance: LiveConfig = new LiveConfig();
+  public static instance: LiveConfig = new LiveConfig();
 
   private constructor() {}
 
   static setAppinfo(params: { appVersion?: string; platform?: string; environment?: string }) {
-    LiveConfig.configInstance.appVersion = params.appVersion;
-    LiveConfig.configInstance.platform = params.platform;
-    LiveConfig.configInstance.environment = params.environment;
+    LiveConfig.instance.appVersion = params.appVersion;
+    LiveConfig.instance.platform = params.platform;
+    LiveConfig.instance.environment = params.environment;
   }
 
   static setProvider(provider: Provider) {
-    LiveConfig.configInstance.provider = provider;
+    LiveConfig.instance.provider = provider;
   }
 
   static setConfig(config: ConfigSchema) {
-    LiveConfig.configInstance.config = config;
+    LiveConfig.instance.config = config;
   }
 
   static getValueByKey(key: string) {
-    if (Object.keys(LiveConfig.configInstance.config).length === 0) {
+    if (Object.keys(LiveConfig.instance.config).length === 0) {
       throw new Error("Config not set");
     }
-    if (!LiveConfig.configInstance.provider) {
+    if (!LiveConfig.instance.provider) {
       // return default value if no provider is set
-      return LiveConfig.configInstance.config[key]?.default;
+      return LiveConfig.instance.config[key]?.default;
     }
-    return LiveConfig.configInstance.provider.getValueBykey(
-      key,
-      LiveConfig.configInstance.config[key],
-    );
+    return LiveConfig.instance.provider.getValueByKey(key, LiveConfig.instance.config[key]);
   }
 }

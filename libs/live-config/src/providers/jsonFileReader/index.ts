@@ -12,7 +12,7 @@ export class JsonFileReader implements Provider {
     this.filePath = config.filePath;
   }
 
-  getValueBykey<K>(key: K, info: ConfigInfo) {
+  getValueByKey(key: string, info: ConfigInfo) {
     if (!fs.existsSync(this.filePath)) {
       throw new Error("Invalid file path, could not read config");
     }
