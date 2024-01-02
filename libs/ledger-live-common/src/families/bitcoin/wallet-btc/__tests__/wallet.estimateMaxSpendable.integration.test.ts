@@ -26,7 +26,7 @@ describe("testing estimateMaxSpendable", () => {
   });
 
   it("should estimate max spendable correctly", async () => {
-    await wallet.syncAccount(account);
+    await wallet.syncAccount(account, 1000000);
     let maxSpendable = await wallet.estimateAccountMaxSpendable(account, 0, []);
     const balance = 109088;
     expect(maxSpendable.toNumber()).toEqual(balance);

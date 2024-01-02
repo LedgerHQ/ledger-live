@@ -70,7 +70,7 @@ class BitcoinLikeWallet {
 
   async syncAccount(account: Account, currentBlockHeight: number): Promise<void> {
     account.xpub.currentBlockHeight = currentBlockHeight;
-    account.xpub.sync();
+    await account.xpub.sync();
     account.xpub.syncedBlockHeight = currentBlockHeight;
   }
 
