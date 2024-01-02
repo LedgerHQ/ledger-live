@@ -38,7 +38,7 @@ import { Provider } from "@ledgerhq/live-config/providers/index";
 import { ConfigInfo, LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 
 class MyCustomProvider implements Provider {
-  getValueBykey<K>(key: K, info: ConfigInfo) {
+  getValueByKey(key: string, info: ConfigInfo) {
     // Implement logic to retrieve the value for the given key
     // This can be an API call, local storage access, etc.
   }
