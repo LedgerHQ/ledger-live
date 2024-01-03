@@ -657,6 +657,7 @@ export const renderError = ({
   withOnboardingCTA,
   device,
   inlineRetry = true,
+  withDescription = true,
   Icon,
 }: {
   error: Error | ErrorConstructor;
@@ -674,6 +675,7 @@ export const renderError = ({
   withOnboardingCTA?: boolean;
   device?: Device | null;
   inlineRetry?: boolean;
+  withDescription?: boolean;
   Icon?: (props: { color?: string | undefined; size?: number | undefined }) => JSX.Element;
 }) => {
   // Redirects from renderError and not from DeviceActionDefaultRendering because renderError
@@ -701,7 +703,11 @@ export const renderError = ({
               )
         }
         title={<TranslatedError error={error as unknown as Error} noLink />}
-        description={<TranslatedError error={error as unknown as Error} field="description" />}
+        description={
+          withDescription && (
+            <TranslatedError error={error as unknown as Error} field="description" />
+          )
+        }
         list={
           list ? (
             <ol style={{ textAlign: "justify" }}>

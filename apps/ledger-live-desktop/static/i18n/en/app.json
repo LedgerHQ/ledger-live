@@ -3537,7 +3537,8 @@
             "title": "Validator"
           },
           "amount": {
-            "title": "Amount"
+            "title": "Amount",
+            "reserveWarning": "Please ensure you reserve at least {{amount}} SOL in your wallet to cover future network fees to deactivate and withdraw your stake"
           },
           "confirmation": {
             "success": {
@@ -5593,8 +5594,7 @@
       "description": "Install the latest Bitcoin and Ethereum apps first."
     },
     "UserRefusedDeviceNameChange": {
-      "title": "Rename cancelled on device",
-      "description": "Try again and allow renaming on your device"
+      "title": "Renaming cancelled on device"
     },
     "SyncError": {
       "title": "Synchronization error",

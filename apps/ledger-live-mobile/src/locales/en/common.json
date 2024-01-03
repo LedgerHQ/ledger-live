@@ -5739,7 +5739,8 @@
       "delegatedTo": "delegated to",
       "started": {
         "description": "You may earn rewards by delegating your SOL assets to a validator."
-      }
+      },
+      "reserveWarning": "Please ensure you reserve at least {{amount}} SOL in your wallet to cover future network fees to deactivate and withdraw your stake"
     }
   },
   "near": {
