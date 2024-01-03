@@ -13,7 +13,7 @@ export interface IExplorer {
     batchSize: number,
     address: Address,
     fromBlockheight: number,
-    toBlockheight: number,
+    toBlockheight: number | undefined,
     isPending: boolean,
   ): Promise<TX[]>;
 }

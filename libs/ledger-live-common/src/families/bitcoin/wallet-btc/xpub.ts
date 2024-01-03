@@ -37,7 +37,7 @@ class Xpub {
   syncedBlockHeight = -1;
 
   // the height of the current block in blockchain
-  currentBlockHeight = 0;
+  currentBlockHeight: number | undefined = undefined;
 
   constructor({
     storage,

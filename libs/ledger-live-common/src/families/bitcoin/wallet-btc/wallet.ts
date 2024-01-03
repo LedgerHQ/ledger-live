@@ -68,10 +68,12 @@ class BitcoinLikeWallet {
     };
   }
 
-  async syncAccount(account: Account, currentBlockHeight: number): Promise<void> {
+  async syncAccount(account: Account, currentBlockHeight?: number): Promise<void> {
     account.xpub.currentBlockHeight = currentBlockHeight;
     await account.xpub.sync();
-    account.xpub.syncedBlockHeight = currentBlockHeight;
+    if (currentBlockHeight) {
+      account.xpub.syncedBlockHeight = currentBlockHeight;
+    }
   }
 
   async getAccountNewReceiveAddress(account: Account): Promise<Address> {

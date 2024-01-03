@@ -32,7 +32,7 @@ describe("testing wallet", () => {
   });
 
   it("should sync an account", async () => {
-    await wallet.syncAccount(account, 0);
+    await wallet.syncAccount(account);
     const balance = await wallet.getAccountBalance(account);
 
     expect(balance.toNumber()).toEqual(109088);

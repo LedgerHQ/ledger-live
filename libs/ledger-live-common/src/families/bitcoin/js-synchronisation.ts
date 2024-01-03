@@ -143,10 +143,8 @@ const makeGetAccountShape =
 
     const oldOperations = initialAccount?.operations || [];
     const currentBlock = await walletAccount.xpub.explorer.getCurrentBlock();
-    if (!currentBlock) {
-      throw new Error("getCurrentBlock failed");
-    }
-    const blockHeight = currentBlock.height;
+
+    const blockHeight = currentBlock?.height;
     await wallet.syncAccount(walletAccount, blockHeight);
 
     const balance = await wallet.getAccountBalance(walletAccount);
