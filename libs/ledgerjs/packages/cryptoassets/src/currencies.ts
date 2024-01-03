@@ -4483,7 +4483,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       node: { type: "external", uri: "https://rpc.linea.build" },
       explorer: {
         type: "etherscan",
-        uri: "https://lineascan.build",
+        uri: "https://api.lineascan.build",
       },
     },
     explorerViews: [
