@@ -1,5 +1,14 @@
 # @ledgerhq/live-common
 
+## 33.4.0-nightly.7
+
+### Patch Changes
+
+- [#5228](https://github.com/LedgerHQ/ledger-live/pull/5228) [`7253544`](https://github.com/LedgerHQ/ledger-live/commit/72535447c5323abbba795b9de02a53ac5e90d410) Thanks [@sponomarev](https://github.com/sponomarev)! - Safer Solana staking
+
+- Updated dependencies [[`5fdd5f0`](https://github.com/LedgerHQ/ledger-live/commit/5fdd5f0acab5f990d46ad20d245315f38be0f08a)]:
+  - @ledgerhq/hw-app-btc@10.2.0-nightly.1
+
 ## 33.4.0-nightly.6
 
 ### Patch Changes

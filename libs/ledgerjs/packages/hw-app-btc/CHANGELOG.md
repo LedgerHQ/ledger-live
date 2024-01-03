@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-btc
 
+## 10.2.0-nightly.1
+
+### Minor Changes
+
+- [#5675](https://github.com/LedgerHQ/ledger-live/pull/5675) [`5fdd5f0`](https://github.com/LedgerHQ/ledger-live/commit/5fdd5f0acab5f990d46ad20d245315f38be0f08a) Thanks [@chabroA](https://github.com/chabroA)! - make Qtum work with old and new nano app interfaces
+
 ## 10.1.2-nightly.0
 
 ### Patch Changes

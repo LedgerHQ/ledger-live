@@ -1,5 +1,20 @@
 # ledger-live-desktop
 
+## 2.74.0-nightly.8
+
+### Minor Changes
+
+- [#5801](https://github.com/LedgerHQ/ledger-live/pull/5801) [`628340b`](https://github.com/LedgerHQ/ledger-live/commit/628340b5b195b81f82772cb72c482b096d7d2407) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Unresponsive button in Receive token flow
+
+### Patch Changes
+
+- [#5786](https://github.com/LedgerHQ/ledger-live/pull/5786) [`a42d23d`](https://github.com/LedgerHQ/ledger-live/commit/a42d23dbfcd368f3bd7746c59205663427bb01fc) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Fix renaming device flow design
+
+- [#5228](https://github.com/LedgerHQ/ledger-live/pull/5228) [`7253544`](https://github.com/LedgerHQ/ledger-live/commit/72535447c5323abbba795b9de02a53ac5e90d410) Thanks [@sponomarev](https://github.com/sponomarev)! - Safer Solana staking
+
+- Updated dependencies [[`7253544`](https://github.com/LedgerHQ/ledger-live/commit/72535447c5323abbba795b9de02a53ac5e90d410)]:
+  - @ledgerhq/live-common@33.4.0-nightly.7
+
 ## 2.74.0-nightly.7
 
 ### Patch Changes

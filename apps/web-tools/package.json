@@ -1,6 +1,6 @@
 {
   "name": "web-tools",
-  "version": "0.3.0-nightly.6",
+  "version": "0.3.0-nightly.7",
   "private": true,
   "browser": {
     "fs": false,
