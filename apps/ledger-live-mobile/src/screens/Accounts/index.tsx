@@ -60,33 +60,34 @@ function Accounts({ navigation, route }: NavigationProps) {
     [accounts, route?.params?.currencyId],
   );
 
-  // Deep linking params redirect
-  useEffect(() => {
-    if (params) {
-      if (params.currency) {
-        const currency = findCryptoCurrencyByKeyword(params.currency.toUpperCase());
-        if (currency) {
-          const account = params.address
-            ? accounts.find(
-                acc =>
-                  acc.currency.id === currency.id &&
-                  acc.freshAddress.toLowerCase() === params.address?.toLowerCase(),
-              )
-            : null;
+  const paramCurrency = useMemo(
+    () => params?.currency && findCryptoCurrencyByKeyword(params.currency.toUpperCase()),
+    [params?.currency],
+  );
 
-          if (account) {
-            navigation.replace(ScreenName.Account, {
-              accountId: account.id,
-            });
-          } else {
-            navigation.replace(ScreenName.Asset, {
-              currency,
-            });
-          }
-        }
+  // Redirect if deep link params are in the url
+  useEffect(() => {
+    if (paramCurrency) {
+      const paramAddress = params?.address;
+      const account = paramAddress
+        ? accounts.find(
+            acc =>
+              acc.currency.id === paramCurrency.id &&
+              acc.freshAddress.toLowerCase() === paramAddress.toLowerCase(),
+          )
+        : null;
+
+      if (account) {
+        navigation.replace(ScreenName.Account, {
+          accountId: account.id,
+        });
+      } else {
+        navigation.replace(ScreenName.Asset, {
+          currency: paramCurrency,
+        });
       }
     }
-  }, [params, accounts, navigation, account]);
+  }, [paramCurrency, accounts, navigation, params?.address]);
 
   const renderItem = useCallback(
     ({ item, index }: ListRenderItemInfo<AccountLike>) => (
@@ -119,8 +120,8 @@ function Accounts({ navigation, route }: NavigationProps) {
             </Text>
           </Flex>
         )}
-        {/* If params contains account address or currency, this page will redirect, so show a loading spinner instead */}
-        {params?.address || params?.currency ? (
+        {/* If params contains a currency, this page will redirect, so show a loading spinner instead */}
+        {paramCurrency ? (
           <Flex flex={1} p={10} justifyContent="center" alignItems="center">
             <InfiniteLoader />
           </Flex>
