@@ -65,9 +65,12 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
   const { recipient, useAllAmount, gasPremium, gasFeeCap, gasLimit } = t;
   let { amount } = t;
 
+  const invalidAddressErr = new InvalidAddress(undefined, {
+    currencyName: a.currency.name,
+  });
   if (!recipient) errors.recipient = new RecipientRequired();
-  else if (!validateAddress(recipient).isValid) errors.recipient = new InvalidAddress();
-  else if (!validateAddress(address).isValid) errors.sender = new InvalidAddress();
+  else if (!validateAddress(recipient).isValid) errors.recipient = invalidAddressErr;
+  else if (!validateAddress(address).isValid) errors.sender = invalidAddressErr;
 
   if (gasFeeCap.eq(0) || gasPremium.eq(0) || gasLimit.eq(0)) errors.gas = new FeeNotLoaded();
 
@@ -116,14 +119,17 @@ const estimateMaxSpendable = async ({
   let methodNum = Methods.Transfer;
   let recipient = transaction?.recipient;
 
+  const invalidAddressErr = new InvalidAddress(undefined, {
+    currencyName: a.currency.name,
+  });
   const senderValidation = validateAddress(sender);
-  if (!senderValidation.isValid) throw new InvalidAddress();
+  if (!senderValidation.isValid) throw invalidAddressErr;
   sender = senderValidation.parsedAddress.toString();
 
   if (recipient) {
     const recipientValidation = validateAddress(recipient);
     if (!recipientValidation.isValid) {
-      throw new InvalidAddress();
+      throw invalidAddressErr;
     }
     recipient = recipientValidation.parsedAddress.toString();
 
