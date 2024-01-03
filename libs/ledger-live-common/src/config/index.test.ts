@@ -1,31 +1,33 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCurrencyConfiguration } from ".";
-import liveConfig from "./sharedConfig";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 
 describe("getCurrencyConfiguration", () => {
-  beforeAll(() => {
-    LiveConfig.setConfig(liveConfig);
+  let getValueByKeySpy: jest.SpyInstance;
+
+  beforeEach(() => {
+    getValueByKeySpy = jest.spyOn(LiveConfig, "getValueByKey");
   });
-  const cosmosCurrencyMock = {
-    family: "cosmos",
-    id: "cosmos",
-  } as CryptoCurrency;
+
   describe("when config fetching is successful", () => {
     it("should return the related currency config", async () => {
+      const cosmosCurrencyMock = {
+        family: "cosmos",
+        id: "cosmos",
+      } as CryptoCurrency;
+      getValueByKeySpy.mockReturnValueOnce(cosmosCurrencyMock);
       const config = getCurrencyConfiguration(cosmosCurrencyMock);
-      expect(config).toEqual(liveConfig.cosmos.default);
+      expect(config).toEqual(cosmosCurrencyMock);
     });
   });
 
-  describe("when config fetching fails", () => {
-    it("should return an error if currency isn't defined in local config", async () => {
-      expect(() =>
-        getCurrencyConfiguration({
-          id: "idontexistasacurrency",
-          family: "ihavenofamily",
-        } as unknown as CryptoCurrency),
-      ).toThrow(Error);
-    });
+  it("should return an error if currency config is null", async () => {
+    getValueByKeySpy.mockReturnValueOnce(null);
+    expect(() =>
+      getCurrencyConfiguration({
+        id: "idontexistasacurrency",
+        family: "ihavenofamily",
+      } as unknown as CryptoCurrency),
+    ).toThrow(Error);
   });
 });
