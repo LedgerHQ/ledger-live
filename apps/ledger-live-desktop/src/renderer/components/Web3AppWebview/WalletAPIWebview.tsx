@@ -267,10 +267,19 @@ function useWebView(
   const handleMessage = useCallback(
     (event: Electron.IpcMessageEvent) => {
       if (event.channel === "webviewToParent") {
+        if (!webviewRef.current) {
+          return;
+        }
+        const manifestUrl = new URL(manifest.url).origin;
+        const webviewUrl = new URL(webviewRef.current?.src).origin;
+        if (manifestUrl !== webviewUrl) {
+          console.warn(`event fired from ${manifestUrl}, ignored as webview is ${webviewUrl}`);
+          return;
+        }
         onMessage(event.args[0]);
       }
     },
-    [onMessage],
+    [onMessage, manifest, webviewRef],
   );
 
   const handleDomReady = useCallback(() => {
