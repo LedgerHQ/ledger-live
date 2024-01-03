@@ -97,6 +97,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const casper = useFeature("currencyCasper");
   const neonEvm = useFeature("currencyNeonEvm");
   const lukso = useFeature("currencyLukso");
+  const linea = useFeature("currencyLinea");
 
   const featureFlaggedCurrencies = useMemo(
     (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
@@ -140,6 +141,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       casper,
       neon_evm: neonEvm,
       lukso,
+      linea,
     }),
     [
       axelar,
@@ -182,6 +184,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       casper,
       neonEvm,
       lukso,
+      linea,
     ],
   );
 

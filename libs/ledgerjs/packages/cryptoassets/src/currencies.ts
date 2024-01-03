@@ -4472,11 +4472,11 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     coinType: CoinType.ETH,
     name: "Linea",
     managerAppName: "Ethereum",
-    ticker: "TBA",
+    ticker: "ETH",
     scheme: "linea",
     color: "#000000",
     family: "evm",
-    units: ethereumUnits("TBA", "TBA"),
+    units: ethereumUnits("ETH", "ETH"),
     disableCountervalue: false,
     ethereumLikeInfo: {
       chainId: 59144,

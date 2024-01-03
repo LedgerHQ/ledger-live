@@ -198,7 +198,6 @@ export type LedgerExplorerId =
   | "eth_holesky"
   | "etc"
   | "matic"
-  | "linea"
   | "bnb";
 
 /**
