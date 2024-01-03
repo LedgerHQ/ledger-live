@@ -4452,7 +4452,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     disableCountervalue: false,
     ethereumLikeInfo: {
       chainId: 42,
-      node: { type: "external", uri: "https://rpc.mainnet.lukso.network	" },
+      node: { type: "external", uri: "https://rpc.mainnet.lukso.network" },
       explorer: {
         type: "blockscout",
         uri: "https://api.explorer.execution.mainnet.lukso.network",
@@ -4463,6 +4463,34 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         tx: "https://explorer.execution.mainnet.lukso.network/tx/$hash",
         address: "https://explorer.execution.mainnet.lukso.network/address/$address",
         token: "https://explorer.execution.mainnet.lukso.network/token/$address",
+      },
+    ],
+  },
+  linea: {
+    type: "CryptoCurrency",
+    id: "linea",
+    coinType: CoinType.ETH,
+    name: "Linea",
+    managerAppName: "Ethereum",
+    ticker: "TBA",
+    scheme: "linea",
+    color: "#000000",
+    family: "evm",
+    units: ethereumUnits("TBA", "TBA"),
+    disableCountervalue: false,
+    ethereumLikeInfo: {
+      chainId: 59144,
+      node: { type: "external", uri: "https://rpc.linea.build" },
+      explorer: {
+        type: "etherscan",
+        uri: "https://lineascan.build",
+      },
+    },
+    explorerViews: [
+      {
+        tx: "https://lineascan.build/tx/$hash",
+        address: "https://lineascan.build/address/$address",
+        token: "https://lineascan.build/token/$address",
       },
     ],
   },

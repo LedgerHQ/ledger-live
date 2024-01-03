@@ -375,5 +375,6 @@ export default Object.values(cryptocurrenciesById)
       mutations: getMutations(currency.id),
       genericDeviceAction: getGenericDeviceAction(currency.id),
     };
+
     return acc;
   }, {});

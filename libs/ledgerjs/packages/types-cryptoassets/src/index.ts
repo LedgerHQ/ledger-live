@@ -163,7 +163,8 @@ export type CryptoCurrencyId =
   | "base_goerli"
   | "casper"
   | "neon_evm"
-  | "lukso";
+  | "lukso"
+  | "linea";
 
 export type LedgerExplorerId =
   | "btc"
@@ -197,6 +198,7 @@ export type LedgerExplorerId =
   | "eth_holesky"
   | "etc"
   | "matic"
+  | "linea"
   | "bnb";
 
 /**
