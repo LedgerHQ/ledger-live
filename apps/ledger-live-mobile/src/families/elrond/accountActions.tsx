@@ -39,11 +39,10 @@ const getMainActions = ({
    */
   const preloaded = getCurrentElrondPreloadData();
   const validators = randomizeProviders(preloaded.validators);
-
-  const screen =
-    account.elrondResources && account.elrondResources.delegations.length === 0
-      ? ScreenName.ElrondDelegationStarted
-      : ScreenName.ElrondDelegationValidator;
+  const firstTimeFlow = account.elrondResources && account.elrondResources.delegations.length === 0;
+  const screen = firstTimeFlow
+    ? ScreenName.ElrondDelegationStarted
+    : ScreenName.ElrondDelegationValidator;
 
   /*
    * Return an empty array if "elrondResources" doesn't exist.
@@ -59,7 +58,15 @@ const getMainActions = ({
   const navigationParams: NavigationParamsType = delegationEnabled
     ? [
         NavigatorName.ElrondDelegationFlow,
-        { screen, params: { account, validators, source: parentRoute } },
+        {
+          screen,
+          params: {
+            account,
+            validators,
+            source: parentRoute,
+            trackingFirstStep: !firstTimeFlow,
+          },
+        },
       ]
     : [
         NavigatorName.NoFundsFlow,

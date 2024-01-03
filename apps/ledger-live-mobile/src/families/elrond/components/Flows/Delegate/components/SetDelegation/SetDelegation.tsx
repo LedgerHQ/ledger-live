@@ -234,7 +234,8 @@ const SetDelegation = (props: SetDelegationPropsType) => {
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen
         category="DelegationFlow"
-        name="Summary"
+        name={route.params.trackingFirstStep ? "Step Starter" : "Summary"}
+        screen="Summary"
         flow="stake"
         action="delegate"
         currency="egld"
