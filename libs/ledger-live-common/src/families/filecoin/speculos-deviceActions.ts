@@ -7,7 +7,12 @@ import { BotScenario } from "./utils";
 
 export const generateDeviceActionFlow = (scenario: BotScenario): DeviceAction<Transaction, any> => {
   const data: Parameters<typeof deviceActionFlow<Transaction>>[0] = { steps: [] };
-
+  data.steps = data.steps.concat([
+    {
+      title: "Please review",
+      button: SpeculosButton.RIGHT,
+    },
+  ]);
   if (scenario == BotScenario.F4_RECIPIENT) {
     data.steps.push({
       title: "To",
