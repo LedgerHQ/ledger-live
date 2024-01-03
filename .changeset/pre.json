@@ -95,6 +95,7 @@
     "@ledgerhq/react-devtools": "0.0.0"
   },
   "changesets": [
+    "sixty-adults-tan",
     "tricky-needles-allow"
   ]
 }
