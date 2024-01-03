@@ -1,11 +1,29 @@
 import { LiveConfig, ConfigSchema } from "../LiveConfig";
-import { JsonFileReader } from "../providers/jsonFileReader";
-import path from "path";
+import { Provider } from "../providers";
+import { ConfigInfo } from "../LiveConfig";
+
+class MockJsonProvider implements Provider {
+  getValueByKey(key: string, info: ConfigInfo) {
+    const configValue = {
+      developer_mode: true,
+      app_name: "test app",
+      requests_per_seconds: 8,
+      explorer: {
+        url: "https://myexplorer1.com",
+        supportedCurrencies: ["btc", "eth"],
+      },
+    };
+    try {
+      return configValue[key] ?? info.default;
+    } catch (err) {
+      throw new Error(`config key ${key} not found`);
+    }
+  }
+}
 
 describe("LiveConfig", () => {
   beforeAll(() => {
-    const filePath = path.join(__dirname, "config.json");
-    const jsonFileReader = new JsonFileReader({ filePath });
+    const jsonProvider = new MockJsonProvider();
     const config: ConfigSchema = {
       app_name: { type: "string", default: "test app" },
       developer_mode: { type: "boolean", default: false },
@@ -28,7 +46,7 @@ describe("LiveConfig", () => {
       },
     };
     LiveConfig.setConfig(config);
-    LiveConfig.setProvider(jsonFileReader);
+    LiveConfig.setProvider(jsonProvider);
   });
   it("get correct config from json file", () => {
     const developer_mode = LiveConfig.getValueByKey("developer_mode");
