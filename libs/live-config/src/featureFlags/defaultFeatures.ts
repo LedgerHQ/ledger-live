@@ -66,7 +66,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyVelasEvm: DEFAULT_FEATURE,
   currencyCasper: DEFAULT_FEATURE,
   currencyNeonEvm: DEFAULT_FEATURE,
-  currencyLinea: { enabled: true },
+  currencyLinea: DEFAULT_FEATURE,
 };
 
 /**
