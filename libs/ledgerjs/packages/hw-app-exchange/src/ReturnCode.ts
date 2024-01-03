@@ -21,7 +21,7 @@ export const ErrorStatus = {
   SIGN_VERIFICATION_FAIL: 0x9d1a,
 } as const;
 
-export function getExchangeErrorMessage(errorCode: number): string | undefined {
+export function getExchangeErrorMessage(errorCode: number, step?: string): string | undefined {
   switch (errorCode) {
     case ErrorStatus.INCORRECT_COMMAND_DATA:
       return "Incorrect command data";
@@ -32,7 +32,10 @@ export function getExchangeErrorMessage(errorCode: number): string | undefined {
     case ErrorStatus.INVALID_ADDRESS:
       return "Invalid address";
     case ErrorStatus.USER_REFUSED:
-      return "User refused";
+      if (step === "CHECK_PAYOUT_ADDRESS")
+        return "This receiving account does not belong to your device. Please change and retry."
+      else if (step === "CHECK_REFUND_ADDRESS")
+        return "This receiving account does not belong to your device for the refund. Please change and retry.";
     case ErrorStatus.INTERNAL_ERROR:
       return "Internal error";
     case ErrorStatus.WRONG_P1:
