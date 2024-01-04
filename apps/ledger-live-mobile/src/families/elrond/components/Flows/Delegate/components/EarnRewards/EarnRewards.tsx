@@ -67,7 +67,7 @@ const EarnRewards = (props: EarnRewardsPropsType) => {
           screen="Started"
           flow="stake"
           action="delegate"
-          currency="egld"
+          currency="MultiversX"
         />
         <IlluRewards style={styles.rewards} />
 

@@ -238,7 +238,7 @@ const SetDelegation = (props: SetDelegationPropsType) => {
         screen="Summary"
         flow="stake"
         action="delegate"
-        currency="egld"
+        currency="MultiversX"
       />
 
       <View style={styles.body}>
