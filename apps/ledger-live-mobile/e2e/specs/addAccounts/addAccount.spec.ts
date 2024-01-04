@@ -48,5 +48,4 @@ describe("Add account from modal", () => {
     await accountPage.waitForAccountPageToLoad("Bitcoin");
     await waitForElementByText("1.19576\u00a0BTC");
   });
-
 });
