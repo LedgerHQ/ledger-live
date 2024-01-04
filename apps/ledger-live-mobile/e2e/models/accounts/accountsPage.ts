@@ -1,10 +1,10 @@
-import { getElementById, openDeeplink, waitForElementById } from "../../helpers";
+import { getElementById, openDeeplink, waitForElementById, tapByElement } from "../../helpers";
 
 const baseLink = "accounts";
 
 export default class accountsPage {
   accountTitle = (coin: string) => getElementById(`accounts-title-${coin}`);
-  addAccountButton = () => getElementById("add-account-button");
+  addAccountCta = () => getElementById("add-account-cta");
 
   async openViaDeeplink() {
     await openDeeplink(baseLink);
@@ -17,6 +17,6 @@ export default class accountsPage {
   }
 
   async addAccount() {
-    await this.addAccountButton().tap();
+    await tapByElement(this.addAccountCta());
   }
 }
