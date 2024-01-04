@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.37.0-nightly.8
+
+### Patch Changes
+
+- [#5821](https://github.com/LedgerHQ/ledger-live/pull/5821) [`835eca0`](https://github.com/LedgerHQ/ledger-live/commit/835eca011390fe2777d634ce75926356d32f89ed) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Add loading spinner to accounts page when url contains account address param to avoid janky redirection via accounts list.
+
 ## 3.37.0-nightly.7
 
 ### Patch Changes
