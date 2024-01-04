@@ -8,9 +8,9 @@ import type { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types"
 import type { DelegationType } from "../../types";
 import type { SummaryPropsType, ItemType } from "./types";
 
-import InfoModal from "../../../../modals/Info";
-import InfoItem from "../../../../components/BalanceSummaryInfoItem";
-import CurrencyUnitValue from "../../../../components/CurrencyUnitValue";
+import InfoModal from "~/modals/Info";
+import InfoItem from "~/components/BalanceSummaryInfoItem";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 
 import styles from "./styles";
 

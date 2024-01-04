@@ -2,7 +2,7 @@ import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/famil
 import type { Operation } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { StakePool } from "@ledgerhq/live-common/families/cardano/api/api-types";
-import { ScreenName } from "../../../const";
+import { ScreenName } from "~/const";
 
 export type CardanoDelegationFlowParamList = {
   [ScreenName.CardanoDelegationStarted]: {

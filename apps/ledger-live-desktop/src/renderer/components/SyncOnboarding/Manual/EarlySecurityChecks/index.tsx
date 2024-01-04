@@ -157,7 +157,6 @@ const EarlySecurityChecks = ({
       deviceInfo,
       device,
       deviceModelId: deviceModelId,
-      setFirmwareUpdateOpened: () => null, // we don't need to keep the state
       setFirmwareUpdateCompleted: () => null,
 
       finalStepSuccessDescription: t(

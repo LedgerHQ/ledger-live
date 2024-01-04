@@ -22,9 +22,9 @@ const ReceiveModal = () => {
 
   const { stepId, isAddressVerified, verifyAddressError } = state;
 
-  const setStepId = (newStepId: State["stepId"]) => {
+  const setStepId = useCallback((newStepId: State["stepId"]) => {
     setState(prevState => ({ ...prevState, stepId: newStepId }));
-  };
+  }, []);
 
   const setIsAddressVerified = (newIsAddressVerified: State["isAddressVerified"]) => {
     setState(prevState => ({ ...prevState, isAddressVerified: newIsAddressVerified }));

@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { ScrollView } from "react-native";
-import { useSelector } from "react-redux";
 import { useTranslation, Trans } from "react-i18next";
 import { getCryptoCurrencyById, toLocaleString } from "@ledgerhq/live-common/currencies/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
@@ -8,16 +7,16 @@ import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
 import type { Account } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import { TronAccount } from "@ledgerhq/live-common/families/tron/types";
-import InfoModal from "../../modals/Info";
-import type { ModalInfo } from "../../modals/Info";
-import FreezeIcon from "../../icons/Freeze";
-import BandwidthIcon from "../../icons/Bandwidth";
-import EnergyIcon from "../../icons/Energy";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import InfoItem from "../../components/BalanceSummaryInfoItem";
-import { localeSelector } from "../../reducers/settings";
-import Alert from "../../components/Alert";
-import { urls } from "@utils/urls";
+import InfoModal from "~/modals/Info";
+import type { ModalInfo } from "~/modals/Info";
+import FreezeIcon from "~/icons/Freeze";
+import BandwidthIcon from "~/icons/Bandwidth";
+import EnergyIcon from "~/icons/Energy";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import InfoItem from "~/components/BalanceSummaryInfoItem";
+import Alert from "~/components/Alert";
+import { urls } from "~/utils/urls";
+import { useSettings } from "~/hooks";
 
 type Props = {
   account: Account;
@@ -26,7 +25,7 @@ type InfoName = "available" | "frozen" | "bandwidth" | "energy";
 
 function AccountBalanceSummaryFooter({ account }: Props) {
   const { t } = useTranslation();
-  const locale = useSelector(localeSelector);
+  const { locale } = useSettings();
   const [infoName, setInfoName] = useState<InfoName | typeof undefined>();
   const infoCandidates = useInfoCandidates();
   const {

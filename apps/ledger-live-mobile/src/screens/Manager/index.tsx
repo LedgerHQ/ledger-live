@@ -7,24 +7,24 @@ import { BluetoothRequired } from "@ledgerhq/errors";
 import { Result } from "@ledgerhq/live-common/hw/actions/manager";
 import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import TabBarSafeAreaView from "../../components/TabBar/TabBarSafeAreaView";
-import { ScreenName } from "../../const";
-import SelectDevice2, { SetHeaderOptionsRequest } from "../../components/SelectDevice2";
-import SelectDevice from "../../components/SelectDevice";
-import RemoveDeviceMenu from "../../components/SelectDevice2/RemoveDeviceMenu";
-import TrackScreen from "../../analytics/TrackScreen";
-import { track } from "../../analytics";
-import NavigationScrollView from "../../components/NavigationScrollView";
-import DeviceActionModal from "../../components/DeviceActionModal";
+import TabBarSafeAreaView from "~/components/TabBar/TabBarSafeAreaView";
+import { ScreenName } from "~/const";
+import SelectDevice2, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
+import SelectDevice from "~/components/SelectDevice";
+import RemoveDeviceMenu from "~/components/SelectDevice2/RemoveDeviceMenu";
+import TrackScreen from "~/analytics/TrackScreen";
+import { track } from "~/analytics";
+import NavigationScrollView from "~/components/NavigationScrollView";
+import DeviceActionModal from "~/components/DeviceActionModal";
 import {
   BaseComposite,
   ReactNavigationHeaderOptions,
   StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
-import { ManagerNavigatorStackParamList } from "../../components/RootNavigator/types/ManagerNavigator";
-import ServicesWidget from "../../components/ServicesWidget";
+} from "~/components/RootNavigator/types/helpers";
+import { ManagerNavigatorStackParamList } from "~/components/RootNavigator/types/ManagerNavigator";
+import ServicesWidget from "~/components/ServicesWidget";
 
-import { useManagerDeviceAction } from "../../hooks/deviceActions";
+import { useManagerDeviceAction } from "~/hooks/deviceActions";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<ManagerNavigatorStackParamList, ScreenName.Manager>

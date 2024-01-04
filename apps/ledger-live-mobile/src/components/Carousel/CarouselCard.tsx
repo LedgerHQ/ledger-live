@@ -2,8 +2,8 @@ import React, { memo, useCallback, useEffect } from "react";
 import { Linking } from "react-native";
 import { Flex, FullBackgroundCard } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
-import { WalletContentCard } from "../../dynamicContent/types";
-import useDynamicContent from "../../dynamicContent/dynamicContent";
+import { WalletContentCard } from "~/dynamicContent/types";
+import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import ForceTheme from "../theme/ForceTheme";
 
 type CarouselCardProps = {

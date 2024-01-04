@@ -102,6 +102,7 @@ const account: SolanaAccount = {
         withdrawable: 0,
       },
     ],
+    unstakeReserve: BigNumber(0),
   },
 };
 

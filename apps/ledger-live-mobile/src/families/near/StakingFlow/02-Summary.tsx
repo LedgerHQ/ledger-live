@@ -20,24 +20,21 @@ import { Trans } from "react-i18next";
 import { Animated, SafeAreaView, StyleSheet, View, TextStyle, StyleProp } from "react-native";
 import Icon from "react-native-vector-icons/Feather";
 import { useSelector } from "react-redux";
-import { TrackScreen } from "../../../analytics";
+import { TrackScreen } from "~/analytics";
 import { rgba } from "../../../colors";
-import Button from "../../../components/Button";
-import Circle from "../../../components/Circle";
-import CurrencyIcon from "../../../components/CurrencyIcon";
-import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
-import Touchable from "../../../components/Touchable";
-import { ScreenName } from "../../../const";
+import Button from "~/components/Button";
+import Circle from "~/components/Circle";
+import CurrencyIcon from "~/components/CurrencyIcon";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import Touchable from "~/components/Touchable";
+import { ScreenName } from "~/const";
 import DelegatingContainer from "../../tezos/DelegatingContainer";
-import { accountScreenSelector } from "../../../reducers/accounts";
+import { accountScreenSelector } from "~/reducers/accounts";
 import ValidatorImage from "../shared/ValidatorImage";
-import LText from "../../../components/LText";
-import TranslatedError from "../../../components/TranslatedError";
+import LText from "~/components/LText";
+import TranslatedError from "~/components/TranslatedError";
 import { getFirstStatusError, hasStatusError } from "../../helpers";
-import type {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
+import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { NearStakingFlowParamList } from "./types";
 
 type Props = BaseComposite<

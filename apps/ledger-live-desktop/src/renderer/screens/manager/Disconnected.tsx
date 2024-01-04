@@ -24,32 +24,38 @@ import nanoSDark from "./assets/nanoS_dark.png";
 import blueDark from "./assets/blue_dark.png";
 import nanoXDark from "./assets/nanoX_dark.png";
 import nanoSPDark from "./assets/nanoSP_dark.png";
+import stax from "./assets/stax.png";
 
 const illustrations = {
   nanoX: {
     light: nanoX,
     dark: nanoXDark,
     width: 332,
+    height: 50,
   },
   nanoS: {
     light: nanoS,
     dark: nanoSDark,
     width: 290,
+    height: 50,
   },
   nanoSP: {
     light: nanoSP,
     dark: nanoSPDark,
     width: 332,
+    height: 50,
   },
   stax: {
-    light: nanoS,
-    dark: nanoSDark,
-    width: 290,
+    light: stax,
+    dark: stax,
+    width: 141,
+    height: 223,
   },
   blue: {
     light: blue,
     dark: blueDark,
     width: 64,
+    height: 64,
   },
 };
 const Illustration = styled.div<{
@@ -62,7 +68,7 @@ const Illustration = styled.div<{
     ]}')
     no-repeat top right;
   width: ${p => illustrations[p.modelId as keyof typeof illustrations].width}px;
-  height: 50px;
+  height: ${p => illustrations[p.modelId as keyof typeof illustrations].height}px;
   background-size: contain;
 `;
 const Disconnected = ({ onTryAgain }: { onTryAgain: (a: boolean) => void }) => {

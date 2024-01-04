@@ -7,7 +7,7 @@ import { Flex, FlowStepper, IconsLegacy, Transitions, SlideIndicator } from "@le
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
 import { DeviceModelId } from "@ledgerhq/devices";
-import Button from "../../../../../components/PreventDoubleClickButton";
+import Button from "~/components/PreventDoubleClickButton";
 
 const transitionDuration = 500;
 

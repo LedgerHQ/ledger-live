@@ -8,7 +8,6 @@ const MAPPED_ASSETS = MOCK as MappedAsset[];
 describe("Deposit logic", () => {
   test("searchByProviderId", () => {
     const result = searchByProviderId(MAPPED_ASSETS, "tether");
-
     expect(result).toEqual(MAPPED_ASSETS);
   });
 
@@ -19,8 +18,8 @@ describe("Deposit logic", () => {
 
   test("groupCurrenciesByProvider", () => {
     const currencies = MAPPED_ASSETS.map(asset => getTokenById(asset.ledgerId));
-    const result = groupCurrenciesByProvider(MAPPED_ASSETS, currencies);
-    expect(result).toEqual([
+    const { currenciesByProvider } = groupCurrenciesByProvider(MAPPED_ASSETS, currencies);
+    expect(currenciesByProvider).toEqual([
       {
         providerId: "tether",
         currenciesByNetwork: currencies,

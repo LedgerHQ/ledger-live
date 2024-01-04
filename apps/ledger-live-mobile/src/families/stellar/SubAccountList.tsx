@@ -3,11 +3,11 @@ import { StyleSheet, View } from "react-native";
 import { Trans } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { useSelector } from "react-redux";
-import IconPlus from "../../icons/Plus";
-import Button from "../../components/Button";
-import { NavigatorName, ScreenName } from "../../const";
-import LText from "../../components/LText";
-import { accountScreenSelector } from "../../reducers/accounts";
+import IconPlus from "~/icons/Plus";
+import Button from "~/components/Button";
+import { NavigatorName, ScreenName } from "~/const";
+import LText from "~/components/LText";
+import { accountScreenSelector } from "~/reducers/accounts";
 
 const ReceiveButton = ({ accountId }: { accountId: string }) => {
   const { colors } = useTheme();

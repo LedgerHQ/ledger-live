@@ -284,7 +284,7 @@
     "lend" : "Leihen",
     "catalog" : "Neues entdecken",
     "market" : "Markt",
-    "recover" : "Ledger Recover"
+    "recover" : "[L] Recover"
   },
   "stars" : {
     "placeholder" : "Geben Sie einem Konto einen Stern, um es hier anzuzeigen.",
@@ -764,6 +764,8 @@
     "energyTooltip" : "Vermögenswerte sperren, um Energie zu gewinnen",
     "delegatedTooltip" : "Delegierte Vermögenswerte werden im Abstimmungsprozess verwendet. Dies entspricht Ihrer Gesamtzahl an Stimmen.",
     "undelegatingTooltip" : "Nicht delegierte Vermögenswerte befinden sich in einer Zeitsperre von{{timelockInDays}} Tagen, bevor sie verfügbar sind.",
+    "claimableRewards" : "Verfügbare Belohnungen",
+    "claimableRewardsTooltip" : "Momentan können USDC-Belohnungen nicht eingefordert werden. Bitte nutzen Sie hierfür eine Wallet von einem Drittanbieter",
     "banner" : {
       "redelegation" : {
         "title" : "Schon gewusst?",
@@ -1166,11 +1168,13 @@
       },
       "pinContent" : {
         "title" : "PIN",
+        "titleCompleted" : "PIN festgelegt",
         "description" : "Wie bei Passwörtern üblich, ermöglicht Ihnen die PIN, Ihr {{productName}}-Gerät zu entsperren und es vor unbefugtem Zugriff zu schützen.",
         "continueOnDevice" : "Legen Sie die PIN für Ihr {{productName}}-Gerät fest"
       },
       "seedContent" : {
         "title" : "Geheime Wiederherstellungsphrase",
+        "titleCompleted" : "Geheime Wiederherstellungsphrase bestätigt",
         "recoverSeed" : "Platzhalter: „Recover“ (Wiederherstellung)",
         "restoreSeed" : "Schützen Sie Ihre Vermögenswerte optimal mithilfe einer von einem Ledger-Gerät generierten geheimen Wiederherstellungsphrase.\n\n Sie haben noch keine? Dann können Sie mit Ihrem {{productName}}-Gerät eine neue Phrase generieren.",
         "selection" : "Wählen Sie die zu Ihren Anforderungen passende Einrichtungsoption aus:",
@@ -1250,12 +1254,14 @@
       },
       "installApplications" : {
         "title" : "Apps auf {{productName}}-Gerät installieren",
+        "titleCompleted" : "Apps auf dem {{productName}}-Gerät installiert",
         "install" : "Installieren",
         "skip" : "Das werde ich später machen",
         "info" : "Apps auf {{deviceName}} werden zur Autorisierung von Transaktionen verwendet. Sie können sie jederzeit hinzufügen oder entfernen."
       },
       "endOfSetup" : {
-        "title" : "Einrichtung beendet"
+        "title" : "Einrichtung beendet",
+        "titleCompleted" : "{{deviceName}} ist bereit"
       },
       "softwareCheckAllowSecureChannelDrawer" : {
         "title" : "Tippen Sie auf „Allow“ (Erlauben), um die Echtheitsprüfung zu starten"
@@ -1296,6 +1302,18 @@
       "title" : "Wie geht es mit Ihrem Ledger Stax weiter?",
       "description" : "Sie können Infinity NFT beantragen, den Sperrbildschirm anpassen oder Ihr Vermögen von anderen Börsen übertragen.",
       "link" : "Schauen Sie, was als nächstes kommt"
+    },
+    "actions" : {
+      "buyCrypto" : {
+        "title" : "Kryptos kaufen",
+        "description" : "Wählen Sie aus über als 500 Coins und den besten Angeboten von Kaufanbietern, abgestimmt auf Ihre Vorlieben.",
+        "actionCompletedPopupLabel" : "Gekaufte Krypto"
+      },
+      "assetsTransfer" : {
+        "title" : "Übertragen Sie Ihre Vermögenswerte in Ihr Ledger",
+        "description" : "Übertragen Sie Vermögenswerte ganz einfach von Coinbase oder einer anderen Börse oder von einer Wallet.",
+        "actionCompletedPopupLabel" : "Vermögenswerte übertragen"
+      }
     }
   },
   "hideNftCollection" : {
@@ -1407,6 +1425,26 @@
       "earn" : {
         "title" : "Staken",
         "description" : "Vermehren Sie Ihre Kryptowährungen mit Ledger"
+      }
+    },
+    "recoverBanner" : {
+      "subscribeDone" : {
+        "title" : "Beenden Sie das Hinzufügen Ihrer Zahlungskarte",
+        "description" : "Zuverlässige Wiederherstellung mit Ledger Recover.",
+        "primaryCta" : "Karte hinzufügen",
+        "secondaryCta" : "Vielleicht später"
+      },
+      "verifyIdentity" : {
+        "title" : "Schließen Sie die Überprüfung Ihrer Identität ab",
+        "description" : "Zuverlässige Wiederherstellung mit Ledger Recover.",
+        "primaryCta" : "Bestätigen",
+        "secondaryCta" : "Vielleicht später"
+      },
+      "connectDevice" : {
+        "title" : "Ledger-Gerät verbinden",
+        "description" : "Sie sind 1 Schritt von Ledger Recover entfernt.",
+        "primaryCta" : "Verbinden",
+        "secondaryCta" : "Vielleicht später"
       }
     }
   },
@@ -1786,7 +1824,7 @@
       "capacity" : "Kapazität",
       "used" : "Verwendet",
       "OSVersion" : "OS-Version",
-      "genuine" : "Dein Gerät ist echt",
+      "genuine" : "Echtheitsprüfung",
       "incomplete" : "Einige Apps wurden nicht erkannt. Bitte deinstallieren Sie diese und installieren Sie sie dann neu."
     },
     "applist" : {
@@ -1906,7 +1944,9 @@
         "preparingUpdate" : "Ihre Einstellungen und Apps werden gesichert",
         "transferringUpdate" : "Update wird an {{productName}} übertragen",
         "prepare" : "Update vorbereiten",
+        "prepareDone" : "Update bereit zur Installation",
         "install" : "Update installieren",
+        "installDone" : "Update\ninstalliert",
         "restore" : "Einstellungen wiederherstellen",
         "apps" : "Apps wiederherstellen",
         "updateMCU" : "Firmware-Update",
@@ -1915,7 +1955,8 @@
         "osu" : "Installiere OSU ...",
         "flash-mcu" : "MCU-Aktualisierung ...",
         "flash-bootloader" : "Bootloader-Aktualisierung ...",
-        "progress" : "Update {{current}} von {{total}} wird installiert",
+        "progress" : "Installiert Update",
+        "progressStep" : "Update {{current}} von {{total}} wird installiert",
         "firmware" : "Firmware-Aktualisierung ...",
         "flash" : "Ihr Gerät vorbereiten ..."
       },
@@ -1928,6 +1969,7 @@
       "mcuFirst" : "Trennen Sie das USB-Kabel von Ihrem Gerät",
       "mcuSecond" : "Drücken Sie die linke Taste und halten Sie sie gedrückt, während Sie das USB-Kabel wieder einstecken, bis der <1><0>{{repairProcessing}}</0></1> Bildschirm erscheint",
       "mcuPin" : "Bitte warten Sie, bis das Update beendet ist",
+      "mcuRestart" : "{{device}} könnte mehrere Male neu starten.",
       "mcuSecondNanoX" : "Drücken und halten Sie die linke Taste, bis <1><0>{{bootloaderOption}}</0></1> erscheint. Drücken Sie beide Tasten, um zu bestätigen und Ihr Gerät erneut zu verbinden.",
       "mcuBlueFirst" : "Halten Sie die seitliche Taste 10 Sekunden lang gedrückt, um das Gerät auszuschalten. Lassen Sie die Taste danach los.",
       "mcuBlueSecond" : "Halten Sie die Taste für mindestens 5 Sekunden gedrückt, bis die Boot-Optionen angezeigt werden. Tippen Sie auf Bootloader-Modus",
@@ -3554,6 +3596,9 @@
       }
     }
   },
+  "graph" : {
+    "noGraphWarning" : "Der Graph für dieses Token ist nicht verfügbar"
+  },
   "near" : {
     "account" : {
       "stakedBalance" : "Kontostand gestaked",
@@ -4099,8 +4144,7 @@
     "updateAvailable" : "Update auf Ledger Live Version {{version}} ist verfügbar",
     "error" : "Fehler beim Update. Bitte erneut herunterladen",
     "reDownload" : "Erneut herunterladen",
-    "nightlyWarning" : "Diese Version kann nicht automatisch aktualisiert werden. Bitte installieren Sie die neueste Version manuell",
-    "downloadNow" : "Update herunterladen"
+    "nightlyWarning" : "Diese Version kann nicht automatisch aktualisiert werden. Bitte installieren Sie die neueste Version manuell"
   },
   "crash" : {
     "title" : "Etwas ist schief gelaufen",
@@ -5257,6 +5301,18 @@
       "title" : "Nicht genug EGLD, um die Transaktionsgebühren zu bezahlen",
       "description" : "Bitte überweisen Sie einige EGLD auf Ihr Konto, um die Transaktionen zu bezahlen."
     },
+    "NotEnoughVTHO" : {
+      "title" : "Nicht genügend VTHO-Vermögenswerte verfügbar",
+      "description" : "Bitte stellen Sie sicher, dass das Konto über ausreichend VTHO verfügt."
+    },
+    "MustBeVechain" : {
+      "title" : "Kein VeChain-Konto",
+      "description" : "Bitte stellen Sie sicher, dass es sich um eine VTHO- oder VET-Coin handelt"
+    },
+    "ImpossibleToCalculateAmountAndFees" : {
+      "title" : "Berechnung von Betrag und Gebühren nicht möglich",
+      "description" : "Berechnung von Betrag und Gebühren nicht möglich"
+    },
     "NotEnoughBalance" : {
       "title" : "Entschuldigung, Guthaben reicht nicht aus",
       "description" : "Bitte stellen Sie sicher, dass das Konto ausreichend gedeckt ist."
@@ -5672,6 +5728,9 @@
     "CardanoNotEnoughFunds" : {
       "title" : "Bitte vergewissern Sie sich, dass Sie genügend Geld für die Bezahlung der Gebühren haben"
     },
+    "CardanoStakeKeyDepositError" : {
+      "title" : "Achten Sie darauf, dass Sie {{depositAmount}} ADA für die Einzahlung zur Verfügung haben"
+    },
     "StacksMemoTooLong" : {
       "title" : "Memo ist zu lang"
     },
@@ -5914,7 +5973,6 @@
     },
     "progress" : {
       "loading" : "Lade Daten...",
-      "resolving" : "Auflösen von Abhängigkeiten",
       "progress" : "Bleiben Sie auf Ledger Live, während die Apps installiert werden.",
       "disclaimer" : "Sie können jederzeit Apps aus Ledger Live hinzufügen oder entfernen.",
       "skippedInfo" : "Einige Apps sind nicht verfügbar. Sie müssen noch entwickelt werden für {{ productName }}.",

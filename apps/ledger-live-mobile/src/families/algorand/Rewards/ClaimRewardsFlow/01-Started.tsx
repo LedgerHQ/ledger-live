@@ -13,18 +13,18 @@ import type {
 } from "@ledgerhq/live-common/families/algorand/types";
 import { useTheme } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
-import { ScreenName } from "../../../../const";
-import Button from "../../../../components/Button";
-import LText from "../../../../components/LText";
-import { accountScreenSelector } from "../../../../reducers/accounts";
-import { localeSelector } from "../../../../reducers/settings";
-import NavigationScrollView from "../../../../components/NavigationScrollView";
-import { TrackScreen } from "../../../../analytics";
-import Alert from "../../../../components/Alert";
-import TranslatedError from "../../../../components/TranslatedError";
-import Illustration from "../../../../images/illustration/Illustration";
-import type { StackNavigatorProps } from "../../../../components/RootNavigator/types/helpers";
+import { ScreenName } from "~/const";
+import Button from "~/components/Button";
+import LText from "~/components/LText";
+import { accountScreenSelector } from "~/reducers/accounts";
+import NavigationScrollView from "~/components/NavigationScrollView";
+import { TrackScreen } from "~/analytics";
+import Alert from "~/components/Alert";
+import TranslatedError from "~/components/TranslatedError";
+import Illustration from "~/images/illustration/Illustration";
+import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { AlgorandClaimRewardsFlowParamList } from "./type";
+import { useSettings } from "~/hooks";
 
 type Props = StackNavigatorProps<
   AlgorandClaimRewardsFlowParamList,
@@ -34,7 +34,7 @@ type Props = StackNavigatorProps<
 export default function DelegationStarted({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
-  const locale = useSelector(localeSelector);
+  const { locale } = useSettings();
   invariant(account, "Account required");
   const mainAccount = getMainAccount(account, undefined) as AlgorandAccount;
   const bridge = getAccountBridge(mainAccount, undefined);
@@ -53,7 +53,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
   const formattedRewards = formatCurrencyUnit(unit, rewards, {
     showCode: true,
     disableRounding: true,
-    locale,
+    locale: locale,
   });
   const onNext = useCallback(() => {
     navigation.navigate(ScreenName.AlgorandClaimRewardsSelectDevice, {
@@ -83,8 +83,8 @@ export default function DelegationStarted({ navigation, route }: Props) {
         <Flex alignItems="center" justifyContent="center" mb={6}>
           <Illustration
             size={200}
-            lightSource={require("../../../../images/illustration/Light/_003.png")}
-            darkSource={require("../../../../images/illustration/Dark/_003.png")}
+            lightSource={require("~/images/illustration/Light/_003.png")}
+            darkSource={require("~/images/illustration/Dark/_003.png")}
           />
         </Flex>
         <LText semiBold style={styles.description}>

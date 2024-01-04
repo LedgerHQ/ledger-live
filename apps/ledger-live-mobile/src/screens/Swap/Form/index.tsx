@@ -19,9 +19,9 @@ import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 import { log } from "@ledgerhq/logs";
-import { shallowAccountsSelector } from "../../../reducers/accounts";
-import { rateSelector, updateRateAction, updateTransactionAction } from "../../../actions/swap";
-import { TrackScreen, useAnalytics } from "../../../analytics";
+import { shallowAccountsSelector } from "~/reducers/accounts";
+import { rateSelector, updateRateAction, updateTransactionAction } from "~/actions/swap";
+import { TrackScreen, useAnalytics } from "~/analytics";
 import { Loading } from "../Loading";
 import { TxForm } from "./TxForm";
 import { Summary } from "./Summary";
@@ -34,10 +34,10 @@ import { DeviceMeta } from "./Modal/Confirmation";
 import {
   MaterialTopTabNavigatorProps,
   StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
-import { ScreenName } from "../../../const";
-import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
-import { SwapFormNavigatorParamList } from "../../../components/RootNavigator/types/SwapFormNavigator";
+} from "~/components/RootNavigator/types/helpers";
+import { ScreenName } from "~/const";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { SwapFormNavigatorParamList } from "~/components/RootNavigator/types/SwapFormNavigator";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import type { DetailsSwapParamList } from "../types";
 import { getAvailableProviders } from "@ledgerhq/live-common/exchange/swap/index";
@@ -246,11 +246,13 @@ export function SwapForm({
         customDappURL: providerURL,
       });
     } else {
+      swapTransaction.transaction ? (swapTransaction.transaction.useAllAmount = false) : null;
       setConfirmed(true);
     }
   }, [
     exchangeRate,
     track,
+    swapTransaction.transaction,
     swapTransaction.swap.from,
     swapTransaction.swap.to.currency?.name,
     navigation,

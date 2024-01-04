@@ -1,6 +1,6 @@
 {
   "name": "live-mobile",
-  "version": "3.35.0",
+  "version": "3.36.0",
   "private": true,
   "scripts": {
     "postinstall": "zx ./scripts/post.mjs",
@@ -16,6 +16,7 @@
     "android:bundleInDebug": "ANDROID_BUNDLE_IN_DEBUG=true pnpm android",
     "gen-metafile": "zx ./scripts/gen-metafile.mjs",
     "e2e:build": "pnpm detox build",
+    "e2e:ci": "zx ./scripts/e2e-ci.mjs",
     "e2e:test": "pnpm detox test",
     "prebeta": "bundle install",
     "ios:staging": "ENVFILE=.env.ios.staging react-native run-ios --configuration Staging",

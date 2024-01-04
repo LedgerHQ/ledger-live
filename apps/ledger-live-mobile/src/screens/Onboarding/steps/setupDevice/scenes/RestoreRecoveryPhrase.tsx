@@ -1,7 +1,7 @@
 import { Text } from "@ledgerhq/native-ui";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import Button from "../../../../../components/PreventDoubleClickButton";
+import Button from "~/components/PreventDoubleClickButton";
 import OnboardingRecoveryPhraseWarning from "../drawers/RecoveryPhraseWarning";
 
 const RestoreRecoveryPhraseScene = () => {
@@ -32,7 +32,12 @@ const Next = ({ onNext }: { onNext: () => void }) => {
 
   return (
     <>
-      <Button type="main" size="large" onPress={() => setOpen(true)}>
+      <Button
+        type="main"
+        size="large"
+        onPress={() => setOpen(true)}
+        testID="onboarding-importRecoveryPhrase-cta"
+      >
         {t("onboarding.stepRecoveryPhrase.importRecoveryPhrase.cta")}
       </Button>
 

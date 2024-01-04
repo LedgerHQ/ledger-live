@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { View, Keyboard, TouchableOpacity, TouchableWithoutFeedback, Platform } from "react-native";
 import { Trans } from "react-i18next";
 import { BigNumber } from "bignumber.js";
-import { useSelector } from "react-redux";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { denominate } from "@ledgerhq/live-common/families/elrond/helpers/denominate";
@@ -14,16 +13,16 @@ import estimateMaxSpendable from "@ledgerhq/live-common/families/elrond/js-estim
 import type { Transaction } from "@ledgerhq/live-common/families/elrond/types";
 import type { PickAmountPropsType, RatioType } from "./types";
 
-import { localeSelector } from "../../../../../../../reducers/settings";
-import { ScreenName } from "../../../../../../../const";
-import Button from "../../../../../../../components/Button";
-import CurrencyInput from "../../../../../../../components/CurrencyInput";
-import LText from "../../../../../../../components/LText";
-import Warning from "../../../../../../../icons/Warning";
-import Check from "../../../../../../../icons/Check";
-import KeyboardView from "../../../../../../../components/KeyboardView";
+import { ScreenName } from "~/const";
+import Button from "~/components/Button";
+import CurrencyInput from "~/components/CurrencyInput";
+import LText from "~/components/LText";
+import Warning from "~/icons/Warning";
+import Check from "~/icons/Check";
+import KeyboardView from "~/components/KeyboardView";
 
 import styles from "./styles";
+import { useSettings } from "~/hooks";
 
 /*
  * Handle the component declaration.
@@ -35,7 +34,7 @@ const PickAmount = (props: PickAmountPropsType) => {
   const { account, validators } = route.params;
 
   const unit = getAccountUnit(account);
-  const locale = useSelector(localeSelector);
+  const { locale } = useSettings();
   const bridge = getAccountBridge(account);
   const transaction = route.params.transaction as Transaction;
 
@@ -227,7 +226,7 @@ const PickAmount = (props: PickAmountPropsType) => {
                       values={{
                         amount: formatCurrencyUnit(unit, maxSpendable.minus(amount), {
                           showCode: true,
-                          locale,
+                          locale: locale,
                         }),
                       }}
                     >

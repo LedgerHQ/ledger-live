@@ -6,15 +6,15 @@ import { Alert as Confirm, ScrollView } from "react-native";
 import { Button, Checkbox, Flex, Text, IconsLegacy, Alert } from "@ledgerhq/native-ui";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
-import SettingsRow from "../../../../components/SettingsRow";
-import accountModel from "../../../../logic/accountModel";
+import SettingsRow from "~/components/SettingsRow";
+import accountModel from "~/logic/accountModel";
 import { saveAccounts } from "../../../../db";
-import { useReboot } from "../../../../context/Reboot";
-import { ScreenName } from "../../../../const";
-import CurrencyIcon from "../../../../components/CurrencyIcon";
-import { SettingsNavigatorStackParamList } from "../../../../components/RootNavigator/types/SettingsNavigator";
-import { StackNavigatorNavigation } from "../../../../components/RootNavigator/types/helpers";
-import TextInput from "../../../../components/TextInput";
+import { useReboot } from "~/context/Reboot";
+import { ScreenName } from "~/const";
+import CurrencyIcon from "~/components/CurrencyIcon";
+import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
+import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
+import TextInput from "~/components/TextInput";
 
 async function injectMockAccountsInDB(currencies: CryptoCurrency[], tokens: string) {
   const tokenIds = tokens.split(",").map(t => t.toLowerCase().trim());

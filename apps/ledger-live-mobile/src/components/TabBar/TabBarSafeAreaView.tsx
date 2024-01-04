@@ -5,7 +5,7 @@ export { TAB_BAR_SAFE_HEIGHT } from "./shared";
 
 const StyledSafeAreaView = styled(SafeAreaView)`
   flex: 1;
-  padding-bottom: ${TAB_BAR_HEIGHT};
+  padding-bottom: ${TAB_BAR_HEIGHT}px;
 `;
 
 export default StyledSafeAreaView;

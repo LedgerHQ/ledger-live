@@ -5718,6 +5718,20 @@
       "totalStake": "Total stake",
       "commission": "Commission",
       "stakeActivationState": "State",
+      "stakeActivePercent": "Active",
+      "stakeAvailableBalance": "Available balance",
+      "actions": {
+        "activate": "Activate",
+        "deactivate": "Deactivate",
+        "reactivate": "Reactivate",
+        "withdraw": "Withdraw"
+      },
+      "states": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "activating": "Activating",
+        "deactivating": "Deactivating"
+      },
       "delegationEarn": "You can earn SOL rewards by delegating your assets.",
       "info": "How Delegation works",
       "broadcastSuccessTitle": "Operation sent",
@@ -5725,7 +5739,8 @@
       "delegatedTo": "delegated to",
       "started": {
         "description": "You may earn rewards by delegating your SOL assets to a validator."
-      }
+      },
+      "reserveWarning": "Please ensure you reserve at least {{amount}} SOL in your wallet to cover future network fees to deactivate and withdraw your stake"
     }
   },
   "near": {
@@ -5936,13 +5951,8 @@
       "claimReward": "Rewards can be claimed every 24 hours.",
       "cosmos": {
         "claimReward": "If the selected validator has pending rewards, they will automatically be claimed.",
-        "redelegate": "You will have to wait 21 days for undelegated assets to return to the available balance.",
-        "undelegate": "You will have to wait 21 days for undelegated assets to return to the available balance."
-      },
-      "osmosis": {
-        "claimReward": "If the selected validator has pending rewards, they will automatically be claimed.",
-        "redelegate": "You will have to wait 14 days for undelegated assets to return to the available balance.",
-        "undelegate": "You will have to wait 14 days for undelegated assets to return to the available balance."
+        "redelegate": "You will have to wait {{numberOfDays}} days for undelegated assets to return to the available balance.",
+        "undelegate": "You will have to wait {{numberOfDays}} days for undelegated assets to return to the available balance."
       },
       "lending": "Verify the operation details on your device before sending it."
     },

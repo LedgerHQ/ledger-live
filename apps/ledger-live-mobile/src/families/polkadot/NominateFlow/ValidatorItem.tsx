@@ -3,9 +3,9 @@ import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 import type { PolkadotValidator } from "@ledgerhq/live-common/families/polkadot/types";
 import { useTheme } from "styled-components/native";
-import CheckBox from "../../../components/CheckBox";
-import LText from "../../../components/LText";
-import Touchable from "../../../components/Touchable";
+import CheckBox from "~/components/CheckBox";
+import LText from "~/components/LText";
+import Touchable from "~/components/Touchable";
 import FirstLetterIcon from "~/components/FirstLetterIcon";
 
 type Props = {

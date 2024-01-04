@@ -10,12 +10,12 @@ import { RouteProp, useRoute } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
 import { useSelector } from "react-redux";
 
-import { ScreenName, NavigatorName } from "../../const";
-import * as families from "../../families";
-import OperationDetails from "../../screens/OperationDetails";
-import PairDevices from "../../screens/PairDevices";
-import EditDeviceName from "../../screens/EditDeviceName";
-import ScanRecipient from "../../screens/SendFunds/ScanRecipient";
+import { ScreenName, NavigatorName } from "~/const";
+import * as families from "~/families";
+import OperationDetails from "~/screens/OperationDetails";
+import PairDevices from "~/screens/PairDevices";
+import EditDeviceName from "~/screens/EditDeviceName";
+import ScanRecipient from "~/screens/SendFunds/ScanRecipient";
 import Main from "./MainNavigator";
 import { ErrorHeaderInfo } from "./BaseOnboardingNavigator";
 import SettingsNavigator from "./SettingsNavigator";
@@ -37,52 +37,52 @@ import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
 import PasswordModifyFlowNavigator from "./PasswordModifyFlowNavigator";
 import SwapNavigator from "./SwapNavigator";
 import NotificationCenterNavigator from "./NotificationCenterNavigator";
-import AnalyticsAllocation from "../../screens/Analytics/Allocation";
-import AnalyticsOperations from "../../screens/Analytics/Operations";
+import AnalyticsAllocation from "~/screens/Analytics/Allocation";
+import AnalyticsOperations from "~/screens/Analytics/Operations";
 import NftNavigator from "./NftNavigator";
-import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
-import Account from "../../screens/Account";
-import ReadOnlyAccount from "../../screens/Account/ReadOnly/ReadOnlyAccount";
-import TransparentHeaderNavigationOptions from "../../navigation/TransparentHeaderNavigationOptions";
-import styles from "../../navigation/styles";
+import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import Account from "~/screens/Account";
+import ReadOnlyAccount from "~/screens/Account/ReadOnly/ReadOnlyAccount";
+import TransparentHeaderNavigationOptions from "~/navigation/TransparentHeaderNavigationOptions";
+import styles from "~/navigation/styles";
 import StepHeader from "../StepHeader";
-import PortfolioHistory from "../../screens/Portfolio/PortfolioHistory";
+import PortfolioHistory from "~/screens/Portfolio/PortfolioHistory";
 import RequestAccountNavigator from "./RequestAccountNavigator";
-import VerifyAccount from "../../screens/VerifyAccount";
-import { LiveApp } from "../../screens/Platform";
+import VerifyAccount from "~/screens/VerifyAccount";
+import { LiveApp } from "~/screens/Platform";
 import AccountsNavigator from "./AccountsNavigator";
-import MarketCurrencySelect from "../../screens/Market/MarketCurrencySelect";
+import MarketCurrencySelect from "~/screens/Market/MarketCurrencySelect";
 import {
   BleDevicePairingFlow,
   bleDevicePairingFlowHeaderOptions,
-} from "../../screens/BleDevicePairingFlow";
+} from "~/screens/BleDevicePairingFlow";
 
-import PostBuyDeviceScreen from "../../screens/PostBuyDeviceScreen";
-import LearnWebView from "../../screens/Learn/index";
-import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
-import PostBuyDeviceSetupNanoWallScreen from "../../screens/PostBuyDeviceSetupNanoWallScreen";
-import MarketDetail from "../../screens/Market/MarketDetail";
-import CurrencySettings from "../../screens/Settings/CryptoAssets/Currencies/CurrencySettings";
+import PostBuyDeviceScreen from "~/screens/PostBuyDeviceScreen";
+import LearnWebView from "~/screens/Learn/index";
+import { useNoNanoBuyNanoWallScreenOptions } from "~/context/NoNanoBuyNanoWall";
+import PostBuyDeviceSetupNanoWallScreen from "~/screens/PostBuyDeviceSetupNanoWallScreen";
+import MarketDetail from "~/screens/Market/MarketDetail";
+import CurrencySettings from "~/screens/Settings/CryptoAssets/Currencies/CurrencySettings";
 import WalletConnectLiveAppNavigator from "./WalletConnectLiveAppNavigator";
 import CustomImageNavigator from "./CustomImageNavigator";
 import ClaimNftNavigator from "./ClaimNftNavigator";
 import PostOnboardingNavigator from "./PostOnboardingNavigator";
-import { readOnlyModeEnabledSelector } from "../../reducers/settings";
-import { hasNoAccountsSelector } from "../../reducers/accounts";
+import { readOnlyModeEnabledSelector } from "~/reducers/settings";
+import { hasNoAccountsSelector } from "~/reducers/accounts";
 import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
-import DeviceConnect, { deviceConnectHeaderOptions } from "../../screens/DeviceConnect";
+import DeviceConnect, { deviceConnectHeaderOptions } from "~/screens/DeviceConnect";
 import ExploreTabNavigator from "./ExploreTabNavigator";
 import NoFundsFlowNavigator from "./NoFundsFlowNavigator";
 import StakeFlowNavigator from "./StakeFlowNavigator";
-import { RecoverPlayer } from "../../screens/Protect/Player";
-import { RedirectToOnboardingRecoverFlowScreen } from "../../screens/Protect/RedirectToOnboardingRecoverFlow";
+import { RecoverPlayer } from "~/screens/Protect/Player";
+import { RedirectToOnboardingRecoverFlowScreen } from "~/screens/Protect/RedirectToOnboardingRecoverFlow";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import {
   NavigationHeaderCloseButton,
   NavigationHeaderCloseButtonAdvanced,
 } from "../NavigationHeaderCloseButton";
 import { RootDrawer } from "../RootDrawer/RootDrawer";
-import EditTransactionNavigator from "../../families/evm/EditTransactionFlow/EditTransactionNavigator";
+import EditTransactionNavigator from "~/families/evm/EditTransactionFlow/EditTransactionNavigator";
 import { DrawerProps } from "../RootDrawer/types";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
@@ -308,6 +308,7 @@ export default function BaseNavigator() {
                         ? t(`operations.types.${route.params.operation.type}`)
                         : ""
                     }
+                    testID="operationDetails-title"
                   />
                 ),
                 headerLeft: () => <NavigationHeaderBackButton />,
@@ -324,6 +325,7 @@ export default function BaseNavigator() {
                       ? t(`operations.types.${route.params.operation.type}`)
                       : ""
                   }
+                  testID="operationDetails-title"
                 />
               ),
               headerLeft: () => <NavigationHeaderBackButton />,

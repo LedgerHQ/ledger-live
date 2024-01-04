@@ -9,21 +9,21 @@ import { ImagePreviewError } from "@ledgerhq/live-common/customImage/errors";
 import useResizedImage, {
   Params as ImageResizerParams,
   ResizeResult,
-} from "../../components/CustomImage/useResizedImage";
+} from "~/components/CustomImage/useResizedImage";
 import ImageProcessor, {
   Props as ImageProcessorProps,
   ProcessorPreviewResult,
   ProcessorRawResult,
-} from "../../components/CustomImage/ImageProcessor";
+} from "~/components/CustomImage/ImageProcessor";
 import { targetDisplayDimensions } from "./shared";
-import Button from "../../components/wrappedUi/Button";
-import BottomButtonsContainer from "../../components/CustomImage/BottomButtonsContainer";
-import ContrastChoice from "../../components/CustomImage/ContrastChoice";
-import { ScreenName } from "../../const";
-import { CustomImageNavigatorParamList } from "../../components/RootNavigator/types/CustomImageNavigator";
-import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import ForceTheme from "../../components/theme/ForceTheme";
-import { TrackScreen } from "../../analytics";
+import Button from "~/components/wrappedUi/Button";
+import BottomButtonsContainer from "~/components/CustomImage/BottomButtonsContainer";
+import ContrastChoice from "~/components/CustomImage/ContrastChoice";
+import { ScreenName } from "~/const";
+import { CustomImageNavigatorParamList } from "~/components/RootNavigator/types/CustomImageNavigator";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import ForceTheme from "~/components/theme/ForceTheme";
+import { TrackScreen } from "~/analytics";
 
 export const PreviewImage = styled.Image.attrs({
   resizeMode: "contain",

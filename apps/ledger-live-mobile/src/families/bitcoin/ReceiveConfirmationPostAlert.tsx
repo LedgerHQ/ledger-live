@@ -2,7 +2,7 @@ import type { Account } from "@ledgerhq/types-live";
 import React from "react";
 import { Trans } from "react-i18next";
 import { View, StyleSheet } from "react-native";
-import Alert from "../../components/Alert";
+import Alert from "~/components/Alert";
 
 type Props = {
   mainAccount: Account;

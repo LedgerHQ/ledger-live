@@ -11,25 +11,25 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import styled, { useTheme } from "styled-components/native";
 import { Flex } from "@ledgerhq/native-ui";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
-import { track, TrackScreen } from "../../analytics";
-import { accountScreenSelector } from "../../reducers/accounts";
-import PreventNativeBack from "../../components/PreventNativeBack";
-import SkipLock from "../../components/behaviour/SkipLock";
+import { track, TrackScreen } from "~/analytics";
+import { accountScreenSelector } from "~/reducers/accounts";
+import PreventNativeBack from "~/components/PreventNativeBack";
+import SkipLock from "~/components/behaviour/SkipLock";
 import logger from "../../logger";
-import { rejectionOp } from "../../logic/debugReject";
-import { ScreenName } from "../../const";
-import LText from "../../components/LText";
-import Button from "../../components/Button";
-import Animation from "../../components/Animation";
-import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
-import Illustration from "../../images/illustration/Illustration";
-import { urls } from "@utils/urls";
-import { ReceiveFundsStackParamList } from "../../components/RootNavigator/types/ReceiveFundsNavigator";
-import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import { rejectionOp } from "~/logic/debugReject";
+import { ScreenName } from "~/const";
+import LText from "~/components/LText";
+import Button from "~/components/Button";
+import Animation from "~/components/Animation";
+import { getDeviceAnimation } from "~/helpers/getDeviceAnimation";
+import Illustration from "~/images/illustration/Illustration";
+import { urls } from "~/utils/urls";
+import { ReceiveFundsStackParamList } from "~/components/RootNavigator/types/ReceiveFundsNavigator";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 
 const illustrations = {
-  dark: require("../../images/illustration/Dark/_080.png"),
-  light: require("../../images/illustration/Light/_080.png"),
+  dark: require("~/images/illustration/Dark/_080.png"),
+  light: require("~/images/illustration/Light/_080.png"),
 };
 
 type Props = {

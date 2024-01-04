@@ -5,10 +5,10 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency, getAccountName } from "@ledgerhq/live-common/account/index";
 import { useTheme } from "@react-navigation/native";
 import SummaryRowCustom from "./SummaryRowCustom";
-import Circle from "../../components/Circle";
-import LText from "../../components/LText";
-import CurrencyIcon from "../../components/CurrencyIcon";
-import Wallet from "../../icons/Wallet";
+import Circle from "~/components/Circle";
+import LText from "~/components/LText";
+import CurrencyIcon from "~/components/CurrencyIcon";
+import Wallet from "~/icons/Wallet";
 
 type Props = {
   account: AccountLike;

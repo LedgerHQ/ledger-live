@@ -6,7 +6,7 @@ import { Flex, Link } from "@ledgerhq/native-ui";
 import { PlusMedium } from "@ledgerhq/native-ui/assets/icons";
 import { Trans } from "react-i18next";
 
-import { SearchResult } from "../helpers/formatAccountSearchResults";
+import { SearchResult } from "~/helpers/formatAccountSearchResults";
 import AccountCard from "./AccountCard";
 
 type Props = {

@@ -7,12 +7,12 @@ import { useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import { ELROND_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/elrond/constants";
 
-import CounterValue from "../../../../../../../../components/CounterValue";
-import ArrowRight from "../../../../../../../../icons/ArrowRight";
-import LText from "../../../../../../../../components/LText";
-import FirstLetterIcon from "../../../../../../../../components/FirstLetterIcon";
-import LedgerLogo from "../../../../../../../../icons/LiveLogo";
-import Circle from "../../../../../../../../components/Circle";
+import CounterValue from "~/components/CounterValue";
+import ArrowRight from "~/icons/ArrowRight";
+import LText from "~/components/LText";
+import FirstLetterIcon from "~/components/FirstLetterIcon";
+import LedgerLogo from "~/icons/LiveLogo";
+import Circle from "~/components/Circle";
 
 import type { UnbondingPropsType } from "./types";
 

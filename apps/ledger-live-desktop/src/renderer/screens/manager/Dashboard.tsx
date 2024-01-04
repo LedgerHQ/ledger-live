@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect, useRef } from "react";
+import React, { useMemo, useState, useEffect, useRef, useContext } from "react";
 import { useSelector } from "react-redux";
 import manager from "@ledgerhq/live-common/manager/index";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
@@ -8,13 +8,14 @@ import { AppOp, ListAppsResult } from "@ledgerhq/live-common/apps/types";
 import { distribute, initState } from "@ledgerhq/live-common/apps/logic";
 import { mockExecWithInstalledContext } from "@ledgerhq/live-common/apps/mock";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import AppsList from "./AppsList";
+import DeviceDashboard from "./DeviceDashboard";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import FirmwareUpdate from "./FirmwareUpdate";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { getEnv } from "@ledgerhq/live-env";
 import { useLocation } from "react-router";
+import { context as drawerContext } from "~/renderer/drawers/Provider";
 
 type Props = {
   device: Device;
@@ -35,9 +36,10 @@ const Dashboard = ({
 }: Props) => {
   const { search } = useLocation();
 
+  const { state: drawerState } = useContext(drawerContext);
   const currentDevice = useSelector(getCurrentDevice);
-  const [firmwareUpdateOpened, setFirmwareUpdateOpened] = useState(false);
-  const hasDisconnectedDuringFU = useRef(false);
+  const [preventResetOnDeviceChange, setPreventResetOnDeviceChange] = useState(false);
+  const deviceChangedWhenResetPrevented = useRef(false);
   const [firmware, setFirmware] = useState<FirmwareUpdateContext | null>(null);
   const [firmwareError, setFirmwareError] = useState(null);
   const params = new URLSearchParams(search || "");
@@ -48,21 +50,26 @@ const Dashboard = ({
 
   // on disconnect, go back to connect
   useEffect(() => {
-    // if there is no device but firmware update still happening
-    if (!currentDevice && firmwareUpdateOpened) {
-      hasDisconnectedDuringFU.current = true; // set disconnected to true for a later onReset()
+    // if there is no device, and a reset is currently prevented,
+    // we need to perform the reset when it becomes possible
+    if (!currentDevice && preventResetOnDeviceChange) {
+      deviceChangedWhenResetPrevented.current = true;
     }
 
-    // we must not reset during firmware update
-    if (firmwareUpdateOpened) {
+    // Don't reset now if a drawer is open and reset is prevented,
+    // for example, during firmware update or device name change
+    if (preventResetOnDeviceChange && drawerState.open) {
       return;
     }
 
-    // we need to reset only if device is unplugged OR a disconnection happened during firmware update
-    if (!currentDevice || hasDisconnectedDuringFU.current) {
-      onReset([], firmwareUpdateOpened);
+    // We need to reset under the following conditions:
+    // - If a device is unplugged and reset is not prevented
+    // - If a disconnection happens during a reset prevention period
+    //   and the drawer is currently closed
+    if (!currentDevice || deviceChangedWhenResetPrevented.current) {
+      onReset([]);
     }
-  }, [onReset, firmwareUpdateOpened, currentDevice]);
+  }, [onReset, preventResetOnDeviceChange, currentDevice, drawerState.open]);
   const exec = useMemo(
     () =>
       getEnv("MOCK")
@@ -89,21 +96,22 @@ const Dashboard = ({
         appLength={result ? result.installed.length : 0}
       />
       {result ? (
-        <AppsList
+        <DeviceDashboard
           device={device}
           deviceInfo={deviceInfo}
           onRefreshDeviceInfo={onRefreshDeviceInfo}
+          setPreventResetOnDeviceChange={setPreventResetOnDeviceChange}
           firmware={firmware}
           result={result}
           appsToRestore={appsToRestore}
           exec={exec}
-          render={({ disableFirmwareUpdate, installed }) => (
+          renderFirmwareUpdateBanner={({ disableFirmwareUpdate, installed }) => (
             <FirmwareUpdate
               device={device}
               deviceInfo={deviceInfo}
               firmware={firmware}
               error={firmwareError}
-              setFirmwareUpdateOpened={setFirmwareUpdateOpened}
+              setPreventResetOnDeviceChange={setPreventResetOnDeviceChange}
               disableFirmwareUpdate={disableFirmwareUpdate}
               installed={installed}
               onReset={onReset}
@@ -117,7 +125,7 @@ const Dashboard = ({
           deviceInfo={deviceInfo}
           firmware={firmware}
           error={firmwareError}
-          setFirmwareUpdateOpened={setFirmwareUpdateOpened}
+          setPreventResetOnDeviceChange={setPreventResetOnDeviceChange}
           onReset={onReset}
           openFirmwareUpdate={openFirmwareUpdate}
         />

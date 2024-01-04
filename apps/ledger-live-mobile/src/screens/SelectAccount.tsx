@@ -4,14 +4,14 @@ import { accountWithMandatoryTokens, flattenAccounts } from "@ledgerhq/live-comm
 import { Flex } from "@ledgerhq/native-ui";
 import { isAccountEmpty, getAccountSpendableBalance } from "@ledgerhq/live-common/account/index";
 import { NotEnoughBalance } from "@ledgerhq/errors";
-import { ScreenName } from "../const";
-import { accountsSelector } from "../reducers/accounts";
-import { TrackScreen } from "../analytics";
-import AccountSelector from "../components/AccountSelector";
-import GenericErrorBottomModal from "../components/GenericErrorBottomModal";
-import { SendFundsNavigatorStackParamList } from "../components/RootNavigator/types/SendFundsNavigator";
-import { StackNavigatorProps } from "../components/RootNavigator/types/helpers";
-import SafeAreaView from "../components/SafeAreaView";
+import { ScreenName } from "~/const";
+import { accountsSelector } from "~/reducers/accounts";
+import { TrackScreen } from "~/analytics";
+import AccountSelector from "~/components/AccountSelector";
+import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
+import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import SafeAreaView from "~/components/SafeAreaView";
 import { AccountLike } from "@ledgerhq/types-live";
 
 type Props = StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendCoin>;

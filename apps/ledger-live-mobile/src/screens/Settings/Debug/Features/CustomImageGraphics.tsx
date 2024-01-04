@@ -5,22 +5,22 @@ import { TFunction, useTranslation } from "react-i18next";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Slider from "react-native-slider";
-import NavigationScrollView from "../../../../components/NavigationScrollView";
+import NavigationScrollView from "~/components/NavigationScrollView";
 import {
   transferConfig,
   previewConfig,
   StaxFramedImageWithContext,
   ImageSourceContext,
-} from "../../../../components/CustomImage/StaxFramedImage";
-import confirmLockscreen from "../../../../animations/stax/customimage/confirmLockscreen.json";
-import allowConnection from "../../../../animations/stax/customimage/allowConnection.json";
-import { StaxFramedLottieWithContext } from "../../../../components/CustomImage/StaxFramedLottie";
+} from "~/components/CustomImage/StaxFramedImage";
+import confirmLockscreen from "~/animations/stax/customimage/confirmLockscreen.json";
+import allowConnection from "~/animations/stax/customimage/allowConnection.json";
+import { StaxFramedLottieWithContext } from "~/components/CustomImage/StaxFramedLottie";
 import {
   renderImageCommitRequested,
   renderImageLoadRequested,
   renderLoadingImage,
-} from "../../../../components/DeviceAction/rendering";
-import imageSource from "../../../../components/CustomImage/assets/examplePicture2.webp";
+} from "~/components/DeviceAction/rendering";
+import imageSource from "~/components/CustomImage/assets/examplePicture2.webp";
 
 const device = {
   deviceId: "",

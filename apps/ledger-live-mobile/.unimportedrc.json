@@ -1,7 +1,17 @@
 {
-  "entry": ["index.js"],
-  "extensions": [".ts", ".js", ".jsx", ".tsx", ".d.ts"],
-  "ignorePatterns": ["**/node_modules/**"],
+  "entry": [
+    "index.js"
+  ],
+  "extensions": [
+    ".ts",
+    ".js",
+    ".jsx",
+    ".tsx",
+    ".d.ts"
+  ],
+  "ignorePatterns": [
+    "**/node_modules/**"
+  ],
   "ignoreUnresolved": [],
   "ignoreUnimported": [
     "**/*.test.*",
@@ -13,7 +23,8 @@
     "src/**/*.android.*",
     "src/**/*.ios.*",
     "src/components/RootNavigator/types.ts",
-    "src/logic/keyboardVisible.ts"
+    "src/logic/keyboardVisible.ts",
+    "src/contentCards/cards/vertical/*"
   ],
   "ignoreUnused": [
     "@ledgerhq/react-native-passcode-auth",

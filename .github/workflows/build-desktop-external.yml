@@ -59,7 +59,7 @@ jobs:
           python-version: "3.x"
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.1.2
+          ruby-version: 3.2.2
           bundler-cache: true
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
@@ -72,7 +72,7 @@ jobs:
           os: ${{ steps.os.outputs.result }}
       - name: Build the app
         id: build-app
-        run: pnpm build:lld --api="http://127.0.0.1:${{ steps.build-desktop.outputs.port }}" --token="yolo" --team="foo"
+        run: pnpm build:lld
       - name: Save result
         id: save-result
         shell: bash

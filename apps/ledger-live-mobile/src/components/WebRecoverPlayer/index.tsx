@@ -14,9 +14,9 @@ import { initialWebviewState } from "../Web3AppWebview/helpers";
 import HeaderTitle from "../HeaderTitle";
 import { InfoPanel } from "../WebPlatformPlayer/InfoPanel";
 import { RightHeader } from "../WebPlatformPlayer/RightHeader";
-import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
+import extraStatusBarPadding from "~/logic/extraStatusBarPadding";
 
-import { completeOnboarding, setHasOrderedNano, setReadOnlyMode } from "../../actions/settings";
+import { completeOnboarding, setHasOrderedNano, setReadOnlyMode } from "~/actions/settings";
 
 type Props = {
   manifest: LiveAppManifest;

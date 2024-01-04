@@ -1,17 +1,12 @@
 import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
-import { useDispatch, useSelector } from "react-redux";
 import { useTransition, animated } from "react-spring";
 import IconArrowRight from "~/renderer/icons/ArrowRight";
-import Box, { Card } from "~/renderer/components/Box";
+import { Card } from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
-import Button from "~/renderer/components/Button";
 import TimeBasedProgressBar from "~/renderer/components/Carousel/TimeBasedProgressBar";
 import IconCross from "~/renderer/icons/Cross";
 import { getTransitions, useDefaultSlides } from "~/renderer/components/Carousel/helpers";
-import { setCarouselVisibility } from "~/renderer/actions/settings";
-import { carouselVisibilitySelector } from "~/renderer/reducers/settings";
-import { Trans } from "react-i18next";
 import { track } from "~/renderer/analytics/segment";
 
 const CarouselWrapper = styled(Card)`
@@ -87,17 +82,6 @@ const Bullets = styled.div<{ index: number }>`
   }
 `;
 
-const Disclaimer = styled(Card)`
-  padding: 40px;
-  height: 100px;
-  margin: 20px 0;
-  background: ${p => p.theme.colors.palette.background.paper};
-  text-align: center;
-  border-radius: 4px;
-  align-items: center;
-  justify-content: center;
-`;
-
 const Slides = styled.div`
   width: 100%;
   height: 100px;
@@ -154,8 +138,6 @@ export const Wrapper = styled.div`
   cursor: pointer;
 `;
 
-export const CAROUSEL_NONCE = 6;
-
 const Carousel = ({
   withArrows = true,
   controls = true,
@@ -167,11 +149,9 @@ const Carousel = ({
   speed?: number;
   type?: "slide" | "flip";
 }) => {
-  const { slides, logSlideImpression } = useDefaultSlides();
+  const { slides, logSlideImpression, dismissCard } = useDefaultSlides();
   const [index, setIndex] = useState(0);
-  const hidden = useSelector(carouselVisibilitySelector);
   const [paused, setPaused] = useState(false);
-  const [wantToDismiss, setWantToDismiss] = useState(false);
   const [reverse, setReverse] = useState(false);
   const transitions = useTransition(index, p => p, getTransitions(type, reverse));
 
@@ -187,8 +167,6 @@ const Carousel = ({
     [logSlideImpression],
   );
 
-  const dispatch = useDispatch();
-
   const onChooseSlide = useCallback(
     (newIndex: number) => {
       setReverse(index > newIndex);
@@ -196,6 +174,15 @@ const Carousel = ({
     },
     [index, changeVisibleSlide],
   );
+
+  const onDismiss = useCallback(() => {
+    track("contentcard_dismissed", {
+      card: slides[index].id,
+      page: "Portfolio",
+    });
+    dismissCard(index);
+    changeVisibleSlide((index + 1) % slides.length);
+  }, [index, slides, dismissCard, changeVisibleSlide]);
 
   const onNext = useCallback(() => {
     setReverse(false);
@@ -215,51 +202,14 @@ const Carousel = ({
     });
   }, [index, slides.length, changeVisibleSlide]);
 
-  const onDismiss = useCallback(() => {
-    setWantToDismiss(true);
-    track("contentcards_dismissed", {
-      page: "Portfolio",
-    });
-  }, []);
-
-  const onUndo = useCallback(() => {
-    setWantToDismiss(false);
-    track("button_clicked", {
-      button: "Show cards again",
-      page: "Portfolio",
-    });
-  }, []);
-
-  const close = useCallback(() => {
-    dispatch(setCarouselVisibility(CAROUSEL_NONCE));
-    track("button_clicked", {
-      button: "Confirm cards dismissal",
-      page: "Portfolio",
-    });
-  }, [dispatch]);
-
-  if (!slides.length || hidden >= CAROUSEL_NONCE) {
+  if (!slides.length) {
     // No slides or dismissed, no problem
     return null;
   }
 
   const showControls = controls && slides.length > 1;
 
-  return wantToDismiss ? (
-    <Disclaimer>
-      <Text ff="Inter|Regular" fontSize={4} color="palette.text.shade80">
-        <Trans i18nKey="carousel.hidden.disclaimer" />
-      </Text>
-      <Box horizontal mt={3}>
-        <Button mr={1} small primary data-test-id="carousel-dismiss-confirm-button" onClick={close}>
-          <Trans i18nKey="carousel.hidden.close" />
-        </Button>
-        <Button ml={1} small secondary outlineGrey onClick={onUndo}>
-          <Trans i18nKey="carousel.hidden.undo" />
-        </Button>
-      </Box>
-    </Disclaimer>
-  ) : (
+  return (
     <CarouselWrapper
       data-test-id="carousel"
       onMouseEnter={() => setPaused(true)}

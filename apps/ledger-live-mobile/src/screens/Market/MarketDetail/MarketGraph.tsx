@@ -4,9 +4,9 @@ import { Flex, GraphTabs, InfiniteLoader, Transitions } from "@ledgerhq/native-u
 import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
 import { useTranslation } from "react-i18next";
 import { SingleCoinProviderData } from "@ledgerhq/live-common/market/MarketDataProvider";
-import Graph from "../../../components/Graph";
-import getWindowDimensions from "../../../logic/getWindowDimensions";
-import { Item } from "../../../components/Graph/types";
+import Graph from "~/components/Graph";
+import getWindowDimensions from "~/logic/getWindowDimensions";
+import { Item } from "~/components/Graph/types";
 
 const { width } = getWindowDimensions();
 

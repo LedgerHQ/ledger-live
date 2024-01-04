@@ -6,10 +6,10 @@ import styled, { useTheme } from "styled-components/native";
 import { Flex, InfiniteLoader, Text, IconsLegacy } from "@ledgerhq/native-ui";
 
 import { useNavigation } from "@react-navigation/native";
-import WebViewScreen from "../../components/WebViewScreen";
-import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
-import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { NavigatorName, ScreenName } from "../../const/navigation";
+import WebViewScreen from "~/components/WebViewScreen";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { NavigatorName, ScreenName } from "~/const/navigation";
 
 export type NavigationProps = StackNavigatorProps<
   BaseNavigatorStackParamList,

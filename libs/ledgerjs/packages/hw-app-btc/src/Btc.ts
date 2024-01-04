@@ -1,3 +1,4 @@
+import semver from "semver";
 import type Transport from "@ledgerhq/hw-transport";
 import BtcNew from "./BtcNew";
 import BtcOld from "./BtcOld";
@@ -49,12 +50,19 @@ export default class Btc {
       ],
       scrambleKey,
     );
-    // new APDU (nano app API) for bitcoin and old APDU for altcoin
-    if (currency === "bitcoin" || currency === "bitcoin_testnet") {
-      this._impl = new BtcNew(new AppClient(this._transport));
-    } else {
-      this._impl = new BtcOld(this._transport);
-    }
+
+    this._impl = (() => {
+      switch (currency) {
+        case "bitcoin":
+        case "bitcoin_testnet":
+        case "qtum":
+          // new APDU (nano app API) for currencies using app-bitcoin-new implementation
+          return new BtcNew(new AppClient(this._transport));
+        default:
+          // old APDU (legacy API) for currencies using legacy bitcoin app implementation
+          return new BtcOld(this._transport);
+      }
+    })();
   }
 
   /**
@@ -263,25 +271,31 @@ export default class Btc {
     // if BtcOld was instantiated, stick with it
     if (this._impl instanceof BtcOld) return this._impl;
 
-    const appAndVersion = await getAppAndVersion(this._transport);
-    let isBtcLegacy = true; // default for all altcoins
+    const { name, version } = await getAppAndVersion(this._transport);
 
-    if (appAndVersion.name === "Bitcoin" || appAndVersion.name === "Bitcoin Test") {
-      const [major, minor] = appAndVersion.version.split(".");
-      // we use the legacy protocol for versions below 2.1.0 of the Bitcoin app.
-      isBtcLegacy = parseInt(major) <= 1 || (parseInt(major) == 2 && parseInt(minor) == 0);
-    } else if (
-      appAndVersion.name === "Bitcoin Legacy" ||
-      appAndVersion.name === "Bitcoin Test Legacy"
-    ) {
-      // the "Bitcoin Legacy" and "Bitcoin Testnet Legacy" app use the legacy protocol, regardless of the version
-      isBtcLegacy = true;
-    } else if (appAndVersion.name === "Exchange") {
-      // We can't query the version of the Bitcoin app if we're coming from Exchange;
-      // therefore, we use a workaround to distinguish legacy and new versions.
-      // This can be removed once Ledger Live enforces minimum bitcoin version >= 2.1.0.
-      isBtcLegacy = await checkIsBtcLegacy(this._transport);
-    }
+    const isBtcLegacy = await (async () => {
+      switch (name) {
+        case "Bitcoin":
+        case "Bitcoin Test": {
+          // we use the legacy protocol for versions below 2.1.0 of the Bitcoin app.
+          return semver.lt(version, "2.1.0");
+        }
+        case "Bitcoin Legacy":
+        case "Bitcoin Test Legacy":
+          // the "Bitcoin Legacy" and "Bitcoin Testnet Legacy" app use the legacy protocol, regardless of the version
+          return true;
+        case "Exchange":
+          // We can't query the version of the Bitcoin app if we're coming from Exchange;
+          // therefore, we use a workaround to distinguish legacy and new versions.
+          // This can be removed once Ledger Live enforces minimum bitcoin version >= 2.1.0.
+          return await checkIsBtcLegacy(this._transport);
+        case "Qtum":
+          // we use the legacy protocol for versions below 3.0.0 of the Qtum app.
+          return semver.lt(version, "3.0.0");
+        default:
+          return true;
+      }
+    })();
 
     if (isBtcLegacy) {
       this._impl = new BtcOld(this._transport);

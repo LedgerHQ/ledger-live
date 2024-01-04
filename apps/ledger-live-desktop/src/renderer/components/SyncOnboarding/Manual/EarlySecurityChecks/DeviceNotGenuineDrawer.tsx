@@ -12,7 +12,7 @@ import { localeSelector } from "~/renderer/reducers/settings";
 import { urls } from "~/config/urls";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
-import { ErrorBody } from "~/renderer/components/DeviceAction/rendering";
+import { ErrorBody } from "~/renderer/components/ErrorBody";
 
 export type Props = {
   productName: string;

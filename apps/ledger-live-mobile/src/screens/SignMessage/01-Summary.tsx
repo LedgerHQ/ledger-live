@@ -8,15 +8,15 @@ import { Trans, useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
-import { TrackScreen } from "../../analytics";
-import Button from "../../components/Button";
-import LText from "../../components/LText";
-import ParentCurrencyIcon from "../../components/ParentCurrencyIcon";
-import { SignMessageNavigatorStackParamList } from "../../components/RootNavigator/types/SignMessageNavigator";
-import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { ScreenName } from "../../const";
-import WalletIcon from "../../icons/Wallet";
-import { accountScreenSelector } from "../../reducers/accounts";
+import { TrackScreen } from "~/analytics";
+import Button from "~/components/Button";
+import LText from "~/components/LText";
+import ParentCurrencyIcon from "~/components/ParentCurrencyIcon";
+import { SignMessageNavigatorStackParamList } from "~/components/RootNavigator/types/SignMessageNavigator";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { ScreenName } from "~/const";
+import WalletIcon from "~/icons/Wallet";
+import { accountScreenSelector } from "~/reducers/accounts";
 
 const MessageProperty = memo(({ label, value }: MessageProperties[0]) => {
   const { colors } = useTheme();

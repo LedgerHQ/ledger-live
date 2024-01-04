@@ -2,6 +2,7 @@ import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { SOLANA_DELEGATION_RESERVE } from "@ledgerhq/live-common/families/solana/utils";
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
@@ -18,22 +19,22 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import { Text } from "@ledgerhq/native-ui";
-import { TrackScreen } from "../../../analytics";
-import Button from "../../../components/Button";
-import CancelButton from "../../../components/CancelButton";
-import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
-import ExternalLink from "../../../components/ExternalLink";
-import GenericErrorBottomModal from "../../../components/GenericErrorBottomModal";
-import KeyboardView from "../../../components/KeyboardView";
-import RetryButton from "../../../components/RetryButton";
-import Touchable from "../../../components/Touchable";
-import { urls } from "@utils/urls";
-import { ScreenName } from "../../../const";
-import InfoIcon from "../../../icons/Info";
-import InfoModal, { ModalInfo } from "../../../modals/Info";
-import { accountScreenSelector } from "../../../reducers/accounts";
-import AmountInput from "../../../screens/SendFunds/AmountInput";
-import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { TrackScreen } from "~/analytics";
+import Button from "~/components/Button";
+import CancelButton from "~/components/CancelButton";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import ExternalLink from "~/components/ExternalLink";
+import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
+import KeyboardView from "~/components/KeyboardView";
+import RetryButton from "~/components/RetryButton";
+import Touchable from "~/components/Touchable";
+import { urls } from "~/utils/urls";
+import { ScreenName } from "~/const";
+import InfoIcon from "~/icons/Info";
+import InfoModal, { ModalInfo } from "~/modals/Info";
+import { accountScreenSelector } from "~/reducers/accounts";
+import AmountInput from "~/screens/SendFunds/AmountInput";
+import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { SolanaDelegationFlowParamList } from "./types";
 
 type ModalInfoName = "maxSpendable";
@@ -180,6 +181,17 @@ export default function DelegationSelectAmount({ navigation, route }: Props) {
                       onValueChange={toggleUseAllAmount}
                     />
                   </View>
+                </View>
+                <View>
+                  <Text color="grey">
+                    <InfoIcon size={12} color="grey" />{" "}
+                    <Trans
+                      i18nKey="solana.delegation.reserveWarning"
+                      values={{
+                        amount: SOLANA_DELEGATION_RESERVE,
+                      }}
+                    />
+                  </Text>
                 </View>
                 <View style={styles.continueWrapper}>
                   <Button

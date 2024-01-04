@@ -5,12 +5,12 @@ import { Trans } from "react-i18next";
 import BigNumber from "bignumber.js";
 import { ELROND_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/elrond/constants";
 
-import LText from "../../../../../../../../../components/LText";
-import FirstLetterIcon from "../../../../../../../../../components/FirstLetterIcon";
-import CurrencyUnitValue from "../../../../../../../../../components/CurrencyUnitValue";
-import ArrowRight from "../../../../../../../../../icons/ArrowRight";
-import Circle from "../../../../../../../../../components/Circle";
-import LedgerLogo from "../../../../../../../../../icons/LiveLogo";
+import LText from "~/components/LText";
+import FirstLetterIcon from "~/components/FirstLetterIcon";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import ArrowRight from "~/icons/ArrowRight";
+import Circle from "~/components/Circle";
+import LedgerLogo from "~/icons/LiveLogo";
 
 import type { ItemPropsType } from "./types";
 
