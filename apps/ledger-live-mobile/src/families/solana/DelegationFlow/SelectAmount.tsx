@@ -2,6 +2,7 @@ import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
+import { SOLANA_DELEGATION_RESERVE } from "@ledgerhq/live-common/families/solana/utils";
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
@@ -180,6 +181,17 @@ export default function DelegationSelectAmount({ navigation, route }: Props) {
                       onValueChange={toggleUseAllAmount}
                     />
                   </View>
+                </View>
+                <View>
+                  <Text color="grey">
+                    <InfoIcon size={12} color="grey" />{" "}
+                    <Trans
+                      i18nKey="solana.delegation.reserveWarning"
+                      values={{
+                        amount: SOLANA_DELEGATION_RESERVE,
+                      }}
+                    />
+                  </Text>
                 </View>
                 <View style={styles.continueWrapper}>
                   <Button
