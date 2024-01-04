@@ -14,6 +14,7 @@ const mockedLogic = jest.mocked(logic);
 const mockedLiveEnv = jest.mocked(liveEnv);
 
 describe("hasMinimumFunds", () => {
+  liveEnv.setEnv("LEDGER_CLIENT_VERSION", "TEST");
   describe("hasMinimumFundsToCancel", () => {
     const mainAccount: Account = {
       balance: new BigNumber(0),
