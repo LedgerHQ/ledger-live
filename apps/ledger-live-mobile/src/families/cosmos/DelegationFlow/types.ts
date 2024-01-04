@@ -20,7 +20,7 @@ export type CosmosDelegationFlowParamList = {
     transaction?: Transaction;
     fromSelectAmount?: boolean;
     source?: RouteProp<ParamListBase, ScreenName>;
-    trackingFirstStep?: boolean;
+    skipStartedStep?: boolean;
   };
   [ScreenName.CosmosDelegationValidatorSelect]: {
     accountId: string;

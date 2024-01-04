@@ -28,7 +28,7 @@ const getMainActions = ({
         accountId: account.id,
         parentId: parentAccount ? parentAccount.id : undefined,
         source: parentRoute,
-        trackingFirstStep: isAlreadyDelegated,
+        skipStartedStep: isAlreadyDelegated,
       },
     },
   ];

@@ -39,8 +39,9 @@ const getMainActions = ({
    */
   const preloaded = getCurrentElrondPreloadData();
   const validators = randomizeProviders(preloaded.validators);
-  const firstTimeFlow = account.elrondResources && account.elrondResources.delegations.length === 0;
-  const screen = firstTimeFlow
+  const isFirstTimeFlow =
+    account.elrondResources && account.elrondResources.delegations.length === 0;
+  const screen = isFirstTimeFlow
     ? ScreenName.ElrondDelegationStarted
     : ScreenName.ElrondDelegationValidator;
 
@@ -64,7 +65,7 @@ const getMainActions = ({
             account,
             validators,
             source: parentRoute,
-            trackingFirstStep: !firstTimeFlow,
+            skipStartedStep: !isFirstTimeFlow,
           },
         },
       ]

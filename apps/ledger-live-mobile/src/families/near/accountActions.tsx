@@ -41,7 +41,7 @@ const getMainActions = ({
             : ScreenName.NearStakingStarted,
           params: {
             source: parentRoute,
-            trackingFirstStep: startWithValidator,
+            skipStartedStep: startWithValidator,
           },
         },
       ];

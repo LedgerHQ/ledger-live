@@ -12,7 +12,7 @@ export type CardanoDelegationFlowParamList = {
     accountId: string;
     pool?: StakePool;
     transaction?: Transaction;
-    trackingFirstStep?: boolean;
+    skipStartedStep?: boolean;
   };
   [ScreenName.CardanoDelegationPoolSelect]: {
     accountId: string;

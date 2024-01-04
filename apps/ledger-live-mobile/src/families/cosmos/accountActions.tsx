@@ -40,7 +40,7 @@ const getMainActions = ({
             : ScreenName.CosmosDelegationStarted,
           params: {
             source: parentRoute,
-            trackingFirstStep: startWithValidator,
+            skipStartedStep: startWithValidator,
           },
         },
       ];

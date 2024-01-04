@@ -20,7 +20,7 @@ export type ElrondDelegationFlowParamList = {
     account: ElrondAccount;
     transaction?: Transaction;
     source?: RouteProp<ParamListBase, ScreenName>;
-    trackingFirstStep?: boolean;
+    skipStartedStep?: boolean;
   };
   [ScreenName.ElrondDelegationValidatorList]: {
     transaction: Transaction | null | undefined;
