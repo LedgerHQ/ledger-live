@@ -21,7 +21,7 @@ import {
   TransactionVersion,
   AnchorMode,
   UnsignedTokenTransferOptions,
-  estimateTransfer,
+  estimateTransaction,
   makeUnsignedSTXTokenTransfer,
 } from "@stacks/transactions";
 
@@ -148,9 +148,9 @@ const estimateMaxSpendable = async ({
 
   const tx = await makeUnsignedSTXTokenTransfer(options);
 
-  const fee = await estimateTransfer(tx);
+  const [feeEst1, _feeEst2, _feeEst3] = await estimateTransaction(tx.payload);
 
-  const diff = spendableBalance.minus(new BigNumber(fee.toString()));
+  const diff = spendableBalance.minus(new BigNumber(feeEst1.fee));
   return diff.gte(0) ? diff : new BigNumber(0);
 };
 
@@ -183,9 +183,9 @@ const prepareTransaction = async (a: Account, t: Transaction): Promise<Transacti
         : AddressVersion.TestnetSingleSig;
     const senderAddress = c32address(addressVersion, tx.auth.spendingCondition!.signer);
 
-    const fee = await estimateTransfer(tx);
+    const [fee] = await estimateTransaction(tx.payload);
 
-    patch.fee = new BigNumber(fee.toString());
+    patch.fee = new BigNumber(fee.fee);
     patch.nonce = await findNextNonce(senderAddress, pendingOperations);
 
     if (useAllAmount) patch.amount = spendableBalance.minus(patch.fee);
@@ -245,7 +245,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
           });
 
           // Sign by device
-          const result = await blockstack.sign(getPath(derivationPath), serializedTx);
+          const result = await blockstack.sign(getPath(derivationPath), Buffer.from(serializedTx));
           throwIfError(result);
 
           o.next({

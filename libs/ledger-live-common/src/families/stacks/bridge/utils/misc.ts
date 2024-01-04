@@ -53,7 +53,7 @@ export const getTxToBroadcast = async (
   // @ts-ignore need to ignore the TS error here
   tx.auth.spendingCondition.signature = createMessageSignature(signature);
 
-  return tx.serialize();
+  return Buffer.from(tx.serialize());
 };
 
 export const getUnit = () => getCryptoCurrencyById("stacks").units[0];
