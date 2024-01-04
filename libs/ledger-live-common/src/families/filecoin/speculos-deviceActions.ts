@@ -9,7 +9,7 @@ export const generateDeviceActionFlow = (scenario: BotScenario): DeviceAction<Tr
   const data: Parameters<typeof deviceActionFlow<Transaction>>[0] = { steps: [] };
   data.steps = data.steps.concat([
     {
-      title: "Please review",
+      title: "Please",
       button: SpeculosButton.RIGHT,
     },
   ]);
