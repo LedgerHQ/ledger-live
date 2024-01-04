@@ -34,7 +34,7 @@ export function isCompleteExchangeData(data: unknown): data is Data {
   if (data === null || typeof data !== "object") {
     return false;
   }
-  return "signature" in data && "binaryPayload" in data ? true : false;
+  return "signature" in data && "binaryPayload" in data;
 }
 
 const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined }) => {

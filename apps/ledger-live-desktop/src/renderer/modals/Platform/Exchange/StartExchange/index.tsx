@@ -16,7 +16,7 @@ export function isStartExchangeData(data: unknown): data is Data {
   if (data === null || typeof data !== "object") {
     return false;
   }
-  return "exchangeType" in data ? true : false;
+  return "exchangeType" in data;
 }
 
 const action = createAction(connectApp, startExchange);
