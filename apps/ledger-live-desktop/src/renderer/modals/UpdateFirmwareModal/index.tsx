@@ -17,6 +17,7 @@ import { Divider, Flex, FlowStepper, Text } from "@ledgerhq/react-ui";
 import Disclaimer from "./Disclaimer";
 import Cancel from "./errors/Cancel";
 import DeviceCancel from "./errors/DeviceError";
+import { DisconnectedDevice, DisconnectedDeviceDuringOperation } from "@ledgerhq/errors";
 import SideDrawerHeader from "~/renderer/components/SideDrawerHeader";
 
 type MaybeError = Error | undefined | null;
@@ -106,17 +107,27 @@ const UpdateModal = ({
   const withFinal = useMemo(() => hasFinalFirmware(firmware?.final), [firmware]);
   const [cancel, setCancel] = useState<boolean>(false);
 
+  const isDisconnectedDeviceError = err instanceof DisconnectedDevice;
+  const isDisconnectedDeviceDuringOperationError = err instanceof DisconnectedDeviceDuringOperation;
+  const isDeviceDisconnected = isDisconnectedDeviceError || isDisconnectedDeviceDuringOperationError;
+
+  console.log("DEVICE", deviceModelId, props.device, updatedDeviceInfo);
+
   const onRequestCancel = useCallback(() => {
-    showDisclaimer || stateStepId === "finish" ? onRequestClose() : setCancel(state => !state);
-  }, [showDisclaimer, stateStepId, onRequestClose]);
+    (showDisclaimer && !isDeviceDisconnected) || stateStepId === "finish" || cancel ? onRequestClose() : setCancel(true);
+  }, [cancel, showDisclaimer, isDeviceDisconnected, stateStepId, onRequestClose]);
 
   const createSteps = useCallback(
     ({ withResetStep }: { withResetStep: boolean }) => {
       const hasRestoreStep =
         firmware && isDeviceLocalizationSupported(firmware.final.name, deviceModelId);
-      const restoreStepLabel = t("manager.modal.steps.restore");
+
+      const restoreStepLabel = stateStepId === "finish"
+        ? t("manager.modal.steps.restoreDone")
+        : t("manager.modal.steps.restore");
+
       const installUpdateLabel =
-        stateStepId === "finish"
+        stateStepId === "finish" || stateStepId === "restore"
           ? t("manager.modal.steps.installDone")
           : t("manager.modal.steps.install");
 
@@ -132,8 +143,8 @@ const UpdateModal = ({
         label: firmware?.osu?.hash
           ? t("manager.modal.identifier")
           : stateStepId === "resetDevice" || stateStepId === "idCheck"
-          ? t("manager.modal.steps.prepare")
-          : t("manager.modal.steps.prepareDone"),
+            ? t("manager.modal.steps.prepare")
+            : t("manager.modal.steps.prepareDone"),
         component: StepPrepare,
       };
 
@@ -202,6 +213,11 @@ const UpdateModal = ({
     [steps],
   );
 
+  const onContinue = useCallback(() => {
+    setCancel(false);
+    handleReset();
+  }, [handleReset]);
+
   const onSkip = useCallback(() => {
     setCompletedRestoreSteps([...completedRestoreSteps, currentRestoreStep]);
     setError(null);
@@ -248,7 +264,7 @@ const UpdateModal = ({
   };
 
   const getMainContent = () => {
-    if (err) {
+    if (err && !isDeviceDisconnected) {
       return (
         <DeviceCancel
           error={err}
@@ -260,8 +276,8 @@ const UpdateModal = ({
           onSkip={onSkip}
         />
       );
-    } else if (cancel) {
-      return <Cancel onContinue={onRequestCancel} onCancel={onRequestClose} />;
+    } else if (cancel || isDeviceDisconnected) {
+      return <Cancel onContinue={onContinue} onCancel={onRequestClose} />;
     } else if (showDisclaimer) {
       return <Disclaimer onContinue={() => setShowDisclaimer(false)} t={t} firmware={firmware} />;
     } else {
