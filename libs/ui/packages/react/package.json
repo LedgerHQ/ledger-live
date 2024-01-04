@@ -70,7 +70,7 @@
     "unimported": "unimported"
   },
   "dependencies": {
-    "@floating-ui/react-dom": "^0.4.0",
+    "@floating-ui/react-dom": "^0.7.0",
     "@ledgerhq/crypto-icons-ui": "workspace:^",
     "@ledgerhq/icons-ui": "workspace:^",
     "@ledgerhq/ui-shared": "workspace:^",
