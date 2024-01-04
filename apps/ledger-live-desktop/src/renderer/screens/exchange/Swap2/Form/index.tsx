@@ -4,7 +4,10 @@ import {
   useIsSwapLiveApp,
   SetExchangeRateCallback,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
-import { convertToNonAtomicUnit } from "@ledgerhq/live-common/exchange/swap/webApp/index";
+import {
+  convertToNonAtomicUnit,
+  getCustomFeesPerFamily,
+} from "@ledgerhq/live-common/exchange/swap/webApp/index";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import React, { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
@@ -35,6 +38,7 @@ import SwapWebView, { SWAP_WEB_MANIFEST_ID, SwapWebProps } from "./SwapWebView";
 import { SwapMigrationNativeUI } from "./Migrations/SwapMigrationNativeUI";
 import SwapFormSummary from "./FormSummary";
 import { useSwapLiveAppHook } from "~/renderer/hooks/swap-migrations/useSwapLiveAppHook";
+import SwapFormRates from "./FormRates";
 
 const DAPP_PROVIDERS = ["paraswap", "oneinch", "moonpay"];
 
@@ -155,15 +159,9 @@ const SwapForm = () => {
     const feeStrategyParam =
       feesStrategy && ["slow", "fast", "custom"].includes(feesStrategy) ? "CUSTOM" : "MEDIUM";
 
-    // Currency ids
-    const fromCurrencyId = swapTransaction.swap.from.currency?.id;
-    const toCurrencyId = swapTransaction.swap.to.currency?.id;
-
     return {
       fromAccountId,
       toAccountId,
-      fromCurrencyId,
-      toCurrencyId,
       fromAmount: fromAmount?.toString(),
       quoteId: rateId ? rateId : undefined,
       rate: rate?.toString(),
@@ -461,8 +459,11 @@ const SwapForm = () => {
         </>
       )}
 
-      {isSwapLiveAppEnabled ? (
-        <SwapWebView swapState={swapWebProps} />
+      {isSwapLiveAppEnabled.enabled ? (
+        <SwapWebView
+          swapState={swapWebProps}
+          liveAppUnavailable={isSwapLiveAppEnabled.onLiveAppCrashed}
+        />
       ) : (
         // Progressive UI migration based on current swap app id.
         <SwapMigrationNativeUI

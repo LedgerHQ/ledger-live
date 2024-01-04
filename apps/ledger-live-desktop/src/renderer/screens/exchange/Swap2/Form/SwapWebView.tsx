@@ -41,9 +41,7 @@ export type SwapProps = {
   provider: string;
   fromAccountId: string;
   fromParentAccountId?: string;
-  fromCurrencyId: string;
   toAccountId: string;
-  toCurrencyId: string;
   fromAmount: string;
   toAmount?: string;
   quoteId: string;
