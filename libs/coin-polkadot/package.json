@@ -55,7 +55,7 @@
     "@ledgerhq/types-live": "workspace:^",
     "@polkadot/types": "10.9.1",
     "@polkadot/types-known": "10.9.1",
-    "@polkadot/util": "12.5.1",
+    "@polkadot/util": "12.6.2",
     "@polkadot/util-crypto": "12.5.1",
     "bignumber.js": "^9.1.2",
     "expect": "^27.4.6",
