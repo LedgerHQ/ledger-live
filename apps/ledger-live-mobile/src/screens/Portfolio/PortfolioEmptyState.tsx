@@ -88,7 +88,7 @@ const PortfolioEmptyState = ({ openAddAccountModal }: { openAddAccountModal: () 
         width={"100%"}
         mt={7}
         mb={11}
-        testID="add-account-button"
+        testID="add-account-cta"
       >
         {t("account.emptyState.addAccountCta")}
       </Button>

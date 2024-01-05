@@ -50,7 +50,7 @@ runs:
 
     - uses: pnpm/action-setup@v2
       with:
-        version: 8.12.1
+        version: 8.13.1
     - name: Get pnpm store directory
       shell: bash
       run: |
@@ -81,7 +81,7 @@ runs:
 
     - uses: actions/setup-node@v3
       with:
-        node-version: 18
+        node-version: 20.10.0
         registry-url: "https://registry.npmjs.org"
 
     - name: upgrade npm

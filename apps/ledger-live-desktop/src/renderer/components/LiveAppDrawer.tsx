@@ -16,13 +16,20 @@ import ExternalLink from "./ExternalLink/index";
 import LiveAppDisclaimer from "./WebPlatformPlayer/LiveAppDisclaimer";
 import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import DeviceAction from "~/renderer/components/DeviceAction";
-import { createAction } from "@ledgerhq/live-common/hw/actions/startExchange";
+import {
+  createAction,
+  Result as StartExchangeResult,
+} from "@ledgerhq/live-common/hw/actions/startExchange";
 import startExchange from "@ledgerhq/live-common/exchange/platform/startExchange";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
+import {
+  Data as StartExchangeData,
+  isStartExchangeData,
+} from "~/renderer/modals/Platform/Exchange/StartExchange/index";
 import CompleteExchange, {
   Data as CompleteExchangeData,
+  isCompleteExchangeData,
 } from "~/renderer/modals/Platform/Exchange/CompleteExchange/Body";
-import { Operation } from "@ledgerhq/types-live";
 
 const Divider = styled(Box)`
   border: 1px solid ${p => p.theme.colors.palette.divider};
@@ -41,7 +48,7 @@ export const LiveAppDrawer = () => {
       type: string;
       manifest: AppManifest;
       disclaimerId: string;
-      data?: CompleteExchangeData;
+      data?: StartExchangeData | CompleteExchangeData;
       next: (manifest: AppManifest, isChecked: boolean) => void;
     };
   } = useSelector(platformAppDrawerStateSelector);
@@ -124,23 +131,26 @@ export const LiveAppDrawer = () => {
           </>
         );
       case "EXCHANGE_START":
-        return data ? (
+        return data && isStartExchangeData(data) ? (
           <Box alignItems={"center"} height={"100%"} px={32}>
             <DeviceAction
               action={action}
               request={{
                 exchangeType: data.exchangeType,
               }}
-              onResult={result => {
+              onResult={(result: StartExchangeResult) => {
                 if ("startExchangeResult" in result) {
-                  data.onResult(result.startExchangeResult as unknown as Operation);
+                  data.onResult(result.startExchangeResult as unknown as string);
+                }
+                if ("startExchangeError" in result) {
+                  data.onCancel?.(result.startExchangeError as unknown as Error);
                 }
               }}
             />
           </Box>
         ) : null;
       case "EXCHANGE_COMPLETE":
-        return data ? <CompleteExchange data={data} /> : null;
+        return data && isCompleteExchangeData(data) ? <CompleteExchange data={data} /> : null;
       default:
         return null;
     }

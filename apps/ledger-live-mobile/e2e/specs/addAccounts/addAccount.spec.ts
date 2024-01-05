@@ -3,6 +3,7 @@ import { knownDevice } from "../../models/devices";
 import { loadBleState, loadConfig } from "../../bridge/server";
 import PortfolioPage from "../../models/wallet/portfolioPage";
 import AccountPage from "../../models/accounts/accountPage";
+import AccountsPage from "../../models/accounts/accountsPage";
 
 import DeviceAction from "../../models/DeviceAction";
 import AddAccountDrawer from "../../models/accounts/addAccountDrawer";
@@ -12,8 +13,9 @@ let portfolioPage: PortfolioPage;
 let accountPage: AccountPage;
 let deviceAction: DeviceAction;
 let addAccountDrawer: AddAccountDrawer;
+let accountsPage: AccountsPage;
 
-describe("Add Bitcoin Accounts", () => {
+describe("Add account from modal", () => {
   beforeAll(async () => {
     loadConfig("onboardingcompleted", true);
     loadBleState({ knownDevices: [knownDevice] });
@@ -22,12 +24,14 @@ describe("Add Bitcoin Accounts", () => {
     accountPage = new AccountPage();
     deviceAction = new DeviceAction(knownDevice);
     addAccountDrawer = new AddAccountDrawer();
+    accountsPage = new AccountsPage();
 
     await portfolioPage.waitForPortfolioPageToLoad();
   });
 
-  it("open add accounts from portfolio", async () => {
-    await addAccountDrawer.openViaDeeplink();
+  it("open add accounts from modal", async () => {
+    await accountsPage.addAccount();
+    await addAccountDrawer.importWithYourLedger();
   });
 
   it("add Bitcoin accounts", async () => {

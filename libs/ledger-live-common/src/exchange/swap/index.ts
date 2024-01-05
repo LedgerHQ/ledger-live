@@ -99,7 +99,7 @@ const swapProviders: Record<string, ProviderConfig> = {
       ),
     },
     signature: Buffer.from(
-      "3045022100e35f78bbdf543614fa7db7ccc45622186b727d1d5b0accbdaf220ac54d4cd2fb02200f7decbb5a6e822668af73bf0ddcde822121e29642436aa6de11feabf12cf2f0",
+      "304402202ea20dd1a67185a14503f073a387ec22564cc06bbb2545444efc929d69c70d1002201622ac8e34a7f332ac50d67c1d9221dcc3334ad7c1fb84e674654cd306bbda73",
       "hex",
     ),
     needsKYC: true,
