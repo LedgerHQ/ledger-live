@@ -3894,7 +3894,7 @@
 | Ethereum | ARBI | 0x5bffc45D740C213e19B68B40e9ed89705f495E44 | ARBI Token |  | ethereum/erc20/arbi_token |
 | Ethereum | ARB | 0xaFBeC4D65BC7b116d85107FD05d912491029Bf46 | ARBITRAGE |  | ethereum/erc20/arbitrage |
 | Ethereum | ARC | 0xC82E3dB60A52CF7529253b4eC688f631aad9e7c2 | ARC |  | ethereum/erc20/arc |
-| Ethereum | ARC | 0xAc709FcB44a43c35F0DA4e3163b117A17F3770f5 | ARC | delisted | ethereum/erc20/arc_0xAc709FcB |
+| Ethereum | ARC | 0xAc709FcB44a43c35F0DA4e3163b117A17F3770f5 | ARC | delisted | ethereum/erc20/arc_0xac709fcb |
 | Ethereum | ARCX | 0xED30Dd7E50EdF3581AD970eFC5D9379Ce2614AdB | ARC Governance Token |  | ethereum/erc20/arc_governance_token |
 | Ethereum | STABLEX | 0xcD91538B91B4ba7797D39a2f66E63810b50A33d0 | ARC STABLEx |  | ethereum/erc20/arc_stablex |
 | Ethereum | ARCA | 0x62A6738d887F47e297676FaB05b902709B106C64 | ARCA |  | ethereum/erc20/arca |
@@ -3938,7 +3938,7 @@
 | Ethereum | AUDD | 0x4cCe605eD955295432958d8951D0B176C10720d5 | AUDD |  | ethereum/erc20/audd |
 | Ethereum | AUTZ | 0x5A7092cf86A6790113C4D3FA83f48fd6EFa71B0D | AUTZ Token |  | ethereum/erc20/autz_token |
 | Ethereum | AVA | 0xa6C0c097741D55ECd9a3A7DeF3A8253fD022ceB9 | AVA |  | ethereum/erc20/ava |
-| Ethereum | AVA | 0xeD247980396B10169BB1d36f6e278eD16700a60f | AVA_0xeD2479 |  | ethereum/erc20/ava_0xeD2479 |
+| Ethereum | AVA | 0xeD247980396B10169BB1d36f6e278eD16700a60f | AVA_0xeD2479 |  | ethereum/erc20/ava_0xed2479 |
 | Ethereum | AVINOC | 0xF1cA9cb74685755965c7458528A36934Df52A3EF | AVINOC Token |  | ethereum/erc20/avinoc_token |
 | Ethereum | AVT | 0x0d88eD6E74bbFD96B831231638b66C05571e824F | AVT |  | ethereum/erc20/avt |
 | Ethereum | AX1 | 0xCd4b4b0F3284a33AC49C67961EC6e111708318Cf | AX1 Mining Token |  | ethereum/erc20/ax1_mining_token |
@@ -4149,7 +4149,7 @@
 | Ethereum | FUMO | 0x2890dF158D76E584877a1D17A85FEA3aeeB85aa6 | Alien Milady Fumo |  | ethereum/erc20/alien_milady_fumo |
 | Ethereum | TLM | 0x888888848B652B3E3a0f34c96E00EEC0F3a23F72 | Alien Worlds Trilium |  | ethereum/erc20/alien_worlds_trilium |
 | Ethereum | AGX | 0x822804FEAB1bA050b0FB4479dFb958a3777B735f | AligatorX |  | ethereum/erc20/aligatorx |
-| Ethereum | AGX | 0xBc765DA95fe4a4Eb7A3DdC3Af2B89Bfa45a0A068 | AligatorX |  | ethereum/erc20/aligatorx_0xBc765DA9 |
+| Ethereum | AGX | 0xBc765DA95fe4a4Eb7A3DdC3Af2B89Bfa45a0A068 | AligatorX |  | ethereum/erc20/aligatorx_0xbc765da9 |
 | Ethereum | ALITA | 0x9c659CB48c4406Cd2857aEcEfF1609b2dB280d0E | Alita Network |  | ethereum/erc20/alita_network |
 | Ethereum | ALKWETH1 | 0x8125afd067094cD573255f82795339b9fe2A40ab | Alkemi Wrapped Ether 1 |  | ethereum/erc20/alkemi_wrapped_ether_1 |
 | Ethereum | ALKWETH2 | 0x1f52453B32BFab737247114D56d756A6c37dd9Ef | Alkemi Wrapped Ether 2 |  | ethereum/erc20/alkemi_wrapped_ether_2 |
@@ -4700,7 +4700,7 @@
 | Ethereum | EYE | 0x155ff1A85F440EE0A382eA949f24CE4E0b751c65 | Behodler.io |  | ethereum/erc20/behodler_io |
 | Ethereum | BEL | 0xA91ac63D040dEB1b7A5E4d4134aD23eb0ba07e14 | Bella |  | ethereum/erc20/bella |
 | Ethereum | BBI | 0x37D40510a2F5Bc98AA7a0f7BF4b3453Bcfb90Ac1 | Beluga Banking Infrastructure Token |  | ethereum/erc20/beluga_banking_infrastructure_token |
-| Ethereum | BEN | 0x9bf1D7D63dD7a4ce167CF4866388226EEefa702E | Ben |  | ethereum/erc20/ben_0x9bf1D7D6 |
+| Ethereum | BEN | 0x9bf1D7D63dD7a4ce167CF4866388226EEefa702E | Ben |  | ethereum/erc20/ben_0x9bf1d7d6 |
 | Ethereum | MARK | 0x67c597624B17b16fb77959217360B7cD18284253 | Benchmark |  | ethereum/erc20/benchmark |
 | Ethereum | BEND | 0x0d02755a5700414B26FF040e1dE35D337DF56218 | Bend Token |  | ethereum/erc20/bend_token |
 | Ethereum | BNFT | 0xdA2C424Fc98c741c2d4ef2f42897CEfed897CA75 | Benefits Coin |  | ethereum/erc20/benefits_coin |
@@ -6189,7 +6189,7 @@
 | Ethereum | AZUKI | 0x910524678C0B1B23FFB9285a81f99C29C11CBaEd | DokiDokiAzuki |  | ethereum/erc20/dokidokiazuki |
 | Ethereum | DOKI | 0x9cEB84f92A0561fa3Cc4132aB9c0b76A59787544 | DokiDokiFinance |  | ethereum/erc20/dokidokifinance |
 | Ethereum | DOLA | 0x865377367054516e17014CcdED1e7d814EDC9ce4 | Dola USD Stablecoin |  | ethereum/erc20/dola_usd_stablecoin |
-| Ethereum | DSQ | 0x54a02Eae26E56d108DdE3B836Db32431228b44aa | DollarSqueeze |  | ethereum/erc20/dollarsqueeze_0x54a02Eae |
+| Ethereum | DSQ | 0x54a02Eae26E56d108DdE3B836Db32431228b44aa | DollarSqueeze |  | ethereum/erc20/dollarsqueeze_0x54a02eae |
 | Ethereum | DSQ | 0x7340eA46360576DC46Ef49bcE99Bc5072c32421d | DollarSqueeze_0x7340ea46 |  | ethereum/erc20/dollarsqueeze_0x7340ea46 |
 | Ethereum | USD | 0x2F6081E3552b1c86cE4479B80062A1ddA8EF23E3 | Dollars | delisted | ethereum/erc20/dollars |
 | Ethereum | USD | 0xd233D1f6FD11640081aBB8db125f722b5dc729dc | Dollars | delisted | ethereum/erc20/dollars_ |
@@ -7602,7 +7602,7 @@
 | Ethereum | IFNFT | 0xB2de3FfDB3409F607C82b1Cd777D34f489e9DBa4 | Insured Finance NFT Vault |  | ethereum/erc20/insured_finance_nft_vault |
 | Ethereum | ISR | 0xd4a293aE8bB9E0BE12E99eB19d48239e8c83a136 | Insureum Token |  | ethereum/erc20/insureum_token |
 | Ethereum | ITGR | 0xD502F487e1841Fdc805130e13eae80c61186Bc98 | Integral |  | ethereum/erc20/integral |
-| Ethereum | ITGR | 0x5bC96017dcCacA53601d92125C5C6Db81d000Da5 | Integral | delisted | ethereum/erc20/integral_0xD502F4 |
+| Ethereum | ITGR | 0x5bC96017dcCacA53601d92125C5C6Db81d000Da5 | Integral | delisted | ethereum/erc20/integral_0xd502f4 |
 | Ethereum | INRM | 0x48e5413b73add2434e47504E2a22d14940dBFe78 | Integrated Money |  | ethereum/erc20/integrated_money |
 | Ethereum | INTRATIO | 0xBA8Ea15b647F54D9ff849670FcaAcF35Df21A457 | Intelligent Ratio Set |  | ethereum/erc20/intelligent_ratio_set |
 | Ethereum | INVE | 0xDAC4AE188AcE3C8985765eDc6C9B4739D4845DdC | InterValue |  | ethereum/erc20/intervalue |
@@ -7841,7 +7841,7 @@
 | Ethereum | KGLD | 0x76deF2112b2A5668782F6754640B982683EAcBCB | Kitco Gold |  | ethereum/erc20/kitco_gold |
 | Ethereum | KTC | 0x9827F6E8Df0CcC584ff7b37144De8bac7c446385 | Kitcoin |  | ethereum/erc20/kitcoin |
 | Ethereum | KITSUNE | 0xFB378115726a9Ab2E0DCCeBbe2d53Dc625Ae201b | Kitsune Inu |  | ethereum/erc20/kitsune_inu |
-| Ethereum | KITSU | 0x6D645193001e674e62aAa0eaC5d56E4D21BBCCeF | Kitsune Inu |  | ethereum/erc20/kitsune_inu_0x6D6451 |
+| Ethereum | KITSU | 0x6D645193001e674e62aAa0eaC5d56E4D21BBCCeF | Kitsune Inu |  | ethereum/erc20/kitsune_inu_0x6d6451 |
 | Ethereum | KIF | 0x177BA0cac51bFC7eA24BAd39d81dcEFd59d74fAa | KittenFinance |  | ethereum/erc20/kittenfinance |
 | Ethereum | KITTY | 0x044727e50ff30DB57fad06Ff4F5846eAb5eA52a2 | Kitty Inu |  | ethereum/erc20/kitty_inu |
 | Ethereum | KLEE | 0x382f0160c24f5c515A19f155BAc14d479433A407 | Klee Kai |  | ethereum/erc20/klee_kai |
@@ -8929,7 +8929,7 @@
 | Ethereum | COVER | 0x5D8d9F5b96f4438195BE9b99eee6118Ed4304286 | Old Cover Protocol |  | ethereum/erc20/old_cover_protocol |
 | Ethereum | OLE | 0x9d9223436dDD466FC247e9dbbD20207e640fEf58 | Olive |  | ethereum/erc20/olive |
 | Ethereum | OHM | 0x64aa3364F17a4D01c6f1751Fd97C2BD3D7e7f1D5 | Olympus |  | ethereum/erc20/olympus |
-| Ethereum | OHM_ | 0x383518188C0C6d7730D91b2c03a03C837814a899 | Olympus | delisted | ethereum/erc20/olympus_OLD |
+| Ethereum | OHM_ | 0x383518188C0C6d7730D91b2c03a03C837814a899 | Olympus | delisted | ethereum/erc20/olympus_old |
 | Ethereum | OLY | 0x6595b8fD9C920C81500dCa94e53Cdc712513Fb1f | Olyseum |  | ethereum/erc20/olyseum |
 | Ethereum | OPM | 0xF4c17Bc4979c1dc7b4CA50115358Dec58C67fD9d | Omega Protocol Money |  | ethereum/erc20/omega_protocol_money |
 | Ethereum | OMG | 0x2392f6ABF07B5fCE14603d0E28fc952205b8703D | OmiseGO | delisted | ethereum/erc20/omisego |
@@ -9316,7 +9316,7 @@
 | Ethereum | PST | 0xE3feDAeCD47aa8EAb6b23227b0eE56F092C967a9 | Primas | delisted | ethereum/erc20/primas |
 | Ethereum | PST | 0x5d4ABC77B8405aD177d8ac6682D584ecbFd46CEc | Primas Token |  | ethereum/erc20/primas_token |
 | Ethereum | PRIME | 0xb23d80f5FefcDDaa212212F028021B41DEd428CF | Prime |  | ethereum/erc20/prime |
-| Ethereum | D2D | 0x43D4A3cd90ddD2F8f4f693170C9c8098163502ad | Prime 0x43D4A3 | delisted | ethereum/erc20/prime_0x43D4A3 |
+| Ethereum | D2D | 0x43D4A3cd90ddD2F8f4f693170C9c8098163502ad | Prime 0x43D4A3 | delisted | ethereum/erc20/prime_0x43d4a3 |
 | Ethereum | PDAI | 0x9043d4d51C9d2e31e3F169de4551E416970c27Ef | Prime DAI |  | ethereum/erc20/prime_dai |
 | Ethereum | PRIME | 0xE59064a8185Ed1Fca1D17999621eFedfab4425c9 | PrimeDAO Token |  | ethereum/erc20/primedao_token |
 | Ethereum | PWC | 0xA3D93c0616dbC31FEf1e112C7665A4bA4dDBf0be | PrimeWhiteRockCompany |  | ethereum/erc20/primewhiterockcompany |
@@ -9632,7 +9632,7 @@
 | Ethereum | XRM | 0xE1329eBf8b719881549909d689987F746A8931D1 | Refine Medium Token |  | ethereum/erc20/refine_medium_token |
 | Ethereum | RFX | 0x159A1dFAe19057de57dFfFcbB3DA1aE784678965 | Reflex |  | ethereum/erc20/reflex |
 | Ethereum | EFK | 0x6653C0d21507573Cc39EAD1E609D74d5E0cA16e2 | Refork |  | ethereum/erc20/refork |
-| Ethereum | RJV | 0x02c3296C6eb50249f290AE596F2bE9454bFfadaB | Rejuve Token |  | ethereum/erc20/rejuve_token_0x02c3296C |
+| Ethereum | RJV | 0x02c3296C6eb50249f290AE596F2bE9454bFfadaB | Rejuve Token |  | ethereum/erc20/rejuve_token_0x02c3296c |
 | Ethereum | RJV | 0xa1f410f13B6007fCa76833ee7eb58478D47Bc5Ef | Rejuve Token 0xa1f410f1 |  | ethereum/erc20/rejuve_token_0xa1f410f1 |
 | Ethereum | RELAY | 0x5D843Fa9495d23dE997C394296ac7B4D721E841c | Relay Token |  | ethereum/erc20/relay_token |
 | Ethereum | RLR | 0x5b3F693EfD5710106eb2Eac839368364aCB5a70f | Relayer |  | ethereum/erc20/relayer |
@@ -9702,7 +9702,7 @@
 | Ethereum | BUNNY | 0x3Ea50B7Ef6a7eaf7E966E2cb72b519C16557497c | Rocket Bunny |  | ethereum/erc20/rocket_bunny |
 | Ethereum | RCKT | 0x78571acCAf24052795F98B11F093b488a2d9EAA4 | Rocket Coin |  | ethereum/erc20/rocket_coin |
 | Ethereum | RPL | 0xD33526068D116cE69F19A9ee46F0bd304F21A51f | Rocket Pool |  | ethereum/erc20/rocket_pool |
-| Ethereum | RPL_ | 0xB4EFd85c19999D84251304bDA99E90B92300Bd93 | Rocket Pool |  | ethereum/erc20/rocket_pool_OLD |
+| Ethereum | RPL_ | 0xB4EFd85c19999D84251304bDA99E90B92300Bd93 | Rocket Pool |  | ethereum/erc20/rocket_pool_old |
 | Ethereum | RETH | 0xae78736Cd615f374D3085123A210448E74Fc6393 | Rocket Pool ETH |  | ethereum/erc20/rocket_pool_eth |
 | Ethereum | ROCK | 0xA40106134c5bF4c41411554e6db99B95A15ed9d8 | Rocket Token |  | ethereum/erc20/rocket_token |
 | Ethereum | RVF | 0xdc8aF07A7861bedD104B8093Ae3e9376fc8596D2 | Rocket Vault |  | ethereum/erc20/rocket_vault |
@@ -9985,7 +9985,7 @@
 | Ethereum | SHIBMERIC | 0x440238CC07186aDEA6653a2E8cb9a24737615609 | Shibmerican |  | ethereum/erc20/shibmerican |
 | Ethereum | SHINJA | 0x7DAc25b1A665e1c70F25F1fC37d88C99274984ed | Shibnobi | delisted | ethereum/erc20/shibnobi |
 | Ethereum | SHINJA_ | 0xab167E816E4d76089119900e941BEfdfA37d6b32 | Shibnobi (old) | delisted | ethereum/erc20/shibnobi_old |
-| Ethereum | SHIDO | 0xeD354cAE598148846aa9694254C854fc7051163c | Shido |  | ethereum/erc20/shido_0xeD354cAE |
+| Ethereum | SHIDO | 0xeD354cAE598148846aa9694254C854fc7051163c | Shido |  | ethereum/erc20/shido_0xed354cae |
 | Ethereum | SHIDO | 0x173E552Bf97BBD50b455514ac52991Ef639ba703 | Shido Inu | delisted | ethereum/erc20/shido_inu |
 | Ethereum | SHIDO | 0x72c60bFffEF18dCa51db32b52b819A951b6Ddbed | Shido_0x72c60bff |  | ethereum/erc20/shido_0x72c60bff |
 | Ethereum | SHLD | 0xd49EFA7BC0D339D74f487959C573d518BA3F8437 | Shield Finance Token |  | ethereum/erc20/shield_finance_token |
@@ -10570,7 +10570,7 @@
 | Ethereum | TIE | 0x999967E2Ec8A74B7c8E9dB19E039d920B31d39D0 | TieToken |  | ethereum/erc20/tietoken |
 | Ethereum | TNT | 0x08f5a9235B08173b7569F83645d2c7fB55e8cCD8 | Tierion Network Token |  | ethereum/erc20/tierion_network_token |
 | Ethereum | TKING | 0x24E89bDf2f65326b94E36978A7EDeAc63623DAFA | Tiger King 0x24 |  | ethereum/erc20/tiger_king_0x24 |
-| Ethereum | TKING | 0xC626d951Eff8E421448074bd2aD7805C6D585793 | Tiger King 0xC6 |  | ethereum/erc20/tiger_king_0xC6 |
+| Ethereum | TKING | 0xC626d951Eff8E421448074bd2aD7805C6D585793 | Tiger King 0xC6 |  | ethereum/erc20/tiger_king_0xc6 |
 | Ethereum | TCH | 0x9B39A0B97319a9bd5fed217c1dB7b030453bac91 | TigerCash |  | ethereum/erc20/tigercash |
 | Ethereum | TIGER | 0xB83c27805aAcA5C7082eB45C868d955Cf04C337F | TigerCoin |  | ethereum/erc20/tigercoin |
 | Ethereum | TIG | 0xEee2d00Eb7DEB8Dd6924187f5AA3496B7d06E62A | Tigereum |  | ethereum/erc20/tigereum |
@@ -12553,7 +12553,7 @@
 | Polygon | WLD_ | 0xA936e1f747d14fC30d08272D065c8aeF4ab7f810 | wLitiDAO (old) |  | polygon/erc20/wlitidao_ |
 | Polygon | XTK | 0x22308317A4aA9e8196065E0b3647e582d44c4d7b | xToken |  | polygon/erc20/xtoken |
 | Polygon | YPRED | 0xdFaF2680239d678d9551669727b93b62Ad0D18Cc | yPredict |  | polygon/erc20/ypredict |
-| Stellar | USDC | GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN | USDC |  | stellar/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN |
+| Stellar | usdc | ga5zsejyb37jrc5avcia5mop4rhtm335x2kgx3ihojapp5re34k4kzvn | USDC |  | stellar/asset/usdc:ga5zsejyb37jrc5avcia5mop4rhtm335x2kgx3ihojapp5re34k4kzvn |
 | Tron | GOLD | TKjLCYg1aQmtnC8HGLCgbrq89Ru7xifPP5 | !!!!GOLDCOIN | delisted | tron/trc10/1002341 |
 | Tron | GOLD | TP429SKrsp4BoTiEFXHj4TNSJwqDFsygnr | !!!!GoldSpot!!!! | delisted | tron/trc10/1002467 |
 | Tron | 666 | TMqNJwD3qVmuRxzzP3Q4A24fuByVBKQ39E | !!!666 | delisted | tron/trc10/1002438 |
@@ -12850,7 +12850,7 @@
 | Tron | BTT | TWkLwAgXtFHwQ93sQEpVA5SMJJnjBsGwJX | BitTorrent | delisted | tron/trc10/1001952 |
 | Tron | BTT | TGUTUbTMkHrmrQWATyUELKemD1fjj2vWZv | BitTorrent | delisted | tron/trc10/1001948 |
 | Tron | BTT | TFMAHNTS35ZNL5Pr9XToVVekyAbE9ts65Y | BitTorrent | delisted | tron/trc10/1000491 |
-| Tron | BTT | TAFjULxiVgT4qWk6UZwjqwZXTSaGaqnVp4 | BitTorrent |  | tron/trc20/TAFjULxiVgT4qWk6UZwjqwZXTSaGaqnVp4 |
+| Tron | BTT | TAFjULxiVgT4qWk6UZwjqwZXTSaGaqnVp4 | BitTorrent |  | tron/trc20/tafjulxivgt4qwk6uzwjqwzxtsagaqnvp4 |
 | Tron | BTTOLD | TF5Bn4cJCT6GVeUgyCN4rBhDg42KBrpAjg | BitTorrent Old | delisted | tron/trc10/1002000 |
 | Tron | BTT | TNMZhgyEAiMENBm2zcLpFs7j8VzQbdLn58 | BitTorrentToken | delisted | tron/trc10/1001940 |
 | Tron | BTV | TJUwM4qk1et2nNKuESQ7UVHPjAHoRqAz3T | BitValuta | delisted | tron/trc10/1002521 |
@@ -13169,7 +13169,7 @@
 | Tron | MANA | TSDVvhkFzRh6QDaQZ2HyZ6kuU5cft5LxrA | Decentraland | delisted | tron/trc10/1000072 |
 | Tron | XDCA | TXWm5yU5FKFpbMDhuN7aMGRsWSU8fGzauW | DecentralizeCurrency | delisted | tron/trc10/1002268 |
 | Tron | DMZ | TTnuC4yk9VSnFMQUvwsu6Z2Hz8ZzgFyntu | DecentralizedMindz | delisted | tron/trc10/1002560 |
-| Tron | USDD | TPYmHEhy5n8TCEfYGqW2rPxsghSfzghPDn | DecentralizedUSD |  | tron/trc20/TPYmHEhy5n8TCEfYGqW2rPxsghSfzghPDn |
+| Tron | USDD | TPYmHEhy5n8TCEfYGqW2rPxsghSfzghPDn | DecentralizedUSD |  | tron/trc20/tpymhehy5n8tcefygqw2rpxsghsfzghpdn |
 | Tron | DEEP | TN5w35HiqNVCSXUZUYzfhiqAeh83E6ojEG | DeepCloudAI | delisted | tron/trc10/1001834 |
 | Tron | DVU | TVVuAJjNw6J2TRXMzua1z6dusfSv4mQpJa | DejaVu | delisted | tron/trc10/1001278 |
 | Tron | DEKA | TSfMPxJnrA9H3mddUtD5ckMYx7EW11ZVE1 | Dekaay | delisted | tron/trc10/1000663 |
@@ -13265,7 +13265,7 @@
 | Tron | EOS | TUqHRKQ9KR8nEYYANn9vYt9e4wDWKeQSYz | EOS | delisted | tron/trc10/1000005 |
 | Tron | EOY | TXDLKf9zhyT2S27G2S7xAGVvJonWahT9yD | EOY | delisted | tron/trc10/1001217 |
 | Tron | EPICAL | TBitZMK7YSUb2Q1Cm537D5iAZSJkaPdN9c | EPICAL | delisted | tron/trc10/1002798 |
-| Tron | TEUR | TZJmk51TP3YEETw7phRP581A7H3VzLDFsa | EUR AlteWay Token |  | tron/trc20/TZJmk51TP3YEETw7phRP581A7H3VzLDFsa |
+| Tron | TEUR | TZJmk51TP3YEETw7phRP581A7H3VzLDFsa | EUR AlteWay Token |  | tron/trc20/tzjmk51tp3yeetw7phrp581a7h3vzldfsa |
 | Tron | EURT | TSSnRwHwcZghXZTneemh7k3DMSCLPiKds2 | EURT | delisted | tron/trc10/1000260 |
 | Tron | EVO | TSVCBAqfg3F4cJWDi6iwZgYFUHgTsaZYKG | EVO | delisted | tron/trc10/1001757 |
 | Tron | EWOK | TL5cogb1dAvNALVWATNinhw3MFRWDedFnG | EWOKS | delisted | tron/trc10/1001233 |
@@ -13670,8 +13670,8 @@
 | Tron | JPYT | TL2HwcjpW8c7kvBnu4N3VANH9CbHzVgT1D | JPYT | delisted | tron/trc10/1000263 |
 | Tron | JRP | TEnzEdfzodBFUMj7NAV4u6tuTqin2VDiEy | JRPMINES | delisted | tron/trc10/1000118 |
 | Tron | JUICE | TChQ691W4CkQA3cCQMGcoEUkc5FSebuG7E | JUICE | delisted | tron/trc10/1002173 |
-| Tron | JST | TCFLL5dx5ZJdKnWuesXxi1VPwjLVmWZZy9 | JUST GOV |  | tron/trc20/TCFLL5dx5ZJdKnWuesXxi1VPwjLVmWZZy9 |
-| Tron | USDJ | TMwFHYXLJaRUPeW6421aqXL4ZEzPRFGkGT | JUST Stablecoin |  | tron/trc20/TMwFHYXLJaRUPeW6421aqXL4ZEzPRFGkGT |
+| Tron | JST | TCFLL5dx5ZJdKnWuesXxi1VPwjLVmWZZy9 | JUST GOV |  | tron/trc20/tcfll5dx5zjdknwuesxxi1vpwjlvmwzzy9 |
+| Tron | USDJ | TMwFHYXLJaRUPeW6421aqXL4ZEzPRFGkGT | JUST Stablecoin |  | tron/trc20/tmwfhyxljarupew6421aqxl4zezprfgkgt |
 | Tron | JACK | TT3c35KUARtk8e6ek3qA6pAddFqu5t9Pyg | JackTronLottery | delisted | tron/trc10/1001911 |
 | Tron | JADE | TUMaabMDstPSrFn4GxQabEwiJFzSDBBHoo | Jade | delisted | tron/trc10/1001103 |
 | Tron | JAL | TCuoBySZpyzeaFiVEpKpwqkwEFRHEWNyWL | Jalmood | delisted | tron/trc10/1002175 |
@@ -13736,7 +13736,7 @@
 | Tron | FAKE | TLmFBokFvDgqPq6RhHJBmtJR65RHjVFz6r | Kiwiberry | delisted | tron/trc10/1001056 |
 | Tron | KCP | TDw8g8qHQxTmkmYXNTgGfAN7TsxfXFkX7o | KlassicCarParts | delisted | tron/trc10/1000184 |
 | Tron | KTC | THuzhRJx3D6nA2HzZ5F2Mdh4btVrTNSbg8 | KlayThompsonCoin | delisted | tron/trc10/1001979 |
-| Tron | KLV | TVj7RNVHy6thbM7BWdSe9G6gXwKhjhdNZS | Klever |  | tron/trc20/TVj7RNVHy6thbM7BWdSe9G6gXwKhjhdNZS |
+| Tron | KLV | TVj7RNVHy6thbM7BWdSe9G6gXwKhjhdNZS | Klever |  | tron/trc20/tvj7rnvhy6thbm7bwdse9g6gxwkhjhdnzs |
 | Tron | KC | TFqKh5dttnfrbRdALRht1H9zygm1KA4KLh | KloutCoin | delisted | tron/trc10/1001439 |
 | Tron | KOBE | TWJLVhZ9ziwBbhSPFLtewQf34uBG7bqene | Kobe | delisted | tron/trc10/1001496 |
 | Tron | KOBE | TTNAd9NcPcAj6A3NogxLPQnnngxv6Dkj2z | KobeBryantCoin | delisted | tron/trc10/1001492 |
@@ -14757,7 +14757,7 @@
 | Tron | TT | TGLLjWSwapkscCU5y8wi4Mj8zxnuLsqQfD | TestToken | delisted | tron/trc10/1001141 |
 | Tron | TTONE | TF4RLCzkQzCSXRxHqw1s7EAuABQnTQNHDX | TestTokenOne | delisted | tron/trc10/1002480 |
 | Tron | TSC | TLGYQzB8QHL9v9vpyPKAcCSxPo9wXmyfY6 | Testcoin | delisted | tron/trc10/1001954 |
-| Tron | USDT | TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t | Tether USD |  | tron/trc20/TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t |
+| Tron | USDT | TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t | Tether USD |  | tron/trc20/tr7nhqjekqxgtci8q8zy4pl8otszgjlj6t |
 | Tron | USDT | TQdeNKFF9rbpDdvKZLvXvE6ak5c43YxQ4u | TetherUSD | delisted | tron/trc10/1002553 |
 | Tron | USDT | TT75TjLbvcyvak8ZVGwDYv7qNKEPVSwXNb | TetherUSD | delisted | tron/trc10/1002546 |
 | Tron | TTT | TPGHykYb4JmC9h149d7v2MJNcLYM2EAe9G | Tetractys | delisted | tron/trc10/1000200 |
@@ -15018,7 +15018,7 @@
 | Tron | TWM | TPT1GXvYw9qwJfZidV63b3H3YZmLToXDnb | Tronwatchmarket | delisted | tron/trc10/1000976 |
 | Tron | TXW | TZGCMCa5Z8s832sJbNyNmvWP8ttoDyS5WH | TronworthFundersToken | delisted | tron/trc10/1002274 |
 | Tron | KING | TP1Gm1CDJySEBQfJxbFF6Wkqmf4HYQ5PFC | TrophyKing | delisted | tron/trc10/1001474 |
-| Tron | TUSD | TUpMhErZL2fhh4sVNULAbNKLokS4GjC1F4 | TrueUSD |  | tron/trc20/TUpMhErZL2fhh4sVNULAbNKLokS4GjC1F4 |
+| Tron | TUSD | TUpMhErZL2fhh4sVNULAbNKLokS4GjC1F4 | TrueUSD |  | tron/trc20/tupmherzl2fhh4svnulabnkloks4gjc1f4 |
 | Tron | TRUMP | TTGTKJBYDSANNpWsBHG2t7exzmjfjUt2Qd | TrumpCoin | delisted | tron/trc10/1000076 |
 | Tron | TP | TPdCRhxocjeHMc7Piq5iDBKcR5sJ89bBUC | Trumputin | delisted | tron/trc10/1000344 |
 | Tron | TRK | TCJs6vPNEE8CPezcDPqc5KoLBgQcTzgQ64 | Truxx | delisted | tron/trc10/1001391 |
@@ -15044,7 +15044,7 @@
 | Tron | USD | TXLivevusxZUuzS3cUyczryRCjd4f3FRqk | USD | delisted | tron/trc10/1000016 |
 | Tron | USDA | TVJ3JLWC9yQvUWKWqzVsyGLvATGiz3tsoH | USDA | delisted | tron/trc10/1002808 |
 | Tron | USDB | TEshuqjp4EV9W5T16WgjNL6BbnBhQwL91T | USDB | delisted | tron/trc10/1002205 |
-| Tron | USDC | TEkxiTehnzSmSe2XqrBj4w32RUN966rdz8 | USDCoin |  | tron/trc20/TEkxiTehnzSmSe2XqrBj4w32RUN966rdz8 |
+| Tron | USDC | TEkxiTehnzSmSe2XqrBj4w32RUN966rdz8 | USDCoin |  | tron/trc20/tekxitehnzsmse2xqrbj4w32run966rdz8 |
 | Tron | USDM | TWijmkvquZi81YtPfjexRfZAx1wpzrnXMY | USDM | delisted | tron/trc10/1002587 |
 | Tron | USDT | TDetKEyeWwYNnChT97TCoqhEeurKXnrQNt | USDT | delisted | tron/trc10/1000259 |
 | Tron | USA | TYt1HkJEyVq6ZrgwSrGYEa56G34XDz2Q4j | USMCvet | delisted | tron/trc10/1000220 |
@@ -15114,7 +15114,7 @@
 | Tron | WHY | TXNRmUqEVUdrXDNsVWgxAQmR5juxUF1dWr | WHISKY | delisted | tron/trc10/1001842 |
 | Tron | BYSD | TMWUs3PiSDkEXuXRwQi9ixoURH8vBSbioQ | WILLBUYSEEDatGmailcomDoublePrice | delisted | tron/trc10/1000825 |
 | Tron | WIN | TBzwNEE7D3DdTB4wALiSBaMmpSK7jdoxYF | WIN | delisted | tron/trc10/1000161 |
-| Tron | WIN | TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7 | WINK |  | tron/trc20/TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7 |
+| Tron | WIN | TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7 | WINK |  | tron/trc20/tla2f6vpqdgre67v1736s7bj8ray5wyju7 |
 | Tron | WS | TJMSD71HRq6Jpv7WzgBXZ824gciBV1t8V2 | WIST | delisted | tron/trc10/1002216 |
 | Tron | WIST | TAogFiGeTNNnfzj1fGJAGctV3JBqvJJEyY | WIST | delisted | tron/trc10/1002215 |
 | Tron | WL | TQijirN36heEBXZqY4EUaHqYr9GTuCtkvx | WL | delisted | tron/trc10/1001823 |
