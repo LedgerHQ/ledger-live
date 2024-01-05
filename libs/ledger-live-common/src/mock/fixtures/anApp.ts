@@ -21,7 +21,6 @@ export const anAppBuilder = (props?: Partial<App>): App => {
     supportURL: "",
     contactURL: "",
     sourceURL: "",
-    compatibleWallets: [],
     hash: "e1c24ea722f537af06f0ce8715200d99faec25153c8e8dc625f476a48d00215f",
     perso: "perso_11",
     firmware: "stax/1.2.1-il3/ethereum/app_1.10.2",
