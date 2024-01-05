@@ -41,6 +41,12 @@ export type ExchangeSellRaw = {
   fromAccount: AccountRawLike;
 };
 
+export type StartExchangeInput = {
+  deviceId: string;
+  exchangeType: number;
+  appVersion?: string;
+};
+
 interface CompleteExchangeInputCommon {
   rateType?: RateTypes;
   deviceId?: string;
