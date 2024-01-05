@@ -20,28 +20,18 @@ export const generateDeviceActionFlow = (scenario: BotScenario): DeviceAction<Tr
       expectedValue: ({ transaction }) => {
         const addr = Address.fromString(transaction.recipient);
         if (Address.isFilEthAddress(addr)) {
-          return addr.toEthAddressHex(true);
+          return addr.toEthAddressHex(true) + transaction.recipient;
         }
-        return transaction.recipient;
+        return "unexpected flow... address should be eth type";
       },
-    });
-    data.steps.push({
-      title: "To",
-      button: SpeculosButton.RIGHT,
-      expectedValue: ({ transaction }) => transaction.recipient,
     });
   } else if (scenario == BotScenario.ETH_RECIPIENT) {
     data.steps.push({
       title: "To",
       button: SpeculosButton.RIGHT,
-      expectedValue: ({ transaction }) => transaction.recipient,
-    });
-    data.steps.push({
-      title: "To",
-      button: SpeculosButton.RIGHT,
       expectedValue: ({ transaction }) => {
         const addr = Address.fromEthAddress(NetworkPrefix.Mainnet, transaction.recipient);
-        return addr.toString();
+        return transaction.recipient + addr.toString();
       },
     });
   } else {
