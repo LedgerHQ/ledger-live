@@ -26,6 +26,7 @@ import { getImplementation, ImplementationType } from "./implementations";
 
 export type State = {
   isLoading: boolean;
+  isDisconnected: boolean;
   requestQuitApp: boolean;
   requestOpenApp: string | null | undefined;
   requiresAppInstallation:
@@ -133,6 +134,7 @@ const mapResult = ({
 
 const getInitialState = (device?: Device | null | undefined, request?: AppRequest): State => ({
   isLoading: !!device,
+  isDisconnected: false,
   requestQuitApp: false,
   requestOpenApp: null,
   unresponsive: false,
@@ -179,13 +181,24 @@ const reducer = (state: State, e: Event): State => {
       };
 
     case "disconnected":
+      // disconnected event can happen for example:
+      // - when the wired device is unplugged
+      // - before a ask-open-app event when an other app is already open
       return {
         ...getInitialState(null, state.request),
         isLoading: !!e.expected,
+        isDisconnected: true,
       };
 
     case "deviceChange":
-      return { ...getInitialState(e.device, state.request), device: e.device };
+      // Preserve the current state when the device is disconnected to avoid displaying
+      // the loader drawer above the disconnected one.
+      if (state.isDisconnected) return state;
+
+      return {
+        ...getInitialState(e.device, state.request),
+        device: e.device,
+      };
 
     case "some-apps-skipped":
       return {
@@ -196,6 +209,7 @@ const reducer = (state: State, e: Event): State => {
     case "inline-install":
       return {
         isLoading: false,
+        isDisconnected: false,
         requestQuitApp: false,
         requiresAppInstallation: null,
         allowOpeningRequestedWording: null,
@@ -233,6 +247,10 @@ const reducer = (state: State, e: Event): State => {
       };
 
     case "error":
+      // Preserve the current state when the device is disconnected to avoid displaying
+      // an additional error message above the disconnected one.
+      if (state.isDisconnected) return state;
+
       return {
         ...getInitialState(state.device, state.request),
         device: state.device || null,
@@ -247,6 +265,7 @@ const reducer = (state: State, e: Event): State => {
     case "ask-open-app":
       return {
         isLoading: false,
+        isDisconnected: false,
         requestQuitApp: false,
         requiresAppInstallation: null,
         allowOpeningRequestedWording: null,
@@ -270,6 +289,7 @@ const reducer = (state: State, e: Event): State => {
     case "ask-quit-app":
       return {
         isLoading: false,
+        isDisconnected: false,
         requestOpenApp: null,
         requiresAppInstallation: null,
         allowOpeningRequestedWording: null,
@@ -293,6 +313,7 @@ const reducer = (state: State, e: Event): State => {
     case "device-permission-requested":
       return {
         isLoading: false,
+        isDisconnected: false,
         requestQuitApp: false,
         requestOpenApp: null,
         requiresAppInstallation: null,
@@ -317,6 +338,7 @@ const reducer = (state: State, e: Event): State => {
     case "device-permission-granted":
       return {
         isLoading: false,
+        isDisconnected: false,
         requestQuitApp: false,
         requestOpenApp: null,
         requiresAppInstallation: null,
@@ -350,6 +372,7 @@ const reducer = (state: State, e: Event): State => {
         derivation: null,
         displayUpgradeWarning: false,
         isLoading: false,
+        isDisconnected: false,
         unresponsive: false,
         isLocked: false,
         allowOpeningGranted: false,
@@ -384,6 +407,7 @@ const reducer = (state: State, e: Event): State => {
         device: state.device,
         error: null,
         isLoading: false,
+        isDisconnected: false,
         unresponsive: false,
         isLocked: false,
         opened: true,
