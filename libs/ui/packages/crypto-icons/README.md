@@ -8,7 +8,7 @@
 
 ## Reference
 
-[**🔗 Icons list**](https://react-ui-storybook.vercel.app/?path=/story/crypto-icons--list)
+[**🔗 Icons list**](https://react-ui-storybook.vercel.app/?path=/story/asorted-cryptoicons--list-crypto-icons)
 
 ## Installation
 
