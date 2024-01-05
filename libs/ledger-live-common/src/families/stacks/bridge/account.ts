@@ -148,9 +148,9 @@ const estimateMaxSpendable = async ({
 
   const tx = await makeUnsignedSTXTokenTransfer(options);
 
-  const [feeEst1, _feeEst2, _feeEst3] = await estimateTransaction(tx.payload);
+  const [feeEst] = await estimateTransaction(tx.payload);
 
-  const diff = spendableBalance.minus(new BigNumber(feeEst1.fee));
+  const diff = spendableBalance.minus(new BigNumber(feeEst.fee));
   return diff.gte(0) ? diff : new BigNumber(0);
 };
 
