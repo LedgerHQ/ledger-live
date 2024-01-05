@@ -4498,7 +4498,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     type: "CryptoCurrency",
     id: "linea_goerli",
     coinType: CoinType.ETH,
-    name: "Linea",
+    name: "Linea Goerli",
     managerAppName: "Ethereum",
     ticker: "ETH",
     scheme: "linea_goerli",
