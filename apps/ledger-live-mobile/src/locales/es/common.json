@@ -102,7 +102,7 @@
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
       "title" : "El precio de la transacción de sustitución es más bajo",
-      "description" : "La tarifa de red podría ser demasiado baja.Auméntala."
+      "description" : "La tarifa de red podría ser demasiado baja. Auméntala."
     },
     "countervaluesUnavailable" : {
       "title" : "No es posible ofrecerte una contraparte para este activo en este momento"
@@ -467,6 +467,18 @@
     "ElrondDelegationBelowMinimumError" : {
       "title" : "La delegación restante no puede ser menor a {{formattedAmount}}"
     },
+    "NotEnoughVTHO" : {
+      "title" : "Lo sentimos, fondos de VTHO insuficientes",
+      "description" : "Asegúrate de que la cuenta tenga VTHO suficientes."
+    },
+    "MustBeVechain" : {
+      "title" : "No es una cuenta de VeChain",
+      "description" : "Asegúrate de que la moneda es VTHO o VET"
+    },
+    "ImpossibleToCalculateAmountAndFees" : {
+      "title" : "No es posible calcular la cantidad y las tarifas",
+      "description" : "No es posible calcular la cantidad y las tarifas"
+    },
     "NotEnoughEGLDForFees" : {
       "title" : "EGLD insuficientes para pagar las tarifas de transacción",
       "description" : "Envía EGLD a tu cuenta para pagar las transacciones."
@@ -752,6 +764,9 @@
     "CardanoNotEnoughFunds" : {
       "title" : "Asegúrate de tener fondos suficientes para pagar las tarifas"
     },
+    "CardanoStakeKeyDepositError" : {
+      "title" : "Asegúrate de que tienes {{depositAmount}} ADA disponibles para depositar"
+    },
     "StacksMemoTooLong" : {
       "title" : "El memo es demasiado largo"
     },
@@ -1006,7 +1021,8 @@
     "week" : "1S",
     "month" : "1M",
     "year" : "1A",
-    "all" : "TODO"
+    "all" : "TODO",
+    "graphNotSupported" : "El gráfico no está disponible para este token"
   },
   "carousel" : {
     "title" : "¿Cerrar el banner?",
@@ -1106,7 +1122,7 @@
     },
     "enjoy" : {
       "title" : "¿Te gusta Ledger Live?\n¡Dale un poco de amor!",
-      "description" : "Déjanos una valoración positiva en App Store.",
+      "description" : "Déjanos una reseña positiva en App Store.",
       "cta" : {
         "rate" : "Evaluar Ledger Live",
         "notNow" : "Ahora no"
@@ -1475,7 +1491,7 @@
           "0" : {
             "title" : "Elige un código PIN",
             "label" : "Presiona el botón izquierdo o derecho para cambiar números. Presiona ambos botones para confirmar un número. Selecciona <0></0> para confirmar tu código PIN. Selecciona <1></1> para borrar un número.",
-            "desc" : "Presiona el botón izquierdo o derecho para cambiar números. Presiona ambos botones para confirmar un número. Selecciona <validIcon></validIcon>para confirmar tu código PIN. Selecciona <cancelIcon></cancelIcon>para borrar un número."
+            "desc" : "Presiona el botón izquierdo o derecho para desplazarte por los números. Presiona ambos botones para confirmar un número. Selecciona <validIcon></validIcon>para confirmar tu código PIN. Selecciona <cancelIcon></cancelIcon>para borrar un número."
           },
           "1" : {
             "title" : "Confirma código PIN",
@@ -1566,7 +1582,7 @@
         "desc" : "Tu Frase de recuperación es la única manera de recuperar tus cripto, en caso de no ser posible utilizar tu Nano. Debes conservarla en un lugar seguro.",
         "bullets" : {
           "0" : {
-            "label" : "Ingresa estas Palabras únicamente en una billetera de hardware, no en PCs, ni en teléfonos."
+            "label" : "Ingresa estas Palabras únicamente en una billetera de hardware, no la ingreses en una PC, ni en otros dispositivos como un smartphone."
           },
           "1" : {
             "label" : "Nunca compartas tus 24 Palabras con nadie, ni siquiera con Ledger."
@@ -1936,7 +1952,7 @@
   "earlySecurityCheck" : {
     "title" : "Verificación de Autenticidad y de actualización del SO",
     "idle" : {
-      "description" : "La Verificación de Autenticidad confirma que tu Ledger Stax es un dispositivo Ledger genuino.Las actualizaciones de SO garantizan de que el SO Ledger Stax está actualizado.",
+      "description" : "Este proceso verifica si tu Ledger Stax es un dispositivo Ledger auténtico.",
       "learnMore" : "Más información sobre la Verificación de Autenticidad",
       "checkCta" : "Verificar Ledger Stax"
     },
@@ -1944,8 +1960,8 @@
       "continueCta" : "Continuar a la configuración"
     },
     "earlySecurityCheckMandatoryDrawer" : {
-      "title" : "La Verificación de Autenticidad es obligatoria",
-      "description" : "No puedes configurar tu {{productName}} sin permitir antes esta Verificación.",
+      "title" : "¿Cancelar la Verificación de Autenticidad y la verificación de actualización del SO?",
+      "description" : "La Verificación de Autenticidad es obligatoria para poder seguir configurando tu {{productName}} con la aplicación Ledger Live.",
       "resumeCta" : "Reanudar verificación",
       "cancelCta" : "Cancelar verificaciones"
     },
@@ -1956,7 +1972,7 @@
       "cancelCta" : "Cancelar configuración",
       "notFoundEntity" : {
         "title" : "Iniciar Verificación de Autenticidad de nuevo",
-        "description" : "Primero tienes que desactivar el ajuste \"My Ledger Provider\" (Mi proveedor de Ledger). Para desactivarlo, abre los \"Ajustes\" de Ledger Live, selecciona \"Funciones experimentales\" y desactiva \"Mi proveedor de Ledger\".",
+        "description" : "Primero tienes que desactivar el ajuste \"My Ledger Provider\" (Proveedor de Mi Ledger). Para desactivarlo, abre los \"Ajustes\" de Ledger Live, selecciona \"Funciones experimentales\" y desactiva \"Proveedor de Mi Ledger\".",
         "settingsCta" : "Ir a Ajustes"
       }
     },
@@ -1966,36 +1982,36 @@
       "supportCta" : "Ponte en contacto con el Soporte de Ledger"
     },
     "allowManagerDrawer" : {
-      "title" : "Pulsa \"Permitir\" para posibilitar la Verificación de Autenticidad y la verificación de actualizaciones del SO"
+      "title" : "Toca “Allow” (Permitir) para iniciar la Verificación de Autenticidad."
     },
     "genuineCheckStep" : {
       "learnMore" : "Más información sobre la Verificación de Autenticidad",
       "inactive" : {
         "title" : "Verificación de autenticidad",
-        "description" : "La Verificación de Autenticidad confirma que tu {{productName}} es un Ledger genuino."
+        "description" : "Se verificará si tu {{productName}} es un Ledger auténtico."
       },
       "active" : {
         "title" : "Verificación de autenticidad",
-        "description" : "La Verificación de Autenticidad confirma que tu {{productName}} es un Ledger genuino."
+        "description" : "Se verificará si tu {{productName}} es un Ledger auténtico."
       },
       "completed" : {
         "title" : "Tu {{productName}} es auténtico",
-        "description" : "La Verificación de Autenticidad confirma que tu {{productName}} es un Ledger genuino."
+        "description" : ""
       },
       "refused" : {
         "title" : "Verificación de Autenticidad rechazada",
-        "description" : "No puedes configurar tu {{productName}} sin permitir antes esta Verificación.",
+        "description" : "La Verificación de Autenticidad es obligatoria para poder seguir configurando tu {{productName}} con la aplicación Ledger Live.",
         "cta" : "Reanudar verificación"
       },
       "error" : {
         "title" : "Verificación de autenticidad",
-        "description" : "La Verificación de Autenticidad confirma que tu {{productName}} es un Ledger genuino."
+        "description" : "La Verificación de Autenticidad verifica que tu {{productName}} sea un Ledger genuino."
       }
     },
     "firmwareUpdateCheckStep" : {
       "active" : {
         "title" : "Verificación de actualización del SO",
-        "description" : "La verificación de actualizaciones del SO garantiza que el sistema operativo {{productName}} está actualizado."
+        "description" : "Se verificará si el sistema operativo de tu {{productName}} está actualizado o no. "
       },
       "completed" : {
         "noUpdateAvailable" : {
@@ -2014,7 +2030,7 @@
       },
       "inactive" : {
         "title" : "Verificación de actualización del SO",
-        "description" : "La verificación de actualizaciones del SO garantiza que el sistema operativo {{productName}} está actualizado."
+        "description" : "Se verificará si el sistema operativo de tu Ledger Stax está actualizado o no. "
       }
     },
     "firmwareUpdateAvailableDrawer" : {
@@ -2071,7 +2087,7 @@
       "helpCta" : "Obtener ayuda"
     },
     "resyncOverlay" : {
-      "content" : "Conexión con {{productName}} perdida. Intentando reconectar..."
+      "content" : "Conexión con {{productName}} perdida. Intentando reconectar."
     },
     "helpDrawer" : {
       "title" : "¿Necesitas ayuda con el manual de configuración?",
@@ -2080,14 +2096,15 @@
       "supportCta" : "Hablar con una persona"
     },
     "earlySecurityCheckCompletedStep" : {
-      "title" : "Este {{productName}} es auténtico",
-      "description" : "Continua con la configuración desde tu {{productName}}."
+      "title" : "Tu {{productName}} es auténtico",
+      "subtitle" : "Es seguro usar este {{productName}}.  Puedes proceder a configurarlo.",
+      "description" : "Toca {{productName}} para iniciar la configuración."
     },
     "pinStep" : {
       "title" : "PIN",
       "doneTitle" : "PIN establecido",
-      "description" : "El PIN evita el acceso no deseado a tu {{productName}}.",
-      "continueOnDevice" : "Define el PIN en tu {{productName}}"
+      "description" : "Al igual que cualquier contraseña o código de acceso, el PIN te permite desbloquear tu {{productName}} e impedir accesos no deseados.",
+      "continueOnDevice" : "Configura el PIN en tu {{productName}}."
     },
     "seedStep" : {
       "title" : "Frase de recuperación secreta",
@@ -2095,17 +2112,25 @@
       "description" : "Tu Frase de recuperación es una lista secreta de 24 Palabras que genera una copia de respaldo de tus claves privadas. Tu {{productName}} genera una Frase de recuperación única. Ledger no conserva ninguna copia.",
       "choiceRestoreDirectOrRecover" : "Marcador de posición: elige la restauración directa o usa Recover.",
       "recoverSeed" : "Marcador de posición: Recover",
-      "restoreSeed" : "Para garantizar la seguridad de tus activos, utiliza una Frase de recuperación secreta generada por un Ledger.\n\n¿No tienes una? Usa tu {{productName}} para generar una Frase nueva.",
-      "selection" : "En {{productName}}, elige la opción de configuración que prefieras.",
-      "selectionContinueOnDevice" : "Toca una opción en {{productName}}",
-      "newSeedDescription" : "Puedes ver los siguientes videos para obtener más información sobre tus palabras secretas.",
+      "restoreSeed" : "Para que tus activos estén lo más seguros posible, utiliza una Frase de recuperación secreta generada por un dispositivo Ledger. \n\n¿No tienes una? Usa tu {{productName}} para generar una Frase nueva.",
+      "selection" : "Elige la opción de configuración que mejor se ajuste a tus necesidades:",
+      "selectionNewLedger" : {
+        "title" : "Configurar como nuevo Ledger",
+        "desc" : "Te permite crear una billetera nueva. Esta acción generará una Frase de recuperación secreta nueva."
+      },
+      "selectionRestore" : {
+        "title" : "Restaurar",
+        "desc" : "Te permitirá restaurar el acceso a activos que ya tengas con tu Frase de recuperación secreta o mediante Ledger Recover."
+      },
+      "selectionContinueOnDevice" : "Elige la opción que prefieras en tu {{productName}}.",
+      "newSeedDescription" : "¿Quieres obtener más información sobre la Frase de recuperación secreta? Mira estos videos:",
       "newSeedContinueOnDevice" : "Haz esto en tu {{productName}}",
-      "recovery" : "Para garantizar la seguridad de tus activos, utiliza una Frase de recuperación secreta generada por un Ledger.\n\n¿No tienes una? Usa tu {{productName}} para generar una Frase nueva.",
-      "restoreChoiceContinueOnDevice" : "Elige una opción en tu {{productName}}",
+      "recovery" : "Para que tus activos estén lo más seguros posible, utiliza una Frase de recuperación secreta generada por un dispositivo Ledger. \n\n¿No tienes una? Usa tu {{productName}} para generar una Frase nueva.",
+      "restoreChoiceContinueOnDevice" : "Elige la opción que prefieras en tu {{productName}}.",
       "restoreChoiceSRPTitle" : "Restauración con la Frase de recuperación secreta",
-      "restoreChoiceSRPDescription" : "Asegúrate de utilizar una Frase generada por un Ledger para garantizar la seguridad de tus activos.",
+      "restoreChoiceSRPDescription" : "Para garantizar la máxima seguridad, utiliza una Frase de recuperación secreta generada por un dispositivo Ledger. ",
       "restoreChoiceRecoverTitle" : "Restaurar con Ledger Recover",
-      "restoreChoiceRecoverDescription" : "Para restaurar la copia de respaldo de tu Frase de recuperación, inicia sesión en tu cuenta de Ledger y confirma tu identidad."
+      "restoreChoiceRecoverDescription" : "Si te has suscrito a Ledger Recover, inicia sesión en tu suscripción para iniciar el proceso de restauración de la copia de respaldo de tu Frase de recuperación secreta."
     },
     "softwareChecksSteps" : {
       "title" : "Comprobaciones de hardware y software",
@@ -2123,7 +2148,7 @@
       }
     },
     "appsStep" : {
-      "title" : "Instalar aplicaciones de la cadena de bloques"
+      "title" : "Instalar aplicaciones en {{productName}}"
     },
     "readyStep" : {
       "title" : "Fin de la configuración",
@@ -2164,7 +2189,7 @@
     },
     "emptyState" : {
       "noAppsTitle" : "Instalar una aplicación en mi dispositivo",
-      "noAppsDesc" : "Instala las aplicaciones en tu dispositivo antes de agregar cuentas en Ledger Live.Accede a Mi Ledger para instalar las aplicaciones.",
+      "noAppsDesc" : "Instala las aplicaciones en tu dispositivo antes de agregar cuentas en Ledger Live. Accede a Mi Ledger para instalar las aplicaciones.",
       "noAccountsTitle" : "No tienes ninguna cuenta…",
       "noAccountsDesc" : "Agrega cuentas a tu Portfolio.",
       "buttons" : {
@@ -2209,6 +2234,20 @@
       "send" : "Enviar",
       "deposit" : "Recibir",
       "stake" : "Participar"
+    },
+    "recoverBanner" : {
+      "subscribeDone" : {
+        "title" : "Termina de agregar tu tarjeta de pago",
+        "description" : "Restauración fiable con Ledger Recover."
+      },
+      "verifyIdentity" : {
+        "title" : "Termina de verificar tu identidad",
+        "description" : "Restauración fiable con Ledger Recover."
+      },
+      "connectDevice" : {
+        "title" : "Último paso: conecta tu Ledger",
+        "description" : "Solo te queda un paso para disfrutar de Ledger Recover."
+      }
     }
   },
   "addAccountsModal" : {
@@ -2509,6 +2548,7 @@
       }
     },
     "availableBalance" : "Saldo disponible",
+    "claimableRewards" : "Recompensas reclamables",
     "totalSupplied" : "Importe depositado",
     "tronFrozen" : "Inmovilizado",
     "bandwidth" : "Ancho de banda",
@@ -2847,6 +2887,18 @@
         "experimentalExplorers" : {
           "title" : "API de Experimental Explorers",
           "description" : "Prueba la siguiente versión de los exploradores de cadena de bloques de Ledger. La modificación de esta configuración puede afectar el saldo de la cuenta y la sincronización, como así también la opción de envío."
+        },
+        "1559DeactivateGate" : {
+          "title" : "Desactivar umbral de tarifa de prioridad mínima EIP1559",
+          "description" : "Esto permite enviar una transacción sin ninguna expectativa de tarifa de prioridad mínima. Optar por ello puede provocar que una transacción quede bloqueada en el pool de memoria para siempre."
+        },
+        "1559CustomPriorityLowerGate" : {
+          "title" : "Umbral de tarifa de prioridad personalizada",
+          "description" : "Personaliza el porcentaje de nuestra tarifa de prioridad mínima calculada permitida para una transacción EIP1559 avanzada."
+        },
+        "1559CustomBaseFeeMultiplier" : {
+          "title" : "Multiplicador personalizado para la tarifa base",
+          "description" : "Personaliza el multiplicador utilizado para la tarifa base que compone el maxFeePerGas de la transacción EIP1559"
         },
         "experimentalListAppsV2" : {
           "title" : "Aplicaciones experimentales de lista para Mi Ledger",
@@ -3650,7 +3702,7 @@
       "message" : "Comprueba siempre que tu dispositivo muestre una dirección exactamente igual a la recibida.",
       "success" : "Activos inmovilizados",
       "amount" : "Importe",
-      "info" : "Empezarás a ganar {{resource}} una vez que la red haya confirmado la inmovilización. En breve podrás votar a superrepresentates para recibir recompensas.",
+      "info" : "Empezarás a ganar {{resource}} una vez que la red haya confirmado la inmovilización. En breve podrás votar a superrepresentantes  para recibir recompensas.",
       "button" : {
         "pending" : "Se está validando la transacción.",
         "pendingDesc" : "Espera un momento antes de votar.",
@@ -3789,6 +3841,11 @@
         "title" : "Agregar token",
         "disclaimer" : "{{tokenName}} es un token BEP-20.\nPuedes recibir tokens directamente en una cuenta de BNB.",
         "learnMore" : "Más información acerca de BEP-20"
+      },
+      "vip180" : {
+        "title" : "Agregar token",
+        "disclaimer" : "{{tokenName}} es un token VIP180.\nPuedes recibir tokens directamente en una cuenta de VET.",
+        "learnMore" : "Obtén más información sobre VIP180"
       }
     },
     "showMoreChainType" : "Más tipos de direcciones",
@@ -3887,7 +3944,7 @@
     },
     "deviceNotFoundPairNewDevice" : "Emparejar con bluetooth",
     "headerDescription" : "Asegúrate de que tu {{productName}} esté desbloqueado y el Bluetooth habilitado",
-    "usb" : "... o conecta el cable USB",
+    "usb" : "... o conectar mediante el cable USB",
     "usbLabel" : "Conecta el cable USB e ingresa el código PIN en el dispositivo",
     "withoutDeviceHeader" : "No llevo el dispositivo conmigo",
     "withoutDevice" : "Continuar sin mi dispositivo",
@@ -3959,7 +4016,7 @@
     "GenuineCheck" : {
       "title" : "Verificación de autenticidad del dispositivo",
       "accept" : "No apagues tu Nano X. Asegúrate de permitir una <1>Conexión Segura con Ledger</1>.",
-      "info" : "Este paso confirma que tu Nano es auténtico."
+      "info" : "Este paso verifica que tu Nano sea auténtico."
     },
     "ScanningHeader" : {
       "title" : "Buscando dispositivos",
@@ -3994,6 +4051,8 @@
       "addALedger" : "Agregar un Ledger",
       "addWithBluetooth" : "Agregar con Bluetooth",
       "addNewCTA" : "Agregar nueva",
+      "showAllCTA" : "Mostrar todos los {{count}} Ledgers",
+      "showLessCTA" : "Mostrar menos",
       "otgBanner" : "Para usar un Ledger Nano S o Ledger Nano S Plus, conéctalo con el cable USB.",
       "connectExistingLedger" : "Conectar un Ledger existente",
       "connectExistingLedgerDescription" : "Si tu Ledger ya está configurado",
@@ -4199,7 +4258,7 @@
     "waitForFirmwareUpdate" : "Espera a que finalice la actualización de firmware en tu dispositivo",
     "waitForInstallationToFinish" : "Espera a que finalice la instalación en {{deviceName}}",
     "staxBatteryLow" : "Ledger Stax no tiene suficiente batería para realizar la actualización",
-    "staxBatteryLowDescription" : "Para iniciar la actualización del SO, necesitas una carga mínima del 20% o mantener tu Ledger Stax cargando.",
+    "staxBatteryLowDescription" : "Para iniciar la actualización del SO, necesitas una carga mínima del {{lowBatteryPercentage}} % o mantener tu Ledger Stax cargando.",
     "updateCancelled" : "Instalación de actualización de SO cancelada en {{deviceName}}",
     "updateCancelledDescription" : "Si se trata de un error, vuelve a iniciar la actualización.",
     "updateNotYetComplete" : "La actualización del SO está en curso",
@@ -4214,6 +4273,7 @@
     "newVersionNumber" : "Nueva versión",
     "success" : "Firmware actualizado",
     "update" : "Actualizar",
+    "retryBatteryCheck" : "Enchúfalo y vuelve a intentarlo",
     "Notifications" : {
       "confirmOnDevice" : "Necesitamos que lo confirmes en el dispositivo",
       "preparingUpdate" : "Transfiriendo actualización. Te informaremos cuando finalice el proceso",
@@ -4317,7 +4377,7 @@
     "action" : "Continuar con la actualización"
   },
   "systemLanguageAvailable" : {
-    "title" : "¿Deseas cambiar el idioma de tu app?",
+    "title" : "¿Deseas cambiar el idioma de tu aplicación?",
     "description" : {
       "newSupport" : "¡Buenas noticias! Nuestros equipos han estado trabajando arduamente y Ledger Live ahora está en {{language}}.",
       "advice" : "Puedes cambiar el idioma más adelante desde los Ajustes."
@@ -4348,7 +4408,7 @@
     "languageInstalledDesc" : "Tu dispositivo ahora está en el idioma que elegiste",
     "firmwareUpdatePrompt" : {
       "title" : "¿Cambiar tu {{deviceName}} a {{language}}?",
-      "description" : "Ya está disponible el idioma {{language}} para tu {{deviceName}}. Puedes cambiar el idioma de tu dispositivo ahora o en cualquier momento desde My Ledger."
+      "description" : "Ya está disponible el idioma {{language}} para tu {{deviceName}}. Puedes cambiar el idioma de tu dispositivo ahora o en cualquier momento desde Mi Ledger."
     },
     "installingLanguage" : "Instalando idioma",
     "languages" : {
@@ -4832,6 +4892,10 @@
       "delegationUnavailable" : {
         "title" : "Delegación no disponible",
         "description" : "No hay saldo suficiente disponible en la cuenta para iniciar una nueva delegación."
+      },
+      "claimable" : {
+        "title" : "Recompensas reclamables",
+        "description" : "En este momento, la opción de reclamar recompensas en USDC no está disponible. Usa una billetera de terceros para hacerlo."
       }
     },
     "delegation" : {
@@ -5652,6 +5716,20 @@
       "totalStake" : "Participación total",
       "commission" : "Comisión",
       "stakeActivationState" : "Provincia",
+      "stakeActivePercent" : "Activo",
+      "stakeAvailableBalance" : "Saldo disponible",
+      "actions" : {
+        "activate" : "Activar",
+        "deactivate" : "Desactivar",
+        "reactivate" : "Reactivar",
+        "withdraw" : "Retirar"
+      },
+      "states" : {
+        "active" : "Activo",
+        "inactive" : "Inactivo",
+        "activating" : "Activando",
+        "deactivating" : "Desactivando"
+      },
       "delegationEarn" : "Puedes recibir recompensas SOL delegando tu activos.",
       "info" : "Cómo funciona la delegación",
       "broadcastSuccessTitle" : "Operación enviada",
@@ -5659,7 +5737,8 @@
       "delegatedTo" : "Delegado a",
       "started" : {
         "description" : "Puedes recibir recompensas delegando tus activos SOL a un validador."
-      }
+      },
+      "reserveWarning" : "Asegúrate de reservar al menos {{amount}} SOL en tu billetera para cubrir las futuras tarifas de red, necesarias para quitar de participación tus activos y retirarlos."
     }
   },
   "near" : {
@@ -5870,13 +5949,8 @@
       "claimReward" : "Es posible reclamar las recompensas cada 24 horas.",
       "cosmos" : {
         "claimReward" : "Si el validador seleccionado tiene recompensas pendientes, se reclamarán automáticamente.",
-        "redelegate" : "Tendrás que esperar 21 días para que los activos desdelegados vuelvan al saldo disponible.",
-        "undelegate" : "Tendrás que esperar 21 días para que los activos desdelegados vuelvan al saldo disponible."
-      },
-      "osmosis" : {
-        "claimReward" : "Si el validador seleccionado tiene recompensas pendientes, se reclamarán automáticamente.",
-        "redelegate" : "Tendrás que esperar 14 días para que los activos desdelegados vuelvan al saldo disponible.",
-        "undelegate" : "Tendrás que esperar 14 días para que los activos desdelegados vuelvan al saldo disponible."
+        "redelegate" : "Tendrás que esperar {{numberOfDays}} días para que los activos desdelegados vuelvan al saldo disponible.",
+        "undelegate" : "Tendrás que esperar {{numberOfDays}} días para que los activos desdelegados vuelvan al saldo disponible."
       },
       "lending" : "Verifica los detalles de la operación en tu dispositivo antes de enviarlos."
     },
@@ -6344,6 +6418,12 @@
         "titleCompleted" : "Activos transferidos al Ledger",
         "description" : "Transfiere fácilmente activos desde Coinbase o cualquier otro exchange o billetera.",
         "popupLabel" : "Activos transferidos"
+      },
+      "buyCrypto" : {
+        "title" : "Comprar cripto",
+        "titleCompleted" : "Activos transferidos al Ledger",
+        "description" : "Elige entre más de 500 monedas y las mejores ofertas de proveedores de compras, adaptadas a tus preferencias.",
+        "popupLabel" : "Cripto comprada"
       }
     }
   },
