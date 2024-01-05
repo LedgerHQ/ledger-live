@@ -57,6 +57,7 @@ console.error = (...args) => {
   }
   originalError.call(console, ...args);
 };
+
 console.warn = (...args) => {
   const warning = args.join();
   if (EXCLUDED_WARNINGS.some(excluded => warning.includes(excluded))) {

@@ -8,13 +8,16 @@ const testPathIgnorePatterns = [
   "cli/",
   "test-helpers/",
 ];
+
 let testRegex = "(/__tests__/.*|(\\.|/)(test|spec))\\.[jt]sx?$";
 if (process.env.IGNORE_INTEGRATION_TESTS) {
   testPathIgnorePatterns.push(".*\\.integration\\.test\\.[tj]s");
 }
+
 if (process.env.ONLY_INTEGRATION_TESTS) {
   testRegex = "(/__tests__/.*|(\\.|/)integration\\.(test|spec))\\.[jt]sx?$";
 }
+
 const reporters = ["default"];
 if (process.env.CI) {
   reporters.push("github-actions");
