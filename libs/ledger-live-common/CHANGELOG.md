@@ -1,5 +1,20 @@
 # @ledgerhq/live-common
 
+## 33.4.0-next.1
+
+### Patch Changes
+
+- [#5736](https://github.com/LedgerHQ/ledger-live/pull/5736) [`d49f444`](https://github.com/LedgerHQ/ledger-live/commit/d49f44417fd175affe71da589c0ca380e88fbb35) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Update CAL
+
+- Updated dependencies [[`d49f444`](https://github.com/LedgerHQ/ledger-live/commit/d49f44417fd175affe71da589c0ca380e88fbb35)]:
+  - @ledgerhq/cryptoassets@11.3.1-next.0
+  - @ledgerhq/coin-algorand@0.3.8-next.0
+  - @ledgerhq/coin-evm@0.11.2-next.0
+  - @ledgerhq/coin-framework@0.10.1-next.0
+  - @ledgerhq/coin-polkadot@0.5.1-next.0
+  - @ledgerhq/hw-app-eth@6.35.2-next.0
+  - @ledgerhq/hw-app-vet@0.1.1-next.0
+
 ## 33.4.0-next.0
 
 ### Minor Changes
