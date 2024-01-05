@@ -1,4 +1,4 @@
-# `@ledgerhq/icons-ui`
+# `@ledgerhq/crypto-icons-ui`
 
 [![npm](https://img.shields.io/npm/v/@ledgerhq/crypto-icons-ui)](https://www.npmjs.com/package/@ledgerhq/crypto-icons-ui)
 
