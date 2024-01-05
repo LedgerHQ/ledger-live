@@ -43,8 +43,8 @@ export const initialStepId = ({
   deviceInfo.isOSU
     ? "updateMCU"
     : manager.firmwareUpdateNeedsLegacyBlueResetInstructions(deviceInfo, device.modelId)
-      ? "resetDevice"
-      : "idCheck";
+    ? "resetDevice"
+    : "idCheck";
 
 /**
  * Entry point of the firmware update

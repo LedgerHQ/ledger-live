@@ -109,12 +109,15 @@ const UpdateModal = ({
 
   const isDisconnectedDeviceError = err instanceof DisconnectedDevice;
   const isDisconnectedDeviceDuringOperationError = err instanceof DisconnectedDeviceDuringOperation;
-  const isDeviceDisconnected = isDisconnectedDeviceError || isDisconnectedDeviceDuringOperationError;
+  const isDeviceDisconnected =
+    isDisconnectedDeviceError || isDisconnectedDeviceDuringOperationError;
 
   console.log("DEVICE", deviceModelId, props.device, updatedDeviceInfo);
 
   const onRequestCancel = useCallback(() => {
-    (showDisclaimer && !isDeviceDisconnected) || stateStepId === "finish" || cancel ? onRequestClose() : setCancel(true);
+    (showDisclaimer && !isDeviceDisconnected) || stateStepId === "finish" || cancel
+      ? onRequestClose()
+      : setCancel(true);
   }, [cancel, showDisclaimer, isDeviceDisconnected, stateStepId, onRequestClose]);
 
   const createSteps = useCallback(
@@ -122,9 +125,10 @@ const UpdateModal = ({
       const hasRestoreStep =
         firmware && isDeviceLocalizationSupported(firmware.final.name, deviceModelId);
 
-      const restoreStepLabel = stateStepId === "finish"
-        ? t("manager.modal.steps.restoreDone")
-        : t("manager.modal.steps.restore");
+      const restoreStepLabel =
+        stateStepId === "finish"
+          ? t("manager.modal.steps.restoreDone")
+          : t("manager.modal.steps.restore");
 
       const installUpdateLabel =
         stateStepId === "finish" || stateStepId === "restore"
@@ -143,8 +147,8 @@ const UpdateModal = ({
         label: firmware?.osu?.hash
           ? t("manager.modal.identifier")
           : stateStepId === "resetDevice" || stateStepId === "idCheck"
-            ? t("manager.modal.steps.prepare")
-            : t("manager.modal.steps.prepareDone"),
+          ? t("manager.modal.steps.prepare")
+          : t("manager.modal.steps.prepareDone"),
         component: StepPrepare,
       };
 

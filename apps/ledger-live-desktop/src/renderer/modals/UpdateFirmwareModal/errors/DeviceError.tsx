@@ -39,7 +39,6 @@ const DeviceCancel = ({
     }
   }, [error, history, onDrawerClose, setDrawer, shouldReloadManagerOnCloseIfUpdateRefused]);
 
-  console.log("ERROR", error);
   const isUserRefusedFirmwareUpdate = error instanceof UserRefusedFirmwareUpdate;
   const isDeviceLockedError = error instanceof LockedDeviceError;
   const isRestoreStepRefusedOnDevice =

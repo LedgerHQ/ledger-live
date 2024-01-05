@@ -22,7 +22,7 @@ const Bar = styled.div.attrs<{ state: TransitionStatus; withPaddingTop: boolean 
   style: {
     ...transitionStyles[props.state as keyof typeof transitionStyles],
   },
-})) <{ state: TransitionStatus; index: number; withPaddingTop: boolean }>`
+}))<{ state: TransitionStatus; index: number; withPaddingTop: boolean }>`
   position: absolute;
   top: 0;
   left: 0;
