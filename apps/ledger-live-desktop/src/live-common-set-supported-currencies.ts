@@ -92,4 +92,5 @@ setSupportedCurrencies([
   "neon_evm",
   "lukso",
   "linea",
+  "linea_goerli",
 ]);

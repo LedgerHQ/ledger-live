@@ -4494,6 +4494,35 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  linea_goerli: {
+    type: "CryptoCurrency",
+    id: "linea_goerli",
+    coinType: CoinType.ETH,
+    name: "Linea",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    scheme: "linea_goerli",
+    color: "#000000",
+    family: "evm",
+    units: ethereumUnits("ETH", "ETH"),
+    disableCountervalue: false,
+    isTestnetFor: "linea",
+    ethereumLikeInfo: {
+      chainId: 59140,
+      node: { type: "external", uri: "https://rpc.goerli.linea.build" },
+      explorer: {
+        type: "etherscan",
+        uri: "https://api-testnet.lineascan.build/api",
+      },
+    },
+    explorerViews: [
+      {
+        tx: "https://goerli.lineascan.build/tx/$hash",
+        address: "https://goerli.lineascan.build/address/$address",
+        token: "https://goerli.lineascan.build/token/$address",
+      },
+    ],
+  },
   // Keep it at the bottom
   // Tickers dup
   binance_beacon_chain: {

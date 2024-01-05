@@ -164,7 +164,8 @@ export type CryptoCurrencyId =
   | "casper"
   | "neon_evm"
   | "lukso"
-  | "linea";
+  | "linea"
+  | "linea_goerli";
 
 export type LedgerExplorerId =
   | "btc"
