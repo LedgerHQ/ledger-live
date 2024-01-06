@@ -1,5 +1,11 @@
 # @ledgerhq/icons-ui
 
+## 0.7.1-nightly.0
+
+### Patch Changes
+
+- [#5820](https://github.com/LedgerHQ/ledger-live/pull/5820) [`fc2cf04`](https://github.com/LedgerHQ/ledger-live/commit/fc2cf04c8d3cd55503ea19aeb21fd12ee55046f6) Thanks [@lvndry](https://github.com/lvndry)! - Rename Coreum ticker to COREUM
+
 ## 0.7.0
 
 ### Minor Changes

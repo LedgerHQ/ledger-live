@@ -111,6 +111,8 @@
     "@actions/desktop-report-build": "1.0.0"
   },
   "changesets": [
+    "angry-needles-kneel",
+    "big-beds-lie",
     "big-emus-hug",
     "bright-insects-allow",
     "brown-phones-jump",
@@ -127,6 +129,7 @@
     "hungry-lizards-scream",
     "itchy-oranges-crash",
     "late-apples-complain",
+    "little-ducks-build",
     "long-grapes-serve",
     "many-toys-know",
     "moody-plums-attend",
@@ -140,6 +143,7 @@
     "red-sloths-do",
     "rude-suits-push",
     "shaggy-bananas-sparkle",
+    "sharp-buttons-rescue",
     "sharp-clocks-hide",
     "shiny-vans-dream",
     "sixty-rules-wait",

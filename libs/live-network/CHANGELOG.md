@@ -1,5 +1,11 @@
 # @ledgerhq/live-network
 
+## 1.1.11-nightly.1
+
+### Patch Changes
+
+- [#5785](https://github.com/LedgerHQ/ledger-live/pull/5785) [`dd5d930`](https://github.com/LedgerHQ/ledger-live/commit/dd5d9308e0e3ef8ca78f879c15bc07313ef3c8c4) Thanks [@lvndry](https://github.com/lvndry)! - Inject https agent in all platform other than mobile
+
 ## 1.1.11-nightly.0
 
 ### Patch Changes

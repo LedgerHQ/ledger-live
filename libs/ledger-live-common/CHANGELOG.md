@@ -1,5 +1,24 @@
 # @ledgerhq/live-common
 
+## 33.4.0-nightly.8
+
+### Patch Changes
+
+- [#5715](https://github.com/LedgerHQ/ledger-live/pull/5715) [`784c1ac`](https://github.com/LedgerHQ/ledger-live/commit/784c1aceddac6751fa03e117df20729513e37a54) Thanks [@cng-ledger](https://github.com/cng-ledger)! - fix(LIVE-10552): change quote refresh rate to 20 seconds
+
+- [#5650](https://github.com/LedgerHQ/ledger-live/pull/5650) [`e4c8b3a`](https://github.com/LedgerHQ/ledger-live/commit/e4c8b3a8200a3e002e4ac130a8b4f3857c5df84e) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Replace hardcoded countervalues URL with env var
+
+- Updated dependencies [[`fc2cf04`](https://github.com/LedgerHQ/ledger-live/commit/fc2cf04c8d3cd55503ea19aeb21fd12ee55046f6), [`dd5d930`](https://github.com/LedgerHQ/ledger-live/commit/dd5d9308e0e3ef8ca78f879c15bc07313ef3c8c4)]:
+  - @ledgerhq/cryptoassets@11.4.0-nightly.1
+  - @ledgerhq/crypto-icons-ui@0.7.1-nightly.0
+  - @ledgerhq/live-network@1.1.11-nightly.1
+  - @ledgerhq/coin-algorand@0.3.8-nightly.1
+  - @ledgerhq/coin-evm@0.12.0-nightly.3
+  - @ledgerhq/coin-framework@0.11.0-nightly.1
+  - @ledgerhq/coin-polkadot@0.5.1-nightly.1
+  - @ledgerhq/hw-app-eth@6.35.2-nightly.1
+  - @ledgerhq/hw-app-vet@0.1.1-nightly.1
+
 ## 33.4.0-nightly.7
 
 ### Patch Changes
