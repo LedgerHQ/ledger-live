@@ -99,11 +99,16 @@ export const errorInterceptor = (error: InterceptedError): InterceptedError => {
 axios.interceptors.request.use(requestInterceptor);
 axios.interceptors.response.use(responseInterceptor, errorInterceptor);
 
-// not react native
-if (!(typeof navigator !== "undefined" && navigator.product === "ReactNative")) {
+/**
+ * We only allow HTTPS agent on platforms other than LLM because
+ * https library is not compatible with react native
+ */
+const NETWORK_USE_HTTPS_KEEP_ALIVE = !getEnv("LEDGER_CLIENT_VERSION")?.startsWith("llm-");
+if (NETWORK_USE_HTTPS_KEEP_ALIVE) {
   // the keepAlive is necessary when we make a lot of request in in parallel, especially for bitcoin sync. Otherwise, it may raise "connect ETIMEDOUT" error
+  // this should only be needed in Windows as UNIX systems reuse TCP packets by default
   // refer to https://stackoverflow.com/questions/63064393/getting-axios-error-connect-etimedout-when-making-high-volume-of-calls
-  // eslint-disable-next-line global-require,@typescript-eslint/no-var-requires
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const https = require("https");
   axios.defaults.httpsAgent = new https.Agent({ keepAlive: true });
 }
@@ -154,7 +159,7 @@ const extractErrorMessage = (raw: string): string | undefined => {
 
 const implementation = <T = any>(arg: AxiosRequestConfig): AxiosPromise<T> => {
   invariant(typeof arg === "object", "network takes an object as parameter");
-  let promise;
+  let promise: AxiosPromise;
 
   if (arg.method === "GET") {
     if (!("timeout" in arg)) {
