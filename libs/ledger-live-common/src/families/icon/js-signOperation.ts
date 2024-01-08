@@ -1,6 +1,5 @@
 import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
-import { FeeNotLoaded } from "@ledgerhq/errors";
 
 import type { IconAccount, Transaction } from "./types";
 import type { Account, Operation, SignOperationEvent } from "@ledgerhq/types-live";
@@ -34,7 +33,7 @@ const buildOptimisticOperation = (
     accountId: account.id,
     transactionSequenceNumber: getNonce(account as IconAccount),
     date: new Date(),
-    extra: { additionalField: transaction.amount },
+    extra: {},
   };
 
   return operation;
@@ -70,10 +69,6 @@ const signOperation = ({
           o.next({
             type: "device-signature-requested",
           });
-
-          if (!transaction.fees) {
-            throw new FeeNotLoaded();
-          }
 
           const { unsigned, rawTransaction } = await buildTransaction(
             account as IconAccount,

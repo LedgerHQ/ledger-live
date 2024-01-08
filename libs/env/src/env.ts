@@ -244,7 +244,7 @@ const envDefinitions = {
     def: "https://icon.coin.ledger.com/node/api/v3",
     desc: "ICON RPC url",
   },
-  ICON_TESTNET_RPC_ENDPOINT: {
+  ICON_TESTNET_NODE_ENDPOINT: {
     parser: stringParser,
     def: "https://berlin.net.solidwallet.io/api/v3",
     desc: "ICON Berlin Testnet API url",
@@ -254,7 +254,7 @@ const envDefinitions = {
     def: "https://tracker.icon.community/api/v1",
     desc: "ICON API url",
   },
-  ICON_TESTNET_API_ENDPOINT: {
+  ICON_TESTNET_INDEXER_ENDPOINT: {
     parser: stringParser,
     def: "https://tracker.berlin.icon.community/api/v1",
     desc: "ICON Berlin Testnet API url",

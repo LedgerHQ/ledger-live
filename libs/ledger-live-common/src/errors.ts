@@ -152,5 +152,4 @@ export * from "./families/stellar/errors";
 export * from "./families/solana/errors";
 export * from "./families/cardano/errors";
 export * from "./families/near/errors";
-export * from "./families/icon/errors";
 export * from "@ledgerhq/coin-evm/errors";

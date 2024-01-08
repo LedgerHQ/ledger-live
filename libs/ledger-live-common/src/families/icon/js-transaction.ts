@@ -4,8 +4,6 @@ import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelp
 import getEstimatedFees from "./js-getFeesForTransaction";
 import estimateMaxSpendable from "./js-estimateMaxSpendable";
 
-const sameFees = (a, b) => (!a || !b ? a === b : a.eq(b));
-
 /**
  * Create an empty transaction
  *
@@ -27,13 +25,8 @@ export const createTransaction = (): Transaction => ({
  * @param {Transaction} t
  */
 export const prepareTransaction = async (a: IconAccount, t: Transaction): Promise<Transaction> => {
-  let fees = t.fees;
+  const fees = await getEstimatedFees({ a, t });
 
-  fees = await getEstimatedFees({ a, t });
-
-  if (!sameFees(t.fees, fees)) {
-    return { ...t, fees };
-  }
   const amount = t.useAllAmount
     ? await estimateMaxSpendable({
         account: a,

@@ -50,9 +50,6 @@ import { SolanaDelegationFlowParamList } from "~/families/solana/DelegationFlow/
 import { StellarAddAssetFlowParamList } from "~/families/stellar/AddAssetFlow/types";
 import { TezosDelegationFlowParamList } from "~/families/tezos/DelegationFlow/types";
 import { TronVoteFlowParamList } from "~/families/tron/VoteFlow/types";
-import { IconFreezeFlowParamList } from "../families/icon/FreezeFlow/type";
-import { IconUnfreezeFlowParamList } from "../families/icon/UnfreezeFlow/type";
-import { IconVoteFlowParamList } from "../families/icon/VoteFlow/types";
 import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
 import { SignMessageNavigatorStackParamList } from "~/components/RootNavigator/types/SignMessageNavigator";
 import { useTransactionDeviceAction } from "~/hooks/deviceActions";
@@ -104,19 +101,7 @@ type Props =
   | StackNavigatorProps<TezosDelegationFlowParamList, ScreenName.DelegationConnectDevice>
   | StackNavigatorProps<TronVoteFlowParamList, ScreenName.VoteConnectDevice>
   | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.SignTransactionConnectDevice>
-  | StackNavigatorProps<SignMessageNavigatorStackParamList, ScreenName.SignConnectDevice>
-  | StackNavigatorProps<
-    IconFreezeFlowParamList,
-    ScreenName.IconFreezeConnectDevice
-  >
-  | StackNavigatorProps<
-    IconUnfreezeFlowParamList,
-    ScreenName.IconUnfreezeConnectDevice
-  >
-  | StackNavigatorProps<
-    IconVoteFlowParamList,
-    ScreenName.IconVoteConnectDevice
-  >;
+  | StackNavigatorProps<SignMessageNavigatorStackParamList, ScreenName.SignConnectDevice>;
 
 export const navigateToSelectDevice = (navigation: Props["navigation"], route: Props["route"]) =>
   // Assumes that it will always navigate to a "SelectDevice"

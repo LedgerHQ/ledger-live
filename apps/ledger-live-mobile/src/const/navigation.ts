@@ -596,10 +596,6 @@ export enum NavigatorName {
   NearStakingFlow = "NearStakingFlow",
   NearUnstakingFlow = "NearUnstakingFlow",
   NearWithdrawingFlow = "NearWithdrawingFlow",
-  // ICON
-  IconFreezeFlow = "IconFreezeFlow",
-  IconUnfreezeFlow = "IconUnfreezeFlow",
-  IconVoteFlow = "IconVoteFlow",
   // Tab
   Main = "Main",
   WalletTab = "WalletTabNavigator",
