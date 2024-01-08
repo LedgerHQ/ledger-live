@@ -5737,7 +5737,8 @@
       "delegatedTo" : "yetkiyi devralan",
       "started" : {
         "description" : "SOL varlıklarınızla bir doğrulayıcıya yetki devrederek ödüller kazanabilirsiniz."
-      }
+      },
+      "reserveWarning" : "Gelecekte staking'inizi durdurmak ve çekmek için gerekecek ağ ücretlerini karşılamak üzere cüzdanınızda en az {{amount}} SOL bulundurduğunuzdan lütfen emin olun"
     }
   },
   "near" : {
