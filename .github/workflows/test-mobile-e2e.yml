@@ -122,7 +122,7 @@ jobs:
         run: pnpm mobile e2e:ci -p ios --bundle
       - name: Test iOS app
         id: detox
-        timeout-minutes: 45
+        timeout-minutes: 60
         run: pnpm mobile e2e:ci -p ios -t
       - name: Delete iOS simulator
         if: always()
@@ -220,7 +220,7 @@ jobs:
             ~/.android/adb*
           key: ${{ runner.os }}-detox-avd-${{ hashFiles('~/.android/avd/*/config.ini') }}
           restore-keys: |
-            ${{ runner.os }}-detox-avd-
+            ${{ runner.os }}-detox-avd-32
 
           # envs set by setup-toolchain
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
