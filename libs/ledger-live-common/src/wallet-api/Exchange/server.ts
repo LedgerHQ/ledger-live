@@ -12,6 +12,13 @@ import {
 } from "@ledgerhq/coin-framework/account/index";
 import { AccountLike } from "@ledgerhq/types-live";
 import { findTokenById } from "@ledgerhq/cryptoassets";
+import {
+  ExchangeCompleteParams,
+  ExchangeCompleteResult,
+  ExchangeStartParams,
+  ExchangeStartResult,
+  ExchangeType,
+} from "@ledgerhq/wallet-api-exchange-module";
 import { TrackingAPI } from "./tracking";
 import { AppManifest } from "../types";
 import {
@@ -19,18 +26,38 @@ import {
   getWalletAPITransactionSignFlowInfos,
 } from "../converters";
 import { getAccountBridge } from "../../bridge";
-import {
-  ExchangeCompleteParams,
-  ExchangeCompleteResult,
-  ExchangeStartParams,
-  ExchangeStartResult,
-  ExchangeType,
-  ExchangeUiHooks,
-} from "./types";
+import { Exchange } from "../../exchange/swap/types";
+import { Transaction } from "../../generated/types";
 
 type Handlers = {
   "custom.exchange.start": RPCHandler<ExchangeStartResult, ExchangeStartParams>;
   "custom.exchange.complete": RPCHandler<ExchangeCompleteResult, ExchangeCompleteParams>;
+};
+
+export type CompleteExchangeUiRequest = {
+  provider: string;
+  exchange: Exchange;
+  transaction: Transaction;
+  binaryPayload: string;
+  signature: string;
+  feesStrategy: string;
+  exchangeType: number;
+  swapId?: string;
+  rate?: number;
+  amountExpectedTo?: number;
+};
+
+export type ExchangeUiHooks = {
+  "custom.exchange.start": (params: {
+    exchangeType: ExchangeStartParams["exchangeType"];
+    onSuccess: (nonce: string) => void;
+    onCancel: (error: Error) => void;
+  }) => void;
+  "custom.exchange.complete": (params: {
+    exchangeParams: CompleteExchangeUiRequest;
+    onSuccess: (hash: string) => void;
+    onCancel: (error: Error) => void;
+  }) => void;
 };
 
 export const handlers = ({
