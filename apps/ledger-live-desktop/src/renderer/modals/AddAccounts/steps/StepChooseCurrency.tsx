@@ -121,7 +121,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       neon_evm: neonEvm,
       lukso,
       linea,
-      lineaGoerli,
+      linea_goerli: lineaGoerli,
     }),
     [
       axelar,
