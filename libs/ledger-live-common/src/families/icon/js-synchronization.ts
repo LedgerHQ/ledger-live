@@ -4,7 +4,7 @@ import { makeSync, makeScanAccounts, mergeOps } from "../../bridge/jsHelpers";
 
 import { getAccount, getOperations } from "./api/node";
 import BigNumber from "bignumber.js";
-import { getDelegation, getStake } from "./api/node";
+import { getDelegation } from "./api/node";
 import { IconResources } from "./types";
 
 const getAccountShape: GetAccountShape = async info => {
@@ -27,13 +27,11 @@ const getAccountShape: GetAccountShape = async info => {
   const newOperations = await getOperations(accountId, address, skip, currency);
   const operations = mergeOps(oldOperations, newOperations);
   const delegationData = await getDelegation(address, currency);
-  const { unstake } = await getStake(address, currency);
 
   const iconResources: IconResources = {
     nonce: 0,
     totalDelegated: delegationData.totalDelegated,
     votingPower: delegationData.votingPower,
-    unstake,
   };
 
   return {
