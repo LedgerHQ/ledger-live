@@ -143,7 +143,7 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
       neon_evm: neonEvm,
       lukso,
       linea,
-      lineaGoerli,
+      linea_goerli: lineaGoerli,
     }),
     [
       axelar,
