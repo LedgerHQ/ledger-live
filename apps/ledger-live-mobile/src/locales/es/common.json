@@ -102,7 +102,7 @@
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
       "title" : "El precio de la transacción de sustitución es más bajo",
-      "description" : "La tarifa de red podría ser demasiado baja.Auméntala."
+      "description" : "La tarifa de red podría ser demasiado baja. Auméntala."
     },
     "countervaluesUnavailable" : {
       "title" : "No es posible ofrecerte una contraparte para este activo en este momento"
@@ -1972,7 +1972,7 @@
       "cancelCta" : "Cancelar configuración",
       "notFoundEntity" : {
         "title" : "Iniciar Verificación de Autenticidad de nuevo",
-        "description" : "Primero tienes que desactivar el ajuste \"My Ledger Provider\" (Mi proveedor de Ledger). Para desactivarlo, abre los \"Ajustes\" de Ledger Live, selecciona \"Funciones experimentales\" y desactiva \"Mi proveedor de Ledger\".",
+        "description" : "Primero tienes que desactivar el ajuste \"My Ledger Provider\" (Proveedor de Mi Ledger). Para desactivarlo, abre los \"Ajustes\" de Ledger Live, selecciona \"Funciones experimentales\" y desactiva \"Proveedor de Mi Ledger\".",
         "settingsCta" : "Ir a Ajustes"
       }
     },
@@ -2189,7 +2189,7 @@
     },
     "emptyState" : {
       "noAppsTitle" : "Instalar una aplicación en mi dispositivo",
-      "noAppsDesc" : "Instala las aplicaciones en tu dispositivo antes de agregar cuentas en Ledger Live.Accede a Mi Ledger para instalar las aplicaciones.",
+      "noAppsDesc" : "Instala las aplicaciones en tu dispositivo antes de agregar cuentas en Ledger Live. Accede a Mi Ledger para instalar las aplicaciones.",
       "noAccountsTitle" : "No tienes ninguna cuenta…",
       "noAccountsDesc" : "Agrega cuentas a tu Portfolio.",
       "buttons" : {
@@ -3702,7 +3702,7 @@
       "message" : "Comprueba siempre que tu dispositivo muestre una dirección exactamente igual a la recibida.",
       "success" : "Activos inmovilizados",
       "amount" : "Importe",
-      "info" : "Empezarás a ganar {{resource}} una vez que la red haya confirmado la inmovilización. En breve podrás votar a superrepresentates para recibir recompensas.",
+      "info" : "Empezarás a ganar {{resource}} una vez que la red haya confirmado la inmovilización. En breve podrás votar a superrepresentantes  para recibir recompensas.",
       "button" : {
         "pending" : "Se está validando la transacción.",
         "pendingDesc" : "Espera un momento antes de votar.",
@@ -4377,7 +4377,7 @@
     "action" : "Continuar con la actualización"
   },
   "systemLanguageAvailable" : {
-    "title" : "¿Deseas cambiar el idioma de tu app?",
+    "title" : "¿Deseas cambiar el idioma de tu aplicación?",
     "description" : {
       "newSupport" : "¡Buenas noticias! Nuestros equipos han estado trabajando arduamente y Ledger Live ahora está en {{language}}.",
       "advice" : "Puedes cambiar el idioma más adelante desde los Ajustes."
@@ -4408,7 +4408,7 @@
     "languageInstalledDesc" : "Tu dispositivo ahora está en el idioma que elegiste",
     "firmwareUpdatePrompt" : {
       "title" : "¿Cambiar tu {{deviceName}} a {{language}}?",
-      "description" : "Ya está disponible el idioma {{language}} para tu {{deviceName}}. Puedes cambiar el idioma de tu dispositivo ahora o en cualquier momento desde My Ledger."
+      "description" : "Ya está disponible el idioma {{language}} para tu {{deviceName}}. Puedes cambiar el idioma de tu dispositivo ahora o en cualquier momento desde Mi Ledger."
     },
     "installingLanguage" : "Instalando idioma",
     "languages" : {
@@ -5737,7 +5737,8 @@
       "delegatedTo" : "Delegado a",
       "started" : {
         "description" : "Puedes recibir recompensas delegando tus activos SOL a un validador."
-      }
+      },
+      "reserveWarning" : "Asegúrate de reservar al menos {{amount}} SOL en tu billetera para cubrir las futuras tarifas de red, necesarias para quitar de participación tus activos y retirarlos."
     }
   },
   "near" : {

@@ -5737,7 +5737,8 @@
       "delegatedTo" : "다음에게 위임됨",
       "started" : {
         "description" : "SOL 암호화폐를 검증인에게 위임하여 보상을 받을 수 있습니다."
-      }
+      },
+      "reserveWarning" : "지갑에 {{amount}}이상의 SOL을 확보하여 지분을 비활성화하고 인출하는 데 필요한 네트워크 수수료를 충당하세요."
     }
   },
   "near" : {
