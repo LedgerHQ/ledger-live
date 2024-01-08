@@ -5737,7 +5737,8 @@
       "delegatedTo" : "délégué à",
       "started" : {
         "description" : "Vous pouvez gagner des récompenses en déléguant vos SOL à un validateur."
-      }
+      },
+      "reserveWarning" : "Conservez au minimum {{amount}} SOL dans votre wallet pour couvrir les frais de réseau futurs afin de désactiver et retirer vos cryptos stakées"
     }
   },
   "near" : {
