@@ -5737,7 +5737,8 @@
       "delegatedTo" : "delegiert an",
       "started" : {
         "description" : "Sie können Belohnungen verdienen, indem Sie Ihre SOL-Werte an einen Validator delegieren."
-      }
+      },
+      "reserveWarning" : "Bitte stellen Sie sicher, dass Sie mindestens {{amount}} SOL in Ihrer Wallet haben, um zukünftige Netzwerkgebühren für die Deaktivierung und Auszahlung Ihres Stakes zu decken."
     }
   },
   "near" : {
