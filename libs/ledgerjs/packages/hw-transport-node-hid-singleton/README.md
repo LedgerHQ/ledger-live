@@ -114,7 +114,6 @@ Returns **Subscription**&#x20;
 Disconnects singleton instance if it is not prevented from disconnecting,
 otherwise try again after DISCONNECT\_AFTER\_INACTIVITY\_TIMEOUT\_MS.
 
-The prevention is handled by `preventAutoDisconnect`.
 Currently, there is only one transport instance (for only one device connected via USB).
 
 Used in pair with `setDisconnectAfterInactivityTimeout`.
