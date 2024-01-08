@@ -1,4 +1,6 @@
+import makeCliTools from "./cli";
+
 export * from "./bridge.integration.test";
-export * from "./cli";
+export { makeCliTools };
 export * from "./specs";
 export * from "./speculos-deviceActions";

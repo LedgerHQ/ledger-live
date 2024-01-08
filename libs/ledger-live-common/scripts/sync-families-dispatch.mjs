@@ -96,7 +96,10 @@ function genCoinFrameworkTarget(targetFile) {
         break;
       // We still use bridge/js file inside "families" directory
       default:
-        if (fs.existsSync(path.join(libsDir, `coin-${family}/src`, targetFile))) {
+        if (
+          fs.existsSync(path.join(libsDir, `coin-${family}/src`, targetFile)) ||
+          fs.existsSync(path.join(libsDir, `coin-${family}/src/bridge`, targetFile))
+        ) {
           imports += `import ${family} from "${targetImportPath}";\n`;
         }
     }

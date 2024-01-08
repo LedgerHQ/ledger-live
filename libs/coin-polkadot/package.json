@@ -29,13 +29,35 @@
         "lib-es/*"
       ],
       "*": [
-        "lib/*"
+        "lib/*",
+        "lib/bridge/*",
+        "lib/test/*"
       ]
     }
   },
   "exports": {
     "./lib/*": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
+    "./deviceTransactionConfig": {
+      "require": "./lib/bridge/deviceTransactionConfig.js",
+      "default": "./lib-es/bridge/deviceTransactionConfig.js"
+    },
+    "./logic": {
+      "require": "./lib/bridge/logic.js",
+      "default": "./lib-es/bridge/logic.js"
+    },
+    "./preload": {
+      "require": "./lib/bridge/preload.js",
+      "default": "./lib-es/bridge/preload.js"
+    },
+    "./serialization": {
+      "require": "./lib/bridge/serialization.js",
+      "default": "./lib-es/bridge/serialization.js"
+    },
+    "./transaction": {
+      "require": "./lib/bridge/transaction.js",
+      "default": "./lib-es/bridge/transaction.js"
+    },
     "./*": {
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"
