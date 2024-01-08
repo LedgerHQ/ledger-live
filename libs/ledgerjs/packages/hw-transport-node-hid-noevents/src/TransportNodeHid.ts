@@ -98,8 +98,6 @@ export default class TransportNodeHidNoEvents extends Transport {
     this.deviceModel = info && info.product ? identifyProductName(info.product) : null;
   }
 
-  // TODO: IS THIS the pb ? emitting while still disconnected the device
-  // emitsDisconnect or notifyNeedsDisconnect
   setDisconnected = () => {
     this.tracer.trace("Setting to disconnected", { alreadyDisconnected: this.disconnected });
 

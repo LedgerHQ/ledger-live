@@ -37,7 +37,6 @@ export type ListenDescriptorEvent = DescriptorEvent<string>;
  */
 export default class TransportNodeHidSingleton extends TransportNodeHidNoEvents {
   isDisconnectAfterInactivityEnabled = true;
-  // preventAutoDisconnect = false;
 
   constructor(device: HID.HID, { context }: { context?: TraceContext } = {}) {
     super(device, { context, logType: LOG_TYPE });
@@ -114,7 +113,6 @@ export default class TransportNodeHidSingleton extends TransportNodeHidNoEvents 
    * Disconnects singleton instance if it is not prevented from disconnecting,
    * otherwise try again after DISCONNECT_AFTER_INACTIVITY_TIMEOUT_MS.
    *
-   * The prevention is handled by `preventAutoDisconnect`.
    * Currently, there is only one transport instance (for only one device connected via USB).
    *
    * Used in pair with `setDisconnectAfterInactivityTimeout`.
@@ -131,7 +129,7 @@ export default class TransportNodeHidSingleton extends TransportNodeHidNoEvents 
       },
     });
 
-    if (transportInstance && !transportInstance.isDisconnectAfterInactivityEnabled) {
+    if (transportInstance && transportInstance.isDisconnectAfterInactivityEnabled) {
       TransportNodeHidSingleton.disconnect();
     } else if (transportInstance) {
       // If the auto-disconnect is prevented, try again in DISCONNECT_TIMEOUT
