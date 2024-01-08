@@ -1,5 +1,16 @@
 # @ledgerhq/live-cli
 
+## 23.2.0-next.1
+
+### Minor Changes
+
+- [#5736](https://github.com/LedgerHQ/ledger-live/pull/5736) [`1cb052d`](https://github.com/LedgerHQ/ledger-live/commit/1cb052dada6363c6f0dc4289b358d93de2320594) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Merging solana hotfix (PR #5824)
+
+### Patch Changes
+
+- Updated dependencies [[`1cb052d`](https://github.com/LedgerHQ/ledger-live/commit/1cb052dada6363c6f0dc4289b358d93de2320594)]:
+  - @ledgerhq/live-common@33.4.0-next.1
+
 ## 23.1.2-next.0
 
 ### Patch Changes
