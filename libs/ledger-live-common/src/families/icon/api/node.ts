@@ -198,31 +198,3 @@ export const getDelegation = async (address, currency) => {
     votingPower: new BigNumber(IconAmount.fromLoop(res?.votingPower || 0, iconUnit)),
   };
 };
-
-export const getStake = async (address, currency) => {
-  const rpcURL = getRpcUrl(currency);
-  const httpProvider = new HttpProvider(rpcURL);
-  const iconService = new IconService(httpProvider);
-  const prepTx: any = new IconBuilder.CallBuilder()
-    .to(IISS_SCORE_ADDRESS)
-    .method("getStake")
-    .params({ address })
-    .build();
-
-  let res;
-  let unstake = new BigNumber(0);
-  try {
-    res = await iconService.call(prepTx).execute();
-    if (res?.unstakes) {
-      const unstakes = res?.unstakes;
-      for (const item of unstakes) {
-        const value = BigNumber(IconAmount.fromLoop(item.unstake || 0, iconUnit));
-        unstake = unstake.plus(value);
-      }
-    }
-  } catch (error) {
-    // TODO: handle show log
-    console.log(error);
-  }
-  return { ...res, unstake };
-};

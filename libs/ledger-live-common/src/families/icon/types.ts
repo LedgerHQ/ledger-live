@@ -15,7 +15,6 @@ export type IconResources = {
   nonce: number;
   votingPower: string | BigNumber;
   totalDelegated: string | BigNumber;
-  unstake: string | BigNumber;
 };
 
 /**
@@ -25,7 +24,6 @@ export type IconResourcesRaw = {
   nonce: number;
   votingPower: string | BigNumber;
   totalDelegated: string | BigNumber;
-  unstake: string | BigNumber;
 };
 
 /**
