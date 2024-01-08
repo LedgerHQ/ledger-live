@@ -5737,7 +5737,8 @@
       "delegatedTo" : "delegado a",
       "started" : {
         "description" : "Você pode receber recompensas delegando seus ativos SOL a um validador."
-      }
+      },
+      "reserveWarning" : "Reserve sempre {{amount}} SOL em sua carteira para cobrir futuras taxas de rede na hora de retirar suas moedas do staking"
     }
   },
   "near" : {
