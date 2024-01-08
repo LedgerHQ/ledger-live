@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { Flex, Alert } from "@ledgerhq/native-ui";
 import DeviceAction from "./DeviceAction";
 import DeviceLanguageInstalled from "./DeviceLanguageInstalled";
-import { useInstallLanguageDeviceAction } from "../hooks/deviceActions";
+import { useInstallLanguageDeviceAction } from "~/hooks/deviceActions";
 
 type Props = {
   device: Device;

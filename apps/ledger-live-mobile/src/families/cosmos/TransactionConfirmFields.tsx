@@ -8,9 +8,10 @@ import type { Transaction } from "@ledgerhq/live-common/families/cosmos/types";
 import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
 import { mapDelegationInfo } from "@ledgerhq/live-common/families/cosmos/logic";
 import { useTheme } from "@react-navigation/native";
-import LText from "../../components/LText";
-import { DataRow, TextValueField } from "../../components/ValidateOnDeviceDataRow";
-import Info from "../../icons/Info";
+import LText from "~/components/LText";
+import { DataRow, TextValueField } from "~/components/ValidateOnDeviceDataRow";
+import Info from "~/icons/Info";
+import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
 
 type FieldProps = {
   account: Account;
@@ -66,10 +67,11 @@ function CosmosSourceValidatorNameField({
   return <TextValueField label={field.label} value={validator?.name ?? sourceValidator} />;
 }
 
-function Warning({ transaction }: FieldProps) {
+function Warning({ account, transaction }: FieldProps) {
   invariant(transaction.family === "cosmos", "cosmos transaction");
   const { colors } = useTheme();
   const { t } = useTranslation();
+  const crypto = cryptoFactory(account.currency.id);
 
   switch (transaction.mode) {
     case "redelegate":
@@ -79,7 +81,9 @@ function Warning({ transaction }: FieldProps) {
         <DataRow>
           <Info size={22} color={colors.live} />
           <LText semiBold style={[styles.text, styles.infoText]} color="live" numberOfLines={3}>
-            {t(`ValidateOnDevice.infoWording.cosmos.${transaction.mode}`)}
+            {t(`ValidateOnDevice.infoWording.cosmos.${transaction.mode}`, {
+              numberOfDays: crypto.unbondingPeriod,
+            })}
           </LText>
         </DataRow>
       );

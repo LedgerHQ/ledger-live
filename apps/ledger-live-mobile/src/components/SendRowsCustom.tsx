@@ -6,7 +6,7 @@ import type { BaseComposite, StackNavigatorProps } from "./RootNavigator/types/h
 import type { SendFundsNavigatorStackParamList } from "./RootNavigator/types/SendFundsNavigator";
 import type { SignTransactionNavigatorParamList } from "./RootNavigator/types/SignTransactionNavigator";
 import type { SwapNavigatorParamList } from "./RootNavigator/types/SwapNavigator";
-import { ScreenName } from "../const";
+import { ScreenName } from "~/const";
 
 type Navigation = BaseComposite<
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>

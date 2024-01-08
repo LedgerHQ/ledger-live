@@ -2888,6 +2888,18 @@
           "title": "Experimental Explorers API",
           "description": "Try an upcoming version of Ledger's blockchain explorers. Changing this setting may affect the account balance and synchronization as well as the send feature."
         },
+        "1559DeactivateGate": {
+          "title": "Deactivate EIP1559 minimum priority fee gate",
+          "description": "This will allow a transaction to be sent without any minimum priority fee expected. This may result in a transaction getting stuck in the mempool forever."
+        },
+        "1559CustomPriorityLowerGate": {
+          "title": "Custom priority fee gate",
+          "description": "Customize the percentage of our estimated minimal priority fee allowed for an advanced EIP1559 transaction"
+        },
+        "1559CustomBaseFeeMultiplier": {
+          "title": "Custom multiplier for the base fee",
+          "description": "Customize the multiplier used for the base fee composing the maxFeePerGas of the EIP1559 transaction"
+        },
         "experimentalListAppsV2": {
           "title": "Experimental list apps for My Ledger",
           "description": "Performance improvement for My Ledger access and inline flows."
@@ -5706,6 +5718,20 @@
       "totalStake": "Total stake",
       "commission": "Commission",
       "stakeActivationState": "State",
+      "stakeActivePercent": "Active",
+      "stakeAvailableBalance": "Available balance",
+      "actions": {
+        "activate": "Activate",
+        "deactivate": "Deactivate",
+        "reactivate": "Reactivate",
+        "withdraw": "Withdraw"
+      },
+      "states": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "activating": "Activating",
+        "deactivating": "Deactivating"
+      },
       "delegationEarn": "You can earn SOL rewards by delegating your assets.",
       "info": "How Delegation works",
       "broadcastSuccessTitle": "Operation sent",
@@ -5925,13 +5951,8 @@
       "claimReward": "Rewards can be claimed every 24 hours.",
       "cosmos": {
         "claimReward": "If the selected validator has pending rewards, they will automatically be claimed.",
-        "redelegate": "You will have to wait 21 days for undelegated assets to return to the available balance.",
-        "undelegate": "You will have to wait 21 days for undelegated assets to return to the available balance."
-      },
-      "osmosis": {
-        "claimReward": "If the selected validator has pending rewards, they will automatically be claimed.",
-        "redelegate": "You will have to wait 14 days for undelegated assets to return to the available balance.",
-        "undelegate": "You will have to wait 14 days for undelegated assets to return to the available balance."
+        "redelegate": "You will have to wait {{numberOfDays}} days for undelegated assets to return to the available balance.",
+        "undelegate": "You will have to wait {{numberOfDays}} days for undelegated assets to return to the available balance."
       },
       "lending": "Verify the operation details on your device before sending it."
     },

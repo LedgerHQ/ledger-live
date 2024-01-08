@@ -3,10 +3,10 @@ import { TouchableOpacity, Linking } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
 import { Flex, Text, Button, Link } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
-import NoResultsFound from "../../icons/NoResultsFound";
-import { track, TrackScreen } from "../../analytics";
-import useRatings from "../../logic/ratings";
-import { urls } from "@utils/urls";
+import NoResultsFound from "~/icons/NoResultsFound";
+import { track, TrackScreen } from "~/analytics";
+import useRatings from "~/logic/ratings";
+import { urls } from "~/utils/urls";
 
 const NotNowButton = styled(TouchableOpacity)`
   align-items: center;

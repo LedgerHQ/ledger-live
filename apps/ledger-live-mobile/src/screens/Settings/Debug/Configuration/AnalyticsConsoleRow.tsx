@@ -1,9 +1,9 @@
 import React, { useCallback } from "react";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { setEnv } from "@ledgerhq/live-env";
-import SettingsRow from "../../../../components/SettingsRow";
-import Track from "../../../../analytics/Track";
-import Switch from "../../../../components/Switch";
+import SettingsRow from "~/components/SettingsRow";
+import Track from "~/analytics/Track";
+import Switch from "~/components/Switch";
 
 const AnalyticsConsoleRow = () => {
   const analyticsConsoleVisibility = useEnv("ANALYTICS_CONSOLE");

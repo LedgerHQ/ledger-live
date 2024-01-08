@@ -6,14 +6,14 @@ import { useSelector } from "react-redux";
 import { Alert } from "@ledgerhq/native-ui";
 import { getTagDerivationMode, DerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { getAccountCurrency, isAccount } from "@ledgerhq/live-common/account/index";
-import { accountScreenSelector } from "../../reducers/accounts";
-import LText from "../../components/LText";
-import NavigationScrollView from "../../components/NavigationScrollView";
+import { accountScreenSelector } from "~/reducers/accounts";
+import LText from "~/components/LText";
+import NavigationScrollView from "~/components/NavigationScrollView";
 import { localeIds } from "../../languages";
-import { localeSelector } from "../../reducers/settings";
-import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { AccountSettingsNavigatorParamList } from "../../components/RootNavigator/types/AccountSettingsNavigator";
-import { ScreenName } from "../../const";
+import { localeSelector } from "~/reducers/settings";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { AccountSettingsNavigatorParamList } from "~/components/RootNavigator/types/AccountSettingsNavigator";
+import { ScreenName } from "~/const";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<AccountSettingsNavigatorParamList, ScreenName.AdvancedLogs>

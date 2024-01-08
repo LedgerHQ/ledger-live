@@ -10,14 +10,14 @@ import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
 import { hasMinimumBondBalance } from "@ledgerhq/live-common/families/polkadot/logic";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
-import type { ModalInfo } from "../../modals/Info";
-import InfoModal from "../../modals/Info";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import InfoItem from "../../components/BalanceSummaryInfoItem";
-import BondedIcon from "../../icons/LinkIcon";
-import UnbondingIcon from "../../icons/Clock";
-import Unbonded from "../../icons/Undelegate";
-import WarningIcon from "../../icons/Warning";
+import type { ModalInfo } from "~/modals/Info";
+import InfoModal from "~/modals/Info";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import InfoItem from "~/components/BalanceSummaryInfoItem";
+import BondedIcon from "~/icons/LinkIcon";
+import UnbondingIcon from "~/icons/Clock";
+import Unbonded from "~/icons/Undelegate";
+import WarningIcon from "~/icons/Warning";
 
 type Props = {
   account: PolkadotAccount;

@@ -411,7 +411,7 @@ const SwapForm = () => {
   };
 
   useEffect(() => {
-    if (isSwapLiveAppEnabled) {
+    if (isSwapLiveAppEnabled.enabled) {
       const providerRedirectURLSearch = getProviderRedirectURLSearch();
       const { parentAccount: fromParentAccount } = swapTransaction.swap.from;
       const fromParentAccountId = fromParentAccount
@@ -432,7 +432,7 @@ const SwapForm = () => {
     }
   }, [
     provider,
-    isSwapLiveAppEnabled,
+    isSwapLiveAppEnabled.enabled,
     getExchangeSDKParams,
     getProviderRedirectURLSearch,
     swapTransaction.swap.from,
@@ -484,8 +484,11 @@ const SwapForm = () => {
         </>
       )}
 
-      {isSwapLiveAppEnabled ? (
-        <SwapWebView swapState={swapWebProps} />
+      {isSwapLiveAppEnabled.enabled ? (
+        <SwapWebView
+          swapState={swapWebProps}
+          liveAppUnavailable={isSwapLiveAppEnabled.onLiveAppCrashed}
+        />
       ) : (
         <Box>
           <Button primary disabled={!isSwapReady} onClick={onSubmit} data-test-id="exchange-button">

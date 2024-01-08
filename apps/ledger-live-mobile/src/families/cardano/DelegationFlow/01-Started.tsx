@@ -3,17 +3,17 @@ import { View, StyleSheet, Linking } from "react-native";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { Button, Flex, Text } from "@ledgerhq/native-ui";
-import LText from "../../../components/LText";
-import ExternalLink from "../../../components/ExternalLink";
-import BulletList, { BulletGreenCheck } from "../../../components/BulletList";
-import NavigationScrollView from "../../../components/NavigationScrollView";
-import Illustration from "../../../images/illustration/Illustration";
-import EarnLight from "../../../images/illustration/Light/_003.png";
-import EarnDark from "../../../images/illustration/Dark/_003.png";
-import { urls } from "@utils/urls";
-import { ScreenName } from "../../../const";
-import { TrackScreen } from "../../../analytics";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import LText from "~/components/LText";
+import ExternalLink from "~/components/ExternalLink";
+import BulletList, { BulletGreenCheck } from "~/components/BulletList";
+import NavigationScrollView from "~/components/NavigationScrollView";
+import Illustration from "~/images/illustration/Illustration";
+import EarnLight from "~/images/illustration/Light/_003.png";
+import EarnDark from "~/images/illustration/Dark/_003.png";
+import { urls } from "~/utils/urls";
+import { ScreenName } from "~/const";
+import { TrackScreen } from "~/analytics";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CardanoDelegationFlowParamList } from "./types";
 
 type Props = StackNavigatorProps<

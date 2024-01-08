@@ -4,8 +4,8 @@ import { Trans } from "react-i18next";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Flex } from "@ledgerhq/native-ui";
 
-import ExternalLink from "../../icons/ExternalLink";
-import Button from "../../components/wrappedUi/Button";
+import ExternalLink from "~/icons/ExternalLink";
+import Button from "~/components/wrappedUi/Button";
 
 type Props = {
   url?: string | null;

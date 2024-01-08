@@ -1,15 +1,11 @@
 import React, { useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import SettingsRow from "../../../../components/SettingsRow";
-import {
-  completeOnboarding,
-  setHasOrderedNano,
-  setReadOnlyMode,
-} from "../../../../actions/settings";
-import { RebootContext } from "../../../../context/Reboot";
-import { knownDevicesSelector } from "../../../../reducers/ble";
-import { removeKnownDevices } from "../../../../actions/ble";
-import { useUnacceptGeneralTerms } from "../../../../logic/terms";
+import SettingsRow from "~/components/SettingsRow";
+import { completeOnboarding, setHasOrderedNano, setReadOnlyMode } from "~/actions/settings";
+import { RebootContext } from "~/context/Reboot";
+import { knownDevicesSelector } from "~/reducers/ble";
+import { removeKnownDevices } from "~/actions/ble";
+import { useUnacceptGeneralTerms } from "~/logic/terms";
 
 export default function ResetOnboardingStateRow() {
   const dispatch = useDispatch();

@@ -2,8 +2,8 @@ import EventEmitter from "events";
 import React, { PropsWithChildren, createContext, useCallback, useContext, useState } from "react";
 import { ParamListBase, useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { NavigatorName } from "../const";
-import type { DrawerProps, RootDrawerProps } from "../components/RootDrawer/types";
+import { NavigatorName } from "~/const";
+import type { DrawerProps, RootDrawerProps } from "~/components/RootDrawer/types";
 
 const rootDrawerEmitter = new EventEmitter();
 

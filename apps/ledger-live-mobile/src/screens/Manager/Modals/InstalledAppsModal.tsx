@@ -6,10 +6,10 @@ import { App, DeviceInfo } from "@ledgerhq/types-live";
 import { State, Action } from "@ledgerhq/live-common/apps/index";
 import { Trans } from "react-i18next";
 import AppIcon from "../AppsList/AppIcon";
-import ByteSize from "../../../components/ByteSize";
+import ByteSize from "~/components/ByteSize";
 import AppUninstallButton from "../AppsList/AppUninstallButton";
 import AppProgressButton from "../AppsList/AppProgressButton";
-import QueuedDrawer from "../../../components/QueuedDrawer";
+import QueuedDrawer from "~/components/QueuedDrawer";
 
 type HeaderProps = {
   illustration: JSX.Element;

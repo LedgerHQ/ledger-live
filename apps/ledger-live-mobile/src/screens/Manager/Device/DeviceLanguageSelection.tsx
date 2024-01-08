@@ -11,7 +11,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Language } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
-import { TrackScreen, track } from "../../../analytics";
+import { TrackScreen, track } from "~/analytics";
 
 type Props = {
   deviceLanguage: Language;

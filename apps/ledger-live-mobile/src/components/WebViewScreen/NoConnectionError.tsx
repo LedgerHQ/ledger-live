@@ -3,7 +3,7 @@ import styled from "styled-components/native";
 import { useTranslation } from "react-i18next";
 
 import WebViewError from "./Error";
-import noConnectionImg from "../../images/noConnection.png";
+import noConnectionImg from "~/images/noConnection.png";
 
 const NoConnectionIllustration = styled.Image.attrs({ resizeMode: "contain" })`
   tint-color: ${p => p.theme.colors.neutral.c100};

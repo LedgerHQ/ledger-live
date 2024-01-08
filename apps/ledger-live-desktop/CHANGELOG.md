@@ -11,21 +11,6 @@
 - Updated dependencies [[`1abfe8d`](https://github.com/LedgerHQ/ledger-live/commit/1abfe8dfa4f2f4abd294f3f992f3681a78b33143)]:
   - @ledgerhq/live-common@33.3.1
 
-## 2.73.1-hotfix.1
-
-### Patch Changes
-
-- [#5824](https://github.com/LedgerHQ/ledger-live/pull/5824) [`6cd881b`](https://github.com/LedgerHQ/ledger-live/commit/6cd881b8b17982649446749d20605d934d51339a) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Solana hotfix
-
-## 2.73.1-hotfix.0
-
-### Patch Changes
-
-- [#5824](https://github.com/LedgerHQ/ledger-live/pull/5824) [`1abfe8d`](https://github.com/LedgerHQ/ledger-live/commit/1abfe8dfa4f2f4abd294f3f992f3681a78b33143) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Safer Solana staking
-
-- Updated dependencies [[`1abfe8d`](https://github.com/LedgerHQ/ledger-live/commit/1abfe8dfa4f2f4abd294f3f992f3681a78b33143)]:
-  - @ledgerhq/live-common@33.3.1-hotfix.0
-
 ## 2.73.0
 
 ### Minor Changes

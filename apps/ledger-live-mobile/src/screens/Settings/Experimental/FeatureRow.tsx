@@ -4,7 +4,7 @@ import { setEnvUnsafe, isEnvDefault, getEnv } from "@ledgerhq/live-env";
 import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { FeatureId } from "@ledgerhq/types-live";
 import { Feature, isReadOnly } from "../../../experimental";
-import SettingsRow from "../../../components/SettingsRow";
+import SettingsRow from "~/components/SettingsRow";
 import FeatureSwitch from "./FeatureSwitch";
 import FeatureInteger from "./FeatureInteger";
 import FeatureFloat from "./FeatureFloat";

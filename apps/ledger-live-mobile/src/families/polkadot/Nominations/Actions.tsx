@@ -1,9 +1,9 @@
 import React, { useState, useCallback } from "react";
 import { TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
-import LText from "../../../components/LText";
-import InfoModal from "../../../modals/Info";
-import Link from "../../../components/wrappedUi/Link";
+import LText from "~/components/LText";
+import InfoModal from "~/modals/Info";
+import Link from "~/components/wrappedUi/Link";
 
 type Props = {
   electionOpen?: boolean;

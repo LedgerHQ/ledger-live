@@ -7,6 +7,7 @@ import { Subject } from "rxjs";
 import { MessageData, MockDeviceEvent } from "./client";
 import { BleState } from "../../src/reducers/types";
 import { Account, AccountRaw } from "@ledgerhq/types-live";
+import { DeviceUSB, nanoSP_USB, nanoS_USB, nanoX_USB } from "../models/devices";
 
 type ServerData = {
   type: "walletAPIResponse";
@@ -96,16 +97,31 @@ export function mockDeviceEvent(...args: MockDeviceEvent[]) {
   });
 }
 
-export function addDevices(
-  deviceNames: string[] = ["Nano X de David", "Nano X de Arnaud", "Nano X de Didier Duchmol"],
+export function addDevicesBT(
+  deviceNames: string | string[] = [
+    "Nano X de David",
+    "Nano X de Arnaud",
+    "Nano X de Didier Duchmol",
+  ],
 ): string[] {
-  deviceNames.forEach((name, i) => {
+  const names = Array.isArray(deviceNames) ? deviceNames : [deviceNames];
+  names.forEach((name, i) => {
     postMessage({
       type: "add",
       payload: { id: `mock_${i + 1}`, name, serviceUUID: `uuid_${i + 1}` },
     });
   });
-  return deviceNames;
+  return names;
+}
+
+export function addDevicesUSB(
+  devices: DeviceUSB | DeviceUSB[] = [nanoX_USB, nanoSP_USB, nanoS_USB],
+): DeviceUSB[] {
+  const devicesArray = Array.isArray(devices) ? devices : [devices];
+  devicesArray.forEach(device => {
+    postMessage({ type: "addUSB", payload: device });
+  });
+  return devicesArray;
 }
 
 export function setInstalledApps(apps: string[] = []) {

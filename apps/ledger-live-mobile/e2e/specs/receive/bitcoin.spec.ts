@@ -2,18 +2,12 @@ import { loadBleState, loadConfig } from "../../bridge/server";
 import PortfolioPage from "../../models/wallet/portfolioPage";
 import ReceivePage from "../../models/trade/receivePage";
 import DeviceAction from "../../models/DeviceAction";
-import { DeviceModelId } from "@ledgerhq/devices";
+import { knownDevice } from "../../models/devices";
 import { tapById, tapByText, waitForElementById, waitForElementByText } from "../../helpers";
 
 let portfolioPage: PortfolioPage;
 let receivePage: ReceivePage;
 let deviceAction: DeviceAction;
-
-const knownDevice = {
-  name: "Nano X de test",
-  id: "mock_1",
-  modelId: DeviceModelId.nanoX,
-};
 
 const currency = "bitcoin";
 const accountName = "Bitcoin 2";

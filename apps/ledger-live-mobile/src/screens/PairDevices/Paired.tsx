@@ -7,9 +7,9 @@ import { Flex, IconBox, Text } from "@ledgerhq/native-ui";
 import { CheckAloneMedium } from "@ledgerhq/native-ui/assets/icons";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { useSelector } from "react-redux";
-import { TrackScreen, track } from "../../analytics";
-import Button from "../../components/Button";
-import { onboardingTypeSelector } from "../../reducers/settings";
+import { TrackScreen, track } from "~/analytics";
+import Button from "~/components/Button";
+import { onboardingTypeSelector } from "~/reducers/settings";
 
 type Props = {
   device: Device;
