@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.36.2-next.1
+
+### Patch Changes
+
+- [#5736](https://github.com/LedgerHQ/ledger-live/pull/5736) [`87ec27d`](https://github.com/LedgerHQ/ledger-live/commit/87ec27d5ad02667dd47308cec00e5fd1d76a5a06) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - update podfile lock
+
 ## 3.36.2-next.0
 
 ### Patch Changes
