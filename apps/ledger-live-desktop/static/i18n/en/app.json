@@ -3530,7 +3530,8 @@
             "title": "Validator"
           },
           "amount": {
-            "title": "Amount"
+            "title": "Amount",
+            "reserveWarning": "Please ensure you reserve at least {{amount}} SOL in your wallet to cover future network fees to deactivate and withdraw your stake"
           },
           "confirmation": {
             "success": {
