@@ -1,6 +1,4 @@
 import { RawTransaction } from "@ledgerhq/wallet-api-core";
-import { Exchange } from "../../exchange/swap/types";
-import { Transaction } from "../../generated/types";
 
 export enum ExchangeType {
   SWAP = 0x00,
@@ -51,30 +49,4 @@ export type ExchangeCompleteParams =
 
 export type ExchangeCompleteResult = {
   transactionHash: string;
-};
-
-export type CompleteExchangeUiRequest = {
-  provider: string;
-  exchange: Exchange;
-  transaction: Transaction;
-  binaryPayload: string;
-  signature: string;
-  feesStrategy: string;
-  exchangeType: number;
-  swapId?: string;
-  rate?: number;
-  amountExpectedTo?: number;
-};
-
-export type ExchangeUiHooks = {
-  "custom.exchange.start": (params: {
-    exchangeType: ExchangeStartParams["exchangeType"];
-    onSuccess: (nonce: string) => void;
-    onCancel: (error: Error) => void;
-  }) => void;
-  "custom.exchange.complete": (params: {
-    exchangeParams: CompleteExchangeUiRequest;
-    onSuccess: (hash: string) => void;
-    onCancel: (error: Error) => void;
-  }) => void;
 };

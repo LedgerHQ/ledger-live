@@ -6,6 +6,8 @@ import {
   ExchangeStartResult,
 } from "./types";
 
+export * from "./types";
+
 // TODO maybe find a better way to type the available custom requests with correct types
 export class ExchangeModule extends CustomModule {
   /**
