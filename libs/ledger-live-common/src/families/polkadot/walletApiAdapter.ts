@@ -1,4 +1,4 @@
-import createTransaction from "@ledgerhq/coin-polkadot/js-createTransaction";
+import createTransaction from "@ledgerhq/coin-polkadot/bridge/createTransaction";
 import { Transaction } from "@ledgerhq/coin-polkadot/types/index";
 import { PolkadotTransaction as WalletAPIPolkadotTransaction } from "@ledgerhq/wallet-api-core";
 import {
