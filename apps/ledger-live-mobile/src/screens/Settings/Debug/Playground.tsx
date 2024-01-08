@@ -1,8 +1,8 @@
 import React from "react";
 import { StyleSheet } from "react-native";
 import { Flex, Alert } from "@ledgerhq/native-ui";
-import NavigationScrollView from "../../../components/NavigationScrollView";
-import Button from "../../../components/Button";
+import NavigationScrollView from "~/components/NavigationScrollView";
+import Button from "~/components/Button";
 
 export default function DebugPlayground() {
   return (

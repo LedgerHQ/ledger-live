@@ -2,7 +2,7 @@ import { Flex, SideImageCard } from "@ledgerhq/native-ui";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import React, { useCallback, useEffect } from "react";
 import { Linking } from "react-native";
-import useDynamicContent from "../../dynamicContent/dynamicContent";
+import useDynamicContent from "~/dynamicContent/useDynamicContent";
 
 type Props = {
   currency: CryptoOrTokenCurrency;

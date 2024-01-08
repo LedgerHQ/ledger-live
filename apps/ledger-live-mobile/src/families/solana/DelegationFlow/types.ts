@@ -8,7 +8,7 @@ import { ParamListBase, RouteProp } from "@react-navigation/native";
 import type { ValidatorsAppValidator } from "@ledgerhq/live-common/families/solana/validator-app/index";
 import type { Operation } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { ScreenName } from "../../../const";
+import { ScreenName } from "~/const";
 
 export type DelegationAction =
   | {

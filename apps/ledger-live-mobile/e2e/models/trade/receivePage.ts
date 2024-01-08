@@ -20,9 +20,10 @@ export default class ReceivePage {
   accountFreshAddressTitle = "receive-verifyAddress-title";
   accountFreshAddress = "receive-verifyAddress-freshAdress";
   buttonVerifyAddressId = "button-verify-my-address";
-  currencyRowSearchPageId = "test-id-account-";
-  currencyRowInNetworkListId = "big-currency-row-";
-  subtitleRowInNetworkListId = "subtitle-row-";
+  accountId = (t: string) => `test-id-account-${t}`;
+  currencyRowId = (t: string) => `big-currency-row-${t}`;
+  currencyNameId = (t: string) => `big-currency-name-${t}`;
+  currencySubtitleId = (t: string) => `big-currency-subtitle-${t}`;
   buttonCloseQrReceivePage = () => getElementById("NavigationHeaderCloseButton");
   buttonCreateAccountId = "button-create-account";
   buttonCreateAccount = () => getElementById(this.buttonCreateAccountId);
@@ -31,8 +32,8 @@ export default class ReceivePage {
   step1HeaderTitle = () => getElementById("receive-header-step1-title");
   step2HeaderTitleId = "receive-header-step2-title";
   step2HeaderTitle = () => getElementById(this.step2HeaderTitleId);
-  titleReceiveConfirmationPageId = "receive-confirmation-title-";
-  accountNameReceiveId = "receive-account-name-";
+  titleReceiveConfirmationPageId = (t: string) => `receive-confirmation-title-${t}`;
+  accountNameReceiveId = (t: string) => `receive-account-name-${t}`;
 
   step2Accounts = () => getElementById("receive-header-step2-accounts");
   step2Networks = () => getElementById("receive-header-step2-networks");
@@ -43,24 +44,31 @@ export default class ReceivePage {
 
   async receiveViaDeeplink(currencyLong?: string) {
     const link = currencyLong ? baseLink + currencyParam + currencyLong : baseLink;
-
     await openDeeplink(link);
   }
 
-  async selectCurrency(currencyId: string) {
-    const id = this.currencyRowInNetworkListId + currencyId;
-    await waitForElementById(id);
+  async selectCurrencyRow(currencyId: string) {
+    const id = this.currencyRowId(currencyId);
     await tapById(id);
   }
 
-  async selectAsset(assetId: string) {
-    const id = this.subtitleRowInNetworkListId + assetId;
-    await waitForElementById(id);
+  async selectCurrency(currencyName: string) {
+    const id = this.currencyNameId(currencyName);
+    await tapById(id);
+  }
+
+  async selectAsset(assetText: string) {
+    const id = this.currencySubtitleId(assetText);
+    return tapById(id);
+  }
+
+  async selectNetwork(networkId: string) {
+    const id = this.currencyNameId(networkId);
     return tapById(id);
   }
 
   async selectAccount(account: string) {
-    const CurrencyRowId = this.currencyRowSearchPageId + account;
+    const CurrencyRowId = this.accountId(account);
     await waitForElementById(CurrencyRowId);
     await tapById(CurrencyRowId);
   }
@@ -77,14 +85,18 @@ export default class ReceivePage {
 
   async expectNumberOfAccountInListIsDisplayed(currencyName: string, accountNumber: number) {
     //set "account" in plural or not in fonction of number account
-    const pluralization: string = accountNumber > 1 ? "accounts" : "account";
-    const currencyRowNameID = this.currencyRowInNetworkListId + currencyName;
-    const accountCountRowID = this.subtitleRowInNetworkListId + accountNumber + " " + pluralization;
-    await waitForElementById(currencyRowNameID);
-    await waitForElementById(accountCountRowID);
-    // expect accountCountRowId is visible and is child of currencyRowNameID
+    const accountCount: string = accountNumber + " account" + (accountNumber > 1 ? "s" : "");
+    const networkRowID = new RegExp(this.currencyRowId(".*"));
+    const accountnameID = this.currencyNameId(currencyName);
+    const accountCountID = this.currencySubtitleId(accountCount);
+    // expect accountCountID is visible and is child of networkRowID
     await expect(
-      element(by.id(currencyRowNameID).withDescendant(by.id(accountCountRowID))),
+      element(
+        by
+          .id(networkRowID)
+          .withDescendant(by.id(accountnameID))
+          .withDescendant(by.id(accountCountID)),
+      ),
     ).toBeVisible();
   }
 
@@ -119,10 +131,15 @@ export default class ReceivePage {
   }
 
   async expectReceivePageIsDisplayed(tickerName: string, accountName: string) {
-    const receiveTitleTickerId = this.titleReceiveConfirmationPageId + tickerName;
-    const accountNameId = this.accountNameReceiveId + accountName;
+    const receiveTitleTickerId = this.titleReceiveConfirmationPageId(tickerName);
+    const accountNameId = this.accountNameReceiveId(accountName);
     await waitForElementById(receiveTitleTickerId);
     await expect(getElementById(receiveTitleTickerId)).toBeVisible();
     await expect(getElementById(accountNameId)).toBeVisible();
+  }
+
+  async doNotVerifyAddress() {
+    await this.selectDontVerifyAddress();
+    await this.selectReconfirmDontVerify();
   }
 }

@@ -1,24 +1,32 @@
-import network from "@ledgerhq/live-network/network";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import estimateMaxSpendable from "./js-estimateMaxSpendable";
 import type { Transaction } from "./types";
+import { getFiatCurrencyByTicker } from "../../currencies/index";
+import cvsApi from "../../countervalues/api";
 
 export const estimatedFeeSafetyRate = 2;
 
-export async function getEstimatedFees(): Promise<BigNumber> {
+export async function getEstimatedFees(account: Account): Promise<BigNumber> {
   try {
-    const { data } = await network({
-      method: "GET",
-      url: "https://countervalues.live.ledger.com/latest/direct?pairs=hbar:usd",
-    });
+    const data = await cvsApi.fetchLatest([
+      {
+        from: account.currency,
+        to: getFiatCurrencyByTicker("USD"),
+      },
+    ]);
 
-    return new BigNumber(10000).dividedBy(data[0]).integerValue(BigNumber.ROUND_CEIL);
-  } catch {
-    // as fees are based on a currency conversion, we stay
-    // on the safe side here and double the estimate for "max spendable"
-    return new BigNumber("150200").multipliedBy(estimatedFeeSafetyRate); // 0.001502 ℏ (as of 2023-03-14)
-  }
+    if (data[0]) {
+      return new BigNumber(10000)
+        .dividedBy(new BigNumber(data[0]))
+        .integerValue(BigNumber.ROUND_CEIL);
+    }
+    // eslint-disable-next-line no-empty
+  } catch {}
+
+  // as fees are based on a currency conversion, we stay
+  // on the safe side here and double the estimate for "max spendable"
+  return new BigNumber("150200").multipliedBy(estimatedFeeSafetyRate); // 0.001502 ℏ (as of 2023-03-14)
 }
 
 export async function calculateAmount({
@@ -37,7 +45,7 @@ export async function calculateAmount({
 
   return {
     amount,
-    totalSpent: amount.plus(await getEstimatedFees()),
+    totalSpent: amount.plus(await getEstimatedFees(account)),
   };
 }
 

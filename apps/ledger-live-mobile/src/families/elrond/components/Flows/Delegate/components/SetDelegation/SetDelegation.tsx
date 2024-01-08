@@ -19,15 +19,15 @@ import BigNumber from "bignumber.js";
 import Icon from "react-native-vector-icons/Feather";
 import { ELROND_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/elrond/constants";
 
-import CurrencyUnitValue from "../../../../../../../components/CurrencyUnitValue";
-import Button from "../../../../../../../components/Button";
-import FirstLetterIcon from "../../../../../../../components/FirstLetterIcon";
-import Circle from "../../../../../../../components/Circle";
-import Touchable from "../../../../../../../components/Touchable";
-import LedgerLogo from "../../../../../../../icons/LiveLogo";
-import CurrencyIcon from "../../../../../../../components/CurrencyIcon";
-import { TrackScreen } from "../../../../../../../analytics";
-import { ScreenName } from "../../../../../../../const";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import Button from "~/components/Button";
+import FirstLetterIcon from "~/components/FirstLetterIcon";
+import Circle from "~/components/Circle";
+import Touchable from "~/components/Touchable";
+import LedgerLogo from "~/icons/LiveLogo";
+import CurrencyIcon from "~/components/CurrencyIcon";
+import { TrackScreen } from "~/analytics";
+import { ScreenName } from "~/const";
 
 import { rgba } from "../../../../../../../colors";
 

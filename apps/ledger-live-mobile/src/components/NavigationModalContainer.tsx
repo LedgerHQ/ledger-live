@@ -5,7 +5,7 @@ import styled from "styled-components/native";
 import type { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex/index";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { OnboardingNavigatorParamList } from "./RootNavigator/types/OnboardingNavigator";
-import { NavigatorName } from "../const";
+import { NavigatorName } from "~/const";
 import { StackNavigatorProps } from "./RootNavigator/types/helpers";
 
 export const MIN_MODAL_HEIGHT = 30;

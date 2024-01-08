@@ -8,21 +8,21 @@ import { useDispatch, useSelector } from "react-redux";
 import { NavigationContainerEventMap } from "@react-navigation/native";
 import { Box } from "@ledgerhq/native-ui";
 import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
-import Portfolio from "../../screens/Portfolio";
-import WalletNftGallery from "../../screens/Nft/WalletNftGallery";
+import Portfolio from "~/screens/Portfolio";
+import WalletNftGallery from "~/screens/Nft/WalletNftGallery";
 import {
   readOnlyModeEnabledSelector,
   walletTabNavigatorLastVisitedTabSelector,
-} from "../../reducers/settings";
-import { hasNoAccountsSelector } from "../../reducers/accounts";
-import ReadOnlyPortfolio from "../../screens/Portfolio/ReadOnly";
-import { setWalletTabNavigatorLastVisitedTab } from "../../actions/settings";
+} from "~/reducers/settings";
+import { hasNoAccountsSelector } from "~/reducers/accounts";
+import ReadOnlyPortfolio from "~/screens/Portfolio/ReadOnly";
+import { setWalletTabNavigatorLastVisitedTab } from "~/actions/settings";
 import WalletTabNavigatorTabBar from "../WalletTab/WalletTabNavigatorTabBar";
 import WalletTabNavigatorScrollManager from "../WalletTab/WalletTabNavigatorScrollManager";
 import WalletTabHeader from "../WalletTab/WalletTabHeader";
 import WalletTabNavigatorTabBarDisabled from "../WalletTab/WalletTabNavigatorTabBarDisabled";
 import { WalletTabNavigatorStackParamList } from "./types/WalletTabNavigator";
-import { ScreenName, NavigatorName } from "../../const/navigation";
+import { ScreenName, NavigatorName } from "~/const/navigation";
 import MarketNavigator from "./MarketNavigator";
 
 const WalletTab = createMaterialTopTabNavigator<WalletTabNavigatorStackParamList>();

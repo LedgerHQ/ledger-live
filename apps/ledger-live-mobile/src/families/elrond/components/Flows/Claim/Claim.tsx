@@ -4,14 +4,11 @@ import { useTranslation } from "react-i18next";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "@react-navigation/native";
 
-import StepHeader from "../../../../../components/StepHeader";
-import ClaimRewardsSelectDevice from "../../../../../screens/SelectDevice";
-import ClaimRewardsConnectDevice from "../../../../../screens/ConnectDevice";
-import {
-  getStackNavigatorConfig,
-  defaultNavigationOptions,
-} from "../../../../../navigation/navigatorConfig";
-import { ScreenName } from "../../../../../const";
+import StepHeader from "~/components/StepHeader";
+import ClaimRewardsSelectDevice from "~/screens/SelectDevice";
+import ClaimRewardsConnectDevice from "~/screens/ConnectDevice";
+import { getStackNavigatorConfig, defaultNavigationOptions } from "~/navigation/navigatorConfig";
+import { ScreenName } from "~/const";
 
 import PickValidator from "./components/PickValidator";
 import PickMethod from "./components/PickMethod";

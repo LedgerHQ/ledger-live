@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>LedgerLive - Deep Links</title>
+  <style>
+    body,
+    html {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+    }
+
+    body {
+      background-color: #bdb3ff19;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-start;
+      font-family: sans-serif;
+      padding: 16px;
+      box-sizing: border-box;
+      color: #bdb3ff;
+    }
+
+    header {
+      flex: 0 0 100px
+    }
+
+    .scrollContent {
+      width: 100%;
+      flex: 1 0 0%;
+      overflow: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .link {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      background-color: white;
+      padding-left: 16px;
+      border-radius: 50px;
+      box-sizing: border-box;
+      margin: 8px 0;
+      border: none;
+      color: #bdb3ff;
+      height: 50px;
+      border-radius: 50px;
+      line-height: 50px;
+      cursor: pointer;
+      flex: 0 0 50px;
+    }
+
+    button p {
+      margin: 0;
+      padding-right: 8px;
+    }
+
+    :focus {
+      outline: none
+    }
+
+    input {
+      min-height: 50px;
+      height: 50px;
+      border: none;
+      background-color: white;
+      border-radius: 50px;
+      padding: 0 0 0 16px;
+      margin: 8px 0;
+      color: #bdb3ff;
+    }
+
+    .separator {
+      display: block;
+      width: 100px;
+      height: 4px;
+      align-self: center;
+      background-color: #bdb3ff19;
+      margin: 8px 0;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h2 class="title">LedgerLive - Deep Links 🔗</h1>
+      <p>
+        Edit the parameters if needed then press on each link to test them.
+      </p>
+  </header>
+  <div class="scrollContent">
+    <input type="text" value="" placeholder="Edit currency..." id="currencyInput">
+
+    <h3>Portfolio (Landing Page)</h3>
+    <button class="link" onclick="onClick('ledgerlive:\/\/')">
+      <p>ledgerlive://</p>
+      <p>🔗</p>
+    </button>
+
+    <button class="link" onclick="onClick('ledgerlive:\/\/portfolio')">
+      <p>ledgerlive://portfolio</p>
+      <p>🔗</p>
+    </button>
+
+    <div class="separator"></div>
+    <h3>Accounts</h3>
+    <button class="link" onclick="onClick('ledgerlive:\/\/accounts')">
+      <p>ledgerlive://accounts</p>
+      <p>🔗</p>
+    </button>
+
+   
+
+    <div class="separator"></div>
+
+    <h3>Account</h3>
+    <button class="link" onclick="onClick('ledgerlive:\/\/account')">
+      <p>ledgerlive://account</p>
+      <p>🔗</p>
+    </button>
+
+    <button class="link" onclick="onClick('ledgerlive:\/\/account?currency=CURRENCY_PARAM')">
+      <p>ledgerlive://account?currency=<b class="currencyName">bitcoin</b></p>
+      <p>🔗</p>
+    </button>
+
+    <div class="separator"></div>
+    <h3>Add Account</h3>
+    <button class="link" onclick="onClick('ledgerlive:\/\/add-account')">
+      <p>ledgerlive://add-account</p>
+      <p>🔗</p>
+    </button>
+
+    <button class="link" onclick="onClick('ledgerlive:\/\/add-account?currency=CURRENCY_PARAM')">
+      <p>ledgerlive://add-account?currency=<b class="currencyName">bitcoin</b></p>
+      <p>🔗</p>
+    </button>
+
+    <div class="separator"></div>
+    <h3>Send</h3>
+    <button class="link" onclick="onClick('ledgerlive:\/\/send')">
+      <p>ledgerlive://send</p>
+      <p>🔗</p>
+    </button>
+
+    <button class="link" onclick="onClick('ledgerlive:\/\/send?currency=CURRENCY_PARAM')">
+      <p>ledgerlive://send?currency=<b class="currencyName">bitcoin</b></p>
+      <p>🔗</p>
+    </button>
+
+    <div class="separator"></div>
+    <h3>Receive</h3>
+    <button class="link" onclick="onClick('ledgerlive:\/\/receive')">
+      <p>ledgerlive://receive</p>
+      <p>🔗</p>
+    </button>
+
+    <button class="link" onclick="onClick('ledgerlive:\/\/receive?currency=CURRENCY_PARAM')">
+      <p>ledgerlive://receive?currency=<b class="currencyName">bitcoin</b></p>
+      <p>🔗</p>
+    </button>
+    <div class="separator"></div>
+    <h3>Delegate</h3>
+
+    <p>Only currency supported is currently tezos. </p>
+    <button class="link" onclick="onClick('ledgerlive:\/\/delegate')">
+      <p>ledgerlive://delegate</p>
+      <p>🔗</p>
+    </button>
+
+    <button class="link" onclick="onClick('ledgerlive:\/\/delegate?currency=tezos')">
+      <p>ledgerlive://delegate?currency=tezos</p>
+      <p>🔗</p>
+    </button>
+
+    <div class="separator"></div>
+    <h3>Buy</h3>
+    <button class="link" onclick="onClick('ledgerlive:\/\/buy')">
+      <p>ledgerlive://buy</p>
+      <p>🔗</p>
+    </button>
+
+    <button class="link" onclick="onClick('ledgerlive:\/\/buy/CURRENCY_PARAM')">
+      <p>ledgerlive://buy/<b class="currencyName">bitcoin</b></p>
+      <p>🔗</p>
+    </button>
+
+    <div class="separator"></div>
+    <h3>Swap</h3>
+    <button class="link" onclick="onClick('ledgerlive:\/\/swap')">
+      <p>ledgerlive://swap</p>
+      <p>🔗</p>
+    </button>
+
+    <div class="separator"></div>
+    <h3>MyLedger</h3>
+    <button class="link" onclick="onClick('ledgerlive:\/\/myledger')">
+      <p>ledgerlive://myledger</p>
+      <p>🔗</p>
+    </button>
+
+    <button class="link" onclick="onClick('ledgerlive:\/\/myledger?installApp=CURRENCY_PARAM')">
+      <p>ledgerlive://myledger?installApp=<b class="currencyName">bitcoin</b></p>
+      </p>
+      <p>🔗</p>
+    </button>
+
+    <div class="separator"></div>
+    <h3>Discover</h3>
+    <button class="link" onclick="onClick('ledgerlive:\/\/discover')">
+      <p>ledgerlive://discover</p>
+      <p>🔗</p>
+    </button>
+
+    <input type="text" value="" placeholder="Edit platform app id..." id="platformAppInput">
+
+    <button class="link" onclick="onClick('ledgerlive:\/\/discover\/PLATFORM_APP_PARAM')">
+      <p>ledgerlive://discover/<b class="platformApp">paraswap</b></p>
+      <p>🔗</p>
+    </button>
+
+    
+    <button class="link" onclick="onClick('ledgerlive:\/\/discover\/PLATFORM_APP_PARAM?accountId=1')">
+      <p>ledgerlive://discover/<b class="platformApp">paraswap</b>?accountId=1</p>
+      <p>🔗</p>
+    </button>
+    <div class="separator"></div>
+
+    <h3>Earn</h3>
+    <button class="link" onclick="onClick('ledgerlive:\/\/earn')">
+      <p>ledgerlive://earn</p>
+      <p>🔗</p>
+    </button>
+
+    <button class="link" onclick="onClick('ledgerlive:\/\/earn?action=stake')">
+      <p>ledgerlive://earn?action=stake</p>
+      <p>🔗</p>
+    </button>
+
+    <button class="link" onclick="onClick('ledgerlive:\/\/earn?action=stake-account&accountId=1')">
+      <p>ledgerlive://earn?action=stake-account&accountId=1</p>
+      <p>🔗</p>
+    </button>
+
+    <button class="link" onclick="onClick('ledgerlive:\/\/earn?action=get-funds&currencyId=ethereum')">
+      <p>ledgerlive://earn?action=get-funds&currencyId=ethereum</p>
+      <p>🔗</p>
+    </button>
+
+    <div class="separator"></div>
+    
+    <h3>Market</h3>
+    <button class="link" onclick="onClick('ledgerlive:\/\/market')">
+      <p>ledgerlive://market</p>
+      <p>🔗</p>
+    </button>
+  </div>
+  <script>
+    let currency = "bitcoin";
+    let platformApp = "paraswap"
+    function onClick(url) {
+      window.open(
+        url
+          .replace(/CURRENCY_PARAM/, currency)
+          .replace(/PLATFORM_APP_PARAM/, platformApp),
+        "_blank"
+      );
+    }
+
+    function onChangeCurrency(evt) {
+      currency = evt.target.value.toLowerCase();
+      Array.from(document.querySelectorAll("b.currencyName")).forEach(el => el.innerHTML = currency)
+    }
+
+    function onChangePlatformApp(evt) {
+      platformApp = event.target.value.toLowerCase()
+      Array.from(document.querySelectorAll("b.platformApp")).forEach(el => el.innerHTML = platformApp)
+    }
+
+    window.onload = () => {
+      document.getElementById("currencyInput").onchange = onChangeCurrency;
+      document.getElementById("platformAppInput").onchange = onChangePlatformApp;
+    }
+  </script>
+</body>
+
+</html>

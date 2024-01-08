@@ -1,6 +1,6 @@
 import React from "react";
 import { ImageSourcePropType } from "react-native";
-import Illustration from "../../images/illustration/Illustration";
+import Illustration from "~/images/illustration/Illustration";
 import DiscoverCard from "../Discover/DiscoverCard";
 
 type Props = {

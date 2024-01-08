@@ -3,8 +3,8 @@ import { IconsLegacy } from "@ledgerhq/native-ui";
 import { Buffer } from "buffer";
 import { useNavigation } from "@react-navigation/native";
 import Clipboard from "@react-native-clipboard/clipboard";
-import { NavigatorName, ScreenName } from "../../../../const";
-import SettingsRow from "../../../../components/SettingsRow";
+import { NavigatorName, ScreenName } from "~/const";
+import SettingsRow from "~/components/SettingsRow";
 
 type Props = {
   title: string;

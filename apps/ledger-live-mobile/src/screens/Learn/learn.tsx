@@ -4,11 +4,11 @@ import React, { memo, useCallback, useEffect, useState } from "react";
 import { FlatList } from "react-native";
 import { TouchableHighlight } from "react-native-gesture-handler";
 import styled, { useTheme } from "styled-components/native";
-import { TrackScreen } from "../../analytics";
-import Skeleton from "../../components/Skeleton";
-import { ScreenName } from "../../const";
-import useDynamicContent from "../../dynamicContent/dynamicContent";
-import { LearnContentCard } from "../../dynamicContent/types";
+import { TrackScreen } from "~/analytics";
+import Skeleton from "~/components/Skeleton";
+import { ScreenName } from "~/const";
+import useDynamicContent from "~/dynamicContent/useDynamicContent";
+import { LearnContentCard } from "~/dynamicContent/types";
 
 const keyExtractor = (item: LearnContentCard) => item.id;
 

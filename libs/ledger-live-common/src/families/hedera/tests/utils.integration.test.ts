@@ -1,8 +1,7 @@
-import network from "@ledgerhq/live-network/network";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type { Transaction } from "../types";
-import { calculateAmount } from "../utils";
+import { calculateAmount, getEstimatedFees } from "../utils";
 
 // Balance is 1 Hbar
 const account: Account = {
@@ -63,17 +62,8 @@ const transaction: Transaction = {
 describe("utils", () => {
   let estimatedFees = new BigNumber("150200").multipliedBy(2); // 0.001502 ℏ (as of 2023-03-14)
 
-  it("should return hedera price if available", async () => {
-    // If get hedera price works, use real estimate, otherwise fallback to hard coded
-    try {
-      const { data } = await network({
-        method: "GET",
-        url: "https://countervalues.live.ledger.com/latest/direct?pairs=hbar:usd",
-      });
-      estimatedFees = new BigNumber(10000).dividedBy(data[0]).integerValue(BigNumber.ROUND_CEIL);
-    } catch {
-      console.error("Could not fetch Hedera price");
-    }
+  beforeAll(async () => {
+    estimatedFees = await getEstimatedFees(account);
   });
 
   test("calculateAmount transaction.useAllAmount = true", async () => {

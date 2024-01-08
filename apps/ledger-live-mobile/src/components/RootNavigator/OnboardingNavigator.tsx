@@ -10,44 +10,44 @@ import { Theme } from "@ledgerhq/native-ui/styles/theme";
 
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
-import { ScreenName, NavigatorName } from "../../const";
+import { ScreenName, NavigatorName } from "~/const";
 import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
-import OnboardingWelcome from "../../screens/Onboarding/steps/welcome";
-import OnboardingLanguage from "../../screens/Onboarding/steps/language";
-import OnboardingTerms from "../../screens/Onboarding/steps/terms";
-import OnboardingDeviceSelection from "../../screens/Onboarding/steps/deviceSelection";
-import OnboardingUseCase from "../../screens/Onboarding/steps/useCaseSelection";
-import OnboardingNewDeviceInfo from "../../screens/Onboarding/steps/newDeviceInfo";
-import OnboardingNewDiscoverLiveInfo from "../../screens/Onboarding/steps/discoverLiveInfo";
-import OnboardingNewDevice from "../../screens/Onboarding/steps/setupDevice";
-import OnboardingRecoveryPhrase from "../../screens/Onboarding/steps/recoveryPhrase";
+import OnboardingWelcome from "~/screens/Onboarding/steps/welcome";
+import OnboardingLanguage from "~/screens/Onboarding/steps/language";
+import OnboardingTerms from "~/screens/Onboarding/steps/terms";
+import OnboardingDeviceSelection from "~/screens/Onboarding/steps/deviceSelection";
+import OnboardingUseCase from "~/screens/Onboarding/steps/useCaseSelection";
+import OnboardingNewDeviceInfo from "~/screens/Onboarding/steps/newDeviceInfo";
+import OnboardingNewDiscoverLiveInfo from "~/screens/Onboarding/steps/discoverLiveInfo";
+import OnboardingNewDevice from "~/screens/Onboarding/steps/setupDevice";
+import OnboardingRecoveryPhrase from "~/screens/Onboarding/steps/recoveryPhrase";
 import OnboardingInfoModal from "../OnboardingStepperView/OnboardingInfoModal";
 
-import OnboardingBleDevicePairingFlow from "../../screens/Onboarding/steps/BleDevicePairingFlow";
-import OnboardingPairNew from "../../screens/Onboarding/steps/pairNew";
-import OnboardingImportAccounts from "../../screens/Onboarding/steps/importAccounts";
-import OnboardingPreQuizModal from "../../screens/Onboarding/steps/setupDevice/drawers/OnboardingPreQuizModal";
-import OnboardingQuiz from "../../screens/Onboarding/OnboardingQuiz";
-import OnboardingQuizFinal from "../../screens/Onboarding/OnboardingQuizFinal";
+import OnboardingBleDevicePairingFlow from "~/screens/Onboarding/steps/BleDevicePairingFlow";
+import OnboardingPairNew from "~/screens/Onboarding/steps/pairNew";
+import OnboardingImportAccounts from "~/screens/Onboarding/steps/importAccounts";
+import OnboardingPreQuizModal from "~/screens/Onboarding/steps/setupDevice/drawers/OnboardingPreQuizModal";
+import OnboardingQuiz from "~/screens/Onboarding/OnboardingQuiz";
+import OnboardingQuizFinal from "~/screens/Onboarding/OnboardingQuizFinal";
 import NavigationHeader from "../NavigationHeader";
 import NavigationOverlay from "../NavigationOverlay";
 import NavigationModalContainer from "../NavigationModalContainer";
-import OnboardingSetupDeviceInformation from "../../screens/Onboarding/steps/setupDevice/drawers/SecurePinCode";
-import OnboardingSetupDeviceRecoveryPhrase from "../../screens/Onboarding/steps/setupDevice/drawers/SecureRecoveryPhrase";
-import OnboardingGeneralInformation from "../../screens/Onboarding/steps/setupDevice/drawers/GeneralInformation";
-import OnboardingBluetoothInformation from "../../screens/Onboarding/steps/setupDevice/drawers/BluetoothConnection";
-import PostWelcomeSelection from "../../screens/Onboarding/steps/postWelcomeSelection";
-import GetDeviceScreen from "../../screens/GetDeviceScreen";
-import OnboardingProtectFlow from "../../screens/Onboarding/steps/protectFlow";
+import OnboardingSetupDeviceInformation from "~/screens/Onboarding/steps/setupDevice/drawers/SecurePinCode";
+import OnboardingSetupDeviceRecoveryPhrase from "~/screens/Onboarding/steps/setupDevice/drawers/SecureRecoveryPhrase";
+import OnboardingGeneralInformation from "~/screens/Onboarding/steps/setupDevice/drawers/GeneralInformation";
+import OnboardingBluetoothInformation from "~/screens/Onboarding/steps/setupDevice/drawers/BluetoothConnection";
+import PostWelcomeSelection from "~/screens/Onboarding/steps/postWelcomeSelection";
+import GetDeviceScreen from "~/screens/GetDeviceScreen";
+import OnboardingProtectFlow from "~/screens/Onboarding/steps/protectFlow";
 
 import {
   OnboardingNavigatorParamList,
   OnboardingPreQuizModalNavigatorParamList,
 } from "./types/OnboardingNavigator";
 import { StackNavigatorProps } from "./types/helpers";
-import ProtectConnectionInformationModal from "../../screens/Onboarding/steps/setupDevice/drawers/ProtectConnectionInformationModal";
+import ProtectConnectionInformationModal from "~/screens/Onboarding/steps/setupDevice/drawers/ProtectConnectionInformationModal";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
-import AccessExistingWallet from "../../screens/Onboarding/steps/accessExistingWallet";
+import AccessExistingWallet from "~/screens/Onboarding/steps/accessExistingWallet";
 
 const Stack = createStackNavigator<OnboardingNavigatorParamList>();
 const OnboardingPreQuizModalStack =

@@ -3,9 +3,9 @@ import Animated from "react-native-reanimated";
 import { useSelector } from "react-redux";
 import { CryptoOrTokenCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 import { AccountLike } from "@ledgerhq/types-live";
-import AssetCentricGraphCard from "../../components/AssetCentricGraphCard";
-import { usePortfolioForAccounts } from "../../hooks/portfolio";
-import { counterValueCurrencySelector } from "../../reducers/settings";
+import AssetCentricGraphCard from "~/components/AssetCentricGraphCard";
+import { usePortfolioForAccounts } from "~/hooks/portfolio";
+import { counterValueCurrencySelector } from "~/reducers/settings";
 
 type Props = {
   accounts: AccountLike[];

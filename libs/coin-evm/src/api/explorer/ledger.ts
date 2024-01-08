@@ -10,6 +10,7 @@ import {
   ledgerERC1155EventToOperations,
   ledgerERC20EventToOperations,
   ledgerERC721EventToOperations,
+  ledgerInternalTransactionToOperations,
   ledgerOperationToOperations,
 } from "../../adapters/index";
 import { ExplorerApi, isLedgerExplorerConfig } from "./types";
@@ -112,6 +113,7 @@ export const getLastOperations: ExplorerApi["getLastOperations"] = async (
   const lastCoinOperations: Operation[] = [];
   const lastTokenOperations: Operation[] = [];
   const lastNftOperations: Operation[] = [];
+  const lastInternalOperations: Operation[] = [];
 
   ledgerExplorerOps.forEach(ledgerOp => {
     const coinOps = ledgerOperationToOperations(accountId, ledgerOp);
@@ -142,17 +144,22 @@ export const getLastOperations: ExplorerApi["getLastOperations"] = async (
           ledgerERC1155EventToOperations(coinOps[0], event, index),
         )
       : [];
+    const internalOps = ledgerOp.actions.flatMap((action, index) =>
+      ledgerInternalTransactionToOperations(coinOps[0], action, index),
+    );
 
     lastCoinOperations.push(...coinOps);
     lastTokenOperations.push(...erc20Ops);
     lastNftOperations.push(...erc721Ops);
     lastNftOperations.push(...erc1155Ops);
+    lastInternalOperations.push(...internalOps);
   });
 
   return {
     lastCoinOperations,
     lastTokenOperations,
     lastNftOperations,
+    lastInternalOperations,
   };
 };
 

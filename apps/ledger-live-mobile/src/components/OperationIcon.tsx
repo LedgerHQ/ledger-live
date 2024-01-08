@@ -4,10 +4,10 @@ import type { Account, AccountLike, Operation, OperationType } from "@ledgerhq/t
 import React from "react";
 import { connect } from "react-redux";
 import perFamilyOperationDetails from "../generated/operationDetails";
-import OperationStatusIcon from "../icons/OperationStatusIcon";
-import { currencySettingsForAccountSelector } from "../reducers/settings";
-import { State } from "../reducers/types";
-import { UnionToIntersection } from "../types/helpers";
+import OperationStatusIcon from "~/icons/OperationStatusIcon";
+import { currencySettingsForAccountSelector } from "~/reducers/settings";
+import { State } from "~/reducers/types";
+import { UnionToIntersection } from "~/types/helpers";
 
 type OwnProps = {
   size: number;

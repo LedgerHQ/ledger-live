@@ -5,7 +5,7 @@ import DrawerFooter from "./DrawerFooter";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
-import { ErrorBody } from "~/renderer/components/DeviceAction/rendering";
+import { ErrorBody } from "~/renderer/components/ErrorBody";
 
 export type Props = {
   onClose: () => void;

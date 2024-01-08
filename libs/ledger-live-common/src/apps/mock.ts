@@ -162,7 +162,6 @@ export function mockListAppsResult(
         delete: "",
         delete_key: "",
         dateModified: "",
-        compatibleWallets: [],
         currencyId: currency ? currency.id : null,
         indexOfMarketCap,
         isDevTools: false,

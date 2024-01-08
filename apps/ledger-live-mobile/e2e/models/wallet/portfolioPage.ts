@@ -15,6 +15,9 @@ export default class PortfolioPage {
   readOnlyPortfolioId = "PortfolioReadOnlyList";
   transferScrollListId = "transfer-scroll-list";
   stakeMenuButtonId = "transfer-stake-button";
+  accountsListView = "PortfolioAccountsList";
+  seeAllTransactionButton = "portfolio-seeAll-transaction";
+  transactionAmountId = "portfolio-operation-amount";
   emptyPortfolioComponent = () => getElementById("PortfolioEmptyAccount");
   portfolioSettingsButton = () => getElementById("settings-icon");
   transferButton = () => getElementById("transfer-button");
@@ -24,7 +27,9 @@ export default class PortfolioPage {
   receiveTransfertMenuButton = () => getElementById("transfer-receive-button");
   sendMenuButton = () => getElementById("send-button");
   marketTabButton = () => getElementById("tab-bar-market");
+  walletTabMarket = () => getElementById("wallet-tab-Market");
   earnButton = () => getElementById("tab-bar-earn");
+  lastTransactionAmount = () => getElementById(this.transactionAmountId, 0);
 
   navigateToSettings() {
     return tapByElement(this.portfolioSettingsButton());
@@ -81,11 +86,19 @@ export default class PortfolioPage {
     return tapByElement(this.marketTabButton());
   }
 
+  openWalletTabMarket() {
+    return tapByElement(this.walletTabMarket());
+  }
+
   openMyLedger() {
     return tapByElement(getElementById("TabBarManager"));
   }
 
   openEarnApp() {
     return tapByElement(this.earnButton());
+  }
+
+  async scrollToTransactions() {
+    await scrollToId(this.seeAllTransactionButton, this.accountsListView);
   }
 }

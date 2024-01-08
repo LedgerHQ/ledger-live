@@ -1,6 +1,7 @@
+import { expect } from "@playwright/test";
+import { getEnv } from "@ledgerhq/live-env";
 import test from "../../fixtures/common";
 import { Layout } from "../../models/Layout";
-import { expect } from "@playwright/test";
 
 test.use({ userdata: "1AccountBTC1AccountETH" });
 
@@ -18,7 +19,7 @@ test("Countervalues: at least one call is made and successful to the API", async
     const firstSuccessfulQuery = new Promise(resolve => {
       page.on("response", response => {
         if (
-          response.url().startsWith("https://countervalues.live.ledger.com") &&
+          response.url().startsWith(getEnv("LEDGER_COUNTERVALUES_API")) &&
           response.status() === 200
         ) {
           resolve(response);

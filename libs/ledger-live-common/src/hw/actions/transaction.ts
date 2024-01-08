@@ -18,6 +18,7 @@ import type {
   SignOperationEvent,
 } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+
 type State = {
   signedOperation: SignedOperation | null | undefined;
   deviceSignatureRequested: boolean;

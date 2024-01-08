@@ -3,9 +3,9 @@
   &nbsp;
   <image src="https://user-images.githubusercontent.com/3428394/165078595-1b2a55ae-783a-4c8f-8548-c4f050ae5e76.png" alt="js-logo" height="100" />
   <br/>
-  <h3 align="center">The Ledger Live JavaScript ecosystem</h3>
+  <h3 align="center">The Ledger Live JavaScript Ecosystem</h3>
   <h4 align="center">
-    <a href="https://jobs.lever.co/ledger/?department=Consumer%20-%20Engineering&team=Live">
+    <a href="https://jobs.lever.co/ledger/?department=Tech">
       We are hiring, join us! 👨‍💻👩‍💻
     </a>
   </h4>
@@ -17,7 +17,7 @@
 
 `ledger-live` is a **monorepository** whose purpose is to centralize all the JavaScript code related to the [**Ledger Live**](https://www.ledger.com/ledger-live) applications in one place.
 
-[**Ledger Live**](https://www.ledger.com/ledger-live) is our platform of apps and services integrated specifically to work with your Nano device. It functions as a secure gateway to the crypto ecosystem. This means accessing a variety of crypto, NFT and DeFi based services directly and seamlessly from your hardware wallet – a better, simpler user experience that bypasses a major security concern known as blind signing.
+[**Ledger Live**](https://www.ledger.com/ledger-live) is our platform of apps and services designed specifically for seamless integration with your Ledger device. Acting as a secure gateway to the crypto ecosystem, it allows direct access to a diverse range of crypto, NFT and DeFi services. This integration ensures a safer and more user-friendly experience that address a common security issue known as 'blind signing'.
 
 Developers looking to integrate their blockchain in Ledger Live are invited to head to the [**Developer Portal**](https://developers.ledger.com) where they will find the section [**Blockchain Support**](https://developers.ledger.com/docs/coin/general-process).
 
@@ -34,7 +34,7 @@ cd ledger-live
 
 ### Proto
 
-**⚠️ Important**: In order to use install the right version of the tools you will need to install the [`proto`](https://moonrepo.dev/proto) toolchain manager.
+**⚠️ Important**: In order to install the right version of the tools you will need to install the [`proto`](https://moonrepo.dev/proto) toolchain manager.
 Please follow the instructions on the [**proto**](https://moonrepo.dev/docs/proto/install) website to install it.
 
 Once you have installed `proto`, please run the following command:
@@ -117,7 +117,7 @@ pnpm typecheck --filter="live-mobile"
 ## Documentation
 
 Each project folder has a `README.md` file which contains basic documentation.
-It includes background info about the project and how to setup, run and build it.
+It includes background information about the project and how to setup, run and build it.
 
 Please check the [**wiki**](https://github.com/LedgerHQ/ledger-live/wiki) for additional documentation.
 
@@ -143,8 +143,8 @@ The applications are user-facing programs which depend on one or more libraries.
 
 ### `/libs` - Libraries
 
-Libraries are public packages which purpose is to be consumed by other libraries or applications.
-They are deployed to the official npm repository under the `@ledgerhq` organization.
+Libraries serve as publicly available packages, designed for integration with other libraries or applications.
+These packages are deployed to the official npm repository under the `@ledgerhq` organization.
 
 <details><summary><b>Ledger Live Libraries</b></summary>
 <br/>
@@ -197,7 +197,7 @@ They are deployed to the official npm repository under the `@ledgerhq` organizat
 
 ### `/tools` - Tools
 
-> ⚠️ Tools are meant to be used internally and are undocumented for the most part.
+> ⚠️ Tools are primarily intended for internal use and are largely undocumented.
 
 A tool can be a github action, a shell script or a piece of JavaScript code that is used throughout this repository.
 
@@ -205,13 +205,13 @@ A tool can be a github action, a shell script or a piece of JavaScript code that
 
 Please check the general guidelines for contributing to Ledger Live projects: [`CONTRIBUTING.md`](https://github.com/LedgerHQ/ledger-live/blob/develop/CONTRIBUTING.md).
 
-Each separate project may also contain specific guidelines inside its own folder.
+Each individual project may include its own specific guidelines, located within its respective folder.
 
-In the meantime here are some important highlights:
+While you explore these projects, here are some key points to keep in mind:
 
-- Follow the git workflow, prefix your branches and do not create unneeded merge commits.
-- Be mindful when creating Pull Requests, specify the reason of the change clearly and write tests if needed.
-- Ledger Applications are mostly accepting bugfix contributions. For features we may reject them based on the fact that they do not fit our roadmap or our long-term goals.
+- Follow the git workflow, prefix your branches and do not create unnecessary merge commits.
+- Be mindful when creating Pull Requests, clearly specify the purpose of your changes and include tests where applicable.
+- Ledger Applications are mostly accepting bugfix contributions. Feature contributions are subject to review; they may be declined if they don't align with our roadmap or our long-term objectives.
 
 ## Nightly Releases
 

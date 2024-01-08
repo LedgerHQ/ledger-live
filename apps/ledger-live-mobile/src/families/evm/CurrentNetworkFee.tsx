@@ -7,9 +7,8 @@ import { Alert, Flex } from "@ledgerhq/native-ui";
 import type { Account, AccountLike, TransactionCommonRaw } from "@ledgerhq/types-live";
 import React, { memo } from "react";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
-import LText from "../../components/LText";
-import { localeSelector } from "../../reducers/settings";
+import LText from "~/components/LText";
+import { useSettings } from "~/hooks";
 
 const CurrentNetworkFeeComponent = ({
   account,
@@ -22,7 +21,7 @@ const CurrentNetworkFeeComponent = ({
   advancedMode?: boolean;
 }) => {
   const { t } = useTranslation();
-  const locale = useSelector(localeSelector);
+  const { locale } = useSettings();
 
   if (!transactionRaw) {
     return null;
@@ -44,7 +43,7 @@ const CurrentNetworkFeeComponent = ({
     formattedMaxPriorityFeePerGas,
     formattedMaxFeePerGas,
     formattedGasPrice,
-  } = getFormattedFeeFields({ transaction, mainAccount, locale });
+  } = getFormattedFeeFields({ transaction, mainAccount, locale: locale });
 
   return (
     <Alert type="info">

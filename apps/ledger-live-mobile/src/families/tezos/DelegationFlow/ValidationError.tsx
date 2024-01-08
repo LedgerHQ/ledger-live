@@ -2,16 +2,16 @@ import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
-import ValidateError from "../../../components/ValidateError";
-import { TrackScreen } from "../../../analytics";
-import { ScreenName } from "../../../const";
+import ValidateError from "~/components/ValidateError";
+import { TrackScreen } from "~/analytics";
+import { ScreenName } from "~/const";
 import type {
   BaseComposite,
   StackNavigatorNavigation,
   StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
+} from "~/components/RootNavigator/types/helpers";
 import type { TezosDelegationFlowParamList } from "./types";
-import type { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
+import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 
 type Props = BaseComposite<
   StackNavigatorProps<TezosDelegationFlowParamList, ScreenName.DelegationValidationError>

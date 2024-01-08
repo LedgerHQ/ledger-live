@@ -51,7 +51,7 @@ import {
   renderInstallingLanguage,
   renderAllowRemoveCustomLockscreen,
   renderLockedDeviceError,
-  RenderDeviceNotOnboardedError,
+  DeviceNotOnboardedErrorComponent,
 } from "./rendering";
 import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils";
 import {
@@ -433,7 +433,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     // NB Until we find a better way, remap the error if it's 6d06 (LNS, LNSP, LNX) or 6d07 (Stax) and we haven't fallen
     // into another handled case.
     if (isDeviceNotOnboardedError(e)) {
-      return <RenderDeviceNotOnboardedError t={t} device={device} />;
+      return <DeviceNotOnboardedErrorComponent t={t} device={device} />;
     }
 
     if (e instanceof NoSuchAppOnProvider) {
@@ -457,6 +457,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
 
     let withExportLogs = true;
     let warning = false;
+    let withDescription = true;
     // User rejections, should be rendered as warnings and not export logs.
     // All the error rendering needs to be unified, the same way we do for ErrorIcon
     // not handled here.
@@ -472,6 +473,10 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
       warning = true;
     }
 
+    if ((error as unknown) instanceof UserRefusedDeviceNameChange) {
+      withDescription = false;
+    }
+
     return renderError({
       t,
       error,
@@ -480,6 +485,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
       withExportLogs,
       device: device ?? undefined,
       inlineRetry,
+      withDescription,
     });
   }
 

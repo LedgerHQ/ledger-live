@@ -13,7 +13,6 @@
     "rootDir": ".",
     "paths": {
       "~/*": ["src/*"],
-      "@utils/*": ["./src/utils/*"],
       "@tests/*": ["src/__tests__/*"]
     }
   },

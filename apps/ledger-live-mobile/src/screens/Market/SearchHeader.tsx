@@ -3,7 +3,7 @@ import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import React, { memo, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { MarketListRequestParams } from "@ledgerhq/live-common/market/types";
-import { track } from "../../analytics";
+import { track } from "~/analytics";
 
 type Props = {
   search?: string;

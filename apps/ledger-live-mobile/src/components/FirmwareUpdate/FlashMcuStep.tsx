@@ -1,7 +1,7 @@
 import { Flex, Text } from "@ledgerhq/native-ui";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import Track from "../../analytics/Track";
+import Track from "~/analytics/Track";
 import DeviceActionProgress from "../DeviceActionProgress";
 
 type Props = {
