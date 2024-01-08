@@ -2909,6 +2909,7 @@
           }
         }
       }
+      "availableBalance": "Available balance"
     }
   },
   "bitcoin": {

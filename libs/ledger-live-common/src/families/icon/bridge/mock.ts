@@ -2,6 +2,7 @@ import { BigNumber } from "bignumber.js";
 import { NotEnoughBalance, RecipientRequired, InvalidAddress, FeeTooHigh } from "@ledgerhq/errors";
 import type { Transaction } from "../types";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import { defaultUpdateTransaction } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import {
   scanAccounts,
   signOperation,
@@ -10,6 +11,7 @@ import {
   isInvalidRecipient,
 } from "../../../bridge/mockHelpers";
 import { getMainAccount } from "../../../account";
+
 import { makeAccountBridgeReceive } from "../../../bridge/mockHelpers";
 
 const receive = makeAccountBridgeReceive();
@@ -23,7 +25,7 @@ const createTransaction = (): Transaction => ({
   fees: null,
 });
 
-const updateTransaction = (t, patch) => ({ ...t, ...patch });
+const updateTransaction = defaultUpdateTransaction;
 
 const prepareTransaction = async (a, t) => t;
 

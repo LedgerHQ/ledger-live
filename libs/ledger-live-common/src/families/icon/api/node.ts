@@ -3,14 +3,13 @@ import IconService from "icon-sdk-js";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "@ledgerhq/live-env";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
-import type { PRep } from "../types";
 import { encodeOperationId } from "../../../operation";
 import { getAccountBalance, getApiUrl, getHistory, getLatestBlockHeight } from "./indexer";
-import { formatPRepData, isTestnet } from "../logic";
+import { isTestnet } from "../logic";
 import { GOVERNANCE_SCORE_ADDRESS, IISS_SCORE_ADDRESS, STEP_LIMIT } from "../constants";
 import { APITransaction } from "./api-type";
 
-const { HttpProvider, SignedTransaction } = IconService;
+const { HttpProvider } = IconService;
 const { IconBuilder, IconAmount } = IconService;
 const iconUnit = IconAmount.Unit.ICX.toString();
 /**
@@ -42,7 +41,7 @@ function isSender(transaction: APITransaction, addr: string): boolean {
 export function getRpcUrl(currency: CryptoCurrency): string {
   let rpcUrl = getEnv("ICON_NODE_ENDPOINT");
   if (isTestnet(currency)) {
-    rpcUrl = getEnv("ICON_TESTNET_RPC_ENDPOINT");
+    rpcUrl = getEnv("ICON_TESTNET_NODE_ENDPOINT");
   }
   return rpcUrl;
 }
@@ -123,7 +122,6 @@ export const submit = async (txObj, currency) => {
   const httpProvider = new HttpProvider(rpcURL);
   const iconService = new IconService(httpProvider);
 
-  SignedTransaction;
   const signedTransaction: any = {
     getProperties: () => txObj.rawData,
     getSignature: () => txObj.signature,
@@ -171,34 +169,6 @@ export const getStepPrice = async (account): Promise<BigNumber> => {
   return new BigNumber(IconAmount.fromLoop(res || 10000000000, iconUnit));
 };
 
-/**
- * Get step price from governance contract
- */
-export const getPreps = async (currency): Promise<PRep[]> => {
-  const rpcURL = getRpcUrl(currency);
-  const httpProvider = new HttpProvider(rpcURL);
-  const iconService = new IconService(httpProvider);
-  const prepTx: any = new IconBuilder.CallBuilder()
-    .to(IISS_SCORE_ADDRESS)
-    .method("getPReps")
-    .build();
-
-  const preps: PRep[] = [];
-  try {
-    const res = await iconService.call(prepTx).execute();
-    if (res?.preps) {
-      for (const pr of res?.preps) {
-        const prepFormatted = formatPRepData(pr);
-        preps.push(prepFormatted);
-      }
-    }
-  } catch (error) {
-    // TODO: handle show log
-    console.log(error);
-  }
-  return preps;
-};
-
 export const getDelegation = async (address, currency) => {
   const rpcURL = getRpcUrl(currency);
   const httpProvider = new HttpProvider(rpcURL);
@@ -227,49 +197,6 @@ export const getDelegation = async (address, currency) => {
     totalDelegated: new BigNumber(IconAmount.fromLoop(res?.totalDelegated || 0, iconUnit)),
     votingPower: new BigNumber(IconAmount.fromLoop(res?.votingPower || 0, iconUnit)),
   };
-};
-
-export const getPrep = async (prepAddress, currency): Promise<PRep> => {
-  const rpcURL = getRpcUrl(currency);
-  const httpProvider = new HttpProvider(rpcURL);
-  const iconService = new IconService(httpProvider);
-  const prepTx: any = new IconBuilder.CallBuilder()
-    .to(IISS_SCORE_ADDRESS)
-    .method("getPRep")
-    .params({ address: prepAddress })
-    .build();
-
-  let res;
-  try {
-    res = await iconService.call(prepTx).execute();
-    if (res) {
-      res = formatPRepData(res);
-    }
-  } catch (error) {
-    // TODO: handle show log
-    console.log(error);
-  }
-  return res;
-};
-
-export const getIScore = async (address, currency) => {
-  const rpcURL = getRpcUrl(currency);
-  const httpProvider = new HttpProvider(rpcURL);
-  const iconService = new IconService(httpProvider);
-  const prepTx: any = new IconBuilder.CallBuilder()
-    .to(IISS_SCORE_ADDRESS)
-    .method("queryIScore")
-    .params({ address })
-    .build();
-
-  let res;
-  try {
-    res = await iconService.call(prepTx).execute();
-  } catch (error) {
-    // TODO: handle show log
-    console.log(error);
-  }
-  return new BigNumber(IconAmount.fromLoop(res?.estimatedICX || 0, iconUnit));
 };
 
 export const getStake = async (address, currency) => {

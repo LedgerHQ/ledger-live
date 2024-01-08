@@ -3,23 +3,21 @@ import type { IconResourcesRaw, IconResources, IconAccount, IconAccountRaw } fro
 import { AccountRaw, Account } from "@ledgerhq/types-live";
 
 export function toIconResourcesRaw(r: IconResources): IconResourcesRaw {
-  const { nonce, votingPower, totalDelegated, unwithdrawnReward, unstake } = r;
+  const { nonce, votingPower, totalDelegated, unstake } = r;
   return {
     nonce,
     votingPower: votingPower.toString(),
     totalDelegated: totalDelegated.toString(),
-    unwithdrawnReward: unwithdrawnReward.toString(),
     unstake: unstake.toString(),
   };
 }
 
 export function fromIconResourcesRaw(r: IconResourcesRaw): IconResources {
-  const { nonce, votingPower, totalDelegated, unwithdrawnReward, unstake } = r;
+  const { nonce, votingPower, totalDelegated, unstake } = r;
   return {
     nonce,
     votingPower: new BigNumber(votingPower || 0),
     totalDelegated: new BigNumber(totalDelegated || 0),
-    unwithdrawnReward: new BigNumber(unwithdrawnReward || 0),
     unstake: new BigNumber(unstake || 0),
   };
 }

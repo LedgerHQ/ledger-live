@@ -107,7 +107,8 @@ type Props =
   | StackNavigatorProps<SignMessageNavigatorStackParamList, ScreenName.SignConnectDevice>
   | StackNavigatorProps<IconFreezeFlowParamList, ScreenName.IconFreezeConnectDevice>
   | StackNavigatorProps<IconUnfreezeFlowParamList, ScreenName.IconUnfreezeConnectDevice>
-  | StackNavigatorProps<IconVoteFlowParamList, ScreenName.IconVoteConnectDevice>;
+  | StackNavigatorProps<IconVoteFlowParamList, ScreenName.IconVoteConnectDevice>
+  | StackNavigatorProps<SignMessageNavigatorStackParamList, ScreenName.SignConnectDevice>;
 
 export const navigateToSelectDevice = (navigation: Props["navigation"], route: Props["route"]) =>
   // Assumes that it will always navigate to a "SelectDevice"
