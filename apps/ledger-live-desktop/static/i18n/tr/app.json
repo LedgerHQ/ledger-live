@@ -1237,11 +1237,12 @@
         "firmwareUpdate" : {
           "title" : {
             "active" : "İşletim sistemi güncellemesi denetimi",
-            "completed" : "{{modelName}} işletim sisteminiz güncel",
+            "completed" : "{{modelName}} işletim sisteminiz güncel.",
             "updateAvailable" : "{{firmwareVersion}} için işletim sistemi güncellemesi mevcut"
           },
           "subtitle" : {
             "active" : "Bu işlem, {{modelName}} İşletim Sisteminizin güncel olup olmadığını denetler.",
+            "completed" : "{{modelName}} cihazınızda uygulamayı geri yüklemeyi başlatmak için aşağıdaki \"Uygulamaları geri yükle\" düğmesini seçin.",
             "updateAvailable" : "Azami güvenlik ve en son özelliklere erişebilmek için güncelleyin."
           },
           "viewUpdateCTA" : "{{modelName}} işletim sistemini güncelleyin",
@@ -1757,8 +1758,8 @@
     "loading" : "Yükleniyor...",
     "connectAndUnlockDevice" : "Cihazınızı bağlayın ve kilidini açın",
     "unlockDevice" : "Cihazınızın kilidini açın",
-    "unlockDeviceAfterFirmwareUpdateStep1" : "Kurulum {{productName}} cihazında tamamlanıyor",
-    "unlockDeviceAfterFirmwareUpdateStep2" : "Kurulumu tamamlamak için {{productName}} cihazının kilidini açın",
+    "unlockDeviceAfterFirmwareUpdateStep1" : "Kurulumun {{productName}} cihazında tamamlanmasını bekleyin.",
+    "unlockDeviceAfterFirmwareUpdateStep2" : "Güncellemeyi tamamlamak için PIN Kodunuzla {{productName}} cihazınızın kilidini açın.",
     "quitApp" : "Cihazınızdaki uygulamadan çıkın",
     "appNotInstalledTitle" : "Gerekli uygulama eksik",
     "appNotInstalledTitle_plural" : "Gerekli uygulamalar eksik",
@@ -1931,10 +1932,12 @@
       "latest" : "Donanım yazılımının {{version}} sürümü mevcut",
       "contactSupport" : "Destek al",
       "deprecated" : "Cihazın yazılım sürümü güncellenemeyecek kadar eski. Değiştirmek için Ledger Destek ekibiyle iletişime geçin.",
-      "prepareSeed" : "Önlem olarak, 24 kelimelik kurtarma ifadenizi Kurtarma Kağıdına yazdığınızdan ve ona kolayca ulaşabileceğinizden emin olun.",
+      "prepareSeed" : "Önlem olarak, 24 kelimelik kurtarma ifadenizi Kurtarma Kağıdına yazdığınızdan ve bu kağıda kolayca ulaşabileceğinizden emin olun.",
       "disclaimerTitle" : "<1>Donanım yazılımının {{version}} sürümünü</1> yüklemek üzeresiniz.",
       "cancelUpdate" : "Güncellemeyi iptal et",
       "continueUpdate" : "Güncellemeye devam et",
+      "restartUpdate" : "Güncellemeyi yeniden başlat",
+      "skipRestore" : "Geri yüklemeyi atla",
       "cancelUpdateWarning" : "Güncellemeyi şimdi iptal ederseniz ayarlarınız ve uygulamalarınız düzgün bir şekilde geri yüklenmeyebilir.",
       "updateInProgress" : "İşletim sistemi güncellemesi devam ediyor"
     },
@@ -1974,9 +1977,10 @@
       "mcuBlueFirst" : "Cihazı kapatmak için yan tuşu 10 saniye basılı tutun. Tuşu bırakın.",
       "mcuBlueSecond" : "Başlatma Seçenekleri görüntülenene kadar tuşu en az 5 saniye basılı tutun. Bootlader Moduna dokunun",
       "successTitle" : "{{deviceName}} işletim sisteminiz\ngüncel.",
-      "sucessCTAApps" : "Uygulamaları yeniden yükle",
-      "SuccessCTANoApps" : "Uygulama yükleyin",
-      "cancelReinstallCTA" : "Güncellemeyi yükle",
+      "successTitleApps" : "{{deviceName}} cihazınızdaki işletim sisteminiz\ngüncel. Son bir şey daha var...",
+      "successSubtitleApps" : "Ledger Stax cihazınızda uygulamayı geri yüklemeyi başlatmak için\naşağıdaki \"Uygulamaları geri yükle\" düğmesini seçin.",
+      "sucessCTAApps" : "Uygulamaları geri yükleyin",
+      "SuccessCTANoApps" : "Tamamla",
       "resetSteps" : {
         "first" : "1. Cihazı sıfırlama",
         "connect" : "USB kablosunu kullanarak {{deviceName}} cihazını bilgisayarınıza bağlayın.",
@@ -2214,7 +2218,7 @@
         "maxFees" : "Maks. Ağ ücretleri",
         "maxFeesInfo" : "Bu ücret, bu işlem için ödeyebileceğiniz azami tutardır. Maks. ağ ücretleri ile gerçek ücretler arasındaki fark iade edilecektir.",
         "useMax" : "Tümünü kullan",
-        "sendMax" : "Tamamını Gönder",
+        "sendMax" : "Tümünü Gönder",
         "rippleTag" : "Etiket",
         "rippleTagPlaceholder" : "Opsiyonel",
         "edit" : "Düzenle",
@@ -2302,7 +2306,7 @@
       "title" : "{{deviceName}} cihazınızın dili {{language}} yapılsın mı?",
       "description" : "{{deviceName}} cihazınızı artık {{language}} kullanabilirsiniz. Cihaz dilini şimdi ayarlayabilir ya da daha sonra My Ledger'dan istediğiniz zaman değiştirebilirsiniz."
     },
-    "allowLanguageInstallation" : "Dilin yüklenmesine izin verin",
+    "allowLanguageInstallation" : "Dili yüklemek için \"İzin ver\"\nseçeneğine dokunun",
     "languageInstalled" : "Dil {{language}} oldu",
     "installingLanguage" : "Dil yükleniyor",
     "languages" : {
@@ -3057,7 +3061,7 @@
         "steps" : {
           "starter" : {
             "title" : "Yetkinin Yeniden Devri",
-            "description" : "Yetkinin Yeniden Devrini kullanarak yetkiyi kolayca bir doğrulayıcıdan diğerine devredebilirsiniz. Fikrinizi değiştirdiğiniz takdirde beklemeniz gerekir çünkü yetkiyi yeniden devretmek 21 günlük bir zaman kilidini etkinleştirir.",
+            "description" : "Yetkinin Yeniden Devrini kullanarak yetkiyi kolayca bir doğrulayıcıdan diğerine devredebilirsiniz. Ancak fikrinizi bir kez daha değiştirmeniz hâlinde beklemeniz gerekir çünkü yetkiyi yeniden devretmek {{ numberOfDays }} günlük bir zaman kilidini etkinleştirir.",
             "warning" : "Doğrulayıcınızı dikkatle seçin: Doğrulayıcının yanlış kararlar vermesi halinde yetki devrinde kullandığınız varlıkların bir kısmını geri dönülemez bir şekilde kaybedebilirsiniz. Aynı anda en fazla <0>7 tane yetki devri beklemede</0> olabilir.",
             "howDelegationWorks" : "Yetki devri nasıl çalışır?"
           },
@@ -3086,7 +3090,7 @@
     },
     "undelegation" : {
       "header" : "Yetki İptalleri",
-      "headerTooltip" : "21 günlük zaman kilidinden sonra kullanılabilir",
+      "headerTooltip" : "{{numberOfDays}} günlük zaman kilidinden sonra kullanılabilir",
       "inactiveTooltip" : "Yetkisi iptal edilen tutarlar üzerinden ödül kazanamazsınız.",
       "flow" : {
         "title" : "Varlıkların Yetkisini İptal Edin",
@@ -3510,7 +3514,8 @@
             "title" : "Doğrulayıcı"
           },
           "amount" : {
-            "title" : "Tutar"
+            "title" : "Tutar",
+            "reserveWarning" : "Gelecekte staking'inizi durdurmak ve çekmek için gerekecek ağ ücretlerini karşılamak üzere cüzdanınızda en az {{amount}} SOL bulundurduğunuzdan lütfen emin olun"
           },
           "confirmation" : {
             "success" : {
@@ -4085,7 +4090,7 @@
     "accounts" : {
       "hideEmptyTokens" : {
         "title" : "Boş token hesaplarını gizle",
-        "desc" : "Hesaplar sayfasında sıfır bakiyeli token hesaplarını gizleyin."
+        "desc" : "Sıfır bakiyeli token hesaplarını gizleyin."
       },
       "tokenBlacklist" : {
         "title" : "Gizlenmiş token'lar",
@@ -5199,8 +5204,8 @@
       "description" : "Lütfen tekrar deneyin veya sorun devam ederse Ledger Destek ile iletişime geçin."
     },
     "LanguageInstallRefusedOnDevice" : {
-      "title" : "Dil yüklemesi cihaz tarafından reddedildi",
-      "description" : "Lütfen tekrar deneyin. Sorun devam ederse, lütfen aşağıdaki butonu kullanarak loglarınızı kaydedin ve Ledger Destek'e gönderin."
+      "title" : "Dil geri yükleme\ncihazda iptal edildi",
+      "description" : "Bunu yanlışlıkla yaptıysanız şimdi tekrar deneyin."
     },
     "RestoreLanguageInstallRefusedOnDevice" : {
       "title" : "Dili geri yükleme işlemi Ledger Stax'te iptal edildi",
@@ -5405,8 +5410,8 @@
       "title" : "My Ledger cihazda reddedildi"
     },
     "UserRefusedFirmwareUpdate" : {
-      "title" : "Güncelleme, cihazda iptal edildi",
-      "description" : "İşletim sistemi güncellemesinin kurulumu, cihazınızda reddedildi. Bunu yanlışlıkla yaptıysanız güncellemeyi yeniden başlatın."
+      "title" : "İşletim sistemi güncellemesi\ncihazda iptal edildi",
+      "description" : "Bunu yanlışlıkla yaptıysanız güncellemeyi yeniden başlatın."
     },
     "UserRefusedOnDevice" : {
       "title" : "Eylem reddedildi",
@@ -5812,12 +5817,12 @@
       "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "Kilitli ekran, Ledger Stax'te iptal edildi",
-      "description" : "Bu resim uygun olmadıysa başka bir resim seçerek tekrar deneyebilirsiniz."
+      "title" : "Kilitli ekran resmi yüklenmesi\nLedger Stax cihazında iptal edildi",
+      "description" : "Bunu yanlışlıkla yaptıysanız şimdi tekrar deneyin."
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "Kilitli ekran, Ledger Stax'te iptal edildi",
-      "description" : "Bu resim uygun olmadıysa başka bir resim seçerek tekrar deneyebilirsiniz."
+      "title" : "Kilitli ekran resmi yüklenmesi\nLedger Stax cihazında iptal edildi",
+      "description" : "Bunu yanlışlıkla yaptıysanız şimdi tekrar deneyin."
     },
     "ImageDoesNotExistOnDevice" : {
       "title" : "Ledger Stax'inizde kaldırılacak kilitli ekran resmi yok",
@@ -5939,13 +5944,13 @@
       "transfer" : {
         "stepLabel" : "Yükleyin",
         "useAnotherPicture" : "Başka bir resim yükleyin",
-        "allowPreview" : "Kilit ekranını özelleştirmek için “Resmi yükle” seçeneğine dokunun",
-        "allowConfirmPreview" : "{{productName}} cihazında kilitli ekran resminin geri yüklenmesine izin verin",
+        "allowPreview" : "Kilitli ekran resmini özelleştirmek için\n\"Resmi yükle\" seçeneğine dokunun",
+        "allowConfirmPreview" : "Kilitli ekran resmini geri yüklemek için\n\"Resmi yükle\" seçeneğine dokunun",
         "loadingPicture" : "Yükleniyor...",
         "voila" : "İşte bu kadar!",
         "imageLoaded" : "Görsel {{productName}} cihazına yüklendi",
         "confirmPicture" : "Gördüğünüz şey hoşunuza gitti mi?\nO zaman böyle kalsın!",
-        "confirmRestorePicture" : "Kilitli ekran resminin geri yüklenmesini onaylayın",
+        "confirmRestorePicture" : "Kilitli ekran resminizi onaylamak için “Tut” seçeneğine dokunun",
         "doThisLater" : "Belki sonra"
       }
     },
