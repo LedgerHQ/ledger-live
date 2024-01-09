@@ -10,10 +10,18 @@ import {
 import { Flex } from "@ledgerhq/native-ui";
 import { ContentCardMetadata } from "~/contentCards/cards/types";
 import { contentCardItem } from "~/contentCards/cards/utils";
-import { compareCards, mapAsHorizontalContentCard } from "~/dynamicContent/utils";
+import {
+  compareCards,
+  mapAsHorizontalContentCard,
+  mapAsSmallSquareContentCard,
+  mapAsMediumSquareContentCard,
+  mapAsBigSquareContentCard,
+} from "~/dynamicContent/utils";
 import Carousel from "../../contentCards/layouts/carousel";
 import useDynamicContent from "../useDynamicContent";
 import { ContentCardsType } from "../types";
+import Grid from "~/contentCards/layouts/grid";
+import VerticalCard from "~/contentCards/cards/vertical";
 
 // TODO : Better type to remove any (maybe use AnyContentCard)
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -23,6 +31,18 @@ const contentCardsTypes: {
     mappingFunction: (card: BrazeContentCard) => AnyContentCard | null;
   };
 } = {
+  [ContentCardsType.smallSquare]: {
+    contentCardComponent: VerticalCard,
+    mappingFunction: mapAsSmallSquareContentCard,
+  },
+  [ContentCardsType.mediumSquare]: {
+    contentCardComponent: VerticalCard,
+    mappingFunction: mapAsMediumSquareContentCard,
+  },
+  [ContentCardsType.bigSquare]: {
+    contentCardComponent: VerticalCard,
+    mappingFunction: mapAsBigSquareContentCard,
+  },
   [ContentCardsType.action]: {
     contentCardComponent: HorizontalCard,
     mappingFunction: mapAsHorizontalContentCard,
@@ -95,9 +115,8 @@ const Layout = ({ category, cards }: LayoutProps) => {
   switch (category.cardsLayout) {
     case ContentCardsLayout.carousel:
       return <Carousel items={items} />;
-    // TODO
-    // case ContentCardsLayout.grid:
-    // return
+    case ContentCardsLayout.grid:
+      return <Grid items={items} />;
     case ContentCardsLayout.unique:
     default:
       return <Flex mx={6}>{items[0].component(items[0].props)}</Flex>;

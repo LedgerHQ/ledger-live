@@ -11,6 +11,7 @@ import {
   ContentCardsType,
   HorizontalContentCard,
   ContentCardsLayout,
+  VerticalContentCard,
 } from "~/dynamicContent/types";
 
 export const getMobileContentCards = (array: BrazeContentCard[]) =>
@@ -136,6 +137,48 @@ export const mapAsHorizontalContentCard = (card: BrazeContentCard): HorizontalCo
   title: card.extras.title,
   description: card.extras.description,
   image: card.extras.image,
+  link: card.extras.link,
+  createdAt: card.created,
+  viewed: card.viewed,
+  order: parseInt(card.extras.order) ? parseInt(card.extras.order) : undefined,
+});
+
+export const mapAsSmallSquareContentCard = (card: BrazeContentCard): VerticalContentCard => ({
+  id: card.id,
+  tag: card.extras.tag,
+  title: card.extras.title,
+  description: card.extras.description,
+  image: card.extras.image,
+  price: card.extras.subtitle,
+  size: "S",
+  link: card.extras.link,
+  createdAt: card.created,
+  viewed: card.viewed,
+  order: parseInt(card.extras.order) ? parseInt(card.extras.order) : undefined,
+});
+
+export const mapAsMediumSquareContentCard = (card: BrazeContentCard): VerticalContentCard => ({
+  id: card.id,
+  tag: card.extras.tag,
+  title: card.extras.title,
+  description: card.extras.description,
+  image: card.extras.image,
+  price: card.extras.subtitle,
+  size: "M",
+  link: card.extras.link,
+  createdAt: card.created,
+  viewed: card.viewed,
+  order: parseInt(card.extras.order) ? parseInt(card.extras.order) : undefined,
+});
+
+export const mapAsBigSquareContentCard = (card: BrazeContentCard): VerticalContentCard => ({
+  id: card.id,
+  tag: card.extras.tag,
+  title: card.extras.title,
+  description: card.extras.description,
+  image: card.extras.image,
+  price: card.extras.subtitle,
+  size: "L",
   link: card.extras.link,
   createdAt: card.created,
   viewed: card.viewed,
