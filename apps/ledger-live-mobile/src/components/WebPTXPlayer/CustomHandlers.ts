@@ -3,8 +3,10 @@ import { useSelector } from "react-redux";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/Exchange/tracking";
-import { handlers as exchangeHandlers } from "@ledgerhq/live-common/wallet-api/Exchange/server";
-import { ExchangeType } from "@ledgerhq/live-common/wallet-api/Exchange/types";
+import {
+  handlers as exchangeHandlers,
+  ExchangeType,
+} from "@ledgerhq/live-common/wallet-api/Exchange/server";
 import { useNavigation } from "@react-navigation/native";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 import { StackNavigatorNavigation } from "../RootNavigator/types/helpers";
