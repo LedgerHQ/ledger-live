@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.43.2-custom-exchange.0
+
+### Patch Changes
+
+- [#5696](https://github.com/LedgerHQ/ledger-live/pull/5696) [`69bbdce`](https://github.com/LedgerHQ/ledger-live/commit/69bbdce5c88d69248cbddb94ac4627334c1df626) Thanks [@mle-gall](https://github.com/mle-gall)! - Adding support for Storyly Deeplinks in ledger-live-mobile
+
 ## 6.43.1
 
 ### Patch Changes

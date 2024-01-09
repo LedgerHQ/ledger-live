@@ -1,5 +1,12 @@
 # webpack.js-example
 
+## 0.0.10-custom-exchange.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/react-ui@0.14.13-custom-exchange.0
+
 ## 0.0.9
 
 ### Patch Changes

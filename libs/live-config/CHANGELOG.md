@@ -1,5 +1,15 @@
 # @ledgerhq/live-config
 
+## 1.0.1-custom-exchange.0
+
+### Patch Changes
+
+- [#5696](https://github.com/LedgerHQ/ledger-live/pull/5696) [`69bbdce`](https://github.com/LedgerHQ/ledger-live/commit/69bbdce5c88d69248cbddb94ac4627334c1df626) Thanks [@mle-gall](https://github.com/mle-gall)! - Adding support for Storyly Deeplinks in ledger-live-mobile
+
+- Updated dependencies [[`2358e87`](https://github.com/LedgerHQ/ledger-live/commit/2358e8748d9ae9398cfc05a0ec20a6b191fc7324), [`69bbdce`](https://github.com/LedgerHQ/ledger-live/commit/69bbdce5c88d69248cbddb94ac4627334c1df626)]:
+  - @ledgerhq/live-env@0.9.0-custom-exchange.0
+  - @ledgerhq/types-live@6.43.2-custom-exchange.0
+
 ## 1.0.0
 
 ### Major Changes
