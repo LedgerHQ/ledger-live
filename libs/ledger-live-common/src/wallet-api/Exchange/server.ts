@@ -29,6 +29,8 @@ import { getAccountBridge } from "../../bridge";
 import { Exchange } from "../../exchange/swap/types";
 import { Transaction } from "../../generated/types";
 
+export type { ExchangeType };
+
 type Handlers = {
   "custom.exchange.start": RPCHandler<ExchangeStartResult, ExchangeStartParams>;
   "custom.exchange.complete": RPCHandler<ExchangeCompleteResult, ExchangeCompleteParams>;

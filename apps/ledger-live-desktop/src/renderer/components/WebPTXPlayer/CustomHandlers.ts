@@ -1,8 +1,10 @@
 import { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
-import { handlers as exchangeHandlers } from "@ledgerhq/live-common/wallet-api/Exchange/server";
-import { ExchangeType } from "@ledgerhq/live-common/wallet-api/Exchange/types";
+import {
+  handlers as exchangeHandlers,
+  ExchangeType,
+} from "@ledgerhq/live-common/wallet-api/Exchange/server";
 import trackingWrapper from "@ledgerhq/live-common/wallet-api/Exchange/tracking";
 import { Operation } from "@ledgerhq/types-live";
 import { track } from "~/renderer/analytics/segment";
