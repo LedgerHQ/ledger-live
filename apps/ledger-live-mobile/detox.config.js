@@ -26,7 +26,7 @@ module.exports = {
     },
     launchApp: "auto",
     cleanup: {
-      shutdownDevice: false,
+      shutdownDevice: process.env.CI ? true : false,
     },
   },
   apps: {
