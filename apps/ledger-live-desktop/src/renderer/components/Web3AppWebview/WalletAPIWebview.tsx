@@ -277,7 +277,6 @@ function useWebView(
             manifestUrl,
             webviewUrl,
           });
-          return;
         }
         onMessage(event.args[0]);
       }
