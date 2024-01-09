@@ -556,7 +556,7 @@
       "title" : "Keine Vermögenswerte zum Entsperren",
       "description" : "Sie haben keine Energie-Vermögenswerte, die Sie entsperren können."
     },
-    "TronUnfreezeNotExpired" : {
+    "TronLegacyUnfreezeNotExpired" : {
       "title" : "Entsperren ist noch nicht verfügbar",
       "description" : "Bitte warten Sie 3 Tage nach Ihrem letzten Sperrvorgang."
     },

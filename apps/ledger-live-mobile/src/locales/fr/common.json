@@ -556,7 +556,7 @@
       "title" : "Aucun actif à dégeler",
       "description" : "Vous n’avez pas d’actifs d’Énergie à dégeler."
     },
-    "TronUnfreezeNotExpired" : {
+    "TronLegacyUnfreezeNotExpired" : {
       "title" : "Dégel indisponible pour le moment",
       "description" : "Merci de patienter 3 jours après votre dernière opération de gel."
     },
