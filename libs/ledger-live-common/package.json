@@ -121,7 +121,7 @@
     "@cosmjs/crypto": "^0.31.0",
     "@cosmjs/stargate": "^0.26.5",
     "@crypto-org-chain/chain-jslib": "1.1.2",
-    "@dfinity/agent": "^0.15.6",
+    "@dfinity/agent": "^0.20.0",
     "@dfinity/candid": "^0.15.6",
     "@dfinity/principal": "^0.15.6",
     "@elrondnetwork/erdjs": "11.0.0",
