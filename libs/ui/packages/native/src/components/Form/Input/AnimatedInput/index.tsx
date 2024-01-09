@@ -1,4 +1,4 @@
-import React, { forwardRef } from "react";
+import React from "react";
 import { BaseInput } from "..";
 import { type InputProps as BaseInputType } from "../BaseInput/index";
 import styled, { useTheme } from "styled-components/native";
@@ -77,4 +77,4 @@ const AnimatedInput = ({ style = { width: "100%" }, ...textInputProps }: Animate
   );
 };
 
-export default forwardRef(AnimatedInput);
+export default AnimatedInput;
