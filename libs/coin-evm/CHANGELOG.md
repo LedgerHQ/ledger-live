@@ -1,5 +1,28 @@
 # @ledgerhq/coin-evm
 
+## 0.12.0-custom-exchange.0
+
+### Minor Changes
+
+- [#5722](https://github.com/LedgerHQ/ledger-live/pull/5722) [`2358e87`](https://github.com/LedgerHQ/ledger-live/commit/2358e8748d9ae9398cfc05a0ec20a6b191fc7324) Thanks [@chabroA](https://github.com/chabroA)! - Add Ethereum Sepolia and Holesky
+
+- [#5744](https://github.com/LedgerHQ/ledger-live/pull/5744) [`ed23f46`](https://github.com/LedgerHQ/ledger-live/commit/ed23f4680d4ed1020bf34ac05b064ff659a282f5) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for internal transactions in transactions' history
+
+### Patch Changes
+
+- [#5743](https://github.com/LedgerHQ/ledger-live/pull/5743) [`e494a2b`](https://github.com/LedgerHQ/ledger-live/commit/e494a2b984fb0406fe9225bb4eccde3d9585efe1) Thanks [@chabroA](https://github.com/chabroA)! - remove unreachable statement
+
+- Updated dependencies [[`fc2cf04`](https://github.com/LedgerHQ/ledger-live/commit/fc2cf04c8d3cd55503ea19aeb21fd12ee55046f6), [`dd5d930`](https://github.com/LedgerHQ/ledger-live/commit/dd5d9308e0e3ef8ca78f879c15bc07313ef3c8c4), [`2358e87`](https://github.com/LedgerHQ/ledger-live/commit/2358e8748d9ae9398cfc05a0ec20a6b191fc7324), [`69bbdce`](https://github.com/LedgerHQ/ledger-live/commit/69bbdce5c88d69248cbddb94ac4627334c1df626)]:
+  - @ledgerhq/cryptoassets@11.4.0-custom-exchange.0
+  - @ledgerhq/live-network@1.1.11-custom-exchange.0
+  - @ledgerhq/types-cryptoassets@7.9.0-custom-exchange.0
+  - @ledgerhq/coin-framework@0.11.0-custom-exchange.0
+  - @ledgerhq/live-env@0.9.0-custom-exchange.0
+  - @ledgerhq/types-live@6.43.2-custom-exchange.0
+  - @ledgerhq/evm-tools@1.0.13-custom-exchange.0
+  - @ledgerhq/hw-app-eth@6.35.2-custom-exchange.0
+  - @ledgerhq/domain-service@1.1.17-custom-exchange.0
+
 ## 0.11.1
 
 ### Patch Changes

@@ -1,5 +1,12 @@
 # @ledgerhq/domain-service
 
+## 1.1.17-custom-exchange.0
+
+### Patch Changes
+
+- Updated dependencies [[`69bbdce`](https://github.com/LedgerHQ/ledger-live/commit/69bbdce5c88d69248cbddb94ac4627334c1df626)]:
+  - @ledgerhq/types-live@6.43.2-custom-exchange.0
+
 ## 1.1.16
 
 ### Patch Changes

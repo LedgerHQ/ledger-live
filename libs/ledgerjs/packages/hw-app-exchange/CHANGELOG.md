@@ -1,5 +1,14 @@
 # @ledgerhq/hw-app-exchange
 
+## 0.4.2-custom-exchange.0
+
+### Patch Changes
+
+- [#5687](https://github.com/LedgerHQ/ledger-live/pull/5687) [`f372d0f`](https://github.com/LedgerHQ/ledger-live/commit/f372d0f02a0f5e18021a9cb49ed3f160552c2791) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Fix issue with startExchange method on mobile
+
+- Updated dependencies [[`16b4d7a`](https://github.com/LedgerHQ/ledger-live/commit/16b4d7ab4702022d4967f3c054d3c62a76716947)]:
+  - @ledgerhq/hw-transport@6.30.2-custom-exchange.0
+
 ## 0.4.1
 
 ### Patch Changes

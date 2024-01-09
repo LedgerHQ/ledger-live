@@ -1,5 +1,19 @@
 # @ledgerhq/coin-framework
 
+## 0.11.0-custom-exchange.0
+
+### Minor Changes
+
+- [#5722](https://github.com/LedgerHQ/ledger-live/pull/5722) [`2358e87`](https://github.com/LedgerHQ/ledger-live/commit/2358e8748d9ae9398cfc05a0ec20a6b191fc7324) Thanks [@chabroA](https://github.com/chabroA)! - Add Ethereum Sepolia and Holesky
+
+### Patch Changes
+
+- Updated dependencies [[`fc2cf04`](https://github.com/LedgerHQ/ledger-live/commit/fc2cf04c8d3cd55503ea19aeb21fd12ee55046f6), [`2358e87`](https://github.com/LedgerHQ/ledger-live/commit/2358e8748d9ae9398cfc05a0ec20a6b191fc7324), [`69bbdce`](https://github.com/LedgerHQ/ledger-live/commit/69bbdce5c88d69248cbddb94ac4627334c1df626)]:
+  - @ledgerhq/cryptoassets@11.4.0-custom-exchange.0
+  - @ledgerhq/types-cryptoassets@7.9.0-custom-exchange.0
+  - @ledgerhq/live-env@0.9.0-custom-exchange.0
+  - @ledgerhq/types-live@6.43.2-custom-exchange.0
+
 ## 0.10.0
 
 ### Minor Changes
