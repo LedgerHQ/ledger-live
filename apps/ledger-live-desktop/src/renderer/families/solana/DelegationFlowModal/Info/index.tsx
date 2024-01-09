@@ -31,6 +31,7 @@ export default function SolanaEarnRewardsInfoModal({ account }: Props) {
         t("solana.delegation.earnRewards.bullet.1"),
         t("solana.delegation.earnRewards.bullet.2"),
       ]}
+      currency="sol"
       additional={<WarnBox>{t("solana.delegation.earnRewards.warning")}</WarnBox>}
       footerLeft={<LinkWithExternalIcon label={t("delegation.howItWorks")} onClick={onLearnMore} />}
     />

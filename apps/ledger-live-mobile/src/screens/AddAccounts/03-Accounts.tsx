@@ -15,39 +15,39 @@ import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
 import type { DerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { useTheme } from "@react-navigation/native";
-import { replaceAccounts } from "../../actions/accounts";
-import { accountsSelector } from "../../reducers/accounts";
+import { replaceAccounts } from "~/actions/accounts";
+import { accountsSelector } from "~/reducers/accounts";
 import logger from "../../logger";
 import { Theme, withTheme } from "../../colors";
-import { NavigatorName, ScreenName } from "../../const";
-import { TrackScreen } from "../../analytics";
-import Button from "../../components/Button";
-import PreventNativeBack from "../../components/PreventNativeBack";
-import SelectableAccountsList from "../../components/SelectableAccountsList";
-import LiveLogo from "../../icons/LiveLogoIcon";
-import IconPause from "../../icons/Pause";
-import ExternalLink from "../../icons/ExternalLink";
-import Chevron from "../../icons/Chevron";
-import Info from "../../icons/Info";
-import Spinning from "../../components/Spinning";
-import LText from "../../components/LText";
-import RetryButton from "../../components/RetryButton";
-import CancelButton from "../../components/CancelButton";
-import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
-import NavigationScrollView from "../../components/NavigationScrollView";
-import { prepareCurrency } from "../../bridge/cache";
-import { blacklistedTokenIdsSelector } from "../../reducers/settings";
-import QueuedDrawer from "../../components/QueuedDrawer";
-import { urls } from "@utils/urls";
+import { NavigatorName, ScreenName } from "~/const";
+import { TrackScreen } from "~/analytics";
+import Button from "~/components/Button";
+import PreventNativeBack from "~/components/PreventNativeBack";
+import SelectableAccountsList from "~/components/SelectableAccountsList";
+import LiveLogo from "~/icons/LiveLogoIcon";
+import IconPause from "~/icons/Pause";
+import ExternalLink from "~/icons/ExternalLink";
+import Chevron from "~/icons/Chevron";
+import Info from "~/icons/Info";
+import Spinning from "~/components/Spinning";
+import LText from "~/components/LText";
+import RetryButton from "~/components/RetryButton";
+import CancelButton from "~/components/CancelButton";
+import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
+import NavigationScrollView from "~/components/NavigationScrollView";
+import { prepareCurrency } from "~/bridge/cache";
+import { blacklistedTokenIdsSelector } from "~/reducers/settings";
+import QueuedDrawer from "~/components/QueuedDrawer";
+import { urls } from "~/utils/urls";
 import noAssociatedAccountsByFamily from "../../generated/NoAssociatedAccounts";
-import { State } from "../../reducers/types";
+import { State } from "~/reducers/types";
 import {
   BaseComposite,
   StackNavigatorNavigation,
   StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
-import { AddAccountsNavigatorParamList } from "../../components/RootNavigator/types/AddAccountsNavigator";
-import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
+} from "~/components/RootNavigator/types/helpers";
+import { AddAccountsNavigatorParamList } from "~/components/RootNavigator/types/AddAccountsNavigator";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import Config from "react-native-config";
 
 const SectionAccounts = ({

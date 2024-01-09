@@ -15,13 +15,13 @@ import {
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
-import BondIcon from "../../icons/LinkIcon";
-import UnbondIcon from "../../icons/Undelegate";
-import WithdrawUnbondedIcon from "../../icons/Coins";
-import NominateIcon from "../../icons/Vote";
-import ChillIcon from "../../icons/VoteNay";
-import { NavigatorName, ScreenName } from "../../const";
-import type { ActionButtonEvent, NavigationParamsType } from "../../components/FabActions";
+import BondIcon from "~/icons/LinkIcon";
+import UnbondIcon from "~/icons/Undelegate";
+import WithdrawUnbondedIcon from "~/icons/Coins";
+import NominateIcon from "~/icons/Vote";
+import ChillIcon from "~/icons/VoteNay";
+import { NavigatorName, ScreenName } from "~/const";
+import { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
 
 const getMainActions = (args: {
   account: PolkadotAccount;

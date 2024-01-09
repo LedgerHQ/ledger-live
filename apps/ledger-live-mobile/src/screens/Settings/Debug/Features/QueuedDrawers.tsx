@@ -2,14 +2,14 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Flex, Alert, Switch, Button, Text } from "@ledgerhq/native-ui";
 import { useDispatch, useSelector } from "react-redux";
-import QueuedDrawer from "../../../../components/QueuedDrawer";
-import { StackNavigatorNavigation } from "../../../../components/RootNavigator/types/helpers";
-import { SettingsNavigatorStackParamList } from "../../../../components/RootNavigator/types/SettingsNavigator";
-import { ScreenName } from "../../../../const";
-import { setDebugAppLevelDrawerOpened } from "../../../../actions/settings";
-import { debugAppLevelDrawerOpenedSelector } from "../../../../reducers/settings";
-import LockModal from "../../../../components/ModalLock";
-import NavigationScrollView from "../../../../components/NavigationScrollView";
+import QueuedDrawer from "~/components/QueuedDrawer";
+import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
+import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
+import { ScreenName } from "~/const";
+import { setDebugAppLevelDrawerOpened } from "~/actions/settings";
+import { debugAppLevelDrawerOpenedSelector } from "~/reducers/settings";
+import LockModal from "~/components/ModalLock";
+import NavigationScrollView from "~/components/NavigationScrollView";
 
 /**
  * Debugging screen to test:

@@ -1,48 +1,29 @@
-import { CurrenciesByProviderId } from "./type";
+import { GroupedCurrencies } from "./type";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  isCurrencySupported,
-  listSupportedCurrencies,
-  listTokens,
-  currenciesByMarketcap,
-} from "../currencies";
-import { getMappedAssets } from "./api";
-import { groupCurrenciesByProvider } from "./helper";
+import { useEffect, useMemo, useState } from "react";
+import { isCurrencySupported, listSupportedCurrencies, listTokens } from "../currencies";
+import { loadCurrenciesByProvider } from "./helper";
 
+// FIXME(LIVE-10505): bad performane & shared utility to move to coin-framework
 const listSupportedTokens = () => listTokens().filter(t => isCurrencySupported(t.parentCurrency));
 
-export const useGroupedCurrenciesByProvider = () => {
-  const [currencies, setCurrencies] = useState<CryptoOrTokenCurrency[]>([]);
-  const [currenciesByProvider, setCurrenciesByProvider] = useState<CurrenciesByProviderId[]>([]);
+const initialResult: GroupedCurrencies = {
+  sortedCryptoCurrencies: [],
+  currenciesByProvider: [],
+};
 
-  // Get Supported Currencies and sort them by marketcap
+export const useGroupedCurrenciesByProvider = () => {
+  const [result, setResult] = useState(initialResult);
+
   const coinsAndTokensSupported = useMemo(
     () => (listSupportedCurrencies() as CryptoOrTokenCurrency[]).concat(listSupportedTokens()),
     [],
   );
 
-  // Get mapped assets filtered by supported currencies and grouped by provider id
-  const getCurrenciesAndGroupThemByProvider = useCallback(async () => {
-    const [sortedCurrenciesSupported, assets] = await Promise.all([
-      currenciesByMarketcap(coinsAndTokensSupported),
-      getMappedAssets(),
-    ]);
-    const currenciesByProvider = groupCurrenciesByProvider(assets, sortedCurrenciesSupported);
-    setCurrenciesByProvider(currenciesByProvider);
-    setCurrencies(
-      currenciesByProvider
-        .filter(value => value.currenciesByNetwork && value.currenciesByNetwork.length > 0)
-        .map(value => value.currenciesByNetwork[0]),
-    );
+  // Get mapped assets filtered by supported & sorted currencies, grouped by provider id
+  useEffect(() => {
+    loadCurrenciesByProvider(coinsAndTokensSupported).then(setResult);
   }, [coinsAndTokensSupported]);
 
-  useEffect(() => {
-    getCurrenciesAndGroupThemByProvider();
-  }, [getCurrenciesAndGroupThemByProvider]);
-
-  return {
-    currenciesByProvider,
-    sortedCryptoCurrencies: currencies,
-  };
+  return result;
 };

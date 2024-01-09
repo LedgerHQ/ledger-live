@@ -4,21 +4,18 @@ import { Trans } from "react-i18next";
 import type { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { useSelector } from "react-redux";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import { useBanner } from "../../../components/banners/hooks";
-import TrackScreen from "../../../analytics/TrackScreen";
-import { ScreenName } from "../../../const";
+import { useBanner } from "~/components/banners/hooks";
+import TrackScreen from "~/analytics/TrackScreen";
+import { ScreenName } from "~/const";
 import TwitterBanner from "./TwitterBanner";
 import DAppDisclaimer, { Props as DisclaimerProps } from "./DAppDisclaimer";
 import Banner from "./Banner";
 import AppCard from "./AppCard";
-import AnimatedHeaderView from "../../../components/AnimatedHeader";
-import TabBarSafeAreaView from "../../../components/TabBar/TabBarSafeAreaView";
-import { readOnlyModeEnabledSelector } from "../../../reducers/settings";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
-import { DiscoverNavigatorStackParamList } from "../../../components/RootNavigator/types/DiscoverNavigator";
+import AnimatedHeaderView from "~/components/AnimatedHeader";
+import TabBarSafeAreaView from "~/components/TabBar/TabBarSafeAreaView";
+import { readOnlyModeEnabledSelector } from "~/reducers/settings";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { DiscoverNavigatorStackParamList } from "~/components/RootNavigator/types/DiscoverNavigator";
 
 export type Props = BaseComposite<
   StackNavigatorProps<DiscoverNavigatorStackParamList, ScreenName.PlatformCatalog>

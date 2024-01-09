@@ -9,12 +9,12 @@ import {
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { AccountLike, Account, BalanceHistoryWithCountervalue } from "@ledgerhq/types-live";
 import Animated from "react-native-reanimated";
-import { withDiscreetMode } from "../../context/DiscreetModeContext";
+import { withDiscreetMode } from "~/context/DiscreetModeContext";
 
 import AccountHeaderRight from "./AccountHeaderRight";
-import CurrencyHeaderLayout from "../../components/CurrencyHeaderLayout";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import Placeholder from "../../components/Placeholder";
+import CurrencyHeaderLayout from "~/components/CurrencyHeaderLayout";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import Placeholder from "~/components/Placeholder";
 import AccountHeaderLeft from "./AccountHeaderLeft";
 
 function AccountHeader({

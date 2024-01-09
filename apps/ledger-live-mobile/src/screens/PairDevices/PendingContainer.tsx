@@ -1,8 +1,8 @@
 import { useTheme } from "@react-navigation/native";
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import Spinning from "../../components/Spinning";
-import LiveLogo from "../../icons/LiveLogoIcon";
+import Spinning from "~/components/Spinning";
+import LiveLogo from "~/icons/LiveLogoIcon";
 
 const styles = StyleSheet.create({
   root: {

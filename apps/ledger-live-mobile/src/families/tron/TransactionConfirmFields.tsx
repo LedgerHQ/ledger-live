@@ -9,10 +9,10 @@ import {
   useTronSuperRepresentatives,
 } from "@ledgerhq/live-common/families/tron/react";
 import { useTheme } from "@react-navigation/native";
-import { DataRow, HeaderRow, ValidatorField } from "../../components/ValidateOnDeviceDataRow";
-import LText from "../../components/LText";
-import Info from "../../icons/Info";
-import { localeSelector } from "../../reducers/settings";
+import { DataRow, HeaderRow, ValidatorField } from "~/components/ValidateOnDeviceDataRow";
+import LText from "~/components/LText";
+import Info from "~/icons/Info";
+import { localeSelector } from "~/reducers/settings";
 
 const styles = StyleSheet.create({
   infoText: {

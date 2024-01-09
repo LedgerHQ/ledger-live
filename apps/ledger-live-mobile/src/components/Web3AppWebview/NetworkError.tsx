@@ -7,8 +7,8 @@ import { Flex, IconsLegacy } from "@ledgerhq/native-ui";
 import GenericErrorView from "../GenericErrorView";
 import Button from "../Button";
 import ExternalLink from "../ExternalLink";
-import { useLocale } from "../../context/Locale";
-import { urls } from "@utils/urls";
+import { useLocale } from "~/context/Locale";
+import { urls } from "~/utils/urls";
 
 const WebPTXPlayerNetworkFail = createCustomErrorClass("WebPTXPlayerNetworkFail");
 

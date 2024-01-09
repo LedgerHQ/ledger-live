@@ -3,8 +3,8 @@ import { useSelector } from "react-redux";
 import { differenceInCalendarDays } from "date-fns";
 import { createSelector } from "reselect";
 import { useTranslation } from "react-i18next";
-import compareDate from "../../logic/compareDate";
-import { dateFormatSelector, languageSelector } from "../../reducers/settings";
+import compareDate from "~/logic/compareDate";
+import { dateFormatSelector, languageSelector } from "~/reducers/settings";
 import { ddmmyyyyFormatter, Format, genericFormatter, mmddyyyyFormatter } from "./formatter.util";
 
 type Props = {

@@ -4,20 +4,20 @@ import {
   useRemoteLiveAppContext,
   useRemoteLiveAppManifest,
 } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import TabBarSafeAreaView from "../../../components/TabBar/TabBarSafeAreaView";
+import TabBarSafeAreaView from "~/components/TabBar/TabBarSafeAreaView";
 import { useTheme } from "styled-components/native";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
-import TrackScreen from "../../../analytics/TrackScreen";
-import GenericErrorView from "../../../components/GenericErrorView";
-import { WebPTXPlayer } from "../../../components/WebPTXPlayer";
-import { EarnLiveAppNavigatorParamList } from "../../../components/RootNavigator/types/EarnLiveAppNavigator";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
-import { ScreenName } from "../../../const";
+import TrackScreen from "~/analytics/TrackScreen";
+import GenericErrorView from "~/components/GenericErrorView";
+import { WebPTXPlayer } from "~/components/WebPTXPlayer";
+import { EarnLiveAppNavigatorParamList } from "~/components/RootNavigator/types/EarnLiveAppNavigator";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { ScreenName } from "~/const";
 import {
   counterValueCurrencySelector,
   discreetModeSelector,
   languageSelector,
-} from "../../../reducers/settings";
+} from "~/reducers/settings";
 import { useSelector } from "react-redux";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 

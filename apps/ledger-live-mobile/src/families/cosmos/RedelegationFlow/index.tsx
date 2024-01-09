@@ -3,16 +3,13 @@ import { Platform } from "react-native";
 import { useTranslation } from "react-i18next";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "@react-navigation/native";
-import {
-  getStackNavigatorConfig,
-  defaultNavigationOptions,
-} from "../../../navigation/navigatorConfig";
-import StepHeader from "../../../components/StepHeader";
-import { ScreenName } from "../../../const";
+import { getStackNavigatorConfig, defaultNavigationOptions } from "~/navigation/navigatorConfig";
+import StepHeader from "~/components/StepHeader";
+import { ScreenName } from "~/const";
 import RedelegationSelectValidator from "./01-SelectValidator";
 import RedelegationAmount from "../shared/02-SelectAmount";
-import SelectDevice from "../../../screens/SelectDevice";
-import ConnectDevice from "../../../screens/ConnectDevice";
+import SelectDevice from "~/screens/SelectDevice";
+import ConnectDevice from "~/screens/ConnectDevice";
 import RedelegationValidationError from "./04-ValidationError";
 import RedelegationValidationSuccess from "./04-ValidationSuccess";
 import type { CosmosRedelegationFlowParamList } from "./types";

@@ -9,27 +9,27 @@ export const recipientParam = "&recipient=";
 export const amountParam = "&amount=";
 export const accountIdParam = "?accountId=";
 
-export function waitForElementById(id: string, timeout: number = DEFAULT_TIMEOUT) {
+export function waitForElementById(id: string | RegExp, timeout: number = DEFAULT_TIMEOUT) {
   return waitFor(getElementById(id)).toBeVisible().withTimeout(timeout);
 }
 
-export function waitForElementByText(text: string, timeout: number = DEFAULT_TIMEOUT) {
+export function waitForElementByText(text: string | RegExp, timeout: number = DEFAULT_TIMEOUT) {
   return waitFor(getElementByText(text)).toBeVisible().withTimeout(timeout);
 }
 
-export function getElementById(id: string, index = 0) {
+export function getElementById(id: string | RegExp, index = 0) {
   return element(by.id(id)).atIndex(index);
 }
 
-export function getElementByText(text: string, index = 0) {
+export function getElementByText(text: string | RegExp, index = 0) {
   return element(by.text(text)).atIndex(index);
 }
 
-export function tapById(id: string, index = 0) {
+export function tapById(id: string | RegExp, index = 0) {
   return getElementById(id, index).tap();
 }
 
-export function tapByText(text: string, index = 0) {
+export function tapByText(text: string | RegExp, index = 0) {
   return getElementByText(text, index).tap();
 }
 
@@ -37,7 +37,7 @@ export function tapByElement(elem: Detox.NativeElement) {
   return elem.tap();
 }
 
-export async function typeTextById(id: string, text: string, focus = true) {
+export async function typeTextById(id: string | RegExp, text: string, focus = true) {
   if (focus) {
     await tapById(id);
   }
@@ -61,7 +61,7 @@ export async function clearTextByElement(elem: Detox.NativeElement) {
 }
 
 export async function scrollToText(
-  text: string,
+  text: string | RegExp,
   scrollViewId: string,
   pixels = 100,
   direction: Direction = "down",
@@ -74,8 +74,8 @@ export async function scrollToText(
 
 export async function scrollToId(
   // Index broken on Android :  https://github.com/wix/Detox/issues/2931
-  id: string,
-  scrollViewId: string,
+  id: string | RegExp,
+  scrollViewId: string | RegExp,
   pixels = 100,
   direction: Direction = "down",
 ) {
@@ -85,7 +85,7 @@ export async function scrollToId(
     .scroll(pixels, direction, NaN, startPositionY);
 }
 
-export async function getTextOfElement(id: string, index = 0) {
+export async function getTextOfElement(id: string | RegExp, index = 0) {
   const attributes = await getElementById(id, index).getAttributes();
   return (!("elements" in attributes) ? attributes.text : attributes.elements[index].text) || "";
 }

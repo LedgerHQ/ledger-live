@@ -1,6 +1,6 @@
 import React from "react";
-import Kiln from "../../../icons/Kiln";
-import { Lido } from "../../../icons/Lido";
+import Kiln from "~/icons/Kiln";
+import { Lido } from "~/icons/Lido";
 
 type Props = {
   icon?: string;

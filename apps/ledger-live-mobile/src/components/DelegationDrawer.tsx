@@ -8,9 +8,9 @@ import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import type { AccountLike } from "@ledgerhq/types-live";
 // TODO move to component
 import { useTheme } from "@react-navigation/native";
-import DelegatingContainer from "../families/tezos/DelegatingContainer";
+import DelegatingContainer from "~/families/tezos/DelegatingContainer";
 import { rgba } from "../colors";
-import getWindowDimensions from "../logic/getWindowDimensions";
+import getWindowDimensions from "~/logic/getWindowDimensions";
 import QueuedDrawer from "./QueuedDrawer";
 import Circle from "./Circle";
 import Touchable from "./Touchable";
@@ -18,7 +18,7 @@ import LText from "./LText";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import CounterValue from "./CounterValue";
 import CurrencyIcon from "./CurrencyIcon";
-import { normalize } from "../helpers/normalizeSize";
+import { normalize } from "~/helpers/normalizeSize";
 
 const { height } = getWindowDimensions();
 type Props = {

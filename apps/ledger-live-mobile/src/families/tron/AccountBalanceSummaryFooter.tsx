@@ -8,16 +8,16 @@ import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
 import type { Account } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import { TronAccount } from "@ledgerhq/live-common/families/tron/types";
-import InfoModal from "../../modals/Info";
-import type { ModalInfo } from "../../modals/Info";
-import FreezeIcon from "../../icons/Freeze";
-import BandwidthIcon from "../../icons/Bandwidth";
-import EnergyIcon from "../../icons/Energy";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import InfoItem from "../../components/BalanceSummaryInfoItem";
-import { localeSelector } from "../../reducers/settings";
-import Alert from "../../components/Alert";
-import { urls } from "@utils/urls";
+import InfoModal from "~/modals/Info";
+import type { ModalInfo } from "~/modals/Info";
+import FreezeIcon from "~/icons/Freeze";
+import BandwidthIcon from "~/icons/Bandwidth";
+import EnergyIcon from "~/icons/Energy";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import InfoItem from "~/components/BalanceSummaryInfoItem";
+import { localeSelector } from "~/reducers/settings";
+import Alert from "~/components/Alert";
+import { urls } from "~/utils/urls";
 
 type Props = {
   account: Account;

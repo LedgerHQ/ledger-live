@@ -2,7 +2,7 @@ import React, { useState, useCallback } from "react";
 import { View, StyleSheet } from "react-native";
 
 import { DropdownMedium, DropupMedium } from "@ledgerhq/native-ui/assets/icons";
-import Button from "../../../components/wrappedUi/Button";
+import Button from "~/components/wrappedUi/Button";
 
 type Props<Item> = {
   children?: React.ReactNode;

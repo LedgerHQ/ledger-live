@@ -4,7 +4,7 @@ import Icon from "react-native-vector-icons/Feather";
 import { useTheme } from "styled-components/native";
 import { Text, Flex } from "@ledgerhq/native-ui";
 import Button from "../Button";
-import FallbackCamera from "../../icons/FallbackCamera";
+import FallbackCamera from "~/icons/FallbackCamera";
 
 type Props = {
   title: string;

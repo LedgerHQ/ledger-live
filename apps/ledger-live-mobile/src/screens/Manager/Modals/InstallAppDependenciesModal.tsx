@@ -3,9 +3,9 @@ import { Trans } from "react-i18next";
 import styled from "styled-components/native";
 import { Flex, IconsLegacy, Text, Button } from "@ledgerhq/native-ui";
 import AppIcon from "../AppsList/AppIcon";
-import QueuedDrawer from "../../../components/QueuedDrawer";
+import QueuedDrawer from "~/components/QueuedDrawer";
 import { AppWithDependencies } from "../AppsInstallUninstallWithDependenciesContext";
-import Link from "../../../components/wrappedUi/Link";
+import Link from "~/components/wrappedUi/Link";
 
 type Props = {
   appWithDependenciesToInstall: AppWithDependencies | null;

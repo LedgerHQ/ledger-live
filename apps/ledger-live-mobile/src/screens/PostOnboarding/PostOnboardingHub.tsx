@@ -12,13 +12,13 @@ import { clearPostOnboardingLastActionCompleted } from "@ledgerhq/live-common/po
 import { useDispatch } from "react-redux";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import PostOnboardingActionRow from "../../components/PostOnboarding/PostOnboardingActionRow";
-import { ScreenName } from "../../const";
-import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { PostOnboardingNavigatorParamList } from "../../components/RootNavigator/types/PostOnboardingNavigator";
-import { useCompleteActionCallback } from "../../logic/postOnboarding/useCompleteAction";
-import { track, TrackScreen } from "../../analytics";
-import Link from "../../components/wrappedUi/Link";
+import PostOnboardingActionRow from "~/components/PostOnboarding/PostOnboardingActionRow";
+import { ScreenName } from "~/const";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { PostOnboardingNavigatorParamList } from "~/components/RootNavigator/types/PostOnboardingNavigator";
+import { useCompleteActionCallback } from "~/logic/postOnboarding/useCompleteAction";
+import { track, TrackScreen } from "~/analytics";
+import Link from "~/components/wrappedUi/Link";
 import { useCompletePostOnboarding } from "~/logic/postOnboarding/useCompletePostOnboarding";
 
 type NavigationProps = BaseComposite<

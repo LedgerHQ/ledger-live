@@ -10,8 +10,8 @@ import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import type { CosmosAccount, CosmosOperation } from "@ledgerhq/live-common/families/cosmos/types";
 import { useSelector } from "react-redux";
 import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
-import Section from "../../screens/OperationDetails/Section";
-import { discreetModeSelector, localeSelector } from "../../reducers/settings";
+import Section from "~/screens/OperationDetails/Section";
+import { discreetModeSelector, localeSelector } from "~/reducers/settings";
 
 function getURLFeesInfo(op: Operation, currencyId: string): string | null | undefined {
   return op.fee.gt(200000) ? cryptoFactory(currencyId).stakingDocUrl : undefined;

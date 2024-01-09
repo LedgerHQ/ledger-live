@@ -8,9 +8,9 @@ import { shortAddressPreview, getMainAccount } from "@ledgerhq/live-common/accou
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
 import { toLocaleString } from "@ledgerhq/live-common/currencies/index";
 import { useSelector } from "react-redux";
-import { DataRow } from "../../components/ValidateOnDeviceDataRow";
-import LText from "../../components/LText";
-import { localeSelector } from "../../reducers/settings";
+import { DataRow } from "~/components/ValidateOnDeviceDataRow";
+import LText from "~/components/LText";
+import { localeSelector } from "~/reducers/settings";
 
 const styles = StyleSheet.create({
   text: {

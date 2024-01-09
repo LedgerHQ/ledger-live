@@ -1,7 +1,7 @@
 import type { Operation } from "@ledgerhq/types-live";
 import type { getURLFeesInfoReturnType } from "./types";
 
-import { urls } from "@utils/urls";
+import { urls } from "~/utils/urls";
 
 /*
  * Handle the helper declaration.

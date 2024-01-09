@@ -14,27 +14,27 @@ import type {
   TronAccount,
   Transaction as TronTransaction,
 } from "@ledgerhq/live-common/families/tron/types";
-import { accountScreenSelector } from "../../reducers/accounts";
-import { ScreenName } from "../../const";
-import { TrackScreen } from "../../analytics";
-import LText from "../../components/LText";
-import Button from "../../components/Button";
-import RetryButton from "../../components/RetryButton";
-import CancelButton from "../../components/CancelButton";
-import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import TranslatedError from "../../components/TranslatedError";
-import Info from "../../icons/Info";
-import CheckBox from "../../components/CheckBox";
-import Bandwidth from "../../icons/Bandwidth";
-import Bolt from "../../icons/Bolt";
-import ClockIcon from "../../icons/Clock";
-import DateFromNow from "../../components/DateFromNow";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { ScreenName } from "~/const";
+import { TrackScreen } from "~/analytics";
+import LText from "~/components/LText";
+import Button from "~/components/Button";
+import RetryButton from "~/components/RetryButton";
+import CancelButton from "~/components/CancelButton";
+import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import TranslatedError from "~/components/TranslatedError";
+import Info from "~/icons/Info";
+import CheckBox from "~/components/CheckBox";
+import Bandwidth from "~/icons/Bandwidth";
+import Bolt from "~/icons/Bolt";
+import ClockIcon from "~/icons/Clock";
+import DateFromNow from "~/components/DateFromNow";
 import {
   StackNavigatorNavigation,
   StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
-import { UnfreezeNavigatorParamList } from "../../components/RootNavigator/types/UnfreezeNavigator";
+} from "~/components/RootNavigator/types/helpers";
+import { UnfreezeNavigatorParamList } from "~/components/RootNavigator/types/UnfreezeNavigator";
 
 /** @TODO move this to common */
 const getUnfreezeData = (

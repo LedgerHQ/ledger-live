@@ -5,9 +5,9 @@ import { useTheme } from "@react-navigation/native";
 import { StyleSheet, View, TouchableOpacity, Linking, ScrollView } from "react-native";
 import { translateContent } from "@ledgerhq/live-common/platform/logic";
 import type { TranslatableString } from "@ledgerhq/live-common/platform/types";
-import { languageSelector } from "../../reducers/settings";
-import ExternalLinkIcon from "../../icons/ExternalLink";
-import AppIcon from "../../screens/Platform/AppIcon";
+import { languageSelector } from "~/reducers/settings";
+import ExternalLinkIcon from "~/icons/ExternalLink";
+import AppIcon from "~/screens/Platform/AppIcon";
 import QueuedDrawer from "../QueuedDrawer";
 import LText from "../LText";
 

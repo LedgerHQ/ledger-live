@@ -43,7 +43,7 @@ import type { Transaction as StacksTransaction } from "@ledgerhq/live-common/fam
 import type { Transaction as CasperTransaction } from "@ledgerhq/live-common/families/casper/types";
 import BigNumber from "bignumber.js";
 import { Account, Operation } from "@ledgerhq/types-live";
-import { ScreenName } from "../../../const";
+import { ScreenName } from "~/const";
 
 type Target = "from" | "to";
 

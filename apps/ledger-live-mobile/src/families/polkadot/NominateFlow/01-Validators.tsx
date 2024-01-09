@@ -32,15 +32,15 @@ import {
   usePolkadotPreloadData,
   useSortedValidators,
 } from "@ledgerhq/live-common/families/polkadot/react";
-import { accountScreenSelector } from "../../../reducers/accounts";
-import { localeSelector } from "../../../reducers/settings";
-import { NavigatorName, ScreenName } from "../../../const";
-import Button from "../../../components/Button";
-import SelectValidatorSearchBox from "../../tron/VoteFlow/01-SelectValidator/SearchBox";
-import LText from "../../../components/LText";
-import Alert from "../../../components/Alert";
-import TranslatedError from "../../../components/TranslatedError";
-import Check from "../../../icons/Check";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { localeSelector } from "~/reducers/settings";
+import { NavigatorName, ScreenName } from "~/const";
+import Button from "~/components/Button";
+import SelectValidatorSearchBox from "~/families/tron/VoteFlow/01-SelectValidator/SearchBox";
+import LText from "~/components/LText";
+import Alert from "~/components/Alert";
+import TranslatedError from "~/components/TranslatedError";
+import Check from "~/icons/Check";
 import { getFirstStatusError } from "../../helpers";
 import FlowErrorBottomModal from "../components/FlowErrorBottomModal";
 import NominationDrawer from "../components/NominationDrawer";
@@ -51,9 +51,9 @@ import type {
   BaseComposite,
   StackNavigatorNavigation,
   StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
+} from "~/components/RootNavigator/types/helpers";
 import type { PolkadotNominateFlowParamList } from "./types";
-import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import FirstLetterIcon from "~/components/FirstLetterIcon";
 
 type Props = BaseComposite<

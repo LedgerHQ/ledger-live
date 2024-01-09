@@ -9,9 +9,9 @@ import {
 } from "@ledgerhq/live-config/featureFlags/index";
 import type { FirebaseFeatureFlagsProviderProps as Props } from "@ledgerhq/live-config/featureFlags/index";
 import { FeatureId, Feature, Features } from "@ledgerhq/types-live";
-import { languageSelector, overriddenFeatureFlagsSelector } from "../reducers/settings";
-import { setOverriddenFeatureFlag, setOverriddenFeatureFlags } from "../actions/settings";
-import { setAnalyticsFeatureFlagMethod } from "../analytics/segment";
+import { languageSelector, overriddenFeatureFlagsSelector } from "~/reducers/settings";
+import { setOverriddenFeatureFlag, setOverriddenFeatureFlags } from "~/actions/settings";
+import { setAnalyticsFeatureFlagMethod } from "~/analytics/segment";
 
 /**
  * @returns all flags that have different defaults are exported as a key value map

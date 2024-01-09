@@ -8,10 +8,10 @@ import type { Transaction } from "@ledgerhq/coin-evm/types/index";
 import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
 import { toLocaleString } from "@ledgerhq/live-common/currencies/index";
 import { Navigation, RouteProps } from "./EvmCustomFees/types";
-import SummaryRow from "../../screens/SendFunds/SummaryRow";
-import { localeSelector } from "../../reducers/settings";
-import LText from "../../components/LText";
-import { ScreenName } from "../../const";
+import SummaryRow from "~/screens/SendFunds/SummaryRow";
+import { localeSelector } from "~/reducers/settings";
+import LText from "~/components/LText";
+import { ScreenName } from "~/const";
 
 type Props = {
   account: Account;

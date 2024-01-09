@@ -3,7 +3,7 @@ import { TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import { Flex, Text, Icon as IconUI } from "@ledgerhq/native-ui";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
-import QueuedDrawer from "../../components/QueuedDrawer";
+import QueuedDrawer from "~/components/QueuedDrawer";
 
 export const Badge = styled(Flex).attrs((p: { bg?: string }) => ({
   bg: p.bg ?? "neutral.c30",

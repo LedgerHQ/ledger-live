@@ -4,12 +4,12 @@ import { useNavigation, useTheme } from "@react-navigation/native";
 import { Icon } from "@ledgerhq/native-ui";
 import type { MappedSwapOperation } from "@ledgerhq/live-common/exchange/swap/types";
 import { getAccountUnit, getAccountName } from "@ledgerhq/live-common/account/helpers";
-import LText from "../../../components/LText";
-import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
+import LText from "~/components/LText";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import { SwapStatusIndicator } from "../SwapStatusIndicator";
-import { ScreenName } from "../../../const";
-import type { SwapNavigatorParamList } from "../../../components/RootNavigator/types/SwapNavigator";
-import type { StackNavigatorNavigation } from "../../../components/RootNavigator/types/helpers";
+import { ScreenName } from "~/const";
+import type { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
+import type { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 
 const OperationRow = ({ item }: { item: MappedSwapOperation }) => {
   const { colors } = useTheme();

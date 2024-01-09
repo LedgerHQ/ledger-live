@@ -7,8 +7,8 @@ import {
 } from "@ledgerhq/live-common/families/tezos/bakers";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
 import { IconsLegacy } from "@ledgerhq/native-ui";
-import { NavigatorName, ScreenName } from "../../const";
-import { ActionButtonEvent, NavigationParamsType } from "../../components/FabActions";
+import { NavigatorName, ScreenName } from "~/const";
+import { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
 
 const getExtraSendActionParams = ({ account }: { account: AccountLike }) => {
   const delegation = getAccountDelegationSync(account);

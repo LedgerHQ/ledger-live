@@ -6,7 +6,7 @@ import { getTimeZone } from "react-native-localize";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSelector } from "react-redux";
 import { DEFAULT_LANGUAGE_LOCALE, getDefaultLanguageLocale, locales } from "../languages";
-import { languageSelector } from "../reducers/settings";
+import { languageSelector } from "~/reducers/settings";
 
 try {
   if ("__setDefaultTimeZone" in Intl.DateTimeFormat) {

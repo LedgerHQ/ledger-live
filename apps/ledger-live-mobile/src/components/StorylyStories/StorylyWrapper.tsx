@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { Storyly } from "storyly-react-native";
 import { StorylyInstanceID } from "@ledgerhq/types-live";
 import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
-import { languageSelector } from "../../reducers/settings";
+import { languageSelector } from "~/reducers/settings";
 
 export type Props = {
   instanceID: StorylyInstanceID;

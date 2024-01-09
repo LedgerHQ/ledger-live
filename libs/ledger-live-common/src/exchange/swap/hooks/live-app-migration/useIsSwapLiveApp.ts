@@ -1,6 +1,7 @@
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
-import { isCryptoCurrency } from "../../../currencies";
+import { useIsCurrencySupported } from "./useIsCurrencySupported";
+import { useCallback, useState } from "react";
 
 type Props = {
   currencyFrom?: CryptoOrTokenCurrency;
@@ -16,18 +17,20 @@ export function useIsSwapLiveApp({ currencyFrom, swapWebManifestId }: Props) {
       : ptxSwapLiveApp;
 
   const { enabled, params } = flagConfig || {};
-  const { families, currencies } = params || {};
 
-  if (!currencyFrom || (!families && !currencies)) {
-    return enabled;
-  }
+  const isCurrencySupported = useIsCurrencySupported({
+    params,
+    currencyFrom,
+    defaultValue: enabled,
+  });
 
-  const familyOfCurrencyFrom = isCryptoCurrency(currencyFrom)
-    ? currencyFrom.family
-    : currencyFrom.parentCurrency.family;
+  const [crashed, setHasCrashed] = useState(false);
+  const onLiveAppCrashed = useCallback(() => setHasCrashed(true), []);
 
-  const familyIsEnabled = families?.length ? families.includes(familyOfCurrencyFrom) : true;
-  const currencyIsEnabled = currencies?.length ? currencies.includes(currencyFrom.id) : true;
+  const liveAppAvailable = Boolean(enabled && isCurrencySupported && !crashed);
 
-  return enabled && (familyIsEnabled || currencyIsEnabled);
+  return {
+    enabled: liveAppAvailable,
+    onLiveAppCrashed,
+  };
 }

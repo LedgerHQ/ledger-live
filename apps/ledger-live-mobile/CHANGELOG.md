@@ -1,5 +1,75 @@
 # live-mobile
 
+## 3.37.0
+
+### Minor Changes
+
+- [#5669](https://github.com/LedgerHQ/ledger-live/pull/5669) [`aa110c2`](https://github.com/LedgerHQ/ledger-live/commit/aa110c2077a95758bddfcd6c48636348fdcda20c) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Fix cosmos static unbonding periods
+
+- [#5736](https://github.com/LedgerHQ/ledger-live/pull/5736) [`1cb052d`](https://github.com/LedgerHQ/ledger-live/commit/1cb052dada6363c6f0dc4289b358d93de2320594) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Merging solana hotfix (PR #5824)
+
+### Patch Changes
+
+- [#5789](https://github.com/LedgerHQ/ledger-live/pull/5789) [`2282bcc`](https://github.com/LedgerHQ/ledger-live/commit/2282bccb49dd6751ddbdfdc1326aafdfb227f773) Thanks [@chabroA](https://github.com/chabroA)! - Remove infinite rerender on live apps sign eth tx summary
+
+- [#5693](https://github.com/LedgerHQ/ledger-live/pull/5693) [`31938df`](https://github.com/LedgerHQ/ledger-live/commit/31938df5744120ca0587915b64d0d98edab7cd24) Thanks [@KVNLS](https://github.com/KVNLS)! - LLM - Fix firmware update banner layout issue
+
+- [#5736](https://github.com/LedgerHQ/ledger-live/pull/5736) [`b286aa1`](https://github.com/LedgerHQ/ledger-live/commit/b286aa1b36dbda3ae5fd2a93e116612a32f2ecd1) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Merging solana hotfix (PR #5824)
+
+- [#5680](https://github.com/LedgerHQ/ledger-live/pull/5680) [`8929ea0`](https://github.com/LedgerHQ/ledger-live/commit/8929ea01acb6aa3d2949a16077a02d1c7b37f527) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix new firmware update flow not exitable (over USB)
+
+- [#5736](https://github.com/LedgerHQ/ledger-live/pull/5736) [`87ec27d`](https://github.com/LedgerHQ/ledger-live/commit/87ec27d5ad02667dd47308cec00e5fd1d76a5a06) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - update podfile lock
+
+- [#5651](https://github.com/LedgerHQ/ledger-live/pull/5651) [`d318ecc`](https://github.com/LedgerHQ/ledger-live/commit/d318ecc22add3dc953d1e9188c6be1aab63fe478) Thanks [@alexandremgo](https://github.com/alexandremgo)! - fix: Genuine check not skipped during onboarding with Nano X via USB
+
+  During the last step of the onboarding, filters USB device by their id and
+  not their device model, using the same flows for Nano X, Nano SP, Nano S
+  and Blue when connected via USB OTG.
+
+- [#5736](https://github.com/LedgerHQ/ledger-live/pull/5736) [`d49f444`](https://github.com/LedgerHQ/ledger-live/commit/d49f44417fd175affe71da589c0ca380e88fbb35) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Update CAL
+
+- [#5691](https://github.com/LedgerHQ/ledger-live/pull/5691) [`a01636a`](https://github.com/LedgerHQ/ledger-live/commit/a01636a0c14e66d20bb853be1e13b48d6036639e) Thanks [@gre](https://github.com/gre)! - deposit flow: fixes currencies sorting ('2049' bug)
+
+- [#5652](https://github.com/LedgerHQ/ledger-live/pull/5652) [`f7f4154`](https://github.com/LedgerHQ/ledger-live/commit/f7f4154bd34abea4985b294c3fea31cee0f50a48) Thanks [@chabroA](https://github.com/chabroA)! - add missing solana i18n
+
+- [#5757](https://github.com/LedgerHQ/ledger-live/pull/5757) [`6acc636`](https://github.com/LedgerHQ/ledger-live/commit/6acc636c081002909330e27385821f4fd68c41f3) Thanks [@KVNLS](https://github.com/KVNLS)! - Fix Recover banner margin
+
+- [#5741](https://github.com/LedgerHQ/ledger-live/pull/5741) [`2a7e906`](https://github.com/LedgerHQ/ledger-live/commit/2a7e9061b4c51f1ca02bd4bd6c72e123b231f4bb) Thanks [@CremaFR](https://github.com/CremaFR)! - bugfix: LIVE-10633
+
+- [#5649](https://github.com/LedgerHQ/ledger-live/pull/5649) [`b045864`](https://github.com/LedgerHQ/ledger-live/commit/b045864a4fae1e4f184f827b8d2274819c932aa9) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Missing translation for Experimental features
+
+- Updated dependencies [[`6c139d7`](https://github.com/LedgerHQ/ledger-live/commit/6c139d7a6431fb87b8711bdeb7b7ffa9882e7723), [`efe1ed0`](https://github.com/LedgerHQ/ledger-live/commit/efe1ed0493b343165ade674ca8c6badfff6ce065), [`b286aa1`](https://github.com/LedgerHQ/ledger-live/commit/b286aa1b36dbda3ae5fd2a93e116612a32f2ecd1), [`8929ea0`](https://github.com/LedgerHQ/ledger-live/commit/8929ea01acb6aa3d2949a16077a02d1c7b37f527), [`ad8f999`](https://github.com/LedgerHQ/ledger-live/commit/ad8f99994341b10d3f7af96543dd2c2028140573), [`d49f444`](https://github.com/LedgerHQ/ledger-live/commit/d49f44417fd175affe71da589c0ca380e88fbb35), [`a01636a`](https://github.com/LedgerHQ/ledger-live/commit/a01636a0c14e66d20bb853be1e13b48d6036639e), [`a8f82dc`](https://github.com/LedgerHQ/ledger-live/commit/a8f82dc1854eaf75e922d55964905b1fd7da0ba2), [`1cb052d`](https://github.com/LedgerHQ/ledger-live/commit/1cb052dada6363c6f0dc4289b358d93de2320594), [`3e46bd1`](https://github.com/LedgerHQ/ledger-live/commit/3e46bd1c8b1baccdce1a5d4a2b0adc81cdbd2e41)]:
+  - @ledgerhq/live-common@33.4.0
+  - @ledgerhq/native-ui@0.22.4
+  - @ledgerhq/coin-evm@0.11.2
+  - @ledgerhq/coin-framework@0.10.1
+
+## 3.37.0-next.2
+
+### Minor Changes
+
+- [#5736](https://github.com/LedgerHQ/ledger-live/pull/5736) [`1cb052d`](https://github.com/LedgerHQ/ledger-live/commit/1cb052dada6363c6f0dc4289b358d93de2320594) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Merging solana hotfix (PR #5824)
+
+### Patch Changes
+
+- Updated dependencies [[`1cb052d`](https://github.com/LedgerHQ/ledger-live/commit/1cb052dada6363c6f0dc4289b358d93de2320594)]:
+  - @ledgerhq/live-common@33.4.0-next.1
+
+## 3.36.2-next.1
+
+### Patch Changes
+
+- [#5736](https://github.com/LedgerHQ/ledger-live/pull/5736) [`87ec27d`](https://github.com/LedgerHQ/ledger-live/commit/87ec27d5ad02667dd47308cec00e5fd1d76a5a06) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - update podfile lock
+
+## 3.36.2-next.0
+
+### Patch Changes
+
+- [#5736](https://github.com/LedgerHQ/ledger-live/pull/5736) [`b286aa1`](https://github.com/LedgerHQ/ledger-live/commit/b286aa1b36dbda3ae5fd2a93e116612a32f2ecd1) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Merging solana hotfix (PR #5824)
+
+- Updated dependencies [[`b286aa1`](https://github.com/LedgerHQ/ledger-live/commit/b286aa1b36dbda3ae5fd2a93e116612a32f2ecd1)]:
+  - @ledgerhq/live-common@33.3.2-next.0
+
 ## 3.36.1
 
 ### Patch Changes
@@ -8,19 +78,6 @@
 
 - Updated dependencies [[`1abfe8d`](https://github.com/LedgerHQ/ledger-live/commit/1abfe8dfa4f2f4abd294f3f992f3681a78b33143)]:
   - @ledgerhq/live-common@33.3.1
-
-## 3.36.1-hotfix.1
-
-### Patch Changes
-
-- [#5824](https://github.com/LedgerHQ/ledger-live/pull/5824) [`6cd881b`](https://github.com/LedgerHQ/ledger-live/commit/6cd881b8b17982649446749d20605d934d51339a) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Solana hotfix
-
-## 3.36.1-hotfix.0
-
-### Patch Changes
-
-- Updated dependencies [[`1abfe8d`](https://github.com/LedgerHQ/ledger-live/commit/1abfe8dfa4f2f4abd294f3f992f3681a78b33143)]:
-  - @ledgerhq/live-common@33.3.1-hotfix.0
 
 ## 3.36.0
 

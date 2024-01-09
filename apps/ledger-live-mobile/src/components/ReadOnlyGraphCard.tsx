@@ -2,7 +2,7 @@ import React, { memo } from "react";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { Flex, Text } from "@ledgerhq/native-ui";
 
-import { withDiscreetMode } from "../context/DiscreetModeContext";
+import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import DiscreetModeButton from "./DiscreetModeButton";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 

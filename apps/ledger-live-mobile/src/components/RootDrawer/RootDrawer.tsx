@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 
-import { EvmStakingDrawer } from "../../families/evm/StakingDrawer";
+import { EvmStakingDrawer } from "~/families/evm/StakingDrawer";
 
-import { RootDrawerProvider, useRootDrawerContext } from "../../context/RootDrawerContext";
+import { RootDrawerProvider, useRootDrawerContext } from "~/context/RootDrawerContext";
 import { InitialDrawerID, RootDrawerProps } from "./types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { NavigatorName } from "../../const";
+import { NavigatorName } from "~/const";
 import { PTXServicesAppleWarning } from "./InitialDrawers/PTXServicesAppleWarning";
 
 export async function getInitialDrawersToShow(initialDrawers: InitialDrawerID[]) {

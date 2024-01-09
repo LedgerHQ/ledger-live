@@ -4,10 +4,10 @@ import { FeatureToggle, useFeature } from "@ledgerhq/live-config/featureFlags/in
 import PushNotificationsModal from "../PushNotificationsModal";
 import RatingsModal from "../RatingsModal";
 import NpsRatingsModal from "../NpsRatingsModal";
-import useRatings from "../../logic/ratings";
-import useNotifications from "../../logic/notifications";
-import DebugAppLevelDrawer from "../../components/DebugAppLevelDrawer";
-import useNpsRatings from "../../logic/npsRatings";
+import useRatings from "~/logic/ratings";
+import useNotifications from "~/logic/notifications";
+import DebugAppLevelDrawer from "~/components/DebugAppLevelDrawer";
+import useNpsRatings from "~/logic/npsRatings";
 
 const getCurrentRouteName = (
   state: NavigationState | Required<NavigationState["routes"][0]>["state"],

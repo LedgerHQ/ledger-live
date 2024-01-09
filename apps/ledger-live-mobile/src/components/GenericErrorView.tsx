@@ -28,8 +28,8 @@ type Props = {
 };
 
 const StyledLink = styled(Link)`
-  margin-top: ${p => p.theme.space[8]};
-  margin-bottom: ${p => p.theme.space[4]};
+  margin-top: ${p => p.theme.space[8]}px;
+  margin-bottom: ${p => p.theme.space[4]}px;
 `;
 
 const GenericErrorView = ({

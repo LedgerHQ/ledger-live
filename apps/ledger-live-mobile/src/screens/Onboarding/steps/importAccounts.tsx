@@ -3,27 +3,24 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 
 import { useDispatch } from "react-redux";
 import { StackNavigationProp } from "@react-navigation/stack";
-import Illustration from "../../../images/illustration/Illustration";
-import { NavigatorName, ScreenName } from "../../../const";
+import Illustration from "~/images/illustration/Illustration";
+import { NavigatorName, ScreenName } from "~/const";
 import BaseStepperView, { SyncDesktop, Metadata } from "./setupDevice/scenes";
-import { TrackScreen } from "../../../analytics";
+import { TrackScreen } from "~/analytics";
 
-import { completeOnboarding, setHasOrderedNano, setReadOnlyMode } from "../../../actions/settings";
+import { completeOnboarding, setHasOrderedNano, setReadOnlyMode } from "~/actions/settings";
 import { useNavigationInterceptor } from "../onboardingContext";
-import {
-  RootComposite,
-  StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
-import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
-import { RootStackParamList } from "../../../components/RootNavigator/types/RootNavigator";
+import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
+import { RootStackParamList } from "~/components/RootNavigator/types/RootNavigator";
 import { Step } from "./setupDevice/scenes/BaseStepperView";
 
 const images = {
   light: {
-    Intro: require("../../../images/illustration/Light/_074.png"),
+    Intro: require("~/images/illustration/Light/_074.png"),
   },
   dark: {
-    Intro: require("../../../images/illustration/Dark/_074.png"),
+    Intro: require("~/images/illustration/Dark/_074.png"),
   },
 };
 

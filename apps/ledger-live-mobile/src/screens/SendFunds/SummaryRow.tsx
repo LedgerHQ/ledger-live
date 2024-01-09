@@ -1,7 +1,7 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import LText, { Opts } from "../../components/LText/index";
-import Touchable from "../../components/Touchable";
+import LText, { Opts } from "~/components/LText/index";
+import Touchable from "~/components/Touchable";
 
 const styles = StyleSheet.create({
   root: {

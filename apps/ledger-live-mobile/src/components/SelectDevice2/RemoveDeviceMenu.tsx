@@ -9,13 +9,13 @@ import { Flex } from "@ledgerhq/native-ui";
 
 import Button from "../Button";
 
-import NanoS from "../../images/devices/NanoS";
-import Stax from "../../images/devices/Stax";
-import NanoX from "../../images/devices/NanoX";
+import NanoS from "~/images/devices/NanoS";
+import Stax from "~/images/devices/Stax";
+import NanoX from "~/images/devices/NanoX";
 
-import Trash from "../../icons/Trash";
+import Trash from "~/icons/Trash";
 import QueuedDrawer from "../QueuedDrawer";
-import { removeKnownDevice } from "../../actions/ble";
+import { removeKnownDevice } from "~/actions/ble";
 
 const illustrations = {
   [DeviceModelId.nanoS]: NanoS,

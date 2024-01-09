@@ -2,11 +2,11 @@ import React, { useCallback } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { StyleSheet, View, Platform, TouchableOpacity, Linking } from "react-native";
-import { urls } from "@utils/urls";
-import IconClose from "../../../icons/Close";
-import LText from "../../../components/LText";
-import IconTwitter from "../../../icons/Twitter";
-import { useBanner } from "../../../components/banners/hooks";
+import { urls } from "~/utils/urls";
+import IconClose from "~/icons/Close";
+import LText from "~/components/LText";
+import IconTwitter from "~/icons/Twitter";
+import { useBanner } from "~/components/banners/hooks";
 
 const CatalogTwitterBanner = () => {
   const { t } = useTranslation();

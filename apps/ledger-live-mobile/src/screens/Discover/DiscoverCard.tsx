@@ -2,7 +2,7 @@ import React from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { BaseTextProps } from "@ledgerhq/native-ui/components/Text/index";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex/index";
-import Touchable from "../../components/Touchable";
+import Touchable from "~/components/Touchable";
 
 const DiscoverCard = ({
   title,

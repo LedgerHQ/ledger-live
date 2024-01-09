@@ -7,8 +7,8 @@ import type { ToastData } from "@ledgerhq/live-common/notifications/ToastProvide
 import { useSelector } from "react-redux";
 import Snackbar from "./Snackbar";
 import * as RootNavigation from "../../../rootnavigation";
-import { NavigatorName, ScreenName } from "../../../const";
-import { hasCompletedOnboardingSelector } from "../../../reducers/settings";
+import { NavigatorName, ScreenName } from "~/const";
+import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 
 export default function SnackbarContainer() {
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);

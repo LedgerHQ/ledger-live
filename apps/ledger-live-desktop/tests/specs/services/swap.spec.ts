@@ -253,7 +253,7 @@ test.describe.parallel("Swap", () => {
     await test.step("Verify Swap details are present in the swap history", async () => {
       await drawer.close();
       await swapPage.verifyHistoricalSwapsHaveLoadedFully();
-      await expect.soft(page).toHaveScreenshot("verify-swap-history.png", { timeout: 20000 });
+      await expect.soft(page).toHaveScreenshot("verify-swap-history.png");
     });
   });
 });

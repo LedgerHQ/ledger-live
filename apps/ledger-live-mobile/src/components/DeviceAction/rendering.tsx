@@ -43,20 +43,20 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { ParamListBase } from "@react-navigation/native";
 import isFirmwareUpdateVersionSupported from "@ledgerhq/live-common/hw/isFirmwareUpdateVersionSupported";
 import ProviderIcon from "../ProviderIcon";
-import { lastSeenDeviceSelector } from "../../reducers/settings";
-import { urls } from "@utils/urls";
+import { lastSeenDeviceSelector } from "~/reducers/settings";
+import { urls } from "~/utils/urls";
 import Alert from "../Alert";
 import { lighten, Theme } from "../../colors";
 import Button from "../Button";
 import DeviceActionProgress from "../DeviceActionProgress";
-import { NavigatorName, ScreenName } from "../../const";
+import { NavigatorName, ScreenName } from "~/const";
 import Animation from "../Animation";
-import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
+import { getDeviceAnimation } from "~/helpers/getDeviceAnimation";
 import GenericErrorView from "../GenericErrorView";
 import Circle from "../Circle";
-import { MANAGER_TABS } from "../../const/manager";
+import { MANAGER_TABS } from "~/const/manager";
 import ExternalLink from "../ExternalLink";
-import { TrackScreen, track } from "../../analytics";
+import { TrackScreen, track } from "~/analytics";
 import CurrencyUnitValue from "../CurrencyUnitValue";
 import TermsFooter, { TermsProviders } from "../TermsFooter";
 import CurrencyIcon from "../CurrencyIcon";
@@ -66,8 +66,8 @@ import {
   StaxFramedLottieWithContext,
 } from "../CustomImage/StaxFramedLottie";
 import ModalLock from "../ModalLock";
-import confirmLockscreen from "../../animations/stax/customimage/confirmLockscreen.json";
-import allowConnection from "../../animations/stax/customimage/allowConnection.json";
+import confirmLockscreen from "~/animations/stax/customimage/confirmLockscreen.json";
+import allowConnection from "~/animations/stax/customimage/allowConnection.json";
 import Config from "react-native-config";
 
 export const Wrapper = styled(Flex).attrs({

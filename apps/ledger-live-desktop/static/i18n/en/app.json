@@ -1237,11 +1237,12 @@
         "firmwareUpdate": {
           "title": {
             "active": "OS update check",
-            "completed": "Your {{modelName}} OS is up to date",
+            "completed": "Your {{modelName}} OS is up to date.",
             "updateAvailable": "OS update {{firmwareVersion}} available"
           },
           "subtitle": {
             "active": "This checks if your {{modelName}} Operating System is up to date or not.",
+            "completed": "To initiate app restore on your {{modelName}}, select the “Restore apps” button below.",
             "updateAvailable": "Update for optimal security and access to the latest features."
           },
           "viewUpdateCTA": "Update {{modelName}} OS",
@@ -1757,8 +1758,8 @@
     "loading": "Loading...",
     "connectAndUnlockDevice": "Connect and unlock your device",
     "unlockDevice": "Unlock your device",
-    "unlockDeviceAfterFirmwareUpdateStep1": "Wait for installation to finish on your {{productName}}",
-    "unlockDeviceAfterFirmwareUpdateStep2": "Unlock {{productName}} to complete installation",
+    "unlockDeviceAfterFirmwareUpdateStep1": "Wait for installation to finish on your {{productName}}.",
+    "unlockDeviceAfterFirmwareUpdateStep2": "Unlock {{productName}} with your PIN to complete the update.",
     "quitApp": "Quit the application on your device",
     "appNotInstalledTitle": "Missing required app",
     "appNotInstalledTitle_plural": "Missing required apps",
@@ -1931,11 +1932,13 @@
       "latest": "Firmware version {{version}} is available",
       "contactSupport": "Contact support",
       "deprecated": "Device firmware version too old to be updated. Contact Ledger Support for a replacement.",
-      "prepareSeed": "Ensure your 24-word recovery phrase is written down on the Recovery Sheet and it is available, as a precaution.",
+      "prepareSeed": "Ensure your 24-word recovery phrase is written down on the Recovery Sheet and is available, as a precaution.",
       "disclaimerTitle": "You are about to install <1>firmware version {{version}}</1>.",
-      "cancelUpdate": "Cancel update",
-      "continueUpdate": "Continue update",
-      "cancelUpdateWarning": "Your settings and apps may not be restored properly if you cancel the update now.",
+      "cancelUpdate": "Cancel OS update",
+      "continueUpdate": "Continue OS update",
+      "restartUpdate": "Restart OS update",
+      "skipRestore": "Skip restore",
+      "cancelUpdateWarning": "Your settings and apps may not be restored\nproperly if you cancel the update now.",
       "updateInProgress": "OS update in progress"
     },
     "modal": {
@@ -1974,9 +1977,10 @@
       "mcuBlueFirst": "Press and hold the side button for 10 seconds to turn off the device. Release the button.",
       "mcuBlueSecond": "Press and hold the button for at least 5 seconds until the Boot Options are displayed. Tap Bootloader Mode",
       "successTitle": "Your {{deviceName}} OS is\nup to date.",
-      "sucessCTAApps": "Reinstall apps",
-      "SuccessCTANoApps": "Install apps",
-      "cancelReinstallCTA": "Install update",
+      "successTitleApps": "Your {{deviceName}} OS is\nup to date. One last thing...",
+      "successSubtitleApps": "To initiate app restore on your Ledger Stax, select\nthe “Restore apps“ button below.",
+      "sucessCTAApps": "Restore apps",
+      "SuccessCTANoApps": "Finish",
       "resetSteps": {
         "first": "1. Reset your device",
         "connect": "Connect the {{deviceName}} to your computer using the USB cable.",
@@ -2302,7 +2306,7 @@
       "title": "Set your {{deviceName}} in {{language}}?",
       "description": "{{language}} is now available for your {{deviceName}}. You can set it now, or change your device language at any time from My Ledger."
     },
-    "allowLanguageInstallation": "Allow language installation",
+    "allowLanguageInstallation": "Tap on “Allow” to\ninstall language",
     "languageInstalled": "Language changed to {{language}}",
     "installingLanguage": "Installing language",
     "languages": {
@@ -3069,7 +3073,7 @@
         "steps": {
           "starter": {
             "title": "Redelegation",
-            "description": "Use redelegation to easily change from one validator to another. But if you change your mind again, you will then have to wait because redelegation triggers a 21-day timelock.",
+            "description": "Use redelegation to easily change from one validator to another. But if you change your mind again, you will then have to wait because redelegation triggers a {{ numberOfDays }}-day timelock.",
             "warning": "Choose your validator wisely: Part of your delegated assets may be irrevocably lost if the validator does not behave appropriately. You can have a maximum of <0>7 pending redelegations</0>.",
             "howDelegationWorks": "How delegation works?"
           },
@@ -3098,7 +3102,7 @@
     },
     "undelegation": {
       "header": "Undelegation(s)",
-      "headerTooltip": "Available after the 21-day timelock",
+      "headerTooltip": "Available after the {{numberOfDays}}-day timelock",
       "inactiveTooltip": "Undelegated amounts do not generate rewards.",
       "flow": {
         "title": "Undelegate assets",
@@ -4106,7 +4110,7 @@
     "accounts": {
       "hideEmptyTokens": {
         "title": "Hide empty token accounts",
-        "desc": "Hide token accounts with zero balance on the Accounts page."
+        "desc": "Hide token accounts with zero balance."
       },
       "tokenBlacklist": {
         "title": "Hidden tokens",
@@ -5223,8 +5227,8 @@
       "description": "Please try again or contact Ledger Support if the problem persists."
     },
     "LanguageInstallRefusedOnDevice": {
-      "title": "Language installation refused on device",
-      "description": "Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support."
+      "title": "Language restore\ncancelled on device",
+      "description": "If this was a mistake, retry now."
     },
     "RestoreLanguageInstallRefusedOnDevice": {
       "title": "Restoration of Language was cancelled on Ledger Stax",
@@ -5429,8 +5433,8 @@
       "title": "My Ledger denied on device"
     },
     "UserRefusedFirmwareUpdate": {
-      "title": "Update was cancelled on device",
-      "description": "The installation of OS update was refused on your device. If this was a mistake, restart the update."
+      "title": "OS update install cancelled\non device",
+      "description": "If this was a mistake, restart the update."
     },
     "UserRefusedOnDevice": {
       "title": "Action rejected",
@@ -5836,12 +5840,12 @@
       "description": "Please try again with another image"
     },
     "ImageCommitRefusedOnDevice": {
-      "title": "Lock screen cancelled on Ledger Stax",
-      "description": "If this image wasn't the right fit, you can try again with another image."
+      "title": "Installation of lock screen picture\ncancelled on Ledger Stax",
+      "description": "If this this was a mistake, retry now."
     },
     "ImageLoadRefusedOnDevice": {
-      "title": "Lock screen cancelled on Ledger Stax",
-      "description": "If this image wasn't the right fit, you can try again with another image."
+      "title": "Installation of lock screen picture\ncancelled on Ledger Stax",
+      "description": "If this this was a mistake, retry now."
     },
     "ImageDoesNotExistOnDevice": {
       "title": "Your Ledger Stax doesn’t have a lock screen picture to remove",
@@ -5963,13 +5967,13 @@
       "transfer": {
         "stepLabel": "Load",
         "useAnotherPicture": "Upload another picture",
-        "allowPreview": "Tap on “Load picture” to customize the lock screen",
-        "allowConfirmPreview": "Allow lock screen picture restoration on {{productName}}",
-        "loadingPicture": "Loading...",
+        "allowPreview": "Tap on “Load picture” to\ncustomize the lock screen picture",
+        "allowConfirmPreview": "Tap on “Load picture“ to\nrestore lock screen picture",
+        "loadingPicture": "Installing...",
         "voila": "Voilà!",
         "imageLoaded": "Image loaded on {{productName}}",
         "confirmPicture": "Like what you see?\nKeep it!",
-        "confirmRestorePicture": "Confirm restoration of the lock screen picture",
+        "confirmRestorePicture": "Tap on “Keep“ to\nconfirm your lock screen picture",
         "doThisLater": "Maybe later"
       }
     },

@@ -9,7 +9,7 @@ import { Box, BoxedIcon, Flex, Text } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { MedalMedium, TrophyMedium } from "@ledgerhq/native-ui/assets/icons";
 import { SuperRepresentative } from "@ledgerhq/live-common/families/tron/types";
-import Clock from "../../../icons/Clock";
+import Clock from "~/icons/Clock";
 
 type Props = {
   validator?: SuperRepresentative | null;

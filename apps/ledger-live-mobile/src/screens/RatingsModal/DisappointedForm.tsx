@@ -5,15 +5,15 @@ import VersionNumber from "react-native-version-number";
 import { Platform } from "react-native";
 import styled from "styled-components/native";
 import { useSelector } from "react-redux";
-import { track, TrackScreen } from "../../analytics";
-import useRatings from "../../logic/ratings";
-import getWindowDimensions from "../../logic/getWindowDimensions";
+import { track, TrackScreen } from "~/analytics";
+import useRatings from "~/logic/ratings";
+import getWindowDimensions from "~/logic/getWindowDimensions";
 import {
   languageSelector,
   lastSeenDeviceSelector,
   notificationsSelector,
-} from "../../reducers/settings";
-import { knownDevicesSelector } from "../../reducers/ble";
+} from "~/reducers/settings";
+import { knownDevicesSelector } from "~/reducers/ble";
 
 const { height } = getWindowDimensions();
 

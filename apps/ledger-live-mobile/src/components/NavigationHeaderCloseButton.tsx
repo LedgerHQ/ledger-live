@@ -8,7 +8,7 @@ import { BaseNavigatorStackParamList } from "./RootNavigator/types/BaseNavigator
 import { StackNavigatorNavigation } from "./RootNavigator/types/helpers";
 import Touchable from "./Touchable";
 import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
-import { useNavigateToPostOnboardingHubCallback } from "../logic/postOnboarding/useNavigateToPostOnboardingHubCallback";
+import { useNavigateToPostOnboardingHubCallback } from "~/logic/postOnboarding/useNavigateToPostOnboardingHubCallback";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const emptyFunction = () => {};

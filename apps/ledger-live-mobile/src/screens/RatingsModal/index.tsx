@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState, useMemo } from "react";
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
-import useRatings from "../../logic/ratings";
-import QueuedDrawer from "../../components/QueuedDrawer";
+import useRatings from "~/logic/ratings";
+import QueuedDrawer from "~/components/QueuedDrawer";
 import Init from "./Init";
 import Enjoy from "./Enjoy";
 import Disappointed from "./Disappointed";

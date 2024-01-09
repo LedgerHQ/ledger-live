@@ -1,5 +1,5 @@
 import { NavigatorScreenParams } from "@react-navigation/native";
-import { NavigatorName, ScreenName } from "../../../const";
+import { NavigatorName, ScreenName } from "~/const";
 import { DiscoverNavigatorStackParamList } from "./DiscoverNavigator";
 import { ManagerNavigatorStackParamList } from "./ManagerNavigator";
 import { MarketNavigatorStackParamList } from "./MarketNavigator";

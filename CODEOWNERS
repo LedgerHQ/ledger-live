@@ -1,46 +1,104 @@
-# Live DX Team
-.github/              @ledgerhq/live-eng-core
-scripts/              @ledgerhq/live-eng-core
-tools/                @ledgerhq/live-eng-core
-fastlane/             @ledgerhq/live-eng-core
+# How does it work? => https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+# This is a comment.
+# Each line is a file pattern followed by one or more owners.
+# Order is important; the last matching pattern takes the most
+# precedence. When someone opens a pull request that only
+# modifies JS files, only @js-owner and not the global
+# owner(s) will be requested for a review.
 
-# Live Blockchain Support Team
-apps/**/families/                                                    @ledgerhq/live-blockchain-support
-apps/ledger-live-desktop/src/live-common-set-supported-currencies.*  @ledgerhq/live-blockchain-support
-apps/ledger-live-mobile/src/live-common-setup.*                      @ledgerhq/live-blockchain-support
-libs/ledger-live-common/src/families                                 @ledgerhq/live-blockchain-support
-libs/ledgerjs/packages/cryptoassets                                  @ledgerhq/live-blockchain-support
-libs/ledgerjs/packages/types-cryptoassets                            @ledgerhq/live-blockchain-support
-libs/ledgerjs/packages/hw-app-*                                      @ledgerhq/live-blockchain-support
-libs/coin-*                                                          @ledgerhq/live-blockchain-support
-libs/domain-service                                                  @ledgerhq/live-blockchain-support
-ledgerjs/packages/evm-tools                                          @ledgerhq/live-blockchain-support
-docs                                                                 @ledgerhq/live-blockchain-support
+# Hub team
+## by default, hub manage apps and libs related to it & then we overrides many exceptions
+apps/ledger-live-desktop/                                @ledgerhq/live-hub
+apps/ledger-live-mobile/                                 @ledgerhq/live-hub
+libs/**/errors/                                          @ledgerhq/live-hub
+libs/**/logs/                                            @ledgerhq/live-hub
+libs/**/types-live/                                      @ledgerhq/live-hub
+libs/env/                                                @ledgerhq/live-hub
+libs/ledger-live-common/                                 @ledgerhq/live-hub
+libs/promise/                                            @ledgerhq/live-hub
+libs/ui/                                                 @ledgerhq/live-hub
 
+# Blockchain team
+.github/**/bot-*.yml                                     @ledgerhq/live-blockchain-support
+**/live-common-set*.ts                                   @ledgerhq/live-blockchain-support
+apps/**/families/                                        @ledgerhq/live-blockchain-support
+apps/cli/                                                @ledgerhq/live-blockchain-support
+apps/web-tools/                                          @ledgerhq/live-blockchain-support
+docs/                                                    @ledgerhq/live-blockchain-support
+libs/coin-*/                                             @ledgerhq/live-blockchain-support
+libs/domain-service/                                     @ledgerhq/live-blockchain-support
+libs/evm-tools/                                          @ledgerhq/live-blockchain-support
+libs/ledger-live-common/src/families/                    @ledgerhq/live-blockchain-support
+libs/ledgerjs/packages/cryptoassets/                     @ledgerhq/live-blockchain-support
+libs/ledgerjs/packages/hw-app-*/                         @ledgerhq/live-blockchain-support
+libs/ledgerjs/packages/types-cryptoassets/               @ledgerhq/live-blockchain-support
+libs/live-config/									     @ledgerhq/live-blockchain-support
+libs/live-network/                                       @ledgerhq/live-blockchain-support
 
-# PTX
-ledger-live-desktop/src/renderer/screens/exchange/  @ledgerhq/ptx
-ledger-live-mobile/src/screens/Exchange/            @LedgerHQ/ptx
-ledger-live-common/src/exchange/                    @LedgerHQ/ptx
+# PTX team
+apps/ledger-live-desktop/src/renderer/components/ProviderIcon/  @ledgerhq/ptx
+apps/ledger-live-desktop/src/renderer/components/WebPTXPlayer/  @ledgerhq/ptx
+apps/ledger-live-desktop/src/renderer/modals/Platform/          @ledgerhq/ptx
+apps/ledger-live-desktop/src/renderer/modals/StartStake/        @ledgerhq/ptx
+apps/ledger-live-desktop/src/renderer/reducers/swap.ts          @ledgerhq/ptx
+apps/ledger-live-desktop/src/renderer/screens/earn/             @ledgerhq/ptx
+apps/ledger-live-desktop/src/renderer/screens/exchange/         @ledgerhq/ptx
+apps/ledger-live-desktop/src/renderer/screens/stake/            @ledgerhq/ptx
+apps/ledger-live-desktop/src/renderer/screens/swapWeb/          @ledgerhq/ptx
+apps/ledger-live-mobile/src/actions/earn.ts                     @ledgerhq/ptx
+apps/ledger-live-mobile/src/actions/swap.ts                     @ledgerhq/ptx
+apps/ledger-live-mobile/src/components/ProviderIcon/            @ledgerhq/ptx
+apps/ledger-live-mobile/src/components/Stake/                   @ledgerhq/ptx
+apps/ledger-live-mobile/src/components/WebPTXPlayer/            @ledgerhq/ptx
+apps/ledger-live-mobile/src/reducers/earn.ts                    @ledgerhq/ptx
+apps/ledger-live-mobile/src/reducers/swap.ts                    @ledgerhq/ptx
+apps/ledger-live-mobile/src/screens/Exchange/                   @ledgerhq/ptx
+apps/ledger-live-mobile/src/screens/PTX/                        @ledgerhq/ptx
+apps/ledger-live-mobile/src/screens/Swap/                       @ledgerhq/ptx
+libs/ledger-live-common/src/exchange/                           @ledgerhq/ptx
 
-# Wallet API
-ledger-live-common/src/platform/                    @LedgerHQ/wallet-api
+# Wallet API team
+**/PlatformAppProviderWrapper.tsx                        @ledgerhq/wallet-api
+**/Web3AppWebview/                                       @ledgerhq/wallet-api
+**/WebPlatformPlayer/                                    @ledgerhq/wallet-api
+apps/ledger-live-desktop/src/renderer/screens/platform/  @ledgerhq/wallet-api
+apps/ledger-live-desktop/src/webviewPreloader/  	     @ledgerhq/wallet-api
+apps/ledger-live-mobile/src/screens/Discover/            @ledgerhq/wallet-api
+apps/ledger-live-mobile/src/screens/Platform/ 		     @ledgerhq/wallet-api
+libs/ledger-live-common/src/platform/                    @ledgerhq/wallet-api
+libs/ledger-live-common/src/wallet-api/                  @ledgerhq/wallet-api
+**/platformAdapter.ts 									 @ledgerhq/wallet-api
+**/walletApiAdapter.ts									 @ledgerhq/wallet-api
+**/liveapp-sdk.spec.ts 								     @ledgerhq/wallet-api @ledgerhq/live-qa
+**/wallet-api.spec.ts 								     @ledgerhq/wallet-api @ledgerhq/live-qa
+libs/test-utils/                                         @ledgerhq/wallet-api @ledgerhq/live-qa
 
-# Live Devices Team
-apps/**/components/DeviceAction/        @ledgerhq/live-devices
-ledger-live-mobile/src/screens/Manager/ @ledgerhq/live-devices
-ledger-live-common/src/hw/              @ledgerhq/live-devices
-ledger-live-common/src/apps/            @ledgerhq/live-devices
-ledger-live-common/src/manager/         @ledgerhq/live-devices
-ledgerjs/packages/types-devices/        @ledgerhq/live-devices
-ledgerjs/packages/devices/              @ledgerhq/live-devices
-ledgerjs/packages/hw-transport-*        @ledgerhq/live-devices
-ledgerjs/packages/react-native-*        @ledgerhq/live-devices
+# Devices team
+**/src/renderer/screens/manager/                         @ledgerhq/live-devices
+apps/**/components/DeviceAction/                         @ledgerhq/live-devices
+apps/ledger-live-mobile/src/screens/Manager/             @ledgerhq/live-devices
+apps/web-tools/repl/                                     @ledgerhq/live-devices
+libs/**/devices/                                         @ledgerhq/live-devices
+libs/**/hw-transport-*/                                  @ledgerhq/live-devices
+libs/**/react-native-*/                                  @ledgerhq/live-devices
+libs/**/swift-*/                                         @ledgerhq/live-devices
+libs/**/types-devices/                                   @ledgerhq/live-devices
+libs/ledger-live-common/src/apps/                        @ledgerhq/live-devices
+libs/ledger-live-common/src/hw/                          @ledgerhq/live-devices
+libs/ledger-live-common/src/manager/                     @ledgerhq/live-devices
 
+# Recover team
+apps/ledger-live-desktop/src/renderer/components/RecoverBanner/         @ledgerhq/recover-software
+apps/ledger-live-desktop/src/renderer/components/RecoverRestore/        @ledgerhq/recover-software
+apps/ledger-live-desktop/src/renderer/components/WebRecoverPlayer/      @ledgerhq/recover-software
+apps/ledger-live-desktop/src/renderer/modals/ProtectDiscover/           @ledgerhq/recover-software
+apps/ledger-live-desktop/src/renderer/screens/recover/                  @ledgerhq/recover-software
+apps/ledger-live-mobile/src/components/RecoverBanner/                   @ledgerhq/recover-software
+apps/ledger-live-mobile/src/components/ServicesWidget/Protect/          @ledgerhq/recover-software
+apps/ledger-live-mobile/src/components/WebRecoverPlayer/                @ledgerhq/recover-software
+apps/ledger-live-mobile/src/screens/Protect/                            @ledgerhq/recover-software
+libs/ledger-live-common/src/hooks/recoverFeatureFlag.ts                 @ledgerhq/recover-software
 
-# Live QA Team
-ledger-live-desktop/tests/**/*-snapshots/ @ledgerhq/live-qa
-
-# Cross-teams
-.github/**/bot-*.yml                 @gre @ledgerhq/live-blockchain-support @ledgerhq/live-qa
-ledgerjs/packages/types-live/        @gre @ledgerhq/live-blockchain-support  @LedgerHQ/wallet-api @ledgerhq/live-devices
+# UI tests
+apps/ledger-live-desktop/tests/                          @ledgerhq/live-hub @ledgerhq/live-qa
+apps/ledger-live-mobile/e2e/                             @ledgerhq/live-hub @ledgerhq/live-qa

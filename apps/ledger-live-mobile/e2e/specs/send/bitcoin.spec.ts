@@ -9,7 +9,7 @@ import { loadAccounts, loadBleState, loadConfig } from "../../bridge/server";
 import PortfolioPage from "../../models/wallet/portfolioPage";
 import SendPage from "../../models/send";
 import DeviceAction from "../../models/DeviceAction";
-import { DeviceModelId } from "@ledgerhq/devices";
+import { knownDevice } from "../../models/devices";
 import { getElementByText } from "../../helpers";
 
 let portfolioPage: PortfolioPage;
@@ -17,12 +17,6 @@ let sendPage: SendPage;
 let deviceAction: DeviceAction;
 
 setSupportedCurrencies(["bitcoin"]);
-
-const knownDevice = {
-  name: "Nano X de test",
-  id: "mock_1",
-  modelId: DeviceModelId.nanoX,
-};
 
 const bitcoinAccount = genAccount("mock1", {
   currency: getCryptoCurrencyById("bitcoin"),

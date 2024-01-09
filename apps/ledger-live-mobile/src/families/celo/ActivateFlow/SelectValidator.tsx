@@ -13,12 +13,12 @@ import {
   activatableVotes,
   fallbackValidatorGroup,
 } from "@ledgerhq/live-common/families/celo/logic";
-import { TrackScreen } from "../../../analytics";
-import { ScreenName } from "../../../const";
-import { accountScreenSelector } from "../../../reducers/accounts";
+import { TrackScreen } from "~/analytics";
+import { ScreenName } from "~/const";
+import { accountScreenSelector } from "~/reducers/accounts";
 import ValidatorHead from "../ValidatorHead";
 import ValidatorRow from "../ValidatorRow";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CeloActivateFlowParamList } from "./types";
 
 type Props = StackNavigatorProps<CeloActivateFlowParamList, ScreenName.CeloActivateValidatorSelect>;

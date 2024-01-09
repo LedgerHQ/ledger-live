@@ -6,11 +6,11 @@ import { Text } from "@ledgerhq/native-ui";
 import type { CardanoDelegation } from "@ledgerhq/live-common/families/cardano/types";
 import { LEDGER_POOL_IDS } from "@ledgerhq/live-common/families/cardano/utils";
 import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
-import CounterValue from "../../../components/CounterValue";
-import ArrowRight from "../../../icons/ArrowRight";
-import LText from "../../../components/LText";
+import CounterValue from "~/components/CounterValue";
+import ArrowRight from "~/icons/ArrowRight";
+import LText from "~/components/LText";
 import PoolImage from "../shared/PoolImage";
-import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import BigNumber from "bignumber.js";
 
 type Props = {

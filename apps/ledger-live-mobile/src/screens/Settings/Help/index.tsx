@@ -1,6 +1,6 @@
 import React from "react";
 import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
-import { TrackScreen } from "../../../analytics";
+import { TrackScreen } from "~/analytics";
 import LedgerSupportRow from "./LedgerSupportRow";
 import ClearCacheRow from "./ClearCacheRow";
 import ExportLogsRow from "./ExportLogsRow";

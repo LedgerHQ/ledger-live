@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import moment from "moment";
 import { Text } from "@ledgerhq/native-ui";
-import useInterval from "../../../../components/useInterval";
+import useInterval from "~/components/useInterval";
 
 export function CountdownTimer({
   end,

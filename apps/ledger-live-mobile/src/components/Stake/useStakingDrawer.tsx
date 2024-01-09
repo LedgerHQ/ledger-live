@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
 import { Account } from "@ledgerhq/types-live";
-import { NavigatorName, ScreenName } from "../../const";
+import { NavigatorName, ScreenName } from "~/const";
 import perFamilyAccountActions from "../../generated/accountActions";
 
 /** Open the stake flow for a given account from any navigator. Returns to parent route on completion. */

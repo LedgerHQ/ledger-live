@@ -18,7 +18,7 @@ import { WebViewProps, WebView, WebViewMessageEvent } from "react-native-webview
 import VersionNumber from "react-native-version-number";
 import { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
-import { NavigatorName, ScreenName } from "../../const";
+import { NavigatorName, ScreenName } from "~/const";
 import { flattenAccountsSelector } from "../../reducers/accounts";
 import { WebviewAPI, WebviewProps, WebviewState } from "./types";
 import prepareSignTransaction from "./liveSDKLogic";

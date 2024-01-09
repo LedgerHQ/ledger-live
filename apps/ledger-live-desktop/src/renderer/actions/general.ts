@@ -30,12 +30,15 @@ const extraSessionTrackingPairsChanges: BehaviorSubject<TrackingPair[]> = new Be
 
 // provide redux states via custom hook wrapper
 
-export function useDistribution() {
+export function useDistribution(
+  opts: Omit<Parameters<typeof useDistributionRaw>[0], "accounts" | "to">,
+) {
   const accounts = useSelector(accountsSelector);
   const to = useSelector(counterValueCurrencySelector);
   return useDistributionRaw({
     accounts,
     to,
+    ...opts,
   });
 }
 export function useCalculateCountervalueCallback() {

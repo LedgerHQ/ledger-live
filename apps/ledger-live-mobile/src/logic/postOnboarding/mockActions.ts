@@ -1,7 +1,7 @@
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { PostOnboardingAction, PostOnboardingActionId } from "@ledgerhq/types-live";
 import { Icons } from "@ledgerhq/native-ui";
-import { NavigatorName, ScreenName } from "../../const";
+import { NavigatorName, ScreenName } from "~/const";
 
 export const claimMock: PostOnboardingAction = {
   id: PostOnboardingActionId.claimMock,

@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { createSelector } from "reselect";
-import { localeSelector } from "../reducers/settings";
+import { localeSelector } from "~/reducers/settings";
 
 type Props = {
   date: Date;

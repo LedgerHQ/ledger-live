@@ -467,6 +467,18 @@
     "ElrondDelegationBelowMinimumError" : {
       "title" : "남은 위임은 {{formattedAmount}}보다 작을 수 없습니다"
     },
+    "NotEnoughVTHO" : {
+      "title" : "죄송합니다. VTHO 자금이 부족합니다.",
+      "description" : "계정에 충분한 VTHO가 있는지 확인하세요."
+    },
+    "MustBeVechain" : {
+      "title" : "비체인 계정이 아닙니다",
+      "description" : "코인이 VTHO 또는 VET인지 확인하세요"
+    },
+    "ImpossibleToCalculateAmountAndFees" : {
+      "title" : "금액 및 수수료 계산이 불가능합니다",
+      "description" : "금액 및 수수료 계산이 불가능합니다"
+    },
     "NotEnoughEGLDForFees" : {
       "title" : "트랜잭션 수수료로 지불할 EGLD가 충분하지 않습니다.",
       "description" : "계정에 EGLD를 전송하여 트랜잭션 수수료를 지불하세요."
@@ -752,6 +764,9 @@
     "CardanoNotEnoughFunds" : {
       "title" : "수수료 지불에 필요한 충분한 자금이 있는지 반드시 확인해 주세요"
     },
+    "CardanoStakeKeyDepositError" : {
+      "title" : "예치에 사용할 {{depositAmount}} ADA가 있는지 확인하세요"
+    },
     "StacksMemoTooLong" : {
       "title" : "메모 길이가 너무 깁니다"
     },
@@ -1006,7 +1021,8 @@
     "week" : "1주",
     "month" : "1달",
     "year" : "1년",
-    "all" : "전체"
+    "all" : "전체",
+    "graphNotSupported" : "이 토큰에 대해서는 그래프를 이용할 수 없습니다."
   },
   "carousel" : {
     "title" : "배너를 닫습니까?",
@@ -1936,7 +1952,7 @@
   "earlySecurityCheck" : {
     "title" : "정품 확인 및\nOS 업데이트 확인",
     "idle" : {
-      "description" : "정품 확인을 통해 보유하신 Ledger Stax가 공식 Ledger 제품인지 여부를 확인합니다.OS 업데이트 확인을 통해 Ledger Stax OS가 최신 상태인지 확인합니다.",
+      "description" : "이를 통해 보유하신 Ledger Stax가 공식 Ledger 제품인지 여부를 확인합니다.",
       "learnMore" : "정품 확인 자세히 알아보기",
       "checkCta" : "Ledger Stax 점검"
     },
@@ -1944,8 +1960,8 @@
       "continueCta" : "설정 계속하기"
     },
     "earlySecurityCheckMandatoryDrawer" : {
-      "title" : "정품 확인은 필수 사항입니다",
-      "description" : "이 점검을 허용하지 않으면 {{productName}}의 설정을 완료할 수 없습니다",
+      "title" : "정품 확인 및 OS 업데이트 확인을 취소하시겠어요?",
+      "description" : "Ledger Live 앱을 사용해 {{productName}} 설정을 계속 진행하려면 정품 확인이 필수입니다.",
       "resumeCta" : "확인 재개",
       "cancelCta" : "확인 취소"
     },
@@ -1966,25 +1982,25 @@
       "supportCta" : "Ledger 지원 부서에 하세요"
     },
     "allowManagerDrawer" : {
-      "title" : "정품 확인 및 OS 업데이트 확인을 활성화하려면 '허용'을 탭하세요"
+      "title" : "정품 확인을 시작하려면 \"허용\"을 탭하세요."
     },
     "genuineCheckStep" : {
       "learnMore" : "정품 확인 자세히 알아보기",
       "inactive" : {
         "title" : "정품 확인",
-        "description" : "정품 확인을 통해 귀하의 {{productName}} 제품이 공식 Ledger 제품임을 확인합니다."
+        "description" : "이를 통해 사용 중인 {{productName}} 제품이 공식 Ledger 제품임을 확인합니다."
       },
       "active" : {
         "title" : "정품 확인",
-        "description" : "정품 확인을 통해 귀하의 {{productName}} 제품이 공식 Ledger 제품임을 확인합니다."
+        "description" : "이를 통해 사용 중인 {{productName}} 제품이 공식 Ledger 제품임을 확인합니다."
       },
       "completed" : {
         "title" : "{{productName}}는 정품입니다",
-        "description" : "정품 확인을 통해 귀하의 {{productName}} 제품이 공식 Ledger 제품임을 확인합니다."
+        "description" : ""
       },
       "refused" : {
         "title" : "정품 확인이 거부되었습니다",
-        "description" : "이 점검을 허용하지 않으면 {{productName}}의 설정을 완료할 수 없습니다",
+        "description" : "Ledger Live 앱을 사용해 {{productName}} 설정을 계속 진행하려면 정품 확인이 필수입니다.",
         "cta" : "확인 재개"
       },
       "error" : {
@@ -1995,7 +2011,7 @@
     "firmwareUpdateCheckStep" : {
       "active" : {
         "title" : "OS 업데이트 확인",
-        "description" : "OS 업데이트 확인을 통해 {{productName}} 운영 시스템이 최신 상태인지 확인합니다."
+        "description" : "이를 통해 사용 중인 {{productName}} 운영 시스템이 최신 상태인지 확인합니다. "
       },
       "completed" : {
         "noUpdateAvailable" : {
@@ -2014,7 +2030,7 @@
       },
       "inactive" : {
         "title" : "OS 업데이트 확인",
-        "description" : "OS 업데이트 확인을 통해 {{productName}} 운영 시스템이 최신 상태인지 확인합니다."
+        "description" : "이를 통해 사용 중인 Ledger Stax 운영 시스템이 최신 상태인지 확인합니다. "
       }
     },
     "firmwareUpdateAvailableDrawer" : {
@@ -2071,7 +2087,7 @@
       "helpCta" : "도움 받기"
     },
     "resyncOverlay" : {
-      "content" : "{{productName}}와의 연결이 끊어졌습니다. 재연결 시도..."
+      "content" : "{{productName}}와의 연결이 끊어졌습니다. 재연결 시도."
     },
     "helpDrawer" : {
       "title" : "설정 안내와 관련하 도움이 필요하신가요?",
@@ -2080,14 +2096,15 @@
       "supportCta" : "상담원과 대화"
     },
     "earlySecurityCheckCompletedStep" : {
-      "title" : "이 {{productName}} 장치는 정품입니다",
-      "description" : "{{productName}}에서 설정을 계속 진행하세요."
+      "title" : "{{productName}}는 정품입니다",
+      "subtitle" : "이 {{productName}}를 사용해도 안전합니다. 설정을 진행하시면 됩니다.",
+      "description" : "설정을 시작하려면 {{productName}}를 탭하세요."
     },
     "pinStep" : {
       "title" : "PIN",
       "doneTitle" : "PIN 설정",
-      "description" : "PIN은 {{productName}}에 대한 원치 않는 액세스를 차단합니다.",
-      "continueOnDevice" : "{{productName}}에서 PIN을 설정하세요"
+      "description" : "다른 비밀번호와 마찬가지로 PIN을 사용하면 {{productName}}의 잠금을 해제하고 원치 않는 액세스를 방지할 수 있습니다.",
+      "continueOnDevice" : "{{productName}}에 PIN을 설정하세요."
     },
     "seedStep" : {
       "title" : "비밀 복구 문구",
@@ -2095,17 +2112,25 @@
       "description" : "복구 문구는 24개의 단어로 이루어진 시크릿 리스트로, 개인 키 백업에 사용됩니다. {{productName}} 장치가 고유한 복구 문구를 생성합니다. Ledger는 복구 문구의 복사본을 보관하지 않습니다.",
       "choiceRestoreDirectOrRecover" : "자리 표시자 - 직접 복원 선택 또는 복구 사용",
       "recoverSeed" : "자리 표시자: 복구",
-      "restoreSeed" : "반드시 Ledger 장치에서 생성되는 비밀 복구 문구를 사용하여 자산에 대한 확실한 보안을 보장받으세요.\n\n복구 문구가 없으신가요? {{productName}}을 사용해 새로운 복구 문구를 생성하세요.",
-      "selection" : "{{productName}}에서 가장 적합한 설정 옵션을 선택하세요.",
-      "selectionContinueOnDevice" : "{{productName}}에서 옵션을 탭하세요",
-      "newSeedDescription" : "아래 동영상에서 비밀번호 설정에 대해 알아보세요.",
+      "restoreSeed" : "Ledger 장치에서 생성된 비밀 복구 문구를 사용해 자산에 대한 보안을 극대화하세요.\n\n복구 문구가 없으신가요? {{productName}}을 사용해 새로운 복구 문구를 생성하세요.",
+      "selection" : "가장 적합한 설정 옵션을 선택하세요.",
+      "selectionNewLedger" : {
+        "title" : "새 Ledger로 설정",
+        "desc" : "새 지갑을 만들 수 있습니다. 이를 통해 새로운 비밀 복구 문구가 생성됩니다."
+      },
+      "selectionRestore" : {
+        "title" : "복구",
+        "desc" : "비밀 복구 문구 또는 Ledger Recover를 사용해 기존 자산에 대한 액세스를 복구할 수 있습니다."
+      },
+      "selectionContinueOnDevice" : "{{productName}}에서 관련 옵션을 선택하세요.",
+      "newSeedDescription" : "비밀 복구 문구에 대해 더 자세히 알고 싶으신가요? 다음의 영상을 시청하세요:",
       "newSeedContinueOnDevice" : "{{productName}}에서 실행해보세요",
-      "recovery" : "반드시 Ledger 장치에서 생성되는 비밀 복구 문구를 사용하여 자산에 대한 확실한 보안을 보장받으세요.\n\n복구 문구가 없으신가요? {{productName}}을 사용해 새로운 복구 문구를 생성하세요.",
-      "restoreChoiceContinueOnDevice" : "{{productName}}에서 옵션을 선택하세요",
+      "recovery" : "Ledger 장치에서 생성된 비밀 복구 문구를 사용해 자산에 대한 보안을 극대화하세요.\n\n복구 문구가 없으신가요? {{productName}}을 사용해 새로운 복구 문구를 생성하세요.",
+      "restoreChoiceContinueOnDevice" : "{{productName}}에서 관련 옵션을 선택하세요.",
       "restoreChoiceSRPTitle" : "비밀 복구 문구를 사용해 복원하세요",
-      "restoreChoiceSRPDescription" : "LEDGER가 생성한 문구를 사용해 자산에 대한 확실한 보안을 보장받으세요.",
+      "restoreChoiceSRPDescription" : "Ledger 장치에서 생성된 비밀 복구 문구를 사용해 보안을 극대화하세요. ",
       "restoreChoiceRecoverTitle" : "Ledger Recover를 이용한 복구",
-      "restoreChoiceRecoverDescription" : "Ledger 계정에 로그인하고 신원을 확인하여 복구 문구 백업을 복원하세요."
+      "restoreChoiceRecoverDescription" : "Ledger Recover를 구독하는 경우 구독 서비스에 로그인하여 비밀 복구 문구의 백업 복구 프로세스를 시작하세요."
     },
     "softwareChecksSteps" : {
       "title" : "하드웨어 및 소프트웨어 점검",
@@ -2123,7 +2148,7 @@
       }
     },
     "appsStep" : {
-      "title" : "블록체인 앱 설치"
+      "title" : "{{productName}}에 앱 설치하기"
     },
     "readyStep" : {
       "title" : "설정 종료",
@@ -2209,6 +2234,20 @@
       "send" : "전송",
       "deposit" : "수령",
       "stake" : "스테이킹"
+    },
+    "recoverBanner" : {
+      "subscribeDone" : {
+        "title" : "결제 카드 추가 완료",
+        "description" : "Ledger Recover로 안심하고 복구하세요."
+      },
+      "verifyIdentity" : {
+        "title" : "신원 인증을 완료하세요",
+        "description" : "Ledger Recover로 안심하고 복구하세요."
+      },
+      "connectDevice" : {
+        "title" : "마지막 단계: Ledger 장치 연결",
+        "description" : "한 단계만 더 완료하면 Ledger Recover를 사용하실 수 있습니다."
+      }
     }
   },
   "addAccountsModal" : {
@@ -2509,6 +2548,7 @@
       }
     },
     "availableBalance" : "이용 가능 잔액",
+    "claimableRewards" : "신청 가능한 보상/리워드",
     "totalSupplied" : "입금 금액",
     "tronFrozen" : "동결됨",
     "bandwidth" : "대역폭",
@@ -2847,6 +2887,18 @@
         "experimentalExplorers" : {
           "title" : "실험적 탐색기 API",
           "description" : "Ledger 블록체인 탐색기 새 버전을 사용해 보세요. 이 설정을 변경하면 계정 잔금과 동기화, 전송 기능이 영향을 받을 수 있습니다."
+        },
+        "1559DeactivateGate" : {
+          "title" : "EIP1559 최소 우선 수수료 게이트 비활성화",
+          "description" : "이를 통해 예상되는 최소 우선 수수료 없이 트랜잭션을 전송할 수 있습니다. 이로 인해 트랜잭션이 멤풀에서 영원히 대기 상태로 멈출 수 있습니다."
+        },
+        "1559CustomPriorityLowerGate" : {
+          "title" : "개인 맞춤형 우선 수수료 게이트",
+          "description" : "고급 EIP1559 트랜잭션에 대한 예상 최소 우선 수수료의 비율을 사용자 지정합니다."
+        },
+        "1559CustomBaseFeeMultiplier" : {
+          "title" : "기본 수수료에 대한 커스텀 멀티플라이어",
+          "description" : "EIP1559 트랜잭션 최대 가스비를 구성하는 기본 수수료에 이용되는 멀티플라이어를 커스터마이징합니다"
         },
         "experimentalListAppsV2" : {
           "title" : "My Ledger용 실험 앱 목록",
@@ -3789,6 +3841,11 @@
         "title" : "토큰 추가",
         "disclaimer" : "{{tokenName}}는 BEP-20 토큰입니다.\nBNB 계정에서 직접 토큰을 받을 수 있습니다.",
         "learnMore" : "BEP-20에 대해 자세히 알아보기"
+      },
+      "vip180" : {
+        "title" : "토큰 추가",
+        "disclaimer" : "{{tokenName}}(은)는 VIP180 토큰입니다.\nVET 계정에서 직접 토큰을 받을 수 있습니다.",
+        "learnMore" : "VIP18에 대해 자세히 알아보기"
       }
     },
     "showMoreChainType" : "더 많은 주소 유형",
@@ -3994,6 +4051,8 @@
       "addALedger" : "Ledger 장치 추가",
       "addWithBluetooth" : "블루투스를 통해 추가",
       "addNewCTA" : "새로 추가하기",
+      "showAllCTA" : "{{count}}개의 Ledger 장치 모두 보기",
+      "showLessCTA" : "간단히 표시",
       "otgBanner" : "Ledger Nano S나 Ledger Nano S Plus를 사용하려면, USB 케이블로 연결하세요.",
       "connectExistingLedger" : "기존 Ledger 연결",
       "connectExistingLedgerDescription" : "Ledger 설정을 이미 완료한 경우",
@@ -4199,7 +4258,7 @@
     "waitForFirmwareUpdate" : "장치에서 펌웨어 업데이트가 완료될 때까지 기다리세요.",
     "waitForInstallationToFinish" : "{{deviceName}}에 설치를 완료할 때까지 기다려주세요",
     "staxBatteryLow" : "Ledger Stax 배터리 부족으로 업데이트 불가",
-    "staxBatteryLowDescription" : "OS 업데이트를 시작하려면 최소 20%의 충전이 필요하거나 Ledger Stax가 충전 중이어야 합니다.",
+    "staxBatteryLowDescription" : "OS 업데이트를 시작하려면 최소 {{lowBatteryPercentage}}%의 충전이 필요하거나 Ledger Stax가 충전 중이어야 합니다.",
     "updateCancelled" : "{{deviceName}}에서 OS 업데이트 설치가 취소되었습니다",
     "updateCancelledDescription" : "실수로 거절한 경우, 업데이트를 다시 시작하세요.",
     "updateNotYetComplete" : "OS 업데이트가 진행 중입니다",
@@ -4214,6 +4273,7 @@
     "newVersionNumber" : "신규 버전",
     "success" : "펌웨어 업데이트됨",
     "update" : "업데이트",
+    "retryBatteryCheck" : "연결 후 다시 시도하기",
     "Notifications" : {
       "confirmOnDevice" : "장치에서 확인이 필요합니다.",
       "preparingUpdate" : "업데이트를 전송하는 중입니다. 완료되면 알려드리겠습니다.",
@@ -4832,6 +4892,10 @@
       "delegationUnavailable" : {
         "title" : "위임할 수 없습니다",
         "description" : "계정에 가용 잔금이 부족하여 새로운 위임을 시작할 수 없습니다."
+      },
+      "claimable" : {
+        "title" : "신청 가능한 보상/리워드",
+        "description" : "현재 USDC 보상 신청 옵션을 사용할 수 없습니다. 보상을 신청하려면 타사 지갑을 사용하세요."
       }
     },
     "delegation" : {
@@ -5652,6 +5716,20 @@
       "totalStake" : "총 스테이킹",
       "commission" : "커미션",
       "stakeActivationState" : "상태",
+      "stakeActivePercent" : "활성",
+      "stakeAvailableBalance" : "이용 가능 잔액",
+      "actions" : {
+        "activate" : "활성화",
+        "deactivate" : "비활성화",
+        "reactivate" : "재활성화",
+        "withdraw" : "출금"
+      },
+      "states" : {
+        "active" : "활성",
+        "inactive" : "비활성",
+        "activating" : "활성화하기",
+        "deactivating" : "비활성화하기"
+      },
       "delegationEarn" : "자산을 위임하여 SOL 보상을 받을 수 있습니다.",
       "info" : "위임의 원리",
       "broadcastSuccessTitle" : "거래 전송됨",
@@ -5659,7 +5737,8 @@
       "delegatedTo" : "다음에게 위임됨",
       "started" : {
         "description" : "SOL 암호화폐를 검증인에게 위임하여 보상을 받을 수 있습니다."
-      }
+      },
+      "reserveWarning" : "지갑에 {{amount}}이상의 SOL을 확보하여 지분을 비활성화하고 인출하는 데 필요한 네트워크 수수료를 충당하세요."
     }
   },
   "near" : {
@@ -5870,13 +5949,8 @@
       "claimReward" : "24시간마다 보상을 수령할 수 있습니다.",
       "cosmos" : {
         "claimReward" : "선택된 검증인에게 대기 중 보상이 있으면, 자동으로 수령됩니다.",
-        "redelegate" : "위임 해제 자산은 21일 후에 가용 잔금으로 되돌아옵니다.",
-        "undelegate" : "위임 해제 자산은 21일 후에 가용 잔금으로 되돌아옵니다."
-      },
-      "osmosis" : {
-        "claimReward" : "선택된 검증인에게 대기 중 보상이 있으면, 자동으로 수령됩니다.",
-        "redelegate" : "위임 해제 자산은 14일 후에 이용 가능 잔액으로 되돌아옵니다.",
-        "undelegate" : "위임 해제 자산은 14일 후에 이용 가능 잔액으로 되돌아옵니다."
+        "redelegate" : "위임 해제 자산은 {{numberOfDays}}일 후에 이용 가능 잔액으로 되돌아옵니다.",
+        "undelegate" : "위임 해제 자산은 {{numberOfDays}}일 후에 이용 가능 잔액으로 되돌아옵니다."
       },
       "lending" : "장치에서 거래 세부사항을 확인한 후 전송하세요."
     },
@@ -6344,6 +6418,12 @@
         "titleCompleted" : "Ledger로 자산 이체 완료",
         "description" : "코인베이스나 기타 거래소, 또는 지갑에서 자산을 쉽게 전송하세요.",
         "popupLabel" : "자산 이체 완료"
+      },
+      "buyCrypto" : {
+        "title" : "암호화폐 구매",
+        "titleCompleted" : "Ledger로 자산 이체 완료",
+        "description" : "500가지 이상의 코인과 다양한 구매 서비스 제공업체의 견적을 살펴보고 내 선호에 맞게 선택하세요.",
+        "popupLabel" : "구매한 암호화폐"
       }
     }
   },

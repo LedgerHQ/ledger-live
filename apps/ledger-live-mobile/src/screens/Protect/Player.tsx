@@ -8,15 +8,15 @@ import { useTheme } from "styled-components/native";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import { OnboardingStep } from "@ledgerhq/live-common/hw/extractOnboardingState";
-import TrackScreen from "../../analytics/TrackScreen";
-import GenericErrorView from "../../components/GenericErrorView";
-import { useLocale } from "../../context/Locale";
-import WebRecoverPlayer from "../../components/WebRecoverPlayer";
-import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
-import { RootComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { NavigatorName, ScreenName } from "../../const";
+import TrackScreen from "~/analytics/TrackScreen";
+import GenericErrorView from "~/components/GenericErrorView";
+import { useLocale } from "~/context/Locale";
+import WebRecoverPlayer from "~/components/WebRecoverPlayer";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { NavigatorName, ScreenName } from "~/const";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { counterValueCurrencySelector } from "../../reducers/settings";
+import { counterValueCurrencySelector } from "~/reducers/settings";
 import { useSelector } from "react-redux";
 
 export type Props = RootComposite<

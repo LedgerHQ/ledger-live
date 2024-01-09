@@ -3,15 +3,15 @@ import React, { useCallback, useState } from "react";
 import { Text, IconsLegacy, Button, SelectableList, Switch, Flex } from "@ledgerhq/native-ui";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 
-import SettingsRow from "../../../../components/SettingsRow";
-import { NavigatorName, ScreenName } from "../../../../const";
-import type { SettingsNavigatorStackParamList } from "../../../../components/RootNavigator/types/SettingsNavigator";
-import type { BaseNavigatorStackParamList } from "../../../../components/RootNavigator/types/BaseNavigator";
+import SettingsRow from "~/components/SettingsRow";
+import { NavigatorName, ScreenName } from "~/const";
+import type { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
+import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import {
   StackNavigatorNavigation,
   StackNavigatorRoute,
-} from "../../../../components/RootNavigator/types/helpers";
-import QueuedDrawer from "../../../../components/QueuedDrawer";
+} from "~/components/RootNavigator/types/helpers";
+import QueuedDrawer from "~/components/QueuedDrawer";
 
 const availableDeviceModelFilter = ["none", DeviceModelId.nanoX, DeviceModelId.stax] as const;
 type AvailableDeviceModelFilter = (typeof availableDeviceModelFilter)[number];

@@ -1,7 +1,7 @@
 import React from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Text, IconBoxList, IconsLegacy } from "@ledgerhq/native-ui";
-import Button from "../../../../../components/PreventDoubleClickButton";
+import Button from "~/components/PreventDoubleClickButton";
 
 const { ComputerMedium, QrCodeMedium, ListMedium } = IconsLegacy;
 const items = [

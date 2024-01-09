@@ -3,7 +3,7 @@ import Svg, { Path, G, Image } from "react-native-svg";
 import manager from "@ledgerhq/live-common/manager/index";
 import { Flex } from "@ledgerhq/native-ui";
 import { App } from "@ledgerhq/types-live";
-import AppIcon from "../screens/Manager/AppsList/AppIcon";
+import AppIcon from "~/screens/Manager/AppsList/AppIcon";
 
 type Props = {
   color: string;

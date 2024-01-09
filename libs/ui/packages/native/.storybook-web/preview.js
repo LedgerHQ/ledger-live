@@ -12,7 +12,12 @@ export const decorators = [
       <div
         style={{ display: "flex", flexDirection: "column", height: "100vh", overflow: "hidden" }}
       >
-        <style> {`body { padding: 0!important;}`}</style>
+        <style> {`body { padding: 0!important;}
+          *:focus, *:active {
+            outline: none !important;
+          }` /* outline custom styling used to mask focus boxes on safari & chrome */
+        }
+        </style>
         <StyleProvider selectedPalette={theme}>
           <FontProvider>
             <Main>

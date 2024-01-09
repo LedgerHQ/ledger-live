@@ -4,7 +4,7 @@ import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Animated } from "react-native";
 import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManager";
-import Header from "../../screens/Portfolio/Header";
+import Header from "~/screens/Portfolio/Header";
 
 const AnimatedFlex = Animated.createAnimatedComponent(Flex);
 

@@ -4,17 +4,17 @@ import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { accountScreenSelector } from "../../../reducers/accounts";
-import { TrackScreen, track } from "../../../analytics";
-import { ScreenName } from "../../../const";
-import PreventNativeBack from "../../../components/PreventNativeBack";
-import ValidateSuccess from "../../../components/ValidateSuccess";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { TrackScreen, track } from "~/analytics";
+import { ScreenName } from "~/const";
+import PreventNativeBack from "~/components/PreventNativeBack";
+import ValidateSuccess from "~/components/ValidateSuccess";
 import type {
   BaseComposite,
   StackNavigatorNavigation,
   StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
-import type { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
+} from "~/components/RootNavigator/types/helpers";
+import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type { CosmosDelegationFlowParamList } from "./types";
 import { getTrackingDelegationType } from "../../helpers";
 

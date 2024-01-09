@@ -12,15 +12,15 @@ import {
 } from "@ledgerhq/errors";
 import { Flex, Button, IconsLegacy } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
-import { TrackScreen } from "../../analytics";
-import Touchable from "../../components/Touchable";
-import LText from "../../components/LText";
-import GenericErrorView from "../../components/GenericErrorView";
-import HelpLink from "../../components/HelpLink";
-import IconArrowRight from "../../icons/ArrowRight";
-import { urls } from "@utils/urls";
-import LocationDisabled from "../../components/RequiresLocation/LocationDisabled";
-import LocationPermissionDenied from "../../components/RequiresLocation/LocationPermissionDenied";
+import { TrackScreen } from "~/analytics";
+import Touchable from "~/components/Touchable";
+import LText from "~/components/LText";
+import GenericErrorView from "~/components/GenericErrorView";
+import HelpLink from "~/components/HelpLink";
+import IconArrowRight from "~/icons/ArrowRight";
+import { urls } from "~/utils/urls";
+import LocationDisabled from "~/components/RequiresLocation/LocationDisabled";
+import LocationPermissionDenied from "~/components/RequiresLocation/LocationPermissionDenied";
 import { trace } from "@ledgerhq/logs";
 
 type Props = {

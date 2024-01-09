@@ -5,8 +5,8 @@ import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { BigNumber } from "bignumber.js";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
 import { useSelector } from "react-redux";
-import Section from "../../screens/OperationDetails/Section";
-import { discreetModeSelector, localeSelector } from "../../reducers/settings";
+import Section from "~/screens/OperationDetails/Section";
+import { discreetModeSelector, localeSelector } from "~/reducers/settings";
 
 type Props = {
   account: Account;

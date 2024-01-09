@@ -6,9 +6,9 @@ import { useTheme } from "styled-components/native";
 import { TFunction } from "react-i18next";
 import Button from "../wrappedUi/Button";
 import Animation from "../Animation";
-import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
+import { getDeviceAnimation } from "~/helpers/getDeviceAnimation";
 import Link from "../wrappedUi/Link";
-import { TrackScreen } from "../../analytics";
+import { TrackScreen } from "~/analytics";
 import { ArrowRight } from "@ledgerhq/native-ui/assets/icons";
 
 // NEW DEVICE ACTION UX

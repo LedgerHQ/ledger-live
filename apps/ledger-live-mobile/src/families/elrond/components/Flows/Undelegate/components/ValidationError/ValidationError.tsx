@@ -2,11 +2,11 @@ import React, { useCallback, useMemo } from "react";
 import { View } from "react-native";
 import { useTheme } from "@react-navigation/native";
 
-import ValidateError from "../../../../../../../components/ValidateError";
-import { TrackScreen } from "../../../../../../../analytics";
+import ValidateError from "~/components/ValidateError";
+import { TrackScreen } from "~/analytics";
 
-import type { StackNavigatorNavigation } from "../../../../../../../components/RootNavigator/types/helpers";
-import type { BaseNavigatorStackParamList } from "../../../../../../../components/RootNavigator/types/BaseNavigator";
+import type { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
+import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type { ValidationErrorPropsType } from "./types";
 
 import styles from "./styles";

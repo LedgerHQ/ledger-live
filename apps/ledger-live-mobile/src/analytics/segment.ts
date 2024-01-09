@@ -42,7 +42,7 @@ import { DeviceLike, State } from "../reducers/types";
 import { satisfactionSelector } from "../reducers/ratings";
 import { accountsSelector } from "../reducers/accounts";
 import type { AppStore } from "../reducers";
-import { NavigatorName } from "../const";
+import { NavigatorName } from "~/const";
 import { previousRouteNameRef, currentRouteNameRef } from "./screenRefs";
 import { AnonymousIpPlugin } from "./AnonymousIpPlugin";
 import { UserIdPlugin } from "./UserIdPlugin";

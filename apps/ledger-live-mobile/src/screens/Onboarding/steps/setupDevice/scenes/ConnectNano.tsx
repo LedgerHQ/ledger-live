@@ -1,22 +1,23 @@
 import React, { useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
+import { trace } from "@ledgerhq/logs";
 import { Flex } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { Result } from "@ledgerhq/live-common/hw/actions/manager";
-import DeviceActionModal from "../../../../../components/DeviceActionModal";
-import SelectDevice from "../../../../../components/SelectDevice";
-import SelectDevice2 from "../../../../../components/SelectDevice2";
-import { TrackScreen } from "../../../../../analytics";
-import Button from "../../../../../components/PreventDoubleClickButton";
+import DeviceActionModal from "~/components/DeviceActionModal";
+import SelectDevice from "~/components/SelectDevice";
+import SelectDevice2 from "~/components/SelectDevice2";
+import { TrackScreen } from "~/analytics";
+import Button from "~/components/PreventDoubleClickButton";
 
 import {
   setHasInstalledAnyApp,
   setHasOrderedNano,
   setLastConnectedDevice,
   setReadOnlyMode,
-} from "../../../../../actions/settings";
-import { useManagerDeviceAction } from "../../../../../hooks/deviceActions";
+} from "~/actions/settings";
+import { useManagerDeviceAction } from "~/hooks/deviceActions";
 
 const ConnectNanoScene = ({
   onNext,
@@ -35,24 +36,25 @@ const ConnectNanoScene = ({
   // Keeping the header (back arrow and information button) from the onboarding.
   const requestToSetHeaderOptions = useCallback(() => undefined, []);
 
-  const onSetDevice = useCallback(
-    async (device: Device) => {
-      dispatch(setLastConnectedDevice(device));
-      setDevice(device);
-      dispatch(setReadOnlyMode(false));
-      dispatch(setHasOrderedNano(false));
-    },
-    [dispatch],
-  );
+  const onSelectDevice = useCallback(
+    (device: Device) => {
+      const isUsbDevice = device.deviceId.startsWith("usb|");
+      trace({ type: "onboarding", message: "Selected device", data: { isUsbDevice } });
 
-  const directNext = useCallback(
-    async (device: Device) => {
       dispatch(setLastConnectedDevice(device));
       dispatch(setReadOnlyMode(false));
       dispatch(setHasOrderedNano(false));
-      onNext();
+
+      // Goes through an "allow secure connection"/genuine check device action
+      if (isUsbDevice || newDeviceSelectionFeatureFlag?.enabled) {
+        setDevice(device);
+      }
+      // The BLE pairing flow on the old device selection will handle the "allow secure connection"/genuine check device action step
+      else {
+        onNext();
+      }
     },
-    [dispatch, onNext],
+    [dispatch, newDeviceSelectionFeatureFlag?.enabled, onNext],
   );
 
   const onResult = useCallback(
@@ -75,7 +77,8 @@ const ConnectNanoScene = ({
     [dispatch, onNext],
   );
 
-  const usbOnly = ["nanoS", "nanoSP", "blue"].includes(deviceModelId);
+  // Other models can be connected via BLE or USB
+  const modelIsUsbOnly = ["nanoS", "nanoSP", "blue"].includes(deviceModelId);
 
   return (
     <>
@@ -83,7 +86,7 @@ const ConnectNanoScene = ({
       <Flex flex={1}>
         {newDeviceSelectionFeatureFlag?.enabled ? (
           <SelectDevice2
-            onSelect={onSetDevice}
+            onSelect={onSelectDevice}
             stopBleScanning={!!device}
             requestToSetHeaderOptions={requestToSetHeaderOptions}
             isChoiceDrawerDisplayedOnAddDevice={false}
@@ -92,8 +95,8 @@ const ConnectNanoScene = ({
         ) : (
           <SelectDevice
             withArrows
-            usbOnly={usbOnly}
-            onSelect={usbOnly ? onSetDevice : directNext}
+            usbOnly={modelIsUsbOnly}
+            onSelect={onSelectDevice}
             autoSelectOnAdd
             hideAnimation
           />

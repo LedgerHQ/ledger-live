@@ -23,7 +23,7 @@ import { Exchange, ExchangeRate, InitSwapResult } from "@ledgerhq/live-common/ex
 import { AppAndVersion } from "@ledgerhq/live-common/hw/connectApp";
 import { LedgerErrorConstructor } from "@ledgerhq/errors/lib/helpers";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { setLastSeenDeviceInfo } from "../../actions/settings";
+import { setLastSeenDeviceInfo } from "~/actions/settings";
 import ValidateOnDevice from "../ValidateOnDevice";
 import ValidateMessageOnDevice from "../ValidateMessageOnDevice";
 import {
@@ -52,7 +52,7 @@ import {
 import PreventNativeBack from "../PreventNativeBack";
 import SkipLock from "../behaviour/SkipLock";
 import DeviceActionProgress from "../DeviceActionProgress";
-import { PartialNullable } from "../../types/helpers";
+import { PartialNullable } from "~/types/helpers";
 import ModalLock from "../ModalLock";
 
 type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;

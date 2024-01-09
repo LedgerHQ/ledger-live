@@ -3,7 +3,7 @@ import { TransactionRaw, TransactionStatusRaw } from "@ledgerhq/coin-evm/types/i
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { Device } from "@ledgerhq/types-devices";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
-import { ScreenName } from "../../../const";
+import { ScreenName } from "~/const";
 
 export type EditTransactionParamList = {
   [ScreenName.TransactionAlreadyValidatedError]: {

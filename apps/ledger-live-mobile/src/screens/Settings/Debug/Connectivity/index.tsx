@@ -2,16 +2,16 @@ import React, { useCallback, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Box, IconsLegacy, Alert, Flex } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import SettingsRow from "../../../../components/SettingsRow";
-import { ScreenName } from "../../../../const";
-import SelectDevice, { SetHeaderOptionsRequest } from "../../../../components/SelectDevice2";
+import SettingsRow from "~/components/SettingsRow";
+import { ScreenName } from "~/const";
+import SelectDevice, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
 import SettingsNavigationScrollView from "../../SettingsNavigationScrollView";
 import {
   ReactNavigationHeaderOptions,
   StackNavigatorNavigation,
-} from "../../../../components/RootNavigator/types/helpers";
-import { SettingsNavigatorStackParamList } from "../../../../components/RootNavigator/types/SettingsNavigator";
-import { NavigationHeaderBackButton } from "../../../../components/NavigationHeaderBackButton";
+} from "~/components/RootNavigator/types/helpers";
+import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
+import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
 
 // Defines here some of the header options for this screen to be able to reset back to them.
 export const connectivityHeaderOptions: ReactNavigationHeaderOptions = {

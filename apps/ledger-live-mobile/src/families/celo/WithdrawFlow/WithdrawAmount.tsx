@@ -14,23 +14,20 @@ import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { rgba, Text } from "@ledgerhq/native-ui";
 import { CeloAccount } from "@ledgerhq/live-common/families/celo/types";
 import Icon from "react-native-vector-icons/Feather";
-import { accountScreenSelector } from "../../../reducers/accounts";
-import { ScreenName } from "../../../const";
-import { TrackScreen } from "../../../analytics";
-import Button from "../../../components/Button";
-import Touchable from "../../../components/Touchable";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { ScreenName } from "~/const";
+import { TrackScreen } from "~/analytics";
+import Button from "~/components/Button";
+import Touchable from "~/components/Touchable";
 import SendRowsFee from "../SendRowsFee";
-import Clock from "../../../icons/Clock";
-import LText from "../../../components/LText";
-import QueuedDrawer from "../../../components/QueuedDrawer";
-import InfoIcon from "../../../components/InfoIcon";
+import Clock from "~/icons/Clock";
+import LText from "~/components/LText";
+import QueuedDrawer from "~/components/QueuedDrawer";
+import InfoIcon from "~/components/InfoIcon";
 import Line from "../components/Line";
 import Words from "../components/Words";
 import ErrorAndWarning from "../components/ErrorAndWarning";
-import type {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
+import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { CeloWithdrawFlowParamList } from "./types";
 
 type Props = BaseComposite<

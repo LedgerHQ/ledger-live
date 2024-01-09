@@ -3,17 +3,17 @@ import { View, Linking } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 
-import { ScreenName } from "../../../../../../../const";
-import Button from "../../../../../../../components/Button";
-import LText from "../../../../../../../components/LText";
-import ExternalLink from "../../../../../../../components/ExternalLink";
-import NavigationScrollView from "../../../../../../../components/NavigationScrollView";
-import IlluRewards from "../../../../../../../icons/images/Rewards";
-import Alert from "../../../../../../../components/Alert";
-import BulletList, { BulletGreenCheck } from "../../../../../../../components/BulletList";
+import { ScreenName } from "~/const";
+import Button from "~/components/Button";
+import LText from "~/components/LText";
+import ExternalLink from "~/components/ExternalLink";
+import NavigationScrollView from "~/components/NavigationScrollView";
+import IlluRewards from "~/icons/images/Rewards";
+import Alert from "~/components/Alert";
+import BulletList, { BulletGreenCheck } from "~/components/BulletList";
 
-import { urls } from "@utils/urls";
-import { TrackScreen } from "../../../../../../../analytics";
+import { urls } from "~/utils/urls";
+import { TrackScreen } from "~/analytics";
 
 import type { EarnRewardsPropsType } from "./types";
 

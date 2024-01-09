@@ -1,9 +1,9 @@
 import React, { useMemo } from "react";
 import { useTheme } from "styled-components/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
+import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import StakeFlow from "../Stake";
-import { ScreenName } from "../../const";
+import { ScreenName } from "~/const";
 import type { StakeNavigatorParamList } from "./types/StakeNavigator";
 
 const StakeFlowNavigator = () => {

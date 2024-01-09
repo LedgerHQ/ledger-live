@@ -6,7 +6,7 @@ import { getMainAccount, getAccountUnit } from "@ledgerhq/live-common/account/in
 import BigNumber from "bignumber.js";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 
-import { ScreenName } from "../../../../../../../const";
+import { ScreenName } from "~/const";
 import Item from "./components/Item";
 
 import type { onSelectType, PickValidatorPropsType } from "./types";

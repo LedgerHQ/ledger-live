@@ -2,13 +2,13 @@ import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "@react-navigation/native";
-import { ScreenName } from "../../../const";
-import { getStackNavigatorConfig } from "../../../navigation/navigatorConfig";
-import StepHeader from "../../../components/StepHeader";
+import { ScreenName } from "~/const";
+import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import StepHeader from "~/components/StepHeader";
 
 import RegisterAccountStarted from "./01-Started";
-import SelectDevice from "../../../screens/SelectDevice";
-import ConnectDevice from "../../../screens/ConnectDevice";
+import SelectDevice from "~/screens/SelectDevice";
+import ConnectDevice from "~/screens/ConnectDevice";
 import ValidationSuccess from "./ValidationSuccess";
 import ValidationError from "./ValidationError";
 import type { CeloRegistrationFlowParamList } from "./types";

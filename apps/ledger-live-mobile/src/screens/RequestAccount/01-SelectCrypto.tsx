@@ -4,14 +4,14 @@ import { StyleSheet, View, FlatList, SafeAreaView, ListRenderItem } from "react-
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";
 import { useTheme } from "@react-navigation/native";
-import { ScreenName } from "../../const";
-import { TrackScreen } from "../../analytics";
-import FilteredSearchBar from "../../components/FilteredSearchBar";
-import KeyboardView from "../../components/KeyboardView";
-import CurrencyRow from "../../components/CurrencyRow";
-import LText from "../../components/LText";
-import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import type { RequestAccountNavigatorParamList } from "../../components/RootNavigator/types/RequestAccountNavigator";
+import { ScreenName } from "~/const";
+import { TrackScreen } from "~/analytics";
+import FilteredSearchBar from "~/components/FilteredSearchBar";
+import KeyboardView from "~/components/KeyboardView";
+import CurrencyRow from "~/components/CurrencyRow";
+import LText from "~/components/LText";
+import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import type { RequestAccountNavigatorParamList } from "~/components/RootNavigator/types/RequestAccountNavigator";
 import { getEnv } from "@ledgerhq/live-env";
 
 const SEARCH_KEYS = getEnv("CRYPTO_ASSET_SEARCH_KEYS");

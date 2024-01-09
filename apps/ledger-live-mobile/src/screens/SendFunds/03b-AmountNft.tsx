@@ -11,14 +11,14 @@ import { useNavigation, useTheme } from "@react-navigation/native";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import type { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
-import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { accountScreenSelector } from "../../reducers/accounts";
-import TranslatedError from "../../components/TranslatedError";
-import KeyboardView from "../../components/KeyboardView";
-import Button from "../../components/Button";
-import LText from "../../components/LText";
-import { ScreenName } from "../../const";
+import type { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { accountScreenSelector } from "~/reducers/accounts";
+import TranslatedError from "~/components/TranslatedError";
+import KeyboardView from "~/components/KeyboardView";
+import Button from "~/components/Button";
+import LText from "~/components/LText";
+import { ScreenName } from "~/const";
 
 type Props = BaseComposite<
   StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendAmountNft>

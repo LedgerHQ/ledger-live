@@ -9,9 +9,9 @@ import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useTheme } from "@react-navigation/native";
 import { Text } from "@ledgerhq/native-ui";
 import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
-import CounterValue from "../../../components/CounterValue";
-import ArrowRight from "../../../icons/ArrowRight";
-import LText from "../../../components/LText";
+import CounterValue from "~/components/CounterValue";
+import ArrowRight from "~/icons/ArrowRight";
+import LText from "~/components/LText";
 import ValidatorImage from "../shared/ValidatorImage";
 
 type Props = {

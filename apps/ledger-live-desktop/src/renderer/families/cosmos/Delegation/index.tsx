@@ -27,6 +27,7 @@ import DelegateIcon from "~/renderer/icons/Delegate";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import { DelegationActionsModalName } from "../modals";
+import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
 
 const Wrapper = styled(Box).attrs(() => ({
   p: 3,
@@ -97,6 +98,7 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
   const hasDelegations = delegations.length > 0;
   const hasUnbondings = unbondings && unbondings.length > 0;
   const hasRewards = _pendingRewardsBalance.gt(0);
+  const crypto = cryptoFactory(account.currency.id);
   return (
     <>
       <TableContainer mb={6}>
@@ -214,7 +216,12 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
             titleProps={{
               "data-e2e": "title_Undelegation",
             }}
-            tooltip={<Trans i18nKey="cosmos.undelegation.headerTooltip" />}
+            tooltip={
+              <Trans
+                i18nKey="cosmos.undelegation.headerTooltip"
+                values={{ numberOfDays: crypto.unbondingPeriod }}
+              />
+            }
           />
           <UnbondingHeader />
           {mappedUnbondings.map((delegation, index) => (

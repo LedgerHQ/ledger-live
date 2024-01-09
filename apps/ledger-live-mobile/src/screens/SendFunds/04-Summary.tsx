@@ -8,38 +8,38 @@ import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/accoun
 import type { Account } from "@ledgerhq/types-live";
 import type { TransactionStatus as BitcoinTransactionStatus } from "@ledgerhq/live-common/families/bitcoin/types";
 import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
-import { NotEnoughGas } from "@ledgerhq/errors";
+import { NotEnoughBalance, NotEnoughGas } from "@ledgerhq/errors";
 import { useTheme } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import invariant from "invariant";
 
-import { accountScreenSelector } from "../../reducers/accounts";
-import { ScreenName, NavigatorName } from "../../const";
-import { TrackScreen } from "../../analytics";
-import { useTransactionChangeFromNavigation } from "../../logic/screenTransactionHooks";
-import Button from "../../components/Button";
-import LText from "../../components/LText";
-import Alert from "../../components/Alert";
-import TranslatedError from "../../components/TranslatedError";
-import SendRowsCustom from "../../components/SendRowsCustom";
-import SendRowsFee from "../../components/SendRowsFee";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { ScreenName, NavigatorName } from "~/const";
+import { TrackScreen } from "~/analytics";
+import { useTransactionChangeFromNavigation } from "~/logic/screenTransactionHooks";
+import Button from "~/components/Button";
+import LText from "~/components/LText";
+import Alert from "~/components/Alert";
+import TranslatedError from "~/components/TranslatedError";
+import SendRowsCustom from "~/components/SendRowsCustom";
+import SendRowsFee from "~/components/SendRowsFee";
 import SummaryFromSection from "./SummaryFromSection";
 import SummaryToSection from "./SummaryToSection";
 import SummaryAmountSection from "./SummaryAmountSection";
 import SummaryNft from "./SummaryNft";
 import SummaryTotalSection from "./SummaryTotalSection";
-import SectionSeparator from "../../components/SectionSeparator";
-import AlertTriangle from "../../icons/AlertTriangle";
-import ConfirmationModal from "../../components/ConfirmationModal";
-import NavigationScrollView from "../../components/NavigationScrollView";
-import Info from "../../icons/Info";
+import SectionSeparator from "~/components/SectionSeparator";
+import AlertTriangle from "~/icons/AlertTriangle";
+import ConfirmationModal from "~/components/ConfirmationModal";
+import NavigationScrollView from "~/components/NavigationScrollView";
+import Info from "~/icons/Info";
 import TooMuchUTXOBottomModal from "./TooMuchUTXOBottomModal";
 import { isCurrencySupported } from "../Exchange/coinifyConfig";
-import type { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
-import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
-import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
-import SupportLinkError from "../../components/SupportLinkError";
+import type { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
+import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
+import SupportLinkError from "~/components/SupportLinkError";
 
 type Navigation = BaseComposite<
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
@@ -50,6 +50,18 @@ type Navigation = BaseComposite<
 type Props = Navigation;
 
 const WARN_FROM_UTXO_COUNT = 50;
+
+const shouldDispayBuyCta = (error?: unknown): boolean => {
+  if (!error) {
+    return false;
+  }
+
+  if (error instanceof NotEnoughGas || error instanceof NotEnoughBalance) {
+    return true;
+  }
+
+  return false;
+};
 
 function SendSummary({ navigation, route }: Props) {
   const { colors } = useTheme();
@@ -260,7 +272,7 @@ function SendSummary({ navigation, route }: Props) {
         <LText style={styles.error} color="alert">
           <TranslatedError error={transactionError} />
         </LText>
-        {error && error instanceof NotEnoughGas ? (
+        {shouldDispayBuyCta(error) ? (
           // If the user does not enough funds for gas, he needs to buy
           // the main account currency (which is not necessarily ETH depending
           // on the EVM network used)

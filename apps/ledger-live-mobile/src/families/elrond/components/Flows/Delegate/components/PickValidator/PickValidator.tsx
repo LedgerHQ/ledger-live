@@ -9,8 +9,8 @@ import { useSearchValidators } from "@ledgerhq/live-common/families/elrond/react
 
 import type { onSelectType, PickValidatorPropsType } from "./types";
 
-import { TrackScreen } from "../../../../../../../analytics";
-import { ScreenName } from "../../../../../../../const";
+import { TrackScreen } from "~/analytics";
+import { ScreenName } from "~/const";
 
 import Item from "./components/Item";
 

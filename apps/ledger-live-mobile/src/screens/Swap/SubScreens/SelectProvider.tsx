@@ -6,12 +6,12 @@ import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { useTranslation } from "react-i18next";
 import { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
-import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
-import ProviderIcon from "../../../components/ProviderIcon";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import ProviderIcon from "~/components/ProviderIcon";
 import { SelectProviderParamList } from "../types";
-import CounterValue from "../../../components/CounterValue";
-import { TrackScreen, useAnalytics } from "../../../analytics";
-import { ScreenName } from "../../../const";
+import CounterValue from "~/components/CounterValue";
+import { TrackScreen, useAnalytics } from "~/analytics";
+import { ScreenName } from "~/const";
 import { sharedSwapTracking, SWAP_VERSION } from "../utils";
 
 export function SelectProvider({ navigation, route }: SelectProviderParamList) {

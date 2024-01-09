@@ -7,7 +7,7 @@ import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { MappedSwapOperation } from "@ledgerhq/live-common/exchange/swap/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
-import { NavigatorName, ScreenName } from "../../../const";
+import { NavigatorName, ScreenName } from "~/const";
 import type { AccountSettingsNavigatorParamList } from "./AccountSettingsNavigator";
 import type { AccountsNavigatorParamList } from "./AccountsNavigator";
 import type { ImportAccountsNavigatorParamList } from "./ImportAccountsNavigator";

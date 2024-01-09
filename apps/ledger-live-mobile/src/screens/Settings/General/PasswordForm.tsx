@@ -3,11 +3,11 @@ import { View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
-import LText from "../../../components/LText";
-import KeyboardView from "../../../components/KeyboardView";
-import TranslatedError from "../../../components/TranslatedError";
-import PasswordInput from "../../../components/PasswordInput";
-import Button from "../../../components/wrappedUi/Button";
+import LText from "~/components/LText";
+import KeyboardView from "~/components/KeyboardView";
+import TranslatedError from "~/components/TranslatedError";
+import PasswordInput from "~/components/PasswordInput";
+import Button from "~/components/wrappedUi/Button";
 
 type Props = {
   onChange: (_: string) => void;

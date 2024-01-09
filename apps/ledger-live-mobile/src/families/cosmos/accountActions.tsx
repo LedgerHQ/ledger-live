@@ -6,9 +6,8 @@ import { canDelegate } from "@ledgerhq/live-common/families/cosmos/logic";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import { Account } from "@ledgerhq/types-live";
-
-import { NavigatorName, ScreenName } from "../../const";
-import { ActionButtonEvent, NavigationParamsType } from "../../components/FabActions";
+import { NavigatorName, ScreenName } from "~/const";
+import { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
 
 const getMainActions = ({
   account,

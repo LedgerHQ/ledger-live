@@ -14,13 +14,13 @@ import {
   getPostOnboardingState,
   getProtect,
 } from "../db";
-import reducers from "../reducers";
-import { importSettings, setSupportedCounterValues } from "../actions/settings";
-import { importStore as importAccounts } from "../actions/accounts";
-import { importBle } from "../actions/ble";
-import { updateProtectData, updateProtectStatus } from "../actions/protect";
-import { INITIAL_STATE as settingsState } from "../reducers/settings";
-import { listCachedCurrencyIds, hydrateCurrency } from "../bridge/cache";
+import reducers from "~/reducers";
+import { importSettings, setSupportedCounterValues } from "~/actions/settings";
+import { importStore as importAccounts } from "~/actions/accounts";
+import { importBle } from "~/actions/ble";
+import { updateProtectData, updateProtectStatus } from "~/actions/protect";
+import { INITIAL_STATE as settingsState } from "~/reducers/settings";
+import { listCachedCurrencyIds, hydrateCurrency } from "~/bridge/cache";
 import { getCryptoCurrencyById, listSupportedFiats } from "@ledgerhq/live-common/currencies/index";
 
 const middlewares: [Middleware] = [thunk];

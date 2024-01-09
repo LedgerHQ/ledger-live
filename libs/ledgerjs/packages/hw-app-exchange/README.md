@@ -79,5 +79,5 @@ docker exec -it speculos bash -c 'speculos --model "nanosp" /app/exchange_nanosp
 From Ledger Live root directory:
 
 ```sh
-pnpm ljs:h-app-exchange test-integ
+pnpm ljs:hw-app-exchange test-integ
 ```

@@ -2,13 +2,19 @@ import { device } from "detox";
 import * as serverBridge from "./bridge/server";
 import net from "net";
 
+let port: number;
+
 beforeAll(async () => {
-  const port = await findFreePort();
-  serverBridge.init(port);
+  port = await findFreePort();
   await device.reverseTcpPort(8081);
   await device.reverseTcpPort(port);
   await device.reverseTcpPort(52619); // To allow the android emulator to access the dummy app
+  await launchApp();
+}, 2000000);
 
+export async function launchApp() {
+  serverBridge.close();
+  serverBridge.init(port);
   await device.launchApp({
     launchArgs: { wsPort: port },
     languageAndLocale: {
@@ -16,7 +22,7 @@ beforeAll(async () => {
       locale: "en-US",
     },
   });
-}, 2000000);
+}
 
 afterAll(async () => {
   serverBridge.close();

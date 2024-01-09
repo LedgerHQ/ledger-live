@@ -3,16 +3,16 @@ import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
-import { TrackScreen } from "../../../analytics";
-import ValidateError from "../../../components/ValidateError";
+import { TrackScreen } from "~/analytics";
+import ValidateError from "~/components/ValidateError";
 import {
   BaseComposite,
   StackNavigatorNavigation,
   StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
-import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
+} from "~/components/RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { CardanoDelegationFlowParamList } from "./types";
-import { ScreenName } from "../../../const";
+import { ScreenName } from "~/const";
 
 type Props = BaseComposite<
   StackNavigatorProps<CardanoDelegationFlowParamList, ScreenName.CardanoDelegationValidationError>

@@ -12,8 +12,8 @@ import {
   DisconnectedDeviceDuringOperation,
   WebsocketConnectionError,
 } from "@ledgerhq/errors";
-import { nextBackgroundEventSelector } from "../../reducers/appstate";
-import { clearBackgroundEvents, dequeueBackgroundEvent } from "../../actions/appstate";
+import { nextBackgroundEventSelector } from "~/reducers/appstate";
+import { clearBackgroundEvents, dequeueBackgroundEvent } from "~/actions/appstate";
 import QueuedDrawer from "../QueuedDrawer";
 import GenericErrorView from "../GenericErrorView";
 import ConfirmRecoveryStep from "./ConfirmRecoveryStep";
@@ -23,9 +23,9 @@ import ConfirmPinStep from "./ConfirmPinStep";
 import ConfirmUpdateStep from "./ConfirmUpdateStep";
 import DownloadingUpdateStep from "./DownloadingUpdateStep";
 import DeviceLanguageStep from "./DeviceLanguageStep";
-import { track } from "../../analytics";
+import { track } from "~/analytics";
 import { FwUpdateForegroundEvent } from "./types";
-import { FwUpdateBackgroundEvent } from "../../reducers/types";
+import { FwUpdateBackgroundEvent } from "~/reducers/types";
 
 type Props = {
   device: Device;

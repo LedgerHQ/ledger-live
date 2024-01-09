@@ -11,13 +11,13 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 
-import Button from "../../../../../../../components/Button";
-import LText from "../../../../../../../components/LText";
-import CurrencyUnitValue from "../../../../../../../components/CurrencyUnitValue";
-import CounterValue from "../../../../../../../components/CounterValue";
-import FirstLetterIcon from "../../../../../../../components/FirstLetterIcon";
-import TranslatedError from "../../../../../../../components/TranslatedError";
-import { ScreenName } from "../../../../../../../const";
+import Button from "~/components/Button";
+import LText from "~/components/LText";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import CounterValue from "~/components/CounterValue";
+import FirstLetterIcon from "~/components/FirstLetterIcon";
+import TranslatedError from "~/components/TranslatedError";
+import { ScreenName } from "~/const";
 
 import type { WithdrawFundsPropsType } from "./types";
 

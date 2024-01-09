@@ -4,10 +4,10 @@ import { View, StyleSheet } from "react-native";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import { useTheme } from "@react-navigation/native";
-import LText from "../../components/LText";
-import CurrencyIcon from "../../components/CurrencyIcon";
-import Button from "../../components/Button";
-import Alert from "../../components/Alert";
+import LText from "~/components/LText";
+import CurrencyIcon from "~/components/CurrencyIcon";
+import Button from "~/components/Button";
+import Alert from "~/components/Alert";
 
 type Props = {
   onCancel: () => void;

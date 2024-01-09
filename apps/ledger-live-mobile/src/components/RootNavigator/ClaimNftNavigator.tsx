@@ -1,10 +1,10 @@
 import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "styled-components/native";
-import { ScreenName } from "../../const";
-import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
-import ClaimNftWelcome from "../../screens/ClaimNft/ClaimNftWelcome";
-import ClaimNftQrScan from "../../screens/ClaimNft/ClaimNftQrScan";
+import { ScreenName } from "~/const";
+import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import ClaimNftWelcome from "~/screens/ClaimNft/ClaimNftWelcome";
+import ClaimNftQrScan from "~/screens/ClaimNft/ClaimNftQrScan";
 import { ClaimNftNavigatorParamList } from "./types/ClaimNftNavigator";
 
 export default function ClaimNftNavigator() {
