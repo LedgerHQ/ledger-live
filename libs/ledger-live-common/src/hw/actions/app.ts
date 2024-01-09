@@ -26,6 +26,7 @@ import { getImplementation, ImplementationType } from "./implementations";
 
 export type State = {
   isLoading: boolean;
+  isDisconnected: boolean;
   requestQuitApp: boolean;
   requestOpenApp: string | null | undefined;
   requiresAppInstallation:
@@ -133,6 +134,7 @@ const mapResult = ({
 
 const getInitialState = (device?: Device | null | undefined, request?: AppRequest): State => ({
   isLoading: !!device,
+  isDisconnected: false,
   requestQuitApp: false,
   requestOpenApp: null,
   unresponsive: false,
@@ -159,6 +161,7 @@ const getInitialState = (device?: Device | null | undefined, request?: AppReques
   listedApps: false, // Nb maybe expose the result
   skippedAppOps: [],
   itemProgress: 0,
+  progress: undefined,
 });
 
 const reducer = (state: State, e: Event): State => {
@@ -179,13 +182,24 @@ const reducer = (state: State, e: Event): State => {
       };
 
     case "disconnected":
+      // disconnected event can happen for example:
+      // - when the wired device is unplugged
+      // - before a ask-open-app event when an other app is already open
       return {
         ...getInitialState(null, state.request),
         isLoading: !!e.expected,
+        isDisconnected: true,
       };
 
     case "deviceChange":
-      return { ...getInitialState(e.device, state.request), device: e.device };
+      // Preserve the current state when the device is disconnected to avoid displaying
+      // the loader drawer above the disconnected one.
+      if (state.isDisconnected) return state;
+
+      return {
+        ...getInitialState(e.device, state.request),
+        device: e.device,
+      };
 
     case "some-apps-skipped":
       return {
@@ -195,25 +209,17 @@ const reducer = (state: State, e: Event): State => {
       };
     case "inline-install":
       return {
+        ...getInitialState(state.device, state.request),
         isLoading: false,
-        requestQuitApp: false,
-        requiresAppInstallation: null,
-        allowOpeningRequestedWording: null,
         allowOpeningGranted: true,
         allowManagerRequested: false,
         allowManagerGranted: true,
         device: state.device,
-        opened: false,
-        appAndVersion: null,
-        error: null,
-        derivation: null,
-        displayUpgradeWarning: false,
-        unresponsive: false,
-        isLocked: false,
         installingApp: true,
         progress: e.progress || 0,
-        requestOpenApp: null,
-        listingApps: false,
+
+        deviceInfo: undefined,
+        latestFirmware: undefined,
 
         request: state.request,
         skippedAppOps: state.skippedAppOps,
@@ -233,6 +239,10 @@ const reducer = (state: State, e: Event): State => {
       };
 
     case "error":
+      // Preserve the current state when the device is disconnected to avoid displaying
+      // an additional error message above the disconnected one.
+      if (state.isDisconnected) return state;
+
       return {
         ...getInitialState(state.device, state.request),
         device: state.device || null,
@@ -246,94 +256,70 @@ const reducer = (state: State, e: Event): State => {
 
     case "ask-open-app":
       return {
+        ...getInitialState(state.device, state.request),
         isLoading: false,
-        requestQuitApp: false,
-        requiresAppInstallation: null,
-        allowOpeningRequestedWording: null,
-        allowOpeningGranted: false,
-        allowManagerRequested: false,
-        allowManagerGranted: false,
         device: state.device,
-        opened: false,
-        appAndVersion: null,
-        error: null,
-        derivation: null,
-        displayUpgradeWarning: false,
-        unresponsive: false,
-        isLocked: false,
         requestOpenApp: e.appName,
 
-        request: state.request,
+        deviceInfo: undefined,
+        latestFirmware: undefined,
+        installingApp: undefined,
+        listingApps: undefined,
+        installQueue: undefined,
+        listedApps: undefined,
+        itemProgress: undefined,
+
         skippedAppOps: state.skippedAppOps,
       };
 
     case "ask-quit-app":
       return {
+        ...getInitialState(state.device, state.request),
         isLoading: false,
-        requestOpenApp: null,
-        requiresAppInstallation: null,
-        allowOpeningRequestedWording: null,
-        allowOpeningGranted: false,
-        allowManagerRequested: false,
-        allowManagerGranted: false,
         device: state.device,
-        opened: false,
-        appAndVersion: null,
-        error: null,
-        derivation: null,
-        displayUpgradeWarning: false,
-        unresponsive: false,
-        isLocked: false,
         requestQuitApp: true,
 
-        request: state.request,
+        installingApp: undefined,
+        listingApps: undefined,
+        installQueue: undefined,
+        listedApps: undefined,
+        itemProgress: undefined,
+
         skippedAppOps: state.skippedAppOps,
       };
 
     case "device-permission-requested":
       return {
+        ...getInitialState(state.device, state.request),
         isLoading: false,
-        requestQuitApp: false,
-        requestOpenApp: null,
-        requiresAppInstallation: null,
         device: state.device,
-        opened: false,
-        appAndVersion: null,
-        error: null,
-        derivation: null,
-        displayUpgradeWarning: false,
-        unresponsive: false,
-        isLocked: false,
-        allowOpeningGranted: false,
-        allowOpeningRequestedWording: null,
-        allowManagerGranted: false,
         allowManagerRequested: true,
 
-        request: state.request,
+        deviceInfo: undefined,
+        latestFirmware: undefined,
+        installingApp: undefined,
+        listingApps: undefined,
+        listedApps: undefined,
+        itemProgress: undefined,
+
         skippedAppOps: state.skippedAppOps,
         installQueue: state.installQueue,
       };
 
     case "device-permission-granted":
       return {
+        ...getInitialState(state.device, state.request),
         isLoading: false,
-        requestQuitApp: false,
-        requestOpenApp: null,
-        requiresAppInstallation: null,
         device: state.device,
-        opened: false,
-        appAndVersion: null,
-        error: null,
-        derivation: null,
-        displayUpgradeWarning: false,
-        unresponsive: false,
-        isLocked: false,
         allowOpeningGranted: true,
-        allowOpeningRequestedWording: null,
         allowManagerGranted: true,
-        allowManagerRequested: false,
 
-        request: state.request,
+        deviceInfo: undefined,
+        latestFirmware: undefined,
+        installingApp: undefined,
+        listingApps: undefined,
+        itemProgress: undefined,
+
         skippedAppOps: state.skippedAppOps,
         installQueue: state.installQueue,
         listedApps: state.listedApps,
@@ -341,27 +327,22 @@ const reducer = (state: State, e: Event): State => {
 
     case "app-not-installed":
       return {
-        requestQuitApp: false,
-        requestOpenApp: null,
-        device: state.device,
-        opened: false,
-        appAndVersion: null,
-        error: null,
-        derivation: null,
-        displayUpgradeWarning: false,
+        ...getInitialState(state.device, state.request),
         isLoading: false,
-        unresponsive: false,
-        isLocked: false,
-        allowOpeningGranted: false,
-        allowOpeningRequestedWording: null,
-        allowManagerGranted: false,
-        allowManagerRequested: false,
+        device: state.device,
         requiresAppInstallation: {
           appNames: e.appNames,
           appName: e.appName,
         },
 
-        request: state.request,
+        deviceInfo: undefined,
+        latestFirmware: undefined,
+        installingApp: undefined,
+        listingApps: undefined,
+        installQueue: undefined,
+        listedApps: undefined,
+        itemProgress: undefined,
+
         skippedAppOps: state.skippedAppOps,
       };
 
@@ -374,21 +355,19 @@ const reducer = (state: State, e: Event): State => {
 
     case "opened":
       return {
-        requestQuitApp: false,
-        requestOpenApp: null,
-        requiresAppInstallation: null,
-        allowOpeningGranted: false,
-        allowOpeningRequestedWording: null,
-        allowManagerGranted: false,
-        allowManagerRequested: false,
-        device: state.device,
-        error: null,
+        ...getInitialState(state.device, state.request),
         isLoading: false,
-        unresponsive: false,
-        isLocked: false,
+        device: state.device,
         opened: true,
         appAndVersion: e.app,
         derivation: e.derivation,
+
+        deviceInfo: undefined,
+        latestFirmware: undefined,
+        installingApp: undefined,
+        listingApps: undefined,
+        installQueue: undefined,
+        itemProgress: undefined,
 
         request: state.request,
         skippedAppOps: state.skippedAppOps,
