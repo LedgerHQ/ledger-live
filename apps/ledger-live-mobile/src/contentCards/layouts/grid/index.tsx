@@ -32,7 +32,7 @@ const Grid = ContentLayoutBuilder<Props>(({ items, styles: _styles = defaultStyl
     >
       {items.map(item => {
         return (
-          <Flex style={{ width }}>
+          <Flex key={item.props.metadata.id} style={{ width }}>
             <item.component {...item.props} />
           </Flex>
         );

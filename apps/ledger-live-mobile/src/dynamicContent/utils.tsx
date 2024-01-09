@@ -1,3 +1,4 @@
+import { Size } from "~/contentCards/cards/vertical/types";
 import {
   BrazeContentCard,
   AssetContentCard,
@@ -143,44 +144,25 @@ export const mapAsHorizontalContentCard = (card: BrazeContentCard): HorizontalCo
   order: parseInt(card.extras.order) ? parseInt(card.extras.order) : undefined,
 });
 
-export const mapAsSmallSquareContentCard = (card: BrazeContentCard): VerticalContentCard => ({
+const mapAsSquareContentCard = (card: BrazeContentCard, size: Size): VerticalContentCard => ({
   id: card.id,
   tag: card.extras.tag,
   title: card.extras.title,
   description: card.extras.description,
   image: card.extras.image,
   price: card.extras.subtitle,
-  size: "S",
+  size,
   link: card.extras.link,
   createdAt: card.created,
   viewed: card.viewed,
   order: parseInt(card.extras.order) ? parseInt(card.extras.order) : undefined,
 });
 
-export const mapAsMediumSquareContentCard = (card: BrazeContentCard): VerticalContentCard => ({
-  id: card.id,
-  tag: card.extras.tag,
-  title: card.extras.title,
-  description: card.extras.description,
-  image: card.extras.image,
-  price: card.extras.subtitle,
-  size: "M",
-  link: card.extras.link,
-  createdAt: card.created,
-  viewed: card.viewed,
-  order: parseInt(card.extras.order) ? parseInt(card.extras.order) : undefined,
-});
+export const mapAsSmallSquareContentCard = (card: BrazeContentCard): VerticalContentCard =>
+  mapAsSquareContentCard(card, "S");
 
-export const mapAsBigSquareContentCard = (card: BrazeContentCard): VerticalContentCard => ({
-  id: card.id,
-  tag: card.extras.tag,
-  title: card.extras.title,
-  description: card.extras.description,
-  image: card.extras.image,
-  price: card.extras.subtitle,
-  size: "L",
-  link: card.extras.link,
-  createdAt: card.created,
-  viewed: card.viewed,
-  order: parseInt(card.extras.order) ? parseInt(card.extras.order) : undefined,
-});
+export const mapAsMediumSquareContentCard = (card: BrazeContentCard): VerticalContentCard =>
+  mapAsSquareContentCard(card, "M");
+
+export const mapAsBigSquareContentCard = (card: BrazeContentCard): VerticalContentCard =>
+  mapAsSquareContentCard(card, "L");
