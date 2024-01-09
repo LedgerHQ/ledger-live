@@ -11,6 +11,7 @@ import {
   hasPendingOperationType,
   isElectionOpen,
   isStash,
+  isStashAccount,
 } from "@ledgerhq/live-common/families/polkadot/logic";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
@@ -112,7 +113,7 @@ const getSecondaryActions = (args: {
   const hasPendingBondOperation = hasPendingOperationType(account, "BOND");
   const hasPendingWithdrawUnbondedOperation = hasPendingOperationType(account, "WITHDRAW_UNBONDED");
   const nominationEnabled = !electionOpen && canNominate(account);
-  const chillEnabled = !electionOpen && canNominate(account) && nominations?.length;
+  const chillEnabled = !electionOpen && isStashAccount(account) && nominations?.length;
   const bondingEnabled =
     !electionOpen &&
     ((!hasBondedBalance && !hasPendingBondOperation) || (hasBondedBalance && canBond(account)));

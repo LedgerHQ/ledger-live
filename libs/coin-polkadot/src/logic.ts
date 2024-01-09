@@ -24,11 +24,9 @@ export const isStash = (a: PolkadotAccount): boolean => {
 /**
  * Returns true if account is a controller.
  * when account is a controller, we have the information of which stash it controls
- *
- * @param {PolkadotAccount} a
  */
-export const isController = (a: PolkadotAccount): boolean => {
-  return !!a.polkadotResources?.stash;
+export const isStashAccount = (account: PolkadotAccount): boolean => {
+  return !!account.polkadotResources?.stash;
 };
 
 /**
@@ -135,7 +133,7 @@ export const canUnbond = (a: PolkadotAccount): boolean => {
  * Returns true if an account can nominate
  */
 export const canNominate = (account: PolkadotAccount): boolean => {
-  return isController(account) && hasMinimumBondBalance(account);
+  return isStashAccount(account) && hasMinimumBondBalance(account);
 };
 
 /**
