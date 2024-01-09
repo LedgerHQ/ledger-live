@@ -29,7 +29,7 @@ import { getAccountBridge } from "../../bridge";
 import { Exchange } from "../../exchange/swap/types";
 import { Transaction } from "../../generated/types";
 
-export type { ExchangeType };
+export { ExchangeType };
 
 type Handlers = {
   "custom.exchange.start": RPCHandler<ExchangeStartResult, ExchangeStartParams>;
