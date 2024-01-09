@@ -4271,7 +4271,7 @@
     "reinstallApps" : "Переустановить приложения",
     "currentVersionNumber" : "Текущая версия",
     "newVersionNumber" : "Новая версия",
-    "success" : "Прошивка обновлена",
+    "success" : "ОС обновлена",
     "update" : "Обновить",
     "retryBatteryCheck" : "Обновить при зарядке",
     "Notifications" : {
@@ -4359,12 +4359,12 @@
   },
   "firmwareUpdateRequired" : {
     "updateAvailableFromLLM" : {
-      "title" : "Необходимо обновить прошивку",
+      "title" : "Необходимо обновить ОС",
       "description" : "Для данного действия сначала необходимо обновить прошивку {{ deviceName }}.",
       "cta" : "Перейти в «Мой Ledger»"
     },
     "updateNotAvailableFromLLM" : {
-      "title" : "Необходимо обновить прошивку посредством ПК",
+      "title" : "Необходимо обновить ОС посредством ПК",
       "description" : "Обновите прошивку {{ deviceName }} через настольное приложение Ledger Live"
     }
   },
@@ -4427,7 +4427,7 @@
     "desc2" : "Нажмите и удерживайте левую кнопку, подключите USB-кабель и отпустите кнопку после появления окна Bootloader."
   },
   "FirmwareUpdateConfirmation" : {
-    "title" : "Прошивка обновлена",
+    "title" : "ОС обновлена",
     "description" : "Перейдите в «Мой Ledger», чтобы переустановить приложения на устройство."
   },
   "RepairDevice" : {
