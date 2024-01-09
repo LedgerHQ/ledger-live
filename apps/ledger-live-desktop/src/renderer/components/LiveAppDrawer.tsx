@@ -145,16 +145,24 @@ export const LiveAppDrawer = () => {
                 if ("startExchangeError" in result) {
                   data.onCancel?.(result.startExchangeError as unknown as Error);
                 }
+                dispatch(closePlatformAppDrawer());
               }}
             />
           </Box>
         ) : null;
       case "EXCHANGE_COMPLETE":
-        return data && isCompleteExchangeData(data) ? <CompleteExchange data={data} /> : null;
+        return data && isCompleteExchangeData(data) ? (
+          <CompleteExchange
+            data={data}
+            onClose={() => {
+              dispatch(closePlatformAppDrawer());
+            }}
+          />
+        ) : null;
       default:
         return null;
     }
-  }, [payload, dismissDisclaimerChecked, onContinue, t]);
+  }, [payload, t, dismissDisclaimerChecked, onContinue, dispatch]);
 
   return (
     <SideDrawer

@@ -86,8 +86,9 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   useEffect(() => {
     if (error) {
       onCancel(error);
+      onClose?.();
     }
-  }, [onCancel, error]);
+  }, [onCancel, error, onClose]);
 
   useEffect(() => {
     if (signedOperation) {
