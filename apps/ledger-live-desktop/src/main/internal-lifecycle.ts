@@ -212,15 +212,15 @@ ipcMain.on("setEnv", async (event, env) => {
 });
 
 /**
- * Factory creating a request/response handler on requests from the renderer process that are sent to the internal process.
+ * Setups a request/response handler on requests from the renderer process that are sent to the internal process.
  *
- * The handler routes a (request) message from the renderer process to the internal process,
- * and sets a handler to receive the response from the internal process and reply it to the renderer process
- * Only 1 response from the internal process is expected.
+ * The handler sets a listener to receive responses from the internal process (identified with `requestId`),
+ * and it routes (requests) messages from the renderer process to the internal process.
+ * Only one response from the internal process per request is expected.
  *
  * @param channel the channel name to create the handler for
  */
-const internalHandlerPromise = (channel: string) => {
+const setupSingleResponseHandlerForChannel = (channel: string) => {
   ipcMain.on(channel, (event, { data, requestId }) => {
     // Channel to send response to the renderer process
     const replyChannel = `${channel}_RESPONSE_${requestId}`;
@@ -244,7 +244,7 @@ const internalHandlerPromise = (channel: string) => {
       }
     };
 
-    // Listens to response from the internal process
+    // Adding a listener does not override the previous ones.
     internal.process?.on("message", responseHandler);
 
     internal.send({
@@ -256,12 +256,15 @@ const internalHandlerPromise = (channel: string) => {
 };
 
 /**
- * Factory creating an "observable" handler on requests from the renderer process that are sent to the internal process.
+ * Setups a request/multi responses handler on requests from the renderer process that are sent to the internal process.
  *
- * Multi events version of `internalHandlerPromise`:
- * One request and listening to several response/event until an error or a complete is received from the internal process.
+ * The handler sets a listener to receive responses from the internal process (identified with `requestId`),
+ * and it routes (requests) messages from the renderer process to the internal process.
+ * Several responses from the internal process per request can be expected.
+ *
+ * @param channel the channel name to create the handler for
  */
-const internalHandlerObservable = (channel: string) => {
+const setupMultiResponsesHandlerForChannel = (channel: string) => {
   ipcMain.on(channel, (event, { data, requestId }) => {
     // Channel to send response to the renderer process
     const replyChannel = `${channel}_RESPONSE_${requestId}`;
@@ -300,12 +303,14 @@ const internalHandlerObservable = (channel: string) => {
 };
 
 /**
- * Factory creating an handler on one-way message from the renderer process that are sent to the internal process.
+ * Setups a request/no response handler on requests from the renderer process that are sent to the internal process.
  *
- * Only routes a (request) message from the renderer process to the internal process.
+ * Only routes (requests) messages from the renderer process to the internal process.
  * No response from the internal process is expected.
+ *
+ * @param channel the channel name to create the handler for
  */
-const internalHandlerEvent = (channel: string) => {
+const setupNoResponseHandlerForChannel = (channel: string) => {
   ipcMain.on(channel, (event, { data, requestId }) => {
     internal.send({
       type: channel,
@@ -315,10 +320,10 @@ const internalHandlerEvent = (channel: string) => {
   });
 };
 
-internalHandlerPromise(transportOpenChannel);
-internalHandlerPromise(transportExchangeChannel);
-internalHandlerPromise(transportCloseChannel);
-internalHandlerObservable(transportExchangeBulkChannel);
-internalHandlerObservable(transportListenChannel);
-internalHandlerEvent(transportExchangeBulkUnsubscribeChannel);
-internalHandlerEvent(transportListenUnsubscribeChannel);
+setupSingleResponseHandlerForChannel(transportOpenChannel);
+setupSingleResponseHandlerForChannel(transportExchangeChannel);
+setupSingleResponseHandlerForChannel(transportCloseChannel);
+setupMultiResponsesHandlerForChannel(transportExchangeBulkChannel);
+setupMultiResponsesHandlerForChannel(transportListenChannel);
+setupNoResponseHandlerForChannel(transportExchangeBulkUnsubscribeChannel);
+setupNoResponseHandlerForChannel(transportListenUnsubscribeChannel);
