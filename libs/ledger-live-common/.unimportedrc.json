@@ -272,6 +272,7 @@
     "src/utils/runOnceWhen.ts",
     "src/user.ts",
     "src/walletConnect/index.ts",
+    "src/wallet-api/Exchange/server.ts",
     "src/wallet-api/CustomLogger/client.ts",
     "src/wallet-api/constants.ts",
     "src/wallet-api/converters.ts",
@@ -307,8 +308,7 @@
     "src/jest.d.ts",
     "src/postOnboarding/mock.ts",
     "src/reactNativeSvg.d.ts",
-    "src/currencies/mock.ts",
-    "src/wallet-api/Exchange/*.ts"
+    "src/currencies/mock.ts"
   ],
   "ignoreUnused": [
     "@types/bchaddrjs",
