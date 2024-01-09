@@ -33,6 +33,7 @@ function Assets() {
   const hideEmptyTokenAccount = useEnv("HIDE_EMPTY_TOKEN_ACCOUNTS");
 
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
+  const blacklistedTokenIdsSet = useMemo(() => new Set(blacklistedTokenIds), [blacklistedTokenIds]);
 
   const { t } = useTranslation();
   const distribution = useDistribution({
@@ -54,10 +55,9 @@ function Assets() {
     () =>
       assets.filter(
         asset =>
-          asset.currency.type !== "TokenCurrency" ||
-          !blacklistedTokenIds.includes(asset.currency.id),
+          asset.currency.type !== "TokenCurrency" || !blacklistedTokenIdsSet.has(asset.currency.id),
       ),
-    [assets, blacklistedTokenIds],
+    [assets, blacklistedTokenIdsSet],
   );
 
   const [isAddModalOpened, setAddModalOpened] = useState(false);
