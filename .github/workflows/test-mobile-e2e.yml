@@ -165,6 +165,14 @@ jobs:
       LANG: en_US.UTF-8
       LANGUAGE: en_US.UTF-8
       LC_ALL: en_US.UTF-8
+      AVD_API: 32
+      AVD_ARCH: x86_64
+      AVD_PROFILE: pixel_6_pro
+      AVD_TARGET: google_apis
+      AVD_NAME: "Pixel_6_Pro_API_32"
+      AVD_CORES: 4
+      AVD_RAM_SIZE: 8192M
+      AVD_OPTIONS: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
     outputs:
       status: ${{ steps.detox.outcome }}
     steps:
@@ -197,6 +205,9 @@ jobs:
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
+      - name: Fix emulator directory permissions
+        continue-on-error: true
+        run: sudo chown -R $(whoami):$(id -ng) /usr/local/lib/android/sdk/emulator/
 
       - name: Install dependencies
         run: |
@@ -218,10 +229,9 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-          key: ${{ runner.os }}-detox-avd-${{ hashFiles('~/.android/avd/*/config.ini') }}
-          restore-keys: |
-            ${{ runner.os }}-detox-avd-32
-
+            /usr/local/lib/android/sdk/system-images/android-${{ env.AVD_API }}/${{ env.AVD_TARGET }}/${{ env.AVD_ARCH }}/*
+            /usr/local/lib/android/sdk/emulator/*
+          key: ${{ runner.os }}-detox-avd-${{ env.AVD_NAME }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}
           # envs set by setup-toolchain
           accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
           secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
@@ -233,35 +243,23 @@ jobs:
         if: steps.detox-avd.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 32
-          arch: x86_64
-          profile: pixel_6_pro
-          target: google_apis
-          avd-name: "Pixel_6_Pro_API_32"
+          api-level: ${{ env.AVD_API }}
+          arch: ${{ env.AVD_ARCH }}
+          profile: ${{ env.AVD_PROFILE }}
+          target: ${{ env.AVD_TARGET }}
+          avd-name: ${{ env.AVD_NAME }}
           force-avd-creation: true
-          cores: 4
-          ram-size: 8192M
+          cores: ${{ env.AVD_CORES }}
+          ram-size: ${{ env.AVD_RAM_SIZE }}
           disable-linux-hw-accel: false
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          emulator-options: ${{ env.AVD_OPTIONS }}
           script: ./tools/scripts/wait_emulator_idle.sh
-      - name: Start Emulator and Run Android Tests
+      - name: Run Android Tests
         id: detox
-        uses: reactivecircus/android-emulator-runner@v2
+        run: pnpm mobile e2e:ci -p android -t
         timeout-minutes: 45
         env:
           DETOX_INSTALL_TIMEOUT: 120000
-        with:
-          api-level: 32
-          arch: x86_64
-          profile: pixel_6_pro
-          target: google_apis
-          avd-name: "Pixel_6_Pro_API_32"
-          force-avd-creation: false
-          cores: 4
-          ram-size: 8192M
-          disable-linux-hw-accel: false
-          emulator-options: -read-only -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          script: pnpm mobile e2e:ci -p android -t
       - name: Upload test artifacts
         if: always()
         uses: actions/upload-artifact@v3
