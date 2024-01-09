@@ -1,5 +1,5 @@
 export default {
-  axelar: {
+  config_currency_axelar: {
     type: "object",
     default: {
       lcd: "https://axelar-api.polkachu.com",
@@ -7,7 +7,7 @@ export default {
       ledgerValidator: "axelarvaloper1fgklp9hemczlwtqp9jqzq3xahh38hznx7vd805",
     },
   },
-  cosmos: {
+  config_currency_cosmos: {
     type: "object",
     default: {
       lcd: "https://cosmoshub4.coin.ledger.com",
@@ -15,14 +15,14 @@ export default {
       minGasPrice: 0.025,
     },
   },
-  desmos: {
+  config_currency_desmos: {
     type: "object",
     default: {
       lcd: "https://desmos-api.ibs.team",
       minGasPrice: 0.0025,
     },
   },
-  dydx: {
+  config_currency_dydx: {
     type: "object",
     default: {
       lcd: "https://api.dydx.nodestake.top:443",
@@ -30,14 +30,14 @@ export default {
       ledgerValidator: "dydxvaloper1gffkd68xcnfpzcsplf0fsuetxkysunud6a900w",
     },
   },
-  nyx: {
+  config_currency_nyx: {
     type: "object",
     default: {
       lcd: "https://api.nyx.nodes.guru",
       minGasPrice: 0,
     },
   },
-  onomy: {
+  config_currency_onomy: {
     type: "object",
     default: {
       lcd: "https://rest-mainnet.onomy.io",
@@ -45,7 +45,7 @@ export default {
       ledgerValidator: "onomyvaloper1fgklp9hemczlwtqp9jqzq3xahh38hznxu9mtmf",
     },
   },
-  osmo: {
+  config_currency_osmo: {
     type: "object",
     default: {
       lcd: "https://osmosis-api.polkachu.com",
@@ -53,7 +53,7 @@ export default {
       minGasPrice: 0.025,
     },
   },
-  persistence: {
+  config_currency_persistence: {
     type: "object",
     default: {
       lcd: "https://rest.core.persistence.one",
@@ -61,7 +61,7 @@ export default {
       ledgerValidator: "persistencevaloper1fgklp9hemczlwtqp9jqzq3xahh38hznxatty38",
     },
   },
-  quicksilver: {
+  config_currency_quicksilver: {
     type: "object",
     default: {
       lcd: "https://lcd.quicksilver.zone",
@@ -69,42 +69,42 @@ export default {
       ledgerValidator: "quickvaloper1fgklp9hemczlwtqp9jqzq3xahh38hznx02n4pp",
     },
   },
-  secret_network: {
+  config_currency_secret_network: {
     type: "object",
     default: {
       lcd: "https://lcd.secret.express",
       minGasPrice: 0.25,
     },
   },
-  sei_network: {
+  config_currency_sei_network: {
     type: "object",
     default: {
       lcd: "https://sei-api.polkachu.com",
       minGasPrice: 0.1,
     },
   },
-  stargaze: {
+  config_currency_stargaze: {
     type: "object",
     default: {
       lcd: "https://stargaze-api.polkachu.com",
       minGasPrice: 1,
     },
   },
-  umee: {
+  config_currency_umee: {
     type: "object",
     default: {
       lcd: "https://umee-api.polkachu.com",
       minGasPrice: 0.1,
     },
   },
-  coreum: {
+  config_currency_coreum: {
     type: "object",
     default: {
       lcd: "https://full-node.mainnet-1.coreum.dev:1317",
       minGasPrice: 0.1,
     },
   },
-  injective: {
+  config_currency_injective: {
     type: "object",
     default: {
       lcd: "https://injective-api.polkachu.com",
