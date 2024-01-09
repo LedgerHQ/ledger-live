@@ -57,7 +57,7 @@ if (INITIAL_SENTRY_TAGS) {
 }
 
 // Handles messages from the `main` process
-process.on("message", async (m: Message) => {
+process.on("message", (m: Message) => {
   switch (m.type) {
     case transportOpenChannel:
       transportOpen(m).subscribe({
