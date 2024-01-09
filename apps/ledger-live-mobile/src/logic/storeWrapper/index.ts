@@ -1,5 +1,6 @@
+import { decorateStats } from "./stats";
 // import asyncstorageImpl from "./asyncstorage";
-// export default asyncstorageImpl;
+// export default decorateStats(asyncstorageImpl);
 
 import mmkvImpl from "./mmkv";
-export default mmkvImpl;
+export default decorateStats(mmkvImpl);

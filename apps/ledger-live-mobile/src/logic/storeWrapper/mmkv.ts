@@ -1,12 +1,13 @@
 import { MMKVLoader } from "react-native-mmkv-storage";
 import { merge } from "lodash";
+import { StoreWrapper } from "./types";
 
 const MMKV = new MMKVLoader().initialize();
 
 // FIXME a temporary solution to implement the exact same interface.
 // but in future, we should directly use MMKV (because it's better typed)
 
-const deviceStorage = {
+const deviceStorage: StoreWrapper = {
   /**
    * Get a one or more value for a key or array of keys from AsyncStorage
    * @param {String|Array} key A key or array of keys
