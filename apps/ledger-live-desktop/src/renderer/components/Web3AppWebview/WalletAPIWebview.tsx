@@ -273,7 +273,10 @@ function useWebView(
         const manifestUrl = new URL(manifest.url).origin;
         const webviewUrl = new URL(webviewRef.current?.src).origin;
         if (manifestUrl !== webviewUrl) {
-          console.warn(`event fired from ${manifestUrl}, ignored as webview is ${webviewUrl}`);
+          track("event fired from liveapp would target another liveapp", {
+            manifestUrl,
+            webviewUrl,
+          });
           return;
         }
         onMessage(event.args[0]);
@@ -314,8 +317,9 @@ function useWebView(
         webview.removeEventListener("dom-ready", handleDomReady);
       }
     };
+    // NOTE: server in deps to avoid this error https://github.com/LedgerHQ/ledger-live/pull/5835#issue-2064329250
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [handleDomReady, handleMessage, onLoad]);
+  }, [handleDomReady, handleMessage, onLoad, server]);
 
   const webviewStyle = useMemo(() => {
     return {
