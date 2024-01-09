@@ -7,7 +7,7 @@ import Text from "~/renderer/components/Text";
 import NoQuoteSwapRate from "./NoQuoteSwapRate";
 import SwapRate from "./SwapRate";
 import Countdown from "./Countdown";
-import EmptyState from "./EmptyState";
+import LoadingState from "./LoadingState";
 import Filter from "./Filter";
 import {
   SwapSelectorStateType,
@@ -247,7 +247,7 @@ export default function ProviderRate({
           );
         })}
       </Box>
-      {!filteredRates.length && <EmptyState />}
+      {!filteredRates.length && <LoadingState />}
     </Box>
   );
 }
