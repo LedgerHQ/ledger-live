@@ -27,7 +27,7 @@ import {
   EXISTENTIAL_DEPOSIT,
   FEES_SAFETY_BUFFER,
   isFirstBond,
-  isStashAccount,
+  isController,
   isStash,
   hasLockedBalance,
   hasMaxUnlockings,
@@ -193,7 +193,7 @@ const getTransactionStatus =
         break;
 
       case "unbond":
-        if (!isStashAccount(a) || !hasLockedBalance(a)) {
+        if (!isController(a) || !hasLockedBalance(a)) {
           errors.staking = new PolkadotUnauthorizedOperation();
         }
 
@@ -216,7 +216,7 @@ const getTransactionStatus =
         break;
 
       case "rebond":
-        if (!isStashAccount(a)) {
+        if (!isController(a)) {
           errors.staking = new PolkadotUnauthorizedOperation();
         }
 
@@ -235,7 +235,7 @@ const getTransactionStatus =
         break;
 
       case "withdrawUnbonded":
-        if (!isStashAccount(a)) {
+        if (!isController(a)) {
           errors.staking = new PolkadotUnauthorizedOperation();
         }
 
@@ -246,7 +246,7 @@ const getTransactionStatus =
         break;
 
       case "nominate":
-        if (!isStashAccount(a)) {
+        if (!isController(a)) {
           errors.staking = new PolkadotUnauthorizedOperation();
         } else if (!t.validators || t.validators?.length === 0) {
           errors.staking = new PolkadotValidatorsRequired();
@@ -278,7 +278,7 @@ const getTransactionStatus =
         break;
 
       case "chill":
-        if (!isStashAccount(a)) {
+        if (!isController(a)) {
           errors.staking = new PolkadotUnauthorizedOperation();
         } else if (!a.polkadotResources?.nominations) {
           errors.staking = new PolkadotNoNominations();

@@ -9,7 +9,6 @@ import {
   canBond,
   canUnbond,
   hasPendingOperationType,
-  isStashAccount,
 } from "@ledgerhq/live-common/families/polkadot/logic";
 import { openModal } from "~/renderer/actions/modals";
 import Box from "~/renderer/components/Box";
@@ -131,7 +130,7 @@ const ManageModal = ({ account, source, ...rest }: Props) => {
   const hasUnlockedBalance = unlockedBalance && unlockedBalance.gt(0);
   const hasPendingWithdrawUnbondedOperation = hasPendingOperationType(account, "WITHDRAW_UNBONDED");
   const nominationEnabled = !electionOpen && accountCanNominate;
-  const chillEnabled = !electionOpen && isStashAccount(account) && nominations?.length;
+  const chillEnabled = !electionOpen && nominations?.length;
   const bondingEnabled = !electionOpen && canBond(account);
   const unbondingEnabled = !electionOpen && canUnbond(account);
   const withdrawEnabled =
