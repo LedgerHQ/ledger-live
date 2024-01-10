@@ -3,12 +3,14 @@ import Fuse from "fuse.js";
 import { useDebounce } from "../hooks/useDebounce";
 
 export function useSearch<Item, T extends TextInput | undefined = undefined>({
-  list,
+  listInput,
+  listFilter,
   options,
   defaultInput = "",
   filter,
 }: {
-  list: Item[];
+  listInput: Item[];
+  listFilter: Item[];
   defaultInput?: string;
   options: Fuse.IFuseOptions<Item>;
   filter?: (item: Item) => void;
@@ -21,8 +23,8 @@ export function useSearch<Item, T extends TextInput | undefined = undefined>({
 
   const [isSearching, setIsSearching] = useState(false);
 
-  const [result, setResult] = useState(list);
-  const fuse = useRef(new Fuse(list, options));
+  const [result, setResult] = useState(listInput);
+  const fuse = useRef(new Fuse(listInput, options));
 
   const onChange = useCallback((value: string) => {
     if (value.length !== 0) {
@@ -61,10 +63,14 @@ export function useSearch<Item, T extends TextInput | undefined = undefined>({
   }, []);
 
   const resultOut = useMemo(() => {
-    const res = input === "" ? list : result;
+    // filter using the input
+    if (input !== "") {
+      return result;
+    }
 
-    return filter ? res.filter(filter) : res;
-  }, [list, result, input, filter]);
+    // filter using the categories
+    return filter ? listFilter.filter(filter) : listFilter;
+  }, [filter, input, listFilter, result]);
 
   return {
     inputRef,

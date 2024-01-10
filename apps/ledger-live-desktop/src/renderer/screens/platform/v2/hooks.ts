@@ -25,10 +25,13 @@ export function useCatalog(db: RecentlyUsedDB) {
   const categories = useCategories();
   const recentlyUsed = useRecentlyUsed(categories.manifests.all, db);
   const search = useSearch({
-    list: categories.manifests.searchable,
+    listInput: categories.manifests.searchable,
+    listFilter: categories.manifests.complete,
     options: BROWSE_SEARCH_OPTIONS,
-    filter: item =>
-      categories.selected === "all" ? true : item.categories.includes(categories.selected),
+    filter: item => {
+      if (categories.selected === "all") return true;
+      return item.categories.includes(categories.selected);
+    },
   });
   const disclaimer = useDisclaimer(recentlyUsed.append);
 

@@ -21,7 +21,7 @@ export function Browse({ categories, search, disclaimer }: Props) {
       <SectionHeader iconLeft="Globe">{t("platform.catalog.section.browse")}</SectionHeader>
 
       <Search categories={categories} search={search} />
-      <Result categories={categories} search={search} disclaimer={disclaimer} />
+      <Result search={search} disclaimer={disclaimer} />
     </Flex>
   );
 }

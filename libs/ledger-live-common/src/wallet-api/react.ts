@@ -795,7 +795,7 @@ export function useCategories(): Categories {
     () => all.filter(m => ["complete", "searchable"].includes(m.visibility)),
     [all],
   );
-  const { categories, manifestsByCategories } = useCategoriesRaw(searchable);
+  const { categories, manifestsByCategories } = useCategoriesRaw(complete);
   const [selected, setSelected] = useState(DISCOVER_INITIAL_CATEGORY);
 
   const reset = useCallback(() => {
