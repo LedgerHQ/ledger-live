@@ -32,11 +32,15 @@ export const hexToAscii = (hex: string): string => Buffer.from(hex, "hex").toStr
 
 const parentTx = [
   "TransferContract",
-  "FreezeBalanceContract",
-  "UnfreezeBalanceContract",
   "VoteWitnessContract",
   "WithdrawBalanceContract",
   "ExchangeTransactionContract",
+  "FreezeBalanceV2Contract",
+  "UnfreezeBalanceV2Contract",
+  "WithdrawExpireUnfreezeContract",
+  "UnDelegateResourceContract",
+  "FreezeBalanceContract",
+  "UnfreezeBalanceContract",
 ];
 
 export const isParentTx = (tx: TrongridTxInfo): boolean => parentTx.includes(tx.type);
@@ -59,6 +63,9 @@ export const getEstimatedBlockSize = (a: Account, t: Transaction): BigNumber => 
     case "freeze":
     case "unfreeze":
     case "claimReward":
+    case "withdrawExpireUnfreeze":
+    case "unDelegateResource":
+    case "legacyUnfreeze":
       return new BigNumber(260);
 
     case "vote":
@@ -86,6 +93,15 @@ export const getOperationTypefromMode = (mode: TronOperationMode): OperationType
     case "claimReward":
       return "REWARD";
 
+    case "withdrawExpireUnfreeze":
+      return "WITHDRAW_EXPIRE_UNFREEZE";
+
+    case "unDelegateResource":
+      return "UNDELEGATE_RESOURCE";
+
+    case "legacyUnfreeze":
+      return "LEGACY_UNFREEZE";
+
     default:
       return "OUT";
   }
@@ -104,17 +120,27 @@ const getOperationType = (
     case "ExchangeTransactionContract":
       return "OUT";
 
-    case "FreezeBalanceContract":
-      return "FREEZE";
-
-    case "UnfreezeBalanceContract":
-      return "UNFREEZE";
-
     case "VoteWitnessContract":
       return "VOTE";
 
     case "WithdrawBalanceContract":
       return "REWARD";
+
+    case "FreezeBalanceContract":
+    case "FreezeBalanceV2Contract":
+      return "FREEZE";
+
+    case "UnfreezeBalanceV2Contract":
+      return "UNFREEZE";
+
+    case "WithdrawExpireUnfreezeContract":
+      return "WITHDRAW_EXPIRE_UNFREEZE";
+
+    case "UnDelegateResourceContract":
+      return "UNDELEGATE_RESOURCE";
+
+    case "UnfreezeBalanceContract":
+      return "LEGACY_UNFREEZE";
 
     default:
       return undefined;
@@ -167,6 +193,9 @@ export const formatTrongridTxResponse = (
       quant,
       frozen_balance,
       votes,
+      unfreeze_balance,
+      balance,
+      receiver_address,
     } = get(tx, "raw_data.contract[0].parameter.value", {});
     const hasFailed = get(tx, "ret[0].contractRet", "SUCCESS") !== "SUCCESS";
     const tokenId =
@@ -209,22 +238,34 @@ export const formatTrongridTxResponse = (
 
     const getExtra = (): TrongridExtraTxInfo | null | undefined => {
       switch (type) {
-        case "FreezeBalanceContract":
-          return {
-            frozenAmount: new BigNumber(frozen_balance),
-          };
-
-        case "UnfreezeBalanceContract":
-          return {
-            unfreezeAmount: new BigNumber(unfreeze_amount || detail.unfreeze_amount),
-          };
-
         case "VoteWitnessContract":
           return {
             votes: votes.map(v => ({
               address: encode58Check(v.vote_address),
               voteCount: v.vote_count,
             })),
+          };
+
+        case "FreezeBalanceContract":
+        case "FreezeBalanceV2Contract":
+          return {
+            frozenAmount: new BigNumber(frozen_balance),
+          };
+
+        case "UnfreezeBalanceV2Contract":
+          return {
+            unfreezeAmount: new BigNumber(unfreeze_balance),
+          };
+
+        case "UnDelegateResourceContract":
+          return {
+            unDelegatedAmount: new BigNumber(balance),
+            receiverAddress: encode58Check(receiver_address),
+          };
+
+        case "UnfreezeBalanceContract":
+          return {
+            unfreezeAmount: new BigNumber(unfreeze_amount || detail.unfreeze_amount),
           };
 
         default:
@@ -292,7 +333,15 @@ export const defaultTronResources: TronResources = {
     bandwidth: undefined,
     energy: undefined,
   },
+  unFrozen: {
+    bandwidth: undefined,
+    energy: undefined,
+  },
   delegatedFrozen: {
+    bandwidth: undefined,
+    energy: undefined,
+  },
+  legacyFrozen: {
     bandwidth: undefined,
     energy: undefined,
   },

@@ -48,9 +48,10 @@ import { RecoveryHowTo3 } from "~/renderer/components/Onboarding/Screens/Tutoria
 import { UseRecoverySheet } from "~/renderer/components/Onboarding/Screens/Tutorial/screens/UseRecoverySheet";
 import { openURL } from "~/renderer/linking";
 import { QuizzPopin } from "~/renderer/modals/OnboardingQuizz/OnboardingQuizzModal";
-import { useDynamicUrl } from "~/renderer/terms";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import RecoveryWarning from "../../Help/RecoveryWarning";
 import { UseCase } from "../../index";
+import { urls } from "~/config/urls";
 
 const FlowStepperContainer = styled(Flex)`
   width: 100%;
@@ -112,7 +113,7 @@ const FlowStepper: React.FC<FlowStepperProps> = ({
   handleBack,
   handleContinue,
 }) => {
-  const urlFaq = useDynamicUrl("faq");
+  const urlFaq = useLocalizedUrl(urls.faq);
 
   const handleHelp = () => openURL(urlFaq);
 

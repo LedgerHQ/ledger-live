@@ -45,7 +45,7 @@ function OperationDetailsExtra({ operation, type, account }: OperationDetailsExt
   const discreet = useSelector(discreetModeSelector);
   const { locale } = useSettings();
   const {
-    extra: { votes, frozenAmount, unfreezeAmount },
+    extra: { votes, frozenAmount, unfreezeAmount, unDelegatedAmount, receiverAddress },
   } = operation;
 
   switch (type) {
@@ -68,6 +68,29 @@ function OperationDetailsExtra({ operation, type, account }: OperationDetailsExt
         showCode: true,
         discreet,
         locale: locale,
+      });
+      return <Section title={t("operationDetails.extra.unfreezeAmount")} value={value} />;
+    }
+
+    case "UNDELEGATE_RESOURCE": {
+      const value = formatCurrencyUnit(account.unit, unDelegatedAmount || new BigNumber(0), {
+        showCode: true,
+        discreet,
+        locale,
+      });
+      return (
+        <>
+          <Section title={t("operationDetails.extra.undelegatedAmount")} value={value} />
+          <Section title={t("operationDetails.extra.undelegatedFrom")} value={receiverAddress} />
+        </>
+      );
+    }
+
+    case "LEGACY_UNFREEZE": {
+      const value = formatCurrencyUnit(account.unit, unfreezeAmount || new BigNumber(0), {
+        showCode: true,
+        discreet,
+        locale,
       });
       return <Section title={t("operationDetails.extra.unfreezeAmount")} value={value} />;
     }

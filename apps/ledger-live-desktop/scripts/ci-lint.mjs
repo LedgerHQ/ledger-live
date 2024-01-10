@@ -1,26 +1,26 @@
 #!/usr/bin/env zx
-import { basename } from 'path'
-import stylish from "../../../node_modules/eslint/lib/cli-engine/formatters/stylish.js"
+import { basename } from "path";
+import stylish from "../../../node_modules/eslint/lib/cli-engine/formatters/stylish.js";
 
 const usage = () => {
   console.log(`Usage: ${basename(__filename)} [-h] [-p <port>] [-t <server-token>]`);
-  process.exit(1)
-}
+  process.exit(1);
+};
 
 let port, token;
 
 for (const arg in argv) {
   switch (arg) {
-    case 'h':
+    case "h":
       usage();
       break;
-    case 'p':
+    case "p":
       port = argv[arg];
-      break
-    case 't':
+      break;
+    case "t":
       token = argv[arg];
       break;
-    case '_':
+    case "_":
       break;
     default:
       usage();
@@ -28,14 +28,9 @@ for (const arg in argv) {
   }
 }
 
-if (typeof token !== "string") {
-  usage();
-}
-
 const lint = async () => {
-  cd('../../')
-
-  if (typeof port === 'string') {
+  cd("../../");
+  if (typeof port === "string" && typeof token !== "string") {
     await $`pnpm lint \\
       --filter="ledger-live-desktop" \\
       --api="http://127.0.0.1:${port}" \\
@@ -44,16 +39,15 @@ const lint = async () => {
       -- --format="json" \\
       -o="lint.json"`;
   } else {
+    console.log("here in the else");
     await $`pnpm lint \\
       --filter="ledger-live-desktop" \\
-      --token=${token} \\
-      --team="foo" \\
       -- --format="json" \\
       -o="lint.json"`;
   }
 
-  const lintJson = require('../lint.json')
+  const lintJson = require("../lint.json");
   stylish(lintJson);
-}
+};
 
-await lint()
+await lint();
