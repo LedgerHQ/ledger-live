@@ -1,5 +1,12 @@
 # dummy-wallet-app
 
+## 0.1.30-custom-exchange.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@33.4.0-custom-exchange.1
+
 ## 0.1.30-custom-exchange.0
 
 ### Patch Changes

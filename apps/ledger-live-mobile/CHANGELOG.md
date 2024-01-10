@@ -1,5 +1,12 @@
 # live-mobile
 
+## 3.37.0-custom-exchange.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@33.4.0-custom-exchange.1
+
 ## 3.37.0-custom-exchange.0
 
 ### Minor Changes

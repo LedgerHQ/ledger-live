@@ -1,5 +1,12 @@
 # web-tools
 
+## 0.3.0-custom-exchange.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@33.4.0-custom-exchange.1
+
 ## 0.3.0-custom-exchange.0
 
 ### Minor Changes

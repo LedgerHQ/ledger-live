@@ -1,5 +1,12 @@
 # @ledgerhq/test-utils
 
+## 0.0.13-custom-exchange.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@33.4.0-custom-exchange.1
+
 ## 0.0.13-custom-exchange.0
 
 ### Patch Changes

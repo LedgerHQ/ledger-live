@@ -1,5 +1,12 @@
 # @ledgerhq/live-common
 
+## 33.4.0-custom-exchange.1
+
+### Patch Changes
+
+- Updated dependencies [[`4da0a52`](https://github.com/LedgerHQ/ledger-live/commit/4da0a5255e7eadd83650b15789f11c8c2ceea403)]:
+  - @ledgerhq/wallet-api-exchange-module@0.1.1-custom-exchange.0
+
 ## 33.4.0-custom-exchange.0
 
 ### Minor Changes

@@ -1,5 +1,12 @@
 # ledger-live-desktop
 
+## 2.74.0-custom-exchange.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@33.4.0-custom-exchange.1
+
 ## 2.74.0-custom-exchange.0
 
 ### Minor Changes
