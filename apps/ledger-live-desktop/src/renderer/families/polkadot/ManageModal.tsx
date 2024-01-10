@@ -127,7 +127,7 @@ const ManageModal = ({ account, source, ...rest }: Props) => {
   );
 
   const electionOpen = staking?.electionClosed !== undefined ? !staking?.electionClosed : false;
-  const accountCanNominate = canNominate(account);
+  const accountCanNominate = true; // canNominate(account);
   const hasUnlockedBalance = unlockedBalance && unlockedBalance.gt(0);
   const hasPendingWithdrawUnbondedOperation = hasPendingOperationType(account, "WITHDRAW_UNBONDED");
   const nominationEnabled = !electionOpen && accountCanNominate;
