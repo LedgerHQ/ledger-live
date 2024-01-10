@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from "react";
+import React, { useContext } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { AnimationContainer, AsideFooter, Bullet, Column, Title } from "../shared";
 
@@ -12,7 +12,7 @@ import { urls } from "~/config/urls";
 import Animation from "~/renderer/animations";
 import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animations";
 import { openURL } from "~/renderer/linking";
-import { useDynamicUrl } from "~/renderer/terms";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { OnboardingContext } from "../../../index";
 
 export function RecoverHowTo() {
@@ -35,9 +35,10 @@ export function RecoverHowTo() {
     },
   ];
 
-  const onClickArticleLink = useCallback(() => openURL(urls.howToUpdateNewLedger), []);
+  const howToUpdateNewLedgerUrl = useLocalizedUrl(urls.howToUpdateNewLedger);
+  const onClickArticleLink = () => openURL(howToUpdateNewLedgerUrl);
 
-  const urlFaq = useDynamicUrl("faq");
+  const urlFaq = useLocalizedUrl(urls.faq);
 
   const onClickSupportLink = () => openURL(urlFaq);
 
