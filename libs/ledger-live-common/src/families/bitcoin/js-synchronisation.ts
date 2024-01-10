@@ -142,11 +142,11 @@ const makeGetAccountShape =
     span.finish();
 
     const oldOperations = initialAccount?.operations || [];
-    const [, currentBlock] = await Promise.all([
-      wallet.syncAccount(walletAccount),
-      walletAccount.xpub.explorer.getCurrentBlock(),
-    ]);
+    const currentBlock = await walletAccount.xpub.explorer.getCurrentBlock();
+
     const blockHeight = currentBlock?.height;
+    await wallet.syncAccount(walletAccount, blockHeight);
+
     const balance = await wallet.getAccountBalance(walletAccount);
     span = startSpan("sync", "getAccountTransactions");
     const { txs: transactions } = await wallet.getAccountTransactions(walletAccount);
