@@ -144,7 +144,7 @@ export const urls = {
     gettingStarted:
       "https://www.ledger.com/start?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=help_modal",
     helpCenter:
-      "https://support.ledger.com/hc/en-us?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=help_modal",
+      "https://support.ledger.com/hc?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=help_modal",
     ledgerAcademy:
       "https://www.ledger.com/academy?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=help_modal",
     status:
