@@ -1,5 +1,23 @@
 # @ledgerhq/live-common
 
+## 33.4.0-nightly.9
+
+### Minor Changes
+
+- [#5534](https://github.com/LedgerHQ/ledger-live/pull/5534) [`a4a72da`](https://github.com/LedgerHQ/ledger-live/commit/a4a72da33ddfefd5ba69ac4d9ecb33d7775583f1) Thanks [@Philippoes](https://github.com/Philippoes)! - Add support for Tron Stake 2.0
+
+### Patch Changes
+
+- [#5845](https://github.com/LedgerHQ/ledger-live/pull/5845) [`5ed4076`](https://github.com/LedgerHQ/ledger-live/commit/5ed407610dc0df8bc5b1c6b17b338d9f2dc0c94e) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Fix the disconnected device drawer behavior when a device is disconnected during action
+
+- Updated dependencies []:
+  - @ledgerhq/coin-algorand@0.3.8-nightly.2
+  - @ledgerhq/coin-evm@0.12.0-nightly.4
+  - @ledgerhq/coin-framework@0.11.0-nightly.2
+  - @ledgerhq/coin-polkadot@0.5.1-nightly.2
+  - @ledgerhq/hw-app-eth@6.35.2-nightly.2
+  - @ledgerhq/live-config@1.0.1-nightly.1
+
 ## 33.4.0-nightly.8
 
 ### Patch Changes

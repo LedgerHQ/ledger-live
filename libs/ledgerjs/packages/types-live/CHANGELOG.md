@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.44.0-nightly.1
+
+### Minor Changes
+
+- [#5534](https://github.com/LedgerHQ/ledger-live/pull/5534) [`a4a72da`](https://github.com/LedgerHQ/ledger-live/commit/a4a72da33ddfefd5ba69ac4d9ecb33d7775583f1) Thanks [@Philippoes](https://github.com/Philippoes)! - Add support for Tron Stake 2.0
+
 ## 6.43.2-nightly.0
 
 ### Patch Changes

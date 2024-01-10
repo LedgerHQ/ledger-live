@@ -1,5 +1,26 @@
 # live-mobile
 
+## 3.37.0-nightly.10
+
+### Minor Changes
+
+- [#5875](https://github.com/LedgerHQ/ledger-live/pull/5875) [`464fa20`](https://github.com/LedgerHQ/ledger-live/commit/464fa20bfb9e30337e8ab769fc098884be03db14) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Add the grid layout and 3 squared content cards to the flexible system
+
+- [#5534](https://github.com/LedgerHQ/ledger-live/pull/5534) [`a4a72da`](https://github.com/LedgerHQ/ledger-live/commit/a4a72da33ddfefd5ba69ac4d9ecb33d7775583f1) Thanks [@Philippoes](https://github.com/Philippoes)! - Add support for Tron Stake 2.0
+
+### Patch Changes
+
+- [#5845](https://github.com/LedgerHQ/ledger-live/pull/5845) [`5ed4076`](https://github.com/LedgerHQ/ledger-live/commit/5ed407610dc0df8bc5b1c6b17b338d9f2dc0c94e) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Fix the disconnected device drawer behavior when a device is disconnected during action
+
+- Updated dependencies [[`e1f967e`](https://github.com/LedgerHQ/ledger-live/commit/e1f967eb617a749a9f6dc58a7d1f4b6633f56d1c), [`5ed4076`](https://github.com/LedgerHQ/ledger-live/commit/5ed407610dc0df8bc5b1c6b17b338d9f2dc0c94e), [`a4a72da`](https://github.com/LedgerHQ/ledger-live/commit/a4a72da33ddfefd5ba69ac4d9ecb33d7775583f1)]:
+  - @ledgerhq/native-ui@0.22.4-nightly.1
+  - @ledgerhq/live-common@33.4.0-nightly.9
+  - @ledgerhq/types-live@6.44.0-nightly.1
+  - @ledgerhq/coin-evm@0.12.0-nightly.4
+  - @ledgerhq/coin-framework@0.11.0-nightly.2
+  - @ledgerhq/domain-service@1.1.17-nightly.1
+  - @ledgerhq/live-config@1.0.1-nightly.1
+
 ## 3.37.0-nightly.9
 
 ### Patch Changes

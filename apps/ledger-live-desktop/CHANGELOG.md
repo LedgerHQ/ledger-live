@@ -1,5 +1,25 @@
 # ledger-live-desktop
 
+## 2.74.0-nightly.10
+
+### Minor Changes
+
+- [#5534](https://github.com/LedgerHQ/ledger-live/pull/5534) [`a4a72da`](https://github.com/LedgerHQ/ledger-live/commit/a4a72da33ddfefd5ba69ac4d9ecb33d7775583f1) Thanks [@Philippoes](https://github.com/Philippoes)! - Add support for Tron Stake 2.0
+
+### Patch Changes
+
+- [#5870](https://github.com/LedgerHQ/ledger-live/pull/5870) [`4b513d1`](https://github.com/LedgerHQ/ledger-live/commit/4b513d1127ee8d2ac82f7fb4f868792d16bb52f0) Thanks [@Justkant](https://github.com/Justkant)! - fix: wallet-api complete exchange drawer not closing
+
+- [#5853](https://github.com/LedgerHQ/ledger-live/pull/5853) [`4579b14`](https://github.com/LedgerHQ/ledger-live/commit/4579b14eac0d644f691bf3567bd78b8d528c7edb) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - error message when searching quotes instead of loading message
+
+- Updated dependencies [[`5ed4076`](https://github.com/LedgerHQ/ledger-live/commit/5ed407610dc0df8bc5b1c6b17b338d9f2dc0c94e), [`a4a72da`](https://github.com/LedgerHQ/ledger-live/commit/a4a72da33ddfefd5ba69ac4d9ecb33d7775583f1)]:
+  - @ledgerhq/live-common@33.4.0-nightly.9
+  - @ledgerhq/types-live@6.44.0-nightly.1
+  - @ledgerhq/coin-evm@0.12.0-nightly.4
+  - @ledgerhq/coin-framework@0.11.0-nightly.2
+  - @ledgerhq/domain-service@1.1.17-nightly.1
+  - @ledgerhq/live-config@1.0.1-nightly.1
+
 ## 2.74.0-nightly.9
 
 ### Patch Changes

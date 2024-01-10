@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.22.4-nightly.1
+
+### Patch Changes
+
+- [#5859](https://github.com/LedgerHQ/ledger-live/pull/5859) [`e1f967e`](https://github.com/LedgerHQ/ledger-live/commit/e1f967eb617a749a9f6dc58a7d1f4b6633f56d1c) Thanks [@mle-gall](https://github.com/mle-gall)! - Fixed warning on animatedInput (forwardRef not needed)
+
 ## 0.22.4-nightly.0
 
 ### Patch Changes
