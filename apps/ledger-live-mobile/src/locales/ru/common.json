@@ -556,7 +556,7 @@
       "title" : "Нет активов для разморозки",
       "description" : "У вас недостаточно очков Энергии (Energy) для разморозки."
     },
-    "TronUnfreezeNotExpired" : {
+    "TronLegacyUnfreezeNotExpired" : {
       "title" : "Функция разморозки пока недоступна",
       "description" : "После заморозки активов должно пройти 3 дня."
     },
