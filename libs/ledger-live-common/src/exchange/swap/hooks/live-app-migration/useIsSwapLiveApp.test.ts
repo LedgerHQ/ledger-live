@@ -18,9 +18,7 @@ describe("useIsSwapLiveApp hook", () => {
     it("returns the enabled flag when currencyFrom is not defined", () => {
       useMockFeature.mockReturnValue({ enabled: true });
 
-      const { result } = renderHook(() =>
-        useIsSwapLiveApp({ currencyFrom: undefined, swapWebManifestId: "swap-live-app-demo-0" }),
-      );
+      const { result } = renderHook(() => useIsSwapLiveApp({ currencyFrom: undefined }));
 
       expect(result.current.enabled).toBe(true);
     });
@@ -31,9 +29,7 @@ describe("useIsSwapLiveApp hook", () => {
         params: { families: undefined, currencies: undefined },
       });
 
-      const { result } = renderHook(() =>
-        useIsSwapLiveApp({ currencyFrom: bitcoin, swapWebManifestId: "swap-live-app-demo-0" }),
-      );
+      const { result } = renderHook(() => useIsSwapLiveApp({ currencyFrom: bitcoin }));
 
       expect(result.current.enabled).toBe(true);
     });
@@ -44,9 +40,7 @@ describe("useIsSwapLiveApp hook", () => {
         params: { families: ["bitcoin"], currencies: [] },
       });
 
-      const { result } = renderHook(() =>
-        useIsSwapLiveApp({ currencyFrom: bitcoin, swapWebManifestId: "swap-live-app-demo-0" }),
-      );
+      const { result } = renderHook(() => useIsSwapLiveApp({ currencyFrom: bitcoin }));
 
       expect(result.current.enabled).toBe(true);
     });
@@ -57,9 +51,7 @@ describe("useIsSwapLiveApp hook", () => {
         params: { families: [], currencies: ["bitcoin"] },
       });
 
-      const { result } = renderHook(() =>
-        useIsSwapLiveApp({ currencyFrom: bitcoin, swapWebManifestId: "swap-live-app-demo-0" }),
-      );
+      const { result } = renderHook(() => useIsSwapLiveApp({ currencyFrom: bitcoin }));
 
       expect(result.current.enabled).toBe(true);
     });
@@ -70,9 +62,7 @@ describe("useIsSwapLiveApp hook", () => {
         params: { families: ["ethereum"], currencies: ["ethereum"] },
       });
 
-      const { result } = renderHook(() =>
-        useIsSwapLiveApp({ currencyFrom: bitcoin, swapWebManifestId: "swap-live-app-demo-0" }),
-      );
+      const { result } = renderHook(() => useIsSwapLiveApp({ currencyFrom: bitcoin }));
 
       expect(result.current.enabled).toBe(false);
     });
@@ -83,9 +73,7 @@ describe("useIsSwapLiveApp hook", () => {
         params: { families: [], currencies: [] },
       });
 
-      const { result } = renderHook(() =>
-        useIsSwapLiveApp({ currencyFrom: bitcoin, swapWebManifestId: "swap-live-app-demo-0" }),
-      );
+      const { result } = renderHook(() => useIsSwapLiveApp({ currencyFrom: bitcoin }));
 
       expect(result.current.enabled).toBe(true);
     });
@@ -94,9 +82,7 @@ describe("useIsSwapLiveApp hook", () => {
     it("returns the enabled flag when currencyFrom is not defined", () => {
       useMockFeature.mockReturnValue({ enabled: true, "swap-live-app-demo-0": { enabled: true } });
 
-      const { result } = renderHook(() =>
-        useIsSwapLiveApp({ currencyFrom: undefined, swapWebManifestId: "swap-live-app-demo-0" }),
-      );
+      const { result } = renderHook(() => useIsSwapLiveApp({ currencyFrom: undefined }));
 
       expect(result.current.enabled).toBe(true);
     });
@@ -108,9 +94,7 @@ describe("useIsSwapLiveApp hook", () => {
         "swap-live-app-demo-0": { enabled: true },
       });
 
-      const { result } = renderHook(() =>
-        useIsSwapLiveApp({ currencyFrom: bitcoin, swapWebManifestId: "swap-live-app-demo-0" }),
-      );
+      const { result } = renderHook(() => useIsSwapLiveApp({ currencyFrom: bitcoin }));
 
       expect(result.current.enabled).toBe(true);
     });
@@ -124,9 +108,7 @@ describe("useIsSwapLiveApp hook", () => {
         },
       });
 
-      const { result } = renderHook(() =>
-        useIsSwapLiveApp({ currencyFrom: bitcoin, swapWebManifestId: "swap-live-app-demo-0" }),
-      );
+      const { result } = renderHook(() => useIsSwapLiveApp({ currencyFrom: bitcoin }));
 
       expect(result.current.enabled).toBe(true);
     });
@@ -140,9 +122,7 @@ describe("useIsSwapLiveApp hook", () => {
         },
       });
 
-      const { result } = renderHook(() =>
-        useIsSwapLiveApp({ currencyFrom: bitcoin, swapWebManifestId: "swap-live-app-demo-0" }),
-      );
+      const { result } = renderHook(() => useIsSwapLiveApp({ currencyFrom: bitcoin }));
 
       expect(result.current.enabled).toBe(true);
     });
@@ -156,9 +136,7 @@ describe("useIsSwapLiveApp hook", () => {
         },
       });
 
-      const { result } = renderHook(() =>
-        useIsSwapLiveApp({ currencyFrom: bitcoin, swapWebManifestId: "swap-live-app-demo-0" }),
-      );
+      const { result } = renderHook(() => useIsSwapLiveApp({ currencyFrom: bitcoin }));
 
       expect(result.current.enabled).toBe(false);
     });
@@ -172,9 +150,7 @@ describe("useIsSwapLiveApp hook", () => {
         },
       });
 
-      const { result } = renderHook(() =>
-        useIsSwapLiveApp({ currencyFrom: bitcoin, swapWebManifestId: "swap-live-app-demo-0" }),
-      );
+      const { result } = renderHook(() => useIsSwapLiveApp({ currencyFrom: bitcoin }));
 
       expect(result.current.enabled).toBe(true);
     });

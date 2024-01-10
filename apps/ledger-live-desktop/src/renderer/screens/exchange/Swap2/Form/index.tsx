@@ -102,7 +102,6 @@ const SwapForm = () => {
 
   const isSwapLiveAppEnabled = useIsSwapLiveApp({
     currencyFrom: swapTransaction.swap.from.currency,
-    swapWebManifestId: SWAP_WEB_MANIFEST_ID,
   });
 
   // @TODO: Try to check if we can directly have the right state from `useSwapTransaction`
