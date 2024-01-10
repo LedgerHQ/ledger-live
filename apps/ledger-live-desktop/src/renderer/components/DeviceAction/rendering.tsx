@@ -596,7 +596,7 @@ export const renderLockedDeviceError = ({
         }
         buttons={
           onRetry && inlineRetry ? (
-            <ButtonV3 size="large" variant="main" onClick={onRetry} borderRadius={"9999px"}>
+            <ButtonV3 size="large" variant="main" onClick={onRetry}>
               {t("common.retry")}
             </ButtonV3>
           ) : null
@@ -630,7 +630,6 @@ export const DeviceNotOnboardedErrorComponent = withV3StyleProvider(
             <ButtonV3
               variant="main"
               size="large"
-              borderRadius="9999px"
               onClick={redirectToOnboarding}
               Icon={IconsLegacy.ArrowRightMedium}
             >
