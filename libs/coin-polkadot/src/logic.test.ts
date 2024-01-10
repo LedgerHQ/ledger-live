@@ -19,7 +19,7 @@ const polkadotAccount: PolkadotAccount = {
   used: true,
   creationDate: new Date(),
   blockHeight: 0,
-  currency: getCryptoCurrencyById("polkdatot"),
+  currency: getCryptoCurrencyById("polkadot"),
   unit: { name: "DOT", code: "DOT", magnitude: 16 },
   operations: [],
   pendingOperations: [],
