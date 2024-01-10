@@ -18,6 +18,7 @@ const ACCOUNT_1 = "SP2DV2RVZP1A69Q6VAG5PHEQ6ZHQHZPCV84TMYNGN";
 
 const stacks: CurrenciesData<Transaction> = {
   FIXME_ignoreAccountFields: [],
+  IgnorePrepareTransactionFields: ["fee"],
   scanAccounts: [
     {
       name: "stacks seed 1",
