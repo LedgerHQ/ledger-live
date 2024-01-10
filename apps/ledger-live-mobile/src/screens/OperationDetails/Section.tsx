@@ -7,12 +7,14 @@ type Props = FieldWrapperProps & {
   title: string;
   value?: string | React.ReactNode;
   headerRight?: React.ReactNode;
+  testID?: string;
 };
 export default function Section({
   title,
   value,
+  testID,
   children = (
-    <LText style={styles.value} semiBold selectable>
+    <LText style={styles.value} semiBold selectable testID={testID}>
       {value}
     </LText>
   ),

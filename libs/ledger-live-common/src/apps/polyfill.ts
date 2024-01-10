@@ -139,7 +139,6 @@ export const mapApplicationV2ToApp = ({
   firmwareKey: firmware_key, // No point in refactoring since api wont change.
   deleteKey: delete_key,
   applicationType: type,
-  compatibleWallets,
   parentName,
   currencyId,
   ...rest
@@ -154,7 +153,6 @@ export const mapApplicationV2ToApp = ({
   type: name === "Exchange" ? AppType.swap : type,
   ...rest,
   currencyId: findCryptoCurrencyById(currencyId) ? currencyId : getCurrencyIdFromAppName(name),
-  compatibleWallets: parseCompatibleWallets(compatibleWallets, name),
 });
 
 export const calculateDependencies = (): void => {
@@ -176,31 +174,6 @@ export const calculateDependencies = (): void => {
       declareDep(currency.managerAppName + " Test", family.managerAppName);
     }
   });
-};
-
-export const parseCompatibleWallets = (
-  compatibleWalletsJSON: string | undefined,
-  appName: string,
-): Array<{ name: string; url: string }> => {
-  const compatibleWallets: Array<{ name: string; url: string }> = [];
-  if (compatibleWalletsJSON) {
-    try {
-      const parsed = JSON.parse(compatibleWalletsJSON);
-      if (parsed && Array.isArray(parsed)) {
-        parsed.forEach(({ name, url }) => {
-          compatibleWallets.push({
-            name,
-            url,
-          });
-        });
-      }
-      return parsed;
-    } catch (e) {
-      console.error("invalid compatibleWalletsJSON for " + appName, e);
-    }
-  }
-
-  return compatibleWallets;
 };
 
 export const polyfillApp = (app: App): App => {

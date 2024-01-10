@@ -303,10 +303,10 @@ type EditTransactionValidationIssues = Partial<
  * the transaction will be rejected by the network with a
  * "replacement transaction underpriced" error
  */
-const validateEditTransaction = ({
-  editType,
+export const validateEditTransaction = ({
   transaction,
   transactionToUpdate,
+  editType,
 }: {
   transaction: EvmTransaction;
   transactionToUpdate: EvmTransaction;

@@ -31,11 +31,14 @@ jobs:
         id: bot
         timeout-minutes: 120
         with:
-          EXPLORER: https://explorers.api-01.live.ledger-stg.com
+          EXPLORER: https://atlas-stg.ledger-test.com
           SHOW_LEGACY_NEW_ACCOUNT: "1"
           SEED: ${{ secrets.SEED2 }}
           SLACK_API_TOKEN: ${{secrets.SLACK_API_TOKEN}}
           SLACK_ICON_EMOJI: ":bot-seed2:"
           SLACK_CHANNEL: explorer-bot-stg
-          BOT_FILTER_CURRENCIES: avalanche_c_chain,bsc,polygon,ethereum,ethereum_classic,ethereum_goerli
+          # These currencies are not yet handled by ATLAS, should be added back
+          # to the list once they are.
+          # avalanche_c_chain,bsc,polygon,ethereum_classic
+          BOT_FILTER_CURRENCIES: ethereum,ethereum_goerli,ethereum_sepolia,ethereum_holesky
           BOT_ENVIRONMENT: staging

@@ -17,7 +17,8 @@ import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import CounterValue from "~/components/CounterValue";
 import DelegationInfo from "~/components/DelegationInfo";
 import Section from "~/screens/OperationDetails/Section";
-import { discreetModeSelector, localeSelector } from "~/reducers/settings";
+import { discreetModeSelector } from "~/reducers/settings";
+import { useSettings } from "~/hooks";
 
 const helpURL = "https://support.ledger.com/hc/en-us/articles/360013062139";
 
@@ -42,9 +43,9 @@ type OperationDetailsExtraProps = {
 function OperationDetailsExtra({ operation, type, account }: OperationDetailsExtraProps) {
   const { t } = useTranslation();
   const discreet = useSelector(discreetModeSelector);
-  const locale = useSelector(localeSelector);
+  const { locale } = useSettings();
   const {
-    extra: { votes, frozenAmount, unfreezeAmount },
+    extra: { votes, frozenAmount, unfreezeAmount, unDelegatedAmount, receiverAddress },
   } = operation;
 
   switch (type) {
@@ -57,12 +58,35 @@ function OperationDetailsExtra({ operation, type, account }: OperationDetailsExt
       const value = formatCurrencyUnit(account.unit, frozenAmount || new BigNumber(0), {
         showCode: true,
         discreet,
-        locale,
+        locale: locale,
       });
       return <Section title={t("operationDetails.extra.frozenAmount")} value={value} />;
     }
 
     case "UNFREEZE": {
+      const value = formatCurrencyUnit(account.unit, unfreezeAmount || new BigNumber(0), {
+        showCode: true,
+        discreet,
+        locale: locale,
+      });
+      return <Section title={t("operationDetails.extra.unfreezeAmount")} value={value} />;
+    }
+
+    case "UNDELEGATE_RESOURCE": {
+      const value = formatCurrencyUnit(account.unit, unDelegatedAmount || new BigNumber(0), {
+        showCode: true,
+        discreet,
+        locale,
+      });
+      return (
+        <>
+          <Section title={t("operationDetails.extra.undelegatedAmount")} value={value} />
+          <Section title={t("operationDetails.extra.undelegatedFrom")} value={receiverAddress} />
+        </>
+      );
+    }
+
+    case "LEGACY_UNFREEZE": {
       const value = formatCurrencyUnit(account.unit, unfreezeAmount || new BigNumber(0), {
         showCode: true,
         discreet,
@@ -84,7 +108,7 @@ type OperationsDetailsVotesProps = {
 function OperationDetailsVotes({ votes, account }: OperationsDetailsVotesProps) {
   const { t } = useTranslation();
   const sp = useTronSuperRepresentatives();
-  const locale = useSelector(localeSelector);
+  const { locale } = useSettings();
   const formattedVotes = formatVotes(votes, sp);
   const redirectAddressCreator = useCallback(
     (address: string) => () => {

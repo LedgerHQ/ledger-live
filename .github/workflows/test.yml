@@ -27,6 +27,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
   cancel-in-progress: true
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   test-docs:
     name: "Test Docs"
@@ -39,13 +43,17 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
+        id: toolchain
         with:
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          skip_turbo_cache: "false"
       - name: Install dependencies
         run: pnpm i --filter="!./apps/**"
       - name: run doc
-        run: pnpm doc:ljs
+        run: pnpm doc:ljs --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
       - name: get diff
         id: diff
         run: |
@@ -65,21 +73,17 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
+        id: toolchain
         with:
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
-      - name: TurboRepo local caching server
-        id: turborepo-cache-server
-        uses: ./tools/actions/turborepo-s3-cache
-        with:
-          server-token: "yolo"
-          cleanup-cache-folder: "true"
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          skip_turbo_cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - name: Install dependencies
         run: pnpm i -F "web-tools..." -F "ledger-live"
       - name: build web-tools
-        run: pnpm turbo run build --filter="web-tools"
+        run: pnpm turbo run build --filter="web-tools" --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
 
   test-cli:
     name: "Test CLI"
@@ -96,28 +100,24 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
+        id: toolchain
         with:
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
-      - name: TurboRepo local caching server
-        id: turborepo-cache-server
-        uses: ./tools/actions/turborepo-s3-cache
-        with:
-          server-token: "yolo"
-          cleanup-cache-folder: "true"
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          skip_turbo_cache: "false"
       - name: Install dependencies
         run: pnpm i -F "live-cli..." -F "ledger-live"
       - name: build cli
-        run: pnpm build:cli
+        run: pnpm build:cli --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
       - name: lint cli
-        run: pnpm lint --filter="live-cli" -- --quiet
+        run: pnpm lint --filter="live-cli" --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo" -- --quiet
       - name: typecheck cli
-        run: pnpm typecheck --filter="live-cli"
+        run: pnpm typecheck --filter="live-cli" --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
       - name: test cli
         id: test
-        run: pnpm run test --filter="live-cli"
+        run: pnpm run test --filter="live-cli" --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
       - name: get diff
         id: diff
         run: |
@@ -140,22 +140,18 @@ jobs:
           fetch-depth: 0
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
+        id: toolchain
         with:
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
-      - name: TurboRepo local caching server
-        id: turborepo-cache-server
-        uses: ./tools/actions/turborepo-s3-cache
-        with:
-          server-token: "yolo"
-          cleanup-cache-folder: "true"
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          skip_turbo_cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - name: Install dependencies
         run: pnpm i --filter="!./apps/**"
       - name: Build and Test affected libraries
         id: test-libs
-        run: pnpm run test --continue --filter="!./apps/**" --filter="!./libs/ui/**" --filter="!./tools/**" --filter="!ledger-live...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+        run: pnpm run test --continue --filter="!./apps/**" --filter="!./libs/ui/**" --filter="!./tools/**" --filter="!ledger-live...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
         shell: bash
       - name: scan ledger-live-common
         if: ${{ hashFiles('libs/ledger-live-common/coverage/lcov.info') != '' }}
@@ -207,26 +203,22 @@ jobs:
           fetch-depth: 0
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
+        id: toolchain
         with:
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          skip_turbo_cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - uses: ruby/setup-ruby@v1
         if: ${{ matrix.os == 'macos-latest' }}
         with:
           ruby-version: 3.2.2
-      - name: TurboRepo local caching server
-        id: turborepo-cache-server
-        uses: ./tools/actions/turborepo-s3-cache
-        with:
-          server-token: "yolo"
-          cleanup-cache-folder: "true"
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: Install dependencies
         run: pnpm i --filter="./libs/ui/**"
       - name: Build and Test affected libraries
         id: test-ui
-        run: pnpm run test --continue --filter="./libs/ui/**" --filter="!ledger-live...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+        run: pnpm run test --continue --filter="./libs/ui/**" --filter="!ledger-live...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
         shell: bash
       - name: (On Failure) Upload react-ui test results
         uses: actions/upload-artifact@v3
@@ -263,28 +255,24 @@ jobs:
           fetch-depth: 0
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
+        id: toolchain
         with:
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
-      - name: TurboRepo local caching server
-        id: turborepo-cache-server
-        uses: ./tools/actions/turborepo-s3-cache
-        with:
-          server-token: "yolo"
-          cleanup-cache-folder: "true"
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          skip_turbo_cache: "false"
       - name: Install dependencies
         run: pnpm i --filter="!./apps/**"
       - name: Lint affected libraries
         id: lint-libs
-        run: pnpm lint --continue --filter="!./apps/**" --filter="!./tools/**" --filter="!ledger-live...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo" -- --quiet
+        run: pnpm lint --continue --filter="!./apps/**" --filter="!./tools/**" --filter="!ledger-live...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo" -- --quiet
       - name: Typecheck affected libraries
         id: typecheck-libs
-        run: pnpm typecheck --continue --filter="!./apps/**" --filter="!./tools/**" --filter="!ledger-live...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+        run: pnpm typecheck --continue --filter="!./apps/**" --filter="!./tools/**" --filter="!ledger-live...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
       - name: Test unimported files
         id: unimported
-        run: pnpm unimported --continue --filter="!./apps/**" --filter="!./tools/**" --filter="!ledger-live...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+        run: pnpm unimported --continue --filter="!./apps/**" --filter="!./tools/**" --filter="!ledger-live...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
         shell: bash
       - uses: actions/github-script@v6
         if: always()

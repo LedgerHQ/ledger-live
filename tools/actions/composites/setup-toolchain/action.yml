@@ -7,15 +7,36 @@ inputs:
   install_dotnet:
     description: "dotnet setup for Windows"
     required: false
-  no_pnpm_cache:
-    description: should install without pnpm cache
+  skip_pnpm_cache:
+    description: "true to skip pnpm caching, false by default"
     required: false
-  aws-access-key:
-    description: "aws access key"
+    default: "false"
+  skip_pod_cache:
+    description: "false to get cache, true by default"
     required: false
-  aws-secret-key:
-    description: "aws secret key"
+    default: "true"
+  skip_turbo_cache:
+    description: "false to get cache, true by default"
     required: false
+    default: "true"
+  accountId:
+    description: "aws cache account id"
+    required: false
+  roleName:
+    description: "aws cache role name"
+    required: false
+  region:
+    description: "aws cache region"
+    required: false
+    default: "eu-west-1"
+  turbo-server-token:
+    description: "custom token for local s3 server"
+    required: false
+    default: "yolo"
+outputs:
+  port:
+    description: "The port the local server runs on"
+    value: ${{ steps.turborepo-cache-server.outputs.port }}
 
 runs:
   using: "composite"
@@ -29,29 +50,38 @@ runs:
 
     - uses: pnpm/action-setup@v2
       with:
-        version: 8.11
+        version: 8.13.1
     - name: Get pnpm store directory
       shell: bash
       run: |
         echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
 
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v3
+      if: inputs.accountId != '' && inputs.roleName != ''
+      id: aws
+      with:
+        role-to-assume: arn:aws:iam::${{ inputs.accountId }}:role/${{ inputs.roleName }}
+        aws-region: ${{ inputs.region }}
+
     - name: Cache pnpm store
       uses: tespkg/actions-cache@v1
-      if: inputs.no_pnpm_cache == '' && inputs.aws-access-key != '' && inputs.aws-secret-key != ''
+      if: steps.aws.conclusion == 'success' && inputs.skip_pnpm_cache != 'true'
       with:
         path: ${{ env.STORE_PATH }}
         key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
         restore-keys: |
           ${{ runner.os }}-pnpm-store-
-        accessKey: ${{ inputs.aws-access-key }}
-        secretKey: ${{ inputs.aws-secret-key }}
+        accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+        secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+        sessionToken: ${{ env.AWS_SESSION_TOKEN }}
         bucket: ll-gha-s3-cache
-        region: eu-west-1
+        region: ${{ inputs.region }}
         use-fallback: false
 
     - uses: actions/setup-node@v3
       with:
-        node-version: 18
+        node-version: 20.10.0
         registry-url: "https://registry.npmjs.org"
 
     - name: upgrade npm
@@ -59,6 +89,28 @@ runs:
       run: |
         npm i -g npm
       shell: bash
+
+    - name: TurboRepo local caching server
+      id: turborepo-cache-server
+      if: steps.aws.conclusion == 'success' && inputs.skip_turbo_cache != 'true'
+      uses: ./tools/actions/turborepo-s3-cache
+      with:
+        server-token: "${{ inputs.turbo-server-token }}"
+        cleanup-cache-folder: "true"
+        aws-access-key: ${{ env.AWS_ACCESS_KEY_ID }}
+        aws-secret-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+        aws-session-token: ${{ env.AWS_SESSION_TOKEN }}
+        region: ${{ inputs.region }}
+
+    - name: Cache LLM pods
+      uses: actions/cache@v3
+      if: inputs.skip_pod_cache != 'true'
+      with:
+        path: |
+          apps/ledger-live-mobile/ios/Pods
+          ~/Library/Caches/CocoaPods
+          ~/.cocoapods
+        key: ${{ runner.os }}-pods-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock') }}
 
     # Using the proto toolchain manager:
     # - name: Setup proto

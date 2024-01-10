@@ -24,6 +24,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
   cancel-in-progress: true
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   codechecks:
     name: "Desktop code checks"
@@ -38,20 +42,21 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
+        id: toolchain
         with:
           install_dotnet: true
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          skip_turbo_cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
           skip_builds: true
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          turborepo-server-port: ${{ steps.toolchain.outputs.port }}
       - name: lint
-        run: |
-          pnpm lint --filter="ledger-live-desktop" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo" -- --format="json" -o="lint.json"
-          node -p "require('./node_modules/eslint/lib/cli-engine/formatters/stylish.js')(require('./apps/ledger-live-desktop/lint.json'))"
+        run: pnpm desktop lint:ci -p ${{ steps.toolchain.outputs.port }} -t "${{ secrets.TURBOREPO_SERVER_TOKEN }}"
       - name: prettier
         run: pnpm desktop prettier:check
       - name: typecheck
@@ -78,16 +83,19 @@ jobs:
         with:
           ref: ${{ inputs.ref || github.sha }}
       - name: Setup the toolchain
+        id: toolchain
         uses: ./tools/actions/composites/setup-toolchain
         with:
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          skip_turbo_cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
           skip_builds: true
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          turborepo-server-port: ${{ steps.toolchain.outputs.port }}
       - name: Run unit tests
         run: pnpm desktop test:jest:coverage
 
@@ -109,18 +117,21 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
+        id: toolchain
         with:
           upgrade_npm: true
           install_dotnet: true
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          skip_turbo_cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
           install_node_gyp: true
           install_playwright: true
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          turborepo-server-port: ${{ steps.toolchain.outputs.port }}
       - name: Run playwright tests
         id: tests
         run: |
@@ -181,17 +192,20 @@ jobs:
         with:
           ref: ${{ inputs.ref || github.sha }}
       - name: Setup the toolchain
+        id: toolchain
         uses: ./tools/actions/composites/setup-toolchain
         with:
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          skip_turbo_cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
           skip_ruby: true
           install_playwright: true
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          turborepo-server-port: ${{ steps.toolchain.outputs.port }}
       - name: Run playwright tests [Linux => xvfb-run]
         id: tests
         run: |
@@ -250,18 +264,21 @@ jobs:
         with:
           ref: ${{ inputs.ref || github.sha }}
       - name: Setup the toolchain
+        id: toolchain
         uses: ./tools/actions/composites/setup-toolchain
         with:
-          no_pnpm_cache: true
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          skip_turbo_cache: "false"
+          # skip_pnpm_cache: true
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
           skip_ruby: true
           install_playwright: true
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          turborepo-server-port: ${{ steps.toolchain.outputs.port }}
       - name: Run playwright tests
         id: tests
         run: |

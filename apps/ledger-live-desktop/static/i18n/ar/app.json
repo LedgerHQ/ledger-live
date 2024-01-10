@@ -5576,7 +5576,7 @@
       "title" : "لا توجد أصول لإزالة تجميدها",
       "description" : "ليس لديك أصول مرتبطة بالطاقة لإزالة التجميد"
     },
-    "TronUnfreezeNotExpired" : {
+    "TronLegacyUnfreezeNotExpired" : {
       "title" : "إزالة التجميد غير متوفر بعد",
       "description" : "يجب الانتظار 3 أيام بعد آخر عملية تجميد لك"
     },

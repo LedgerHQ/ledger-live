@@ -31,7 +31,7 @@ describe("Receive Flow", () => {
     await portfolioPage.waitForPortfolioPageToLoad();
     await portfolioPage.openTransferMenu();
     await portfolioPage.navigateToReceiveFromTransferMenu();
-    await common.performSearch("bitcoin");
+    await common.performSearch("Bitcoin");
     await receivePage.selectAsset("BTC");
     await deviceAction.selectMockDevice();
     await deviceAction.openApp();
@@ -44,14 +44,14 @@ describe("Receive Flow", () => {
   it("Should display the number of account existing per networks", async () => {
     await openReceive();
     await receivePage.selectAsset("ETH");
-    await receivePage.expectNumberOfAccountInListIsDisplayed("ethereum", 3);
-    await receivePage.expectNumberOfAccountInListIsDisplayed("optimism", 1);
+    await receivePage.expectNumberOfAccountInListIsDisplayed("Ethereum", 3);
+    await receivePage.expectNumberOfAccountInListIsDisplayed("OP Mainnet", 1);
   });
 
   it("Should create an account on a network", async () => {
     await openReceive();
     await receivePage.selectAsset("ETH");
-    await receivePage.selectCurrency("optimism");
+    await receivePage.selectNetwork("OP Mainnet");
     await receivePage.createAccount();
     await deviceAction.openApp();
     await receivePage.selectAccount("OP Mainnet 1");
@@ -63,13 +63,12 @@ describe("Receive Flow", () => {
 
   it("Should access to receive after importing a cryptocurrency on a selected network", async () => {
     await openReceive();
-    await common.performSearch("pol");
+    await common.performSearch("Polygon");
     await receivePage.selectAsset("MATIC");
-    await receivePage.selectCurrency("bsc");
+    await receivePage.selectNetwork("Binance Smart Chain");
     await deviceAction.openApp();
     await receivePage.selectAccount("Binance Smart Chain 1");
-    await receivePage.selectDontVerifyAddress();
-    await receivePage.selectReconfirmDontVerify();
+    await receivePage.doNotVerifyAddress();
     await receivePage.expectReceivePageIsDisplayed("BNB", "Binance Smart Chain 1");
   });
 
@@ -77,8 +76,7 @@ describe("Receive Flow", () => {
     await openReceive();
     await receivePage.selectAsset("XRP");
     await receivePage.selectAccount("XRP 2");
-    await receivePage.selectDontVerifyAddress();
-    await receivePage.selectReconfirmDontVerify();
+    await receivePage.doNotVerifyAddress();
     await receivePage.expectReceivePageIsDisplayed("XRP", "XRP 2");
   });
 });

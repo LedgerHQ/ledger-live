@@ -67,7 +67,6 @@ export type Props = {
   error?: Error | null | undefined;
   deviceModelId: DeviceModelId;
   deviceInfo: DeviceInfo;
-  setFirmwareUpdateOpened: (isOpen: boolean) => void;
   setFirmwareUpdateCompleted: (completed: boolean) => void;
   // This is bad practice but it seems to be needed since we spread additional props in the stepper and down below…
   [key: string]: unknown;

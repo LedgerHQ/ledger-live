@@ -51,6 +51,8 @@ setSupportedCurrencies([
   "bitcoin_testnet",
   "ethereum_ropsten",
   "ethereum_goerli",
+  "ethereum_sepolia",
+  "ethereum_holesky",
   "crypto_org_croeseid",
   "crypto_org",
   "filecoin",

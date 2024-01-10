@@ -516,7 +516,7 @@
       "title" : "Sem ativos para descongelar",
       "description" : "Você não tem ativos de Energia para descongelar."
     },
-    "TronUnfreezeNotExpired" : {
+    "TronLegacyUnfreezeNotExpired" : {
       "title" : "Descongelamento ainda indisponível",
       "description" : "Aguarde 3 dias após sua última operação de congelamento."
     },

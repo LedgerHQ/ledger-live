@@ -305,7 +305,7 @@ const envDefinitions = {
     desc: "disable the version check for firmware update eligibility",
   },
   EIP1559_ENABLED_CURRENCIES: {
-    def: "ethereum,ethereum_goerli,polygon",
+    def: "ethereum,ethereum_goerli,ethereum_sepolia,ethereum_holesky,polygon",
     parser: stringArrayParser,
     desc: "set the currency ids where EIP1559 is enabled",
   },

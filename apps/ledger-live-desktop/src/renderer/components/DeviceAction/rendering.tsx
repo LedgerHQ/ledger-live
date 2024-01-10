@@ -49,9 +49,9 @@ import {
   Button as ButtonV3,
   Flex,
   Text,
-  BoxedIcon,
   ProgressLoader,
   InfiniteLoader,
+  IconsLegacy,
 } from "@ledgerhq/react-ui";
 import { LockAltMedium } from "@ledgerhq/react-ui/assets/icons";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
@@ -61,6 +61,7 @@ import { Account } from "@ledgerhq/types-live";
 import LinkWithExternalIcon from "../LinkWithExternalIcon";
 import { openURL } from "~/renderer/linking";
 import Installing from "~/renderer/modals/UpdateFirmwareModal/Installing";
+import { ErrorBody } from "../ErrorBody";
 
 export const AnimationWrapper = styled.div`
   width: 600px;
@@ -155,6 +156,10 @@ export const SubTitle = styled(Text).attrs({
   margin-top: 8px;
 `;
 
+/**
+ * @deprecated use ErrorBody or its exported
+ * ErrorTitle instead (up to date v3 design)
+ * */
 const ErrorTitle = styled(Text).attrs({
   variant: "paragraph",
   fontWeight: "semiBold",
@@ -167,6 +172,10 @@ const ErrorTitle = styled(Text).attrs({
   margin-top: 20px;
 `;
 
+/**
+ * @deprecated use ErrorBody or its exported
+ * ErrorTitle instead (up to date v3 design)
+ * */
 const ErrorDescription = styled(Text).attrs({
   variant: "paragraph",
   color: "palette.text.shade60",
@@ -419,24 +428,27 @@ export const renderAllowManager = ({
   modelId: DeviceModelId;
   type: Theme["theme"];
   requestType?: "manager" | "rename";
-}) => (
-  <Wrapper>
-    <DeviceBlocker />
-    <Header />
-    <AnimationWrapper>
-      <Animation animation={getDeviceAnimation(modelId, type, "allowManager")} />
-    </AnimationWrapper>
-    <Footer>
-      <Title>
-        {requestType === "rename" ? (
-          <Trans i18nKey="DeviceAction.allowRenaming" />
-        ) : (
-          <Trans i18nKey="DeviceAction.allowManagerPermission" />
-        )}
-      </Title>
-    </Footer>
-  </Wrapper>
-);
+}) => {
+  const productName = getDeviceModel(modelId).productName;
+  return (
+    <Wrapper>
+      <DeviceBlocker />
+      <Header />
+      <AnimationWrapper>
+        <Animation animation={getDeviceAnimation(modelId, type, "allowManager")} />
+      </AnimationWrapper>
+      <Footer>
+        <Title>
+          {requestType === "rename" ? (
+            <Trans i18nKey="DeviceAction.allowRenaming" />
+          ) : (
+            <Trans i18nKey="DeviceAction.allowManagerPermission" values={{ productName }} />
+          )}
+        </Title>
+      </Footer>
+    </Wrapper>
+  );
+};
 
 export const renderAllowLanguageInstallation = ({
   modelId,
@@ -567,20 +579,20 @@ export const renderLockedDeviceError = ({
 
   return (
     <Wrapper id="error-locked-device">
-      <Flex mb={5}>
-        <BoxedIcon size={64} Icon={LockAltMedium} iconSize={24} iconColor="neutral.c100" />
-      </Flex>
-      <ErrorTitle>{t("errors.LockedDeviceError.title")}</ErrorTitle>
-      <ErrorDescription>
-        {productName
-          ? t("errors.LockedDeviceError.descriptionWithProductName", {
-              productName,
-            })
-          : t("errors.LockedDeviceError.description")}
-      </ErrorDescription>
+      <ErrorBody
+        Icon={LockAltMedium}
+        title={t("errors.LockedDeviceError.title")}
+        description={
+          productName
+            ? t("errors.LockedDeviceError.descriptionWithProductName", {
+                productName,
+              })
+            : t("errors.LockedDeviceError.description")
+        }
+      />
       <ButtonContainer>
         {onRetry && inlineRetry ? (
-          <ButtonV3 variant="main" onClick={onRetry} borderRadius={"9999px"}>
+          <ButtonV3 size="large" variant="main" onClick={onRetry} borderRadius={"9999px"}>
             {t("common.retry")}
           </ButtonV3>
         ) : null}
@@ -589,79 +601,45 @@ export const renderLockedDeviceError = ({
   );
 };
 
-export const RenderDeviceNotOnboardedError = ({
-  t,
-  device,
-}: {
-  t: TFunction;
-  device?: Device | null;
-}) => {
-  const productName = device ? getDeviceModel(device.modelId).productName : null;
-  const history = useHistory();
-  const { setDrawer } = useContext(context);
-  const dispatch = useDispatch();
+export const DeviceNotOnboardedErrorComponent = withV3StyleProvider(
+  ({ t, device }: { t: TFunction; device?: Device | null }) => {
+    const productName = device ? getDeviceModel(device.modelId).productName : null;
+    const history = useHistory();
+    const { setDrawer } = useContext(context);
+    const dispatch = useDispatch();
 
-  const redirectToOnboarding = useCallback(() => {
-    setTrackingSource("device action open onboarding button");
-    dispatch(closeAllModal());
-    setDrawer(undefined);
-    history.push(device?.modelId === "stax" ? "/sync-onboarding/manual" : "/onboarding");
-  }, [device?.modelId, dispatch, history, setDrawer]);
+    const redirectToOnboarding = useCallback(() => {
+      setTrackingSource("device action open onboarding button");
+      dispatch(closeAllModal());
+      setDrawer(undefined);
+      history.push(device?.modelId === "stax" ? "/sync-onboarding/manual" : "/onboarding");
+    }, [device?.modelId, dispatch, history, setDrawer]);
 
-  return (
-    <Wrapper id="error-device-not-onboarded">
-      {device ? (
-        <Flex mb={5}>
-          <DeviceIllustration deviceId={device.modelId} />
-        </Flex>
-      ) : null}
-      <Text color="neutral.c100" fontSize={7} mb={2}>
-        {productName
-          ? t("errors.DeviceNotOnboardedError.titleWithProductName", {
-              productName,
-            })
-          : t("errors.DeviceNotOnboardedError.title")}
-      </Text>
-      <Text
-        variant="paragraph"
-        color="neutral.c80"
-        fontSize={6}
-        whiteSpace="pre-wrap"
-        textAlign="center"
-      >
-        {productName
-          ? t("errors.DeviceNotOnboardedError.descriptionWithProductName", {
-              productName,
-            })
-          : t("errors.DeviceNotOnboardedError.description")}
-      </Text>
-      <ButtonV3 variant="main" borderRadius="9999px" mt={5} onClick={redirectToOnboarding}>
-        {productName
-          ? t("errors.DeviceNotOnboardedError.goToOnboardingButtonWithProductName", {
-              productName,
-            })
-          : t("errors.DeviceNotOnboardedError.goToOnboardingButton")}
-      </ButtonV3>
-    </Wrapper>
-  );
-};
-
-/** Renders an error icon, title and description */
-export const ErrorBody: React.FC<{
-  Icon: (props: { color?: string | undefined; size?: number | undefined }) => JSX.Element;
-  title: string | React.ReactNode;
-  description: string | React.ReactNode;
-  list?: string | React.ReactNode;
-}> = ({ Icon, title, description, list }) => {
-  return (
-    <>
-      <BoxedIcon Icon={Icon} size={64} iconSize={24} />
-      <ErrorTitle>{title}</ErrorTitle>
-      <ErrorDescription>{description}</ErrorDescription>
-      {list ? <ErrorDescription>{list}</ErrorDescription> : null}
-    </>
-  );
-};
+    return (
+      <Wrapper id="error-device-not-onboarded">
+        <ErrorBody
+          top={device ? <DeviceIllustration size={120} deviceId={device.modelId} /> : null}
+          title={t("errors.DeviceNotOnboardedError.title")}
+          description={t("errors.DeviceNotOnboardedError.description")}
+        />
+        <ButtonV3
+          variant="main"
+          size="large"
+          borderRadius="9999px"
+          mt={10}
+          onClick={redirectToOnboarding}
+          Icon={IconsLegacy.ArrowRightMedium}
+        >
+          {productName
+            ? t("errors.DeviceNotOnboardedError.goToOnboardingButtonWithProductName", {
+                productName,
+              })
+            : t("errors.DeviceNotOnboardedError.goToOnboardingButton")}
+        </ButtonV3>
+      </Wrapper>
+    );
+  },
+);
 
 export const renderError = ({
   error,
@@ -679,6 +657,7 @@ export const renderError = ({
   withOnboardingCTA,
   device,
   inlineRetry = true,
+  withDescription = true,
   Icon,
 }: {
   error: Error | ErrorConstructor;
@@ -696,6 +675,7 @@ export const renderError = ({
   withOnboardingCTA?: boolean;
   device?: Device | null;
   inlineRetry?: boolean;
+  withDescription?: boolean;
   Icon?: (props: { color?: string | undefined; size?: number | undefined }) => JSX.Element;
 }) => {
   // Redirects from renderError and not from DeviceActionDefaultRendering because renderError
@@ -703,7 +683,7 @@ export const renderError = ({
   if (error instanceof LockedDeviceError) {
     return renderLockedDeviceError({ t, onRetry, device, inlineRetry });
   } else if (error instanceof DeviceNotOnboarded) {
-    return <RenderDeviceNotOnboardedError t={t} device={device} />;
+    return <DeviceNotOnboardedErrorComponent t={t} device={device} />;
   }
 
   // if no supportLink is provided, we fallback on the related url linked to
@@ -723,7 +703,11 @@ export const renderError = ({
               )
         }
         title={<TranslatedError error={error as unknown as Error} noLink />}
-        description={<TranslatedError error={error as unknown as Error} field="description" />}
+        description={
+          withDescription && (
+            <TranslatedError error={error as unknown as Error} field="description" />
+          )
+        }
         list={
           list ? (
             <ol style={{ textAlign: "justify" }}>
@@ -1025,9 +1009,11 @@ export const renderSecureTransferDeviceConfirmation = ({
   type: Theme["theme"];
 }) => (
   <>
-    <Alert type="primary" learnMoreUrl={urls.swap.learnMore} horizontal={false}>
-      <Trans i18nKey={`DeviceAction.${exchangeType}.notice`} />
-    </Alert>
+    <Box flex={0}>
+      <Alert type="primary" learnMoreUrl={urls.swap.learnMore} horizontal={false}>
+        <Trans i18nKey={`DeviceAction.${exchangeType}.notice`} />
+      </Alert>
+    </Box>
     {renderVerifyUnwrapped({ modelId, type })}
     <Box alignItems={"center"}>
       <Text textAlign="center" fontWeight="semiBold" color="palette.text.shade100" fontSize={5}>

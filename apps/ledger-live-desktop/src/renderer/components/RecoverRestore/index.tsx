@@ -24,6 +24,8 @@ import { FirmwareInfo, SeedPhraseType } from "@ledgerhq/types-live";
 import { renderError } from "../DeviceAction/rendering";
 import { useDynamicUrl } from "~/renderer/terms";
 import { isDeviceNotOnboardedError } from "../DeviceAction/utils";
+import connectDeviceImage from "~/renderer/images/connect-device.svg";
+import Image from "../Image";
 
 const RecoverRestore = () => {
   const { t } = useTranslation();
@@ -150,6 +152,7 @@ const RecoverRestore = () => {
       <Flex position="relative" height="100%" width="100%" flexDirection="column">
         <OnboardingNavHeader onClickPrevious={() => history.push("/onboarding/select-device")} />
         <Flex flex={1} alignItems="center" justifyContent="center" flexDirection="column">
+          <Image resource={connectDeviceImage} alt="connect your device" />
           <Text
             variant="h3Inter"
             color="neutral.c100"

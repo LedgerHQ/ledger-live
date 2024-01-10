@@ -15,6 +15,7 @@ import {
   mockAccount,
   mockAccountNoReward,
   mockAccountNoVote,
+  mockAccountV2,
 } from "./data.mock";
 import superRepresentatives from "./api/superRepresentativesData.mock";
 
@@ -115,18 +116,10 @@ test("Tron search SR - search SR in the list - Expect to retrieve all the list i
 });
 
 test("Tron unfreeze - get unfreeze data - Expect to retrieve unfreeze data from account", () => {
-  const {
-    unfreezeBandwidth,
-    unfreezeEnergy,
-    canUnfreezeBandwidth,
-    canUnfreezeEnergy,
-    bandwidthExpiredAt,
-    energyExpiredAt,
-  } = getUnfreezeData(mockAccount);
-  expect(unfreezeBandwidth.toString()).toBe("375000000");
-  expect(unfreezeEnergy.toString()).toBe("0");
+  const { unfreezeBandwidth, unfreezeEnergy, canUnfreezeBandwidth, canUnfreezeEnergy } =
+    getUnfreezeData(mockAccountV2);
+  expect(unfreezeBandwidth.toString()).toBe("539000000");
+  expect(unfreezeEnergy.toString()).toBe("28877000");
   expect(canUnfreezeBandwidth).toBe(true);
-  expect(canUnfreezeEnergy).toBe(false);
-  expect(bandwidthExpiredAt).toBeDefined();
-  expect(energyExpiredAt).toBeNull();
+  expect(canUnfreezeEnergy).toBe(true);
 });

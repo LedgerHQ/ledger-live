@@ -7870,6 +7870,7 @@ exports[`sortCurrenciesByIds snapshot 1`] = `
   "ethereum_ropsten/erc20/uniswap",
   "ethereum_ropsten/erc20/usd_tether__erc20_",
   "ethereum_ropsten/erc20/vault_coin",
+  "ethereum_sepolia/erc20/yasstoken",
   "polygon/erc20/(del)",
   "polygon/erc20/(pos)_compound",
   "polygon/erc20/(pos)_dai_stablecoin",

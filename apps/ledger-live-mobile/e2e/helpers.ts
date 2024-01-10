@@ -1,9 +1,11 @@
 import { by, element, waitFor, device } from "detox";
-import { Direction } from "react-native-modal";
+import { Direction } from "detox/detox";
 
 const DEFAULT_TIMEOUT = 60000; // 60s !!
 const BASE_DEEPLINK = "ledgerlive://";
 const startPositionY = 0.8; // Needed on Android to scroll views : https://github.com/wix/Detox/issues/3918
+export const itifAndroid = (...args: Parameters<typeof test>) =>
+  isAndroid() ? test(...args) : test.skip("[Android only] " + args[0], args[1], args[2]);
 export const currencyParam = "?currency=";
 export const recipientParam = "&recipient=";
 export const amountParam = "&amount=";
@@ -50,10 +52,9 @@ export async function typeTextByElement(
   closeKeyboard = true,
   focus = true,
 ) {
-  if (focus) {
-    await tapByElement(elem);
-  }
-  await elem.typeText(text + (closeKeyboard ? "\n" : "")); // ' \n' close keyboard if open
+  if (focus) await tapByElement(elem);
+  await elem.replaceText(text);
+  if (closeKeyboard) await elem.typeText("\n"); // ' \n' close keyboard if open
 }
 
 export async function clearTextByElement(elem: Detox.NativeElement) {
@@ -63,20 +64,20 @@ export async function clearTextByElement(elem: Detox.NativeElement) {
 export async function scrollToText(
   text: string | RegExp,
   scrollViewId: string,
-  pixels = 100,
+  pixels = 300,
   direction: Direction = "down",
 ) {
   await waitFor(element(by.text(text)))
     .toBeVisible()
     .whileElement(by.id(scrollViewId))
-    .scroll(pixels, direction);
+    .scroll(pixels, direction, NaN, startPositionY);
 }
 
 export async function scrollToId(
   // Index broken on Android :  https://github.com/wix/Detox/issues/2931
   id: string | RegExp,
   scrollViewId: string | RegExp,
-  pixels = 100,
+  pixels = 300,
   direction: Direction = "down",
 ) {
   await waitFor(element(by.id(id)))

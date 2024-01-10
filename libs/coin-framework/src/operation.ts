@@ -177,6 +177,9 @@ export function getOperationAmountNumber(op: Operation): BigNumber {
 
     case "FREEZE":
     case "UNFREEZE":
+    case "UNDELEGATE_RESOURCE":
+    case "WITHDRAW_EXPIRE_UNFREEZE":
+    case "LEGACY_UNFREEZE":
     case "VOTE":
     case "BOND":
     case "UNBOND":

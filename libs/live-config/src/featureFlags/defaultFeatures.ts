@@ -97,6 +97,7 @@ export const DEFAULT_FEATURES: Features = {
   protectServicesDiscoverDesktop: DEFAULT_FEATURE,
   llmWalletQuickActions: DEFAULT_FEATURE,
   listAppsV2minor1: DEFAULT_FEATURE,
+  flexibleContentCards: DEFAULT_FEATURE,
   ethStakingProviders: initFeature(),
   referralProgramDiscoverCard: initFeature(),
   newsfeedPage: initFeature(),
@@ -199,16 +200,19 @@ export const DEFAULT_FEATURES: Features = {
       stories: {
         recoverySeed: {
           testingEnabled: false,
+          instanceId: "14829",
           token:
             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NfaWQiOjY5NDgsImFwcF9pZCI6MTE0MjIsImluc19pZCI6MTQ4Mjl9.iak4gUnizDdPrEXJEV3wszzJ2YkYX-RIWDXv31aJkiE",
         },
         storylyExample: {
           testingEnabled: false,
+          instanceId: "none",
           token:
             "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2NfaWQiOjc2MCwiYXBwX2lkIjo0MDUsImluc19pZCI6NDA0fQ.1AkqOy_lsiownTBNhVOUKc91uc9fDcAxfQZtpm3nj40",
         },
         testStory: {
           testingEnabled: false,
+          instanceId: "12198",
           token:
             "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhY2NfaWQiOjY5NDgsImFwcF9pZCI6MTE0MjIsImluc19pZCI6MTIxOTh9.XqNitheri5VPDqebtA4JFu1VucVOHYlryki2TqCb1DQ",
         },

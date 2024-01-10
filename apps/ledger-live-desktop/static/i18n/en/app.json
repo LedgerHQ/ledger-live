@@ -167,6 +167,9 @@
       "VOTE": "Voted",
       "FREEZE": "Frozen",
       "UNFREEZE": "Unfrozen",
+      "UNDELEGATE_RESOURCE": "Undelegated",
+      "WITHDRAW_EXPIRE_UNFREEZE": "Withdrawal",
+      "LEGACYUNFREEZE": "Unfrozen",
       "REWARD": "Claimed reward",
       "FEES": "Fees",
       "OPT_IN": "Opt in",
@@ -1753,7 +1756,7 @@
   "DeviceAction": {
     "allowAppPermission": "Open the {{wording}} app on your device",
     "allowAppPermissionSubtitleToken": "to manage your {{token}} tokens",
-    "allowManagerPermission": "Allow Ledger Manager on your device",
+    "allowManagerPermission": "Allow Ledger Manager on your {{productName}}",
     "allowRenaming": "Allow renaming on your device",
     "loading": "Loading...",
     "connectAndUnlockDevice": "Connect and unlock your device",
@@ -2031,7 +2034,7 @@
         "energyDescription": "Energy points are required to execute smart contracts. If you don't run any smart contracts, there is no need to choose rewards in Energy.",
         "amountLabel": "Amount to freeze",
         "available": "Available: {{amountAvailable}}",
-        "info": "Frozen assets cannot be sent for 3 days."
+        "info": "Frozen assets can be unfrozen immediately and accessible after the 14-day unfreezing period."
       },
       "connectDevice": {
         "title": "Device"
@@ -2292,6 +2295,13 @@
     "confirmation": "Confirm removal of image on your Ledger Stax",
     "success": "Lock screen picture removed"
   },
+  "changeCustomLockscreen": {
+    "cta": "Change"
+  },
+  "removeCurrentPicture": {
+    "cta": "Remove current picture"
+  },
+  "appsInstallingDisabledTooltip": "Disabled until apps finish installing",
   "deviceLocalization": {
     "language": "Language",
     "deviceLanguage": "Change Device Language",
@@ -2624,7 +2634,7 @@
             "description": "Freeze TRX to earn rewards and still keep full security and control of your assets.",
             "bullet": {
               "delegate": "Delegated assets stay yours.",
-              "access": "You can unfreeze your assets after 3 days.",
+              "access": "Frozen assets can be unfrozen immediately and will become accessible after the 14-day unfreezing period.",
               "ledger": "Freeze and vote securely with your Ledger device."
             },
             "help": "How voting works",
@@ -3894,9 +3904,7 @@
       "region": "Region",
       "regionDesc": "Choose your region to update formats of dates, time and currencies.",
       "stock": "Regional market indicator",
-      "stockDesc": "Choose Western to display market increases in blue or Eastern to display them in red.",
-      "carouselVisibility": "Carousel visibility",
-      "carouselVisibilityDesc": "Enable visibility of the carousel on Portfolio"
+      "stockDesc": "Choose Western to display market increases in blue or Eastern to display them in red."
     },
     "developer": {
       "search": "Search",
@@ -4915,6 +4923,9 @@
       "claimReward": "Please confirm on your device to finalize the operation",
       "freeze": "Please confirm on your device to finalize the operation",
       "unfreeze": "Please confirm on your device to finalize the operation",
+      "withdrawExpireUnfreeze": "Please confirm on your device to finalize the operation",
+      "unDelegateResource": "Please confirm on your device to finalize the operation",
+      "legacyUnfreeze": "Please confirm on your device to finalize the operation",
       "vote": "Please confirm on your device to finalize the operation",
       "delegate": "Please confirm on your device to finalize the operation",
       "undelegate": "Please confirm on your device to finalize the operation",
@@ -5589,8 +5600,7 @@
       "description": "Install the latest Bitcoin and Ethereum apps first."
     },
     "UserRefusedDeviceNameChange": {
-      "title": "Rename cancelled on device",
-      "description": "Try again and allow renaming on your device"
+      "title": "Renaming cancelled on device"
     },
     "SyncError": {
       "title": "Synchronization error",
@@ -5604,7 +5614,7 @@
       "title": "No assets to unfreeze",
       "description": "You do not have assets to unfreeze associated to Energy"
     },
-    "TronUnfreezeNotExpired": {
+    "TronLegacyUnfreezeNotExpired": {
       "title": "Unfreeze is not available yet",
       "description": "You need to wait 3 days after your last Freeze operation"
     },
@@ -5641,6 +5651,16 @@
     },
     "TronNotEnoughEnergy": {
       "title": "Energy is lower than necessary. You might pay up to 50 TRX in fees."
+    },
+    "TronNoUnfrozenResource": {
+      "title": "No unfrozen resources to withdraw"
+    },
+    "TronInvalidUnDelegateResourceAmount": {
+      "title": "Not enough delegated resources"
+    },
+    "TronUnfreezeNotExpired": {
+      "title": "Resources not unfrozen yet",
+      "description": "You need to wait until {{time}} to withdraw"
     },
     "PairingFailed": {
       "title": "Pairing unsuccessful",
@@ -5889,11 +5909,9 @@
       "descriptionWithProductName": "Unlock your {{ productName }} and try again."
     },
     "DeviceNotOnboardedError": {
-      "title": "Your device is not ready to use yet",
-      "titleWithProductName": "{{ productName }} is not ready to use yet",
-      "description": "You need to setup your device first.\nWe will guide you through the setup process.",
-      "descriptionWithProductName": "You need to setup your {{ productName }} first.\nWe will guide you through the setup process.",
-      "goToOnboardingButton": "Set up my device",
+      "title": "Your Ledger is not set up",
+      "description": "Set it up to start using it. We will guide you through the setup process.",
+      "goToOnboardingButton": "Set up my Ledger",
       "goToOnboardingButtonWithProductName": "Set up my {{ productName }}"
     },
     "EtherscanAPIError": {

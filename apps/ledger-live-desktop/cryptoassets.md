@@ -19,7 +19,7 @@
 | Cardano | ADA | YES | cardano |
 | Casper | CSPR | YES | casper |
 | Celo | CELO | YES | celo |
-| Coreum | CORE | YES | coreum |
+| Coreum | COREUM | YES | coreum |
 | Cosmos | ATOM | YES | cosmos |
 | Cronos | CRO | YES | cronos |
 | Cronos POS Chain | CRO | YES | crypto_org |
@@ -145,7 +145,11 @@
 | lisk | LSK | NO | lisk |
 | æternity | AE | NO | aeternity |
 
+<<<<<<< HEAD
 ## Tokens (15842)
+=======
+## Tokens (15259)
+>>>>>>> develop
 | parent currency | ticker | contract | name | status | ledger id |
 |--|--|--|--|--|--|
 | Algorand | GEMS | 5XU7ASL2PLB2C43N6JNFPMSXGATO2VIVNF7X6NTJ4BRCCKRGETEYS3LOAQ | AlgoGems |  | algorand/asa/230946361 |
@@ -12468,6 +12472,7 @@
 | Ethereum Ropsten | tWETH | 0xc778417E063141139Fce010982780140Aa0cD5Ab | Uniswap Wrapped Ether | delisted | ethereum_ropsten/erc20/uniswap_weth |
 | Ethereum Ropsten | tVLC | 0xF62ef17b7c919b84A9D9f33609bb2cf4405a5682 | Vault Coin |  | ethereum_ropsten/erc20/vault_coin |
 | Ethereum Ropsten | tHASKELL | 0x63652B9Dd39565332B22BB815104c8210934Ae45 | haskell | delisted | ethereum_ropsten/erc20/haskell |
+| Ethereum Sepolia | tYSS | 0xDA3f792Ec1fF2072ECeA9757B065b76337a9b0CC | YassToken |  | ethereum_sepolia/erc20/yasstoken |
 | MultiversX | AERO | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | Aerovek |  | elrond/esdt/4145524f2d343538626266 |
 | MultiversX | ASH | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | AshSwap |  | elrond/esdt/4153482d346365343434 |
 | MultiversX | BHAT | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | BHNetwork |  | elrond/esdt/424841542d633166646533 |

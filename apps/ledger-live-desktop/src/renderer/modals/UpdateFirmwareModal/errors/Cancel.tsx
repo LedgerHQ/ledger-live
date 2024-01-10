@@ -1,7 +1,7 @@
 import React from "react";
 import { IconsLegacy } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
-import { ErrorBody } from "~/renderer/components/DeviceAction/rendering";
+import { ErrorBody } from "~/renderer/components/ErrorBody";
 import UpdateFirmwareError from ".";
 
 type Props = {

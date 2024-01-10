@@ -94,6 +94,10 @@ const completeExchange = (
           getCurrencyExchangeConfig(payoutCurrency);
 
         try {
+          o.next({
+            type: "complete-exchange-requested",
+            estimatedFees: estimatedFees.toString(),
+          });
           await exchange.checkPayoutAddress(
             payoutAddressConfig,
             payoutAddressConfigSignature,
@@ -109,11 +113,6 @@ const completeExchange = (
           throw e;
         }
 
-        o.next({
-          type: "complete-exchange-requested",
-          estimatedFees: estimatedFees.toString(),
-        });
-
         if (unsubscribed) return;
         ignoreTransportError = true;
         await exchange.signCoinTransaction();
@@ -127,11 +126,11 @@ const completeExchange = (
         throw e;
       });
       await delay(3000);
-      if (unsubscribed) return;
       o.next({
         type: "complete-exchange-result",
         completeExchangeResult: transaction,
       });
+      if (unsubscribed) return;
     };
 
     confirmExchange().then(

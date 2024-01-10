@@ -20,6 +20,7 @@ export default class OnboardingSteps {
   accessWalletButton = () => getElementById("onboarding-accessWallet");
   noLedgerYetButton = () => getElementById("onboarding-noLedgerYet");
   exploreAppButton = () => getElementById("onboarding-noLedgerYetModal-explore");
+  buyLedgerButton = () => getElementById("onboarding-noLedgerYetModal-buy");
   exploreWithoutDeviceButton = () => getElementById(this.exploreWithoutDeviceButtonId);
   connectLedgerButton = () => getElementById("Existing Wallet | Connect");
   continueButton = () => getElementById(this.devicePairedContinueButtonId);
@@ -80,6 +81,10 @@ export default class OnboardingSteps {
       await tapById(this.discoverLiveTitle(i));
     }
     await tapById(this.exploreWithoutDeviceButtonId);
+  }
+
+  async chooseToBuyLedger() {
+    await tapByElement(this.buyLedgerButton());
   }
 
   // Accessing existing Wallet

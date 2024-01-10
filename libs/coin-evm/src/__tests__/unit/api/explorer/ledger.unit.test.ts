@@ -6,8 +6,8 @@ import { delay } from "@ledgerhq/live-promise";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
-import * as LEDGER_API from "../../../../api/explorer/ledger";
 import { LedgerExplorerUsedIncorrectly } from "../../../../errors";
+import * as LEDGER_API from "../../../../api/explorer/ledger";
 import {
   coinOperation1,
   coinOperation2,
@@ -196,6 +196,7 @@ describe("EVM Family", () => {
               hasFailed: false,
               nftOperations: [],
               subOperations: [],
+              internalOperations: [],
               recipients: [eip55.encode(coinOperation1.to)],
               senders: [eip55.encode(coinOperation1.from)],
               transactionSequenceNumber: coinOperation1.nonce_value,
@@ -216,6 +217,7 @@ describe("EVM Family", () => {
               hasFailed: false,
               nftOperations: [],
               subOperations: [],
+              internalOperations: [],
               recipients: [eip55.encode(coinOperation2.to)],
               senders: [eip55.encode(coinOperation2.from)],
               transactionSequenceNumber: coinOperation2.nonce_value,
@@ -236,6 +238,7 @@ describe("EVM Family", () => {
               hasFailed: false,
               nftOperations: [],
               subOperations: [],
+              internalOperations: [],
               recipients: [eip55.encode(coinOperation3.to)],
               senders: [eip55.encode(coinOperation3.from)],
               transactionSequenceNumber: coinOperation3.nonce_value,
@@ -254,6 +257,7 @@ describe("EVM Family", () => {
               hasFailed: false,
               nftOperations: [],
               subOperations: [],
+              internalOperations: [],
               recipients: [eip55.encode(coinOperation4.to)],
               senders: [eip55.encode(coinOperation4.from)],
               transactionSequenceNumber: coinOperation4.nonce_value,
@@ -336,6 +340,23 @@ describe("EVM Family", () => {
               transactionSequenceNumber: coinOperation1.nonce_value,
               type: "OUT",
               value: new BigNumber("100000000000000"),
+            },
+          ],
+          lastInternalOperations: [
+            {
+              id: "js:2:ethereum:0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d:-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-IN-i0",
+              accountId,
+              blockHash: coinOperation2.block.hash,
+              blockHeight: coinOperation2.block.height,
+              date: new Date(coinOperation2.block.time),
+              extra: {},
+              fee: new BigNumber("0"),
+              hasFailed: false,
+              hash: coinOperation2.hash,
+              recipients: [eip55.encode(coinOperation2.actions[0].to)],
+              senders: [eip55.encode(coinOperation2.actions[0].from)],
+              type: "IN",
+              value: new BigNumber(coinOperation2.actions[0].value),
             },
           ],
         });

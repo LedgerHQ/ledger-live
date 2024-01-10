@@ -611,12 +611,23 @@ describe("EVM Family", () => {
             type: "NFT_IN",
           }),
         ];
+        const internalOperations = [
+          makeOperation({
+            accountId: coinOperation.accountId,
+            value: new BigNumber(5),
+            type: "OUT",
+            hash: coinOperation.hash,
+          }),
+        ];
 
-        expect(attachOperations([coinOperation], tokenOperations, nftOperations)).toEqual([
+        expect(
+          attachOperations([coinOperation], tokenOperations, nftOperations, internalOperations),
+        ).toEqual([
           {
             ...coinOperation,
             subOperations: [tokenOperations[0], tokenOperations[1]],
             nftOperations: [nftOperations[0], nftOperations[1]],
+            internalOperations: [internalOperations[0]],
           },
           {
             ...tokenOperations[2],
@@ -628,6 +639,7 @@ describe("EVM Family", () => {
             recipients: [],
             nftOperations: [],
             subOperations: [tokenOperations[2]],
+            internalOperations: [],
             accountId: "",
             contract: undefined,
           },
@@ -641,6 +653,7 @@ describe("EVM Family", () => {
             recipients: [],
             nftOperations: [nftOperations[2]],
             subOperations: [],
+            internalOperations: [],
             accountId: "",
             contract: undefined,
           },
@@ -669,9 +682,14 @@ describe("EVM Family", () => {
             type: "NFT_OUT",
           }),
         ]);
-        expect(
+        const internalOperations = deepFreeze([
+          makeOperation({
+            hash: "0xCoinOpInternal",
+          }),
+        ]);
+        expect(() =>
           // @ts-expect-error purposely ignore readonly ts issue for this
-          () => attachOperations(coinOperations, tokenOperations, nftOperations),
+          attachOperations(coinOperations, tokenOperations, nftOperations, internalOperations),
         ).not.toThrow(); // mutation prevented by deepFreeze method
       });
     });
