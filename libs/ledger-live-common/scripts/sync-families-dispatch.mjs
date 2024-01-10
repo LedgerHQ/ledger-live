@@ -98,6 +98,16 @@ function genCoinFrameworkTarget(targetFile) {
           exprts += `\n  ${family},`;
         }
         break;
+      case "specs.ts":
+        if (fs.existsSync(path.join(libsDir, `coin-${family}/src`, targetFile))) {
+          imports += `import ${family} from "${targetImportPath}";\n`;
+          exprts += `\n  ${family},`;
+        }
+        if (fs.existsSync(path.join(libsDir, `coin-${family}/src/test`, targetFile))) {
+          imports += `import ${family} from "@ledgerhq/coin-${family}/test/${targetName}";\n`;
+          exprts += `\n  ${family},`;
+        }
+        break;
       // We still use bridge/js file inside "families" directory
       default:
         if (
@@ -137,8 +147,8 @@ async function getDeviceTransactionConfig(families) {
   const libsDir = path.join(__dirname, "../..");
   const family = "polkadot";
   const target = "deviceTransactionConfig.ts";
-  if (fs.existsSync(path.join(libsDir, `coin-${family}/src`, target))) {
-    imports += `import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_${family} } from "@ledgerhq/coin-${family}/deviceTransactionConfig";\n`;
+  if (fs.existsSync(path.join(libsDir, `coin-${family}/src/bridge`, target))) {
+    imports += `import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_${family} } from "@ledgerhq/coin-${family}/bridge/deviceTransactionConfig";\n`;
     exprts += `\n  | ExtraDeviceTransactionField_${family}`;
   }
 
