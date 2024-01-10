@@ -82,16 +82,20 @@ function genCoinFrameworkTarget(targetFile) {
     switch (targetFile) {
       case "bridge/js.ts":
         imports += `import { bridge as ${family} } from "../../families/${family}/setup";\n`;
+        exprts += `\n  ${family},`;
         break;
       case "cli-transaction.ts":
         imports += `import { cliTools as ${family} } from "../families/${family}/setup";\n`;
+        exprts += `\n  ${family},`;
         break;
       case "hw-getAddress.ts":
         imports += `import { resolver as ${family} } from "../families/${family}/setup";\n`;
+        exprts += `\n  ${family},`;
         break;
       case "hw-signMessage.ts":
         if (fs.existsSync(path.join(libsDir, `coin-${family}/src`, targetFile))) {
           imports += `import { messageSigner as ${family} } from "../families/${family}/setup";\n`;
+          exprts += `\n  ${family},`;
         }
         break;
       // We still use bridge/js file inside "families" directory
@@ -101,10 +105,8 @@ function genCoinFrameworkTarget(targetFile) {
           fs.existsSync(path.join(libsDir, `coin-${family}/src/bridge`, targetFile))
         ) {
           imports += `import ${family} from "${targetImportPath}";\n`;
+          exprts += `\n  ${family},`;
         }
-    }
-    if (fs.existsSync(path.join(libsDir, `coin-${family}/src`, targetFile))) {
-      exprts += `\n  ${family},`;
     }
   }
 

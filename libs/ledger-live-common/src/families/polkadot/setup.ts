@@ -2,7 +2,7 @@
 
 import { createBridges } from "@ledgerhq/coin-polkadot/bridge/index";
 import { makeCliTools } from "@ledgerhq/coin-polkadot/test/index";
-import polkadotResolver from "@ledgerhq/coin-polkadot/hw-getAddress";
+import polkadotResolver from "@ledgerhq/coin-polkadot/bridge/hw-getAddress";
 import { Transaction } from "@ledgerhq/coin-polkadot/types/index";
 import Polkadot from "@ledgerhq/hw-app-polkadot";
 import Transport from "@ledgerhq/hw-transport";
