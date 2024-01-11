@@ -167,6 +167,9 @@
       "VOTE" : "تم التصويت",
       "FREEZE" : "مُجمد",
       "UNFREEZE" : "تمت إزالة التجميد",
+      "UNDELEGATE_RESOURCE" : "Undelegated",
+      "WITHDRAW_EXPIRE_UNFREEZE" : "Withdrawal",
+      "LEGACYUNFREEZE" : "Unfrozen",
       "REWARD" : "المكافأة المُطالب بها",
       "FEES" : "رسوم",
       "OPT_IN" : "الانضمام",
@@ -1237,11 +1240,12 @@
         "firmwareUpdate" : {
           "title" : {
             "active" : "التحقق من تحديث نظام التشغيل",
-            "completed" : "نظام تشغيل جهازك {{modelName}} مُحدَّث إلى آخر إصدار",
+            "completed" : "نظام تشغيل جهازك {{modelName}} مُحدَّث إلى آخر إصدار.",
             "updateAvailable" : "تحديث نظام التشغيل {{firmwareVersion}} متاح"
           },
           "subtitle" : {
             "active" : "يتحقق هذا مما إذا كان نظام تشغيل جهازك {{modelName}} مُحدَّث إلى آخر إصدار أم لا.",
+            "completed" : "لبدء استعادة التطبيق على جهازك {{modelName}}، اختر زر ”Restore apps (استعادة التطبيقات)“ أدناه.",
             "updateAvailable" : "قم بالتحديث من أجل الأمان الأمثل والوصول إلى أحدث الميزات."
           },
           "viewUpdateCTA" : "تحديث نظام تشغيل {{modelName}}",
@@ -1752,13 +1756,13 @@
   "DeviceAction" : {
     "allowAppPermission" : "افتح تطبيق {{wording}} على جهازك",
     "allowAppPermissionSubtitleToken" : "لإدارة رموزك {{token}}",
-    "allowManagerPermission" : "اسمح بمدير Ledger على جهازك",
+    "allowManagerPermission" : "اسمح بمدير Ledger على جهازك {{productName}}",
     "allowRenaming" : "اسمح بإعادة التسمية على جهازك",
     "loading" : "جاري التحميل...",
     "connectAndUnlockDevice" : "قم بتوصيل جهازك وإلغاء قفله",
     "unlockDevice" : "قم بإلغاء قفل جهازك",
-    "unlockDeviceAfterFirmwareUpdateStep1" : "انتظر حتى انتهاء التثبيت على جهازك {{productName}}",
-    "unlockDeviceAfterFirmwareUpdateStep2" : "قم بإلغاء قفل {{productName}} لإكمال التثبيت",
+    "unlockDeviceAfterFirmwareUpdateStep1" : "انتظر حتى ينتهي التثبيت على جهازك {{productName}}.",
+    "unlockDeviceAfterFirmwareUpdateStep2" : "قم بإلغاء قفل {{productName}} عن طريق كود PIN الخاص بك لإكمال التحديث.",
     "quitApp" : "الخروج من التطبيق على جهازك",
     "appNotInstalledTitle" : "التطبيق المطلوب غير موجود",
     "appNotInstalledTitle_plural" : "التطبيقات المطلوبة غير موجودة",
@@ -1931,11 +1935,13 @@
       "latest" : "الإصدار {{version}} من البرنامج الثابت متاح",
       "contactSupport" : "تواصل مع الدعم",
       "deprecated" : "إصدار البرنامج الثابت للجهاز قديم للغاية ليتم تحديثه. تواصل مع دعم Ledger للحصول على بديل.",
-      "prepareSeed" : "تأكد من كتابة عبارة الاسترداد الخاصة بك المكونة من 24 كلمة على ورقة الاسترداد وأنها متوفرة، على سبيل الاحتياط.",
+      "prepareSeed" : "تأكد من كتابة عبارة الاسترداد الخاصة بك المكونة من 24 كلمة على ورقة الاسترداد وأنها متاحة، على سبيل الاحتياط.",
       "disclaimerTitle" : "أنت على وشك تثبيت <1>إصدار البرنامج الثابت {{version}}</1>.",
-      "cancelUpdate" : "إلغاء التحديث",
-      "continueUpdate" : "متابعة التحديث",
-      "cancelUpdateWarning" : "إعداداتك وتطبيقاتك قد لا يتم استعادتها بشكل صحيح إذا ألغيت التحديث الآن.",
+      "cancelUpdate" : "إلغاء تحديث نظام التشغيل",
+      "continueUpdate" : "متابعة تحديث نظام التشغيل",
+      "restartUpdate" : "إعادة بدء تحديث نظام التشغيل",
+      "skipRestore" : "تخطي الاستعادة",
+      "cancelUpdateWarning" : "إعداداتك وتطبيقاتك قد لا يتم استعادتها\nبشكل صحيح إذا ألغيت التحديث الآن.",
       "updateInProgress" : "تحديث نظام التشغيل قيد التنفيذ"
     },
     "modal" : {
@@ -1974,9 +1980,10 @@
       "mcuBlueFirst" : "اضغط مع الاستمرار على الزر الجانبي لمدة 10 ثوان لإيقاف تشغيل الجهاز. ثم حرر الزر.",
       "mcuBlueSecond" : "اضغط مع الاستمرار على الزر على الأقل لمدة 5 ثوانٍ حتى يتم عرض خيارات التمهيد. انقر على وضع Bootloader",
       "successTitle" : "نظام تشغيل جهازك {{deviceName}}\nمُحدَّث إلى آخر إصدار.",
-      "sucessCTAApps" : "أعد تثبيت التطبيقات",
-      "SuccessCTANoApps" : "تثبيت التطبيقات",
-      "cancelReinstallCTA" : "تثبيت التحديث",
+      "successTitleApps" : "نظام تشغيل جهازك {{deviceName}}\nمُحدَّث إلى آخر إصدار. شيء أخير...",
+      "successSubtitleApps" : "لبدء استعادة التطبيق على جهازك Ledger Stax، اختر\nزر ”Restore apps (استعادة التطبيقات)“ أدناه.",
+      "sucessCTAApps" : "استعادة التطبيقات",
+      "SuccessCTANoApps" : "إتمام",
       "resetSteps" : {
         "first" : "1. إعادة تعيين جهازك",
         "connect" : "قم بتوصيل {{deviceName}} بالكمبيوتر الخاص بك باستخدام كبل USB.",
@@ -2027,7 +2034,7 @@
         "energyDescription" : "نقاط الطاقة مطلوبة لتنفيذ العقود الذكية. إذا كنت لا تقم بتشغيل أي عقود ذكية، فلا حاجة لاختيار المكافآت في صورة طاقة.",
         "amountLabel" : "المبلغ المراد تجميده",
         "available" : "متاح: {{amountAvailable}}",
-        "info" : "الأصول المجمدة لا يمكن إرسالها لمدة 3 أيام."
+        "info" : "Frozen assets can be unfrozen immediately and accessible after the 14-day unfreezing period."
       },
       "connectDevice" : {
         "title" : "جهاز"
@@ -2288,6 +2295,13 @@
     "confirmation" : "قم بتأكيد إزالة الصورة على Ledger Stax الخاص بك",
     "success" : "تم إزالة صورة شاشة القفل"
   },
+  "changeCustomLockscreen" : {
+    "cta" : "تغيير"
+  },
+  "removeCurrentPicture" : {
+    "cta" : "إزالة الصورة الحالية"
+  },
+  "appsInstallingDisabledTooltip" : "مُعطَّل حتى انتهاء تثبيت التطبيقات",
   "deviceLocalization" : {
     "language" : "اللغة",
     "deviceLanguage" : "تغيير لغة الجهاز",
@@ -2302,7 +2316,7 @@
       "title" : "تعيين {{deviceName}} خاصتك باللغة {{language}}؟",
       "description" : "اللغة {{language}} متاحة الآن لجهازك {{deviceName}}. يمكنك تعيينها الآن، أو تغيير لغة جهازك في أي وقت من My Ledger."
     },
-    "allowLanguageInstallation" : "اسمح بتثبيت اللغة",
+    "allowLanguageInstallation" : "انقر على ”Allow [سماح]“\nلتثبيت اللغة",
     "languageInstalled" : "تم تغيير اللغة إلى {{language}}",
     "installingLanguage" : "جاري تثبيت اللغة",
     "languages" : {
@@ -2612,7 +2626,7 @@
             "description" : "قم بتجميد TRX للحصول على مكافآت وستظل تحتفظ بأمان وسيطرة كاملين على أصولك.",
             "bullet" : {
               "delegate" : "الأصول المفوضة تظل ملكك.",
-              "access" : "يمكنك إزالة تجميد أصولك بعد 3 أيام.",
+              "access" : "Frozen assets can be unfrozen immediately and will become accessible after the 14-day unfreezing period.",
               "ledger" : "قم بالتجميد والتصويت بأمان مع جهازك Ledger."
             },
             "help" : "كيف يعمل التصويت",
@@ -3057,7 +3071,7 @@
         "steps" : {
           "starter" : {
             "title" : "إعادة التفويض",
-            "description" : "استخدم إعادة التفويض لسهولة التغيير من مدقق إلى مدقق آخر. ولكن إذا قمت بتغير رأيك مرة أخرى، فسيكون عليك الانتظار لأن إعادة التفويض تؤدي إلى تفعيل فترة حظر زمني لمدة 21 يوماً.",
+            "description" : "استخدم إعادة التفويض للتغيير من مدقق إلى مدقق آخر بسهولة. لكن إذا قمت بتغير رأيك مرة أخرى، سيكون عليك الانتظار لأن إعادة التفويض تؤدي إلى تفعيل فترة حظر زمني لمدة {{ numberOfDays }} يوماً.",
             "warning" : "اختر المدقق بحكمة: فقد يتم فقدان جزء من أصولك المفوضة بشكل لا رجعة فيه إذا لم يتصرف المدقق بشكل لائق. يمكن أن يكون لديك <0>7 عمليات إعادة تفويض مُعلقة</0> كحد أقصى.",
             "howDelegationWorks" : "كيف يعمل التفويض؟"
           },
@@ -3086,7 +3100,7 @@
     },
     "undelegation" : {
       "header" : "إلغاء التفويض (إلغاء التفويضات)",
-      "headerTooltip" : "متاحة بعد فترة الحظر الزمني الممتد لفترة 21 يوماً",
+      "headerTooltip" : "متاحة بعد فترة الحظر الزمني الممتد لفترة {{numberOfDays}} يوماً",
       "inactiveTooltip" : "المبالغ غير المفوضة لا تولد مكافآت.",
       "flow" : {
         "title" : "إلغاء تفويض الأصول",
@@ -3510,7 +3524,8 @@
             "title" : "المدقق"
           },
           "amount" : {
-            "title" : "المبلغ"
+            "title" : "المبلغ",
+            "reserveWarning" : "يُرجى التأكد من أنك تحتفظ بـ {{amount}} SOL على الأقل في محفظتك لتغطية رسوم الشبكة المستقبلية من أجل إلغاء تنشيط وسحب حصتك"
           },
           "confirmation" : {
             "success" : {
@@ -3869,9 +3884,7 @@
       "region" : "المنطقة",
       "regionDesc" : "اختر منطقتك لتحديث صِيغ التواريخ والوقت والعملات.",
       "stock" : "مؤشر السوق الإقليمي",
-      "stockDesc" : "اختر \"Western\" (غربي) لعرض زيادات السوق باللون الأزرق أو \"Eastern\" (شرقي) لعرضها باللون الأحمر.",
-      "carouselVisibility" : "رؤية كشريط دوّار",
-      "carouselVisibilityDesc" : "تمكين الرؤية كشريط دوّار في المحفظة الاستثمارية"
+      "stockDesc" : "اختر \"Western\" (غربي) لعرض زيادات السوق باللون الأزرق أو \"Eastern\" (شرقي) لعرضها باللون الأحمر."
     },
     "developer" : {
       "search" : "بحث",
@@ -4085,7 +4098,7 @@
     "accounts" : {
       "hideEmptyTokens" : {
         "title" : "إخفاء حسابات رموز التوكن الفارغة",
-        "desc" : "إخفاء حسابات رموز التوكن التي تحتوي على رصيد صفر من صفحة الحسابات."
+        "desc" : "إخفاء حسابات رموز التوكن التي تحتوي على رصيد صفر."
       },
       "tokenBlacklist" : {
         "title" : "إخفاء رموز التوكن",
@@ -4891,6 +4904,9 @@
       "claimReward" : "يرجى التأكيد على جهازك لإنهاء العملية",
       "freeze" : "يرجى التأكيد على جهازك لإنهاء العملية",
       "unfreeze" : "يرجى التأكيد على جهازك لإنهاء العملية",
+      "withdrawExpireUnfreeze" : "Please confirm on your device to finalize the operation",
+      "unDelegateResource" : "Please confirm on your device to finalize the operation",
+      "legacyUnfreeze" : "Please confirm on your device to finalize the operation",
       "vote" : "يرجى التأكيد على جهازك لإنهاء العملية",
       "delegate" : "يرجى التأكيد على جهازك لإنهاء العملية",
       "undelegate" : "يرجى التأكيد على جهازك لإنهاء العملية",
@@ -5199,8 +5215,8 @@
       "description" : "يرجى المحاولة مرة أخرى أو الاتصال بدعم ليدجر إذا استمرت المشكلة."
     },
     "LanguageInstallRefusedOnDevice" : {
-      "title" : "تم رفض تثبيت اللغة على الجهاز",
-      "description" : "يرجى إعادة المحاولة مرة أخرى. إذا استمرت المشكلة، يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم Ledger."
+      "title" : "تم إلغاء استعادة اللغة\nعلى الجهاز",
+      "description" : "إذا كان هذا خطأً، أعد المحاولة الآن."
     },
     "RestoreLanguageInstallRefusedOnDevice" : {
       "title" : "تم إلغاء استعادة اللغة على Ledger Stax",
@@ -5405,8 +5421,8 @@
       "title" : "تم رفض My Ledger على الجهاز"
     },
     "UserRefusedFirmwareUpdate" : {
-      "title" : "تم إلغاء التحديث على الجهاز",
-      "description" : "تثبيت تحديث نظام التشغيل تم رفضه على جهازك. إذا كان هذا خطأ، قم بإعادة بدء التحديث."
+      "title" : "تم إلغاء تثبيت تحديث نظام التشغيل\nعلى الجهاز",
+      "description" : "إذا كان هذا خطأ، قم بإعادة بدء التحديث."
     },
     "UserRefusedOnDevice" : {
       "title" : "تم رفض الإجراء",
@@ -5561,8 +5577,7 @@
       "description" : "قم بتثبيت أحدث تطبيقات بيتكوين وإيثريوم أولاً."
     },
     "UserRefusedDeviceNameChange" : {
-      "title" : "تم إلغاء إعادة التسمية على الجهاز",
-      "description" : "حاول مرة أخرى واسمح بإعادة التسمية على جهازك"
+      "title" : "تم إلغاء إعادة التسمية على الجهاز"
     },
     "SyncError" : {
       "title" : "خطأ في المزامنة",
@@ -5577,8 +5592,8 @@
       "description" : "ليس لديك أصول مرتبطة بالطاقة لإزالة التجميد"
     },
     "TronLegacyUnfreezeNotExpired" : {
-      "title" : "إزالة التجميد غير متوفر بعد",
-      "description" : "يجب الانتظار 3 أيام بعد آخر عملية تجميد لك"
+      "title" : "Unfreeze is not available yet",
+      "description" : "You need to wait 3 days after your last Freeze operation"
     },
     "TronVoteRequired" : {
       "title" : "مطلوب على الأقل 1 صوت"
@@ -5613,6 +5628,16 @@
     },
     "TronNotEnoughEnergy" : {
       "title" : "الطاقة أقل من المطلوب. قد تدفع رسوم تصل إلى 50 TRX."
+    },
+    "TronNoUnfrozenResource" : {
+      "title" : "No unfrozen resources to withdraw"
+    },
+    "TronInvalidUnDelegateResourceAmount" : {
+      "title" : "Not enough delegated resources"
+    },
+    "TronUnfreezeNotExpired" : {
+      "title" : "Resources not unfrozen yet",
+      "description" : "You need to wait until {{time}} to withdraw"
     },
     "PairingFailed" : {
       "title" : "لم يتم إجراء الإقران بنجاح",
@@ -5812,12 +5837,12 @@
       "description" : "يُرجى المحاولة مرة أخرى بصورة أخرى"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "تم إلغاء شاشة القَفل على Ledger Stax",
-      "description" : "إذا لم تكن هذه الصورة بالمقاس المناسب، يُمكنك المحاولة مرة ثانية مع صورة أخرى."
+      "title" : "تم إلغاء تثبيت صورة شاشة القفل\nعلى Ledger Stax",
+      "description" : "إذا كان هذا خطأً، أعد المحاولة الآن."
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "تم إلغاء شاشة القَفل على Ledger Stax",
-      "description" : "إذا لم تكن هذه الصورة بالمقاس المناسب، يُمكنك المحاولة مرة ثانية مع صورة أخرى."
+      "title" : "تم إلغاء تثبيت صورة شاشة القفل\nعلى Ledger Stax",
+      "description" : "إذا كان هذا خطأً، أعد المحاولة الآن."
     },
     "ImageDoesNotExistOnDevice" : {
       "title" : "ليس لدى Ledger Stax الخاص بك صورة شاشة قفل لإزالتها",
@@ -5861,11 +5886,9 @@
       "descriptionWithProductName" : "قم بإلغاء قفل {{ productName }} خاصتك وحاول مرة أخرى."
     },
     "DeviceNotOnboardedError" : {
-      "title" : "جهازك غير مُستعد للاستخدام بعد",
-      "titleWithProductName" : "{{ productName }} غير جاهز للاستخدام بعد",
-      "description" : "يجب أن تقوم بإعداد جهازك أولاً.\nسنرشدك خلال عملية الإعداد.",
-      "descriptionWithProductName" : "يجب أن تقوم بإعداد {{ productName }} خاصتك أولاً.\nسنرشدك خلال عملية الإعداد.",
-      "goToOnboardingButton" : "إعداد جهازي",
+      "title" : "لم يتم إعداد جهازك Ledger",
+      "description" : "قم بإعداده لتبدأ استخدامه. سنرشدك خلال عملية الإعداد.",
+      "goToOnboardingButton" : "إعداد جهازي Ledger",
       "goToOnboardingButtonWithProductName" : "إعداد {{ productName }}"
     },
     "EtherscanAPIError" : {
@@ -5878,6 +5901,9 @@
     "FailedToRetrieveFirmwareUpdateInfo" : {
       "title" : "فشل التحقق من تحديث نظام التشغيل",
       "description" : "حدث خطأ ما. يرجى المحاولة مرة أخرى أو التواصل مع دعم Ledger إذا كان لديك شك."
+    },
+    "TezosUnrevealedAccount" : {
+      "title" : "Cannot swap from a never-used Tezos account"
     }
   },
   "cryptoOrg" : {
@@ -5939,13 +5965,13 @@
       "transfer" : {
         "stepLabel" : "تحميل",
         "useAnotherPicture" : "تحميل صورة أخرى",
-        "allowPreview" : "انقر على \"Load picture [تحميل الصورة]\" لتخصيص شاشة القفل",
-        "allowConfirmPreview" : "السماح باستعادة صورة شاشة القفل على {{productName}}",
-        "loadingPicture" : "جاري التحميل ...",
+        "allowPreview" : "انقر على ”Load picture [تحميل صورة]“\nلتخصيص صورة شاشة القفل",
+        "allowConfirmPreview" : "انقر على ”Load picture [تحميل صورة]“\nلاستعادة صورة شاشة القفل",
+        "loadingPicture" : "جاري التثبيت...",
         "voila" : "ها هي!",
         "imageLoaded" : "تم تحميل الصورة على {{productName}}",
         "confirmPicture" : "يُعجبك ما تراه؟\nاحتفظ بها!",
-        "confirmRestorePicture" : "تأكيد استعادة صورة شاشة القفل",
+        "confirmRestorePicture" : "انقر على ”keep [تعيين]“\nلتأكيد صورة شاشة القفل الخاصة بك",
         "doThisLater" : "ربّما في وقت لاحق"
       }
     },
