@@ -16,7 +16,9 @@ import { PolkadotAccount, PolkadotValidator, Transaction } from "../types";
 import { PolkadotAPI } from "../api";
 import { NetworkRequestCall } from "@ledgerhq/coin-framework/network";
 import { LRUCacheFn } from "@ledgerhq/coin-framework/cache";
-type Options = {name: string; type: StringConstructor; desc: string;} | {name: string; type: StringConstructor; desc: string; multiple: boolean};
+type Options =
+  | { name: string; type: StringConstructor; desc: string }
+  | { name: string; type: StringConstructor; desc: string; multiple: boolean };
 const options: Array<Options> = [
   {
     name: "mode",
