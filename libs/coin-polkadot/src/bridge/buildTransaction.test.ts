@@ -24,7 +24,7 @@ const transactionParams = {
   tip: 8,
   transactionVersion: 22,
 };
-jest.mock("./api", () => ({
+jest.mock("../api", () => ({
   PolkadotAPI: jest.fn().mockImplementation(() => {
     return {
       getRegistry: () => {

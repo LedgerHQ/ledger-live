@@ -16,7 +16,8 @@ import { PolkadotAccount, PolkadotValidator, Transaction } from "../types";
 import { PolkadotAPI } from "../api";
 import { NetworkRequestCall } from "@ledgerhq/coin-framework/network";
 import { LRUCacheFn } from "@ledgerhq/coin-framework/cache";
-const options = [
+type Options = {name: string; type: StringConstructor; desc: string;} | {name: string; type: StringConstructor; desc: string; multiple: boolean};
+const options: Array<Options> = [
   {
     name: "mode",
     type: String,
@@ -94,7 +95,19 @@ const polkadotValidatorsFormatters: Record<string, PolkadotValidatorFormatter> =
     return tableList;
   },
 };
-function createValidators(polkadotAPI: PolkadotAPI) {
+type Validators = {
+  args: Array<Options>;
+  job: ({
+    format,
+    status,
+    validator,
+  }: Partial<{
+    format: string;
+    status: SidecarValidatorsParamStatus | SidecarValidatorsParamAddresses;
+    validator: string[];
+  }>) => Observable<string>;
+};
+function createValidators(polkadotAPI: PolkadotAPI): Validators {
   return {
     args: [
       {
@@ -169,7 +182,19 @@ function inferTransactions(
   );
 }
 
-export default function makeCliTools(network: NetworkRequestCall, cache: LRUCacheFn) {
+export type CliTools = {
+  options: Array<Options>;
+  inferTransactions: (
+    transactions: Array<{
+      account: AccountLike;
+      transaction: Transaction;
+    }>,
+    opts: Record<string, any>,
+    { inferAmount }: any,
+  ) => Transaction[];
+  commands: { polkadotValidators: Validators };
+};
+export default function makeCliTools(network: NetworkRequestCall, cache: LRUCacheFn): CliTools {
   const polkadotAPI = new PolkadotAPI(network, cache);
   return {
     options,
