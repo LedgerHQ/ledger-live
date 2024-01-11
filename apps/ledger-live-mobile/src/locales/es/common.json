@@ -492,7 +492,7 @@
       "description" : "Prueba a reinstalar la aplicación desde Mi Ledger"
     },
     "NotEnoughGas" : {
-      "title" : "El saldo de la cuenta principal es insuficiente para las comisiones de red",
+      "title" : "En la red {{cryptoName}} debes pagar una tarifa de red de {{fees}} {{ticker}} para realizar permutas. <link0>Comprar {{ticker}}</link0>",
       "description" : "Envía monedas a tu cuenta para pagar por transacciones de tokens."
     },
     "NotEnoughGasSwap" : {
@@ -605,6 +605,16 @@
     },
     "TronNotEnoughEnergy" : {
       "title" : "La energía es menor que la requerida. Es posible que pagues hasta 50 TRX en tarifas."
+    },
+    "TronNoUnfrozenResource" : {
+      "title" : "No unfrozen resources to withdraw"
+    },
+    "TronInvalidUnDelegateResourceAmount" : {
+      "title" : "Not enough delegated resources"
+    },
+    "TronUnfreezeNotExpired" : {
+      "title" : "Resources not unfrozen yet",
+      "description" : "You need to wait until {{time}} to withdraw"
     },
     "UpdateYourApp" : {
       "title" : "Es necesario actualizar la aplicación",
@@ -2313,6 +2323,9 @@
       "VOTE" : "Votado",
       "FREEZE" : "Inmovilizado",
       "UNFREEZE" : "Desinmovilizado",
+      "UNDELEGATE_RESOURCE" : "Desdelegado",
+      "WITHDRAW_EXPIRE_UNFREEZE" : "Retiro",
+      "LEGACYUNFREEZE" : "Desinmovilizado",
       "REWARD" : "Recompensa reclamada",
       "FEES" : "Tarifas",
       "OPT_IN" : "Adherir",
@@ -3687,7 +3700,7 @@
       "description" : "Inmoviliza TRX para recibir recompensas de forma segura, al tiempo que conservas el completo control de tus activos.",
       "steps" : {
         "0" : "Los activos delegados siguen siendo tuyos.",
-        "1" : "Podrás desinmovilizar los activos después de 3 días.",
+        "1" : "You can unfreeze your assets at any time, and they will be accessible after the 14-day unfreezing period.",
         "2" : "Inmoviliza y vota de forma segura con tu dispositivo Ledger."
       },
       "howVotingWorks" : "Cómo funciona la votación",
@@ -5344,7 +5357,7 @@
             "description" : "Delega TRX a un tercero para recibir recompensas. Haz clic en Continuar para inmovilizar activos y votar.",
             "bullet" : {
               "delegate" : "Los activos delegados siguen siendo tuyos.",
-              "access" : "Podrás acceder a tus activos 3 días después de haberlos inmovilizado.",
+              "access" : "Frozen assets can be unfrozen immediately and will become accessible after the 14-day unfreezing period.",
               "ledger" : "Delega y vota de forma segura con tu dispositivo Ledger."
             },
             "button" : {
@@ -5362,7 +5375,7 @@
       },
       "unfreeze" : {
         "title" : "Desinmovilizar",
-        "description" : "Desinmoviliza TRX para agregarlos de nuevo al saldo disponible. Ya no recibirás recompensas."
+        "description" : "Unfreeze TRX to add them back to your available balance. You will no longer earn rewards. The assets will be available after the 14-day unfreezing period"
       },
       "vote" : {
         "title" : "Votar",
@@ -5920,6 +5933,9 @@
       "freeze" : "En el dispositivo, confirma para finalizar la operación",
       "unfreeze" : "En el dispositivo, confirma para finalizar la operación",
       "claimReward" : "En el dispositivo, confirma para finalizar la operación",
+      "legacyUnfreeze" : "En el dispositivo, confirma para finalizar la operación",
+      "withdrawExpireUnfreeze" : "En el dispositivo, confirma para finalizar la operación",
+      "undelegateResource" : "En el dispositivo, confirma para finalizar la operación",
       "vote" : "En el dispositivo, confirma para finalizar la operación",
       "delegate" : "En el dispositivo, confirma para finalizar la operación",
       "redelegate" : "En el dispositivo, confirma para finalizar la operación",
@@ -5944,9 +5960,12 @@
     "votes" : "Votos",
     "validator" : "Validador",
     "infoWording" : {
-      "freeze" : "Los tokens inmovilizados quedan bloqueados durante un período de 3 días.",
+      "freeze" : "Freeze tokens to acquire bandwidth or energy and receive an equivalent amount of TRON Power (TP).",
       "unfreeze" : "Tus puntos de {{resource}} se reducirán y se cancelarán todos tus votos.",
+      "legacyUnfreeze" : "Tus puntos de {{resource}} se reducirán y se cancelarán todos tus votos.",
       "claimReward" : "Es posible reclamar las recompensas cada 24 horas.",
+      "withdrawExpireUnfreeze" : "Your unfrozen resources that has passed the unfreezing period will be withdrawn",
+      "unDelegateResource" : "Cancel the delegation of {{resource}}",
       "cosmos" : {
         "claimReward" : "Si el validador seleccionado tiene recompensas pendientes, se reclamarán automáticamente.",
         "redelegate" : "Tendrás que esperar {{numberOfDays}} días para que los activos desdelegados vuelvan al saldo disponible.",
