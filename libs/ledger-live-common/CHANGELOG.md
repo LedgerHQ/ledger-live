@@ -1,123 +1,57 @@
 # @ledgerhq/live-common
 
-## 33.4.0-nightly.9
+## 33.4.0
 
 ### Minor Changes
 
-- [#5534](https://github.com/LedgerHQ/ledger-live/pull/5534) [`a4a72da`](https://github.com/LedgerHQ/ledger-live/commit/a4a72da33ddfefd5ba69ac4d9ecb33d7775583f1) Thanks [@Philippoes](https://github.com/Philippoes)! - Add support for Tron Stake 2.0
+- [#5736](https://github.com/LedgerHQ/ledger-live/pull/5736) [`1cb052d`](https://github.com/LedgerHQ/ledger-live/commit/1cb052dada6363c6f0dc4289b358d93de2320594) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Merging solana hotfix (PR #5824)
+
+- [#5383](https://github.com/LedgerHQ/ledger-live/pull/5383) [`3e46bd1`](https://github.com/LedgerHQ/ledger-live/commit/3e46bd1c8b1baccdce1a5d4a2b0adc81cdbd2e41) Thanks [@cng-ledger](https://github.com/cng-ledger)! - feat(LIVE-9451): capture swap live app load failure & use native flow
 
 ### Patch Changes
 
-- [#5845](https://github.com/LedgerHQ/ledger-live/pull/5845) [`5ed4076`](https://github.com/LedgerHQ/ledger-live/commit/5ed407610dc0df8bc5b1c6b17b338d9f2dc0c94e) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Fix the disconnected device drawer behavior when a device is disconnected during action
+- [#5703](https://github.com/LedgerHQ/ledger-live/pull/5703) [`6c139d7`](https://github.com/LedgerHQ/ledger-live/commit/6c139d7a6431fb87b8711bdeb7b7ffa9882e7723) Thanks [@gre](https://github.com/gre)! - Fixes icons of testnet coins.
 
-- Updated dependencies []:
-  - @ledgerhq/coin-algorand@0.3.8-nightly.2
-  - @ledgerhq/coin-evm@0.12.0-nightly.4
-  - @ledgerhq/coin-framework@0.11.0-nightly.2
-  - @ledgerhq/coin-polkadot@0.5.1-nightly.2
-  - @ledgerhq/hw-app-eth@6.35.2-nightly.2
-  - @ledgerhq/live-config@1.0.1-nightly.1
+- [#5662](https://github.com/LedgerHQ/ledger-live/pull/5662) [`efe1ed0`](https://github.com/LedgerHQ/ledger-live/commit/efe1ed0493b343165ade674ca8c6badfff6ce065) Thanks [@mle-gall](https://github.com/mle-gall)! - Fix post onboarding not clearing it's active state if no actions
 
-## 33.4.0-nightly.8
+- [#5736](https://github.com/LedgerHQ/ledger-live/pull/5736) [`b286aa1`](https://github.com/LedgerHQ/ledger-live/commit/b286aa1b36dbda3ae5fd2a93e116612a32f2ecd1) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Merging solana hotfix (PR #5824)
 
-### Patch Changes
+- [#5680](https://github.com/LedgerHQ/ledger-live/pull/5680) [`8929ea0`](https://github.com/LedgerHQ/ledger-live/commit/8929ea01acb6aa3d2949a16077a02d1c7b37f527) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix new firmware update flow not exitable (over USB)
 
-- [#5715](https://github.com/LedgerHQ/ledger-live/pull/5715) [`784c1ac`](https://github.com/LedgerHQ/ledger-live/commit/784c1aceddac6751fa03e117df20729513e37a54) Thanks [@cng-ledger](https://github.com/cng-ledger)! - fix(LIVE-10552): change quote refresh rate to 20 seconds
+- [#5736](https://github.com/LedgerHQ/ledger-live/pull/5736) [`d49f444`](https://github.com/LedgerHQ/ledger-live/commit/d49f44417fd175affe71da589c0ca380e88fbb35) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Update CAL
 
-- [#5650](https://github.com/LedgerHQ/ledger-live/pull/5650) [`e4c8b3a`](https://github.com/LedgerHQ/ledger-live/commit/e4c8b3a8200a3e002e4ac130a8b4f3857c5df84e) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Replace hardcoded countervalues URL with env var
+- [#5691](https://github.com/LedgerHQ/ledger-live/pull/5691) [`a01636a`](https://github.com/LedgerHQ/ledger-live/commit/a01636a0c14e66d20bb853be1e13b48d6036639e) Thanks [@gre](https://github.com/gre)! - deposit flow: fixes currencies sorting ('2049' bug)
 
-- Updated dependencies [[`fc2cf04`](https://github.com/LedgerHQ/ledger-live/commit/fc2cf04c8d3cd55503ea19aeb21fd12ee55046f6), [`dd5d930`](https://github.com/LedgerHQ/ledger-live/commit/dd5d9308e0e3ef8ca78f879c15bc07313ef3c8c4)]:
-  - @ledgerhq/cryptoassets@11.4.0-nightly.1
-  - @ledgerhq/crypto-icons-ui@0.7.1-nightly.0
-  - @ledgerhq/live-network@1.1.11-nightly.1
-  - @ledgerhq/coin-algorand@0.3.8-nightly.1
-  - @ledgerhq/coin-evm@0.12.0-nightly.3
-  - @ledgerhq/coin-framework@0.11.0-nightly.1
-  - @ledgerhq/coin-polkadot@0.5.1-nightly.1
-  - @ledgerhq/hw-app-eth@6.35.2-nightly.1
-  - @ledgerhq/hw-app-vet@0.1.1-nightly.1
+- [#5655](https://github.com/LedgerHQ/ledger-live/pull/5655) [`a8f82dc`](https://github.com/LedgerHQ/ledger-live/commit/a8f82dc1854eaf75e922d55964905b1fd7da0ba2) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - add moonpay swap provider config
 
-## 33.4.0-nightly.7
+- Updated dependencies [[`d49f444`](https://github.com/LedgerHQ/ledger-live/commit/d49f44417fd175affe71da589c0ca380e88fbb35), [`f372d0f`](https://github.com/LedgerHQ/ledger-live/commit/f372d0f02a0f5e18021a9cb49ed3f160552c2791), [`0e2287b`](https://github.com/LedgerHQ/ledger-live/commit/0e2287b1ce4200004ed2c06f3e74cd3b03100784)]:
+  - @ledgerhq/cryptoassets@11.3.1
+  - @ledgerhq/hw-app-exchange@0.4.2
+  - @ledgerhq/crypto-icons-ui@1.0.0
+  - @ledgerhq/coin-algorand@0.3.8
+  - @ledgerhq/coin-evm@0.11.2
+  - @ledgerhq/coin-framework@0.10.1
+  - @ledgerhq/coin-polkadot@0.5.1
+  - @ledgerhq/hw-app-eth@6.35.2
+  - @ledgerhq/hw-app-vet@0.1.1
 
-### Patch Changes
-
-- [#5228](https://github.com/LedgerHQ/ledger-live/pull/5228) [`7253544`](https://github.com/LedgerHQ/ledger-live/commit/72535447c5323abbba795b9de02a53ac5e90d410) Thanks [@sponomarev](https://github.com/sponomarev)! - Safer Solana staking
-
-- Updated dependencies [[`5fdd5f0`](https://github.com/LedgerHQ/ledger-live/commit/5fdd5f0acab5f990d46ad20d245315f38be0f08a)]:
-  - @ledgerhq/hw-app-btc@10.2.0-nightly.1
-
-## 33.4.0-nightly.6
-
-### Patch Changes
-
-- Updated dependencies [[`ed23f46`](https://github.com/LedgerHQ/ledger-live/commit/ed23f4680d4ed1020bf34ac05b064ff659a282f5)]:
-  - @ledgerhq/coin-evm@0.12.0-nightly.2
-
-## 33.4.0-nightly.5
-
-### Patch Changes
-
-- [#5775](https://github.com/LedgerHQ/ledger-live/pull/5775) [`241cdac`](https://github.com/LedgerHQ/ledger-live/commit/241cdace43c9e6b6394617d8a63c60a7505f6a53) Thanks [@lvndry](https://github.com/lvndry)! - [Near] Cache getValidator and getComission
-
-## 33.4.0-nightly.4
-
-### Patch Changes
-
-- [#5714](https://github.com/LedgerHQ/ledger-live/pull/5714) [`714f15e`](https://github.com/LedgerHQ/ledger-live/commit/714f15e3ec3acf5048dd014d018595ac6a1eb8fb) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Log Cardano raw transactions about to be signed
-
-## 33.4.0-nightly.3
-
-### Patch Changes
-
-- Updated dependencies [[`e494a2b`](https://github.com/LedgerHQ/ledger-live/commit/e494a2b984fb0406fe9225bb4eccde3d9585efe1)]:
-  - @ledgerhq/coin-evm@0.12.0-nightly.1
-
-## 33.4.0-nightly.2
-
-### Patch Changes
-
-- [#5747](https://github.com/LedgerHQ/ledger-live/pull/5747) [`c9dbad0`](https://github.com/LedgerHQ/ledger-live/commit/c9dbad07da7924ec4b40e94a837f64604645a9e4) Thanks [@sarneijim](https://github.com/sarneijim)! - Fix exchange funds
-
-## 33.4.0-nightly.1
+## 33.4.0-next.1
 
 ### Minor Changes
 
-- [#5722](https://github.com/LedgerHQ/ledger-live/pull/5722) [`2358e87`](https://github.com/LedgerHQ/ledger-live/commit/2358e8748d9ae9398cfc05a0ec20a6b191fc7324) Thanks [@chabroA](https://github.com/chabroA)! - Add Ethereum Sepolia and Holesky
+- [#5736](https://github.com/LedgerHQ/ledger-live/pull/5736) [`1cb052d`](https://github.com/LedgerHQ/ledger-live/commit/1cb052dada6363c6f0dc4289b358d93de2320594) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Merging solana hotfix (PR #5824)
+
+## 33.3.2-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`2358e87`](https://github.com/LedgerHQ/ledger-live/commit/2358e8748d9ae9398cfc05a0ec20a6b191fc7324), [`69bbdce`](https://github.com/LedgerHQ/ledger-live/commit/69bbdce5c88d69248cbddb94ac4627334c1df626), [`16b4d7a`](https://github.com/LedgerHQ/ledger-live/commit/16b4d7ab4702022d4967f3c054d3c62a76716947)]:
-  - @ledgerhq/cryptoassets@11.4.0-nightly.0
-  - @ledgerhq/coin-framework@0.11.0-nightly.0
-  - @ledgerhq/coin-evm@0.12.0-nightly.0
-  - @ledgerhq/live-env@0.9.0-nightly.0
-  - @ledgerhq/live-config@1.0.1-nightly.0
-  - @ledgerhq/hw-transport@6.30.2-nightly.0
-  - @ledgerhq/coin-algorand@0.3.8-nightly.0
-  - @ledgerhq/coin-polkadot@0.5.1-nightly.0
-  - @ledgerhq/hw-app-eth@6.35.2-nightly.0
-  - @ledgerhq/hw-app-vet@0.1.1-nightly.0
-  - @ledgerhq/live-network@1.1.11-nightly.0
-  - @ledgerhq/hw-app-algorand@6.28.2-nightly.0
-  - @ledgerhq/hw-app-btc@10.1.2-nightly.0
-  - @ledgerhq/hw-app-cosmos@6.29.2-nightly.0
-  - @ledgerhq/hw-app-exchange@0.4.2-nightly.0
-  - @ledgerhq/hw-app-near@6.28.2-nightly.0
-  - @ledgerhq/hw-app-polkadot@6.28.2-nightly.0
-  - @ledgerhq/hw-app-solana@7.1.2-nightly.0
-  - @ledgerhq/hw-app-str@6.28.2-nightly.0
-  - @ledgerhq/hw-app-tezos@6.28.2-nightly.0
-  - @ledgerhq/hw-app-trx@6.28.2-nightly.0
-  - @ledgerhq/hw-app-xrp@6.28.2-nightly.0
-  - @ledgerhq/hw-transport-mocker@6.28.2-nightly.0
-  - @ledgerhq/hw-transport-node-speculos@6.28.2-nightly.0
-  - @ledgerhq/hw-transport-node-speculos-http@6.28.2-nightly.0
+- [#5736](https://github.com/LedgerHQ/ledger-live/pull/5736) [`b286aa1`](https://github.com/LedgerHQ/ledger-live/commit/b286aa1b36dbda3ae5fd2a93e116612a32f2ecd1) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Merging solana hotfix (PR #5824)
 
-## 33.4.0-nightly.0
+## 33.3.1
 
-### Minor Changes
+### Patch Changes
 
-- [#5697](https://github.com/LedgerHQ/ledger-live/pull/5697) [`78e7aa2`](https://github.com/LedgerHQ/ledger-live/commit/78e7aa26e4d35091abbb32084b0fa748085b38e3) Thanks [@Justkant](https://github.com/Justkant)! - feat(wallet-api): add new optional fields for polkadot
+- [#5824](https://github.com/LedgerHQ/ledger-live/pull/5824) [`1abfe8d`](https://github.com/LedgerHQ/ledger-live/commit/1abfe8dfa4f2f4abd294f3f992f3681a78b33143) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Safer Solana staking
 
 ## 33.3.0
 

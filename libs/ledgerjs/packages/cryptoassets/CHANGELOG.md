@@ -1,16 +1,16 @@
 # @ledgerhq/cryptoassets
 
-## 11.4.0-nightly.1
+## 11.3.1
 
 ### Patch Changes
 
-- [#5820](https://github.com/LedgerHQ/ledger-live/pull/5820) [`fc2cf04`](https://github.com/LedgerHQ/ledger-live/commit/fc2cf04c8d3cd55503ea19aeb21fd12ee55046f6) Thanks [@lvndry](https://github.com/lvndry)! - Rename Coreum ticker to COREUM
+- [#5736](https://github.com/LedgerHQ/ledger-live/pull/5736) [`d49f444`](https://github.com/LedgerHQ/ledger-live/commit/d49f44417fd175affe71da589c0ca380e88fbb35) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Update CAL
 
-## 11.4.0-nightly.0
+## 11.3.1-next.0
 
-### Minor Changes
+### Patch Changes
 
-- [#5722](https://github.com/LedgerHQ/ledger-live/pull/5722) [`2358e87`](https://github.com/LedgerHQ/ledger-live/commit/2358e8748d9ae9398cfc05a0ec20a6b191fc7324) Thanks [@chabroA](https://github.com/chabroA)! - Add Ethereum Sepolia and Holesky
+- [#5736](https://github.com/LedgerHQ/ledger-live/pull/5736) [`d49f444`](https://github.com/LedgerHQ/ledger-live/commit/d49f44417fd175affe71da589c0ca380e88fbb35) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Update CAL
 
 ## 11.3.0
 

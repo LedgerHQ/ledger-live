@@ -1,57 +1,24 @@
 # @ledgerhq/coin-evm
 
-## 0.12.0-nightly.4
+## 0.11.2
 
 ### Patch Changes
 
-- Updated dependencies [[`a4a72da`](https://github.com/LedgerHQ/ledger-live/commit/a4a72da33ddfefd5ba69ac4d9ecb33d7775583f1)]:
-  - @ledgerhq/types-live@6.44.0-nightly.1
-  - @ledgerhq/coin-framework@0.11.0-nightly.2
-  - @ledgerhq/domain-service@1.1.17-nightly.1
-  - @ledgerhq/evm-tools@1.0.13-nightly.1
-  - @ledgerhq/hw-app-eth@6.35.2-nightly.2
+- Updated dependencies [[`d49f444`](https://github.com/LedgerHQ/ledger-live/commit/d49f44417fd175affe71da589c0ca380e88fbb35)]:
+  - @ledgerhq/cryptoassets@11.3.1
+  - @ledgerhq/coin-framework@0.10.1
+  - @ledgerhq/evm-tools@1.0.13
+  - @ledgerhq/hw-app-eth@6.35.2
 
-## 0.12.0-nightly.3
-
-### Patch Changes
-
-- Updated dependencies [[`fc2cf04`](https://github.com/LedgerHQ/ledger-live/commit/fc2cf04c8d3cd55503ea19aeb21fd12ee55046f6), [`dd5d930`](https://github.com/LedgerHQ/ledger-live/commit/dd5d9308e0e3ef8ca78f879c15bc07313ef3c8c4)]:
-  - @ledgerhq/cryptoassets@11.4.0-nightly.1
-  - @ledgerhq/live-network@1.1.11-nightly.1
-  - @ledgerhq/coin-framework@0.11.0-nightly.1
-  - @ledgerhq/evm-tools@1.0.13-nightly.1
-  - @ledgerhq/hw-app-eth@6.35.2-nightly.1
-
-## 0.12.0-nightly.2
-
-### Minor Changes
-
-- [#5744](https://github.com/LedgerHQ/ledger-live/pull/5744) [`ed23f46`](https://github.com/LedgerHQ/ledger-live/commit/ed23f4680d4ed1020bf34ac05b064ff659a282f5) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for internal transactions in transactions' history
-
-## 0.12.0-nightly.1
+## 0.11.2-next.0
 
 ### Patch Changes
 
-- [#5743](https://github.com/LedgerHQ/ledger-live/pull/5743) [`e494a2b`](https://github.com/LedgerHQ/ledger-live/commit/e494a2b984fb0406fe9225bb4eccde3d9585efe1) Thanks [@chabroA](https://github.com/chabroA)! - remove unreachable statement
-
-## 0.12.0-nightly.0
-
-### Minor Changes
-
-- [#5722](https://github.com/LedgerHQ/ledger-live/pull/5722) [`2358e87`](https://github.com/LedgerHQ/ledger-live/commit/2358e8748d9ae9398cfc05a0ec20a6b191fc7324) Thanks [@chabroA](https://github.com/chabroA)! - Add Ethereum Sepolia and Holesky
-
-### Patch Changes
-
-- Updated dependencies [[`2358e87`](https://github.com/LedgerHQ/ledger-live/commit/2358e8748d9ae9398cfc05a0ec20a6b191fc7324), [`69bbdce`](https://github.com/LedgerHQ/ledger-live/commit/69bbdce5c88d69248cbddb94ac4627334c1df626)]:
-  - @ledgerhq/types-cryptoassets@7.9.0-nightly.0
-  - @ledgerhq/cryptoassets@11.4.0-nightly.0
-  - @ledgerhq/coin-framework@0.11.0-nightly.0
-  - @ledgerhq/live-env@0.9.0-nightly.0
-  - @ledgerhq/types-live@6.43.2-nightly.0
-  - @ledgerhq/domain-service@1.1.17-nightly.0
-  - @ledgerhq/evm-tools@1.0.13-nightly.0
-  - @ledgerhq/hw-app-eth@6.35.2-nightly.0
-  - @ledgerhq/live-network@1.1.11-nightly.0
+- Updated dependencies [[`d49f444`](https://github.com/LedgerHQ/ledger-live/commit/d49f44417fd175affe71da589c0ca380e88fbb35)]:
+  - @ledgerhq/cryptoassets@11.3.1-next.0
+  - @ledgerhq/coin-framework@0.10.1-next.0
+  - @ledgerhq/evm-tools@1.0.13-next.0
+  - @ledgerhq/hw-app-eth@6.35.2-next.0
 
 ## 0.11.1
 

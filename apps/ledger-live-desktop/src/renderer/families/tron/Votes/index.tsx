@@ -12,7 +12,6 @@ import {
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
-import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import Text from "~/renderer/components/Text";
 import Button from "~/renderer/components/Button";
@@ -31,6 +30,8 @@ import { useDiscreetMode } from "~/renderer/components/Discreet";
 import { localeSelector } from "~/renderer/reducers/settings";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
 import { TronAccount } from "@ledgerhq/live-common/families/tron/types";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { urls } from "~/config/urls";
 
 const Wrapper = styled(Box).attrs(() => ({
   p: 3,
@@ -42,6 +43,7 @@ const Wrapper = styled(Box).attrs(() => ({
 const Delegation = ({ account }: { account: TronAccount }) => {
   const locale = useSelector(localeSelector);
   const superRepresentatives = useTronSuperRepresentatives();
+  const stakingUrl = useLocalizedUrl(urls.stakingTron);
   const lastVoteDate = getLastVotedDate(account);
   const duration = useMemo(
     () => (lastVoteDate ? moment().diff(lastVoteDate, "days") : 0),
@@ -177,7 +179,7 @@ const Delegation = ({ account }: { account: TronAccount }) => {
             <Box mt={2}>
               <LinkWithExternalIcon
                 label={<Trans i18nKey="tron.voting.emptyState.info" />}
-                onClick={() => openURL(urls.stakingTron)}
+                onClick={() => openURL(stakingUrl)}
               />
             </Box>
           </Box>

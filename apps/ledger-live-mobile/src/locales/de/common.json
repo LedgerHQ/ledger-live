@@ -467,6 +467,18 @@
     "ElrondDelegationBelowMinimumError" : {
       "title" : "Verbleibende Delegierung darf nicht kleiner als {{formattedAmount}} sein"
     },
+    "NotEnoughVTHO" : {
+      "title" : "Nicht genügend VTHO-Vermögenswerte verfügbar",
+      "description" : "Bitte stellen Sie sicher, dass das Konto über ausreichend VTHO verfügt."
+    },
+    "MustBeVechain" : {
+      "title" : "Kein VeChain-Konto",
+      "description" : "Bitte stellen Sie sicher, dass es sich um eine VTHO- oder VET-Coin handelt"
+    },
+    "ImpossibleToCalculateAmountAndFees" : {
+      "title" : "Berechnung von Betrag und Gebühren nicht möglich",
+      "description" : "Berechnung von Betrag und Gebühren nicht möglich"
+    },
     "NotEnoughEGLDForFees" : {
       "title" : "Nicht genug EGLD, um die Transaktionsgebühren zu bezahlen",
       "description" : "Bitte überweisen Sie einige EGLD auf Ihr Konto, um die Transaktionen zu bezahlen."
@@ -752,6 +764,9 @@
     "CardanoNotEnoughFunds" : {
       "title" : "Bitte vergewissern Sie sich, dass Sie genügend Geld für die Bezahlung der Gebühren haben"
     },
+    "CardanoStakeKeyDepositError" : {
+      "title" : "Achten Sie darauf, dass Sie {{depositAmount}} ADA für die Einzahlung zur Verfügung haben"
+    },
     "StacksMemoTooLong" : {
       "title" : "Memo ist zu lang"
     },
@@ -1006,7 +1021,8 @@
     "week" : "1W",
     "month" : "1M",
     "year" : "1J",
-    "all" : "Alle"
+    "all" : "Alle",
+    "graphNotSupported" : "Der Graph für dieses Token ist nicht verfügbar"
   },
   "carousel" : {
     "title" : "Banner schließen?",
@@ -1936,7 +1952,7 @@
   "earlySecurityCheck" : {
     "title" : "Echtheitsprüfung und \nPrüfung auf Betriebssystem-Update",
     "idle" : {
-      "description" : "Die Echtheitsprüfung stellt sicher, dass Ihr Ledger Stax ein offizielles Ledger-Gerät ist. Zudem wird durch die Prüfung auf Betriebssystem-Updates gewährleistet, dass Ledger Stax OS auf dem aktuellen Stand ist.",
+      "description" : "Dadurch wird sichergestellt, dass Ihr Ledger Stax ein offizielles Ledger-Gerät ist.",
       "learnMore" : "Weitere Informationen zur Echtheitsprüfung",
       "checkCta" : "Ledger Stax prüfen"
     },
@@ -1944,8 +1960,8 @@
       "continueCta" : "Weiter zur Einrichtung"
     },
     "earlySecurityCheckMandatoryDrawer" : {
-      "title" : "Die Echtheitsprüfung ist obligatorisch",
-      "description" : "Ohne diese Prüfung lässt sich Ihr {{productName}}-Gerät nicht einrichten.",
+      "title" : "Echtheitsprüfung und Prüfung auf Betriebssystem-Update abbrechen?",
+      "description" : "Diese Echtheitsprüfung ist obligatorisch, um die Einrichtung Ihres {{productName}} mit der Ledger Live-App fortsetzen zu können.",
       "resumeCta" : "Prüfung fortsetzen",
       "cancelCta" : "Prüfungen abbrechen"
     },
@@ -1966,25 +1982,25 @@
       "supportCta" : "Ledger-Kundenservice kontaktieren"
     },
     "allowManagerDrawer" : {
-      "title" : "Auf „Erlauben“ tippen, um die Echtheitsprüfung und die Prüfung auf Betriebssystem-Updates zu aktivieren"
+      "title" : "Tippen Sie auf „Allow“ (Erlauben), um die Echtheitsprüfung zu starten"
     },
     "genuineCheckStep" : {
       "learnMore" : "Weitere Informationen zur Echtheitsprüfung",
       "inactive" : {
         "title" : "Echtheitsprüfung",
-        "description" : "Die Echtheitsprüfung stellt sicher, dass Ihr {{productName}}-Gerät ein offizielles Ledger-Gerät ist."
+        "description" : "Hiermit wird verifiziert, dass es sich bei Ihrem {{productName}}-Gerät um ein offizielles Ledger-Gerät handelt."
       },
       "active" : {
         "title" : "Echtheitsprüfung",
-        "description" : "Die Echtheitsprüfung stellt sicher, dass Ihr {{productName}}-Gerät ein offizielles Ledger-Gerät ist."
+        "description" : "Hiermit wird verifiziert, dass es sich bei Ihrem {{productName}}-Gerät um ein offizielles Ledger-Gerät handelt."
       },
       "completed" : {
         "title" : "{{productName}} ist echt",
-        "description" : "Die Echtheitsprüfung stellt sicher, dass Ihr {{productName}}-Gerät ein offizielles Ledger-Gerät ist."
+        "description" : ""
       },
       "refused" : {
         "title" : "Echtheitsprüfung abgelehnt",
-        "description" : "Ohne diese Prüfung lässt sich Ihr {{productName}}-Gerät nicht einrichten.",
+        "description" : "Diese Echtheitsprüfung ist obligatorisch, um die Einrichtung Ihres {{productName}} mit der Ledger Live-App fortsetzen zu können.",
         "cta" : "Prüfung fortsetzen"
       },
       "error" : {
@@ -1995,7 +2011,7 @@
     "firmwareUpdateCheckStep" : {
       "active" : {
         "title" : "Prüfung auf Betriebssystem-Update",
-        "description" : "Mit der Prüfung auf Betriebssystem-Updates wird sichergestellt, dass das Betriebssystem für {{productName}} auf dem aktuellen Stand ist."
+        "description" : "Hiermit wird geprüft, ob das Betriebssystem Ihres {{productName}}-Geräts auf dem neuesten Stand ist. "
       },
       "completed" : {
         "noUpdateAvailable" : {
@@ -2014,7 +2030,7 @@
       },
       "inactive" : {
         "title" : "Prüfung auf Betriebssystem-Update",
-        "description" : "Mit der Prüfung auf Betriebssystem-Updates wird sichergestellt, dass das Betriebssystem für {{productName}} auf dem aktuellen Stand ist."
+        "description" : "Damit wird geprüft, ob Ihr Ledger Stax-Betriebssystem auf dem neuesten Stand ist oder nicht. "
       }
     },
     "firmwareUpdateAvailableDrawer" : {
@@ -2071,7 +2087,7 @@
       "helpCta" : "Hilfe erhalten"
     },
     "resyncOverlay" : {
-      "content" : "Verbindung mit {{productName}} verloren. Versuche Verbindung wiederherzustellen..."
+      "content" : "Verbindung mit {{productName}} getrennt. Die Verbindung wird wiederhergestellt."
     },
     "helpDrawer" : {
       "title" : "Benötigen Sie Hilfe mit Ihrem Einrichtungshandbuch?",
@@ -2080,14 +2096,15 @@
       "supportCta" : "Sprechen Sie mit einem Menschen"
     },
     "earlySecurityCheckCompletedStep" : {
-      "title" : "Dieses {{productName}}-Gerät ist echt",
-      "description" : "Die Einrichtung auf dem {{productName}} wird fortgesetzt."
+      "title" : "{{productName}} ist echt",
+      "subtitle" : "Die Verwendung dieses {{productName}} ist sicher. Sie können mit dem Einrichten beginnen.",
+      "description" : "Tippen Sie auf {{productName}}, um mit dem Einrichten zu beginnen."
     },
     "pinStep" : {
       "title" : "PIN",
       "doneTitle" : "PIN festgelegt",
-      "description" : "Ihre PIN verhindert unerwünschten Zugriff auf Ihre {{productName}}.",
-      "continueOnDevice" : "Legen Sie die PIN fest für Ihr {{productName}}"
+      "description" : "Wie bei Passwörtern üblich, ermöglicht Ihnen die PIN, Ihr {{productName}}-Gerät zu entsperren und es vor unbefugtem Zugriff zu schützen.",
+      "continueOnDevice" : "Legen Sie die PIN für Ihr {{productName}} fest."
     },
     "seedStep" : {
       "title" : "Geheime Wiederherstellungsphrase",
@@ -2095,17 +2112,25 @@
       "description" : "Ihre Wiederherstellungsphrase ist eine geheime Liste mit 24 Wörtern, mit denen Ihre privaten Schlüssel gesichert werden. Ihre {{productName}} erzeugt eine eindeutige Wiederherstellungsphrase. Ledger bewahrt keine Kopie davon auf.",
       "choiceRestoreDirectOrRecover" : "Platzhalter – wählen Sie direkte Wiederherstellung oder verwenden Sie „Recover“ (Wiederherstellung)",
       "recoverSeed" : "Platzhalter: „Recover“ (Wiederherstellung)",
-      "restoreSeed" : "Stellen Sie sicher, dass Sie für die Wiederherstellung eine geheime Wiederherstellungsphrase verwenden, die von einem Ledger-Gerät generiert wird, um die Sicherheit Ihrer Vermögenswerte zu gewährleisten.\n\nSie haben keine? Verwenden Sie Ihr {{productName}}, um eine neue Phrase zu generieren.",
-      "selection" : "Im {{productName}} können Sie eine Einrichtungsoption wählen, die Ihnen am besten gefällt.",
-      "selectionContinueOnDevice" : "Tippen Sie auf eine Option im {{productName}}",
-      "newSeedDescription" : "Sehen Sie sich die folgenden Videos an, um mehr über Ihre geheimen Wörter zu erfahren.",
+      "restoreSeed" : "Schützen Sie Ihre Vermögenswerte optimal mithilfe einer von einem Ledger-Gerät generierten geheimen Wiederherstellungsphrase. \n\nSie haben keine solche Phrase? Dann können Sie mit Ihrem {{productName}}-Gerät eine neue Phrase generieren.",
+      "selection" : "Wählen Sie die zu Ihren Anforderungen passende Einrichtungsoption aus:",
+      "selectionNewLedger" : {
+        "title" : "Als neues Ledger-Gerät einrichten",
+        "desc" : "Ermöglicht Ihnen die Erstellung einer neuen Wallet. Hierbei wird eine neue geheime Wiederherstellungsphrase generiert."
+      },
+      "selectionRestore" : {
+        "title" : "Wiederherstellen",
+        "desc" : "Erlaubt Ihnen den Zugriff auf Ihre bestehenden Vermögenswerte mittels Ihrer geheimen Wiederherstellungsphrase oder durch Nutzung von Ledger Recover wiederherzustellen."
+      },
+      "selectionContinueOnDevice" : "Wählen Sie die entsprechende Option auf Ihrem {{productName}} aus.",
+      "newSeedDescription" : "Möchten Sie mehr über die geheime Wiederherstellungsphrase erfahren? Schauen Sie sich diese Videos an:",
       "newSeedContinueOnDevice" : "Machen Sie dies auf Ihrem {{productName}}",
-      "recovery" : "Stellen Sie sicher, dass Sie für die Wiederherstellung eine geheime Wiederherstellungsphrase verwenden, die von einem Ledger-Gerät generiert wird, um die Sicherheit Ihrer Vermögenswerte zu gewährleisten.\n\nSie haben keine? Verwenden Sie Ihr {{productName}}, um eine neue Phrase zu generieren.",
-      "restoreChoiceContinueOnDevice" : "Wählen Sie eine Option auf Ihrem {{productName}}",
+      "recovery" : "Schützen Sie Ihre Vermögenswerte optimal mithilfe einer von einem Ledger-Gerät generierten geheimen Wiederherstellungsphrase. \n\nSie haben keine? Verwenden Sie Ihr {{productName}}, um eine neue Phrase zu generieren.",
+      "restoreChoiceContinueOnDevice" : "Wählen Sie die entsprechende Option auf Ihrem {{productName}} aus.",
       "restoreChoiceSRPTitle" : "Wiederherstellung mit geheimer Wiederherstellungsphrase",
-      "restoreChoiceSRPDescription" : "Achten Sie darauf, eine von einem Ledger-Gerät generierte Phrase zu verwenden, um die Sicherheit Ihres Vermögens zu gewährleisten.",
+      "restoreChoiceSRPDescription" : "Für maximale Sicherheit verwenden Sie eine von einem Ledger-Gerät generierte geheime Wiederherstellungsphrase. ",
       "restoreChoiceRecoverTitle" : "Wiederherstellen mit Ledger Recover",
-      "restoreChoiceRecoverDescription" : "Stellen Sie die Sicherheitskopie Ihrer Wiederherstellungsphrase wieder her, indem Sie sich bei Ihrem Ledger-Konto anmelden und Ihre Identität bestätigen."
+      "restoreChoiceRecoverDescription" : "Wenn Sie Ledger Recover abonniert haben, melden Sie sich bei Ihrem Abonnement an, um den Wiederherstellungsprozess für die Sicherheitskopie Ihrer geheimen Wiederherstellungsphrase zu beginnen."
     },
     "softwareChecksSteps" : {
       "title" : "Hardware- und Software-Überprüfungen",
@@ -2123,7 +2148,7 @@
       }
     },
     "appsStep" : {
-      "title" : "Blockchain-Apps installieren"
+      "title" : "Apps auf {{productName}}-Gerät installieren"
     },
     "readyStep" : {
       "title" : "Einrichtung beendet",
@@ -2209,6 +2234,20 @@
       "send" : "Senden",
       "deposit" : "Empfangen",
       "stake" : "Staken"
+    },
+    "recoverBanner" : {
+      "subscribeDone" : {
+        "title" : "Schließen Sie das Hinzufügen Ihrer Zahlungskarte ab",
+        "description" : "Zuverlässige Wiederherstellung mit Ledger Recover."
+      },
+      "verifyIdentity" : {
+        "title" : "Schließen Sie die Überprüfung Ihrer Identität ab",
+        "description" : "Zuverlässige Wiederherstellung mit Ledger Recover."
+      },
+      "connectDevice" : {
+        "title" : "Letzter Schritt: Schließen Sie Ihr Ledger-Gerät an",
+        "description" : "Sie sind 1 Schritt von Ledger Recover entfernt."
+      }
     }
   },
   "addAccountsModal" : {
@@ -2509,6 +2548,7 @@
       }
     },
     "availableBalance" : "Verfügbares Guthaben",
+    "claimableRewards" : "Verfügbare Belohnungen",
     "totalSupplied" : "Eingezahlter Betrag",
     "tronFrozen" : "Eingefroren",
     "bandwidth" : "Bandbreite",
@@ -2847,6 +2887,18 @@
         "experimentalExplorers" : {
           "title" : "Experimentelle Explorer-API",
           "description" : "Probieren Sie eine kommende Version von Ledgers Blockchain-Explorern aus. Das Ändern dieser Einstellung kann den Kontostand und die Synchronisation sowie die Sendefunktion beeinflussen."
+        },
+        "1559DeactivateGate" : {
+          "title" : "Deaktivierung der Mindestprioritätsgebühren (gemäß EIP1559)",
+          "description" : "Dies ermöglicht die Übermittlung einer Transaktion, ohne dass eine Mindestprioritätsgebühr erhoben wird. Dies kann dazu führen, dass eine Transaktion für immer im Mempool stecken bleibt."
+        },
+        "1559CustomPriorityLowerGate" : {
+          "title" : "Benutzerdefinierte Grenze für Prioritätsgebühren",
+          "description" : "Passen Sie den Prozentsatz unserer voraussichtlichen Mindestprioritätsgebühr für eine erweiterte EIP1559-Transaktion an."
+        },
+        "1559CustomBaseFeeMultiplier" : {
+          "title" : "Benutzerdefinierten Faktor für Mindestgebühr eingeben",
+          "description" : "Passen Sie den für die Mindestgebühr verwendeten Multiplikationsfaktor an. Hieraus setzt sich die maxFeePerGas der EIP1559-Transaktion zusammen."
         },
         "experimentalListAppsV2" : {
           "title" : "Experimentelle Apps-Liste für My Ledger",
@@ -3789,6 +3841,11 @@
         "title" : "Token hinzufügen",
         "disclaimer" : "{{tokenName}} ist ein BEP-20-Token.\nSie können Tokens direkt in einem BNB-Konto empfangen.",
         "learnMore" : "Erfahren Sie mehr über BEP-20"
+      },
+      "vip180" : {
+        "title" : "Token hinzufügen",
+        "disclaimer" : "{{tokenName}} ist ein VIP180-Token.\nSie können Token auf einem VET-Konto direkt empfangen.",
+        "learnMore" : "Erfahren Sie mehr über VIP180"
       }
     },
     "showMoreChainType" : "Weitere Adresstypen",
@@ -3994,6 +4051,8 @@
       "addALedger" : "Ein Ledger hinzufügen",
       "addWithBluetooth" : "Mit Bluetooth hinzufügen",
       "addNewCTA" : "Neu hinzufügen",
+      "showAllCTA" : "Alle {{count}} Ledger-Geräte anzeigen",
+      "showLessCTA" : "Weniger anzeigen",
       "otgBanner" : "Um Ledger Nano S oder Ledger Nano S Plus zu verwenden, schließen Sie es mit dem USB-Kabel an.",
       "connectExistingLedger" : "Vorhandenes Ledger verbinden",
       "connectExistingLedgerDescription" : "Wenn Ihr Ledger bereits eingerichtet ist",
@@ -4199,7 +4258,7 @@
     "waitForFirmwareUpdate" : "Warten Sie, bis das Firmware-Update auf Ihrem Gerät abgeschlossen ist",
     "waitForInstallationToFinish" : "Warten Sie, bis die Installation auf Ihrem {{deviceName}} abgeschlossen ist",
     "staxBatteryLow" : "Ledger Stax Batterie zu schwach für Update",
-    "staxBatteryLowDescription" : "Um das Betriebssystem-Update zu starten, muss Ihr Ledger Stax entweder einen Akkuladestand von mindestens 20 % aufweisen oder an das Ladegerät angeschlossen sein.",
+    "staxBatteryLowDescription" : "Um das Betriebssystem-Update zu starten, muss Ihr Ledger Stax entweder einen Akkuladestand von mindestens {{lowBatteryPercentage}} % aufweisen oder an das Ladegerät angeschlossen sein.",
     "updateCancelled" : "Installation des Betriebssystem-Updates auf {{deviceName}} abgebrochen",
     "updateCancelledDescription" : "Wenn dies irrtümlich geschehen ist, starten Sie das Update erneut.",
     "updateNotYetComplete" : "Betriebssystem-Update in Bearbeitung",
@@ -4214,6 +4273,7 @@
     "newVersionNumber" : "Neue Version",
     "success" : "Firmware aktualisiert",
     "update" : "Aktualisieren",
+    "retryBatteryCheck" : "Versuch nach dem Anschließen wiederholen",
     "Notifications" : {
       "confirmOnDevice" : "Wir benötigen Ihre Bestätigung auf dem Gerät",
       "preparingUpdate" : "Das Update wird übertragen. Wir benachrichtigen Sie, wenn der Vorgang abgeschlossen ist.",
@@ -4832,6 +4892,10 @@
       "delegationUnavailable" : {
         "title" : "Übertragung nicht verfügbar",
         "description" : "Nicht genügend verfügbares Guthaben auf Ihrem Konto, um eine neue Übertragung zu starten."
+      },
+      "claimable" : {
+        "title" : "Verfügbare Belohnungen",
+        "description" : "Momentan können USDC-Belohnungen nicht eingefordert werden. Bitte nutzen Sie hierfür eine Wallet von einem Drittanbieter."
       }
     },
     "delegation" : {
@@ -5652,6 +5716,20 @@
       "totalStake" : "Stake-Gesamtsumme",
       "commission" : "Provision",
       "stakeActivationState" : "Status",
+      "stakeActivePercent" : "Aktiv",
+      "stakeAvailableBalance" : "Verfügbares Guthaben",
+      "actions" : {
+        "activate" : "Aktivieren",
+        "deactivate" : "Deaktivieren",
+        "reactivate" : "Reaktivieren",
+        "withdraw" : "Abheben"
+      },
+      "states" : {
+        "active" : "Aktiv",
+        "inactive" : "Inaktiv",
+        "activating" : "Aktivieren",
+        "deactivating" : "Deaktivieren"
+      },
       "delegationEarn" : "Sie können SOL-Belohnungen verdienen, indem Sie Ihre Vermögenswerte delegieren.",
       "info" : "So funktioniert Delegation",
       "broadcastSuccessTitle" : "Vorgang gesendet",
@@ -5659,7 +5737,8 @@
       "delegatedTo" : "delegiert an",
       "started" : {
         "description" : "Sie können Belohnungen verdienen, indem Sie Ihre SOL-Werte an einen Validator delegieren."
-      }
+      },
+      "reserveWarning" : "Bitte stellen Sie sicher, dass Sie mindestens {{amount}} SOL in Ihrer Wallet haben, um zukünftige Netzwerkgebühren für die Deaktivierung und Auszahlung Ihres Stakes zu decken."
     }
   },
   "near" : {
@@ -5870,13 +5949,8 @@
       "claimReward" : "Prämien können einmal alle 24 Stunden beansprucht werden.",
       "cosmos" : {
         "claimReward" : "Wenn der ausgewählte Validator ausstehende Prämien hat, werden diese automatisch eingefordert.",
-        "redelegate" : "Sie müssen 21 Tage warten, bis die nicht delegierten Guthaben wieder auf dem verfügbaren Guthaben sind.",
-        "undelegate" : "Sie müssen 21 Tage warten, bis die nicht delegierten Guthaben wieder auf dem verfügbaren Guthaben sind."
-      },
-      "osmosis" : {
-        "claimReward" : "Wenn der ausgewählte Validator ausstehende Prämien hat, werden diese automatisch eingefordert.",
-        "redelegate" : "Sie müssen 14 Tage warten, bis die nicht delegierten Guthaben wieder auf dem verfügbaren Guthaben sind.",
-        "undelegate" : "Sie müssen 14 Tage warten, bis die nicht delegierten Guthaben wieder auf dem verfügbaren Guthaben sind."
+        "redelegate" : "Sie müssen {{numberOfDays}} Tage warten, bis die nicht delegierten Vermögenswerte wieder auf dem verfügbaren Guthaben erscheinen.",
+        "undelegate" : "Sie müssen {{numberOfDays}} Tage warten, bis die nicht delegierten Vermögenswerte wieder auf dem verfügbaren Guthaben erscheinen."
       },
       "lending" : "Überprüfen Sie die Vorgangsdetails auf Ihrem Gerät, bevor Sie sie senden."
     },
@@ -6344,6 +6418,12 @@
         "titleCompleted" : "Vermögenswerte in Ihr Ledger übertragen",
         "description" : "Übertragen Sie Vermögenswerte ganz einfach von Coinbase oder einer anderen Börse oder von einer Wallet.",
         "popupLabel" : "Vermögenswerte übertragen"
+      },
+      "buyCrypto" : {
+        "title" : "Kryptos kaufen",
+        "titleCompleted" : "Zu Ledger übertragene Assets",
+        "description" : "Wählen Sie aus über als 500 Coins und den besten Angeboten von Kaufanbietern, abgestimmt auf Ihre Vorlieben.",
+        "popupLabel" : "Gekaufte Krypto"
       }
     }
   },

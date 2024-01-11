@@ -1,17 +1,22 @@
 # @ledgerhq/native-ui
 
-## 0.22.4-nightly.1
+## 0.22.4
 
 ### Patch Changes
 
-- [#5859](https://github.com/LedgerHQ/ledger-live/pull/5859) [`e1f967e`](https://github.com/LedgerHQ/ledger-live/commit/e1f967eb617a749a9f6dc58a7d1f4b6633f56d1c) Thanks [@mle-gall](https://github.com/mle-gall)! - Fixed warning on animatedInput (forwardRef not needed)
+- [#5630](https://github.com/LedgerHQ/ledger-live/pull/5630) [`ad8f999`](https://github.com/LedgerHQ/ledger-live/commit/ad8f99994341b10d3f7af96543dd2c2028140573) Thanks [@mle-gall](https://github.com/mle-gall)! - New animated input (label morphes from placeholder to fixed label onFocus)
 
-## 0.22.4-nightly.0
+- Updated dependencies [[`0e2287b`](https://github.com/LedgerHQ/ledger-live/commit/0e2287b1ce4200004ed2c06f3e74cd3b03100784)]:
+  - @ledgerhq/crypto-icons-ui@1.0.0
+
+## 0.22.4-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`fc2cf04`](https://github.com/LedgerHQ/ledger-live/commit/fc2cf04c8d3cd55503ea19aeb21fd12ee55046f6)]:
-  - @ledgerhq/crypto-icons-ui@0.7.1-nightly.0
+- [#5630](https://github.com/LedgerHQ/ledger-live/pull/5630) [`ad8f999`](https://github.com/LedgerHQ/ledger-live/commit/ad8f99994341b10d3f7af96543dd2c2028140573) Thanks [@mle-gall](https://github.com/mle-gall)! - New animated input (label morphes from placeholder to fixed label onFocus)
+
+- Updated dependencies [[`0e2287b`](https://github.com/LedgerHQ/ledger-live/commit/0e2287b1ce4200004ed2c06f3e74cd3b03100784)]:
+  - @ledgerhq/crypto-icons-ui@1.0.0-next.0
 
 ## 0.22.3
 

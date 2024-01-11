@@ -1,146 +1,67 @@
 # ledger-live-desktop
 
-## 2.74.0-nightly.10
+## 2.74.0
 
 ### Minor Changes
 
-- [#5534](https://github.com/LedgerHQ/ledger-live/pull/5534) [`a4a72da`](https://github.com/LedgerHQ/ledger-live/commit/a4a72da33ddfefd5ba69ac4d9ecb33d7775583f1) Thanks [@Philippoes](https://github.com/Philippoes)! - Add support for Tron Stake 2.0
+- [#5669](https://github.com/LedgerHQ/ledger-live/pull/5669) [`aa110c2`](https://github.com/LedgerHQ/ledger-live/commit/aa110c2077a95758bddfcd6c48636348fdcda20c) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Fix cosmos static unbonding periods
+
+- [#5736](https://github.com/LedgerHQ/ledger-live/pull/5736) [`1cb052d`](https://github.com/LedgerHQ/ledger-live/commit/1cb052dada6363c6f0dc4289b358d93de2320594) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Merging solana hotfix (PR #5824)
+
+- [#5383](https://github.com/LedgerHQ/ledger-live/pull/5383) [`3e46bd1`](https://github.com/LedgerHQ/ledger-live/commit/3e46bd1c8b1baccdce1a5d4a2b0adc81cdbd2e41) Thanks [@cng-ledger](https://github.com/cng-ledger)! - feat(LIVE-9451): capture swap live app load failure & use native flow
 
 ### Patch Changes
 
-- [#5870](https://github.com/LedgerHQ/ledger-live/pull/5870) [`4b513d1`](https://github.com/LedgerHQ/ledger-live/commit/4b513d1127ee8d2ac82f7fb4f868792d16bb52f0) Thanks [@Justkant](https://github.com/Justkant)! - fix: wallet-api complete exchange drawer not closing
+- [#5643](https://github.com/LedgerHQ/ledger-live/pull/5643) [`bbd1967`](https://github.com/LedgerHQ/ledger-live/commit/bbd1967bc7749367f601807003e2d17f46cccba7) Thanks [@RamyEB](https://github.com/RamyEB)! - Drawer's back button work again
 
-- [#5853](https://github.com/LedgerHQ/ledger-live/pull/5853) [`4579b14`](https://github.com/LedgerHQ/ledger-live/commit/4579b14eac0d644f691bf3567bd78b8d528c7edb) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - error message when searching quotes instead of loading message
+- [#5736](https://github.com/LedgerHQ/ledger-live/pull/5736) [`b286aa1`](https://github.com/LedgerHQ/ledger-live/commit/b286aa1b36dbda3ae5fd2a93e116612a32f2ecd1) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Merging solana hotfix (PR #5824)
 
-- Updated dependencies [[`5ed4076`](https://github.com/LedgerHQ/ledger-live/commit/5ed407610dc0df8bc5b1c6b17b338d9f2dc0c94e), [`a4a72da`](https://github.com/LedgerHQ/ledger-live/commit/a4a72da33ddfefd5ba69ac4d9ecb33d7775583f1)]:
-  - @ledgerhq/live-common@33.4.0-nightly.9
-  - @ledgerhq/types-live@6.44.0-nightly.1
-  - @ledgerhq/coin-evm@0.12.0-nightly.4
-  - @ledgerhq/coin-framework@0.11.0-nightly.2
-  - @ledgerhq/domain-service@1.1.17-nightly.1
-  - @ledgerhq/live-config@1.0.1-nightly.1
+- [#5659](https://github.com/LedgerHQ/ledger-live/pull/5659) [`71ad6a1`](https://github.com/LedgerHQ/ledger-live/commit/71ad6a19b5ff4b9f64aec81c2550101ee6bb6a92) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Hide empty token accounts" setting or "Hide token" hides correclty accounts in App"
 
-## 2.74.0-nightly.9
+- [#5674](https://github.com/LedgerHQ/ledger-live/pull/5674) [`9cf3f07`](https://github.com/LedgerHQ/ledger-live/commit/9cf3f0791c8ffdcd24160804f6a637a7ea88dd29) Thanks [@stephane-lieumont-ledger](https://github.com/stephane-lieumont-ledger)! - allow onboarding restore previous version lns+
 
-### Patch Changes
+- [#5736](https://github.com/LedgerHQ/ledger-live/pull/5736) [`d49f444`](https://github.com/LedgerHQ/ledger-live/commit/d49f44417fd175affe71da589c0ca380e88fbb35) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Update CAL
 
-- [#5820](https://github.com/LedgerHQ/ledger-live/pull/5820) [`fc2cf04`](https://github.com/LedgerHQ/ledger-live/commit/fc2cf04c8d3cd55503ea19aeb21fd12ee55046f6) Thanks [@lvndry](https://github.com/lvndry)! - Rename Coreum ticker to COREUM
+- [#5710](https://github.com/LedgerHQ/ledger-live/pull/5710) [`4a05b3a`](https://github.com/LedgerHQ/ledger-live/commit/4a05b3a1a6b4e91ed43299c48580798b98660ef9) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Added stax image on Manager Disconnected screen
 
-- [#5715](https://github.com/LedgerHQ/ledger-live/pull/5715) [`784c1ac`](https://github.com/LedgerHQ/ledger-live/commit/784c1aceddac6751fa03e117df20729513e37a54) Thanks [@cng-ledger](https://github.com/cng-ledger)! - fix(LIVE-10552): change quote refresh rate to 20 seconds
+- [#5451](https://github.com/LedgerHQ/ledger-live/pull/5451) [`b2f5aba`](https://github.com/LedgerHQ/ledger-live/commit/b2f5aba4e08a3a82070aee145591fa8bb3b84d66) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - change staking flow start tracking to use step starter name
 
-- [#5650](https://github.com/LedgerHQ/ledger-live/pull/5650) [`e4c8b3a`](https://github.com/LedgerHQ/ledger-live/commit/e4c8b3a8200a3e002e4ac130a8b4f3857c5df84e) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Replace hardcoded countervalues URL with env var
+- Updated dependencies [[`6c139d7`](https://github.com/LedgerHQ/ledger-live/commit/6c139d7a6431fb87b8711bdeb7b7ffa9882e7723), [`efe1ed0`](https://github.com/LedgerHQ/ledger-live/commit/efe1ed0493b343165ade674ca8c6badfff6ce065), [`b286aa1`](https://github.com/LedgerHQ/ledger-live/commit/b286aa1b36dbda3ae5fd2a93e116612a32f2ecd1), [`8929ea0`](https://github.com/LedgerHQ/ledger-live/commit/8929ea01acb6aa3d2949a16077a02d1c7b37f527), [`d49f444`](https://github.com/LedgerHQ/ledger-live/commit/d49f44417fd175affe71da589c0ca380e88fbb35), [`a01636a`](https://github.com/LedgerHQ/ledger-live/commit/a01636a0c14e66d20bb853be1e13b48d6036639e), [`a8f82dc`](https://github.com/LedgerHQ/ledger-live/commit/a8f82dc1854eaf75e922d55964905b1fd7da0ba2), [`1cb052d`](https://github.com/LedgerHQ/ledger-live/commit/1cb052dada6363c6f0dc4289b358d93de2320594), [`3e46bd1`](https://github.com/LedgerHQ/ledger-live/commit/3e46bd1c8b1baccdce1a5d4a2b0adc81cdbd2e41)]:
+  - @ledgerhq/live-common@33.4.0
+  - @ledgerhq/coin-evm@0.11.2
+  - @ledgerhq/coin-framework@0.10.1
+  - @ledgerhq/react-ui@0.14.13
 
-- Updated dependencies [[`dd5d930`](https://github.com/LedgerHQ/ledger-live/commit/dd5d9308e0e3ef8ca78f879c15bc07313ef3c8c4), [`784c1ac`](https://github.com/LedgerHQ/ledger-live/commit/784c1aceddac6751fa03e117df20729513e37a54), [`e4c8b3a`](https://github.com/LedgerHQ/ledger-live/commit/e4c8b3a8200a3e002e4ac130a8b4f3857c5df84e)]:
-  - @ledgerhq/live-network@1.1.11-nightly.1
-  - @ledgerhq/live-common@33.4.0-nightly.8
-  - @ledgerhq/coin-evm@0.12.0-nightly.3
-  - @ledgerhq/coin-framework@0.11.0-nightly.1
-  - @ledgerhq/react-ui@0.14.13-nightly.0
-
-## 2.74.0-nightly.8
+## 2.74.0-next.1
 
 ### Minor Changes
 
-- [#5801](https://github.com/LedgerHQ/ledger-live/pull/5801) [`628340b`](https://github.com/LedgerHQ/ledger-live/commit/628340b5b195b81f82772cb72c482b096d7d2407) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Unresponsive button in Receive token flow
+- [#5736](https://github.com/LedgerHQ/ledger-live/pull/5736) [`1cb052d`](https://github.com/LedgerHQ/ledger-live/commit/1cb052dada6363c6f0dc4289b358d93de2320594) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Merging solana hotfix (PR #5824)
 
 ### Patch Changes
 
-- [#5786](https://github.com/LedgerHQ/ledger-live/pull/5786) [`a42d23d`](https://github.com/LedgerHQ/ledger-live/commit/a42d23dbfcd368f3bd7746c59205663427bb01fc) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Fix renaming device flow design
+- Updated dependencies [[`1cb052d`](https://github.com/LedgerHQ/ledger-live/commit/1cb052dada6363c6f0dc4289b358d93de2320594)]:
+  - @ledgerhq/live-common@33.4.0-next.1
 
-- [#5228](https://github.com/LedgerHQ/ledger-live/pull/5228) [`7253544`](https://github.com/LedgerHQ/ledger-live/commit/72535447c5323abbba795b9de02a53ac5e90d410) Thanks [@sponomarev](https://github.com/sponomarev)! - Safer Solana staking
-
-- Updated dependencies [[`7253544`](https://github.com/LedgerHQ/ledger-live/commit/72535447c5323abbba795b9de02a53ac5e90d410)]:
-  - @ledgerhq/live-common@33.4.0-nightly.7
-
-## 2.74.0-nightly.7
+## 2.73.2-next.0
 
 ### Patch Changes
 
-- [#5779](https://github.com/LedgerHQ/ledger-live/pull/5779) [`1a9d88f`](https://github.com/LedgerHQ/ledger-live/commit/1a9d88f92265e8805ab4e2e55aefd9739308be82) Thanks [@stephane-lieumont-ledger](https://github.com/stephane-lieumont-ledger)! - add icon usb on connect device recover restore flow
+- [#5736](https://github.com/LedgerHQ/ledger-live/pull/5736) [`b286aa1`](https://github.com/LedgerHQ/ledger-live/commit/b286aa1b36dbda3ae5fd2a93e116612a32f2ecd1) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Merging solana hotfix (PR #5824)
 
-## 2.74.0-nightly.6
+- Updated dependencies [[`b286aa1`](https://github.com/LedgerHQ/ledger-live/commit/b286aa1b36dbda3ae5fd2a93e116612a32f2ecd1)]:
+  - @ledgerhq/live-common@33.3.2-next.0
 
-### Patch Changes
-
-- Updated dependencies [[`ed23f46`](https://github.com/LedgerHQ/ledger-live/commit/ed23f4680d4ed1020bf34ac05b064ff659a282f5)]:
-  - @ledgerhq/coin-evm@0.12.0-nightly.2
-  - @ledgerhq/live-common@33.4.0-nightly.6
-
-## 2.74.0-nightly.5
+## 2.73.1
 
 ### Patch Changes
 
-- Updated dependencies [[`241cdac`](https://github.com/LedgerHQ/ledger-live/commit/241cdace43c9e6b6394617d8a63c60a7505f6a53)]:
-  - @ledgerhq/live-common@33.4.0-nightly.5
+- [#5824](https://github.com/LedgerHQ/ledger-live/pull/5824) [`6cd881b`](https://github.com/LedgerHQ/ledger-live/commit/6cd881b8b17982649446749d20605d934d51339a) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Solana hotfix
 
-## 2.74.0-nightly.4
+- [#5824](https://github.com/LedgerHQ/ledger-live/pull/5824) [`1abfe8d`](https://github.com/LedgerHQ/ledger-live/commit/1abfe8dfa4f2f4abd294f3f992f3681a78b33143) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Safer Solana staking
 
-### Minor Changes
-
-- [#5767](https://github.com/LedgerHQ/ledger-live/pull/5767) [`4dbe280`](https://github.com/LedgerHQ/ledger-live/commit/4dbe280434d1f2577d2cd211e35a792bf724ee30) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Carousel visibility toggle removed from the settings and we can now dismiss carousel cards individually
-
-### Patch Changes
-
-- [#5781](https://github.com/LedgerHQ/ledger-live/pull/5781) [`b719767`](https://github.com/LedgerHQ/ledger-live/commit/b719767f964570abb08dc7b70b8fc0a7dd3007db) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix "locked device" device action state rendering
-  Rework `ErrorBody` component used by device actions so that it works everywhere even in v2 style provider
-  Use `ErrorBody` for "device not onboarded" device action state
-- Updated dependencies [[`714f15e`](https://github.com/LedgerHQ/ledger-live/commit/714f15e3ec3acf5048dd014d018595ac6a1eb8fb)]:
-  - @ledgerhq/live-common@33.4.0-nightly.4
-
-## 2.74.0-nightly.3
-
-### Patch Changes
-
-- [#5761](https://github.com/LedgerHQ/ledger-live/pull/5761) [`5af473e`](https://github.com/LedgerHQ/ledger-live/commit/5af473ea77df7aa56bf74d3438e3f70c019aeaef) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - fix account wallet parameter not passed to dapp
-
-- [#5774](https://github.com/LedgerHQ/ledger-live/pull/5774) [`6373b5d`](https://github.com/LedgerHQ/ledger-live/commit/6373b5db7eedd8185758716eec8a18d3a3762dcd) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Pixel polish of the "device not onboarded" device action state
-
-- Updated dependencies [[`e494a2b`](https://github.com/LedgerHQ/ledger-live/commit/e494a2b984fb0406fe9225bb4eccde3d9585efe1)]:
-  - @ledgerhq/coin-evm@0.12.0-nightly.1
-  - @ledgerhq/live-common@33.4.0-nightly.3
-
-## 2.74.0-nightly.2
-
-### Patch Changes
-
-- [#5747](https://github.com/LedgerHQ/ledger-live/pull/5747) [`c9dbad0`](https://github.com/LedgerHQ/ledger-live/commit/c9dbad07da7924ec4b40e94a837f64604645a9e4) Thanks [@sarneijim](https://github.com/sarneijim)! - Fix exchange funds
-
-- Updated dependencies [[`c9dbad0`](https://github.com/LedgerHQ/ledger-live/commit/c9dbad07da7924ec4b40e94a837f64604645a9e4)]:
-  - @ledgerhq/live-common@33.4.0-nightly.2
-
-## 2.74.0-nightly.1
-
-### Minor Changes
-
-- [#5722](https://github.com/LedgerHQ/ledger-live/pull/5722) [`2358e87`](https://github.com/LedgerHQ/ledger-live/commit/2358e8748d9ae9398cfc05a0ec20a6b191fc7324) Thanks [@chabroA](https://github.com/chabroA)! - Add Ethereum Sepolia and Holesky
-
-### Patch Changes
-
-- [#5734](https://github.com/LedgerHQ/ledger-live/pull/5734) [`496bcc3`](https://github.com/LedgerHQ/ledger-live/commit/496bcc3067eedeef5412a76d2578868ef9e1dcbf) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Refactor file structure and component break down of My Ledger
-
-- [#5734](https://github.com/LedgerHQ/ledger-live/pull/5734) [`7b08584`](https://github.com/LedgerHQ/ledger-live/commit/7b08584c17f1bbd21033949e5385340a2ab653fa) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - My Ledger: improve UX of adding/remove custom lock screen, improve disabled buttons when apps are (un)installing
-
-- Updated dependencies [[`2358e87`](https://github.com/LedgerHQ/ledger-live/commit/2358e8748d9ae9398cfc05a0ec20a6b191fc7324), [`69bbdce`](https://github.com/LedgerHQ/ledger-live/commit/69bbdce5c88d69248cbddb94ac4627334c1df626), [`16b4d7a`](https://github.com/LedgerHQ/ledger-live/commit/16b4d7ab4702022d4967f3c054d3c62a76716947)]:
-  - @ledgerhq/types-cryptoassets@7.9.0-nightly.0
-  - @ledgerhq/live-common@33.4.0-nightly.1
-  - @ledgerhq/coin-framework@0.11.0-nightly.0
-  - @ledgerhq/coin-evm@0.12.0-nightly.0
-  - @ledgerhq/live-env@0.9.0-nightly.0
-  - @ledgerhq/types-live@6.43.2-nightly.0
-  - @ledgerhq/live-config@1.0.1-nightly.0
-  - @ledgerhq/hw-transport-node-hid-singleton@6.30.2-nightly.0
-  - @ledgerhq/hw-transport@6.30.2-nightly.0
-  - @ledgerhq/domain-service@1.1.17-nightly.0
-  - @ledgerhq/live-network@1.1.11-nightly.0
-  - @ledgerhq/hw-transport-http@6.29.2-nightly.0
-  - @ledgerhq/hw-transport-vault@1.2.2-nightly.0
-
-## 2.73.1-nightly.0
-
-### Patch Changes
-
-- Updated dependencies [[`78e7aa2`](https://github.com/LedgerHQ/ledger-live/commit/78e7aa26e4d35091abbb32084b0fa748085b38e3)]:
-  - @ledgerhq/live-common@33.4.0-nightly.0
+- Updated dependencies [[`1abfe8d`](https://github.com/LedgerHQ/ledger-live/commit/1abfe8dfa4f2f4abd294f3f992f3681a78b33143)]:
+  - @ledgerhq/live-common@33.3.1
 
 ## 2.73.0
 

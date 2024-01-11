@@ -1,33 +1,20 @@
 # @ledgerhq/hw-app-eth
 
-## 6.35.2-nightly.2
+## 6.35.2
 
 ### Patch Changes
 
-- Updated dependencies [[`a4a72da`](https://github.com/LedgerHQ/ledger-live/commit/a4a72da33ddfefd5ba69ac4d9ecb33d7775583f1)]:
-  - @ledgerhq/types-live@6.44.0-nightly.1
-  - @ledgerhq/domain-service@1.1.17-nightly.1
-  - @ledgerhq/evm-tools@1.0.13-nightly.1
+- Updated dependencies [[`d49f444`](https://github.com/LedgerHQ/ledger-live/commit/d49f44417fd175affe71da589c0ca380e88fbb35)]:
+  - @ledgerhq/cryptoassets@11.3.1
+  - @ledgerhq/evm-tools@1.0.13
 
-## 6.35.2-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`fc2cf04`](https://github.com/LedgerHQ/ledger-live/commit/fc2cf04c8d3cd55503ea19aeb21fd12ee55046f6)]:
-  - @ledgerhq/cryptoassets@11.4.0-nightly.1
-  - @ledgerhq/evm-tools@1.0.13-nightly.1
-
-## 6.35.2-nightly.0
+## 6.35.2-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`2358e87`](https://github.com/LedgerHQ/ledger-live/commit/2358e8748d9ae9398cfc05a0ec20a6b191fc7324), [`69bbdce`](https://github.com/LedgerHQ/ledger-live/commit/69bbdce5c88d69248cbddb94ac4627334c1df626), [`16b4d7a`](https://github.com/LedgerHQ/ledger-live/commit/16b4d7ab4702022d4967f3c054d3c62a76716947)]:
-  - @ledgerhq/cryptoassets@11.4.0-nightly.0
-  - @ledgerhq/types-live@6.43.2-nightly.0
-  - @ledgerhq/hw-transport@6.30.2-nightly.0
-  - @ledgerhq/domain-service@1.1.17-nightly.0
-  - @ledgerhq/evm-tools@1.0.13-nightly.0
-  - @ledgerhq/hw-transport-mocker@6.28.2-nightly.0
+- Updated dependencies [[`d49f444`](https://github.com/LedgerHQ/ledger-live/commit/d49f44417fd175affe71da589c0ca380e88fbb35)]:
+  - @ledgerhq/cryptoassets@11.3.1-next.0
+  - @ledgerhq/evm-tools@1.0.13-next.0
 
 ## 6.35.1
 
