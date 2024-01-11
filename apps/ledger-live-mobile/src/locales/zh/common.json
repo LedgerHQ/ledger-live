@@ -492,7 +492,7 @@
       "description" : "尝试在 My Ledger（我的 Ledger）中重新安装应用程序"
     },
     "NotEnoughGas" : {
-      "title" : "父账户余额不足以支付网络费用",
+      "title" : "您需要 {{fees}} {{ticker}} 的网络费用才能在 {{cryptoName}} 网络上进行互换。<link0>买入 {{ticker}}</link0>",
       "description" : "请向您的账户发送一些币以支付代币交易费用。"
     },
     "NotEnoughGasSwap" : {
@@ -605,6 +605,16 @@
     },
     "TronNotEnoughEnergy" : {
       "title" : "能量低于必要值。您可能需要支付高达 50 TRX 的费用。"
+    },
+    "TronNoUnfrozenResource" : {
+      "title" : "No unfrozen resources to withdraw"
+    },
+    "TronInvalidUnDelegateResourceAmount" : {
+      "title" : "Not enough delegated resources"
+    },
+    "TronUnfreezeNotExpired" : {
+      "title" : "Resources not unfrozen yet",
+      "description" : "You need to wait until {{time}} to withdraw"
     },
     "UpdateYourApp" : {
       "title" : "需要更新应用程序",
@@ -2313,6 +2323,9 @@
       "VOTE" : "已投票",
       "FREEZE" : "已冻结",
       "UNFREEZE" : "已解冻",
+      "UNDELEGATE_RESOURCE" : "已解除委托",
+      "WITHDRAW_EXPIRE_UNFREEZE" : "提取",
+      "LEGACYUNFREEZE" : "已解冻",
       "REWARD" : "已申领的奖励",
       "FEES" : "费用",
       "OPT_IN" : "选择加入",
@@ -3687,7 +3700,7 @@
       "description" : "冻结 TRX 从而安全地赚取奖励，同时依旧掌控您的资产。",
       "steps" : {
         "0" : "委托出去的资产依旧为您所有。",
-        "1" : "3 天后您可以解冻您的资产。",
+        "1" : "You can unfreeze your assets at any time, and they will be accessible after the 14-day unfreezing period.",
         "2" : "使用您的 Ledger 设备安全冻结资产并投票。"
       },
       "howVotingWorks" : "如何投票",
@@ -5344,7 +5357,7 @@
             "description" : "将 TRX 委托给第三方候选人从而赚取奖励。点击继续按钮以冻结资产并投票。",
             "bullet" : {
               "delegate" : "委托出去的资产依旧为您所有。",
-              "access" : "您可以在冻结 3 天后访问您的资产。",
+              "access" : "Frozen assets can be unfrozen immediately and will become accessible after the 14-day unfreezing period.",
               "ledger" : "使用您的 Ledger 设备安全地进行委托。"
             },
             "button" : {
@@ -5362,7 +5375,7 @@
       },
       "unfreeze" : {
         "title" : "解冻",
-        "description" : "解冻 TRX 以重新将其添加到您的可用余额。您将不再赚取奖励。"
+        "description" : "Unfreeze TRX to add them back to your available balance. You will no longer earn rewards. The assets will be available after the 14-day unfreezing period"
       },
       "vote" : {
         "title" : "投票",
@@ -5920,6 +5933,9 @@
       "freeze" : "请在您的设备上确认，以便完成该操作",
       "unfreeze" : "请在您的设备上确认，以便完成该操作",
       "claimReward" : "请在您的设备上确认，以便完成该操作",
+      "legacyUnfreeze" : "请在您的设备上确认，以便完成该操作",
+      "withdrawExpireUnfreeze" : "请在您的设备上确认，以便完成该操作",
+      "undelegateResource" : "请在您的设备上确认，以便完成该操作",
       "vote" : "请在您的设备上确认，以便完成该操作",
       "delegate" : "请在您的设备上确认，以便完成该操作",
       "redelegate" : "请在您的设备上确认，以便完成该操作",
@@ -5944,9 +5960,12 @@
     "votes" : "选票",
     "validator" : "验证者",
     "infoWording" : {
-      "freeze" : "冻结的代币会有 3 天的锁定期。",
+      "freeze" : "Freeze tokens to acquire bandwidth or energy and receive an equivalent amount of TRON Power (TP).",
       "unfreeze" : "您的 {{resource}} 点数将被减少，且您的全部投票也将被取消。",
+      "legacyUnfreeze" : "您的 {{resource}} 点数将被减少，且您的全部投票也将被取消。",
       "claimReward" : "每 24 小时可申领一次奖励。",
+      "withdrawExpireUnfreeze" : "Your unfrozen resources that has passed the unfreezing period will be withdrawn",
+      "unDelegateResource" : "Cancel the delegation of {{resource}}",
       "cosmos" : {
         "claimReward" : "如果已选的验证者有待领取的奖励，它们将被自动申领。",
         "redelegate" : "取消委托的资产必须等待 {{numberOfDays}} 天才能返还至可用余额。",
