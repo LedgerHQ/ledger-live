@@ -8,7 +8,7 @@ import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/accoun
 import type { Account } from "@ledgerhq/types-live";
 import type { TransactionStatus as BitcoinTransactionStatus } from "@ledgerhq/live-common/families/bitcoin/types";
 import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
-import { NotEnoughBalance, NotEnoughGas } from "@ledgerhq/errors";
+import { NotEnoughGas } from "@ledgerhq/errors";
 import { useTheme } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import invariant from "invariant";
@@ -47,18 +47,6 @@ type Navigation = BaseComposite<
 type Props = Navigation;
 
 const WARN_FROM_UTXO_COUNT = 50;
-
-const shouldDispayBuyCta = (error?: unknown): boolean => {
-  if (!error) {
-    return false;
-  }
-
-  if (error instanceof NotEnoughGas || error instanceof NotEnoughBalance) {
-    return true;
-  }
-
-  return false;
-};
 
 function SendSummary({ navigation, route }: Props) {
   const { colors } = useTheme();
