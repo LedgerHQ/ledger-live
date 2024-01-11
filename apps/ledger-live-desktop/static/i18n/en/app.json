@@ -5924,6 +5924,9 @@
     "FailedToRetrieveFirmwareUpdateInfo": {
       "title": "OS update check failed",
       "description": "Something went wrong. Please try again or contact Ledger Support if in doubt."
+    },
+    "TezosUnrevealedAccount": {
+      "title": "Cannot swap from a never-used Tezos account"
     }
   },
   "cryptoOrg": {

@@ -118,7 +118,7 @@ const SwapForm = () => {
   }, []);
 
   const exchangeRatesState = swapTransaction.swap?.rates;
-  const swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
+  let swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
   const swapWarning = swapTransaction.fromAmountWarning;
   const pageState = usePageState(swapTransaction, swapError);
   const provider = useMemo(() => exchangeRate?.provider, [exchangeRate?.provider]);
@@ -126,7 +126,16 @@ const SwapForm = () => {
   const [swapWebProps, setSwapWebProps] = useState<SwapWebProps["swapState"] | undefined>(
     undefined,
   );
-
+  if (
+    !swapError &&
+    swapTransaction?.transaction?.family == "tezos" &&
+    swapTransaction?.transaction?.estimatedFees &&
+    swapTransaction?.transaction?.fees !== swapTransaction?.transaction?.estimatedFees
+  ) {
+    const tezosError = new Error("Cannot swap with an unrevealed Tezos account");
+    tezosError.name = "TezosUnrevealedAccount";
+    swapError = tezosError;
+  }
   const { setDrawer } = React.useContext(context);
 
   const pauseRefreshing = !!swapError || idleState;
