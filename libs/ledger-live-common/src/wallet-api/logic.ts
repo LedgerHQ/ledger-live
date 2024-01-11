@@ -6,7 +6,13 @@ import {
 } from "./converters";
 import type { TrackingAPI } from "./tracking";
 import { AppManifest, TranslatableString, WalletAPITransaction } from "./types";
-import { isTokenAccount, isAccount, getMainAccount, makeEmptyTokenAccount } from "../account/index";
+import {
+  isTokenAccount,
+  isAccount,
+  getMainAccount,
+  makeEmptyTokenAccount,
+  findTokenAccountByCurrency,
+} from "../account/index";
 import { Transaction } from "../generated/types";
 import { prepareMessageToSign } from "../hw/signMessage/index";
 import { getAccountBridge } from "../bridge";
@@ -73,6 +79,7 @@ export function signTransactionLogic(
       liveTx: Partial<Transaction>;
     },
   ) => Promise<SignedOperation>,
+  tokenCurrency?: string,
 ): Promise<SignedOperation> {
   tracking.signTransactionRequested(manifest);
 
@@ -94,7 +101,9 @@ export function signTransactionLogic(
     return Promise.reject(new Error("Account required"));
   }
 
-  const parentAccount = getParentAccount(account, accounts);
+  const currency = tokenCurrency ? findTokenById(tokenCurrency) : null;
+  const signerAccount = currency ? makeEmptyTokenAccount(account as Account, currency) : account;
+  const parentAccount = getParentAccount(signerAccount, accounts); // todo or signer?
 
   const accountFamily = isTokenAccount(account)
     ? parentAccount?.currency.family
@@ -115,7 +124,8 @@ export function signTransactionLogic(
     );
   }
 
-  return uiNavigation(account, parentAccount, {
+  // return uiNavigation(account, parentAccount, {
+  return uiNavigation(signerAccount, parentAccount, {
     canEditFees,
     liveTx,
     hasFeesProvided,
@@ -131,6 +141,7 @@ export function broadcastTransactionLogic(
     parentAccount: Account | undefined,
     signedOperation: SignedOperation,
   ) => Promise<string>,
+  tokenCurrency?: string,
 ): Promise<string> {
   if (!signedOperation) {
     tracking.broadcastFail(manifest);
@@ -149,9 +160,11 @@ export function broadcastTransactionLogic(
     return Promise.reject(new Error("Account required"));
   }
 
-  const parentAccount = getParentAccount(account, accounts);
+  const currency = tokenCurrency ? findTokenById(tokenCurrency) : null;
+  const signerAccount = currency ? makeEmptyTokenAccount(account as Account, currency) : account;
+  const parentAccount = getParentAccount(signerAccount, accounts);
 
-  return uiNavigation(account, parentAccount, signedOperation);
+  return uiNavigation(signerAccount, parentAccount, signedOperation);
 }
 
 export function signMessageLogic(
