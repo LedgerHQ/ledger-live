@@ -1,5 +1,16 @@
 # ledger-live-desktop
 
+## 2.75.0-nightly.0
+
+### Minor Changes
+
+- [#5677](https://github.com/LedgerHQ/ledger-live/pull/5677) [`e47e7b4`](https://github.com/LedgerHQ/ledger-live/commit/e47e7b47dcd21b97e93700497019c4fd672312e2) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Localize urls within Live
+
+### Patch Changes
+
+- Updated dependencies [[`5f3a394`](https://github.com/LedgerHQ/ledger-live/commit/5f3a39431099ddfdc4573c6155dc1524c6f94afa)]:
+  - @ledgerhq/live-common@33.4.1-nightly.0
+
 ## 2.74.0
 
 ### Minor Changes

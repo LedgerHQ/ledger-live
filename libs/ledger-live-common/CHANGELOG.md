@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 33.4.1-nightly.0
+
+### Patch Changes
+
+- [#5818](https://github.com/LedgerHQ/ledger-live/pull/5818) [`5f3a394`](https://github.com/LedgerHQ/ledger-live/commit/5f3a39431099ddfdc4573c6155dc1524c6f94afa) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - improve btc sync performance
+
 ## 33.4.0
 
 ### Minor Changes
