@@ -68,7 +68,7 @@ const ValidationSuccess = (props: ValidationSuccessPropsType) => {
         name="ValidationSuccess"
         flow="stake"
         action="withdraw"
-        currency="egld"
+        currency="MultiversX"
       />
       <PreventNativeBack />
 
