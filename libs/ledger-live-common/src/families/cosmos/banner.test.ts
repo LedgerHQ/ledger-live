@@ -15,7 +15,7 @@ jest.mock("./js-prepareTransaction", () => ({
 jest.mock("./chain/chain");
 
 LiveConfig.setConfig(liveConfig);
-const LEDGER_VALIDATOR_ADDRESS = LiveConfig.getValueByKey("cosmos").ledgerValidator;
+const LEDGER_VALIDATOR_ADDRESS = LiveConfig.getValueByKey("config_currency_cosmos").ledgerValidator;
 const ledgerValidator: CosmosValidatorItem | undefined = data.validators.find(
   x => x.validatorAddress === LEDGER_VALIDATOR_ADDRESS,
 );

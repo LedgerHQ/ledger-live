@@ -36,9 +36,9 @@ describe("cosmos/react", () => {
   beforeAll(() => {
     LiveConfig.setConfig(liveConfig);
     const cosmos = cryptoFactory("cosmos");
-    cosmos.lcd = LiveConfig.getValueByKey("cosmos").lcd;
-    cosmos.minGasPrice = LiveConfig.getValueByKey("cosmos").minGasPrice;
-    cosmos.ledgerValidator = LiveConfig.getValueByKey("cosmos").ledgerValidator;
+    cosmos.lcd = LiveConfig.getValueByKey("config_currency_cosmos").lcd;
+    cosmos.minGasPrice = LiveConfig.getValueByKey("config_currency_cosmos").minGasPrice;
+    cosmos.ledgerValidator = LiveConfig.getValueByKey("config_currency_cosmos").ledgerValidator;
   });
 
   describe("useCosmosFamilyPreloadData", () => {
