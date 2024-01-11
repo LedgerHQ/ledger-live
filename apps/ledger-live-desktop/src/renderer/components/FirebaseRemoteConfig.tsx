@@ -103,7 +103,11 @@ export const FirebaseRemoteConfigProvider = ({ children }: Props): JSX.Element |
     };
 
     const fetchConfig = async () => {
-      await warnOnConfigMismatch();
+      try {
+        await warnOnConfigMismatch();
+      } catch (error) {
+        // ignore the config check if any error occurs because it's not critical
+      }
       try {
         const remoteConfig = getRemoteConfig();
 

@@ -55,6 +55,7 @@
     "command-line-args": "^5.2.1",
     "cors": "^2.8.5",
     "express": "^4.17.2",
+    "firebase": "^9.6.6",
     "invariant": "^2.2.4",
     "lodash": "^4.17.21",
     "lodash.product": "^18.9.19",
