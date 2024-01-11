@@ -169,6 +169,9 @@ importers:
       express:
         specifier: ^4.17.2
         version: 4.18.1
+      firebase:
+        specifier: ^9.6.6
+        version: 9.8.1
       invariant:
         specifier: ^2.2.4
         version: 2.2.4
@@ -27646,7 +27649,7 @@ packages:
       babel-plugin-syntax-jsx: 6.18.0
       lodash: 4.17.21
       picomatch: 2.3.1
-      styled-components: 5.3.5(react-dom@18.2.0)(react-is@17.0.2)(react@18.2.0)
+      styled-components: 5.3.5(react-is@18.1.0)(react@18.2.0)
 
   /babel-plugin-syntax-jsx@6.18.0:
     resolution: {integrity: sha512-qrPaCSo9c8RHNRHIotaufGbuOBN8rtdC4QrrFFc43vyWCCz7Kl7GL1PGaXtMGQZUXrkCjNEgxDfmAuAabr/rlw==}
@@ -29238,6 +29241,7 @@ packages:
   /chokidar@3.5.3:
     resolution: {integrity: sha512-Dr3sfKRP6oTcjf2JmUmFJfeVMvXBdegxB0iVQ5eb2V10uFJUCAS8OByZdVAyVb8xXNz3GjjTgj9kLWsZTqE6kw==}
     engines: {node: '>= 8.10.0'}
+    requiresBuild: true
     dependencies:
       anymatch: 3.1.3
       braces: 3.0.2
@@ -39442,7 +39446,7 @@ packages:
       pretty-format: 29.7.0
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.9.1(typescript@5.2.2)
+      ts-node: 10.9.1(@swc/core@1.3.95)(typescript@5.1.3)
     transitivePeerDependencies:
       - babel-plugin-macros
       - metro
@@ -39483,7 +39487,7 @@ packages:
       pretty-format: 29.7.0
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.9.1(typescript@5.2.2)
+      ts-node: 10.9.1(@swc/core@1.3.95)(typescript@5.1.3)
     transitivePeerDependencies:
       - babel-plugin-macros
       - metro
@@ -52383,7 +52387,6 @@ packages:
       react-is: 18.1.0
       shallowequal: 1.1.0
       supports-color: 5.5.0
-    dev: false
 
   /styled-components@6.0.7(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-xIwWuiRMYR43mskVsW9MGTRjSo7ol4bcVjT595fGUp3OLBJOlOgaiKaxsHdC4a2HqWKqKnh0CmcRbk5ogyDjTg==}

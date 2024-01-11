@@ -34,7 +34,6 @@
     "bufferutil": "^4.0.7",
     "encoding": "^0.1.13",
     "eslint-config-next": "13.5.4",
-    "firebase": "^9.6.6",
     "invariant": "^2.2.4",
     "lodash": "^4.17.21",
     "next": "13.5.4",

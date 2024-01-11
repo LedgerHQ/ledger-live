@@ -15,6 +15,9 @@ import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
 import { closeAllSpeculosDevices } from "@ledgerhq/live-common/load/speculos";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import liveConfigSchema from "@ledgerhq/live-common/config/sharedConfig";
+import { getRemoteConfig, fetchAndActivate, getValue } from "firebase/remote-config";
+import { initializeApp } from "firebase/app";
+import { FirebaseRemoteConfigProvider as FirebaseProvider } from "@ledgerhq/live-config/providers/index";
 
 checkLibs({
   NotEnoughBalance,
@@ -99,6 +102,29 @@ if (SPECULOS_APDU_PORT) {
 }
 
 const cacheBle = {};
+
+async function configInit() {
+  const firebaseOptions = {
+    apiKey: "AIzaSyDh7WKaA5cvXV1C554Djyd68vy_1LrXxhk",
+    authDomain: "ledger-live-development.firebaseapp.com",
+    projectId: "ledger-live-development",
+    storageBucket: "ledger-live-development.appspot.com",
+    messagingSenderId: "750497694072",
+    appId: "1:750497694072:web:d2fc719100b45405bac88d",
+  };
+  const firebaseApp = initializeApp(firebaseOptions);
+  const remoteConfig = getRemoteConfig(firebaseApp);
+  remoteConfig.settings.minimumFetchIntervalMillis = 0;
+  await fetchAndActivate(remoteConfig);
+  LiveConfig.setProvider(
+    new FirebaseProvider({
+      getValue: (key: string) => {
+        return getValue(remoteConfig, key);
+      },
+    }),
+  );
+  LiveConfig.setConfig(liveConfigSchema);
+}
 
 async function init() {
   let TransportNodeBle;
@@ -196,8 +222,7 @@ async function init() {
   });
 }
 
-LiveConfig.setConfig(liveConfigSchema);
-
+configInit();
 if (!process.env.CI) {
   init();
 }
