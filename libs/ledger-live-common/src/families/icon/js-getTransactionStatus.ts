@@ -23,20 +23,22 @@ const getTransactionStatus = async (a: IconAccount, t: Transaction): Promise<Tra
 
   const estimatedFees = t.fees || new BigNumber(0);
 
-  if (estimatedFees.gt(a.balance)) {
+  if (estimatedFees.gt(a.spendableBalance)) {
     errors.amount = new NotEnoughBalance();
   }
 
-  const totalSpent = useAllAmount ? a.balance : new BigNumber(t.amount).plus(estimatedFees);
+  const totalSpent = useAllAmount
+    ? a.spendableBalance
+    : new BigNumber(t.amount).plus(estimatedFees);
 
-  const amount = useAllAmount ? a.balance.minus(estimatedFees) : new BigNumber(t.amount);
+  const amount = useAllAmount ? a.spendableBalance.minus(estimatedFees) : new BigNumber(t.amount);
 
   if (amount.lte(0) && !t.useAllAmount) {
     errors.amount = new AmountRequired();
   }
 
   if (t.mode === "send") {
-    if (totalSpent.gt(a.balance)) {
+    if (totalSpent.gt(a.spendableBalance)) {
       errors.amount = new NotEnoughBalance();
     }
 

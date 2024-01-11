@@ -74,5 +74,3 @@ export function getNid(currency: CryptoCurrency): number {
   }
   return nid;
 }
-
-export const defaultIISSContractAddress = (): string => IISS_SCORE_ADDRESS;
