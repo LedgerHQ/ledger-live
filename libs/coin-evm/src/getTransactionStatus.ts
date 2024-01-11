@@ -167,7 +167,7 @@ const validateGas = (
       fees: formatCurrencyUnit(getFeesUnit(account.currency), estimatedFees),
       ticker: account.currency.ticker,
       cryptoName: account.currency.name,
-      links: [`ledgerlive://platform/multibuy?${query.toString()}`],
+      links: [`ledgerlive://buy?${query.toString()}`],
     });
   }
 
