@@ -28,7 +28,8 @@ export function useCatalog() {
   const recentlyUsed = useRecentlyUsed(categories.manifests.all, db);
 
   const search = useSearch<AppManifest, TextInput>({
-    list: categories.searchable,
+    listInput: categories.searchable,
+    listFilter: categories.searchable,
     options: BROWSE_SEARCH_OPTIONS,
   });
 
