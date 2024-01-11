@@ -1,17 +1,19 @@
 {
   "entry": [
+    "src/bridge/index.ts",
+    "src/bridge/deviceTransactionConfig.ts",
+    "src/bridge/hw-getAddress.ts",
+    "src/bridge/logic.ts",
+    "src/bridge/preload.ts",
+    "src/bridge/serialization.ts",
+    "src/bridge/transaction.ts",
+    "src/test/cli.ts",
+    "src/test/index.ts",
+    "src/test/specs.ts",
+    "src/types/errors.ts",
     "src/account.ts",
-    "src/bridge/js.ts",
-    "src/cli-transaction.ts",
-    "src/deviceTransactionConfig.ts",
-    "src/errors.ts",
-    "src/hw-getAddress.ts",
-    "src/logic.ts",
-    "src/platformAdapter.ts",
-    "src/preload.ts",
-    "src/serialization.ts",
-    "src/specs.ts",
-    "src/transaction.ts"
+    "src/index.ts",
+    "src/platformAdapter.ts"
   ],
   "ignoreUnimported": ["src/api/subscan.ts", "src/api/websocket.ts"],
   "ignoreUnresolved": []
