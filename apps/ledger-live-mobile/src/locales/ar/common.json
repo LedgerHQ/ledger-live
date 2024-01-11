@@ -492,7 +492,7 @@
       "description" : "حاول إعادة تثبيت التطبيق من My Ledger (جهازي Ledger)"
     },
     "NotEnoughGas" : {
-      "title" : "رصيد الحساب الأصلي غير كاف لرسوم الشبكة",
+      "title" : "أنت بحاجة إلى {{ticker}} {{fees}} لرسوم الشبكة من أجل المبادلة حيث أنك على شبكة {{cryptoName}}. <link0>شراء {{ticker}}</link0>",
       "description" : "يرجى إرسال بعض العملات إلى حسابك لسداد قيمة معاملات رموز التوكن."
     },
     "NotEnoughGasSwap" : {
@@ -569,8 +569,8 @@
       "description" : "ليس لديك أصول الطاقة لإزالة تجميدها."
     },
     "TronLegacyUnfreezeNotExpired" : {
-      "title" : "إزالة التجميد غير متوفر بعد",
-      "description" : "يرجى الانتظار 3 أيام بعد آخر عملية تجميد لديك."
+      "title" : "Unfreeze is not available yet",
+      "description" : "Please wait 3 days after your last Freeze operation."
     },
     "TronVoteRequired" : {
       "title" : "مطلوب على الأقل 1 صوت"
@@ -605,6 +605,16 @@
     },
     "TronNotEnoughEnergy" : {
       "title" : "الطاقة أقل من المطلوب. قد تدفع رسوم تصل إلى 50TRX."
+    },
+    "TronNoUnfrozenResource" : {
+      "title" : "No unfrozen resources to withdraw"
+    },
+    "TronInvalidUnDelegateResourceAmount" : {
+      "title" : "Not enough delegated resources"
+    },
+    "TronUnfreezeNotExpired" : {
+      "title" : "Resources not unfrozen yet",
+      "description" : "You need to wait until {{time}} to withdraw"
     },
     "UpdateYourApp" : {
       "title" : "مطلوب تحديث للتطبيق",
@@ -2313,6 +2323,9 @@
       "VOTE" : "تم التصويت",
       "FREEZE" : "تجميد",
       "UNFREEZE" : "تمت إزالة التجميد",
+      "UNDELEGATE_RESOURCE" : "Undelegated",
+      "WITHDRAW_EXPIRE_UNFREEZE" : "Withdrawal",
+      "LEGACYUNFREEZE" : "Unfrozen",
       "REWARD" : "المكافأة المُطالب بها",
       "FEES" : "رسوم",
       "OPT_IN" : "الانضمام",
@@ -3687,7 +3700,7 @@
       "description" : "قم بتجميد TRX لكسب المكافآت بشكل آمن، مع الاحتفاظ بالسيطرة على أصولك.",
       "steps" : {
         "0" : "الأصول المفوضة تظل ملكك.",
-        "1" : "يمكنك إزالة تجميد أصولك بعد 3 أيام.",
+        "1" : "You can unfreeze your assets at any time, and they will be accessible after the 14-day unfreezing period.",
         "2" : "قم بالتجميد والتصويت بأمان مع جهازك Ledger."
       },
       "howVotingWorks" : "كيف يعمل التصويت",
@@ -5344,7 +5357,7 @@
             "description" : "قم بتفويض TRX إلى مرشح طرف ثالث لكسب المكافآت. انقر على متابعة لتجميد الأصول والتصويت.",
             "bullet" : {
               "delegate" : "الأصول المفوضة تظل ملكك.",
-              "access" : "يمكنك الوصول إلى أصولك بعد 3 أيام من التجميد.",
+              "access" : "Frozen assets can be unfrozen immediately and will become accessible after the 14-day unfreezing period.",
               "ledger" : "قم بالتفويض بشكل آمن مع جهازك Ledger."
             },
             "button" : {
@@ -5362,7 +5375,7 @@
       },
       "unfreeze" : {
         "title" : "إزالة التجميد",
-        "description" : "قم بإزالة تجميد TRX لإعادتهم مرة أخرى إلى رصيدك المتاح. لن تحصل على مكافآت بعد ذلك."
+        "description" : "Unfreeze TRX to add them back to your available balance. You will no longer earn rewards. The assets will be available after the 14-day unfreezing period"
       },
       "vote" : {
         "title" : "تصويت",
@@ -5920,6 +5933,9 @@
       "freeze" : "يرجى التأكيد على جهازك لإتمام العملية",
       "unfreeze" : "يرجى التأكيد على جهازك لإتمام العملية",
       "claimReward" : "يرجى التأكيد على جهازك لإتمام العملية",
+      "legacyUnfreeze" : "On your device, please confirm to finalize the operation",
+      "withdrawExpireUnfreeze" : "On your device, please confirm to finalize the operation",
+      "undelegateResource" : "On your device, please confirm to finalize the operation",
       "vote" : "يرجى التأكيد على جهازك لإتمام العملية",
       "delegate" : "يرجى التأكيد على جهازك لإتمام العملية",
       "redelegate" : "يرجى التأكيد على جهازك لإتمام العملية",
@@ -5944,9 +5960,12 @@
     "votes" : "الأصوات",
     "validator" : "المدقق",
     "infoWording" : {
-      "freeze" : "يتم قفل رموز التوكن المجمدة لمدة 3 أيام.",
+      "freeze" : "Freeze tokens to acquire bandwidth or energy and receive an equivalent amount of TRON Power (TP).",
       "unfreeze" : "سيتم خفض نقاطك من {{resource}} وجميع أصواتك سيتم إلغائها.",
+      "legacyUnfreeze" : "Your {{resource}} points will be reduced, and all your votes will be cancelled.",
       "claimReward" : "يمكن المطالبة بالمكافآت كل 24 ساعة.",
+      "withdrawExpireUnfreeze" : "Your unfrozen resources that has passed the unfreezing period will be withdrawn",
+      "unDelegateResource" : "Cancel the delegation of {{resource}}",
       "cosmos" : {
         "claimReward" : "إذا كان المدقق المحدد لديه مكافآت معلقة، فسيتم المطالبة بهم تلقائياً.",
         "redelegate" : "سيتعين عليك الانتظار {{numberOfDays}} يوماً حتى تعود الأصول التي تم إلغاء تفويضها إلى الرصيد المتاح.",
