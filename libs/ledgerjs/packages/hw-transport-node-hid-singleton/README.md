@@ -120,8 +120,6 @@ Used in pair with `setDisconnectAfterInactivityTimeout`.
 
 Hence, once called once, the disconnection is tried at a frequency of DISCONNECT\_TIMEOUT (or until `clearDisconnectAfterInactivityTimeout` is called)
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<void>**&#x20;
-
 #### disconnect
 
 Disconnects from the HID device associated to the transport singleton.
