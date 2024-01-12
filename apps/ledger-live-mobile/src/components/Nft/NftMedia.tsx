@@ -5,7 +5,7 @@ import { NFTMediaSize, NFTMetadata } from "@ledgerhq/types-live";
 import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import { Theme } from "@react-navigation/native";
 import { StyleProp, ViewStyle } from "react-native";
-import { getMetadataMediaType } from "../../logic/nft";
+import { getMetadataMediaType } from "~/logic/nft";
 import { withTheme } from "../../colors";
 import NftImage from "./NftImage";
 import NftVideo from "./NftVideo";

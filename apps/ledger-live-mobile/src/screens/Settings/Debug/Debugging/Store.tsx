@@ -10,12 +10,12 @@ import { useTheme } from "@react-navigation/native";
 import Share from "react-native-share";
 import Node from "./Node";
 import logger from "../../../../logger";
-import { dangerouslyOverrideState } from "../../../../actions/settings";
-import Button from "../../../../components/Button";
-import { SettingsActionTypes } from "../../../../actions/types";
-import { State } from "../../../../reducers/types";
-import QueuedDrawer from "../../../../components/QueuedDrawer";
-import TextInput from "../../../../components/FocusedTextInput";
+import { dangerouslyOverrideState } from "~/actions/settings";
+import Button from "~/components/Button";
+import { SettingsActionTypes } from "~/actions/types";
+import { State } from "~/reducers/types";
+import QueuedDrawer from "~/components/QueuedDrawer";
+import TextInput from "~/components/FocusedTextInput";
 
 const Separator = styled(Flex).attrs({
   width: "100%",

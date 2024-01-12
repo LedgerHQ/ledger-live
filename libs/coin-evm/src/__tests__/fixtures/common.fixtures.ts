@@ -144,6 +144,7 @@ export const makeOperation = (partialOp?: Partial<Operation>): Operation => {
     date: new Date(),
     nftOperations: [],
     subOperations: [],
+    internalOperations: [],
     extra: {},
     ...partialOp,
   });

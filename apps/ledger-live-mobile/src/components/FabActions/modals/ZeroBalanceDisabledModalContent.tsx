@@ -6,7 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { ModalOnDisabledClickComponentProps } from "../index";
 import ParentCurrencyIcon from "../../ParentCurrencyIcon";
-import { NavigatorName, ScreenName } from "../../../const";
+import { NavigatorName, ScreenName } from "~/const";
 import Button from "../../wrappedUi/Button";
 import {
   RootNavigationComposite,

@@ -13,25 +13,21 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useTheme } from "@react-navigation/native";
 import { TransportBleDevice } from "@ledgerhq/live-common/ble/types";
 import TransportBLE from "../../react-native-hw-transport-ble";
-import { GENUINE_CHECK_TIMEOUT } from "@utils/constants";
-import { addKnownDevice } from "../../actions/ble";
-import {
-  setHasInstalledAnyApp,
-  setLastSeenDeviceInfo,
-  setReadOnlyMode,
-} from "../../actions/settings";
-import { hasCompletedOnboardingSelector } from "../../reducers/settings";
-import RequiresBLE from "../../components/RequiresBLE";
+import { GENUINE_CHECK_TIMEOUT } from "~/utils/constants";
+import { addKnownDevice } from "~/actions/ble";
+import { setHasInstalledAnyApp, setLastSeenDeviceInfo, setReadOnlyMode } from "~/actions/settings";
+import { hasCompletedOnboardingSelector } from "~/reducers/settings";
+import RequiresBLE from "~/components/RequiresBLE";
 import PendingPairing from "./PendingPairing";
 import PendingGenuineCheck from "./PendingGenuineCheck";
 import Paired from "./Paired";
 import Scanning from "./Scanning";
 import ScanningTimeout from "./ScanningTimeout";
 import RenderError from "./RenderError";
-import { RootComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
-import { ScreenName } from "../../const";
-import { BaseOnboardingNavigatorParamList } from "../../components/RootNavigator/types/BaseOnboardingNavigator";
+import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { ScreenName } from "~/const";
+import { BaseOnboardingNavigatorParamList } from "~/components/RootNavigator/types/BaseOnboardingNavigator";
 import { lastValueFrom } from "rxjs";
 import { LocalTracer } from "@ledgerhq/logs";
 

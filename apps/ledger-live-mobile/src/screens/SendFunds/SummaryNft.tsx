@@ -6,7 +6,7 @@ import { useTheme } from "@react-navigation/native";
 import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import LText from "../../components/LText";
+import LText from "~/components/LText";
 import SummaryRow from "./SummaryRow";
 
 type Props = {

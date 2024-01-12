@@ -1,5 +1,5 @@
 import React from "react";
-import QueuedDrawer, { Props as QueuedDrawerProps } from "../../components/QueuedDrawer";
+import QueuedDrawer, { Props as QueuedDrawerProps } from "~/components/QueuedDrawer";
 import { Button, Flex, IconBadge, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { GetBatteryStatusesActionState } from "@ledgerhq/live-common/deviceSDK/actions/getBatteryStatuses";

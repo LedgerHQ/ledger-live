@@ -2,18 +2,18 @@ import { Device, DeviceModelId } from "@ledgerhq/types-devices";
 import React, { useCallback } from "react";
 import { Flex } from "@ledgerhq/native-ui";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { NavigatorName, ScreenName } from "../../const";
+import { NavigatorName, ScreenName } from "~/const";
 import BleDevicePairingFlowComponent, {
   SetHeaderOptionsRequest,
-} from "../../components/BleDevicePairingFlow/index";
+} from "~/components/BleDevicePairingFlow/index";
 import {
   ReactNavigationHeaderOptions,
   RootComposite,
   StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
-import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
-import { NavigationHeaderBackButton } from "../../components/NavigationHeaderBackButton";
-import { useIncrementOnNavigationFocusState } from "../../helpers/useIncrementOnNavigationFocusState";
+} from "~/components/RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
+import { useIncrementOnNavigationFocusState } from "~/helpers/useIncrementOnNavigationFocusState";
 
 export type Props = RootComposite<
   StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.BleDevicePairingFlow>

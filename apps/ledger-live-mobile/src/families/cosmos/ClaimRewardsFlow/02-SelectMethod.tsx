@@ -14,18 +14,18 @@ import {
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useTheme } from "@react-navigation/native";
 import cosmosBase from "@ledgerhq/live-common/families/cosmos/chain/cosmosBase";
-import { accountScreenSelector } from "../../../reducers/accounts";
-import Button from "../../../components/Button";
-import LText from "../../../components/LText";
-import { ScreenName } from "../../../const";
-import ToggleButton from "../../../components/ToggleButton";
-import InfoModal from "../../../modals/Info";
-import Info from "../../../icons/Info";
-import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
-import CounterValue from "../../../components/CounterValue";
-import TranslatedError from "../../../components/TranslatedError";
+import { accountScreenSelector } from "~/reducers/accounts";
+import Button from "~/components/Button";
+import LText from "~/components/LText";
+import { ScreenName } from "~/const";
+import ToggleButton from "~/components/ToggleButton";
+import InfoModal from "~/modals/Info";
+import Info from "~/icons/Info";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import CounterValue from "~/components/CounterValue";
+import TranslatedError from "~/components/TranslatedError";
 import ValidatorImage from "../shared/ValidatorImage";
-import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { CosmosClaimRewardsFlowParamList } from "./types";
 
 const options = [

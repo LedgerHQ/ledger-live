@@ -1,5 +1,5 @@
 import { NavigatorScreenParams } from "@react-navigation/native";
-import { ScreenName, NavigatorName } from "../../../const";
+import { ScreenName, NavigatorName } from "~/const";
 import { MarketNavigatorStackParamList } from "./MarketNavigator";
 
 export type WalletTabNavigatorStackParamList = {

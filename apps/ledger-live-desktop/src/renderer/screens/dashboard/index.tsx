@@ -56,7 +56,7 @@ export default function DashboardPage() {
   );
   const isPostOnboardingBannerVisible = usePostOnboardingEntryPointVisibleOnWallet();
 
-  const showCarousel = hasInstalledApps && totalAccounts > 0;
+  const showCarousel = hasInstalledApps && totalAccounts >= 0;
   useRefreshAccountsOrderingEffect({
     onMount: true,
   });

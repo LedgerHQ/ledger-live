@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@octokit/plugin-retry": "^4.1.1",
-    "probot": "^12.2.2"
+    "probot": "^12.3.3"
   },
   "devDependencies": {
     "@types/jest": "^29.5.10",

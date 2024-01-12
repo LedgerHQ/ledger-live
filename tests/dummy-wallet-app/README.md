@@ -166,7 +166,7 @@ import { getMockAppManifest } from "PATH/TO/utils/serve-dummy-app";
 
 test.beforeAll(async () => {
   try {
-    const port = await server.start("dummy-wallet-app/build");
+    const port = await server.start("dummy-wallet-app/dist");
     const url = `http://localhost:${port}`;
     const response = await request.get(url);
     if (response.ok()) {

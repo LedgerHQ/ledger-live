@@ -1,15 +1,18 @@
 import { SolanaAccount, SolanaAccountRaw, SolanaResources, SolanaResourcesRaw } from "./types";
 import { Account, AccountRaw } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
 
 export function toSolanaResourcesRaw(resources: SolanaResources): SolanaResourcesRaw {
   return {
     stakes: JSON.stringify(resources.stakes),
+    unstakeReserve: resources.unstakeReserve.toJSON(),
   };
 }
 
 export function fromSolanaResourcesRaw(resourcesRaw: SolanaResourcesRaw): SolanaResources {
   return {
     stakes: JSON.parse(resourcesRaw.stakes),
+    unstakeReserve: new BigNumber(resourcesRaw.unstakeReserve),
   };
 }
 

@@ -13,22 +13,19 @@ import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { CompositeScreenProps } from "@react-navigation/native";
-import { useLocale } from "../../../context/Locale";
+import { useLocale } from "~/context/Locale";
 import { languages, supportedLocales, localeIdToDeviceLanguage, Locale } from "../../../languages";
-import { ScreenName } from "../../../const";
-import { setLanguage, setLastSeenDevice } from "../../../actions/settings";
-import { lastConnectedDeviceSelector, lastSeenDeviceSelector } from "../../../reducers/settings";
-import ChangeDeviceLanguageAction from "../../../components/ChangeDeviceLanguageAction";
-import ChangeDeviceLanguagePrompt from "../../../components/ChangeDeviceLanguagePrompt";
-import { track, updateIdentify } from "../../../analytics";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
-import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
-import { BaseOnboardingNavigatorParamList } from "../../../components/RootNavigator/types/BaseOnboardingNavigator";
-import Button from "../../../components/Button";
-import QueuedDrawer from "../../../components/QueuedDrawer";
+import { ScreenName } from "~/const";
+import { setLanguage, setLastSeenDevice } from "~/actions/settings";
+import { lastConnectedDeviceSelector, lastSeenDeviceSelector } from "~/reducers/settings";
+import ChangeDeviceLanguageAction from "~/components/ChangeDeviceLanguageAction";
+import ChangeDeviceLanguagePrompt from "~/components/ChangeDeviceLanguagePrompt";
+import { track, updateIdentify } from "~/analytics";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
+import { BaseOnboardingNavigatorParamList } from "~/components/RootNavigator/types/BaseOnboardingNavigator";
+import Button from "~/components/Button";
+import QueuedDrawer from "~/components/QueuedDrawer";
 
 type NavigationProps = CompositeScreenProps<
   StackNavigatorProps<OnboardingNavigatorParamList, ScreenName.OnboardingLanguage>,

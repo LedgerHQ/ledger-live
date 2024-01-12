@@ -7,15 +7,15 @@ import { useTranslation } from "react-i18next";
 import i18next from "i18next";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useIsFocused, useTheme } from "@react-navigation/native";
-import KeyboardView from "../../components/KeyboardView";
-import Button from "../../components/Button";
-import { ScreenName } from "../../const";
-import { accountScreenSelector } from "../../reducers/accounts";
-import TextInput from "../../components/FocusedTextInput";
-import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
-import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
-import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
+import KeyboardView from "~/components/KeyboardView";
+import Button from "~/components/Button";
+import { ScreenName } from "~/const";
+import { accountScreenSelector } from "~/reducers/accounts";
+import TextInput from "~/components/FocusedTextInput";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
+import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
+import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<

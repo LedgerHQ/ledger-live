@@ -49,7 +49,7 @@ function StepConfirmation({
     return (
       <Container>
         <TrackPage
-          category="Stake NEAR"
+          category="Delegation Flow"
           name="Step Confirmed"
           flow="stake"
           action="staking"

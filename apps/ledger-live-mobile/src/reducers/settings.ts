@@ -82,7 +82,7 @@ import {
   SettingsActionTypes,
   SettingsSetWalletTabNavigatorLastVisitedTabPayload,
 } from "../actions/types";
-import { ScreenName } from "../const";
+import { ScreenName } from "~/const";
 
 export const timeRangeDaysByKey = {
   day: 1,

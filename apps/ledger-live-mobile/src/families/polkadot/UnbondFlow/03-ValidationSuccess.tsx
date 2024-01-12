@@ -5,12 +5,12 @@ import { Trans } from "react-i18next";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
 import { StackScreenProps } from "@react-navigation/stack";
-import { accountScreenSelector } from "../../../reducers/accounts";
-import { TrackScreen } from "../../../analytics";
-import { ScreenName } from "../../../const";
-import PreventNativeBack from "../../../components/PreventNativeBack";
-import ValidateSuccess from "../../../components/ValidateSuccess";
-import { BaseComposite, BaseNavigation } from "../../../components/RootNavigator/types/helpers";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { TrackScreen } from "~/analytics";
+import { ScreenName } from "~/const";
+import PreventNativeBack from "~/components/PreventNativeBack";
+import ValidateSuccess from "~/components/ValidateSuccess";
+import { BaseComposite, BaseNavigation } from "~/components/RootNavigator/types/helpers";
 import { PolkadotUnbondFlowParamList } from "./type";
 
 type NavigationProps = BaseComposite<

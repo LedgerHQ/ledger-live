@@ -2,16 +2,16 @@ import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
-import { ScreenName } from "../../const";
-import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
-import Step1Cropping from "../../screens/CustomImage/Step1Crop";
-import Step2ChooseContrast from "../../screens/CustomImage/Step2ChooseContrast";
-import Step3Transfer, { step3TransferHeaderOptions } from "../../screens/CustomImage/Step3Transfer";
-import ErrorScreen from "../../screens/CustomImage/ErrorScreen";
-import Step0Welcome from "../../screens/CustomImage/Step0Welcome";
-import PreviewPreEdit from "../../screens/CustomImage/PreviewPreEdit";
-import PreviewPostEdit from "../../screens/CustomImage/PreviewPostEdit";
-import NFTGallerySelector from "../../screens/CustomImage/NFTGallerySelector";
+import { ScreenName } from "~/const";
+import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import Step1Cropping from "~/screens/CustomImage/Step1Crop";
+import Step2ChooseContrast from "~/screens/CustomImage/Step2ChooseContrast";
+import Step3Transfer, { step3TransferHeaderOptions } from "~/screens/CustomImage/Step3Transfer";
+import ErrorScreen from "~/screens/CustomImage/ErrorScreen";
+import Step0Welcome from "~/screens/CustomImage/Step0Welcome";
+import PreviewPreEdit from "~/screens/CustomImage/PreviewPreEdit";
+import PreviewPostEdit from "~/screens/CustomImage/PreviewPostEdit";
+import NFTGallerySelector from "~/screens/CustomImage/NFTGallerySelector";
 import { CustomImageNavigatorParamList } from "./types/CustomImageNavigator";
 
 export default function CustomImageNavigator() {

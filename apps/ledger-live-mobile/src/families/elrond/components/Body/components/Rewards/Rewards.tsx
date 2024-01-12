@@ -13,12 +13,12 @@ import type { StackNavigationProp } from "@react-navigation/stack";
 import type { NavigationType } from "../../../../types";
 import type { RewardsPropsType } from "./types";
 
-import AccountSectionLabel from "../../../../../../components/AccountSectionLabel";
-import CurrencyUnitValue from "../../../../../../components/CurrencyUnitValue";
-import CounterValue from "../../../../../../components/CounterValue";
-import Button from "../../../../../../components/Button";
-import LText from "../../../../../../components/LText";
-import { ScreenName, NavigatorName } from "../../../../../../const";
+import AccountSectionLabel from "~/components/AccountSectionLabel";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import CounterValue from "~/components/CounterValue";
+import Button from "~/components/Button";
+import LText from "~/components/LText";
+import { ScreenName, NavigatorName } from "~/const";
 
 import styles from "./styles";
 

@@ -4,13 +4,13 @@ import { Trans } from "react-i18next";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
 import { Currency } from "@ledgerhq/types-cryptoassets";
-import QueuedDrawer from "../../components/QueuedDrawer";
-import Circle from "../../components/Circle";
-import IconInfo from "../../icons/Info";
-import LText from "../../components/LText";
-import Button from "../../components/Button";
+import QueuedDrawer from "~/components/QueuedDrawer";
+import Circle from "~/components/Circle";
+import IconInfo from "~/icons/Info";
+import LText from "~/components/LText";
+import Button from "~/components/Button";
 import { rgba } from "../../colors";
-import { urls } from "@utils/urls";
+import { urls } from "~/utils/urls";
 
 export type Props = {
   isOpened: boolean;

@@ -7,17 +7,17 @@ import { Trans } from "react-i18next";
 import { compose } from "redux";
 import { Box } from "@ledgerhq/native-ui";
 import { Account } from "@ledgerhq/types-live";
-import { accountScreenSelector } from "../../reducers/accounts";
-import { updateAccount } from "../../actions/accounts";
-import TextInput from "../../components/TextInput";
-import { getFontStyle } from "../../components/LText";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { updateAccount } from "~/actions/accounts";
+import TextInput from "~/components/TextInput";
+import { getFontStyle } from "~/components/LText";
 import { Theme, withTheme } from "../../colors";
-import Button from "../../components/wrappedUi/Button";
-import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { ScreenName } from "../../const";
-import { AddAccountsNavigatorParamList } from "../../components/RootNavigator/types/AddAccountsNavigator";
-import { State } from "../../reducers/types";
-import { AccountSettingsNavigatorParamList } from "../../components/RootNavigator/types/AccountSettingsNavigator";
+import Button from "~/components/wrappedUi/Button";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { ScreenName } from "~/const";
+import { AddAccountsNavigatorParamList } from "~/components/RootNavigator/types/AddAccountsNavigator";
+import { State } from "~/reducers/types";
+import { AccountSettingsNavigatorParamList } from "~/components/RootNavigator/types/AccountSettingsNavigator";
 
 export const MAX_ACCOUNT_NAME_LENGHT = 50;
 

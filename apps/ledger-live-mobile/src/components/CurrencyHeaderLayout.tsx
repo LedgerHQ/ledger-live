@@ -4,7 +4,7 @@ import { Box, Flex } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
 import Animated, { Extrapolate, interpolate, useAnimatedStyle } from "react-native-reanimated";
 
-import getWindowDimensions from "../logic/getWindowDimensions";
+import getWindowDimensions from "~/logic/getWindowDimensions";
 import CurrencyGradient from "./CurrencyGradient";
 
 const windowsWidth = getWindowDimensions().width;

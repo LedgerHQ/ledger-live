@@ -6,8 +6,8 @@ import { Trans } from "react-i18next";
 import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { useNavigation } from "@react-navigation/native";
 
-import { urls } from "@utils/urls";
-import { NavigatorName, ScreenName } from "../const";
+import { urls } from "~/utils/urls";
+import { NavigatorName, ScreenName } from "~/const";
 
 const BuyDeviceCTA: React.FC<Record<string, never>> = () => {
   const buyDeviceFromLive = useFeature("buyDeviceFromLive");

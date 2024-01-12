@@ -7,15 +7,15 @@ import { CompositeScreenProps } from "@react-navigation/native";
 import React from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
-import CounterValue from "../../components/CounterValue";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import SummaryRow from "../../screens/SendFunds/SummaryRow";
-import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
-import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import type { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
-import { ScreenName } from "../../const";
-import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
-import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
+import CounterValue from "~/components/CounterValue";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import SummaryRow from "~/screens/SendFunds/SummaryRow";
+import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import type { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
+import { ScreenName } from "~/const";
+import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
+import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 
 type Props = {
   account: AccountLike;

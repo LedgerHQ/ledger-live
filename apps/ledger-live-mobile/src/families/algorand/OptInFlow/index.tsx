@@ -3,15 +3,12 @@ import { Platform } from "react-native";
 import { useTranslation } from "react-i18next";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "@react-navigation/native";
-import {
-  getStackNavigatorConfig,
-  defaultNavigationOptions,
-} from "../../../navigation/navigatorConfig";
-import StepHeader from "../../../components/StepHeader";
-import { ScreenName } from "../../../const";
+import { getStackNavigatorConfig, defaultNavigationOptions } from "~/navigation/navigatorConfig";
+import StepHeader from "~/components/StepHeader";
+import { ScreenName } from "~/const";
 import OptInSelectToken from "./01-SelectToken";
-import OptInSelectDevice from "../../../screens/SelectDevice";
-import OptInConnectDevice from "../../../screens/ConnectDevice";
+import OptInSelectDevice from "~/screens/SelectDevice";
+import OptInConnectDevice from "~/screens/ConnectDevice";
 import OptInValidation from "./03-Validation";
 import OptInValidationError from "./03-ValidationError";
 import OptInValidationSuccess from "./03-ValidationSuccess";

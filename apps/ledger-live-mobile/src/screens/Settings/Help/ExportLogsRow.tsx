@@ -1,7 +1,7 @@
 import React from "react";
 import { Trans } from "react-i18next";
-import SettingsRow from "../../../components/SettingsRow";
-import useExportLogs from "../../../components/useExportLogs";
+import SettingsRow from "~/components/SettingsRow";
+import useExportLogs from "~/components/useExportLogs";
 
 export default function ExportLogsRow() {
   const exportLogs = useExportLogs();

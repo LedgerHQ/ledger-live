@@ -9,7 +9,7 @@ import {
 import { BatteryStatusTypes } from "../../hw/getBatteryStatus";
 import { useEnv } from "../../env.react";
 
-export type UseBateryStatusesArgs = {
+export type UseBatteryStatusesArgs = {
   deviceId?: string;
   statuses: BatteryStatusTypes[];
 };
@@ -29,7 +29,7 @@ export type UseBateryStatusesArgs = {
 export const useBatteryStatuses = ({
   deviceId,
   statuses,
-}: UseBateryStatusesArgs): {
+}: UseBatteryStatusesArgs): {
   batteryStatusesState: GetBatteryStatusesActionState;
   requestCompleted: boolean;
   triggerRequest: () => void;
@@ -41,7 +41,11 @@ export const useBatteryStatuses = ({
     useState<GetBatteryStatusesActionState>(initialState);
   const [requestCompleted, setRequestCompleted] = useState<boolean>(false);
   const [nonce, setNonce] = useState(0);
-  const [cancelRequest, setCancelRequest] = useState<() => void>(() => {});
+
+  // when passing a function to useState, the function is used as an initializer,
+  // i.e its return value will be the initial state value,
+  // cf. https://react.dev/reference/react/useState#parameters
+  const [cancelRequest, setCancelRequest] = useState(() => () => {});
   const [isBatteryLow, setIsBatteryLow] = useState<boolean>(false);
   const lowBatteryPercentage = useEnv("LOW_BATTERY_PERCENTAGE");
 

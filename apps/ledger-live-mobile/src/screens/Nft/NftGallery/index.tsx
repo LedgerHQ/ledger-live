@@ -7,21 +7,18 @@ import { Account, ProtoNFT } from "@ledgerhq/types-live";
 import { nftsByCollections } from "@ledgerhq/live-common/nft/index";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
-import { withDiscreetMode } from "../../../context/DiscreetModeContext";
-import LoadingFooter from "../../../components/LoadingFooter";
-import { accountSelector } from "../../../reducers/accounts";
+import { withDiscreetMode } from "~/context/DiscreetModeContext";
+import LoadingFooter from "~/components/LoadingFooter";
+import { accountSelector } from "~/reducers/accounts";
 import NftCollectionWithName from "./NftCollectionWithName";
-import { NavigatorName, ScreenName } from "../../../const";
-import Button from "../../../components/Button";
-import SendIcon from "../../../icons/Send";
-import { hiddenNftCollectionsSelector } from "../../../reducers/settings";
-import type { State } from "../../../reducers/types";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
-import { AccountsNavigatorParamList } from "../../../components/RootNavigator/types/AccountsNavigator";
-import InfoModal from "../../../modals/Info";
+import { NavigatorName, ScreenName } from "~/const";
+import Button from "~/components/Button";
+import SendIcon from "~/icons/Send";
+import { hiddenNftCollectionsSelector } from "~/reducers/settings";
+import type { State } from "~/reducers/types";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
+import InfoModal from "~/modals/Info";
 import { notAvailableModalInfo } from "../NftInfoNotAvailable";
 import invariant from "invariant";
 

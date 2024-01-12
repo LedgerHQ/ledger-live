@@ -1,7 +1,7 @@
 import { IconBoxList, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import Button from "../../../../../components/PreventDoubleClickButton";
+import Button from "~/components/PreventDoubleClickButton";
 import OnboardingSetupDeviceInformation from "../drawers/Warning";
 
 const items = [
@@ -46,7 +46,12 @@ const Next = ({ onNext }: { onNext: () => void }) => {
 
   return (
     <>
-      <Button type="main" size="large" onPress={() => setOpen(true)}>
+      <Button
+        type="main"
+        size="large"
+        onPress={() => setOpen(true)}
+        testID="onboarding-stepSetupDevice-start"
+      >
         {t("onboarding.stepSetupDevice.start.cta")}
       </Button>
 

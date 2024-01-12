@@ -24,15 +24,15 @@ import { useSelector } from "react-redux";
 import CurrencyUnitValue from "../CurrencyUnitValue";
 import CounterValue from "../CounterValue";
 import OperationIcon from "../OperationIcon";
-import { ScreenName } from "../../const";
+import { ScreenName } from "~/const";
 import OperationRowDate from "../OperationRowDate";
 import OperationRowNftName from "../OperationRowNftName";
 import perFamilyOperationDetails from "../../generated/operationDetails";
-import { track } from "../../analytics";
-import { UnionToIntersection } from "../../types/helpers";
+import { track } from "~/analytics";
+import { UnionToIntersection } from "~/types/helpers";
 import { BaseNavigation } from "../RootNavigator/types/helpers";
-import { currencySettingsForAccountSelector } from "../../reducers/settings";
-import type { State } from "../../reducers/types";
+import { currencySettingsForAccountSelector } from "~/reducers/settings";
+import type { State } from "~/reducers/types";
 
 type FamilyOperationDetailsIntersection = UnionToIntersection<
   (typeof perFamilyOperationDetails)[keyof typeof perFamilyOperationDetails]
@@ -236,7 +236,13 @@ function OperationRow({
           </BodyRightContainer>
         ) : amount.isZero() ? null : (
           <BodyRightContainer>
-            <Text numberOfLines={1} color={valueColor} variant="body" fontWeight="semiBold">
+            <Text
+              numberOfLines={1}
+              color={valueColor}
+              variant="body"
+              fontWeight="semiBold"
+              testID="portfolio-operation-amount"
+            >
               <CurrencyUnitValue showCode unit={unit} value={amount} alwaysShowSign />
             </Text>
             <Text variant="paragraph" fontWeight="medium" color={colors.neutral.c70}>

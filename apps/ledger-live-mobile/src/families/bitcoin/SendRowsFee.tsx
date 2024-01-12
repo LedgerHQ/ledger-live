@@ -8,13 +8,13 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useFeesStrategy } from "@ledgerhq/live-common/families/bitcoin/react";
 import { CompositeScreenProps } from "@react-navigation/native";
 import BigNumber from "bignumber.js";
-import { ScreenName } from "../../const";
-import SelectFeesStrategy, { SelectFeeStrategy } from "../../components/SelectFeesStrategy";
-import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import type { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
-import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
-import type { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
-import type { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
+import { ScreenName } from "~/const";
+import SelectFeesStrategy, { SelectFeeStrategy } from "~/components/SelectFeesStrategy";
+import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import type { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
+import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import type { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
+import type { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 
 type Props = {
   transaction: Transaction;

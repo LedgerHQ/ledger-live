@@ -18,19 +18,19 @@ import {
   TouchableOpacityProps,
   View,
 } from "react-native";
-import { useAnalytics } from "../../analytics";
-import CounterValue from "../../components/CounterValue";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import LText from "../../components/LText";
-import NetworkFeeInfo from "../../components/NetworkFeeInfo";
-import QueuedDrawer from "../../components/QueuedDrawer";
-import SectionSeparator from "../../components/SectionSeparator";
-import Info from "../../icons/Info";
-import TachometerFast from "../../icons/TachometerFast";
-import TachometerMedium from "../../icons/TachometerMedium";
-import TachometerSlow from "../../icons/TachometerSlow";
-import SummaryRow from "../../screens/SendFunds/SummaryRow";
-import { sharedSwapTracking } from "../../screens/Swap/utils";
+import { useAnalytics } from "~/analytics";
+import CounterValue from "~/components/CounterValue";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import LText from "~/components/LText";
+import NetworkFeeInfo from "~/components/NetworkFeeInfo";
+import QueuedDrawer from "~/components/QueuedDrawer";
+import SectionSeparator from "~/components/SectionSeparator";
+import Info from "~/icons/Info";
+import TachometerFast from "~/icons/TachometerFast";
+import TachometerMedium from "~/icons/TachometerMedium";
+import TachometerSlow from "~/icons/TachometerSlow";
+import SummaryRow from "~/screens/SendFunds/SummaryRow";
+import { sharedSwapTracking } from "~/screens/Swap/utils";
 import { StrategyWithCustom } from "./types";
 
 type Props = {

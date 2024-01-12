@@ -3,11 +3,11 @@ import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
 import { StackScreenProps } from "@react-navigation/stack";
-import { TrackScreen } from "../../../analytics";
-import ValidateError from "../../../components/ValidateError";
-import { BaseComposite, BaseNavigation } from "../../../components/RootNavigator/types/helpers";
+import { TrackScreen } from "~/analytics";
+import ValidateError from "~/components/ValidateError";
+import { BaseComposite, BaseNavigation } from "~/components/RootNavigator/types/helpers";
 import { PolkadotRebondFlowParamList } from "./type";
-import { ScreenName } from "../../../const";
+import { ScreenName } from "~/const";
 
 type NavigationProps = BaseComposite<
   StackScreenProps<PolkadotRebondFlowParamList, ScreenName.PolkadotRebondValidationError>

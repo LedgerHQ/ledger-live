@@ -8,6 +8,7 @@ import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import { AlgorandAccount } from "@ledgerhq/live-common/families/algorand/types";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 
 export type Props = {
   account: AlgorandAccount | SubAccount;
@@ -18,9 +19,11 @@ export default function AlgorandEarnRewardsInfoModal({ account }: Props) {
   const onNext = useCallback(() => {
     dispatch(openModal("MODAL_RECEIVE", { account }));
   }, [account, dispatch]);
-  const onLearnMore = useCallback(() => {
-    openURL(urls.algorandStakingRewards);
-  }, []);
+
+  const algorandStakingRewards = useLocalizedUrl(urls.algorandStakingRewards);
+  const onLearnMore = () => {
+    openURL(algorandStakingRewards);
+  };
   return (
     <EarnRewardsInfoModal
       name="MODAL_ALGORAND_EARN_REWARDS_INFO"
@@ -32,6 +35,7 @@ export default function AlgorandEarnRewardsInfoModal({ account }: Props) {
         t("algorand.claimRewards.flow.steps.starter.bullet.access"),
         t("algorand.claimRewards.flow.steps.starter.bullet.ledger"),
       ]}
+      currency="algo"
       additional={null}
       footerLeft={
         <LinkWithExternalIcon

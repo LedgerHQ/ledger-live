@@ -2,10 +2,10 @@ import React, { useCallback, useContext } from "react";
 import { PermissionsAndroid, Linking } from "react-native";
 import { useTranslation } from "react-i18next";
 import { locationPermission } from "./hooks/useAndroidLocationPermission";
-import NoLocationImage from "../../icons/NoLocationImage";
+import NoLocationImage from "~/icons/NoLocationImage";
 import GenericInformationalDrawerContent from "../GenericInformationalDrawerContent";
 import GenericInformationalView from "../GenericInformationalView";
-import IsInDrawerContext from "../../context/IsInDrawerContext";
+import IsInDrawerContext from "~/context/IsInDrawerContext";
 
 type Props = {
   onRetry?: (() => void) | null;

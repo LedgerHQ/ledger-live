@@ -5,15 +5,15 @@ import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 
-import { accountScreenSelector } from "../../../../../../../reducers/accounts";
-import { TrackScreen, track } from "../../../../../../../analytics";
-import { ScreenName } from "../../../../../../../const";
-import PreventNativeBack from "../../../../../../../components/PreventNativeBack";
-import ValidateSuccess from "../../../../../../../components/ValidateSuccess";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { TrackScreen, track } from "~/analytics";
+import { ScreenName } from "~/const";
+import PreventNativeBack from "~/components/PreventNativeBack";
+import ValidateSuccess from "~/components/ValidateSuccess";
 
 import type { ValidationSuccessPropsType } from "./types";
-import type { StackNavigatorNavigation } from "../../../../../../../components/RootNavigator/types/helpers";
-import type { BaseNavigatorStackParamList } from "../../../../../../../components/RootNavigator/types/BaseNavigator";
+import type { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
+import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 
 import styles from "./styles";
 
@@ -85,7 +85,7 @@ const ValidationSuccess = ({ navigation, route }: ValidationSuccessPropsType) =>
         name="ValidationSuccess"
         flow="stake"
         action="delegate"
-        currency="egld"
+        currency="MultiversX"
       />
       <PreventNativeBack />
 

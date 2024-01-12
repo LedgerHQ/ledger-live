@@ -6,20 +6,18 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useSelector, useDispatch } from "react-redux";
 import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { targetDisplayDimensions } from "../../../CustomImage/shared";
-import { customImageBackupSelector } from "../../../../reducers/settings";
-import { setCustomImageBackup } from "../../../../actions/settings";
-import NavigationScrollView from "../../../../components/NavigationScrollView";
-import SelectDevice from "../../../../components/SelectDevice";
-import SelectDevice2, { SetHeaderOptionsRequest } from "../../../../components/SelectDevice2";
-import CustomImageDeviceAction from "../../../../components/CustomImageDeviceAction";
-import ImageHexProcessor from "../../../../components/CustomImage/ImageHexProcessor";
-import { ProcessorPreviewResult } from "../../../../components/CustomImage/ImageProcessor";
-import StaxFramedImage, {
-  transferConfig,
-} from "../../../../components/CustomImage/StaxFramedImage";
-import { NavigationHeaderBackButton } from "../../../../components/NavigationHeaderBackButton";
-import { ReactNavigationHeaderOptions } from "../../../../components/RootNavigator/types/helpers";
-import { useStaxFetchImageDeviceAction } from "../../../../hooks/deviceActions";
+import { customImageBackupSelector } from "~/reducers/settings";
+import { setCustomImageBackup } from "~/actions/settings";
+import NavigationScrollView from "~/components/NavigationScrollView";
+import SelectDevice from "~/components/SelectDevice";
+import SelectDevice2, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
+import CustomImageDeviceAction from "~/components/CustomImageDeviceAction";
+import ImageHexProcessor from "~/components/CustomImage/ImageHexProcessor";
+import { ProcessorPreviewResult } from "~/components/CustomImage/ImageProcessor";
+import StaxFramedImage, { transferConfig } from "~/components/CustomImage/StaxFramedImage";
+import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
+import { ReactNavigationHeaderOptions } from "~/components/RootNavigator/types/helpers";
+import { useStaxFetchImageDeviceAction } from "~/hooks/deviceActions";
 
 // Defines here some of the header options for this screen to be able to reset back to them.
 export const debugFetchCustomImageHeaderOptions: ReactNavigationHeaderOptions = {

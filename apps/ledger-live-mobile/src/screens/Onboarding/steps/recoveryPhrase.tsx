@@ -1,8 +1,8 @@
 import React, { useCallback, useMemo, memo } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
-import { ScreenName } from "../../../const";
-import Illustration from "../../../images/illustration/Illustration";
+import { ScreenName } from "~/const";
+import Illustration from "~/images/illustration/Illustration";
 import BaseStepperView, {
   RestoreRecovery,
   RestoreRecoveryStep1,
@@ -12,32 +12,32 @@ import BaseStepperView, {
   ExistingRecoveryStep1,
   ExistingRecoveryStep2,
 } from "./setupDevice/scenes";
-import { TrackScreen } from "../../../analytics";
+import { TrackScreen } from "~/analytics";
 import StepLottieAnimation from "./setupDevice/scenes/StepLottieAnimation";
 import SeedWarning from "../shared/SeedWarning";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
-import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import { Step } from "./setupDevice/scenes/BaseStepperView";
 
 // @TODO Replace
 const images = {
   light: {
-    RestoreRecovery: require("../../../images/illustration/Light/_067.png"),
-    RestoreRecoveryStep1: require("../../../images/illustration/Light/_067.png"),
-    PinCode: require("../../../images/illustration/Light/_062.png"),
-    PinCodeInstructions: require("../../../images/illustration/Light/_062.png"),
-    ExistingRecovery: require("../../../images/illustration/Light/_059.png"),
-    ExistingRecoveryStep1: require("../../../images/illustration/Light/_061.png"),
-    ExistingRecoveryStep2: require("../../../images/illustration/Light/_061.png"),
+    RestoreRecovery: require("~/images/illustration/Light/_067.png"),
+    RestoreRecoveryStep1: require("~/images/illustration/Light/_067.png"),
+    PinCode: require("~/images/illustration/Light/_062.png"),
+    PinCodeInstructions: require("~/images/illustration/Light/_062.png"),
+    ExistingRecovery: require("~/images/illustration/Light/_059.png"),
+    ExistingRecoveryStep1: require("~/images/illustration/Light/_061.png"),
+    ExistingRecoveryStep2: require("~/images/illustration/Light/_061.png"),
   },
   dark: {
-    RestoreRecovery: require("../../../images/illustration/Dark/_067.png"),
-    RestoreRecoveryStep1: require("../../../images/illustration/Dark/_067.png"),
-    PinCode: require("../../../images/illustration/Dark/_062.png"),
-    PinCodeInstructions: require("../../../images/illustration/Dark/_062.png"),
-    ExistingRecovery: require("../../../images/illustration/Dark/_059.png"),
-    ExistingRecoveryStep1: require("../../../images/illustration/Dark/_061.png"),
-    ExistingRecoveryStep2: require("../../../images/illustration/Dark/_061.png"),
+    RestoreRecovery: require("~/images/illustration/Dark/_067.png"),
+    RestoreRecoveryStep1: require("~/images/illustration/Dark/_067.png"),
+    PinCode: require("~/images/illustration/Dark/_062.png"),
+    PinCodeInstructions: require("~/images/illustration/Dark/_062.png"),
+    ExistingRecovery: require("~/images/illustration/Dark/_059.png"),
+    ExistingRecoveryStep1: require("~/images/illustration/Dark/_061.png"),
+    ExistingRecoveryStep2: require("~/images/illustration/Dark/_061.png"),
   },
 };
 

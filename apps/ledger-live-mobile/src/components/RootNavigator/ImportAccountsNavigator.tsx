@@ -2,11 +2,11 @@ import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
-import { ScreenName } from "../../const";
-import ScanAccounts from "../../screens/ImportAccounts/Scan";
-import DisplayResult from "../../screens/ImportAccounts/DisplayResult";
-import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
-import TransparentHeaderNavigationOptions from "../../navigation/TransparentHeaderNavigationOptions";
+import { ScreenName } from "~/const";
+import ScanAccounts from "~/screens/ImportAccounts/Scan";
+import DisplayResult from "~/screens/ImportAccounts/DisplayResult";
+import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import TransparentHeaderNavigationOptions from "~/navigation/TransparentHeaderNavigationOptions";
 import type { ImportAccountsNavigatorParamList } from "./types/ImportAccountsNavigator";
 import { NavigationHeaderCloseButtonAdvanced } from "../NavigationHeaderCloseButton";
 

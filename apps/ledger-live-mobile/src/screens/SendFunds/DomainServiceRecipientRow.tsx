@@ -10,9 +10,9 @@ import Clipboard from "@react-native-clipboard/clipboard";
 import { InvalidDomain, NoResolution } from "@ledgerhq/domain-service/errors/index";
 import { Trans } from "react-i18next";
 import { BasicErrorsView, DomainErrorsView } from "./DomainErrorHandlers";
-import RecipientInput from "../../components/RecipientInput";
-import Alert from "../../components/Alert";
-import { urls } from "@utils/urls";
+import RecipientInput from "~/components/RecipientInput";
+import Alert from "~/components/Alert";
+import { urls } from "~/utils/urls";
 
 type Props = {
   onChangeText: (value: string) => void;

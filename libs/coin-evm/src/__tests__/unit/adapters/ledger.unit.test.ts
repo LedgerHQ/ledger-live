@@ -6,12 +6,14 @@ import {
   ledgerERC1155EventToOperations,
   ledgerERC20EventToOperations,
   ledgerERC721EventToOperations,
+  ledgerInternalTransactionToOperations,
   ledgerOperationToOperations,
 } from "../../../adapters";
 import {
   LedgerExplorerER1155TransferEvent,
   LedgerExplorerER721TransferEvent,
   LedgerExplorerERC20TransferEvent,
+  LedgerExplorerInternalTransaction,
   LedgerExplorerOperation,
 } from "../../../types";
 
@@ -46,8 +48,8 @@ describe("EVM Family", () => {
   describe("adapters", () => {
     describe("ledger", () => {
       describe("ledgerOperationToOperations", () => {
-        it("should convert an etherscan-like smart contract creation operation (from their API) to a Ledger Live Operation", () => {
-          const etherscanOp: LedgerExplorerOperation = {
+        it("should convert a ledger explorer smart contract creation operation (from their API) to a Ledger Live Operation", () => {
+          const ledgerExplorerOp: LedgerExplorerOperation = {
             hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
             transaction_type: 2,
             nonce: "0x4b",
@@ -108,11 +110,14 @@ describe("EVM Family", () => {
             hasFailed: false,
             nftOperations: [],
             subOperations: [],
+            internalOperations: [],
             type: "NONE",
             extra: {},
           };
 
-          expect(ledgerOperationToOperations(accountId, etherscanOp)).toEqual([expectedOperation]);
+          expect(ledgerOperationToOperations(accountId, ledgerExplorerOp)).toEqual([
+            expectedOperation,
+          ]);
         });
 
         it("should convert ledger explorer smart contract operation to a Ledger Live Operation", () => {
@@ -168,6 +173,7 @@ describe("EVM Family", () => {
             hasFailed: false,
             nftOperations: [],
             subOperations: [],
+            internalOperations: [],
             type: "FEES",
             extra: {},
           };
@@ -230,6 +236,7 @@ describe("EVM Family", () => {
             hasFailed: false,
             nftOperations: [],
             subOperations: [],
+            internalOperations: [],
             type: "OUT",
             extra: {},
           };
@@ -292,6 +299,7 @@ describe("EVM Family", () => {
             hasFailed: false,
             nftOperations: [],
             subOperations: [],
+            internalOperations: [],
             type: "IN",
             extra: {},
           };
@@ -354,6 +362,7 @@ describe("EVM Family", () => {
             hasFailed: false,
             nftOperations: [],
             subOperations: [],
+            internalOperations: [],
             type: "NONE",
             extra: {},
           };
@@ -421,6 +430,7 @@ describe("EVM Family", () => {
             hasFailed: false,
             nftOperations: [],
             subOperations: [],
+            internalOperations: [],
             type: "NONE",
             extra: {},
           };
@@ -483,6 +493,7 @@ describe("EVM Family", () => {
             hasFailed: false,
             nftOperations: [],
             subOperations: [],
+            internalOperations: [],
             type: "IN",
             extra: {},
           };
@@ -501,6 +512,7 @@ describe("EVM Family", () => {
             hasFailed: false,
             nftOperations: [],
             subOperations: [],
+            internalOperations: [],
             type: "OUT",
             extra: {},
           };
@@ -1030,6 +1042,177 @@ describe("EVM Family", () => {
             expectedOperation3,
             expectedOperation4,
           ]);
+        });
+      });
+
+      describe("ledgerInternalTransactionToOperations", () => {
+        it("should convert a ledger explorer out action to a Ledger Live Operation", () => {
+          const ledgerAction: LedgerExplorerInternalTransaction = {
+            from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            to: "0x49048044d57e1c92a77f79988d21fa8faf74e97e",
+            input: null,
+            value: "10000000000000000",
+            gas: "57090",
+            gas_used: "27485",
+            error: null,
+          };
+
+          const expectedOperation: Operation = {
+            id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-OUT-i0",
+            hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
+            accountId,
+            blockHash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
+            blockHeight: 38476740,
+            senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+            recipients: ["0x49048044D57e1C92A77f79988d21Fa8fAF74E97e"],
+            value: new BigNumber("10000000000000000"),
+            fee: new BigNumber("0"),
+            date: new Date("2023-01-24T17:11:45Z"),
+            type: "OUT",
+            hasFailed: false,
+            extra: {},
+          };
+
+          expect(ledgerInternalTransactionToOperations(coinOperation, ledgerAction)).toEqual([
+            expectedOperation,
+          ]);
+        });
+
+        it("should convert a ledger explorer in action to a Ledger Live Operation", () => {
+          const ledgerAction: LedgerExplorerInternalTransaction = {
+            from: "0x49048044d57e1c92a77f79988d21fa8faf74e97e",
+            to: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            input: null,
+            value: "10000000000000000",
+            gas: "57090",
+            gas_used: "27485",
+            error: null,
+          };
+
+          const expectedOperation: Operation = {
+            id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-IN-i0",
+            hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
+            accountId,
+            blockHash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
+            blockHeight: 38476740,
+            senders: ["0x49048044D57e1C92A77f79988d21Fa8fAF74E97e"],
+            recipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+            value: new BigNumber("10000000000000000"),
+            fee: new BigNumber("0"),
+            date: new Date("2023-01-24T17:11:45Z"),
+            type: "IN",
+            hasFailed: false,
+            extra: {},
+          };
+
+          expect(ledgerInternalTransactionToOperations(coinOperation, ledgerAction)).toEqual([
+            expectedOperation,
+          ]);
+        });
+
+        it("shoud ignore a ledger explorer action when identical to the Operation it's triggered by", () => {
+          const coinOperationFees = coinOperation;
+          const coinOperationOut = {
+            ...coinOperation,
+            type: "OUT" as const,
+          };
+          const coinOperationIn = {
+            ...coinOperation,
+            senders: coinOperation.recipients,
+            recipients: coinOperation.senders,
+            type: "IN" as const,
+          };
+
+          const ledgerActionOutOrFees: LedgerExplorerInternalTransaction = {
+            from: coinOperationFees.senders[0],
+            to: coinOperationFees.recipients[0],
+            input: null,
+            value: coinOperationFees.value.minus(coinOperationFees.fee).toFixed(),
+            gas: "57090",
+            gas_used: "27485",
+            error: null,
+          };
+
+          const ledgerActionIn: LedgerExplorerInternalTransaction = {
+            ...ledgerActionOutOrFees,
+            from: coinOperationFees.recipients[0],
+            to: coinOperationFees.senders[0],
+            value: coinOperationIn.value.toFixed(),
+          };
+
+          expect(
+            ledgerInternalTransactionToOperations(coinOperationFees, ledgerActionOutOrFees),
+          ).toEqual([]);
+          expect(
+            ledgerInternalTransactionToOperations(coinOperationOut, ledgerActionOutOrFees),
+          ).toEqual([]);
+
+          expect(ledgerInternalTransactionToOperations(coinOperationIn, ledgerActionIn)).toEqual(
+            [],
+          );
+        });
+
+        it("should convert a ledger explorer none action to a Ledger Live Operation", () => {
+          const ledgerAction: LedgerExplorerInternalTransaction = {
+            from: "0x49048044d57e1c92a77f79988d21fa8faf74e97e",
+            to: "0x3244100A07c7fEE9bDE409e877ed2e8Ff1EdeEda", // pdv.eth
+            input: null,
+            value: "10000000000000000",
+            gas: "57090",
+            gas_used: "27485",
+            error: null,
+          };
+
+          expect(ledgerInternalTransactionToOperations(coinOperation, ledgerAction)).toEqual([]);
+        });
+
+        it("should convert a ledger explorer self action to 2 Ledger Live Operations", () => {
+          const ledgerAction: LedgerExplorerInternalTransaction = {
+            from: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
+            to: "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d", // pdv.eth
+            input: null,
+            value: "10000000000000000",
+            gas: "57090",
+            gas_used: "27485",
+            error: null,
+          };
+
+          const expectedOperations: Operation[] = [
+            {
+              id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-IN-i0",
+              hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
+              accountId,
+              blockHash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
+              blockHeight: 38476740,
+              senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+              recipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+              value: new BigNumber("10000000000000000"),
+              fee: new BigNumber("0"),
+              date: new Date("2023-01-24T17:11:45Z"),
+              type: "IN",
+              hasFailed: false,
+              extra: {},
+            },
+            {
+              id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:-0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79-OUT-i0",
+              hash: "0xf350d4f8e910419e2d5cec294d44e69af8c6185b7089061d33bb4fc246cefb79",
+              accountId,
+              blockHash: "0xcbd52de09904fd89a94b0638a8e39107e247d761e92411fd5b7b7d8b88641ddd",
+              blockHeight: 38476740,
+              senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+              recipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+              value: new BigNumber("10000000000000000"),
+              fee: new BigNumber("0"),
+              date: new Date("2023-01-24T17:11:45Z"),
+              type: "OUT",
+              hasFailed: false,
+              extra: {},
+            },
+          ];
+
+          expect(ledgerInternalTransactionToOperations(coinOperation, ledgerAction)).toEqual(
+            expectedOperations,
+          );
         });
       });
     });

@@ -4,8 +4,8 @@ import { I18nextProvider } from "react-i18next";
 import { Provider } from "react-redux";
 import { NavigationContainer } from "@react-navigation/native";
 
-import { store } from "../context/LedgerStore";
-import { i18n } from "../context/Locale";
+import { store } from "~/context/LedgerStore";
+import { i18n } from "~/context/Locale";
 
 import StyleProvider from "../StyleProvider";
 

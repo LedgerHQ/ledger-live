@@ -7,7 +7,6 @@
       "outputs": ["dist/**", "lib/**", "lib-es/**", "build/**"]
     },
     "lint": {
-      "outputs": ["lint.json"],
       "env": ["CI_OS"]
     },
     "lint:fix": {
@@ -98,7 +97,7 @@
     "ledger-live-desktop#lint": {
       "dependsOn": ["^build"],
       "env": ["CI_OS"],
-      "outputs": []
+      "outputs": ["lint.json"]
     },
     "ledger-live-desktop#test": {
       "dependsOn": ["ledger-live-desktop#build:testing"],

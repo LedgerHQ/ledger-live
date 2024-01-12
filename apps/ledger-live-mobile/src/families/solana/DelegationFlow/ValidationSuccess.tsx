@@ -5,18 +5,18 @@ import { StyleSheet, View } from "react-native";
 import { useSelector } from "react-redux";
 import invariant from "invariant";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { TrackScreen, track } from "../../../analytics";
-import PreventNativeBack from "../../../components/PreventNativeBack";
-import ValidateSuccess from "../../../components/ValidateSuccess";
-import { ScreenName } from "../../../const";
-import { accountScreenSelector } from "../../../reducers/accounts";
+import { TrackScreen, track } from "~/analytics";
+import PreventNativeBack from "~/components/PreventNativeBack";
+import ValidateSuccess from "~/components/ValidateSuccess";
+import { ScreenName } from "~/const";
+import { accountScreenSelector } from "~/reducers/accounts";
 import {
   BaseComposite,
   StackNavigatorNavigation,
   StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
+} from "~/components/RootNavigator/types/helpers";
 import { SolanaDelegationFlowParamList } from "./types";
-import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { getTrackingDelegationType } from "../../helpers";
 
 type Props = BaseComposite<

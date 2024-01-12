@@ -7,14 +7,14 @@ import { useTheme } from "@react-navigation/native";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency, flattenAccounts } from "@ledgerhq/live-common/account/index";
 import { accountWithMandatoryTokens } from "@ledgerhq/live-common/account/helpers";
-import { TrackScreen, useAnalytics } from "../../../analytics";
-import AccountCard from "../../../components/AccountCard";
-import FilteredSearchBar from "../../../components/FilteredSearchBar";
-import KeyboardView from "../../../components/KeyboardView";
-import { formatSearchResults, SearchResult } from "../../../helpers/formatAccountSearchResults";
+import { TrackScreen, useAnalytics } from "~/analytics";
+import AccountCard from "~/components/AccountCard";
+import FilteredSearchBar from "~/components/FilteredSearchBar";
+import KeyboardView from "~/components/KeyboardView";
+import { formatSearchResults, SearchResult } from "~/helpers/formatAccountSearchResults";
 import { SelectAccountParamList } from "../types";
-import { NavigatorName, ScreenName } from "../../../const";
-import { accountsSelector } from "../../../reducers/accounts";
+import { NavigatorName, ScreenName } from "~/const";
+import { accountsSelector } from "~/reducers/accounts";
 import { sharedSwapTracking } from "../utils";
 
 export function SelectAccount({ navigation, route: { params } }: SelectAccountParamList) {

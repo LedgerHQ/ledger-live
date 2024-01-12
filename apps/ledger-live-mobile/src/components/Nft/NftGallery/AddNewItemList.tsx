@@ -4,8 +4,8 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { TouchableOpacity } from "react-native";
 import styled from "@ledgerhq/native-ui/components/styled";
-import ReceiveNFTsModal from "../../../screens/Nft/NftGallery/ReceiveNFTsModal";
-import { useReceiveNFTsModal } from "../../../screens/Nft/NftGallery/ReceiveNFTsModal.hook";
+import ReceiveNFTsModal from "~/screens/Nft/NftGallery/ReceiveNFTsModal";
+import { useReceiveNFTsModal } from "~/screens/Nft/NftGallery/ReceiveNFTsModal.hook";
 
 const StyledTouchableOpacity = styled(TouchableOpacity)`
   background-color: ${props => props.theme.colors.background.main};

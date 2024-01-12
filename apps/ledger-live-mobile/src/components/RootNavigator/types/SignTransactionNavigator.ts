@@ -34,7 +34,7 @@ import type { Transaction as CasperTransaction } from "@ledgerhq/live-common/fam
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { ScreenName } from "../../../const";
+import { ScreenName } from "~/const";
 
 type ListenersParams = {
   error?: Error;

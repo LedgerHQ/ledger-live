@@ -4,22 +4,19 @@ import { Trans } from "react-i18next";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { hasInstalledAnyAppSelector } from "../../reducers/settings";
-import { NavigatorName } from "../../const";
-import Button from "../../components/Button";
+import { hasInstalledAnyAppSelector } from "~/reducers/settings";
+import { NavigatorName } from "~/const";
+import Button from "~/components/Button";
 import AddAccountsModal from "../AddAccounts/AddAccountsModal";
-import noAccountsImgDark from "../../images/illustration/Dark/_048.png";
-import noAccountsImgLight from "../../images/illustration/Light/_048.png";
-import noAppsImgDark from "../../images/illustration/Dark/_056.png";
-import noAppsImgLight from "../../images/illustration/Light/_056.png";
-import HelpLink from "../../components/HelpLink";
-import { urls } from "@utils/urls";
-import Illustration from "../../images/illustration/Illustration";
-import {
-  BaseNavigation,
-  BaseNavigationComposite,
-} from "../../components/RootNavigator/types/helpers";
-import { MainNavigatorParamList } from "../../components/RootNavigator/types/MainNavigator";
+import noAccountsImgDark from "~/images/illustration/Dark/_048.png";
+import noAccountsImgLight from "~/images/illustration/Light/_048.png";
+import noAppsImgDark from "~/images/illustration/Dark/_056.png";
+import noAppsImgLight from "~/images/illustration/Light/_056.png";
+import HelpLink from "~/components/HelpLink";
+import { urls } from "~/utils/urls";
+import Illustration from "~/images/illustration/Illustration";
+import { BaseNavigation, BaseNavigationComposite } from "~/components/RootNavigator/types/helpers";
+import { MainNavigatorParamList } from "~/components/RootNavigator/types/MainNavigator";
 
 type Props = {
   showHelp?: boolean;

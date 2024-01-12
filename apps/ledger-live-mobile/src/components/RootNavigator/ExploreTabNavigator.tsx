@@ -6,13 +6,13 @@ import {
 } from "@react-navigation/material-top-tabs";
 import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
 import { ExploreTabNavigatorStackParamList } from "./types/ExploreTabNavigator";
-import { ScreenName } from "../../const/navigation";
-import NewsfeedPage from "../../screens/Newsfeed";
-import Learn from "../../screens/Learn/learn";
+import { ScreenName } from "~/const/navigation";
+import NewsfeedPage from "~/screens/Newsfeed";
+import Learn from "~/screens/Learn/learn";
 import ExploreTabNavigatorTabBar from "../ExploreTab/ExploreTabNavigatorTabBar";
 import ExploreTabNavigatorTabBarDisabled from "../ExploreTab/ExploreTabNavigatorTabBarDisabled";
-import { useIsNewsfeedAvailable } from "../../hooks/newsfeed/useIsNewsfeedAvailable";
-import useDynamicContent from "../../dynamicContent/dynamicContent";
+import { useIsNewsfeedAvailable } from "~/hooks/newsfeed/useIsNewsfeedAvailable";
+import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 
 const ExploreTab = createMaterialTopTabNavigator<ExploreTabNavigatorStackParamList>();

@@ -7,20 +7,20 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/live-common/currencies/index";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { useFocusEffect } from "@react-navigation/native";
-import ReadOnlyGraphCard from "../../../components/ReadOnlyGraphCard";
-import ReadOnlyFabActions from "../../../components/FabActions/ReadOnlyFabActions";
-import GradientContainer from "../../../components/GradientContainer";
-import BuyDeviceBanner, { IMAGE_PROPS_BIG_NANO } from "../../../components/BuyDeviceBanner";
-import SetupDeviceBanner from "../../../components/SetupDeviceBanner";
-import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
-import { TrackScreen } from "../../../analytics";
+import ReadOnlyGraphCard from "~/components/ReadOnlyGraphCard";
+import ReadOnlyFabActions from "~/components/FabActions/ReadOnlyFabActions";
+import GradientContainer from "~/components/GradientContainer";
+import BuyDeviceBanner, { IMAGE_PROPS_BIG_NANO } from "~/components/BuyDeviceBanner";
+import SetupDeviceBanner from "~/components/SetupDeviceBanner";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import { TrackScreen } from "~/analytics";
 
-import { withDiscreetMode } from "../../../context/DiscreetModeContext";
-import { counterValueCurrencySelector, hasOrderedNanoSelector } from "../../../reducers/settings";
-import { AnalyticsContext } from "../../../analytics/AnalyticsContext";
-import type { AccountsNavigatorParamList } from "../../../components/RootNavigator/types/AccountsNavigator";
-import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
-import { ScreenName } from "../../../const";
+import { withDiscreetMode } from "~/context/DiscreetModeContext";
+import { counterValueCurrencySelector, hasOrderedNanoSelector } from "~/reducers/settings";
+import { AnalyticsContext } from "~/analytics/AnalyticsContext";
+import type { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
+import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { ScreenName } from "~/const";
 
 type Props = StackNavigatorProps<AccountsNavigatorParamList, ScreenName.Account>;
 

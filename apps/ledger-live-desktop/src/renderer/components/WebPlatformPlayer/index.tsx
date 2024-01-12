@@ -30,7 +30,7 @@ type Props = {
   config?: WebPlatformPlayerConfig;
 } & WebviewProps;
 
-export default function WebPlatformPlayer({ manifest, inputs, onClose, config }: Props) {
+export default function WebPlatformPlayer({ manifest, inputs, onClose, config, ...props }: Props) {
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
 
@@ -39,6 +39,11 @@ export default function WebPlatformPlayer({ manifest, inputs, onClose, config }:
       ...loggerHandlers,
     };
   }, []);
+
+  const onStateChange: WebviewProps["onStateChange"] = state => {
+    setWebviewState(state);
+    props.onStateChange?.(state);
+  };
 
   return (
     <Container>
@@ -53,7 +58,7 @@ export default function WebPlatformPlayer({ manifest, inputs, onClose, config }:
         <Web3AppWebview
           manifest={manifest}
           inputs={inputs}
-          onStateChange={setWebviewState}
+          onStateChange={onStateChange}
           ref={webviewAPIRef}
           customHandlers={customHandlers}
         />

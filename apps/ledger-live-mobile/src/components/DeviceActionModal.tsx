@@ -4,7 +4,7 @@ import { Alert, Flex } from "@ledgerhq/native-ui";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components/native";
-import { PartialNullable } from "../types/helpers";
+import { PartialNullable } from "~/types/helpers";
 import QueuedDrawer from "./QueuedDrawer";
 import DeviceAction from "./DeviceAction";
 

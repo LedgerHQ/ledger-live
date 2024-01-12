@@ -3,13 +3,13 @@ import { useNavigation } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
 import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import SelectDevice from "../../../components/SelectDevice";
-import SelectDevice2, { SetHeaderOptionsRequest } from "../../../components/SelectDevice2";
-import DeviceActionModal from "../../../components/DeviceActionModal";
-import { TrackScreen } from "../../../analytics";
+import SelectDevice from "~/components/SelectDevice";
+import SelectDevice2, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
+import DeviceActionModal from "~/components/DeviceActionModal";
+import { TrackScreen } from "~/analytics";
 import SkipSelectDevice from "../../SkipSelectDevice";
 import { DeviceMeta } from "./Modal/Confirmation";
-import { useManagerDeviceAction } from "../../../hooks/deviceActions";
+import { useManagerDeviceAction } from "~/hooks/deviceActions";
 
 export function Connect({
   setResult,

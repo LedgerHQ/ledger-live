@@ -5,19 +5,19 @@ import { View, TouchableWithoutFeedback } from "react-native";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { FeatureToggle, useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import Config from "react-native-config";
-import { ScreenName } from "../../const";
-import { hasNoAccountsSelector } from "../../reducers/accounts";
-import SettingsCard from "../../components/SettingsCard";
+import { ScreenName } from "~/const";
+import { hasNoAccountsSelector } from "~/reducers/accounts";
+import SettingsCard from "~/components/SettingsCard";
 import PoweredByLedger from "./PoweredByLedger";
-import { TrackScreen } from "../../analytics";
+import { TrackScreen } from "~/analytics";
 import timer from "../../timer";
 import SettingsNavigationScrollView from "./SettingsNavigationScrollView";
-import useRatings from "../../logic/ratings";
-import useNpsRatings from "../../logic/npsRatings";
-import { SettingsNavigatorStackParamList } from "../../components/RootNavigator/types/SettingsNavigator";
-import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { openDebugMenu } from "../../actions/appstate";
-import { isDebugMenuVisible } from "../../reducers/appstate";
+import useRatings from "~/logic/ratings";
+import useNpsRatings from "~/logic/npsRatings";
+import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { openDebugMenu } from "~/actions/appstate";
+import { isDebugMenuVisible } from "~/reducers/appstate";
 
 export default function Settings({
   navigation,

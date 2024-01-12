@@ -7,21 +7,21 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { Flex } from "@ledgerhq/native-ui";
-import { TrackScreen } from "../../analytics";
-import SelectDevice2, { SetHeaderOptionsRequest } from "../../components/SelectDevice2";
-import SelectDevice from "../../components/SelectDevice";
-import RemoveDeviceMenu from "../../components/SelectDevice2/RemoveDeviceMenu";
-import DeviceActionModal from "../../components/DeviceActionModal";
-import NavigationScrollView from "../../components/NavigationScrollView";
+import { TrackScreen } from "~/analytics";
+import SelectDevice2, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
+import SelectDevice from "~/components/SelectDevice";
+import RemoveDeviceMenu from "~/components/SelectDevice2/RemoveDeviceMenu";
+import DeviceActionModal from "~/components/DeviceActionModal";
+import NavigationScrollView from "~/components/NavigationScrollView";
 import {
   ReactNavigationHeaderOptions,
   RootComposite,
   StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
-import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
-import { ScreenName } from "../../const";
-import { NavigationHeaderBackButton } from "../../components/NavigationHeaderBackButton";
-import { useAppDeviceAction } from "../../hooks/deviceActions";
+} from "~/components/RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { ScreenName } from "~/const";
+import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
+import { useAppDeviceAction } from "~/hooks/deviceActions";
 
 type NavigationProps = RootComposite<
   StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.DeviceConnect>

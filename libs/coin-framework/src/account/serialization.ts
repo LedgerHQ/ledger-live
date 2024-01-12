@@ -32,7 +32,7 @@ export const toOperationRaw = (
   preserveSubOperation?: boolean,
 ): OperationRaw => {
   // -- THIS CAN BE REMOVED ONCE THE DATE ERROR HAS BEEN FIGURED OUT
-  if (date instanceof Date && !isNaN(date as unknown as number)) {
+  if (date instanceof Date && isNaN(date as unknown as number)) {
     log("Ethereum Date Error", "Date is invalid while serializing", {
       date,
       value,

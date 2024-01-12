@@ -9,6 +9,7 @@ import { openURL } from "~/renderer/linking";
 import { openModal } from "~/renderer/actions/modals";
 import { DelegationType } from "~/renderer/families/elrond/types";
 import { ElrondAccount, ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 
 export interface Props {
   account: ElrondAccount;
@@ -28,9 +29,11 @@ const ElrondEarnRewardsInfoModal = (props: Props) => {
       }),
     );
   }, [account, dispatch, validators, delegations]);
-  const onLearnMore = useCallback(() => {
-    openURL(urls.elrondStaking);
-  }, []);
+
+  const elrondUrl = useLocalizedUrl(urls.elrondStaking);
+  const onLearnMore = () => {
+    openURL(elrondUrl);
+  };
   return (
     <EarnRewardsInfoModal
       name="MODAL_ELROND_REWARDS_INFO"
@@ -42,6 +45,7 @@ const ElrondEarnRewardsInfoModal = (props: Props) => {
       additional={
         <WarnBox>{t("elrond.delegation.flow.steps.starter.warning.description")}</WarnBox>
       }
+      currency="elrond"
       footerLeft={
         <LinkWithExternalIcon
           label={t("elrond.delegation.emptyState.info")}

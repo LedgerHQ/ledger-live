@@ -4,7 +4,7 @@ import type { CryptoOrTokenCurrency, TokenCurrency } from "@ledgerhq/types-crypt
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { Observable } from "rxjs";
 import { NavigatorScreenParams } from "@react-navigation/native";
-import { NavigatorName, ScreenName } from "../../../const";
+import { NavigatorName, ScreenName } from "~/const";
 import { AddAccountsNavigatorParamList } from "./AddAccountsNavigator";
 
 export type RequestAccountNavigatorParamList = {

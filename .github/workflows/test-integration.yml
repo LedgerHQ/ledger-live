@@ -15,6 +15,10 @@ on:
         required: false
         default: ""
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   integration-tests:
     name: "Integration Tests"
@@ -39,10 +43,14 @@ jobs:
           fetch-depth: 0
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
+        id: toolchain
         with:
+          skip_turbo_cache: "false"
           upgrade_npm: ${{ matrix.os == 'windows-latest' }}
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - name: Install node-gyp globally
         if: runner.os == 'Windows'
         run: |
@@ -50,7 +58,7 @@ jobs:
       - name: Install dependencies
         run: pnpm i --filter="live-common..." --filter="ledger-live"
       - name: Build
-        run: pnpm build:llc
+        run: pnpm build:llc --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
       - name: Test
         shell: bash
         env:

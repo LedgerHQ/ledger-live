@@ -26,3 +26,8 @@ export type CurrenciesByProviderId = {
   currenciesByNetwork: CryptoOrTokenCurrency[];
   providerId: string;
 };
+
+export type GroupedCurrencies = {
+  currenciesByProvider: CurrenciesByProviderId[];
+  sortedCryptoCurrencies: CryptoOrTokenCurrency[];
+};

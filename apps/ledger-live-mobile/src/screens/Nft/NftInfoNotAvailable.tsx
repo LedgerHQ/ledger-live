@@ -3,10 +3,10 @@ import React from "react";
 import { Trans } from "react-i18next";
 import { Linking } from "react-native";
 import styled from "styled-components/native";
-import Button from "../../components/wrappedUi/Button";
+import Button from "~/components/wrappedUi/Button";
 
-import { urls } from "@utils/urls";
-import { ModalInfo } from "../../modals/Info";
+import { urls } from "~/utils/urls";
+import { ModalInfo } from "~/modals/Info";
 
 const IconInfoContainer = styled.TouchableOpacity`
   background-color: ${p => p.theme.colors.opacityDefault.c05};

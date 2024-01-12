@@ -8,8 +8,8 @@ import type {
 } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import { ProtoNFT } from "@ledgerhq/types-live";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { scrollToTop } from "../../../navigation/utils";
-import NftMedia from "../../../components/Nft/NftMedia";
+import { scrollToTop } from "~/navigation/utils";
+import NftMedia from "~/components/Nft/NftMedia";
 
 type RouteParams = RouteProp<{ params: { collection: ProtoNFT[] } }, "params">;
 

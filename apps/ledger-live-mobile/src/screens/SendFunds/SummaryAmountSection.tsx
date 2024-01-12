@@ -5,9 +5,9 @@ import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { getAccountUnit, getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import BigNumber from "bignumber.js";
 import SummaryRow from "./SummaryRow";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import CounterValue from "../../components/CounterValue";
-import LText from "../../components/LText";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import CounterValue from "~/components/CounterValue";
+import LText from "~/components/LText";
 
 const styles = StyleSheet.create({
   amountContainer: {
@@ -42,7 +42,7 @@ const SummaryAmountSection = ({ account, amount, overrideAmountLabel }: Props) =
           </LText>
         ) : (
           <>
-            <LText style={styles.valueText} semiBold>
+            <LText style={styles.valueText} semiBold testID="send-summary-amount">
               <CurrencyUnitValue unit={unit} value={amount} disableRounding />
             </LText>
             <LText style={styles.counterValueText} color="grey" semiBold>

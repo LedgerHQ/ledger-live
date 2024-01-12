@@ -5,7 +5,7 @@ import { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoa
 import { Flex, Text, ensureContrast } from "@ledgerhq/native-ui";
 import styled, { useTheme } from "styled-components/native";
 
-import { getCurrencyColor, useCurrencyColor } from "../helpers/getCurrencyColor";
+import { getCurrencyColor, useCurrencyColor } from "~/helpers/getCurrencyColor";
 
 const DefaultWrapper = styled(Flex)<{ disabled?: boolean }>`
   height: ${p => p.size}px;

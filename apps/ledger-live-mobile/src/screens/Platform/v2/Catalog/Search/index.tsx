@@ -5,10 +5,10 @@ import * as Animatable from "react-native-animatable";
 import { Flex, Text, InfiniteLoader } from "@ledgerhq/native-ui";
 import { Trans, useTranslation } from "react-i18next";
 import { HTTP_REGEX } from "@ledgerhq/live-common/wallet-api/constants";
-import ArrowLeft from "../../../../../icons/ArrowLeft";
-import { TAB_BAR_SAFE_HEIGHT } from "../../../../../components/TabBar/TabBarSafeAreaView";
+import ArrowLeft from "~/icons/ArrowLeft";
+import { TAB_BAR_SAFE_HEIGHT } from "~/components/TabBar/TabBarSafeAreaView";
 import { Layout } from "../Layout";
-import Illustration from "../../../../../images/illustration/Illustration";
+import Illustration from "~/images/illustration/Illustration";
 import { ManifestList } from "../ManifestList";
 import { SearchBar } from "./SearchBar";
 import { Disclaimer } from "../../hooks";
@@ -18,8 +18,8 @@ import { Categories } from "@ledgerhq/live-common/wallet-api/react";
 export * from "./SearchBar";
 
 const noResultIllustration = {
-  dark: require("../../../../../images/illustration/Dark/_051.png"),
-  light: require("../../../../../images/illustration/Light/_051.png"),
+  dark: require("~/images/illustration/Dark/_051.png"),
+  light: require("~/images/illustration/Light/_051.png"),
 };
 
 const AnimatedView = Animatable.View;

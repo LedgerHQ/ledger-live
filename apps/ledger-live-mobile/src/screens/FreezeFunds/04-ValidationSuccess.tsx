@@ -7,19 +7,19 @@ import { useTronPowerLoading, getLastVotedDate } from "@ledgerhq/live-common/fam
 import { useTimer } from "@ledgerhq/live-common/hooks/useTimer";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import { TronAccount, Transaction } from "@ledgerhq/live-common/families/tron/types";
-import { accountScreenSelector } from "../../reducers/accounts";
-import { TrackScreen } from "../../analytics";
-import { NavigatorName, ScreenName } from "../../const";
-import PreventNativeBack from "../../components/PreventNativeBack";
-import ValidateSuccess from "../../components/ValidateSuccess";
-import Button from "../../components/Button";
-import LText from "../../components/LText";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { TrackScreen } from "~/analytics";
+import { NavigatorName, ScreenName } from "~/const";
+import PreventNativeBack from "~/components/PreventNativeBack";
+import ValidateSuccess from "~/components/ValidateSuccess";
+import Button from "~/components/Button";
+import LText from "~/components/LText";
 import {
   StackNavigatorNavigation,
   StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
-import { FreezeNavigatorParamList } from "../../components/RootNavigator/types/FreezeNavigator";
-import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
+} from "~/components/RootNavigator/types/helpers";
+import { FreezeNavigatorParamList } from "~/components/RootNavigator/types/FreezeNavigator";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 
 type NavigatorProps = CompositeScreenProps<
   StackNavigatorProps<FreezeNavigatorParamList, ScreenName.FreezeValidationSuccess>,

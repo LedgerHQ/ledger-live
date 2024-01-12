@@ -14,18 +14,18 @@ import { getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { Box, Button, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import { TronAccount } from "@ledgerhq/live-common/families/tron/types";
-import { urls } from "@utils/urls";
+import { urls } from "~/utils/urls";
 import Row from "./Row";
 import Header from "./Header";
-import LText from "../../../components/LText";
-import ArrowRight from "../../../icons/ArrowRight";
-import DateFromNow from "../../../components/DateFromNow";
-import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
-import CounterValue from "../../../components/CounterValue";
-import IlluRewards from "../../../icons/images/Rewards";
-import ProgressCircle from "../../../components/ProgressCircle";
-import AccountDelegationInfo from "../../../components/AccountDelegationInfo";
-import AccountSectionLabel from "../../../components/AccountSectionLabel";
+import LText from "~/components/LText";
+import ArrowRight from "~/icons/ArrowRight";
+import DateFromNow from "~/components/DateFromNow";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import CounterValue from "~/components/CounterValue";
+import IlluRewards from "~/icons/images/Rewards";
+import ProgressCircle from "~/components/ProgressCircle";
+import AccountDelegationInfo from "~/components/AccountDelegationInfo";
+import AccountSectionLabel from "~/components/AccountSectionLabel";
 
 type Props = {
   account: TronAccount;

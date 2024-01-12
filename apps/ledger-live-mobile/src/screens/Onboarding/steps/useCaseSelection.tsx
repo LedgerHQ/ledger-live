@@ -7,13 +7,13 @@ import { useTranslation } from "react-i18next";
 import { Linking } from "react-native";
 import { useDispatch } from "react-redux";
 import { useTheme } from "styled-components/native";
-import { setOnboardingType } from "../../../actions/settings";
-import Button from "../../../components/Button";
-import QueuedDrawer from "../../../components/QueuedDrawer";
-import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
-import { ScreenName } from "../../../const";
-import { OnboardingType } from "../../../reducers/types";
+import { setOnboardingType } from "~/actions/settings";
+import Button from "~/components/Button";
+import QueuedDrawer from "~/components/QueuedDrawer";
+import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { ScreenName } from "~/const";
+import { OnboardingType } from "~/reducers/types";
 import { SelectionCards } from "./Cards/SelectionCard";
 import OnboardingView from "./OnboardingView";
 
@@ -102,7 +102,7 @@ const OnboardingStepUseCaseSelection = () => {
             eventProperties: {
               button: "Create a new wallet",
             },
-            testID: `Onboarding UseCase - Selection|New Wallet`,
+            testID: `onboarding-useCase-newWallet`,
             onPress: onPressNew,
             icon: <Icons.PlusCircle color={colors.primary.c80} />,
           },
@@ -113,7 +113,7 @@ const OnboardingStepUseCaseSelection = () => {
             eventProperties: {
               button: "Restore with your secret phrase",
             },
-            testID: `Onboarding UseCase - Selection|Recovery phrase`,
+            testID: `onboarding-useCase-recoveryPhrase`,
             onPress: onPressRecoveryPhrase,
             icon: <Icons.Note color={colors.primary.c80} />,
           },

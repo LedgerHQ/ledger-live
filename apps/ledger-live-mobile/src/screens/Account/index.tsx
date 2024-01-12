@@ -7,36 +7,36 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { Flex } from "@ledgerhq/native-ui";
 import debounce from "lodash/debounce";
-import SafeAreaView from "../../components/SafeAreaView";
+import SafeAreaView from "~/components/SafeAreaView";
 import { useTranslation } from "react-i18next";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { ReactNavigationPerformanceView } from "@shopify/react-native-performance-navigation";
-import { switchCountervalueFirst } from "../../actions/settings";
-import { useBalanceHistoryWithCountervalue } from "../../hooks/portfolio";
+import { switchCountervalueFirst } from "~/actions/settings";
+import { useBalanceHistoryWithCountervalue } from "~/hooks/portfolio";
 import {
   selectedTimeRangeSelector,
   counterValueCurrencySelector,
   countervalueFirstSelector,
-} from "../../reducers/settings";
-import { accountScreenSelector } from "../../reducers/accounts";
-import { track, TrackScreen } from "../../analytics";
-import accountSyncRefreshControl from "../../components/accountSyncRefreshControl";
-import { ScreenName } from "../../const";
-import CurrencyBackgroundGradient from "../../components/CurrencyBackgroundGradient";
+} from "~/reducers/settings";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { track, TrackScreen } from "~/analytics";
+import accountSyncRefreshControl from "~/components/accountSyncRefreshControl";
+import { ScreenName } from "~/const";
+import CurrencyBackgroundGradient from "~/components/CurrencyBackgroundGradient";
 import AccountHeader from "./AccountHeader";
 import { getListHeaderComponents } from "./ListHeaderComponent";
-import { withDiscreetMode } from "../../context/DiscreetModeContext";
+import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import SectionContainer from "../WalletCentricSections/SectionContainer";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";
 import EmptyAccountCard from "./EmptyAccountCard";
 import useAccountActions from "./hooks/useAccountActions";
-import type { AccountsNavigatorParamList } from "../../components/RootNavigator/types/AccountsNavigator";
-import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
-import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import type { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
+import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 
 type Props =
   | StackNavigatorProps<AccountsNavigatorParamList, ScreenName.Account>

@@ -7,10 +7,23 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable no-console */
 
+const path = require("path");
 const extraConfig = require("metro-extra-config");
+const tsconfig = require("./tsconfig.json");
 const { getDefaultConfig, mergeConfig } = require("@react-native/metro-config");
 // Dependencies that are forcefully resolved from the LLM folder.
 const forcedDependencies = ["react-redux", "react-native", "react-native-svg", "styled-components"];
+
+const removeStarPath = moduleName => moduleName.replace("/*", "");
+
+const buildTsAlias = (conf = {}) =>
+  Object.keys(conf).reduce(
+    (acc, moduleName) => ({
+      ...acc,
+      [removeStarPath(moduleName)]: path.resolve(__dirname, removeStarPath(conf[moduleName][0])),
+    }),
+    {},
+  );
 
 const specificConfig = {
   resolver: {
@@ -20,6 +33,7 @@ const specificConfig = {
       ...require("node-libs-react-native"),
       fs: require.resolve("react-native-level-fs"),
       net: require.resolve("react-native-tcp-socket"),
+      ...buildTsAlias(tsconfig.compilerOptions.paths),
     },
     // makeMetroConfig adds the "module" field, but we skip it here on purpose
     // because it makes the "react-native-url-polyfill" package consume the

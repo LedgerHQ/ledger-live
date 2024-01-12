@@ -119,7 +119,7 @@ export class OperationsList extends PureComponent<Props, State> {
     if (groupedOperations?.sections) {
       for (const group of groupedOperations.sections) {
         const { day } = group;
-        if (day instanceof Date && !isNaN(day as unknown as number)) {
+        if (day instanceof Date && isNaN(day as unknown as number)) {
           log("Ethereum Date Error", "Date in operation is invalid", {
             day,
             accountId: account?.id,

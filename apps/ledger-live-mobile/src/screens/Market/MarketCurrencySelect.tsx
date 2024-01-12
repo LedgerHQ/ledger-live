@@ -5,12 +5,12 @@ import { Trans, useTranslation } from "react-i18next";
 import { FlatList, TouchableOpacity, Image, TextInput } from "react-native";
 import styled, { useTheme } from "styled-components/native";
 import { useDispatch, useSelector } from "react-redux";
-import Search from "../../components/Search";
-import { getSupportedCounterValues } from "../../reducers/settings";
-import { setMarketCounterCurrency } from "../../actions/settings";
-import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
-import { ScreenName } from "../../const";
+import Search from "~/components/Search";
+import { getSupportedCounterValues } from "~/reducers/settings";
+import { setMarketCounterCurrency } from "~/actions/settings";
+import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { ScreenName } from "~/const";
 
 const RenderEmptyList = ({ theme, search }: { theme: string; search: string }) => (
   // FIXME: NO textAlign ON VIEW COMPONENTS
@@ -19,8 +19,8 @@ const RenderEmptyList = ({ theme, search }: { theme: string; search: string }) =
       style={{ width: 164, height: 164 }}
       source={
         theme === "light"
-          ? require("../../images/marketNoResultslight.png")
-          : require("../../images/marketNoResultsdark.png")
+          ? require("~/images/marketNoResultslight.png")
+          : require("~/images/marketNoResultsdark.png")
       }
     />
     <Text textAlign="center" variant="h4" my={3}>

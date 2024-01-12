@@ -18,6 +18,7 @@ import { decodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { nftsFromOperations } from "@ledgerhq/coin-framework/nft/helpers";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { attachOperations, getSyncHash, mergeSubAccounts } from "./logic";
+import { ExplorerApi } from "./api/explorer/types";
 import { getExplorerApi } from "./api/explorer";
 import { getNodeApi } from "./api/node/index";
 
@@ -60,31 +61,28 @@ export const getAccountShape: GetAccountShape = async infos => {
         return (acc?.blockHeight || 0) > (curr?.blockHeight || 0) ? acc : curr;
       }, null);
 
-  const { lastCoinOperations, lastTokenOperations, lastNftOperations } = await (async (): Promise<{
-    lastCoinOperations: Operation[];
-    lastTokenOperations: Operation[];
-    lastNftOperations: Operation[];
-  }> => {
-    try {
-      const { getLastOperations } = getExplorerApi(currency);
-      return await getLastOperations(
-        currency,
-        address,
-        accountId,
-        latestSyncedOperation?.blockHeight
-          ? Math.max(latestSyncedOperation.blockHeight - SAFE_REORG_THRESHOLD, 0)
-          : 0,
-        blockHeight,
-      );
-    } catch (e) {
-      log("EVM Family", "Failed to get latest transactions", {
-        address,
-        currency,
-        error: e,
-      });
-      throw e;
-    }
-  })();
+  const { lastCoinOperations, lastTokenOperations, lastNftOperations, lastInternalOperations } =
+    await (async (): ReturnType<ExplorerApi["getLastOperations"]> => {
+      try {
+        const { getLastOperations } = getExplorerApi(currency);
+        return await getLastOperations(
+          currency,
+          address,
+          accountId,
+          latestSyncedOperation?.blockHeight
+            ? Math.max(latestSyncedOperation.blockHeight - SAFE_REORG_THRESHOLD, 0)
+            : 0,
+          blockHeight,
+        );
+      } catch (e) {
+        log("EVM Family", "Failed to get latest transactions", {
+          address,
+          currency,
+          error: e,
+        });
+        throw e;
+      }
+    })();
 
   const newSubAccounts = await getSubAccounts(infos, accountId, lastTokenOperations);
   const subAccounts = shouldSyncFromScratch
@@ -105,6 +103,7 @@ export const getAccountShape: GetAccountShape = async infos => {
     lastCoinOperations,
     lastTokenOperations,
     lastNftOperations,
+    lastInternalOperations,
   );
   const newOperations = [...confirmedOperations, ...lastCoinOperationsWithAttachements];
   const operations =
@@ -224,7 +223,7 @@ export const getOperationStatus = async (
     const date = new Date(timestamp);
 
     // -- THIS CAN BE REMOVED ONCE THE DATE ERROR HAS BEEN FIGURED OUT
-    if (date instanceof Date && !isNaN(date as unknown as number)) {
+    if (date instanceof Date && isNaN(date as unknown as number)) {
       log("Ethereum Date Error", "Date fetched from single operation with explorer is invalid", {
         blockHeight,
         blockHash,

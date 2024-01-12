@@ -2,9 +2,9 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { ParamListBase, useNavigation } from "@react-navigation/native";
-import QueuedDrawer from "../../components/QueuedDrawer";
-import { TrackScreen } from "../../analytics";
-import { AutoRepair } from "../../components/DeviceAction/rendering";
+import QueuedDrawer from "~/components/QueuedDrawer";
+import { TrackScreen } from "~/analytics";
+import { AutoRepair } from "~/components/DeviceAction/rendering";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { Flex } from "@ledgerhq/native-ui";
 

@@ -3,9 +3,9 @@ import { Text, Flex, IconsLegacy, IconBadge } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/types-devices";
 import { TFunction } from "i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
-import Button from "../../components/wrappedUi/Button";
-import Link from "../../components/wrappedUi/Link";
-import { TrackScreen } from "../../analytics";
+import Button from "~/components/wrappedUi/Button";
+import Link from "~/components/wrappedUi/Link";
+import { TrackScreen } from "~/analytics";
 import { UserRefusedAllowManager } from "@ledgerhq/errors";
 import {
   LanguageInstallRefusedOnDevice,

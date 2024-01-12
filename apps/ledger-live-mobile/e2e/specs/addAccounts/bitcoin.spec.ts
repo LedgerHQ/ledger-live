@@ -1,5 +1,5 @@
 import { expect } from "detox";
-import { DeviceModelId } from "@ledgerhq/devices";
+import { knownDevice } from "../../models/devices";
 import { loadBleState, loadConfig } from "../../bridge/server";
 import PortfolioPage from "../../models/wallet/portfolioPage";
 import AccountPage from "../../models/accounts/accountPage";
@@ -12,12 +12,6 @@ let portfolioPage: PortfolioPage;
 let accountPage: AccountPage;
 let deviceAction: DeviceAction;
 let addAccountDrawer: AddAccountDrawer;
-
-const knownDevice = {
-  name: "Nano X de test",
-  id: "mock_1",
-  modelId: DeviceModelId.nanoX,
-};
 
 describe("Add Bitcoin Accounts", () => {
   beforeAll(async () => {
@@ -47,7 +41,7 @@ describe("Add Bitcoin Accounts", () => {
   });
 
   it("displays Bitcoin accounts page summary", async () => {
-    await accountPage.waitForAccountAssetsToLoad("Bitcoin");
+    await accountPage.waitForAccountPageToLoad("Bitcoin");
     await waitForElementByText("1.19576\u00a0BTC");
   });
 });

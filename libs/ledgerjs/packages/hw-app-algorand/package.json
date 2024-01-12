@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-algorand",
-  "version": "6.28.0",
+  "version": "6.28.1",
   "description": "Ledger Hardware Wallet Algorand Application API",
   "keywords": [
     "Ledger",

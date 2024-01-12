@@ -3,7 +3,7 @@ import React from "react";
 import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import { Trans } from "react-i18next";
 import { StyleSheet } from "react-native";
-import LText from "../../components/LText";
+import LText from "~/components/LText";
 import { deviceNames } from "../../wording";
 import PendingContainer from "../PairDevices/PendingContainer";
 

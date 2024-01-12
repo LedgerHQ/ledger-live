@@ -6,19 +6,20 @@ import { View } from "react-native";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import QueuedDrawer from "./QueuedDrawer";
 import ModalBottomAction from "./ModalBottomAction";
-import { languageSelector, languageIsSetByUserSelector } from "../reducers/settings";
-import { setLanguage } from "../actions/settings";
+import { languageIsSetByUserSelector } from "~/reducers/settings";
+import { setLanguage } from "~/actions/settings";
 import { getDefaultLanguageLocale } from "../languages";
-import { useLanguageAvailableChecked } from "../context/Locale";
-import { Track, updateIdentify } from "../analytics";
+import { useLanguageAvailableChecked } from "~/context/Locale";
+import { Track, updateIdentify } from "~/analytics";
 import Button from "./wrappedUi/Button";
+import { useSettings } from "~/hooks";
 
 export default function CheckLanguageAvailability() {
   const { t } = useTranslation();
+  const { language } = useSettings();
   const [modalOpened, setModalOpened] = useState(true);
   const dispatch = useDispatch();
   const defaultLanguage = getDefaultLanguageLocale();
-  const currAppLanguage = useSelector(languageSelector);
   const [hasAnswered, answer] = useLanguageAvailableChecked();
   const isLanguageSetByUser = useSelector(languageIsSetByUserSelector);
 
@@ -42,8 +43,8 @@ export default function CheckLanguageAvailability() {
     modalOpened &&
     !isLanguageSetByUser &&
     !hasAnswered &&
-    currAppLanguage !== defaultLanguage &&
-    currAppLanguage === "en";
+    language !== defaultLanguage &&
+    language === "en";
 
   if (!toShow) {
     return null;

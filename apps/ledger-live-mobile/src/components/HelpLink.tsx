@@ -4,8 +4,8 @@ import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import Touchable, { Props as TouchableProps } from "./Touchable";
 import LText from "./LText";
-import { urls } from "@utils/urls";
-import Help from "../icons/Help";
+import { urls } from "~/utils/urls";
+import Help from "~/icons/Help";
 
 type Props = {
   url?: string;

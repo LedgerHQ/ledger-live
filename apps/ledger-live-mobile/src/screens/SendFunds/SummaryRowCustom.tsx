@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import LText from "../../components/LText/index";
+import LText from "~/components/LText/index";
 
 const styles = StyleSheet.create({
   root: {

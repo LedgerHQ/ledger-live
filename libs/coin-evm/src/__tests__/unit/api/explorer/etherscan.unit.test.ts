@@ -3,21 +3,23 @@ import axios from "axios";
 import { delay } from "@ledgerhq/live-promise";
 import { CryptoCurrency, EthereumLikeInfo } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { EtherscanLikeExplorerUsedIncorrectly } from "../../../../errors";
 import * as ETHERSCAN_API from "../../../../api/explorer/etherscan";
 import { makeAccount } from "../../../fixtures/common.fixtures";
 import {
   etherscanCoinOperations,
   etherscanERC1155Operations,
   etherscanERC721Operations,
+  etherscanInternalOperations,
   etherscanTokenOperations,
 } from "../../../fixtures/etherscan.fixtures";
 import {
   etherscanERC1155EventToOperations,
   etherscanERC20EventToOperations,
   etherscanERC721EventToOperations,
+  etherscanInternalTransactionToOperations,
   etherscanOperationToOperations,
 } from "../../../../adapters";
-import { EtherscanLikeExplorerUsedIncorrectly } from "../../../../errors";
 
 jest.mock("axios");
 jest.mock("@ledgerhq/live-promise");
@@ -662,6 +664,142 @@ describe("EVM Family", () => {
         expect(response).toEqual(
           response.slice().sort((a, b) => b.date.getTime() - a.date.getTime()),
         );
+      });
+    });
+
+    describe("getLastInternalOperations", () => {
+      afterEach(() => {
+        jest.clearAllMocks();
+      });
+
+      it("should throw if the currency is misconfigured", async () => {
+        jest.spyOn(axios, "request").mockImplementation(async () => ({
+          data: {
+            result: etherscanInternalOperations,
+          },
+        }));
+
+        try {
+          await ETHERSCAN_API.getLastInternalOperations(
+            {
+              ...currency,
+              ethereumLikeInfo: {
+                chainId: 1,
+                // no explorer
+              } as EthereumLikeInfo,
+            },
+            account.freshAddress,
+            account.id,
+            0,
+          );
+          fail("Promise should have been rejected");
+        } catch (e) {
+          if (e instanceof AssertionError) {
+            throw e;
+          }
+          expect(e).toBeInstanceOf(EtherscanLikeExplorerUsedIncorrectly);
+        }
+      });
+
+      it("should return a flat list of internal transactions from block 0", async () => {
+        const spy = jest.spyOn(axios, "request").mockImplementation(async () => ({
+          data: {
+            result: etherscanInternalOperations,
+          },
+        }));
+
+        const response = await ETHERSCAN_API.getLastInternalOperations(
+          currency,
+          account.freshAddress,
+          account.id,
+          0,
+        );
+
+        expect(response).toEqual(
+          [
+            etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[0], 0),
+            etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[1], 1),
+            etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[2], 0),
+          ].flat(),
+        );
+        expect(spy).toBeCalledWith({
+          method: "GET",
+          url: `mock/api?module=account&action=txlistinternal&address=${account.freshAddress}`,
+          params: {
+            tag: "latest",
+            page: 1,
+            sort: "desc",
+            startBlock: 0,
+          },
+        });
+      });
+
+      it("should return a flat list of internal transactions from block 50", async () => {
+        const spy = jest.spyOn(axios, "request").mockImplementation(async () => ({
+          data: {
+            result: etherscanInternalOperations,
+          },
+        }));
+
+        const response = await ETHERSCAN_API.getLastInternalOperations(
+          currency,
+          account.freshAddress,
+          account.id,
+          50,
+        );
+
+        expect(response).toEqual(
+          [
+            etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[0], 0),
+            etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[1], 1),
+            etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[2], 0),
+          ].flat(),
+        );
+        expect(spy).toBeCalledWith({
+          method: "GET",
+          url: `mock/api?module=account&action=txlistinternal&address=${account.freshAddress}`,
+          params: {
+            tag: "latest",
+            page: 1,
+            sort: "desc",
+            startBlock: 50,
+          },
+        });
+      });
+
+      it("should return a flat list of internal transactions from block 50 to block 100", async () => {
+        const spy = jest.spyOn(axios, "request").mockImplementation(async () => ({
+          data: {
+            result: etherscanInternalOperations,
+          },
+        }));
+
+        const response = await ETHERSCAN_API.getLastInternalOperations(
+          currency,
+          account.freshAddress,
+          account.id,
+          50,
+          100,
+        );
+
+        expect(response).toEqual(
+          [
+            etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[0], 0),
+            etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[1], 1),
+            etherscanInternalTransactionToOperations(account.id, etherscanInternalOperations[2], 0),
+          ].flat(),
+        );
+        expect(spy).toBeCalledWith({
+          method: "GET",
+          url: `mock/api?module=account&action=txlistinternal&address=${account.freshAddress}`,
+          params: {
+            tag: "latest",
+            page: 1,
+            sort: "desc",
+            startBlock: 50,
+            endBlock: 100,
+          },
+        });
       });
     });
   });

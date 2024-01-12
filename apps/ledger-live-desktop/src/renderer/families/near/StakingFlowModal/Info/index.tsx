@@ -35,6 +35,7 @@ export default function NearEarnRewardsInfoModal({ account }: Props) {
         t("near.stake.flow.steps.starter.bullet.1"),
         t("near.stake.flow.steps.starter.bullet.2"),
       ]}
+      currency="near"
       additional={<WarnBox>{t("near.stake.flow.steps.starter.warning.description")}</WarnBox>}
       footerLeft={
         <LinkWithExternalIcon label={t("near.stake.emptyState.info")} onClick={onLearnMore} />

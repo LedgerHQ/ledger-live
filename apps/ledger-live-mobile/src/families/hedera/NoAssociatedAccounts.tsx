@@ -2,10 +2,10 @@ import React, { useCallback } from "react";
 import i18next from "i18next";
 import { useTheme } from "@react-navigation/native";
 import { StyleSheet, Linking, Text } from "react-native";
-import { urls } from "@utils/urls";
-import Touchable, { Props as TouchableProps } from "../../components/Touchable";
-import LText from "../../components/LText";
-import ExternalLink from "../../icons/ExternalLink";
+import { urls } from "~/utils/urls";
+import Touchable, { Props as TouchableProps } from "~/components/Touchable";
+import LText from "~/components/LText";
+import ExternalLink from "~/icons/ExternalLink";
 
 type Props = {
   style?: {

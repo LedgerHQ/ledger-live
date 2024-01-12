@@ -32,7 +32,8 @@ describe("DEX Swap", () => {
     await swapPage.chooseProvider("1inch");
   });
 
-  it("should be able to navigate to a DEX with the correct params", async () => {
+  // FIXME site unavailable on Android CI
+  it.skip("should be able to navigate to a DEX with the correct params", async () => {
     await swapPage.startExchange();
 
     await detox.expect(liveAppWebview.appTitle()).toHaveText(" https://1inch.io/"); // for some reason there is a space before the URL so this is required

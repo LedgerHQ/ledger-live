@@ -12,6 +12,7 @@ import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { WebviewAPI, WebviewState, WebviewTag } from "./types";
 import { track } from "~/renderer/analytics/segment";
+import { WalletAPIServer } from "@ledgerhq/live-common/wallet-api/types";
 
 export const initialWebviewState: WebviewState = {
   url: "",
@@ -39,6 +40,7 @@ type UseWebviewStateReturn = {
 export function useWebviewState(
   params: UseWebviewStateParams,
   webviewAPIRef: React.ForwardedRef<WebviewAPI>,
+  serverRef?: React.MutableRefObject<WalletAPIServer | undefined>,
 ): UseWebviewStateReturn {
   const webviewRef = useRef<WebviewTag>(null);
   const { manifest, inputs } = params;
@@ -79,9 +81,15 @@ export function useWebviewState(
 
           webview.clearHistory();
         },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        notify: (method: `event.${string}`, params: any) => {
+          serverRef?.current?.sendMessage(method, params);
+        },
       };
     },
-    [webviewRef],
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
   );
 
   const [isMounted, setMounted] = useState<boolean>(false);

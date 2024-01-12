@@ -3,17 +3,17 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 
-import { ScreenName } from "../../../const";
-import { getStackNavigatorConfig } from "../../../navigation/navigatorConfig";
+import { ScreenName } from "~/const";
+import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import { MethodSelection } from "./MethodSelection";
-import StepHeader from "../../../components/StepHeader";
+import StepHeader from "~/components/StepHeader";
 import { EditTransactionParamList } from "./EditTransactionParamList";
 import EditTransactionSummary from "./EditTransactionSummary";
 import { TransactionAlreadyValidatedError } from "./TransactionAlreadyValidatedError";
-import SelectDevice from "../../../screens/SelectDevice";
-import SendConnectDevice from "../../../screens/ConnectDevice";
-import SendValidationSuccess from "../../../screens/SendFunds/07-ValidationSuccess";
-import SendValidationError from "../../../screens/SendFunds/07-ValidationError";
+import SelectDevice from "~/screens/SelectDevice";
+import SendConnectDevice from "~/screens/ConnectDevice";
+import SendValidationSuccess from "~/screens/SendFunds/07-ValidationSuccess";
+import SendValidationError from "~/screens/SendFunds/07-ValidationError";
 
 const Stack = createStackNavigator<EditTransactionParamList>();
 

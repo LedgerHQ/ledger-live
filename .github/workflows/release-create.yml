@@ -39,13 +39,15 @@ jobs:
           git add .
           git commit -m 'chore(prerelease) update cryptoassets' || echo "No new tokens added"
       - name: update cryptoassets.md
+        run: pnpm generate:cryptoassets-md
+      - name: commit cryptoassets.md
         run: |
-          pnpm generate:cryptoassets-md
           git add .
           git commit -m 'update cryptoassets.md' || echo "No changes in cryptoassets.md"
       - name: update sortByMarketcap snapshot
+        run: pnpm common jest --runTestsByPath src/currencies/sortByMarketcap.test.ts -u
+      - name: commit sortByMarketcap.test.ts
         run: |
-          pnpm common jest --runTestsByPath src/currencies/sortByMarketcap.test.ts -u
           git add .
           git commit -m 'update sortByMarketcap snapshot' || echo "No changes in snapshot of sortByMarketcap.test.ts"
       - name: enter prerelease mode

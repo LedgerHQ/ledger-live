@@ -4,9 +4,9 @@ import { Currency } from "@ledgerhq/types-cryptoassets";
 import { LayoutChangeEvent } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import { useSelector } from "react-redux";
-import { usePortfolioAllAccounts } from "../../hooks/portfolio";
-import { areAccountsEmptySelector } from "../../reducers/accounts";
-import { counterValueCurrencySelector } from "../../reducers/settings";
+import { usePortfolioAllAccounts } from "~/hooks/portfolio";
+import { areAccountsEmptySelector } from "~/reducers/accounts";
+import { counterValueCurrencySelector } from "~/reducers/settings";
 import GraphCardContainer from "./GraphCardContainer";
 
 type Props = {
@@ -27,7 +27,7 @@ const PortfolioGraphCard = ({ showAssets }: Props) => {
   }, []);
 
   return (
-    <Box pt={60} onLayout={onPortfolioCardLayout}>
+    <Box onLayout={onPortfolioCardLayout}>
       <GraphCardContainer
         counterValueCurrency={counterValueCurrency}
         portfolio={portfolio}

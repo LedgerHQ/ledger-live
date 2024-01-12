@@ -12,11 +12,11 @@ import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import CounterValue from "./CounterValue";
 import CurrencyIcon from "./CurrencyIcon";
-import { accountSelector } from "../reducers/accounts";
-import { selectedTimeRangeSelector } from "../reducers/settings";
-import { useBalanceHistoryWithCountervalue } from "../hooks/portfolio";
+import { accountSelector } from "~/reducers/accounts";
+import { selectedTimeRangeSelector } from "~/reducers/settings";
+import { useBalanceHistoryWithCountervalue } from "~/hooks/portfolio";
 import Delta from "./Delta";
-import { State as RootState } from "../reducers/types";
+import { State as RootState } from "~/reducers/types";
 
 type Props = {
   account: SubAccount;

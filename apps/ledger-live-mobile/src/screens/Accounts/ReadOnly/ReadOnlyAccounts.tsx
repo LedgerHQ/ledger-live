@@ -11,20 +11,18 @@ import {
 } from "@ledgerhq/live-common/currencies/index";
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import TrackScreen from "../../../analytics/TrackScreen";
+import TrackScreen from "~/analytics/TrackScreen";
 
 import ReadOnlyAccountRow from "./ReadOnlyAccountRow";
-import { withDiscreetMode } from "../../../context/DiscreetModeContext";
+import { withDiscreetMode } from "~/context/DiscreetModeContext";
 
-import GradientContainer from "../../../components/GradientContainer";
-import TabBarSafeAreaView, {
-  TAB_BAR_SAFE_HEIGHT,
-} from "../../../components/TabBar/TabBarSafeAreaView";
+import GradientContainer from "~/components/GradientContainer";
+import TabBarSafeAreaView, { TAB_BAR_SAFE_HEIGHT } from "~/components/TabBar/TabBarSafeAreaView";
 import AccountsNavigationHeader from "../AccountsNavigationHeader";
-import { AnalyticsContext } from "../../../analytics/AnalyticsContext";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
-import { AccountsNavigatorParamList } from "../../../components/RootNavigator/types/AccountsNavigator";
-import { ScreenName } from "../../../const";
+import { AnalyticsContext } from "~/analytics/AnalyticsContext";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
+import { ScreenName } from "~/const";
 
 type NavigationProps = StackNavigatorProps<AccountsNavigatorParamList, ScreenName.Accounts>;
 

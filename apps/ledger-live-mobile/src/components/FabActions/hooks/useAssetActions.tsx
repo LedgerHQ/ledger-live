@@ -8,13 +8,13 @@ import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCat
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { useRoute } from "@react-navigation/native";
-import { NavigatorName, ScreenName } from "../../../const";
-import { readOnlyModeEnabledSelector } from "../../../reducers/settings";
+import { NavigatorName, ScreenName } from "~/const";
+import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { ActionButtonEvent } from "..";
 import ZeroBalanceDisabledModalContent from "../modals/ZeroBalanceDisabledModalContent";
-import { sharedSwapTracking } from "../../../screens/Swap/utils";
+import { sharedSwapTracking } from "~/screens/Swap/utils";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
-import { flattenAccountsSelector } from "../../../reducers/accounts";
+import { flattenAccountsSelector } from "~/reducers/accounts";
 import { PtxToast } from "../../Toast/PtxToast";
 
 type useAssetActionsProps = {

@@ -32,11 +32,13 @@ export default function StepStake({
   return (
     <Box flow={1}>
       <TrackPage
-        category="Staking Flow"
-        name="Step Validator"
+        category="Delegation Flow"
+        name="Step Starter"
+        page="Step Validator"
         flow="stake"
         action="staking"
         currency="near"
+        type="modal"
       />
       {error && <ErrorBanner error={error} />}
       <ValidatorField

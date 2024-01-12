@@ -1,5 +1,21 @@
 # @ledgerhq/hw-transport-vault
 
+## 1.2.1
+
+### Patch Changes
+
+- Updated dependencies [[`52a3732`](https://github.com/LedgerHQ/ledger-live/commit/52a373273dee3b2cb5a3e8d2d4b05f90616d71a2), [`4d1aade`](https://github.com/LedgerHQ/ledger-live/commit/4d1aade53cd33f8e7548ce340f54fbb834bdcdcb)]:
+  - @ledgerhq/errors@6.16.1
+  - @ledgerhq/hw-transport-http@6.29.1
+
+## 1.2.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`52a3732`](https://github.com/LedgerHQ/ledger-live/commit/52a373273dee3b2cb5a3e8d2d4b05f90616d71a2), [`4d1aade`](https://github.com/LedgerHQ/ledger-live/commit/4d1aade53cd33f8e7548ce340f54fbb834bdcdcb)]:
+  - @ledgerhq/errors@6.16.1-next.0
+  - @ledgerhq/hw-transport-http@6.29.1-next.0
+
 ## 1.2.0
 
 ### Minor Changes

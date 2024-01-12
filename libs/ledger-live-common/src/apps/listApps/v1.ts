@@ -156,25 +156,6 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
           }
 
           const indexOfMarketCap = crypto ? sortedCryptoCurrencies.indexOf(crypto) : -1;
-          const compatibleWallets: { name: string; url: string }[] = [];
-
-          if (application.compatibleWalletsJSON) {
-            try {
-              const parsed = JSON.parse(application.compatibleWalletsJSON);
-              if (parsed && Array.isArray(parsed)) {
-                parsed.forEach(w => {
-                  if (w && typeof w === "object" && w.name) {
-                    compatibleWallets.push({
-                      name: w.name,
-                      url: w.url,
-                    });
-                  }
-                });
-              }
-            } catch (e) {
-              console.error("invalid compatibleWalletsJSON for " + version.name, e);
-            }
-          }
 
           const type =
             application.description &&
@@ -196,7 +177,6 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
             supportURL: application.supportURL,
             contactURL: application.contactURL,
             sourceURL: application.sourceURL,
-            compatibleWallets,
             hash: version.hash,
             perso: version.perso,
             firmware: version.firmware,

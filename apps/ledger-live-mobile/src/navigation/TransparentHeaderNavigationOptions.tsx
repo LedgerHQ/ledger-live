@@ -1,5 +1,5 @@
 import React from "react";
-import HeaderTitle from "../components/HeaderTitle";
+import HeaderTitle from "~/components/HeaderTitle";
 import styles from "./styles";
 
 export default {

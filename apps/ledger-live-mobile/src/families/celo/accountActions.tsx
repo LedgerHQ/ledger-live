@@ -5,8 +5,8 @@ import invariant from "invariant";
 import type { Account } from "@ledgerhq/types-live";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import CeloIcon from "./components/CeloIcon";
-import { NavigatorName, ScreenName } from "../../const";
-import { ActionButtonEvent, NavigationParamsType } from "../../components/FabActions";
+import { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
+import { NavigatorName, ScreenName } from "~/const";
 
 const getMainActions = ({
   account,

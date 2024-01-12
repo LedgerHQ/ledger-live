@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-transport-node-hid-noevents",
-  "version": "6.29.0",
+  "version": "6.29.1",
   "description": "Ledger Hardware Wallet Node implementation of the communication layer, using node-hid. without usb events",
   "keywords": [
     "Ledger",

@@ -8,7 +8,7 @@ import {
 } from "react-native-adjust";
 import Config from "react-native-config";
 import { useSelector } from "react-redux";
-import { analyticsEnabledSelector } from "../reducers/settings";
+import { analyticsEnabledSelector } from "~/reducers/settings";
 
 export default function AdjustSetup() {
   const analyticsEnabled: boolean = useSelector(analyticsEnabledSelector);

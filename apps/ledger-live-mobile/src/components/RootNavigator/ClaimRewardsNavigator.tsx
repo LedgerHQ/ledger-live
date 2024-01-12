@@ -2,12 +2,12 @@ import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "styled-components/native";
-import { ScreenName } from "../../const";
-import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
-import SelectDevice from "../../screens/SelectDevice";
-import ConnectDevice from "../../screens/ConnectDevice";
-import ValidationSuccess from "../../screens/ClaimRewards/02-ValidationSuccess";
-import ValidationError from "../../screens/ClaimRewards/02-ValidationError";
+import { ScreenName } from "~/const";
+import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import SelectDevice from "~/screens/SelectDevice";
+import ConnectDevice from "~/screens/ConnectDevice";
+import ValidationSuccess from "~/screens/ClaimRewards/02-ValidationSuccess";
+import ValidationError from "~/screens/ClaimRewards/02-ValidationError";
 import StepHeader from "../StepHeader";
 import type { ClaimRewardsNavigatorParamList } from "./types/ClaimRewardsNavigator";
 

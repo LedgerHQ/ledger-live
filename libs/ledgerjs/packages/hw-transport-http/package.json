@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-transport-http",
-  "version": "6.29.0",
+  "version": "6.29.1",
   "description": "Ledger Hardware Wallet communication layer over http",
   "keywords": [
     "Ledger",

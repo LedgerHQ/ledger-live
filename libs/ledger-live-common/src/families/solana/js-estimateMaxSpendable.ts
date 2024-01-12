@@ -1,13 +1,53 @@
-import type { AccountBridge } from "@ledgerhq/types-live";
+import type { Account, AccountBridge } from "@ledgerhq/types-live";
 import type { Transaction } from "./types";
 import BigNumber from "bignumber.js";
 import { ChainAPI } from "./api";
-import {
-  getAccountMinimumBalanceForRentExemption,
-  getStakeAccountMinimumBalanceForRentExemption,
-} from "./api/chain/web3";
+import { getStakeAccountMinimumBalanceForRentExemption } from "./api/chain/web3";
 import { getMainAccount } from "../../account";
 import { estimateTxFee } from "./tx-fees";
+
+export const estimateFeeAndSpendable = async (
+  api: ChainAPI,
+  account: Account,
+  transaction?: Transaction | undefined | null,
+): Promise<{ fee: number; spendable: BigNumber }> => {
+  const txKind = transaction?.model.kind ?? "transfer";
+  const txFee = await estimateTxFee(api, account.freshAddress, txKind);
+
+  const spendableBalance = BigNumber.max(account.spendableBalance.minus(txFee), 0);
+
+  switch (txKind) {
+    case "token.createATA": {
+      const assocAccRentExempt = await api.getAssocTokenAccMinNativeBalance();
+
+      return {
+        fee: txFee + assocAccRentExempt,
+        spendable: BigNumber.max(spendableBalance.minus(assocAccRentExempt), 0),
+      };
+    }
+    case "stake.createAccount": {
+      const stakeAccRentExempt = await getStakeAccountMinimumBalanceForRentExemption(api);
+      const unstakeReserve =
+        (await estimateTxFee(api, account.freshAddress, "stake.undelegate")) +
+        (await estimateTxFee(api, account.freshAddress, "stake.withdraw"));
+
+      return {
+        fee: txFee + stakeAccRentExempt,
+        spendable: BigNumber.max(
+          spendableBalance.minus(stakeAccRentExempt).minus(unstakeReserve),
+          0,
+        ),
+      };
+    }
+
+    default: {
+      return {
+        fee: txFee,
+        spendable: spendableBalance,
+      };
+    }
+  }
+};
 
 const estimateMaxSpendableWithAPI = async (
   {
@@ -20,24 +60,8 @@ const estimateMaxSpendableWithAPI = async (
   const mainAccount = getMainAccount(account, parentAccount);
 
   switch (account.type) {
-    case "Account": {
-      const txKind = transaction?.model.kind ?? "transfer";
-      const txFee = await estimateTxFee(api, mainAccount, txKind);
-
-      switch (txKind) {
-        case "stake.createAccount": {
-          const stakeAccRentExempt = await getStakeAccountMinimumBalanceForRentExemption(api);
-          return BigNumber.max(account.spendableBalance.minus(txFee).minus(stakeAccRentExempt), 0);
-        }
-        default: {
-          const rentExemptMin = await getAccountMinimumBalanceForRentExemption(
-            api,
-            account.freshAddress,
-          );
-          return BigNumber.max(account.spendableBalance.minus(txFee).minus(rentExemptMin), 0);
-        }
-      }
-    }
+    case "Account":
+      return (await estimateFeeAndSpendable(api, mainAccount, transaction)).spendable;
     case "TokenAccount":
       return account.spendableBalance;
   }

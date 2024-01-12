@@ -6,7 +6,7 @@ import type {
 } from "@ledgerhq/live-common/families/near/types";
 import type { Operation } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { ScreenName } from "../../../const";
+import { ScreenName } from "~/const";
 
 export type NearWithdrawingFlowParamList = {
   [ScreenName.NearWithdrawingAmount]: {

@@ -5,11 +5,11 @@ import { Button } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import AccountRow from "../Accounts/AccountRow";
-import { withDiscreetMode } from "../../context/DiscreetModeContext";
-import { NavigatorName, ScreenName } from "../../const";
-import { track } from "../../analytics";
-import { AccountsNavigatorParamList } from "../../components/RootNavigator/types/AccountsNavigator";
-import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import { withDiscreetMode } from "~/context/DiscreetModeContext";
+import { NavigatorName, ScreenName } from "~/const";
+import { track } from "~/analytics";
+import { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 
 const NB_MAX_ACCOUNTS_TO_DISPLAY = 3;
 

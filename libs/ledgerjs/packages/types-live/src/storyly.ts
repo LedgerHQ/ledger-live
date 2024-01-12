@@ -3,3 +3,5 @@ export enum StorylyInstanceID {
   testStory = "testStory",
   storylyExample = "storylyExample",
 }
+
+export type StorylyInstanceType = { testingEnabled: boolean; token: string; instanceId?: string };

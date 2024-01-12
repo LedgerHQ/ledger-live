@@ -1,3 +1,5 @@
+/* istanbul ignore file: pure exports */
+
 import { getEditTransactionStatus } from "../getTransactionStatus";
 import { getEditTransactionPatch } from "./getEditTransactionPatch";
 import { getFormattedFeeFields } from "./getFormattedFeeFields";

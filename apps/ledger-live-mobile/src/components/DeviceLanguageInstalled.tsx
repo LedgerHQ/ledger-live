@@ -4,7 +4,7 @@ import { Language, languageIds } from "@ledgerhq/types-live";
 import { useTranslation } from "react-i18next";
 import { Flex, Button, Icons } from "@ledgerhq/native-ui";
 import { useDispatch } from "react-redux";
-import { setLastSeenDeviceLanguageId } from "../actions/settings";
+import { setLastSeenDeviceLanguageId } from "~/actions/settings";
 import { GenericInformationBody } from "./GenericInformationBody";
 
 const DeviceLanguageInstalled: React.FC<{

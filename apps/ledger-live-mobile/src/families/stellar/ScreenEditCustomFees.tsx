@@ -7,16 +7,16 @@ import { useTheme } from "@react-navigation/native";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { useSelector } from "react-redux";
-import Button from "../../components/Button";
-import KeyboardView from "../../components/KeyboardView";
-import LText from "../../components/LText";
-import { accountScreenSelector } from "../../reducers/accounts";
-import CurrencyInput from "../../components/CurrencyInput";
-import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
-import { ScreenName } from "../../const";
-import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
-import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
+import Button from "~/components/Button";
+import KeyboardView from "~/components/KeyboardView";
+import LText from "~/components/LText";
+import { accountScreenSelector } from "~/reducers/accounts";
+import CurrencyInput from "~/components/CurrencyInput";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
+import { ScreenName } from "~/const";
+import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
+import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 
 const options = {
   title: <Trans i18nKey="send.summary.fees" />,

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-config",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Ledger Live configuration tools",
   "license": "Apache-2.0",
   "keywords": [

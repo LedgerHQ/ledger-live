@@ -37,16 +37,16 @@ import trackingWrapper from "@ledgerhq/live-common/platform/tracking";
 import BigNumber from "bignumber.js";
 import { DEFAULT_MULTIBUY_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
 import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
-import { NavigatorName, ScreenName } from "../../const";
-import { broadcastSignedTx } from "../../logic/screenTransactionHooks";
-import { flattenAccountsSelector } from "../../reducers/accounts";
-import { track } from "../../analytics/segment";
+import { NavigatorName, ScreenName } from "~/const";
+import { broadcastSignedTx } from "~/logic/screenTransactionHooks";
+import { flattenAccountsSelector } from "~/reducers/accounts";
+import { track } from "~/analytics/segment";
 import prepareSignTransaction from "./liveSDKLogic";
 import { RootNavigationComposite, StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { WebviewAPI, WebviewProps } from "./types";
 import { useWebviewState } from "./helpers";
-import { currentRouteNameRef } from "../../analytics/screenRefs";
+import { currentRouteNameRef } from "~/analytics/screenRefs";
 
 function renderLoading() {
   return (

@@ -28,6 +28,7 @@ export default function PolkadotEarnRewardsInfoModal({ account }: Props) {
         t("polkadot.bond.steps.starter.bullet.1"),
         t("polkadot.bond.steps.starter.bullet.2"),
       ]}
+      currency="dot"
       additional={<WarnBox>{t("polkadot.bond.steps.starter.warning")}</WarnBox>}
       footerLeft={
         <LinkWithExternalIcon

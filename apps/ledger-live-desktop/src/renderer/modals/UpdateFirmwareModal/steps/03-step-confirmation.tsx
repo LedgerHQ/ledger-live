@@ -1,16 +1,12 @@
-import React, { useCallback, useContext, useEffect } from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { log } from "@ledgerhq/logs";
-import { LockedDeviceError, UserRefusedFirmwareUpdate } from "@ledgerhq/errors";
-import { useHistory } from "react-router-dom";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Track from "~/renderer/analytics/Track";
 import { getDeviceModel } from "@ledgerhq/devices";
 import Box from "~/renderer/components/Box";
-import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { StepProps } from "../";
-import { context } from "~/renderer/drawers/Provider";
 import { BoxedIcon, Button, IconsLegacy } from "@ledgerhq/react-ui";
 
 const Container = styled(Box).attrs(() => ({
@@ -29,22 +25,22 @@ const Title = styled(Box).attrs(() => ({
   text-align: center;
 `;
 
-const StepConfirmation = ({ error, deviceModelId }: StepProps) => {
+const SubTitle = styled(Box).attrs(() => ({
+  ff: "Inter|Regular",
+  fontSize: 4,
+  mt: 3,
+  color: "palette.text.shade70",
+}))`
+  white-space: pre-wrap;
+  text-align: center;
+`;
+
+const StepConfirmation = ({ deviceModelId, appsToBeReinstalled }: StepProps) => {
   const device = getDeviceModel(deviceModelId);
   const { t } = useTranslation();
+  const deviceName = { deviceName: device ? device.productName : "" };
 
   useEffect(() => () => log("firmware-record-end"), []);
-
-  if (error) {
-    const isUserRefusedFirmwareUpdate = error instanceof UserRefusedFirmwareUpdate;
-    return (
-      <ErrorDisplay
-        error={error}
-        warning={isUserRefusedFirmwareUpdate}
-        withExportLogs={!isUserRefusedFirmwareUpdate}
-      />
-    );
-  }
 
   return (
     <Container data-test-id="firmware-update-done">
@@ -56,8 +52,13 @@ const StepConfirmation = ({ error, deviceModelId }: StepProps) => {
         iconSize={24}
       />
       <Title mt={9}>
-        {t("manager.modal.successTitle", { deviceName: device ? device.productName : "" })}
+        {appsToBeReinstalled
+          ? t("manager.modal.successTitleApps", deviceName)
+          : t("manager.modal.successTitle", deviceName)}
       </Title>
+      {appsToBeReinstalled ? (
+        <SubTitle>{t("manager.modal.successSubtitleApps", deviceName)}</SubTitle>
+      ) : null}
       <Box mx={7} />
     </Container>
   );
@@ -65,42 +66,11 @@ const StepConfirmation = ({ error, deviceModelId }: StepProps) => {
 
 export const StepConfirmFooter = ({
   onDrawerClose,
-  error,
   appsToBeReinstalled,
-  onRetry,
   finalStepSuccessButtonLabel,
   finalStepSuccessButtonOnClick,
-  shouldReloadManagerOnCloseIfUpdateRefused,
 }: StepProps) => {
   const { t } = useTranslation();
-  const history = useHistory();
-  const { setDrawer } = useContext(context);
-
-  const onCloseReload = useCallback(() => {
-    onDrawerClose();
-    if (error instanceof UserRefusedFirmwareUpdate && shouldReloadManagerOnCloseIfUpdateRefused) {
-      history.push("/manager/reload");
-      setDrawer();
-    }
-  }, [error, history, onDrawerClose, setDrawer, shouldReloadManagerOnCloseIfUpdateRefused]);
-
-  if (error) {
-    const isUserRefusedFirmwareUpdate = error instanceof UserRefusedFirmwareUpdate;
-    const isDeviceLockedError = error instanceof LockedDeviceError;
-    const isRetryableError = isUserRefusedFirmwareUpdate || isDeviceLockedError;
-    return (
-      <>
-        <Button variant={"main"} outline={isRetryableError} onClick={onCloseReload}>
-          {t("common.close")}
-        </Button>
-        {isRetryableError ? (
-          <Button variant="main" ml={4} onClick={() => onRetry()}>
-            {isDeviceLockedError ? t("common.retry") : t("manager.modal.cancelReinstallCTA")}
-          </Button>
-        ) : null}
-      </>
-    );
-  }
 
   return (
     <>

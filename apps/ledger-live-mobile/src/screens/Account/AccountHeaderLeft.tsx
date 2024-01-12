@@ -1,13 +1,13 @@
 import React, { useCallback } from "react";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { ArrowLeftMedium } from "@ledgerhq/native-ui/assets/icons";
-import { ScreenName } from "../../const";
-import Touchable from "../../components/Touchable";
-import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
-import type { AccountsNavigatorParamList } from "../../components/RootNavigator/types/AccountsNavigator";
+import { ScreenName } from "~/const";
+import Touchable from "~/components/Touchable";
+import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import type { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
 
 import { Flex } from "@ledgerhq/native-ui";
-import { track } from "../../analytics";
+import { track } from "~/analytics";
 import { isWalletConnectSupported } from "@ledgerhq/live-common/walletConnect/index";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 

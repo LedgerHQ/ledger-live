@@ -5,15 +5,15 @@ import { Button, Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { ImageDoesNotExistOnDevice } from "@ledgerhq/live-common/errors";
-import { NavigatorName, ScreenName } from "../../const";
+import { NavigatorName, ScreenName } from "~/const";
 import QueuedDrawer, { Props as BottomModalProps } from "../QueuedDrawer";
 import ModalChoice from "./ModalChoice";
 import { importImageFromPhoneGallery } from "./imageUtils";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { StackNavigatorNavigation } from "../RootNavigator/types/helpers";
-import { TrackScreen } from "../../analytics";
+import { TrackScreen } from "~/analytics";
 import DeviceAction from "../DeviceAction";
-import { useStaxRemoveImageDeviceAction } from "../../hooks/deviceActions";
+import { useStaxRemoveImageDeviceAction } from "~/hooks/deviceActions";
 
 const analyticsDrawerName = "Choose an image to set as your device lockscreen";
 

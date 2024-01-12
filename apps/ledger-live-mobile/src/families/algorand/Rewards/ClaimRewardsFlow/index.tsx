@@ -7,12 +7,12 @@ import {
   getStackNavigatorConfig,
   defaultNavigationOptions,
 } from "../../../../navigation/navigatorConfig";
-import StepHeader from "../../../../components/StepHeader";
-import { ScreenName } from "../../../../const";
+import StepHeader from "~/components/StepHeader";
+import { ScreenName } from "~/const";
 import ClaimRewardsInfo from "./01-Info";
 import ClaimRewardsStarted from "./01-Started";
-import ClaimRewardsSelectDevice from "../../../../screens/SelectDevice";
-import ClaimRewardsConnectDevice from "../../../../screens/ConnectDevice";
+import ClaimRewardsSelectDevice from "~/screens/SelectDevice";
+import ClaimRewardsConnectDevice from "~/screens/ConnectDevice";
 import ClaimRewardsValidation from "./03-Validation";
 import ClaimRewardsValidationError from "./03-ValidationError";
 import ClaimRewardsValidationSuccess from "./03-ValidationSuccess";

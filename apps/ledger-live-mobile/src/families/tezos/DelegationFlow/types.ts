@@ -2,7 +2,7 @@ import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/famil
 import type { Operation } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
-import { ScreenName } from "../../../const";
+import { ScreenName } from "~/const";
 
 export type TezosDelegationFlowParamList = {
   [ScreenName.DelegationStarted]: {

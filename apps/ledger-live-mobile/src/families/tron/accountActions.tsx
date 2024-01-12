@@ -5,8 +5,8 @@ import type { Account } from "@ledgerhq/types-live";
 import type { TronAccount } from "@ledgerhq/live-common/families/tron/types";
 import { getLastVotedDate } from "@ledgerhq/live-common/families/tron/react";
 import { IconsLegacy } from "@ledgerhq/native-ui";
-import { NavigatorName, ScreenName } from "../../const";
-import { ActionButtonEvent } from "../../components/FabActions";
+import { NavigatorName, ScreenName } from "~/const";
+import { ActionButtonEvent } from "~/components/FabActions";
 
 const getSecondaryActions = ({
   account,

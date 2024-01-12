@@ -568,7 +568,7 @@
       "title": "No assets to unfreeze",
       "description": "You don't have Energy assets to unfreeze."
     },
-    "TronUnfreezeNotExpired": {
+    "TronLegacyUnfreezeNotExpired": {
       "title": "Unfreeze is not available yet",
       "description": "Please wait 3 days after your last Freeze operation."
     },
@@ -605,6 +605,16 @@
     },
     "TronNotEnoughEnergy": {
       "title": "Energy is lower than necessary. You might pay up to 50TRX in fees."
+    },
+    "TronNoUnfrozenResource": {
+      "title": "No unfrozen resources to withdraw"
+    },
+    "TronInvalidUnDelegateResourceAmount": {
+      "title": "Not enough delegated resources"
+    },
+    "TronUnfreezeNotExpired": {
+      "title": "Resources not unfrozen yet",
+      "description": "You need to wait until {{time}} to withdraw"
     },
     "UpdateYourApp": {
       "title": "App update needed",
@@ -2313,6 +2323,9 @@
       "VOTE": "Voted",
       "FREEZE": "Frozen",
       "UNFREEZE": "Unfrozen",
+      "UNDELEGATE_RESOURCE": "Undelegated",
+      "WITHDRAW_EXPIRE_UNFREEZE": "Withdrawal",
+      "LEGACYUNFREEZE": "Unfrozen",
       "REWARD": "Claimed reward",
       "FEES": "Fees",
       "OPT_IN": "Opt in",
@@ -3687,7 +3700,7 @@
       "description": "Freeze TRX to earn rewards securely, keeping control of your assets.",
       "steps": {
         "0": "Delegated assets remain yours.",
-        "1": "You can unfreeze your assets after 3 days.",
+        "1": "You can unfreeze your assets at any time, and they will be accessible after the 14-day unfreezing period.",
         "2": "Freeze and vote securely with your Ledger device."
       },
       "howVotingWorks": "How voting works",
@@ -5342,7 +5355,7 @@
             "description": "Delegate TRX to a third party candidate to earn rewards. Click on continue to freeze assets and vote.",
             "bullet": {
               "delegate": "Delegated assets remain yours.",
-              "access": "You can access your assets 3 days after freezing.",
+              "access": "Frozen assets can be unfrozen immediately and will become accessible after the 14-day unfreezing period.",
               "ledger": "Delegate securely with your Ledger device."
             },
             "button": {
@@ -5360,7 +5373,7 @@
       },
       "unfreeze": {
         "title": "Unfreeze",
-        "description": "Unfreeze TRX to add them back to your available balance. You will no longer earn rewards."
+        "description": "Unfreeze TRX to add them back to your available balance. You will no longer earn rewards. The assets will be available after the 14-day unfreezing period"
       },
       "vote": {
         "title": "Vote",
@@ -5718,6 +5731,20 @@
       "totalStake": "Total stake",
       "commission": "Commission",
       "stakeActivationState": "State",
+      "stakeActivePercent": "Active",
+      "stakeAvailableBalance": "Available balance",
+      "actions": {
+        "activate": "Activate",
+        "deactivate": "Deactivate",
+        "reactivate": "Reactivate",
+        "withdraw": "Withdraw"
+      },
+      "states": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "activating": "Activating",
+        "deactivating": "Deactivating"
+      },
       "delegationEarn": "You can earn SOL rewards by delegating your assets.",
       "info": "How Delegation works",
       "broadcastSuccessTitle": "Operation sent",
@@ -5725,7 +5752,8 @@
       "delegatedTo": "delegated to",
       "started": {
         "description": "You may earn rewards by delegating your SOL assets to a validator."
-      }
+      },
+      "reserveWarning": "Please ensure you reserve at least {{amount}} SOL in your wallet to cover future network fees to deactivate and withdraw your stake"
     }
   },
   "near": {
@@ -5907,6 +5935,9 @@
       "freeze": "On your device, please confirm to finalize the operation",
       "unfreeze": "On your device, please confirm to finalize the operation",
       "claimReward": "On your device, please confirm to finalize the operation",
+      "legacyUnfreeze": "On your device, please confirm to finalize the operation",
+      "withdrawExpireUnfreeze": "On your device, please confirm to finalize the operation",
+      "undelegateResource": "On your device, please confirm to finalize the operation",
       "vote": "On your device, please confirm to finalize the operation",
       "delegate": "On your device, please confirm to finalize the operation",
       "redelegate": "On your device, please confirm to finalize the operation",
@@ -5931,18 +5962,16 @@
     "votes": "Votes",
     "validator": "Validator",
     "infoWording": {
-      "freeze": "Frozen tokens are locked for a period of 3 days.",
+      "freeze": "Freeze tokens to acquire bandwidth or energy and receive an equivalent amount of TRON Power (TP).",
       "unfreeze": "Your {{resource}} points will be reduced, and all your votes will be cancelled.",
+      "legacyUnfreeze": "Your {{resource}} points will be reduced, and all your votes will be cancelled.",
       "claimReward": "Rewards can be claimed every 24 hours.",
+      "withdrawExpireUnfreeze": "Your unfrozen resources that has passed the unfreezing period will be withdrawn",
+      "unDelegateResource": "Cancel the delegation of {{resource}}",
       "cosmos": {
         "claimReward": "If the selected validator has pending rewards, they will automatically be claimed.",
-        "redelegate": "You will have to wait 21 days for undelegated assets to return to the available balance.",
-        "undelegate": "You will have to wait 21 days for undelegated assets to return to the available balance."
-      },
-      "osmosis": {
-        "claimReward": "If the selected validator has pending rewards, they will automatically be claimed.",
-        "redelegate": "You will have to wait 14 days for undelegated assets to return to the available balance.",
-        "undelegate": "You will have to wait 14 days for undelegated assets to return to the available balance."
+        "redelegate": "You will have to wait {{numberOfDays}} days for undelegated assets to return to the available balance.",
+        "undelegate": "You will have to wait {{numberOfDays}} days for undelegated assets to return to the available balance."
       },
       "lending": "Verify the operation details on your device before sending it."
     },

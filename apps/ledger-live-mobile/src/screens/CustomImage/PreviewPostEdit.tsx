@@ -4,14 +4,14 @@ import { ImagePreviewError } from "@ledgerhq/live-common/customImage/errors";
 import { NativeSyntheticEvent, ImageErrorEventData } from "react-native";
 import { useTranslation } from "react-i18next";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Button from "../../components/wrappedUi/Button";
+import Button from "~/components/wrappedUi/Button";
 
-import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { CustomImageNavigatorParamList } from "../../components/RootNavigator/types/CustomImageNavigator";
-import { NavigatorName, ScreenName } from "../../const";
-import StaxFramedImage, { previewConfig } from "../../components/CustomImage/StaxFramedImage";
-import { TrackScreen } from "../../analytics";
-import Link from "../../components/wrappedUi/Link";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { CustomImageNavigatorParamList } from "~/components/RootNavigator/types/CustomImageNavigator";
+import { NavigatorName, ScreenName } from "~/const";
+import StaxFramedImage, { previewConfig } from "~/components/CustomImage/StaxFramedImage";
+import { TrackScreen } from "~/analytics";
+import Link from "~/components/wrappedUi/Link";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<CustomImageNavigatorParamList, ScreenName.CustomImagePreviewPostEdit>

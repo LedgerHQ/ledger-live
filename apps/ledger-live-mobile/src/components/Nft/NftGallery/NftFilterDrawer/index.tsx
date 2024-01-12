@@ -1,13 +1,13 @@
 import React, { FC } from "react";
 import { useTranslation } from "react-i18next";
 
-import { TrackScreen } from "../../../../analytics";
+import { TrackScreen } from "~/analytics";
 import NftFilterSection from "./NftFilterSection";
 import { NftFilterCurrencyItem } from "./NftFilterItem";
-import { NftGalleryChainFiltersState } from "../../../../reducers/types";
-import { NavigatorName, ScreenName } from "../../../../const/navigation";
+import { NftGalleryChainFiltersState } from "~/reducers/types";
+import { NavigatorName, ScreenName } from "~/const/navigation";
 import { useNavigation } from "@react-navigation/native";
-import { track } from "../../../../analytics";
+import { track } from "~/analytics";
 import { View } from "react-native";
 import QueuedDrawer from "../../../QueuedDrawer";
 

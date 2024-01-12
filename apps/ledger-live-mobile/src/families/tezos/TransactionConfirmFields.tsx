@@ -7,10 +7,9 @@ import { useBaker } from "@ledgerhq/live-common/families/tezos/bakers";
 import { shortAddressPreview, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
 import { toLocaleString } from "@ledgerhq/live-common/currencies/index";
-import { useSelector } from "react-redux";
-import { DataRow } from "../../components/ValidateOnDeviceDataRow";
-import LText from "../../components/LText";
-import { localeSelector } from "../../reducers/settings";
+import { DataRow } from "~/components/ValidateOnDeviceDataRow";
+import LText from "~/components/LText";
+import { useSettings } from "~/hooks";
 
 const styles = StyleSheet.create({
   text: {
@@ -21,7 +20,7 @@ const styles = StyleSheet.create({
 });
 
 const TezosStorageLimit = ({ transaction }: { transaction: Transaction }) => {
-  const locale = useSelector(localeSelector);
+  const { locale } = useSettings();
   invariant(transaction.family === "tezos", "tezos transaction");
   return (
     <DataRow label="Storage Limit">

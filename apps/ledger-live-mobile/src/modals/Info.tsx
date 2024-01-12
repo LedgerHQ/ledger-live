@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import QueuedDrawer from "../components/QueuedDrawer";
-import LText, { Opts } from "../components/LText";
+import QueuedDrawer from "~/components/QueuedDrawer";
+import LText, { Opts } from "~/components/LText";
 
 type Props = {
   data: ModalInfo[];

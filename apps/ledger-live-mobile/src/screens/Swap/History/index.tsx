@@ -17,15 +17,15 @@ import {
 import Share from "react-native-share";
 import { useDispatch, useSelector } from "react-redux";
 import type { Account } from "@ledgerhq/types-live";
-import { updateAccountWithUpdater } from "../../../actions/accounts";
-import { TrackScreen } from "../../../analytics";
-import Alert from "../../../components/Alert";
-import Button from "../../../components/Button";
-import LText from "../../../components/LText";
-import useInterval from "../../../components/useInterval";
-import DownloadFileIcon from "../../../icons/DownloadFile";
+import { updateAccountWithUpdater } from "~/actions/accounts";
+import { TrackScreen } from "~/analytics";
+import Alert from "~/components/Alert";
+import Button from "~/components/Button";
+import LText from "~/components/LText";
+import useInterval from "~/components/useInterval";
+import DownloadFileIcon from "~/icons/DownloadFile";
 import logger from "../../../logger";
-import { flattenAccountsSelector } from "../../../reducers/accounts";
+import { flattenAccountsSelector } from "~/reducers/accounts";
 import EmptyState from "./EmptyState";
 import OperationRow from "./OperationRow";
 

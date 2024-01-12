@@ -5,12 +5,12 @@ import { useTranslation } from "react-i18next";
 import { TouchableOpacity } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import styled, { useTheme } from "styled-components/native";
-import { setDateFormat } from "../../../actions/settings";
-import { track, TrackScreen } from "../../../analytics";
-import { Format } from "../../../components/DateFormat/formatter.util";
-import QueuedDrawer from "../../../components/QueuedDrawer";
-import { ScreenName } from "../../../const";
-import { dateFormatSelector } from "../../../reducers/settings";
+import { setDateFormat } from "~/actions/settings";
+import { track, TrackScreen } from "~/analytics";
+import { Format } from "~/components/DateFormat/formatter.util";
+import QueuedDrawer from "~/components/QueuedDrawer";
+import { ScreenName } from "~/const";
+import { dateFormatSelector } from "~/reducers/settings";
 
 const drawerNameAnalytics = "Date Format selection";
 

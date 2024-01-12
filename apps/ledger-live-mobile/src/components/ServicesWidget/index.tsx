@@ -6,8 +6,8 @@ import styled, { useTheme } from "styled-components/native";
 
 import Touchable from "../Touchable";
 
-import LedgerRecoverLogoLight from "../../images/ledger_recover_light.png";
-import LedgerRecoverBackground from "../../images/ledger_recover_card_background.png";
+import LedgerRecoverLogoLight from "~/images/ledger_recover_light.png";
+import LedgerRecoverBackground from "~/images/ledger_recover_card_background.png";
 import { useProtect } from "./Protect/useProtect";
 
 function ServicesWidget() {

@@ -6,18 +6,18 @@ import { BottomTabBarProps, createBottomTabNavigator } from "@react-navigation/b
 import { useSelector } from "react-redux";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useManagerNavLockCallback } from "./CustomBlockRouterNavigator";
-import { ScreenName, NavigatorName } from "../../const";
-import { PortfolioTabIcon } from "../../screens/Portfolio";
+import { ScreenName, NavigatorName } from "~/const";
+import { PortfolioTabIcon } from "~/screens/Portfolio";
 import Transfer, { TransferTabIcon } from "../TabBar/Transfer";
 import TabIcon from "../TabIcon";
 import MarketNavigator from "./MarketNavigator";
 import PortfolioNavigator from "./PortfolioNavigator";
-import { hasOrderedNanoSelector, readOnlyModeEnabledSelector } from "../../reducers/settings";
+import { hasOrderedNanoSelector, readOnlyModeEnabledSelector } from "~/reducers/settings";
 import ManagerNavigator, { ManagerTabIcon } from "./ManagerNavigator";
 import DiscoverNavigator from "./DiscoverNavigator";
 import customTabBar from "../TabBar/CustomTabBar";
 import { MainNavigatorParamList } from "./types/MainNavigator";
-import { isMainNavigatorVisibleSelector } from "../../reducers/appstate";
+import { isMainNavigatorVisibleSelector } from "~/reducers/appstate";
 import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
 import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 

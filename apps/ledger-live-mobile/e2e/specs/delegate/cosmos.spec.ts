@@ -5,22 +5,15 @@ import {
 } from "@ledgerhq/live-common/currencies/index";
 import { loadAccounts, loadBleState, loadConfig } from "../../bridge/server";
 import PortfolioPage from "../../models/wallet/portfolioPage";
-import StakePage from "../../models/stake";
+import StakePage from "../../models/trade/stakePage";
 import DeviceAction from "../../models/DeviceAction";
-import { DeviceModelId } from "@ledgerhq/devices";
+import { knownDevice } from "../../models/devices";
 import { BigNumber } from "bignumber.js";
-import { Unit } from "@ledgerhq/types-cryptoassets";
-import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { formattedAmount } from "../../models/common";
 
 let portfolioPage: PortfolioPage;
 let stakePage: StakePage;
 let deviceAction: DeviceAction;
-
-const knownDevice = {
-  name: "Nano X de test",
-  id: "mock_1",
-  modelId: DeviceModelId.nanoX,
-};
 
 const testedCurrency = "cosmos";
 const id = "cosmosid";
@@ -32,13 +25,6 @@ const testedAccount = genAccount(id, {
 
 const COSMOS_MIN_SAFE = new BigNumber(100000); // 100000 uAtom
 const COSMOS_MIN_FEES = new BigNumber(6000);
-const formattedAmount = (unit: Unit, amount: BigNumber, showAllDigits = false) =>
-  // amount formatted with the same unit as what the input should use
-  formatCurrencyUnit(unit, amount, {
-    showCode: true,
-    showAllDigits: showAllDigits,
-    disableRounding: false,
-  });
 
 describe("Cosmos delegate flow", () => {
   beforeAll(async () => {

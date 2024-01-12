@@ -6,16 +6,16 @@ import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { StackScreenProps } from "@react-navigation/stack";
-import { TrackScreen } from "../../analytics";
-import { ScreenName } from "../../const";
+import { TrackScreen } from "~/analytics";
+import { ScreenName } from "~/const";
 
-import quizImage1 from "../../images/illustration/Light/_056.png";
-import quizImage2 from "../../images/illustration/Light/_021.png";
-import quizImage3 from "../../images/illustration/Light/_055.png";
+import quizImage1 from "~/images/illustration/Light/_056.png";
+import quizImage2 from "~/images/illustration/Light/_021.png";
+import quizImage3 from "~/images/illustration/Light/_055.png";
 
 import OnboardingQuizItem from "./OnboardingQuizItem";
-import { OnboardingNavigatorParamList } from "../../components/RootNavigator/types/OnboardingNavigator";
-import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 
 const transitionStyles = [StyleSheet.absoluteFill, { flex: 1 }];
 
@@ -94,12 +94,14 @@ function OnboardingQuiz({ navigation, route }: Props) {
               correct: true,
               desc: t("onboarding.quizz.coins.modal.text"),
               title: t("onboarding.quizz.modal.success"),
+              testID: "onboarding-quizz-coins-success",
             },
             {
               answer: t("onboarding.quizz.coins.answers.wrong"),
               correct: false,
               desc: t("onboarding.quizz.coins.modal.text"),
               title: t("onboarding.quizz.modal.fail"),
+              testID: "onboarding-quizz-coins-fail",
             },
           ].sort(() => 0.5 - Math.random()),
         },
@@ -112,12 +114,14 @@ function OnboardingQuiz({ navigation, route }: Props) {
               correct: true,
               desc: t("onboarding.quizz.recoveryPhrase.modal.text"),
               title: t("onboarding.quizz.modal.success"),
+              testID: "onboarding-quizz-recoveryPhrase-success",
             },
             {
               answer: t("onboarding.quizz.recoveryPhrase.answers.wrong"),
               correct: false,
               desc: t("onboarding.quizz.recoveryPhrase.modal.text"),
               title: t("onboarding.quizz.modal.fail"),
+              testID: "onboarding-quizz-recoveryPhrase-fail",
             },
           ].sort(() => 0.5 - Math.random()),
         },
@@ -130,12 +134,14 @@ function OnboardingQuiz({ navigation, route }: Props) {
               correct: true,
               desc: t("onboarding.quizz.privateKey.modal.text"),
               title: t("onboarding.quizz.modal.success"),
+              testID: "onboarding-quizz-privateKey-success",
             },
             {
               answer: t("onboarding.quizz.privateKey.answers.wrong"),
               correct: false,
               desc: t("onboarding.quizz.privateKey.modal.text"),
               title: t("onboarding.quizz.modal.fail"),
+              testID: "onboarding-quizz-privateKey-fail",
             },
           ].sort(() => 0.5 - Math.random()),
         },

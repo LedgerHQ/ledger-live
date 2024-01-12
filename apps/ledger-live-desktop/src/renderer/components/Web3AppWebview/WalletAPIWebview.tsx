@@ -1,6 +1,14 @@
 /* eslint-disable react/prop-types */
 
-import React, { forwardRef, RefObject, useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  forwardRef,
+  RefObject,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
@@ -12,7 +20,7 @@ import {
   UiHook,
   ExchangeType,
 } from "@ledgerhq/live-common/wallet-api/react";
-import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
+import { AppManifest, WalletAPIServer } from "@ledgerhq/live-common/wallet-api/types";
 import trackingWrapper, { TrackingAPI } from "@ledgerhq/live-common/wallet-api/tracking";
 import { openModal } from "../../actions/modals";
 import { updateAccountWithUpdater } from "../../actions/accounts";
@@ -179,7 +187,6 @@ function useUiHook(
               onSuccess(operation.hash);
             },
             onCancel: (error: Error) => {
-              console.error(error);
               onCancel(error);
             },
           }),
@@ -210,6 +217,7 @@ function useWebView(
   { manifest, customHandlers }: Pick<WebviewProps, "manifest" | "customHandlers">,
   webviewRef: RefObject<WebviewTag>,
   tracking: TrackingAPI,
+  serverRef: React.MutableRefObject<WalletAPIServer | undefined>,
 ) {
   const accounts = useSelector(flattenAccountsSelector);
 
@@ -237,7 +245,7 @@ function useWebView(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const { widgetLoaded, onLoad, onReload, onMessage } = useWalletAPIServer({
+  const { widgetLoaded, onLoad, onReload, onMessage, server } = useWalletAPIServer({
     manifest,
     accounts,
     tracking,
@@ -246,6 +254,12 @@ function useWebView(
     uiHook,
     customHandlers,
   });
+
+  useEffect(() => {
+    serverRef.current = server;
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [server]);
 
   const handleMessage = useCallback(
     (event: Electron.IpcMessageEvent) => {
@@ -329,9 +343,12 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       [],
     );
 
+    const serverRef = useRef<WalletAPIServer>();
+
     const { webviewState, webviewRef, webviewProps, handleRefresh } = useWebviewState(
       { manifest, inputs },
       ref,
+      serverRef,
     );
     useEffect(() => {
       if (onStateChange) {
@@ -346,6 +363,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       },
       webviewRef,
       tracking,
+      serverRef,
     );
 
     return (

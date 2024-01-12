@@ -75,7 +75,6 @@ export type SettingsState = {
   filterTokenOperationsZeroAmount: boolean;
   sidebarCollapsed: boolean;
   discreetMode: boolean;
-  carouselVisibility: number;
   starredAccountIds?: string[];
   blacklistedTokenIds: string[];
   hiddenNftCollections: string[];
@@ -158,7 +157,6 @@ const INITIAL_STATE: SettingsState = {
   discreetMode: false,
   preferredDeviceModel: DeviceModelId.nanoS,
   hasInstalledApps: true,
-  carouselVisibility: 0,
   lastSeenDevice: null,
   devicesModelList: [],
   lastSeenCustomImage: {
@@ -626,7 +624,6 @@ export const autoLockTimeoutSelector = (state: State) => state.settings.autoLock
 export const shareAnalyticsSelector = (state: State) => state.settings.shareAnalytics;
 export const selectedTimeRangeSelector = (state: State) => state.settings.selectedTimeRange;
 export const hasInstalledAppsSelector = (state: State) => state.settings.hasInstalledApps;
-export const carouselVisibilitySelector = (state: State) => state.settings.carouselVisibility;
 export const USBTroubleshootingIndexSelector = (state: State) =>
   state.settings.USBTroubleshootingIndex;
 export const allowDebugAppsSelector = (state: State) => state.settings.allowDebugApps;

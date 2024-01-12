@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { usePostOnboardingEntryPointVisibleOnWallet } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { hidePostOnboardingWalletEntryPoint } from "@ledgerhq/live-common/postOnboarding/actions";
 import { postOnboardingDeviceModelIdSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
-import { useNavigateToPostOnboardingHubCallback } from "../../logic/postOnboarding/useNavigateToPostOnboardingHubCallback";
+import { useNavigateToPostOnboardingHubCallback } from "~/logic/postOnboarding/useNavigateToPostOnboardingHubCallback";
 import Touchable from "../Touchable";
 import Button from "../wrappedUi/Button";
 

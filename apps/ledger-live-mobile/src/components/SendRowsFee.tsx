@@ -3,7 +3,7 @@ import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/gener
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { CompositeScreenProps } from "@react-navigation/native";
 import React from "react";
-import { ScreenName } from "../const";
+import { ScreenName } from "~/const";
 import perFamily from "../generated/SendRowsFee";
 import type { BaseNavigatorStackParamList } from "./RootNavigator/types/BaseNavigator";
 import type { SendFundsNavigatorStackParamList } from "./RootNavigator/types/SendFundsNavigator";

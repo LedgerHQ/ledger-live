@@ -5,31 +5,31 @@ import { useDispatch } from "react-redux";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/index";
-import { NavigatorName, ScreenName } from "../../../const";
+import { NavigatorName, ScreenName } from "~/const";
 import BaseStepperView, { PairNew, ConnectNano } from "./setupDevice/scenes";
-import { TrackScreen } from "../../../analytics";
+import { TrackScreen } from "~/analytics";
 import SeedWarning from "../shared/SeedWarning";
-import Illustration from "../../../images/illustration/Illustration";
+import Illustration from "~/images/illustration/Illustration";
 
 import StepLottieAnimation from "./setupDevice/scenes/StepLottieAnimation";
-import { completeOnboarding } from "../../../actions/settings";
+import { completeOnboarding } from "~/actions/settings";
 import { useNavigationInterceptor } from "../onboardingContext";
-import useNotifications from "../../../logic/notifications";
+import useNotifications from "~/logic/notifications";
 import {
   RootComposite,
   StackNavigatorNavigation,
   StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
-import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
-import { BaseOnboardingNavigatorParamList } from "../../../components/RootNavigator/types/BaseOnboardingNavigator";
+} from "~/components/RootNavigator/types/helpers";
+import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
+import { BaseOnboardingNavigatorParamList } from "~/components/RootNavigator/types/BaseOnboardingNavigator";
 import { Step } from "./setupDevice/scenes/BaseStepperView";
 
 const images = {
   light: {
-    Intro: require("../../../images/illustration/Light/_076.png"),
+    Intro: require("~/images/illustration/Light/_076.png"),
   },
   dark: {
-    Intro: require("../../../images/illustration/Dark/_076.png"),
+    Intro: require("~/images/illustration/Dark/_076.png"),
   },
 };
 

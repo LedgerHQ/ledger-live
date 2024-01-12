@@ -1,5 +1,5 @@
 import { ParamListBase, RouteProp } from "@react-navigation/core";
-import { ScreenName } from "../../../const";
+import { ScreenName } from "~/const";
 import { Account } from "@ledgerhq/types-live";
 
 export type StakeNavigatorParamList = {

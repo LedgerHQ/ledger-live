@@ -5,13 +5,13 @@ import { useNavigation } from "@react-navigation/native";
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Platform } from "react-native";
-import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
+import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import {
   BaseNavigationComposite,
   RootNavigationComposite,
   StackNavigatorNavigation,
-} from "../../../components/RootNavigator/types/helpers";
-import { ScreenName } from "../../../const";
+} from "~/components/RootNavigator/types/helpers";
+import { ScreenName } from "~/const";
 import { DeviceCards } from "./Cards/DeviceCard";
 import OnboardingView from "./OnboardingView";
 import { NotCompatibleModal } from "./setupDevice/drawers/NotCompatibleModal";

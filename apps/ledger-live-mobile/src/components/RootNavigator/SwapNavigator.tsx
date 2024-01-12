@@ -9,13 +9,13 @@ import {
   SelectFees,
   PendingOperation,
   OperationDetails,
-} from "../../screens/Swap/index";
+} from "~/screens/Swap/index";
 import { StackNavigatorProps } from "./types/helpers";
-import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
+import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
-import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
+import { useNoNanoBuyNanoWallScreenOptions } from "~/context/NoNanoBuyNanoWall";
 import { SwapNavigatorParamList } from "./types/SwapNavigator";
-import { ScreenName, NavigatorName } from "../../const";
+import { ScreenName, NavigatorName } from "~/const";
 import SwapFormNavigator from "./SwapFormNavigator";
 import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
 

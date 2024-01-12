@@ -32,15 +32,14 @@ import {
   usePolkadotPreloadData,
   useSortedValidators,
 } from "@ledgerhq/live-common/families/polkadot/react";
-import { accountScreenSelector } from "../../../reducers/accounts";
-import { localeSelector } from "../../../reducers/settings";
-import { NavigatorName, ScreenName } from "../../../const";
-import Button from "../../../components/Button";
-import SelectValidatorSearchBox from "../../tron/VoteFlow/01-SelectValidator/SearchBox";
-import LText from "../../../components/LText";
-import Alert from "../../../components/Alert";
-import TranslatedError from "../../../components/TranslatedError";
-import Check from "../../../icons/Check";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { NavigatorName, ScreenName } from "~/const";
+import Button from "~/components/Button";
+import SelectValidatorSearchBox from "~/families/tron/VoteFlow/01-SelectValidator/SearchBox";
+import LText from "~/components/LText";
+import Alert from "~/components/Alert";
+import TranslatedError from "~/components/TranslatedError";
+import Check from "~/icons/Check";
 import { getFirstStatusError } from "../../helpers";
 import FlowErrorBottomModal from "../components/FlowErrorBottomModal";
 import NominationDrawer from "../components/NominationDrawer";
@@ -51,10 +50,11 @@ import type {
   BaseComposite,
   StackNavigatorNavigation,
   StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
+} from "~/components/RootNavigator/types/helpers";
 import type { PolkadotNominateFlowParamList } from "./types";
-import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import FirstLetterIcon from "~/components/FirstLetterIcon";
+import { useSettings } from "~/hooks";
 
 type Props = BaseComposite<
   StackNavigatorProps<PolkadotNominateFlowParamList, ScreenName.PolkadotNominateSelectValidators>
@@ -64,7 +64,7 @@ function NominateSelectValidator({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
-  const locale = useSelector(localeSelector);
+  const { locale } = useSettings();
   invariant(account, "account required");
   const mainAccount = getMainAccount(account, parentAccount) as PolkadotAccount;
   const bridge = getAccountBridge(account, parentAccount);
@@ -121,7 +121,7 @@ function NominateSelectValidator({ navigation, route }: Props) {
     alwaysShowSign: false,
     showCode: true,
     discreet: false,
-    locale,
+    locale: locale,
   });
   const maxNominatorRewardedPerValidator = staking?.maxNominatorRewardedPerValidator || 300;
   const sorted = useSortedValidators(searchQuery, polkadotValidators, nominations);

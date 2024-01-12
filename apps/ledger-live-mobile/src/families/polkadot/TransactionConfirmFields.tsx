@@ -7,12 +7,12 @@ import type { PolkadotValidator, Transaction } from "@ledgerhq/live-common/famil
 import { usePolkadotPreloadData } from "@ledgerhq/live-common/families/polkadot/react";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
 import { useTheme } from "@react-navigation/native";
-import LText from "../../components/LText";
-import { DataRow, HeaderRow } from "../../components/ValidateOnDeviceDataRow";
-import InfoIcon from "../../icons/Info";
+import LText from "~/components/LText";
+import { DataRow, HeaderRow } from "~/components/ValidateOnDeviceDataRow";
+import InfoIcon from "~/icons/Info";
 import NominationInfo from "./components/NominationInfo";
 import PolkadotFeeRow from "./SendRowsFee";
-import Alert from "../../components/Alert";
+import Alert from "~/components/Alert";
 
 type FieldProps = {
   account: Account;

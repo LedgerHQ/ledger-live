@@ -15,18 +15,18 @@ import type { Account, AccountLike, FeeStrategy } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import BigNumber from "bignumber.js";
 import LText from "./LText";
-import SummaryRow from "../screens/SendFunds/SummaryRow";
+import SummaryRow from "~/screens/SendFunds/SummaryRow";
 import CounterValue from "./CounterValue";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import SectionSeparator from "./SectionSeparator";
 import QueuedDrawer from "./QueuedDrawer";
-import Info from "../icons/Info";
-import TachometerSlow from "../icons/TachometerSlow";
-import TachometerMedium from "../icons/TachometerMedium";
-import TachometerFast from "../icons/TachometerFast";
+import Info from "~/icons/Info";
+import TachometerSlow from "~/icons/TachometerSlow";
+import TachometerMedium from "~/icons/TachometerMedium";
+import TachometerFast from "~/icons/TachometerFast";
 import NetworkFeeInfo from "./NetworkFeeInfo";
-import { useAnalytics } from "../analytics";
-import { sharedSwapTracking } from "../screens/Swap/utils";
+import { useAnalytics } from "~/analytics";
+import { sharedSwapTracking } from "~/screens/Swap/utils";
 
 export type SelectFeeStrategy = FeeStrategy & {
   userGasLimit?: BigNumber;

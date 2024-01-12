@@ -10,17 +10,17 @@ import NftListItem from "./NftListItem";
 import { AddNewItem } from "./AddNewItemList";
 import CollapsibleHeaderFlatList from "../../WalletTab/CollapsibleHeaderFlatList";
 import globalSyncRefreshControl from "../../globalSyncRefreshControl";
-import { TrackScreen, track } from "../../../analytics";
+import { TrackScreen, track } from "~/analytics";
 import { useNftList } from "./NftList.hook";
 import BackgroundGradient from "../../TabBar/BackgroundGradient";
 import NftFilterDrawer from "./NftFilterDrawer";
 import EmptyState from "./EmptyState";
 import ScrollToTopButton from "./ScrollToTopButton";
 import NftFilterChip from "./NftFilterChip";
-import FiltersIcon from "../../../icons/Filters";
-import { ScreenName } from "../../../const";
+import FiltersIcon from "~/icons/Filters";
+import { ScreenName } from "~/const";
 import WalletTabSafeAreaView from "../../WalletTab/WalletTabSafeAreaView";
-import { withDiscreetMode } from "../../../context/DiscreetModeContext";
+import { withDiscreetMode } from "~/context/DiscreetModeContext";
 
 const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl<FlatListProps<ProtoNFT>>(
   CollapsibleHeaderFlatList,
