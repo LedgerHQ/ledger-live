@@ -51,8 +51,8 @@ const DeviceCancel = ({
   const cancelLabel = isRestoreStepRefusedOnDevice
     ? t("manager.firmware.skipRestore")
     : isDeviceLockedError || isUserRefusedFirmwareUpdate
-      ? t("manager.firmware.cancelUpdate")
-      : t("common.close");
+    ? t("manager.firmware.cancelUpdate")
+    : t("common.close");
   const continueLabel = isRestoreStepRefusedOnDevice
     ? t("common.retry")
     : t("manager.firmware.restartUpdate");
