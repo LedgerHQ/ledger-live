@@ -13,6 +13,7 @@ export async function getEstimatedFees(account: Account): Promise<BigNumber> {
       {
         from: account.currency,
         to: getFiatCurrencyByTicker("USD"),
+        startDate: new Date(),
       },
     ]);
 

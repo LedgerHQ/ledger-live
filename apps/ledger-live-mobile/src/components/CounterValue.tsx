@@ -82,6 +82,7 @@ export default function CounterValue({
       addExtraSessionTrackingPair({
         from: currency,
         to: counterValueCurrency,
+        startDate: new Date(),
       });
       t = setTimeout(cvPolling.poll, 2000); // poll after 2s to ensure debounced CV userSettings are effective after this update
     }

@@ -1,5 +1,5 @@
 import type { Module, Pair } from "./types";
-import { getCryptoCurrencyById } from "../../currencies";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
 const ETH = getCryptoCurrencyById("ethereum");
 

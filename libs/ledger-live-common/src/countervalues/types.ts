@@ -32,7 +32,7 @@ export type RateMapRaw = Record<string, number>;
 export type TrackingPair = {
   from: Currency;
   to: Currency;
-  startDate?: Date | null | undefined;
+  startDate: Date;
 };
 export type CounterValuesAPI = {
   fetchHistorical: (

@@ -1,14 +1,21 @@
 import "../__tests__/test-helpers/setup";
-import { initialState, loadCountervalues, calculate } from "./logic";
+import {
+  initialState,
+  loadCountervalues,
+  calculate,
+  exportCountervalues,
+  importCountervalues,
+} from "./logic";
+import { findCurrencyByTicker } from "../currencies";
 import {
   getFiatCurrencyByTicker,
   getCryptoCurrencyById,
   getTokenById,
-  findCurrencyByTicker,
-} from "../currencies";
+} from "@ledgerhq/cryptoassets";
 import { getBTCValues } from "../countervalues/mock";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import Prando from "prando";
+import api from "./api";
 
 const ethereum = getCryptoCurrencyById("ethereum");
 const bitcoin = getCryptoCurrencyById("bitcoin");
@@ -161,6 +168,28 @@ describe("WETH rules", () => {
     expect(value).toBeGreaterThan(0);
   });
 
+  test("ethereum WETH have reversed countervalues", async () => {
+    const weth = getTokenById("ethereum/erc20/weth");
+    const state = await loadCountervalues(initialState, {
+      trackingPairs: [
+        {
+          from: bitcoin,
+          to: ethereum,
+          startDate: new Date(now - 10 * 24 * 60 * 60 * 1000),
+        },
+      ],
+      autofillGaps: true,
+      disableAutoRecoverErrors: true,
+    });
+    const value = calculate(state, {
+      disableRounding: true,
+      from: bitcoin,
+      to: weth,
+      value: 1000000,
+    });
+    expect(value).toBeGreaterThan(0);
+  });
+
   test("ethereum goerli WETH doesn't countervalues", async () => {
     const weth = getTokenById("ethereum_goerli/erc20/wrapped_ether");
     const state = await loadCountervalues(initialState, {
@@ -182,4 +211,32 @@ describe("WETH rules", () => {
     });
     expect(value).toBe(undefined);
   });
+});
+
+test("fetchIdsSortedByMarketcap", async () => {
+  const ids = await api.fetchIdsSortedByMarketcap();
+  expect(ids).toContain("bitcoin");
+});
+
+test("export and import it back", async () => {
+  const settings = {
+    trackingPairs: [
+      {
+        from: bitcoin,
+        to: usd,
+        startDate: new Date(now - 10 * 24 * 60 * 60 * 1000),
+      },
+      {
+        from: ethereum,
+        to: usd,
+        startDate: new Date(now - 100 * 24 * 60 * 60 * 1000),
+      },
+    ],
+    autofillGaps: true,
+    disableAutoRecoverErrors: true,
+  };
+  const state = await loadCountervalues(initialState, settings);
+  const exported = exportCountervalues(state);
+  const imported = importCountervalues(exported, settings);
+  expect(imported).toEqual(state);
 });
