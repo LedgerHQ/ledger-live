@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { Linking } from "react-native";
 import { Flex, IconsLegacy, ScrollListContainer, Box, Text } from "@ledgerhq/native-ui";
-import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { urls } from "~/utils/urls";
 import Button from "~/components/wrappedUi/Button";
 

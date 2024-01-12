@@ -4,7 +4,7 @@ import {
   createMaterialTopTabNavigator,
   MaterialTopTabBarProps,
 } from "@react-navigation/material-top-tabs";
-import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { ExploreTabNavigatorStackParamList } from "./types/ExploreTabNavigator";
 import { ScreenName } from "~/const/navigation";
 import NewsfeedPage from "~/screens/Newsfeed";

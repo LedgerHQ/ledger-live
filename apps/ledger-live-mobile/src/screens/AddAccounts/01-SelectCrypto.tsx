@@ -14,7 +14,7 @@ import {
 } from "@ledgerhq/live-common/currencies/index";
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";
 import { useTheme } from "@react-navigation/native";
-import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { ScreenName } from "~/const";
 import { TrackScreen } from "~/analytics";

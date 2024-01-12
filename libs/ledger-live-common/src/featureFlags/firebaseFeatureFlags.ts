@@ -3,7 +3,7 @@ import { snakeCase } from "lodash";
 import semver from "semver";
 import { Feature, FeatureId } from "@ledgerhq/types-live";
 import { getEnv } from "@ledgerhq/live-env";
-import { LiveConfig } from "../LiveConfig";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 
 export type FirebaseFeatureFlagsProviderProps = PropsWithChildren<unknown>;
 export const formatToFirebaseFeatureId = (id: string) => `feature_${snakeCase(id)}`;

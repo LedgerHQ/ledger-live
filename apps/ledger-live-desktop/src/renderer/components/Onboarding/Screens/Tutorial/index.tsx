@@ -1,4 +1,4 @@
-import { useFeature, isRecoverDisplayed } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature, isRecoverDisplayed } from "@ledgerhq/live-common/featureFlags/index";
 import {
   useAlreadySeededDevicePath,
   useRestore24Path,

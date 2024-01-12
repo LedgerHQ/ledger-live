@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef } from "react";
 import { useSelector } from "react-redux";
 import { accountsSelector } from "~/reducers/accounts";
 import getOrCreateUser from "../user";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import {
   updateTransactionsAlertsAddresses,
   deleteUserChainwatchAccounts,

@@ -1,10 +1,10 @@
 import { renderHook } from "@testing-library/react-hooks";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "../../../../featureFlags";
 import { useIsSwapLiveApp } from "./useIsSwapLiveApp";
 import { cryptocurrenciesById } from "@ledgerhq/cryptoassets/currencies";
 
 // Mock dependencies.
-jest.mock("@ledgerhq/live-config/featureFlags/index");
+jest.mock("../../../../featureFlags");
 
 const useMockFeature = useFeature as jest.Mock;
 
