@@ -27,11 +27,12 @@ import { useTranslation } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
 import { log } from "@ledgerhq/logs";
-import { useDynamicUrl } from "~/renderer/terms";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { FinalFirmware } from "@ledgerhq/types-live";
 import { useHistory } from "react-router-dom";
 import { NetworkDown } from "@ledgerhq/errors";
 import { NetworkStatus, useNetworkStatus } from "~/renderer/hooks/useNetworkStatus";
+import { urls } from "~/config/urls";
 
 export type Props = {
   onComplete: () => void;
@@ -76,7 +77,7 @@ const EarlySecurityChecks = ({
   isDeviceConnected,
 }: Props) => {
   const { t } = useTranslation();
-  const whySecurityChecksUrl = useDynamicUrl("genuineCheck");
+  const whySecurityChecksUrl = useLocalizedUrl(urls.genuineCheck);
 
   const optimisticGenuineCheck = !isInitialRunOfSecurityChecks;
   const [genuineCheckStatus, setGenuineCheckStatus] = useState<SoftwareCheckStatus>(
@@ -157,7 +158,6 @@ const EarlySecurityChecks = ({
       deviceInfo,
       device,
       deviceModelId: deviceModelId,
-      setFirmwareUpdateOpened: () => null, // we don't need to keep the state
       setFirmwareUpdateCompleted: () => null,
 
       finalStepSuccessDescription: t(

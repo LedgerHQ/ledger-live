@@ -38,7 +38,7 @@ import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { SWAP_RATES_TIMEOUT } from "../../config";
 import { OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
 import { v4 } from "uuid";
-import SwapWebView, { SWAP_WEB_MANIFEST_ID, SwapWebProps } from "./SwapWebView";
+import SwapWebView, { SwapWebProps } from "./SwapWebView";
 
 const DAPP_PROVIDERS = ["paraswap", "oneinch", "moonpay"];
 
@@ -102,7 +102,6 @@ const SwapForm = () => {
 
   const isSwapLiveAppEnabled = useIsSwapLiveApp({
     currencyFrom: swapTransaction.swap.from.currency,
-    swapWebManifestId: SWAP_WEB_MANIFEST_ID,
   });
 
   // @TODO: Try to check if we can directly have the right state from `useSwapTransaction`

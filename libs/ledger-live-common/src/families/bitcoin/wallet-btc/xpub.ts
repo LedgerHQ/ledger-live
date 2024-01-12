@@ -32,6 +32,13 @@ class Xpub {
   // need to be bigger than the number of tx from the same address that can be in the same block
   txsSyncArraySize = 1000;
 
+  // the height of the block during the previous synchronization. We do not need to repeatedly synchronize blocks lower than this height.
+  // -1 means that this account has not been synchronized
+  syncedBlockHeight = -1;
+
+  // the height of the current block in blockchain
+  currentBlockHeight: number | undefined = undefined;
+
   constructor({
     storage,
     explorer,
@@ -112,6 +119,9 @@ class Xpub {
       if (highestBlockFromExplorer?.hash === highestBlockFromStorage.hash) {
         needReorg = false;
       }
+    }
+    if (needReorg) {
+      this.syncedBlockHeight = -1;
     }
     await Promise.all([
       this.syncAccount(0, needReorg), // for receive addresses
@@ -311,16 +321,18 @@ class Xpub {
     let txs: TX[] = [];
     let inserted = 0;
     do {
-      const lastTxBlockheight =
+      let lastTxBlockheight =
         this.storage.getLastConfirmedTxBlock({
           account,
           index,
-        })?.height || 0;
+        })?.height || -1;
+      lastTxBlockheight = Math.max(lastTxBlockheight, this.syncedBlockHeight);
       if (pendingTxs.length > 0) {
         txs = await this.explorer.getTxsSinceBlockheight(
           this.txsSyncArraySize,
           { address, account, index },
-          lastTxBlockheight,
+          lastTxBlockheight + 1,
+          this.currentBlockHeight,
           false,
         );
         inserted += this.storage.appendTxs(txs); // insert not pending tx
@@ -330,12 +342,14 @@ class Xpub {
             this.txsSyncArraySize,
             { address, account, index },
             0,
+            this.currentBlockHeight,
             true,
           ),
           this.explorer.getTxsSinceBlockheight(
             this.txsSyncArraySize,
             { address, account, index },
-            lastTxBlockheight,
+            lastTxBlockheight + 1,
+            this.currentBlockHeight,
             false,
           ),
         ]);

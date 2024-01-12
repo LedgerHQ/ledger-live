@@ -126,6 +126,8 @@ setSupportedCurrencies([
   "lukso",
   "aptos",
   "aptos_testnet",
+  "linea",
+  "linea_goerli",
 ]);
 
 if (Config.BLE_LOG_LEVEL) BluetoothTransport.setLogLevel(Config.BLE_LOG_LEVEL);

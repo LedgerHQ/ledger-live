@@ -1,3 +1,9 @@
+# 2.73.1
+
+### 🐛 Fix
+
+We’ve resolved the bug that caused an error when staking or unstaking the entire Solana (SOL) balance.
+
 # 2.73.0
 
 ### 🌷 Improvements

@@ -20,6 +20,10 @@ export const enum ExchangeTypes {
 }
 const ExchangeTypeNg = [ExchangeTypes.SwapNg, ExchangeTypes.SellNg, ExchangeTypes.FundNg];
 
+export function isExchangeTypeNg(type: ExchangeTypes): boolean {
+  return ExchangeTypeNg.includes(type);
+}
+
 const START_NEW_TRANSACTION_COMMAND = 0x03;
 const SET_PARTNER_KEY_COMMAND = 0x04;
 const CHECK_PARTNER_COMMAND = 0x05;
@@ -340,6 +344,6 @@ export default class Exchange {
   }
 
   private isExchangeTypeNg(): boolean {
-    return ExchangeTypeNg.includes(this.transactionType);
+    return isExchangeTypeNg(this.transactionType);
   }
 }

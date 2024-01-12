@@ -38,8 +38,9 @@ export default function StakingStarted({ navigation, route }: Props) {
     <View style={[styles.root, { backgroundColor: colors.background }]}>
       <NavigationScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
         <TrackScreen
-          category="StakingFlow"
-          name="Started"
+          category="Delegation Flow"
+          name="Step Starter"
+          screen="Started"
           flow="stake"
           action="staking"
           currency="near"

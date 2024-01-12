@@ -64,6 +64,8 @@ test("importAccounts with a set of real data", async () => {
       subAccounts: [],
       tronResources: {
         frozen: {},
+        unFrozen: {},
+        legacyFrozen: {},
         delegatedFrozen: {},
         votes: [],
         tronPower: 0,

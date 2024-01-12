@@ -540,8 +540,8 @@ importers:
         specifier: ^14.5.1
         version: 14.5.1(@testing-library/dom@9.3.3)
       '@types/chart.js':
-        specifier: 2.9.37
-        version: 2.9.37
+        specifier: 2.9.41
+        version: 2.9.41
       '@types/color':
         specifier: ^3.0.3
         version: 3.0.3
@@ -564,8 +564,8 @@ importers:
         specifier: ^1.2.6
         version: 1.2.6(@types/react@18.2.28)
       '@types/react-motion':
-        specifier: ^0.0.34
-        version: 0.0.34(@types/react@18.2.28)
+        specifier: ^0.0.40
+        version: 0.0.40(@types/react@18.2.28)
       '@types/react-redux':
         specifier: ^7.1.24
         version: 7.1.24(@types/react@18.2.28)
@@ -23624,8 +23624,8 @@ packages:
       cbor: 8.1.0
     dev: true
 
-  /@types/chart.js@2.9.37:
-    resolution: {integrity: sha512-9bosRfHhkXxKYfrw94EmyDQcdjMaQPkU1fH2tDxu8DWXxf1mjzWQAV4laJF51ZbC2ycYwNDvIm1rGez8Bug0vg==}
+  /@types/chart.js@2.9.41:
+    resolution: {integrity: sha512-3dvkDvueckY83UyUXtJMalYoH6faOLkWQoaTlJgB4Djde3oORmNP0Jw85HtzTuXyliUHcdp704s0mZFQKio/KQ==}
     dependencies:
       moment: 2.29.4
     dev: true
@@ -24275,8 +24275,8 @@ packages:
       '@types/react': 18.2.28
     dev: true
 
-  /@types/react-motion@0.0.34(@types/react@18.2.28):
-    resolution: {integrity: sha512-/rFI22Vg4Xzb47hXtS06WkzUGRu+Vb3yDleuxiqzGj0JbXYXQUCgwSa2ZU12K7ubKi4C8xsdIN3xt4Z4fjSdPw==}
+  /@types/react-motion@0.0.40(@types/react@18.2.28):
+    resolution: {integrity: sha512-Bp6i9WTvW6QFN2E/XQPm8HPGMx1SVJ7H1DPsvptwWWh1XBymDZ7N7SK4nSZT/4tP4bTGvp1KHSAsswWZKO/WHA==}
     peerDependencies:
       '@types/react': '*'
     peerDependenciesMeta:
@@ -34577,6 +34577,7 @@ packages:
       is-hex-prefixed: 1.0.0
       strip-hex-prefix: 1.0.0
     dev: false
+    bundledDependencies: false
 
   /ev-emitter@1.1.1:
     resolution: {integrity: sha512-ipiDYhdQSCZ4hSbX4rMW+XzNKMD1prg/sTvoVmSLkuQ1MVlwjJQQA+sW8tMYR3BLUr9KjodFV4pvzunvRhd33Q==}

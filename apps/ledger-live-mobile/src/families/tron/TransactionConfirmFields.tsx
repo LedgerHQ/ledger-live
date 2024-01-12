@@ -33,6 +33,9 @@ const Warning = ({ transaction }: { transaction: Transaction }) => {
     case "claimReward":
     case "unfreeze":
     case "freeze":
+    case "legacyUnfreeze":
+    case "unDelegateResource":
+    case "withdrawExpireUnfreeze":
       return (
         <DataRow>
           <Info size={22} color={colors.live} />
