@@ -116,6 +116,8 @@ export type CurrencyFeatures = {
   currencyCasper: DefaultFeature;
   currencyNeonEvm: DefaultFeature;
   currencyLukso: DefaultFeature;
+  currencyLinea: DefaultFeature;
+  currencyLineaGoerli: DefaultFeature;
 };
 
 /**

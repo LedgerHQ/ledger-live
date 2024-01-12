@@ -43,7 +43,7 @@ const stringArrayParser = (v: unknown): string[] | undefined => {
 
 const envDefinitions = {
   ADDRESS_POISONING_FAMILIES: {
-    def: "ethereum,evm,tron",
+    def: "evm,tron",
     parser: stringParser,
     desc: "List of families impacted by the address poisoning attack",
   },
@@ -189,8 +189,13 @@ const envDefinitions = {
   },
   SOLANA_VALIDATORS_APP_BASE_URL: {
     parser: stringParser,
-    def: "https://validators-solana.coin.ledger.com/api/v1/validators",
+    def: "https://earn.api.live.ledger.com/v0/network/solana/validator-details",
     desc: "base url for validators.app validator list",
+  },
+  SOLANA_TESTNET_VALIDATORS_APP_BASE_URL: {
+    parser: stringParser,
+    def: "https://validators-solana.coin.ledger.com/api/v1/validators",
+    desc: "base url for testnet validators.app validator list",
   },
   SOLANA_TX_CONFIRMATION_TIMEOUT: {
     def: 100 * 1000,
