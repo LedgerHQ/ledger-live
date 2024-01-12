@@ -64,7 +64,7 @@ const PickValidator = (props: PickValidatorPropsType) => {
         name="SelectValidator"
         flow="stake"
         action="delegate"
-        currency="egld"
+        currency="MultiversX"
       />
 
       <Box mx={6} mt={3} mb={4}>

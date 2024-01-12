@@ -417,6 +417,10 @@ export const DEFAULT_FEATURES: Features = {
     enabled: false,
   },
 
+  ptxSwapLiveAppDemoZero: {
+    enabled: false,
+  },
+
   ptxSwapMoonpayProvider: DEFAULT_FEATURE,
 };
 
