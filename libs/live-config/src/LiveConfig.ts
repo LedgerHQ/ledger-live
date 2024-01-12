@@ -56,4 +56,11 @@ export class LiveConfig {
     }
     return LiveConfig.instance.provider.getValueByKey(key, LiveConfig.instance.config[key]);
   }
+
+  static getDefaultValueByKey(key: string) {
+    if (Object.keys(LiveConfig.instance.config).length === 0) {
+      throw new Error("Config not set");
+    }
+    return LiveConfig.instance.config[key]?.default;
+  }
 }

@@ -4,8 +4,9 @@ import * as logic from "./logic";
 import type { CosmosAccount, CosmosValidatorItem } from "./types";
 import data from "./preloadedData.mock";
 import cryptoFactory from "./chain/chain";
-import defaultConfig from "../../config/defaultConfig";
 import { BigNumber } from "bignumber.js";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import liveConfig from "../../config/sharedConfig";
 
 jest.mock("./js-prepareTransaction", () => ({
   calculateFees: jest.fn(() => Promise.resolve({})),
@@ -13,7 +14,8 @@ jest.mock("./js-prepareTransaction", () => ({
 
 jest.mock("./chain/chain");
 
-const LEDGER_VALIDATOR_ADDRESS = defaultConfig.config.cosmos.cosmos.ledgerValidator;
+LiveConfig.setConfig(liveConfig);
+const LEDGER_VALIDATOR_ADDRESS = LiveConfig.getValueByKey("config_currency_cosmos").ledgerValidator;
 const ledgerValidator: CosmosValidatorItem | undefined = data.validators.find(
   x => x.validatorAddress === LEDGER_VALIDATOR_ADDRESS,
 );

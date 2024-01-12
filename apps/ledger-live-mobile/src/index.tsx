@@ -14,7 +14,7 @@ import { useCountervaluesExport } from "@ledgerhq/live-common/countervalues/reac
 import { pairId } from "@ledgerhq/live-common/countervalues/helpers";
 import { NftMetadataProvider } from "@ledgerhq/live-common/nft/index";
 import { ToastProvider } from "@ledgerhq/live-common/notifications/ToastProvider/index";
-
+import "./config/configInit";
 import { isEqual } from "lodash";
 import { postOnboardingSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import Config from "react-native-config";
@@ -86,7 +86,6 @@ import {
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import useAccountsWithFundsListener from "@ledgerhq/live-common/hooks/useAccountsWithFundsListener";
 import { updateIdentify } from "./analytics";
-import "./config/configInit";
 import { StorylyProvider } from "./components/StorylyStories/StorylyProvider";
 
 if (Config.DISABLE_YELLOW_BOX) {
