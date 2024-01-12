@@ -6,7 +6,7 @@ import manager from "@ledgerhq/live-common/manager/index";
 import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import UpdateModal, { Props as UpdateModalProps } from "~/renderer/modals/UpdateFirmwareModal";
-import { StepId } from "~/renderer/modals/UpdateFirmwareModal/helpers/types";
+import { StepId } from "~/renderer/modals/UpdateFirmwareModal/types";
 import Text from "~/renderer/components/Text";
 import IconInfoCircle from "~/renderer/icons/InfoCircle";
 import Box from "~/renderer/components/Box";

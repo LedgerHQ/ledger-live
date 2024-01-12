@@ -13,7 +13,7 @@ import DeviceCancel from "./errors/DeviceError";
 import { DisconnectedDevice, DisconnectedDeviceDuringOperation } from "@ledgerhq/errors";
 import SideDrawerHeader from "~/renderer/components/SideDrawerHeader";
 import { createFirmwareUpdateSteps } from "./helpers/createFirmwareUpdateSteps";
-import { StepId, STEPS } from "./helpers/types";
+import { StepId, STEPS } from "./types";
 
 type MaybeError = Error | undefined | null;
 

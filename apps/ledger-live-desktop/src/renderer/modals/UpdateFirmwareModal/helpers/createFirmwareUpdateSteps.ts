@@ -7,7 +7,7 @@ import StepFlashMcu from "../steps/02-step-flash-mcu";
 import StepRestore from "../steps/02-step-restore";
 import StepUpdating from "../steps/02-step-updating";
 import StepConfirmation, { StepConfirmFooter } from "../steps/03-step-confirmation";
-import { Step, StepId, STEPS } from "./types";
+import { Step, StepId, STEPS } from "../types";
 
 export const createFirmwareUpdateSteps = ({
   firmware,
@@ -16,7 +16,7 @@ export const createFirmwareUpdateSteps = ({
   deviceModelId,
   stateStepId,
 }: {
-  firmware: FirmwareUpdateContext;
+  firmware?: FirmwareUpdateContext;
   withFinal: boolean;
   withResetStep: boolean;
   deviceModelId: DeviceModelId;
