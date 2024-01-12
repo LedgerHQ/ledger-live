@@ -24,6 +24,7 @@ const Grid = ContentLayoutBuilder<Props>(({ items, styles: _styles = defaultStyl
     <Flex
       style={{
         marginHorizontal: "auto",
+        justifyContent: "center",
         width: "100%",
         flexDirection: "row",
         flexWrap: "wrap",
