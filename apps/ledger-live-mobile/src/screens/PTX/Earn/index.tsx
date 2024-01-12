@@ -13,13 +13,10 @@ import { WebPTXPlayer } from "~/components/WebPTXPlayer";
 import { EarnLiveAppNavigatorParamList } from "~/components/RootNavigator/types/EarnLiveAppNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
-import {
-  counterValueCurrencySelector,
-  discreetModeSelector,
-  languageSelector,
-} from "~/reducers/settings";
+import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
 import { useSelector } from "react-redux";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import { useSettings } from "~/hooks";
 
 export type Props = StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenName.Earn>;
 
@@ -30,7 +27,7 @@ export const EarnScreen = memo(Earn);
 
 function Earn({ route }: Props) {
   const { theme } = useTheme();
-  const language = useSelector(languageSelector);
+  const { language } = useSettings();
   const { ticker: currencyTicker } = useSelector(counterValueCurrencySelector);
   const discreet = useSelector(discreetModeSelector);
   const { platform: appId, ...params } = route.params || {};

@@ -41,7 +41,7 @@ describe("Add Bitcoin Accounts", () => {
   });
 
   it("displays Bitcoin accounts page summary", async () => {
-    await accountPage.waitForAccountAssetsToLoad("Bitcoin");
+    await accountPage.waitForAccountPageToLoad("Bitcoin");
     await waitForElementByText("1.19576\u00a0BTC");
   });
 });

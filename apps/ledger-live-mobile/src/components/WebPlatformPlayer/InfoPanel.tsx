@@ -1,15 +1,14 @@
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
-import { useSelector } from "react-redux";
 import { useTheme } from "@react-navigation/native";
 import { StyleSheet, View, TouchableOpacity, Linking, ScrollView } from "react-native";
 import { translateContent } from "@ledgerhq/live-common/platform/logic";
 import type { TranslatableString } from "@ledgerhq/live-common/platform/types";
-import { languageSelector } from "~/reducers/settings";
 import ExternalLinkIcon from "~/icons/ExternalLink";
 import AppIcon from "~/screens/Platform/AppIcon";
 import QueuedDrawer from "../QueuedDrawer";
 import LText from "../LText";
+import { useSettings } from "~/hooks";
 
 type Props = {
   name: string;
@@ -22,7 +21,7 @@ type Props = {
 };
 
 export function InfoPanel({ name, icon, description, url, uri, isOpened, setIsOpened }: Props) {
-  const settingsLocale = useSelector(languageSelector);
+  const { language } = useSettings();
   const { colors } = useTheme();
   const onClose = useCallback(() => {
     setIsOpened(false);
@@ -54,7 +53,7 @@ export function InfoPanel({ name, icon, description, url, uri, isOpened, setIsOp
             color: colors.text,
           }}
         >
-          {translateContent(description, settingsLocale)}
+          {translateContent(description, language)}
         </LText>
         {url ? (
           <>

@@ -19,6 +19,8 @@ const getMainActions = ({
   parentRoute: RouteProp<ParamListBase, ScreenName>;
 }): ActionButtonEvent[] => {
   const delegationDisabled = !canDelegate(account);
+  const startWithValidator =
+    account.cosmosResources && account.cosmosResources?.delegations.length > 0;
   const navigationParams: NavigationParamsType = delegationDisabled
     ? [
         NavigatorName.NoFundsFlow,
@@ -33,15 +35,16 @@ const getMainActions = ({
     : [
         NavigatorName.CosmosDelegationFlow,
         {
-          screen:
-            account.cosmosResources && account.cosmosResources?.delegations.length > 0
-              ? ScreenName.CosmosDelegationValidator
-              : ScreenName.CosmosDelegationStarted,
+          screen: startWithValidator
+            ? ScreenName.CosmosDelegationValidator
+            : ScreenName.CosmosDelegationStarted,
           params: {
             source: parentRoute,
+            skipStartedStep: startWithValidator,
           },
         },
       ];
+
   return [
     {
       id: "stake",

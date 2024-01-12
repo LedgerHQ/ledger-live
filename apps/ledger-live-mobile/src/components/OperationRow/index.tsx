@@ -236,7 +236,13 @@ function OperationRow({
           </BodyRightContainer>
         ) : amount.isZero() ? null : (
           <BodyRightContainer>
-            <Text numberOfLines={1} color={valueColor} variant="body" fontWeight="semiBold">
+            <Text
+              numberOfLines={1}
+              color={valueColor}
+              variant="body"
+              fontWeight="semiBold"
+              testID="portfolio-operation-amount"
+            >
               <CurrencyUnitValue showCode unit={unit} value={amount} alwaysShowSign />
             </Text>
             <Text variant="paragraph" fontWeight="medium" color={colors.neutral.c70}>

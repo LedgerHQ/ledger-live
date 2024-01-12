@@ -66,7 +66,7 @@ const StepClaimRewards = (props: StepProps) => {
         name="Step 1"
         flow="stake"
         action="claim"
-        currency="egld"
+        currency="MultiversX"
       />
       {warning && !error ? <ErrorBanner error={warning} warning={true} /> : null}
       {error ? <ErrorBanner error={error} /> : null}

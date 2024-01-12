@@ -15,13 +15,18 @@ export default class OnboardingSteps {
   getStartedButtonId = "onboarding-getStarted-button";
   devicePairedContinueButtonId = "onboarding-paired-continue";
   exploreWithoutDeviceButtonId = "discoverLive-exploreWithoutADevice";
+  readyToScanButtonID = "onboarding-scan-button";
+  scanAndImportAccountsPageID = "onboarding-import-accounts-title";
   discoverLiveTitle = (index: number) => `onboarding-discoverLive-${index}-title`;
   onboardingGetStartedButton = () => getElementById(this.getStartedButtonId);
   accessWalletButton = () => getElementById("onboarding-accessWallet");
   noLedgerYetButton = () => getElementById("onboarding-noLedgerYet");
   exploreAppButton = () => getElementById("onboarding-noLedgerYetModal-explore");
+  buyLedgerButton = () => getElementById("onboarding-noLedgerYetModal-buy");
   exploreWithoutDeviceButton = () => getElementById(this.exploreWithoutDeviceButtonId);
   connectLedgerButton = () => getElementById("Existing Wallet | Connect");
+  syncWithLedgerLiveDesktop = () => getElementById("Existing Wallet | Sync");
+  readyToScanButton = () => getElementById(this.readyToScanButtonID);
   continueButton = () => getElementById(this.devicePairedContinueButtonId);
   pairDeviceButton = () => getElementById("pair-device");
   pairNanoButton = () => getElementById("Onboarding-PairNewNano");
@@ -82,6 +87,10 @@ export default class OnboardingSteps {
     await tapById(this.exploreWithoutDeviceButtonId);
   }
 
+  async chooseToBuyLedger() {
+    await tapByElement(this.buyLedgerButton());
+  }
+
   // Accessing existing Wallet
   async chooseToAccessYourWallet() {
     await tapByElement(this.accessWalletButton());
@@ -89,6 +98,18 @@ export default class OnboardingSteps {
 
   async chooseToConnectYourLedger() {
     await tapByElement(this.connectLedgerButton());
+  }
+
+  async chooseToSyncWithLedgerLiveDesktop() {
+    await tapByElement(this.syncWithLedgerLiveDesktop());
+  }
+
+  async goesThroughLedgerLiveDesktopScanning() {
+    await tapByElement(this.readyToScanButton());
+  }
+
+  async waitForScanningPage() {
+    await waitForElementById(this.scanAndImportAccountsPageID);
   }
 
   // Setup new Ledger

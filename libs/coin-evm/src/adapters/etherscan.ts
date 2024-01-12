@@ -9,13 +9,14 @@ import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
 import { decodeAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { encodeOperationId, encodeSubOperationId } from "@ledgerhq/coin-framework/operation";
+import { safeEncodeEIP55 } from "../logic";
 import {
   EtherscanOperation,
   EtherscanERC20Event,
   EtherscanERC721Event,
   EtherscanERC1155Event,
+  EtherscanInternalTransaction,
 } from "../types";
-import { safeEncodeEIP55 } from "../logic";
 
 /**
  * Adapter to convert an Etherscan operation into Ledger Live Operations.
@@ -50,7 +51,7 @@ export const etherscanOperationToOperations = (
       ({
         id: encodeOperationId(accountId, etherscanOp.hash, type),
         hash: etherscanOp.hash,
-        type: type,
+        type,
         value: type === "OUT" || type === "FEES" ? value.plus(fee) : hasFailed ? fee : value,
         fee,
         senders: [from],
@@ -62,6 +63,7 @@ export const etherscanOperationToOperations = (
         date: new Date(parseInt(etherscanOp.timeStamp, 10) * 1000),
         subOperations: [],
         nftOperations: [],
+        internalOperations: [],
         hasFailed,
         extra: {},
       }) as Operation,
@@ -103,7 +105,7 @@ export const etherscanERC20EventToOperations = (
       ({
         id: encodeSubOperationId(tokenAccountId, event.hash, type, index),
         hash: event.hash,
-        type: type,
+        type,
         value,
         fee,
         senders: [from],
@@ -153,7 +155,7 @@ export const etherscanERC721EventToOperations = (
       ({
         id: encodeERC721OperationId(nftId, event.hash, type, index),
         hash: event.hash,
-        type: type,
+        type,
         fee,
         senders: [from],
         recipients: [to],
@@ -203,7 +205,7 @@ export const etherscanERC1155EventToOperations = (
       ({
         id: encodeERC1155OperationId(nftId, event.hash, type, index),
         hash: event.hash,
-        type: type,
+        type,
         fee,
         senders: [from],
         recipients: [to],
@@ -216,6 +218,52 @@ export const etherscanERC1155EventToOperations = (
         tokenId: event.tokenID,
         value,
         date: new Date(parseInt(event.timeStamp, 10) * 1000),
+        extra: {},
+      }) as Operation,
+  );
+};
+
+/**
+ * Adapter to convert an internal transaction
+ * on etherscan APIs into LL Operations
+ */
+export const etherscanInternalTransactionToOperations = (
+  accountId: string,
+  internalTx: EtherscanInternalTransaction,
+  index = 0,
+): Operation[] => {
+  const { hash, blockNumber, timeStamp, isError } = internalTx;
+  const { xpubOrAddress: address } = decodeAccountId(accountId);
+
+  const checksummedAddress = eip55.encode(address);
+  const from = safeEncodeEIP55(internalTx.from);
+  const to = safeEncodeEIP55(internalTx.to);
+  const value = new BigNumber(internalTx.value);
+  const types: OperationType[] = [];
+  const hasFailed = isError === "1";
+
+  if (to === checksummedAddress) {
+    types.push("IN");
+  }
+  if (from === checksummedAddress) {
+    types.push("OUT");
+  }
+
+  return types.map(
+    type =>
+      ({
+        id: encodeSubOperationId(accountId, hash, type, index),
+        hash: hash,
+        type,
+        fee: new BigNumber(0), // unecessary as it's already contained in the fees of the main op
+        senders: [from],
+        recipients: [to],
+        blockHeight: parseInt(blockNumber, 10),
+        blockHash: undefined, // not made directly available by etherscan, only blockNumber is provided
+        accountId,
+        value,
+        date: new Date(parseInt(timeStamp, 10) * 1000),
+        hasFailed,
         extra: {},
       }) as Operation,
   );

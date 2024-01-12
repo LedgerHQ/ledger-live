@@ -23,8 +23,9 @@ exports[`solana currency bridge scanAccounts solana seed 1 1`] = `
     "seedIdentifier": "AQbkEagmPgmsdAfS4X8V8UyJnXXjVPMvjeD15etqQ3Jh",
     "solanaResources": {
       "stakes": "[]",
+      "unstakeReserve": "0",
     },
-    "spendableBalance": "83389840",
+    "spendableBalance": "82498960",
     "starred": false,
     "swapHistory": [],
     "syncHash": undefined,
@@ -52,6 +53,7 @@ exports[`solana currency bridge scanAccounts solana seed 1 1`] = `
     "seedIdentifier": "AQbkEagmPgmsdAfS4X8V8UyJnXXjVPMvjeD15etqQ3Jh",
     "solanaResources": {
       "stakes": "[]",
+      "unstakeReserve": "0",
     },
     "spendableBalance": "0",
     "starred": false,

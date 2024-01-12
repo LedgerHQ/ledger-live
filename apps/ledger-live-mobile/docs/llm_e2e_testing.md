@@ -17,7 +17,7 @@ pnpm clean
 pnpm i --filter="live-mobile..." --filter="ledger-live" --no-frozen-lockfile --unsafe-perm
 pnpm mobile pod
 pnpm build:llm:deps
-pnpm mobile detox clean-framework-cache && pnpm mobile detox build-framework-cache
+pnpm mobile exec detox clean-framework-cache && pnpm mobile exec detox build-framework-cache
 pnpm mobile e2e:build -c android.emu.debug
 pnpm mobile e2e:build -c ios.sim.debug
 ```

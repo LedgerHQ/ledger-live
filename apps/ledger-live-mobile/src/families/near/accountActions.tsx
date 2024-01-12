@@ -19,6 +19,9 @@ const getMainActions = ({
   parentRoute: RouteProp<ParamListBase, ScreenName>;
 }): ActionButtonEvent[] => {
   const stakingDisabled = !canStake(account);
+  const startWithValidator =
+    account.nearResources && account.nearResources?.stakingPositions.length > 0;
+
   const navigationParams: NavigationParamsType = stakingDisabled
     ? [
         NavigatorName.NoFundsFlow,
@@ -33,12 +36,12 @@ const getMainActions = ({
     : [
         NavigatorName.NearStakingFlow,
         {
-          screen:
-            account.nearResources && account.nearResources?.stakingPositions.length > 0
-              ? ScreenName.NearStakingValidator
-              : ScreenName.NearStakingStarted,
+          screen: startWithValidator
+            ? ScreenName.NearStakingValidator
+            : ScreenName.NearStakingStarted,
           params: {
             source: parentRoute,
+            skipStartedStep: startWithValidator,
           },
         },
       ];

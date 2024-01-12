@@ -166,8 +166,12 @@ It is possible to run Ledger Live Mobile on an emulator and connect to a Nano th
   DEVICE_PROXY_URL=ws://192.168.1.14:8435
   Nano S proxy started on 192.168.1.14
   ```
-- Either do `export DEVICE_PROXY_URL=the_adress_given_by_the_server` or paste this variable environment in the `.env` file at the root of the project (create it if it doesn't exist)
-- Build & run Ledger Live Mobile `pnpm mobile ios` or `pnpm mobile android`
+- Either
+  - First, do `export DEVICE_PROXY_URL=the_adress_given_by_the_server` or paste this variable environment in the `.env` file at the root of the project (create it if it doesn't exist)
+  - Then, build & run Ledger Live Mobile `pnpm mobile ios` or `pnpm mobile android`
+  - OR
+  - First, build & run Ledger Live Mobile `pnpm mobile ios` or `pnpm mobile android`
+  - Then, go to the settings tab, then *debug* > *connectivity* > *http transport* and paste the IP (ex: 192.168.1.14)
 - When prompted to choose a Nano device in Ledger Live Mobile, you will see your Nano available with the adress from above, just select it and it should work normally.
 
 ### Extra Docs 📄

@@ -5,29 +5,27 @@ import { useCallback, useState } from "react";
 
 type Props = {
   currencyFrom?: CryptoOrTokenCurrency;
-  swapWebManifestId: string;
 };
 
-export function useIsSwapLiveApp({ currencyFrom, swapWebManifestId }: Props) {
-  const ptxSwapLiveApp = useFeature("ptxSwapLiveApp");
-
-  const flagConfig =
-    ptxSwapLiveApp && ptxSwapLiveApp[swapWebManifestId]
-      ? ptxSwapLiveApp[swapWebManifestId]
-      : ptxSwapLiveApp;
-
-  const { enabled, params } = flagConfig || {};
-
-  const isCurrencySupported = useIsCurrencySupported({
-    params,
-    currencyFrom,
-    defaultValue: enabled,
-  });
-
+export function useIsSwapLiveApp({ currencyFrom }: Props) {
+  const ptxSwapLiveApp = useFeature("ptxSwapLiveAppDemoZero");
   const [crashed, setHasCrashed] = useState(false);
+
   const onLiveAppCrashed = useCallback(() => setHasCrashed(true), []);
 
-  const liveAppAvailable = Boolean(enabled && isCurrencySupported && !crashed);
+  const isEnabled = !!ptxSwapLiveApp?.enabled;
+  const { families, currencies } = ptxSwapLiveApp?.params ?? {};
+
+  const isCurrencySupported = useIsCurrencySupported({
+    params: {
+      families,
+      currencies,
+    },
+    currencyFrom,
+    defaultValue: !!isEnabled,
+  });
+
+  const liveAppAvailable = Boolean(isEnabled && isCurrencySupported && !crashed);
 
   return {
     enabled: liveAppAvailable,

@@ -43,9 +43,7 @@ jobs:
         with:
           skip_builds: true
       - name: lint
-        run: |
-          pnpm lint --filter="ledger-live-desktop" -- --format="json" -o="lint.json"
-          node -p "require('./node_modules/eslint/lib/cli-engine/formatters/stylish.js')(require('./apps/ledger-live-desktop/lint.json'))"
+        run: pnpm desktop lint:ci
       - name: prettier
         run: pnpm desktop prettier:check
       - name: typecheck

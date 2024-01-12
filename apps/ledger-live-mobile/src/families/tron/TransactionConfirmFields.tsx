@@ -1,7 +1,6 @@
 import invariant from "invariant";
 import React from "react";
 import { StyleSheet } from "react-native";
-import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import {
@@ -12,7 +11,7 @@ import { useTheme } from "@react-navigation/native";
 import { DataRow, HeaderRow, ValidatorField } from "~/components/ValidateOnDeviceDataRow";
 import LText from "~/components/LText";
 import Info from "~/icons/Info";
-import { localeSelector } from "~/reducers/settings";
+import { useSettings } from "~/hooks";
 
 const styles = StyleSheet.create({
   infoText: {
@@ -34,6 +33,9 @@ const Warning = ({ transaction }: { transaction: Transaction }) => {
     case "claimReward":
     case "unfreeze":
     case "freeze":
+    case "legacyUnfreeze":
+    case "unDelegateResource":
+    case "withdrawExpireUnfreeze":
       return (
         <DataRow>
           <Info size={22} color={colors.live} />
@@ -70,7 +72,7 @@ const TronResourceField = ({ transaction }: { transaction: Transaction }) => {
 function TronVotesField({ transaction }: { transaction: Transaction }) {
   invariant(transaction.family === "tron", "tron transaction");
   const { t } = useTranslation();
-  const locale = useSelector(localeSelector);
+  const { locale } = useSettings();
   const { votes } = transaction;
   const sp = useTronSuperRepresentatives();
   const formattedVotes = votes && votes.length > 0 ? formatVotes(votes, sp) : null;

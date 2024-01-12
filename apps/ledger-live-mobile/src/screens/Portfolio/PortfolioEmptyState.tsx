@@ -7,6 +7,8 @@ import WalletCoinsSupported from "~/icons/WalletCoinsSupported";
 import WalletTabSafeAreaView from "~/components/WalletTab/WalletTabSafeAreaView";
 import { NavigatorName, ScreenName } from "~/const";
 import { track, TrackScreen } from "~/analytics";
+import { ContentCardLocation } from "~/dynamicContent/types";
+import ContentCardsLocation from "~/dynamicContent/ContentCardsLocation";
 
 const PortfolioEmptyState = ({ openAddAccountModal }: { openAddAccountModal: () => void }) => {
   const { t } = useTranslation();
@@ -39,6 +41,11 @@ const PortfolioEmptyState = ({ openAddAccountModal }: { openAddAccountModal: () 
       <Text variant="body" fontWeight="medium" color="neutral.c70" textAlign="center" mt={4}>
         {t("portfolio.emptyState.subtitle")}
       </Text>
+      <ContentCardsLocation
+        key="contentCardsLocationPortfolio"
+        locationId={ContentCardLocation.Wallet}
+        mt={7}
+      />
       <Flex flexGrow={1} flexDirection="row" mt={9}>
         <Button
           type="main"
@@ -81,7 +88,7 @@ const PortfolioEmptyState = ({ openAddAccountModal }: { openAddAccountModal: () 
         width={"100%"}
         mt={7}
         mb={11}
-        testID="add-account-button"
+        testID="add-account-cta"
       >
         {t("account.emptyState.addAccountCta")}
       </Button>

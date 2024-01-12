@@ -44,6 +44,20 @@ export const FirebaseRemoteConfigProvider = ({ children }: Props): JSX.Element |
       console.error(`Failed to initialize Firebase SDK with error: ${error}`);
       setLoaded(true);
     }
+    const remoteConfig = getRemoteConfig();
+    remoteConfig.settings.minimumFetchIntervalMillis = 0;
+    remoteConfig.defaultConfig = {
+      ...formatDefaultFeatures(DEFAULT_FEATURES),
+    };
+    setConfig(remoteConfig);
+
+    LiveConfig.setProvider(
+      new FirebaseProvider({
+        getValue: (key: string) => {
+          return getValue(remoteConfig, key);
+        },
+      }),
+    );
 
     // check whether local default settings and firebase remote settings are consistent
     const warnOnConfigMismatch = async () => {
@@ -102,37 +116,24 @@ export const FirebaseRemoteConfigProvider = ({ children }: Props): JSX.Element |
       });
     };
 
-    const fetchConfig = async () => {
+    const fetchAndActivateConfig = async () => {
       try {
         await warnOnConfigMismatch();
       } catch (error) {
         // ignore the config check if any error occurs because it's not critical
       }
       try {
-        const remoteConfig = getRemoteConfig();
-
-        if (__DEV__) {
-          remoteConfig.settings.minimumFetchIntervalMillis = 0;
-        }
-
-        remoteConfig.defaultConfig = {
-          ...formatDefaultFeatures(DEFAULT_FEATURES),
-        };
         await fetchAndActivate(remoteConfig);
-        setConfig(remoteConfig);
-        LiveConfig.setProvider(
-          new FirebaseProvider({
-            getValue: (key: string) => {
-              return getValue(remoteConfig, key);
-            },
-          }),
-        );
       } catch (error) {
         console.error(`Failed to fetch Firebase remote config with error: ${error}`);
+      } finally {
+        setLoaded(true);
       }
-      setLoaded(true);
     };
-    fetchConfig();
+    fetchAndActivateConfig();
+    // 12 hours fetch interval. TODO: make this configurable
+    const intervalId = window.setInterval(fetchAndActivateConfig, 12 * 60 * 60 * 1000);
+    return () => clearInterval(intervalId);
   }, [setConfig]);
 
   if (!loaded) {

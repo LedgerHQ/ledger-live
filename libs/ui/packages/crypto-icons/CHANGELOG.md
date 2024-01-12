@@ -1,5 +1,21 @@
 # @ledgerhq/icons-ui
 
+## 1.0.0
+
+### Major Changes
+
+- [#5394](https://github.com/LedgerHQ/ledger-live/pull/5394) [`0e2287b`](https://github.com/LedgerHQ/ledger-live/commit/0e2287b1ce4200004ed2c06f3e74cd3b03100784) Thanks [@KaliszukTomasz](https://github.com/KaliszukTomasz)! - Add logo for GSWIFT token to ledger. Support for tokens was added to ledger live desktop already
+  Contract address (arbitrum):
+  GSWIFT - 0x580e933d90091b9ce380740e3a4a39c67eb85b4c
+
+## 1.0.0-next.0
+
+### Major Changes
+
+- [#5394](https://github.com/LedgerHQ/ledger-live/pull/5394) [`0e2287b`](https://github.com/LedgerHQ/ledger-live/commit/0e2287b1ce4200004ed2c06f3e74cd3b03100784) Thanks [@KaliszukTomasz](https://github.com/KaliszukTomasz)! - Add logo for GSWIFT token to ledger. Support for tokens was added to ledger live desktop already
+  Contract address (arbitrum):
+  GSWIFT - 0x580e933d90091b9ce380740e3a4a39c67eb85b4c
+
 ## 0.7.0
 
 ### Minor Changes

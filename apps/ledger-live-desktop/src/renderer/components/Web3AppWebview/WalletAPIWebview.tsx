@@ -187,7 +187,6 @@ function useUiHook(
               onSuccess(operation.hash);
             },
             onCancel: (error: Error) => {
-              console.error(error);
               onCancel(error);
             },
           }),

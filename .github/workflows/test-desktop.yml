@@ -56,9 +56,7 @@ jobs:
           skip_builds: true
           turborepo-server-port: ${{ steps.toolchain.outputs.port }}
       - name: lint
-        run: |
-          pnpm lint --filter="ledger-live-desktop" --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo" -- --format="json" -o="lint.json"
-          node -p "require('./node_modules/eslint/lib/cli-engine/formatters/stylish.js')(require('./apps/ledger-live-desktop/lint.json'))"
+        run: pnpm desktop lint:ci -p ${{ steps.toolchain.outputs.port }} -t "${{ secrets.TURBOREPO_SERVER_TOKEN }}"
       - name: prettier
         run: pnpm desktop prettier:check
       - name: typecheck

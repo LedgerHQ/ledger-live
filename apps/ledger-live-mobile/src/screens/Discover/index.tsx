@@ -14,7 +14,7 @@ import { TrackScreen, track } from "~/analytics";
 import { AnalyticsContext } from "~/analytics/AnalyticsContext";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { MainNavigatorParamList } from "~/components/RootNavigator/types/MainNavigator";
-import useDynamicContent from "~/dynamicContent/dynamicContent";
+import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import { useIsNewsfeedAvailable } from "~/hooks/newsfeed/useIsNewsfeedAvailable";
 
 const images = {

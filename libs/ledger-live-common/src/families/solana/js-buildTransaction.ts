@@ -1,4 +1,3 @@
-import type { Account } from "@ledgerhq/types-live";
 import type { Command, Transaction } from "./types";
 import {
   buildTransferInstructions,
@@ -20,7 +19,7 @@ import {
 import { ChainAPI } from "./api";
 
 export const buildTransactionWithAPI = async (
-  account: Account,
+  address: string,
   transaction: Transaction,
   api: ChainAPI,
 ): Promise<readonly [OnChainTransaction, (signature: Buffer) => OnChainTransaction]> => {
@@ -28,7 +27,7 @@ export const buildTransactionWithAPI = async (
 
   const recentBlockhash = await api.getLatestBlockhash();
 
-  const feePayer = new PublicKey(account.freshAddress);
+  const feePayer = new PublicKey(address);
 
   const tm = new TransactionMessage({
     payerKey: feePayer,
@@ -41,7 +40,7 @@ export const buildTransactionWithAPI = async (
   return [
     tx,
     (signature: Buffer) => {
-      tx.addSignature(new PublicKey(account.freshAddress), signature);
+      tx.addSignature(new PublicKey(address), signature);
       return tx;
     },
   ];

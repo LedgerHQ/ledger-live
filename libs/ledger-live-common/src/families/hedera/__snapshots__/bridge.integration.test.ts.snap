@@ -3,7 +3,7 @@
 exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
 [
   {
-    "balance": "99460655",
+    "balance": "89312168",
     "currencyId": "hedera",
     "derivationMode": "hederaBip44",
     "freshAddress": "0.0.1040977",
@@ -18,10 +18,10 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
     "index": 0,
     "name": "Hedera 1",
     "nfts": undefined,
-    "operationsCount": 3,
+    "operationsCount": 4,
     "pendingOperations": [],
     "seedIdentifier": "9e92a312233d5fd6b5a723875aeea2cea81a8e48ffc00341cff6dffcfd3ab7f2",
-    "spendableBalance": "99460655",
+    "spendableBalance": "89312168",
     "starred": false,
     "swapHistory": [],
     "syncHash": undefined,
@@ -34,6 +34,30 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 1`] = `
 exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
 [
   [
+    {
+      "accountId": "js:2:hedera:0.0.1040977:hederaBip44",
+      "blockHash": null,
+      "blockHeight": 5,
+      "contract": undefined,
+      "extra": {
+        "consensusTimestamp": "1701941251.224927003",
+      },
+      "fee": "148487",
+      "hash": "66faf4cc5ccbda67922281967b426510e84155eb6f8f72171f7389e49cbb93bcd2e312c4223a95eadc51b8f620c37830",
+      "id": "js:2:hedera:0.0.1040977:hederaBip44-66faf4cc5ccbda67922281967b426510e84155eb6f8f72171f7389e49cbb93bcd2e312c4223a95eadc51b8f620c37830-OUT",
+      "operator": undefined,
+      "recipients": [
+        "0.0.2024333",
+      ],
+      "senders": [
+        "0.0.800",
+        "0.0.1040977",
+      ],
+      "standard": undefined,
+      "tokenId": undefined,
+      "type": "OUT",
+      "value": "10148487",
+    },
     {
       "accountId": "js:2:hedera:0.0.1040977:hederaBip44",
       "blockHash": null,

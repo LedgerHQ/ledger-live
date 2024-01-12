@@ -169,6 +169,8 @@ export enum DynamicContentActionTypes {
   DYNAMIC_CONTENT_SET_ASSET_CARDS = "DYNAMIC_CONTENT_SET_ASSET_CARDS",
   DYNAMIC_CONTENT_SET_LEARN_CARDS = "DYNAMIC_CONTENT_SET_LEARN_CARDS",
   DYNAMIC_CONTENT_SET_NOTIFICATION_CARDS = "DYNAMIC_CONTENT_SET_NOTIFICATION_CARDS",
+  DYNAMIC_CONTENT_SET_CATEGORIES_CARDS = "DYNAMIC_CONTENT_SET_CATEGORIES_CARDS",
+  DYNAMIC_CONTENT_SET_MOBILE_CARDS = "DYNAMIC_CONTENT_SET_MOBILE_CARDS",
 }
 
 export type DynamicContentSetWalletCardsPayload = DynamicContentState["walletCards"];
@@ -179,11 +181,17 @@ export type DynamicContentSetLearnCardsPayload = DynamicContentState["learnCards
 
 export type DynamicContentSetNotificationCardsPayload = DynamicContentState["notificationCards"];
 
+export type DynamicContentSetCategoriesCardsPayload = DynamicContentState["categoriesCards"];
+
+export type DynamicContentSetMobileCardsPayload = DynamicContentState["mobileCards"];
+
 export type DynamicContentPayload =
   | DynamicContentSetWalletCardsPayload
   | DynamicContentSetAssetCardsPayload
   | DynamicContentSetLearnCardsPayload
-  | DynamicContentSetNotificationCardsPayload;
+  | DynamicContentSetNotificationCardsPayload
+  | DynamicContentSetCategoriesCardsPayload
+  | DynamicContentSetMobileCardsPayload;
 
 // === RATINGS ACTIONS ===
 
@@ -240,7 +248,6 @@ export enum SettingsActionTypes {
   DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
   SETTINGS_SET_THEME = "SETTINGS_SET_THEME",
   SETTINGS_SET_OS_THEME = "SETTINGS_SET_OS_THEME",
-  SETTINGS_SET_CAROUSEL_VISIBILITY = "SETTINGS_SET_CAROUSEL_VISIBILITY",
   SETTINGS_SET_DISMISSED_DYNAMIC_CARDS = "SETTINGS_SET_DISMISSED_DYNAMIC_CARDS",
   SETTINGS_SET_DISCREET_MODE = "SETTINGS_SET_DISCREET_MODE",
   SETTINGS_SET_LANGUAGE = "SETTINGS_SET_LANGUAGE",
