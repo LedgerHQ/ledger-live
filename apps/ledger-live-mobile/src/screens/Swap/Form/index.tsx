@@ -125,22 +125,10 @@ export function SwapForm({
     );
   }, [exchangeRatesState.value, swapTransaction.swap.to.currency]);
 
-  const isTezosAccountReveal = (swapTransaction: SwapTransactionType): Error | undefined => {
-    if (
-      swapTransaction?.transaction?.family == "tezos" &&
-      swapTransaction?.transaction?.estimatedFees &&
-      swapTransaction?.transaction?.fees !== swapTransaction?.transaction?.estimatedFees
-    ) {
-      const tezosError = new Error("Cannot swap with an unrevealed Tezos account");
-      tezosError.name = "TezosUnrevealedAccount";
-      return tezosError;
-    }
-  };
-
   const swapError =
     swapTransaction.fromAmountError ||
     exchangeRatesState?.error ||
-    isTezosAccountReveal(swapTransaction);
+    maybeTezosAccountUnrevealedAccount(swapTransaction);
   const swapWarning = swapTransaction.fromAmountWarning;
   const pageState = usePageState(swapTransaction, swapError || swapWarning);
   const provider = exchangeRate?.provider;
@@ -398,4 +386,9 @@ export function SwapForm({
   }
 
   return <Loading />;
+}
+function maybeTezosAccountUnrevealedAccount(
+  swapTransaction: SwapTransactionType,
+): Error | undefined {
+  throw new Error("Function not implemented.");
 }
