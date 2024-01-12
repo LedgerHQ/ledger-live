@@ -43,7 +43,6 @@ function temporalFactor(from, to, maybeDate) {
 }
 
 function rate(from: string, to: string, date?: Date) {
-  if (from === to) return 1;
   const asBTC = getBTCValues()[from];
   if (!asBTC) return;
 
@@ -104,7 +103,6 @@ const api: CounterValuesAPI = {
     const f = formatPerGranularity[granularity];
     getDates(granularity, startDate).forEach(date => {
       const v = rate(from.ticker, to.ticker, date);
-
       if (v) {
         r[f(date)] = v;
       }

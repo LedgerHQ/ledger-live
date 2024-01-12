@@ -1,7 +1,7 @@
 import { useTrackingPairForAccounts } from "./react";
 import { genAccount } from "../mock/account";
 import { renderHook, act } from "@testing-library/react-hooks";
-import { getFiatCurrencyByTicker } from "../currencies";
+import { getFiatCurrencyByTicker } from "@ledgerhq/cryptoassets";
 import { inferTrackingPairForAccounts } from "./logic";
 
 describe("useTrackingPairForAccounts", () => {
