@@ -1,5 +1,19 @@
 # live-mobile
 
+## 3.37.1-nightly.1
+
+### Patch Changes
+
+- [#5834](https://github.com/LedgerHQ/ledger-live/pull/5834) [`feec452`](https://github.com/LedgerHQ/ledger-live/commit/feec452f1bef1330660b6f346ebaf51400e6e5f3) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - modify staking flow tracking on llm to use step starter for name of first step. Rename egld to MultiversX in staking tracking
+
+- Updated dependencies [[`acc0605`](https://github.com/LedgerHQ/ledger-live/commit/acc06050b622f8d4265be9f962c6c83b1fbaefd5), [`65772fb`](https://github.com/LedgerHQ/ledger-live/commit/65772fbcc1e6887d60ca585147123d356914ba56), [`d54a13e`](https://github.com/LedgerHQ/ledger-live/commit/d54a13e1caf5a831222f10714e654c5f49db00be)]:
+  - @ledgerhq/coin-framework@0.10.2-nightly.0
+  - @ledgerhq/types-live@6.44.0-nightly.2
+  - @ledgerhq/live-common@33.4.1-nightly.1
+  - @ledgerhq/live-config@1.0.1-nightly.2
+  - @ledgerhq/coin-evm@0.11.3-nightly.0
+  - @ledgerhq/domain-service@1.1.17-nightly.2
+
 ## 3.37.1-nightly.0
 
 ### Patch Changes

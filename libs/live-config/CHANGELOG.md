@@ -1,5 +1,14 @@
 # @ledgerhq/live-config
 
+## 1.0.1-nightly.2
+
+### Patch Changes
+
+- [#5883](https://github.com/LedgerHQ/ledger-live/pull/5883) [`65772fb`](https://github.com/LedgerHQ/ledger-live/commit/65772fbcc1e6887d60ca585147123d356914ba56) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Update swap live app ff logic
+
+- Updated dependencies [[`65772fb`](https://github.com/LedgerHQ/ledger-live/commit/65772fbcc1e6887d60ca585147123d356914ba56)]:
+  - @ledgerhq/types-live@6.44.0-nightly.2
+
 ## 1.0.1-nightly.1
 
 ### Patch Changes

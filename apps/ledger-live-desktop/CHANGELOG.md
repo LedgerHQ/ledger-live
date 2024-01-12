@@ -1,5 +1,27 @@
 # ledger-live-desktop
 
+## 2.75.0-nightly.1
+
+### Patch Changes
+
+- [#5877](https://github.com/LedgerHQ/ledger-live/pull/5877) [`7b14733`](https://github.com/LedgerHQ/ledger-live/commit/7b14733f636d62cbf9068895f7ef8bd14c7632e3) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Remove bad usage of JSON.stringify as a hash function, remove unused actions in StepReceiveStakingFlow, replace state with constants, and fix a url string type.
+
+- [#5887](https://github.com/LedgerHQ/ledger-live/pull/5887) [`d18d4ac`](https://github.com/LedgerHQ/ledger-live/commit/d18d4ac8da19e5d9aa9d80e1e5e8bdba2e1ad1aa) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Device actions errors: new rendering component for FirmwareNotRecognized/"InvalidProvider" error
+
+- [#5834](https://github.com/LedgerHQ/ledger-live/pull/5834) [`feec452`](https://github.com/LedgerHQ/ledger-live/commit/feec452f1bef1330660b6f346ebaf51400e6e5f3) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - modify staking flow tracking on llm to use step starter for name of first step. Rename egld to MultiversX in staking tracking
+
+- [#5892](https://github.com/LedgerHQ/ledger-live/pull/5892) [`acc0605`](https://github.com/LedgerHQ/ledger-live/commit/acc06050b622f8d4265be9f962c6c83b1fbaefd5) Thanks [@mle-gall](https://github.com/mle-gall)! - Supported Counter Values : fallback to local list if call fails + fixed call to the API retriggered on LLD causing UI bugs
+
+- [#5883](https://github.com/LedgerHQ/ledger-live/pull/5883) [`65772fb`](https://github.com/LedgerHQ/ledger-live/commit/65772fbcc1e6887d60ca585147123d356914ba56) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Update swap live app ff logic
+
+- Updated dependencies [[`acc0605`](https://github.com/LedgerHQ/ledger-live/commit/acc06050b622f8d4265be9f962c6c83b1fbaefd5), [`65772fb`](https://github.com/LedgerHQ/ledger-live/commit/65772fbcc1e6887d60ca585147123d356914ba56), [`d54a13e`](https://github.com/LedgerHQ/ledger-live/commit/d54a13e1caf5a831222f10714e654c5f49db00be)]:
+  - @ledgerhq/coin-framework@0.10.2-nightly.0
+  - @ledgerhq/types-live@6.44.0-nightly.2
+  - @ledgerhq/live-common@33.4.1-nightly.1
+  - @ledgerhq/live-config@1.0.1-nightly.2
+  - @ledgerhq/coin-evm@0.11.3-nightly.0
+  - @ledgerhq/domain-service@1.1.17-nightly.2
+
 ## 2.75.0-nightly.0
 
 ### Minor Changes

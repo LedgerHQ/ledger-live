@@ -1,5 +1,14 @@
 # @ledgerhq/coin-framework
 
+## 0.10.2-nightly.0
+
+### Patch Changes
+
+- [#5892](https://github.com/LedgerHQ/ledger-live/pull/5892) [`acc0605`](https://github.com/LedgerHQ/ledger-live/commit/acc06050b622f8d4265be9f962c6c83b1fbaefd5) Thanks [@mle-gall](https://github.com/mle-gall)! - Supported Counter Values : fallback to local list if call fails + fixed call to the API retriggered on LLD causing UI bugs
+
+- Updated dependencies [[`65772fb`](https://github.com/LedgerHQ/ledger-live/commit/65772fbcc1e6887d60ca585147123d356914ba56)]:
+  - @ledgerhq/types-live@6.44.0-nightly.2
+
 ## 0.10.1
 
 ### Patch Changes
