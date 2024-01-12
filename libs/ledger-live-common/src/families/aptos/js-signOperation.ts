@@ -5,11 +5,16 @@ import { encodeOperationId } from "../../operation";
 import buildTransaction from "./js-buildTransaction";
 import BigNumber from "bignumber.js";
 
-import type { Account, Operation, OperationType, SignOperationEvent } from "@ledgerhq/types-live";
+import type {
+  Account,
+  Operation,
+  OperationType,
+  SignOperationFnSignature,
+} from "@ledgerhq/types-live";
 import { AptosAPI } from "./api";
 import LedgerAccount from "./LedgerAccount";
 
-const signOperation = ({
+const signOperation: SignOperationFnSignature<Transaction> = ({
   account,
   deviceId,
   transaction,
@@ -17,24 +22,24 @@ const signOperation = ({
   account: Account;
   deviceId: any;
   transaction: Transaction;
-}): Observable<SignOperationEvent> =>
+}) =>
   withDevice(deviceId)(
     transport =>
       new Observable(o => {
-        let cancelled;
-
         async function main() {
           const aptosClient = new AptosAPI(account.currency.id);
 
           o.next({ type: "device-signature-requested" });
 
-          const ledgerAccount = new LedgerAccount(account.freshAddresses[0].derivationPath);
+          const ledgerAccount = new LedgerAccount(
+            account.freshAddresses[0].derivationPath,
+            account.xpub as string,
+          );
           await ledgerAccount.init(transport);
 
           const rawTx = await buildTransaction(account, transaction, aptosClient);
-          const signedTx = await ledgerAccount.signTransaction(rawTx);
-
-          if (cancelled) return;
+          const txBytes = await ledgerAccount.signTransaction(rawTx);
+          const signed = Buffer.from(txBytes).toString("hex");
 
           o.next({ type: "device-signature-granted" });
 
@@ -74,8 +79,7 @@ const signOperation = ({
             type: "signed",
             signedOperation: {
               operation,
-              signature: Buffer.from(signedTx).toString("hex"),
-              expirationDate: undefined,
+              signature: signed,
             },
           });
         }
@@ -84,10 +88,6 @@ const signOperation = ({
           () => o.complete(),
           e => o.error(e),
         );
-
-        return () => {
-          cancelled = true;
-        };
       }),
   );
 

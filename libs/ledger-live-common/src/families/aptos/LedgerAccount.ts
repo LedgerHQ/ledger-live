@@ -37,9 +37,11 @@ export default class LedgerAccount {
 
   async init(transport: Transport, display = false): Promise<void> {
     this.client = new HwAptos(transport);
-    const response = await this.client.getAddress(this.hdPath, display);
-    this.accountAddress = new HexString(response.address);
-    this.publicKey = response.publicKey;
+    if (!this.publicKey.length && !display) {
+      const response = await this.client.getAddress(this.hdPath, display);
+      this.accountAddress = new HexString(response.address);
+      this.publicKey = response.publicKey;
+    }
   }
 
   hdWalletPath(): string {

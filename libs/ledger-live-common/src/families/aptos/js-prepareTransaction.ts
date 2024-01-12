@@ -20,25 +20,23 @@ const prepareTransaction = async (
   const amount = transaction.useAllAmount
     ? getMaxSendBalance(account.spendableBalance)
     : BigNumber(transaction.amount);
-  const preparedTransaction: Transaction = {
-    ...transaction,
-    amount,
-  };
+  transaction.amount = amount;
 
   const aptosClient = new AptosAPI(account.currency.id);
 
   const { fees, estimate, errors } = await getEstimatedGas(account, transaction, aptosClient);
 
-  const options = { ...transaction.options };
-  if (transaction.firstEmulation) options.maxGasAmount = estimate.maxGasAmount;
+  if (transaction.firstEmulation) {
+    transaction.options.maxGasAmount = estimate.maxGasAmount;
+  }
 
-  preparedTransaction.fees = fees;
-  preparedTransaction.estimate = estimate;
-  preparedTransaction.errors = errors;
-  preparedTransaction.options = options;
-  preparedTransaction.firstEmulation = false;
-  preparedTransaction.skipEmulation = false;
-  return preparedTransaction;
+  transaction.fees = fees;
+  transaction.estimate = estimate;
+  transaction.errors = errors;
+  transaction.firstEmulation = false;
+  transaction.skipEmulation = false;
+
+  return transaction;
 };
 
 export default prepareTransaction;
