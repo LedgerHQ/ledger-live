@@ -66,6 +66,8 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyVelasEvm: DEFAULT_FEATURE,
   currencyCasper: DEFAULT_FEATURE,
   currencyNeonEvm: DEFAULT_FEATURE,
+  currencyLinea: DEFAULT_FEATURE,
+  currencyLineaGoerli: DEFAULT_FEATURE,
 };
 
 /**
@@ -414,6 +416,10 @@ export const DEFAULT_FEATURES: Features = {
   },
 
   ptxSwapLiveApp: {
+    enabled: false,
+  },
+
+  ptxSwapLiveAppDemoZero: {
     enabled: false,
   },
 

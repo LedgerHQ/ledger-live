@@ -65,7 +65,7 @@ const StepAmount = (props: StepProps) => {
         name="Step 1"
         flow="stake"
         action="undelegate"
-        currency="egld"
+        currency="MultiversX"
       />
       {error && <ErrorBanner error={error} />}
 

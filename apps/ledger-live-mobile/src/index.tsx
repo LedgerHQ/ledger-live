@@ -30,11 +30,7 @@ import {
   saveCountervalues,
   savePostOnboardingState,
 } from "./db";
-import {
-  exportSelector as settingsExportSelector,
-  osThemeSelector,
-  themeSelector,
-} from "~/reducers/settings";
+import { exportSelector as settingsExportSelector, osThemeSelector } from "~/reducers/settings";
 import { accountsSelector, exportSelector as accountsExportSelector } from "~/reducers/accounts";
 import { exportSelector as bleSelector } from "~/reducers/ble";
 import LocaleProvider, { i18n } from "~/context/Locale";
@@ -90,6 +86,7 @@ import { LiveConfig } from "@ledgerhq/live-config/featureFlags/index";
 import VersionNumber from "react-native-version-number";
 import { Platform } from "react-native";
 import { StorylyProvider } from "./components/StorylyStories/StorylyProvider";
+import { useSettings } from "~/hooks";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -223,7 +220,7 @@ const PerformanceProvider = ({ children }: { children: React.ReactNode }) => {
 };
 
 const StylesProvider = ({ children }: { children: React.ReactNode }) => {
-  const theme = useSelector(themeSelector);
+  const { theme } = useSettings();
   const osTheme = useSelector(osThemeSelector);
   const dispatch = useDispatch();
 

@@ -2,4 +2,4 @@
 "@ledgerhq/live-common": patch
 ---
 
-add moonpay swap provider config
+lower stale timeout on fetch rates

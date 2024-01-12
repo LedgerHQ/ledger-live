@@ -16,6 +16,8 @@ export const LEDGER_VALIDATOR: ValidatorsAppValidator = {
   totalScore: 6,
 };
 
+export const SOLANA_DELEGATION_RESERVE = 0.01;
+
 export const assertUnreachable = (_: never): never => {
   throw new Error("unreachable assertion failed");
 };

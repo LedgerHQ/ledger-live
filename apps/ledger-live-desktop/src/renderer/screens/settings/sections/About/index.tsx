@@ -10,11 +10,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { v4 as uuidv4 } from "uuid";
 import { developerModeSelector } from "../../../../reducers/settings";
-import { useDynamicUrl } from "~/renderer/terms";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { urls } from "~/config/urls";
+
 const SectionHelp = () => {
   const { t } = useTranslation();
-  const privacyPolicyUrl = useDynamicUrl("privacyPolicy");
-  const urlTerms = useDynamicUrl("terms");
+  const privacyPolicyUrl = useLocalizedUrl(urls.privacyPolicy);
+  const urlTerms = useLocalizedUrl(urls.terms);
   const devMode = useSelector(developerModeSelector);
   const dispatch = useDispatch();
   const { pushToast } = useToasts();

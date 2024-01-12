@@ -30,6 +30,13 @@ export type Data = {
   amountExpectedTo?: number;
 };
 
+export function isCompleteExchangeData(data: unknown): data is Data {
+  if (data === null || typeof data !== "object") {
+    return false;
+  }
+  return "signature" in data && "binaryPayload" in data;
+}
+
 const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined }) => {
   const dispatch = useDispatch();
   const { onResult, onCancel, swapId, rate, ...exchangeParams } = data;
@@ -79,8 +86,9 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   useEffect(() => {
     if (error) {
       onCancel(error);
+      onClose?.();
     }
-  }, [onCancel, error]);
+  }, [onCancel, error, onClose]);
 
   useEffect(() => {
     if (signedOperation) {

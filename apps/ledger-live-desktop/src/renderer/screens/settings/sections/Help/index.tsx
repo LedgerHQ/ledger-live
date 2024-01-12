@@ -10,12 +10,13 @@ import CleanButton from "./CleanButton";
 import ResetButton from "./ResetButton";
 import RepairDeviceButton from "./RepairDeviceButton";
 import LaunchOnboardingBtn from "./LaunchOnboardingBtn";
-import { useDynamicUrl } from "~/renderer/terms";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { urls } from "~/config/urls";
 
 const SectionHelp = () => {
   const { t } = useTranslation();
 
-  const urlFaq = useDynamicUrl("faq");
+  const urlFaq = useLocalizedUrl(urls.faq);
 
   return (
     <>

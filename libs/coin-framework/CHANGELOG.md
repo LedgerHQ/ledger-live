@@ -1,5 +1,19 @@
 # @ledgerhq/coin-framework
 
+## 0.10.1
+
+### Patch Changes
+
+- Updated dependencies [[`d49f444`](https://github.com/LedgerHQ/ledger-live/commit/d49f44417fd175affe71da589c0ca380e88fbb35)]:
+  - @ledgerhq/cryptoassets@11.3.1
+
+## 0.10.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`d49f444`](https://github.com/LedgerHQ/ledger-live/commit/d49f44417fd175affe71da589c0ca380e88fbb35)]:
+  - @ledgerhq/cryptoassets@11.3.1-next.0
+
 ## 0.10.0
 
 ### Minor Changes

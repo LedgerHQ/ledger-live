@@ -1,6 +1,10 @@
 import { ContentCard as BrazeContentCard } from "@braze/react-native-sdk";
+import { Size } from "~/contentCards/cards/vertical/types";
 
 enum ContentCardsType {
+  smallSquare = "smallSquare",
+  mediumSquare = "mediumSquare",
+  bigSquare = "bigSquare",
   action = "action",
   category = "category",
 }
@@ -84,13 +88,24 @@ type HorizontalContentCard = ContentCardCommonProperties & {
   image?: string;
 };
 
+type VerticalContentCard = ContentCardCommonProperties & {
+  tag?: string;
+  title?: string;
+  link?: string;
+  description?: string;
+  image?: string;
+  price?: string;
+  size: Size;
+};
+
 type AnyContentCard =
   | CategoryContentCard
   | WalletContentCard
   | AssetContentCard
   | LearnContentCard
   | NotificationContentCard
-  | HorizontalContentCard;
+  | HorizontalContentCard
+  | VerticalContentCard;
 
 export type {
   ContentCardCommonProperties,
@@ -100,6 +115,7 @@ export type {
   LearnContentCard,
   CategoryContentCard,
   HorizontalContentCard,
+  VerticalContentCard,
   BrazeContentCard,
   AnyContentCard,
 };

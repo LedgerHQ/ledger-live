@@ -9,9 +9,10 @@ import {
 } from "@ledgerhq/live-config/featureFlags/index";
 import type { FirebaseFeatureFlagsProviderProps as Props } from "@ledgerhq/live-config/featureFlags/index";
 import { FeatureId, Feature, Features } from "@ledgerhq/types-live";
-import { languageSelector, overriddenFeatureFlagsSelector } from "~/reducers/settings";
+import { overriddenFeatureFlagsSelector } from "~/reducers/settings";
 import { setOverriddenFeatureFlag, setOverriddenFeatureFlags } from "~/actions/settings";
 import { setAnalyticsFeatureFlagMethod } from "~/analytics/segment";
+import { useSettings } from "~/hooks";
 
 /**
  * @returns all flags that have different defaults are exported as a key value map
@@ -33,14 +34,13 @@ export const getAllDivergedFlags = (
 export const FirebaseFeatureFlagsProvider: React.FC<Props> = ({ children }) => {
   const localOverrides = useSelector(overriddenFeatureFlagsSelector);
   const dispatch = useDispatch();
-
-  const appLanguage = useSelector(languageSelector);
+  const { language } = useSettings();
 
   const overrideFeature = useCallback(
     (key: FeatureId, value: Feature): void => {
       const actualRemoteValue = getFeature({
         key,
-        appLanguage,
+        appLanguage: language,
         allowOverride: false,
       });
       if (!isEqual(actualRemoteValue, value)) {
@@ -51,7 +51,7 @@ export const FirebaseFeatureFlagsProvider: React.FC<Props> = ({ children }) => {
         dispatch(setOverriddenFeatureFlag({ id: key, value: undefined }));
       }
     },
-    [appLanguage, dispatch],
+    [language, dispatch],
   );
 
   const resetFeature = useCallback(
@@ -66,8 +66,9 @@ export const FirebaseFeatureFlagsProvider: React.FC<Props> = ({ children }) => {
   }, [dispatch]);
 
   const wrappedGetFeature = useCallback(
-    <T extends FeatureId>(key: T): Features[T] => getFeature({ key, appLanguage, localOverrides }),
-    [localOverrides, appLanguage],
+    <T extends FeatureId>(key: T): Features[T] =>
+      getFeature({ key, appLanguage: language, localOverrides }),
+    [localOverrides, language],
   );
 
   useEffect(() => {

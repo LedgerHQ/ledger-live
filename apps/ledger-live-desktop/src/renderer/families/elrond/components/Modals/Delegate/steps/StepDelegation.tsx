@@ -31,7 +31,7 @@ const StepDelegation = (props: StepProps) => {
         name="Step Validator"
         flow="stake"
         action="delegate"
-        currency="egld"
+        currency="MultiversX"
       />
 
       {error && <ErrorBanner error={error} />}

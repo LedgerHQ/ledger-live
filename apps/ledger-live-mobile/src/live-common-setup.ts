@@ -124,6 +124,8 @@ setSupportedCurrencies([
   "casper",
   "neon_evm",
   "lukso",
+  "linea",
+  "linea_goerli",
 ]);
 
 if (Config.BLE_LOG_LEVEL) BluetoothTransport.setLogLevel(Config.BLE_LOG_LEVEL);

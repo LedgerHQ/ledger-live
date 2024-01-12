@@ -1,6 +1,5 @@
 import React, { useCallback } from "react";
 import { BigNumber } from "bignumber.js";
-import { useSelector } from "react-redux";
 import { View, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
 import { Account } from "@ledgerhq/types-live";
@@ -9,9 +8,9 @@ import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
 import { toLocaleString } from "@ledgerhq/live-common/currencies/index";
 import { Navigation, RouteProps } from "./EvmCustomFees/types";
 import SummaryRow from "~/screens/SendFunds/SummaryRow";
-import { localeSelector } from "~/reducers/settings";
 import LText from "~/components/LText";
 import { ScreenName } from "~/const";
+import { useSettings } from "~/hooks";
 
 type Props = {
   account: Account;
@@ -25,7 +24,7 @@ export default function EvmGasLimit({ account, transaction, gasLimit, setGasLimi
   const navigation = useNavigation<Navigation>();
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const locale = useSelector(localeSelector);
+  const { locale } = useSettings();
   const editGasLimit = useCallback(() => {
     navigation.navigate(ScreenName.EvmEditGasLimit, {
       ...route.params,

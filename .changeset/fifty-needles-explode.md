@@ -2,4 +2,4 @@
 "@ledgerhq/live-common": patch
 ---
 
-Fixes icons of testnet coins.
+improve btc sync performance

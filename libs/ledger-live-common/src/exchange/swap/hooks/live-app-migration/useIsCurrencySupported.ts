@@ -4,8 +4,8 @@ import { isCryptoCurrency } from "../../../../currencies";
 type UseIsCurrencySupportedProps = {
   currencyFrom?: CryptoOrTokenCurrency;
   params: {
-    families: string;
-    currencies: Array<unknown>;
+    families?: Array<string>;
+    currencies?: Array<string>;
   };
   defaultValue: boolean;
 };
@@ -25,8 +25,10 @@ export function useIsCurrencySupported({
     ? currencyFrom.family
     : currencyFrom.parentCurrency.family;
 
-  const familyIsEnabled = families?.length ? families.includes(familyOfCurrencyFrom) : true;
-  const currencyIsEnabled = currencies?.length ? currencies.includes(currencyFrom.id) : true;
+  const familyOrCurrencyIsEnabled =
+    families?.includes(familyOfCurrencyFrom) || currencies?.includes(currencyFrom.id);
 
-  return familyIsEnabled || currencyIsEnabled;
+  // if families or currencies are defined then check if a family or currency is
+  // enabled. If neither of these are defined or of length 0 then assume everything is enabled.
+  return families?.length || currencies?.length ? familyOrCurrencyIsEnabled : true;
 }

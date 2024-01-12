@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { Trans, useTranslation } from "react-i18next";
 import {
   Wrapper,
@@ -15,11 +15,13 @@ import Text from "~/renderer/components/Text";
 import { openURL } from "~/renderer/linking";
 import illustration from "~/renderer/images/USBTroubleshooting/illus1.png";
 import { urls } from "~/config/urls";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 const ResetNVRAMSolution = ({ number = 1 }: { number?: number }) => {
   const { t } = useTranslation();
-  const onClickLink = useCallback(() => {
-    openURL(urls.troubleshootingUSB);
-  }, []);
+  const troubleshootingUSBUrl = useLocalizedUrl(urls.troubleshootingUSB);
+  const onClickLink = () => {
+    openURL(troubleshootingUSBUrl);
+  };
   return (
     <Wrapper>
       <Number>
