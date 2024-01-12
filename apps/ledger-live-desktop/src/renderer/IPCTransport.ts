@@ -173,7 +173,7 @@ export class IPCTransport extends Transport {
     // empty fn
   }
 
-  async close(): Promise<void> {
+  close(): Promise<void> {
     return rendererRequest(transportCloseChannel, {
       descriptor: this.id,
     }).then(response => {
