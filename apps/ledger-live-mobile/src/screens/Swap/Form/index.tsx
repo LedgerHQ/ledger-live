@@ -2,7 +2,11 @@ import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Button, Flex } from "@ledgerhq/native-ui";
-import { ExchangeRate, OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
+import {
+  ExchangeRate,
+  OnNoRatesCallback,
+  SwapTransactionType,
+} from "@ledgerhq/live-common/exchange/swap/types";
 import { useSwapTransaction, usePageState } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { useDispatch, useSelector } from "react-redux";
@@ -121,7 +125,22 @@ export function SwapForm({
     );
   }, [exchangeRatesState.value, swapTransaction.swap.to.currency]);
 
-  const swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
+  const isTezosAccountReveal = (swapTransaction: SwapTransactionType): Error | undefined => {
+    if (
+      swapTransaction?.transaction?.family == "tezos" &&
+      swapTransaction?.transaction?.estimatedFees &&
+      swapTransaction?.transaction?.fees !== swapTransaction?.transaction?.estimatedFees
+    ) {
+      const tezosError = new Error("Cannot swap with an unrevealed Tezos account");
+      tezosError.name = "TezosUnrevealedAccount";
+      return tezosError;
+    }
+  };
+
+  const swapError =
+    swapTransaction.fromAmountError ||
+    exchangeRatesState?.error ||
+    isTezosAccountReveal(swapTransaction);
   const swapWarning = swapTransaction.fromAmountWarning;
   const pageState = usePageState(swapTransaction, swapError || swapWarning);
   const provider = exchangeRate?.provider;
