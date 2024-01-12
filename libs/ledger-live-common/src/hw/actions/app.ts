@@ -194,7 +194,9 @@ const reducer = (state: State, e: Event): State => {
     case "deviceChange":
       // Preserve the current state when the device is disconnected to avoid displaying
       // the loader drawer above the disconnected one.
-      if (state.isDisconnected) return state;
+      if (state.isDisconnected) {
+        return { ...state, device: e.device };
+      }
 
       return {
         ...getInitialState(e.device, state.request),
