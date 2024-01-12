@@ -64,7 +64,10 @@ import {
   TronUnexpectedFees,
   TronNotEnoughTronPower,
   TronNotEnoughEnergy,
-} from "../../../errors";
+  TronNoUnfrozenResource,
+  TronInvalidUnDelegateResourceAmount,
+  TronLegacyUnfreezeNotExpired,
+} from "../errors";
 import {
   broadcastTron,
   claimRewardTronTransaction,
@@ -79,10 +82,14 @@ import {
   hydrateSuperRepresentatives,
   validateAddress,
   freezeTronTransaction,
-  unfreezeTronTransaction,
   voteTronSuperRepresentatives,
   fetchCurrentBlockHeight,
   getContractUserEnergyRatioConsumption,
+  withdrawExpireUnfreezeTronTransaction,
+  unDelegateResourceTransaction,
+  unfreezeTronTransaction,
+  getDelegatedResource,
+  legacyUnfreezeTronTransaction,
 } from "../api";
 import { activationFees, oneTrx } from "../constants";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
@@ -139,6 +146,15 @@ const signOperation: SignOperationFnSignature<Transaction> = ({ account, transac
 
               case "claimReward":
                 return claimRewardTronTransaction(account);
+
+              case "withdrawExpireUnfreeze":
+                return withdrawExpireUnfreezeTronTransaction(account, transaction);
+
+              case "unDelegateResource":
+                return unDelegateResourceTransaction(account, transaction);
+
+              case "legacyUnfreeze":
+                return legacyUnfreezeTronTransaction(account, transaction);
 
               default:
                 return createTronTransaction(account, transaction, subAccount);
@@ -201,16 +217,27 @@ const signOperation: SignOperationFnSignature<Transaction> = ({ account, transac
 
               case "unfreeze":
                 return {
-                  unfreezeAmount: get(
-                    (account as TronAccount).tronResources,
-                    `frozen.${resource.toLocaleLowerCase()}.amount`,
-                    new BigNumber(0),
-                  ),
+                  unfreezeAmount: transaction.amount,
                 };
 
               case "vote":
                 return {
                   votes: transaction.votes,
+                };
+
+              case "unDelegateResource":
+                return {
+                  unDelegatedAmount: transaction.amount,
+                  receiverAddress: transaction.recipient,
+                };
+
+              case "legacyUnfreeze":
+                return {
+                  unfreezeAmount: get(
+                    (account as TronAccount).tronResources,
+                    `frozen.${resource.toLocaleLowerCase()}.amount`,
+                    new BigNumber(0),
+                  ),
                 };
 
               default:
@@ -360,7 +387,33 @@ const getAccountShape = async (info: AccountShapeInfo, syncConfig) => {
       tronResources.delegatedFrozen.energy
         ? tronResources.delegatedFrozen.energy.amount
         : new BigNumber(0),
+    )
+
+    .plus(
+      tronResources.unFrozen.energy
+        ? tronResources.unFrozen.energy.reduce((accum, cur) => {
+            return accum.plus(cur.amount);
+          }, new BigNumber(0))
+        : new BigNumber(0),
+    )
+    .plus(
+      tronResources.unFrozen.bandwidth
+        ? tronResources.unFrozen.bandwidth.reduce((accum, cur) => {
+            return accum.plus(cur.amount);
+          }, new BigNumber(0))
+        : new BigNumber(0),
+    )
+    .plus(
+      tronResources.legacyFrozen.bandwidth
+        ? tronResources.legacyFrozen.bandwidth.amount
+        : new BigNumber(0),
+    )
+    .plus(
+      tronResources.legacyFrozen.energy
+        ? tronResources.legacyFrozen.energy.amount
+        : new BigNumber(0),
     );
+
   const parentTxs = txs.filter(isParentTx);
   const parentOperations: TronOperation[] = compact(
     parentTxs.map(tx => txInfoToOperation(accountId, info.address, tx)),
@@ -567,7 +620,7 @@ const getTransactionStatus = async (a: TronAccount, t: Transaction): Promise<Tra
     errors.recipient = new RecipientRequired();
   }
 
-  if (["send", "freeze", "unfreeze"].includes(mode)) {
+  if (["send", "unDelegateResource", "legacyUnfreeze"].includes(mode)) {
     if (recipient === a.freshAddress) {
       errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
     } else if (recipient && !(await validateAddress(recipient))) {
@@ -588,13 +641,19 @@ const getTransactionStatus = async (a: TronAccount, t: Transaction): Promise<Tra
   }
 
   if (mode === "unfreeze") {
+    const { bandwidth, energy } = a.tronResources.frozen;
+    if (resource === "BANDWIDTH" && t.amount.gt(bandwidth?.amount || new BigNumber(0))) {
+      errors.resource = new TronNoFrozenForBandwidth();
+    } else if (t.amount.gt(energy?.amount || new BigNumber(0))) {
+      errors.resource = new TronNoFrozenForEnergy();
+    }
+  }
+
+  if (mode === "legacyUnfreeze") {
     const lowerCaseResource = resource ? resource.toLowerCase() : "bandwidth";
     const now = new Date();
-    const expiredDatePath = recipient
-      ? `tronResources.delegatedFrozen.${lowerCaseResource}.expiredAt`
-      : `tronResources.frozen.${lowerCaseResource}.expiredAt`;
+    const expiredDatePath = `tronResources.legacyFrozen.${lowerCaseResource}.expiredAt`;
     const expirationDate: Date | null | undefined = get(a, expiredDatePath, undefined);
-
     if (!expirationDate) {
       if (resource === "BANDWIDTH") {
         errors.resource = new TronNoFrozenForBandwidth();
@@ -602,9 +661,48 @@ const getTransactionStatus = async (a: TronAccount, t: Transaction): Promise<Tra
         errors.resource = new TronNoFrozenForEnergy();
       }
     } else if (now.getTime() < expirationDate.getTime()) {
-      errors.resource = new TronUnfreezeNotExpired(undefined, {
-        until: expirationDate.toISOString(),
-      });
+      errors.resource = new TronLegacyUnfreezeNotExpired();
+    }
+  }
+
+  if (mode === "withdrawExpireUnfreeze") {
+    const now = new Date();
+    if (
+      (!a.tronResources.unFrozen.bandwidth || a.tronResources.unFrozen.bandwidth.length === 0) &&
+      (!a.tronResources.unFrozen.energy || a.tronResources.unFrozen.energy.length === 0)
+    ) {
+      errors.resource = new TronNoUnfrozenResource();
+    } else {
+      const unfreezingResources = [
+        ...(a.tronResources.unFrozen.bandwidth ?? []),
+        ...(a.tronResources.unFrozen.energy ?? []),
+      ];
+
+      const hasNoExpiredResource = !unfreezingResources.some(
+        unfrozen => unfrozen.expireTime.getTime() <= now.getTime(),
+      );
+
+      if (hasNoExpiredResource) {
+        const closestExpireTime = unfreezingResources.reduce((closest, current) => {
+          if (!closest) {
+            return current;
+          }
+          const closestTimeDifference = Math.abs(closest.expireTime.getTime() - now.getTime());
+          const currentTimeDifference = Math.abs(current.expireTime.getTime() - now.getTime());
+
+          return currentTimeDifference < closestTimeDifference ? current : closest;
+        });
+        errors.resource = new TronUnfreezeNotExpired(undefined, {
+          time: closestExpireTime.expireTime.toISOString(),
+        });
+      }
+    }
+  }
+
+  if (mode === "unDelegateResource" && resource && a.tronResources) {
+    const delegatedResourceAmount = await getDelegatedResource(a, t, resource);
+    if (delegatedResourceAmount.lt(t.amount)) {
+      errors.resource = new TronInvalidUnDelegateResourceAmount();
     }
   }
 
@@ -659,7 +757,9 @@ const getTransactionStatus = async (a: TronAccount, t: Transaction): Promise<Tra
       ? BigNumber.max(0, account.spendableBalance.minus(estimatedFees))
       : account.balance;
   const amount = useAllAmount ? balance : t.amount;
-  const amountSpent = ["send", "freeze"].includes(mode) ? amount : new BigNumber(0);
+  const amountSpent = ["send", "freeze", "undelegateResource"].includes(mode)
+    ? amount
+    : new BigNumber(0);
 
   if (mode === "freeze" && amount.lt(oneTrx)) {
     errors.amount = new TronInvalidFreezeAmount();

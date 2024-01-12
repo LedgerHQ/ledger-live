@@ -69,7 +69,7 @@ const ValidationSuccess = (props: ValidationSuccessPropsType) => {
         name="ValidationSuccess"
         flow="stake"
         action="claim"
-        currency="egld"
+        currency="MultiversX"
       />
       <PreventNativeBack />
 

@@ -8,8 +8,10 @@ import { saveSettings } from "~/renderer/actions/settings";
 import LangSwitcher from "~/renderer/components/Onboarding/LangSwitcher";
 import { openURL } from "~/renderer/linking";
 import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
-import { acceptTerms, useDynamicUrl } from "~/renderer/terms";
+import { acceptTerms } from "~/renderer/terms";
 import BuyNanoX from "./assets/buyNanoX.webm";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { urls } from "~/config/urls";
 
 const StyledLink = styled(Text)`
   text-decoration: underline;
@@ -91,13 +93,13 @@ export function Welcome() {
     }
   }, [hasCompletedOnboarding, history]);
 
-  const urlBuyNew = useDynamicUrl("buyNew");
+  const urlBuyNew = useLocalizedUrl(urls.buyNew);
   const buyNanoX = () => openURL(urlBuyNew);
 
-  const urlTerms = useDynamicUrl("terms");
+  const urlTerms = useLocalizedUrl(urls.terms);
   const openTermsAndConditions = () => openURL(urlTerms);
 
-  const urlPrivacyPolicy = useDynamicUrl("privacyPolicy");
+  const urlPrivacyPolicy = useLocalizedUrl(urls.privacyPolicy);
   const openPrivacyPolicy = () => openURL(urlPrivacyPolicy);
 
   const countTitle = useRef(0);

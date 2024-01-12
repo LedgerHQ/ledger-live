@@ -19,7 +19,7 @@ const options = [
   {
     name: "mode",
     type: String,
-    desc: "mode of transaction: send, freeze, unfreeze",
+    desc: "mode of transaction: send, freeze, unfreeze, withdrawExpireUnfreeze, unDelegateResource, legacyUnfreeze",
   },
   {
     name: "duration",
@@ -88,7 +88,16 @@ function inferTransactions(
 ): Transaction[] {
   const mode = opts.mode || "send";
   invariant(
-    ["send", "freeze", "unfreeze", "vote", "claimReward"].includes(mode),
+    [
+      "send",
+      "freeze",
+      "unfreeze",
+      "vote",
+      "claimReward",
+      "withdrawExpireUnfreeze",
+      "unDelegateResource",
+      "legacyUnfreeze",
+    ].includes(mode),
     `Unexpected mode: ${mode}`,
   );
   const resource = opts.resource ? opts.resource.toUpperCase() : undefined;

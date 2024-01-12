@@ -85,7 +85,7 @@ const ValidationSuccess = ({ navigation, route }: ValidationSuccessPropsType) =>
         name="ValidationSuccess"
         flow="stake"
         action="delegate"
-        currency="egld"
+        currency="MultiversX"
       />
       <PreventNativeBack />
 

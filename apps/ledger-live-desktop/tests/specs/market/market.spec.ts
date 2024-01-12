@@ -1,4 +1,5 @@
 import { expect } from "@playwright/test";
+import { getEnv } from "@ledgerhq/live-env";
 import test from "../../fixtures/common";
 import { MarketPage } from "../../models/MarketPage";
 import { Layout } from "../../models/Layout";
@@ -41,7 +42,7 @@ test("Market", async ({ page }) => {
     await expect.soft(page).toHaveScreenshot("market-page-no-scrollbar.png");
   });
 
-  await page.route("https://countervalues.live.ledger.com/v2/supported-to", async route => {
+  await page.route(`${getEnv("LEDGER_COUNTERVALUES_API")}/v2/supported-to`, async route => {
     route.fulfill({
       headers: { teststatus: "mocked" },
       body: JSON.stringify([

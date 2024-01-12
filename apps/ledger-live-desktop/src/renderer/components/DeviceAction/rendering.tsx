@@ -2,7 +2,7 @@ import React, { useCallback, useContext, useEffect } from "react";
 import { BigNumber } from "bignumber.js";
 import map from "lodash/map";
 import { TFunction } from "i18next";
-import { Trans } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { connect, useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
@@ -11,7 +11,12 @@ import ProviderIcon from "~/renderer/components/ProviderIcon";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { ExchangeRate, Exchange } from "@ledgerhq/live-common/exchange/swap/types";
 import { getProviderName, getNoticeType } from "@ledgerhq/live-common/exchange/swap/utils/index";
-import { WrongDeviceForAccount, UpdateYourApp, LockedDeviceError } from "@ledgerhq/errors";
+import {
+  WrongDeviceForAccount,
+  UpdateYourApp,
+  LockedDeviceError,
+  FirmwareNotRecognized,
+} from "@ledgerhq/errors";
 import { LatestFirmwareVersionRequired, DeviceNotOnboarded } from "@ledgerhq/live-common/errors";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -41,7 +46,7 @@ import { Rotating } from "~/renderer/components/Spinner";
 import ProgressCircle from "~/renderer/components/ProgressCircle";
 import CrossCircle from "~/renderer/icons/CrossCircle";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
-import { context } from "~/renderer/drawers/Provider";
+import { context, setDrawer } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
 import { DrawerFooter } from "~/renderer/screens/exchange/Swap2/Form/DrawerFooter";
 import {
@@ -58,10 +63,10 @@ import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import DeviceIllustration from "~/renderer/components/DeviceIllustration";
 import FramedImage from "../CustomImage/FramedImage";
 import { Account } from "@ledgerhq/types-live";
-import LinkWithExternalIcon from "../LinkWithExternalIcon";
 import { openURL } from "~/renderer/linking";
 import Installing from "~/renderer/modals/UpdateFirmwareModal/Installing";
 import { ErrorBody } from "../ErrorBody";
+import LinkWithExternalIcon from "../LinkWithExternalIcon";
 
 export const AnimationWrapper = styled.div`
   width: 600px;
@@ -589,14 +594,14 @@ export const renderLockedDeviceError = ({
               })
             : t("errors.LockedDeviceError.description")
         }
+        buttons={
+          onRetry && inlineRetry ? (
+            <ButtonV3 size="large" variant="main" onClick={onRetry}>
+              {t("common.retry")}
+            </ButtonV3>
+          ) : null
+        }
       />
-      <ButtonContainer>
-        {onRetry && inlineRetry ? (
-          <ButtonV3 size="large" variant="main" onClick={onRetry} borderRadius={"9999px"}>
-            {t("common.retry")}
-          </ButtonV3>
-        ) : null}
-      </ButtonContainer>
     </Wrapper>
   );
 };
@@ -621,25 +626,58 @@ export const DeviceNotOnboardedErrorComponent = withV3StyleProvider(
           top={device ? <DeviceIllustration size={120} deviceId={device.modelId} /> : null}
           title={t("errors.DeviceNotOnboardedError.title")}
           description={t("errors.DeviceNotOnboardedError.description")}
+          buttons={
+            <ButtonV3
+              variant="main"
+              size="large"
+              onClick={redirectToOnboarding}
+              Icon={IconsLegacy.ArrowRightMedium}
+            >
+              {productName
+                ? t("errors.DeviceNotOnboardedError.goToOnboardingButtonWithProductName", {
+                    productName,
+                  })
+                : t("errors.DeviceNotOnboardedError.goToOnboardingButton")}
+            </ButtonV3>
+          }
         />
-        <ButtonV3
-          variant="main"
-          size="large"
-          borderRadius="9999px"
-          mt={10}
-          onClick={redirectToOnboarding}
-          Icon={IconsLegacy.ArrowRightMedium}
-        >
-          {productName
-            ? t("errors.DeviceNotOnboardedError.goToOnboardingButtonWithProductName", {
-                productName,
-              })
-            : t("errors.DeviceNotOnboardedError.goToOnboardingButton")}
-        </ButtonV3>
       </Wrapper>
     );
   },
 );
+
+const FirmwareNotRecognizedErrorComponent: React.FC<{
+  onRetry?: (() => void) | null | undefined;
+}> = ({ onRetry }) => {
+  const { t } = useTranslation();
+  const history = useHistory();
+  const goToExperimentalSettings = () => {
+    setDrawer();
+    history.push("/settings/experimental");
+  };
+  return (
+    <Wrapper>
+      <ErrorBody
+        Icon={IconsLegacy.InfoAltFillMedium}
+        iconColor="primary.c80"
+        title={t("errors.FirmwareNotRecognized.title")}
+        description={t("errors.FirmwareNotRecognized.description")}
+        buttons={
+          <>
+            <ButtonV3 size="large" variant="main" onClick={goToExperimentalSettings}>
+              {t("errors.FirmwareNotRecognized.goToSettingsCTA")}
+            </ButtonV3>
+            {onRetry ? (
+              <ButtonV3 size="large" variant="shade" onClick={onRetry}>
+                {t("common.retry")}
+              </ButtonV3>
+            ) : null}
+          </>
+        }
+      />
+    </Wrapper>
+  );
+};
 
 export const renderError = ({
   error,
@@ -684,6 +722,8 @@ export const renderError = ({
     return renderLockedDeviceError({ t, onRetry, device, inlineRetry });
   } else if (error instanceof DeviceNotOnboarded) {
     return <DeviceNotOnboardedErrorComponent t={t} device={device} />;
+  } else if (error instanceof FirmwareNotRecognized) {
+    return <FirmwareNotRecognizedErrorComponent onRetry={onRetry} />;
   }
 
   // if no supportLink is provided, we fallback on the related url linked to
