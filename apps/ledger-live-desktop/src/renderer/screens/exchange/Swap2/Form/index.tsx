@@ -36,7 +36,7 @@ import { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { SWAP_RATES_TIMEOUT } from "../../config";
-import { OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
+import { OnNoRatesCallback, SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
 import { v4 } from "uuid";
 import SwapWebView, { SWAP_WEB_MANIFEST_ID, SwapWebProps } from "./SwapWebView";
 
@@ -117,8 +117,23 @@ const SwapForm = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const isTezosAccountReveal = (swapTransaction: SwapTransactionType): Error | undefined => {
+    if (
+      swapTransaction?.transaction?.family == "tezos" &&
+      swapTransaction?.transaction?.estimatedFees &&
+      swapTransaction?.transaction?.fees !== swapTransaction?.transaction?.estimatedFees
+    ) {
+      const tezosError = new Error("Cannot swap with an unrevealed Tezos account");
+      tezosError.name = "TezosUnrevealedAccount";
+      return tezosError;
+    }
+  };
+
   const exchangeRatesState = swapTransaction.swap?.rates;
-  let swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
+  const swapError =
+    swapTransaction.fromAmountError ||
+    exchangeRatesState?.error ||
+    isTezosAccountReveal(swapTransaction);
   const swapWarning = swapTransaction.fromAmountWarning;
   const pageState = usePageState(swapTransaction, swapError);
   const provider = useMemo(() => exchangeRate?.provider, [exchangeRate?.provider]);
@@ -126,16 +141,6 @@ const SwapForm = () => {
   const [swapWebProps, setSwapWebProps] = useState<SwapWebProps["swapState"] | undefined>(
     undefined,
   );
-  if (
-    !swapError &&
-    swapTransaction?.transaction?.family == "tezos" &&
-    swapTransaction?.transaction?.estimatedFees &&
-    swapTransaction?.transaction?.fees !== swapTransaction?.transaction?.estimatedFees
-  ) {
-    const tezosError = new Error("Cannot swap with an unrevealed Tezos account");
-    tezosError.name = "TezosUnrevealedAccount";
-    swapError = tezosError;
-  }
   const { setDrawer } = React.useContext(context);
 
   const pauseRefreshing = !!swapError || idleState;
