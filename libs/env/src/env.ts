@@ -43,7 +43,7 @@ const stringArrayParser = (v: unknown): string[] | undefined => {
 
 const envDefinitions = {
   ADDRESS_POISONING_FAMILIES: {
-    def: "ethereum,evm,tron",
+    def: "evm,tron",
     parser: stringParser,
     desc: "List of families impacted by the address poisoning attack",
   },
