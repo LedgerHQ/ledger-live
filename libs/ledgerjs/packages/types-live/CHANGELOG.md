@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.44.0-nightly.3
+
+### Minor Changes
+
+- [#5830](https://github.com/LedgerHQ/ledger-live/pull/5830) [`0375de1`](https://github.com/LedgerHQ/ledger-live/commit/0375de19ca909b0b013992c114b0fa2ead2a08f3) Thanks [@lvndry](https://github.com/lvndry)! - Add support for linea
+
 ## 6.44.0-nightly.2
 
 ### Patch Changes

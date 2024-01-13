@@ -1,5 +1,13 @@
 # @ledgerhq/coin-framework
 
+## 0.10.2-nightly.1
+
+### Patch Changes
+
+- Updated dependencies [[`0375de1`](https://github.com/LedgerHQ/ledger-live/commit/0375de19ca909b0b013992c114b0fa2ead2a08f3)]:
+  - @ledgerhq/cryptoassets@11.4.0-nightly.0
+  - @ledgerhq/types-live@6.44.0-nightly.3
+
 ## 0.10.2-nightly.0
 
 ### Patch Changes

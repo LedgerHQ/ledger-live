@@ -1,5 +1,21 @@
 # @ledgerhq/coin-evm
 
+## 0.11.3-nightly.1
+
+### Patch Changes
+
+- [#5780](https://github.com/LedgerHQ/ledger-live/pull/5780) [`2b627ae`](https://github.com/LedgerHQ/ledger-live/commit/2b627aebddef859b9cb62467353e7d868bfbc4f9) Thanks [@mle-gall](https://github.com/mle-gall)! - Parent Account Error on gas fees LLD
+
+- [#5780](https://github.com/LedgerHQ/ledger-live/pull/5780) [`17d1f86`](https://github.com/LedgerHQ/ledger-live/commit/17d1f86022f0122ac85ca6489eb4698c7d9045fb) Thanks [@mle-gall](https://github.com/mle-gall)! - New LLM gas fees parent account error
+
+- Updated dependencies [[`0375de1`](https://github.com/LedgerHQ/ledger-live/commit/0375de19ca909b0b013992c114b0fa2ead2a08f3)]:
+  - @ledgerhq/cryptoassets@11.4.0-nightly.0
+  - @ledgerhq/types-live@6.44.0-nightly.3
+  - @ledgerhq/coin-framework@0.10.2-nightly.1
+  - @ledgerhq/evm-tools@1.0.14-nightly.0
+  - @ledgerhq/hw-app-eth@6.35.3-nightly.1
+  - @ledgerhq/domain-service@1.1.17-nightly.3
+
 ## 0.11.3-nightly.0
 
 ### Patch Changes

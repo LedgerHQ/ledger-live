@@ -1,5 +1,12 @@
 # @ledgerhq/live-config
 
+## 1.0.1-nightly.3
+
+### Patch Changes
+
+- Updated dependencies [[`0375de1`](https://github.com/LedgerHQ/ledger-live/commit/0375de19ca909b0b013992c114b0fa2ead2a08f3)]:
+  - @ledgerhq/types-live@6.44.0-nightly.3
+
 ## 1.0.1-nightly.2
 
 ### Patch Changes

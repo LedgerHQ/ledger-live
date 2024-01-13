@@ -1,5 +1,21 @@
 # @ledgerhq/live-common
 
+## 33.4.1-nightly.2
+
+### Patch Changes
+
+- [#5723](https://github.com/LedgerHQ/ledger-live/pull/5723) [`418fe65`](https://github.com/LedgerHQ/ledger-live/commit/418fe65c7eb983dd4bae5c9c0799ae9dce36bec8) Thanks [@lvndry](https://github.com/lvndry)! - [solana] update URL to get validators information
+
+- Updated dependencies [[`2b627ae`](https://github.com/LedgerHQ/ledger-live/commit/2b627aebddef859b9cb62467353e7d868bfbc4f9), [`17d1f86`](https://github.com/LedgerHQ/ledger-live/commit/17d1f86022f0122ac85ca6489eb4698c7d9045fb), [`0375de1`](https://github.com/LedgerHQ/ledger-live/commit/0375de19ca909b0b013992c114b0fa2ead2a08f3)]:
+  - @ledgerhq/coin-evm@0.11.3-nightly.1
+  - @ledgerhq/cryptoassets@11.4.0-nightly.0
+  - @ledgerhq/coin-algorand@0.3.9-nightly.1
+  - @ledgerhq/coin-framework@0.10.2-nightly.1
+  - @ledgerhq/coin-polkadot@0.5.2-nightly.1
+  - @ledgerhq/hw-app-eth@6.35.3-nightly.1
+  - @ledgerhq/hw-app-vet@0.1.2-nightly.0
+  - @ledgerhq/live-config@1.0.1-nightly.3
+
 ## 33.4.1-nightly.1
 
 ### Patch Changes
