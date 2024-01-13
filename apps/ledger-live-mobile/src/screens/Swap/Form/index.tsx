@@ -2,11 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Button, Flex } from "@ledgerhq/native-ui";
-import {
-  ExchangeRate,
-  OnNoRatesCallback,
-  SwapTransactionType,
-} from "@ledgerhq/live-common/exchange/swap/types";
+import { ExchangeRate, OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
 import { useSwapTransaction, usePageState } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { useDispatch, useSelector } from "react-redux";
@@ -44,7 +40,10 @@ import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/Ba
 import { SwapFormNavigatorParamList } from "~/components/RootNavigator/types/SwapFormNavigator";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import type { DetailsSwapParamList } from "../types";
-import { getAvailableProviders } from "@ledgerhq/live-common/exchange/swap/index";
+import {
+  getAvailableProviders,
+  maybeTezosAccountUnrevealedAccount,
+} from "@ledgerhq/live-common/exchange/swap/index";
 
 type Navigation = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.Account>;
 
@@ -386,9 +385,4 @@ export function SwapForm({
   }
 
   return <Loading />;
-}
-function maybeTezosAccountUnrevealedAccount(
-  swapTransaction: SwapTransactionType,
-): Error | undefined {
-  throw new Error("Function not implemented.");
 }

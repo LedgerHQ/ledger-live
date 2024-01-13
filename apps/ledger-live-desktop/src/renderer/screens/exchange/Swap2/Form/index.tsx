@@ -36,9 +36,10 @@ import { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { SWAP_RATES_TIMEOUT } from "../../config";
-import { OnNoRatesCallback, SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
+import { OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
 import { v4 } from "uuid";
 import SwapWebView, { SWAP_WEB_MANIFEST_ID, SwapWebProps } from "./SwapWebView";
+import { maybeTezosAccountUnrevealedAccount } from "@ledgerhq/live-common/exchange/swap/index";
 
 const DAPP_PROVIDERS = ["paraswap", "oneinch", "moonpay"];
 
@@ -503,6 +504,3 @@ const SwapForm = () => {
 };
 
 export default SwapForm;
-function maybeTezosAccountUnrevealedAccount(swapTransaction: any): any {
-  throw new Error("Function not implemented.");
-}
