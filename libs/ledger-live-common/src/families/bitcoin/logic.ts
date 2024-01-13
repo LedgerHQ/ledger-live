@@ -209,12 +209,6 @@ export const mapTxToOperations = (
 
   const hasSpentNothing = value.eq(0);
 
-  // Change output is always the last one
-  const changeOutputIndex =
-    tx.outputs.length === 0
-      ? 0
-      : tx.outputs.map(o => o.output_index).reduce((p, c) => (p > c ? p : c));
-
   for (const output of tx.outputs) {
     // ledger explorer returns "unknown" as recipient for OP_RETURN outputs, we don't want to display it in our UI
     if (output.address && !output.address.includes("unknown")) {
@@ -223,7 +217,7 @@ export const mapTxToOperations = (
         if (
           accountInputs.length > 0 && // It's a SEND operation
           (tx.outputs.length === 1 || // The transaction has only 1 output
-            output.output_index < changeOutputIndex) // The output isn't the change output
+            !changeAddresses.has(output.address)) // The output isn't the change output
         ) {
           recipients.push(syncReplaceAddress ? syncReplaceAddress(output.address) : output.address);
         }
@@ -237,10 +231,7 @@ export const mapTxToOperations = (
         } else {
           // The output is a change output of this account,
           // we count it as a recipient only in some special cases
-          if (
-            (recipients.length === 0 && output.output_index >= changeOutputIndex) ||
-            hasSpentNothing
-          ) {
+          if ((recipients.length === 0 && changeAddresses.has(output.address)) || hasSpentNothing) {
             recipients.push(
               syncReplaceAddress ? syncReplaceAddress(output.address) : output.address,
             );
