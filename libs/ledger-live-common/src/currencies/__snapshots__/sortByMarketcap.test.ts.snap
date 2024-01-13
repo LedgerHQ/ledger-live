@@ -1543,6 +1543,7 @@ exports[`sortCurrenciesByIds snapshot 1`] = `
   "base",
   "neon_evm",
   "lukso",
+  "linea",
   "binance_beacon_chain",
   "ethereum/erc20/$aapl",
   "ethereum/erc20/$based",

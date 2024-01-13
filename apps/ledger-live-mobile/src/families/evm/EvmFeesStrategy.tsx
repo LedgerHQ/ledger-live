@@ -36,6 +36,7 @@ export default function EvmFeesStrategy({
   navigation,
   route,
   shouldPrefillEvmGasOptions = true,
+  status,
   ...props
 }: Props<Transaction>) {
   const mainAccount = getMainAccount(account, parentAccount);
@@ -221,6 +222,7 @@ export default function EvmFeesStrategy({
       parentAccount={parentAccount}
       transaction={transaction}
       NetworkFeesInfoComponent={EvmNetworkFeeInfo}
+      status={status}
     />
   );
 }
