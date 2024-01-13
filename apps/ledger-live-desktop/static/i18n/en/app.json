@@ -5231,7 +5231,8 @@
     },
     "FirmwareNotRecognized": {
       "title": "Invalid Provider",
-      "description": "You have to change \"My Ledger provider\" setting. To change it, open Ledger Live \"Settings\", select \"Experimental features\", and then select a different provider."
+      "description": "You have to change \"My Ledger provider\" setting. To change it, open Ledger Live \"Settings\", select \"Experimental features\", and then select a different provider.",
+      "goToSettingsCTA": "Go to settings"
     },
     "HardResetFail": {
       "title": "Sorry, could not reset",
@@ -5360,7 +5361,7 @@
       "title": "Recipient address is inactive. Send at least {{minimalAmount}} to activate it"
     },
     "NotEnoughGas": {
-      "title": "The parent account balance is insufficient for network fees"
+      "title": "You need {{fees}} {{ticker}} for network fees to swap as you are on {{cryptoName}} network. <link0>Buy {{ticker}}</link0>"
     },
     "NotEnoughGasSwap": {
       "title": "You need {{fees}} {{ticker}} for network fees to swap as you are on {{cryptoName}} network. <link0>Buy {{ticker}}</link0>"

@@ -4452,7 +4452,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     disableCountervalue: false,
     ethereumLikeInfo: {
       chainId: 42,
-      node: { type: "external", uri: "https://rpc.mainnet.lukso.network	" },
+      node: { type: "external", uri: "https://rpc.mainnet.lukso.network" },
       explorer: {
         type: "blockscout",
         uri: "https://api.explorer.execution.mainnet.lukso.network",
@@ -4463,6 +4463,63 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         tx: "https://explorer.execution.mainnet.lukso.network/tx/$hash",
         address: "https://explorer.execution.mainnet.lukso.network/address/$address",
         token: "https://explorer.execution.mainnet.lukso.network/token/$address",
+      },
+    ],
+  },
+  linea: {
+    type: "CryptoCurrency",
+    id: "linea",
+    coinType: CoinType.ETH,
+    name: "Linea",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    scheme: "linea",
+    color: "#000000",
+    family: "evm",
+    units: ethereumUnits("ETH", "ETH"),
+    disableCountervalue: false,
+    ethereumLikeInfo: {
+      chainId: 59144,
+      node: { type: "external", uri: "https://rpc.linea.build" },
+      explorer: {
+        type: "etherscan",
+        uri: "https://api.lineascan.build",
+      },
+    },
+    explorerViews: [
+      {
+        tx: "https://lineascan.build/tx/$hash",
+        address: "https://lineascan.build/address/$address",
+        token: "https://lineascan.build/token/$address",
+      },
+    ],
+  },
+  linea_goerli: {
+    type: "CryptoCurrency",
+    id: "linea_goerli",
+    coinType: CoinType.ETH,
+    name: "Linea Goerli",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    scheme: "linea_goerli",
+    color: "#000000",
+    family: "evm",
+    units: ethereumUnits("ETH", "ETH"),
+    disableCountervalue: false,
+    isTestnetFor: "linea",
+    ethereumLikeInfo: {
+      chainId: 59140,
+      node: { type: "external", uri: "https://rpc.goerli.linea.build" },
+      explorer: {
+        type: "etherscan",
+        uri: "https://api-testnet.lineascan.build/api",
+      },
+    },
+    explorerViews: [
+      {
+        tx: "https://goerli.lineascan.build/tx/$hash",
+        address: "https://goerli.lineascan.build/address/$address",
+        token: "https://goerli.lineascan.build/token/$address",
       },
     ],
   },

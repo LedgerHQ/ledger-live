@@ -74,4 +74,12 @@ describe("Onboarding", () => {
     await onboardingSteps.openLedgerLive();
     await portfolioPage.waitForPortfolioPageToLoad();
   });
+
+  it("does the Onboarding and choose to synchronize with Ledger Live Desktop", async () => {
+    await onboardingSteps.startOnboarding();
+    await onboardingSteps.chooseToAccessYourWallet();
+    await onboardingSteps.chooseToSyncWithLedgerLiveDesktop();
+    await onboardingSteps.goesThroughLedgerLiveDesktopScanning();
+    await onboardingSteps.waitForScanningPage();
+  });
 });

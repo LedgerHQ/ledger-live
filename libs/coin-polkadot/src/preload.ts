@@ -70,14 +70,17 @@ function fromHydratePreloadData(data: any): PolkadotPreloadData {
 }
 
 const updates = new Subject<PolkadotPreloadData>();
+
 export function getCurrentPolkadotPreloadData(): PolkadotPreloadData {
   return currentPolkadotPreloadedData;
 }
+
 export function setPolkadotPreloadData(data: PolkadotPreloadData) {
   if (data === currentPolkadotPreloadedData) return;
   currentPolkadotPreloadedData = data;
   updates.next(data);
 }
+
 export function getPolkadotPreloadDataUpdates(): Observable<PolkadotPreloadData> {
   return updates.asObservable();
 }
