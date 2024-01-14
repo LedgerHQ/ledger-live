@@ -208,7 +208,9 @@ export const mapTxToOperations = (
     (accountInputs.length > 0 && accountInputs[0].sequence) || undefined;
 
   const hasSpentNothing = value.eq(0);
-
+  const allOutputsAreChangeAddresses = tx.outputs.every(output =>
+    changeAddresses.has(output.address),
+  );
   for (const output of tx.outputs) {
     // ledger explorer returns "unknown" as recipient for OP_RETURN outputs, we don't want to display it in our UI
     if (output.address && !output.address.includes("unknown")) {
@@ -231,7 +233,7 @@ export const mapTxToOperations = (
         } else {
           // The output is a change output of this account,
           // we count it as a recipient only in some special cases
-          if ((recipients.length === 0 && changeAddresses.has(output.address)) || hasSpentNothing) {
+          if (allOutputsAreChangeAddresses || hasSpentNothing) {
             recipients.push(
               syncReplaceAddress ? syncReplaceAddress(output.address) : output.address,
             );
@@ -240,7 +242,6 @@ export const mapTxToOperations = (
       }
     }
   }
-
   if (accountInputs.length > 0) {
     // It's a SEND operation
     for (const output of accountOutputs) {
