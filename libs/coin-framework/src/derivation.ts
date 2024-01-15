@@ -168,14 +168,21 @@ const modes = Object.freeze({
   polkadotbip44: {
     overridesDerivation: "44'/354'/<account>'/0'/<address>'",
   },
-  gliflegacy: {
+  glifLegacy: {
     overridesDerivation: "44'/1'/0'/0/<account>",
     tag: "legacy",
+    mandatoryEmptyAccountSkip: 5,
   },
   glif: {
     overridesDerivation: "44'/461'/0'/0/<account>",
-    startsAt: 1,
     tag: "third-party",
+    mandatoryEmptyAccountSkip: 5,
+  },
+  filecoinBIP44: {
+    overridesDerivation: "44'/<coin_type>'/<account>'/<node>/<address>",
+    startsAt: 1,
+    tag: "bip44",
+    mandatoryEmptyAccountSkip: 5,
   },
   casper_wallet: {
     overridesDerivation: "44'/506'/0'/0/<account>",
@@ -221,7 +228,7 @@ const legacyDerivations: Partial<Record<CryptoCurrency["id"], DerivationMode[]>>
   stellar: ["sep5"],
   polkadot: ["polkadotbip44"],
   hedera: ["hederaBip44"],
-  filecoin: ["gliflegacy", "glif"],
+  filecoin: ["glifLegacy", "filecoinBIP44", "glif"],
   internet_computer: ["internet_computer"],
   casper: ["casper_wallet"],
   cardano: ["cardano"],
@@ -369,6 +376,7 @@ const disableBIP44: Record<string, boolean> = {
   vechain: true,
   internet_computer: true,
   casper: true,
+  filecoin: true,
 };
 type SeedInfo = {
   purpose: number;
