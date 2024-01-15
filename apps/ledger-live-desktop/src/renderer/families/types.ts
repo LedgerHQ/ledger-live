@@ -309,7 +309,7 @@ export type LLDCoinFamily<
    */
   getTransactionExplorer?: (
     explorerView: ExplorerView | null | undefined,
-    operation: Operation,
+    operation: O,
   ) => string | null | undefined;
 
   nft?: {
