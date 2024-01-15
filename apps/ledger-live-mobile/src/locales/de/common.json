@@ -492,7 +492,7 @@
       "description" : "Versuchen Sie, die App über My Ledger neu zu installieren."
     },
     "NotEnoughGas" : {
-      "title" : "Der übergeordnete Kontostand reicht für Netzwerkgebühren nicht aus",
+      "title" : "Für den Umtausch benötigen Sie {{fees}} {{ticker}} für Netzwerkgebühren, da Sie sich im {{cryptoName}}-Netzwerk befinden. <link0>{{ticker}} kaufen</link0>",
       "description" : "Bitte senden Sie einige Coins an Ihr Konto, um Token-Transaktionen bezahlen zu können."
     },
     "NotEnoughGasSwap" : {
@@ -605,6 +605,16 @@
     },
     "TronNotEnoughEnergy" : {
       "title" : "Energie ist niedriger als notwendig. Es können bis zu 50 TRX an Gebühren anfallen."
+    },
+    "TronNoUnfrozenResource" : {
+      "title" : "Keine entsperrten Vermögenswerte zum Abheben vorhanden"
+    },
+    "TronInvalidUnDelegateResourceAmount" : {
+      "title" : "Nicht genügend delegierte Guthaben"
+    },
+    "TronUnfreezeNotExpired" : {
+      "title" : "Vermögenswerte noch nicht entsperrt",
+      "description" : "Bitte warten Sie bis {{time}}, um Auszahlungen vorzunehmen"
     },
     "UpdateYourApp" : {
       "title" : "App-Update erforderlich",
@@ -2313,6 +2323,9 @@
       "VOTE" : "Abgestimmt",
       "FREEZE" : "Eingefroren",
       "UNFREEZE" : "Einfrieren aufgehoben",
+      "UNDELEGATE_RESOURCE" : "Nicht delegiert",
+      "WITHDRAW_EXPIRE_UNFREEZE" : "Abhebung",
+      "LEGACYUNFREEZE" : "Einfrieren aufgehoben",
       "REWARD" : "Beanspruchte Prämie",
       "FEES" : "Gebühren",
       "OPT_IN" : "Zustimmen",
@@ -3687,7 +3700,7 @@
       "description" : "Sperren Sie TRX, um sicher Prämien zu verdienen und die Kontrolle über Ihr Vermögen zu behalten.",
       "steps" : {
         "0" : "Delegierte Vermögenswerte bleiben in Ihrem Besitz.",
-        "1" : "Sie können Ihre Vermögenswerte nach 3 Tagen wieder entsperren.",
+        "1" : "Sie können Ihre Vermögenswerte jederzeit entsperren; sie stehen Ihnen dann nach einer 14-tägigen Wartezeit zur Verfügung.",
         "2" : "Sicher sperren und abstimmen mit Ihrem Ledger-Gerät."
       },
       "howVotingWorks" : "Wie die Abstimmung funktioniert",
@@ -5344,7 +5357,7 @@
             "description" : "Delegieren Sie TRX an einen Drittpartei-Kandidaten um Prämien zu erhalten. Klicken Sie auf Weiter, um Vermögenswerte zu sperren und zu wählen.",
             "bullet" : {
               "delegate" : "Delegierte Vermögenswerte bleiben in Ihrem Besitz.",
-              "access" : "Sie können 3 Tage nach dem Sperren auf Ihr Vermögen zugreifen.",
+              "access" : "Sie können eingefrorene Vermögenswerte gleich entsperren, sie sind jedoch erst nach einer 14-tägigen Wartezeit zugänglich.",
               "ledger" : "Delegieren Sie sicher mit Ihrem Ledger-Gerät."
             },
             "button" : {
@@ -5362,7 +5375,7 @@
       },
       "unfreeze" : {
         "title" : "Entsperren",
-        "description" : "Entsperren Sie TRX, um sie wieder in Ihrem verfügbaren Guthaben zu haben. Sie werden keine Prämien mehr verdienen."
+        "description" : "Entsperren Sie TRX, um sie Ihrem verfügbaren Guthaben wieder hinzuzufügen. Sie werden keine Prämien mehr verdienen. Die Vermögenswerte stehen nach Ablauf der 14-tägigen Sperrfrist zur Verfügung"
       },
       "vote" : {
         "title" : "Abstimmen",
@@ -5920,6 +5933,9 @@
       "freeze" : "Bestätigen Sie bitte auf Ihrem Gerät, um den Vorgang abzuschließen",
       "unfreeze" : "Bestätigen Sie bitte auf Ihrem Gerät, um den Vorgang abzuschließen",
       "claimReward" : "Bestätigen Sie bitte auf Ihrem Gerät, um den Vorgang abzuschließen",
+      "legacyUnfreeze" : "Bestätigen Sie bitte auf Ihrem Gerät, um den Vorgang abzuschließen",
+      "withdrawExpireUnfreeze" : "Bestätigen Sie bitte auf Ihrem Gerät, um den Vorgang abzuschließen",
+      "undelegateResource" : "Bestätigen Sie bitte auf Ihrem Gerät, um den Vorgang abzuschließen",
       "vote" : "Bestätigen Sie bitte auf Ihrem Gerät, um den Vorgang abzuschließen",
       "delegate" : "Bestätigen Sie bitte auf Ihrem Gerät, um den Vorgang abzuschließen",
       "redelegate" : "Bestätigen Sie bitte auf Ihrem Gerät, um den Vorgang abzuschließen",
@@ -5944,9 +5960,12 @@
     "votes" : "Abstimmungen",
     "validator" : "Validator",
     "infoWording" : {
-      "freeze" : "Gesperrte Token sind für einen Zeitraum von 3 Tagen gesperrt.",
+      "freeze" : "Indem Sie Ihre Token einfrieren, sichern Sie sich Bandbreite oder Energie und erhalten dafür eine entsprechende Menge an TRON Power (TP).",
       "unfreeze" : "Ihre {{resource}} Punkte werden reduziert und alle Ihre Stimmen werden storniert.",
+      "legacyUnfreeze" : "Ihre {{resource}} Punkte werden reduziert und alle Ihre Stimmen werden storniert.",
       "claimReward" : "Prämien können einmal alle 24 Stunden beansprucht werden.",
+      "withdrawExpireUnfreeze" : "Ihre entsperrten Ressourcen, die das Ende der Sperrfrist erreicht haben, werden abgehoben",
+      "unDelegateResource" : "Delegieren von {{resource}} abbrechen",
       "cosmos" : {
         "claimReward" : "Wenn der ausgewählte Validator ausstehende Prämien hat, werden diese automatisch eingefordert.",
         "redelegate" : "Sie müssen {{numberOfDays}} Tage warten, bis die nicht delegierten Vermögenswerte wieder auf dem verfügbaren Guthaben erscheinen.",
