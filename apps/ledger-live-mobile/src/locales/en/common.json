@@ -911,6 +911,9 @@
     "FirmwareNotRecognized": {
       "title": "Invalid Provider",
       "description": "You have to change \"My Ledger provider\" setting. To change it, open Ledger Live \"Settings\", select \"Experimental features\", and then select a different provider."
+    },
+    "TonCommentInvalid": {
+      "title": "Comment must be up to 120 ascii chars"
     }
   },
   "crash": {
@@ -2413,7 +2416,8 @@
       "gasLimit": "Gas Limit",
       "id": "Id",
       "autoClaimedRewards": "Auto Claimed Rewards",
-      "stakedAmount": "Staked amount"
+      "stakedAmount": "Staked amount",
+      "comment": "Comment"
     },
     "multipleAddresses": "Why multiple addresses?",
     "tokenName": "Token Name",
@@ -3603,6 +3607,8 @@
         "value": "Memo value"
       },
       "validateMemo": "Validate memo",
+      "comment": "Comment",
+      "validateComment": "Validate comment",
       "quantity": "Quantity"
     },
     "validation": {
