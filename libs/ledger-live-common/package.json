@@ -180,6 +180,7 @@
     "@ton-community/ton-ledger": "^7.0.1",
     "@ton/core": "^0.53.0",
     "@ton/crypto": "^3.2.0",
+    "@ton/ton": "^13.9.0",
     "@types/bchaddrjs": "^0.4.0",
     "@types/bs58check": "^2.1.0",
     "@types/pako": "^2.0.0",
