@@ -1,9 +1,8 @@
+import React, { createContext, useState, useContext, ReactNode, useRef, useEffect } from "react";
 import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
 import { Feature_Storyly, StorylyInstanceType } from "@ledgerhq/types-live";
-import React, { createContext, useState, useContext, ReactNode, useRef, useEffect } from "react";
-import { type StorylyOptions } from "./useStoryly";
-import "storyly-web";
 
+import { StorylyRef } from "storyly-web";
 interface StorylyProviderProps {
   children: ReactNode;
 }
@@ -17,21 +16,10 @@ const StorylyContext = createContext<StorylyContextType | undefined>(undefined);
 
 type StoriesType = Feature_Storyly["params"] extends { stories: infer S } ? S : never;
 
-type openStoryParams = {
-  group?: string;
-  story?: string;
-  playMode?: string;
-};
-
 const getTokenForInstanceId = (stories: StoriesType, targetInstanceId: string): string | null => {
   const foundStory = Object.values(stories) as StorylyInstanceType[];
   const matchingStory = foundStory.find(story => story.instanceId === targetInstanceId);
   return matchingStory ? matchingStory?.token : null;
-};
-
-type StorylyRef = {
-  init: (options: StorylyOptions & { events: { closeStoryGroup: () => void } }) => void;
-  openStory: (props: openStoryParams) => void;
 };
 
 const StorylyProvider: React.FC<StorylyProviderProps> = ({ children }) => {
@@ -80,7 +68,7 @@ const StorylyProvider: React.FC<StorylyProviderProps> = ({ children }) => {
   return (
     <StorylyContext.Provider value={{ url, setUrl }}>
       {children}
-      {/* @ts-expect-error the `storyly-web` package doesn't provide any typings yet. */}
+      {/* @ts-expect-error even by typing the package (types/storyly-web.d.ts), the way it is exported for a global use prevents typescript from figuring out what's happening */}
       {token && <storyly-web ref={storylyRef} />}
     </StorylyContext.Provider>
   );
