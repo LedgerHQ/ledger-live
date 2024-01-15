@@ -168,7 +168,7 @@ export const mapAsSmallSquareContentCard = (card: BrazeContentCard): VerticalCon
   mapAsSquareContentCard(card, "S", WidthFactor.Half);
 
 export const mapAsMediumSquareContentCard = (card: BrazeContentCard): VerticalContentCard =>
-  mapAsSquareContentCard(card, "M", WidthFactor.Quarter);
+  mapAsSquareContentCard(card, "M", WidthFactor.ThreeQuarters);
 
 export const mapAsBigSquareContentCard = (card: BrazeContentCard): VerticalContentCard =>
-  mapAsSquareContentCard(card, "L", WidthFactor.Quarter);
+  mapAsSquareContentCard(card, "L", WidthFactor.ThreeQuarters);
