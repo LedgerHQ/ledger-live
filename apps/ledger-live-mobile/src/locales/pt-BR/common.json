@@ -492,7 +492,7 @@
       "description" : "Tente reinstalar o aplicativo através do My Ledger"
     },
     "NotEnoughGas" : {
-      "title" : "O saldo da conta principal é insuficiente para as taxas de rede",
+      "title" : "Você precisa de {{fees}} {{ticker}} para pagar as taxas de rede desta troca, já que está na rede {{cryptoName}}. <link0>Comprar {{ticker}}</link0>",
       "description" : "Envie algumas moedas à sua conta para pagar transações de tokens."
     },
     "NotEnoughGasSwap" : {
@@ -569,8 +569,8 @@
       "description" : "Você não tem ativos de Energia para descongelar."
     },
     "TronLegacyUnfreezeNotExpired" : {
-      "title" : "Descongelamento ainda indisponível",
-      "description" : "Aguarde 3 dias após sua última operação de congelamento."
+      "title" : "Unfreeze is not available yet",
+      "description" : "Please wait 3 days after your last Freeze operation."
     },
     "TronVoteRequired" : {
       "title" : "Pelo menos 1 voto é necessário"
@@ -605,6 +605,16 @@
     },
     "TronNotEnoughEnergy" : {
       "title" : "A Energia está abaixo do necessário. Você pode pagar até 50 TRX em taxas."
+    },
+    "TronNoUnfrozenResource" : {
+      "title" : "No unfrozen resources to withdraw"
+    },
+    "TronInvalidUnDelegateResourceAmount" : {
+      "title" : "Not enough delegated resources"
+    },
+    "TronUnfreezeNotExpired" : {
+      "title" : "Resources not unfrozen yet",
+      "description" : "You need to wait until {{time}} to withdraw"
     },
     "UpdateYourApp" : {
       "title" : "Atualização de aplicativo necessária",
@@ -2313,6 +2323,9 @@
       "VOTE" : "Votado",
       "FREEZE" : "Congelado",
       "UNFREEZE" : "Descongelado",
+      "UNDELEGATE_RESOURCE" : "Undelegated",
+      "WITHDRAW_EXPIRE_UNFREEZE" : "Withdrawal",
+      "LEGACYUNFREEZE" : "Unfrozen",
       "REWARD" : "Recompensa resgatada",
       "FEES" : "Taxas",
       "OPT_IN" : "Aderir",
@@ -3687,7 +3700,7 @@
       "description" : "Congele TRX para ganhar prêmios de forma segura, mantendo o controle de seus ativos.",
       "steps" : {
         "0" : "Os ativos delegados continuam sendo seus.",
-        "1" : "Você pode descongelar seus ativos após 3 dias.",
+        "1" : "You can unfreeze your assets at any time, and they will be accessible after the 14-day unfreezing period.",
         "2" : "Congele e vote com segurança com seu dispositivo Ledger."
       },
       "howVotingWorks" : "Como funciona a votação",
@@ -5344,7 +5357,7 @@
             "description" : "Delegar TRX a um candidato terceiro para receber recompensas. Clique em continuar para congelar ativos e votar.",
             "bullet" : {
               "delegate" : "Ativos delegados ainda são seus.",
-              "access" : "Você pode acessar seus ativos 3 dias após o congelamento.",
+              "access" : "Frozen assets can be unfrozen immediately and will become accessible after the 14-day unfreezing period.",
               "ledger" : "Delegue com segurança usando seu dispositivo Ledger."
             },
             "button" : {
@@ -5362,7 +5375,7 @@
       },
       "unfreeze" : {
         "title" : "Descongelar",
-        "description" : "Descongele TRX para adicioná-los de volta ao seu saldo disponível. Você não ganhará mais recompensas."
+        "description" : "Unfreeze TRX to add them back to your available balance. You will no longer earn rewards. The assets will be available after the 14-day unfreezing period"
       },
       "vote" : {
         "title" : "Votar",
@@ -5920,6 +5933,9 @@
       "freeze" : "Em seu dispositivo, confirme para finalizar a operação",
       "unfreeze" : "Em seu dispositivo, confirme para finalizar a operação",
       "claimReward" : "Em seu dispositivo, confirme para finalizar a operação",
+      "legacyUnfreeze" : "On your device, please confirm to finalize the operation",
+      "withdrawExpireUnfreeze" : "On your device, please confirm to finalize the operation",
+      "undelegateResource" : "On your device, please confirm to finalize the operation",
       "vote" : "Em seu dispositivo, confirme para finalizar a operação",
       "delegate" : "Em seu dispositivo, confirme para finalizar a operação",
       "redelegate" : "Em seu dispositivo, confirme para finalizar a operação",
@@ -5944,9 +5960,12 @@
     "votes" : "Votos",
     "validator" : "Validador",
     "infoWording" : {
-      "freeze" : "Tokens congelados são bloqueados por um período de 3 dias.",
+      "freeze" : "Freeze tokens to acquire bandwidth or energy and receive an equivalent amount of TRON Power (TP).",
       "unfreeze" : "Seus pontos {{resource}} serão reduzidos, e todos os seus votos serão cancelados.",
+      "legacyUnfreeze" : "Your {{resource}} points will be reduced, and all your votes will be cancelled.",
       "claimReward" : "As recompensas podem ser resgatadas a cada 24 horas.",
+      "withdrawExpireUnfreeze" : "Your unfrozen resources that has passed the unfreezing period will be withdrawn",
+      "unDelegateResource" : "Cancel the delegation of {{resource}}",
       "cosmos" : {
         "claimReward" : "Se o validador selecionado tiver recompensas pendentes, elas serão automaticamente resgatadas.",
         "redelegate" : "Você terá que esperar {{numberOfDays}} dias para que os ativos desdelegados retornem ao saldo disponível.",
