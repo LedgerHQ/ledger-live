@@ -1,9 +1,9 @@
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { Address } from "@ton/ton";
 import BigNumber from "bignumber.js";
 import { TonOperation } from "../../types";
-import { TonTransaction } from "./api.types";
 import { fetchTransactions } from "./api";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { TonTransaction } from "./api.types";
 
 export async function getTransactions(addr: string, startLt?: string): Promise<TonTransaction[]> {
   const txs = await fetchTransactions(addr, { startLt });

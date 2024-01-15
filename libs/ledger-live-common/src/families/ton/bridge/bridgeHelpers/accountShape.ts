@@ -4,10 +4,10 @@ import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { flatMap } from "lodash";
 import { decodeAccountId, encodeAccountId } from "../../../../account";
-import { fetchAccountInfo, fetchLastBlockNumber } from "./api";
-import { getTransactions, mapTxToOps } from "./txn";
-import { TonTransaction } from "./api.types";
 import { TonOperation } from "../../types";
+import { fetchAccountInfo, fetchLastBlockNumber } from "./api";
+import { TonTransaction } from "./api.types";
+import { getTransactions, mapTxToOps } from "./txn";
 
 export const getAccountShape: GetAccountShape = async info => {
   const { address, rest, currency, derivationMode, initialAccount } = info;

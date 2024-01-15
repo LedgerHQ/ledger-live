@@ -111,6 +111,13 @@ export interface TonAccountInfo {
   seqno: number;
 }
 
+export interface TonFee {
+  in_fwd_fee: number;
+  storage_fee: number;
+  gas_fee: number;
+  fwd_fee: number;
+}
+
 export interface TonResponseMasterchainInfo {
   first: TonBlock;
   last: TonBlock;
@@ -133,4 +140,13 @@ export interface TonResponseWalletInfo {
   wallet_id: number | null;
   last_transaction_lt: string | null;
   last_transaction_hash: string | null;
+}
+
+export interface TonResponseEstimateFee {
+  source_fees: TonFee;
+  destination_fees: TonFee[];
+}
+
+export interface TonResponseMessage {
+  message_hash: string;
 }
