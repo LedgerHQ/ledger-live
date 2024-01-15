@@ -1,0 +1,31 @@
+diff --git a/index.d.ts b/index.d.ts
+index 07096a2f725aaccf84776b5e8158ac95038484cf..e461a2bdf35518aaaabb938384d985d0a594b28a 100644
+--- a/index.d.ts
++++ b/index.d.ts
+@@ -7,6 +7,7 @@ export class Buffer extends Uint8Array {
+     compare(otherBuffer: Uint8Array, targetStart?: number, targetEnd?: number, sourceStart?: number, sourceEnd?: number): number;
+     copy(targetBuffer: Buffer, targetStart?: number, sourceStart?: number, sourceEnd?: number): number;
+     slice(start?: number, end?: number): Buffer;
++    subarray(start?: number, end?: number): Buffer;
+     writeUIntLE(value: number, offset: number, byteLength: number, noAssert?: boolean): number;
+     writeUIntBE(value: number, offset: number, byteLength: number, noAssert?: boolean): number;
+     writeIntLE(value: number, offset: number, byteLength: number, noAssert?: boolean): number;
+diff --git a/index.js b/index.js
+index 7a0e9c2a123bc9d26c20bb3de4a3c4e49b24ee40..748adf8821db72f8277d6689f00f758760bf94df 100644
+--- a/index.js
++++ b/index.js
+@@ -1119,6 +1119,14 @@ Buffer.prototype.slice = function slice (start, end) {
+   return newBuf
+ }
+ 
++// got from https://github.com/craftzdog/react-native-buffer/commit/1adab65d393ba30829e35ca83d4304d1d1303749
++Buffer.prototype.subarray = function subarray (start, end) {
++  const newBuf = Uint8Array.prototype.subarray.call(this, start, end)
++  Object.setPrototypeOf(newBuf, Buffer.prototype)
++
++  return newBuf
++}
++
+ /*
+  * Need to make sure that buffer isn't trying to write out of bounds.
+  */
