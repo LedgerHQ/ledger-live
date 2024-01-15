@@ -492,7 +492,7 @@
       "description" : "My Ledgerからアプリの再インストールを試す"
     },
     "NotEnoughGas" : {
-      "title" : "親アカウントで、ネットワーク手数料用の残高が不足しています",
+      "title" : "{{cryptoName}}ネットワークを使用しているため、スワップするにはネットワーク手数料{{fees}}{{ticker}}が必要です。<link0>{{ticker}}を購入する</link0>",
       "description" : "トークンのトランザクションの支払いに必要なコインをアカウントに送ってください。"
     },
     "NotEnoughGasSwap" : {
@@ -569,8 +569,8 @@
       "description" : "凍結を解除できるエネルギー資産がありません。"
     },
     "TronLegacyUnfreezeNotExpired" : {
-      "title" : "凍結解除はまだ利用できません。",
-      "description" : "前回の凍結から3日後にご利用ください。"
+      "title" : "Unfreeze is not available yet",
+      "description" : "Please wait 3 days after your last Freeze operation."
     },
     "TronVoteRequired" : {
       "title" : "1票以上が必要です。"
@@ -605,6 +605,16 @@
     },
     "TronNotEnoughEnergy" : {
       "title" : "エネルギーが必要額を満たしていません。手数料には最大50TRXが必要となります。"
+    },
+    "TronNoUnfrozenResource" : {
+      "title" : "No unfrozen resources to withdraw"
+    },
+    "TronInvalidUnDelegateResourceAmount" : {
+      "title" : "Not enough delegated resources"
+    },
+    "TronUnfreezeNotExpired" : {
+      "title" : "Resources not unfrozen yet",
+      "description" : "You need to wait until {{time}} to withdraw"
     },
     "UpdateYourApp" : {
       "title" : "アプリのアップデートが必要です。",
@@ -2313,6 +2323,9 @@
       "VOTE" : "投票済み",
       "FREEZE" : "凍結中",
       "UNFREEZE" : "凍結解除済み",
+      "UNDELEGATE_RESOURCE" : "Undelegated",
+      "WITHDRAW_EXPIRE_UNFREEZE" : "Withdrawal",
+      "LEGACYUNFREEZE" : "Unfrozen",
       "REWARD" : "獲得した報酬",
       "FEES" : "手数料",
       "OPT_IN" : "オプトイン",
@@ -3687,7 +3700,7 @@
       "description" : "資産をしっかり管理しつつ、TRXを凍結して安全に報酬を獲得しましょう。",
       "steps" : {
         "0" : "資産をデリゲートしても、資産の所有者は変わりません。",
-        "1" : "資産の凍結は3日後に解除できます。",
+        "1" : "You can unfreeze your assets at any time, and they will be accessible after the 14-day unfreezing period.",
         "2" : "Ledgerデバイスを使って、資産の凍結と投票を安全に行いましょう。"
       },
       "howVotingWorks" : "投票の仕組み",
@@ -5344,7 +5357,7 @@
             "description" : "TRXを第三者の候補者にデリゲートすることで、報酬を獲得できます。資産を凍結して投票を行うには、「続行」をクリックしてください。",
             "bullet" : {
               "delegate" : "資産をデリゲートしても、資産の所有者は変わりません。",
-              "access" : "凍結の3日後に資産にアクセスできるようになります。",
+              "access" : "Frozen assets can be unfrozen immediately and will become accessible after the 14-day unfreezing period.",
               "ledger" : "Ledgerデバイスを使って安全にデリゲートできます。"
             },
             "button" : {
@@ -5362,7 +5375,7 @@
       },
       "unfreeze" : {
         "title" : "凍結解除",
-        "description" : "TRXの凍結を解除すると利用可能残高に戻ります。報酬を得ることはできなくなります。"
+        "description" : "Unfreeze TRX to add them back to your available balance. You will no longer earn rewards. The assets will be available after the 14-day unfreezing period"
       },
       "vote" : {
         "title" : "投票",
@@ -5920,6 +5933,9 @@
       "freeze" : "デバイス上で操作を確定してください。",
       "unfreeze" : "デバイス上で操作を確定してください。",
       "claimReward" : "デバイス上で操作を確定してください。",
+      "legacyUnfreeze" : "On your device, please confirm to finalize the operation",
+      "withdrawExpireUnfreeze" : "On your device, please confirm to finalize the operation",
+      "undelegateResource" : "On your device, please confirm to finalize the operation",
       "vote" : "デバイス上で操作を確定してください。",
       "delegate" : "デバイス上で操作を確定してください。",
       "redelegate" : "デバイス上で操作を確定してください。",
@@ -5944,9 +5960,12 @@
     "votes" : "票数",
     "validator" : "バリデーター",
     "infoWording" : {
-      "freeze" : "凍結されたトークンは3日間ロックされます。",
+      "freeze" : "Freeze tokens to acquire bandwidth or energy and receive an equivalent amount of TRON Power (TP).",
       "unfreeze" : "{{resource}}ポイントが減り、投票はすべて取り消されます。",
+      "legacyUnfreeze" : "Your {{resource}} points will be reduced, and all your votes will be cancelled.",
       "claimReward" : "報酬は24時間ごとに請求できます。",
+      "withdrawExpireUnfreeze" : "Your unfrozen resources that has passed the unfreezing period will be withdrawn",
+      "unDelegateResource" : "Cancel the delegation of {{resource}}",
       "cosmos" : {
         "claimReward" : "選択したバリデーターに未請求の報酬がある場合は、自動的に請求されます。",
         "redelegate" : "デリゲート解除済みの資産が利用可能残高に戻るまで、{{numberOfDays}}日間待機する必要があります。",
