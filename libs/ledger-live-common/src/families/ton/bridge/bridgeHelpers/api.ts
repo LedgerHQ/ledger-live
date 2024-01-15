@@ -3,7 +3,9 @@ import network from "@ledgerhq/live-network/network";
 import { Address } from "@ton/ton";
 import {
   TonAccountInfo,
+  TonFee,
   TonResponseAccountInfo,
+  TonResponseEstimateFee,
   TonResponseMasterchainInfo,
   TonResponseMessage,
   TonResponseWalletInfo,
@@ -80,4 +82,25 @@ export async function fetchAccountInfo(addr: string): Promise<TonAccountInfo> {
     status: data.status,
     seqno: seqno || 0,
   };
+}
+
+export async function estimateFee(
+  address: string,
+  body: string,
+  initCode?: string,
+  initData?: string,
+): Promise<TonFee> {
+  return (
+    await send<TonResponseEstimateFee>("/estimateFee", {
+      address,
+      body,
+      init_code: initCode,
+      init_data: initData,
+      ignore_chksig: true,
+    })
+  ).source_fees;
+}
+
+export async function broadcastTx(bocBase64: string): Promise<string> {
+  return (await send<TonResponseMessage>("/message", { boc: bocBase64 })).message_hash;
 }

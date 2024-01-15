@@ -13,6 +13,7 @@ import solana from "../families/solana/deviceTransactionConfig";
 import stacks from "../families/stacks/deviceTransactionConfig";
 import stellar from "../families/stellar/deviceTransactionConfig";
 import tezos from "../families/tezos/deviceTransactionConfig";
+import ton from "../families/ton/deviceTransactionConfig";
 import tron from "../families/tron/deviceTransactionConfig";
 import algorand from "@ledgerhq/coin-algorand/deviceTransactionConfig";
 import evm from "@ledgerhq/coin-evm/deviceTransactionConfig";
@@ -35,6 +36,7 @@ export default {
   stacks,
   stellar,
   tezos,
+  ton,
   tron,
   algorand,
   evm,
