@@ -492,7 +492,7 @@
       "description" : "Uygulamayı My Ledger'dan yeniden yüklemeyi deneyin"
     },
     "NotEnoughGas" : {
-      "title" : "Ana hesaptaki bakiye ağ ücretlerini karşılamak için yetersiz",
+      "title" : "{{cryptoName}} ağında takas işlemi için {{fees}} {{ticker}} ağ ücreti ödemeniz gerekiyor. <link0>{{ticker}} Satın Al</link0>",
       "description" : "Token işlem ücretlerini ödemek için lütfen hesabınıza biraz coin gönderin."
     },
     "NotEnoughGasSwap" : {
@@ -569,8 +569,8 @@
       "description" : "Çözülebilecek Enerji varlığınız yok."
     },
     "TronLegacyUnfreezeNotExpired" : {
-      "title" : "Varlık çözme işlevi henüz açık değil",
-      "description" : "Lütfen son Dondurma işleminden sonra 3 gün bekleyin."
+      "title" : "Unfreeze is not available yet",
+      "description" : "Please wait 3 days after your last Freeze operation."
     },
     "TronVoteRequired" : {
       "title" : "En az 1 oy gerekiyor"
@@ -605,6 +605,16 @@
     },
     "TronNotEnoughEnergy" : {
       "title" : "Enerji yetersiz. Ağ ücreti 50 TRX tutarına ulaşabilir."
+    },
+    "TronNoUnfrozenResource" : {
+      "title" : "No unfrozen resources to withdraw"
+    },
+    "TronInvalidUnDelegateResourceAmount" : {
+      "title" : "Not enough delegated resources"
+    },
+    "TronUnfreezeNotExpired" : {
+      "title" : "Resources not unfrozen yet",
+      "description" : "You need to wait until {{time}} to withdraw"
     },
     "UpdateYourApp" : {
       "title" : "Uygulama güncellemesi gerekiyor",
@@ -2313,6 +2323,9 @@
       "VOTE" : "Oylandı",
       "FREEZE" : "Donduruldu",
       "UNFREEZE" : "Çözüldü",
+      "UNDELEGATE_RESOURCE" : "Undelegated",
+      "WITHDRAW_EXPIRE_UNFREEZE" : "Withdrawal",
+      "LEGACYUNFREEZE" : "Unfrozen",
       "REWARD" : "Ödül alındı",
       "FEES" : "Ücretler",
       "OPT_IN" : "Onaylama",
@@ -3687,7 +3700,7 @@
       "description" : "TRX'i dondurarak hem güvenle ödül kazanın hem de varlıklarınızın kontrolünü sağlamayı sürdürün.",
       "steps" : {
         "0" : "Yetkisi devredilen varlıklar size ait olmaya devam eder.",
-        "1" : "Varlıklarınızı 3 gün sonra çözebilirsiniz.",
+        "1" : "You can unfreeze your assets at any time, and they will be accessible after the 14-day unfreezing period.",
         "2" : "Ledger cihazınız ile güvenle dondurun ve oylayın."
       },
       "howVotingWorks" : "Oylama nasıl çalışır?",
@@ -5344,7 +5357,7 @@
             "description" : "TRX varlıklarınızla üçüncü bir tarafa yetki devrederek ödül kazanın. Varlıklarınızı dondurmak ve oy vermek için Devam butonuna tıklayın.",
             "bullet" : {
               "delegate" : "Yetkisi devredilen varlıklar size ait olmaya devam eder.",
-              "access" : "Dondurduğunuz varlıklara donduktan 3 gün sonra erişebilirsiniz.",
+              "access" : "Frozen assets can be unfrozen immediately and will become accessible after the 14-day unfreezing period.",
               "ledger" : "Ledger cihazınızı kullanarak güvenle yetki devredin."
             },
             "button" : {
@@ -5362,7 +5375,7 @@
       },
       "unfreeze" : {
         "title" : "Çöz",
-        "description" : "TRX çözerek yeniden bakiyenize ekleyebilirsiniz. Ancak başka ödül kazanamazsınız."
+        "description" : "Unfreeze TRX to add them back to your available balance. You will no longer earn rewards. The assets will be available after the 14-day unfreezing period"
       },
       "vote" : {
         "title" : "Oyla",
@@ -5920,6 +5933,9 @@
       "freeze" : "İşlemi tamamlamak için lütfen cihazınızda onaylayın",
       "unfreeze" : "İşlemi tamamlamak için lütfen cihazınızda onaylayın",
       "claimReward" : "İşlemi tamamlamak için lütfen cihazınızda onaylayın",
+      "legacyUnfreeze" : "On your device, please confirm to finalize the operation",
+      "withdrawExpireUnfreeze" : "On your device, please confirm to finalize the operation",
+      "undelegateResource" : "On your device, please confirm to finalize the operation",
       "vote" : "İşlemi tamamlamak için lütfen cihazınızda onaylayın",
       "delegate" : "İşlemi tamamlamak için lütfen cihazınızda onaylayın",
       "redelegate" : "İşlemi tamamlamak için lütfen cihazınızda onaylayın",
@@ -5944,9 +5960,12 @@
     "votes" : "Oylar",
     "validator" : "Doğrulayıcı",
     "infoWording" : {
-      "freeze" : "Dondurulmuş token'lar 3 gün boyunca kilitlenir.",
+      "freeze" : "Freeze tokens to acquire bandwidth or energy and receive an equivalent amount of TRON Power (TP).",
       "unfreeze" : "{{resource}} puanlarınız düşecek ve tüm oylarınız iptal edilecek.",
+      "legacyUnfreeze" : "Your {{resource}} points will be reduced, and all your votes will be cancelled.",
       "claimReward" : "Ödüller her 24 saatte bir talep edilebilir.",
+      "withdrawExpireUnfreeze" : "Your unfrozen resources that has passed the unfreezing period will be withdrawn",
+      "unDelegateResource" : "Cancel the delegation of {{resource}}",
       "cosmos" : {
         "claimReward" : "Seçilen doğrulayıcıda bekleyen ödüller varsa ödüller otomatik olarak alınır.",
         "redelegate" : "Yetkisi iptal edilen varlıkların kullanılabilir bakiyeye geri dönmesi için {{numberOfDays}} gün beklemeniz gerekir.",
