@@ -1,5 +1,5 @@
 const common = require("./common.esbuild");
-const { electronPreloaderExternals } = require("esbuild-utils");
+const { electronPreloaderExternals } = require("@ledgerhq/esbuild-utils");
 
 module.exports = {
   ...common,

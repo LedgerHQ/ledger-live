@@ -8,7 +8,7 @@
 /* eslint-disable no-console */
 
 const path = require("path");
-const extraConfig = require("metro-extra-config");
+const extraConfig = require("@ledgerhq/metro-extra-config");
 const tsconfig = require("./tsconfig.json");
 const { getDefaultConfig, mergeConfig } = require("@react-native/metro-config");
 // Dependencies that are forcefully resolved from the LLM folder.

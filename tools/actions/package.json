@@ -1,5 +1,5 @@
 {
-  "name": "actions-root",
+  "name": "@ledgerhq/actions-root",
   "version": "0.0.2",
   "private": true,
   "devDependencies": {
