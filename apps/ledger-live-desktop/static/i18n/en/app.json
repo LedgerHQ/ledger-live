@@ -1954,6 +1954,7 @@
         "install": "Install update",
         "installDone": "Update\ninstalled",
         "restore": "Restore settings",
+        "restoreDone": "Settings restored",
         "apps": "Restore apps",
         "updateMCU": "Firmware update",
         "updating": "Firmware update",

@@ -36,7 +36,7 @@ const Bar = styled.div.attrs<{ state: TransitionStatus; withPaddingTop: boolean 
   will-change: transform;
   background-color: ${p => p.theme.colors.palette.background.paper};
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.03);
-  padding: ${p => (p.withPaddingTop ? "62px 0px 15px 0px" : "0px 0px 15px 0px")};
+  padding: ${p => (p.withPaddingTop ? "62px 0px 15px 0px" : "10px 0px 15px 0px")};
   overflow-x: hidden;
   overflow-y: auto;
 `;

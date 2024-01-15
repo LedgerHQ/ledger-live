@@ -16,7 +16,7 @@ import FlashMCU from "~/renderer/components/FlashMCU";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import Installing from "../Installing";
 import { Body as StepUpdatingBody } from "./02-step-updating";
-import { StepProps } from "..";
+import { StepProps } from "../types";
 
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
