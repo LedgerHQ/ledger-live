@@ -27,25 +27,28 @@ const bigNumberToArray = (v: BigNumber) => {
   return Buffer.concat([Buffer.from(signByte, "hex"), Buffer.from(tmp, "hex")]);
 };
 
-export const toCBOR = (account: Account, tx: Transaction): Buffer => {
+export const toCBOR = (
+  account: Account,
+  tx: Transaction,
+): { txPayload: Buffer; parsedRecipient: string; parsedSender: string } => {
   const { address: from } = getAddress(account);
   const { method, version, nonce, gasLimit, gasPremium, gasFeeCap, params, amount, recipient } = tx;
   const answer: any[] = [];
 
-  const recipientBytes = validateAddress(recipient);
-  const fromBytes = validateAddress(from);
+  const recipientValidation = validateAddress(recipient);
+  const fromValidation = validateAddress(from);
 
-  if (!recipientBytes.isValid || !fromBytes.isValid)
+  if (!recipientValidation.isValid || !fromValidation.isValid)
     throw new Error("recipient and/or from address are not valid");
 
   // "version" field
   answer.push(version);
 
   // "to" field
-  answer.push(recipientBytes.bytes);
+  answer.push(recipientValidation.parsedAddress.toBytes());
 
   // "from" field
-  answer.push(fromBytes.bytes);
+  answer.push(fromValidation.parsedAddress.toBytes());
 
   // "nonce" field
   answer.push(nonce);
@@ -71,5 +74,9 @@ export const toCBOR = (account: Account, tx: Transaction): Buffer => {
   if (params) answer.push(params);
   else answer.push(Buffer.alloc(0));
 
-  return cbor.encode(answer);
+  return {
+    txPayload: cbor.encode(answer),
+    parsedRecipient: recipientValidation.parsedAddress.toString(),
+    parsedSender: fromValidation.parsedAddress.toString(),
+  };
 };

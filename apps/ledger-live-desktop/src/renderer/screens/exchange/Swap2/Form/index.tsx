@@ -39,6 +39,7 @@ import { SWAP_RATES_TIMEOUT } from "../../config";
 import { OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
 import { v4 } from "uuid";
 import SwapWebView, { SwapWebProps } from "./SwapWebView";
+import { maybeTezosAccountUnrevealedAccount } from "@ledgerhq/live-common/exchange/swap/index";
 
 const DAPP_PROVIDERS = ["paraswap", "oneinch", "moonpay"];
 
@@ -117,7 +118,10 @@ const SwapForm = () => {
   }, []);
 
   const exchangeRatesState = swapTransaction.swap?.rates;
-  const swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
+  const swapError =
+    swapTransaction.fromAmountError ||
+    exchangeRatesState?.error ||
+    maybeTezosAccountUnrevealedAccount(swapTransaction);
   const swapWarning = swapTransaction.fromAmountWarning;
   const pageState = usePageState(swapTransaction, swapError);
   const provider = useMemo(() => exchangeRate?.provider, [exchangeRate?.provider]);
@@ -125,7 +129,6 @@ const SwapForm = () => {
   const [swapWebProps, setSwapWebProps] = useState<SwapWebProps["swapState"] | undefined>(
     undefined,
   );
-
   const { setDrawer } = React.useContext(context);
 
   const pauseRefreshing = !!swapError || idleState;

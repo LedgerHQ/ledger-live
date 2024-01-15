@@ -1,9 +1,11 @@
 import { Address } from "@zondax/izari-filecoin/address";
+import { NetworkPrefix } from "@zondax/izari-filecoin/artifacts";
+import { log } from "@ledgerhq/logs";
 
 export type ValidateAddressResult =
   | {
       isValid: true;
-      bytes: Buffer;
+      parsedAddress: Address;
     }
   | {
       isValid: false;
@@ -11,9 +13,18 @@ export type ValidateAddressResult =
 
 export const validateAddress = (input: string): ValidateAddressResult => {
   try {
-    const bytes = Address.fromString(input).toBytes();
-    return { isValid: true, bytes };
+    const parsedAddress = Address.fromString(input);
+    return { isValid: true, parsedAddress };
   } catch (error) {
-    return { isValid: false };
+    log("debug", `[validateAddress] fromString invalid address`);
   }
+
+  try {
+    const parsedAddress = Address.fromEthAddress(NetworkPrefix.Mainnet, input);
+    return { isValid: true, parsedAddress };
+  } catch (error) {
+    log("debug", `[validateAddress] fromEthAddress invalid address`);
+  }
+
+  return { isValid: false };
 };
