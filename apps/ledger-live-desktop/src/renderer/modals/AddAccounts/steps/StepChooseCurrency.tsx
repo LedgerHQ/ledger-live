@@ -79,6 +79,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const blastSepolia = useFeature("currencyBlastSepolia");
   const scroll = useFeature("currencyScroll");
   const scrollSepolia = useFeature("currencyScrollSepolia");
+  const ton = useFeature("currencyTon");
 
   const featureFlaggedCurrencies = useMemo(
     (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
@@ -121,6 +122,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       neon_evm: neonEvm,
       lukso,
       linea,
+      ton,
       linea_sepolia: lineaSepolia,
       blast,
       blast_sepolia: blastSepolia,
@@ -167,6 +169,7 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       neonEvm,
       lukso,
       linea,
+      ton,
       lineaSepolia,
       blast,
       blastSepolia,

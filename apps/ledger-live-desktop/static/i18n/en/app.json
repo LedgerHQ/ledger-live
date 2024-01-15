@@ -1813,7 +1813,8 @@
       "withdrawUnbondedAmount": "Withdrawn Amount",
       "palletMethod": "Method",
       "transferAmount": "Transfer Amount",
-      "validatorsCount": "Validators ({{number}})"
+      "validatorsCount": "Validators ({{number}})",
+      "comment": "Comment"
     }
   },
   "operationList": {
@@ -5173,6 +5174,11 @@
       "memoPlaceholder": "Optional",
       "memo": "Memo",
       "memoWarningText": "When using a Memo, carefully verify the type used with the recipient"
+    },
+    "ton": {
+      "commentPlaceholder": "Optional",
+      "comment": "Comment",
+      "commentWarningText": "Comment must be up to 120 ascii chars"
     },
     "stellar": {
       "memo": "Memo",
