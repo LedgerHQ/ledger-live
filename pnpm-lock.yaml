@@ -702,8 +702,8 @@ importers:
         specifier: ^4.5.1
         version: 4.5.1
       vite-plugin-electron:
-        specifier: 0.4.9
-        version: 0.4.9
+        specifier: 0.15.6
+        version: 0.15.6(tree-kill@1.2.2)
       yargs:
         specifier: ^17.0.0
         version: 17.4.1
@@ -56421,14 +56421,18 @@ packages:
       replace-ext: 1.0.0
     dev: true
 
-  /vite-plugin-electron@0.4.9:
-    resolution: {integrity: sha512-LYKBd2/hncUqe99AG7D4PDzdU7qP0R7W1ijvO4IHTKwARhlWii2tsPa2dr+6Yi/+NBazlKK2OBSzc8lRNl+ctQ==}
+  /vite-plugin-electron@0.15.6(tree-kill@1.2.2):
+    resolution: {integrity: sha512-sbjzNiH8N6Was67oIUgglW6tefahkiCTItM3MsdOAQ0xhUMxizeQMF9DhSvEBwvLvUGKYboIdIYskSchV7Akrg==}
+    peerDependencies:
+      tree-kill: '*'
+      vite-plugin-electron-renderer: '*'
+    peerDependenciesMeta:
+      tree-kill:
+        optional: true
+      vite-plugin-electron-renderer:
+        optional: true
     dependencies:
-      vite-plugin-optimizer: 1.4.0
-    dev: true
-
-  /vite-plugin-optimizer@1.4.0:
-    resolution: {integrity: sha512-hTY1pdtSmN/BNOnjvmcmK+2fW1Ac9wD0gFBy67i5IsKwhr1fS1/GGmssdCaik2SpnplHjoDrmCgVsgBv20HzrA==}
+      tree-kill: 1.2.2
     dev: true
 
   /vite@4.5.1:

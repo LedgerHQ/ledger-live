@@ -208,7 +208,7 @@
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2",
     "vite": "^4.5.1",
-    "vite-plugin-electron": "0.4.9",
+    "vite-plugin-electron": "0.15.6",
     "yargs": "^17.0.0"
   }
 }
