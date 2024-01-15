@@ -1,4 +1,5 @@
 import { Size } from "~/contentCards/cards/vertical/types";
+import { WidthFactor } from "~/contentCards/layouts/carousel";
 import {
   BrazeContentCard,
   AssetContentCard,
@@ -144,7 +145,11 @@ export const mapAsHorizontalContentCard = (card: BrazeContentCard): HorizontalCo
   order: parseInt(card.extras.order) ? parseInt(card.extras.order) : undefined,
 });
 
-const mapAsSquareContentCard = (card: BrazeContentCard, size: Size): VerticalContentCard => ({
+const mapAsSquareContentCard = (
+  card: BrazeContentCard,
+  size: Size,
+  widthFactor: WidthFactor,
+): VerticalContentCard => ({
   id: card.id,
   tag: card.extras.tag,
   title: card.extras.title,
@@ -156,13 +161,14 @@ const mapAsSquareContentCard = (card: BrazeContentCard, size: Size): VerticalCon
   createdAt: card.created,
   viewed: card.viewed,
   order: parseInt(card.extras.order) ? parseInt(card.extras.order) : undefined,
+  carouselWidthFactor: widthFactor,
 });
 
 export const mapAsSmallSquareContentCard = (card: BrazeContentCard): VerticalContentCard =>
-  mapAsSquareContentCard(card, "S");
+  mapAsSquareContentCard(card, "S", WidthFactor.Half);
 
 export const mapAsMediumSquareContentCard = (card: BrazeContentCard): VerticalContentCard =>
-  mapAsSquareContentCard(card, "M");
+  mapAsSquareContentCard(card, "M", WidthFactor.Quarter);
 
 export const mapAsBigSquareContentCard = (card: BrazeContentCard): VerticalContentCard =>
-  mapAsSquareContentCard(card, "L");
+  mapAsSquareContentCard(card, "L", WidthFactor.Quarter);
