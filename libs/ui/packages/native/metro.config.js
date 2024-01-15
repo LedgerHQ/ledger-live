@@ -1,4 +1,4 @@
-const extraConfig = require("metro-extra-config");
+const extraConfig = require("@ledgerhq/metro-extra-config");
 const { mergeConfig } = require("metro-config");
 // const duplicatesChecker = extraConfig.duplicatesChecker();
 

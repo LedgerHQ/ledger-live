@@ -6,7 +6,7 @@ const {
   JsonPlugin,
   electronRendererExternals,
   nodeExternals,
-} = require("esbuild-utils");
+} = require("@ledgerhq/esbuild-utils");
 const { DOTENV_FILE } = require("../utils");
 const common = require("./common.esbuild");
 

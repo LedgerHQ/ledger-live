@@ -68,7 +68,7 @@
       "outputs": [".next/**", "!.next/cache/**"],
       "cache": false
     },
-    "ledger-live-desktop#build": {
+    "@ledgerhq/ledger-live-desktop#build": {
       "dependsOn": ["^build"],
       "cache": false
     },
@@ -89,22 +89,22 @@
       "env": ["CI_OS"],
       "outputs": []
     },
-    "live-mobile#lint": {
+    "@ledgerhq/live-mobile#lint": {
       "dependsOn": ["^build"],
       "env": ["CI_OS"],
       "outputs": ["lint.json"]
     },
-    "ledger-live-desktop#lint": {
+    "@ledgerhq/ledger-live-desktop#lint": {
       "dependsOn": ["^build"],
       "env": ["CI_OS"],
       "outputs": ["lint.json"]
     },
-    "ledger-live-desktop#test": {
+    "@ledgerhq/ledger-live-desktop#test": {
       "dependsOn": ["ledger-live-desktop#build:testing"],
       "env": ["CI_OS"],
       "outputs": []
     },
-    "ledger-live-desktop#build:testing": {
+    "@ledgerhq/ledger-live-desktop#build:testing": {
       "cache": false,
       "dependsOn": ["^build"]
     },
