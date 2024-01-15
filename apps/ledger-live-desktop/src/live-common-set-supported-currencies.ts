@@ -91,4 +91,5 @@ setSupportedCurrencies([
   "lukso",
   "linea",
   "linea_goerli",
+  "ton",
 ]);
