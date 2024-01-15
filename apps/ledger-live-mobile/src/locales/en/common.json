@@ -927,6 +927,9 @@
       "title": "Sequence number error",
       "description": "Please close the window and try again later"
     },
+    "TonCommentInvalid": {
+      "title": "Comment must be up to 120 ascii chars"
+    },
     "TezosUnrevealedAccount": {
       "title": "Swap unavailable: Initial send/delegate needed with Tezos account or change pair."
     }
@@ -2456,7 +2459,8 @@
       "gasLimit": "Gas Limit",
       "id": "Id",
       "autoClaimedRewards": "Auto Claimed Rewards",
-      "stakedAmount": "Staked amount"
+      "stakedAmount": "Staked amount",
+      "comment": "Comment"
     },
     "multipleAddresses": "Why multiple addresses?",
     "tokenName": "Token Name",
@@ -3647,6 +3651,8 @@
         "value": "Memo value"
       },
       "validateMemo": "Validate memo",
+      "comment": "Comment",
+      "validateComment": "Validate comment",
       "quantity": "Quantity"
     },
     "validation": {

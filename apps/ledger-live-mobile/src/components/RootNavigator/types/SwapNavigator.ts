@@ -41,6 +41,7 @@ import type { Transaction as ICPTransaction } from "@ledgerhq/live-common/famili
 import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
 import type { Transaction as StacksTransaction } from "@ledgerhq/live-common/families/stacks/types";
 import type { Transaction as CasperTransaction } from "@ledgerhq/live-common/families/casper/types";
+import type { Transaction as TonTransaction } from "@ledgerhq/live-common/families/ton/types";
 import BigNumber from "bignumber.js";
 import { Account, Operation } from "@ledgerhq/types-live";
 import { ScreenName } from "~/const";
@@ -305,6 +306,20 @@ export type SwapNavigatorParamList = {
     account: Account;
     parentId?: string;
     transaction: CasperTransaction;
+    currentNavigation:
+      | ScreenName.SignTransactionSummary
+      | ScreenName.SendSummary
+      | ScreenName.SwapForm;
+    nextNavigation:
+      | ScreenName.SignTransactionSelectDevice
+      | ScreenName.SendSelectDevice
+      | ScreenName.SwapForm;
+  };
+  [ScreenName.TonEditComment]: {
+    accountId: string;
+    account: Account;
+    parentId?: string;
+    transaction: TonTransaction;
     currentNavigation:
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
