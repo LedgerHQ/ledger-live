@@ -87,7 +87,9 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
   if (!recipient) {
     errors.recipient = new RecipientRequired();
   } else if (!validateAddress(recipient).isValid) {
-    errors.recipient = new InvalidAddress();
+    errors.recipient = new InvalidAddress("", {
+      currencyName: a.currency.name,
+    });
   } else if (address === recipient) {
     errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
   } else if (!fee || fee.eq(0)) {
@@ -208,7 +210,9 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
           const { recipient, fee, anchorMode, network, memo, amount, nonce } = transaction;
 
           if (!xpub) {
-            throw new InvalidAddress();
+            throw new InvalidAddress("", {
+              currencyName: account.currency.name,
+            });
           }
 
           if (!fee) {

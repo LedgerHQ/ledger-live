@@ -3,11 +3,6 @@ run-name: "@Gate triggered by ${{ github.actor }} ${{ format('on branch {0}', gi
 
 on:
   pull_request:
-    branches:
-      - develop
-      - main
-      - release
-      - hotfix
   merge_group:
 
 concurrency:
@@ -26,6 +21,7 @@ env:
   base_branch: ${{ github.event.pull_request.base.ref || github.event.merge_group.base_ref }}
   base_owner: ${{ github.event.pull_request.base.repo.owner.login || github.repository_owner }}
   is_fork: ${{ github.event.pull_request.head.repo.fork || false }}
+  ref: ${{ github.sha }}
 
 jobs:
   setup:
@@ -34,7 +30,7 @@ jobs:
     outputs:
       affected: ${{ steps.affected.outputs.affected }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -78,7 +74,8 @@ jobs:
               base_sha: "${{ env.base_sha }}",
               base_branch: "${{ env.base_branch }}",
               base_owner: "${{ env.base_owner }}",
-              is_fork: ${{ env.is_fork }}
+              is_fork: ${{ env.is_fork }},
+              ref: "${{ env.ref }}"
             }), "utf-8");
       - uses: actions/upload-artifact@v3
         with:

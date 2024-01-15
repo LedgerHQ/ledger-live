@@ -12,7 +12,7 @@ on:
         required: false
       login:
         description: The GitHub username that triggered the workflow
-        required: true
+        required: false
       commentId:
         description: comment id to update
         required: false
@@ -21,6 +21,10 @@ concurrency:
   # See: https://github.com/orgs/community/discussions/35341
   group: ${{ github.workflow }}-${{ github.event.inputs.ref || github.event.inputs.number }}
   cancel-in-progress: true
+
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
   generate-screenshots-linux:
@@ -36,13 +40,13 @@ jobs:
         with:
           app_id: ${{ secrets.GH_BOT_APP_ID }}
           private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         if: ${{ inputs.ref != null }}
         with:
           ref: ${{ inputs.ref }}
           fetch-depth: 0
           token: ${{ steps.generate-token.outputs.token }}
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         if: ${{ !inputs.ref }}
         with:
           fetch-depth: 0
@@ -60,28 +64,27 @@ jobs:
         run: gh pr checkout ${{ inputs.number }}
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
-      - name: set git user
-        run: |
-          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
-          git config user.name "live-github-bot[bot]"
+      - name: Setup git user
+        uses: ./tools/actions/composites/setup-git-user
       - name: Setup the toolchain
+        id: toolchain
         uses: ./tools/actions/composites/setup-toolchain
         with:
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
           skip_ruby: true
           install_playwright: true
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          turborepo-server-port: ${{ steps.toolchain.outputs.port }}
       - uses: ./tools/actions/composites/update-snapshots-desktop
         id: update-snapshots
         with:
           os: ubuntu-latest
 
-  # REWORK WINDOWS FOR OWN RUNNERS ? WAITING FOR KUBERNETES SOLUTION FROM INFRA ?
   generate-screenshots-windows:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
@@ -95,13 +98,13 @@ jobs:
         with:
           app_id: ${{ secrets.GH_BOT_APP_ID }}
           private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         if: ${{ inputs.ref != null }}
         with:
           ref: ${{ inputs.ref }}
           fetch-depth: 0
           token: ${{ steps.generate-token.outputs.token }}
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         if: ${{ !inputs.ref }}
         with:
           fetch-depth: 0
@@ -113,21 +116,22 @@ jobs:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
+        id: toolchain
         with:
           upgrade_npm: true
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          skip_turbo_cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
           skip_ruby: true
           install_playwright: true
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
-      - name: set git user
-        run: |
-          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
-          git config user.name "live-github-bot[bot]"
+          turborepo-server-port: ${{ steps.toolchain.outputs.port }}
+      - name: Setup git user
+        uses: ./tools/actions/composites/setup-git-user
       - uses: ./tools/actions/composites/update-snapshots-desktop
         id: update-snapshots
         with:
@@ -146,13 +150,13 @@ jobs:
         with:
           app_id: ${{ secrets.GH_BOT_APP_ID }}
           private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         if: ${{ inputs.ref != null }}
         with:
           ref: ${{ inputs.ref }}
           fetch-depth: 0
           token: ${{ steps.generate-token.outputs.token }}
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         if: ${{ !inputs.ref }}
         with:
           fetch-depth: 0
@@ -164,21 +168,22 @@ jobs:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
+        id: toolchain
         with:
-          no_pnpm_cache: true
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          # skip_pnpm_cache: "true"
+          skip_turbo_cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
           skip_ruby: true
           install_playwright: true
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
-      - name: set git user
-        run: |
-          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
-          git config user.name "live-github-bot[bot]"
+          turborepo-server-port: ${{ steps.toolchain.outputs.port }}
+      - name: Setup git user
+        uses: ./tools/actions/composites/setup-git-user
       - uses: ./tools/actions/composites/update-snapshots-desktop
         id: update-snapshots
         with:

@@ -15,7 +15,7 @@ declare module "*.mp4";
 
 type Store = import("redux").Store;
 type Device = import("@ledgerhq/live-common/hw/actions/types").Device;
-type ReplaySubject = import("rxjs").ReplaySubject;
+type ReplaySubject = import("rxjs").ReplaySubject<unknown>;
 type ListAppResult = import("@ledgerhq/live-common/apps/types").ListAppsResult;
 type TransactionRaw = import("@ledgerhq/live-common/generated/types").TransactionRaw;
 type Transaction = import("@ledgerhq/live-common/generated/types").Transaction;

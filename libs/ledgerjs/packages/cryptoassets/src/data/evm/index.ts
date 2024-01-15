@@ -21,8 +21,10 @@ import polygon_zk_evm_testnet_tokens from "./1442/erc20.json";
 import klaytn_tokens from "./8217/erc20.json";
 import base_tokens from "./8453/erc20.json";
 import arbitrum_tokens from "./42161/erc20.json";
+import avalanche_c_chain_tokens from "./43114/erc20.json";
 import base_goerli_tokens from "./84531/erc20.json";
 import arbitrum_goerli_tokens from "./421613/erc20.json";
+import ethereum_sepolia_tokens from "./11155111/erc20.json";
 import neon_evm_tokens from "./245022934/erc20.json";
 
 import ethereum_signatures from "./1/erc20-signatures.json";
@@ -48,8 +50,10 @@ import polygon_zk_evm_testnet_signatures from "./1442/erc20-signatures.json";
 import klaytn_signatures from "./8217/erc20-signatures.json";
 import base_signatures from "./8453/erc20-signatures.json";
 import arbitrum_signatures from "./42161/erc20-signatures.json";
+import avalanche_c_chain_signatures from "./43114/erc20-signatures.json";
 import base_goerli_signatures from "./84531/erc20-signatures.json";
 import arbitrum_goerli_signatures from "./421613/erc20-signatures.json";
+import ethereum_sepolia_signatures from "./11155111/erc20-signatures.json";
 import neon_evm_signatures from "./245022934/erc20-signatures.json";
 
 export const tokens = {
@@ -76,8 +80,10 @@ export const tokens = {
   8217: klaytn_tokens,
   8453: base_tokens,
   42161: arbitrum_tokens,
+  43114: avalanche_c_chain_tokens,
   84531: base_goerli_tokens,
   421613: arbitrum_goerli_tokens,
+  11155111: ethereum_sepolia_tokens,
   245022934: neon_evm_tokens,
 };
 
@@ -105,8 +111,10 @@ export const signatures = {
   8217: klaytn_signatures,
   8453: base_signatures,
   42161: arbitrum_signatures,
+  43114: avalanche_c_chain_signatures,
   84531: base_goerli_signatures,
   421613: arbitrum_goerli_signatures,
+  11155111: ethereum_sepolia_signatures,
   245022934: neon_evm_signatures,
 };
 

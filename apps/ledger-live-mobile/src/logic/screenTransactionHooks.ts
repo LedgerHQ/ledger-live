@@ -23,15 +23,15 @@ import { TransactionRefusedOnDevice } from "@ledgerhq/live-common/errors";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { updateAccountWithUpdater } from "../actions/accounts";
 import logger from "../logger";
-import { ScreenName } from "../const";
+import { ScreenName } from "~/const";
 import type {
   StackNavigatorNavigation,
   StackNavigatorRoute,
 } from "../components/RootNavigator/types/helpers";
 import type { SendFundsNavigatorStackParamList } from "../components/RootNavigator/types/SendFundsNavigator";
 import type { SignTransactionNavigatorParamList } from "../components/RootNavigator/types/SignTransactionNavigator";
-import type { AlgorandClaimRewardsFlowParamList } from "../families/algorand/Rewards/ClaimRewardsFlow/type";
-import type { StellarAddAssetFlowParamList } from "../families/stellar/AddAssetFlow/types";
+import type { AlgorandClaimRewardsFlowParamList } from "~/families/algorand/Rewards/ClaimRewardsFlow/type";
+import type { StellarAddAssetFlowParamList } from "~/families/stellar/AddAssetFlow/types";
 
 type Navigation =
   | StackNavigatorNavigation<SendFundsNavigatorStackParamList, ScreenName.SendSummary>

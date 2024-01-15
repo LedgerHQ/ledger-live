@@ -114,7 +114,8 @@ const Body = ({
       "cardano: account and cardano resources required",
     );
     const bridge = getAccountBridge(account, undefined);
-    const transaction = bridge.createTransaction(account);
+    let transaction = bridge.createTransaction(account);
+    transaction = bridge.updateTransaction(transaction, { mode: "delegate" });
 
     return {
       account,

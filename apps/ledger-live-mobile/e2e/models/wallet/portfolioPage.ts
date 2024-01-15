@@ -2,6 +2,7 @@ import {
   getElementById,
   getTextOfElement,
   openDeeplink,
+  scrollToId,
   tapByElement,
   waitForElementById,
 } from "../../helpers";
@@ -12,14 +13,23 @@ export default class PortfolioPage {
   graphCardBalanceId = "graphCard-balance";
   assetBalanceId = "asset-balance";
   readOnlyPortfolioId = "PortfolioReadOnlyList";
+  transferScrollListId = "transfer-scroll-list";
+  stakeMenuButtonId = "transfer-stake-button";
+  accountsListView = "PortfolioAccountsList";
+  seeAllTransactionButton = "portfolio-seeAll-transaction";
+  transactionAmountId = "portfolio-operation-amount";
   emptyPortfolioComponent = () => getElementById("PortfolioEmptyAccount");
   portfolioSettingsButton = () => getElementById("settings-icon");
   transferButton = () => getElementById("transfer-button");
   swapTransferMenuButton = () => getElementById("swap-transfer-button");
+  stakeTransferMenuButton = () => getElementById(this.stakeMenuButtonId);
   sendTransferMenuButton = () => getElementById("transfer-send-button");
+  receiveTransfertMenuButton = () => getElementById("transfer-receive-button");
   sendMenuButton = () => getElementById("send-button");
   marketTabButton = () => getElementById("tab-bar-market");
+  walletTabMarket = () => getElementById("wallet-tab-Market");
   earnButton = () => getElementById("tab-bar-earn");
+  lastTransactionAmount = () => getElementById(this.transactionAmountId, 0);
 
   navigateToSettings() {
     return tapByElement(this.portfolioSettingsButton());
@@ -40,6 +50,15 @@ export default class PortfolioPage {
 
   async navigateToSendFromTransferMenu() {
     await tapByElement(this.sendTransferMenuButton());
+  }
+
+  async navigateToStakeFromTransferMenu() {
+    await scrollToId(this.stakeMenuButtonId, this.transferScrollListId);
+    return tapByElement(this.stakeTransferMenuButton());
+  }
+
+  navigateToReceiveFromTransferMenu() {
+    return tapByElement(this.receiveTransfertMenuButton());
   }
 
   async openAddAccount() {
@@ -67,11 +86,19 @@ export default class PortfolioPage {
     return tapByElement(this.marketTabButton());
   }
 
+  openWalletTabMarket() {
+    return tapByElement(this.walletTabMarket());
+  }
+
   openMyLedger() {
     return tapByElement(getElementById("TabBarManager"));
   }
 
   openEarnApp() {
     return tapByElement(this.earnButton());
+  }
+
+  async scrollToTransactions() {
+    await scrollToId(this.seeAllTransactionButton, this.accountsListView);
   }
 }

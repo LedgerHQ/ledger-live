@@ -3,12 +3,12 @@ import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Switch } from "@ledgerhq/native-ui";
-import { NavigatorName } from "../../../const";
-import { privacySelector } from "../../../reducers/settings";
-import SettingsRow from "../../../components/SettingsRow";
+import { NavigatorName } from "~/const";
+import { privacySelector } from "~/reducers/settings";
+import SettingsRow from "~/components/SettingsRow";
 import BiometricsRow from "./BiometricsRow";
-import { ScreenName } from "../../../const";
-import { track } from "../../../analytics";
+import { ScreenName } from "~/const";
+import { track } from "~/analytics";
 
 export default function AuthSecurityToggle() {
   const { t } = useTranslation();

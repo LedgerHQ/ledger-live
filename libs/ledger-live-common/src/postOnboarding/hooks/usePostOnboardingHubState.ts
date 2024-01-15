@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import { useMemo } from "react";
 import { PostOnboardingHubState } from "@ledgerhq/types-live";
-import { useFeatureFlags } from "../../featureFlags";
+import { useFeatureFlags } from "@ledgerhq/live-config/featureFlags/index";
 import { hubStateSelector } from "../reducer";
 import { usePostOnboardingContext } from "./usePostOnboardingContext";
 
@@ -24,6 +24,7 @@ export function usePostOnboardingHubState(): PostOnboardingHubState {
         deviceModelId: hubState.deviceModelId,
         lastActionCompleted: null,
         actionsState: [],
+        postOnboardingInProgress: hubState.postOnboardingInProgress,
       };
     const actionsState = hubState.actionsToComplete
       .map(actionId => ({
@@ -47,6 +48,7 @@ export function usePostOnboardingHubState(): PostOnboardingHubState {
       deviceModelId: hubState.deviceModelId,
       lastActionCompleted: isLastActionCompletedEnabled ? lastActionCompleted : null,
       actionsState,
+      postOnboardingInProgress: hubState.postOnboardingInProgress,
     };
   }, [getFeature, hubState, getPostOnboardingAction]);
 }

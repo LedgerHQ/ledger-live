@@ -3,7 +3,7 @@ import { DeviceModelId, getDeviceModel, identifyTargetId } from "@ledgerhq/devic
 import { UnexpectedBootloader } from "@ledgerhq/errors";
 import { Observable, throwError, Subscription } from "rxjs";
 import { App, DeviceInfo } from "@ledgerhq/types-live";
-import { log } from "@ledgerhq/logs";
+import { LocalTracer } from "@ledgerhq/logs";
 import type { ListAppsEvent, ListAppsResult, ListAppResponse } from "../types";
 import manager, { getProviderId } from "../../manager";
 import hwListApps from "../../hw/listApps";
@@ -26,7 +26,8 @@ const appsWithDynamicHashes = ["Fido U2F", "Security Key"];
 const emptyHashData = "0".repeat(64);
 
 const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<ListAppsEvent> => {
-  log("list-apps", "using new version");
+  const tracer = new LocalTracer("list-apps", { transport: transport.getTraceContext() });
+  tracer.trace("Using new version", { deviceInfo });
 
   if (deviceInfo.isOSU || deviceInfo.isBootloader) {
     return throwError(() => new UnexpectedBootloader(""));
@@ -59,11 +60,12 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
         // If the user has already allowed a secure channel during this session we can directly
         // ask the device for the installed applications instead of going through a scriptrunner,
         // this is a performance optimization, part of a larger rework with Manager API v2.
-        log("list-apps", "using direct apdu listapps");
+        tracer.trace("Using direct apdu listapps");
         listAppsResponsePromise = hwListApps(transport);
       } else {
         // Fallback to original web-socket list apps
-        log("list-apps", "using scriptrunner listapps");
+        tracer.trace("Using scriptrunner listapps");
+
         listAppsResponsePromise = new Promise<ListAppResponse>((resolve, reject) => {
           sub = ManagerAPI.listInstalledApps(transport, {
             targetId: deviceInfo.targetId,
@@ -176,14 +178,19 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
 
         // If the hash is not static (ex: Fido app) we need to find the app by its name using the catalog
         const matchFromCatalog = catalogForDevice.find(({ name }) => name === localName);
-        log("list-apps", `falling back to catalog for ${localName}`);
+        tracer.trace(`Falling back to catalog for ${localName}`, {
+          localName,
+          matchFromCatalog: Boolean(matchFromCatalog),
+        });
         if (matchFromCatalog) {
           installedList.push(matchFromCatalog);
         }
       });
 
-      log("list-apps", `${installedList.length} apps installed.`);
-      log("list-apps", `${catalogForDevice.length} apps in catalog.`);
+      tracer.trace("Installed and in catalog apps", {
+        installedApps: installedList.length,
+        inCatalogApps: catalogForDevice.length,
+      });
 
       // Abused somewhere else
       const appByName = catalogForDevice.reduce((result, app) => {

@@ -2,10 +2,10 @@ import React, { useContext } from "react";
 import { useTranslation } from "react-i18next";
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
 
-import NoLocationImage from "../../icons/NoLocationImage";
+import NoLocationImage from "~/icons/NoLocationImage";
 import GenericInformationalDrawerContent from "../GenericInformationalDrawerContent";
 import GenericInformationalView from "../GenericInformationalView";
-import IsInDrawerContext from "../../context/IsInDrawerContext";
+import IsInDrawerContext from "~/context/IsInDrawerContext";
 
 type Props = {
   onRetry?: (() => void) | null;

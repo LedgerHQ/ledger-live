@@ -10,8 +10,11 @@ import Text from "~/renderer/components/Text";
 import Rewards from "~/renderer/images/rewards.svg";
 import Alert from "~/renderer/components/Alert";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
-import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
+import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
+import { urls } from "~/config/urls";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+
 const RewardImg = styled.img.attrs(() => ({
   src: Rewards,
 }))`
@@ -20,6 +23,7 @@ const RewardImg = styled.img.attrs(() => ({
 `;
 export default function StepStarter({ account, transaction }: StepProps) {
   invariant(account && account.cosmosResources && transaction, "account and transaction required");
+  const crypto = cryptoFactory(account.currency.id);
   return (
     <Box flow={4}>
       <TrackPage
@@ -43,7 +47,10 @@ export default function StepStarter({ account, transaction }: StepProps) {
               lineHeight: 1.57,
             }}
           >
-            <Trans i18nKey="cosmos.redelegation.flow.steps.starter.description" />
+            <Trans
+              i18nKey="cosmos.redelegation.flow.steps.starter.description"
+              values={{ numberOfDays: crypto.unbondingPeriod }}
+            />
           </Text>
         </Box>
         <Alert type="primary">
@@ -57,11 +64,12 @@ export default function StepStarter({ account, transaction }: StepProps) {
 }
 export function StepStarterFooter({ transitionTo, account, onClose }: StepProps) {
   invariant(account, "account required");
+  const stakingUrl = useLocalizedUrl(urls.stakingCosmos);
   return (
     <>
       <LinkWithExternalIcon
         label={<Trans i18nKey="cosmos.redelegation.flow.steps.starter.howDelegationWorks" />}
-        onClick={() => openURL(urls.stakingCosmos)}
+        onClick={() => openURL(stakingUrl)}
       />
       <Box horizontal>
         <Button mr={1} secondary onClick={onClose}>

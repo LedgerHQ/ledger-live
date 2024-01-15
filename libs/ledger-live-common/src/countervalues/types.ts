@@ -40,7 +40,7 @@ export type CounterValuesAPI = {
     pair: TrackingPair,
   ) => Promise<Record<string, number>>;
   fetchLatest: (pairs: TrackingPair[]) => Promise<Array<number | null | undefined>>;
-  fetchMarketcapTickers: () => Promise<string[]>;
+  fetchIdsSortedByMarketcap: () => Promise<string[]>;
 };
 export type CounterValuesStatus = Record<
   string,

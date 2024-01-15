@@ -7,7 +7,6 @@ export type Pair = {
 };
 
 export type Module = {
-  handleCountervalue?: (arg0: Currency) => boolean;
   mapRate?: (arg0: Pair, arg1: number) => number;
   aliasPair?: (arg0: Pair) => Pair;
   resolveTrackingPair?: (arg0: Pair) => Pair;

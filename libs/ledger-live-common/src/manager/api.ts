@@ -67,8 +67,7 @@ const remapSocketError = (context?: string) =>
 
     const status =
       e instanceof TransportStatusError
-        ? // @ts-expect-error TransportStatusError to be typed on ledgerjs
-          e.statusCode.toString(16)
+        ? e.statusCode.toString(16)
         : (e as Error).message.slice((e as Error).message.length - 4);
 
     // TODO use StatusCode instead of this.

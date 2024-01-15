@@ -1,6 +1,6 @@
 import React from "react";
 import { Pressable, View } from "react-native";
-import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeatureFlags } from "@ledgerhq/live-config/featureFlags/index";
 import type { FeatureId } from "@ledgerhq/types-live";
 
 import { Flex, Divider, Tag } from "@ledgerhq/native-ui";
@@ -40,7 +40,7 @@ const FeatureFlagDetails: React.FC<Props> = props => {
     overriddenByEnv,
     overridesRemote,
     enabledOverriddenForCurrentLanguage,
-    enabledOverriddenForCurrentMobileVersion,
+    enabledOverriddenForCurrentVersion,
   } = flagValue;
 
   return (
@@ -66,7 +66,7 @@ const FeatureFlagDetails: React.FC<Props> = props => {
               disabled for current language
             </Tag>
           )}
-          {enabledOverriddenForCurrentMobileVersion && (
+          {enabledOverriddenForCurrentVersion && (
             <Tag my={1} mr={2}>
               disabled for current version
             </Tag>

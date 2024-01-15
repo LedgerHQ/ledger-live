@@ -28,8 +28,8 @@ const animations: Animations = {
       dark: require("../animations/nanoS/4QuitApp/dark.json"),
     },
     allowManager: {
-      light: require("../animations/nanoS/5AllowManager/light.json"),
-      dark: require("../animations/nanoS/5AllowManager/dark.json"),
+      light: require("../animations/nanoS/7Validate/light.json"),
+      dark: require("../animations/nanoS/7Validate/dark.json"),
     },
     openApp: {
       light: require("../animations/nanoS/6OpenApp/light.json"),
@@ -62,8 +62,8 @@ const animations: Animations = {
       dark: require("../animations/nanoSP/4QuitApp/dark.json"),
     },
     allowManager: {
-      light: require("../animations/nanoSP/5AllowManager/light.json"),
-      dark: require("../animations/nanoSP/5AllowManager/dark.json"),
+      light: require("../animations/nanoSP/7Validate/light.json"),
+      dark: require("../animations/nanoSP/7Validate/dark.json"),
     },
     openApp: {
       light: require("../animations/nanoSP/6OpenApp/light.json"),
@@ -131,8 +131,8 @@ const animations: Animations = {
         dark: require("../animations/nanoX/wired/4QuitApp/dark.json"),
       },
       allowManager: {
-        light: require("../animations/nanoX/wired/5AllowManager/light.json"),
-        dark: require("../animations/nanoX/wired/5AllowManager/dark.json"),
+        light: require("../animations/nanoX/wired/7Validate/light.json"),
+        dark: require("../animations/nanoX/wired/7Validate/dark.json"),
       },
       openApp: {
         light: require("../animations/nanoX/wired/6OpenApp/light.json"),
@@ -165,8 +165,8 @@ const animations: Animations = {
         dark: require("../animations/nanoX/bluetooth/4QuitApp/dark.json"),
       },
       allowManager: {
-        light: require("../animations/nanoX/bluetooth/5AllowManager/light.json"),
-        dark: require("../animations/nanoX/bluetooth/5AllowManager/dark.json"),
+        light: require("../animations/nanoX/bluetooth/7Validate/light.json"),
+        dark: require("../animations/nanoX/bluetooth/7Validate/dark.json"),
       },
       openApp: {
         light: require("../animations/nanoX/bluetooth/6OpenApp/light.json"),

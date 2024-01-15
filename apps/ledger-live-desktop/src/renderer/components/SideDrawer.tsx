@@ -64,6 +64,7 @@ const DrawerContent = styled.div.attrs(({ state }: { state: TransitionStatus }) 
   flex-direction: column;
   will-change: transform;
   overflow: hidden;
+  -webkit-app-region: no-drag;
 `;
 const transitionContainerStyles = {
   entering: {},

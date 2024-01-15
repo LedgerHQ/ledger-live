@@ -2,6 +2,8 @@ import BigNumber from "bignumber.js";
 import { OnNoRatesCallback, RatesReducerState, SwapSelectorStateType } from "../../types";
 import { useFetchRates } from "./useFetchRates";
 import { SetExchangeRateCallback } from "../useSwapTransaction";
+import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useCallback } from "react";
 
 type Props = {
   fromState: SwapSelectorStateType;
@@ -22,15 +24,25 @@ export function useProviderRates({
   onNoRates,
   setExchangeRate,
 }: Props): UseProviderRatesResponse {
+  const ptxSwapMoonpayProviderFlag = useFeature("ptxSwapMoonpayProvider");
+  const filterMoonpay = useCallback(
+    rates => {
+      if (!rates || ptxSwapMoonpayProviderFlag?.enabled) return rates;
+      return rates.filter(r => r.provider !== "moonpay");
+    },
+    [ptxSwapMoonpayProviderFlag?.enabled],
+  );
+
   const { data, isLoading, error, refetch } = useFetchRates({
     fromCurrencyAccount: fromState.account,
     toCurrency: toState.currency,
     fromCurrencyAmount: fromState.amount ?? BigNumber(0),
     onSuccess(data) {
-      if (data.length === 0) {
+      const rates = filterMoonpay(data);
+      if (rates.length === 0) {
         onNoRates?.({ fromState, toState });
       } else {
-        setExchangeRate?.(data[0]);
+        setExchangeRate?.(rates[0]);
       }
     },
   });
@@ -77,7 +89,7 @@ export function useProviderRates({
     return {
       rates: {
         status: "success",
-        value: data,
+        value: filterMoonpay(data),
         error: undefined,
       },
       refetchRates: refetch,

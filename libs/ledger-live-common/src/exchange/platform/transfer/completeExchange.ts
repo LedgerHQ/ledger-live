@@ -94,13 +94,16 @@ const completeExchange = (
           getCurrencyExchangeConfig(payoutCurrency);
 
         try {
+          o.next({
+            type: "complete-exchange-requested",
+            estimatedFees: estimatedFees.toString(),
+          });
           await exchange.checkPayoutAddress(
             payoutAddressConfig,
             payoutAddressConfigSignature,
             payoutAddressParameters.addressParameters,
           );
         } catch (e) {
-          // @ts-expect-error TransportStatusError to be typed on ledgerjs
           if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
             throw new WrongDeviceForAccount(undefined, {
               accountName: mainAccount.name,
@@ -110,18 +113,12 @@ const completeExchange = (
           throw e;
         }
 
-        o.next({
-          type: "complete-exchange-requested",
-          estimatedFees: estimatedFees.toString(),
-        });
-
         if (unsubscribed) return;
         ignoreTransportError = true;
         await exchange.signCoinTransaction();
       }).catch(e => {
         if (ignoreTransportError) return;
 
-        // @ts-expect-error TransportStatusError to be typed on ledgerjs
         if (e instanceof TransportStatusError && e.statusCode === 0x6a84) {
           throw new TransactionRefusedOnDevice();
         }
@@ -129,11 +126,11 @@ const completeExchange = (
         throw e;
       });
       await delay(3000);
-      if (unsubscribed) return;
       o.next({
         type: "complete-exchange-result",
         completeExchangeResult: transaction,
       });
+      if (unsubscribed) return;
     };
 
     confirmExchange().then(

@@ -76,13 +76,18 @@ const ignoreErrors = [
   "DisconnectedDevice",
   "DisconnectedDeviceDuringOperation",
   "EthAppPleaseEnableContractData",
+  "VechainAppPleaseEnableContractDataAndMultiClause",
   "failed with status code",
   "GetAppAndVersionUnsupportedFormat",
   "Invalid channel",
   "Ledger Device is busy",
   "ManagerDeviceLocked",
+  "LockedDeviceError",
+  "UnresponsiveDeviceError",
   "PairingFailed",
   "Ledger device: UNKNOWN_ERROR",
+  // wrong My Ledger provider selected for the firmware of the connected device
+  "FirmwareNotRecognized",
   // errors coming from the usage of a Transport implementation
   "HwTransportError",
   // other
@@ -144,10 +149,24 @@ export function init(Sentry: typeof SentryMainModule, opts?: Partial<ElectronMai
     },
     beforeBreadcrumb(breadcrumb) {
       switch (breadcrumb.category) {
+        case "navigation":
         case "fetch":
         case "xhr": {
           // ignored, too verbose, lot of background http calls
           return null;
+        }
+        case "electron": {
+          if (breadcrumb.data?.url) {
+            // remove urls from the data (useless and can contain ids)
+            return {
+              ...breadcrumb,
+              data: {
+                ...breadcrumb.data,
+                url: undefined,
+              },
+            };
+          }
+          return breadcrumb;
         }
         case "console": {
           if (pname === "internal") {

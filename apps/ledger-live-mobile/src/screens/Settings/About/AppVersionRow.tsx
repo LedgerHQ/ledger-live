@@ -1,8 +1,8 @@
 import React from "react";
 import { Trans } from "react-i18next";
 import { Text } from "@ledgerhq/native-ui";
-import SettingsRow from "../../../components/SettingsRow";
-import getFullAppVersion from "../../../logic/version";
+import SettingsRow from "~/components/SettingsRow";
+import getFullAppVersion from "~/logic/version";
 
 function AppVersionRow() {
   const version = getFullAppVersion();

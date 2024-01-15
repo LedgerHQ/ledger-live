@@ -156,15 +156,15 @@ export function useAlreadySeededDevicePath(
   return usePath(servicesConfig, uri);
 }
 
-export function useCustomPath(
+export function useCustomURI(
   servicesConfig: Feature_ProtectServicesDesktop | Feature_ProtectServicesMobile | null,
   page?: string,
   source?: string,
   deeplinkCampaign?: string,
 ): string | undefined {
-  const modelUri = usePostOnboardingURI(servicesConfig);
   const customUri = useMemo(() => {
-    const [basicUri] = modelUri ? modelUri.split("?") : [];
+    const id = servicesConfig?.params?.protectId;
+    const basicUri = id ? `ledgerlive://recover/${id}` : "ledgerlive://recover/protect-prod";
     const uri = new URL(basicUri);
 
     if (page) uri.searchParams.append("redirectTo", page);
@@ -173,8 +173,20 @@ export function useCustomPath(
       uri.searchParams.append("ajs_recover_source", source);
       uri.searchParams.append("ajs_recover_campaign", deeplinkCampaign);
     }
-    return uri;
-  }, [deeplinkCampaign, modelUri, page, source]);
 
-  return usePath(servicesConfig, customUri.toString()) ?? undefined;
+    return uri;
+  }, [deeplinkCampaign, page, servicesConfig?.params?.protectId, source]);
+
+  return customUri.toString();
+}
+
+export function useCustomPath(
+  servicesConfig: Feature_ProtectServicesDesktop | Feature_ProtectServicesMobile | null,
+  page?: string,
+  source?: string,
+  deeplinkCampaign?: string,
+): string | undefined {
+  const uri = useCustomURI(servicesConfig, page, source, deeplinkCampaign);
+
+  return usePath(servicesConfig, uri);
 }

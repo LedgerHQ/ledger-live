@@ -4,12 +4,13 @@ import { Text, Flex } from "@ledgerhq/react-ui";
 import { RecentlyUsed } from "./RecentlyUsed";
 import { Browse } from "./Browse";
 import { useTranslation } from "react-i18next";
-import { useCatalog } from "../hooks";
-import { RecentlyUsedDB } from "@ledgerhq/live-common/wallet-api/react";
+import { useCatalog, useDiscoverDB } from "../hooks";
 
-export function Catalog({ db }: { db: RecentlyUsedDB }) {
+export function Catalog() {
+  const discoverDB = useDiscoverDB();
+
   const { t } = useTranslation();
-  const { categories, recentlyUsed, disclaimer, search } = useCatalog(db);
+  const { categories, recentlyUsed, disclaimer, search } = useCatalog(discoverDB);
 
   return (
     <Flex flexDirection="column" paddingBottom={100}>

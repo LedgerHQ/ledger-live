@@ -24,11 +24,9 @@ export const isStash = (a: PolkadotAccount): boolean => {
 /**
  * Returns true if account is a controller.
  * when account is a controller, we have the information of which stash it controls
- *
- * @param {PolkadotAccount} a
  */
-export const isController = (a: PolkadotAccount): boolean => {
-  return !!a.polkadotResources?.stash;
+export const isController = (account: PolkadotAccount): boolean => {
+  return !!account.polkadotResources?.stash;
 };
 
 /**

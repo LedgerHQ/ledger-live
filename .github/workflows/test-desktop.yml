@@ -1,5 +1,5 @@
 name: "@Desktop • Test App"
-run-name: "@Desktop • Test App triggered by ${{ github.event_name == 'workflow_dispatch' && inputs.login || github.actor }} ${{ format('on ref {0}', github.ref_name) }}"
+run-name: "@Desktop • Test App triggered by ${{ inputs.login || github.actor }} ${{ format('on ref {0}', github.ref_name) }}"
 
 on:
   push:
@@ -15,21 +15,18 @@ on:
         required: false
       login:
         description: The GitHub username that triggered the workflow
-        required: true
+        required: false
       base_ref:
         description: The base branch to merge the head into when checking out the code
         required: false
-      draft:
-        description: true if the PR is in draft
-        required: false
-        default: "false"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
   cancel-in-progress: true
 
-env:
-  REFNAME: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
   codechecks:
@@ -40,26 +37,26 @@ jobs:
       CI_OS: ubuntu-latest
     runs-on: ubuntu-latest
     steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+      - uses: actions/checkout@v4
         with:
-          ref: ${{ env.REFNAME }}
-          base: ${{ inputs.base_ref }}
+          ref: ${{ inputs.ref || github.sha }}
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
+        id: toolchain
         with:
           install_dotnet: true
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          skip_turbo_cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
           skip_builds: true
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          turborepo-server-port: ${{ steps.toolchain.outputs.port }}
       - name: lint
-        run: |
-          pnpm lint --filter="ledger-live-desktop" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo" -- --format="json" -o="lint.json"
-          node -p "require('./node_modules/eslint/lib/cli-engine/formatters/stylish.js')(require('./apps/ledger-live-desktop/lint.json'))"
+        run: pnpm desktop lint:ci -p ${{ steps.toolchain.outputs.port }} -t "${{ secrets.TURBOREPO_SERVER_TOKEN }}"
       - name: prettier
         run: pnpm desktop prettier:check
       - name: typecheck
@@ -70,30 +67,6 @@ jobs:
         with:
           name: lint
           path: ${{ github.workspace }}/apps/ledger-live-desktop/lint.json
-
-  deadcodecheck:
-    name: "Desktop deadcode check"
-    env:
-      NODE_OPTIONS: "--max-old-space-size=7168"
-      FORCE_COLOR: 3
-      CI_OS: ubuntu-latest
-    runs-on: ubuntu-latest
-    steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
-        with:
-          ref: ${{ env.REFNAME }}
-          base: ${{ inputs.base_ref }}
-      - name: Setup the toolchain
-        uses: ./tools/actions/composites/setup-toolchain
-        with:
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
-      - uses: ./tools/actions/composites/setup-test-desktop
-        id: setup-test-desktop
-        with:
-          skip_builds: true
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: check for dead code
         run: pnpm desktop unimported
         shell: bash
@@ -106,21 +79,23 @@ jobs:
       CI_OS: ubuntu-latest
     runs-on: ubuntu-latest
     steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+      - uses: actions/checkout@v4
         with:
-          ref: ${{ env.REFNAME }}
-          base: ${{ inputs.base_ref }}
+          ref: ${{ inputs.ref || github.sha }}
       - name: Setup the toolchain
+        id: toolchain
         uses: ./tools/actions/composites/setup-toolchain
         with:
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          skip_turbo_cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
           skip_builds: true
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          turborepo-server-port: ${{ steps.toolchain.outputs.port }}
       - name: Run unit tests
         run: pnpm desktop test:jest:coverage
 
@@ -137,24 +112,26 @@ jobs:
       # DEBUG_LOGS: 1
     runs-on: [ledger-live-4xlarge-windows-2022]
     steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+      - uses: actions/checkout@v4
         with:
-          ref: ${{ env.REFNAME }}
-          base: ${{ inputs.base_ref }}
+          ref: ${{ inputs.ref || github.sha }}
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
+        id: toolchain
         with:
           upgrade_npm: true
           install_dotnet: true
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          skip_turbo_cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
           install_node_gyp: true
           install_playwright: true
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          turborepo-server-port: ${{ steps.toolchain.outputs.port }}
       - name: Run playwright tests
         id: tests
         run: |
@@ -211,22 +188,24 @@ jobs:
       # DEBUG_LOGS: 1
     runs-on: [ledger-live-4xlarge-linux]
     steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+      - uses: actions/checkout@v4
         with:
-          ref: ${{ env.REFNAME }}
-          base: ${{ inputs.base_ref }}
+          ref: ${{ inputs.ref || github.sha }}
       - name: Setup the toolchain
+        id: toolchain
         uses: ./tools/actions/composites/setup-toolchain
         with:
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          skip_turbo_cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
           skip_ruby: true
           install_playwright: true
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          turborepo-server-port: ${{ steps.toolchain.outputs.port }}
       - name: Run playwright tests [Linux => xvfb-run]
         id: tests
         run: |
@@ -281,23 +260,25 @@ jobs:
       # DEBUG: "pw:browser*"
       # DEBUG_LOGS: 1
     steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+      - uses: actions/checkout@v4
         with:
-          ref: ${{ env.REFNAME }}
-          base: ${{ inputs.base_ref }}
+          ref: ${{ inputs.ref || github.sha }}
       - name: Setup the toolchain
+        id: toolchain
         uses: ./tools/actions/composites/setup-toolchain
         with:
-          no_pnpm_cache: true
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          skip_turbo_cache: "false"
+          # skip_pnpm_cache: true
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
           skip_ruby: true
           install_playwright: true
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          turborepo-server-port: ${{ steps.toolchain.outputs.port }}
       - name: Run playwright tests
         id: tests
         run: |
@@ -340,15 +321,13 @@ jobs:
           path: apps/ledger-live-desktop/allure-results
 
   report:
-    needs:
-      [codechecks, deadcodecheck, unit-tests, e2e-tests-linux, e2e-tests-windows, e2e-tests-mac]
+    needs: [codechecks, unit-tests, e2e-tests-linux, e2e-tests-windows, e2e-tests-mac]
     runs-on: ubuntu-latest
     if: always() && !cancelled()
     steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+      - uses: actions/checkout@v4
         with:
-          ref: ${{ env.REFNAME }}
-          base: ${{ inputs.base_ref }}
+          ref: ${{ inputs.ref || github.sha }}
       - name: "download linter results"
         uses: actions/download-artifact@v3
         with:
@@ -428,10 +407,6 @@ jobs:
               status: "${{ needs.unit-tests.result }}",
             };
 
-            const deadcodecheck = {
-              pass: ${{ needs.deadcodecheck.result == 'success' }},
-            };
-
             const report = {
               mac: {
                 pass: ${{ needs.e2e-tests-mac.outputs.status == 'success' }},
@@ -451,10 +426,6 @@ jobs:
 
             ${typecheck.pass ? "Typechecks are fine" : "Unfortunately typechecks did not pass"}
               - ${typecheck.pass ? "✅" : "❌"} **Type checks** ended with status \`${typecheck.status}\`
-
-            ### Dead Code Check
-            ${deadcodecheck.pass ? "Dead code checks are fine" : "Unfortunately, dead code checks did not pass. Try \`pnpm desktop unimported\` in apps/ledger-live-desktop"}
-              - ${deadcodecheck.pass ? "✅" : "❌"}
 
             ### Unit Tests (Jest)
             ${unitTests.pass ? "Unit tests are fine" : "Unit tests did not pass"}
@@ -567,13 +538,6 @@ jobs:
                   }
                 },
                 {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": `- typechecks: ${typecheck.pass ? "✅" : "❌"}\n - deadcode checks: ${deadcodecheck.pass ? "✅" : "❌"}\n - unit tests: ${unitTests.pass ? "✅" : "❌"}\n`
-                  }
-                },
-                {
                   "type": "divider"
                 },
                 {
@@ -626,7 +590,7 @@ jobs:
     if: ${{ always() && !cancelled() && github.ref_name == 'develop' }}
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
       - name: Download Allure Report - Windows

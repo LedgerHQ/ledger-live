@@ -19,12 +19,12 @@ import { disconnect } from "@ledgerhq/live-common/hw/index";
 import { useTheme } from "@react-navigation/native";
 import { Button, IconsLegacy } from "@ledgerhq/native-ui";
 import BluetoothTransport from "@ledgerhq/react-native-hw-transport-ble";
-import LText from "../../../../components/LText";
-import KeyboardView from "../../../../components/KeyboardView";
-import Switch from "../../../../components/Switch";
-import { ScreenName } from "../../../../const";
-import { SettingsNavigatorStackParamList } from "../../../../components/RootNavigator/types/SettingsNavigator";
-import { StackNavigatorProps } from "../../../../components/RootNavigator/types/helpers";
+import LText from "~/components/LText";
+import KeyboardView from "~/components/KeyboardView";
+import Switch from "~/components/Switch";
+import { ScreenName } from "~/const";
+import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { Theme } from "../../../../colors";
 
 const tags = ["apdu", "ble-verbose", "error", "ble-frame"];

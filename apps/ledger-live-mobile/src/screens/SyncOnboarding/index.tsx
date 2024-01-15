@@ -9,10 +9,10 @@ import { useToggleOnboardingEarlyCheck } from "@ledgerhq/live-common/deviceSDK/h
 import { log } from "@ledgerhq/logs";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { LockedDeviceError, UnexpectedBootloader } from "@ledgerhq/errors";
-import { ScreenName } from "../../const";
-import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
-import { RootStackParamList } from "../../components/RootNavigator/types/RootNavigator";
-import { SyncOnboardingStackParamList } from "../../components/RootNavigator/types/SyncOnboardingNavigator";
+import { ScreenName } from "~/const";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { RootStackParamList } from "~/components/RootNavigator/types/RootNavigator";
+import { SyncOnboardingStackParamList } from "~/components/RootNavigator/types/SyncOnboardingNavigator";
 import {
   SyncOnboardingCompanion,
   NORMAL_DESYNC_OVERLAY_DISPLAY_DELAY_MS,
@@ -21,9 +21,9 @@ import { EarlySecurityCheck } from "./EarlySecurityCheck";
 import DesyncDrawer from "./DesyncDrawer";
 import EarlySecurityCheckMandatoryDrawer from "./EarlySecurityCheckMandatoryDrawer";
 import { PlainOverlay } from "./DesyncOverlay";
-import { track } from "../../analytics";
-import { NavigationHeaderCloseButton } from "../../components/NavigationHeaderCloseButton";
-import UnlockDeviceDrawer from "../../components/UnlockDeviceDrawer";
+import { track } from "~/analytics";
+import { NavigationHeaderCloseButton } from "~/components/NavigationHeaderCloseButton";
+import UnlockDeviceDrawer from "~/components/UnlockDeviceDrawer";
 import AutoRepairDrawer from "./AutoRepairDrawer";
 
 export type SyncOnboardingScreenProps = CompositeScreenProps<
@@ -61,6 +61,8 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
 
   // Used to know if a first genuine check already happened and to pass the information to the ESC
   const [isAlreadyGenuine, setIsAlreadyGenuine] = useState<boolean>(false);
+
+  const [isPreviousUpdateCancelled, setIsPreviousUpdateCancelled] = useState<boolean>(false);
 
   // States handling a UI trick to hide the header while the desync alert overlay
   // is displayed from the companion
@@ -123,7 +125,16 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
   // Probably because the device restarted.
   // If the caller knows that the device is already genuine, save this information.
   const notifyEarlySecurityCheckShouldReset = useCallback(
-    ({ isAlreadyGenuine }: { isAlreadyGenuine: boolean } = { isAlreadyGenuine: false }) => {
+    (
+      {
+        isAlreadyGenuine,
+        isPreviousUpdateCancelled,
+      }: { isAlreadyGenuine: boolean; isPreviousUpdateCancelled: boolean } = {
+        isAlreadyGenuine: false,
+        isPreviousUpdateCancelled: false,
+      },
+    ) => {
+      setIsPreviousUpdateCancelled(isPreviousUpdateCancelled);
       setIsAlreadyGenuine(isAlreadyGenuine);
       setCurrentStep("loading");
       // Resets the polling state because it could return the same result object (and so no state has changed)
@@ -276,6 +287,7 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
       <EarlySecurityCheck
         device={device}
         isAlreadyGenuine={isAlreadyGenuine}
+        isPreviousUpdateCancelled={isPreviousUpdateCancelled}
         notifyOnboardingEarlyCheckEnded={notifyOnboardingEarlyCheckEnded}
         notifyEarlySecurityCheckShouldReset={notifyEarlySecurityCheckShouldReset}
         onCancelOnboarding={onCancelEarlySecurityCheck}

@@ -1,7 +1,7 @@
 import React, { Fragment } from "react";
 import Button, { ButtonExpandProps, ButtonProps, ButtonVariants, IconPosition } from "./index";
 import Text from "../../asorted/Text";
-import { PlusMedium, WalletAddMedium } from "@ledgerhq/icons-ui/reactLegacy/";
+import { PlusMedium, WalletAddMedium } from "@ledgerhq/icons-ui/reactLegacy";
 import { InvertTheme } from "../../../styles/InvertTheme";
 import Flex from "../../layout/Flex";
 import Grid from "../../layout/Grid";

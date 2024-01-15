@@ -1,4 +1,4 @@
-import React, { useContext, useCallback } from "react";
+import React, { useContext } from "react";
 import { Trans } from "react-i18next";
 import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
@@ -8,6 +8,7 @@ import IconWarning from "~/renderer/icons/TriangleWarning";
 import Spinner from "~/renderer/components/Spinner";
 import TopBanner, { FakeLink, Content } from "~/renderer/components/TopBanner";
 import { UpdaterContext } from "./UpdaterContext";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 
 export const VISIBLE_STATUS = [
   "download-progress",
@@ -21,7 +22,6 @@ const CONTENT_BY_STATUS = (
   quitAndInstall: () => void,
   reDownload: () => void,
   progress: number,
-  downloadUpdate: () => void,
   version: string,
 ): {
   [x: string]: Content;
@@ -65,11 +65,6 @@ const CONTENT_BY_STATUS = (
         }}
       />
     ),
-    right: (
-      <FakeLink onClick={downloadUpdate}>
-        <Trans i18nKey="update.downloadNow" />
-      </FakeLink>
-    ),
   },
   error: {
     Icon: IconWarning,
@@ -83,17 +78,17 @@ const CONTENT_BY_STATUS = (
 });
 const UpdaterTopBanner = () => {
   const context = useContext(UpdaterContext);
-  const reDownload = useCallback(() => {
-    openURL(urls.liveHome);
-  }, []);
+  const urlLive = useLocalizedUrl(urls.liveHome);
+  const reDownload = () => {
+    openURL(urlLive);
+  };
   if (context && context.version) {
-    const { status, quitAndInstall, downloadProgress, version, downloadUpdate } = context;
+    const { status, quitAndInstall, downloadProgress, version } = context;
     if (!VISIBLE_STATUS.includes(status)) return null;
     const content: Content | undefined | null = CONTENT_BY_STATUS(
       quitAndInstall,
       reDownload,
       downloadProgress,
-      downloadUpdate,
       version,
     )[status];
     if (!content) return null;

@@ -1,9 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`encode/decode 1`] = `
-Object {
-  "accounts": Array [
-    Object {
+{
+  "accounts": [
+    {
       "balance": "349005855825536773784",
       "currencyId": "ethereum_classic",
       "derivationMode": "",
@@ -13,7 +13,7 @@ Object {
       "name": "uuwygRL0AmMrs9riAlv1",
       "seedIdentifier": "mock",
     },
-    Object {
+    {
       "balance": "45503129837786898140",
       "currencyId": "ethereum_classic",
       "derivationMode": "",
@@ -23,7 +23,7 @@ Object {
       "name": "4GEb2iRQXlUt6X1jviKzSz4umwWj",
       "seedIdentifier": "mock",
     },
-    Object {
+    {
       "balance": "3979459404",
       "currencyId": "litecoin",
       "derivationMode": "",
@@ -34,24 +34,24 @@ Object {
       "seedIdentifier": "mock",
     },
   ],
-  "meta": Object {
+  "meta": {
     "exporterName": "test",
     "exporterVersion": "0.0.0",
     "modelId": undefined,
     "modelIdList": undefined,
   },
-  "settings": Object {
-    "blacklistedTokenIds": Array [
+  "settings": {
+    "blacklistedTokenIds": [
       "tokenid1",
       "tokenid2",
     ],
     "counterValue": "USD",
-    "currenciesSettings": Object {
-      "bitcoin": Object {
+    "currenciesSettings": {
+      "bitcoin": {
         "confirmationsNb": 3,
       },
     },
-    "pairExchanges": Object {
+    "pairExchanges": {
       "BTC_USD": "KRAKEN",
     },
   },

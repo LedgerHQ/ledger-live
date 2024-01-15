@@ -226,7 +226,7 @@ test.describe.parallel("Swap", () => {
       await swapPage.selectExchangeQuote("changelly", "float");
       await swapPage.confirmExchange();
       await deviceAction.initiateSwap();
-      await expect.soft(drawer.content).toHaveScreenshot("initiate-swap.png", { timeout: 10000 });
+      await expect.soft(drawer.content).toHaveScreenshot("initiate-swap.png");
     });
 
     await test.step("Confirm swap with Nano App", async () => {
@@ -253,7 +253,7 @@ test.describe.parallel("Swap", () => {
     await test.step("Verify Swap details are present in the swap history", async () => {
       await drawer.close();
       await swapPage.verifyHistoricalSwapsHaveLoadedFully();
-      await expect.soft(page).toHaveScreenshot("verify-swap-history.png", { timeout: 20000 });
+      await expect.soft(page).toHaveScreenshot("verify-swap-history.png");
     });
   });
 });

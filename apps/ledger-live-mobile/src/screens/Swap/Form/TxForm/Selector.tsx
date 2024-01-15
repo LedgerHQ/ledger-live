@@ -3,7 +3,7 @@ import { TouchableOpacity } from "react-native";
 import { Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useTranslation } from "react-i18next";
-import CurrencyIcon from "../../../../components/CurrencyIcon";
+import CurrencyIcon from "~/components/CurrencyIcon";
 
 interface Props {
   currency?: CryptoCurrency | TokenCurrency;

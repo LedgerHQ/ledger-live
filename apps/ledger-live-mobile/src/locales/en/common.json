@@ -100,6 +100,10 @@
     }
   },
   "errors": {
+    "ReplacementTransactionUnderpriced": {
+      "title": "Replacement transaction underpriced",
+      "description": "The network fee might be too low. Please increase"
+    },
     "countervaluesUnavailable": {
       "title": "We're not able to provide a countervalue for this asset at the moment"
     },
@@ -313,6 +317,9 @@
     "FeeNotLoaded": {
       "title": "Could not load fee rates"
     },
+    "FeeNotLoadedSwap": {
+      "title": "Network fee estimation failed because of technical issues. Try again or change the assets."
+    },
     "FeeRequired": {
       "title": "Fees are required"
     },
@@ -460,6 +467,18 @@
     "ElrondDelegationBelowMinimumError": {
       "title": "Remaining delegation can't be less than {{formattedAmount}}"
     },
+    "NotEnoughVTHO": {
+      "title": "Sorry, insufficient VTHO funds",
+      "description": "Please make sure the account has enough VTHO."
+    },
+    "MustBeVechain": {
+      "title": "Not a vechain account",
+      "description": "Please make sure the coin is VTHO or VET"
+    },
+    "ImpossibleToCalculateAmountAndFees": {
+      "title": "Impossible to calculate amount and fees",
+      "description": "Impossible to calculate amount and fees"
+    },
     "NotEnoughEGLDForFees": {
       "title": "Not enough EGLD to pay the transaction fees",
       "description": "Please send some EGLD to your account to pay for transactions."
@@ -473,7 +492,7 @@
       "description": "Try reinstalling the app from My Ledger"
     },
     "NotEnoughGas": {
-      "title": "The parent account balance is insufficient for network fees",
+      "title": "You need {{fees}} {{ticker}} for network fees to swap as you are on {{cryptoName}} network. <link0>Buy {{ticker}}</link0>",
       "description": "Please send some coins to your account to pay for token transactions."
     },
     "NotEnoughGasSwap": {
@@ -549,7 +568,7 @@
       "title": "No assets to unfreeze",
       "description": "You don't have Energy assets to unfreeze."
     },
-    "TronUnfreezeNotExpired": {
+    "TronLegacyUnfreezeNotExpired": {
       "title": "Unfreeze is not available yet",
       "description": "Please wait 3 days after your last Freeze operation."
     },
@@ -586,6 +605,16 @@
     },
     "TronNotEnoughEnergy": {
       "title": "Energy is lower than necessary. You might pay up to 50TRX in fees."
+    },
+    "TronNoUnfrozenResource": {
+      "title": "No unfrozen resources to withdraw"
+    },
+    "TronInvalidUnDelegateResourceAmount": {
+      "title": "Not enough delegated resources"
+    },
+    "TronUnfreezeNotExpired": {
+      "title": "Resources not unfrozen yet",
+      "description": "You need to wait until {{time}} to withdraw"
     },
     "UpdateYourApp": {
       "title": "App update needed",
@@ -745,6 +774,9 @@
     "CardanoNotEnoughFunds": {
       "title": "Please ensure you have enough funds to pay for fees"
     },
+    "CardanoStakeKeyDepositError": {
+      "title": "Ensure that you have {{depositAmount}} ADA available for the deposit"
+    },
     "StacksMemoTooLong": {
       "title": "Memo length is too long"
     },
@@ -879,6 +911,9 @@
     "FirmwareNotRecognized": {
       "title": "Invalid Provider",
       "description": "You have to change \"My Ledger provider\" setting. To change it, open Ledger Live \"Settings\", select \"Experimental features\", and then select a different provider."
+    },
+    "TezosUnrevealedAccount": {
+      "title": "Swap unavailable: Initial send/delegate needed with Tezos account or change pair."
     }
   },
   "crash": {
@@ -999,7 +1034,8 @@
     "week": "1W",
     "month": "1M",
     "year": "1Y",
-    "all": "ALL"
+    "all": "ALL",
+    "graphNotSupported": "The graph is not available for this token"
   },
   "carousel": {
     "title": "Close banner?",
@@ -1929,7 +1965,7 @@
   "earlySecurityCheck": {
     "title": "Genuine Check and OS update check",
     "idle": {
-      "description": "Genuine Check makes sure your Ledger Stax is an official Ledger. OS update check makes sure Ledger Stax OS is up to date.",
+      "description": "This makes sure your Ledger Stax is an official Ledger.",
       "learnMore": "Learn more about Genuine Check",
       "checkCta": "Check Ledger Stax"
     },
@@ -1937,8 +1973,8 @@
       "continueCta": "Continue to setup"
     },
     "earlySecurityCheckMandatoryDrawer": {
-      "title": "Genuine Check is mandatory",
-      "description": "You cannot setup your {{productName}} without allowing this Check.",
+      "title": "Cancel Genuine check and OS update check?",
+      "description": "Genuine check is mandatory to continue setting up your {{productName}} using the Ledger Live app.",
       "resumeCta": "Resume Check",
       "cancelCta": "Cancel Checks"
     },
@@ -1959,25 +1995,25 @@
       "supportCta": "Contact Ledger Support"
     },
     "allowManagerDrawer": {
-      "title": "Tap 'Allow' to enable Genuine Check and OS update check"
+      "title": "Tap on “Allow” to start Genuine Check"
     },
     "genuineCheckStep": {
       "learnMore": "Learn more about Genuine Check",
       "inactive": {
         "title": "Genuine Check",
-        "description": "Genuine Check makes sure your {{productName}} is an official Ledger."
+        "description": "This makes sure your {{productName}} is an official Ledger."
       },
       "active": {
         "title": "Genuine Check",
-        "description": "Genuine Check makes sure your {{productName}} is an official Ledger."
+        "description": "This makes sure your {{productName}} is an official Ledger."
       },
       "completed": {
         "title": "{{productName}} is genuine",
-        "description": "Genuine Check makes sure your {{productName}} is an official Ledger."
+        "description": ""
       },
       "refused": {
         "title": "Genuine Check declined",
-        "description": "You cannot setup your {{productName}} without allowing this Check.",
+        "description": "Genuine Check is mandatory to continue setting up your {{productName}} using the Ledger Live app.",
         "cta": "Resume Check"
       },
       "error": {
@@ -1988,7 +2024,7 @@
     "firmwareUpdateCheckStep": {
       "active": {
         "title": "OS update check",
-        "description": "OS update check makes sure {{productName}} Operating System is up to date."
+        "description": "This checks if your {{productName}} Operating System is up to date or not. "
       },
       "completed": {
         "noUpdateAvailable": {
@@ -2007,7 +2043,7 @@
       },
       "inactive": {
         "title": "OS update check",
-        "description": "OS update check makes sure {{productName}} Operating System is up to date."
+        "description": "This checks if your Ledger Stax Operating System is up to date or not. "
       }
     },
     "firmwareUpdateAvailableDrawer": {
@@ -2064,7 +2100,7 @@
       "helpCta": "Get help"
     },
     "resyncOverlay": {
-      "content": "Connection with {{productName}} lost. Trying to reconnect..."
+      "content": "Connection with {{productName}} lost. Trying to reconnect."
     },
     "helpDrawer": {
       "title": "Need some help with your setup manual?",
@@ -2073,14 +2109,15 @@
       "supportCta": "Speak to a human"
     },
     "earlySecurityCheckCompletedStep": {
-      "title": "This {{productName}} is genuine",
-      "description": "Continue setting up on {{productName}}."
+      "title": "{{productName}} is genuine",
+      "subtitle": "It is safe to use this {{productName}}. You can proceed to set it up.",
+      "description": "Tap on {{productName}} to start setup."
     },
     "pinStep": {
       "title": "PIN",
       "doneTitle": "PIN set",
-      "description": "Your PIN prevents unwanted access to your {{productName}}.",
-      "continueOnDevice": "Set PIN on your {{productName}}"
+      "description": "Just like any password or passcode, the PIN lets you unlock your {{productName}} and prevent unwanted access.",
+      "continueOnDevice": "Set your PIN on your {{productName}}."
     },
     "seedStep": {
       "title": "Secret Recovery Phrase",
@@ -2088,17 +2125,25 @@
       "description": "Your recovery phrase is a secret list of 24 words that backs up your private keys. Your {{productName}} generates a unique recovery phrase. Ledger does not keep a copy of it",
       "choiceRestoreDirectOrRecover": "Placeholder - choice direct restore or use Recover",
       "recoverSeed": "Placeholder: Recover",
-      "restoreSeed": "For recovery, make sure to use a Secret Recovery Phrase generated by a Ledger for the guaranted security of your assets.\n\nDon't have one? Use your {{productName}} to generate a new Phrase.",
-      "selection": "On {{productName}}, choose a setup option that best suits you.",
-      "selectionContinueOnDevice": "Tap an option on {{productName}}",
-      "newSeedDescription": "Watch the videos below to learn more about your secret words.",
+      "restoreSeed": "Make sure to use a Secret Recovery Phrase generated by a Ledger device for maximum security over your assets. \n\nDon't have one? Use your {{productName}} to generate a new Phrase.",
+      "selection": "Choose the setup option that best suits you:",
+      "selectionNewLedger": {
+        "title": "Set up as a new Ledger",
+        "desc": "Lets you create a new wallet. This generates a new Secret Recovery Phrase."
+      },
+      "selectionRestore": {
+        "title": "Restore",
+        "desc": "Lets you restore access to your existing assets with your Secret Recovery Phrase, or by using Ledger Recover."
+      },
+      "selectionContinueOnDevice": "Choose the relevant option on your {{productName}}.",
+      "newSeedDescription": "Want to learn more about the Secret Recovery Phrase? Watch these videos:",
       "newSeedContinueOnDevice": "Do this on your {{productName}}",
-      "recovery": "For recovery, make sure to use a Secret Recovery Phrase generated by a Ledger for the guaranted security of your assets.\n\nDon't have one? Use your {{productName}} to generate a new Phrase.",
-      "restoreChoiceContinueOnDevice": "Choose an option on your {{productName}}",
+      "recovery": "Make sure to use a Secret Recovery Phrase generated by a Ledger device for maximum security over your assets. \n\nDon't have one? Use your {{productName}} to generate a new Phrase.",
+      "restoreChoiceContinueOnDevice": "Choose the relevant option on your {{productName}}.",
       "restoreChoiceSRPTitle": "Restore using Secret Recovery Phrase",
-      "restoreChoiceSRPDescription": "Make sure to use a Phrase generated by a Ledger for the guaranteed security of your assets.",
+      "restoreChoiceSRPDescription": "Use a Secret Recovery Phrase generated by a Ledger device for maximum security. ",
       "restoreChoiceRecoverTitle": "Restore using Ledger Recover",
-      "restoreChoiceRecoverDescription": "Restore your Recovery Phrase Backup by logging into your Ledger account and confirming your identity."
+      "restoreChoiceRecoverDescription": "If you’re subscribed to Ledger Recover, log in to your subscription to initiate the restore process for the backup for your Secret Recovery Phrase."
     },
     "softwareChecksSteps": {
       "title": "Hardware and Software checks",
@@ -2116,7 +2161,7 @@
       }
     },
     "appsStep": {
-      "title": "Install blockchain apps"
+      "title": "Install apps on {{productName}}"
     },
     "readyStep": {
       "title": "End of setup",
@@ -2202,6 +2247,20 @@
       "send": "Send",
       "deposit": "Receive",
       "stake": "Stake"
+    },
+    "recoverBanner": {
+      "subscribeDone": {
+        "title": "Finish adding your payment card",
+        "description": "Restore reliably with Ledger Recover."
+      },
+      "verifyIdentity": {
+        "title": "Finish verifying your identity",
+        "description": "Restore reliably with Ledger Recover."
+      },
+      "connectDevice": {
+        "title": "Final step: Connect your Ledger",
+        "description": "You're 1 step away from Ledger Recover."
+      }
     }
   },
   "addAccountsModal": {
@@ -2267,6 +2326,9 @@
       "VOTE": "Voted",
       "FREEZE": "Frozen",
       "UNFREEZE": "Unfrozen",
+      "UNDELEGATE_RESOURCE": "Undelegated",
+      "WITHDRAW_EXPIRE_UNFREEZE": "Withdrawal",
+      "LEGACYUNFREEZE": "Unfrozen",
       "REWARD": "Claimed reward",
       "FEES": "Fees",
       "OPT_IN": "Opt in",
@@ -2502,6 +2564,7 @@
       }
     },
     "availableBalance": "Available balance",
+    "claimableRewards": "Claimable rewards",
     "totalSupplied": "Amount deposited",
     "tronFrozen": "Frozen",
     "bandwidth": "Bandwidth",
@@ -2841,6 +2904,18 @@
           "title": "Experimental Explorers API",
           "description": "Try an upcoming version of Ledger's blockchain explorers. Changing this setting may affect the account balance and synchronization as well as the send feature."
         },
+        "1559DeactivateGate": {
+          "title": "Deactivate EIP1559 minimum priority fee gate",
+          "description": "This will allow a transaction to be sent without any minimum priority fee expected. This may result in a transaction getting stuck in the mempool forever."
+        },
+        "1559CustomPriorityLowerGate": {
+          "title": "Custom priority fee gate",
+          "description": "Customize the percentage of our estimated minimal priority fee allowed for an advanced EIP1559 transaction"
+        },
+        "1559CustomBaseFeeMultiplier": {
+          "title": "Custom multiplier for the base fee",
+          "description": "Customize the multiplier used for the base fee composing the maxFeePerGas of the EIP1559 transaction"
+        },
         "experimentalListAppsV2": {
           "title": "Experimental list apps for My Ledger",
           "description": "Performance improvement for My Ledger access and inline flows."
@@ -2933,7 +3008,7 @@
     },
     "receive": {
       "title": "Receive",
-      "description": "Deposit crypto from another wallet.",
+      "description": "Receive crypto from another wallet.",
       "titleReadOnly": "Unverified address",
       "headerTitle": "Crypto asset",
       "titleDevice": "Connect device",
@@ -2984,7 +3059,7 @@
         }
       },
       "receiveConfirmation": {
-        "title": "Deposit {{currencyTicker}}",
+        "title": "Receive {{currencyTicker}}",
         "onCurrencyName": "On {{currencyName}}",
         "copyAdress": "Copy address",
         "addressCopied": "Address copied!",
@@ -3582,10 +3657,10 @@
     },
     "previousFeesInfo": {
       "pendingTransactionFeesInfo": "Pending transaction fees info: ",
-      "networkfee": "Network fee = {{amount}} {{unit}}",
-      "maxFee": "Max fee = {{amount}} Gwei",
-      "maxPriorityFee": "Max Priority fee = {{amount}} Gwei",
-      "gasPrice": "GasPrice = {{amount}} Gwei"
+      "networkfee": "Network fee = {{amount}}",
+      "maxFee": "Max fee = {{amount}}",
+      "maxPriorityFee": "Max Priority fee = {{amount}}",
+      "gasPrice": "GasPrice = {{amount}}"
     },
     "speedUp": {
       "title": "Speed Up",
@@ -3593,14 +3668,14 @@
     },
     "cancel": {
       "title": "Cancel",
-      "description": "Sending 0 {{ticker}} to your own address.\nTo ensure cancellation, the network fee is 30% higher than the fee of the transaction meant to be cancelled."
+      "description": "Sending 0 {{ticker}} to your own address."
     },
     "error": {
       "notEnoughFundsToCancel": "Cancelling transaction is not available because you don't have enough funds on your account.",
       "notEnoughFundsToSpeedup": "Speeding up transaction is not available because you don’t have enough funds in your account.",
       "notlowestNonceToSpeedup": "Speed up feature is not available. Your transaction is pending because a previous transaction is stuck. You can wait for it to be confirmed, speed it up and cancel it.",
       "TransactionHasBeenValidatedError": {
-        "title": "Can't be speed up or cancel",
+        "title": "Can't be sped up or canceled",
         "description": "This transaction has already been validated"
       }
     }
@@ -3628,7 +3703,7 @@
       "description": "Freeze TRX to earn rewards securely, keeping control of your assets.",
       "steps": {
         "0": "Delegated assets remain yours.",
-        "1": "You can unfreeze your assets after 3 days.",
+        "1": "You can unfreeze your assets at any time, and they will be accessible after the 14-day unfreezing period.",
         "2": "Freeze and vote securely with your Ledger device."
       },
       "howVotingWorks": "How voting works",
@@ -3780,6 +3855,11 @@
         "title": "Add Token",
         "disclaimer": "{{tokenName}} is a BEP-20 Token.\nYou can receive tokens directly in a BNB account.",
         "learnMore": "Learn more about BEP-20"
+      },
+      "vip180": {
+        "title": "Add token",
+        "disclaimer": "{{tokenName}} is a VIP180 Token.\nYou can receive tokens directly in a VET account.",
+        "learnMore": "Learn more about VIP180"
       }
     },
     "showMoreChainType": "More address types",
@@ -3985,6 +4065,8 @@
       "addALedger": "Add a Ledger",
       "addWithBluetooth": "Add with Bluetooth",
       "addNewCTA": "Add new",
+      "showAllCTA": "Show all {{count}} Ledgers",
+      "showLessCTA": "Show less",
       "otgBanner": "To use Ledger Nano S or Ledger Nano S Plus, connect with the USB cable.",
       "connectExistingLedger": "Connect an existing Ledger",
       "connectExistingLedgerDescription": "If your Ledger is already set up",
@@ -4190,7 +4272,7 @@
     "waitForFirmwareUpdate": "Wait for the firmware update to finish on your device",
     "waitForInstallationToFinish": "Wait for installation to finish on your {{deviceName}}",
     "staxBatteryLow": "Ledger Stax battery too low to update",
-    "staxBatteryLowDescription": "To start the OS update, a minimum of 20% charge is needed, or your Ledger Stax must be charging.",
+    "staxBatteryLowDescription": "To start the OS update, a minimum of {{lowBatteryPercentage}}% charge is needed, or your Ledger Stax must be charging.",
     "updateCancelled": "OS update install cancelled on {{deviceName}}",
     "updateCancelledDescription": "If this was a mistake, restart the update.",
     "updateNotYetComplete": "OS update is in progress",
@@ -4205,6 +4287,7 @@
     "newVersionNumber": "New version",
     "success": "Firmware updated",
     "update": "Update",
+    "retryBatteryCheck": "Retry after pluggin",
     "Notifications": {
       "confirmOnDevice": "We require your confirmation on the device",
       "preparingUpdate": "Transferring update, we will notify you when we're done",
@@ -4823,6 +4906,10 @@
       "delegationUnavailable": {
         "title": "Delegation unavailable",
         "description": "Not enough available balance in your account to start a new delegation."
+      },
+      "claimable": {
+        "title": "Claimable Rewards",
+        "description": "Currently, the option to claim USDC rewards is unavailable. Please use a third-party wallet for this purpose."
       }
     },
     "delegation": {
@@ -5271,7 +5358,7 @@
             "description": "Delegate TRX to a third party candidate to earn rewards. Click on continue to freeze assets and vote.",
             "bullet": {
               "delegate": "Delegated assets remain yours.",
-              "access": "You can access your assets 3 days after freezing.",
+              "access": "Frozen assets can be unfrozen immediately and will become accessible after the 14-day unfreezing period.",
               "ledger": "Delegate securely with your Ledger device."
             },
             "button": {
@@ -5289,7 +5376,7 @@
       },
       "unfreeze": {
         "title": "Unfreeze",
-        "description": "Unfreeze TRX to add them back to your available balance. You will no longer earn rewards."
+        "description": "Unfreeze TRX to add them back to your available balance. You will no longer earn rewards. The assets will be available after the 14-day unfreezing period"
       },
       "vote": {
         "title": "Vote",
@@ -5647,6 +5734,20 @@
       "totalStake": "Total stake",
       "commission": "Commission",
       "stakeActivationState": "State",
+      "stakeActivePercent": "Active",
+      "stakeAvailableBalance": "Available balance",
+      "actions": {
+        "activate": "Activate",
+        "deactivate": "Deactivate",
+        "reactivate": "Reactivate",
+        "withdraw": "Withdraw"
+      },
+      "states": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "activating": "Activating",
+        "deactivating": "Deactivating"
+      },
       "delegationEarn": "You can earn SOL rewards by delegating your assets.",
       "info": "How Delegation works",
       "broadcastSuccessTitle": "Operation sent",
@@ -5654,7 +5755,8 @@
       "delegatedTo": "delegated to",
       "started": {
         "description": "You may earn rewards by delegating your SOL assets to a validator."
-      }
+      },
+      "reserveWarning": "Please ensure you reserve at least {{amount}} SOL in your wallet to cover future network fees to deactivate and withdraw your stake"
     }
   },
   "near": {
@@ -5836,6 +5938,9 @@
       "freeze": "On your device, please confirm to finalize the operation",
       "unfreeze": "On your device, please confirm to finalize the operation",
       "claimReward": "On your device, please confirm to finalize the operation",
+      "legacyUnfreeze": "On your device, please confirm to finalize the operation",
+      "withdrawExpireUnfreeze": "On your device, please confirm to finalize the operation",
+      "undelegateResource": "On your device, please confirm to finalize the operation",
       "vote": "On your device, please confirm to finalize the operation",
       "delegate": "On your device, please confirm to finalize the operation",
       "redelegate": "On your device, please confirm to finalize the operation",
@@ -5860,18 +5965,16 @@
     "votes": "Votes",
     "validator": "Validator",
     "infoWording": {
-      "freeze": "Frozen tokens are locked for a period of 3 days.",
+      "freeze": "Freeze tokens to acquire bandwidth or energy and receive an equivalent amount of TRON Power (TP).",
       "unfreeze": "Your {{resource}} points will be reduced, and all your votes will be cancelled.",
+      "legacyUnfreeze": "Your {{resource}} points will be reduced, and all your votes will be cancelled.",
       "claimReward": "Rewards can be claimed every 24 hours.",
+      "withdrawExpireUnfreeze": "Your unfrozen resources that has passed the unfreezing period will be withdrawn",
+      "unDelegateResource": "Cancel the delegation of {{resource}}",
       "cosmos": {
         "claimReward": "If the selected validator has pending rewards, they will automatically be claimed.",
-        "redelegate": "You will have to wait 21 days for undelegated assets to return to the available balance.",
-        "undelegate": "You will have to wait 21 days for undelegated assets to return to the available balance."
-      },
-      "osmosis": {
-        "claimReward": "If the selected validator has pending rewards, they will automatically be claimed.",
-        "redelegate": "You will have to wait 14 days for undelegated assets to return to the available balance.",
-        "undelegate": "You will have to wait 14 days for undelegated assets to return to the available balance."
+        "redelegate": "You will have to wait {{numberOfDays}} days for undelegated assets to return to the available balance.",
+        "undelegate": "You will have to wait {{numberOfDays}} days for undelegated assets to return to the available balance."
       },
       "lending": "Verify the operation details on your device before sending it."
     },
@@ -6343,6 +6446,12 @@
         "titleCompleted": "Assets transferred to Ledger",
         "description": "Easily transfer assets from Coinbase or any other exchange or wallet.",
         "popupLabel": "Assets transferred"
+      },
+      "buyCrypto": {
+        "title": "Buy Crypto",
+        "titleCompleted": "Assets transferred to Ledger",
+        "description": "Choose from 500+ coins and the best quotes from buy-providers, tailored to your preferences.",
+        "popupLabel": "Crypto bought"
       }
     }
   },

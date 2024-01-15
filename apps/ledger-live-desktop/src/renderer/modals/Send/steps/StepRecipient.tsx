@@ -36,7 +36,7 @@ const StepRecipient = ({
 }: StepProps) => {
   if (!status || !account) return null;
   const mainAccount = getMainAccount(account, parentAccount);
-  // for ethereum family, check if there is a stuck transaction. If so, display a warning panel with "speed up or cancel" button
+  // check if there is a stuck transaction. If so, display a warning panel with "speed up or cancel" button
   const stuckAccountAndOperation = getStuckAccountAndOperation(account, parentAccount);
 
   return (

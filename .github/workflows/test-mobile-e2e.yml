@@ -1,5 +1,5 @@
 name: "@Mobile • Test App End-2-End"
-run-name: "@Mobile • Test App End-2-End triggered by ${{ github.event_name == 'workflow_dispatch' && inputs.login || github.actor }} ${{ format('on ref {0}', github.ref_name) }}"
+run-name: "@Mobile • Test App End-2-End triggered by ${{ inputs.login || github.actor }} ${{ format('on ref {0}', github.ref_name) }}"
 
 on:
   push:
@@ -11,11 +11,13 @@ on:
   workflow_dispatch:
     inputs:
       ref:
-        description: the branch which triggered this workflow
-        required: false
+        description: |
+          If you run this manually, and want to run on a PR, the correct ref should be refs/pull/{PR_NUMBER}/merge to
+          have the "normal" scenario involving checking out a merge commit between your branch and the base branch.
+          If you want to run only on a branch or specific commit, you can use either the sha or the branch name instead (prefer the first verion for PRs).
       login:
         description: The GitHub username that triggered the workflow
-        required: true
+        required: false
       base_ref:
         description: The base branch to merge the head into when checking out the code
         required: false
@@ -29,6 +31,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
   cancel-in-progress: true
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   detox-tests-ios:
     name: "Ledger Live Mobile - iOS Detox Tests"
@@ -41,15 +47,19 @@ jobs:
     outputs:
       status: ${{ steps.detox.outcome }}
     steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+      - uses: actions/checkout@v4
         with:
-          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
-          base: ${{ inputs.base_ref }}
+          ref: ${{ inputs.ref || github.sha }}
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
+        id: toolchain
         with:
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          skip_pod_cache: "false"
+          skip_turbo_cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - name: Install applesimutils
         run: |
           brew update
@@ -77,21 +87,12 @@ jobs:
           bucket: ll-gha-s3-cache
           region: eu-west-1
           use-fallback: false
-
-      - name: TurboRepo local caching server
-        id: turborepo-cache-server
-        uses: ./tools/actions/turborepo-s3-cache
-        with:
-          server-token: "yolo"
-          cleanup-cache-folder: "true"
-          aws-access-key: ${{ secrets.ACCESS_KEY_BUCKET }}
-          aws-secret-key: ${{ secrets.SECRET_KEY_BUCKET }}
       - name: install dependencies
         run: |
           pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="dummy-*-app..." --no-frozen-lockfile --unsafe-perm
       - name: Build dependencies
         run: |
-          pnpm build:llm:deps --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+          pnpm build:llm:deps --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
       - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
         run: |
           pnpm build:dummy-apps
@@ -99,26 +100,19 @@ jobs:
       - name: Create iOS simulator
         id: simulator
         run: |
-          ID=$(xcrun simctl create "iPhone 13" "iPhone 13")
+          ID=$(xcrun simctl create "iPhone 14" "iPhone 14")
           echo "id=$ID" >> $GITHUB_OUTPUT
       - name: Build iOS app for Detox test run
         if: steps.detox-build.outputs.cache-hit != 'true'
-        run: |
-          pnpm mobile e2e:build -c ios.sim.release
+        run: pnpm mobile e2e:ci -p ios -b
 
       - name: Build JS Bundle app for Detox test run
         if: steps.detox-build.outputs.cache-hit == 'true'
-        run: |
-          pnpm mobile bundle:ios --dev false --minify false
-          pnpm mobile exec detox clean-framework-cache
-          pnpm mobile exec detox build-framework-cache
-          cd apps/ledger-live-mobile
-          cp main.jsbundle ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app/main.jsbundle
-          mv main.jsbundle ios/build/Build/Products/Release-iphonesimulator/main.jsbundle
+        run: pnpm mobile e2e:ci -p ios --bundle
       - name: Test iOS app
         id: detox
-        run: |
-          pnpm mobile e2e:test -c ios.sim.release --loglevel error --record-logs all --take-screenshots all --detectOpenHandles --headless --retries 1
+        timeout-minutes: 45
+        run: pnpm mobile e2e:ci -p ios -t
       - name: Delete iOS simulator
         if: always()
         run: |
@@ -142,7 +136,7 @@ jobs:
     if: ${{ always() && !cancelled() && github.ref_name == 'develop' }}
     needs: [detox-tests-ios]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
       - uses: ./tools/actions/composites/upload-allure-report
@@ -163,14 +157,18 @@ jobs:
     outputs:
       status: ${{ steps.detox.outcome }}
     steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+      - uses: actions/checkout@v4
         with:
-          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
+          ref: ${{ inputs.ref || github.sha }}
       - name: Setup the toolchain
+        id: toolchain
         uses: ./tools/actions/composites/setup-toolchain
         with:
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          skip_turbo_cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - name: setup JDK 11
         uses: actions/setup-java@v3
         with:
@@ -189,47 +187,70 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
-      - name: TurboRepo local caching server
-        id: turborepo-cache-server
-        uses: ./tools/actions/turborepo-s3-cache
-        with:
-          server-token: "yolo"
-          cleanup-cache-folder: "true"
-          aws-access-key: ${{ secrets.ACCESS_KEY_BUCKET }}
-          aws-secret-key: ${{ secrets.SECRET_KEY_BUCKET }}
       - name: Install dependencies
         run: |
           pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="dummy-*-app..." --no-frozen-lockfile --unsafe-perm
       - name: Build dependencies
         run: |
-          pnpm build:llm:deps --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+          pnpm build:llm:deps --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
       - name: Build Dummy Live SDK and Dummy Wallet API apps for testing
         run: |
-          pnpm build:dummy-apps
+          pnpm build:dummy-apps --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
         shell: bash
       - name: Build Android app for Detox test run
         run: |
-          pnpm mobile e2e:build -c android.emu.release
+          pnpm mobile e2e:ci -p android -b
+      - name: cache android emulator
+        uses: tespkg/actions-cache@v1
+        id: detox-avd
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: ${{ runner.os }}-detox-avd-${{ hashFiles('~/.android/avd/*/config.ini') }}
+          restore-keys: |
+            ${{ runner.os }}-detox-avd-
+
+          # envs set by setup-toolchain
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
+          bucket: ll-gha-s3-cache
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
+      - name: create AVD and generate snapshot for caching
+        if: steps.detox-avd.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 32
+          arch: x86_64
+          profile: pixel_6_pro
+          target: google_apis
+          avd-name: "Pixel_6_Pro_API_32"
+          force-avd-creation: true
+          cores: 4
+          ram-size: 8192M
+          disable-linux-hw-accel: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          script: ./tools/scripts/wait_emulator_idle.sh
       - name: Start Emulator and Run Android Tests
         id: detox
         uses: reactivecircus/android-emulator-runner@v2
-        timeout-minutes: 60
+        timeout-minutes: 45
         env:
           DETOX_INSTALL_TIMEOUT: 120000
         with:
-          api-level: 31
+          api-level: 32
           arch: x86_64
-          profile: pixel_5
+          profile: pixel_6_pro
           target: google_apis
-          avd-name: "Pixel_5_API_31"
-          force-avd-creation: true
-          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          avd-name: "Pixel_6_Pro_API_32"
+          force-avd-creation: false
           cores: 4
-          ram-size: 4096M
-          heap-size: 512M
-          disk-size: 4096M
+          ram-size: 8192M
           disable-linux-hw-accel: false
-          script: pnpm mobile e2e:test -c android.emu.release --loglevel error --record-logs all --take-screenshots all --forceExit --detectOpenHandles --headless --retries 1
+          emulator-options: -read-only -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          script: pnpm mobile e2e:ci -p android -t
       - name: Upload test artifacts
         if: always()
         uses: actions/upload-artifact@v3
@@ -250,7 +271,7 @@ jobs:
     needs: [detox-tests-android]
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
       - uses: ./tools/actions/composites/upload-allure-report
@@ -265,10 +286,9 @@ jobs:
     runs-on: ubuntu-latest
     if: always() && !cancelled() && github.event_name == 'workflow_dispatch'
     steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+      - uses: actions/checkout@v4
         with:
-          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
-          base: ${{ inputs.base_ref }}
+          ref: ${{ inputs.ref || github.sha }}
       - uses: actions/github-script@v6
         name: prepare status
         id: status

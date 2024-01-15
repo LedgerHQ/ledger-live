@@ -82,26 +82,24 @@ export const experimentalFeatures: Feature[] = [
   {
     type: "toggle",
     name: "EIP1559_MINIMUM_FEES_GATE",
-    title: "Deactivate EIP-1559 minimum priority fee gate",
-    description:
-      "This will allow a transaction to be sent without any minimum priority fee expected. This may result in a transaction getting stuck in the mempool forever.",
+    title: i18nKey("1559DeactivateGate", "title"),
+    description: i18nKey("1559DeactivateGate", "description"),
     valueOn: false,
     valueOff: true,
   },
   {
     type: "integer",
     name: "EIP1559_PRIORITY_FEE_LOWER_GATE",
-    title: "Custom priority fee gate",
-    description:
-      "Customize the percentage of our estimated minimal priority fee allowed for an advanced EIP1559 transaction",
+    title: i18nKey("1559CustomPriorityLowerGate", "title"),
+    description: i18nKey("1559CustomPriorityLowerGate", "description"),
     minValue: 0,
     maxValue: 1,
   },
   {
     type: "float",
     name: "EIP1559_BASE_FEE_MULTIPLIER",
-    title: "Custom multiplier for the base fee",
-    description: "Customize the multiplier used for the base fee composing the maxFeePerGas",
+    title: i18nKey("1559CustomBaseFeeMultiplier", "title"),
+    description: i18nKey("1559CustomBaseFeeMultiplier", "description"),
     minValue: 0,
     maxValue: 10,
   },

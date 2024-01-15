@@ -50,7 +50,7 @@ Type: {unsubscribe: function (): void}
 
 #### Properties
 
-*   `unsubscribe` **function (): void** 
+*   `unsubscribe` **function (): void**&#x20;
 
 ### Device
 
@@ -70,11 +70,11 @@ Type: function (cla: [number](https://developer.mozilla.org/docs/Web/JavaScript/
 
 #### Parameters
 
-*   `cla`  
-*   `ins`  
-*   `p1`  
-*   `p2`  
-*   `data`  
+*   `cla` &#x20;
+*   `ins` &#x20;
+*   `p1` &#x20;
+*   `p2` &#x20;
+*   `data` &#x20;
 *   `statusList`  is a list of accepted status code (shorts). \[0x9000] by default
 
 Returns **any** a Promise of response buffer

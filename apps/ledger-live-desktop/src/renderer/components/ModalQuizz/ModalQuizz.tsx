@@ -143,10 +143,11 @@ const ModalQuizz: React.FunctionComponent<Props> = ({
   }, [stepIndex, stepCount, setStepIndex, setUserChoiceIndex, score, onClose, onLose, onWin]);
 
   const onChoiceChanged = useCallback(
-    (value: number) => {
+    (value: number | string | readonly string[] | undefined) => {
       if (userMadeAChoice) return;
-      setUserChoiceIndex(value);
-      const isCorrect = choices[value].correct;
+      const n = Number(value); // in our case it's a number
+      setUserChoiceIndex(n);
+      const isCorrect = choices[n].correct;
       if (isCorrect) setScore(score + 1);
       track(`Onboarding - Quizz step ${stepIndex} ${isCorrect ? "correct" : "false"}`);
     },
@@ -160,7 +161,6 @@ const ModalQuizz: React.FunctionComponent<Props> = ({
       <Text variant="h5">{stepTitle}</Text>
       <Radio
         name={`quizz-${title}-step-${stepIndex}`}
-        // @ts-expect-error onChange signature is (a: string | number | readonly string[]) => void...
         onChange={onChoiceChanged}
         currentValue={userChoiceIndex}
         containerProps={{ flexDirection: "column", rowGap: 5, margin: "-10px" }}

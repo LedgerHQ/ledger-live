@@ -1,9 +1,8 @@
 {
   "entry": [
     "src/index.ts",
-    "src/data/evm/index.ts",
-    "src/data/eip712.ts",
-    "src/data/erc20-signatures.ts"
+    "src/crypto-assets-importer/index.ts"
   ],
-  "ignoreUnimported": ["src/data/**/index.ts", "src/data/spl.ts"]
+  "ignorePatterns": ["src/data/**/*.ts", "src/**/*.test.ts"],
+  "ignoreUnimported": ["src/data/**", "src/**/*.test.ts"]
 }

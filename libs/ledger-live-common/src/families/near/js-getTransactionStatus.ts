@@ -118,7 +118,9 @@ const getSendTransactionStatus = async (
   if (!t.recipient) {
     errors.recipient = new RecipientRequired();
   } else if (!isValidAddress(t.recipient)) {
-    errors.recipient = new InvalidAddress();
+    errors.recipient = new InvalidAddress("", {
+      currencyName: a.currency.name,
+    });
   } else {
     const accountDetails = await fetchAccountDetails(t.recipient);
 

@@ -50,8 +50,8 @@ Ledger's React Native HID Transport implementation
 
 #### Parameters
 
-*   `nativeId` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
-*   `productId` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
+*   `nativeId` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
+*   `productId` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
 
 #### Examples
 
@@ -79,7 +79,7 @@ Returns **any** Promise
 
 Check if the transport is supported (basically true on Android)
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)>** 
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)>**&#x20;
 
 #### list
 
@@ -93,9 +93,9 @@ Listen to ledger devices events
 
 ##### Parameters
 
-*   `observer` **any** 
+*   `observer` **any**&#x20;
 
-Returns **any** 
+Returns **any**&#x20;
 
 #### open
 
@@ -103,4 +103,4 @@ Open a the transport with a Ledger device
 
 ##### Parameters
 
-*   `deviceObj` **DeviceObj** 
+*   `deviceObj` **DeviceObj**&#x20;

@@ -4,10 +4,11 @@ import {
   LockedDeviceError,
   TransportRaceCondition,
   UnresponsiveDeviceError,
-  createCustomErrorClass,
+  TransportStatusErrorClassType,
+  CustomErrorClassType,
 } from "@ledgerhq/errors";
 import { Observable, from, of, throwError, timer } from "rxjs";
-import { catchError, concatMap, retryWhen, switchMap, timeout } from "rxjs/operators";
+import { catchError, concatMap, retry, switchMap, timeout } from "rxjs/operators";
 import { Transport, TransportRef } from "../transports/core";
 
 export type SharedTaskEvent = { type: "error"; error: Error; retrying: boolean };
@@ -35,38 +36,33 @@ export function sharedLogicTaskWrapper<TaskArgsType, TaskEventsType>(
       return task(args)
         .pipe(
           timeout(defaultTimeoutOverride ?? NO_RESPONSE_TIMEOUT_MS),
-          retryWhen(attempts =>
-            attempts.pipe(
-              // concatMap to sequentially handle errors
-              concatMap(error => {
-                let acceptedError = false;
+          retry({
+            delay: error => {
+              let acceptedError = false;
 
-                // - LockedDeviceError and UnresponsiveDeviceError: on every transport if there is a device but it is locked
-                // - CantOpenDevice: it can come from hw-transport-node-hid-singleton/TransportNodeHid
-                //   or react-native-hw-transport-ble/BleTransport when no device is found
-                // - DisconnectedDevice: it can come from TransportNodeHid while switching app
-                if (
-                  error instanceof LockedDeviceError ||
-                  error instanceof UnresponsiveDeviceError ||
-                  error instanceof CantOpenDevice ||
-                  error instanceof DisconnectedDevice ||
-                  error instanceof TransportRaceCondition
-                ) {
-                  // Emits to the action an error event so it is aware of it (for ex locked device) before retrying
-                  const event: SharedTaskEvent = {
-                    type: "error",
-                    error,
-                    retrying: true,
-                  };
-                  subscriber.next(event);
-                  acceptedError = true;
-                }
-
-                return acceptedError ? timer(RETRY_ON_ERROR_DELAY_MS) : throwError(() => error);
-              }),
-            ),
-          ),
-
+              // - LockedDeviceError and UnresponsiveDeviceError: on every transport if there is a device but it is locked
+              // - CantOpenDevice: it can come from hw-transport-node-hid-singleton/TransportNodeHid
+              //   or react-native-hw-transport-ble/BleTransport when no device is found
+              // - DisconnectedDevice: it can come from TransportNodeHid while switching app
+              if (
+                error instanceof LockedDeviceError ||
+                error instanceof UnresponsiveDeviceError ||
+                error instanceof CantOpenDevice ||
+                error instanceof DisconnectedDevice ||
+                error instanceof TransportRaceCondition
+              ) {
+                // Emits to the action an error event so it is aware of it (for ex locked device) before retrying
+                const event: SharedTaskEvent = {
+                  type: "error",
+                  error,
+                  retrying: true,
+                };
+                subscriber.next(event);
+                acceptedError = true;
+              }
+              return acceptedError ? timer(RETRY_ON_ERROR_DELAY_MS) : throwError(() => error);
+            },
+          }),
           catchError((error: Error) => {
             // Emits the error to the action, without throwing
             return of<SharedTaskEvent>({ type: "error", error, retrying: false });
@@ -77,8 +73,7 @@ export function sharedLogicTaskWrapper<TaskArgsType, TaskEventsType>(
   };
 }
 
-// To update once createCustomErrorClass is not used on Transports errors
-type ErrorClass = ReturnType<typeof createCustomErrorClass>;
+type ErrorClass = CustomErrorClassType | TransportStatusErrorClassType;
 
 // To be able to retry a command, the command needs to take an object containing a transport as its argument
 type CommandTransportArgs = { transport: Transport };
@@ -138,40 +133,37 @@ export function retryOnErrorsCommandWrapper<CommandArgsWithoutTransportType, Com
           transport: transportRef.current,
         });
       }),
-      retryWhen(attempts =>
-        attempts.pipe(
-          // concatMap to sequentially handle errors
-          concatMap(error => {
-            let isAllowedError = false;
+      retry({
+        delay: error => {
+          let isAllowedError = false;
 
-            if (latestErrorName !== error.name) {
-              sameErrorInARowCount = 0;
-            } else {
-              sameErrorInARowCount++;
-            }
+          if (latestErrorName !== error.name) {
+            sameErrorInARowCount = 0;
+          } else {
+            sameErrorInARowCount++;
+          }
 
-            latestErrorName = error.name;
+          latestErrorName = error.name;
 
-            for (const { errorClass, maxRetries } of allowedErrors) {
-              if (error instanceof errorClass) {
-                if (maxRetries === "infinite" || sameErrorInARowCount < maxRetries) {
-                  isAllowedError = true;
-                }
-
-                break;
+          for (const { errorClass, maxRetries } of allowedErrors) {
+            if (error instanceof errorClass) {
+              if (maxRetries === "infinite" || sameErrorInARowCount < maxRetries) {
+                isAllowedError = true;
               }
-            }
 
-            if (isAllowedError) {
-              // Retries the whole pipe chain after the delay
-              return timer(RETRY_ON_ERROR_DELAY_MS);
+              break;
             }
+          }
 
-            // If the error is not part of the allowed errors, it is thrown
-            return throwError(() => error);
-          }),
-        ),
-      ),
+          if (isAllowedError) {
+            // Retries the whole pipe chain after the delay
+            return timer(RETRY_ON_ERROR_DELAY_MS);
+          }
+
+          // If the error is not part of the allowed errors, it is thrown
+          return throwError(() => error);
+        },
+      }),
     );
   };
 }

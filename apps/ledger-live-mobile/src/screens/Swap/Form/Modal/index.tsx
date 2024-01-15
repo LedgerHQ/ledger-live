@@ -2,11 +2,11 @@ import React, { useMemo, useCallback, useState } from "react";
 import { SwapTransactionType, ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
 import { postSwapCancelled } from "@ledgerhq/live-common/exchange/swap/index";
 import { useDispatch } from "react-redux";
-import GenericErrorBottomModal from "../../../../components/GenericErrorBottomModal";
+import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
 import { Confirmation, DeviceMeta } from "./Confirmation";
 import { Terms } from "./Terms";
-import { swapAcceptProvider } from "../../../../actions/settings";
-import { useAnalytics } from "../../../../analytics";
+import { swapAcceptProvider } from "~/actions/settings";
+import { useAnalytics } from "~/analytics";
 import { sharedSwapTracking } from "../../utils";
 
 export function Modal({

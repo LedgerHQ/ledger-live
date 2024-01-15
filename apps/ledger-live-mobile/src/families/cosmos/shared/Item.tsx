@@ -10,9 +10,9 @@ import type {
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 import { useTheme } from "@react-navigation/native";
 import cosmosBase from "@ledgerhq/live-common/families/cosmos/chain/cosmosBase";
-import LText from "../../../components/LText";
-import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
-import ArrowRight from "../../../icons/ArrowRight";
+import LText from "~/components/LText";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import ArrowRight from "~/icons/ArrowRight";
 import ValidatorImage from "./ValidatorImage";
 
 type Props = {

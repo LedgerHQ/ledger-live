@@ -11,42 +11,54 @@ import {
 } from "@ledgerhq/native-ui";
 import { useDispatch, useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
+import TabBarSafeAreaView from "~/components/TabBar/TabBarSafeAreaView";
 import { useMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
-import { FlatList, ListRenderItem, RefreshControl, TouchableOpacity } from "react-native";
+import { Platform, ListRenderItem, RefreshControl, TouchableOpacity, FlatList } from "react-native";
 import { CurrencyData, MarketListRequestParams } from "@ledgerhq/live-common/market/types";
 import { useRoute, useFocusEffect } from "@react-navigation/native";
 import { useNetInfo } from "@react-native-community/netinfo";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
 import {
   marketFilterByStarredAccountsSelector,
   starredMarketCoinsSelector,
-} from "../../reducers/settings";
+} from "~/reducers/settings";
 import MarketRowItem from "./MarketRowItem";
-import { useLocale } from "../../context/Locale";
+import { useLocale } from "~/context/Locale";
 import SortBadge, { Badge } from "./SortBadge";
 import SearchHeader from "./SearchHeader";
-import { ScreenName } from "../../const";
-import { track } from "../../analytics";
-import TrackScreen from "../../analytics/TrackScreen";
-import { TAB_BAR_SAFE_HEIGHT } from "../../components/TabBar/TabBarSafeAreaView";
-import { setMarketFilterByStarredAccounts, setMarketRequestParams } from "../../actions/settings";
-import { AnalyticsContext } from "../../analytics/AnalyticsContext";
+import { ScreenName } from "~/const";
+import { track } from "~/analytics";
+import TrackScreen from "~/analytics/TrackScreen";
+import globalSyncRefreshControl from "~/components/globalSyncRefreshControl";
+import { TAB_BAR_SAFE_HEIGHT } from "~/components/TabBar/TabBarSafeAreaView";
+import CollapsibleHeaderFlatList from "~/components/WalletTab/CollapsibleHeaderFlatList";
+import WalletTabSafeAreaView from "~/components/WalletTab/WalletTabSafeAreaView";
+import { setMarketFilterByStarredAccounts, setMarketRequestParams } from "~/actions/settings";
+import { AnalyticsContext } from "~/analytics/AnalyticsContext";
 import EmptyStarredCoins from "./EmptyStarredCoins";
-import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { MarketNavigatorStackParamList } from "../../components/RootNavigator/types/MarketNavigator";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { MarketNavigatorStackParamList } from "~/components/RootNavigator/types/MarketNavigator";
 import EmptyState from "./EmptyState";
 
+const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl(
+  CollapsibleHeaderFlatList<CurrencyData>,
+  {
+    progressViewOffset: Platform.OS === "android" ? 64 : 0,
+  },
+);
+
 const noResultIllustration = {
-  dark: require("../../images/illustration/Dark/_051.png"),
-  light: require("../../images/illustration/Light/_051.png"),
+  dark: require("~/images/illustration/Dark/_051.png"),
+  light: require("~/images/illustration/Light/_051.png"),
 };
 
 const noNetworkIllustration = {
-  dark: require("../../images/illustration/Dark/_078.png"),
-  light: require("../../images/illustration/Light/_078.png"),
+  dark: require("~/images/illustration/Dark/_078.png"),
+  light: require("~/images/illustration/Light/_078.png"),
 };
+
+const keyExtractor = (item: CurrencyData, index: number) => item.id + index;
 
 function getAnalyticsProperties<P extends object>(
   requestParams: MarketListRequestParams,
@@ -228,28 +240,6 @@ const BottomSection = ({ navigation }: { navigation: NavigationProps["navigation
           </Text>
         </Badge>
       </TouchableOpacity>
-
-      {/* The following is disabled for now as the mapping for supported coins is not 100% working (ERC20 etc.) */}
-      {/* <SortBadge
-        label={t("market.filters.view.label")}
-        value={liveCompatible ? "liveCompatible" : "all"}
-        valueLabel={t(
-          `market.filters.view.${liveCompatible ? "liveCompatible" : "all"}`,
-        )}
-        options={[
-          {
-            label: t(`market.filters.view.all_label`),
-            requestParam: { liveCompatible: false },
-            value: "all",
-          },
-          {
-            label: t(`market.filters.view.liveCompatible_label`),
-            requestParam: { liveCompatible: true },
-            value: "liveCompatible",
-          },
-        ]}
-        onChange={onChange}
-      /> */}
     </ScrollContainer>
   );
 };
@@ -440,51 +430,57 @@ export default function Market({ navigation }: NavigationProps) {
     }, [setScreen, setSource]),
   );
 
-  const insets = useSafeAreaInsets();
+  const listProps = {
+    contentContainerStyle: {
+      paddingHorizontal: 16,
+      paddingBottom: TAB_BAR_SAFE_HEIGHT,
+    },
+    data: marketDataFiltered,
+    renderItem: renderItems,
+    onEndReached: onEndReached,
+    onEndReachedThreshold: 0.5,
+    scrollEventThrottle: 50,
+    initialNumToRender: limit,
+    keyExtractor,
+    ListFooterComponent: renderFooter,
+    ListEmptyComponent: renderEmptyComponent,
+    refreshControl: (
+      <RefreshControl
+        refreshing={refreshControlVisible}
+        colors={[colors.primary.c80]}
+        tintColor={colors.primary.c80}
+        onRefresh={handlePullToRefresh}
+      />
+    ),
+  };
 
-  return (
-    <Flex
-      /**
-       * NB: not using SafeAreaView because it flickers during navigation
-       * https://github.com/th3rdwave/react-native-safe-area-context/issues/219
-       */
-      flex={1}
-      mt={insets.top}
-      bg="background.main"
-    >
-      <Flex px={6} pt={ptxEarnFeature?.enabled ? 6 : 0}>
-        {!ptxEarnFeature?.enabled && (
+  if (!ptxEarnFeature?.enabled) {
+    return (
+      <TabBarSafeAreaView>
+        <Flex px={6} pt={ptxEarnFeature?.enabled ? 6 : 0}>
           <Text my={3} variant="h4" fontWeight="semiBold">
             {t("market.title")}
           </Text>
-        )}
-        <SearchHeader search={search} refresh={refresh} />
-        <BottomSection navigation={navigation} />
-      </Flex>
+          <SearchHeader search={search} refresh={refresh} />
+          <BottomSection navigation={navigation} />
+        </Flex>
+        <FlatList {...listProps} />
+      </TabBarSafeAreaView>
+    );
+  }
 
-      <FlatList
-        contentContainerStyle={{
-          paddingHorizontal: 16,
-          paddingBottom: TAB_BAR_SAFE_HEIGHT,
-        }}
-        data={marketDataFiltered}
-        renderItem={renderItems}
-        onEndReached={onEndReached}
-        onEndReachedThreshold={0.5}
-        scrollEventThrottle={50}
-        initialNumToRender={limit}
-        keyExtractor={(item, index) => item.id + index}
-        ListFooterComponent={renderFooter}
-        ListEmptyComponent={renderEmptyComponent}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshControlVisible}
-            colors={[colors.primary.c80]}
-            tintColor={colors.primary.c80}
-            onRefresh={handlePullToRefresh}
-          />
-        }
-      />
-    </Flex>
+  return (
+    <RefreshableCollapsibleHeaderFlatList
+      {...listProps}
+      stickyHeaderIndices={[0]}
+      ListHeaderComponent={
+        <WalletTabSafeAreaView edges={["left", "right"]}>
+          <Flex backgroundColor={colors.background.main}>
+            <SearchHeader search={search} refresh={refresh} />
+            <BottomSection navigation={navigation} />
+          </Flex>
+        </WalletTabSafeAreaView>
+      }
+    />
   );
 }

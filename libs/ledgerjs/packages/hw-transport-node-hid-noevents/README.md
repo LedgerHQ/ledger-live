@@ -37,11 +37,11 @@ node-hid Transport minimal implementation
 
 #### Parameters
 
-*   `device` **HID.HID** 
+*   `device` **HID.HID**&#x20;
 *   `$1` **{context: TraceContext?, logType: LogType?}**  (optional, default `{}`)
 
-    *   `$1.context`  
-    *   `$1.logType`  
+    *   `$1.context` &#x20;
+    *   `$1.logType` &#x20;
 
 #### Examples
 
@@ -57,7 +57,7 @@ Exchange with the device using APDU protocol.
 
 ##### Parameters
 
-*   `apdu` **[Buffer](https://nodejs.org/api/buffer.html)** 
+*   `apdu` **[Buffer](https://nodejs.org/api/buffer.html)**&#x20;
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[Buffer](https://nodejs.org/api/buffer.html)>** a promise of apdu response
 
@@ -65,23 +65,23 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 
 release the USB device.
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<void>** 
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<void>**&#x20;
 
 #### isSupported
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)>** 
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)>**&#x20;
 
 #### list
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<any>** 
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<any>**&#x20;
 
 #### listen
 
 ##### Parameters
 
-*   `observer` **Observer\<DescriptorEvent\<any>>** 
+*   `observer` **Observer\<DescriptorEvent\<any>>**&#x20;
 
-Returns **Subscription** 
+Returns **Subscription**&#x20;
 
 #### open
 
@@ -89,4 +89,4 @@ if path="" is not provided, the library will take the first device
 
 ##### Parameters
 
-*   `path` **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
+*   `path` **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**&#x20;

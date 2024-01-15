@@ -2,10 +2,11 @@ import React from "react";
 import { ScrollView } from "react-native";
 import { Flex, Link, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
-import Button from "../../components/wrappedUi/Button";
+import Button from "~/components/wrappedUi/Button";
 import type { Step, UiCheckStatus } from "./EarlySecurityCheck";
 import CheckCard from "./CheckCard";
 import { useTheme } from "styled-components/native";
+import { OnePressCta } from "~/components/OnePressCta";
 
 export type Props = {
   productName: string;
@@ -111,9 +112,9 @@ const EarlySecurityCheckBody: React.FC<Props> = ({
       );
 
       primaryBottomCta = (
-        <Button type="main" size="large" onPress={notifyOnboardingEarlyCheckEnded}>
+        <OnePressCta onPress={notifyOnboardingEarlyCheckEnded}>
           {t("earlySecurityCheck.completed.continueCta")}
-        </Button>
+        </OnePressCta>
       );
       break;
     case "error":
@@ -153,9 +154,14 @@ const EarlySecurityCheckBody: React.FC<Props> = ({
       }
 
       secondaryBottomCta = (
-        <Link size="large" onPress={onSkipFirmwareUpdate}>
+        <OnePressCta
+          PressableComponent={({ pending, ...props }) => (
+            <Link size="large" disabled={pending} {...props} />
+          )}
+          onPress={onSkipFirmwareUpdate}
+        >
           {t("earlySecurityCheck.firmwareUpdateCheckStep.refused.skipCta")}
-        </Link>
+        </OnePressCta>
       );
 
       break;

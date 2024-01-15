@@ -26,14 +26,14 @@ For new one, we call the new APDU commands (Ng, Next Gen).
 
 #### Parameters
 
-*   `type` **ExchangeTypes** 
-*   `partnerVersion` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?** 
+*   `type` **ExchangeTypes**&#x20;
+*   `partnerVersion` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?**&#x20;
 
-Returns **ExchangeTypes** 
+Returns **ExchangeTypes**&#x20;
 
 ### OkStatus
 
-Those values map the one defined in the app-exchange code (@see protocol.md and swap_errors.h)
+Those values map the one defined in the app-exchange code (@see protocol.md and swap\_errors.h)
 
 Type: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)
 
@@ -79,5 +79,5 @@ docker exec -it speculos bash -c 'speculos --model "nanosp" /app/exchange_nanosp
 From Ledger Live root directory:
 
 ```sh
-pnpm ljs:h-app-exchange test-integ
+pnpm ljs:hw-app-exchange test-integ
 ```

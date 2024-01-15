@@ -1,8 +1,8 @@
+import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import "../__tests__/test-helpers/setup";
-
-import { getWalletAPITransactionSignFlowInfos } from "./converters";
 import type { Transaction } from "../generated/types";
+import { getWalletAPITransactionSignFlowInfos } from "./converters";
 import type { WalletAPITransaction } from "./types";
 
 const evmBridge = jest.fn();
@@ -37,7 +37,7 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
     };
 
     // When
-    getWalletAPITransactionSignFlowInfos(tx);
+    getWalletAPITransactionSignFlowInfos({ walletApiTransaction: tx, account: {} as Account });
 
     // Then
     expect(bitcoinBridge).toBeCalledTimes(1);
@@ -53,7 +53,7 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
     };
 
     // When
-    getWalletAPITransactionSignFlowInfos(tx);
+    getWalletAPITransactionSignFlowInfos({ walletApiTransaction: tx, account: {} as Account });
 
     // Then
     expect(evmBridge).toBeCalledTimes(1);
@@ -77,7 +77,10 @@ describe("getWalletAPITransactionSignFlowInfos", () => {
     };
 
     // When
-    const { canEditFees, hasFeesProvided, liveTx } = getWalletAPITransactionSignFlowInfos(tx);
+    const { canEditFees, hasFeesProvided, liveTx } = getWalletAPITransactionSignFlowInfos({
+      walletApiTransaction: tx,
+      account: {} as Account,
+    });
 
     // Then
     expect(evmBridge).toBeCalledTimes(0);

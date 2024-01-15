@@ -6,13 +6,14 @@ import { connect } from "react-redux";
 import { withTranslation } from "react-i18next";
 import { createStructuredSelector } from "reselect";
 import { compose } from "redux";
-import { setPrivacy } from "../../actions/settings";
-import { privacySelector } from "../../reducers/settings";
-import { isPasswordLockBlocked } from "../../reducers/appstate";
-import { SkipLockContext } from "../../components/behaviour/SkipLock";
-import type { Privacy, State as GlobalState, AppState as EventState } from "../../reducers/types";
+import { setPrivacy } from "~/actions/settings";
+import { privacySelector } from "~/reducers/settings";
+import { isPasswordLockBlocked } from "~/reducers/appstate";
+import { SkipLockContext } from "~/components/behaviour/SkipLock";
+import type { Privacy, State as GlobalState, AppState as EventState } from "~/reducers/types";
 import AuthScreen from "./AuthScreen";
-import RequestBiometricAuth from "../../components/RequestBiometricAuth";
+import RequestBiometricAuth from "~/components/RequestBiometricAuth";
+import { resetQueuedDrawer } from "~/components/QueuedDrawer";
 
 const mapDispatchToProps = {
   setPrivacy,
@@ -165,6 +166,9 @@ class AuthPass extends PureComponent<Props, State> {
   lock = () => {
     if (!this.props.privacy?.hasPassword || this.state.skipLockCount) return;
     wasUnlocked = false;
+
+    // Close the drawer if one was opened
+    resetQueuedDrawer();
 
     if (this.state.mounted) {
       this.setState(

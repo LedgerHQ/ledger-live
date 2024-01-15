@@ -1,8 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import {
-  sortByMarketcap,
   listTokens,
-  listCryptoCurrencies,
   getCryptoCurrencyById,
   getFiatCurrencyByTicker,
   formatCurrencyUnit,
@@ -14,7 +12,7 @@ import {
   sanitizeValueString,
 } from "../currencies";
 import { byContractAddressAndChainId } from "@ledgerhq/hw-app-eth/erc20";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+
 test("erc20 are all consistent with those on ledgerjs side", () => {
   const normalList = listTokens();
   const delistedList = listTokens({
@@ -43,27 +41,7 @@ test("erc20 are all consistent with those on ledgerjs side", () => {
     }
   }
 });
-test("sort by marketcap", () => {
-  const tokens = listTokens().filter(
-    t => t.ticker === "XST" || t.ticker === "ZRX" || t.ticker === "HOT",
-  );
-  const currencies: (CryptoCurrency | TokenCurrency)[] = listCryptoCurrencies().filter(
-    c => c.ticker === "BTC" || c.ticker === "XST" || c.id === "ethereum",
-  );
-  expect(
-    sortByMarketcap(currencies.concat(tokens), ["BTC", "ETH", "ZRX", "HOT", "XST"]).map(c => c.id),
-  ).toMatchObject([
-    "bitcoin",
-    "ethereum",
-    "ethereum/erc20/0x_project",
-    "ethereum/erc20/holotoken",
-    "ethereum/erc20/xstable_protocol",
-    "ethereum/erc20/hydro_protocol",
-    "ethereum/erc20/xensor",
-    "polygon/erc20/holotoken",
-    "polygon/erc20/zrx",
-  ]);
-});
+
 test("can format a currency unit", () => {
   const btc = getCryptoCurrencyById("bitcoin").units[0];
   expect(formatCurrencyUnit(btc, new BigNumber(100000000))).toBe("1");

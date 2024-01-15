@@ -4,6 +4,7 @@ import {
   ConvertToLiveTransaction,
   GetWalletAPITransactionSignFlowInfos,
 } from "../../wallet-api/types";
+import createTransaction from "./js-createTransaction";
 import { Transaction } from "./types";
 
 const CAN_EDIT_FEES = true;
@@ -13,27 +14,42 @@ const areFeesProvided: AreFeesProvided<WalletAPIBitcoinTransaction> = tx => !!tx
 const convertToLiveTransaction: ConvertToLiveTransaction<
   WalletAPIBitcoinTransaction,
   Transaction
-> = tx => {
-  const hasFeesProvided = areFeesProvided(tx);
+> = ({ walletApiTransaction }) => {
+  const hasFeesProvided = areFeesProvided(walletApiTransaction);
 
-  const liveTx: Partial<Transaction> = {
-    ...tx,
-    amount: tx.amount,
-    recipient: tx.recipient,
-    feePerByte: tx.feePerByte,
-  };
+  const liveTx: Transaction = createTransaction();
 
-  return hasFeesProvided ? { ...liveTx, feesStrategy: null } : liveTx;
+  if (walletApiTransaction.amount) {
+    liveTx.amount = walletApiTransaction.amount;
+  }
+
+  if (walletApiTransaction.recipient) {
+    liveTx.recipient = walletApiTransaction.recipient;
+  }
+
+  if (walletApiTransaction.feePerByte) {
+    liveTx.feePerByte = walletApiTransaction.feePerByte;
+  }
+
+  if (walletApiTransaction.opReturnData) {
+    liveTx.opReturnData = walletApiTransaction.opReturnData;
+  }
+
+  if (hasFeesProvided) {
+    liveTx.feesStrategy = null;
+  }
+
+  return liveTx;
 };
 
 const getWalletAPITransactionSignFlowInfos: GetWalletAPITransactionSignFlowInfos<
   WalletAPIBitcoinTransaction,
   Transaction
-> = tx => {
+> = ({ walletApiTransaction, account }) => {
   return {
     canEditFees: CAN_EDIT_FEES,
-    liveTx: convertToLiveTransaction(tx),
-    hasFeesProvided: areFeesProvided(tx),
+    liveTx: convertToLiveTransaction({ walletApiTransaction, account }),
+    hasFeesProvided: areFeesProvided(walletApiTransaction),
   };
 };
 

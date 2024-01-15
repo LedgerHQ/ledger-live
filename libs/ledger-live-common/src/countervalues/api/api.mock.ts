@@ -3,6 +3,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { getBTCValues, BTCtoUSD, referenceSnapshotDate } from "../mock";
 import { formatPerGranularity } from "../helpers";
 import Prando from "prando";
+import { findCurrencyByTicker } from "../../currencies";
 
 function btcTrend(date: Date) {
   const daysSinceGenesis = (date.valueOf() - 1230937200000) / (24 * 60 * 60 * 1000);
@@ -72,6 +73,17 @@ const increment = {
   hourly: 60 * 60 * 1000,
 };
 
+function getIds(): string[] {
+  const ids: string[] = [];
+  for (const k in getBTCValues()) {
+    const c = findCurrencyByTicker(k);
+    if (c && (c.type == "CryptoCurrency" || c.type == "TokenCurrency")) {
+      ids.push(c.id);
+    }
+  }
+  return ids;
+}
+
 function getDates(granularity, start): Date[] {
   const array: Date[] = [];
   const f = formatPerGranularity[granularity];
@@ -100,6 +112,6 @@ const api: CounterValuesAPI = {
     return Promise.resolve(r);
   },
   fetchLatest: pairs => Promise.resolve(pairs.map(({ from, to }) => rate(from.ticker, to.ticker))),
-  fetchMarketcapTickers: () => Promise.resolve(Object.keys(getBTCValues())),
+  fetchIdsSortedByMarketcap: () => Promise.resolve(getIds()),
 };
 export default api;

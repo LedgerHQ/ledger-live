@@ -1,4 +1,4 @@
-import type { SignedOperation } from "@ledgerhq/types-live";
+import type { Account, SignedOperation } from "@ledgerhq/types-live";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Transaction as WalletAPITransaction } from "@ledgerhq/wallet-api-core";
 import type { CustomHandlers as WalletAPICustomHandlers } from "@ledgerhq/wallet-api-server";
@@ -14,6 +14,8 @@ export type {
   CryptoCurrency as WalletAPICryptoCurrency,
   ERC20TokenCurrency as WalletAPIERC20TokenCurrency,
 } from "@ledgerhq/wallet-api-core";
+
+export type { WalletAPIServer } from "@ledgerhq/wallet-api-server";
 
 export {
   CurrencyType as WalletAPICurrencyType,
@@ -44,7 +46,7 @@ export type WalletAPISupportedCurrency = CryptoCurrency | TokenCurrency;
 export type GetWalletAPITransactionSignFlowInfos<
   T extends WalletAPITransaction,
   U extends Transaction,
-> = (tx: T) => {
+> = ({ walletApiTransaction, account }: { walletApiTransaction: T; account: Account }) => {
   canEditFees: boolean;
   hasFeesProvided: boolean;
   liveTx: Partial<U>;
@@ -52,9 +54,13 @@ export type GetWalletAPITransactionSignFlowInfos<
 
 export type AreFeesProvided<T extends WalletAPITransaction> = (tx: T) => boolean;
 
-export type ConvertToLiveTransaction<T extends WalletAPITransaction, U extends Transaction> = (
-  tx: T,
-) => Partial<U>;
+export type ConvertToLiveTransaction<T extends WalletAPITransaction, U extends Transaction> = ({
+  walletApiTransaction,
+  account,
+}: {
+  walletApiTransaction: T;
+  account: Account;
+}) => Partial<U>;
 
 export type DiscoverDB = {
   recentlyUsed: RecentlyUsed[];

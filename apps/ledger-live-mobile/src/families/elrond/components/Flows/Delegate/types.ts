@@ -6,7 +6,7 @@ import type {
   ElrondProvider,
   TransactionStatus,
 } from "@ledgerhq/live-common/families/elrond/types";
-import type { ScreenName } from "../../../../../const";
+import type { ScreenName } from "~/const";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
 
 export type ElrondDelegationFlowParamList = {
@@ -20,6 +20,7 @@ export type ElrondDelegationFlowParamList = {
     account: ElrondAccount;
     transaction?: Transaction;
     source?: RouteProp<ParamListBase, ScreenName>;
+    skipStartedStep?: boolean;
   };
   [ScreenName.ElrondDelegationValidatorList]: {
     transaction: Transaction | null | undefined;

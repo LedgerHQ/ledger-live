@@ -21,15 +21,15 @@
   },
   "dependencies": {
     "@octokit/plugin-retry": "^4.1.1",
-    "probot": "^12.2.2"
+    "probot": "^12.3.3"
   },
   "devDependencies": {
-    "@types/jest": "^27.5.1",
-    "@types/node": "^18.0.0",
-    "jest": "^28.1.0",
+    "@types/jest": "^29.5.10",
+    "@types/node": "^20.8.10",
+    "jest": "^29.7.0",
     "nock": "^13.0.5",
     "nodemon": "^3.0.0",
     "smee-client": "^1.2.3",
-    "ts-jest": "^28.0.5"
+    "ts-jest": "^29.1.1"
   }
 }

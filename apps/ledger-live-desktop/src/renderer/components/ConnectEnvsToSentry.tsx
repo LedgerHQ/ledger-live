@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { ipcRenderer } from "electron";
 import { EnvName, getEnv } from "@ledgerhq/live-env";
-import { DEFAULT_FEATURES, useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
+import { DEFAULT_FEATURES, useFeatureFlags } from "@ledgerhq/live-config/featureFlags/index";
 import { FeatureId } from "@ledgerhq/types-live";
 import { enabledExperimentalFeatures } from "../experimental";
 import { setTags } from "../../sentry/renderer";
@@ -55,7 +55,7 @@ export const ConnectEnvsToSentry = () => {
     // We need to wait firebase to load the data and then we set once for all the tags
     const timeout = setTimeout(syncTheTags, 5000);
     // We also try to regularly update them so we are sure to get the correct tags (as these are dynamic)
-    const interval = setInterval(syncTheTags, 60000);
+    const interval = window.setInterval(syncTheTags, 60000);
     return () => {
       clearTimeout(timeout);
       clearInterval(interval);

@@ -7,8 +7,8 @@ import { useTheme } from "@react-navigation/native";
 import { Text } from "@ledgerhq/native-ui";
 import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/near/constants";
 
-import CounterValue from "../../../components/CounterValue";
-import ArrowRight from "../../../icons/ArrowRight";
+import CounterValue from "~/components/CounterValue";
+import ArrowRight from "~/icons/ArrowRight";
 import ValidatorImage from "../shared/ValidatorImage";
 
 type Props = {

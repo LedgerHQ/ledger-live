@@ -6,7 +6,7 @@ import { Transition } from "react-transition-group";
 import styled from "styled-components";
 import { useManagerBlueDot } from "@ledgerhq/live-common/manager/hooks";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { FeatureToggle, useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { IconsLegacy, Tag as TagComponent } from "@ledgerhq/react-ui";
 import { accountsSelector, starredAccountsSelector } from "~/renderer/reducers/accounts";
 import {
@@ -29,7 +29,7 @@ import Space from "~/renderer/components/Space";
 import UpdateDot from "~/renderer/components/Updater/UpdateDot";
 import { Dot } from "~/renderer/components/Dot";
 import Stars from "~/renderer/components/Stars";
-import useEnv from "~/renderer/hooks/useEnv";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { CARD_APP_ID } from "~/renderer/screens/card";
 import TopGradient from "./TopGradient";
 import Hide from "./Hide";
@@ -273,7 +273,7 @@ const MainSideBar = () => {
   }, [push, trackEntry]);
   const handleClickDashboard = useCallback(() => {
     push("/");
-    trackEntry("/");
+    trackEntry("/portfolio");
   }, [push, trackEntry]);
   const handleClickMarket = useCallback(() => {
     push("/market");
@@ -463,7 +463,6 @@ const MainSideBar = () => {
                     isActive={location.pathname === "/earn"}
                     collapsed={secondAnim}
                     NotifComponent={
-                      // @ts-expect-error TODO doesn't exist yet in our types
                       ptxEarnConfig?.params?.isNew ? (
                         <CustomTag active type="plain" size="small">
                           {t("common.new")}
@@ -540,6 +539,13 @@ const MainSideBar = () => {
                     iconActiveColor="wallet"
                     onClick={handleClickRecover}
                     collapsed={secondAnim}
+                    NotifComponent={
+                      recoverFeature?.params?.isNew && (
+                        <CustomTag active type="plain" size="small">
+                          {t("common.new")}
+                        </CustomTag>
+                      )
+                    }
                   />
                 </FeatureToggle>
                 <SideBarListItem

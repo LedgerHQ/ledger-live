@@ -187,7 +187,6 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
             payoutAddressParameters.addressParameters,
           );
         } catch (e) {
-          // @ts-expect-error TransportStatusError to be typed on ledgerjs
           if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
             throw new WrongDeviceForAccount(undefined, {
               accountName: payoutAccount.name,
@@ -241,7 +240,6 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
             refundAddressParameters.addressParameters,
           );
         } catch (e) {
-          // @ts-expect-error TransportStatusError to be typed on ledgerjs
           if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
             throw new WrongDeviceForAccount(undefined, {
               accountName: refundAccount.name,
@@ -257,7 +255,6 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
       }).catch(e => {
         if (ignoreTransportError) return;
 
-        // @ts-expect-error TransportStatusError to be typed on ledgerjs
         if (e instanceof TransportStatusError && e.statusCode === 0x6a84) {
           throw new TransactionRefusedOnDevice();
         }

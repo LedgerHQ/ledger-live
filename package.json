@@ -1,7 +1,7 @@
 {
   "name": "ledger-live",
   "version": "0.0.0",
-  "license": "MIT",
+  "license": "MIT AND Apache-2.0",
   "private": true,
   "repository": {
     "type": "git",
@@ -27,6 +27,7 @@
     "build:coin": "pnpm turbo build --no-daemon --filter=\"./libs/coin-**\"",
     "build:domain": "pnpm turbo build --no-daemon --filter=domain-service",
     "build:network": "pnpm turbo build --no-daemon --filter=live-network",
+    "build:config": "pnpm turbo build --no-daemon --filter=live-config",
     "build:llc": "pnpm turbo build --no-daemon --filter=\"live-common\"",
     "build:lld": "pnpm turbo build --no-daemon --filter=ledger-live-desktop",
     "build:lld:deps": "pnpm turbo build --no-daemon --filter=\"ledger-live-desktop^...\"",
@@ -71,6 +72,7 @@
     "portfolio": "pnpm --filter live-portfolio",
     "promise": "pnpm --filter live-promise",
     "network": "pnpm --filter live-network",
+    "config": "pnpm --filter live-config",
     "utils": "pnpm --filter live-utils",
     "bot:github": "pnpm --filter live-github-bot",
     "ljs:cryptoassets": "pnpm --filter cryptoassets",
@@ -124,10 +126,11 @@
     "ui:example:next": "pnpm  --filter=\"next.js-example\"",
     "ui:example:webpack": "pnpm  --filter=\"webpack.js-example\"",
     "actions": "pnpm --filter @actions/*",
-    "import:cal-tokens": "pnpm --filter=\"./libs/ledgerjs/**\" import-cal-tokens"
+    "import:cal-tokens": "pnpm --filter=\"@ledgerhq/cryptoassets\" import:cal-tokens",
+    "generate:cryptoassets-md": "pnpm --filter=\"ledger-live-desktop\" generate:cryptoassets-md"
   },
   "devDependencies": {
-    "@changesets/changelog-github": "^0.4.8",
+    "@changesets/changelog-github": "^0.5.0",
     "@changesets/cli": "^2.26.0",
     "@commitlint/cli": "^17.4.2",
     "@commitlint/config-conventional": "^17.6.5",
@@ -164,7 +167,7 @@
       "react-native-image-crop-tools@1.6.4": "patches/react-native-image-crop-tools@1.6.4.patch",
       "react-native-webview@11.26.1": "patches/react-native-webview@11.26.1.patch",
       "asyncstorage-down@4.2.0": "patches/asyncstorage-down@4.2.0.patch",
-      "detox@20.13.1": "patches/detox@20.13.1.patch",
+      "detox@20.13.5": "patches/detox@20.13.5.patch",
       "usb@2.9.0": "patches/usb@2.9.0.patch"
     },
     "packageExtensions": {

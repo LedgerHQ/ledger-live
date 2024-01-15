@@ -48,7 +48,7 @@ export const txToMessages = (
             amount: [
               {
                 denom: account.currency.units[1].code,
-                amount: transaction.amount.toString(),
+                amount: transaction.amount.toFixed(),
               },
             ],
           },
@@ -64,7 +64,7 @@ export const txToMessages = (
             amount: [
               {
                 denom: account.currency.units[1].code,
-                amount: transaction.amount.toString(),
+                amount: transaction.amount.toFixed(),
               },
             ],
           }).finish(),
@@ -82,7 +82,7 @@ export const txToMessages = (
               validator_address: validator.address,
               amount: {
                 denom: account.currency.units[1].code,
-                amount: transaction.amount.toString(),
+                amount: transaction.amount.toFixed(),
               },
             },
           };
@@ -96,7 +96,7 @@ export const txToMessages = (
               validatorAddress: validator.address,
               amount: {
                 denom: account.currency.units[1].code,
-                amount: transaction.amount.toString(),
+                amount: transaction.amount.toFixed(),
               },
             }).finish(),
           });
@@ -121,7 +121,7 @@ export const txToMessages = (
             validator_dst_address: validator.address,
             amount: {
               denom: account.currency.units[1].code,
-              amount: validator.amount.toString(),
+              amount: validator.amount.toFixed(),
             },
           },
         };
@@ -136,7 +136,7 @@ export const txToMessages = (
             validatorDstAddress: validator.address,
             amount: {
               denom: account.currency.units[1].code,
-              amount: validator.amount.toString(),
+              amount: validator.amount.toFixed(),
             },
           }).finish(),
         });
@@ -154,7 +154,7 @@ export const txToMessages = (
               validator_address: validator.address,
               amount: {
                 denom: account.currency.units[1].code,
-                amount: validator.amount.toString(),
+                amount: validator.amount.toFixed(),
               },
             },
           };
@@ -168,7 +168,7 @@ export const txToMessages = (
               validatorAddress: validator.address,
               amount: {
                 denom: account.currency.units[1].code,
-                amount: validator.amount.toString(),
+                amount: validator.amount.toFixed(),
               },
             }).finish(),
           });
@@ -224,7 +224,7 @@ export const txToMessages = (
             validator_address: validator.address,
             amount: {
               denom: account.currency.units[1].code,
-              amount: validator.amount.toString(),
+              amount: validator.amount.toFixed(),
             },
           },
         };
@@ -245,7 +245,7 @@ export const txToMessages = (
             validatorAddress: validator.address,
             amount: {
               denom: account.currency.units[1].code,
-              amount: validator.amount.toString(),
+              amount: validator.amount.toFixed(),
             },
           }).finish(),
         });

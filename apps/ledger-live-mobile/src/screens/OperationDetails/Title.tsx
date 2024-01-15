@@ -5,10 +5,10 @@ import type { NFTMetadataResponse, Operation } from "@ledgerhq/types-live";
 import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import type { BigNumber } from "bignumber.js";
 import { useTranslation } from "react-i18next";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import DoubleCounterValue from "../../components/DoubleCountervalue";
-import Skeleton from "../../components/Skeleton";
-import LText from "../../components/LText";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import DoubleCounterValue from "~/components/DoubleCountervalue";
+import Skeleton from "~/components/Skeleton";
+import LText from "~/components/LText";
 
 type Props = {
   hasFailed: boolean;
@@ -82,6 +82,7 @@ const Title = ({
             color: valueColor,
           },
         ]}
+        testID="operationDetails-amount"
       >
         <CurrencyUnitValue
           showCode

@@ -1,8 +1,9 @@
-import React, { useReducer, useCallback, useEffect, useRef } from "react";
+import React, { useReducer, useCallback, useEffect, useRef, useState } from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useDispatch, useSelector } from "react-redux";
 import { timeout, tap } from "rxjs/operators";
+import { v4 as uuid } from "uuid";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import getDeviceName from "@ledgerhq/live-common/hw/getDeviceName";
 import { listApps } from "@ledgerhq/live-common/apps/hw";
@@ -12,26 +13,23 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useTheme } from "@react-navigation/native";
 import { TransportBleDevice } from "@ledgerhq/live-common/ble/types";
 import TransportBLE from "../../react-native-hw-transport-ble";
-import { GENUINE_CHECK_TIMEOUT } from "@utils/constants";
-import { addKnownDevice } from "../../actions/ble";
-import {
-  setHasInstalledAnyApp,
-  setLastSeenDeviceInfo,
-  setReadOnlyMode,
-} from "../../actions/settings";
-import { hasCompletedOnboardingSelector } from "../../reducers/settings";
-import RequiresBLE from "../../components/RequiresBLE";
+import { GENUINE_CHECK_TIMEOUT } from "~/utils/constants";
+import { addKnownDevice } from "~/actions/ble";
+import { setHasInstalledAnyApp, setLastSeenDeviceInfo, setReadOnlyMode } from "~/actions/settings";
+import { hasCompletedOnboardingSelector } from "~/reducers/settings";
+import RequiresBLE from "~/components/RequiresBLE";
 import PendingPairing from "./PendingPairing";
 import PendingGenuineCheck from "./PendingGenuineCheck";
 import Paired from "./Paired";
 import Scanning from "./Scanning";
 import ScanningTimeout from "./ScanningTimeout";
 import RenderError from "./RenderError";
-import { RootComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
-import { ScreenName } from "../../const";
-import { BaseOnboardingNavigatorParamList } from "../../components/RootNavigator/types/BaseOnboardingNavigator";
-import { firstValueFrom } from "rxjs";
+import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { ScreenName } from "~/const";
+import { BaseOnboardingNavigatorParamList } from "~/components/RootNavigator/types/BaseOnboardingNavigator";
+import { lastValueFrom } from "rxjs";
+import { LocalTracer } from "@ledgerhq/logs";
 
 type NavigationProps = RootComposite<
   | StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.PairDevices>
@@ -75,9 +73,11 @@ const initialState: State = {
 };
 
 function PairDevicesInner({ navigation, route }: NavigationProps) {
+  const [tracer] = useState(() => new LocalTracer("ble-ui", { component: "PairDevicesInner" }));
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const dispatchRedux = useDispatch();
   const [{ error, status, device, skipCheck, name }, dispatch] = useReducer(reducer, initialState);
+
   const unmounted = useRef(false);
   useEffect(
     () => () => {
@@ -126,16 +126,15 @@ function PairDevicesInner({ navigation, route }: NavigationProps) {
       });
 
       try {
-        const transport = await TransportBLE.open(bleDevice.id);
+        const transport = await TransportBLE.open(bleDevice.id, undefined, {
+          correlationId: uuid(),
+          origin: tracer.getContext(),
+        });
         if (unmounted.current) return;
 
         try {
           const deviceInfo = await getDeviceInfo(transport);
-          if (__DEV__)
-            // eslint-disable-next-line no-console
-            console.log({
-              deviceInfo,
-            });
+          tracer.trace("Device info", { deviceInfo });
 
           if (unmounted.current) return;
           dispatch({
@@ -143,10 +142,14 @@ function PairDevicesInner({ navigation, route }: NavigationProps) {
             payload: device,
           });
           let appsInstalled;
-          await firstValueFrom(
+
+          // Waits until listApps completes or emits and error
+          await lastValueFrom(
             listApps(transport, deviceInfo).pipe(
               timeout(GENUINE_CHECK_TIMEOUT),
               tap(e => {
+                tracer.trace("Event from listApps", { eventType: e.type });
+
                 if (e.type === "result") {
                   appsInstalled = e.result && e.result.installed.length;
 
@@ -157,19 +160,23 @@ function PairDevicesInner({ navigation, route }: NavigationProps) {
                       dispatchRedux(setHasInstalledAnyApp(false));
                     }
                   }
-
-                  return;
                 }
 
                 dispatch({
                   type: "allowManager",
-                  payload: e.type === "allow-manager-requested",
+                  payload:
+                    e.type === "allow-manager-requested" ||
+                    e.type === "device-permission-requested",
                 });
               }),
             ),
           );
           if (unmounted.current) return;
+
+          // listApps has completed, a new APDU can be sent
           const name = (await getDeviceName(transport)) || device.deviceName || "";
+          tracer.trace("Fetched device name", { name });
+
           if (unmounted.current) return;
           dispatchRedux(
             addKnownDevice({
@@ -196,7 +203,7 @@ function PairDevicesInner({ navigation, route }: NavigationProps) {
         } finally {
           transport.close();
           // eslint-disable-next-line @typescript-eslint/no-empty-function
-          await TransportBLE.disconnect(device.deviceId).catch(() => {});
+          await TransportBLE.disconnectDevice(device.deviceId).catch(() => {});
           await delay(500);
         }
       } catch (error) {
@@ -205,7 +212,7 @@ function PairDevicesInner({ navigation, route }: NavigationProps) {
         onError(error as Error);
       }
     },
-    [dispatch, dispatchRedux, hasCompletedOnboarding, onError],
+    [dispatchRedux, hasCompletedOnboarding, onError, tracer],
   );
   const onBypassGenuine = useCallback(() => {
     navigation.setParams({
@@ -306,6 +313,7 @@ function reducer(
         device: action.payload as Device,
       };
 
+    // Currently allowManager is not used to display any UI component
     case "allowManager":
       return { ...state, genuineAskedOnDevice: !!action.payload };
 

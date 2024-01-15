@@ -1,5 +1,3 @@
-// FIXME: to update when implementing edit transaction on evm
-
 import type { Operation, AccountLike, Account, DeviceInfo } from "@ledgerhq/types-live";
 import type { NavigatorScreenParams, ParamListBase } from "@react-navigation/native";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -9,7 +7,7 @@ import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { MappedSwapOperation } from "@ledgerhq/live-common/exchange/swap/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
-import { NavigatorName, ScreenName } from "../../../const";
+import { NavigatorName, ScreenName } from "~/const";
 import type { AccountSettingsNavigatorParamList } from "./AccountSettingsNavigator";
 import type { AccountsNavigatorParamList } from "./AccountsNavigator";
 import type { ImportAccountsNavigatorParamList } from "./ImportAccountsNavigator";
@@ -59,7 +57,7 @@ import type { CosmosClaimRewardsFlowParamList } from "../../../families/cosmos/C
 import type { SolanaDelegationFlowParamList } from "../../../families/solana/DelegationFlow/types";
 import type { StellarAddAssetFlowParamList } from "../../../families/stellar/AddAssetFlow/types";
 import type { TezosDelegationFlowParamList } from "../../../families/tezos/DelegationFlow/types";
-// import type { EditTransactionParamList } from "../../../families/ethereum/EditTransactionFlow/EditTransactionParamList";
+import type { EditTransactionParamList } from "../../../families/evm/EditTransactionFlow/EditTransactionParamList";
 import type { TronVoteFlowParamList } from "../../../families/tron/VoteFlow/types";
 import type { NoFundsNavigatorParamList } from "./NoFundsNavigator";
 import type { StakeNavigatorParamList } from "./StakeNavigator";
@@ -260,8 +258,8 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.CosmosUndelegationFlow]: NavigatorScreenParams<CosmosUndelegationFlowParamList>;
   [NavigatorName.CosmosClaimRewardsFlow]: NavigatorScreenParams<CosmosClaimRewardsFlowParamList>;
 
-  // Ethereum
-  // [NavigatorName.EditTransaction]: NavigatorScreenParams<EditTransactionParamList>;
+  // EVM
+  [NavigatorName.EvmEditTransaction]: NavigatorScreenParams<EditTransactionParamList>;
 
   // Solana
   [NavigatorName.SolanaDelegationFlow]: NavigatorScreenParams<SolanaDelegationFlowParamList>;

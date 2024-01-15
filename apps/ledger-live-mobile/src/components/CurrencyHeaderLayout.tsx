@@ -4,7 +4,7 @@ import { Box, Flex } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
 import Animated, { Extrapolate, interpolate, useAnimatedStyle } from "react-native-reanimated";
 
-import getWindowDimensions from "../logic/getWindowDimensions";
+import getWindowDimensions from "~/logic/getWindowDimensions";
 import CurrencyGradient from "./CurrencyGradient";
 
 const windowsWidth = getWindowDimensions().width;
@@ -68,21 +68,6 @@ function CurrencyHeaderLayout({
     };
   }, [graphCardEndPosition]);
 
-  const Header = styled(Flex)`
-    position: absolute;
-  `;
-
-  const CenteredElement = styled(Flex).attrs((p: { width: number }) => ({
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    height: 48,
-    left: -p.width / 2 + p.width * 0.15,
-    width: p.width * 0.7,
-  }))`
-    position: absolute;
-  `;
-
   return (
     <Header
       flexDirection="row"
@@ -109,7 +94,7 @@ function CurrencyHeaderLayout({
           <CurrencyGradient gradientColor={currencyColor} />
         </Box>
       </Animated.View>
-      <Box width={24}>{leftElement}</Box>
+      <Box>{leftElement}</Box>
       <Flex flexDirection={"row"} alignItems={"center"}>
         <CenteredElement width={windowsWidth}>
           <Animated.View style={[AfterScrollAnimation]}>{centerAfterScrollElement}</Animated.View>
@@ -118,9 +103,24 @@ function CurrencyHeaderLayout({
           <Animated.View style={[BeforeScrollAnimation]}>{centerBeforeScrollElement}</Animated.View>
         </CenteredElement>
       </Flex>
-      <Box width={24}>{rightElement}</Box>
+      <Box>{rightElement}</Box>
     </Header>
   );
 }
 
 export default CurrencyHeaderLayout;
+
+const Header = styled(Flex)`
+  position: absolute;
+`;
+
+const CenteredElement = styled(Flex).attrs((p: { width: number }) => ({
+  flexDirection: "row",
+  justifyContent: "center",
+  alignItems: "center",
+  height: 48,
+  left: -p.width / 2 + p.width * 0.15,
+  width: p.width * 0.7,
+}))`
+  position: absolute;
+`;

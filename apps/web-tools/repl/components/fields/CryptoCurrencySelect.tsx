@@ -1,9 +1,7 @@
 import React from "react";
 import Select from "react-select";
-import {
-  listCryptoCurrencies,
-  useCurrenciesByMarketcap,
-} from "@ledgerhq/live-common/currencies/index";
+import { listCryptoCurrencies } from "@ledgerhq/live-common/currencies/index";
+import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 export type DataTypeCryptoCurrency = {

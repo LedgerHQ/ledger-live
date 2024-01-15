@@ -10,22 +10,22 @@ import {
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import type { Transaction as RippleTransaction } from "@ledgerhq/live-common/families/ripple/types";
-import SummaryRow from "../../screens/SendFunds/SummaryRow";
-import LText from "../../components/LText";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import CounterValue from "../../components/CounterValue";
-import ExternalLink from "../../icons/ExternalLink";
-import { urls } from "@utils/urls";
-import { ScreenName } from "../../const";
-import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
+import SummaryRow from "~/screens/SendFunds/SummaryRow";
+import LText from "~/components/LText";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import CounterValue from "~/components/CounterValue";
+import ExternalLink from "~/icons/ExternalLink";
+import { urls } from "~/utils/urls";
+import { ScreenName } from "~/const";
+import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type {
   BaseComposite,
   StackNavigatorNavigation,
   StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
-import type { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
-import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
-import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
+} from "~/components/RootNavigator/types/helpers";
+import type { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
+import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
+import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 
 type Navigation = CompositeNavigationProp<
   StackNavigatorNavigation<SendFundsNavigatorStackParamList, ScreenName.SendSummary>,

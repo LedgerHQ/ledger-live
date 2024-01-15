@@ -7,9 +7,9 @@ import { IconsLegacy } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
 
 import type { Account } from "@ledgerhq/types-live";
-import type { ActionButtonEvent } from "../../components/FabActions";
+import type { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
 
-import { NavigatorName, ScreenName } from "../../const";
+import { NavigatorName, ScreenName } from "~/const";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
 
 /*
@@ -22,8 +22,6 @@ export interface getActionsType {
   parentRoute: RouteProp<ParamListBase, ScreenName>;
 }
 export type getActionsReturnType = ActionButtonEvent[] | null | undefined;
-
-type NavigationParamsType = readonly [name: string, options: object];
 
 /*
  * Declare the function that will return the actions' settings array.
@@ -41,11 +39,11 @@ const getMainActions = ({
    */
   const preloaded = getCurrentElrondPreloadData();
   const validators = randomizeProviders(preloaded.validators);
-
-  const screen =
-    account.elrondResources && account.elrondResources.delegations.length === 0
-      ? ScreenName.ElrondDelegationStarted
-      : ScreenName.ElrondDelegationValidator;
+  const isFirstTimeFlow =
+    account.elrondResources && account.elrondResources.delegations.length === 0;
+  const screen = isFirstTimeFlow
+    ? ScreenName.ElrondDelegationStarted
+    : ScreenName.ElrondDelegationValidator;
 
   /*
    * Return an empty array if "elrondResources" doesn't exist.
@@ -58,10 +56,18 @@ const getMainActions = ({
   /*
    * Return the array of actions.
    */
-  const navigationParams = delegationEnabled
+  const navigationParams: NavigationParamsType = delegationEnabled
     ? [
         NavigatorName.ElrondDelegationFlow,
-        { screen, params: { account, validators, source: parentRoute } },
+        {
+          screen,
+          params: {
+            account,
+            validators,
+            source: parentRoute,
+            skipStartedStep: !isFirstTimeFlow,
+          },
+        },
       ]
     : [
         NavigatorName.NoFundsFlow,
@@ -78,7 +84,7 @@ const getMainActions = ({
       id: "stake",
       label: <Trans i18nKey="account.stake" />,
       Icon: IconsLegacy.CoinsMedium,
-      navigationParams: navigationParams as unknown as NavigationParamsType,
+      navigationParams,
       event: "button_clicked",
       eventProperties: {
         button: "stake",

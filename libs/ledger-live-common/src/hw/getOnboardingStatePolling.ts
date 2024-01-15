@@ -1,5 +1,5 @@
-import { from, of, throwError, Observable, TimeoutError } from "rxjs";
-import { map, catchError, first, timeout, repeatWhen, delay } from "rxjs/operators";
+import { from, of, throwError, Observable, TimeoutError, timer } from "rxjs";
+import { map, catchError, first, timeout, repeat } from "rxjs/operators";
 import getVersion from "./getVersion";
 import { withDevice } from "./deviceAccess";
 import {
@@ -11,6 +11,7 @@ import {
   TransportRaceCondition,
   LockedDeviceError,
   UnexpectedBootloader,
+  TransportExchangeTimeoutError,
 } from "@ledgerhq/errors";
 import { FirmwareInfo } from "@ledgerhq/types-live";
 import { extractOnboardingState, OnboardingState } from "./extractOnboardingState";
@@ -26,14 +27,20 @@ export type GetOnboardingStatePollingResult = Observable<OnboardingStatePollingR
 export type GetOnboardingStatePollingArgs = {
   deviceId: string;
   pollingPeriodMs: number;
-  fetchingTimeoutMs?: number;
+  transportAbortTimeoutMs?: number;
+  safeGuardTimeoutMs?: number;
 };
 
 /**
  * Polls the device onboarding state at a given frequency
+ *
  * @param deviceId A device id
  * @param pollingPeriodMs The period in ms after which the device onboarding state is fetched again
- * @param fetchingTimeoutMs The time to wait while fetching for the device onboarding state before throwing an error, in ms
+ * @param transportAbortTimeoutMs Depending on the transport implementation, an "abort timeout" will be set (and throw an error) when:
+ *  - opening a transport instance
+ *  - on called commands (where `getVersion`)
+ *  Default to (pollingPeriodMs - 100) ms
+ * @param safeGuardTimeoutMs For Transport implementations not implementing an "abort timeout", a timeout will be triggered (and throw an error) at this function call level
  * @returns An Observable that polls the device onboarding state and pushes an object containing:
  * - onboardingState: the device state during the onboarding
  * - allowedError: any error that is allowed and does not stop the polling
@@ -42,11 +49,14 @@ export type GetOnboardingStatePollingArgs = {
 export const getOnboardingStatePolling = ({
   deviceId,
   pollingPeriodMs,
-  fetchingTimeoutMs = pollingPeriodMs * 10, // Nb Empirical value
+  transportAbortTimeoutMs = pollingPeriodMs - 100,
+  safeGuardTimeoutMs = pollingPeriodMs * 10, // Nb Empirical value
 }: GetOnboardingStatePollingArgs): GetOnboardingStatePollingResult => {
   const getOnboardingStateOnce = (): Observable<OnboardingStatePollingResult> => {
-    return withDevice(deviceId)(t => from(getVersion(t))).pipe(
-      timeout(fetchingTimeoutMs), // Throws a TimeoutError
+    return withDevice(deviceId, { openTimeoutMs: transportAbortTimeoutMs })(t =>
+      from(getVersion(t, { abortTimeoutMs: transportAbortTimeoutMs })),
+    ).pipe(
+      timeout(safeGuardTimeoutMs), // Throws a TimeoutError
       first(),
       catchError((error: unknown) => {
         if (isAllowedOnboardingStatePollingError(error)) {
@@ -68,7 +78,7 @@ export const getOnboardingStatePolling = ({
 
           try {
             onboardingState = extractOnboardingState(firmwareInfo.flags);
-          } catch (error: any) {
+          } catch (error: unknown) {
             if (error instanceof DeviceExtractOnboardingStateError) {
               return {
                 onboardingState: null,
@@ -76,12 +86,17 @@ export const getOnboardingStatePolling = ({
                 lockedDevice: false,
               };
             } else {
+              let errorMessage = "";
+              if (error instanceof Error) {
+                errorMessage = `${error.name}: ${error.message}`;
+              } else {
+                errorMessage = `${error}`;
+              }
+
               return {
                 onboardingState: null,
                 allowedError: new DeviceOnboardingStatePollingError(
-                  `SyncOnboarding: Unknown error while extracting the onboarding state ${
-                    error?.name ?? error
-                  } ${error?.message}`,
+                  `SyncOnboarding: Unknown error while extracting the onboarding state ${errorMessage}`,
                 ),
                 lockedDevice: false,
               };
@@ -96,6 +111,7 @@ export const getOnboardingStatePolling = ({
           // If an error is caught previously, and this error is "allowed",
           // the value from the observable is not a FirmwareInfo but an Error
           const allowedError = event as Error;
+
           return {
             onboardingState: null,
             allowedError: allowedError,
@@ -107,7 +123,9 @@ export const getOnboardingStatePolling = ({
   };
 
   return getOnboardingStateOnce().pipe(
-    repeatWhen(completed => completed.pipe(delay(pollingPeriodMs))),
+    repeat({
+      delay: _count => timer(pollingPeriodMs),
+    }),
   );
 };
 
@@ -116,6 +134,7 @@ export const isAllowedOnboardingStatePollingError = (error: unknown): boolean =>
     error &&
     // Timeout error is thrown by rxjs's timeout
     (error instanceof TimeoutError ||
+      error instanceof TransportExchangeTimeoutError ||
       error instanceof DisconnectedDevice ||
       error instanceof CantOpenDevice ||
       error instanceof TransportRaceCondition ||

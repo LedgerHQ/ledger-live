@@ -4,12 +4,6 @@ inputs:
   os:
     description: "name of the os <mac | linux | win>"
     required: true
-  aws-access-key:
-    description: "aws access key"
-    required: false
-  aws-secret-key:
-    description: "aws secret key"
-    required: false
 outputs:
   version:
     description: "package.json version"
@@ -17,22 +11,10 @@ outputs:
   name:
     description: "package.json name"
     value: ${{ steps.post-version.outputs.name }}
-  port:
-    description: "The port the local server runs on"
-    value: ${{ steps.turborepo-cache-server.outputs.port }}
 
 runs:
   using: "composite"
   steps:
-    - name: TurboRepo local caching server
-      id: turborepo-cache-server
-      uses: ./tools/actions/turborepo-s3-cache
-      if: inputs.aws-access-key != '' && inputs.aws-secret-key != ''
-      with:
-        server-token: "yolo"
-        cleanup-cache-folder: "true"
-        aws-access-key: ${{ inputs.aws-access-key }}
-        aws-secret-key: ${{ inputs.aws-secret-key }}
     - name: install dependencies
       env:
         LC_ALL: en_US.UTF-8

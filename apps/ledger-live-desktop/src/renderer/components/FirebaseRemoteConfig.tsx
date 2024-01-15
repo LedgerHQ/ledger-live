@@ -1,32 +1,17 @@
-import React, { ReactNode, useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { initializeApp } from "firebase/app";
-import { getRemoteConfig, fetchAndActivate, RemoteConfig } from "firebase/remote-config";
-import { DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/index";
-import { Features } from "@ledgerhq/types-live";
-import reduce from "lodash/reduce";
-import snakeCase from "lodash/snakeCase";
+import { getRemoteConfig, fetchAndActivate, RemoteConfig, getValue } from "firebase/remote-config";
+import {
+  DEFAULT_FEATURES,
+  formatDefaultFeatures,
+  LiveConfig,
+} from "@ledgerhq/live-config/featureFlags/index";
+import type { FirebaseFeatureFlagsProviderProps as Props } from "@ledgerhq/live-config/featureFlags/index";
 import { getFirebaseConfig } from "~/firebase-setup";
 
 export const FirebaseRemoteConfigContext = React.createContext<RemoteConfig | null>(null);
 
 export const useFirebaseRemoteConfig = () => useContext(FirebaseRemoteConfigContext);
-
-export const formatToFirebaseFeatureId = (id: string) => `feature_${snakeCase(id)}`;
-
-// Firebase SDK treat JSON values as strings
-const formatDefaultFeatures = (config: Features) =>
-  reduce(
-    config,
-    (acc, feature, featureId) => ({
-      ...acc,
-      [formatToFirebaseFeatureId(featureId)]: JSON.stringify(feature),
-    }),
-    {},
-  );
-
-type Props = {
-  children?: ReactNode;
-};
 
 export const FirebaseRemoteConfigProvider = ({ children }: Props): JSX.Element | null => {
   const [config, setConfig] = useState<RemoteConfig | null>(null);
@@ -54,9 +39,15 @@ export const FirebaseRemoteConfigProvider = ({ children }: Props): JSX.Element |
         };
         await fetchAndActivate(remoteConfig);
         setConfig(remoteConfig);
+        LiveConfig.setProviderGetValueMethod({
+          firebaseRemoteConfig: (key: string) => {
+            return getValue(remoteConfig, key);
+          },
+        });
       } catch (error) {
         console.error(`Failed to fetch Firebase remote config with error: ${error}`);
       }
+
       setLoaded(true);
     };
 

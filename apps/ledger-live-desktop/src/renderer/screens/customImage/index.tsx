@@ -310,7 +310,7 @@ const CustomImage: React.FC<Props> = props => {
               size={64}
               iconSize={24}
             />
-            <Text variant="large" alignSelf="stretch" mt={9} textAlign="center">
+            <Text variant="h5Inter" alignSelf="stretch" mt={9} textAlign="center">
               {t("customImage.customImageSet")}
             </Text>
           </Flex>

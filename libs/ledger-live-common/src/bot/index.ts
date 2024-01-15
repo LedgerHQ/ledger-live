@@ -164,6 +164,7 @@ export async function bot({ disabled, filter }: Arg = {}): Promise<void> {
   const SEED = getEnv("SEED");
   invariant(SEED, "SEED required");
   const specsLogs: string[][] = [];
+
   const specs = getSpecs({ disabled, filter });
 
   const timeBefore = Date.now();

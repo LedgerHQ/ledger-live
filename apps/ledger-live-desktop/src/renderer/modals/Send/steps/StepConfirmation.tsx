@@ -1,19 +1,19 @@
-// FIXME: to update when implementing edit transaction on evm
-
+import { TransactionHasBeenValidatedError } from "@ledgerhq/errors";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import React from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-import { SyncOneAccountOnMount } from "@ledgerhq/live-common/bridge/react/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { multiline } from "~/renderer/styles/helpers";
 import Box from "~/renderer/components/Box";
-import Button from "~/renderer/components/Button";
-import RetryButton from "~/renderer/components/RetryButton";
-import ErrorDisplay from "~/renderer/components/ErrorDisplay";
-import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import BroadcastErrorDisclaimer from "~/renderer/components/BroadcastErrorDisclaimer";
+import Button from "~/renderer/components/Button";
+import ErrorDisplay from "~/renderer/components/ErrorDisplay";
+import RetryButton from "~/renderer/components/RetryButton";
+import SuccessDisplay from "~/renderer/components/SuccessDisplay";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { setDrawer } from "~/renderer/drawers/Provider";
+import { multiline } from "~/renderer/styles/helpers";
 import { StepProps } from "../types";
 
 const Container = styled(Box).attrs(() => ({
@@ -34,6 +34,8 @@ function StepConfirmation({
   isNFTSend,
   signed,
   currencyName,
+  account,
+  parentAccount,
 }: StepProps) {
   if (optimisticOperation) {
     return (
@@ -57,13 +59,13 @@ function StepConfirmation({
     );
   }
   if (error) {
-    // // Edit ethereum transaction nonce error because transaction has been validated
-    // if (error.name === "LedgerAPI4xx" && error.message.includes("nonce too low")) {
-    //   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
-    //   if (mainAccount?.currency?.family === "evm") {
-    //     error = new TransactionHasBeenValidatedError();
-    //   }
-    // }
+    // Edit ethereum transaction nonce error because transaction has been validated
+    if (error.name === "LedgerAPI4xx" && error.message.includes("nonce too low")) {
+      const mainAccount = account ? getMainAccount(account, parentAccount) : null;
+      if (mainAccount?.currency?.family === "evm") {
+        error = new TransactionHasBeenValidatedError();
+      }
+    }
 
     return (
       <Container shouldSpace={signed}>

@@ -16,7 +16,7 @@ import IconError from "~/renderer/icons/Error";
 import IconLoader from "~/renderer/icons/Loader";
 import { isUpToDateAccountSelector } from "~/renderer/reducers/accounts";
 import { colors } from "~/renderer/styles/theme";
-import useEnv from "~/renderer/hooks/useEnv";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 const mapStateToProps = createStructuredSelector({
   isUpToDateAccount: isUpToDateAccountSelector,
 });

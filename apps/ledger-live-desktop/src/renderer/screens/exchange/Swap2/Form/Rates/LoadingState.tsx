@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 function Loader() {
   const [dots, setDots] = useState("");
   useEffect(() => {
-    const interval = setInterval(() => {
+    const interval = window.setInterval(() => {
       setDots(dots => (dots.length < 3 ? dots + "." : ""));
     }, 500);
     return () => clearInterval(interval);

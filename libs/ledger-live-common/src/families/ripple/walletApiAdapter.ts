@@ -10,11 +10,11 @@ const areFeesProvided: AreFeesProvided<WalletAPIRippleTransaction> = tx => !!tx.
 const getWalletAPITransactionSignFlowInfos: GetWalletAPITransactionSignFlowInfos<
   WalletAPIRippleTransaction,
   Transaction
-> = tx => {
+> = ({ walletApiTransaction }) => {
   return {
     canEditFees: CAN_EDIT_FEES,
-    liveTx: tx,
-    hasFeesProvided: areFeesProvided(tx),
+    liveTx: walletApiTransaction,
+    hasFeesProvided: areFeesProvided(walletApiTransaction),
   };
 };
 

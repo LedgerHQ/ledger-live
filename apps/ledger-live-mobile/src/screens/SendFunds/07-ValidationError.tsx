@@ -5,16 +5,16 @@ import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 
-import { TrackScreen } from "../../analytics";
-import ValidateError from "../../components/ValidateError";
-import { accountScreenSelector } from "../../reducers/accounts";
-import { ScreenName } from "../../const";
-import type { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
-import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
+import { TrackScreen } from "~/analytics";
+import ValidateError from "~/components/ValidateError";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { ScreenName } from "~/const";
+import type { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
+import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type {
   StackNavigatorNavigation,
   StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
+} from "~/components/RootNavigator/types/helpers";
 
 type Props = CompositeScreenProps<
   StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendValidationError>,

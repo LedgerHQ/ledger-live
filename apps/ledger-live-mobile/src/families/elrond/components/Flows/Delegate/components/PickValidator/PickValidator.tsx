@@ -9,8 +9,8 @@ import { useSearchValidators } from "@ledgerhq/live-common/families/elrond/react
 
 import type { onSelectType, PickValidatorPropsType } from "./types";
 
-import { TrackScreen } from "../../../../../../../analytics";
-import { ScreenName } from "../../../../../../../const";
+import { TrackScreen } from "~/analytics";
+import { ScreenName } from "~/const";
 
 import Item from "./components/Item";
 
@@ -64,7 +64,7 @@ const PickValidator = (props: PickValidatorPropsType) => {
         name="SelectValidator"
         flow="stake"
         action="delegate"
-        currency="egld"
+        currency="MultiversX"
       />
 
       <Box mx={6} mt={3} mb={4}>

@@ -1,17 +1,19 @@
 import axios from "axios";
+import { log } from "@ledgerhq/logs";
 import { getEnv } from "@ledgerhq/live-env";
 import { delay } from "@ledgerhq/live-promise";
 import { Operation } from "@ledgerhq/types-live";
 import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
-import { ExplorerApi, isLedgerExplorerConfig } from "./types";
 import { LedgerExplorerUsedIncorrectly } from "../../errors";
 import { LedgerExplorerOperation } from "../../types";
 import {
+  ledgerERC1155EventToOperations,
   ledgerERC20EventToOperations,
   ledgerERC721EventToOperations,
-  ledgerERC1155EventToOperations,
+  ledgerInternalTransactionToOperations,
   ledgerOperationToOperations,
 } from "../../adapters/index";
+import { ExplorerApi, isLedgerExplorerConfig } from "./types";
 
 export const BATCH_SIZE = 10_000;
 export const LEDGER_TIMEOUT = 200; // 200ms between 2 calls
@@ -36,6 +38,7 @@ export async function fetchPaginatedOpsWithRetries(
   try {
     const {
       data: { data: operationsBatch, token },
+      headers,
     } = await axios.request<{
       data: LedgerExplorerOperation[];
       token: string;
@@ -51,6 +54,20 @@ export async function fetchPaginatedOpsWithRetries(
         token: paginationToken,
       },
     });
+
+    // -- THIS CAN BE REMOVED ONCE THE DATE ERROR HAS BEEN FIGURED OUT
+    log("Ethereum", "Ethereum explorer request", {
+      url: `${getEnv("EXPLORER")}/blockchain/v4/${params.explorerId}/address/${params.address}/txs`,
+      params: {
+        filtering: true,
+        from_height: params.fromBlock ?? 0,
+        order: "ascending", // Needed to make sure we get transactions after the block height and not before. Order is still descending in the end
+        batch_size: BATCH_SIZE,
+        token: paginationToken,
+      },
+      responseHeaders: headers,
+    });
+    // -- THIS CAN BE REMOVED ONCE THE DATE ERROR HAS BEEN FIGURED OUT
 
     const mergedOperations = [...previousOperations, ...operationsBatch];
 
@@ -96,9 +113,24 @@ export const getLastOperations: ExplorerApi["getLastOperations"] = async (
   const lastCoinOperations: Operation[] = [];
   const lastTokenOperations: Operation[] = [];
   const lastNftOperations: Operation[] = [];
+  const lastInternalOperations: Operation[] = [];
 
   ledgerExplorerOps.forEach(ledgerOp => {
     const coinOps = ledgerOperationToOperations(accountId, ledgerOp);
+
+    // -- THIS CAN BE REMOVED ONCE THE DATE ERROR HAS BEEN FIGURED OUT
+    for (const coinOp of coinOps) {
+      if (coinOp.date instanceof Date && isNaN(coinOp.date as unknown as number)) {
+        log("Ethereum Date Error", "Date fetched while getting all txs from explorer is invalid", {
+          coinOp,
+          date: coinOp.date,
+          hash: coinOp.hash,
+          address,
+        });
+      }
+    }
+    // -- THIS CAN BE REMOVED ONCE THE DATE ERROR HAS BEEN FIGURED OUT
+
     const erc20Ops = ledgerOp.transfer_events.flatMap(event =>
       ledgerERC20EventToOperations(coinOps[0], event),
     );
@@ -112,17 +144,22 @@ export const getLastOperations: ExplorerApi["getLastOperations"] = async (
           ledgerERC1155EventToOperations(coinOps[0], event, index),
         )
       : [];
+    const internalOps = ledgerOp.actions.flatMap((action, index) =>
+      ledgerInternalTransactionToOperations(coinOps[0], action, index),
+    );
 
     lastCoinOperations.push(...coinOps);
     lastTokenOperations.push(...erc20Ops);
     lastNftOperations.push(...erc721Ops);
     lastNftOperations.push(...erc1155Ops);
+    lastInternalOperations.push(...internalOps);
   });
 
   return {
     lastCoinOperations,
     lastTokenOperations,
     lastNftOperations,
+    lastInternalOperations,
   };
 };
 

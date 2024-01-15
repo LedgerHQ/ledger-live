@@ -66,7 +66,7 @@ Logs something
 
 *   `type` **LogType** a namespaced identifier of the log (it is not a level like "debug", "error" but more like "apdu-in", "apdu-out", etc...)
 *   `message` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** a clear message of the log associated to the type
-*   `data` **LogData?** 
+*   `data` **LogData?**&#x20;
 
 ### trace
 
@@ -79,10 +79,10 @@ This is simple for now, but can be improved later.
 
 *   `context` **{type: LogType, message: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, data: LogData?, context: TraceContext?}** Anything representing the context where the log occurred
 
-    *   `context.type`  
-    *   `context.message`  
-    *   `context.data`  
-    *   `context.context`  
+    *   `context.type` &#x20;
+    *   `context.message` &#x20;
+    *   `context.data` &#x20;
+    *   `context.context` &#x20;
 
 ### LocalTracer
 
@@ -93,8 +93,8 @@ This is simple for now, but can be improved later.
 
 #### Parameters
 
-*   ``  
-*   ``  
+*   `` &#x20;
+*   `` &#x20;
 *   `type`  A given type (not level) for the current local tracer ("hw", "withDevice", etc.)
 *   `context`  Anything representing the context where the log occurred
 
@@ -107,9 +107,9 @@ following a simple builder pattern.
 
 ##### Parameters
 
-*   `type` **LogType** 
+*   `type` **LogType**&#x20;
 
-Returns **[LocalTracer](#localtracer)** 
+Returns **[LocalTracer](#localtracer)**&#x20;
 
 #### withContext
 
@@ -122,7 +122,7 @@ following a simple builder pattern.
 
 *   `context` **TraceContext?** A TraceContext, that can undefined to reset the context
 
-Returns **[LocalTracer](#localtracer)** 
+Returns **[LocalTracer](#localtracer)**&#x20;
 
 #### withUpdatedContext
 
@@ -134,9 +134,9 @@ following a simple builder pattern.
 
 ##### Parameters
 
-*   `contextToAdd` **TraceContext** 
+*   `contextToAdd` **TraceContext**&#x20;
 
-Returns **[LocalTracer](#localtracer)** 
+Returns **[LocalTracer](#localtracer)**&#x20;
 
 ### listen
 

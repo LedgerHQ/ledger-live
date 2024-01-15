@@ -12,19 +12,19 @@ import { getDefaultExplorerView, getStakePoolExplorer } from "@ledgerhq/live-com
 
 import { StackNavigationProp } from "@react-navigation/stack";
 import { AccountLike } from "@ledgerhq/types-live";
-import AccountDelegationInfo from "../../../components/AccountDelegationInfo";
-import AccountSectionLabel from "../../../components/AccountSectionLabel";
-import DelegationDrawer from "../../../components/DelegationDrawer";
-import type { IconProps } from "../../../components/DelegationDrawer";
-import Circle from "../../../components/Circle";
-import LText from "../../../components/LText";
-import Touchable from "../../../components/Touchable";
+import AccountDelegationInfo from "~/components/AccountDelegationInfo";
+import AccountSectionLabel from "~/components/AccountSectionLabel";
+import DelegationDrawer from "~/components/DelegationDrawer";
+import type { IconProps } from "~/components/DelegationDrawer";
+import Circle from "~/components/Circle";
+import LText from "~/components/LText";
+import Touchable from "~/components/Touchable";
 import { rgba } from "../../../colors";
-import IlluRewards from "../../../icons/images/Rewards";
-import { urls } from "@utils/urls";
-import { ScreenName, NavigatorName } from "../../../const";
-import RedelegateIcon from "../../../icons/Redelegate";
-import UndelegateIcon from "../../../icons/Undelegate";
+import IlluRewards from "~/icons/images/Rewards";
+import { urls } from "~/utils/urls";
+import { ScreenName, NavigatorName } from "~/const";
+import RedelegateIcon from "~/icons/Redelegate";
+import UndelegateIcon from "~/icons/Undelegate";
 import DelegationRow from "./Row";
 import PoolImage from "../shared/PoolImage";
 

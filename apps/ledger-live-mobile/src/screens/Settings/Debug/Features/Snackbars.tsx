@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { Flex, Button } from "@ledgerhq/native-ui";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
-import TextInput from "../../../../components/TextInput";
+import TextInput from "~/components/TextInput";
 
 /**
  * Debugging screen to test snackbars:

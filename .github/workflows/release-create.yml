@@ -1,4 +1,5 @@
 name: "[Release] Create Branch"
+
 on:
   workflow_dispatch:
 
@@ -8,6 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
+      RELEASE_BRANCH: "release"
     steps:
       - name: generate token
         id: generate-token
@@ -15,21 +17,39 @@ jobs:
         with:
           app_id: ${{ secrets.GH_BOT_APP_ID }}
           private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: develop
           token: ${{ steps.generate-token.outputs.token }}
-      - name: set git user
-        run: |
-          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
-          git config user.name "live-github-bot[bot]"
+      - name: Setup git user
+        uses: ./tools/actions/composites/setup-git-user
       - name: create release branch
         run: |
-          git checkout -b release
+          git checkout -b $RELEASE_BRANCH
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
       - name: install dependencies
-        run: pnpm i -F "ledger-live"
+        run: pnpm i
+      - name: Build libs
+        run: pnpm build:libs
+      - name: import CAL tokens
+        run: pnpm import:cal-tokens
+      - name: commit new tokens
+        run: |
+          git add .
+          git commit -m 'chore(prerelease) update cryptoassets' || echo "No new tokens added"
+      - name: update cryptoassets.md
+        run: pnpm generate:cryptoassets-md
+      - name: commit cryptoassets.md
+        run: |
+          git add .
+          git commit -m 'update cryptoassets.md' || echo "No changes in cryptoassets.md"
+      - name: update sortByMarketcap snapshot
+        run: pnpm common jest --runTestsByPath src/currencies/sortByMarketcap.test.ts -u
+      - name: commit sortByMarketcap.test.ts
+        run: |
+          git add .
+          git commit -m 'update sortByMarketcap snapshot' || echo "No changes in snapshot of sortByMarketcap.test.ts"
       - name: enter prerelease mode
         run: pnpm changeset pre enter next
       - name: commit
@@ -42,7 +62,7 @@ jobs:
           echo "date=$(date +%F)" >> $GITHUB_OUTPUT
       - name: push
         run: |
-          git push origin release
-          gh pr create --title ":rocket: Release ${{ steps.date.outputs.date }}" -F .github/templates/release.md --base main --head release
+          git push origin $RELEASE_BRANCH
+          gh pr create --title ":rocket: Release ${{ steps.date.outputs.date }}" -F .github/templates/release.md --base main --head $RELEASE_BRANCH
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}

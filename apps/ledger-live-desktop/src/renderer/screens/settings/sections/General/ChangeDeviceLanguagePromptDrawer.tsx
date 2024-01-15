@@ -75,7 +75,7 @@ const ChangeDeviceLanguagePromptDrawer: React.FC<Props> = ({
       overflowY="hidden"
       width="100%"
       flex={1}
-      data-test-id="device-rename-container"
+      data-test-id="device-language-installation-container"
     >
       <Text alignSelf="center" variant="h5Inter" mb={3}>
         {t("deviceLocalization.deviceLanguage")}

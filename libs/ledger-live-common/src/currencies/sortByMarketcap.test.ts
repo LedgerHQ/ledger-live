@@ -1,16 +1,22 @@
-import { sortByMarketcap } from "./sortByMarketcap";
-import { listCryptoCurrencies, listTokens } from ".";
+import { sortCurrenciesByIds } from "./sortByMarketcap";
+import { findCurrencyByTicker, listCryptoCurrencies, listTokens } from ".";
 import { getBTCValues } from "../countervalues/mock";
-import { CURRENCIES_LIST, TICKERS } from "./mock";
+import { CURRENCIES_LIST, IDS } from "./mock";
 
-test("sortByMarketcap snapshot", () => {
+test("sortCurrenciesByIds snapshot", () => {
   const list = [...listCryptoCurrencies(), ...listTokens()];
-  const tickers = Object.keys(getBTCValues());
-  expect(sortByMarketcap(list, tickers).map(c => c.id)).toMatchSnapshot();
+  const ids: string[] = [];
+  for (const k in getBTCValues()) {
+    const c = findCurrencyByTicker(k);
+    if (c && (c.type == "CryptoCurrency" || c.type == "TokenCurrency")) {
+      ids.push(c.id);
+    }
+  }
+  expect(sortCurrenciesByIds(list, ids).map(c => c.id)).toMatchSnapshot();
 });
 
-test("sortByMarketcap simulate staking from portfolio", () => {
-  expect(sortByMarketcap(CURRENCIES_LIST, TICKERS).map(c => c.id)).toEqual([
+test("sortCurrenciesByIds simulate staking from portfolio", () => {
+  expect(sortCurrenciesByIds(CURRENCIES_LIST, IDS).map(c => c.id)).toEqual([
     "ethereum",
     "solana",
     "cardano",

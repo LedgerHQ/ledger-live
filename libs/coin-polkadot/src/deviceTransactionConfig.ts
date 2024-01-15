@@ -49,7 +49,7 @@ function getDeviceTransactionConfig({
   transaction: Transaction;
   status: TransactionStatus;
 }): Array<DeviceTransactionField> {
-  const { mode, recipient, rewardDestination } = transaction;
+  const { mode, rewardDestination } = transaction;
   const { amount } = status;
   const mainAccount = getMainAccount(account, parentAccount) as PolkadotAccount;
   let fields: { type: string; label: string; value?: string }[] = [];
@@ -80,11 +80,6 @@ function getDeviceTransactionConfig({
           type: "text",
           label: "Staking",
           value: "Bond",
-        });
-        fields.push({
-          type: "text",
-          label: "Controller",
-          value: recipient,
         });
         fields.push({
           type: "text",
@@ -170,14 +165,6 @@ function getDeviceTransactionConfig({
         type: "text",
         label: "Staking",
         value: "Set controller",
-      });
-      fields.push({
-        type: "text",
-        label: "Controller",
-        value:
-          // NOTE: I added this here as TokenAccount and ChildAccount
-          // both don't have freshAddress
-          account.type === "Account" ? account.freshAddress : mainAccount.freshAddress,
       });
       break;
 

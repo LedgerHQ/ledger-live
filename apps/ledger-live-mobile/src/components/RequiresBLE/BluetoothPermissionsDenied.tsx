@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Linking } from "react-native";
 import GenericInformationalDrawerContent from "../GenericInformationalDrawerContent";
 import GenericInformationalView from "../GenericInformationalView";
-import IsInDrawerContext from "../../context/IsInDrawerContext";
+import IsInDrawerContext from "~/context/IsInDrawerContext";
 
 type Props = {
   onRetry?: (() => void) | null;

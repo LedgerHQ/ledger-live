@@ -7,6 +7,9 @@ import type { Props as BottomModalProps } from "./QueuedDrawer";
 import { BaseNavigatorStackParamList } from "./RootNavigator/types/BaseNavigator";
 import { StackNavigatorNavigation } from "./RootNavigator/types/helpers";
 import Touchable from "./Touchable";
+import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/hooks/index";
+import { useNavigateToPostOnboardingHubCallback } from "~/logic/postOnboarding/useNavigateToPostOnboardingHubCallback";
+
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const emptyFunction = () => {};
 
@@ -43,6 +46,29 @@ export const NavigationHeaderCloseButton: React.FC<Props> = React.memo(({ onPres
   );
 });
 
+export const NavigationHeaderCloseButtonRounded: React.FC<Props> = React.memo(({ onPress }) => {
+  const navigation = useNavigation<StackNavigationProp<ParamListBase>>();
+  return (
+    <Touchable
+      onPress={() => (onPress ? onPress() : navigation.popToTop())}
+      touchableTestID="NavigationHeaderCloseButton"
+      event="HeaderRightClose"
+    >
+      <Flex
+        bg="neutral.c100"
+        width="32px"
+        height="32px"
+        alignItems="center"
+        justifyContent="center"
+        borderRadius={32}
+        mr={6}
+      >
+        <IconsLegacy.CloseMedium size={20} color="neutral.c00" />
+      </Flex>
+    </Touchable>
+  );
+});
+
 type AdvancedProps = {
   preferDismiss?: boolean;
   skipNavigation?: boolean;
@@ -51,6 +77,7 @@ type AdvancedProps = {
   confirmationTitle?: React.ReactNode;
   confirmationDesc?: React.ReactNode;
   onClose?: () => void;
+  rounded?: boolean;
 };
 
 /**
@@ -68,12 +95,20 @@ export const NavigationHeaderCloseButtonAdvanced: React.FC<AdvancedProps> = Reac
     confirmationTitle,
     confirmationDesc,
     onClose = emptyFunction,
+    rounded = false,
   }) => {
     const navigation = useNavigation();
     const [isConfirmationModalOpened, setIsConfirmationModalOpened] = useState(false);
     const [onModalHide, setOnModalHide] = useState<BottomModalProps["onModalHide"]>();
+    const { postOnboardingInProgress } = usePostOnboardingHubState();
+    const navigateToPostOnboardingHub = useNavigateToPostOnboardingHubCallback();
 
     const close = useCallback(() => {
+      if (postOnboardingInProgress) {
+        navigateToPostOnboardingHub();
+        return;
+      }
+
       if (skipNavigation) {
         // onClose should always be called at the end of the close method,
         // so the callback will not interfere with the expected behavior of this component
@@ -92,7 +127,14 @@ export const NavigationHeaderCloseButtonAdvanced: React.FC<AdvancedProps> = Reac
         (navigation as unknown as { closeDrawer: () => void }).closeDrawer();
       navigation.goBack();
       onClose();
-    }, [navigation, onClose, preferDismiss, skipNavigation]);
+    }, [
+      navigateToPostOnboardingHub,
+      navigation,
+      onClose,
+      postOnboardingInProgress,
+      preferDismiss,
+      skipNavigation,
+    ]);
 
     const openConfirmationModal = useCallback(() => {
       setIsConfirmationModalOpened(true);
@@ -117,7 +159,12 @@ export const NavigationHeaderCloseButtonAdvanced: React.FC<AdvancedProps> = Reac
 
     return (
       <>
-        <NavigationHeaderCloseButton onPress={onPress} color={color} />
+        {rounded ? (
+          <NavigationHeaderCloseButtonRounded onPress={onPress} color={color} />
+        ) : (
+          <NavigationHeaderCloseButton onPress={onPress} color={color} />
+        )}
+
         {withConfirmation && (
           <ConfirmationModal
             isOpened={isConfirmationModalOpened}

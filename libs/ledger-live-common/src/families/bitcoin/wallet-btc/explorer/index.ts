@@ -7,6 +7,7 @@ import { blockchainBaseURL } from "../../../../explorer";
 type ExplorerParams = {
   batch_size?: number;
   from_height?: number;
+  to_height?: number;
   order?: "ascending" | "descending";
 };
 
@@ -66,14 +67,6 @@ class BitcoinLikeExplorer implements IExplorer {
       url: `${this.baseUrl}/fees`,
     });
     return data;
-  }
-
-  async getRelayFee(): Promise<number> {
-    const { data } = await network({
-      method: "GET",
-      url: `${this.baseUrl}/network`,
-    });
-    return parseFloat(data["relay_fee"]);
   }
 
   async getPendings(address: Address, nbMax = 1000): Promise<TX[]> {
@@ -149,15 +142,28 @@ class BitcoinLikeExplorer implements IExplorer {
   async getTxsSinceBlockheight(
     batchSize: number,
     address: Address,
-    startingBlockheight: number,
+    fromBlockheight: number,
+    toBlockheight: number | undefined,
     isPending: boolean,
   ): Promise<TX[]> {
     const params: ExplorerParams = {
       batch_size: batchSize,
     };
+    // when isPending = false,
+    // we use https://explorers.api.live.ledger.com/blockchain/v4/btc/address/{address}/txs?batch_size={batch_size}&from_height={fromBlockheight}&order=ascending&to_height={toBlockheight} to fetch confirmed txs
+    // when isPending = true,
+    // we use https://explorers.api.live.ledger.com/blockchain/v4/btc/address/{address}/txs/pending?batch_size={batch_size} to fetch pending txs
     if (!isPending) {
-      params.from_height = startingBlockheight;
+      // toBlockheight is height of the current block
+      // but in some cases, we don't set this value (e.g. integration tests), so toBlockheight = undefined and we skip this optimization
+      if (toBlockheight && fromBlockheight > toBlockheight) {
+        return [];
+      }
+      params.from_height = fromBlockheight;
       params.order = "ascending";
+      if (toBlockheight) {
+        params.to_height = toBlockheight;
+      }
     }
     const txs = isPending
       ? await this.fetchPendingTxs(address, params)

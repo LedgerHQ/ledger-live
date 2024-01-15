@@ -1,5 +1,17 @@
 # @actions/upload-images
 
+## 2.0.0
+
+### Major Changes
+
+- [#4872](https://github.com/LedgerHQ/ledger-live/pull/4872) [`b08629a4d8`](https://github.com/LedgerHQ/ledger-live/commit/b08629a4d8496c58c75a1503346f0c2d470f7a7e) Thanks [@valpinkman](https://github.com/valpinkman)! - switch provider to s3 instead of imgur
+
+## 2.0.0-next.0
+
+### Major Changes
+
+- [#4872](https://github.com/LedgerHQ/ledger-live/pull/4872) [`b08629a4d8`](https://github.com/LedgerHQ/ledger-live/commit/b08629a4d8496c58c75a1503346f0c2d470f7a7e) Thanks [@valpinkman](https://github.com/valpinkman)! - switch provider to s3 instead of imgur
+
 ## 1.0.2
 
 ### Patch Changes

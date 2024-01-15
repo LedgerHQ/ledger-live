@@ -21,6 +21,8 @@ import {
   AssetContentCard,
   LearnContentCard,
   NotificationContentCard,
+  CategoryContentCard,
+  BrazeContentCard,
 } from "../dynamicContent/types";
 import { ProtectStateNumberEnum } from "../components/ServicesWidget/types";
 import { ImageType } from "../components/CustomImage/types";
@@ -118,6 +120,10 @@ export type DynamicContentState = {
   learnCards: LearnContentCard[];
   /** Dynamic content cards displayed in Notification Center */
   notificationCards: NotificationContentCard[];
+  /** Dynamic content cards handling flexible categories throughout the app */
+  categoriesCards: CategoryContentCard[];
+  /** Dynamic content cards for Ledger Live Mobile */
+  mobileCards: BrazeContentCard[];
 };
 
 // === RATINGS STATE ===
@@ -234,6 +240,8 @@ export type SettingsState = {
     hash: string;
   };
   notifications: NotificationsSettings;
+  /** True if user never clicked on the AllowNotifications button in the notifications settings */
+  neverClickedOnAllowNotificationsButton: boolean;
   walletTabNavigatorLastVisitedTab: keyof WalletTabNavigatorStackParamList;
   overriddenFeatureFlags: { [key in FeatureId]?: Feature | undefined };
   featureFlagsBannerVisible: boolean;

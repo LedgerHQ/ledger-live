@@ -40,7 +40,9 @@ const LangSwitcher = () => {
   }, [i18n, language]);
 
   const changeLanguage = useCallback(
-    ({ value }: typeof currentLanguage) => {
+    (l: typeof currentLanguage | null) => {
+      if (!l) return;
+      const { value } = l;
       dispatch(setLanguage(value));
     },
     [dispatch],
@@ -56,7 +58,6 @@ const LangSwitcher = () => {
       label=""
       value={currentLanguage}
       options={options}
-      // @ts-expect-error Dropdown being stubborn
       onChange={changeLanguage}
       styles={styles}
     />

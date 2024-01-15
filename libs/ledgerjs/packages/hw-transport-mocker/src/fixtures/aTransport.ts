@@ -45,6 +45,7 @@ export const aTransportBuilder = (props?: Partial<Transport>): Transport => {
     decorateAppAPIMethods: jest.fn(),
     decorateAppAPIMethod: jest.fn(),
     setTraceContext: jest.fn(),
+    updateTraceContext: jest.fn(),
     getTraceContext: jest.fn(),
     ...props,
   };

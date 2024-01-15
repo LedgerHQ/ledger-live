@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
 import { getAccountBannerState } from "@ledgerhq/live-common/families/cosmos/banner";
 import { canDelegate } from "@ledgerhq/live-common/families/cosmos/logic";
 import { AccountBanner } from "~/renderer/screens/account/AccountBanner";
@@ -10,9 +10,12 @@ import { openModal } from "~/renderer/actions/modals";
 import { useDispatch } from "react-redux";
 import { track } from "~/renderer/analytics/segment";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { urls } from "~/config/urls";
 
 const StakeBanner: React.FC<{ account: CosmosAccount }> = ({ account }) => {
   const dispatch = useDispatch();
+  const stakingUrl = useLocalizedUrl(urls.stakingCosmos);
   const { t } = useTranslation();
   const stakeAccountBanner = useFeature("stakeAccountBanner");
   const stakeAccountBannerParams: StakeAccountBannerParams | null =
@@ -73,7 +76,7 @@ const StakeBanner: React.FC<{ account: CosmosAccount }> = ({ account }) => {
       onClick={onClick}
       display={display}
       linkText={t("account.banner.delegation.linkText")}
-      linkUrl={"https://www.ledger.com/staking/ledger-node/cosmos"}
+      linkUrl={stakingUrl}
     />
   );
 };

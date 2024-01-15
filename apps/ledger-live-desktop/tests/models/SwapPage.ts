@@ -208,7 +208,7 @@ export class SwapPage {
 
   // TODO: pull this function out into a utility function so we can use it elsewhere
   async verifyHistoricalSwapsHaveLoadedFully() {
-    await this.page.waitForFunction(() => {
+    await this.page.waitForFunction(async () => {
       const swapHistoryRow = document.querySelector(".swap-history-row");
 
       let swapHistoryStyles;

@@ -11,25 +11,25 @@ import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import styled, { useTheme } from "styled-components/native";
 import { Flex } from "@ledgerhq/native-ui";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
-import { track, TrackScreen } from "../../analytics";
-import { accountScreenSelector } from "../../reducers/accounts";
-import PreventNativeBack from "../../components/PreventNativeBack";
-import SkipLock from "../../components/behaviour/SkipLock";
+import { track, TrackScreen } from "~/analytics";
+import { accountScreenSelector } from "~/reducers/accounts";
+import PreventNativeBack from "~/components/PreventNativeBack";
+import SkipLock from "~/components/behaviour/SkipLock";
 import logger from "../../logger";
-import { rejectionOp } from "../../logic/debugReject";
-import { ScreenName } from "../../const";
-import LText from "../../components/LText";
-import Button from "../../components/Button";
-import Animation from "../../components/Animation";
-import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
-import Illustration from "../../images/illustration/Illustration";
-import { urls } from "@utils/urls";
-import { ReceiveFundsStackParamList } from "../../components/RootNavigator/types/ReceiveFundsNavigator";
-import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import { rejectionOp } from "~/logic/debugReject";
+import { ScreenName } from "~/const";
+import LText from "~/components/LText";
+import Button from "~/components/Button";
+import Animation from "~/components/Animation";
+import { getDeviceAnimation } from "~/helpers/getDeviceAnimation";
+import Illustration from "~/images/illustration/Illustration";
+import { urls } from "~/utils/urls";
+import { ReceiveFundsStackParamList } from "~/components/RootNavigator/types/ReceiveFundsNavigator";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 
 const illustrations = {
-  dark: require("../../images/illustration/Dark/_080.png"),
-  light: require("../../images/illustration/Light/_080.png"),
+  dark: require("~/images/illustration/Dark/_080.png"),
+  light: require("~/images/illustration/Light/_080.png"),
 };
 
 type Props = {
@@ -67,7 +67,7 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
 
       sub.current = (
         mainAccount.id.startsWith("mock")
-          ? of({}).pipe(delay(1000), rejectionOp())
+          ? of({}).pipe(delay(5000), rejectionOp())
           : getAccountBridge(mainAccount).receive(mainAccount, {
               deviceId: device.deviceId,
               verify: true,
@@ -174,14 +174,14 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
       ) : (
         <Flex flex={1} alignItems="center" justifyContent="center" p={6}>
           <TrackScreen category="Deposit" name="Verify Address" />
-          <LText variant="h4" textAlign="center" mb={6}>
+          <LText variant="h4" textAlign="center" mb={6} testID={"receive-verifyAddress-title"}>
             {t("transfer.receive.verifyAddress.title")}
           </LText>
           <LText variant="body" color="neutral.c70" textAlign="center">
             {t("transfer.receive.verifyAddress.subtitle")}
           </LText>
           <Flex mt={10} bg={"neutral.c30"} borderRadius={8} p={6} mx={6}>
-            <LText semiBold textAlign="center">
+            <LText semiBold textAlign="center" testID={"receive-verifyAddress-freshAdress"}>
               {mainAccount.freshAddress}
             </LText>
           </Flex>

@@ -6,8 +6,8 @@ import styled, { useTheme } from "styled-components/native";
 
 import Touchable from "../Touchable";
 
-import LedgerRecoverLogoLight from "../../images/ledger_recover_light.png";
-import LedgerRecoverBackground from "../../images/ledger_recover_card_background.png";
+import LedgerRecoverLogoLight from "~/images/ledger_recover_light.png";
+import LedgerRecoverBackground from "~/images/ledger_recover_card_background.png";
 import { useProtect } from "./Protect/useProtect";
 
 function ServicesWidget() {
@@ -60,7 +60,7 @@ function ServicesWidget() {
         {t("servicesWidget.recover.desc")}
       </Text>
 
-      <Button type="main" onPress={onClickFreeTrial} style={{ alignSelf: "flex-start" }}>
+      <Button type="main" onPress={onClickFreeTrial} style={{ alignSelf: "flex-start" }} mb={8}>
         <Text variant="body" fontWeight="semiBold" color="neutral.c00">
           {t("servicesWidget.recover.cta")}
         </Text>

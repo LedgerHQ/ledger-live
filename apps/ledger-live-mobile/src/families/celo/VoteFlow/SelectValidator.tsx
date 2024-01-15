@@ -5,13 +5,13 @@ import { FlatList, StyleSheet, View, SafeAreaView, ListRenderItem } from "react-
 import { useSelector } from "react-redux";
 import { CeloValidatorGroup } from "@ledgerhq/live-common/families/celo/types";
 import { useValidatorGroups } from "@ledgerhq/live-common/families/celo/react";
-import { TrackScreen } from "../../../analytics";
-import { ScreenName } from "../../../const";
-import { accountScreenSelector } from "../../../reducers/accounts";
+import { TrackScreen } from "~/analytics";
+import { ScreenName } from "~/const";
+import { accountScreenSelector } from "~/reducers/accounts";
 import ValidatorHead from "../ValidatorHead";
 import ValidatorRow from "../ValidatorRow";
 import SelectValidatorSearchBox from "../../tron/VoteFlow/01-SelectValidator/SearchBox";
-import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { CeloVoteFlowParamList } from "./types";
 
 type Props = StackNavigatorProps<CeloVoteFlowParamList, ScreenName.CeloVoteValidatorSelect>;

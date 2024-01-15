@@ -70,7 +70,7 @@ export function StepDelegationFooter({
   invariant(account, "account required");
   const { errors } = status;
   const canNext = !bridgePending && !errors.amount && transaction;
-  const displayError = errors.amount?.message === "CardanoNotEnoughFunds" ? errors.amount : "";
+  const displayError = errors.amount?.message ? errors.amount : "";
 
   return (
     <Box horizontal alignItems="center" flow={2} grow>

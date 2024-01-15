@@ -9,7 +9,7 @@ import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import { WarningMedium } from "@ledgerhq/native-ui/assets/icons";
 
 import styled from "styled-components/native";
-import ByteSize from "../../../components/ByteSize";
+import ByteSize from "~/components/ByteSize";
 import StorageBarItem from "./StorageBarItem";
 
 type Props = {

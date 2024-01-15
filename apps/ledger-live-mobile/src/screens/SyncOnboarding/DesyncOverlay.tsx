@@ -3,7 +3,7 @@ import { Flex, IconsLegacy, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import styled, { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { TrackScreen } from "../../analytics";
+import { TrackScreen } from "~/analytics";
 
 type DelayProps = {
   isOpen: boolean;

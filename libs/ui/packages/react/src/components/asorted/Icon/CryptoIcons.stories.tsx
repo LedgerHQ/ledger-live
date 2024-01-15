@@ -67,7 +67,6 @@ const Story = {
     size: {
       type: "number",
       description: "Icon size for preview",
-      defaultValue: 32,
     },
     color: {
       type: "string",
@@ -76,7 +75,6 @@ const Story = {
     },
     name: {
       type: "enum",
-      defaultValue: "BTC",
       description: "[Only for single icon], Icon name",
       control: {
         options: Object.keys(cryptoIcons),
@@ -88,18 +86,22 @@ const Story = {
     circleIcon: {
       type: "boolean",
       description: "if icon is in a circle or not",
-      defaultValue: false,
     },
     disabled: {
       type: "boolean",
       description: "if icon is in a disabled or not",
-      defaultValue: false,
     },
     tokenIcon: {
       type: "string",
       description: "ref to the token icon to show as a sub icon",
-      defaultValue: "",
     },
+  },
+  args: {
+    size: 32,
+    name: "BTC",
+    circleIcon: false,
+    disabled: false,
+    tokenIcon: "",
   },
   parameters: {
     docs: {

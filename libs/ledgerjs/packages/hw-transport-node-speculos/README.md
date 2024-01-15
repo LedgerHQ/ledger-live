@@ -36,7 +36,7 @@ async function exampleAdvanced() {
 
 ### With ledger-live CLI
 
-It's working with SPECULOS_APDU_PORT and SPECULOS_HOST envs.
+It's working with SPECULOS\_APDU\_PORT and SPECULOS\_HOST envs.
 
 ```sh
 SPECULOS_APDU_PORT=40000 ledger-live sync -c btc
@@ -76,10 +76,10 @@ Type: {apduPort: [number](https://developer.mozilla.org/docs/Web/JavaScript/Refe
 
 #### Properties
 
-*   `apduPort` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
-*   `buttonPort` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?** 
-*   `automationPort` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?** 
-*   `host` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?** 
+*   `apduPort` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
+*   `buttonPort` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?**&#x20;
+*   `automationPort` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?**&#x20;
+*   `host` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?**&#x20;
 
 ### SpeculosTransport
 
@@ -89,8 +89,8 @@ Speculos TCP transport implementation
 
 #### Parameters
 
-*   `apduSocket` **net.Socket** 
-*   `opts` **[SpeculosTransportOpts](#speculostransportopts)** 
+*   `apduSocket` **net.Socket**&#x20;
+*   `opts` **[SpeculosTransportOpts](#speculostransportopts)**&#x20;
 
 #### Examples
 
@@ -108,14 +108,14 @@ typically "Rr" would press and release the right button
 
 ##### Parameters
 
-*   `command` **any** 
+*   `command` **any**&#x20;
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<void>** 
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<void>**&#x20;
 
 #### open
 
 ##### Parameters
 
-*   `opts` **[SpeculosTransportOpts](#speculostransportopts)** 
+*   `opts` **[SpeculosTransportOpts](#speculostransportopts)**&#x20;
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[SpeculosTransport](#speculostransport)>** 
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[SpeculosTransport](#speculostransport)>**&#x20;

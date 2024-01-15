@@ -40,35 +40,43 @@ const Story = {
     weight: {
       type: "enum",
       description: "Weight (Deprecated)",
-      defaultValue: "Medium",
-      control: {
-        options: ["Medium"],
-        control: {
-          type: "select",
-        },
+      options: ["Medium"],
+      control: { type: "select" },
+      table: {
+        type: { summary: "enum" },
+        defaultValue: { summary: "Medium" },
       },
     },
     size: {
       type: "number",
       description: "Icon size for preview",
-      defaultValue: 32,
+      table: {
+        type: { summary: "number" },
+        defaultValue: { summary: "32" },
+      },
     },
     color: {
       type: "string",
-      description: "Color",
-      control: { control: "color" },
+      description: "Icon color",
+      table: {
+        type: { summary: "string" },
+        defaultValue: { summary: "theme.colors.neutral.c100" },
+      },
     },
     name: {
       type: "enum",
-      defaultValue: "Activity",
-      description: "[Only for single icon], Icon name",
-      control: {
-        options: iconNames,
-        control: {
-          type: "select",
-        },
+      description: "Icon name",
+      options: iconNames,
+      control: { type: "select" },
+      table: {
+        type: { summary: "enum" },
       },
     },
+  },
+  args: {
+    weight: "Medium",
+    size: 32,
+    name: "Activity",
   },
 };
 export default Story;
@@ -133,5 +141,5 @@ const IconTemplate = (args: IconProps) => {
   return <Icon {...args} color={color} />;
 };
 
-export const List = ListTemplate.bind({});
 export const SingleIcon = IconTemplate.bind({});
+export const List = ListTemplate.bind({});

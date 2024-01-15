@@ -6,7 +6,7 @@ import { useTheme, useNavigation } from "@react-navigation/native";
 import { NFTMetadata, ProtoNFT } from "@ledgerhq/types-live";
 import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
 import { useTranslation } from "react-i18next";
-import { NavigatorName, ScreenName } from "../../const";
+import { NavigatorName, ScreenName } from "~/const";
 import Skeleton from "../Skeleton";
 import NftMedia from "./NftMedia";
 import LText from "../LText";

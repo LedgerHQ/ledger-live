@@ -1,10 +1,10 @@
 import React from "react";
 import { DefaultTheme } from "styled-components/native";
-import { NavigationHeaderCloseButtonAdvanced } from "../components/NavigationHeaderCloseButton";
-import HeaderTitle, { Props as HeaderTitleProps } from "../components/HeaderTitle";
+import { NavigationHeaderCloseButtonAdvanced } from "~/components/NavigationHeaderCloseButton";
+import HeaderTitle, { Props as HeaderTitleProps } from "~/components/HeaderTitle";
 import styles from "./styles";
 import { Theme } from "../colors";
-import { NavigationHeaderBackImage } from "../components/NavigationHeaderBackButton";
+import { NavigationHeaderBackImage } from "~/components/NavigationHeaderBackButton";
 
 export const defaultNavigationOptions = {
   headerStyle: styles.header,

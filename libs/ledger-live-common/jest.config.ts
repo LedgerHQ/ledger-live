@@ -8,13 +8,16 @@ const testPathIgnorePatterns = [
   "cli/",
   "test-helpers/",
 ];
+
 let testRegex = "(/__tests__/.*|(\\.|/)(test|spec))\\.[jt]sx?$";
 if (process.env.IGNORE_INTEGRATION_TESTS) {
   testPathIgnorePatterns.push(".*\\.integration\\.test\\.[tj]s");
 }
+
 if (process.env.ONLY_INTEGRATION_TESTS) {
   testRegex = "(/__tests__/.*|(\\.|/)integration\\.(test|spec))\\.[jt]sx?$";
 }
+
 const reporters = ["default"];
 if (process.env.CI) {
   reporters.push("github-actions");
@@ -39,6 +42,15 @@ const defaultConfig = {
   testRegex,
   transformIgnorePatterns: ["/node_modules/(?!|@babel/runtime/helpers/esm/)"],
   moduleDirectories: ["node_modules", "cli/node_modules"],
+  /**
+   * Added because of this error happening when using toMatchInlineSnapshot:
+   *     TypeError: prettier.resolveConfig.sync is not a function
+
+      at runPrettier (../../node_modules/.pnpm/jest-snapshot@28.1.3/node_modules/jest-snapshot/build/InlineSnapshots.js:319:30)
+   * 
+   * See: https://github.com/jestjs/jest/issues/14305#issuecomment-1627346697   
+   */
+  prettierPath: null,
 };
 
 export default {

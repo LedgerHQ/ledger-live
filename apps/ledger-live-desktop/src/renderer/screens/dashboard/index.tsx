@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { isAddressPoisoningOperation } from "@ledgerhq/live-common/operation";
 import Box from "~/renderer/components/Box";
 import { accountsSelector, currenciesSelector } from "~/renderer/reducers/accounts";
@@ -18,6 +18,7 @@ import OperationsList from "~/renderer/components/OperationsList";
 import Carousel from "~/renderer/components/Carousel";
 import AssetDistribution from "./AssetDistribution";
 import ClearCacheBanner from "~/renderer/components/ClearCacheBanner";
+import RecoverBanner from "~/renderer/components/RecoverBanner/RecoverBanner";
 import { usePostOnboardingEntryPointVisibleOnWallet } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { useFilterTokenOperationsZeroAmount } from "~/renderer/actions/settings";
 import { useSelector } from "react-redux";
@@ -55,7 +56,7 @@ export default function DashboardPage() {
   );
   const isPostOnboardingBannerVisible = usePostOnboardingEntryPointVisibleOnWallet();
 
-  const showCarousel = hasInstalledApps && totalAccounts > 0;
+  const showCarousel = hasInstalledApps && totalAccounts >= 0;
   useRefreshAccountsOrderingEffect({
     onMount: true,
   });
@@ -81,6 +82,7 @@ export default function DashboardPage() {
         <CurrencyDownStatusAlert currencies={currencies} hideStatusIncidents />
       </TopBannerContainer>
       {showCarousel ? <Carousel /> : null}
+      <RecoverBanner />
       {isPostOnboardingBannerVisible && <PostOnboardingHubBanner />}
       <FeaturedButtons />
       <TrackPage

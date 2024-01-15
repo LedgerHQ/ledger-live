@@ -3,7 +3,7 @@ import { AppState, AppStateStatus } from "react-native";
 import { useNetInfo } from "@react-native-community/netinfo";
 import { Countervalues, useCountervaluesPolling } from "@ledgerhq/live-common/countervalues/react";
 import { CounterValuesStateRaw } from "@ledgerhq/live-common/countervalues/types";
-import { useUserSettings } from "../actions/general";
+import { useUserSettings } from "~/actions/general";
 
 export default function CountervaluesProvider({
   children,

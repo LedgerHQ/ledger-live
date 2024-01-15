@@ -18,6 +18,7 @@ import type {
   SignOperationEvent,
 } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+
 type State = {
   signedOperation: SignedOperation | null | undefined;
   deviceSignatureRequested: boolean;
@@ -80,7 +81,6 @@ const reducer = (state: State, e: Event): State => {
     case "error": {
       const { error } = e;
       const transactionSignError =
-        // @ts-expect-error TODO: fix this
         error instanceof TransportStatusError && error.statusCode === 0x6985
           ? new TransactionRefusedOnDevice()
           : error;

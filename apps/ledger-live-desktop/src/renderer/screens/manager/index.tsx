@@ -21,11 +21,11 @@ const Manager = () => {
   const [result, setResult] = useState<Result | null>(null);
   const [hasReset, setHasReset] = useState(false);
   const onReset = useCallback(
-    (apps?: string[] | null, firmwareUpdateOpened?: boolean | null) => {
+    (apps?: string[] | null) => {
       setRestoreApps(apps ?? []);
       setResult(null);
       setDrawer(); // Nb prevent zombie flows.
-      if (!firmwareUpdateOpened) setHasReset(true);
+      setHasReset(true);
     },
     [setDrawer],
   );

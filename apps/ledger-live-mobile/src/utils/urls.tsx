@@ -60,6 +60,8 @@ export const urls = {
   erc20:
     "https://support.ledger.com/hc/en-us/articles/4404389645329-Manage-ERC20-tokens?docs=true&utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=receive_erc20",
   errors: {
+    EthAppPleaseEnableContractData:
+      "https://support.ledger.com/hc/en-us/articles/4405481324433?docs=true",
     NotEnoughGas: "https://support.ledger.com/hc/en-us/articles/9096370252573?support=true",
     PeerRemovedPairing:
       "https://support.ledger.com/hc/en-us/articles/360025864773-Fix-Bluetooth-pairing-issues?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=pairing_failed",
@@ -96,6 +98,7 @@ export const urls = {
     asa: "https://support.ledger.com/hc/en-us/articles/360015896040?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=receive_account_flow",
     bep20:
       "https://support.ledger.com/hc/en-us/articles/4412962166289-Manage-BEP20-tokens?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=receive_account_flow_bep20",
+    vip180: "https://support.ledger.com/hc/en-us/articles/360007655934-VeChain-VET-?support=true",
   },
   celoStakingRewards:
     "https://support.ledger.com/hc/en-us/articles/360020499920-Celo-CELO-?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=celo&docs=true",
@@ -163,7 +166,7 @@ export const urls = {
     website: "https://elrond.com",
   },
   cryptoOrg: {
-    website: "https://crypto.org",
+    website: "https://cronos-pos.org",
   },
   solana: {
     supportPage: "https://support.ledger.com",
@@ -219,7 +222,7 @@ export const urls = {
     myLedger: "ledgerlive://myledger",
   },
   domainService: "https://support.ledger.com/hc/articles/9710787581469?docs=true",
-  editEthTx: {
+  editEvmTx: {
     learnMore: "https://support.ledger.com/hc/articles/9756122596765?support=true",
   },
   genuineCheck: {

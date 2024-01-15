@@ -20,9 +20,9 @@ import { ConsoleLogger, InMemoryLogger, isALog } from "./logger";
 
 const LEDGER_CONFIG_DIRECTORY = app.getPath("userData");
 const HOME_DIRECTORY = app.getPath("home");
-let sentryEnabled: boolean | null = null;
-let userId: string | null = null;
-let sentryTags: string | null = null;
+let sentryEnabled: boolean | undefined;
+let userId: string | undefined;
+let sentryTags: string | undefined;
 
 const internal = new InternalProcess({
   timeout: 3000,
@@ -31,7 +31,7 @@ const internal = new InternalProcess({
 const inMemoryLogger = InMemoryLogger.getLogger();
 const consoleLogger = ConsoleLogger.getLogger();
 
-export function getSentryEnabled(): boolean | null {
+export function getSentryEnabled(): boolean | undefined {
   return sentryEnabled;
 }
 
@@ -49,12 +49,20 @@ ipcMain.handle("set-sentry-tags", (event, tags) => {
   });
 });
 
+function serializedEnvs(envs: Record<string, unknown>): Record<string, string> {
+  const serialized: Record<string, string> = {};
+  for (const key in envs) {
+    const value = envs[key];
+    serialized[key] = String(value);
+  }
+  return serialized;
+}
+
 const spawnCoreProcess = () => {
   const env = {
-    ...getAllEnvs(),
-
+    ...serializedEnvs(getAllEnvs()),
     ...process.env,
-    IS_INTERNAL_PROCESS: 1,
+    IS_INTERNAL_PROCESS: "1",
     LEDGER_CONFIG_DIRECTORY,
     HOME_DIRECTORY,
     INITIAL_SENTRY_TAGS: sentryTags,
@@ -64,7 +72,6 @@ const spawnCoreProcess = () => {
 
   internal.configure(path.resolve(__dirname, "main.bundle.js"), [], {
     silent: true,
-    // @ts-expect-error Some envs are not typed as strings…
     env,
     // Passes a list of env variables set on `LEDGER_INTERNAL_ARGS` to the internal thread
     execArgv: (process.env.LEDGER_INTERNAL_ARGS || "").split(/[ ]+/).filter(Boolean),

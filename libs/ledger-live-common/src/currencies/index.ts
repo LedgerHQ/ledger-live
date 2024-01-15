@@ -35,13 +35,7 @@ import {
 } from "@ledgerhq/coin-framework/currencies/index";
 import { getCurrencyColor, ColorableCurrency } from "./color";
 import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/parseCurrencyUnit";
-import {
-  sortByMarketcap,
-  getMarketcapTickers,
-  useMarketcapTickers,
-  currenciesByMarketcap,
-  useCurrenciesByMarketcap,
-} from "./sortByMarketcap";
+import { sortCurrenciesByIds, currenciesByMarketcap } from "./sortByMarketcap";
 
 export * from "@ledgerhq/coin-framework/currencies/BigNumberToLocaleString";
 export * from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
@@ -49,11 +43,8 @@ export * from "@ledgerhq/coin-framework/currencies/support";
 export * from "./helpers";
 
 export {
-  sortByMarketcap,
-  getMarketcapTickers,
-  useMarketcapTickers,
+  sortCurrenciesByIds,
   currenciesByMarketcap,
-  useCurrenciesByMarketcap,
   listFiatCurrencies,
   listCryptoCurrencies,
   getFiatCurrencyByTicker,

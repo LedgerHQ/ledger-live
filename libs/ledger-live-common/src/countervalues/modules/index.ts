@@ -123,10 +123,3 @@ export const resolveTrackingPair = (pair: {
     pair,
   );
 };
-
-export const isCountervalueEnabled = (currency: Currency): boolean => {
-  return (
-    !currency.disableCountervalue ||
-    modules.some(module => module.handleCountervalue && module.handleCountervalue(currency))
-  );
-};

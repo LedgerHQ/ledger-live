@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -17,11 +17,16 @@ import { first } from "rxjs/operators";
 import { Subscription, from } from "rxjs";
 import {
   OnboardingState,
+  OnboardingStep,
   extractOnboardingState,
 } from "@ledgerhq/live-common/hw/extractOnboardingState";
-import { FirmwareInfo } from "@ledgerhq/types-live";
+import { FirmwareInfo, SeedPhraseType } from "@ledgerhq/types-live";
 import { renderError } from "../DeviceAction/rendering";
-import { useDynamicUrl } from "~/renderer/terms";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { urls } from "~/config/urls";
+import { isDeviceNotOnboardedError } from "../DeviceAction/utils";
+import connectDeviceImage from "~/renderer/images/connect-device.svg";
+import Image from "../Image";
 
 const RecoverRestore = () => {
   const { t } = useTranslation();
@@ -31,7 +36,7 @@ const RecoverRestore = () => {
   const [state, setState] = useState<OnboardingState>();
   const [error, setError] = useState<Error>();
   const { setDeviceModelId } = useContext(OnboardingContext);
-  const buyNew = useDynamicUrl("buyNew");
+  const buyNew = useLocalizedUrl(urls.buyNew);
   const sub = useRef<Subscription>();
   const recoverDiscoverPath = useMemo(() => {
     return `/recover/${recoverFF?.params?.protectId}?redirectTo=disclaimerRestore`;
@@ -53,7 +58,17 @@ const RecoverRestore = () => {
         }
       },
       error: (error: Error) => {
-        setError(error);
+        if (isDeviceNotOnboardedError(error)) {
+          setState({
+            isOnboarded: false,
+            isInRecoveryMode: false,
+            seedPhraseType: SeedPhraseType.TwentyFour,
+            currentOnboardingStep: OnboardingStep.NewDevice,
+            currentSeedWordIndex: 0,
+          });
+        } else {
+          setError(error);
+        }
       },
     });
   }, []);
@@ -82,6 +97,7 @@ const RecoverRestore = () => {
     if (state && !state.isOnboarded) {
       switch (currentDevice?.modelId) {
         case DeviceModelId.nanoX:
+        case DeviceModelId.nanoSP:
           setDeviceModelId(currentDevice.modelId);
           history.push({
             pathname: `/onboarding/${UseCase.recover}/${ScreenId.pairMyNano}`,
@@ -137,6 +153,7 @@ const RecoverRestore = () => {
       <Flex position="relative" height="100%" width="100%" flexDirection="column">
         <OnboardingNavHeader onClickPrevious={() => history.push("/onboarding/select-device")} />
         <Flex flex={1} alignItems="center" justifyContent="center" flexDirection="column">
+          <Image resource={connectDeviceImage} alt="connect your device" />
           <Text
             variant="h3Inter"
             color="neutral.c100"

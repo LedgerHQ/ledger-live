@@ -3,10 +3,10 @@ import { Flex } from "@ledgerhq/native-ui";
 import React, { useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useStartPostOnboardingCallback } from "@ledgerhq/live-common/postOnboarding/hooks/index";
-import PostOnboardingEntryPointCard from "../../components/PostOnboarding/PostOnboardingEntryPointCard";
-import SettingsRow from "../../components/SettingsRow";
-import { useNavigateToPostOnboardingHubCallback } from "../../logic/postOnboarding/useNavigateToPostOnboardingHubCallback";
-import { NavigatorName } from "../../const";
+import PostOnboardingEntryPointCard from "~/components/PostOnboarding/PostOnboardingEntryPointCard";
+import SettingsRow from "~/components/SettingsRow";
+import { useNavigateToPostOnboardingHubCallback } from "~/logic/postOnboarding/useNavigateToPostOnboardingHubCallback";
+import { NavigatorName } from "~/const";
 
 export default () => {
   const navigation = useNavigation();

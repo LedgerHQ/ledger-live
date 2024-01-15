@@ -3,6 +3,7 @@ module.exports = {
     browser: true,
     es6: true,
   },
+  plugins: ["import"],
   overrides: [
     {
       files: ["src/**/*.test.{ts,tsx}"],
@@ -23,5 +24,6 @@ module.exports = {
     "no-console": ["error", { allow: ["warn", "error"] }],
     "@typescript-eslint/no-empty-function": "off",
     "@typescript-eslint/explicit-function-return-type": "error",
+    "import/order": ["error"],
   },
 };

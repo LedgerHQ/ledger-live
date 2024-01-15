@@ -10,8 +10,8 @@ import { DomainServiceResolution } from "../../types";
 jest.mock("axios");
 jest.mock("../../resolvers");
 
-const mockedResolvedDomain = jest.mocked(resolveDomain, true);
-const mockedResolvedAddress = jest.mocked(resolveAddress, true);
+const mockedResolvedDomain = jest.mocked(resolveDomain);
+const mockedResolvedAddress = jest.mocked(resolveAddress);
 
 const resolutionKeys: (keyof DomainServiceResolution)[] = ["registry", "address", "domain", "type"];
 

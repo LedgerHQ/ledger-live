@@ -5,31 +5,26 @@ import { Trans } from "react-i18next";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { BluetoothRequired } from "@ledgerhq/errors";
 import { Result } from "@ledgerhq/live-common/hw/actions/manager";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { Flex, Text } from "@ledgerhq/native-ui";
-
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { ScreenName } from "../../const";
-import SelectDevice2, { SetHeaderOptionsRequest } from "../../components/SelectDevice2";
-import SelectDevice from "../../components/SelectDevice";
-import RemoveDeviceMenu from "../../components/SelectDevice2/RemoveDeviceMenu";
-import TrackScreen from "../../analytics/TrackScreen";
-import { track } from "../../analytics";
-import NavigationScrollView from "../../components/NavigationScrollView";
-import DeviceActionModal from "../../components/DeviceActionModal";
+import TabBarSafeAreaView from "~/components/TabBar/TabBarSafeAreaView";
+import { ScreenName } from "~/const";
+import SelectDevice2, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
+import SelectDevice from "~/components/SelectDevice";
+import RemoveDeviceMenu from "~/components/SelectDevice2/RemoveDeviceMenu";
+import TrackScreen from "~/analytics/TrackScreen";
+import { track } from "~/analytics";
+import NavigationScrollView from "~/components/NavigationScrollView";
+import DeviceActionModal from "~/components/DeviceActionModal";
 import {
   BaseComposite,
   ReactNavigationHeaderOptions,
   StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
-import { ManagerNavigatorStackParamList } from "../../components/RootNavigator/types/ManagerNavigator";
-import ServicesWidget from "../../components/ServicesWidget";
+} from "~/components/RootNavigator/types/helpers";
+import { ManagerNavigatorStackParamList } from "~/components/RootNavigator/types/ManagerNavigator";
+import ServicesWidget from "~/components/ServicesWidget";
 
-import { TAB_BAR_SAFE_HEIGHT } from "../../components/TabBar/shared";
-
-import { useExperimental } from "../../experimental";
-import { HEIGHT as ExperimentalHeaderHeight } from "../Settings/Experimental/ExperimentalHeader";
-import { useManagerDeviceAction } from "../../hooks/deviceActions";
+import { useManagerDeviceAction } from "~/hooks/deviceActions";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<ManagerNavigatorStackParamList, ScreenName.Manager>
@@ -57,7 +52,6 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
   const navigation = useNavigation<NavigationProps["navigation"]>();
   const { params } = useRoute<NavigationProps["route"]>();
 
-  const isExperimental = useExperimental();
   const newDeviceSelectionFeatureFlag = useFeature("llmNewDeviceSelection");
 
   const onSelectDevice = (device?: Device) => {
@@ -131,23 +125,14 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
     [navigation],
   );
 
-  const insets = useSafeAreaInsets();
-
   if (!isFocused) return null;
 
   return (
-    <Flex
-      /**
-       * NB: not using SafeAreaView because it flickers during navigation
-       * https://github.com/th3rdwave/react-native-safe-area-context/issues/219
-       */
-      flex={1}
-      pt={insets.top + (isExperimental ? ExperimentalHeaderHeight : 0)}
-    >
+    <TabBarSafeAreaView>
       <TrackScreen category="Manager" name="ChooseDevice" />
       {!isHeaderOverridden ? (
-        <Flex px={16} mb={8}>
-          <Text mt={3} fontWeight="semiBold" variant="h4" testID="manager-title">
+        <Flex px={16} pb={8}>
+          <Text pt={3} fontWeight="semiBold" variant="h4" testID="manager-title">
             <Trans i18nKey="manager.title" />
           </Text>
         </Flex>
@@ -162,14 +147,10 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
             requestToSetHeaderOptions={requestToSetHeaderOptions}
             withMyLedgerTracking
             hasPostOnboardingEntryPointCard
-            paddingBottom={insets.bottom + TAB_BAR_SAFE_HEIGHT}
           />
         </Flex>
       ) : (
-        <NavigationScrollView
-          style={{ marginBottom: insets.bottom + TAB_BAR_SAFE_HEIGHT }}
-          contentContainerStyle={styles.scrollContainer}
-        >
+        <NavigationScrollView contentContainerStyle={styles.scrollContainer}>
           <SelectDevice
             usbOnly={params?.firmwareUpdate}
             autoSelectOnAdd
@@ -195,7 +176,7 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
         request={null}
         onError={onError}
       />
-    </Flex>
+    </TabBarSafeAreaView>
   );
 };
 

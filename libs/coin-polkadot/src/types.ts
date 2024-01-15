@@ -80,6 +80,7 @@ export type TransactionRaw = TransactionCommonRaw & {
   rewardDestination: string | null | undefined;
   numSlashingSpans: number | null | undefined;
 };
+
 export type PolkadotValidator = {
   address: string;
   identity: string;
@@ -91,6 +92,7 @@ export type PolkadotValidator = {
   isElected: boolean;
   isOversubscribed: boolean;
 };
+
 export type PolkadotNominationInfo = string;
 export type PolkadotStakingProgress = {
   activeEra: number;

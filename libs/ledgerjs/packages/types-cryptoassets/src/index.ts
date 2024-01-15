@@ -125,6 +125,8 @@ export type CryptoCurrencyId =
   | "bitcoin_testnet"
   | "ethereum_ropsten"
   | "ethereum_goerli"
+  | "ethereum_sepolia"
+  | "ethereum_holesky"
   | "stacks"
   | "crypto_org_croeseid"
   | "solana_testnet"
@@ -160,7 +162,10 @@ export type CryptoCurrencyId =
   | "base"
   | "base_goerli"
   | "casper"
-  | "neon_evm";
+  | "neon_evm"
+  | "lukso"
+  | "linea"
+  | "linea_goerli";
 
 export type LedgerExplorerId =
   | "btc"
@@ -190,6 +195,8 @@ export type LedgerExplorerId =
   | "eth"
   | "eth_ropsten"
   | "eth_goerli"
+  | "eth_sepolia"
+  | "eth_holesky"
   | "etc"
   | "matic"
   | "bnb";
@@ -223,8 +230,12 @@ type CurrencyCommon = {
   units: Unit[];
   // a shorter version of code using the symbol of the currency. like Ƀ . not all cryptocurrencies have a symbol
   symbol?: string;
-  // tells if countervalue need to be disabled (typically because colliding with other coins)
+  /*
+   * tells if countervalue need to be disabled (typically because colliding with other coins)
+   * @deprecated this field will soon be dropped. this is the API that drives this dynamically.
+   */
   disableCountervalue?: boolean;
+  // tells if countervalue need to be disabled (typically because colliding with other coins)
   delisted?: boolean;
   // keywords to be able to find currency from "obvious" terms
   keywords?: string[];

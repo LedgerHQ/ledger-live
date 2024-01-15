@@ -1,4 +1,5 @@
 import { getMessageProperties } from "@ledgerhq/coin-evm/logic";
+import AccountBodyHeader from "./AccountBodyHeader";
 import AccountFooter from "./AccountFooter";
 import accountHeaderManageActions from "./AccountHeaderManageActions";
 import sendAmountFields from "./SendAmountFields";
@@ -10,6 +11,7 @@ import operationDetails from "./operationDetails";
 import { EvmFamily } from "./types";
 
 const family: EvmFamily = {
+  AccountBodyHeader,
   AccountFooter,
   operationDetails,
   accountHeaderManageActions,

@@ -2,17 +2,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Flex } from "@ledgerhq/native-ui";
 import BleDevicePairingFlowComponent, {
   SetHeaderOptionsRequest,
-} from "../../../components/BleDevicePairingFlow";
+} from "~/components/BleDevicePairingFlow";
 import React, { useCallback } from "react";
 import { Device, DeviceModelId } from "@ledgerhq/types-devices";
-import { NavigatorName, ScreenName } from "../../../const";
-import {
-  RootComposite,
-  StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
-import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
+import { NavigatorName, ScreenName } from "~/const";
+import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import { useSelector } from "react-redux";
-import { hasCompletedOnboardingSelector } from "../../../reducers/settings";
+import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import { bleDevicePairingFlowHeaderOptions } from "../../BleDevicePairingFlow";
 
 export type Props = RootComposite<

@@ -1,73 +1,53 @@
-import React, { useEffect, useState } from "react";
-import { Platform } from "react-native";
+import React, { memo } from "react";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import {
   useRemoteLiveAppContext,
   useRemoteLiveAppManifest,
 } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+import TabBarSafeAreaView from "~/components/TabBar/TabBarSafeAreaView";
 import { useTheme } from "styled-components/native";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import TrackScreen from "../../../analytics/TrackScreen";
-import GenericErrorView from "../../../components/GenericErrorView";
-import { WebPTXPlayer } from "../../../components/WebPTXPlayer";
-import { EarnLiveAppNavigatorParamList } from "../../../components/RootNavigator/types/EarnLiveAppNavigator";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
-import { ScreenName } from "../../../const";
-import {
-  counterValueCurrencySelector,
-  discreetModeSelector,
-  languageSelector,
-} from "../../../reducers/settings";
+import TrackScreen from "~/analytics/TrackScreen";
+import GenericErrorView from "~/components/GenericErrorView";
+import { WebPTXPlayer } from "~/components/WebPTXPlayer";
+import { EarnLiveAppNavigatorParamList } from "~/components/RootNavigator/types/EarnLiveAppNavigator";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { ScreenName } from "~/const";
+import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
 import { useSelector } from "react-redux";
-import { MAIN_BUTTON_BOTTOM, MAIN_BUTTON_SIZE } from "../../../components/TabBar/shared";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import { useSettings } from "~/hooks";
 
 export type Props = StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenName.Earn>;
 
-const appManifestNotFoundError = new Error("App not found"); // FIXME move this elsewhere.
+const appManifestNotFoundError = new Error("Earn App not found");
 const DEFAULT_EARN_APP_ID = "earn";
 
-export function EarnScreen({ route }: Props) {
+export const EarnScreen = memo(Earn);
+
+function Earn({ route }: Props) {
   const { theme } = useTheme();
-  const [manifest, setManifest] = useState<LiveAppManifest | undefined>();
-  const language = useSelector(languageSelector);
+  const { language } = useSettings();
   const { ticker: currencyTicker } = useSelector(counterValueCurrencySelector);
   const discreet = useSelector(discreetModeSelector);
-  const insets = useSafeAreaInsets();
-
   const { platform: appId, ...params } = route.params || {};
   const searchParams = route.path
     ? new URL("ledgerlive://" + route.path).searchParams
     : new URLSearchParams();
 
-  const localManifest = useLocalLiveAppManifest(DEFAULT_EARN_APP_ID);
-  const remoteManifest = useRemoteLiveAppManifest(DEFAULT_EARN_APP_ID);
+  const localManifest: LiveAppManifest | undefined = useLocalLiveAppManifest(DEFAULT_EARN_APP_ID);
+  const remoteManifest: LiveAppManifest | undefined = useRemoteLiveAppManifest(DEFAULT_EARN_APP_ID);
   const { state: remoteLiveAppState } = useRemoteLiveAppContext();
 
-  // To avoid manifest updating to undefined when previously defined
-  useEffect(() => {
-    const appManifest = localManifest || remoteManifest;
+  const manifest: LiveAppManifest | undefined = !localManifest ? remoteManifest : localManifest;
 
-    // Perform a simple diff check
-    if (appManifest && JSON.stringify(appManifest) !== JSON.stringify(manifest)) {
-      setManifest(appManifest);
-    }
-  }, [localManifest, remoteManifest, manifest]);
-
-  const isAndroid = Platform.OS === "android";
+  if (!remoteLiveAppState.isLoading && !manifest) {
+    // We want to track occurrences of this error in Sentry
+    console.error(appManifestNotFoundError);
+  }
 
   return manifest ? (
-    <Flex
-      /**
-       * NB: not using SafeAreaView because it flickers during navigation
-       * https://github.com/th3rdwave/react-native-safe-area-context/issues/219
-       */
-      flex={1}
-      pt={insets.top}
-      pb={isAndroid ? MAIN_BUTTON_BOTTOM : MAIN_BUTTON_SIZE} // iOS calculates differently
-      backgroundColor={"background.main"} // Earn app bg color
-    >
+    <TabBarSafeAreaView>
       <TrackScreen category="EarnDashboard" name="Earn" />
       <WebPTXPlayer
         manifest={manifest}
@@ -82,7 +62,7 @@ export function EarnScreen({ route }: Props) {
           ...Object.fromEntries(searchParams.entries()),
         }}
       />
-    </Flex>
+    </TabBarSafeAreaView>
   ) : (
     <Flex flex={1} p={10} justifyContent="center" alignItems="center">
       {remoteLiveAppState.isLoading ? (

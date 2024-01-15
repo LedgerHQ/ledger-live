@@ -3,9 +3,9 @@ import { useTranslation } from "react-i18next";
 import { isEnvDefault } from "@ledgerhq/live-env";
 
 import { Alert } from "@ledgerhq/native-ui";
-import { TrackScreen } from "../../../analytics";
+import { TrackScreen } from "~/analytics";
 import { experimentalFeatures } from "../../../experimental";
-import KeyboardView from "../../../components/KeyboardView";
+import KeyboardView from "~/components/KeyboardView";
 import FeatureRow from "./FeatureRow";
 import SettingsNavigationScrollView from "../SettingsNavigationScrollView";
 

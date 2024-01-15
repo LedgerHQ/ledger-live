@@ -8,4 +8,4 @@ export * from "./useToState";
 export * from "./usePageState";
 export * from "./v5";
 export * from "./useSwapableAccounts";
-export * from "./useIsSwapLiveApp";
+export * from "./live-app-migration/useIsSwapLiveApp";

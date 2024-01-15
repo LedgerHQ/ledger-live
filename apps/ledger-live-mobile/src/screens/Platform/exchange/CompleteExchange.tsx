@@ -2,15 +2,12 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import DeviceActionModal from "../../../components/DeviceActionModal";
-import { useBroadcast } from "../../../components/useBroadcast";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
-import { PlatformExchangeNavigatorParamList } from "../../../components/RootNavigator/types/PlatformExchangeNavigator";
-import { ScreenName } from "../../../const";
-import {
-  useTransactionDeviceAction,
-  useCompleteExchangeDeviceAction,
-} from "../../../hooks/deviceActions";
+import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
+import DeviceActionModal from "~/components/DeviceActionModal";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { PlatformExchangeNavigatorParamList } from "~/components/RootNavigator/types/PlatformExchangeNavigator";
+import { ScreenName } from "~/const";
+import { useTransactionDeviceAction, useCompleteExchangeDeviceAction } from "~/hooks/deviceActions";
 import { SignedOperation } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 

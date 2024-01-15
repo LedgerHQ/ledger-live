@@ -32,6 +32,7 @@ type BodyContentProps = {
     signature: string;
     exchangeType: number;
     rateType?: number;
+    amountExpectedTo?: number;
   };
   onOperationSigned: (value: SignedOperation) => void;
   onTransactionComplete: (value: Transaction) => void;

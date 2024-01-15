@@ -2,7 +2,7 @@ import { Button, IconsLegacy } from "@ledgerhq/native-ui";
 import { ModalHeader } from "@ledgerhq/native-ui/components/Layout/Modals/BaseModal/index";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import QueuedDrawer from "../../../../../components/QueuedDrawer";
+import QueuedDrawer from "~/components/QueuedDrawer";
 
 const OnboardingRecoveryPhraseWarning = ({
   open,
@@ -24,7 +24,13 @@ const OnboardingRecoveryPhraseWarning = ({
         description={t("onboarding.stepRecoveryPhrase.importRecoveryPhrase.warning.desc")}
       />
 
-      <Button type="main" size="large" onPress={onPress} mt={4}>
+      <Button
+        type="main"
+        size="large"
+        onPress={onPress}
+        mt={4}
+        testID="onboarding-importRecoveryPhrase-warning"
+      >
         {t("onboarding.stepRecoveryPhrase.importRecoveryPhrase.warning.cta")}
       </Button>
     </QueuedDrawer>

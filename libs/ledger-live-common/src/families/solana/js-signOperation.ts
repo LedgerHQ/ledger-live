@@ -62,7 +62,7 @@ export const signOperationWithAPI = (
       new Observable(subscriber => {
         const main = async () => {
           const [tx, signOnChainTransaction] = await buildTransactionWithAPI(
-            account,
+            account.freshAddress,
             transaction,
             await api(),
           );

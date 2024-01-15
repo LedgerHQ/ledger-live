@@ -1,5 +1,5 @@
-import { groupedFeatures } from "@ledgerhq/live-common/featureFlags/groupedFeatures";
-import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/FeatureFlagsContext";
+import { groupedFeatures } from "@ledgerhq/live-config/featureFlags/groupedFeatures";
+import { useFeatureFlags } from "@ledgerhq/live-config/featureFlags/FeatureFlagsContext";
 import { Divider, Flex, Link, Switch, Tag } from "@ledgerhq/native-ui";
 import { FeatureId } from "@ledgerhq/types-live";
 import React, { useCallback, useMemo, useState } from "react";

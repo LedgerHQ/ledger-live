@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Flex, Text, Switch } from "@ledgerhq/native-ui";
 import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
-import { useAnalytics } from "../../../analytics";
+import { useAnalytics } from "~/analytics";
 import { sharedSwapTracking } from "../utils";
 
 export function Max({ swapTx }: { swapTx: SwapTransactionType }) {

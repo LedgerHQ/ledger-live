@@ -12,6 +12,7 @@ import CounterValue from "~/renderer/components/CounterValue";
 import { getFeesCurrency, getFeesUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { Account, FeeStrategy } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
+import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 
 export type OnClickType = {
   amount: BigNumber;
@@ -28,16 +29,21 @@ type Props = {
     [x: string]: unknown;
   };
   suffixPerByte?: boolean;
+  status: TransactionStatus;
 };
 
-const FeesWrapper = styled(Box)<{ selected?: boolean; disabled?: boolean }>`
+const FeesWrapper = styled(Box)<{ selected?: boolean; disabled?: boolean; error: boolean }>`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
 
   border: ${p =>
     `1px solid ${
-      p.selected ? p.theme.colors.palette.primary.main : p.theme.colors.palette.divider
+      p.selected
+        ? p.error
+          ? p.theme.colors.palette.warning.c70
+          : p.theme.colors.palette.primary.main
+        : p.theme.colors.palette.divider
     }`};
   ${p => (p.selected ? "box-shadow: 0px 0px 0px 4px rgba(138, 128, 219, 0.3);" : "")}
   padding: 20px 16px;
@@ -50,10 +56,12 @@ const FeesWrapper = styled(Box)<{ selected?: boolean; disabled?: boolean }>`
     cursor: ${p => (p.disabled ? "unset" : "pointer")};
   }
 `;
-const FeesHeader = styled(Box)<{ selected?: boolean; disabled?: boolean }>`
+const FeesHeader = styled(Box)<{ selected?: boolean; disabled?: boolean; error: boolean }>`
   color: ${p =>
     p.selected
-      ? p.theme.colors.palette.primary.main
+      ? p.error
+        ? p.theme.colors.palette.warning.c70
+        : p.theme.colors.palette.primary.main
       : p.disabled
       ? p.theme.colors.palette.text.shade20
       : p.theme.colors.palette.text.shade50};
@@ -70,12 +78,17 @@ const SelectFeeStrategy = ({
   strategies,
   mapStrategies,
   suffixPerByte,
+  status,
 }: Props) => {
   const mainAccount = getMainAccount(account, parentAccount);
   const feesCurrency = getFeesCurrency(mainAccount);
   const feesUnit = getFeesUnit(feesCurrency);
   const { t } = useTranslation();
   strategies = mapStrategies ? strategies.map(mapStrategies) : strategies;
+
+  const { errors } = status;
+  const { gasPrice: messageGas } = errors;
+
   return (
     <Box alignItems="center" flow={2}>
       {strategies.map(s => {
@@ -87,6 +100,7 @@ const SelectFeeStrategy = ({
             key={s.label}
             selected={selected}
             disabled={disabled}
+            error={!!messageGas}
             onClick={() => {
               !disabled &&
                 onClick({
@@ -95,7 +109,13 @@ const SelectFeeStrategy = ({
                 });
             }}
           >
-            <FeesHeader horizontal alignItems="center" selected={selected} disabled={disabled}>
+            <FeesHeader
+              horizontal
+              alignItems="center"
+              selected={selected}
+              disabled={disabled}
+              error={!!messageGas}
+            >
               {label === "medium" ? (
                 <TachometerMedium size={14} />
               ) : label === "slow" ? (

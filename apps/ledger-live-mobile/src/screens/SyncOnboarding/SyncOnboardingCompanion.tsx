@@ -18,12 +18,12 @@ import { useTranslation } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useDispatch } from "react-redux";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
 
 import { SeedPhraseType, StorylyInstanceID } from "@ledgerhq/types-live";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { addKnownDevice } from "../../actions/ble";
-import { NavigatorName, ScreenName } from "../../const";
+import { addKnownDevice } from "~/actions/ble";
+import { NavigatorName, ScreenName } from "~/const";
 import HelpDrawer from "./HelpDrawer";
 import DesyncOverlay from "./DesyncOverlay";
 import {
@@ -31,10 +31,10 @@ import {
   setHasOrderedNano,
   setLastConnectedDevice,
   setReadOnlyMode,
-} from "../../actions/settings";
-import InstallSetOfApps from "../../components/DeviceAction/InstallSetOfApps";
-import Stories from "../../components/StorylyStories";
-import { TrackScreen, screen } from "../../analytics";
+} from "~/actions/settings";
+import InstallSetOfApps from "~/components/DeviceAction/InstallSetOfApps";
+import Stories from "~/components/StorylyStories";
+import { TrackScreen, screen } from "~/analytics";
 import ContinueOnStax from "./assets/ContinueOnStax";
 import type { SyncOnboardingScreenProps } from ".";
 
@@ -501,6 +501,11 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
           renderBody: () => (
             <>
               <TrackScreen category={"Set up device: Step 1 device paired"} />
+              <Text variant="body" color="neutral.c80" mb={6}>
+                {t("syncOnboarding.earlySecurityCheckCompletedStep.subtitle", {
+                  productName,
+                })}
+              </Text>
               <ContinueOnDeviceWithAnim
                 deviceModelId={device.modelId}
                 text={t("syncOnboarding.earlySecurityCheckCompletedStep.description", {
@@ -574,11 +579,28 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                 <BodyText>{t("syncOnboarding.seedStep.recoverSeed")}</BodyText>
               ) : (
                 <Flex>
-                  <BodyText>
+                  <BodyText color="neutral.c80">
                     {t("syncOnboarding.seedStep.selection", {
                       productName,
                     })}
                   </BodyText>
+
+                  <Flex mt={6}>
+                    <Text color="neutral.c100" fontWeight="semiBold" mb={3}>
+                      {t("syncOnboarding.seedStep.selectionNewLedger.title")}
+                    </Text>
+                    <Text color="neutral.c80">
+                      {t("syncOnboarding.seedStep.selectionNewLedger.desc")}
+                    </Text>
+                  </Flex>
+                  <Flex my={6}>
+                    <Text color="neutral.c100" fontWeight="semiBold" mb={3}>
+                      {t("syncOnboarding.seedStep.selectionRestore.title")}
+                    </Text>
+                    <Text color="neutral.c80">
+                      {t("syncOnboarding.seedStep.selectionRestore.desc")}
+                    </Text>
+                  </Flex>
                   <ContinueOnDeviceWithAnim
                     deviceModelId={device.modelId}
                     text={t("syncOnboarding.seedStep.selectionContinueOnDevice", {

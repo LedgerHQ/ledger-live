@@ -2,10 +2,10 @@ import React, { useCallback } from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { SelectFeesParamList } from "../types";
-import SendRowsFee from "../../../components/SendRowsFee";
-import NavigationScrollView from "../../../components/NavigationScrollView";
-import { TrackScreen } from "../../../analytics";
-import { ScreenName } from "../../../const";
+import SendRowsFee from "~/components/SendRowsFee";
+import NavigationScrollView from "~/components/NavigationScrollView";
+import { TrackScreen } from "~/analytics";
+import { ScreenName } from "~/const";
 import { SWAP_VERSION } from "../utils";
 
 export function SelectFees({ navigation, route }: SelectFeesParamList) {

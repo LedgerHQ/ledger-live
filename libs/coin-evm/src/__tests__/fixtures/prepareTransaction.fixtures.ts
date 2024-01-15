@@ -3,12 +3,14 @@ import BigNumber from "bignumber.js";
 import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { Account } from "@ledgerhq/types-live";
+
 import { EvmNftTransaction, Transaction as EvmTransaction } from "../../types";
-import { makeAccount, makeTokenAccount } from "./common.fixtures";
 import ERC1155ABI from "../../abis/erc1155.abi.json";
 import ERC721ABI from "../../abis/erc721.abi.json";
 import ERC20ABI from "../../abis/erc20.abi.json";
-import { Account } from "@ledgerhq/types-live";
+
+import { makeAccount, makeTokenAccount } from "./common.fixtures";
 
 const currency: CryptoCurrency = {
   ...getCryptoCurrencyById("ethereum"),

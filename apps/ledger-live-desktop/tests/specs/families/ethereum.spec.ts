@@ -24,7 +24,6 @@ test("Send flow", async ({ page }) => {
     const sendFeeMode = sendModal.container.locator("data-test-id=send-fee-mode");
     await sendFeeMode.waitFor({ state: "visible" });
 
-    await expect.soft(sendModal.container).toHaveScreenshot("send-modal-eth-max-network-fees.png");
     expect(await sendModal.container.getByText("Max Network fees").isVisible()).toBeTruthy();
   });
 });

@@ -6,14 +6,14 @@ export interface IExplorer {
   broadcast(tx: string): Promise<{ data: { result: string } }>;
   getTxHex(txId: string): Promise<string>;
   getFees(): Promise<{ [key: string]: number }>;
-  getRelayFee(): Promise<number>;
   getCurrentBlock(): Promise<Block | null>;
   getBlockByHeight(height: number): Promise<Block | null>;
   getPendings(address: Address, nbMax?: number): Promise<TX[]>;
   getTxsSinceBlockheight(
     batchSize: number,
     address: Address,
-    startingBlockheight: number,
+    fromBlockheight: number,
+    toBlockheight: number | undefined,
     isPending: boolean,
   ): Promise<TX[]>;
 }

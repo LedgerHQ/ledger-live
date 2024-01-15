@@ -10,7 +10,7 @@ jest.useFakeTimers();
 jest.spyOn(global, "setInterval");
 
 jest.mock("@ledgerhq/coin-evm/api/gasTracker/index");
-const mockedGetGasTracker = jest.mocked(getGasTracker, true);
+const mockedGetGasTracker = jest.mocked(getGasTracker);
 
 const mockedGetGasOptions = jest.fn();
 

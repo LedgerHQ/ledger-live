@@ -1,15 +1,15 @@
 import { Flex } from "@ledgerhq/native-ui";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
-import { TrackScreen } from "../../analytics";
-import Button from "../../components/Button";
-import CustomImageBottomModal from "../../components/CustomImage/CustomImageBottomModal";
-import GenericErrorView from "../../components/GenericErrorView";
-import { CustomImageNavigatorParamList } from "../../components/RootNavigator/types/CustomImageNavigator";
-import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { ScreenName } from "../../const";
+import { TrackScreen } from "~/analytics";
+import Button from "~/components/Button";
+import CustomImageBottomModal from "~/components/CustomImage/CustomImageBottomModal";
+import GenericErrorView from "~/components/GenericErrorView";
+import { CustomImageNavigatorParamList } from "~/components/RootNavigator/types/CustomImageNavigator";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { ScreenName } from "~/const";
 
 const Container = styled(SafeAreaView).attrs({
   edges: ["left", "right", "bottom"],
@@ -25,10 +25,30 @@ const buttonClickedEventProperties = {
   button: "upload another image",
 };
 
-const ErrorScreen = ({ route }: NavigationProps) => {
+const ErrorScreen = ({ route, navigation }: NavigationProps) => {
   const [isModalOpened, setIsModalOpened] = useState(false);
   const { params } = route;
   const { error, device } = params;
+
+  // Only keep 1 instance of error page in the navigation
+  useEffect(() => {
+    const navigationState = navigation.getState();
+    const { index, routes } = navigationState;
+    const firstErrorPageIndex = routes.findIndex(
+      (route: { name: string }, id: number) =>
+        route.name === ScreenName.CustomImageErrorScreen && index !== id,
+    );
+
+    if (firstErrorPageIndex !== -1) {
+      const filteredRoutes = routes.filter((route, id) => id !== firstErrorPageIndex);
+
+      navigation.reset({
+        ...navigationState,
+        index: filteredRoutes.length - 1,
+        routes: filteredRoutes,
+      });
+    }
+  }, [navigation]);
 
   const { t } = useTranslation();
 

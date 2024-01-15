@@ -11,11 +11,12 @@ import { GasEstimationError, LedgerNodeUsedIncorrectly } from "../../errors";
 import OptimismGasPriceOracleAbi from "../../abis/optimismGasPriceOracle.abi.json";
 import { getSerializedTransaction } from "../../transaction";
 import { LedgerExplorerOperation } from "../../types";
-import { NodeApi, isLedgerNodeConfig } from "./types";
 import { getGasOptions } from "../gasTracker/ledger";
 import { padHexString } from "../../logic";
+import { NodeApi, isLedgerNodeConfig } from "./types";
 
-export const LEDGER_TIMEOUT = 200; // 200ms between 2 calls
+export const LEDGER_TIMEOUT = 10_000; // 10_000ms (10s) for network call timeout
+export const LEDGER_TIME_BETWEEN_TRIES = 200; // 200ms between 2 calls
 export const DEFAULT_RETRIES_API = 2;
 
 export async function fetchWithRetries<T>(
@@ -35,7 +36,7 @@ export async function fetchWithRetries<T>(
   } catch (e) {
     if (retries) {
       // wait the API timeout before trying again
-      await delay(LEDGER_TIMEOUT);
+      await delay(LEDGER_TIME_BETWEEN_TRIES);
       // decrement with prefix here or it won't work
       return fetchWithRetries<T>(params, --retries);
     }
@@ -185,6 +186,7 @@ export const getGasEstimation: NodeApi["getGasEstimation"] = async (
       estimated_gas_limit: string;
     }>({
       method: "POST",
+      timeout: LEDGER_TIMEOUT,
       url: `${getEnv("EXPLORER")}/blockchain/v4/${node.explorerId}/tx/estimate-gas-limit`,
       data: {
         from: account.freshAddress, // should be necessary for some estimations
@@ -272,17 +274,36 @@ export const getBlockByHeight: NodeApi["getBlockByHeight"] = async (
     throw new LedgerNodeUsedIncorrectly();
   }
 
-  const { hash, height, time } = await fetchWithRetries<{
-    hash: string;
-    height: number;
-    time: string;
-    txs: string[];
-  }>({
+  if (blockHeight === "latest") {
+    const { hash, height, time } = await fetchWithRetries<{
+      hash: string;
+      height: number;
+      time: string;
+      txs: string[];
+    }>({
+      method: "GET",
+      url: `${getEnv("EXPLORER")}/blockchain/v4/${node.explorerId}/block/current`,
+    });
+
+    return { hash, height, timestamp: new Date(time).getTime() };
+  }
+
+  /**
+   * for some reason, this explorer endpoint doesn't return the block object
+   * but an array of one element with the requested block
+   */
+  const [{ hash, height, time }] = await fetchWithRetries<
+    [
+      {
+        hash: string;
+        height: number;
+        time: string;
+        txs: string[];
+      },
+    ]
+  >({
     method: "GET",
-    url:
-      blockHeight === "latest"
-        ? `${getEnv("EXPLORER")}/blockchain/v4/${node.explorerId}/block/current`
-        : `${getEnv("EXPLORER")}/blockchain/v4/${node.explorerId}/block/${blockHeight}`,
+    url: `${getEnv("EXPLORER")}/blockchain/v4/${node.explorerId}/block/${blockHeight}`,
   });
 
   return {

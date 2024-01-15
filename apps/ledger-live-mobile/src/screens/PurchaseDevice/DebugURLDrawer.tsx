@@ -2,8 +2,8 @@ import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@ledgerhq/native-ui";
 
-import QueuedDrawer from "../../components/QueuedDrawer";
-import TextInput from "../../components/TextInput";
+import QueuedDrawer from "~/components/QueuedDrawer";
+import TextInput from "~/components/TextInput";
 
 export type Props = {
   isOpen: boolean;

@@ -1,4 +1,4 @@
-import { Server } from "ws";
+import { Server, WebSocket } from "ws";
 import path from "path";
 import fs from "fs";
 import { toAccountRaw } from "@ledgerhq/live-common/account/index";
@@ -7,6 +7,7 @@ import { Subject } from "rxjs";
 import { MessageData, MockDeviceEvent } from "./client";
 import { BleState } from "../../src/reducers/types";
 import { Account, AccountRaw } from "@ledgerhq/types-live";
+import { DeviceUSB, nanoSP_USB, nanoS_USB, nanoX_USB } from "../models/devices";
 
 type ServerData = {
   type: "walletAPIResponse";
@@ -16,17 +17,22 @@ type ServerData = {
 export const e2eBridgeServer = new Subject<ServerData>();
 
 let wss: Server;
+let onConnectionPromise: Promise<WebSocket> | null = null;
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
-export function init(port = 8099, onConnection = () => {}) {
-  wss = new Server({ port });
-  log(`Start listening on localhost:${port}`);
+export function init(port = 8099, onConnection = () => {}): Promise<WebSocket> {
+  onConnectionPromise = new Promise(resolve => {
+    wss = new Server({ port });
+    log(`Start listening on localhost:${port}`);
 
-  wss.on("connection", ws => {
-    log(`Connection`);
-    onConnection();
-    ws.on("message", onMessage);
+    wss.on("connection", ws => {
+      log(`Client connected`);
+      onConnection();
+      resolve(ws); // Resolve the promise when a client connects
+      ws.on("message", onMessage);
+    });
   });
+  return onConnectionPromise;
 }
 
 export function close() {
@@ -91,16 +97,31 @@ export function mockDeviceEvent(...args: MockDeviceEvent[]) {
   });
 }
 
-export function addDevices(
-  deviceNames: string[] = ["Nano X de David", "Nano X de Arnaud", "Nano X de Didier Duchmol"],
+export function addDevicesBT(
+  deviceNames: string | string[] = [
+    "Nano X de David",
+    "Nano X de Arnaud",
+    "Nano X de Didier Duchmol",
+  ],
 ): string[] {
-  deviceNames.forEach((name, i) => {
+  const names = Array.isArray(deviceNames) ? deviceNames : [deviceNames];
+  names.forEach((name, i) => {
     postMessage({
       type: "add",
       payload: { id: `mock_${i + 1}`, name, serviceUUID: `uuid_${i + 1}` },
     });
   });
-  return deviceNames;
+  return names;
+}
+
+export function addDevicesUSB(
+  devices: DeviceUSB | DeviceUSB[] = [nanoX_USB, nanoSP_USB, nanoS_USB],
+): DeviceUSB[] {
+  const devicesArray = Array.isArray(devices) ? devices : [devices];
+  devicesArray.forEach(device => {
+    postMessage({ type: "addUSB", payload: device });
+  });
+  return devicesArray;
 }
 
 export function setInstalledApps(apps: string[] = []) {
@@ -136,8 +157,11 @@ function acceptTerms() {
   postMessage({ type: "acceptTerms" });
 }
 
-function postMessage(message: MessageData) {
-  for (const ws of wss.clients.values()) {
+async function postMessage(message: MessageData) {
+  const ws = await onConnectionPromise; // Wait until a client is connected and get the WebSocket instance
+  if (ws) {
     ws.send(JSON.stringify(message));
+  } else {
+    log("WebSocket connection is not open. Message not sent.");
   }
 }

@@ -1,22 +1,22 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`cardano_testnet currency bridge scanAccounts cardano_testnet seed 1 1`] = `
-Array [
-  Object {
+[
+  {
     "balance": "10098829375",
-    "cardanoResources": Object {
-      "delegation": Object {
+    "cardanoResources": {
+      "delegation": {
         "name": "Apex Cardano Pool",
         "poolId": "7facad662e180ce45e5c504957cd1341940c72a708728f7ecfc6e349",
         "rewards": "0",
         "status": true,
         "ticker": "APEX",
       },
-      "externalCredentials": Array [
-        Object {
+      "externalCredentials": [
+        {
           "isUsed": true,
           "key": "bea94629d5cf776b8374a00afa15686f0b0742dd0330f86804c61202",
-          "path": Object {
+          "path": {
             "account": 0,
             "chain": 0,
             "coin": 1815,
@@ -24,10 +24,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": true,
           "key": "aad02a003b77bd537b836afb3977da22c6f42f3ac00de2018bfb8ba9",
-          "path": Object {
+          "path": {
             "account": 0,
             "chain": 0,
             "coin": 1815,
@@ -35,10 +35,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "647a9b7597c38833639fdb23e842f22bb7087e020af736419eabccf6",
-          "path": Object {
+          "path": {
             "account": 0,
             "chain": 0,
             "coin": 1815,
@@ -46,10 +46,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "d4f53c26d1b0db9f9037462acbf6b27c09bd1ef6951d30e2f5c1d20f",
-          "path": Object {
+          "path": {
             "account": 0,
             "chain": 0,
             "coin": 1815,
@@ -57,10 +57,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "9b1a76bfb10585fea0e37bb60657db3bc153210d4c0cfeef7adb4b72",
-          "path": Object {
+          "path": {
             "account": 0,
             "chain": 0,
             "coin": 1815,
@@ -68,10 +68,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "5ad6ee8337a8b4021ae81871013bcd66ab559fc9b3044095105f20cf",
-          "path": Object {
+          "path": {
             "account": 0,
             "chain": 0,
             "coin": 1815,
@@ -79,10 +79,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "6663049f293c86f1ef109d08f37752b61760140583dc3b6ed2446825",
-          "path": Object {
+          "path": {
             "account": 0,
             "chain": 0,
             "coin": 1815,
@@ -90,10 +90,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "769d28809ce7644505eae23a410a6cfb62b65da2adc20069f83f5b03",
-          "path": Object {
+          "path": {
             "account": 0,
             "chain": 0,
             "coin": 1815,
@@ -101,10 +101,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "e038768aab13784df8c50ca5d81c440b28c5281b1ee02a1200b40443",
-          "path": Object {
+          "path": {
             "account": 0,
             "chain": 0,
             "coin": 1815,
@@ -112,10 +112,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "b3cb4cd584df234d2bc8f39fde4a9b1d4f742fc55564ad48af2580b8",
-          "path": Object {
+          "path": {
             "account": 0,
             "chain": 0,
             "coin": 1815,
@@ -123,10 +123,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "b067b0657b27a613c905efdecaab71968fb0e2354c504ab66a2a6b77",
-          "path": Object {
+          "path": {
             "account": 0,
             "chain": 0,
             "coin": 1815,
@@ -134,10 +134,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "c3005838ba533f24a110fed626c937a4ebb06848d23725680ea9a051",
-          "path": Object {
+          "path": {
             "account": 0,
             "chain": 0,
             "coin": 1815,
@@ -145,10 +145,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "74fa93ceaceea287954f52e8539b20c806f32077306f3ece7758236c",
-          "path": Object {
+          "path": {
             "account": 0,
             "chain": 0,
             "coin": 1815,
@@ -156,10 +156,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "8fb004c2ca49b98a455aaefefb04593c830e1ceab453375ac1804e0d",
-          "path": Object {
+          "path": {
             "account": 0,
             "chain": 0,
             "coin": 1815,
@@ -167,10 +167,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "050861b6965ddac05e93ff771c80d84242264f99fd67e88eab20ce2d",
-          "path": Object {
+          "path": {
             "account": 0,
             "chain": 0,
             "coin": 1815,
@@ -178,10 +178,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "76cbd4dd744b3b1d5dba3931582a16eef14513fedf3f4798ce4643f1",
-          "path": Object {
+          "path": {
             "account": 0,
             "chain": 0,
             "coin": 1815,
@@ -189,10 +189,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "b186488dd09306cae246e408f7389caa7fb3c92afb8a824d38ebef15",
-          "path": Object {
+          "path": {
             "account": 0,
             "chain": 0,
             "coin": 1815,
@@ -200,10 +200,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "4e25c828d800533598f60087672cb6894d99317ac02dbfe8dd10b924",
-          "path": Object {
+          "path": {
             "account": 0,
             "chain": 0,
             "coin": 1815,
@@ -211,10 +211,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "42d82978e1714a06bbcfef0ef1269f6471859333801b39ba5da51b15",
-          "path": Object {
+          "path": {
             "account": 0,
             "chain": 0,
             "coin": 1815,
@@ -222,10 +222,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "4dbd3c474f9b59ca4b9ef1eddd1cb779229316eba20511f5164b6935",
-          "path": Object {
+          "path": {
             "account": 0,
             "chain": 0,
             "coin": 1815,
@@ -233,10 +233,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "22fd380c82b3678521b743d9749edf7a4234284ad9fa6f23d621b4dd",
-          "path": Object {
+          "path": {
             "account": 0,
             "chain": 0,
             "coin": 1815,
@@ -244,10 +244,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "7c1b6e0acc2148f3251b876d13623a5cb74530ccab01b0962be0a97e",
-          "path": Object {
+          "path": {
             "account": 0,
             "chain": 0,
             "coin": 1815,
@@ -256,11 +256,11 @@ Array [
           },
         },
       ],
-      "internalCredentials": Array [
-        Object {
+      "internalCredentials": [
+        {
           "isUsed": true,
           "key": "5d2fe30ef616ded30933fb6a58fc0de7d5b49ee3798106304e1fdd10",
-          "path": Object {
+          "path": {
             "account": 0,
             "chain": 1,
             "coin": 1815,
@@ -268,10 +268,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": true,
           "key": "cdc820fc923c1f0c21eda007b83b15da770edee5f7d8fc9e77bf02ba",
-          "path": Object {
+          "path": {
             "account": 0,
             "chain": 1,
             "coin": 1815,
@@ -279,10 +279,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": true,
           "key": "db5e419ca26f022b946b900b9e606201631b54378aa5f47682061b9b",
-          "path": Object {
+          "path": {
             "account": 0,
             "chain": 1,
             "coin": 1815,
@@ -290,10 +290,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "cd4481948eac6db1f3c8d0486c92007feaf3fd8574ca627dfa7f2ea1",
-          "path": Object {
+          "path": {
             "account": 0,
             "chain": 1,
             "coin": 1815,
@@ -301,10 +301,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "6f9555c4c8f18b67176ab4778d313cc3504d7e6b024472f6042d52df",
-          "path": Object {
+          "path": {
             "account": 0,
             "chain": 1,
             "coin": 1815,
@@ -312,10 +312,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "e4316f7dbe7615f478e20b1cd826449dc78ff656a6e5383a62292764",
-          "path": Object {
+          "path": {
             "account": 0,
             "chain": 1,
             "coin": 1815,
@@ -323,10 +323,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "e0c9a5b4e58e7dc37837f0139375056cf8c8e0fb01553982aa67cc82",
-          "path": Object {
+          "path": {
             "account": 0,
             "chain": 1,
             "coin": 1815,
@@ -334,10 +334,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "f1ee4b055852a16ed18d8aa8712eeafd79cd831fd7a801ccb0b9513d",
-          "path": Object {
+          "path": {
             "account": 0,
             "chain": 1,
             "coin": 1815,
@@ -345,10 +345,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "8603fdbb2e7edeb011b6c01b2950bdcbcf2ac35e872e74c33de3870c",
-          "path": Object {
+          "path": {
             "account": 0,
             "chain": 1,
             "coin": 1815,
@@ -356,10 +356,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "2340e7f406f87fc8c56cac9f1733571cb4af0db2f43f37e0ba098203",
-          "path": Object {
+          "path": {
             "account": 0,
             "chain": 1,
             "coin": 1815,
@@ -367,10 +367,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "56484beaa227c227d883b8b2e590cb38c5bf686a0a5c42828e3a2fa5",
-          "path": Object {
+          "path": {
             "account": 0,
             "chain": 1,
             "coin": 1815,
@@ -378,10 +378,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "90173fd1394315c35d71fd60b198546203b7230188d33637394b878a",
-          "path": Object {
+          "path": {
             "account": 0,
             "chain": 1,
             "coin": 1815,
@@ -389,10 +389,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "22a87039e5d8fdf1ae0c79148ef7de4a287eb4aa8907bc18cdf8e20c",
-          "path": Object {
+          "path": {
             "account": 0,
             "chain": 1,
             "coin": 1815,
@@ -400,10 +400,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "c9b74500ebe6570e3419afef9e8adf597acc3a27d93462e511160990",
-          "path": Object {
+          "path": {
             "account": 0,
             "chain": 1,
             "coin": 1815,
@@ -411,10 +411,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "05afcfe113937e83c1c4ddeaead37dce1fe216abd3a3773f97aca5e1",
-          "path": Object {
+          "path": {
             "account": 0,
             "chain": 1,
             "coin": 1815,
@@ -422,10 +422,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "cf47b5b456b3c996d0401407790e3251d9c00db1d75964553f3c6aa1",
-          "path": Object {
+          "path": {
             "account": 0,
             "chain": 1,
             "coin": 1815,
@@ -433,10 +433,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "1464df1cf106283ba468ff2f19a8b26f28100d6d2b57b806210b0c22",
-          "path": Object {
+          "path": {
             "account": 0,
             "chain": 1,
             "coin": 1815,
@@ -444,10 +444,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "26563526761302e005ddac4cdd564a43fa49e1416894f1391ad1f36e",
-          "path": Object {
+          "path": {
             "account": 0,
             "chain": 1,
             "coin": 1815,
@@ -455,10 +455,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "e36e278ee505e558957d5871f710d71d2d90301a755151db2b65e199",
-          "path": Object {
+          "path": {
             "account": 0,
             "chain": 1,
             "coin": 1815,
@@ -466,10 +466,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "6c0a217dc6ec7b12e750c8dab1fa9bf0b8e04f75e354a5c0316ec4de",
-          "path": Object {
+          "path": {
             "account": 0,
             "chain": 1,
             "coin": 1815,
@@ -477,10 +477,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "69378a358f8fc867ab7227181e35a99b80344304098c464d5198fafc",
-          "path": Object {
+          "path": {
             "account": 0,
             "chain": 1,
             "coin": 1815,
@@ -488,10 +488,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "417549767de9dd871c9bb15ccaa7e28c0ddfcfbfab100d57f508f488",
-          "path": Object {
+          "path": {
             "account": 0,
             "chain": 1,
             "coin": 1815,
@@ -499,10 +499,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "880bc69c9c7ba02031ca8adfe866018b1183da5d8a121f5d2a541861",
-          "path": Object {
+          "path": {
             "account": 0,
             "chain": 1,
             "coin": 1815,
@@ -511,10 +511,10 @@ Array [
           },
         },
       ],
-      "protocolParams": Object {
+      "protocolParams": {
         "collateralPercent": "150",
-        "languageView": Object {
-          "PlutusScriptV1": Object {
+        "languageView": {
+          "PlutusScriptV1": {
             "addInteger-cpu-arguments-intercept": 197209,
             "addInteger-cpu-arguments-slope": 0,
             "addInteger-memory-arguments-intercept": 1,
@@ -690,15 +690,15 @@ Array [
         "priceSteps": "0.0000721",
         "stakeKeyDeposit": "2000000",
       },
-      "utxos": Array [
-        Object {
+      "utxos": [
+        {
           "address": "00aad02a003b77bd537b836afb3977da22c6f42f3ac00de2018bfb8ba9b5de20d8ec4cd8ca0ba6183589fec7a09896b7643d2176b8a447ac36",
           "amount": "200000000",
           "hash": "9b5428b372e50265ee588a28e67f547b0b24e5d8c3f191cac7ed6479c53e397a",
           "index": 0,
-          "paymentCredential": Object {
+          "paymentCredential": {
             "key": "aad02a003b77bd537b836afb3977da22c6f42f3ac00de2018bfb8ba9",
-            "path": Object {
+            "path": {
               "account": 0,
               "chain": 0,
               "coin": 1815,
@@ -706,16 +706,16 @@ Array [
               "purpose": 1852,
             },
           },
-          "tokens": Array [],
+          "tokens": [],
         },
-        Object {
+        {
           "address": "00aad02a003b77bd537b836afb3977da22c6f42f3ac00de2018bfb8ba9b5de20d8ec4cd8ca0ba6183589fec7a09896b7643d2176b8a447ac36",
           "amount": "1344798",
           "hash": "6c8f2922d87f6d321bac3c6e4987985bdff16a3c840c0f6fab9412420a2df7af",
           "index": 0,
-          "paymentCredential": Object {
+          "paymentCredential": {
             "key": "aad02a003b77bd537b836afb3977da22c6f42f3ac00de2018bfb8ba9",
-            "path": Object {
+            "path": {
               "account": 0,
               "chain": 0,
               "coin": 1815,
@@ -723,22 +723,22 @@ Array [
               "purpose": 1852,
             },
           },
-          "tokens": Array [
-            Object {
+          "tokens": [
+            {
               "amount": "100",
               "assetName": "54657374",
               "policyId": "47be64fcc8a7fe5321b976282ce4e43e4d29015f6613cfabcea28eab",
             },
           ],
         },
-        Object {
+        {
           "address": "00db5e419ca26f022b946b900b9e606201631b54378aa5f47682061b9bb5de20d8ec4cd8ca0ba6183589fec7a09896b7643d2176b8a447ac36",
           "amount": "9897484577",
           "hash": "1bc0f281044d852d6390c7977ff6cbf446e315c6b8879e1fa0dcc021372ac5e3",
           "index": 0,
-          "paymentCredential": Object {
+          "paymentCredential": {
             "key": "db5e419ca26f022b946b900b9e606201631b54378aa5f47682061b9b",
-            "path": Object {
+            "path": {
               "account": 0,
               "chain": 1,
               "coin": 1815,
@@ -746,7 +746,7 @@ Array [
               "purpose": 1852,
             },
           },
-          "tokens": Array [],
+          "tokens": [],
         },
       ],
     },
@@ -754,84 +754,84 @@ Array [
     "derivationMode": "cardano",
     "freshAddress": "addr_test1qpj84xm4jlpcsvmrnldj86zz7g4mwzr7qg90wdjpn64uea44mcsd3mzvmr9qhfscxkyla3aqnzttwepay9mt3fz84smqyjvhh4",
     "freshAddressPath": "1852'/1815'/0'/0/2",
-    "freshAddresses": Array [
-      Object {
+    "freshAddresses": [
+      {
         "address": "addr_test1qpj84xm4jlpcsvmrnldj86zz7g4mwzr7qg90wdjpn64uea44mcsd3mzvmr9qhfscxkyla3aqnzttwepay9mt3fz84smqyjvhh4",
         "derivationPath": "1852'/1815'/0'/0/2",
       },
-      Object {
+      {
         "address": "addr_test1qr2020px6xcdh8usxarz4jlkkf7qn0g776236v8z7hqayra4mcsd3mzvmr9qhfscxkyla3aqnzttwepay9mt3fz84smqkrm3fh",
         "derivationPath": "1852'/1815'/0'/0/3",
       },
-      Object {
+      {
         "address": "addr_test1qzd35a4lkyzctl4qudamvpjhmvauz5epp4xqelh00td5ku44mcsd3mzvmr9qhfscxkyla3aqnzttwepay9mt3fz84smqslr4y3",
         "derivationPath": "1852'/1815'/0'/0/4",
       },
-      Object {
+      {
         "address": "addr_test1qpdddm5rx75tgqs6aqv8zqfme4n2k4vlexesgsy4zp0jpna4mcsd3mzvmr9qhfscxkyla3aqnzttwepay9mt3fz84smqwq5hvk",
         "derivationPath": "1852'/1815'/0'/0/5",
       },
-      Object {
+      {
         "address": "addr_test1qpnxxpyl9y7gdu00zzws3umh22mpwcq5qkpacwmw6fzxsfd4mcsd3mzvmr9qhfscxkyla3aqnzttwepay9mt3fz84smqe5yjj2",
         "derivationPath": "1852'/1815'/0'/0/6",
       },
-      Object {
+      {
         "address": "addr_test1qpmf62yqnnnkg3g9at3r5sg2dnak9dja52kuyqrflql4kqa4mcsd3mzvmr9qhfscxkyla3aqnzttwepay9mt3fz84smqwryns8",
         "derivationPath": "1852'/1815'/0'/0/7",
       },
-      Object {
+      {
         "address": "addr_test1qrsrsa524vfhsn0cc5x2tkqugs9j33fgrv0wq2sjqz6qgsa4mcsd3mzvmr9qhfscxkyla3aqnzttwepay9mt3fz84smql9u5y4",
         "derivationPath": "1852'/1815'/0'/0/8",
       },
-      Object {
+      {
         "address": "addr_test1qzeuknx4sn0jxnftereelhj2nvw57ap0c42kft2g4ujcpw94mcsd3mzvmr9qhfscxkyla3aqnzttwepay9mt3fz84smqt0lkfh",
         "derivationPath": "1852'/1815'/0'/0/9",
       },
-      Object {
+      {
         "address": "addr_test1qzcx0vr90vn6vy7fqhhaaj4twxtglv8zx4x9qj4kdg4xkaa4mcsd3mzvmr9qhfscxkyla3aqnzttwepay9mt3fz84smqunnce9",
         "derivationPath": "1852'/1815'/0'/0/10",
       },
-      Object {
+      {
         "address": "addr_test1qrpsqkpchffn7f9pzrldvfkfx7jwhvrgfrfrwftgp656q5d4mcsd3mzvmr9qhfscxkyla3aqnzttwepay9mt3fz84smqzcwg06",
         "derivationPath": "1852'/1815'/0'/0/11",
       },
-      Object {
+      {
         "address": "addr_test1qp604y7w4nh29pu4fafws5umyryqdueqwucx70kwwavzxm94mcsd3mzvmr9qhfscxkyla3aqnzttwepay9mt3fz84smquz0mgf",
         "derivationPath": "1852'/1815'/0'/0/12",
       },
-      Object {
+      {
         "address": "addr_test1qz8mqpxzefymnzj9t2h0a7cyty7gxrsua269xd66cxqyurd4mcsd3mzvmr9qhfscxkyla3aqnzttwepay9mt3fz84smqxwrl3c",
         "derivationPath": "1852'/1815'/0'/0/13",
       },
-      Object {
+      {
         "address": "addr_test1qqzsscdkjewa4sz7j0lhw8yqmppyyfj0n87k06yw4vsvutd4mcsd3mzvmr9qhfscxkyla3aqnzttwepay9mt3fz84smqmlj8r6",
         "derivationPath": "1852'/1815'/0'/0/14",
       },
-      Object {
+      {
         "address": "addr_test1qpmvh4xaw39nk82ahgunzkp2zmh0z3gnlm0n73uceery8ud4mcsd3mzvmr9qhfscxkyla3aqnzttwepay9mt3fz84smqc93u69",
         "derivationPath": "1852'/1815'/0'/0/15",
       },
-      Object {
+      {
         "address": "addr_test1qzccvjyd6zfsdjhzgmjq3aecnj48lv7f9tac4qjd8r4779d4mcsd3mzvmr9qhfscxkyla3aqnzttwepay9mt3fz84smqru5ugx",
         "derivationPath": "1852'/1815'/0'/0/16",
       },
-      Object {
+      {
         "address": "addr_test1qp8ztjpgmqq9xdvc7cqgweevk6y5mxf30tqzm0lgm5gtjf94mcsd3mzvmr9qhfscxkyla3aqnzttwepay9mt3fz84smq66qq6t",
         "derivationPath": "1852'/1815'/0'/0/17",
       },
-      Object {
+      {
         "address": "addr_test1qppds2tcu9c55p4melhsaufxnaj8rpvnxwqpkwd6tkj3k9d4mcsd3mzvmr9qhfscxkyla3aqnzttwepay9mt3fz84smqcfetql",
         "derivationPath": "1852'/1815'/0'/0/18",
       },
-      Object {
+      {
         "address": "addr_test1qpxm60z8f7d4njjtnmc7mhgukauj9yckaw3q2y04ze9kjdd4mcsd3mzvmr9qhfscxkyla3aqnzttwepay9mt3fz84smqahev6d",
         "derivationPath": "1852'/1815'/0'/0/19",
       },
-      Object {
+      {
         "address": "addr_test1qq306wqvs2ek0pfpkapajay7maayydpgftvl5mer6csmfhd4mcsd3mzvmr9qhfscxkyla3aqnzttwepay9mt3fz84smqdpg6t6",
         "derivationPath": "1852'/1815'/0'/0/20",
       },
-      Object {
+      {
         "address": "addr_test1qp7pkms2ess53ue9rwrk6ymz8fwtw3fsej4srvyk90s2jl44mcsd3mzvmr9qhfscxkyla3aqnzttwepay9mt3fz84smqyl58qp",
         "derivationPath": "1852'/1815'/0'/0/21",
       },
@@ -841,39 +841,26 @@ Array [
     "name": "Cardano (Testnet) 1",
     "nfts": undefined,
     "operationsCount": 6,
-    "pendingOperations": Array [],
+    "pendingOperations": [],
     "seedIdentifier": "bea94629d5cf776b8374a00afa15686f0b0742dd0330f86804c61202",
     "spendableBalance": "10097484577",
     "starred": false,
-    "subAccounts": Array [],
-    "swapHistory": Array [],
-    "syncHash": "[\\"ethereum/erc20/ampleforth\\",\\"ethereum/erc20/steth\\"]_1",
+    "subAccounts": [],
+    "swapHistory": [],
+    "syncHash": "["ethereum/erc20/ampleforth","ethereum/erc20/steth"]_0",
     "unitMagnitude": 6,
     "used": true,
     "xpub": "806499588e0c4a58f4119f7e6e096bf42c3f774a528d2acec9e82ceebf87d1ceb3d4f3622dd2c77c65cc89c123f79337db22cf8a69f122e36dab1bf5083bf82d",
   },
-  Object {
-    "approvals": undefined,
-    "balance": "100",
-    "id": "js:2:cardano_testnet:806499588e0c4a58f4119f7e6e096bf42c3f774a528d2acec9e82ceebf87d1ceb3d4f3622dd2c77c65cc89c123f79337db22cf8a69f122e36dab1bf5083bf82d:cardano+cardano_testnet%2Fnative%2F47be64fcc8a7fe5321b976282ce4e43e4d29015f6613cfabcea28eab54657374",
-    "operationsCount": 1,
-    "parentId": "js:2:cardano_testnet:806499588e0c4a58f4119f7e6e096bf42c3f774a528d2acec9e82ceebf87d1ceb3d4f3622dd2c77c65cc89c123f79337db22cf8a69f122e36dab1bf5083bf82d:cardano",
-    "pendingOperations": Array [],
-    "spendableBalance": "100",
-    "starred": false,
-    "swapHistory": Array [],
-    "tokenId": "cardano_testnet/native/47be64fcc8a7fe5321b976282ce4e43e4d29015f6613cfabcea28eab54657374",
-    "type": "TokenAccountRaw",
-  },
-  Object {
+  {
     "balance": "0",
-    "cardanoResources": Object {
+    "cardanoResources": {
       "delegation": undefined,
-      "externalCredentials": Array [
-        Object {
+      "externalCredentials": [
+        {
           "isUsed": false,
           "key": "09457d98f405191765830c1afe91cc32b5f45c193a9aad4b606f8f5d",
-          "path": Object {
+          "path": {
             "account": 1,
             "chain": 0,
             "coin": 1815,
@@ -881,10 +868,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "7b819256fed21b6917c1f535a6578a836327bfa2cfaba557460b552a",
-          "path": Object {
+          "path": {
             "account": 1,
             "chain": 0,
             "coin": 1815,
@@ -892,10 +879,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "a9e68139c51d6ff63627583028b8f5f96afda044b2f63ba23585bb5f",
-          "path": Object {
+          "path": {
             "account": 1,
             "chain": 0,
             "coin": 1815,
@@ -903,10 +890,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "1461370353d1745f1a73758cd8bfb50944ae58943d62918d84cb26e1",
-          "path": Object {
+          "path": {
             "account": 1,
             "chain": 0,
             "coin": 1815,
@@ -914,10 +901,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "f4488d356819afdd81e6211a669f0a48b31170d1f00bb95cc0fb5900",
-          "path": Object {
+          "path": {
             "account": 1,
             "chain": 0,
             "coin": 1815,
@@ -925,10 +912,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "cc4027ca9dd22ee41858ef303ad166d8ce2b7c9b8fb0fd1cbd6fd4ca",
-          "path": Object {
+          "path": {
             "account": 1,
             "chain": 0,
             "coin": 1815,
@@ -936,10 +923,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "0c4314d8947a68d66c8041b602a327a9f8411e6429dce12bba006371",
-          "path": Object {
+          "path": {
             "account": 1,
             "chain": 0,
             "coin": 1815,
@@ -947,10 +934,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "cc0cb09c1b0f4c91ff79b22dd6a8be46e5594037fce0ec8e0412b24f",
-          "path": Object {
+          "path": {
             "account": 1,
             "chain": 0,
             "coin": 1815,
@@ -958,10 +945,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "f52d71fe2477d3d4e23f22e510e581d2b6372bc6349ed7db5c5229d7",
-          "path": Object {
+          "path": {
             "account": 1,
             "chain": 0,
             "coin": 1815,
@@ -969,10 +956,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "a5d770079a1cf5804b9d1915d547b1e654d003948afa3cc04addf9b1",
-          "path": Object {
+          "path": {
             "account": 1,
             "chain": 0,
             "coin": 1815,
@@ -980,10 +967,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "48a7b7e68a34777d403c4bc44525516a63ee02b1115f22c773d3ceaa",
-          "path": Object {
+          "path": {
             "account": 1,
             "chain": 0,
             "coin": 1815,
@@ -991,10 +978,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "36a61129bb5ed25189151fb4e96a0a0bc12f7df8167d8f8ad2008126",
-          "path": Object {
+          "path": {
             "account": 1,
             "chain": 0,
             "coin": 1815,
@@ -1002,10 +989,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "4131725775892be426dee6454e30f7f3d0a69f1d63edfb391da2f2c5",
-          "path": Object {
+          "path": {
             "account": 1,
             "chain": 0,
             "coin": 1815,
@@ -1013,10 +1000,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "ab5f0de95d96d4f4a53c48f3d85da987fb96f3b29afe323166f3bdc8",
-          "path": Object {
+          "path": {
             "account": 1,
             "chain": 0,
             "coin": 1815,
@@ -1024,10 +1011,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "72307625adb7f08b79ae3f5cd9d8fa4517c4a789a0e63a8e6a83efaf",
-          "path": Object {
+          "path": {
             "account": 1,
             "chain": 0,
             "coin": 1815,
@@ -1035,10 +1022,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "f9de8f21ada74cfc82999b9d4faacc013d3f2914eb8f4fcd2665ab9a",
-          "path": Object {
+          "path": {
             "account": 1,
             "chain": 0,
             "coin": 1815,
@@ -1046,10 +1033,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "f5173d7cb1202132a6b361ae516f160b7d4273ffd2bc177b391fec9c",
-          "path": Object {
+          "path": {
             "account": 1,
             "chain": 0,
             "coin": 1815,
@@ -1057,10 +1044,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "a96d291dd1c716bcad97736cca4d68094cc90f6f264de7a3ee90d486",
-          "path": Object {
+          "path": {
             "account": 1,
             "chain": 0,
             "coin": 1815,
@@ -1068,10 +1055,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "e04254e8c9186465ff137c049595149fac2a82b86251e12dcd301dbb",
-          "path": Object {
+          "path": {
             "account": 1,
             "chain": 0,
             "coin": 1815,
@@ -1079,10 +1066,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "ab8e6339d66091c87f4fa0a3bf4e0b67ec99597c9a753f821d6455c2",
-          "path": Object {
+          "path": {
             "account": 1,
             "chain": 0,
             "coin": 1815,
@@ -1091,11 +1078,11 @@ Array [
           },
         },
       ],
-      "internalCredentials": Array [
-        Object {
+      "internalCredentials": [
+        {
           "isUsed": false,
           "key": "7cc28ab7b7e4739fc31b0dfc8b750ed4a2529e73970b67654d7f38cd",
-          "path": Object {
+          "path": {
             "account": 1,
             "chain": 1,
             "coin": 1815,
@@ -1103,10 +1090,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "61f4d9fadf0fae8bf22c59f3a857109ad7ed338747b194412b061d65",
-          "path": Object {
+          "path": {
             "account": 1,
             "chain": 1,
             "coin": 1815,
@@ -1114,10 +1101,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "9d0a5e571e11641d6f6378f75e32c2f0ec9550ca9192efa6d5403a9a",
-          "path": Object {
+          "path": {
             "account": 1,
             "chain": 1,
             "coin": 1815,
@@ -1125,10 +1112,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "b8d9642c8066c8f612f1480faa99336d56a7eb5e648f043ede3ae4de",
-          "path": Object {
+          "path": {
             "account": 1,
             "chain": 1,
             "coin": 1815,
@@ -1136,10 +1123,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "b1c9354adc05cdb8ae587d72b5199c45ec0c78930feacd739b8ebdd0",
-          "path": Object {
+          "path": {
             "account": 1,
             "chain": 1,
             "coin": 1815,
@@ -1147,10 +1134,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "a7870136976405826401c5cc08a6548fda2d837c088444ab3eaf9865",
-          "path": Object {
+          "path": {
             "account": 1,
             "chain": 1,
             "coin": 1815,
@@ -1158,10 +1145,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "af394319b74da4efc7b4f950388faf0321938274edd9a01463d43151",
-          "path": Object {
+          "path": {
             "account": 1,
             "chain": 1,
             "coin": 1815,
@@ -1169,10 +1156,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "86eb086df653a924f2b564dc3363ed0d877ce827a6c60986f5a8d739",
-          "path": Object {
+          "path": {
             "account": 1,
             "chain": 1,
             "coin": 1815,
@@ -1180,10 +1167,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "3b38f6502d5c507d2c72b6196768ff58cbcbef4c644f3518cbd71e0d",
-          "path": Object {
+          "path": {
             "account": 1,
             "chain": 1,
             "coin": 1815,
@@ -1191,10 +1178,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "e3d1382b8470c4c0184ce77763002ce4d10436a3c4c524f82d837561",
-          "path": Object {
+          "path": {
             "account": 1,
             "chain": 1,
             "coin": 1815,
@@ -1202,10 +1189,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "d1c943c765131a555d5a415fcee8da08f95f8323f1fd0d636915f990",
-          "path": Object {
+          "path": {
             "account": 1,
             "chain": 1,
             "coin": 1815,
@@ -1213,10 +1200,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "0d641900a5d79ea6629ad46804aeb318089ebe9a4f7d713fe1ec9fc6",
-          "path": Object {
+          "path": {
             "account": 1,
             "chain": 1,
             "coin": 1815,
@@ -1224,10 +1211,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "18ccd0dfd31ecddd9ff382252bdee7dddf43ce1bb4c5ebf5181c76e3",
-          "path": Object {
+          "path": {
             "account": 1,
             "chain": 1,
             "coin": 1815,
@@ -1235,10 +1222,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "360ea2f7d869a7a7038ac07443c6aad1c56e38c25e333ded5b17a396",
-          "path": Object {
+          "path": {
             "account": 1,
             "chain": 1,
             "coin": 1815,
@@ -1246,10 +1233,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "c9ddd9026aecc9cbadd1df4ed8224af3d8eacc4f27008e58fa45ad42",
-          "path": Object {
+          "path": {
             "account": 1,
             "chain": 1,
             "coin": 1815,
@@ -1257,10 +1244,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "11c32769c2d7a949fb7b7a2600185bea6667c9afde2f30ef46cfcf7d",
-          "path": Object {
+          "path": {
             "account": 1,
             "chain": 1,
             "coin": 1815,
@@ -1268,10 +1255,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "0ee4b9bc6ba9b3832acea2c25fe17586131252add67a2b69c255d813",
-          "path": Object {
+          "path": {
             "account": 1,
             "chain": 1,
             "coin": 1815,
@@ -1279,10 +1266,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "b8e7359983d37d1117ccedce37aeac88d697573de4eb108ca4a2defd",
-          "path": Object {
+          "path": {
             "account": 1,
             "chain": 1,
             "coin": 1815,
@@ -1290,10 +1277,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "64eac004d2c333d79d214a001fbe1d48082922740336c8cedbf45aab",
-          "path": Object {
+          "path": {
             "account": 1,
             "chain": 1,
             "coin": 1815,
@@ -1301,10 +1288,10 @@ Array [
             "purpose": 1852,
           },
         },
-        Object {
+        {
           "isUsed": false,
           "key": "a7b3ec4159411a94e506b3b526b374bd8241b9efc88a48f7b2a47093",
-          "path": Object {
+          "path": {
             "account": 1,
             "chain": 1,
             "coin": 1815,
@@ -1313,10 +1300,10 @@ Array [
           },
         },
       ],
-      "protocolParams": Object {
+      "protocolParams": {
         "collateralPercent": "150",
-        "languageView": Object {
-          "PlutusScriptV1": Object {
+        "languageView": {
+          "PlutusScriptV1": {
             "addInteger-cpu-arguments-intercept": 197209,
             "addInteger-cpu-arguments-slope": 0,
             "addInteger-memory-arguments-intercept": 1,
@@ -1492,90 +1479,90 @@ Array [
         "priceSteps": "0.0000721",
         "stakeKeyDeposit": "2000000",
       },
-      "utxos": Array [],
+      "utxos": [],
     },
     "currencyId": "cardano_testnet",
     "derivationMode": "cardano",
     "freshAddress": "addr_test1qqy52lvc7sz3j9m9svxp4l53esettazuryaf4t2tvphc7hw4n8vhzdwpyhzkx0fagscmapafelexasyd8zyr807v2v8sugy68t",
     "freshAddressPath": "1852'/1815'/1'/0/0",
-    "freshAddresses": Array [
-      Object {
+    "freshAddresses": [
+      {
         "address": "addr_test1qqy52lvc7sz3j9m9svxp4l53esettazuryaf4t2tvphc7hw4n8vhzdwpyhzkx0fagscmapafelexasyd8zyr807v2v8sugy68t",
         "derivationPath": "1852'/1815'/1'/0/0",
       },
-      Object {
+      {
         "address": "addr_test1qpacryjklmfpk6ghc86ntfjh32pkxfal5t86hf2hgc9422k4n8vhzdwpyhzkx0fagscmapafelexasyd8zyr807v2v8sjtp0ul",
         "derivationPath": "1852'/1815'/1'/0/1",
       },
-      Object {
+      {
         "address": "addr_test1qz57dqfec5wkla3kyavrq29c7huk4ldqgje0vwazxkzmkh74n8vhzdwpyhzkx0fagscmapafelexasyd8zyr807v2v8skqqlaj",
         "derivationPath": "1852'/1815'/1'/0/2",
       },
-      Object {
+      {
         "address": "addr_test1qq2xzdcr20ghghc6wd6cek9lk5y5ftjcjs7k9yvdsn9jdcw4n8vhzdwpyhzkx0fagscmapafelexasyd8zyr807v2v8shuud0x",
         "derivationPath": "1852'/1815'/1'/0/3",
       },
-      Object {
+      {
         "address": "addr_test1qr6y3rf4dqv6lhvpucs35e5lpfytxyts68cqhw2ucra4jqx4n8vhzdwpyhzkx0fagscmapafelexasyd8zyr807v2v8s3h053u",
         "derivationPath": "1852'/1815'/1'/0/4",
       },
-      Object {
+      {
         "address": "addr_test1qrxyqf72nhfzaeqctrhnqwk3vmvvu2munw8mplguh4hafjk4n8vhzdwpyhzkx0fagscmapafelexasyd8zyr807v2v8s3fzdep",
         "derivationPath": "1852'/1815'/1'/0/5",
       },
-      Object {
+      {
         "address": "addr_test1qqxyx9xcj3ax34nvspqmvq4ry75lssg7vs5aecfthgqxxuw4n8vhzdwpyhzkx0fagscmapafelexasyd8zyr807v2v8sxfes5t",
         "derivationPath": "1852'/1815'/1'/0/6",
       },
-      Object {
+      {
         "address": "addr_test1qrxqevyurv85ey0l0xezm44gherw2k2qxl7wpmywqsftyn74n8vhzdwpyhzkx0fagscmapafelexasyd8zyr807v2v8swaxjup",
         "derivationPath": "1852'/1815'/1'/0/7",
       },
-      Object {
+      {
         "address": "addr_test1qr6j6u07y3ma848z8u3w2y89s8ftvdetcc6fa47mt3fzn474n8vhzdwpyhzkx0fagscmapafelexasyd8zyr807v2v8s6c39wf",
         "derivationPath": "1852'/1815'/1'/0/8",
       },
-      Object {
+      {
         "address": "addr_test1qzjawuq8ngw0tqztn5v3t428k8n9f5qrjj9050xqftwlnvw4n8vhzdwpyhzkx0fagscmapafelexasyd8zyr807v2v8sg8yrcg",
         "derivationPath": "1852'/1815'/1'/0/9",
       },
-      Object {
+      {
         "address": "addr_test1qpy20dlx3g68wl2q839ug3f9294x8mszkyg47gk8w0fua2k4n8vhzdwpyhzkx0fagscmapafelexasyd8zyr807v2v8sn3afzy",
         "derivationPath": "1852'/1815'/1'/0/10",
       },
-      Object {
+      {
         "address": "addr_test1qqm2vyffhd0dy5vfz50mf6t2pg9uztmalqt8mru26gqgzfk4n8vhzdwpyhzkx0fagscmapafelexasyd8zyr807v2v8sh4d8c4",
         "derivationPath": "1852'/1815'/1'/0/11",
       },
-      Object {
+      {
         "address": "addr_test1qpqnzujhwkyjhepxmmny2n3s7leapf5lr437m7eerk3093w4n8vhzdwpyhzkx0fagscmapafelexasyd8zyr807v2v8sh8nsfs",
         "derivationPath": "1852'/1815'/1'/0/12",
       },
-      Object {
+      {
         "address": "addr_test1qz447r0ftktdfa9983y08kza4xrlh9hnk2d0uv33vmemmjx4n8vhzdwpyhzkx0fagscmapafelexasyd8zyr807v2v8sga9n4a",
         "derivationPath": "1852'/1815'/1'/0/13",
       },
-      Object {
+      {
         "address": "addr_test1qperqa394kmlpzme4cl4ekwclfz303983xswvw5wd2p7lt74n8vhzdwpyhzkx0fagscmapafelexasyd8zyr807v2v8sa4qppt",
         "derivationPath": "1852'/1815'/1'/0/14",
       },
-      Object {
+      {
         "address": "addr_test1qruaarep4kn5elyznxde6na2esqn60efzn4c7n7dyej6hxk4n8vhzdwpyhzkx0fagscmapafelexasyd8zyr807v2v8slaslmd",
         "derivationPath": "1852'/1815'/1'/0/15",
       },
-      Object {
+      {
         "address": "addr_test1qr63w0tukyszzv4xkds6u5t0zc9h6snnllftc9mm8y07e8x4n8vhzdwpyhzkx0fagscmapafelexasyd8zyr807v2v8skszln4",
         "derivationPath": "1852'/1815'/1'/0/16",
       },
-      Object {
+      {
         "address": "addr_test1qz5k62ga68r3d09djaekejjddqy5ejg0dunymeara6gdfpk4n8vhzdwpyhzkx0fagscmapafelexasyd8zyr807v2v8styws9n",
         "derivationPath": "1852'/1815'/1'/0/17",
       },
-      Object {
+      {
         "address": "addr_test1qrsyy48geyvxge0lzd7qf9v4zj06c25zhp39rcfde5cpmw74n8vhzdwpyhzkx0fagscmapafelexasyd8zyr807v2v8s8tmvgj",
         "derivationPath": "1852'/1815'/1'/0/18",
       },
-      Object {
+      {
         "address": "addr_test1qz4cucee6esfrjrlf7s2806wpdn7ex2e0jd820uzr4j9tsk4n8vhzdwpyhzkx0fagscmapafelexasyd8zyr807v2v8sjfjk5c",
         "derivationPath": "1852'/1815'/1'/0/19",
       },
@@ -1585,13 +1572,13 @@ Array [
     "name": "Cardano (Testnet) 2",
     "nfts": undefined,
     "operationsCount": 0,
-    "pendingOperations": Array [],
+    "pendingOperations": [],
     "seedIdentifier": "bea94629d5cf776b8374a00afa15686f0b0742dd0330f86804c61202",
     "spendableBalance": "0",
     "starred": false,
-    "subAccounts": Array [],
-    "swapHistory": Array [],
-    "syncHash": "[\\"ethereum/erc20/ampleforth\\",\\"ethereum/erc20/steth\\"]_1",
+    "subAccounts": [],
+    "swapHistory": [],
+    "syncHash": "["ethereum/erc20/ampleforth","ethereum/erc20/steth"]_0",
     "unitMagnitude": 6,
     "used": false,
     "xpub": "ed5e0d059cb2eed53ea30b9ba84bb3aaa6c2364c6305a0c9a7e8944aa439884a642cc2f06e601808926e14b6e27417be0b0323d5a5149f1eebab8fc4e1fe14d4",
@@ -1600,22 +1587,22 @@ Array [
 `;
 
 exports[`cardano_testnet currency bridge scanAccounts cardano_testnet seed 1 2`] = `
-Array [
-  Array [
-    Object {
+[
+  [
+    {
       "accountId": "js:2:cardano_testnet:806499588e0c4a58f4119f7e6e096bf42c3f774a528d2acec9e82ceebf87d1ceb3d4f3622dd2c77c65cc89c123f79337db22cf8a69f122e36dab1bf5083bf82d:cardano",
       "blockHash": undefined,
       "blockHeight": 278777,
       "contract": undefined,
-      "extra": Object {},
+      "extra": {},
       "fee": "172805",
       "hash": "1bc0f281044d852d6390c7977ff6cbf446e315c6b8879e1fa0dcc021372ac5e3",
       "id": "js:2:cardano_testnet:806499588e0c4a58f4119f7e6e096bf42c3f774a528d2acec9e82ceebf87d1ceb3d4f3622dd2c77c65cc89c123f79337db22cf8a69f122e36dab1bf5083bf82d:cardano-1bc0f281044d852d6390c7977ff6cbf446e315c6b8879e1fa0dcc021372ac5e3-DELEGATE",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "addr_test1qrd4usvu5fhsy2u5dwgqh8nqvgqkxx65x792tarksgrphxa4mcsd3mzvmr9qhfscxkyla3aqnzttwepay9mt3fz84smq08uhn5",
       ],
-      "senders": Array [
+      "senders": [
         "addr_test1qrxusg8ujg7p7rppaksq0wpmzhd8wrk7uhma3ly7w7ls9w44mcsd3mzvmr9qhfscxkyla3aqnzttwepay9mt3fz84smqyrw2z3",
       ],
       "standard": undefined,
@@ -1623,20 +1610,20 @@ Array [
       "type": "DELEGATE",
       "value": "172805",
     },
-    Object {
+    {
       "accountId": "js:2:cardano_testnet:806499588e0c4a58f4119f7e6e096bf42c3f774a528d2acec9e82ceebf87d1ceb3d4f3622dd2c77c65cc89c123f79337db22cf8a69f122e36dab1bf5083bf82d:cardano",
       "blockHash": undefined,
       "blockHeight": 261953,
       "contract": undefined,
-      "extra": Object {},
+      "extra": {},
       "fee": "200000",
       "hash": "5a79cec1f369c234d11ce12fd06b39ef60aa32e344be2485033af462cd879034",
       "id": "js:2:cardano_testnet:806499588e0c4a58f4119f7e6e096bf42c3f774a528d2acec9e82ceebf87d1ceb3d4f3622dd2c77c65cc89c123f79337db22cf8a69f122e36dab1bf5083bf82d:cardano-5a79cec1f369c234d11ce12fd06b39ef60aa32e344be2485033af462cd879034-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "addr_test1qzl2j33f6h8hw6urwjsq47s4dphskp6zm5pnp7rgqnrpyq44mcsd3mzvmr9qhfscxkyla3aqnzttwepay9mt3fz84smqe83h2u",
       ],
-      "senders": Array [
+      "senders": [
         "addr_test1vzpwq95z3xyum8vqndgdd9mdnmafh3djcxnc6jemlgdmswcve6tkw",
       ],
       "standard": undefined,
@@ -1644,21 +1631,21 @@ Array [
       "type": "IN",
       "value": "10000000000",
     },
-    Object {
+    {
       "accountId": "js:2:cardano_testnet:806499588e0c4a58f4119f7e6e096bf42c3f774a528d2acec9e82ceebf87d1ceb3d4f3622dd2c77c65cc89c123f79337db22cf8a69f122e36dab1bf5083bf82d:cardano",
       "blockHash": undefined,
       "blockHeight": 279040,
       "contract": undefined,
-      "extra": Object {},
+      "extra": {},
       "fee": "188689",
       "hash": "6c8f2922d87f6d321bac3c6e4987985bdff16a3c840c0f6fab9412420a2df7af",
       "id": "js:2:cardano_testnet:806499588e0c4a58f4119f7e6e096bf42c3f774a528d2acec9e82ceebf87d1ceb3d4f3622dd2c77c65cc89c123f79337db22cf8a69f122e36dab1bf5083bf82d:cardano-6c8f2922d87f6d321bac3c6e4987985bdff16a3c840c0f6fab9412420a2df7af-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "addr_test1qz4dq2sq8dmm65mmsd40kwthmg3vdap08tqqmcsp30ach2d4mcsd3mzvmr9qhfscxkyla3aqnzttwepay9mt3fz84smqkx5sjf",
         "addr_test1qp64lq7jlq743x9gg8cxvnuht5g8k94lpmggl9aqkcuxhpmra2x9gp8eakdwsrv4k42ys4ajqy0r7f4k8hwrhcdt6sksyx45r7",
       ],
-      "senders": Array [
+      "senders": [
         "addr_test1qr4qq9s7cf28zse9t4c46l3utj6ajphx654l8ddcv6rhketra2x9gp8eakdwsrv4k42ys4ajqy0r7f4k8hwrhcdt6sksjh37nz",
       ],
       "standard": undefined,
@@ -1666,21 +1653,21 @@ Array [
       "type": "IN",
       "value": "1344798",
     },
-    Object {
+    {
       "accountId": "js:2:cardano_testnet:806499588e0c4a58f4119f7e6e096bf42c3f774a528d2acec9e82ceebf87d1ceb3d4f3622dd2c77c65cc89c123f79337db22cf8a69f122e36dab1bf5083bf82d:cardano",
       "blockHash": undefined,
       "blockHeight": 274614,
       "contract": undefined,
-      "extra": Object {},
+      "extra": {},
       "fee": "168317",
       "hash": "9b5428b372e50265ee588a28e67f547b0b24e5d8c3f191cac7ed6479c53e397a",
       "id": "js:2:cardano_testnet:806499588e0c4a58f4119f7e6e096bf42c3f774a528d2acec9e82ceebf87d1ceb3d4f3622dd2c77c65cc89c123f79337db22cf8a69f122e36dab1bf5083bf82d:cardano-9b5428b372e50265ee588a28e67f547b0b24e5d8c3f191cac7ed6479c53e397a-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "addr_test1qz4dq2sq8dmm65mmsd40kwthmg3vdap08tqqmcsp30ach2d4mcsd3mzvmr9qhfscxkyla3aqnzttwepay9mt3fz84smqkx5sjf",
         "addr_test1qp2dhfym0ac3kzx8z0d4f007asday5jx3934sta8nph6da76d3nuxxfhf0vk9f8v9vqnx5nt8n9ked9e9hanh82p975s4xdl2h",
       ],
-      "senders": Array [
+      "senders": [
         "addr_test1qrn4m22gxzjzs5d8qqmmz55rpp5xvuw8wehc8wz760k9p576d3nuxxfhf0vk9f8v9vqnx5nt8n9ked9e9hanh82p975s9ahz2y",
       ],
       "standard": undefined,
@@ -1688,22 +1675,22 @@ Array [
       "type": "IN",
       "value": "200000000",
     },
-    Object {
+    {
       "accountId": "js:2:cardano_testnet:806499588e0c4a58f4119f7e6e096bf42c3f774a528d2acec9e82ceebf87d1ceb3d4f3622dd2c77c65cc89c123f79337db22cf8a69f122e36dab1bf5083bf82d:cardano",
       "blockHash": undefined,
       "blockHeight": 274636,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "deposit": "2 tADA",
       },
       "fee": "174301",
       "hash": "cdfd34431c6345e7dafc3a32f0f90e5805b7d12eb9d1083e837645d7fd682bd6",
       "id": "js:2:cardano_testnet:806499588e0c4a58f4119f7e6e096bf42c3f774a528d2acec9e82ceebf87d1ceb3d4f3622dd2c77c65cc89c123f79337db22cf8a69f122e36dab1bf5083bf82d:cardano-cdfd34431c6345e7dafc3a32f0f90e5805b7d12eb9d1083e837645d7fd682bd6-DELEGATE",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "addr_test1qrxusg8ujg7p7rppaksq0wpmzhd8wrk7uhma3ly7w7ls9w44mcsd3mzvmr9qhfscxkyla3aqnzttwepay9mt3fz84smqyrw2z3",
       ],
-      "senders": Array [
+      "senders": [
         "addr_test1qpwjlccw7ctda5cfx0ak5k8uphnatdy7uduczp3sfc0a6y94mcsd3mzvmr9qhfscxkyla3aqnzttwepay9mt3fz84smqwyqhg7",
       ],
       "standard": undefined,
@@ -1711,21 +1698,21 @@ Array [
       "type": "DELEGATE",
       "value": "2174301",
     },
-    Object {
+    {
       "accountId": "js:2:cardano_testnet:806499588e0c4a58f4119f7e6e096bf42c3f774a528d2acec9e82ceebf87d1ceb3d4f3622dd2c77c65cc89c123f79337db22cf8a69f122e36dab1bf5083bf82d:cardano",
       "blockHash": undefined,
       "blockHeight": 274607,
       "contract": undefined,
-      "extra": Object {},
+      "extra": {},
       "fee": "168317",
       "hash": "ecde338c38caf74209773ca95be32db75cdeff0c1edf5fc9ddad35f21f4de94e",
       "id": "js:2:cardano_testnet:806499588e0c4a58f4119f7e6e096bf42c3f774a528d2acec9e82ceebf87d1ceb3d4f3622dd2c77c65cc89c123f79337db22cf8a69f122e36dab1bf5083bf82d:cardano-ecde338c38caf74209773ca95be32db75cdeff0c1edf5fc9ddad35f21f4de94e-OUT",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "addr_test1qqcqjp0x6y3hhx9w75ltt86wt2nqd209d2uv4uxktzu3uz76d3nuxxfhf0vk9f8v9vqnx5nt8n9ked9e9hanh82p975spw239z",
         "addr_test1qpwjlccw7ctda5cfx0ak5k8uphnatdy7uduczp3sfc0a6y94mcsd3mzvmr9qhfscxkyla3aqnzttwepay9mt3fz84smqwyqhg7",
       ],
-      "senders": Array [
+      "senders": [
         "addr_test1qzl2j33f6h8hw6urwjsq47s4dphskp6zm5pnp7rgqnrpyq44mcsd3mzvmr9qhfscxkyla3aqnzttwepay9mt3fz84smqe83h2u",
       ],
       "standard": undefined,
@@ -1734,30 +1721,6 @@ Array [
       "value": "100168317",
     },
   ],
-  Array [
-    Object {
-      "accountId": "js:2:cardano_testnet:806499588e0c4a58f4119f7e6e096bf42c3f774a528d2acec9e82ceebf87d1ceb3d4f3622dd2c77c65cc89c123f79337db22cf8a69f122e36dab1bf5083bf82d:cardano+cardano_testnet%2Fnative%2F47be64fcc8a7fe5321b976282ce4e43e4d29015f6613cfabcea28eab54657374",
-      "blockHash": undefined,
-      "blockHeight": 279040,
-      "contract": undefined,
-      "extra": Object {},
-      "fee": "188689",
-      "hash": "6c8f2922d87f6d321bac3c6e4987985bdff16a3c840c0f6fab9412420a2df7af",
-      "id": "js:2:cardano_testnet:806499588e0c4a58f4119f7e6e096bf42c3f774a528d2acec9e82ceebf87d1ceb3d4f3622dd2c77c65cc89c123f79337db22cf8a69f122e36dab1bf5083bf82d:cardano+cardano_testnet%2Fnative%2F47be64fcc8a7fe5321b976282ce4e43e4d29015f6613cfabcea28eab54657374-6c8f2922d87f6d321bac3c6e4987985bdff16a3c840c0f6fab9412420a2df7af-IN",
-      "operator": undefined,
-      "recipients": Array [
-        "addr_test1qz4dq2sq8dmm65mmsd40kwthmg3vdap08tqqmcsp30ach2d4mcsd3mzvmr9qhfscxkyla3aqnzttwepay9mt3fz84smqkx5sjf",
-        "addr_test1qp64lq7jlq743x9gg8cxvnuht5g8k94lpmggl9aqkcuxhpmra2x9gp8eakdwsrv4k42ys4ajqy0r7f4k8hwrhcdt6sksyx45r7",
-      ],
-      "senders": Array [
-        "addr_test1qr4qq9s7cf28zse9t4c46l3utj6ajphx654l8ddcv6rhketra2x9gp8eakdwsrv4k42ys4ajqy0r7f4k8hwrhcdt6sksjh37nz",
-      ],
-      "standard": undefined,
-      "tokenId": undefined,
-      "type": "IN",
-      "value": "100",
-    },
-  ],
-  Array [],
+  [],
 ]
 `;

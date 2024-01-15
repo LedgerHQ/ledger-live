@@ -4,9 +4,9 @@ import { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoa
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { MaterialTopTabScreenProps } from "@react-navigation/material-top-tabs";
 import { StackScreenProps } from "@react-navigation/stack";
-import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
-import { ScreenName } from "../../const";
-import { BaseComposite } from "../../components/RootNavigator/types/helpers";
+import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
+import { ScreenName } from "~/const";
+import { BaseComposite } from "~/components/RootNavigator/types/helpers";
 
 export type SwapFormParamList = MaterialTopTabScreenProps<
   SwapFormNavParamList,

@@ -2,9 +2,9 @@ import { BigNumber } from "bignumber.js";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
 import { CryptoCurrency, LedgerExplorerId } from "@ledgerhq/types-cryptoassets";
-import { GasTrackerApi, isLedgerGasTracker } from "./types";
 import { GasOptions } from "../../types";
 import { LedgerGasTrackerUsedIncorrectly, NoGasTrackerFound } from "../../errors";
+import { GasTrackerApi, isLedgerGasTracker } from "./types";
 
 type GasTracker = {
   compatibilty: {
@@ -24,6 +24,8 @@ const explorerIdGasTrackerMap = new Map<LedgerExplorerId, GasTracker>([
   ["matic", { compatibilty: { eip1559: true } }],
   ["eth_ropsten", { compatibilty: { eip1559: true } }],
   ["eth_goerli", { compatibilty: { eip1559: true } }],
+  ["eth_sepolia", { compatibilty: { eip1559: true } }],
+  ["eth_holesky", { compatibilty: { eip1559: true } }],
 ]);
 
 export const getGasOptions = async ({

@@ -1,7 +1,5 @@
-import React, { useCallback } from "react";
-import { useNavigation } from "@react-navigation/native";
+import React from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { ArrowLeftMedium } from "@ledgerhq/native-ui/assets/icons";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import {
   getAccountCurrency,
@@ -11,13 +9,13 @@ import {
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { AccountLike, Account, BalanceHistoryWithCountervalue } from "@ledgerhq/types-live";
 import Animated from "react-native-reanimated";
-import Touchable from "../../components/Touchable";
-import { withDiscreetMode } from "../../context/DiscreetModeContext";
-import { track } from "../../analytics";
+import { withDiscreetMode } from "~/context/DiscreetModeContext";
+
 import AccountHeaderRight from "./AccountHeaderRight";
-import CurrencyHeaderLayout from "../../components/CurrencyHeaderLayout";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import Placeholder from "../../components/Placeholder";
+import CurrencyHeaderLayout from "~/components/CurrencyHeaderLayout";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import Placeholder from "~/components/Placeholder";
+import AccountHeaderLeft from "./AccountHeaderLeft";
 
 function AccountHeader({
   currentPositionY,
@@ -57,16 +55,7 @@ function AccountHeader({
     items.reverse();
   }
 
-  const navigation = useNavigation();
   const currency = getAccountCurrency(account);
-
-  const onBackButtonPress = useCallback(() => {
-    track("button_clicked", {
-      button: "Back",
-      page: "Account",
-    });
-    navigation.goBack();
-  }, [navigation]);
 
   const isToken = parentAccount && parentAccount.name !== undefined;
 
@@ -74,11 +63,7 @@ function AccountHeader({
     <CurrencyHeaderLayout
       currentPositionY={currentPositionY}
       graphCardEndPosition={graphCardEndPosition}
-      leftElement={
-        <Touchable onPress={onBackButtonPress}>
-          <ArrowLeftMedium size={24} />
-        </Touchable>
-      }
+      leftElement={<AccountHeaderLeft currency={currency} />}
       centerAfterScrollElement={
         <Flex flexDirection={"column"} alignItems={"center"}>
           {typeof items[1]?.value === "number" ? (

@@ -1,8 +1,8 @@
 import React, { useCallback } from "react";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { setEnv } from "@ledgerhq/live-env";
-import SettingsRow from "../../../../components/SettingsRow";
-import Switch from "../../../../components/Switch";
+import SettingsRow from "~/components/SettingsRow";
+import Switch from "~/components/Switch";
 
 const ThemeToggleRow = () => {
   const debugThemeVisibility = useEnv("DEBUG_THEME");

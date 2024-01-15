@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/types-live",
-  "version": "6.41.1",
+  "version": "6.43.1",
   "description": "Ledger Live main types.",
   "keywords": [
     "Ledger"
@@ -27,13 +27,13 @@
   "devDependencies": {
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
-    "@types/jest": "^29.5.0",
-    "@types/node": "^18.15.3",
-    "documentation": "13.2.5",
-    "jest": "^28.1.1",
+    "@types/jest": "^29.5.10",
+    "@types/node": "^20.8.10",
+    "documentation": "14.0.2",
+    "jest": "^29.7.0",
     "rimraf": "^4.4.1",
     "source-map-support": "^0.5.21",
-    "ts-jest": "^28.0.5",
+    "ts-jest": "^29.1.1",
     "ts-node": "^10.4.0"
   },
   "scripts": {

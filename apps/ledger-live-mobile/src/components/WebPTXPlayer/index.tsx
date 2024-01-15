@@ -29,9 +29,9 @@ import { Web3AppWebview } from "../Web3AppWebview";
 import { RootNavigationComposite, StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { initialWebviewState } from "../Web3AppWebview/helpers";
-import { track } from "../../analytics";
+import { track } from "~/analytics";
 import { NavigationHeaderCloseButtonAdvanced } from "../NavigationHeaderCloseButton";
-import { NavigatorName, ScreenName } from "../../const";
+import { NavigatorName, ScreenName } from "~/const";
 import { Loading } from "../Loading";
 
 type BackToInternalDomainProps = {

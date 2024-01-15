@@ -16,27 +16,27 @@ import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/ind
 import { useTheme } from "styled-components/native";
 import { Flex, Text, IconsLegacy, Button, Box, BannerCard, Icons } from "@ledgerhq/native-ui";
 import { useRoute } from "@react-navigation/native";
-import getWindowDimensions from "../../logic/getWindowDimensions";
-import { accountScreenSelector } from "../../reducers/accounts";
-import CurrencyIcon from "../../components/CurrencyIcon";
-import NavigationScrollView from "../../components/NavigationScrollView";
+import getWindowDimensions from "~/logic/getWindowDimensions";
+import { accountScreenSelector } from "~/reducers/accounts";
+import CurrencyIcon from "~/components/CurrencyIcon";
+import NavigationScrollView from "~/components/NavigationScrollView";
 import ReceiveSecurityModal from "./ReceiveSecurityModal";
-import { replaceAccounts } from "../../actions/accounts";
-import { ScreenName } from "../../const";
-import { track, TrackScreen } from "../../analytics";
+import { replaceAccounts } from "~/actions/accounts";
+import { ScreenName } from "~/const";
+import { track, TrackScreen } from "~/analytics";
 import byFamily from "../../generated/Confirmation";
 import byFamilyPostAlert from "../../generated/ReceiveConfirmationPostAlert";
 
-import { ReceiveFundsStackParamList } from "../../components/RootNavigator/types/ReceiveFundsNavigator";
-import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import { ReceiveFundsStackParamList } from "~/components/RootNavigator/types/ReceiveFundsNavigator";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import styled, { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
 import Clipboard from "@react-native-clipboard/clipboard";
 import ConfirmationHeaderTitle from "./ConfirmationHeaderTitle";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
 import { BankMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { hasClosedWithdrawBannerSelector } from "../../reducers/settings";
-import { setCloseWithdrawBanner } from "../../actions/settings";
+import { hasClosedWithdrawBannerSelector } from "~/reducers/settings";
+import { setCloseWithdrawBanner } from "~/actions/settings";
 import * as Animatable from "react-native-animatable";
 
 const AnimatedView = Animatable.View;
@@ -283,6 +283,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
                   fontWeight={"semiBold"}
                   textAlign={"center"}
                   numberOfLines={1}
+                  testID={"receive-account-name-" + mainAccount.name}
                 >
                   {mainAccount.name}
                 </Text>
@@ -382,7 +383,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
       </NavigationScrollView>
       <Flex m={6}>
         <Flex>
-          <Button type="main" size="large" onPress={onRetry}>
+          <Button type="main" size="large" onPress={onRetry} testID="button-receive-confirmation">
             {t("transfer.receive.receiveConfirmation.verifyAddress")}
           </Button>
 

@@ -4,15 +4,12 @@ import { Trans } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { Transaction } from "@ledgerhq/coin-evm/types/index";
-import { SendFundsNavigatorStackParamList } from "../../../components/RootNavigator/types/SendFundsNavigator";
-import { accountScreenSelector } from "../../../reducers/accounts";
+import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
+import { accountScreenSelector } from "~/reducers/accounts";
 import EvmLegacyCustomFees from "./EvmLegacyCustomFees";
 import Evm1559CustomFees from "./Evm1559CustomFees";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
-import { ScreenName } from "../../../const";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { ScreenName } from "~/const";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
 
 type Props = BaseComposite<
@@ -29,7 +26,6 @@ export default function EvmCustomFees({ route }: Props) {
     setCustomStrategyTransactionPatch,
     transaction: baseTransaction,
     gasOptions,
-    goBackOnSetTransaction = true,
   } = route.params;
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
   const navigation = useNavigation();
@@ -50,15 +46,10 @@ export default function EvmCustomFees({ route }: Props) {
   const onValidateFees = useCallback(
     (transactionPatch: Partial<Transaction>) => () => {
       setCustomStrategyTransactionPatch(transactionPatch);
-      // In the context of some UI flows like the swap, the main component might already
-      // be providing a navigation after updating the transaction. On those cases,
-      // we'll remove the default "go back" behaviour and
-      // let the parent UI decide how to navigate.
-      if (goBackOnSetTransaction) {
-        navigation.goBack();
-      }
+
+      navigation.goBack();
     },
-    [navigation, setCustomStrategyTransactionPatch, goBackOnSetTransaction],
+    [navigation, setCustomStrategyTransactionPatch],
   );
 
   const shouldUseEip1559 = transaction.type === 2;

@@ -1,9 +1,9 @@
 import React from "react";
 import { Icons, Button, Flex, Link } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
-import QueuedDrawer from "../../components/QueuedDrawer";
-import { TrackScreen } from "../../analytics";
-import { GenericInformationBody } from "../../components/GenericInformationBody";
+import QueuedDrawer from "~/components/QueuedDrawer";
+import { TrackScreen } from "~/analytics";
+import { GenericInformationBody } from "~/components/GenericInformationBody";
 
 export type Props = {
   /**

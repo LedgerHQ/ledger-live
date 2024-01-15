@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { Flex, Text, Button, IconsLegacy } from "@ledgerhq/react-ui";
 import styled from "styled-components";
@@ -6,6 +6,7 @@ import { ScrollArea } from "~/renderer/components/Onboarding/ScrollArea";
 import FakeLink from "~/renderer/components/FakeLink";
 import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 
 const PinHelpContainer = styled(Flex).attrs({
   flexDirection: "column",
@@ -14,8 +15,8 @@ const PinHelpContainer = styled(Flex).attrs({
 
 export function RecoverySeed(props: { handleNextInDrawer: () => void }) {
   const { t } = useTranslation();
-
-  const onClickLink = useCallback(() => openURL(urls.whatIsARecoveryPhrase), []);
+  const whatIsARecoveryPhrase = useLocalizedUrl(urls.whatIsARecoveryPhrase);
+  const onClickLink = () => openURL(whatIsARecoveryPhrase);
 
   return (
     <>
@@ -32,6 +33,7 @@ export function RecoverySeed(props: { handleNextInDrawer: () => void }) {
           </Text>
           <FakeLink onClick={onClickLink}>
             <Text
+              display="contents"
               mt="8px"
               color="neutral.c100"
               ff="Inter|Regular"

@@ -4,14 +4,14 @@ import { StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
-import { accountScreenSelector } from "../../reducers/accounts";
-import DeviceAction from "../../components/DeviceAction";
-import { TrackScreen } from "../../analytics";
-import { ScreenName } from "../../const";
+import { accountScreenSelector } from "~/reducers/accounts";
+import DeviceAction from "~/components/DeviceAction";
+import { TrackScreen } from "~/analytics";
+import { ScreenName } from "~/const";
 import { navigateToSelectDevice } from "../ConnectDevice";
-import { SignMessageNavigatorStackParamList } from "../../components/RootNavigator/types/SignMessageNavigator";
-import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { useSignMessageDeviceAction } from "../../hooks/deviceActions";
+import { SignMessageNavigatorStackParamList } from "~/components/RootNavigator/types/SignMessageNavigator";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { useSignMessageDeviceAction } from "~/hooks/deviceActions";
 
 export default function ConnectDevice({
   route,

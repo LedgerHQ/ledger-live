@@ -7,6 +7,5 @@ const ROOT_PATH = getEnv("MAPPING_SERVICE");
 export async function getMappedAssets(): Promise<MappedAsset[]> {
   const url = `${ROOT_PATH}/v1/coingecko/mapped-assets`;
   const { data } = await network({ method: "GET", url });
-
   return data;
 }

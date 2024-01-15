@@ -45,7 +45,7 @@ XRP API
 
 #### Parameters
 
-*   `transport` **Transport** 
+*   `transport` **Transport**&#x20;
 *   `scrambleKey`   (optional, default `"XRP"`)
 
 #### Examples

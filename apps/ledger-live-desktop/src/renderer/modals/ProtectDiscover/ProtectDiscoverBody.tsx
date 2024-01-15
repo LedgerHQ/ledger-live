@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Flex, Button as BaseButton, Text } from "@ledgerhq/react-ui";
 import styled, { BaseStyledProps } from "@ledgerhq/react-ui/components/styled";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { ModalBody } from "~/renderer/components/Modal";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import GetItOnGooglePlayImage from "./images/get_it_on_google_play.png";
@@ -28,13 +28,14 @@ const ProtectDiscoverBody = ({ onClose }: Props) => {
   const { t } = useTranslation();
   const protectServicesDesktopFeature = useFeature("protectServicesDesktop");
 
+  const discoverTheBenefitsLink = protectServicesDesktopFeature?.params?.discoverTheBenefitsLink;
   const onDiscoverClick = useCallback(() => {
+    if (!discoverTheBenefitsLink) return;
     track("button_clicked", {
       button: "Discover the benefits",
     });
-    // @ts-expect-error TYPINGS
-    openURL(protectServicesDesktopFeature?.params?.discoverTheBenefitsLink);
-  }, [protectServicesDesktopFeature?.params?.discoverTheBenefitsLink]);
+    openURL(discoverTheBenefitsLink);
+  }, [discoverTheBenefitsLink]);
 
   return (
     <ModalBody

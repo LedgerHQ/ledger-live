@@ -1,16 +1,3 @@
-// FIXME: to update when implementing edit transaction on evm
-
-import React, { useMemo, Component, useCallback } from "react";
-import { connect } from "react-redux";
-import { useHistory, useLocation } from "react-router-dom";
-import { TFunction } from "i18next";
-import { Trans, useTranslation } from "react-i18next";
-import styled from "styled-components";
-import uniq from "lodash/uniq";
-import { getEnv } from "@ledgerhq/live-env";
-import { colors } from "~/renderer/styles/theme";
-import Alert from "~/renderer/components/Alert";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import {
   findSubAccountById,
   getAccountCurrency,
@@ -20,61 +7,78 @@ import {
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
 import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
-import { getDefaultExplorerView, getTransactionExplorer } from "@ledgerhq/live-common/explorers";
+import {
+  getDefaultExplorerView,
+  getTransactionExplorer as getDefaultTransactionExplorer,
+} from "@ledgerhq/live-common/explorers";
+import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useNftMetadata } from "@ledgerhq/live-common/nft/NftMetadataProvider/index";
 import {
   findOperationInAccount,
   getOperationAmountNumber,
   getOperationConfirmationDisplayableNumber,
   isConfirmedOperation,
   isEditableOperation,
+  isStuckOperation,
 } from "@ledgerhq/live-common/operation";
+import { getEnv } from "@ledgerhq/live-env";
+import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { Account, AccountLike, NFTMetadata, Operation, OperationType } from "@ledgerhq/types-live";
-import { useNftMetadata } from "@ledgerhq/live-common/nft/NftMetadataProvider/index";
-import Skeleton from "~/renderer/components/Nft/Skeleton";
+import { TFunction } from "i18next";
+import invariant from "invariant";
+import uniq from "lodash/uniq";
+import React, { Component, useCallback, useMemo } from "react";
+import { Trans, useTranslation } from "react-i18next";
+import { connect, useDispatch } from "react-redux";
+import { useHistory, useLocation } from "react-router-dom";
+import styled from "styled-components";
 import { urls } from "~/config/urls";
+import { openModal } from "~/renderer/actions/modals";
 import TrackPage, { setTrackingSource } from "~/renderer/analytics/TrackPage";
+import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
+import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
-import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
 import CopyWithFeedback from "~/renderer/components/CopyWithFeedback";
 import CounterValue from "~/renderer/components/CounterValue";
+import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import Ellipsis from "~/renderer/components/Ellipsis";
 import FakeLink from "~/renderer/components/FakeLink";
+import FormattedDate from "~/renderer/components/FormattedDate";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import LabelInfoTooltip from "~/renderer/components/LabelInfoTooltip";
 import Link from "~/renderer/components/Link";
 import LinkHelp from "~/renderer/components/LinkHelp";
+import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
+import Skeleton from "~/renderer/components/Nft/Skeleton";
+import { SplitAddress } from "~/renderer/components/OperationsList/AddressCell";
 import ConfirmationCheck from "~/renderer/components/OperationsList/ConfirmationCheck";
 import OperationComponent from "~/renderer/components/OperationsList/Operation";
 import Text, { TextProps } from "~/renderer/components/Text";
+import ToolTip from "~/renderer/components/Tooltip";
+import { getLLDCoinFamily } from "~/renderer/families";
 import IconChevronRight from "~/renderer/icons/ChevronRight";
 import IconExternalLink from "~/renderer/icons/ExternalLink";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import { openURL } from "~/renderer/linking";
+import { State } from "~/renderer/reducers";
 import { accountSelector } from "~/renderer/reducers/accounts";
 import { confirmationsNbForCurrencySelector } from "~/renderer/reducers/settings";
-import { getMarketColor, centerEllipsis } from "~/renderer/styles/helpers";
-import {
-  OpDetailsSection,
-  OpDetailsTitle,
-  GradientHover,
-  OpDetailsData,
-  B,
-  TextEllipsis,
-  Separator,
-  HashContainer,
-  OpDetailsSideButton,
-} from "./styledComponents";
-import ToolTip from "~/renderer/components/Tooltip";
-import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
-import FormattedDate from "~/renderer/components/FormattedDate";
+import { centerEllipsis, getMarketColor } from "~/renderer/styles/helpers";
+import { colors } from "~/renderer/styles/theme";
 import { setDrawer } from "../Provider";
-import { SplitAddress } from "~/renderer/components/OperationsList/AddressCell";
-import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import AmountDetails from "./AmountDetails";
 import NFTOperationDetails from "./NFTOperationDetails";
-import { State } from "~/renderer/reducers";
-// import { openModal } from "~/renderer/actions/modals";
-import { getLLDCoinFamily } from "~/renderer/families";
+import {
+  B,
+  GradientHover,
+  HashContainer,
+  OpDetailsData,
+  OpDetailsSection,
+  OpDetailsSideButton,
+  OpDetailsTitle,
+  Separator,
+  TextEllipsis,
+} from "./styledComponents";
 
 const mapStateToProps = (
   state: State,
@@ -140,6 +144,7 @@ const OperationD = (props: Props) => {
   const location = useLocation();
   const mainAccount = getMainAccount(account, parentAccount);
   const { hash, date, senders, type, fee, recipients: _recipients, contract, tokenId } = operation;
+  const uniqueSenders = uniq(senders);
   const recipients = _recipients.filter(Boolean);
   const { name } = mainAccount;
   const isNftOperation = ["NFT_IN", "NFT_OUT"].includes(operation.type);
@@ -162,16 +167,22 @@ const OperationD = (props: Props) => {
   const IconElement = confirmationCell ? confirmationCell[operation.type] : null;
   const amountTooltip = specific?.operationDetails?.amountTooltip;
   const AmountTooltip = amountTooltip ? amountTooltip[operation.type] : null;
+
   const getURLWhatIsThis = specific?.operationDetails?.getURLWhatIsThis;
-  const getURLFeesInfo = specific?.operationDetails?.getURLFeesInfo;
   const urlWhatIsThis = getURLWhatIsThis
     ? getURLWhatIsThis({ op: operation, currencyId: cryptoCurrency.id })
     : null;
+
+  const getURLFeesInfo = specific?.operationDetails?.getURLFeesInfo;
   const urlFeesInfo = getURLFeesInfo
     ? getURLFeesInfo({ op: operation, currencyId: cryptoCurrency.id })
     : null;
-  const url = getTransactionExplorer(getDefaultExplorerView(mainAccount.currency), operation.hash);
-  const uniqueSenders = uniq(senders);
+
+  const getTransactionExplorer = specific?.getTransactionExplorer;
+  const url = getTransactionExplorer
+    ? getTransactionExplorer(getDefaultExplorerView(mainAccount.currency), operation)
+    : getDefaultTransactionExplorer(getDefaultExplorerView(mainAccount.currency), operation.hash);
+
   const OpDetailsExtra = specific?.operationDetails?.OperationDetailsExtra || OperationDetailsExtra;
   const { hasFailed } = operation;
   const subOperations: Operation[] = useMemo(
@@ -235,47 +246,34 @@ const OperationD = (props: Props) => {
       ? currency.parentCurrency.name
       : currency.name
     : undefined;
-  const editEthTx = useFeature("editEthTx");
-  const editable = editEthTx?.enabled && isEditableOperation(mainAccount, operation);
-  // const dispatch = useDispatch();
-  // const handleOpenEditModal = useCallback(
-  //   (account, parentAccount, transactionRaw, transactionHash) => {
-  //     setDrawer(undefined);
-  //     if (subOperations.length > 0 && isToken) {
-  //       // if the operation is a token operation,(ERC-20 send), in order to speedup/cancel we need to find the subAccount
-  //       const opAccount = findSubAccountById(account, subOperations[0].accountId);
-  //       dispatch(
-  //         openModal("MODAL_EDIT_TRANSACTION", {
-  //           account: opAccount,
-  //           parentAccount: account,
-  //           transactionRaw,
-  //           transactionHash,
-  //         }),
-  //       );
-  //     } else {
-  //       dispatch(
-  //         openModal("MODAL_EDIT_TRANSACTION", {
-  //           account,
-  //           parentAccount,
-  //           transactionRaw,
-  //           transactionHash,
-  //         }),
-  //       );
-  //     }
-  //   },
-  //   [dispatch, isToken, subOperations],
-  // );
 
-  const handleOpenEditModal = (
-    _account: unknown,
-    _parentAccount: unknown,
-    _transactionRaw: unknown,
-    _transactionHash: unknown,
-  ) => {};
+  const { enabled: isEditEvmTxEnabled, params } = useFeature("editEvmTx") ?? {};
+  const isCurrencySupported =
+    params?.supportedCurrencyIds?.includes(mainAccount.currency.id as CryptoCurrencyId) || false;
 
-  // pending transactions that exceeds 5 minutes are considered as stuck transactions
-  const isStuck =
-    new Date().getTime() - operation.date.getTime() > getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT");
+  const editable =
+    isEditEvmTxEnabled &&
+    isCurrencySupported &&
+    isEditableOperation({ account: mainAccount, operation });
+
+  const dispatch = useDispatch();
+
+  const handleOpenEditModal = useCallback(() => {
+    setDrawer(undefined);
+
+    invariant(operation.transactionRaw, "operation.transactionRaw is required");
+
+    dispatch(
+      openModal("MODAL_EVM_EDIT_TRANSACTION", {
+        account,
+        parentAccount,
+        transactionRaw: operation.transactionRaw,
+        transactionHash: operation.hash,
+      }),
+    );
+  }, [dispatch, account, parentAccount, operation.transactionRaw, operation.hash]);
+
+  const isStuck = isStuckOperation({ family: mainAccount.currency.family, operation });
   const feesCurrency = useMemo(() => getFeesCurrency(mainAccount), [mainAccount]);
   const feesUnit = useMemo(() => getFeesUnit(feesCurrency), [feesCurrency]);
 
@@ -382,6 +380,7 @@ const OperationD = (props: Props) => {
           <LinkWithExternalIcon
             fontSize={4}
             onClick={() =>
+              url &&
               openURL(url, "viewOperationInExplorer", {
                 currencyId: currencyName,
               })
@@ -398,14 +397,7 @@ const OperationD = (props: Props) => {
           <div>
             <Link
               style={{ textDecoration: "underline", fontSize: "13px" }}
-              onClick={() => {
-                handleOpenEditModal(
-                  account,
-                  parentAccount,
-                  operation.transactionRaw,
-                  operation.hash,
-                );
-              }}
+              onClick={handleOpenEditModal}
             >
               <Trans i18nKey="operation.edit.title" />
             </Link>

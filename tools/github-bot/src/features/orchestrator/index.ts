@@ -282,22 +282,19 @@ export function orchestrator(app: Probot) {
             const workflowRef =
               metadata?.head_branch || payload.workflow_run.pull_requests[0]?.head.ref;
 
-            let draft = false;
-            if (typeof metadata?.number == "number") {
-              const { data } = await octokit.pulls.get({
-                owner,
-                repo,
-                pull_number: metadata?.number,
-              });
-              draft = data?.draft || false;
-            }
+            // NOTE: Keeping this here in case we ever need it again
 
-            const inputs = workflow.getInputs(
-              payload,
-              metadata,
-              isFork ? localRef : undefined,
-              draft,
-            );
+            // let draft = false;
+            // if (typeof metadata?.number == "number") {
+            //   const { data } = await octokit.pulls.get({
+            //     owner,
+            //     repo,
+            //     pull_number: metadata?.number,
+            //   });
+            //   draft = data?.draft || false;
+            // }
+
+            const inputs = workflow.getInputs(payload, metadata, isFork ? localRef : undefined);
 
             context.log.info(
               `[Orchestrator](workflow_run.completed) Dispatching workflow ${fileName} on ref ${workflowRef} with inputs ${JSON.stringify(

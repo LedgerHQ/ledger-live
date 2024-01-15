@@ -17,7 +17,6 @@ describe("@deviceSDK/commands/toggleOnboardingEarlyCheckCmd", () => {
         error: (error: unknown) => {
           try {
             if (error instanceof TransportStatusError) {
-              // @ts-expect-error TransportStatusError not typed correctly
               expect(error.statusCode).toBe(StatusCodes.SECURITY_STATUS_NOT_SATISFIED);
               done();
             } else {
@@ -45,7 +44,6 @@ describe("@deviceSDK/commands/toggleOnboardingEarlyCheckCmd", () => {
         error: (error: unknown) => {
           try {
             if (error instanceof TransportStatusError) {
-              // @ts-expect-error TransportStatusError not typed correctly
               expect(error.statusCode).toBe(StatusCodes.INCORRECT_LENGTH);
               done();
             } else {

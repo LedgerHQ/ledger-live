@@ -5,16 +5,16 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import invariant from "invariant";
 import { useTheme } from "@react-navigation/native";
 import { Account } from "@ledgerhq/types-live";
-import { useSignWithDevice } from "../../../../logic/screenTransactionHooks";
-import { updateAccountWithUpdater } from "../../../../actions/accounts";
-import { accountScreenSelector } from "../../../../reducers/accounts";
-import { TrackScreen } from "../../../../analytics";
-import PreventNativeBack from "../../../../components/PreventNativeBack";
-import ValidateOnDevice from "../../../../components/ValidateOnDevice";
-import SkipLock from "../../../../components/behaviour/SkipLock";
-import { StackNavigatorProps } from "../../../../components/RootNavigator/types/helpers";
+import { useSignWithDevice } from "~/logic/screenTransactionHooks";
+import { updateAccountWithUpdater } from "~/actions/accounts";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { TrackScreen } from "~/analytics";
+import PreventNativeBack from "~/components/PreventNativeBack";
+import ValidateOnDevice from "~/components/ValidateOnDevice";
+import SkipLock from "~/components/behaviour/SkipLock";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { AlgorandClaimRewardsFlowParamList } from "./type";
-import { ScreenName } from "../../../../const";
+import { ScreenName } from "~/const";
 
 type Props = StackNavigatorProps<
   AlgorandClaimRewardsFlowParamList,

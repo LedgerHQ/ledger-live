@@ -11,11 +11,11 @@ import { getAccountCurrency, getAccountUnit } from "@ledgerhq/live-common/accoun
 
 import { useTheme } from "styled-components/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
-import CounterValue from "../../../components/CounterValue";
-import LText from "../../../components/LText";
-import ArrowRight from "../../../icons/ArrowRight";
-import Identicon from "@polkadot/reactnative-identicon";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import CounterValue from "~/components/CounterValue";
+import LText from "~/components/LText";
+import ArrowRight from "~/icons/ArrowRight";
+import FirstLetterIcon from "~/components/FirstLetterIcon";
 
 type Props = {
   nomination: PolkadotNomination;
@@ -41,7 +41,7 @@ export default function NominationRow({ nomination, validator, account, onPress 
     <TouchableOpacity onPress={() => onPress(nomination)}>
       <Flex flexDirection={"row"} alignItems={"center"} py={5}>
         <View style={styles.icon}>
-          <Identicon theme="polkadot" value={address} size={32} />
+          <FirstLetterIcon label={validator?.identity || "-"} />
         </View>
 
         <View style={styles.nameWrapper}>

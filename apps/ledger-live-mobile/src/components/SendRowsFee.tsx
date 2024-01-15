@@ -1,23 +1,23 @@
-import React from "react";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
+import type { Account, AccountLike, TransactionStatusCommon } from "@ledgerhq/types-live";
 import { CompositeScreenProps } from "@react-navigation/native";
-
+import React from "react";
+import { ScreenName } from "~/const";
 import perFamily from "../generated/SendRowsFee";
-import type { StackNavigatorProps } from "./RootNavigator/types/helpers";
+import type { BaseNavigatorStackParamList } from "./RootNavigator/types/BaseNavigator";
 import type { SendFundsNavigatorStackParamList } from "./RootNavigator/types/SendFundsNavigator";
 import type { SignTransactionNavigatorParamList } from "./RootNavigator/types/SignTransactionNavigator";
-import type { BaseNavigatorStackParamList } from "./RootNavigator/types/BaseNavigator";
 import type { SwapNavigatorParamList } from "./RootNavigator/types/SwapNavigator";
-import { ScreenName } from "../const";
+import type { StackNavigatorProps } from "./RootNavigator/types/helpers";
 
 type Props = {
   transaction: Transaction;
   account: AccountLike;
   parentAccount?: Account | null;
-  status?: TransactionStatus;
+  status?: TransactionStatusCommon;
   setTransaction: (..._: Array<Transaction>) => void;
+  transactionToUpdate?: Transaction;
   disabledStrategies?: Array<string>;
   shouldPrefillEvmGasOptions?: boolean;
 } & CompositeScreenProps<
@@ -34,15 +34,20 @@ export default ({
   navigation,
   route,
   setTransaction,
+  status,
   ...props
 }: Props) => {
   const mainAccount = getMainAccount(account, parentAccount);
 
-  // eslint-disable-next-line no-prototype-builtins
-  if (perFamily.hasOwnProperty(mainAccount.currency.family)) {
-    const C = perFamily[mainAccount.currency.family as keyof typeof perFamily];
+  const hasFamilyProperty = Object.prototype.hasOwnProperty.call(
+    perFamily,
+    mainAccount.currency.family,
+  );
+
+  if (hasFamilyProperty) {
+    const Component = perFamily[mainAccount.currency.family as keyof typeof perFamily];
     return (
-      <C
+      <Component
         {...props}
         setTransaction={setTransaction}
         transaction={transaction}
@@ -50,6 +55,7 @@ export default ({
         parentAccount={parentAccount}
         navigation={navigation}
         route={route}
+        status={status}
       />
     );
   }

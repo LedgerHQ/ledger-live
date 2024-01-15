@@ -50,7 +50,15 @@ export const convertToNonAtomicUnit = ({
   return amount?.shiftedBy(-fromMagnitude);
 };
 
-export const getMagnitudeAwareRate = ({ fromAccount, toAccount, rate }): BigNumber => {
+export const getMagnitudeAwareRate = ({
+  fromAccount,
+  toAccount,
+  rate,
+}: {
+  fromAccount: AccountLike;
+  toAccount: AccountLike;
+  rate: number;
+}): BigNumber => {
   const unitFrom = getAccountUnit(fromAccount);
   const unitTo = getAccountUnit(toAccount);
   const magnitudeAwareRate = new BigNumber(rate).shiftedBy(unitTo.magnitude - unitFrom.magnitude);

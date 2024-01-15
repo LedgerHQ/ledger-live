@@ -1,13 +1,15 @@
 import { useCallback, useEffect, useState } from "react";
+import { log } from "@ledgerhq/logs";
+import { BatteryStatusFlags } from "@ledgerhq/types-devices";
 import {
   getBatteryStatusesAction,
   GetBatteryStatusesActionState,
   initialState,
 } from "../actions/getBatteryStatuses";
 import { BatteryStatusTypes } from "../../hw/getBatteryStatus";
-import { log } from "@ledgerhq/logs";
+import { useEnv } from "../../env.react";
 
-export type UseBateryStatusesArgs = {
+export type UseBatteryStatusesArgs = {
   deviceId?: string;
   statuses: BatteryStatusTypes[];
 };
@@ -27,17 +29,25 @@ export type UseBateryStatusesArgs = {
 export const useBatteryStatuses = ({
   deviceId,
   statuses,
-}: UseBateryStatusesArgs): {
+}: UseBatteryStatusesArgs): {
   batteryStatusesState: GetBatteryStatusesActionState;
   requestCompleted: boolean;
   triggerRequest: () => void;
   cancelRequest: () => void;
+  isBatteryLow: boolean;
+  lowBatteryPercentage: number;
 } => {
   const [batteryStatusesState, setBatteryStatusesState] =
     useState<GetBatteryStatusesActionState>(initialState);
   const [requestCompleted, setRequestCompleted] = useState<boolean>(false);
   const [nonce, setNonce] = useState(0);
-  const [cancelRequest, setCancelRequest] = useState<() => void>(() => {});
+
+  // when passing a function to useState, the function is used as an initializer,
+  // i.e its return value will be the initial state value,
+  // cf. https://react.dev/reference/react/useState#parameters
+  const [cancelRequest, setCancelRequest] = useState(() => () => {});
+  const [isBatteryLow, setIsBatteryLow] = useState<boolean>(false);
+  const lowBatteryPercentage = useEnv("LOW_BATTERY_PERCENTAGE");
 
   useEffect(() => {
     if (nonce > 0 && deviceId) {
@@ -45,7 +55,22 @@ export const useBatteryStatuses = ({
         deviceId,
         statuses,
       }).subscribe({
-        next: state => setBatteryStatusesState(state),
+        next: state => {
+          if (state.error?.type === "UnknownApdu") {
+            setBatteryStatusesState({ ...state, error: null });
+          } else {
+            setBatteryStatusesState(state);
+          }
+
+          // no battery status flags available
+          if (state.batteryStatuses.length <= 1) return;
+
+          const [percentage, statusFlags] = state.batteryStatuses as [number, BatteryStatusFlags];
+
+          if (percentage < lowBatteryPercentage && statusFlags.charging === 0) {
+            setIsBatteryLow(true);
+          }
+        },
         complete: () => {
           setRequestCompleted(true);
         },
@@ -62,10 +87,11 @@ export const useBatteryStatuses = ({
         sub.unsubscribe();
       };
     }
-  }, [deviceId, statuses, nonce]);
+  }, [deviceId, lowBatteryPercentage, statuses, nonce]);
 
   const triggerRequest = useCallback(() => {
     setRequestCompleted(false);
+    setIsBatteryLow(false);
     setBatteryStatusesState(initialState);
     setNonce(nonce => nonce + 1);
   }, []);
@@ -75,5 +101,7 @@ export const useBatteryStatuses = ({
     triggerRequest,
     requestCompleted,
     cancelRequest,
+    isBatteryLow,
+    lowBatteryPercentage,
   };
 };

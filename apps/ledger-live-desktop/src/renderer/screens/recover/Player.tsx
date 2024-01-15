@@ -10,7 +10,7 @@ import WebRecoverPlayer from "~/renderer/components/WebRecoverPlayer";
 import useTheme from "~/renderer/hooks/useTheme";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import styled from "styled-components";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { StaticContext } from "react-router";
 
 const pollingPeriodMs = 1000;

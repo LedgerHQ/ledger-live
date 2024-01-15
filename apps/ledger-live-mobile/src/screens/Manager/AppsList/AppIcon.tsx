@@ -7,7 +7,7 @@ import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
 import type { App } from "@ledgerhq/types-live";
 import { Flex } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
-import ManagerAppIcon from "../../../images/managerAppIcon.png";
+import ManagerAppIcon from "~/images/managerAppIcon.png";
 
 type Props = {
   app?: App;

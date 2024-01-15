@@ -55,9 +55,6 @@ allprojects {
         maven {
             url "$rootDir/../node_modules/expo-camera/android/maven"
         }
-        maven {
-            url "https://appboy.github.io/appboy-android-sdk/sdk"
-        }
     }
     configurations.all {
         resolutionStrategy {

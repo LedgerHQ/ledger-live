@@ -11,7 +11,7 @@ import SoftwareCheckAllowSecureChannelDrawer, {
   Props as SoftwareCheckAllowSecureChannelDrawerProps,
 } from "./SoftwareCheckAllowSecureChannelDrawer";
 import { Status as SoftwareCheckStatus } from "../types";
-import { getDeviceModel } from "@ledgerhq/devices";
+import { getDeviceModel, DeviceModelId } from "@ledgerhq/devices";
 import { openURL } from "~/renderer/linking";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import UpdateFirmwareModal, {
@@ -27,11 +27,12 @@ import { useTranslation } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
 import { log } from "@ledgerhq/logs";
-import { useDynamicUrl } from "~/renderer/terms";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { FinalFirmware } from "@ledgerhq/types-live";
 import { useHistory } from "react-router-dom";
 import { NetworkDown } from "@ledgerhq/errors";
 import { NetworkStatus, useNetworkStatus } from "~/renderer/hooks/useNetworkStatus";
+import { urls } from "~/config/urls";
 
 export type Props = {
   onComplete: () => void;
@@ -50,6 +51,7 @@ export type Props = {
   // unmounted when we restart the polling after the user interrupts an update."
   fwUpdateInterrupted: FinalFirmware | null;
   setFwUpdateInterrupted: (finalFirmware: FinalFirmware) => void;
+  isDeviceConnected: boolean;
 };
 
 const commonDrawerProps = {
@@ -72,9 +74,10 @@ const EarlySecurityChecks = ({
   isInitialRunOfSecurityChecks,
   setFwUpdateInterrupted,
   fwUpdateInterrupted,
+  isDeviceConnected,
 }: Props) => {
   const { t } = useTranslation();
-  const whySecurityChecksUrl = useDynamicUrl("genuineCheck");
+  const whySecurityChecksUrl = useLocalizedUrl(urls.genuineCheck);
 
   const optimisticGenuineCheck = !isInitialRunOfSecurityChecks;
   const [genuineCheckStatus, setGenuineCheckStatus] = useState<SoftwareCheckStatus>(
@@ -146,7 +149,7 @@ const EarlySecurityChecks = ({
       },
       onRequestClose: () => {
         closeFwUpdateDrawer();
-        setFwUpdateInterrupted(latestFirmware.final);
+        setFwUpdateInterrupted(latestFirmware?.final);
         restartChecksAfterUpdate();
       },
       status: modal,
@@ -155,7 +158,6 @@ const EarlySecurityChecks = ({
       deviceInfo,
       device,
       deviceModelId: deviceModelId,
-      setFirmwareUpdateOpened: () => null, // we don't need to keep the state
       setFirmwareUpdateCompleted: () => null,
 
       finalStepSuccessDescription: t(
@@ -168,7 +170,7 @@ const EarlySecurityChecks = ({
         closeFwUpdateDrawer();
         restartChecksAfterUpdate();
       },
-      deviceHasPin: false, // early security checks are triggered only if the device is in one of the steps prior to setting a PIN code
+      deviceHasPin: deviceModelId !== DeviceModelId.stax, // early security checks are triggered only if the device is in one of the steps prior to setting a PIN code
     };
 
     setDrawer(UpdateFirmwareModal, updateFirmwareModalProps, {
@@ -244,7 +246,8 @@ const EarlySecurityChecks = ({
 
   const allowSecureChannelIsOpen =
     devicePermissionState === "requested" &&
-    (genuineCheckActive || firmwareUpdateStatus === SoftwareCheckStatus.active);
+    (genuineCheckActive || firmwareUpdateStatus === SoftwareCheckStatus.active) &&
+    isDeviceConnected;
 
   const notGenuineIsOpen = genuineCheckStatus === SoftwareCheckStatus.notGenuine;
 
@@ -331,7 +334,7 @@ const EarlySecurityChecks = ({
   ]);
 
   return (
-    <Flex flex={1} flexDirection="column" justifyContent="center" alignItems="center">
+    <Flex flex={1} flexDirection="column" alignItems="center" marginTop="64px">
       {isInitialRunOfSecurityChecks && (
         <TrackPage category="Genuine check and OS update check start" />
       )}

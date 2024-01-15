@@ -9,9 +9,9 @@ import OptimismGasPriceOracleAbi from "../../abis/optimismGasPriceOracle.abi.jso
 import { GasEstimationError, InsufficientFunds } from "../../errors";
 import { transactionToEthersTransaction } from "../../adapters";
 import { getSerializedTransaction } from "../../transaction";
-import { NodeApi, isExternalNodeConfig } from "./types";
 import ERC20Abi from "../../abis/erc20.abi.json";
 import { FeeHistory } from "../../types";
+import { NodeApi, isExternalNodeConfig } from "./types";
 
 export const RPC_TIMEOUT = process.env.NODE_ENV === "test" ? 100 : 5000; // wait 5 sec after a fail
 export const DEFAULT_RETRIES_RPC_METHODS = process.env.NODE_ENV === "test" ? 1 : 3;
@@ -106,23 +106,28 @@ export const getTransactionCount: NodeApi["getTransactionCount"] = (currency, ad
  * Get an estimated gas limit for a transaction
  */
 export const getGasEstimation: NodeApi["getGasEstimation"] = (account, transaction) =>
-  withApi(account.currency, async api => {
-    const { to, value, data } = transactionToEthersTransaction(transaction);
+  withApi(
+    account.currency,
+    async api => {
+      const { to, value, data } = transactionToEthersTransaction(transaction);
 
-    try {
-      const gasEtimation = await api.estimateGas({
-        from: account.freshAddress, // should be necessary for some estimations
-        to,
-        value,
-        data,
-      });
+      try {
+        const gasEstimation = await api.estimateGas({
+          from: account.freshAddress, // should be necessary for some estimations
+          to,
+          value,
+          data,
+        });
 
-      return new BigNumber(gasEtimation.toString());
-    } catch (e) {
-      log("error", "EVM Family: Gas Estimation Error", e);
-      throw new GasEstimationError();
-    }
-  });
+        return new BigNumber(gasEstimation.toString());
+      } catch (e) {
+        log("error", "EVM Family: Gas Estimation Error", e);
+        throw new GasEstimationError();
+      }
+    },
+    // we don't want to retry this method because it can fail for valid reasons
+    0,
+  );
 
 /**
  * Get an estimation of fees on the network
@@ -223,7 +228,8 @@ export const getBlockByHeight: NodeApi["getBlockByHeight"] = (currency, blockHei
     return {
       hash,
       height: number,
-      timestamp,
+      // timestamp is returned in seconds by getBlock, we need milliseconds
+      timestamp: timestamp * 1000,
     };
   });
 

@@ -17,7 +17,7 @@ import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import useStakeFlow from "~/renderer/screens/stake";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import { BalanceHistoryWithCountervalue, ValueChange } from "@ledgerhq/types-live";

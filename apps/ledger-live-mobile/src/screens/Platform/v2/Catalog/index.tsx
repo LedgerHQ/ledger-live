@@ -2,12 +2,10 @@ import React from "react";
 import * as Animatable from "react-native-animatable";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
-import TabBarSafeAreaView, {
-  TAB_BAR_SAFE_HEIGHT,
-} from "../../../../components/TabBar/TabBarSafeAreaView";
+import TabBarSafeAreaView from "~/components/TabBar/TabBarSafeAreaView";
 import { Layout } from "./Layout";
 import { useCatalog } from "../hooks";
-import TrackScreen from "../../../../analytics/TrackScreen";
+import TrackScreen from "~/analytics/TrackScreen";
 import { Search, SearchBar } from "./Search";
 import { ManifestList } from "./ManifestList";
 import { RecentlyUsed } from "./RecentlyUsed";
@@ -22,7 +20,7 @@ export function Catalog() {
   const { categories, recentlyUsed, search, disclaimer } = useCatalog();
 
   return (
-    <TabBarSafeAreaView edges={["bottom", "left", "right"]}>
+    <TabBarSafeAreaView edges={["top", "bottom", "left", "right"]}>
       {/* TODO: put under the animation header and style  */}
       <TrackScreen category="Platform" name="Catalog" />
       <DAppDisclaimer disclaimer={disclaimer} />
@@ -51,7 +49,7 @@ export function Catalog() {
             subBottomHeaderContent={<CatalogSection categories={categories} />}
             bodyContent={
               <AnimatedView animation="fadeInUp" delay={50} duration={300}>
-                <Flex paddingTop={4} paddingBottom={TAB_BAR_SAFE_HEIGHT}>
+                <Flex paddingTop={4}>
                   <ManifestList
                     manifests={categories.manifestsByCategories.get(categories.selected) ?? []}
                     onSelect={disclaimer.onSelect}

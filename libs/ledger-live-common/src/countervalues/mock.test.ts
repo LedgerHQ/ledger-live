@@ -26,8 +26,8 @@ test("mock load with nothing to track", async () => {
     }),
   ).toBeUndefined();
 });
-test("mock fetchMarketcapTickers", async () => {
-  expect(await CountervaluesAPI.fetchMarketcapTickers()).toBeDefined();
+test("mock fetchIdsSortedByMarketcap", async () => {
+  expect(await CountervaluesAPI.fetchIdsSortedByMarketcap()).toBeDefined();
 });
 test("mock load with btc-usd to track", async () => {
   const state = await loadCountervalues(initialState, {

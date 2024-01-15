@@ -3,8 +3,8 @@ import { useTranslation } from "react-i18next";
 import { Flex, IconBox, Text, Checkbox, IconsLegacy, Button } from "@ledgerhq/native-ui";
 import { Disclaimer } from "../hooks";
 import { AppIcon } from "../AppIcon";
-import LedgerIcon from "../../../../icons/Ledger";
-import QueuedDrawer from "../../../../components/QueuedDrawer";
+import LedgerIcon from "~/icons/Ledger";
+import QueuedDrawer from "~/components/QueuedDrawer";
 
 export function DAppDisclaimer({
   disclaimer: { name, icon, isChecked, isOpened, onClose, toggleCheck, onConfirm },

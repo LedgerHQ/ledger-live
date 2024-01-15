@@ -45,7 +45,13 @@ const Body = ({
   total,
 }: BodyProps) => {
   return installing || !firmware?.shouldFlashMCU || initialDelayPhase ? (
-    <Installing installing={installing} current={current} total={total} progress={progress} />
+    <Installing
+      isInstalling={!!installing}
+      current={current}
+      total={total}
+      progress={progress}
+      deviceModelId={deviceModelId}
+    />
   ) : (
     <FlashMCU deviceModelId={deviceModelId} />
   );
@@ -59,6 +65,7 @@ const StepFlashMcu = ({
   setError,
   transitionTo,
   setUpdatedDeviceInfo,
+  deviceHasPin,
 }: StepProps) => {
   const [installing, setInstalling] = useState<string | undefined>(undefined);
   const [initialDelayPhase, setInitialDelayPhase] = useState(true);
@@ -142,7 +149,11 @@ const StepFlashMcu = ({
         if (!withFinal && installing === "flash-mcu" && progress === 1) {
           // set a flag to display the "updating" mode
           // timeout will debounces the UI to not see the "loading" if there are possible second mcu in future
-          endOfFirstFlashMcuTimeout = setTimeout(() => setAutoUpdatingMode(true), 1000);
+
+          endOfFirstFlashMcuTimeout = setTimeout(() => {
+            setCurrentStep(currentStep => currentStep + 1);
+            setAutoUpdatingMode(true);
+          }, 1000);
         } else {
           if (endOfFirstFlashMcuTimeout) {
             clearTimeout(endOfFirstFlashMcuTimeout);
@@ -173,7 +184,11 @@ const StepFlashMcu = ({
     return (
       <Container>
         <TrackPage category="Manager" name="Firmware Updating" />
-        <StepUpdatingBody modelId={deviceModelId} />
+        <StepUpdatingBody
+          modelId={deviceModelId}
+          deviceHasPin={deviceHasPin}
+          downloadPhase={{ current: currentStep, total: maxSteps }}
+        />
       </Container>
     );
   }

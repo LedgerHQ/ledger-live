@@ -100,6 +100,11 @@ export async function createSpeculosDevice(
     seed: string;
     // Folder where we have app binaries
     coinapps: string;
+    onSpeculosDeviceCreated?: (device: {
+      transport: SpeculosTransport;
+      id: string;
+      appPath: string;
+    }) => Promise<void>;
   },
   maxRetry = 3,
 ): Promise<{
@@ -271,11 +276,18 @@ export async function createSpeculosDevice(
       destroy,
     };
   }
-  return {
+
+  const device = {
     id: speculosID,
     transport,
     appPath,
   };
+
+  if (arg.onSpeculosDeviceCreated != null) {
+    await arg.onSpeculosDeviceCreated(device);
+  }
+
+  return device;
 }
 
 function hackBadSemver(str) {

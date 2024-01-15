@@ -3,7 +3,6 @@ import { BigNumber } from "bignumber.js";
 import { getEnv } from "@ledgerhq/live-env";
 import type { Account, AccountLike, NFTStandard, Operation } from "@ledgerhq/types-live";
 import { encodeERC1155OperationId, encodeERC721OperationId } from "./nft/nftOperationId";
-import { findSubAccountById, getMainAccount } from "./account/helpers";
 import { decodeAccountId } from "./account";
 import { encodeNftId } from "./nft/nftId";
 
@@ -178,6 +177,9 @@ export function getOperationAmountNumber(op: Operation): BigNumber {
 
     case "FREEZE":
     case "UNFREEZE":
+    case "UNDELEGATE_RESOURCE":
+    case "WITHDRAW_EXPIRE_UNFREEZE":
+    case "LEGACY_UNFREEZE":
     case "VOTE":
     case "BOND":
     case "UNBOND":
@@ -240,74 +242,26 @@ export const isAddressPoisoningOperation = (
   );
 };
 
-export function isEditableOperation(account: AccountLike, operation: Operation): boolean {
-  let isEvmFamily = false;
-  if (account.type === "Account") {
-    isEvmFamily = account.currency.family === "evm";
-  } else if (account.type === "TokenAccount") {
-    isEvmFamily = account.token.parentCurrency.family === "evm";
-  }
-
-  return isEvmFamily && operation.blockHeight === null && !!operation.transactionRaw;
-}
-
-// return the oldest stuck pending operation and its corresponding account according to a eth account or a token subaccount. If no stuck pending operation is found, return undefined
-export function getStuckAccountAndOperation(
-  account: AccountLike,
-  parentAccount: Account | undefined | null,
-):
-  | {
-      account: AccountLike;
-      parentAccount: Account | undefined;
-      operation: Operation;
-    }
-  | undefined {
-  let stuckAccount;
-  let stuckParentAccount;
-  const mainAccount = getMainAccount(account, parentAccount);
-
-  const SUPPORTED_FAMILIES = ["evm"];
-
-  if (!SUPPORTED_FAMILIES.includes(mainAccount.currency.family)) {
-    return undefined;
-  }
-
-  const now = new Date().getTime();
-  const stuckOperations = mainAccount.pendingOperations.filter(
-    pendingOp =>
-      isEditableOperation(mainAccount, pendingOp) &&
-      now - pendingOp.date.getTime() > getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT"),
-  );
-
-  if (stuckOperations.length === 0) {
-    return undefined;
-  }
-
-  const oldestStuckOperation = stuckOperations.reduce((oldestOp, currentOp) => {
-    if (!oldestOp) return currentOp;
-    return oldestOp.transactionSequenceNumber !== undefined &&
-      currentOp.transactionSequenceNumber !== undefined &&
-      oldestOp.transactionSequenceNumber > currentOp.transactionSequenceNumber
-      ? currentOp
-      : oldestOp;
-  });
-
-  if (oldestStuckOperation?.transactionRaw?.subAccountId) {
-    stuckAccount = findSubAccountById(
-      mainAccount,
-      oldestStuckOperation.transactionRaw.subAccountId,
+/**
+ * @param account The account of the transaction to edit
+ * @param nonce The nouce of the transaction to edit
+ * @returns true if the nonce corresponds to the oldest pending operation
+ */
+export const isOldestPendingOperation = (account: Account, nonce: number): boolean => {
+  /**
+   * The selected pending operation is the oldest if there is no pending
+   * operation with a lower transactionSequenceNumber
+   */
+  return !account.pendingOperations.some(pendingOp => {
+    /**
+     * the pending operation must have a transactionSequenceNumberat this stage
+     * since it should have previously been broadcasted
+     */
+    invariant(
+      pendingOp.transactionSequenceNumber !== undefined,
+      "transactionSequenceNumber required",
     );
-    stuckParentAccount = mainAccount;
-  } else {
-    stuckAccount = mainAccount;
-    stuckParentAccount = undefined;
-  }
 
-  invariant(stuckAccount, "stuckAccount required");
-
-  return {
-    account: stuckAccount,
-    parentAccount: stuckParentAccount,
-    operation: oldestStuckOperation,
-  };
-}
+    return pendingOp.transactionSequenceNumber < nonce;
+  });
+};

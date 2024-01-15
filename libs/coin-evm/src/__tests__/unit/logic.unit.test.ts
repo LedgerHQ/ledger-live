@@ -16,6 +16,7 @@ import {
   legacyTransactionHasFees,
   mergeSubAccounts,
   padHexString,
+  safeEncodeEIP55,
 } from "../../logic";
 
 import {
@@ -610,12 +611,23 @@ describe("EVM Family", () => {
             type: "NFT_IN",
           }),
         ];
+        const internalOperations = [
+          makeOperation({
+            accountId: coinOperation.accountId,
+            value: new BigNumber(5),
+            type: "OUT",
+            hash: coinOperation.hash,
+          }),
+        ];
 
-        expect(attachOperations([coinOperation], tokenOperations, nftOperations)).toEqual([
+        expect(
+          attachOperations([coinOperation], tokenOperations, nftOperations, internalOperations),
+        ).toEqual([
           {
             ...coinOperation,
             subOperations: [tokenOperations[0], tokenOperations[1]],
             nftOperations: [nftOperations[0], nftOperations[1]],
+            internalOperations: [internalOperations[0]],
           },
           {
             ...tokenOperations[2],
@@ -627,6 +639,7 @@ describe("EVM Family", () => {
             recipients: [],
             nftOperations: [],
             subOperations: [tokenOperations[2]],
+            internalOperations: [],
             accountId: "",
             contract: undefined,
           },
@@ -640,6 +653,7 @@ describe("EVM Family", () => {
             recipients: [],
             nftOperations: [nftOperations[2]],
             subOperations: [],
+            internalOperations: [],
             accountId: "",
             contract: undefined,
           },
@@ -668,9 +682,14 @@ describe("EVM Family", () => {
             type: "NFT_OUT",
           }),
         ]);
-        expect(
+        const internalOperations = deepFreeze([
+          makeOperation({
+            hash: "0xCoinOpInternal",
+          }),
+        ]);
+        expect(() =>
           // @ts-expect-error purposely ignore readonly ts issue for this
-          () => attachOperations(coinOperations, tokenOperations, nftOperations),
+          attachOperations(coinOperations, tokenOperations, nftOperations, internalOperations),
         ).not.toThrow(); // mutation prevented by deepFreeze method
       });
     });
@@ -679,6 +698,38 @@ describe("EVM Family", () => {
       it("should always return an odd number of characters", () => {
         expect(padHexString("1")).toEqual("01");
         expect(padHexString("01")).toEqual("01");
+      });
+    });
+
+    describe("safeEncodeEIP55", () => {
+      it("Should return encoded address if valid address", () => {
+        const address = "0x9aa99c23f67c81701c772b106b4f83f6e858dd2e";
+        const encodedAddress = safeEncodeEIP55(address);
+        expect(encodedAddress).toBe("0x9AA99C23F67c81701C772B106b4F83f6e858dd2E");
+      });
+
+      it("Should return empty string if empty address", () => {
+        const address = "";
+        const encodedAddress = safeEncodeEIP55(address);
+        expect(encodedAddress).toBe("");
+      });
+
+      it("Should return empty string if 0x0 address", () => {
+        const address = "0x0";
+        const encodedAddress = safeEncodeEIP55(address);
+        expect(encodedAddress).toBe("");
+      });
+
+      it("Should return empty string if 0x address", () => {
+        const address = "0x";
+        const encodedAddress = safeEncodeEIP55(address);
+        expect(encodedAddress).toBe("");
+      });
+
+      it("Should return address if invalid address", () => {
+        const address = "0x00000";
+        const encodedAddress = safeEncodeEIP55(address);
+        expect(encodedAddress).toBe(address);
       });
     });
   });

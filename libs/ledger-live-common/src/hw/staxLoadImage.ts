@@ -164,10 +164,7 @@ export default function loadImage({ deviceId, request }: Input): Observable<Load
                 e instanceof DeviceOnDashboardExpected ||
                 (e &&
                   e instanceof TransportStatusError &&
-                  [0x6e00, 0x6d00, 0x6e01, 0x6d01, 0x6d02].includes(
-                    // @ts-expect-error typescript not checking against the instanceof
-                    e.statusCode,
-                  ))
+                  [0x6e00, 0x6d00, 0x6e01, 0x6d01, 0x6d02].includes(e.statusCode))
               ) {
                 return from(getAppAndVersion(transport)).pipe(
                   concatMap(appAndVersion => {

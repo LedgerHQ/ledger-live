@@ -37,7 +37,7 @@ for (const modelId of modelIds) {
       });
 
       await test.step(`[${modelId}] Take screenshot of main screen`, async () => {
-        expect(await page.screenshot()).toMatchSnapshot(`sync-onboarding-manual-${modelId}.png`);
+        await expect(page).toHaveScreenshot(`sync-onboarding-manual-${modelId}.png`);
       });
     });
   });

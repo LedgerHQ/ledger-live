@@ -16,15 +16,15 @@ jobs:
           app_id: ${{ secrets.GH_BOT_APP_ID }}
           private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           token: ${{ steps.generate-token.outputs.token }}
+      - name: Setup git user
+        uses: ./tools/actions/composites/setup-git-user
       - name: Git stuff
         run: |
           git config checkout.defaultRemote origin
-          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
-          git config user.name "live-github-bot[bot]"
           git fetch -n origin
       - name: Execute shell script
         env:

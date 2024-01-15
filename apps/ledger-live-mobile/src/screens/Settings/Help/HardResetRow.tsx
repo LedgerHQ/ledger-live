@@ -2,8 +2,8 @@ import React, { useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { InfoMedium } from "@ledgerhq/native-ui/assets/icons";
-import SettingsRow from "../../../components/SettingsRow";
-import QueuedDrawer from "../../../components/QueuedDrawer";
+import SettingsRow from "~/components/SettingsRow";
+import QueuedDrawer from "~/components/QueuedDrawer";
 
 export default function HardResetRow() {
   const { colors } = useTheme();

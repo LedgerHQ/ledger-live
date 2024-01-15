@@ -1,4 +1,3 @@
-import { log } from "@ledgerhq/logs";
 import eip55 from "eip55";
 import BigNumber from "bignumber.js";
 import {
@@ -15,40 +14,9 @@ import {
   LedgerExplorerERC20TransferEvent,
   LedgerExplorerER721TransferEvent,
   LedgerExplorerER1155TransferEvent,
+  LedgerExplorerInternalTransaction,
 } from "../types";
-
-/**
- * Some addresses returned by Ledger explorers are not 40 characters hex addresses
- * For example the explorers may return "0x0" as an address (for example for
- * some events or contract interactions, like a contract creation transaction)
- *
- * This is not a valid EIP55 address and thus will fail when trying to encode it
- * with a "Bad address" error.
- * cf:
- * https://github.com/cryptocoinjs/eip55/blob/v2.1.1/index.js#L5-L6
- * https://github.com/cryptocoinjs/eip55/blob/v2.1.1/index.js#L63-L65
- *
- * Since we can't control what the explorer returns, and we don't want the app to crash
- * in these cases, we simply ignore the address and return an empty string.
- *
- * For now this has only been observed on the from or to fields of an operation
- * so we only use this function for these fields.
- */
-const safeEncodeEIP55 = (addr: string): string => {
-  if (!addr || addr === "0x" || addr === "0x0") {
-    return "";
-  }
-
-  try {
-    return eip55.encode(addr);
-  } catch (e) {
-    log("EVM Family - adapters/ledger", "Failed to eip55 encode address", {
-      address: addr,
-      error: e,
-    });
-    return "";
-  }
-};
+import { safeEncodeEIP55 } from "../logic";
 
 /**
  * Adapter to convert a Ledger Explorer operation
@@ -91,10 +59,11 @@ export const ledgerOperationToOperations = (
         blockHeight: ledgerOp.block.height,
         blockHash: ledgerOp.block.hash,
         transactionSequenceNumber: ledgerOp.nonce_value,
-        accountId: accountId,
+        accountId,
         date,
         subOperations: [],
         nftOperations: [],
+        internalOperations: [],
         hasFailed,
         extra: {},
       }) as Operation,
@@ -254,4 +223,69 @@ export const ledgerERC1155EventToOperations = (
         }) as Operation,
     );
   });
+};
+
+/**
+ * Adapter to convert an internal transaction
+ * on Ledger explorers into LL Operations
+ */
+export const ledgerInternalTransactionToOperations = (
+  coinOperation: Operation,
+  action: LedgerExplorerInternalTransaction,
+  index = 0,
+): Operation[] => {
+  const { hash, blockHeight, blockHash, date, accountId } = coinOperation;
+  const { xpubOrAddress: address } = decodeAccountId(accountId);
+  const from = safeEncodeEIP55(action.from);
+  const to = safeEncodeEIP55(action.to);
+  const checksummedAddress = eip55.encode(address);
+  const hasFailed = !!action.error; // AFAIK this is not working, all actions contain error = null even when it reverted
+  const value = new BigNumber(action.value);
+  const types: OperationType[] = [];
+
+  // Ledger explorers are indexing the first `CALL` opcode of a smart contract transaction as an
+  // internal transaction which is wrong. Only children `CALL` opcode should be indexed,
+  // therefore we need to filter those "actions" to prevent duplicating ops.
+  if (from === coinOperation.senders[0] && to === coinOperation.recipients[0]) {
+    const coinOpValueWithoutFees = coinOperation.value.minus(coinOperation.fee);
+    const coinOpValueWithFees = coinOperation.value;
+    const coinTypeOutOrFees = coinOperation.type === "OUT" || coinOperation.type === "FEES";
+    const coinTypeIn = coinOperation.type === "IN";
+
+    // Detecting if an action value is identical to its coin op value
+    // (which is modified in the live depending on its type)
+    // in order to ignore the action completely
+    if (
+      (coinTypeOutOrFees && value.isEqualTo(coinOpValueWithoutFees)) ||
+      (coinTypeIn && value.isEqualTo(coinOpValueWithFees))
+    ) {
+      return [];
+    }
+  }
+
+  if (to === checksummedAddress) {
+    types.push("IN");
+  }
+  if (from === checksummedAddress) {
+    types.push("OUT");
+  }
+
+  return types.map(
+    type =>
+      ({
+        id: encodeSubOperationId(accountId, hash, type, index),
+        hash: hash,
+        type: type,
+        value,
+        fee: new BigNumber(0), // unecessary as it's already contained in the fees of the main op
+        senders: [from],
+        recipients: [to],
+        blockHeight,
+        blockHash,
+        accountId,
+        date,
+        hasFailed,
+        extra: {},
+      }) as Operation,
+  );
 };

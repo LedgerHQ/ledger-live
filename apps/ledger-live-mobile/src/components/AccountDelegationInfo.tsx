@@ -1,7 +1,7 @@
 import React from "react";
 import { View, StyleSheet, TouchableOpacity, Linking } from "react-native";
 import { useTheme } from "@react-navigation/native";
-import ExternalLink from "../icons/ExternalLink";
+import ExternalLink from "~/icons/ExternalLink";
 import Button from "./Button";
 import LText from "./LText";
 

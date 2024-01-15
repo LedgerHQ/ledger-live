@@ -16,7 +16,7 @@ import {
   CrossWrapper,
   connectionStatus,
 } from "../..";
-import useEnv from "~/renderer/hooks/useEnv";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 const Node = ({
   nodeConnectionStatus = connectionStatus.IDLE,
   nodeConfig,

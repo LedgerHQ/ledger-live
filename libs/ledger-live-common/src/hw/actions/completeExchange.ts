@@ -28,6 +28,7 @@ type CompleteExchangeRequest = {
   rateType?: number;
   swapId?: string;
   rate?: number;
+  amountExpectedTo?: number;
 };
 type Result =
   | {

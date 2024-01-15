@@ -5,6 +5,18 @@ import { concatMap } from "rxjs/operators";
 import { TransportRef } from "../transports/core";
 import { aTransportRefBuilder } from "../mocks/aTransportRef";
 
+// Needs to mock the timer from rxjs used in the retry mechanism
+jest.mock("rxjs", () => {
+  const originalModule = jest.requireActual("rxjs");
+
+  return {
+    ...originalModule,
+    timer: jest.fn(() => {
+      return of(1);
+    }),
+  };
+});
+
 describe("sharedLogicTaskWrapper", () => {
   const task = jest.fn();
   const wrappedTask = sharedLogicTaskWrapper<void, { type: "data" }>(task);
@@ -200,7 +212,7 @@ describe("retryOnErrorsCommandWrapper", () => {
           concatMap(_event => {
             counter++;
 
-            // Throws an error even after the limit is reached
+            // Always throws an error, exceeding the set max retry
             return throwError(
               () => new DisconnectedDevice(`Handled error max ${disconnectedDeviceMaxRetries}`),
             );
@@ -278,7 +290,10 @@ describe("retryOnErrorsCommandWrapper", () => {
   describe("When the command throws an error that is set to be handled by the wrapper, and this error can be retried an infinite number of times", () => {
     it("should retry infinitely, without throwing an error, until a correct event is emitted", done => {
       let counter = 0;
-      const randomNumberOfRetries = Math.floor(Math.random() * 10 + 5);
+
+      // The default retry time is 500ms: testing a total time higher than the 5000ms that triggers a Jest timeout
+      // as the time should be mocked/faked
+      const randomNumberOfRetries = Math.floor(Math.random() * 5) + 11;
 
       command.mockReturnValue(
         of({ type: "data" }).pipe(

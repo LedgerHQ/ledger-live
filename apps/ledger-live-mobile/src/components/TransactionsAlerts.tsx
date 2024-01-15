@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useRef } from "react";
 import { useSelector } from "react-redux";
-import { accountsSelector } from "../reducers/accounts";
+import { accountsSelector } from "~/reducers/accounts";
 import getOrCreateUser from "../user";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import {
   updateTransactionsAlertsAddresses,
   deleteUserChainwatchAccounts,
 } from "@ledgerhq/live-common/transactionsAlerts/index";
 import type { ChainwatchNetwork, Account } from "@ledgerhq/types-live";
-import { notificationsSelector } from "../reducers/settings";
+import { notificationsSelector } from "~/reducers/settings";
 
 const TransactionsAlerts = () => {
   const featureTransactionsAlerts = useFeature("transactionsAlerts");

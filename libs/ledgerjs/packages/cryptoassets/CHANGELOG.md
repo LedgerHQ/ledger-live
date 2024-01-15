@@ -1,5 +1,113 @@
 # @ledgerhq/cryptoassets
 
+## 11.3.1
+
+### Patch Changes
+
+- [#5736](https://github.com/LedgerHQ/ledger-live/pull/5736) [`d49f444`](https://github.com/LedgerHQ/ledger-live/commit/d49f44417fd175affe71da589c0ca380e88fbb35) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Update CAL
+
+## 11.3.1-next.0
+
+### Patch Changes
+
+- [#5736](https://github.com/LedgerHQ/ledger-live/pull/5736) [`d49f444`](https://github.com/LedgerHQ/ledger-live/commit/d49f44417fd175affe71da589c0ca380e88fbb35) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Update CAL
+
+## 11.3.0
+
+### Minor Changes
+
+- [#5543](https://github.com/LedgerHQ/ledger-live/pull/5543) [`0f5292a`](https://github.com/LedgerHQ/ledger-live/commit/0f5292af8feaa517f36ec35155d813b17c4f66e9) Thanks [@chabroA](https://github.com/chabroA)! - rename Crypto.org to Cronos POS Chain
+
+- [#4947](https://github.com/LedgerHQ/ledger-live/pull/4947) [`2edfa53`](https://github.com/LedgerHQ/ledger-live/commit/2edfa533bccafbfd8a61aea0f5422c0db79825ea) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - vechain integration
+
+### Patch Changes
+
+- [#5477](https://github.com/LedgerHQ/ledger-live/pull/5477) [`618307f`](https://github.com/LedgerHQ/ledger-live/commit/618307f92899af07f4c8ad97c67df483492e3d9d) Thanks [@lvndry](https://github.com/lvndry)! - Only add tokens in ledger live if parent currency is supported
+
+- [#5613](https://github.com/LedgerHQ/ledger-live/pull/5613) [`eb5ac4d`](https://github.com/LedgerHQ/ledger-live/commit/eb5ac4dca430654f5f86854025fddddab4261a29) Thanks [@chabroA](https://github.com/chabroA)! - update near explorer views urls
+
+## 11.3.0-next.0
+
+### Minor Changes
+
+- [#5543](https://github.com/LedgerHQ/ledger-live/pull/5543) [`0f5292a`](https://github.com/LedgerHQ/ledger-live/commit/0f5292af8feaa517f36ec35155d813b17c4f66e9) Thanks [@chabroA](https://github.com/chabroA)! - rename Crypto.org to Cronos POS Chain
+
+- [#4947](https://github.com/LedgerHQ/ledger-live/pull/4947) [`2edfa53`](https://github.com/LedgerHQ/ledger-live/commit/2edfa533bccafbfd8a61aea0f5422c0db79825ea) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - vechain integration
+
+### Patch Changes
+
+- [#5477](https://github.com/LedgerHQ/ledger-live/pull/5477) [`618307f`](https://github.com/LedgerHQ/ledger-live/commit/618307f92899af07f4c8ad97c67df483492e3d9d) Thanks [@lvndry](https://github.com/lvndry)! - Only add tokens in ledger live if parent currency is supported
+
+- [#5613](https://github.com/LedgerHQ/ledger-live/pull/5613) [`eb5ac4d`](https://github.com/LedgerHQ/ledger-live/commit/eb5ac4dca430654f5f86854025fddddab4261a29) Thanks [@chabroA](https://github.com/chabroA)! - update near explorer views urls
+
+## 11.2.0
+
+### Minor Changes
+
+- [#4819](https://github.com/LedgerHQ/ledger-live/pull/4819) [`c5981ae341`](https://github.com/LedgerHQ/ledger-live/commit/c5981ae3411abc4c8594adf2efcb52aacddac143) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add support for casper blockchain
+
+- [#5430](https://github.com/LedgerHQ/ledger-live/pull/5430) [`5964e30bed`](https://github.com/LedgerHQ/ledger-live/commit/5964e30bed11d64a3b7401c6ab51ffc1ad4c427c) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update documentation v14 ledgerjs
+
+### Patch Changes
+
+- [#5292](https://github.com/LedgerHQ/ledger-live/pull/5292) [`08dde174fd`](https://github.com/LedgerHQ/ledger-live/commit/08dde174fdeaadbce85dcd914383839f788f21dd) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Lukso
+
+- [#5276](https://github.com/LedgerHQ/ledger-live/pull/5276) [`317685e696`](https://github.com/LedgerHQ/ledger-live/commit/317685e69678e6fe1f489f0c071e7613d329d389) Thanks [@lvndry](https://github.com/lvndry)! - Enable tron tokens countervalues by default
+
+- [#5283](https://github.com/LedgerHQ/ledger-live/pull/5283) [`b4e7201b0b`](https://github.com/LedgerHQ/ledger-live/commit/b4e7201b0b70d146de7d936ff2c9e9e443164243) Thanks [@lvndry](https://github.com/lvndry)! - Update cryptoasset list
+
+- [#5479](https://github.com/LedgerHQ/ledger-live/pull/5479) [`4a283060bf`](https://github.com/LedgerHQ/ledger-live/commit/4a283060bf2e837d73c6c1cb5d89f890a4e4b931) Thanks [@lvndry](https://github.com/lvndry)! - Only add tokens in ledger live if parent currency is supported
+
+## 11.2.0-next.1
+
+### Patch Changes
+
+- [#5479](https://github.com/LedgerHQ/ledger-live/pull/5479) [`4a283060bf`](https://github.com/LedgerHQ/ledger-live/commit/4a283060bf2e837d73c6c1cb5d89f890a4e4b931) Thanks [@lvndry](https://github.com/lvndry)! - Only add tokens in ledger live if parent currency is supported
+
+## 11.2.0-next.0
+
+### Minor Changes
+
+- [#4819](https://github.com/LedgerHQ/ledger-live/pull/4819) [`c5981ae341`](https://github.com/LedgerHQ/ledger-live/commit/c5981ae3411abc4c8594adf2efcb52aacddac143) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Add support for casper blockchain
+
+- [#5430](https://github.com/LedgerHQ/ledger-live/pull/5430) [`5964e30bed`](https://github.com/LedgerHQ/ledger-live/commit/5964e30bed11d64a3b7401c6ab51ffc1ad4c427c) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update documentation v14 ledgerjs
+
+### Patch Changes
+
+- [#5292](https://github.com/LedgerHQ/ledger-live/pull/5292) [`08dde174fd`](https://github.com/LedgerHQ/ledger-live/commit/08dde174fdeaadbce85dcd914383839f788f21dd) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for Lukso
+
+- [#5276](https://github.com/LedgerHQ/ledger-live/pull/5276) [`317685e696`](https://github.com/LedgerHQ/ledger-live/commit/317685e69678e6fe1f489f0c071e7613d329d389) Thanks [@lvndry](https://github.com/lvndry)! - Enable tron tokens countervalues by default
+
+- [#5283](https://github.com/LedgerHQ/ledger-live/pull/5283) [`b4e7201b0b`](https://github.com/LedgerHQ/ledger-live/commit/b4e7201b0b70d146de7d936ff2c9e9e443164243) Thanks [@lvndry](https://github.com/lvndry)! - Update cryptoasset list
+
+## 11.1.0
+
+### Minor Changes
+
+- [#5167](https://github.com/LedgerHQ/ledger-live/pull/5167) [`f5a5c315ea`](https://github.com/LedgerHQ/ledger-live/commit/f5a5c315ea2200cd5b52ef3a0b377d1327b1144e) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Integrate Dydx
+
+- [#5173](https://github.com/LedgerHQ/ledger-live/pull/5173) [`17ba334e47`](https://github.com/LedgerHQ/ledger-live/commit/17ba334e47b901e34fbb083396aa3f9952e5233e) Thanks [@chabroA](https://github.com/chabroA)! - Add neon_evm support
+
+### Patch Changes
+
+- [#5113](https://github.com/LedgerHQ/ledger-live/pull/5113) [`54b1d185c9`](https://github.com/LedgerHQ/ledger-live/commit/54b1d185c9df5ae84dc7e85d58249c06550df5f1) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - remove tokens definition for ICP chain
+
+- [#5196](https://github.com/LedgerHQ/ledger-live/pull/5196) [`9b49ff233c`](https://github.com/LedgerHQ/ledger-live/commit/9b49ff233ccfad68c98d15cd648927dee12a8b0b) Thanks [@chabroA](https://github.com/chabroA)! - Update data from CAL
+
+## 11.1.0-next.0
+
+### Minor Changes
+
+- [#5167](https://github.com/LedgerHQ/ledger-live/pull/5167) [`f5a5c315ea`](https://github.com/LedgerHQ/ledger-live/commit/f5a5c315ea2200cd5b52ef3a0b377d1327b1144e) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Integrate Dydx
+
+- [#5173](https://github.com/LedgerHQ/ledger-live/pull/5173) [`17ba334e47`](https://github.com/LedgerHQ/ledger-live/commit/17ba334e47b901e34fbb083396aa3f9952e5233e) Thanks [@chabroA](https://github.com/chabroA)! - Add neon_evm support
+
+### Patch Changes
+
+- [#5113](https://github.com/LedgerHQ/ledger-live/pull/5113) [`54b1d185c9`](https://github.com/LedgerHQ/ledger-live/commit/54b1d185c9df5ae84dc7e85d58249c06550df5f1) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - remove tokens definition for ICP chain
+
+- [#5196](https://github.com/LedgerHQ/ledger-live/pull/5196) [`9b49ff233c`](https://github.com/LedgerHQ/ledger-live/commit/9b49ff233ccfad68c98d15cd648927dee12a8b0b) Thanks [@chabroA](https://github.com/chabroA)! - Update data from CAL
+
 ## 11.0.1
 
 ### Patch Changes

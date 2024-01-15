@@ -40,7 +40,7 @@ Algorand API
 
 #### Parameters
 
-*   `transport` **Transport** 
+*   `transport` **Transport**&#x20;
 
 #### Examples
 
@@ -56,7 +56,7 @@ get Algorant address for a given BIP 32 path.
 ##### Parameters
 
 *   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a path in BIP 32 format
-*   `boolDisplay` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?** 
+*   `boolDisplay` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?**&#x20;
 
 ##### Examples
 

@@ -1,13 +1,13 @@
 import React, { useCallback } from "react";
 import { Button, Flex, Icons, Link } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
-import QueuedDrawer from "../../components/QueuedDrawer";
-import { TrackScreen, track } from "../../analytics";
-import GenericErrorView from "../../components/GenericErrorView";
-import { GenericInformationBody } from "../../components/GenericInformationBody";
+import QueuedDrawer from "~/components/QueuedDrawer";
+import { TrackScreen, track } from "~/analytics";
+import GenericErrorView from "~/components/GenericErrorView";
+import { GenericInformationBody } from "~/components/GenericInformationBody";
 import { BluetoothRequired, FirmwareNotRecognized } from "@ledgerhq/errors";
 import { useNavigation } from "@react-navigation/native";
-import { NavigatorName, ScreenName } from "../../const";
+import { NavigatorName, ScreenName } from "~/const";
 import type { SyncOnboardingScreenProps } from ".";
 
 export type Props = {

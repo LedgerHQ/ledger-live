@@ -3,7 +3,7 @@ import { FlatList, LayoutChangeEvent, ListRenderItemInfo } from "react-native";
 import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { Box, Flex } from "@ledgerhq/native-ui";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
@@ -13,24 +13,22 @@ import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { isEqual } from "lodash";
 import BigNumber from "bignumber.js";
 import { ReactNavigationPerformanceView } from "@shopify/react-native-performance-navigation";
-import accountSyncRefreshControl from "../../components/accountSyncRefreshControl";
-import { withDiscreetMode } from "../../context/DiscreetModeContext";
-import TabBarSafeAreaView, {
-  TAB_BAR_SAFE_HEIGHT,
-} from "../../components/TabBar/TabBarSafeAreaView";
-import { flattenAccountsByCryptoCurrencyScreenSelector } from "../../reducers/accounts";
+import accountSyncRefreshControl from "~/components/accountSyncRefreshControl";
+import { withDiscreetMode } from "~/context/DiscreetModeContext";
+import SafeAreaView from "~/components/SafeAreaView";
+import { flattenAccountsByCryptoCurrencyScreenSelector } from "~/reducers/accounts";
 import SectionContainer from "../WalletCentricSections/SectionContainer";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";
 import AccountsSection from "./AccountsSection";
-import { NavigatorName, ScreenName } from "../../const";
+import { NavigatorName, ScreenName } from "~/const";
 import EmptyAccountCard from "../Account/EmptyAccountCard";
-import CurrencyBackgroundGradient from "../../components/CurrencyBackgroundGradient";
+import CurrencyBackgroundGradient from "~/components/CurrencyBackgroundGradient";
 import Header from "./Header";
-import { track, TrackScreen } from "../../analytics";
-import { FabAssetActions } from "../../components/FabActions/actionsList/asset";
-import { AccountsNavigatorParamList } from "../../components/RootNavigator/types/AccountsNavigator";
-import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import { track, TrackScreen } from "~/analytics";
+import { FabAssetActions } from "~/components/FabActions/actionsList/asset";
+import { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import AssetDynamicContent from "./AssetDynamicContent";
 import AssetMarketSection from "./AssetMarketSection";
 import AssetGraph from "./AssetGraph";
@@ -176,7 +174,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
 
   return (
     <ReactNavigationPerformanceView screenName={ScreenName.Asset} interactive>
-      <TabBarSafeAreaView edges={["bottom", "left", "right"]}>
+      <SafeAreaView edges={["bottom", "left", "right"]} isFlex>
         <TrackScreen category="Asset" currency={currency.name} />
         <CurrencyBackgroundGradient
           currentPositionY={currentPositionY}
@@ -184,8 +182,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
           gradientColor={getCurrencyColor(currency) || colors.primary.c80}
         />
         <AnimatedFlatListWithRefreshControl
-          style={{ flex: 1, paddingTop: 48 }}
-          contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
+          style={{ flex: 1 }}
           data={data}
           renderItem={({ item }: ListRenderItemInfo<unknown>) => item as JSX.Element}
           keyExtractor={(_: unknown, index: number) => String(index)}
@@ -198,7 +195,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
           currency={currency}
           currencyBalance={currencyBalance}
         />
-      </TabBarSafeAreaView>
+      </SafeAreaView>
     </ReactNavigationPerformanceView>
   );
 };

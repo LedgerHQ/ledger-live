@@ -161,7 +161,7 @@ let testServerIsRunning = false;
 
 test.beforeAll(async () => {
   // Check that dummy app in tests/dummy-live-app has been started successfully
-  testServerIsRunning = await LiveAppWebview.startLiveApp("dummy-wallet-app/build", {
+  testServerIsRunning = await LiveAppWebview.startLiveApp("dummy-wallet-app/dist", {
     name: "Dummy Wallet API Live App",
     id: "dummy-live-app",
     apiVersion: "2.0.0",
@@ -249,6 +249,7 @@ test("Wallet API methods @smoke", async ({ page }) => {
     });
 
     await deviceAction.openApp();
+    await deviceAction.complete();
     await modal.waitForModalToDisappear();
     await expect(response).resolves.toStrictEqual({
       id,

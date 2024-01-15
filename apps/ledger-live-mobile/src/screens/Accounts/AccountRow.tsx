@@ -10,15 +10,15 @@ import { DerivationMode, getTagDerivationMode } from "@ledgerhq/coin-framework/d
 import { useSelector } from "react-redux";
 import { GestureResponderEvent } from "react-native";
 import { useStartProfiler } from "@shopify/react-native-performance";
-import { NavigatorName, ScreenName } from "../../const";
-import { useBalanceHistoryWithCountervalue } from "../../hooks/portfolio";
-import AccountRowLayout from "../../components/AccountRowLayout";
-import { parentAccountSelector } from "../../reducers/accounts";
-import { track } from "../../analytics";
-import { State } from "../../reducers/types";
-import { AccountsNavigatorParamList } from "../../components/RootNavigator/types/AccountsNavigator";
-import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { MarketNavigatorStackParamList } from "../../components/RootNavigator/types/MarketNavigator";
+import { NavigatorName, ScreenName } from "~/const";
+import { useBalanceHistoryWithCountervalue } from "~/hooks/portfolio";
+import AccountRowLayout from "~/components/AccountRowLayout";
+import { parentAccountSelector } from "~/reducers/accounts";
+import { track } from "~/analytics";
+import { State } from "~/reducers/types";
+import { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { MarketNavigatorStackParamList } from "~/components/RootNavigator/types/MarketNavigator";
 
 type Navigation = BaseComposite<
   | StackNavigatorProps<AccountsNavigatorParamList, ScreenName.Asset | ScreenName.Accounts>

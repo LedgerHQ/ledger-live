@@ -15,7 +15,12 @@ import type {
 } from "./types";
 import { isHexString, isValidAddress } from "./logic";
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
-import { CardanoInvalidPoolId, CardanoMinAmountError, CardanoNotEnoughFunds } from "./errors";
+import {
+  CardanoInvalidPoolId,
+  CardanoStakeKeyDepositError,
+  CardanoMinAmountError,
+  CardanoNotEnoughFunds,
+} from "./errors";
 import { AccountAwaitingSendPendingOperations } from "../../errors";
 import { getNetworkParameters } from "./networks";
 import { decodeTokenAssetId, decodeTokenCurrencyId } from "./buildSubAccounts";
@@ -145,6 +150,16 @@ async function getDelegateTransactionStatus(
         throw e;
       }
     }
+  }
+
+  const stakeKeyRegisterDeposit = new BigNumber(a.cardanoResources.protocolParams.stakeKeyDeposit);
+  if (
+    !a.cardanoResources.delegation?.status &&
+    a.spendableBalance.isLessThan(stakeKeyRegisterDeposit)
+  ) {
+    errors.amount = new CardanoStakeKeyDepositError("", {
+      depositAmount: stakeKeyRegisterDeposit.div(1e6).toString(),
+    });
   }
 
   return Promise.resolve({

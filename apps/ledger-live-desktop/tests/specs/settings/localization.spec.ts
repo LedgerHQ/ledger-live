@@ -37,6 +37,8 @@ test("Settings", async ({ page }) => {
 
     await settingsPage.changeLanguage("Français", "Español");
 
+    await settingsPage.waitForDeviceLauguagesDrawer();
+
     await expect(page).toHaveScreenshot("settings-français-with-device-l10n.png");
   });
 

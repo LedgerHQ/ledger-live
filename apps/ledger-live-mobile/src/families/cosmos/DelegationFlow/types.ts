@@ -7,7 +7,7 @@ import type { Operation } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
-import { ScreenName } from "../../../const";
+import { ScreenName } from "~/const";
 
 export type CosmosDelegationFlowParamList = {
   [ScreenName.CosmosDelegationStarted]: {
@@ -20,6 +20,7 @@ export type CosmosDelegationFlowParamList = {
     transaction?: Transaction;
     fromSelectAmount?: boolean;
     source?: RouteProp<ParamListBase, ScreenName>;
+    skipStartedStep?: boolean;
   };
   [ScreenName.CosmosDelegationValidatorSelect]: {
     accountId: string;

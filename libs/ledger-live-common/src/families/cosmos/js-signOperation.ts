@@ -34,10 +34,10 @@ const signOperation: SignOperationFnSignature<Transaction> = ({ account, deviceI
             amount: [
               {
                 denom: account.currency.units[1].code,
-                amount: transaction.fees.toString(),
+                amount: transaction.fees.toFixed(),
               },
             ],
-            gas: transaction.gas.toString(),
+            gas: transaction.gas.toFixed(),
           };
           // Note:
           // Cosmos Nano App sign data in Amino way only, not Protobuf.

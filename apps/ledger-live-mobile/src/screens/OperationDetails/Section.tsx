@@ -1,18 +1,20 @@
 import React from "react";
 import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
-import LText from "../../components/LText";
+import LText from "~/components/LText";
 
 type Props = FieldWrapperProps & {
   title: string;
   value?: string | React.ReactNode;
   headerRight?: React.ReactNode;
+  testID?: string;
 };
 export default function Section({
   title,
   value,
+  testID,
   children = (
-    <LText style={styles.value} semiBold selectable>
+    <LText style={styles.value} semiBold selectable testID={testID}>
       {value}
     </LText>
   ),

@@ -64,7 +64,11 @@ function SlideIndicator({ slidesLength, activeIndex = 0, onChange }: Props): Rea
   return (
     <Container>
       {slidesArray.map((_, index) => (
-        <Bullet key={index} onPress={() => onChange && onChange(index)} />
+        <Bullet
+          key={index}
+          onPress={() => onChange && onChange(index)}
+          testID={`slide-bullet-${index}`}
+        />
       ))}
       <AnimatedBullet style={[animatedStyles]} />
     </Container>

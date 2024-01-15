@@ -60,7 +60,10 @@ export const buildSignOperation =
   }): Observable<SignOperationEvent> =>
     new Observable(o => {
       async function main(): Promise<void> {
-        const preparedTransaction = await prepareForSignOperation(account, transaction);
+        const preparedTransaction = await prepareForSignOperation({
+          account,
+          transaction,
+        });
         const serializedTxHexString = getSerializedTransaction(preparedTransaction).slice(2); // Remove 0x prefix
 
         // Configure type of resolutions necessary for the clear signing

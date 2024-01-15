@@ -96,10 +96,7 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectManagerEvent> =>
                     0x6e01, // No StatusCodes definition
                     0x6d01, // No StatusCodes definition
                     0x6d02, // No StatusCodes definition
-                  ].includes(
-                    // @ts-expect-error typescript not checking agains the instanceof
-                    e.statusCode,
-                  ))
+                  ].includes(e.statusCode))
               ) {
                 return from(getAppAndVersion(transport)).pipe(
                   concatMap(appAndVersion => {

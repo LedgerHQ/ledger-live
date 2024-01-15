@@ -3,9 +3,8 @@ import styled from "styled-components";
 import { ipcRenderer } from "electron";
 import { Redirect, Route, Switch, useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import TrackAppStart from "~/renderer/components/TrackAppStart";
-import { PlatformCatalog, LiveApp } from "~/renderer/screens/platform";
+import { LiveApp } from "~/renderer/screens/platform";
 import { BridgeSyncProvider } from "~/renderer/bridge/BridgeSyncContext";
 import { SyncNewAccounts } from "~/renderer/bridge/SyncNewAccounts";
 import Box from "~/renderer/components/Box/Box";
@@ -40,8 +39,7 @@ import FirmwareUpdateBanner from "~/renderer/components/FirmwareUpdateBanner";
 import VaultSignerBanner from "~/renderer/components/VaultSignerBanner";
 import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
 import { updateIdentify } from "./analytics/segment";
-import { useDiscoverDB } from "./screens/platform/v2/hooks";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature, FeatureToggle } from "@ledgerhq/live-config/featureFlags/index";
 import { enableListAppsV2 } from "@ledgerhq/live-common/apps/hw";
 import {
   useFetchCurrencyAll,
@@ -51,6 +49,7 @@ import { Flex, InfiniteLoader } from "@ledgerhq/react-ui";
 import useAccountsWithFundsListener from "@ledgerhq/live-common/hooks/useAccountsWithFundsListener";
 import { accountsSelector } from "./reducers/accounts";
 
+const PlatformCatalog = lazy(() => import("~/renderer/screens/platform"));
 const Dashboard = lazy(() => import("~/renderer/screens/dashboard"));
 const Settings = lazy(() => import("~/renderer/screens/settings"));
 const Accounts = lazy(() => import("~/renderer/screens/accounts"));
@@ -188,7 +187,6 @@ export default function Default() {
   useUSBTroubleshooting();
   useFetchCurrencyAll();
   useFetchCurrencyFrom();
-  const discoverDB = useDiscoverDB();
 
   const listAppsV2 = useFeature("listAppsV2minor1");
   useEffect(() => {
@@ -295,11 +293,7 @@ export default function Default() {
                             <Route path="/card" render={withSuspense(Card)} />
                             <Redirect from="/manager/reload" to="/manager" />
                             <Route path="/manager" render={withSuspense(Manager)} />
-                            <Route
-                              path="/platform"
-                              component={() => <PlatformCatalog db={discoverDB} />}
-                              exact
-                            />
+                            <Route path="/platform" render={withSuspense(PlatformCatalog)} exact />
                             <Route path="/platform/:appId?" component={LiveApp} />
                             <Route path="/earn" render={withSuspense(Earn)} />
                             <Route exact path="/exchange/:appId?" render={withSuspense(Exchange)} />

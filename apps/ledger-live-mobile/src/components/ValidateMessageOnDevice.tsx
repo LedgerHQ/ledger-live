@@ -6,7 +6,7 @@ import { useTheme } from "@react-navigation/native";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet, View } from "react-native";
-import { getDeviceAnimation } from "../helpers/getDeviceAnimation";
+import { getDeviceAnimation } from "~/helpers/getDeviceAnimation";
 import Animation from "./Animation";
 import LText from "./LText";
 

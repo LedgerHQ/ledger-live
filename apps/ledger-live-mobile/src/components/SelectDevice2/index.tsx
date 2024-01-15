@@ -9,27 +9,27 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useBleDevicesScanning } from "@ledgerhq/live-common/ble/hooks/useBleDevicesScanning";
 import { usePostOnboardingEntryPointVisibleOnWallet } from "@ledgerhq/live-common/postOnboarding/hooks/usePostOnboardingEntryPointVisibleOnWallet";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-
+import SafeAreaView from "../SafeAreaView";
 import TransportBLE from "../../react-native-hw-transport-ble";
-import { TrackScreen, track } from "../../analytics";
-import { NavigatorName, ScreenName } from "../../const";
-import { knownDevicesSelector } from "../../reducers/ble";
+import { TrackScreen, track } from "~/analytics";
+import { NavigatorName, ScreenName } from "~/const";
+import { knownDevicesSelector } from "~/reducers/ble";
 import Touchable from "../Touchable";
-import Item from "./Item";
-import { saveBleDeviceName } from "../../actions/ble";
-import { setHasConnectedDevice, updateMainNavigatorVisibility } from "../../actions/appstate";
-import { setLastConnectedDevice, setReadOnlyMode } from "../../actions/settings";
+import { saveBleDeviceName } from "~/actions/ble";
+import { setHasConnectedDevice, updateMainNavigatorVisibility } from "~/actions/appstate";
+import { setLastConnectedDevice, setReadOnlyMode } from "~/actions/settings";
 import { BaseComposite, StackNavigatorProps } from "../RootNavigator/types/helpers";
 import { ManagerNavigatorStackParamList } from "../RootNavigator/types/ManagerNavigator";
 import { MainNavigatorParamList } from "../RootNavigator/types/MainNavigator";
 import PostOnboardingEntryPointCard from "../PostOnboarding/PostOnboardingEntryPointCard";
 import BleDevicePairingFlow, { SetHeaderOptionsRequest } from "../BleDevicePairingFlow";
 import BuyDeviceCTA from "../BuyDeviceCTA";
-import { useResetOnNavigationFocusState } from "../../helpers/useResetOnNavigationFocusState";
+import { useResetOnNavigationFocusState } from "~/helpers/useResetOnNavigationFocusState";
 import { useDebouncedRequireBluetooth } from "../RequiresBLE/hooks/useRequireBluetooth";
 import RequiresBluetoothDrawer from "../RequiresBLE/RequiresBluetoothDrawer";
 import QueuedDrawer from "../QueuedDrawer";
 import ServicesWidget from "../ServicesWidget";
+import { DeviceList } from "./DeviceList";
 
 export type { SetHeaderOptionsRequest };
 
@@ -58,7 +58,6 @@ type Props = {
   isChoiceDrawerDisplayedOnAddDevice?: boolean;
   withMyLedgerTracking?: boolean;
   filterByDeviceModelId?: DeviceModelId;
-  paddingBottom?: number;
 };
 
 export default function SelectDevice({
@@ -70,7 +69,6 @@ export default function SelectDevice({
   hasPostOnboardingEntryPointCard,
   withMyLedgerTracking,
   filterByDeviceModelId,
-  paddingBottom,
 }: Props) {
   const [USBDevice, setUSBDevice] = useState<Device | undefined>();
   const [ProxyDevice, setProxyDevice] = useState<Device | undefined>();
@@ -309,7 +307,7 @@ export default function SelectDevice({
   );
 
   return (
-    <Flex flex={1} pb={paddingBottom && !isPairingDevices ? paddingBottom : 0}>
+    <SafeAreaView edges={["left", "right"]} isFlex>
       {withMyLedgerTracking ? <TrackScreen {...trackScreenProps} /> : null}
       <RequiresBluetoothDrawer
         isOpenedOnIssue={isBleRequired}
@@ -366,9 +364,7 @@ export default function SelectDevice({
           >
             <Flex>
               {deviceList.length > 0 ? (
-                deviceList.map(device => (
-                  <Item key={device.deviceId} device={device as Device} onPress={handleOnSelect} />
-                ))
+                <DeviceList deviceList={deviceList} handleOnSelect={handleOnSelect} />
               ) : (
                 <Touchable
                   onPress={isChoiceDrawerDisplayedOnAddDevice ? onAddNewPress : openBlePairingFlow}
@@ -404,6 +400,7 @@ export default function SelectDevice({
                     fontWeight="semiBold"
                     fontSize={4}
                     lineHeight="21px"
+                    mt={3}
                   >
                     <Trans i18nKey="manager.selectDevice.otgBanner" />
                   </Text>
@@ -411,7 +408,7 @@ export default function SelectDevice({
               {displayServicesWidget && <ServicesWidget />}
             </Flex>
 
-            <Flex alignItems="center" mt={10}>
+            <Flex alignItems="center" mt={10} mb={8}>
               <BuyDeviceCTA />
             </Flex>
           </ScrollContainer>
@@ -488,6 +485,6 @@ export default function SelectDevice({
           </QueuedDrawer>
         </Flex>
       )}
-    </Flex>
+    </SafeAreaView>
   );
 }

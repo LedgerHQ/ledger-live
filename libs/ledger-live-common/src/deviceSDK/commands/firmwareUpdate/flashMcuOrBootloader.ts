@@ -4,9 +4,10 @@ import Transport from "@ledgerhq/hw-transport";
 import type { DeviceInfo, SocketEvent } from "@ledgerhq/types-live";
 import { version as livecommonversion } from "../../../../package.json";
 import { getEnv } from "@ledgerhq/live-env";
-import { log } from "@ledgerhq/logs";
+import { LocalTracer } from "@ledgerhq/logs";
 import { createDeviceSocket } from "../../../socket";
 import { filter, map } from "rxjs/operators";
+import { LOG_TYPE } from "../core";
 
 export type FlashMcuOrBootloaderCommandRequest = {
   targetId: DeviceInfo["targetId"];
@@ -38,7 +39,9 @@ export function flashMcuOrBootloaderCommand(
   transport: Transport,
   { targetId, version }: FlashMcuOrBootloaderCommandRequest,
 ): Observable<FlashMcuCommandEvent> {
-  log("device-command", "flashMcuOrBootloader", {
+  const tracer = new LocalTracer(LOG_TYPE, { function: "flashMcuOrBootloaderCommand" });
+
+  tracer.trace("Starting", {
     targetId,
     version,
   });
@@ -52,6 +55,7 @@ export function flashMcuOrBootloaderCommand(
         version,
       },
     }),
+    context: tracer.getContext(),
   }).pipe(
     filter<SocketEvent, ProgressEvent>(filterProgressEvent),
     map(e => ({

@@ -1,13 +1,14 @@
 import { Account } from "@ledgerhq/types-live";
 import { useHistory } from "react-router";
 import { useTranslation } from "react-i18next";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
 import { getAccountBannerState } from "@ledgerhq/live-common/families/evm/banner";
 import { AccountBanner } from "~/renderer/screens/account/AccountBanner";
 import { track } from "~/renderer/analytics/segment";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import React from "react";
 import { StakeAccountBannerParams } from "~/renderer/screens/account/types";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
 
 /**
@@ -29,6 +30,8 @@ const StakeBanner: React.FC<{ account: Account }> = ({ account }) => {
   const stakeAccountBannerParams: StakeAccountBannerParams | null =
     stakeAccountBanner?.params ?? null;
   const { stakeProvider } = getAccountBannerState(account);
+
+  const stakingUrl = useLocalizedUrl(urls.stakingEthereum);
 
   if (stakeProvider === "lido" && !stakeAccountBannerParams?.eth?.lido) return null;
   if (stakeProvider === "kiln" && !stakeAccountBannerParams?.eth?.kiln) return null;
@@ -82,7 +85,7 @@ const StakeBanner: React.FC<{ account: Account }> = ({ account }) => {
       cta={cta}
       onClick={onClick}
       linkText={t("account.banner.delegation.linkText")}
-      linkUrl={urls.stakingEthereum}
+      linkUrl={stakingUrl}
     />
   );
 };

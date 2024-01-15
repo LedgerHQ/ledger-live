@@ -81,6 +81,7 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
       grow
       style={{
         overflow: "hidden",
+        height: "100%",
       }}
     >
       {manifest ? (
@@ -103,8 +104,8 @@ export type ExchangeComponentParams = {
 };
 
 const Exchange = ({ match }: RouteComponentProps<ExchangeComponentParams>) => {
-  const { params } = match;
+  const appId = match?.params?.appId;
 
-  return <LiveAppExchange appId={params.appId || DEFAULT_MULTIBUY_APP_ID} />;
+  return <LiveAppExchange appId={appId || DEFAULT_MULTIBUY_APP_ID} />;
 };
 export default Exchange;

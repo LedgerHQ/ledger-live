@@ -20,6 +20,10 @@ export const enum ExchangeTypes {
 }
 const ExchangeTypeNg = [ExchangeTypes.SwapNg, ExchangeTypes.SellNg, ExchangeTypes.FundNg];
 
+export function isExchangeTypeNg(type: ExchangeTypes): boolean {
+  return ExchangeTypeNg.includes(type);
+}
+
 const START_NEW_TRANSACTION_COMMAND = 0x03;
 const SET_PARTNER_KEY_COMMAND = 0x04;
 const CHECK_PARTNER_COMMAND = 0x05;
@@ -117,14 +121,16 @@ export default class Exchange {
     );
     maybeThrowProtocolError(result);
 
+    // Leave the deprecated warning and don't update to `subarray` method as
+    // the output on LLM will not be the expected one (cf. LIVE-10430)
     switch (this.transactionType) {
       case ExchangeTypes.Sell:
       case ExchangeTypes.Fund:
-        return result.subarray(0, 32).toString("base64");
+        return result.slice(0, 32).toString("base64");
       case ExchangeTypes.Swap:
         return result.toString("ascii", 0, 10);
       default:
-        return result.subarray(0, 32).toString("hex");
+        return result.slice(0, 32).toString("hex");
     }
   }
 
@@ -338,6 +344,6 @@ export default class Exchange {
   }
 
   private isExchangeTypeNg(): boolean {
-    return ExchangeTypeNg.includes(this.transactionType);
+    return isExchangeTypeNg(this.transactionType);
   }
 }

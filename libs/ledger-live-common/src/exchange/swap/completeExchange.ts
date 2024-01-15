@@ -43,7 +43,6 @@ function convertTransportError(
   err: unknown,
 ): SwapCompleteExchangeError | unknown {
   if (err instanceof TransportStatusError) {
-    // @ts-expect-error TransportStatusError to be typed on ledgerjs
     const errorMessage = getExchangeErrorMessage(err.statusCode);
     return new SwapCompleteExchangeError(step, errorMessage);
   }
@@ -137,7 +136,6 @@ const completeExchange = (
             payoutAddressParameters.addressParameters,
           );
         } catch (e) {
-          // @ts-expect-error TransportStatusError to be typed on ledgerjs
           if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
             throw new WrongDeviceForAccount(undefined, {
               accountName: payoutAccount.name,
@@ -176,7 +174,6 @@ const completeExchange = (
           );
           log(COMPLETE_EXCHANGE_LOG, "checkrefund address");
         } catch (e) {
-          // @ts-expect-error TransportStatusError to be typed on ledgerjs
           if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
             log(COMPLETE_EXCHANGE_LOG, "transport error");
             throw new WrongDeviceForAccount(undefined, {
@@ -194,7 +191,6 @@ const completeExchange = (
       }).catch(e => {
         if (ignoreTransportError) return;
 
-        // @ts-expect-error TransportStatusError to be typed on ledgerjs
         if (e instanceof TransportStatusError && e.statusCode === 0x6a84) {
           throw new TransactionRefusedOnDevice();
         }

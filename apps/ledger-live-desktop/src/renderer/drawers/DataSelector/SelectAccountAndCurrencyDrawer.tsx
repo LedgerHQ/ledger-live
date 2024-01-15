@@ -6,7 +6,7 @@ import { Account, AccountLike } from "@ledgerhq/types-live";
 import { CryptoOrTokenCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 import { setDrawer } from "../Provider";
 import Fuse from "fuse.js";
-import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/index";
+import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";
 import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import Text from "~/renderer/components/Text";
 import { CurrencyList } from "./CurrencyList";

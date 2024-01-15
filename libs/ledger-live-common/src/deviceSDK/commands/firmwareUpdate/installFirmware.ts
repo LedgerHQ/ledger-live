@@ -5,7 +5,7 @@ import type { FinalFirmware, OsuFirmware } from "@ledgerhq/types-live";
 import type { DeviceInfo, SocketEvent } from "@ledgerhq/types-live";
 import { version as livecommonversion } from "../../../../package.json";
 import { getEnv } from "@ledgerhq/live-env";
-import { log } from "@ledgerhq/logs";
+import { LocalTracer } from "@ledgerhq/logs";
 import { createDeviceSocket } from "../../../socket";
 import { catchError, filter, map } from "rxjs/operators";
 import {
@@ -14,7 +14,7 @@ import {
   DeviceOnDashboardExpected,
   ManagerDeviceLockedError,
 } from "@ledgerhq/errors";
-import { UnresponsiveCmdEvent } from "../core";
+import { LOG_TYPE, UnresponsiveCmdEvent } from "../core";
 
 export type InstallFirmwareCommandRequest = {
   targetId: DeviceInfo["targetId"];
@@ -49,11 +49,12 @@ export type InstallFirmwareCommandEvent =
   | UnresponsiveCmdEvent;
 
 /**
- * Creates a scriptrunner connection with the /install API endpoint of the HSM in order to install
+ * Creates a scriptrunner connection with the /install API endpoint of the HSM in order to install (upload)
  * an OSU (operating system updater).
  * This is the same endpoint that is used to install applications, however the parameters that are
  * passed are different. Besides that, the emitted events are semantically different. This is why
  * this is a dedicated command to OSU installations.
+ *
  * @param transport The transport object to contact the device
  * @param param1 The firmware details to be installed
  * @returns An observable that emits the events according to the progression of the firmware installation
@@ -62,9 +63,9 @@ export function installFirmwareCommand(
   transport: Transport,
   { targetId, firmware }: InstallFirmwareCommandRequest,
 ): Observable<InstallFirmwareCommandEvent> {
-  // TODO handle mock
+  const tracer = new LocalTracer(LOG_TYPE, { function: "installFirmwareCommand" });
 
-  log("device-command", "installOsuFirmware", {
+  tracer.trace("Starting", {
     targetId,
     osuFirmware: firmware,
   });
@@ -81,8 +82,12 @@ export function installFirmwareCommand(
       },
     }),
     unresponsiveExpectedDuringBulk: true,
+    context: tracer.getContext(),
   }).pipe(
-    catchError(remapSocketFirmwareError),
+    catchError(error => {
+      tracer.trace("Socket firmware error", { error });
+      return remapSocketFirmwareError(error);
+    }),
     filter<SocketEvent, FilteredSocketEvent>((e): e is FilteredSocketEvent => {
       return e.type === "bulk-progress" || e.type === "device-permission-requested";
     }),
@@ -108,7 +113,10 @@ export function installFirmwareCommand(
       // then type is "device-permission-requested"
       return { type: "allowSecureChannelRequested" };
     }),
-    catchError(remapSocketUnresponsiveError),
+    catchError(error => {
+      tracer.trace("Socket unresponsive error", { error });
+      return remapSocketUnresponsiveError(error);
+    }),
   );
 }
 
@@ -132,8 +140,7 @@ const remapSocketFirmwareError: (e: Error) => Observable<never> = (e: Error) => 
 
   const status =
     e instanceof TransportStatusError
-      ? // @ts-expect-error TransportStatusError to be typed on ledgerjs
-        e.statusCode.toString(16)
+      ? e.statusCode.toString(16)
       : (e as Error).message.slice((e as Error).message.length - 4);
 
   switch (status) {

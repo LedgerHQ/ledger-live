@@ -22,6 +22,7 @@ import {
   GENESIS_PASS_COLLECTION_CONTRACT,
   INFINITY_PASS_COLLECTION_CONTRACT,
 } from "@ledgerhq/live-common/nft/helpers";
+import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
 import { getAndroidArchitecture, getAndroidVersionCode } from "../logic/cleanBuildVersion";
 import getOrCreateUser from "../user";
 import {
@@ -41,7 +42,7 @@ import { DeviceLike, State } from "../reducers/types";
 import { satisfactionSelector } from "../reducers/ratings";
 import { accountsSelector } from "../reducers/accounts";
 import type { AppStore } from "../reducers";
-import { NavigatorName } from "../const";
+import { NavigatorName } from "~/const";
 import { previousRouteNameRef, currentRouteNameRef } from "./screenRefs";
 import { AnonymousIpPlugin } from "./AnonymousIpPlugin";
 import { UserIdPlugin } from "./UserIdPlugin";
@@ -63,9 +64,11 @@ export function setAnalyticsFeatureFlagMethod(method: typeof analyticsFeatureFla
   analyticsFeatureFlagMethod = method;
 }
 
-const getFeatureFlagProperties = (): Record<string, boolean | string> => {
-  try {
-    if (!analyticsFeatureFlagMethod) return {};
+const getFeatureFlagProperties = () => {
+  if (!analyticsFeatureFlagMethod || !segmentClient) return {};
+  (async () => {
+    const { user } = await getOrCreateUser();
+    const ptxEarnFeatureFlag = analyticsFeatureFlagMethod("ptxEarn");
     const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
 
     const isBatch1Enabled =
@@ -74,19 +77,17 @@ const getFeatureFlagProperties = (): Record<string, boolean | string> => {
       !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 2;
     const isBatch3Enabled =
       !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 3;
-    const ptxEarnFeatureFlag = analyticsFeatureFlagMethod("ptxEarn");
-    const llmWalletQuickActions = analyticsFeatureFlagMethod("llmWalletQuickActions");
-    return {
+
+    segmentClient.identify(user.id, {
       ptxEarnEnabled: !!ptxEarnFeatureFlag?.enabled,
-      llmWalletQuickActionsEnabled: !!llmWalletQuickActions?.enabled,
       isBatch1Enabled,
       isBatch2Enabled,
       isBatch3Enabled,
-    };
-  } catch (e) {
-    return {};
-  }
+    });
+  })();
 };
+
+runOnceWhen(() => !!analyticsFeatureFlagMethod && !!segmentClient, getFeatureFlagProperties);
 
 export const updateSessionId = () => (sessionId = uuid());
 
@@ -179,7 +180,6 @@ const extraProperties = async (store: AppStore) => {
     appTimeToInteractiveMilliseconds: appStartupTime,
     staxDeviceUser: knownDeviceModelIds.stax,
     staxLockscreen: customImageType || "none",
-    ...getFeatureFlagProperties(),
     nps,
   };
 };

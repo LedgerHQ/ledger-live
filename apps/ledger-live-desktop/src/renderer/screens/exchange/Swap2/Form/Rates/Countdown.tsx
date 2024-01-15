@@ -25,7 +25,7 @@ export default function Countdown({ refreshTime, rates }: Props) {
     setIconKey(key => key + 1);
     const startTime = new Date().getTime();
     setCountdown(getSeconds(refreshTime));
-    const countdownInterval = setInterval(() => {
+    const countdownInterval = window.setInterval(() => {
       const now = new Date().getTime();
       const newCountdown = refreshTime + startTime - now;
       setCountdown(getSeconds(newCountdown));

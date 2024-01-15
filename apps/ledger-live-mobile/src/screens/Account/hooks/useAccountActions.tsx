@@ -10,16 +10,16 @@ import { useTranslation } from "react-i18next";
 import { useRoute } from "@react-navigation/native";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { DefaultTheme } from "styled-components/native";
-import { NavigatorName, ScreenName } from "../../../const";
-import { readOnlyModeEnabledSelector } from "../../../reducers/settings";
+import { NavigatorName, ScreenName } from "~/const";
+import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import perFamilyAccountActions from "../../../generated/accountActions";
 
-import ZeroBalanceDisabledModalContent from "../../../components/FabActions/modals/ZeroBalanceDisabledModalContent";
-import { ActionButtonEvent } from "../../../components/FabActions";
+import ZeroBalanceDisabledModalContent from "~/components/FabActions/modals/ZeroBalanceDisabledModalContent";
+import { ActionButtonEvent } from "~/components/FabActions";
 import { useCanShowStake } from "./useCanShowStake";
-import { PtxToast } from "../../../components/Toast/PtxToast";
+import { PtxToast } from "~/components/Toast/PtxToast";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 
 type Props = {
@@ -55,8 +55,6 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
   const mainAccount = getMainAccount(account, parentAccount);
   // @ts-expect-error issue in typing
   const decorators = perFamilyAccountActions[mainAccount?.currency?.family];
-
-  const isWalletConnectSupported = ["ethereum", "bsc", "polygon"].includes(currency.id);
 
   const { isCurrencyAvailable } = useRampCatalog();
 
@@ -222,29 +220,7 @@ export default function useAccountActions({ account, parentAccount, colors }: Pr
       })) ||
     [];
 
-  const secondaryActions = [
-    ...familySpecificSecondaryActions,
-    ...(isWalletConnectSupported
-      ? [
-          {
-            id: "walletconnect",
-            navigationParams: [
-              NavigatorName.Base,
-              {
-                screen: NavigatorName.WalletConnect,
-                params: {
-                  screen: ScreenName.WalletConnectConnect,
-                },
-              },
-            ],
-            label: t("account.walletconnect"),
-            Icon: IconsLegacy.WalletConnectMedium,
-            event: "WalletConnect Account Button",
-            eventProperties: { currencyName: currency?.name },
-          },
-        ]
-      : []),
-  ];
+  const secondaryActions = [...familySpecificSecondaryActions];
 
   return {
     mainActions,

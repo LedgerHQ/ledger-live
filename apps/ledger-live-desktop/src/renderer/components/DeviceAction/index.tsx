@@ -6,7 +6,6 @@ import { Action } from "@ledgerhq/live-common/hw/actions/types";
 import {
   OutdatedApp,
   LatestFirmwareVersionRequired,
-  DeviceNotOnboarded,
   NoSuchAppOnProvider,
   EConnResetError,
   LanguageInstallRefusedOnDevice,
@@ -27,7 +26,6 @@ import useTheme from "~/renderer/hooks/useTheme";
 import {
   ManagerNotEnoughSpaceError,
   UpdateYourApp,
-  TransportStatusError,
   UserRefusedAddress,
   UserRefusedAllowManager,
   UserRefusedFirmwareUpdate,
@@ -53,7 +51,7 @@ import {
   renderInstallingLanguage,
   renderAllowRemoveCustomLockscreen,
   renderLockedDeviceError,
-  RenderDeviceNotOnboardedError,
+  DeviceNotOnboardedErrorComponent,
 } from "./rendering";
 import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils";
 import {
@@ -69,6 +67,7 @@ import { AppAndVersion } from "@ledgerhq/live-common/hw/connectApp";
 import { Device } from "@ledgerhq/types-devices";
 import { LedgerErrorConstructor } from "@ledgerhq/errors/lib/helpers";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { isDeviceNotOnboardedError } from "./utils";
 
 type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;
 
@@ -433,12 +432,8 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
 
     // NB Until we find a better way, remap the error if it's 6d06 (LNS, LNSP, LNX) or 6d07 (Stax) and we haven't fallen
     // into another handled case.
-    if (
-      e instanceof DeviceNotOnboarded ||
-      (e instanceof TransportStatusError &&
-        (error.message.includes("0x6d06") || error.message.includes("0x6d07")))
-    ) {
-      return <RenderDeviceNotOnboardedError t={t} device={device} />;
+    if (isDeviceNotOnboardedError(e)) {
+      return <DeviceNotOnboardedErrorComponent t={t} device={device} />;
     }
 
     if (e instanceof NoSuchAppOnProvider) {
@@ -462,6 +457,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
 
     let withExportLogs = true;
     let warning = false;
+    let withDescription = true;
     // User rejections, should be rendered as warnings and not export logs.
     // All the error rendering needs to be unified, the same way we do for ErrorIcon
     // not handled here.
@@ -477,6 +473,10 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
       warning = true;
     }
 
+    if ((error as unknown) instanceof UserRefusedDeviceNameChange) {
+      withDescription = false;
+    }
+
     return renderError({
       t,
       error,
@@ -485,6 +485,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
       withExportLogs,
       device: device ?? undefined,
       inlineRetry,
+      withDescription,
     });
   }
 

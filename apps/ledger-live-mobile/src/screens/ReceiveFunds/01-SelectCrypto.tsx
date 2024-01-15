@@ -11,15 +11,15 @@ import debounce from "lodash/debounce";
 
 import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { useSelector } from "react-redux";
-import { ScreenName } from "../../const";
-import { track, TrackScreen } from "../../analytics";
-import FilteredSearchBar from "../../components/FilteredSearchBar";
-import BigCurrencyRow from "../../components/BigCurrencyRow";
-import { flattenAccountsSelector } from "../../reducers/accounts";
-import { ReceiveFundsStackParamList } from "../../components/RootNavigator/types/ReceiveFundsNavigator";
-import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import { ScreenName } from "~/const";
+import { track, TrackScreen } from "~/analytics";
+import FilteredSearchBar from "~/components/FilteredSearchBar";
+import BigCurrencyRow from "~/components/BigCurrencyRow";
+import { flattenAccountsSelector } from "~/reducers/accounts";
+import { ReceiveFundsStackParamList } from "~/components/RootNavigator/types/ReceiveFundsNavigator";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { getEnv } from "@ledgerhq/live-env";
-import { findAccountByCurrency } from "../../logic/deposit";
+import { findAccountByCurrency } from "~/logic/deposit";
 
 import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/index";
 import DepositFromCoinbaseButton from "./DepositFromCoinbaseButton";
@@ -44,6 +44,10 @@ const renderEmptyList = () => (
 export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
   const paramsCurrency = route?.params?.currency;
   const filterCurrencyIds = route?.params?.filterCurrencyIds;
+  const filterCurrencyIdsSet = useMemo(
+    () => (filterCurrencyIds ? new Set(filterCurrencyIds) : null),
+    [filterCurrencyIds],
+  );
 
   const { t } = useTranslation();
   const accounts = useSelector(flattenAccountsSelector);
@@ -129,10 +133,10 @@ export default function AddAccountsSelectCrypto({ navigation, route }: Props) {
 
   const list = useMemo(
     () =>
-      filterCurrencyIds
-        ? sortedCryptoCurrencies.filter(crypto => filterCurrencyIds.includes(crypto.id))
+      filterCurrencyIdsSet
+        ? sortedCryptoCurrencies.filter(crypto => filterCurrencyIdsSet.has(crypto.id))
         : sortedCryptoCurrencies,
-    [filterCurrencyIds, sortedCryptoCurrencies],
+    [filterCurrencyIdsSet, sortedCryptoCurrencies],
   );
 
   return (

@@ -1,5 +1,77 @@
 # @ledgerhq/devices
 
+## 8.2.0
+
+### Minor Changes
+
+- [#5171](https://github.com/LedgerHQ/ledger-live/pull/5171) [`52a3732`](https://github.com/LedgerHQ/ledger-live/commit/52a373273dee3b2cb5a3e8d2d4b05f90616d71a2) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Feat: cleaner refactoring of BLE and USB HID frames encoding/decoding
+
+  - Cleans up + documentation + tracing/logs + unit tests of BLE frame encoding and decoding:
+    `receiveAPDU` and `sendAPDU`
+  - Cleans up + documentation + tracing/logs + unit tests of HID USB frame encoding and decoding:
+    `hid-framing`
+
+### Patch Changes
+
+- Updated dependencies [[`52a3732`](https://github.com/LedgerHQ/ledger-live/commit/52a373273dee3b2cb5a3e8d2d4b05f90616d71a2), [`4d1aade`](https://github.com/LedgerHQ/ledger-live/commit/4d1aade53cd33f8e7548ce340f54fbb834bdcdcb)]:
+  - @ledgerhq/errors@6.16.1
+
+## 8.2.0-next.0
+
+### Minor Changes
+
+- [#5171](https://github.com/LedgerHQ/ledger-live/pull/5171) [`52a3732`](https://github.com/LedgerHQ/ledger-live/commit/52a373273dee3b2cb5a3e8d2d4b05f90616d71a2) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Feat: cleaner refactoring of BLE and USB HID frames encoding/decoding
+
+  - Cleans up + documentation + tracing/logs + unit tests of BLE frame encoding and decoding:
+    `receiveAPDU` and `sendAPDU`
+  - Cleans up + documentation + tracing/logs + unit tests of HID USB frame encoding and decoding:
+    `hid-framing`
+
+### Patch Changes
+
+- Updated dependencies [[`52a3732`](https://github.com/LedgerHQ/ledger-live/commit/52a373273dee3b2cb5a3e8d2d4b05f90616d71a2), [`4d1aade`](https://github.com/LedgerHQ/ledger-live/commit/4d1aade53cd33f8e7548ce340f54fbb834bdcdcb)]:
+  - @ledgerhq/errors@6.16.1-next.0
+
+## 8.1.0
+
+### Minor Changes
+
+- [#5430](https://github.com/LedgerHQ/ledger-live/pull/5430) [`5964e30bed`](https://github.com/LedgerHQ/ledger-live/commit/5964e30bed11d64a3b7401c6ab51ffc1ad4c427c) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update documentation v14 ledgerjs
+
+### Patch Changes
+
+- Updated dependencies [[`771c9d3c1d`](https://github.com/LedgerHQ/ledger-live/commit/771c9d3c1d138ddd68da2e4f9738e2c41ecaf81b), [`c5981ae341`](https://github.com/LedgerHQ/ledger-live/commit/c5981ae3411abc4c8594adf2efcb52aacddac143), [`e63205b850`](https://github.com/LedgerHQ/ledger-live/commit/e63205b85071538ed2431157a12818d7a8f0ffa9), [`5964e30bed`](https://github.com/LedgerHQ/ledger-live/commit/5964e30bed11d64a3b7401c6ab51ffc1ad4c427c)]:
+  - @ledgerhq/errors@6.16.0
+  - @ledgerhq/logs@6.12.0
+
+## 8.1.0-next.0
+
+### Minor Changes
+
+- [#5430](https://github.com/LedgerHQ/ledger-live/pull/5430) [`5964e30bed`](https://github.com/LedgerHQ/ledger-live/commit/5964e30bed11d64a3b7401c6ab51ffc1ad4c427c) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update documentation v14 ledgerjs
+
+### Patch Changes
+
+- Updated dependencies [[`771c9d3c1d`](https://github.com/LedgerHQ/ledger-live/commit/771c9d3c1d138ddd68da2e4f9738e2c41ecaf81b), [`c5981ae341`](https://github.com/LedgerHQ/ledger-live/commit/c5981ae3411abc4c8594adf2efcb52aacddac143), [`e63205b850`](https://github.com/LedgerHQ/ledger-live/commit/e63205b85071538ed2431157a12818d7a8f0ffa9), [`5964e30bed`](https://github.com/LedgerHQ/ledger-live/commit/5964e30bed11d64a3b7401c6ab51ffc1ad4c427c)]:
+  - @ledgerhq/errors@6.16.0-next.0
+  - @ledgerhq/logs@6.12.0-next.0
+
+## 8.0.8
+
+### Patch Changes
+
+- Updated dependencies [[`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac), [`4d6fa0772e`](https://github.com/LedgerHQ/ledger-live/commit/4d6fa0772e19cdbd4b432fafa43621c42e2a5fdd)]:
+  - @ledgerhq/logs@6.11.0
+  - @ledgerhq/errors@6.15.0
+
+## 8.0.8-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`9e2d32aec4`](https://github.com/LedgerHQ/ledger-live/commit/9e2d32aec4ebd8774880f94e3ef0e805ebb172ac), [`4d6fa0772e`](https://github.com/LedgerHQ/ledger-live/commit/4d6fa0772e19cdbd4b432fafa43621c42e2a5fdd)]:
+  - @ledgerhq/logs@6.11.0-next.0
+  - @ledgerhq/errors@6.15.0-next.0
+
 ## 8.0.7
 
 ### Patch Changes

@@ -1,3 +1,4 @@
+import { isConfirmedOperation } from "@ledgerhq/coin-framework/operation";
 import { RecipientRequired } from "@ledgerhq/errors";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -6,14 +7,11 @@ import {
   SyncSkipUnderPriority,
 } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
+import { getStuckAccountAndOperation } from "@ledgerhq/live-common/operation";
 import { Operation } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
-import {
-  getStuckAccountAndOperation,
-  isConfirmedOperation,
-} from "@ledgerhq/coin-framework/operation";
 import invariant from "invariant";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
@@ -21,24 +19,24 @@ import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useSelector } from "react-redux";
-import { track, TrackScreen } from "../../analytics";
-import Alert from "../../components/Alert";
-import Button from "../../components/Button";
-import CancelButton from "../../components/CancelButton";
-import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
-import KeyboardView from "../../components/KeyboardView";
-import LText from "../../components/LText";
-import NavigationScrollView from "../../components/NavigationScrollView";
-import RetryButton from "../../components/RetryButton";
-import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
-import { ScreenName } from "../../const";
-import { accountScreenSelector } from "../../reducers/accounts";
+import { TrackScreen, track } from "~/analytics";
+import Alert from "~/components/Alert";
+import Button from "~/components/Button";
+import CancelButton from "~/components/CancelButton";
+import { EditOperationCard } from "~/components/EditOperationCard";
+import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
+import KeyboardView from "~/components/KeyboardView";
+import LText from "~/components/LText";
+import NavigationScrollView from "~/components/NavigationScrollView";
+import RetryButton from "~/components/RetryButton";
+import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { ScreenName } from "~/const";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { currencySettingsForAccountSelector } from "~/reducers/settings";
+import type { State } from "~/reducers/types";
 import DomainServiceRecipientRow from "./DomainServiceRecipientRow";
 import RecipientRow from "./RecipientRow";
-import { EditOperationCard } from "../../components/EditOperationCard";
-import { currencySettingsForAccountSelector } from "../../reducers/settings";
-import type { State } from "../../reducers/types";
 
 const withoutHiddenError = (error: Error): Error | null =>
   error instanceof RecipientRequired ? null : error;

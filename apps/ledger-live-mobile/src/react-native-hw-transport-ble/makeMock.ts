@@ -34,7 +34,7 @@ export default (opts: Opts) => {
     static observeState = (o: PartialObserver<{ type: string; available: boolean }>) =>
       observeState.subscribe(o);
     static list = () => Promise.resolve([]);
-    static disconnect = (_id: string) => Promise.resolve();
+    static disconnectDevice = (_id: string) => Promise.resolve();
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     static setLogLevel = (_param: string) => {};
 

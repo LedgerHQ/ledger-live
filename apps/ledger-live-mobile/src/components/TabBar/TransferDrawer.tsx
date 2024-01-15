@@ -8,17 +8,17 @@ import { Linking, StyleProp, ViewStyle } from "react-native";
 import { snakeCase } from "lodash";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { NavigatorName } from "../../const";
-import { hasOrderedNanoSelector, readOnlyModeEnabledSelector } from "../../reducers/settings";
+import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+import { NavigatorName } from "~/const";
+import { hasOrderedNanoSelector, readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { Props as ModalProps } from "../QueuedDrawer";
 import TransferButton from "../TransferButton";
 import BuyDeviceBanner, { IMAGE_PROPS_SMALL_NANO } from "../BuyDeviceBanner";
 import SetupDeviceBanner from "../SetupDeviceBanner";
-import { track, useAnalytics } from "../../analytics";
+import { track, useAnalytics } from "~/analytics";
 import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
-import useQuickActions from "../../hooks/useQuickActions";
-import { PTX_SERVICES_TOAST_ID } from "@utils/constants";
+import useQuickActions from "~/hooks/useQuickActions";
+import { PTX_SERVICES_TOAST_ID } from "~/utils/constants";
 
 import { useQuickAccessURI } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 
@@ -127,7 +127,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
         }
       },
       disabled: BUY.disabled,
-      testID: "transfer-receive-button",
+      testID: "transfer-buy-button",
     },
     {
       eventProperties: {

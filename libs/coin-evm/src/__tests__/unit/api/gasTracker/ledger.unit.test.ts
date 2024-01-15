@@ -1,7 +1,7 @@
+import { AssertionError } from "assert";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
 import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
-import { AssertionError } from "assert";
 import BigNumber from "bignumber.js";
 import { getGasOptions } from "../../../../api/gasTracker/ledger";
 import { LedgerGasTrackerUsedIncorrectly, NoGasTrackerFound } from "../../../../errors";

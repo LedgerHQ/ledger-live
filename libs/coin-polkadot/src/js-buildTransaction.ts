@@ -36,8 +36,6 @@ const getExtrinsicParams = (a: PolkadotAccount, t: Transaction): ExtrinsicParams
           pallet: "staking",
           name: "bond",
           args: {
-            // Spec choice: we always set the account as both the stash and its controller
-            controller: a.freshAddress,
             value: t.amount.toString(),
             // The rewards destination. Can be "Stash", "Staked", "Controller" or "{ Account: accountId }"".
             payee: t.rewardDestination || "Stash",
@@ -93,7 +91,7 @@ const getExtrinsicParams = (a: PolkadotAccount, t: Transaction): ExtrinsicParams
       return {
         pallet: "staking",
         name: "setController",
-        args: { controller: a.freshAddress },
+        args: {},
       };
 
     case "nominate":

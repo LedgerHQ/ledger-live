@@ -3,7 +3,6 @@ import { AccountLike } from "@ledgerhq/types-live";
 import { getAccountCurrency, getAccountUnit } from "@ledgerhq/coin-framework/account/helpers";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
-import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 import { fetchRates } from "../../api/v5/fetchRates";
 import { useAPI } from "../../../../hooks/useAPI";
 import { ExchangeRate } from "../../types";
@@ -26,7 +25,7 @@ export function useFetchRates({
   const unitTo = toCurrency?.units[0];
 
   const formattedCurrencyAmount =
-    (unitFrom && formatCurrencyUnit(unitFrom, fromCurrencyAmount)) ?? "0";
+    (unitFrom && `${fromCurrencyAmount.shiftedBy(-unitFrom.magnitude)}`) ?? "0";
 
   const toCurrencyId = toCurrency?.id;
   return useAPI({
@@ -39,7 +38,7 @@ export function useFetchRates({
       toCurrencyId,
       fromCurrencyAmount: formattedCurrencyAmount,
     },
-    staleTimeout: 50000,
+    staleTimeout: 20000,
     enabled: !!toCurrencyId && !!currencyFrom && fromCurrencyAmount.gt(0) && !!unitFrom && !!unitTo,
     onSuccess,
   });

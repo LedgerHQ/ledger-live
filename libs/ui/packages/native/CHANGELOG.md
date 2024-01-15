@@ -1,5 +1,83 @@
 # @ledgerhq/native-ui
 
+## 0.22.4
+
+### Patch Changes
+
+- [#5630](https://github.com/LedgerHQ/ledger-live/pull/5630) [`ad8f999`](https://github.com/LedgerHQ/ledger-live/commit/ad8f99994341b10d3f7af96543dd2c2028140573) Thanks [@mle-gall](https://github.com/mle-gall)! - New animated input (label morphes from placeholder to fixed label onFocus)
+
+- Updated dependencies [[`0e2287b`](https://github.com/LedgerHQ/ledger-live/commit/0e2287b1ce4200004ed2c06f3e74cd3b03100784)]:
+  - @ledgerhq/crypto-icons-ui@1.0.0
+
+## 0.22.4-next.0
+
+### Patch Changes
+
+- [#5630](https://github.com/LedgerHQ/ledger-live/pull/5630) [`ad8f999`](https://github.com/LedgerHQ/ledger-live/commit/ad8f99994341b10d3f7af96543dd2c2028140573) Thanks [@mle-gall](https://github.com/mle-gall)! - New animated input (label morphes from placeholder to fixed label onFocus)
+
+- Updated dependencies [[`0e2287b`](https://github.com/LedgerHQ/ledger-live/commit/0e2287b1ce4200004ed2c06f3e74cd3b03100784)]:
+  - @ledgerhq/crypto-icons-ui@1.0.0-next.0
+
+## 0.22.3
+
+### Patch Changes
+
+- [#5595](https://github.com/LedgerHQ/ledger-live/pull/5595) [`c094e4e`](https://github.com/LedgerHQ/ledger-live/commit/c094e4ed0c3220877d13703e20c77a0b013cd3ea) Thanks [@ak-ledger](https://github.com/ak-ledger)! - update react/native libs Storybook to 7.5.3
+
+- [#5464](https://github.com/LedgerHQ/ledger-live/pull/5464) [`c4bc268`](https://github.com/LedgerHQ/ledger-live/commit/c4bc2688de43ad1f5ecec5e83d8e5c88edb6d372) Thanks [@mle-gall](https://github.com/mle-gall)! - Adding icons instructions
+
+- Updated dependencies [[`2edfa53`](https://github.com/LedgerHQ/ledger-live/commit/2edfa533bccafbfd8a61aea0f5422c0db79825ea), [`335ce83`](https://github.com/LedgerHQ/ledger-live/commit/335ce8366c8c997cdd77f191262a9dedee9888f6)]:
+  - @ledgerhq/crypto-icons-ui@0.7.0
+
+## 0.22.3-next.0
+
+### Patch Changes
+
+- [#5595](https://github.com/LedgerHQ/ledger-live/pull/5595) [`c094e4e`](https://github.com/LedgerHQ/ledger-live/commit/c094e4ed0c3220877d13703e20c77a0b013cd3ea) Thanks [@ak-ledger](https://github.com/ak-ledger)! - update react/native libs Storybook to 7.5.3
+
+- [#5464](https://github.com/LedgerHQ/ledger-live/pull/5464) [`c4bc268`](https://github.com/LedgerHQ/ledger-live/commit/c4bc2688de43ad1f5ecec5e83d8e5c88edb6d372) Thanks [@mle-gall](https://github.com/mle-gall)! - Adding icons instructions
+
+- Updated dependencies [[`2edfa53`](https://github.com/LedgerHQ/ledger-live/commit/2edfa533bccafbfd8a61aea0f5422c0db79825ea), [`335ce83`](https://github.com/LedgerHQ/ledger-live/commit/335ce8366c8c997cdd77f191262a9dedee9888f6)]:
+  - @ledgerhq/crypto-icons-ui@0.7.0-next.0
+
+## 0.22.2
+
+### Patch Changes
+
+- Updated dependencies [[`08dde174fd`](https://github.com/LedgerHQ/ledger-live/commit/08dde174fdeaadbce85dcd914383839f788f21dd)]:
+  - @ledgerhq/crypto-icons-ui@0.6.1
+
+## 0.22.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`08dde174fd`](https://github.com/LedgerHQ/ledger-live/commit/08dde174fdeaadbce85dcd914383839f788f21dd)]:
+  - @ledgerhq/crypto-icons-ui@0.6.1-next.0
+
+## 0.22.1
+
+### Patch Changes
+
+- [#4289](https://github.com/LedgerHQ/ledger-live/pull/4289) [`29d9d40f11`](https://github.com/LedgerHQ/ledger-live/commit/29d9d40f11515de9502995349f2fd7fbd5cb8757) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Upgrade peerDependency react-native-reanimated to 3.3.0, devDependency expo to expo SDK 49 and metro to 0.79.0
+
+- [#4827](https://github.com/LedgerHQ/ledger-live/pull/4827) [`fc121ce96d`](https://github.com/LedgerHQ/ledger-live/commit/fc121ce96dbcc4f30cfd9836644f778b85f997b7) Thanks [@valpinkman](https://github.com/valpinkman)! - Update react to react 18
+
+- Updated dependencies [[`fc121ce96d`](https://github.com/LedgerHQ/ledger-live/commit/fc121ce96dbcc4f30cfd9836644f778b85f997b7), [`f5a5c315ea`](https://github.com/LedgerHQ/ledger-live/commit/f5a5c315ea2200cd5b52ef3a0b377d1327b1144e), [`22df6b230c`](https://github.com/LedgerHQ/ledger-live/commit/22df6b230c72d82d18375fb7ae7e8da599f41070)]:
+  - @ledgerhq/crypto-icons-ui@0.6.0
+  - @ledgerhq/icons-ui@0.6.2
+
+## 0.22.1-next.0
+
+### Patch Changes
+
+- [#4289](https://github.com/LedgerHQ/ledger-live/pull/4289) [`29d9d40f11`](https://github.com/LedgerHQ/ledger-live/commit/29d9d40f11515de9502995349f2fd7fbd5cb8757) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Upgrade peerDependency react-native-reanimated to 3.3.0, devDependency expo to expo SDK 49 and metro to 0.79.0
+
+- [#4827](https://github.com/LedgerHQ/ledger-live/pull/4827) [`fc121ce96d`](https://github.com/LedgerHQ/ledger-live/commit/fc121ce96dbcc4f30cfd9836644f778b85f997b7) Thanks [@valpinkman](https://github.com/valpinkman)! - Update react to react 18
+
+- Updated dependencies [[`fc121ce96d`](https://github.com/LedgerHQ/ledger-live/commit/fc121ce96dbcc4f30cfd9836644f778b85f997b7), [`f5a5c315ea`](https://github.com/LedgerHQ/ledger-live/commit/f5a5c315ea2200cd5b52ef3a0b377d1327b1144e), [`22df6b230c`](https://github.com/LedgerHQ/ledger-live/commit/22df6b230c72d82d18375fb7ae7e8da599f41070)]:
+  - @ledgerhq/crypto-icons-ui@0.6.0-next.0
+  - @ledgerhq/icons-ui@0.6.2-next.0
+
 ## 0.22.0
 
 ### Minor Changes

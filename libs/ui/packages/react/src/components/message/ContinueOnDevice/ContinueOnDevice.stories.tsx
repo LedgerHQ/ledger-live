@@ -25,7 +25,13 @@ const YourComponent = () => (
 `;
 
 const PlaceholderIcon = ({ size }: { size: number }) => (
-  <Flex height={size} width={size} borderRadius={size} bg="neutral.c40" />
+  <Flex
+    height={size}
+    width={size}
+    borderRadius={size}
+    bg="neutral.c40"
+    backgroundColor="primary.c50"
+  />
 );
 
 export default {
@@ -41,16 +47,18 @@ export default {
   argTypes: {
     Icon: {
       type: "object",
-      defaultValue: PlaceholderIcon,
     },
     text: {
       type: "string",
-      defaultValue: "Continue on device",
     },
     withTopDivider: {
       type: "boolean",
-      defaultValue: false,
     },
+  },
+  args: {
+    Icon: PlaceholderIcon,
+    text: "Continue on device",
+    withTopDivider: false,
   },
 };
 

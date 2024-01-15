@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
 import {
   cryptopanicAvailableRegions,
   CryptopanicAvailableRegionsType,
@@ -7,7 +7,7 @@ import {
   CryptopanicNewsWithMetadata,
   getPosts,
 } from "./cryptopanicApi";
-import { useLocale } from "../../context/Locale";
+import { useLocale } from "~/context/Locale";
 
 type LoadingStateType = null | "initial" | "refreshing" | "loadingMore";
 

@@ -6,7 +6,7 @@ import { TransportStatusError, UserRefusedAddress } from "@ledgerhq/errors";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "./currencies";
 import { getEnv } from "@ledgerhq/live-env";
-import type { CryptoCurrencyIds } from "@ledgerhq/types-live";
+
 export type ModeSpec = {
   mandatoryEmptyAccountSkip?: number;
   isNonIterable?: boolean;
@@ -168,14 +168,21 @@ const modes = Object.freeze({
   polkadotbip44: {
     overridesDerivation: "44'/354'/<account>'/0'/<address>'",
   },
-  gliflegacy: {
+  glifLegacy: {
     overridesDerivation: "44'/1'/0'/0/<account>",
     tag: "legacy",
+    mandatoryEmptyAccountSkip: 5,
   },
   glif: {
     overridesDerivation: "44'/461'/0'/0/<account>",
-    startsAt: 1,
     tag: "third-party",
+    mandatoryEmptyAccountSkip: 5,
+  },
+  filecoinBIP44: {
+    overridesDerivation: "44'/<coin_type>'/<account>'/<node>/<address>",
+    startsAt: 1,
+    tag: "bip44",
+    mandatoryEmptyAccountSkip: 5,
   },
   casper_wallet: {
     overridesDerivation: "44'/506'/0'/0/<account>",
@@ -198,6 +205,9 @@ const modes = Object.freeze({
     overridesDerivation: "44'/397'/0'/0'/<account>'",
     mandatoryEmptyAccountSkip: 1,
   },
+  vechain: {
+    overridesDerivation: "44'/818'/0'/0/<account>",
+  },
   internet_computer: {
     overridesDerivation: "44'/223'/0'/0/<account>",
   },
@@ -209,29 +219,28 @@ const modes = Object.freeze({
 });
 modes as Record<DerivationMode, ModeSpec>; // eslint-disable-line
 
-// FIXME: CryptoCurrencyConfig was a flowtype we could not easily convert to ts so it has been deleted
-// previous types: Partial<CryptoCurrencyConfig<DerivationMode[]>>
-const legacyDerivations: Record<CryptoCurrencyIds, DerivationMode[]> = {
+const legacyDerivations: Partial<Record<CryptoCurrency["id"], DerivationMode[]>> = {
   aeternity: ["aeternity"],
   bitcoin_cash: [],
   bitcoin: ["legacy_on_bch"],
   vertcoin: ["vertcoin_128", "vertcoin_128_segwit"],
-  ethereum_classic: ["etcM"],
   tezos: ["galleonL", "tezboxL", "tezosbip44h", "tezbox"],
   stellar: ["sep5"],
   polkadot: ["polkadotbip44"],
   hedera: ["hederaBip44"],
-  filecoin: ["gliflegacy", "glif"],
+  filecoin: ["glifLegacy", "filecoinBIP44", "glif"],
   internet_computer: ["internet_computer"],
   casper: ["casper_wallet"],
   cardano: ["cardano"],
   cardano_testnet: ["cardano"],
   near: ["nearbip44h"],
+  vechain: ["vechain"],
   stacks: ["stacks_wallet"],
-};
-
-const legacyDerivationsPerFamily: Record<string, DerivationMode[]> = {
   ethereum: ["ethM", "ethMM"],
+  ethereum_classic: ["ethM", "ethMM", "etcM"],
+  solana: ["solanaMain", "solanaSub"],
+  solana_devnet: ["solanaMain", "solanaSub"],
+  solana_testnet: ["solanaMain", "solanaSub"],
 };
 
 export const asDerivationMode = (derivationMode: string): DerivationMode => {
@@ -364,8 +373,10 @@ const disableBIP44: Record<string, boolean> = {
   cardano: true,
   cardano_testnet: true,
   near: true,
+  vechain: true,
   internet_computer: true,
   casper: true,
+  filecoin: true,
 };
 type SeedInfo = {
   purpose: number;
@@ -383,6 +394,7 @@ const seedIdentifierPath: Record<string, SeedPathFn> = {
   cardano_testnet: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   internet_computer: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   near: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0'/0'`,
+  vechain: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0/0`,
   _: ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'`,
 };
 export const getSeedIdentifierDerivation = (
@@ -401,11 +413,8 @@ export const getSeedIdentifierDerivation = (
 // return an array of ways to derivate, by convention the latest is the standard one.
 export const getDerivationModesForCurrency = (currency: CryptoCurrency): DerivationMode[] => {
   let all: DerivationMode[] = [];
-  if (currency.family in legacyDerivationsPerFamily) {
-    all = all.concat(legacyDerivationsPerFamily[currency.family]);
-  }
   if (currency.id in legacyDerivations) {
-    all = all.concat(legacyDerivations[currency.id]);
+    all = all.concat(legacyDerivations[currency.id] || []);
   }
   if (currency.forkedFrom) {
     all.push("unsplit");
@@ -416,9 +425,7 @@ export const getDerivationModesForCurrency = (currency: CryptoCurrency): Derivat
   }
 
   if (currency.supportsSegwit) {
-    all.push("segwit_on_legacy");
-    all.push("legacy_on_segwit");
-    all.push("legacy_on_native_segwit");
+    all.push("segwit_on_legacy", "legacy_on_segwit", "legacy_on_native_segwit");
   }
 
   if (currency.supportsNativeSegwit) {
@@ -432,16 +439,13 @@ export const getDerivationModesForCurrency = (currency: CryptoCurrency): Derivat
     }
   }
 
+  // Can't this be concatenated with the first `supportsSegwit` condition ?
   if (currency.supportsSegwit) {
     all.push("segwit");
   }
 
   if (!disableBIP44[currency.id]) {
     all.push("");
-  }
-
-  if (currency.family === "solana") {
-    all.push("solanaMain", "solanaSub");
   }
 
   if (!getEnv("SCAN_FOR_INVALID_PATHS")) {

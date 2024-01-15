@@ -10,10 +10,10 @@ const api: CounterValuesAPI = {
       : prodAPI.fetchHistorical(granularity, pair),
   fetchLatest: pairs =>
     getEnv("MOCK_COUNTERVALUES") ? mockAPI.fetchLatest(pairs) : prodAPI.fetchLatest(pairs),
-  fetchMarketcapTickers: () =>
+  fetchIdsSortedByMarketcap: () =>
     getEnv("MOCK_COUNTERVALUES")
-      ? mockAPI.fetchMarketcapTickers()
-      : prodAPI.fetchMarketcapTickers(),
+      ? mockAPI.fetchIdsSortedByMarketcap()
+      : prodAPI.fetchIdsSortedByMarketcap(),
 };
 
 export default api;

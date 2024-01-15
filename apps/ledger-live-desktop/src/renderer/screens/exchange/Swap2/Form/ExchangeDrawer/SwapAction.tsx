@@ -6,6 +6,7 @@ import {
   SwapTransaction,
   SwapTransactionType,
 } from "@ledgerhq/live-common/exchange/swap/types";
+import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
 import { createAction as initSwapCreateAction } from "@ledgerhq/live-common/hw/actions/initSwap";
 import { createAction as transactionCreateAction } from "@ledgerhq/live-common/hw/actions/transaction";
 import { Operation, SignedOperation } from "@ledgerhq/types-live";
@@ -17,7 +18,6 @@ import Box from "~/renderer/components/Box";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import Text from "~/renderer/components/Text";
-import { useBroadcast } from "~/renderer/hooks/useBroadcast";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import initSwap from "@ledgerhq/live-common/exchange/swap/initSwap";

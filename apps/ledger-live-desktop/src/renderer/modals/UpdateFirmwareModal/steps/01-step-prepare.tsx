@@ -35,7 +35,7 @@ const Container = styled(Box).attrs(() => ({
 }))``;
 
 const HighlightVersion = styled(Text).attrs(() => ({
-  backgroundColor: "neutral.c30",
+  backgroundColor: "neutral.c40",
   color: "palette.text.shade100",
   ff: "Inter|SemiBold",
   variant: "subtitle",
@@ -74,26 +74,6 @@ const Body = ({
   const to = firmware?.final.name;
   const normalProgress = (progress || 0) * 100;
 
-  if (!displayedOnDevice) {
-    return (
-      <Box my={5} alignItems="center">
-        <Flex alignItems="center" justifyContent="center" borderRadius={9999} size={60} mb={5}>
-          <ProgressLoader
-            stroke={8}
-            infinite={!normalProgress}
-            progress={normalProgress}
-            showPercentage={false}
-          />
-        </Flex>
-        <Title>
-          {step !== "transfer"
-            ? t("manager.modal.steps.preparingUpdate")
-            : t("manager.modal.steps.transferringUpdate", { productName: deviceModel.productName })}
-        </Title>
-      </Box>
-    );
-  }
-
   if (displayedOnDevice) {
     return (
       <>
@@ -111,7 +91,7 @@ const Body = ({
           </Box>
         ) : (
           <Box mb={8}>
-            <Animation animation={getDeviceAnimation(deviceModelId, type, "verify")} />
+            <Animation animation={getDeviceAnimation(deviceModelId, type, "allowManager")} />
           </Box>
         )}
         {hasHash ? (
@@ -122,7 +102,7 @@ const Body = ({
                 .map((hash, i) => <span key={`${i}-${hash}`}>{hash}</span>)}
           </HighlightVersion>
         ) : (
-          <Flex flexDirection="row" alignItems="center" my={2}>
+          <Flex flexDirection="row" alignItems="center" mb={4}>
             <>
               <HighlightVersion>{`V ${from}`}</HighlightVersion>
               <IconsLegacy.ArrowRightMedium size={14} />
@@ -131,10 +111,28 @@ const Body = ({
           </Flex>
         )}
 
-        <Text ff="Inter|Regular" textAlign="center" color="palette.text.shade100">
-          {t("manager.modal.confirmIdentifierText")}
-        </Text>
+        <Title>{t("manager.modal.confirmIdentifierText")}</Title>
       </>
+    );
+  } else {
+    const isStepTransfer = step !== "transfer";
+
+    return (
+      <Box my={5} alignItems="center">
+        <Flex alignItems="center" justifyContent="center" borderRadius={9999} size={60} mb={5}>
+          <ProgressLoader
+            stroke={8}
+            infinite={isStepTransfer || !normalProgress}
+            progress={normalProgress}
+            showPercentage={!isStepTransfer && !!normalProgress}
+          />
+        </Flex>
+        <Title>
+          {isStepTransfer
+            ? t("manager.modal.steps.preparingUpdate")
+            : t("manager.modal.steps.transferringUpdate", { productName: deviceModel.productName })}
+        </Title>
+      </Box>
     );
   }
 

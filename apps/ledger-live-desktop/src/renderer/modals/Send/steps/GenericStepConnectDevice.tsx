@@ -5,7 +5,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import StepProgress from "~/renderer/components/StepProgress";
 import { createAction } from "@ledgerhq/live-common/hw/actions/transaction";
-import { useBroadcast } from "~/renderer/hooks/useBroadcast";
+import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
 import { Account, AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { getEnv } from "@ledgerhq/live-env";

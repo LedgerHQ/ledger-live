@@ -7,19 +7,19 @@ import { groupAccountsOperationsByDay } from "@ledgerhq/live-common/account/inde
 import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
 
 import { Trans } from "react-i18next";
-import { useRefreshAccountsOrdering } from "../../actions/general";
-import { accountsSelector, flattenAccountsSelector } from "../../reducers/accounts";
+import { useRefreshAccountsOrdering } from "~/actions/general";
+import { accountsSelector, flattenAccountsSelector } from "~/reducers/accounts";
 
-import NoMoreOperationFooter from "../../components/NoMoreOperationFooter";
-import OperationRow from "../../components/OperationRow";
-import SectionHeader from "../../components/SectionHeader";
-import LoadingFooter from "../../components/LoadingFooter";
-import Button from "../../components/Button";
-import { ScreenName } from "../../const";
-import { withDiscreetMode } from "../../context/DiscreetModeContext";
-import { track } from "../../analytics";
-import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
+import NoMoreOperationFooter from "~/components/NoMoreOperationFooter";
+import OperationRow from "~/components/OperationRow";
+import SectionHeader from "~/components/SectionHeader";
+import LoadingFooter from "~/components/LoadingFooter";
+import Button from "~/components/Button";
+import { ScreenName } from "~/const";
+import { withDiscreetMode } from "~/context/DiscreetModeContext";
+import { track } from "~/analytics";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 
 type Props = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.PortfolioOperationHistory>;
 

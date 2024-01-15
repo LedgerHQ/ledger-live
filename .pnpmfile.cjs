@@ -262,6 +262,9 @@ function readPackage(pkg, context) {
       addDependencies("casper-js-sdk", {
         "@noble/curves": "*",
       }),
+      addDependencies("@actions/github", {
+        undici: "*",
+      }),
     ],
     pkg,
     context,

@@ -3,7 +3,7 @@ import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { StyleSheet } from "react-native";
 import { BigNumber } from "bignumber.js";
 import { Unit } from "@ledgerhq/types-cryptoassets";
-import CurrencyInput from "../../../../components/CurrencyInput";
+import CurrencyInput from "~/components/CurrencyInput";
 
 interface Props {
   value: BigNumber | undefined;

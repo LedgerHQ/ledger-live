@@ -3,7 +3,7 @@ import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { Linking } from "react-native";
 import styled from "styled-components/native";
-import { urls } from "@utils/urls";
+import { urls } from "~/utils/urls";
 
 const CenteredText = styled(Text).attrs({
   fontWeight: "medium",

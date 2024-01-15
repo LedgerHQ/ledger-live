@@ -17,20 +17,16 @@ test.describe.parallel("Onboarding", () => {
 
       await test.step("Wait for launch", async () => {
         await onboardingPage.waitForLaunch();
-        expect(
-          await onboardingPage.page.screenshot({
-            mask: [page.locator("video")],
-          }),
-        ).toMatchSnapshot("v3-get-started.png");
+        await expect(page).toHaveScreenshot("v3-get-started.png", {
+          mask: [page.locator("video")],
+        });
       });
 
       await test.step("Get started", async () => {
         await onboardingPage.getStarted();
-        expect(
-          await onboardingPage.page.screenshot({
-            mask: [page.locator("video")],
-          }),
-        ).toMatchSnapshot("v3-device-selection.png");
+        await expect(page).toHaveScreenshot("v3-device-selection.png", {
+          mask: [page.locator("video")],
+        });
       });
 
       await test.step(`[${nano}] Select Device`, async () => {
@@ -38,102 +34,68 @@ test.describe.parallel("Onboarding", () => {
       });
 
       await test.step(`[${nano}] Restore device`, async () => {
-        expect(await page.screenshot()).toMatchSnapshot(`v3-restore-device-${nano}.png`);
+        await expect(page).toHaveScreenshot(`v3-restore-device-${nano}.png`);
         await onboardingPage.restoreDevice();
 
-        expect(await onboardingPage.page.screenshot()).toMatchSnapshot([
-          "v3-restore-tutorial",
-          "get-started-1.png",
-        ]);
+        await expect(page).toHaveScreenshot(["v3-restore-tutorial", "get-started-1.png"]);
         await onboardingPage.continueTutorial();
 
-        expect
-          .soft(
-            await onboardingPage.page.screenshot({
-              mask: [onboardingPage.page.locator("[role=animation]")],
-            }),
-          )
-          .toMatchSnapshot(["v3-restore-tutorial", `get-started-2-${nano}.png`]);
+        await expect
+          .soft(page)
+          .toHaveScreenshot(["v3-restore-tutorial", `get-started-2-${nano}.png`], {
+            mask: [onboardingPage.page.locator("[role=animation]")],
+          });
         await onboardingPage.continueTutorial();
 
-        expect(await onboardingPage.page.screenshot()).toMatchSnapshot([
-          "v3-restore-tutorial",
-          `pin-code-${nano}-1.png`,
-        ]);
+        await expect(page).toHaveScreenshot(["v3-restore-tutorial", `pin-code-${nano}-1.png`]);
         await onboardingPage.acceptPrivatePinCode();
 
-        expect(await onboardingPage.page.screenshot()).toMatchSnapshot([
-          "v3-restore-tutorial",
-          `pin-code-${nano}-2.png`,
-        ]);
+        await expect(page).toHaveScreenshot(["v3-restore-tutorial", `pin-code-${nano}-2.png`]);
         await onboardingPage.continueTutorial();
 
-        expect
-          .soft(
-            await onboardingPage.page.screenshot({
-              mask: [onboardingPage.page.locator("[role=animation]")],
-            }),
-          )
-          .toMatchSnapshot(["v3-restore-tutorial", `pin-code-${nano}-3.png`]);
-        await onboardingPage.continueTutorial();
-
-        expect(
-          await onboardingPage.page.screenshot({
+        await expect
+          .soft(page)
+          .toHaveScreenshot(["v3-restore-tutorial", `pin-code-${nano}-3.png`], {
             mask: [onboardingPage.page.locator("[role=animation]")],
-          }),
-        ).toMatchSnapshot(["v3-restore-tutorial", `pin-code-${nano}-4.png`]);
+          });
+        await onboardingPage.continueTutorial();
+
+        await expect(page).toHaveScreenshot(["v3-restore-tutorial", `pin-code-${nano}-4.png`], {
+          mask: [onboardingPage.page.locator("[role=animation]")],
+        });
         await onboardingPage.continuePinDrawer();
 
-        expect(await page.screenshot()).toMatchSnapshot([
-          "v3-restore-tutorial",
-          "recovery-phrase-1.png",
-        ]);
+        await expect(page).toHaveScreenshot(["v3-restore-tutorial", "recovery-phrase-1.png"]);
         await onboardingPage.acceptRecoveryPhraseLoss();
 
-        expect(await page.screenshot()).toMatchSnapshot([
-          "v3-restore-tutorial",
-          "recovery-phrase-2.png",
-        ]);
+        await expect(page).toHaveScreenshot(["v3-restore-tutorial", "recovery-phrase-2.png"]);
         await onboardingPage.continueTutorial();
 
-        expect(await page.screenshot()).toMatchSnapshot([
-          "v3-restore-tutorial",
-          "recovery-phrase-3.png",
-        ]);
+        await expect(page).toHaveScreenshot(["v3-restore-tutorial", "recovery-phrase-3.png"]);
         await onboardingPage.continueTutorial();
 
-        expect(await page.screenshot()).toMatchSnapshot([
-          "v3-restore-tutorial",
-          "recovery-phrase-4.png",
-        ]);
+        await expect(page).toHaveScreenshot(["v3-restore-tutorial", "recovery-phrase-4.png"]);
         await onboardingPage.continueTutorial();
 
-        expect(await page.screenshot()).toMatchSnapshot([
-          "v3-restore-tutorial",
-          "recovery-phrase-5.png",
-        ]);
+        await expect(page).toHaveScreenshot(["v3-restore-tutorial", "recovery-phrase-5.png"]);
         await onboardingPage.continueRecoverySeedDrawer();
       });
 
       await test.step(`[${nano}] Device genuine check`, async () => {
-        expect(await onboardingPage.page.screenshot()).toMatchSnapshot("v3-genuine-check.png");
+        await expect(page).toHaveScreenshot("v3-genuine-check.png");
         await onboardingPage.checkDevice();
-        expect(await onboardingPage.page.screenshot()).toMatchSnapshot(
-          "v3-before-genuine-check.png",
-        );
+        await expect(page).toHaveScreenshot("v3-before-genuine-check.png");
       });
 
       await test.step("Pass genuine check", async () => {
-        expect(await onboardingPage.page.screenshot()).toMatchSnapshot("v3-genuine-checking.png");
+        await expect(page).toHaveScreenshot("v3-genuine-checking.png");
         await onboardingPage.genuineCheck();
-        expect(await onboardingPage.page.screenshot()).toMatchSnapshot("v3-genuine-check-done.png");
+        await expect(page).toHaveScreenshot("v3-genuine-check-done.png");
       });
 
       await test.step("Reach app", async () => {
         await onboardingPage.reachApp();
-        expect(await onboardingPage.page.screenshot()).toMatchSnapshot(
-          "v3-onboarding-complete.png",
-        );
+        await expect(page).toHaveScreenshot("v3-onboarding-complete.png");
       });
     });
   }

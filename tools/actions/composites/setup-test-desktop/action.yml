@@ -13,12 +13,13 @@ inputs:
   install_playwright:
     description: "install playwright"
     required: false
-  aws-access-key:
-    description: "aws access key"
+  turborepo-server-port:
+    description: "turborepo server port"
     required: false
-  aws-secret-key:
-    description: "aws secret key"
+  turbo-server-token:
+    description: "custom token for local s3 server"
     required: false
+    default: "yolo"
 
 runs:
   using: "composite"
@@ -41,18 +42,15 @@ runs:
       if: ${{ inputs.install_playwright }}
       run: pnpm desktop test:playwright:setup
       shell: bash
-    - name: TurboRepo local caching server
-      if: inputs.aws-access-key != '' && inputs.aws-secret-key != ''
-      id: turborepo-cache-server
-      uses: ./tools/actions/turborepo-s3-cache
-      with:
-        server-token: "yolo"
-        cleanup-cache-folder: "true"
-        aws-access-key: ${{ inputs.aws-access-key }}
-        aws-secret-key: ${{ inputs.aws-secret-key }}
     - name: Build dependencies
+      if: inputs.turborepo-server-port != ''
       run: |
-        pnpm build:lld:deps --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+        pnpm build:lld:deps --api="http://127.0.0.1:${{ inputs.turborepo-server-port }}" --token="${{ inputs.turbo-server-token }}" --team="foo"
+      shell: bash
+    - name: Build dependencies
+      if: inputs.turborepo-server-port == ''
+      run: |
+        pnpm build:lld:deps
       shell: bash
     - name: Build LLD app for testing
       env:

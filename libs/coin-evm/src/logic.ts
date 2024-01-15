@@ -1,3 +1,5 @@
+import eip55 from "eip55";
+import BigNumber from "bignumber.js";
 import {
   Account,
   AnyMessage,
@@ -5,7 +7,6 @@ import {
   Operation,
   SubAccount,
 } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
 import murmurhash from "imurmurhash";
 import { getEnv } from "@ledgerhq/live-env";
 import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
@@ -15,6 +16,7 @@ import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets/tokens";
 import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { getEIP712FieldsDisplayedOnNano } from "@ledgerhq/evm-tools/message/EIP712/index";
+import { log } from "@ledgerhq/logs";
 import { getNodeApi } from "./api/node/index";
 import {
   EvmNftTransaction,
@@ -237,14 +239,16 @@ export const attachOperations = (
   _coinOperations: Operation[],
   _tokenOperations: Operation[],
   _nftOperations: Operation[],
+  _internalOperations: Operation[],
 ): Operation[] => {
   // Creating deep copies of each Operation[] to prevent mutating the originals
   const coinOperations = _coinOperations.map(op => ({ ...op }));
   const tokenOperations = _tokenOperations.map(op => ({ ...op }));
   const nftOperations = _nftOperations.map(op => ({ ...op }));
+  const internalOperations = _internalOperations.map(op => ({ ...op }));
 
   type OperationWithRequiredChildren = Operation &
-    Required<Pick<Operation, "nftOperations" | "subOperations">>;
+    Required<Pick<Operation, "nftOperations" | "subOperations" | "internalOperations">>;
 
   // Helper to create a coin operation with type NONE as a parent of an orphan child operation
   const makeCoinOpForOrphanChildOp = (childOp: Operation): OperationWithRequiredChildren => {
@@ -265,6 +269,7 @@ export const attachOperations = (
       transactionSequenceNumber: childOp.transactionSequenceNumber,
       subOperations: [],
       nftOperations: [],
+      internalOperations: [],
       accountId: "",
       date: childOp.date,
       extra: {},
@@ -282,6 +287,7 @@ export const attachOperations = (
     // by the adapters so it should never be needed
     op.subOperations = [];
     op.nftOperations = [];
+    op.internalOperations = [];
     coinOperationsByHash[op.hash].push(op as OperationWithRequiredChildren);
   });
 
@@ -315,6 +321,21 @@ export const attachOperations = (
     }
   }
 
+  // Looping through internal operations to potentially copy them as a child operation of a coin operation
+  for (const internalOperation of internalOperations) {
+    let mainOperations = coinOperationsByHash[internalOperation.hash];
+    if (!mainOperations?.length) {
+      const noneOperation = makeCoinOpForOrphanChildOp(internalOperation);
+      mainOperations = [noneOperation];
+      coinOperations.push(noneOperation);
+    }
+
+    // Ugly loop in loop but in theory, this can only be a 2 elements array maximum in the case of a self send
+    for (const mainOperation of mainOperations) {
+      mainOperation.internalOperations.push(internalOperation);
+    }
+  }
+
   return coinOperations;
 };
 
@@ -345,4 +366,38 @@ export const getMessageProperties = async (
   }
 
   return null;
+};
+
+/**
+ * Some addresses returned by the explorers are not 40 characters hex addresses
+ * For example the explorers may return "0x0" as an address (for example for
+ * some events or contract interactions, like a contract creation transaction)
+ *
+ * This is not a valid EIP55 address and thus will fail when trying to encode it
+ * with a "Bad address" error.
+ * cf:
+ * https://github.com/cryptocoinjs/eip55/blob/v2.1.1/index.js#L5-L6
+ * https://github.com/cryptocoinjs/eip55/blob/v2.1.1/index.js#L63-L65
+ *
+ * Since we can't control what the explorer returns, and we don't want the app to crash
+ * in these cases, we simply ignore the address and return an empty string.
+ *
+ * For now this has only been observed on the from or to fields of an operation
+ * so we only use this function for these fields.
+ */
+export const safeEncodeEIP55 = (addr: string): string => {
+  if (!addr || addr === "0x" || addr === "0x0") {
+    return "";
+  }
+
+  try {
+    return eip55.encode(addr);
+  } catch (e) {
+    log("EVM Family - logic.ts", "Failed to eip55 encode address", {
+      address: addr,
+      error: e,
+    });
+
+    return addr;
+  }
 };

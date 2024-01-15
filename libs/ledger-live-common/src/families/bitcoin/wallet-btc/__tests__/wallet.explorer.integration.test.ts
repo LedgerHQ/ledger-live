@@ -19,9 +19,6 @@ describe("Integration tests for bitcoin v4 explorer api", () => {
     );
     expect(txs.length).toBeGreaterThan(10);
 
-    const relayFee = await explorer.getRelayFee();
-    expect(relayFee).toBeGreaterThan(0);
-
     const fees = await explorer.getFees();
     expect(Object.keys(fees).length).toBeGreaterThan(3);
 

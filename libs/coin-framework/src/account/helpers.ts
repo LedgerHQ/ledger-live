@@ -107,6 +107,10 @@ export const getAccountSpendableBalance = (account: AccountLike): BigNumber => {
 
 export const isAccountEmpty = (a: AccountLike): boolean => {
   // FIXME LIVE-5966 why do we need this? also this shouldn't be implemented here / this part must be removed back to the coin specifics
+  if (a.type == "Account" && a.currency.family == "vechain") {
+    const checkSubAccounts = a.subAccounts && !a.subAccounts[0].balance.isZero();
+    return a.operationsCount === 0 && a.balance.isZero() && !checkSubAccounts;
+  }
   if (a.type === "Account" && a.currency.family === "tron") {
     return (a as any).tronResources && (a as any).tronResources.bandwidth.freeLimit.eq(0);
   }

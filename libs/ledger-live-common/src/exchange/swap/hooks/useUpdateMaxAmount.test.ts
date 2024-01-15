@@ -12,7 +12,7 @@ jest.mock("../../../account/support");
 const mockedCheckAccount = jest.mocked(checkAccountSupported);
 // Mock to use a custom estimate value and test the result.
 jest.mock("../../../families/evm/bridge/mock");
-const mockedEstimateMaxSpendable = jest.mocked(ethBridge.accountBridge.estimateMaxSpendable, true);
+const mockedEstimateMaxSpendable = jest.mocked(ethBridge.accountBridge.estimateMaxSpendable);
 
 const ETH = getCryptoCurrencyById("ethereum");
 const USDT = getTokenById("ethereum/erc20/usd_tether__erc20_");

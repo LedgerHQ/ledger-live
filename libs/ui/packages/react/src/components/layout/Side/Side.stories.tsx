@@ -83,7 +83,6 @@ export default {
     title: {
       type: "text",
       description: "Side default title",
-      defaultValue: "Default title",
       control: {
         type: "text",
       },
@@ -98,6 +97,10 @@ export default {
         type: "boolean",
       },
     },
+  },
+  args: {
+    title: "Default title",
+    isOpen: true,
   },
 };
 

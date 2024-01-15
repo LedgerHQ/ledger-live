@@ -4,7 +4,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { Button, Flex } from "@ledgerhq/native-ui";
 import { ExchangeRate, OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
 import { useSwapTransaction, usePageState } from "@ledgerhq/live-common/exchange/swap/hooks/index";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import {
@@ -19,9 +19,9 @@ import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 import { log } from "@ledgerhq/logs";
-import { shallowAccountsSelector } from "../../../reducers/accounts";
-import { rateSelector, updateRateAction, updateTransactionAction } from "../../../actions/swap";
-import { TrackScreen, useAnalytics } from "../../../analytics";
+import { shallowAccountsSelector } from "~/reducers/accounts";
+import { rateSelector, updateRateAction, updateTransactionAction } from "~/actions/swap";
+import { TrackScreen, useAnalytics } from "~/analytics";
 import { Loading } from "../Loading";
 import { TxForm } from "./TxForm";
 import { Summary } from "./Summary";
@@ -34,13 +34,16 @@ import { DeviceMeta } from "./Modal/Confirmation";
 import {
   MaterialTopTabNavigatorProps,
   StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
-import { ScreenName } from "../../../const";
-import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
-import { SwapFormNavigatorParamList } from "../../../components/RootNavigator/types/SwapFormNavigator";
+} from "~/components/RootNavigator/types/helpers";
+import { ScreenName } from "~/const";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { SwapFormNavigatorParamList } from "~/components/RootNavigator/types/SwapFormNavigator";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import type { DetailsSwapParamList } from "../types";
-import { getAvailableProviders } from "@ledgerhq/live-common/exchange/swap/index";
+import {
+  getAvailableProviders,
+  maybeTezosAccountUnrevealedAccount,
+} from "@ledgerhq/live-common/exchange/swap/index";
 
 type Navigation = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.Account>;
 
@@ -121,7 +124,10 @@ export function SwapForm({
     );
   }, [exchangeRatesState.value, swapTransaction.swap.to.currency]);
 
-  const swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
+  const swapError =
+    swapTransaction.fromAmountError ||
+    exchangeRatesState?.error ||
+    maybeTezosAccountUnrevealedAccount(swapTransaction);
   const swapWarning = swapTransaction.fromAmountWarning;
   const pageState = usePageState(swapTransaction, swapError || swapWarning);
   const provider = exchangeRate?.provider;
@@ -246,11 +252,13 @@ export function SwapForm({
         customDappURL: providerURL,
       });
     } else {
+      swapTransaction.transaction ? (swapTransaction.transaction.useAllAmount = false) : null;
       setConfirmed(true);
     }
   }, [
     exchangeRate,
     track,
+    swapTransaction.transaction,
     swapTransaction.swap.from,
     swapTransaction.swap.to.currency?.name,
     navigation,

@@ -10,18 +10,18 @@ import type { Account, ProtoNFT } from "@ledgerhq/types-live";
 import { useSelector } from "react-redux";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { hiddenNftCollectionsSelector } from "../../reducers/settings";
-import LoadingFooter from "../../components/LoadingFooter";
-import NftMedia from "../../components/Nft/NftMedia";
-import Skeleton from "../../components/Skeleton";
-import ChevronIcon from "../../icons/Chevron";
-import LText from "../../components/LText";
-import { ScreenName } from "../../const";
+import { hiddenNftCollectionsSelector } from "~/reducers/settings";
+import LoadingFooter from "~/components/LoadingFooter";
+import NftMedia from "~/components/Nft/NftMedia";
+import Skeleton from "~/components/Skeleton";
+import ChevronIcon from "~/icons/Chevron";
+import LText from "~/components/LText";
+import { ScreenName } from "~/const";
 import {
   StackNavigatorNavigation,
   StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
-import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
+} from "~/components/RootNavigator/types/helpers";
+import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
 
 const MAX_COLLECTIONS_FIRST_RENDER = 8;
 const COLLECTIONS_TO_ADD_ON_LIST_END_REACHED = 8;

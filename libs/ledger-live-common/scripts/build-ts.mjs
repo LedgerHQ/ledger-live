@@ -5,19 +5,10 @@ import rimraf from "rimraf";
 cd(path.join(__dirname, ".."));
 
 if (!process.env.CI) {
-  await rimraf([
-    "lib",
-    "src/data/icons/react",
-    "src/data/icons/reactNative",
-    "src/data/flags/react",
-    "src/data/flags/reactNative",
-  ]);
+  await rimraf(["lib"]);
 }
 
 await $`zx ./scripts/sync-families-dispatch.mjs`;
-
-await $`node ./scripts/buildReactIcons.js`;
-await $`node ./scripts/buildReactFlags.js`;
 
 const prefix = $.prefix;
 

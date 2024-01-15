@@ -1,0 +1,16 @@
+name: desktop-report-build
+description: Report the results of desktop builds in a `summary.json` file
+inputs:
+  token:
+    description: Github token
+    required: true
+  statuses:
+    description: Statuses of the jobs
+    required: true
+  attempt:
+    description: Attempt number
+    required: true
+
+runs:
+  using: node20
+  main: build/main.js
