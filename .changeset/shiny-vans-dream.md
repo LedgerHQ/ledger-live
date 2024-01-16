@@ -1,5 +1,5 @@
 ---
-"ledger-live-desktop": patch
+"@ledgerhq/ledger-live-desktop": patch
 ---
 
 Fix renaming device flow design
