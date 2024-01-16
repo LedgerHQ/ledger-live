@@ -13,7 +13,7 @@ import { getAccountUnit } from "../../account";
 
 export const formatTransaction = (
   { mode, amount, fees, recipient, useAllAmount }: Transaction,
-  account: Account
+  account: Account,
 ): string => `
 ${mode.toUpperCase()} ${
   useAllAmount
@@ -39,7 +39,6 @@ export const fromTransactionRaw = (t: TransactionRaw): Transaction => {
     options: JSON.parse(t.options),
     estimate: JSON.parse(t.estimate),
     firstEmulation: JSON.parse(t.firstEmulation),
-    skipEmulation: t.skipEmulation ? JSON.parse(t.skipEmulation) : null,
     errors: t.errors ? JSON.parse(t.errors) : {},
   };
 };
@@ -54,7 +53,6 @@ export const toTransactionRaw = (t: Transaction): TransactionRaw => {
     options: JSON.stringify(t.options),
     estimate: JSON.stringify(t.estimate),
     firstEmulation: JSON.stringify(t.firstEmulation),
-    skipEmulation: JSON.stringify(t.skipEmulation || false),
     errors: JSON.stringify(t.errors),
   };
 };

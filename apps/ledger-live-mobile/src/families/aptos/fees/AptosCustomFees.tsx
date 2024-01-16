@@ -78,7 +78,6 @@ const AptosCustomFees = ({ navigation, route }: NavigationProps) => {
           maxGasAmount: transaction.estimate.maxGasAmount,
           gasUnitPrice: transaction.estimate.gasUnitPrice,
         },
-        skipEmulation: true,
       }),
     );
   }, [account, updateTransaction]);

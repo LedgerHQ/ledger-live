@@ -49,7 +49,6 @@ const MaxGasAmountField = forwardRef(function MaxGasAmountFieldComponent(
             ...transaction.options,
             maxGasAmount: str || transaction.estimate.maxGasAmount,
           },
-          skipEmulation: true,
         }),
       );
     },

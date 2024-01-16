@@ -48,7 +48,6 @@ const FeesField = forwardRef(function FeesFieldComponent(
             ...transaction.options,
             gasUnitPrice: str || transaction.estimate.gasUnitPrice,
           },
-          skipEmulation: true,
         }),
       );
     },

@@ -33,7 +33,6 @@ const prepareTransaction = async (
   transaction.estimate = estimate;
   transaction.errors = errors;
   transaction.firstEmulation = false;
-  transaction.skipEmulation = false;
 
   return transaction;
 };

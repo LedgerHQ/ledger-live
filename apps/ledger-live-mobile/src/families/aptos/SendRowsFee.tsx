@@ -39,7 +39,7 @@ export default function SendRowsFee({
   const setCustomFees = useCallback(
     (txPatch: Partial<Transaction>) => {
       const bridge = getAccountBridge(account);
-      const updatedTx = bridge.updateTransaction(transaction, { ...txPatch, skipEmulation: true });
+      const updatedTx = bridge.updateTransaction(transaction, { ...txPatch });
       setTransaction(updatedTx);
     },
     [account, transaction, setTransaction],

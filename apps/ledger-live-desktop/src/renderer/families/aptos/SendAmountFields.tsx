@@ -43,7 +43,6 @@ const Fields = ({ account, parentAccount, transaction, updateTransaction, status
           maxGasAmount: transaction.estimate.maxGasAmount,
           gasUnitPrice: transaction.estimate.gasUnitPrice,
         },
-        skipEmulation: true,
       }),
     );
   }, [mainAccount, updateTransaction]);

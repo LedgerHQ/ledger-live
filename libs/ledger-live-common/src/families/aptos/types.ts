@@ -65,7 +65,6 @@ export type Transaction = TransactionCommon & {
   fees?: BigNumber | null;
   options: TransactionOptions;
   estimate: TransactionEstimate;
-  skipEmulation?: boolean;
   firstEmulation: boolean;
   errors?: TransactionErrors;
 };
@@ -76,7 +75,6 @@ export type TransactionRaw = TransactionCommonRaw & {
   fees?: string | null;
   options: string;
   estimate: string;
-  skipEmulation?: string;
   firstEmulation: string;
   errors?: string;
 };
