@@ -186,6 +186,7 @@ export function mockListAppsResult(
     installed,
     installedAvailable: true,
     customImageBlocks: 0,
+    installedLanguagePack: undefined,
   };
 }
 

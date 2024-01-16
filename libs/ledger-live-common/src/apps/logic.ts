@@ -386,7 +386,9 @@ export const distribute = (
   const totalBlocks = Math.floor(totalBytes / blockSize);
   const osBytes = (state.firmware && state.firmware.bytes) || 0;
   const osBlocks = Math.ceil(osBytes / blockSize);
-  const appsSpaceBlocks = totalBlocks - osBlocks - customImageBlocks;
+  const languagePackBytes = state.installedLanguagePack?.bytes || 0;
+  const languagePackBlocks = Math.ceil(languagePackBytes / blockSize);
+  const appsSpaceBlocks = totalBlocks - osBlocks - customImageBlocks - languagePackBlocks;
   const appsSpaceBytes = appsSpaceBlocks * blockSize;
   let totalAppsBlocks = 0;
   const apps = state.installed.map(app => {
@@ -423,6 +425,7 @@ export const distribute = (
     appsSpaceBytes,
     totalAppsBlocks,
     customImageBlocks,
+    languagePackBlocks,
     totalAppsBytes,
     freeSpaceBlocks,
     freeSpaceBytes,
