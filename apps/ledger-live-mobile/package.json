@@ -1,5 +1,5 @@
 {
-  "name": "@ledgerhq/live-mobile",
+  "name": "live-mobile",
   "version": "3.38.0-next.0",
   "private": true,
   "scripts": {

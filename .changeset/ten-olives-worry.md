@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/ledger-live-desktop": patch
+"ledger-live-desktop": patch
 ---
 
 Fix "locked device" device action state rendering
