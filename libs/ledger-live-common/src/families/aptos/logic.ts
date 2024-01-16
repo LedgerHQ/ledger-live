@@ -13,13 +13,13 @@ import {
   APTOS_TRANSFER_FUNCTION_ADDRESS,
   DIRECTION,
 } from "./constants";
-import { compareAddress } from "./utils";
 
 export const DEFAULT_GAS = 5;
 export const DEFAULT_GAS_PRICE = 100;
 export const ESTIMATE_GAS_MUL = 1.2;
 
 const HEX_REGEXP = /^[-+]?[a-f0-9]+\.?[a-f0-9]*?$/i;
+const CLEAN_HEX_REGEXP = /^0x0*|^0+/;
 
 const LENGTH_WITH_0x = 66;
 
@@ -133,9 +133,16 @@ export const txsToOps = (info: any, id: string, txs: (AptosTransaction | null)[]
 
         op.hasFailed = !tx.success;
         op.id = encodeOperationId(id, tx.hash, op.type);
-        ops.push(op);
+        if (op.type !== DIRECTION.UNKNOWN) ops.push(op);
       }
     }
   });
   return ops;
 };
+
+export function compareAddress(addressA: string, addressB: string) {
+  return (
+    addressA.replace(CLEAN_HEX_REGEXP, "").toLowerCase() ===
+    addressB.replace(CLEAN_HEX_REGEXP, "").toLowerCase()
+  );
+}
