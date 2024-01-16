@@ -24,7 +24,7 @@ import useTheme from "~/renderer/hooks/useTheme";
 import { EMPTY, concat } from "rxjs";
 import { catchError, map, tap } from "rxjs/operators";
 import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker";
-import { StepProps } from "..";
+import { StepProps } from "../types";
 import manager from "@ledgerhq/live-common/manager/index";
 
 const Container = styled(Box).attrs(() => ({

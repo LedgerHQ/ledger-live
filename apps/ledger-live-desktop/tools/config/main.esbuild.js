@@ -1,6 +1,6 @@
 const path = require("path");
 const common = require("./common.esbuild");
-const { electronMainExternals, CopyPlugin } = require("esbuild-utils");
+const { electronMainExternals, CopyPlugin } = require("@ledgerhq/esbuild-utils");
 
 const rootFolder = path.resolve(__dirname, "..", "..");
 
