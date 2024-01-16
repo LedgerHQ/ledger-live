@@ -1,3 +1,4 @@
+import { LlmAnalyticsOptInPromptVariants } from "./analyticsOptInPrompt";
 import {
   CexDepositEntryPointsLocationsDesktop,
   CexDepositEntryPointsLocationsMobile,
@@ -183,6 +184,7 @@ export type Features = CurrencyFeatures & {
   ptxSwapLiveAppDemoZero: Feature_PtxSwapLiveAppDemoZero;
   ptxSwapMoonpayProvider: Feature_PtxSwapMoonpayProvider;
   flexibleContentCards: Feature_FlexibleContentCards;
+  llmAnalyticsOptInPrompt: Feature_LlmAnalyticsOptInPrompt;
 };
 
 /**
@@ -476,6 +478,10 @@ export type Feature_PtxSwapLiveAppDemoZero = Feature<{
 
 export type Feature_FetchAdditionalCoins = Feature<{
   batch: number;
+}>;
+
+export type Feature_LlmAnalyticsOptInPrompt = Feature<{
+  variant: LlmAnalyticsOptInPromptVariants;
 }>;
 
 export type Feature_LlmNewFirmwareUpdateUx = DefaultFeature;
