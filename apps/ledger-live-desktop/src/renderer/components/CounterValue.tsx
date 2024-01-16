@@ -2,7 +2,7 @@ import { BigNumber } from "bignumber.js";
 import React, { useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { Currency } from "@ledgerhq/types-cryptoassets";
-import { useCalculate, useCountervaluesPolling } from "@ledgerhq/live-common/countervalues/react";
+import { useCalculate, useCountervaluesPolling } from "@ledgerhq/live-countervalues/react";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import FormattedVal, { OwnProps as FormattedValProps } from "~/renderer/components/FormattedVal";
 import ToolTip from "./Tooltip";

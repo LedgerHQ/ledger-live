@@ -1,6 +1,6 @@
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
-import api from "../countervalues/api";
+import api from "@ledgerhq/live-countervalues/api/index";
 
 // sort currencies by ids provided
 export const sortCurrenciesByIds = <C extends Currency>(currencies: C[], ids: string[]): C[] => {

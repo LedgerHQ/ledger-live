@@ -1,8 +1,9 @@
 import { useTrackingPairForAccounts } from "./react";
-import { genAccount } from "../mock/account";
-import { renderHook, act } from "@testing-library/react-hooks";
+import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
+import { renderHook, act } from "@testing-library/react";
 import { getFiatCurrencyByTicker } from "@ledgerhq/cryptoassets";
 import { inferTrackingPairForAccounts } from "./logic";
+import { TrackingPair } from "./types";
 
 describe("useTrackingPairForAccounts", () => {
   const accounts = Array(20)
@@ -21,7 +22,7 @@ describe("useTrackingPairForAccounts", () => {
 
   test("a re-render preserve the reference", async () => {
     const { result, rerender } = renderHook(() => useTrackingPairForAccounts(accounts, usd));
-    let initial;
+    let initial: TrackingPair[] | undefined;
     await act(async () => {
       initial = result.current;
     });
@@ -35,7 +36,7 @@ describe("useTrackingPairForAccounts", () => {
     const { result, rerender } = renderHook(() =>
       useTrackingPairForAccounts(accounts.slice(0), usd),
     );
-    let initial;
+    let initial: TrackingPair[] | undefined;
     await act(async () => {
       initial = result.current;
     });
@@ -89,7 +90,7 @@ describe("useTrackingPairForAccounts", () => {
     const { result, rerender } = renderHook(rev =>
       useTrackingPairForAccounts(rev ? reverse : accounts, usd),
     );
-    let initial;
+    let initial: TrackingPair[] | undefined;
     await act(async () => {
       initial = result.current;
     });
@@ -104,7 +105,7 @@ describe("useTrackingPairForAccounts", () => {
     const { result, rerender } = renderHook(d =>
       useTrackingPairForAccounts(d ? doubled : accounts, usd),
     );
-    let initial;
+    let initial: TrackingPair[] | undefined;
     await act(async () => {
       initial = result.current;
     });

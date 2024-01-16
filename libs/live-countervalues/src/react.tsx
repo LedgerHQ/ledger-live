@@ -24,7 +24,7 @@ import type {
   CountervaluesSettings,
   TrackingPair,
 } from "./types";
-import { useDebounce } from "../hooks/useDebounce";
+import { useDebounce } from "@ledgerhq/live-hooks/useDebounce";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 // Polling is the control object you get from the high level <PollingConsumer>{ polling => ...

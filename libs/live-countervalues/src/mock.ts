@@ -1,6 +1,6 @@
 export const referenceSnapshotDate = new Date(1588421046099);
 export const BTCtoUSD = 9000;
-let parsed;
+let parsed: Record<string, number> | undefined;
 export const getBTCValues = () =>
   parsed ||
   (parsed = JSON.parse(

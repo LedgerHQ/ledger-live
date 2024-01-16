@@ -13,6 +13,7 @@ import type {
   RateMap,
   RateGranularity,
   PairRateMapCache,
+  RateMapRaw,
 } from "./types";
 import {
   pairId,
@@ -31,12 +32,10 @@ import api from "./api";
 
 // yield raw version of the countervalues state to be saved in a db
 export function exportCountervalues({ data, status }: CounterValuesState): CounterValuesStateRaw {
-  const out = {
-    status,
-  };
+  const out = { status } as CounterValuesStateRaw;
 
   for (const path in data) {
-    const obj = {};
+    const obj: RateMapRaw = {};
 
     for (const [k, v] of data[path]) {
       obj[k] = v;
@@ -45,7 +44,7 @@ export function exportCountervalues({ data, status }: CounterValuesState): Count
     out[path] = obj;
   }
 
-  return <CounterValuesStateRaw>out;
+  return out;
 }
 
 // restore a countervalues state from the raw version
@@ -53,7 +52,7 @@ export function importCountervalues(
   { status, ...rest }: CounterValuesStateRaw,
   settings: CountervaluesSettings,
 ): CounterValuesState {
-  const data = {};
+  const data: Record<string, RateMap> = {};
 
   for (const path in rest) {
     const obj = rest[path];
@@ -101,6 +100,13 @@ export function inferTrackingPairForAccounts(
         };
       }),
   );
+}
+
+/**
+ * yield the ids of the tracking pairs as stored in the database
+ */
+export function trackingPairIds(trackingPairs: TrackingPair[]): string[] {
+  return trackingPairs.map(pairId);
 }
 
 export const initialState: CounterValuesState = {
@@ -259,7 +265,7 @@ export async function loadCountervalues(
     api
       .fetchLatest(latestToFetch)
       .then(rates => {
-        const out = {};
+        const out: Record<string, { latest: number | null | undefined }> = {};
         let hasData = false;
         latestToFetch.forEach((pair, i) => {
           const key = pairId(pair);
@@ -286,9 +292,17 @@ export async function loadCountervalues(
       }),
   ]);
 
-  const updates: any[] = histo.concat(latest).filter(Boolean);
+  const updates = [];
+  for (const patch of histo) {
+    if (patch) {
+      updates.push(patch);
+    }
+  }
+  if (latest) {
+    updates.push(latest);
+  }
   log("countervalues", updates.length + " updates to apply");
-  const changesKeys = {};
+  const changesKeys: Record<string, unknown> = {};
   updates.forEach(patch => {
     Object.keys(patch).forEach(key => {
       changesKeys[key] = 1;

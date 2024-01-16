@@ -1,36 +1,36 @@
-import type { CounterValuesAPI } from "../types";
+import type { CounterValuesAPI, RateGranularity } from "../types";
 import { getEnv } from "@ledgerhq/live-env";
 import { getBTCValues, BTCtoUSD, referenceSnapshotDate } from "../mock";
 import { formatPerGranularity } from "../helpers";
 import Prando from "prando";
-import { findCurrencyByTicker } from "../../currencies";
+import { findCurrencyByTicker } from "@ledgerhq/coin-framework/currencies/index";
 
-function btcTrend(date: Date) {
-  const daysSinceGenesis = (date.valueOf() - 1230937200000) / (24 * 60 * 60 * 1000);
+function btcTrend(t: number) {
+  const daysSinceGenesis = (t - 1230937200000) / (24 * 60 * 60 * 1000);
   return Math.pow(daysSinceGenesis / 693, 5.526);
 }
 
-const randomCache = {};
+const randomCache: Record<string, number> = {};
 
-function fromToRandom(id) {
+function fromToRandom(id: string) {
   if (randomCache[id]) return randomCache[id];
   return (randomCache[id] = new Prando(getEnv("MOCK") + id).next());
 }
 
-function temporalFactor(from, to, maybeDate) {
-  const date = maybeDate || new Date();
+function temporalFactor(from: string, to: string, maybeDate: Date | undefined) {
+  const t = (maybeDate || new Date()).getTime();
   const r = fromToRandom(from); // make it varies between rates...
 
-  const wave1 = Math.cos(r * 0.5 + date / (200 * 24 * 60 * 60 * 1000 * (0.5 + 0.5 * r)));
+  const wave1 = Math.cos(r * 0.5 + t / (200 * 24 * 60 * 60 * 1000 * (0.5 + 0.5 * r)));
   // long term wave
-  const wave2 = Math.sin(r + date / (30 * 24 * 60 * 60 * 1000)); // short term wave
+  const wave2 = Math.sin(r + t / (30 * 24 * 60 * 60 * 1000)); // short term wave
 
   const wave3 = // random market perturbation
-    Math.max(0, Math.sin(date / (66 * 24 * 60 * 60 * 1000))) *
-    Math.cos(wave2 + Math.cos(r) + date / (3 * 24 * 60 * 60 * 1000 * (1 - 0.1 * r)));
+    Math.max(0, Math.sin(t / (66 * 24 * 60 * 60 * 1000))) *
+    Math.cos(wave2 + Math.cos(r) + t / (3 * 24 * 60 * 60 * 1000 * (1 - 0.1 * r)));
 
   // This is essentially randomness!
-  if (maybeDate && Math.cos(7 * r + date * 0.1) > 0.9 + 0.1 * r) {
+  if (maybeDate && Math.cos(7 * r + t * 0.1) > 0.9 + 0.1 * r) {
     return 0; // intentionally set a GAP into the data
   }
 
@@ -38,11 +38,11 @@ function temporalFactor(from, to, maybeDate) {
     (0.2 - 0.2 * r * r) * wave1 +
     (0.1 + 0.05 * Math.sin(r)) * wave2 +
     0.05 * wave3 +
-    btcTrend(date) / btcTrend(referenceSnapshotDate);
+    btcTrend(t) / btcTrend(referenceSnapshotDate.getTime());
   return Math.max(0, res);
 }
 
-function rate(from: string, to: string, date?: Date) {
+function rate(from: string, to: string, date?: Date): number | undefined {
   const asBTC = getBTCValues()[from];
   if (!asBTC) return;
 
@@ -83,7 +83,7 @@ function getIds(): string[] {
   return ids;
 }
 
-function getDates(granularity, start): Date[] {
+function getDates(granularity: RateGranularity, start: Date): Date[] {
   const array: Date[] = [];
   const f = formatPerGranularity[granularity];
   const incr = increment[granularity];
@@ -99,7 +99,7 @@ function getDates(granularity, start): Date[] {
 
 const api: CounterValuesAPI = {
   fetchHistorical: (granularity, { from, to, startDate }) => {
-    const r = {};
+    const r: Record<string, number> = {};
     const f = formatPerGranularity[granularity];
     getDates(granularity, startDate).forEach(date => {
       const v = rate(from.ticker, to.ticker, date);

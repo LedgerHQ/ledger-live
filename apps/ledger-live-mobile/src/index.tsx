@@ -10,8 +10,8 @@ import Transport from "@ledgerhq/hw-transport";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
-import { useCountervaluesExport } from "@ledgerhq/live-common/countervalues/react";
-import { pairId } from "@ledgerhq/live-common/countervalues/helpers";
+import { useCountervaluesExport } from "@ledgerhq/live-countervalues/react";
+import { pairId } from "@ledgerhq/live-countervalues/helpers";
 import { NftMetadataProvider } from "@ledgerhq/live-common/nft/index";
 import { ToastProvider } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 

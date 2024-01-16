@@ -1,4 +1,4 @@
-import { genAccount } from "../mock/account";
+import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
 import { getCryptoCurrencyById, getFiatCurrencyByTicker } from "@ledgerhq/cryptoassets";
 import { inferTrackingPairForAccounts } from "./logic";
 

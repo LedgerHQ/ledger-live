@@ -80,6 +80,7 @@
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/hw-transport-http": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
+    "@ledgerhq/live-countervalues": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/logs": "workspace:^",

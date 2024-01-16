@@ -4,7 +4,7 @@ import {
   initialState,
   loadCountervalues,
   inferTrackingPairForAccounts,
-} from "../countervalues/logic";
+} from "@ledgerhq/live-countervalues/logic";
 import {
   getPortfolioCount,
   getBalanceHistory,

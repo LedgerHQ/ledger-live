@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { RefreshControl } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { useBridgeSync, useAccountSyncState } from "@ledgerhq/live-common/bridge/react/index";
-import { useCountervaluesPolling } from "@ledgerhq/live-common/countervalues/react";
+import { useCountervaluesPolling } from "@ledgerhq/live-countervalues/react";
 import { SYNC_DELAY } from "~/utils/constants";
 
 export interface Props {

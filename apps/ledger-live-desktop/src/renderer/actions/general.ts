@@ -13,8 +13,8 @@ import { reorderAccounts } from "~/renderer/actions/accounts";
 import {
   useCalculateCountervalueCallback as useCalculateCountervalueCallbackCommon,
   useTrackingPairForAccounts,
-} from "@ledgerhq/live-common/countervalues/react";
-import { TrackingPair } from "@ledgerhq/live-common/countervalues/types";
+} from "@ledgerhq/live-countervalues/react";
+import { TrackingPair } from "@ledgerhq/live-countervalues/types";
 import { useDistribution as useDistributionRaw } from "@ledgerhq/live-common/portfolio/v2/react";
 import { accountsSelector, activeAccountsSelector } from "~/renderer/reducers/accounts";
 import { osDarkModeSelector } from "~/renderer/reducers/application";

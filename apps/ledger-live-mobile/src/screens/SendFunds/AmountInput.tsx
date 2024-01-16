@@ -3,7 +3,7 @@ import { View, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import { BigNumber } from "bignumber.js";
 import type { AccountLike } from "@ledgerhq/types-live";
-import { useSendAmount } from "@ledgerhq/live-common/countervalues/react";
+import { useSendAmount } from "@ledgerhq/live-countervalues/react";
 import { useTranslation } from "react-i18next";
 import { track } from "~/analytics";
 import { counterValueCurrencySelector } from "~/reducers/settings";

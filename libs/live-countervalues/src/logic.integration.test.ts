@@ -1,4 +1,3 @@
-import "../__tests__/test-helpers/setup";
 import {
   initialState,
   loadCountervalues,
@@ -6,16 +5,20 @@ import {
   exportCountervalues,
   importCountervalues,
 } from "./logic";
-import { findCurrencyByTicker } from "../currencies";
+import { findCurrencyByTicker } from "@ledgerhq/coin-framework/currencies/index";
 import {
   getFiatCurrencyByTicker,
   getCryptoCurrencyById,
   getTokenById,
 } from "@ledgerhq/cryptoassets";
-import { getBTCValues } from "../countervalues/mock";
+import { getBTCValues } from "./mock";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import Prando from "prando";
 import api from "./api";
+import { setEnv } from "@ledgerhq/live-env";
+
+const value = "ll-ci/0.0.0";
+setEnv("LEDGER_CLIENT_VERSION", value);
 
 const ethereum = getCryptoCurrencyById("ethereum");
 const bitcoin = getCryptoCurrencyById("bitcoin");
@@ -239,4 +242,11 @@ test("export and import it back", async () => {
   const exported = exportCountervalues(state);
   const imported = importCountervalues(exported, settings);
   expect(imported).toEqual(state);
+});
+
+describe("API specific unit tests", () => {
+  test("fetchLatest with empty pairs", async () => {
+    const rates = await api.fetchLatest([]);
+    expect(rates).toEqual([]);
+  });
 });

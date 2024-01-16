@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { AppState, AppStateStatus } from "react-native";
 import { useNetInfo } from "@react-native-community/netinfo";
-import { Countervalues, useCountervaluesPolling } from "@ledgerhq/live-common/countervalues/react";
-import { CounterValuesStateRaw } from "@ledgerhq/live-common/countervalues/types";
+import { Countervalues, useCountervaluesPolling } from "@ledgerhq/live-countervalues/react";
+import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { useUserSettings } from "~/actions/general";
 
 export default function CountervaluesProvider({

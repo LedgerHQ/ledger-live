@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useSelector } from "react-redux";
 import { BigNumber } from "bignumber.js";
 import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
-import { useCalculate } from "@ledgerhq/live-common/countervalues/react";
+import { useCalculate } from "@ledgerhq/live-countervalues/react";
 import { getCurrencyColor } from "~/renderer/getCurrencyColor";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { colors } from "~/renderer/styles/theme";

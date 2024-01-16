@@ -1,6 +1,6 @@
 import React, { Fragment, useContext, useCallback, useState } from "react";
 import hoistNonReactStatic from "hoist-non-react-statics";
-import { useCountervaluesPolling } from "@ledgerhq/live-common/countervalues/react";
+import { useCountervaluesPolling } from "@ledgerhq/live-countervalues/react";
 import { clearDb } from "../db";
 
 export type RebootFunc = (_?: boolean) => Promise<void>;

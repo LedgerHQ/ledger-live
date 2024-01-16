@@ -3,13 +3,13 @@ import {
   Countervalues,
   useCountervaluesPolling,
   useCountervaluesExport,
-} from "@ledgerhq/live-common/countervalues/react";
+} from "@ledgerhq/live-countervalues/react";
 import {
   CountervaluesSettings,
   CounterValuesStateRaw,
   RateMapRaw,
-} from "@ledgerhq/live-common/countervalues/types";
-import { pairId } from "@ledgerhq/live-common/countervalues/helpers";
+} from "@ledgerhq/live-countervalues/types";
+import { pairId } from "@ledgerhq/live-countervalues/helpers";
 import { setKey } from "~/renderer/storage";
 import { useUserSettings } from "../actions/general";
 export default function CountervaluesProvider({
