@@ -1,5 +1,5 @@
 ---
-"ledger-live-desktop": patch
+"@ledgerhq/ledger-live-desktop": patch
 "@ledgerhq/coin-evm": patch
 ---
 

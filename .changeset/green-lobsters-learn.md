@@ -1,5 +1,5 @@
 ---
-"ledger-live-desktop": patch
+"@ledgerhq/ledger-live-desktop": patch
 ---
 
 fix: wallet-api complete exchange drawer not closing
