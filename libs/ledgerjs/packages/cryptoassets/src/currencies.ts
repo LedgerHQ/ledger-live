@@ -4504,7 +4504,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "linea_goerli",
     color: "#000000",
     family: "evm",
-    units: ethereumUnits("ETH", "ETH"),
+    units: ethereumUnits("ETH", "ETH").map(makeTestnetUnit),
     disableCountervalue: false,
     isTestnetFor: "linea",
     ethereumLikeInfo: {
