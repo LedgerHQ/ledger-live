@@ -1,5 +1,6 @@
 import { ContentCard as BrazeContentCard } from "@braze/react-native-sdk";
 import { Size } from "~/contentCards/cards/vertical/types";
+import { WidthFactor } from "~/contentCards/layouts/carousel";
 
 enum ContentCardsType {
   smallSquare = "small_square",
@@ -36,6 +37,7 @@ type ContentCardCommonProperties = {
   createdAt: number;
   viewed: boolean;
   order?: number;
+  carouselWidthFactor?: WidthFactor;
 };
 
 type CategoryContentCard = ContentCardCommonProperties & {
