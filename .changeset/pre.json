@@ -92,7 +92,9 @@
     "@ledgerhq/metro-extra-config": "1.0.1",
     "@ledgerhq/native-modules-tools": "1.0.2",
     "@ledgerhq/pnpm-utils": "1.0.1",
-    "@ledgerhq/react-devtools": "0.0.0"
+    "@ledgerhq/react-devtools": "0.0.0",
+    "ledger-live-desktop": "2.75.0-next.0",
+    "live-mobile": "3.38.0-next.0"
   },
   "changesets": [
     "angry-needles-kneel",
