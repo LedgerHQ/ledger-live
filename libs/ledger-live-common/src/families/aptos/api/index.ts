@@ -28,10 +28,8 @@ import type {
 } from "../types";
 import { isUndefined } from "lodash";
 
-// const getApiEndpoint = (_: string) => getEnv("APTOS_API_ENDPOINT");
-// const getIndexerEndpoint = (_: string) => getEnv("APTOS_INDEXER_ENDPOINT");
-const getApiEndpoint = (_: string) => getEnv("APTOS_TESTNET_API_ENDPOINT");
-const getIndexerEndpoint = (_: string) => getEnv("APTOS_TESTNET_INDEXER_ENDPOINT");
+const getApiEndpoint = (_: string) => getEnv("APTOS_API_ENDPOINT");
+const getIndexerEndpoint = (_: string) => getEnv("APTOS_INDEXER_ENDPOINT");
 
 export class AptosAPI {
   private apiUrl: string;

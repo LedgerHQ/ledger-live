@@ -99,9 +99,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        address:
-          "https://explorer.aptoslabs.com/account/$address?network=testnet", // TODO: change to mainnet before release
-        tx: "https://explorer.aptoslabs.com/txn/$hash?network=testnet", // TODO: change to mainnet before release
+        address: "https://explorer.aptoslabs.com/account/$address?network=mainnet",
+        tx: "https://explorer.aptoslabs.com/txn/$hash?network=mainnet",
       },
     ],
   },
@@ -125,8 +124,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        address:
-          "https://explorer.aptoslabs.com/account/$address?network=testnet",
+        address: "https://explorer.aptoslabs.com/account/$address?network=testnet",
         tx: "https://explorer.aptoslabs.com/txn/$hash?network=testnet",
       },
     ],
