@@ -1,7 +1,7 @@
-import type { Account, AccountLike } from "@ledgerhq/types-live";
+import type { AccountLike } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { getMainAccount } from "../../account";
-import type { Transaction } from "./types";
+import type { Transaction, AptosAccount as Account } from "./types";
 import { getMaxSendBalance } from "./logic";
 
 const estimateMaxSpendable = async ({

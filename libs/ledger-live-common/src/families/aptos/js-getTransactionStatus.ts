@@ -6,9 +6,8 @@ import {
   FeeNotLoaded,
   GasLessThanEstimate,
 } from "@ledgerhq/errors";
-import type { Account } from "@ledgerhq/types-live";
 import type { TransactionStatus } from "../..//generated/types";
-import type { Transaction } from "./types";
+import type { Transaction, AptosAccount as Account } from "./types";
 
 import { isValidAddress } from "./logic";
 import {

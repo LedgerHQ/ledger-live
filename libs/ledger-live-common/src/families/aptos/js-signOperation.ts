@@ -13,9 +13,10 @@ import type {
 } from "@ledgerhq/types-live";
 import { AptosAPI } from "./api";
 import LedgerAccount from "./LedgerAccount";
+import { AptosAccount } from "./types";
 
 const signOperation: SignOperationFnSignature<Transaction> = ({
-  account,
+  account: _account,
   deviceId,
   transaction,
 }: {
@@ -27,17 +28,18 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
     transport =>
       new Observable(o => {
         async function main() {
+          const account = _account as AptosAccount;
           const aptosClient = new AptosAPI(account.currency.id);
 
           o.next({ type: "device-signature-requested" });
 
           const ledgerAccount = new LedgerAccount(
             account.freshAddresses[0].derivationPath,
-            account.xpub as string,
+            account.publicKey as string,
           );
           await ledgerAccount.init(transport);
 
-          const rawTx = await buildTransaction(account, transaction, aptosClient);
+          const rawTx = await buildTransaction(account as AptosAccount, transaction, aptosClient);
           const txBytes = await ledgerAccount.signTransaction(rawTx);
           const signed = Buffer.from(txBytes).toString("hex");
 

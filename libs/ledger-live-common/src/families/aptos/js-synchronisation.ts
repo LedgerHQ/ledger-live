@@ -1,7 +1,7 @@
 import { from, firstValueFrom } from "rxjs";
 import { withDevice } from "../../hw/deviceAccess";
 import type { GetAccountShape } from "../../bridge/jsHelpers";
-import type { AptosAccount } from "./types";
+import type { AptosAccount as Account } from "./types";
 import { makeSync, makeScanAccounts, mergeOps } from "../../bridge/jsHelpers";
 
 import { encodeAccountId } from "../../account";
@@ -11,18 +11,22 @@ import { txsToOps } from "./logic";
 import Aptos from "./hw-app-aptos";
 
 const getAccountShape: GetAccountShape = async info => {
-  const { address, initialAccount, derivationMode, currency, deviceId, derivationPath } = info;
+  const {
+    address,
+    initialAccount: _initialAccount,
+    derivationMode,
+    currency,
+    deviceId,
+    derivationPath,
+  } = info;
+  const initialAccount = _initialAccount as Account;
 
-  // "xpub" field is used to store publicKey to simulate transaction during sending tokens.
-  // We can't get access to the Nano X via bluetooth on the step of simulation
-  // but we need public key to simulate transaction.
-  // "xpub" field is used because this field exists in ledger operation type
-  let xpub = initialAccount?.xpub;
-  if (!initialAccount?.xpub && typeof deviceId === "string") {
+  let publicKey = initialAccount?.publicKey;
+  if (!initialAccount?.publicKey && typeof deviceId === "string") {
     const result = await firstValueFrom(
       withDevice(deviceId)(transport => from(new Aptos(transport).getAddress(derivationPath))),
     );
-    xpub = Buffer.from(result.publicKey).toString("hex");
+    publicKey = Buffer.from(result.publicKey).toString("hex");
   }
 
   const oldOperations = initialAccount?.operations || [];
@@ -45,10 +49,10 @@ const getAccountShape: GetAccountShape = async info => {
   const newOperations = txsToOps(info, accountId, transactions);
   const operations = mergeOps(oldOperations, newOperations);
 
-  const shape: Partial<AptosAccount> = {
+  const shape: Partial<Account> = {
     type: "Account",
     id: accountId,
-    xpub,
+    publicKey,
     balance: balance,
     spendableBalance: balance,
     delegatedBalance,

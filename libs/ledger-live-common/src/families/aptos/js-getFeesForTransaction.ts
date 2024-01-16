@@ -1,11 +1,10 @@
 import BigNumber from "bignumber.js";
 import { HexString, TxnBuilderTypes } from "aptos";
-import type { Account } from "@ledgerhq/types-live";
 
 import { AptosAPI } from "./api";
 import buildTransaction from "./js-buildTransaction";
 import { DEFAULT_GAS, DEFAULT_GAS_PRICE, ESTIMATE_GAS_MUL } from "./logic";
-import type { Transaction, TransactionErrors } from "./types";
+import type { Transaction, TransactionErrors, AptosAccount as Account } from "./types";
 import { log } from "@ledgerhq/logs";
 
 type IGetEstimatedGasReturnType = {
@@ -48,9 +47,9 @@ export const getFee = async (
     // skip
   }
 
-  if (account.xpub) {
+  if (account.publicKey) {
     try {
-      const publickKey = account.xpub as string;
+      const publickKey = account.publicKey as string;
       const pubKeyUint = new HexString(publickKey).toUint8Array();
       const publicKeyEd = new TxnBuilderTypes.Ed25519PublicKey(pubKeyUint);
       const tx = await buildTransaction(account, transaction, aptosClient);

@@ -15,7 +15,7 @@ export type AptosTransaction = AptosTypes.UserTransaction & {
   };
 };
 
-export type AptosAccount = Account & { delegatedBalance: BigNumber };
+export type AptosAccount = Account & { delegatedBalance: BigNumber; publicKey: string };
 
 export type TransactionStatus = TransactionStatusCommon;
 
