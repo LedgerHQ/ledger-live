@@ -3473,6 +3473,11 @@
       }
     }
   },
+  "aptos": {
+    "delegation": {
+      "delegatedInfoTooltip" : "委托至验证者的总数额。"
+    }
+  },
   "solana" : {
     "common" : {
       "broadcastError" : "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。",

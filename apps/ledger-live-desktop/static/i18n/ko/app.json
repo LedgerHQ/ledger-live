@@ -3473,6 +3473,11 @@
       }
     }
   },
+  "aptos": {
+    "delegation": {
+      "delegatedInfoTooltip" : "검증인에게 위임된 총 금액입니다."
+    }
+  },
   "solana" : {
     "common" : {
       "broadcastError" : "트랜잭션이 실패한 것 같습니다. 잠시 기다려 트랜잭션 내역을 확인한 후 다시 시도하세요.",

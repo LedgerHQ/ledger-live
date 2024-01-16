@@ -3473,6 +3473,11 @@
       }
     }
   },
+  "aptos": {
+    "delegation": {
+      "delegatedInfoTooltip" : "Doğrulayıcılara yetkisi devredilen toplam tutar."
+    }
+  },
   "solana" : {
     "common" : {
       "broadcastError" : "İşleminiz başarısız olmuş olabilir. Lütfen biraz bekleyin ve tekrar denemeden önce işlem geçmişini kontrol edin.",

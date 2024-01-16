@@ -3473,6 +3473,11 @@
       }
     }
   },
+  "aptos": {
+    "delegation": {
+      "delegatedInfoTooltip" : "バリデーターにデリゲートされる合計額。"
+    }
+  },
   "solana" : {
     "common" : {
       "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。",

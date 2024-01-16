@@ -3473,6 +3473,11 @@
       }
     }
   },
+  "aptos": {
+    "delegation": {
+      "delegatedInfoTooltip" : "Gesamtbetrag, der an Validatoren delegiert ist."
+    }
+  },
   "solana" : {
     "common" : {
       "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen.",

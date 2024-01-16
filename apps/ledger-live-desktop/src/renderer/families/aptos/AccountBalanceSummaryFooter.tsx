@@ -83,7 +83,7 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
         </AmountValue>
       </BalanceDetail>
       <BalanceDetail>
-        <ToolTip content={<Trans i18nKey="solana.delegation.delegatedInfoTooltip" />}>
+        <ToolTip content={<Trans i18nKey="aptos.delegation.delegatedInfoTooltip" />}>
           <TitleWrapper>
             <Title>
               <Trans i18nKey="account.delegatedAssets" />

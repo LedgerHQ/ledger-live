@@ -3473,6 +3473,11 @@
       }
     }
   },
+  "aptos": {
+    "delegation": {
+      "delegatedInfoTooltip" : "Montant total délégué à des validateurs"
+    }
+  },
   "solana" : {
     "common" : {
       "broadcastError" : "Échec probable de votre transaction. Patientez un instant puis vérifiez l’historique des transactions avant de réessayer.",

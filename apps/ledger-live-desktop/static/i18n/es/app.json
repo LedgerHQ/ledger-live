@@ -3473,6 +3473,11 @@
       }
     }
   },
+  "aptos": {
+    "delegation": {
+      "delegatedInfoTooltip" : "Cantidad total delegada a validadores."
+    }
+  },
   "solana" : {
     "common" : {
       "broadcastError" : "Es posible que la transacción haya fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo.",
