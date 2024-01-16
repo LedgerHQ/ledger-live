@@ -5,6 +5,9 @@ import { Transaction, TransactionModel } from "./types";
 import { assertUnreachable } from "./utils";
 import { VersionedTransaction as OnChainTransaction } from "@solana/web3.js";
 import { log } from "@ledgerhq/logs";
+import { NetworkError } from "@ledgerhq/errors";
+
+const MAX_RETRIES = 10; // TODO Candidate to put in coin config
 
 export async function estimateTxFee(
   api: ChainAPI,
@@ -14,12 +17,18 @@ export async function estimateTxFee(
   const tx = createDummyTx(address, kind);
   const [onChainTx] = await buildTransactionWithAPI(address, tx, api);
 
-  const fee = await api.getFeeForMessage(onChainTx.message);
+  let fee = await api.getFeeForMessage(onChainTx.message);
+  let retries = 0;
+
+  while (typeof fee !== "number" && retries++ < MAX_RETRIES) {
+    // FIXME HACK: sometimes fee is not a number, retrying with a next blockhash
+    log("debug", `api.getFeeForMessage returned invalid fee: <${fee}>`);
+    fee = await retryWithNewBlockhash(api, onChainTx);
+  }
 
   if (typeof fee !== "number") {
-    log("error", `api.getFeeForMessage returned invalid fee: <${fee}>`);
-    // TEMP HACK: sometimes fee is not a number, retrying with a next blockhash
-    return retryWithNewBlockhash(api, onChainTx);
+    log("error", `unexpected fee: <${fee}>, after retry with a new blockhash`);
+    throw new NetworkError();
   }
   return fee;
 }
@@ -170,13 +179,7 @@ async function retryWithNewBlockhash(api: ChainAPI, onChainTx: OnChainTransactio
     onChainTx.message.recentBlockhash,
   );
 
-  const fee = await api.getFeeForMessage(onChainTx.message);
-
-  if (typeof fee !== "number") {
-    throw new Error(`unexpected fee: <${fee}>, after retry with a new blockhash`);
-  }
-
-  return fee;
+  return api.getFeeForMessage(onChainTx.message);
 }
 
 function sleep(durationMS: number): Promise<void> {
