@@ -218,9 +218,23 @@ class BitcoinLikeWallet {
       onDeviceStreaming,
     } = params;
 
-    const orderedInputs: TransactionInfo["inputs"] = utils.lexicographicalIndexingTransactionInputs(
-      { inputs: txInfo.inputs },
-    );
+    const inputIndexMap = txInfo.inputs.map((input, index) => ({
+      input,
+      originalIndex: index
+    }));
+
+    const orderedInputsWithIndex = utils.lexicographicalIndexingTransactionInputs({
+      inputs: inputIndexMap.map(x => x.input),
+    }).map(input => {
+      const found = inputIndexMap.find(x => x.input === input);
+      if (!found) {
+        throw new Error("Matching input not found.");
+      }
+      return { input, originalIndex: found.originalIndex };
+    });
+
+    const orderedInputs: TransactionInfo["inputs"] = orderedInputsWithIndex.map((item) => item.input);
+
     const orderedOutputs: TransactionInfo["outputs"] =
       utils.lexicographicalIndexingTransactionOutputs({
         outputs: txInfo.outputs,
@@ -260,9 +274,13 @@ class BitcoinLikeWallet {
     });
 
     const outputScriptHex = buffer.toString("hex");
+
     const associatedKeysets = txInfo.associatedDerivations.map(
       ([account, index]) =>
         `${fromAccount.params.path}/${fromAccount.params.index}'/${account}/${index}`,
+    );
+    const orderedAssociatedKeysets = orderedInputsWithIndex.map(x =>
+      associatedKeysets[x.originalIndex]
     );
 
     type Inputs = [Transaction, number, string | null | undefined, number | null | undefined][];
@@ -291,7 +309,7 @@ class BitcoinLikeWallet {
 
     log("hw", `createPaymentTransaction`, {
       inputs,
-      associatedKeysets,
+      associatedKeysets: orderedAssociatedKeysets,
       outputScriptHex,
       ...(params.lockTime && { lockTime: params.lockTime }),
       ...(params.sigHashType && { sigHashType: params.sigHashType }),
@@ -313,7 +331,7 @@ class BitcoinLikeWallet {
      */
     const tx = await btc.createPaymentTransaction({
       inputs,
-      associatedKeysets,
+      associatedKeysets: orderedAssociatedKeysets,
       outputScriptHex,
       ...(params.lockTime && { lockTime: params.lockTime }),
       ...(params.sigHashType && { sigHashType: params.sigHashType }),
