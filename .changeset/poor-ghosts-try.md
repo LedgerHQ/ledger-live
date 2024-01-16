@@ -1,6 +1,6 @@
 ---
 "ledger-live-desktop": patch
-"@ledgerhq/live-mobile": patch
+"live-mobile": patch
 ---
 
 Add support for linea
