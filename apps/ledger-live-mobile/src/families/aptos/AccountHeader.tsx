@@ -12,7 +12,7 @@ type Props = {
 
 function AptosAccountHeader({ account }: Props) {
   const unit = getAccountUnit(account);
-  const { delegatedBalance } = account;
+  const { delegatedAmount } = account;
 
   return (
     <View style={styles.root}>
@@ -20,7 +20,7 @@ function AptosAccountHeader({ account }: Props) {
         <Trans i18nKey="account.delegatedAssets" />
       </LText>
       <LText style={styles.valueText} semiBold>
-        <CurrencyUnitValue unit={unit} value={delegatedBalance} disableRounding />
+        <CurrencyUnitValue unit={unit} value={delegatedAmount} disableRounding />
       </LText>
     </View>
   );

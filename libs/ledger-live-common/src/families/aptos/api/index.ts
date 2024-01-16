@@ -107,7 +107,7 @@ export class AptosAPI {
   }
 
   async getAccountInfo(address: string, startAt: string) {
-    const [balance, transactions, blockHeight, delegatedBalance] = await Promise.all([
+    const [balance, transactions, blockHeight, delegatedAmount] = await Promise.all([
       this.getBalance(address),
       this.fetchTransactions(address, undefined, startAt),
       this.getHeight(),
@@ -118,7 +118,7 @@ export class AptosAPI {
       balance,
       transactions,
       blockHeight,
-      delegatedBalance,
+      delegatedAmount,
     };
   }
 
@@ -155,8 +155,8 @@ export class AptosAPI {
       try {
         const ts = (await this.aptosClient.getLedgerInfo()).ledger_timestamp;
         serverTimestamp = BigInt(Math.ceil(+ts / 1_000_000 + 2 * 60)); // in microseconds
-      } catch (e) {
-        // nothing
+      } catch (_) {
+        // skip
       }
     }
 

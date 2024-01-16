@@ -55,7 +55,7 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
   if (account.type !== "Account") return null;
-  const { spendableBalance: _spendableBalance, delegatedBalance: _delegatedBalance } = account;
+  const { spendableBalance: _spendableBalance, delegatedAmount: _delegatedAmount } = account;
   const unit = getAccountUnit(account);
   const formatConfig = {
     disableRounding: true,
@@ -65,7 +65,7 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
     locale,
   };
   const spendableBalance = formatCurrencyUnit(unit, _spendableBalance, formatConfig);
-  const delegatedBalance = formatCurrencyUnit(unit, _delegatedBalance, formatConfig);
+  const delegatedAmount = formatCurrencyUnit(unit, _delegatedAmount, formatConfig);
 
   return (
     <Wrapper>
@@ -92,7 +92,7 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
           </TitleWrapper>
         </ToolTip>
         <AmountValue>
-          <Discreet>{delegatedBalance}</Discreet>
+          <Discreet>{delegatedAmount}</Discreet>
         </AmountValue>
       </BalanceDetail>
     </Wrapper>
