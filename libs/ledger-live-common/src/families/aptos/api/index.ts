@@ -283,6 +283,6 @@ export class AptosAPI {
       return total + activePrincipals + pendingInactivePrincipals;
     }, 0);
 
-    return new BigNumber(stakedBalance / 1e8);
+    return new BigNumber(stakedBalance);
   }
 }
