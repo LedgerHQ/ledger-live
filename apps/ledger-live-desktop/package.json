@@ -1,5 +1,5 @@
 {
-  "name": "@ledgerhq/ledger-live-desktop",
+  "name": "ledger-live-desktop",
   "productName": "Ledger Live",
   "description": "Ledger Live - Desktop",
   "author": "Ledger Live Team <team-live@ledger.fr>",

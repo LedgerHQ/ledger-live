@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/ledger-live-desktop": patch
+"ledger-live-desktop": patch
 "@ledgerhq/live-mobile": patch
 ---
 
