@@ -103,13 +103,15 @@ export const transportExchange = ({
   requestId,
 }: MessagesMap["transport:exchange"]): Observable<TransportExchange> => {
   return new Observable(subscriber => {
+    const { descriptor, apduHex, abortTimeoutMs, context } = data;
+
     const tracer = new LocalTracer(LOG_TYPE_INTERNAL, {
       requestId,
       function: "transportExchange",
+      descriptor,
     });
     tracer.trace("transport:exchange message received", { data });
 
-    const { descriptor, apduHex, abortTimeoutMs, context } = data;
     const transport = transportForDevices.get(descriptor);
 
     if (!transport) {
@@ -165,6 +167,7 @@ export const transportExchangeBulk = ({
     const tracer = new LocalTracer(LOG_TYPE_INTERNAL, {
       requestId,
       function: "transportExchangeBulk",
+      descriptor: data.descriptor,
     });
     tracer.trace("transport:exchangeBulk message received", { data });
 
@@ -229,6 +232,7 @@ export const transportExchangeBulkUnsubscribe = ({
     const tracer = new LocalTracer(LOG_TYPE_INTERNAL, {
       requestId,
       function: "transportExchangeBulkUnsubscribe",
+      descriptor: data.descriptor,
     });
     tracer.trace("transport:exchangeBulk:unsubscribe message received", { data });
 
@@ -339,6 +343,7 @@ export const transportClose = ({
     const tracer = new LocalTracer(LOG_TYPE_INTERNAL, {
       requestId,
       function: "transportClose",
+      descriptor: data.descriptor,
     });
     tracer.trace("transport:close message received", { data });
 

@@ -32,19 +32,17 @@ For a smooth and quick integration:
 *   [TransportNodeHidSingleton](#transportnodehidsingleton)
     *   [Parameters](#parameters)
     *   [Examples](#examples)
-    *   [setEnableDisconnectAfterInactivity](#setenabledisconnectafterinactivity)
-        *   [Parameters](#parameters-1)
     *   [exchange](#exchange)
-        *   [Parameters](#parameters-2)
+        *   [Parameters](#parameters-1)
     *   [close](#close)
     *   [isSupported](#issupported)
     *   [list](#list)
     *   [listen](#listen)
-        *   [Parameters](#parameters-3)
-    *   [disconnectAfterInactivity](#disconnectafterinactivity)
+        *   [Parameters](#parameters-2)
+    *   [setDisconnectAfterInactivityTimeout](#setdisconnectafterinactivitytimeout)
     *   [disconnect](#disconnect)
     *   [open](#open)
-        *   [Parameters](#parameters-4)
+        *   [Parameters](#parameters-3)
 *   [onDisconnect](#ondisconnect)
 
 ### TransportNodeHidSingleton
@@ -68,16 +66,6 @@ import TransportNodeHid from "@ledgerhq/hw-transport-node-hid-singleton";
 TransportNodeHid.create().then(transport => ...)
 ```
 
-#### setEnableDisconnectAfterInactivity
-
-Enables or disables the disconnection from the current HID device after some inactivity (DISCONNECT\_TIMEOUT)
-
-##### Parameters
-
-*   `isEnabled` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**&#x20;
-
-Returns **void**&#x20;
-
 #### exchange
 
 Exchanges with the device using APDU protocol
@@ -90,7 +78,7 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 
 #### close
 
-Closes the transport instance by not preventing an auto-disconnection (see `disconnectAfterInactivity`).
+Closes the transport instance by triggering a disconnection after some inactivity (no new `open`).
 
 Intentionally not disconnecting the device/closing the hid connection directly:
 The HID connection will only be closed after some inactivity.
@@ -109,26 +97,18 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 
 Returns **Subscription**&#x20;
 
-#### disconnectAfterInactivity
+#### setDisconnectAfterInactivityTimeout
 
-Disconnects singleton instance if it is not prevented from disconnecting,
-otherwise try again after DISCONNECT\_AFTER\_INACTIVITY\_TIMEOUT\_MS.
+Disconnects device from singleton instance after some inactivity (no new `open`).
 
 Currently, there is only one transport instance (for only one device connected via USB).
-
-Used in pair with `setDisconnectAfterInactivityTimeout`.
-
-Hence, once called once, the disconnection is tried at a frequency of DISCONNECT\_TIMEOUT (or until `clearDisconnectAfterInactivityTimeout` is called)
 
 #### disconnect
 
 Disconnects from the HID device associated to the transport singleton.
 
-If you want to try to re-use the same transport instance at the next operations (exchange for ex), you can use
+If you want to try to re-use the same transport instance at the next action (when calling `open` again), you can use
 the transport instance `close` method: it will only enable a disconnect after some inactivity.
-
-`disconnectAfterInactivity` will be called at a fixed frequency, and when the disconnect after some inactivity is enabled
-it will call this `disconnect` function.
 
 #### open
 

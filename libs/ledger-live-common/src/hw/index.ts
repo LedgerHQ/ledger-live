@@ -42,15 +42,6 @@ export type TransportModule = {
   // returns falsy if the transport module can't handle this id
   disconnect: (id: string) => Promise<void> | null | undefined;
 
-  /**
-   * Sets whether the transport can disconnect with the associated device after a period of inactivity.
-   */
-  setEnableDisconnectAfterInactivity?: (params: {
-    transport: Transport;
-    deviceId: string;
-    isEnabled: boolean;
-  }) => "ok" | "not-supported";
-
   // optional observable that allows to discover a transport
   discovery?: Discovery;
 };
@@ -184,39 +175,6 @@ export const close = (
   // Otherwise fallbacks on the transport implementation of close directly
   return transport.close();
 };
-
-/**
- * On the registered transport modules, find the 1st module with matching transport instance and device
- * that supports `setEnableDisconnectAfterInactivity` and execute it.
- *
- * @return if no matching module is found, returns "not-supported". Otherwise returns "ok".
- */
-export function setEnableDisconnectAfterInactivityForTransport({
-  transport,
-  deviceId,
-  isEnabled,
-}: {
-  transport: Transport;
-  deviceId: string;
-  isEnabled: boolean;
-}): "ok" | "not-supported" {
-  for (let i = 0; i < modules.length; i++) {
-    const m = modules[i];
-
-    if (m.setEnableDisconnectAfterInactivity) {
-      if (m.setEnableDisconnectAfterInactivity({ transport, deviceId, isEnabled }) === "ok") {
-        trace({
-          type: LOG_TYPE,
-          message: `Set enable disconnect after inactivity called on ${m.id}`,
-          data: { moduleId: m.id, isEnabled },
-        });
-        return "ok";
-      }
-    }
-  }
-
-  return "not-supported";
-}
 
 export const disconnect = (deviceId: string): Promise<void> => {
   for (let i = 0; i < modules.length; i++) {
