@@ -1,5 +1,5 @@
 ---
-"ledger-live-desktop": patch
+"@ledgerhq/ledger-live-desktop": patch
 ---
 
 add icon usb on connect device recover restore flow

@@ -1,5 +1,5 @@
 ---
-"ledger-live-desktop": patch
+"@ledgerhq/ledger-live-desktop": patch
 ---
 
 error message when searching quotes instead of loading message

@@ -1,5 +1,5 @@
 ---
-"live-mobile": patch
+"@ledgerhq/live-mobile": patch
 "@ledgerhq/live-common": patch
 ---
 
