@@ -9,7 +9,7 @@ import { mergeOps } from "../../bridge/jsHelpers";
 import type { GetAccountShape } from "../../bridge/jsHelpers";
 import { encodeOperationId } from "../../operation";
 import { areAllOperationsLoaded, decodeAccountId } from "../../account";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, OperationType } from "@ledgerhq/types-live";
 import api from "./api/tzkt";
 import type { APIOperation } from "./api/tzkt";
 import { TezosOperation } from "./types";
@@ -142,8 +142,8 @@ export const getAccountShape: GetAccountShape = async infoInput => {
 const txToOp =
   ({ address, accountId }) =>
   (tx: APIOperation): TezosOperation | null | undefined => {
-    let type;
-    let maybeValue;
+    let type: OperationType;
+    let maybeValue = new BigNumber(0);
     let senders: string[] = [];
     let recipients: string[] = [];
     const hasFailed = tx.status ? tx.status !== "applied" : false;

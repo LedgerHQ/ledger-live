@@ -10,6 +10,7 @@ import {
 import type { Account } from "@ledgerhq/types-live";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
+
 export const formatTransaction = (
   {
     mode,
@@ -42,6 +43,7 @@ with gasLimit=${!gasLimit ? "?" : gasLimit.toString()}
 with storageLimit=${!storageLimit ? "?" : storageLimit.toString()}
 (estimatedFees ${!estimatedFees ? "?" : formatCurrencyUnit(mainAccount.unit, estimatedFees)})`;
 };
+
 export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
   const common = fromTransactionCommonRaw(tr);
   const { networkInfo } = tr;
@@ -60,6 +62,7 @@ export const fromTransactionRaw = (tr: TransactionRaw): Transaction => {
     taquitoError: tr.taquitoError,
   };
 };
+
 export const toTransactionRaw = (t: Transaction): TransactionRaw => {
   const common = toTransactionCommonRaw(t);
   const { networkInfo } = t;

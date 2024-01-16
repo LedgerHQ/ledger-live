@@ -15,6 +15,7 @@ const maxAccount = 12;
 function expectUnrevealed(account) {
   invariant(account.tezosResources?.revealed === false, "account must be unreleaved");
 }
+
 function expectRevealed(account) {
   invariant(account.tezosResources?.revealed === true, "account must be releaved");
 }

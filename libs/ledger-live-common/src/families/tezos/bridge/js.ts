@@ -63,7 +63,7 @@ const createTransaction: () => Transaction = () => ({
 
 const getTransactionStatus = async (
   account: TezosAccount,
-  t: Transaction,
+  tx: Transaction,
 ): Promise<TransactionStatus> => {
   const errors: {
     recipient?: Error;
@@ -79,13 +79,13 @@ const getTransactionStatus = async (
   let resetTotalSpent = false;
 
   // Recipient validation logic
-  if (t.mode !== "undelegate") {
-    if (account.freshAddress === t.recipient) {
+  if (tx.mode !== "undelegate") {
+    if (account.freshAddress === tx.recipient) {
       errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
     } else {
       const { recipientError, recipientWarning } = await validateRecipient(
         account.currency,
-        t.recipient,
+        tx.recipient,
       );
       if (recipientError) {
         errors.recipient = recipientError;
@@ -97,21 +97,21 @@ const getTransactionStatus = async (
   }
 
   // Pre validation of amount field
-  const estimatedFees = t.estimatedFees || new BigNumber(0);
-  if (t.mode === "send") {
-    if (!errors.amount && t.amount.eq(0) && !t.useAllAmount) {
+  const estimatedFees = tx.estimatedFees || new BigNumber(0);
+  if (tx.mode === "send") {
+    if (!errors.amount && tx.amount.eq(0) && !tx.useAllAmount) {
       resetTotalSpent = true;
       errors.amount = new AmountRequired();
-    } else if (t.amount.gt(0) && estimatedFees.times(10).gt(t.amount)) {
+    } else if (tx.amount.gt(0) && estimatedFees.times(10).gt(tx.amount)) {
       warnings.feeTooHigh = new FeeTooHigh();
     }
     const thresholdWarning = 0.5 * 10 ** account.currency.units[0].magnitude;
     if (
       !errors.amount &&
-      account.balance.minus(t.amount).minus(estimatedFees).lt(thresholdWarning)
+      account.balance.minus(tx.amount).minus(estimatedFees).lt(thresholdWarning)
     ) {
       if (isAccountDelegating(account)) {
-        if (t.useAllAmount) {
+        if (tx.useAllAmount) {
           errors.amount = new RecommendUndelegation();
         } else {
           warnings.amount = new RecommendUndelegation();
@@ -122,25 +122,25 @@ const getTransactionStatus = async (
 
   // effective amount
   // if we also have taquitoError, we interprete them and they override the previously inferred errors
-  if (t.taquitoError) {
-    log("taquitoerror", String(t.taquitoError));
+  if (tx.taquitoError) {
+    log("taquitoerror", String(tx.taquitoError));
 
     // remap taquito errors
     if (
-      t.taquitoError.endsWith("balance_too_low") ||
-      t.taquitoError.endsWith("subtraction_underflow")
+      tx.taquitoError.endsWith("balance_too_low") ||
+      tx.taquitoError.endsWith("subtraction_underflow")
     ) {
-      if (t.mode === "send") {
+      if (tx.mode === "send") {
         resetTotalSpent = true;
         errors.amount = new NotEnoughBalance();
       } else {
         errors.amount = new NotEnoughBalanceToDelegate();
       }
-    } else if (t.taquitoError.endsWith("delegate.unchanged")) {
+    } else if (tx.taquitoError.endsWith("delegate.unchanged")) {
       errors.recipient = new InvalidAddressBecauseAlreadyDelegated();
     } else if (!errors.amount) {
       // unidentified error case
-      errors.amount = new Error(t.taquitoError);
+      errors.amount = new Error(tx.taquitoError);
       resetTotalSpent = true;
     }
   }
@@ -153,9 +153,9 @@ const getTransactionStatus = async (
   // Catch a specific case that requires a minimum amount
   if (
     !errors.amount &&
-    t.mode === "send" &&
-    t.amount.lt(EXISTENTIAL_DEPOSIT) &&
-    (await api.getAccountByAddress(t.recipient)).type === "empty"
+    tx.mode === "send" &&
+    tx.amount.lt(EXISTENTIAL_DEPOSIT) &&
+    (await api.getAccountByAddress(tx.recipient)).type === "empty"
   ) {
     resetTotalSpent = true;
     errors.amount = new NotEnoughBalanceBecauseDestinationNotCreated("", {
@@ -167,9 +167,10 @@ const getTransactionStatus = async (
     errors,
     warnings,
     estimatedFees,
-    amount: t.amount,
-    totalSpent: resetTotalSpent ? new BigNumber(0) : t.amount.plus(estimatedFees),
+    amount: tx.amount,
+    totalSpent: resetTotalSpent ? new BigNumber(0) : tx.amount.plus(estimatedFees),
   };
+
   return Promise.resolve(result);
 };
 
@@ -222,7 +223,7 @@ const prepareTransaction = async (
   try {
     let estimate: Estimate;
     switch (transaction.mode) {
-      case "send":
+      case "send": {
         estimate = await tezos.estimate.transfer({
           mutez: true,
           to: transaction.recipient,
@@ -230,17 +231,20 @@ const prepareTransaction = async (
           storageLimit: DEFAULT_STORAGE_LIMIT.ORIGINATION, // https://github.com/TezTech/eztz/blob/master/PROTO_003_FEES.md for originating an account
         });
         break;
-      case "delegate":
+      }
+      case "delegate": {
         estimate = await tezos.estimate.setDelegate({
           source: account.freshAddress,
           delegate: transaction.recipient,
         });
         break;
-      case "undelegate":
+      }
+      case "undelegate": {
         estimate = await tezos.estimate.setDelegate({
           source: account.freshAddress,
         });
         break;
+      }
       default:
         throw new Error("unsupported mode=" + transaction.mode);
     }
@@ -270,8 +274,10 @@ const prepareTransaction = async (
 
     tx.storageLimit = new BigNumber(estimate.storageLimit);
     tx.estimatedFees = tx.fees;
+
     if (!tezosResources.revealed) {
       tx.estimatedFees = tx.estimatedFees.plus(DEFAULT_FEE.REVEAL);
+      tx.fees = tx.fees.plus(DEFAULT_FEE.REVEAL);
     }
   } catch (e) {
     if (typeof e !== "object" || !e) throw e;
@@ -325,6 +331,7 @@ const estimateMaxSpendable = async ({
     recipient: transaction?.recipient || "tz1burnburnburnburnburnburnburjAYjjX",
     useAllAmount: true,
   });
+
   const s = await getTransactionStatus(mainAccount, t);
   return s.amount;
 };

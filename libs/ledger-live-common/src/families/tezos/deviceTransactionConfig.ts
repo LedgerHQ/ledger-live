@@ -2,6 +2,7 @@ import type { AccountLike, Account } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "./types";
 import type { DeviceTransactionField } from "../../transaction";
 import { getMainAccount } from "../../account";
+
 export type ExtraDeviceTransactionField =
   | {
       type: "tezos.delegateValidator";
@@ -66,6 +67,7 @@ function getDeviceTransactionConfig({
     type: "tezos.storageLimit",
     label: "Storage Limit",
   });
+
   return fields;
 }
 

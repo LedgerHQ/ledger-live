@@ -45,7 +45,8 @@ export const signOperation: SignOperationFnSignature<Transaction> = ({
 
           let type: OperationType = "OUT";
 
-          let res, opbytes;
+          let opbytes: string;
+
           const params = {
             fee: transaction.fees?.toNumber() || 0,
             storageLimit: transaction.storageLimit?.toNumber() || 0,
@@ -53,17 +54,19 @@ export const signOperation: SignOperationFnSignature<Transaction> = ({
           };
 
           switch (transaction.mode) {
-            case "send":
-              res = await tezos.contract.transfer({
+            case "send": {
+              const res = await tezos.contract.transfer({
                 mutez: true,
                 to: transaction.recipient,
                 amount: transaction.amount.toNumber(),
                 ...params,
               });
+
               opbytes = res.raw.opbytes;
               break;
-            case "delegate":
-              res = await tezos.contract.setDelegate({
+            }
+            case "delegate": {
+              const res = await tezos.contract.setDelegate({
                 ...params,
                 source: freshAddress,
                 delegate: transaction.recipient,
@@ -71,16 +74,19 @@ export const signOperation: SignOperationFnSignature<Transaction> = ({
               opbytes = res.raw.opbytes;
               type = "DELEGATE";
               break;
-            case "undelegate":
-              res = await tezos.contract.setDelegate({
+            }
+            case "undelegate": {
+              const res = await tezos.contract.setDelegate({
                 ...params,
                 source: freshAddress,
               });
               opbytes = res.raw.opbytes;
               type = "UNDELEGATE";
               break;
-            default:
+            }
+            default: {
               throw new Error("not supported");
+            }
           }
 
           if (cancelled) {
@@ -122,7 +128,7 @@ export const signOperation: SignOperationFnSignature<Transaction> = ({
 
         main().then(
           () => o.complete(),
-          e => o.error(e),
+          err => o.error(err),
         );
 
         return () => {
