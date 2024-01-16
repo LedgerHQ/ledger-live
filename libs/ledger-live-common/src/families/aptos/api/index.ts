@@ -6,14 +6,20 @@ import network from "@ledgerhq/live-network/network";
 import { getEnv } from "@ledgerhq/live-env";
 
 import {
-  GetAccountTransactionsDataGt,
   GetAccountTransactionsDataQuery,
-  GetAccountTransactionsData,
-  GetAccountTransactionsDataLt,
   GetAccountTransactionsDataQueryVariables,
+  PartitionedDelegatedStakingActivities,
+  DelegatedStakingActivity,
+  GetDelegatedStakingActivitiesQuery,
+  StakePrincipals,
 } from "./graphql/types";
+import {
+  GetAccountTransactionsData,
+  GetAccountTransactionsDataGt,
+  GetAccountTransactionsDataLt,
+  GetDelegatedStakingActivities,
+} from "./graphql/queries";
 
-// import { isTestnet } from "../logic";
 import type {
   AptosResource,
   AptosCoinStoreResource,
@@ -22,13 +28,10 @@ import type {
 } from "../types";
 import { isUndefined } from "lodash";
 
+// const getApiEndpoint = (_: string) => getEnv("APTOS_API_ENDPOINT");
+// const getIndexerEndpoint = (_: string) => getEnv("APTOS_INDEXER_ENDPOINT");
 const getApiEndpoint = (_: string) => getEnv("APTOS_TESTNET_API_ENDPOINT");
 const getIndexerEndpoint = (_: string) => getEnv("APTOS_TESTNET_INDEXER_ENDPOINT");
-// TODO: uncomment before release
-// const getApiEndpoint = (currencyId: string) =>
-//   isTestnet(currencyId)
-//     ? getEnv("APTOS_TESTNET_API_ENDPOINT")
-//     : getEnv("APTOS_API_ENDPOINT");
 
 export class AptosAPI {
   private apiUrl: string;
@@ -104,16 +107,18 @@ export class AptosAPI {
   }
 
   async getAccountInfo(address: string, startAt: string) {
-    const [balance, transactions, blockHeight] = await Promise.all([
+    const [balance, transactions, blockHeight, delegatedBalance] = await Promise.all([
       this.getBalance(address),
       this.fetchTransactions(address, undefined, startAt),
       this.getHeight(),
+      this.getTotalStakedAmount(address),
     ]);
 
     return {
       balance,
       transactions,
       blockHeight,
+      delegatedBalance,
     };
   }
 
@@ -213,5 +218,71 @@ export class AptosAPI {
       height: parseInt(block.block_height),
       hash: block.block_hash,
     };
+  }
+
+  private async getDelegatedStakingActivitiesForAllPools(
+    delegatorAddress: string,
+  ): Promise<PartitionedDelegatedStakingActivities> {
+    const response = await this.apolloClient.query<GetDelegatedStakingActivitiesQuery>({
+      query: GetDelegatedStakingActivities,
+      variables: { delegatorAddress },
+    });
+
+    const data = response.data;
+    return data.delegated_staking_activities.reduce(
+      (acc: PartitionedDelegatedStakingActivities, item) => {
+        acc[item.pool_address] = acc[item.pool_address] || [];
+        acc[item.pool_address].push(item);
+        return acc;
+      },
+      {},
+    );
+  }
+
+  // https://github.com/aptos-labs/explorer/blob/5c9854e9f3ff97b6c1dcf07c930e53ffead6cedc/src/pages/DelegatoryValidator/utils.tsx#L64
+  private getStakeOperationPrincipals(activities: DelegatedStakingActivity[]): StakePrincipals {
+    let activePrincipals = 0;
+    let pendingInactivePrincipals = 0;
+
+    const activitiesCopy: DelegatedStakingActivity[] = JSON.parse(JSON.stringify(activities));
+
+    activitiesCopy
+      .sort((a, b) => Number(a.transaction_version) - Number(b.transaction_version))
+      .map((activity: DelegatedStakingActivity) => {
+        const eventType = activity.event_type.split("::")[2];
+        const amount = activity.amount;
+        switch (eventType) {
+          case "AddStakeEvent":
+            activePrincipals += amount;
+            break;
+          case "UnlockStakeEvent":
+            activePrincipals -= amount;
+            pendingInactivePrincipals += amount;
+            break;
+          case "ReactivateStakeEvent":
+            activePrincipals += amount;
+            pendingInactivePrincipals -= amount;
+            break;
+          case "WithdrawStakeEvent":
+            pendingInactivePrincipals -= amount;
+            break;
+        }
+        activePrincipals = activePrincipals < 0 ? 0 : activePrincipals;
+        pendingInactivePrincipals = pendingInactivePrincipals < 0 ? 0 : pendingInactivePrincipals;
+      });
+
+    return { activePrincipals, pendingInactivePrincipals };
+  }
+
+  async getTotalStakedAmount(delegatorAddress: string): Promise<BigNumber> {
+    const partitionedData = await this.getDelegatedStakingActivitiesForAllPools(delegatorAddress);
+
+    const stakedBalance = Object.values(partitionedData).reduce((total, activities) => {
+      const { activePrincipals, pendingInactivePrincipals } =
+        this.getStakeOperationPrincipals(activities);
+      return total + activePrincipals + pendingInactivePrincipals;
+    }, 0);
+
+    return new BigNumber(stakedBalance / 1e8);
   }
 }
