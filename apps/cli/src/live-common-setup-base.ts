@@ -98,6 +98,7 @@ setSupportedCurrencies([
   "casper",
   "neon_evm",
   "lukso",
+  "filecoin",
   "linea",
   "linea_goerli",
 ]);

@@ -165,6 +165,7 @@
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/wallet-api-client": "^1.5.0",
     "@ledgerhq/wallet-api-core": "^1.6.0",
+    "@ledgerhq/wallet-api-exchange-module": "workspace:^",
     "@ledgerhq/wallet-api-server": "^1.5.0",
     "@solana/spl-token": "^0.3.7",
     "@solana/web3.js": "1.77.3",

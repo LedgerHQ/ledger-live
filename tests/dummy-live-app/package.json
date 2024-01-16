@@ -1,5 +1,5 @@
 {
-  "name": "dummy-live-app",
+  "name": "@ledgerhq/dummy-live-app",
   "version": "0.1.2",
   "private": true,
   "dependencies": {

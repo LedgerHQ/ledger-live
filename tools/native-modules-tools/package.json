@@ -1,5 +1,5 @@
 {
-  "name": "native-modules-tools",
+  "name": "@ledgerhq/native-modules-tools",
   "private": true,
   "version": "1.0.2",
   "description": "Tools to crawl and package native nodejs addons",

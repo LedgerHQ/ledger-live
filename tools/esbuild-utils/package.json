@@ -1,5 +1,5 @@
 {
-  "name": "esbuild-utils",
+  "name": "@ledgerhq/esbuild-utils",
   "version": "1.0.1",
   "private": true,
   "description": "esbuild utility functions and plugins",

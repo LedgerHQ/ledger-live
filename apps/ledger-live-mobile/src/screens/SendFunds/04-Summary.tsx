@@ -8,13 +8,13 @@ import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/accoun
 import type { Account } from "@ledgerhq/types-live";
 import type { TransactionStatus as BitcoinTransactionStatus } from "@ledgerhq/live-common/families/bitcoin/types";
 import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
-import { NotEnoughBalance, NotEnoughGas } from "@ledgerhq/errors";
+import { NotEnoughGas } from "@ledgerhq/errors";
 import { useTheme } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import invariant from "invariant";
 
 import { accountScreenSelector } from "~/reducers/accounts";
-import { ScreenName, NavigatorName } from "~/const";
+import { ScreenName } from "~/const";
 import { TrackScreen } from "~/analytics";
 import { useTransactionChangeFromNavigation } from "~/logic/screenTransactionHooks";
 import Button from "~/components/Button";
@@ -32,14 +32,11 @@ import SectionSeparator from "~/components/SectionSeparator";
 import AlertTriangle from "~/icons/AlertTriangle";
 import ConfirmationModal from "~/components/ConfirmationModal";
 import NavigationScrollView from "~/components/NavigationScrollView";
-import Info from "~/icons/Info";
 import TooMuchUTXOBottomModal from "./TooMuchUTXOBottomModal";
-import { isCurrencySupported } from "../Exchange/coinifyConfig";
 import type { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
-import SupportLinkError from "~/components/SupportLinkError";
 
 type Navigation = BaseComposite<
   | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
@@ -50,18 +47,6 @@ type Navigation = BaseComposite<
 type Props = Navigation;
 
 const WARN_FROM_UTXO_COUNT = 50;
-
-const shouldDispayBuyCta = (error?: unknown): boolean => {
-  if (!error) {
-    return false;
-  }
-
-  if (error instanceof NotEnoughGas || error instanceof NotEnoughBalance) {
-    return true;
-  }
-
-  return false;
-};
 
 function SendSummary({ navigation, route }: Props) {
   const { colors } = useTheme();
@@ -154,19 +139,6 @@ function SendSummary({ navigation, route }: Props) {
     account.type === "Account" &&
     (account.subAccounts || []).some(subAccount => subAccount.balance.gt(0));
 
-  const onBuy = useCallback(
-    (account: Account) => {
-      navigation.navigate(NavigatorName.Exchange, {
-        screen: ScreenName.ExchangeBuy,
-        params: {
-          defaultAccountId: account.id,
-          defaultCurrencyId: account.currency.id,
-        },
-      });
-    },
-    [navigation],
-  );
-
   // FIXME: why is recipient sometimes empty?
   if (!account || !transaction || !transaction.recipient || !currencyOrToken) {
     return null;
@@ -237,26 +209,6 @@ function SendSummary({ navigation, route }: Props) {
           route={route}
         />
 
-        {error ? (
-          <View style={styles.gasPriceErrorContainer}>
-            <View style={styles.gasPriceError}>
-              <View
-                style={{
-                  padding: 4,
-                }}
-              >
-                <Info size={12} color={colors.alert} />
-              </View>
-              <LText style={[styles.error, styles.gasPriceErrorText]}>
-                <TranslatedError error={error} />
-              </LText>
-            </View>
-            <View>
-              <SupportLinkError error={error} type="alert" />
-            </View>
-          </View>
-        ) : null}
-
         {!amount.eq(totalSpent) && !hideTotal ? (
           <>
             <SectionSeparator lineColor={colors.lightFog} />
@@ -272,38 +224,18 @@ function SendSummary({ navigation, route }: Props) {
         <LText style={styles.error} color="alert">
           <TranslatedError error={transactionError} />
         </LText>
-        {shouldDispayBuyCta(error) ? (
-          // If the user does not enough funds for gas, he needs to buy
-          // the main account currency (which is not necessarily ETH depending
-          // on the EVM network used)
-          isCurrencySupported(mainAccount.currency) && (
-            <Button
-              event="SummaryBuyEth"
-              type="primary"
-              title={
-                <Trans
-                  i18nKey="buyCurrency.buyCTA"
-                  values={{
-                    currencyNameOrTicker: mainAccount.currency.name,
-                  }}
-                />
-              }
-              containerStyle={styles.continueButton}
-              onPress={() => onBuy(mainAccount)}
-            />
-          )
-        ) : (
-          <Button
-            event="SummaryContinue"
-            type="primary"
-            testID="summary-continue-button"
-            title={<Trans i18nKey="common.continue" />}
-            containerStyle={styles.continueButton}
-            onPress={() => setContinuing(true)}
-            disabled={bridgePending || !!transactionError}
-            pending={bridgePending}
-          />
-        )}
+        <Button
+          event="SummaryContinue"
+          type="primary"
+          testID="summary-continue-button"
+          title={<Trans i18nKey="common.continue" />}
+          containerStyle={styles.continueButton}
+          onPress={() => setContinuing(true)}
+          disabled={
+            bridgePending || !!transactionError || (!!error && error instanceof NotEnoughGas)
+          }
+          pending={bridgePending}
+        />
       </View>
       <ConfirmationModal
         isOpened={highFeesOpen}
