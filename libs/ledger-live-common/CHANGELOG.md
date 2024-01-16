@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 33.5.0-next.1
+
+### Patch Changes
+
+- [#5923](https://github.com/LedgerHQ/ledger-live/pull/5923) [`bfae509`](https://github.com/LedgerHQ/ledger-live/commit/bfae509744cef7592ed8795be2c35c6f0e7a8125) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Mitigate Solana error when fetching fees for an address
+
 ## 33.5.0-next.0
 
 ### Minor Changes
