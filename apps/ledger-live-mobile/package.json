@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-mobile",
-  "version": "3.37.0",
+  "version": "3.38.0-next.0",
   "private": true,
   "scripts": {
     "postinstall": "zx ./scripts/post.mjs",

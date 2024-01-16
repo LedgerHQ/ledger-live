@@ -1,5 +1,12 @@
 # next.js-example
 
+## 0.0.11-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/react-ui@0.14.14-next.0
+
 ## 0.0.10
 
 ### Patch Changes
