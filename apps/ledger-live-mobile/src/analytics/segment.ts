@@ -4,7 +4,7 @@ import { v4 as uuid } from "uuid";
 import * as Sentry from "@sentry/react-native";
 import Config from "react-native-config";
 import { Platform } from "react-native";
-import { createClient, SegmentClient } from "@segment/analytics-react-native";
+import { createClient, SegmentClient, UserTraits } from "@segment/analytics-react-native";
 import VersionNumber from "react-native-version-number";
 import RNLocalize from "react-native-localize";
 import { ReplaySubject } from "rxjs";
@@ -104,14 +104,14 @@ const extraProperties = async (store: AppStore) => {
   const lastDevice = lastSeenDeviceSelector(state) || devices[devices.length - 1];
   const deviceInfo = lastDevice
     ? {
-        deviceVersion: lastDevice.deviceInfo?.version,
-        deviceLanguage:
-          lastDevice.deviceInfo?.languageId !== undefined
-            ? idsToLanguage[lastDevice.deviceInfo.languageId]
-            : undefined,
-        appLength: (lastDevice as DeviceLike)?.appsInstalled,
-        modelId: lastDevice.modelId,
-      }
+      deviceVersion: lastDevice.deviceInfo?.version,
+      deviceLanguage:
+        lastDevice.deviceInfo?.languageId !== undefined
+          ? idsToLanguage[lastDevice.deviceInfo.languageId]
+          : undefined,
+      appLength: (lastDevice as DeviceLike)?.appsInstalled,
+      modelId: lastDevice.modelId,
+    }
     : {};
   const onboardingHasDevice = onboardingHasDeviceSelector(state);
   const notifications = notificationsSelector(state);
@@ -128,19 +128,19 @@ const extraProperties = async (store: AppStore) => {
   const { user } = await getOrCreateUser();
   const accountsWithFunds = accounts
     ? [
-        ...new Set(
-          accounts
-            .filter(account => account?.balance.isGreaterThan(0))
-            .map(account => account?.currency?.ticker),
-        ),
-      ]
+      ...new Set(
+        accounts
+          .filter(account => account?.balance.isGreaterThan(0))
+          .map(account => account?.currency?.ticker),
+      ),
+    ]
     : [];
   const blockchainsWithNftsOwned = accounts
     ? [
-        ...new Set(
-          accounts.filter(account => account.nfts?.length).map(account => account.currency.ticker),
-        ),
-      ]
+      ...new Set(
+        accounts.filter(account => account.nfts?.length).map(account => account.currency.ticker),
+      ),
+    ]
     : [];
   const hasGenesisPass = hasNftInAccounts(GENESIS_PASS_COLLECTION_CONTRACT, accounts);
   const hasInfinityPass = hasNftInAccounts(INFINITY_PASS_COLLECTION_CONTRACT, accounts);
@@ -164,8 +164,8 @@ const extraProperties = async (store: AppStore) => {
     onboardingHasDevice,
     ...(satisfaction
       ? {
-          satisfaction,
-        }
+        satisfaction,
+      }
       : {}),
     ...deviceInfo,
     notificationsBlacklisted,
@@ -213,7 +213,7 @@ export const start = async (store: AppStore): Promise<SegmentClient | undefined>
   return segmentClient;
 };
 
-export const updateIdentify = async (additionalProperties?: Record<string, unknown>) => {
+export const updateIdentify = async (additionalProperties?: UserTraits) => {
   Sentry.addBreadcrumb({
     category: "identify",
     level: "debug",
