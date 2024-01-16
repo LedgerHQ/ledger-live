@@ -220,20 +220,22 @@ class BitcoinLikeWallet {
 
     const inputIndexMap = txInfo.inputs.map((input, index) => ({
       input,
-      originalIndex: index
+      originalIndex: index,
     }));
 
-    const orderedInputsWithIndex = utils.lexicographicalIndexingTransactionInputs({
-      inputs: inputIndexMap.map(x => x.input),
-    }).map(input => {
-      const found = inputIndexMap.find(x => x.input === input);
-      if (!found) {
-        throw new Error("Matching input not found.");
-      }
-      return { input, originalIndex: found.originalIndex };
-    });
+    const orderedInputsWithIndex = utils
+      .lexicographicalIndexingTransactionInputs({
+        inputs: inputIndexMap.map(x => x.input),
+      })
+      .map(input => {
+        const found = inputIndexMap.find(x => x.input === input);
+        if (!found) {
+          throw new Error("Matching input not found.");
+        }
+        return { input, originalIndex: found.originalIndex };
+      });
 
-    const orderedInputs: TransactionInfo["inputs"] = orderedInputsWithIndex.map((item) => item.input);
+    const orderedInputs: TransactionInfo["inputs"] = orderedInputsWithIndex.map(item => item.input);
 
     const orderedOutputs: TransactionInfo["outputs"] =
       utils.lexicographicalIndexingTransactionOutputs({
@@ -279,8 +281,8 @@ class BitcoinLikeWallet {
       ([account, index]) =>
         `${fromAccount.params.path}/${fromAccount.params.index}'/${account}/${index}`,
     );
-    const orderedAssociatedKeysets = orderedInputsWithIndex.map(x =>
-      associatedKeysets[x.originalIndex]
+    const orderedAssociatedKeysets = orderedInputsWithIndex.map(
+      x => associatedKeysets[x.originalIndex],
     );
 
     type Inputs = [Transaction, number, string | null | undefined, number | null | undefined][];
