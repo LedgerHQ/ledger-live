@@ -1,6 +1,6 @@
 ---
-"@ledgerhq/ledger-live-desktop": patch
-"@ledgerhq/live-mobile": patch
+"ledger-live-desktop": patch
+"live-mobile": patch
 ---
 
 [polkadot] Account can chill regardless of amount bounded
