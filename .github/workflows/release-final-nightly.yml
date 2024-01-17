@@ -75,7 +75,7 @@ jobs:
       - name: tag mobile
         if: ${{ steps.mobile-version.outputs.version != steps.post-mobile-version.outputs.version }}
         run: |
-          git tag @ledgerhq/live-mobile@${{ steps.post-mobile-version.outputs.version }}
+          git tag live-mobile@${{ steps.post-mobile-version.outputs.version }}
       - name: push changes
         if: ${{ always() }}
         run: |

@@ -57,7 +57,7 @@ const devices: { [key in DeviceModelId]: DeviceModel } = {
     productIdMM: 0x50,
     legacyUsbProductId: 0x0005,
     usbOnly: true,
-    memorySize: 1536 * 1024,
+    memorySize: 1533 * 1024,
     masks: [0x33100000],
     getBlockSize: (_firmwareVersion: string): number => 32,
   },
@@ -85,7 +85,7 @@ const devices: { [key in DeviceModelId]: DeviceModel } = {
     productIdMM: 0x60,
     legacyUsbProductId: 0x0006,
     usbOnly: false,
-    memorySize: 1536 * 1024,
+    memorySize: 1533 * 1024,
     masks: [0x33200000],
     getBlockSize: (_firmwareVersion: string): number => 32,
     bluetoothSpec: [
