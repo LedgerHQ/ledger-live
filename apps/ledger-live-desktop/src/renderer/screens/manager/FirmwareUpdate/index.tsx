@@ -19,6 +19,7 @@ import { FakeLink } from "~/renderer/components/TopBanner";
 import { context } from "~/renderer/drawers/Provider";
 import { track } from "~/renderer/analytics/segment";
 import { LocalTracer } from "@ledgerhq/logs";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 
 type Props = {
   deviceInfo: DeviceInfo;
@@ -71,7 +72,7 @@ const FirmwareUpdate = (props: Props) => {
   const deviceSpecs = getDeviceModel(device.modelId);
   const isDeprecated = manager.firmwareUnsupported(device.modelId, deviceInfo);
   const [tracer] = useState(() => new LocalTracer("manager", { component: "FirmwareUpdate" }));
-
+  const contactSupportUrl = useLocalizedUrl(urls.contactSupport);
   const onDrawerClose = useCallback(() => {
     onReset((installed || []).map(({ name }) => name));
   }, [installed, onReset]);
@@ -163,7 +164,7 @@ const FirmwareUpdate = (props: Props) => {
       <FirmwareUpdateBanner
         old
         right={
-          <FakeLink onClick={() => openURL(urls.contactSupport)}>
+          <FakeLink onClick={() => openURL(contactSupportUrl)}>
             <Trans i18nKey="manager.firmware.banner.old.cta" />
           </FakeLink>
         }

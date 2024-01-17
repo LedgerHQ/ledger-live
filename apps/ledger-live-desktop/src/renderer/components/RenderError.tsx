@@ -24,6 +24,7 @@ type Props = {
 export default function RenderError({ error, withoutAppData, children }: Props) {
   const { t } = useTranslation();
   const hardReset = useHardReset();
+  const troubleshootingCrashUrl = urls.troubleshootingCrash;
   const [isHardResetting, setIsHardResetting] = useState(false);
   const [isHardResetModalOpened, setIsHardResetModalOpened] = useState(false);
   const handleOpenHardResetModal = useCallback(() => {
@@ -32,9 +33,9 @@ export default function RenderError({ error, withoutAppData, children }: Props) 
   const handleCloseHardResetModal = useCallback(() => {
     setIsHardResetModalOpened(false);
   }, []);
-  const troubleshootingCrash = useCallback(() => {
-    openURL(urls.troubleshootingCrash);
-  }, []);
+  const troubleshootingCrash = () => {
+    openURL(troubleshootingCrashUrl);
+  };
   const hardResetIconRender = useCallback(
     () => (
       <IconWrapperCircle color="alertRed">

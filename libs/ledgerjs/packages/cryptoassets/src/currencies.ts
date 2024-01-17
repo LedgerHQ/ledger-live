@@ -677,7 +677,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     coinType: CoinType.ATOM,
     name: "Coreum",
     managerAppName: "Cosmos",
-    ticker: "CORE",
+    ticker: "COREUM",
     scheme: "coreum",
     color: "#6DD39A",
     family: "cosmos",

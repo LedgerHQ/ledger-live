@@ -81,7 +81,7 @@ async function initializeUserSupportedFiats() {
 
 export async function fetchSupportedFiatsTokens(): Promise<string[]> {
   try {
-    const response = await fetch("https://countervalues.live.ledger.com/v2/supported-to", {
+    const response = await fetch(`${getEnv("LEDGER_COUNTERVALUES_API")}/v2/supported-to`, {
       method: "GET",
       headers: {
         accept: "application/json",

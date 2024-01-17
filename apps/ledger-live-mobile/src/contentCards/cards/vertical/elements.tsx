@@ -166,6 +166,7 @@ export const Container = ({ size, children }: { size: Size } & PropsWithChildren
         justifyContent: "space-between",
         alignItems: "center",
         backgroundColor: colors.opacityDefault.c05,
+        paddingHorizontal: 10,
 
         ...ContainerStyles[size],
       }}

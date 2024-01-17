@@ -5576,7 +5576,7 @@
       "title" : "Çözülecek varlık yok",
       "description" : "Enerjiyle ilişkili olan ve çözülebilecek herhangi bir varlığınız bulunmuyor"
     },
-    "TronUnfreezeNotExpired" : {
+    "TronLegacyUnfreezeNotExpired" : {
       "title" : "Varlık çözme işlevi henüz açık değil",
       "description" : "Son Dondurma işleminden sonra 3 gün beklemeniz gerekiyor"
     },
