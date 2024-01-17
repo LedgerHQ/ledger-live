@@ -1,0 +1,97 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ton currency bridge scanAccounts ton seed 1 1`] = `
+[
+  {
+    "balance": "1000000000",
+    "currencyId": "ton",
+    "derivationMode": "ton",
+    "freshAddress": "UQCOvQLYvTcbi5tL9MaDNzuVl3-J3vATimNm9yO5XPafLfV4",
+    "freshAddressPath": "44'/607'/0'/0'/0'/0'",
+    "freshAddresses": [
+      {
+        "address": "UQCOvQLYvTcbi5tL9MaDNzuVl3-J3vATimNm9yO5XPafLfV4",
+        "derivationPath": "44'/607'/0'/0'/0'/0'",
+      },
+    ],
+    "id": "js:2:ton:86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060:ton",
+    "index": 0,
+    "name": "TON 1",
+    "nfts": undefined,
+    "operationsCount": 1,
+    "pendingOperations": [],
+    "seedIdentifier": "86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060",
+    "spendableBalance": "1000000000",
+    "starred": false,
+    "swapHistory": [],
+    "syncHash": undefined,
+    "unitMagnitude": 9,
+    "used": true,
+    "xpub": "86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060",
+  },
+  {
+    "balance": "0",
+    "currencyId": "ton",
+    "derivationMode": "ton",
+    "freshAddress": "UQAui6M4jOYOezUGfmeONA22Ars9yjd34YIGdAR1Pcpp4sgR",
+    "freshAddressPath": "44'/607'/0'/0'/1'/0'",
+    "freshAddresses": [
+      {
+        "address": "UQAui6M4jOYOezUGfmeONA22Ars9yjd34YIGdAR1Pcpp4sgR",
+        "derivationPath": "44'/607'/0'/0'/1'/0'",
+      },
+    ],
+    "id": "js:2:ton:b5177c2b32f9d72fa8c673cc3d61acec6a9f68eb5e4945445fdbb48a45eb4887:ton",
+    "index": 1,
+    "name": "TON 2",
+    "nfts": undefined,
+    "operationsCount": 0,
+    "pendingOperations": [],
+    "seedIdentifier": "86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060",
+    "spendableBalance": "0",
+    "starred": false,
+    "swapHistory": [],
+    "syncHash": undefined,
+    "unitMagnitude": 9,
+    "used": false,
+    "xpub": "b5177c2b32f9d72fa8c673cc3d61acec6a9f68eb5e4945445fdbb48a45eb4887",
+  },
+]
+`;
+
+exports[`ton currency bridge scanAccounts ton seed 1 2`] = `
+[
+  [
+    {
+      "accountId": "js:2:ton:86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060:ton",
+      "blockHash": null,
+      "blockHeight": 35650189,
+      "contract": undefined,
+      "extra": {
+        "comment": {
+          "isEncrypted": false,
+          "text": "",
+        },
+        "explorerHash": "mzCqNBjsEDmpgq5VMfNfNqnslW64f/B1seatUCej9TY=",
+        "lt": "44161792000003",
+      },
+      "fee": "0",
+      "hasFailed": false,
+      "hash": "V0y/lJDCYzAgmzNVA+dapRQemNP+AJpVhCxBhs7eNfQ=",
+      "id": "js:2:ton:86196cb40cd25e9e696bc808e3f2c074ce0b39f2a2a9d482a68eafef86e4a060:ton-V0y/lJDCYzAgmzNVA+dapRQemNP+AJpVhCxBhs7eNfQ=-IN",
+      "operator": undefined,
+      "recipients": [
+        "UQCOvQLYvTcbi5tL9MaDNzuVl3-J3vATimNm9yO5XPafLfV4",
+      ],
+      "senders": [
+        "UQDzd8aeBOU-jqYw_ZSuZjceI5p-F4b7HMprAsUJAtRPbMol",
+      ],
+      "standard": undefined,
+      "tokenId": undefined,
+      "type": "IN",
+      "value": "1000000000",
+    },
+  ],
+  [],
+]
+`;
