@@ -1,9 +1,10 @@
 import BigNumber from "bignumber.js";
 import { TxnBuilderTypes } from "aptos";
+import type { Account } from "@ledgerhq/types-live";
 
 import { AptosAPI } from "./api";
 import { DEFAULT_GAS, DEFAULT_GAS_PRICE, normalizeTransactionOptions } from "./logic";
-import type { Transaction, AptosAccount as Account } from "./types";
+import type { Transaction } from "./types";
 
 const buildTransaction = async (
   account: Account,
