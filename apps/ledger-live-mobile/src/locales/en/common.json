@@ -6583,5 +6583,91 @@
       "text": "Get {{coin}} to stake",
       "description": "Buy, swap or receive crypto directly to your Ledger using Ledger Live."
     }
+  },
+  "analyticsOptIn": {
+    "variantA": {
+      "main": {
+        "title": "Help us improve and personalize your experience.",
+        "subtitle": "No personal identifying information is captured, we only track usage to create the best experience for you.",
+        "content": {
+          "able": {
+            "title": "Ledger Live will be able to track:",
+            "diagAndUsage": "Diagnostic and usage data"
+          },
+          "unable": {
+            "title": "Ledger Live will never collect:",
+            "adresses": "Your addresses",
+            "balance": "Your balances",
+            "nfts": "Your NFTs",
+            "personnalInfos": "Personal identifying information"
+          },
+          "moreOptions": "More options",
+          "ctas": {
+            "refuse": "Refuse all",
+            "accept": "Accept all"
+          },
+          "infoText": {
+            "info": "Please note that you can withdraw your consent at any time in the settings of the app.",
+            "link": "Click here to learn more."
+          }
+        }
+      },
+      "details": {
+        "title": "Manage your preferences",
+        "analytics":{
+          "title": "Analytics",
+          "description": "Help Ledger improve the application by sharing app usage and diagnostic data.",
+          "link": "Learn more"
+        },
+        "personalizedExp":{
+          "title": "Personalized experience",
+          "description": "Receive personalised recommendations that match your preferences.",
+          "link": "Learn more"
+        },
+        "ctas": {
+          "notNow": "Not now",
+          "allow": "Allow"
+        },
+        "infoText": {
+          "info": "You can withdraw your consent at any time in the settings of the app.",
+          "link": "Click here to learn more."
+        }
+      }
+    },
+    "variantB": {
+      "main": {
+        "title": "Lets improve Ledger Live together",
+         "description": "Sharing your Ledger Live usage and diagnostics data helps us understand how people are using Ledger Live and fix technical issues.",
+         "bulletPoints": {
+           "1": "Usage and diagnostics data includes page visits, clicks, conversion, and bug reports.",
+           "2": "We won’t collect or see your addresses, accounts, balance, NFTs or any other information related to your portfolio.",
+           "3": "Analytics are totally anonymous. We can’t see or collect your personal information."
+         },
+         "ctas": {
+          "refuse": "Refuse",
+          "share": "Share"
+        },
+         "infoText": {
+            "info": "You can withdraw your consent at any time in the settings of the app.",
+            "link": "Learn more about revoking consent"
+         }
+      },
+      "details": {
+        "title": "Get a personnalized experience.",
+         "description": "Allow us to give you the best experience possible",
+         "bulletPoints": {
+           "1": "Personnalized recommandations",
+           "2": "Personnalized notifications",
+         },
+         "ctas": {
+          "refuse": "Refuse",
+          "allow": "Allow"
+        },
+         "infoText": {
+            "info": "You can withdraw your consent at any time in the settings of the app.",
+            "link": "Learn more about revoking consent"
+         }
+      }
+    }
   }
 }
