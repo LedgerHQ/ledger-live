@@ -112,7 +112,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     managerAppName: "Aptos",
     ticker: "APT",
     scheme: "aptos_testnet",
-    color: "#231F20",
+    color: "#FFCD29",
     family: "aptos",
     isTestnetFor: "aptos",
     units: [

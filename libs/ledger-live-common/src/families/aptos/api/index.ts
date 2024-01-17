@@ -4,7 +4,9 @@ import type { Types as AptosTypes } from "aptos";
 import BigNumber from "bignumber.js";
 import network from "@ledgerhq/live-network/network";
 import { getEnv } from "@ledgerhq/live-env";
+import { isUndefined } from "lodash";
 
+import { isTestnet } from "../logic";
 import {
   GetAccountTransactionsDataQuery,
   GetAccountTransactionsDataQueryVariables,
@@ -27,10 +29,13 @@ import type {
   AptosTransaction,
   Transaction,
 } from "../types";
-import { isUndefined } from "lodash";
 
-const getApiEndpoint = (_: string) => getEnv("APTOS_API_ENDPOINT");
-const getIndexerEndpoint = (_: string) => getEnv("APTOS_INDEXER_ENDPOINT");
+const getApiEndpoint = (currencyId: string) =>
+  isTestnet(currencyId) ? getEnv("APTOS_TESTNET_API_ENDPOINT") : getEnv("APTOS_API_ENDPOINT");
+const getIndexerEndpoint = (currencyId: string) =>
+  isTestnet(currencyId)
+    ? getEnv("APTOS_TESTNET_INDEXER_ENDPOINT")
+    : getEnv("APTOS_INDEXER_ENDPOINT");
 
 export class AptosAPI {
   private apiUrl: string;
