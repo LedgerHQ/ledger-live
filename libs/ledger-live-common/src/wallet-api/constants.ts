@@ -13,14 +13,7 @@ export const WALLET_API_FAMILIES = [...FAMILIES, "evm"];
 export const WALLET_API_VERSION = "2.0.0";
 
 export const BROWSE_SEARCH_OPTIONS: Fuse.IFuseOptions<AppManifest> = {
-  keys: [
-    "name",
-    "categories",
-    {
-      name: "mergedDescriptions",
-      getFn: item => Object.values(item.content.description).join(" "),
-    },
-  ],
+  keys: ["name", "categories"],
   threshold: 0.1,
 };
 
