@@ -25,6 +25,8 @@ import { ManagerNavigatorStackParamList } from "~/components/RootNavigator/types
 import ServicesWidget from "~/components/ServicesWidget";
 
 import { useManagerDeviceAction } from "~/hooks/deviceActions";
+import ContentCardsLocation from "~/dynamicContent/ContentCardsLocation";
+import { ContentCardLocation } from "~/dynamicContent/types";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<ManagerNavigatorStackParamList, ScreenName.Manager>
@@ -151,20 +153,23 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
         </Flex>
       ) : (
         <NavigationScrollView contentContainerStyle={styles.scrollContainer}>
-          <SelectDevice
-            usbOnly={params?.firmwareUpdate}
-            autoSelectOnAdd
-            onSelect={onSelectDevice}
-            onBluetoothDeviceAction={onShowMenu}
-          />
-          {chosenDevice ? (
-            <RemoveDeviceMenu
-              open={showMenu}
-              device={chosenDevice as Device}
-              onHideMenu={onHideMenu}
+          <Flex px={16}>
+            <SelectDevice
+              usbOnly={params?.firmwareUpdate}
+              autoSelectOnAdd
+              onSelect={onSelectDevice}
+              onBluetoothDeviceAction={onShowMenu}
             />
-          ) : null}
-          <ServicesWidget />
+            {chosenDevice ? (
+              <RemoveDeviceMenu
+                open={showMenu}
+                device={chosenDevice as Device}
+                onHideMenu={onHideMenu}
+              />
+            ) : null}
+            <ServicesWidget />
+          </Flex>
+          <ContentCardsLocation locationId={ContentCardLocation.MyLedger} mb={32} />
         </NavigationScrollView>
       )}
       <DeviceActionModal
@@ -182,7 +187,6 @@ const ChooseDevice: React.FC<ChooseDeviceProps> = ({ isFocused }) => {
 
 const styles = StyleSheet.create({
   scrollContainer: {
-    paddingHorizontal: 16,
     flexGrow: 1,
     justifyContent: "space-between",
   },

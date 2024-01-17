@@ -17,7 +17,7 @@ import {
   mapAsMediumSquareContentCard,
   mapAsBigSquareContentCard,
 } from "~/dynamicContent/utils";
-import Carousel from "../../contentCards/layouts/carousel";
+import Carousel, { WidthFactor } from "../../contentCards/layouts/carousel";
 import useDynamicContent from "../useDynamicContent";
 import { ContentCardsType } from "../types";
 import Grid from "~/contentCards/layouts/grid";
@@ -114,7 +114,12 @@ const Layout = ({ category, cards }: LayoutProps) => {
 
   switch (category.cardsLayout) {
     case ContentCardsLayout.carousel:
-      return <Carousel items={items} />;
+      return (
+        <Carousel
+          items={items}
+          styles={{ widthFactor: cardsSorted[0].carouselWidthFactor || WidthFactor.Full }}
+        />
+      );
     case ContentCardsLayout.grid:
       return <Grid items={items} />;
     case ContentCardsLayout.unique:

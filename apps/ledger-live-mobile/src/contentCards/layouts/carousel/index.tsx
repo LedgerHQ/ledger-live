@@ -15,8 +15,8 @@ import { ContentCardItem } from "~/contentCards/cards/types";
 
 export enum WidthFactor {
   Full = 1,
-  Quarter = 0.72,
   Half = 0.5,
+  ThreeQuarters = 0.72,
 }
 
 type Props = {
@@ -44,7 +44,7 @@ const Carousel = ContentLayoutBuilder<Props>(({ items, styles: _styles = default
 
   const separatorWidth = useTheme().space[styles.gap];
 
-  const isPaginationEnabled = styles.pagination && styles.widthFactor >= WidthFactor.Quarter;
+  const isPaginationEnabled = styles.pagination && styles.widthFactor >= WidthFactor.ThreeQuarters;
 
   const carouselRef = useRef<FlatList>(null);
   const [carouselIndex, setCarouselIndex] = useState(0);
