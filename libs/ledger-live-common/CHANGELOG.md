@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 33.5.0-next.3
+
+### Patch Changes
+
+- [#5942](https://github.com/LedgerHQ/ledger-live/pull/5942) [`6ac34be`](https://github.com/LedgerHQ/ledger-live/commit/6ac34beba9692bde7aad7c6ad38e83cb0b79fb0e) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Fix: inline install app while another app is opened
+
 ## 33.5.0-next.2
 
 ### Patch Changes
