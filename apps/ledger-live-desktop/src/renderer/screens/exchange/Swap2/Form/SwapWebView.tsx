@@ -62,12 +62,9 @@ export type SwapWebProps = {
 
 export const SWAP_WEB_MANIFEST_ID = "swap-live-app-demo-0";
 
-const SwapWebAppWrapper = styled.div<{ isDevelopment: boolean }>(
-  ({ isDevelopment }) => `
-  ${!isDevelopment ? "height: 0px;" : ""}
+const SwapWebAppWrapper = styled.div<{ isDevelopment: boolean }>`
   width: 100%;
-`,
-);
+`
 
 const SwapWebView = ({ swapState, liveAppUnavailable }: SwapWebProps) => {
   const {
