@@ -68,5 +68,6 @@ export const useSwapLiveAppHook = (props: UseSwapLiveAppHookProps) => {
     swapError,
     swapTransaction.bridgePending,
     exchangeRatesState.status,
+    updateSwapWebProps,
   ]);
 };

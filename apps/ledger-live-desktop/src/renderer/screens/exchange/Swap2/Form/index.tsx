@@ -38,7 +38,7 @@ import SwapWebView, { SWAP_WEB_MANIFEST_ID, SwapWebProps } from "./SwapWebView";
 import { SwapMigrationNativeUI } from "./Migrations/SwapMigrationNativeUI";
 import { useSwapLiveAppHook } from "~/renderer/hooks/swap-migrations/useSwapLiveAppHook";
 import { maybeTezosAccountUnrevealedAccount } from "@ledgerhq/live-common/exchange/swap/index";
-import SwapFormSummary from './FormSummary'
+import SwapFormSummary from "./FormSummary";
 
 const DAPP_PROVIDERS = ["paraswap", "oneinch", "moonpay"];
 
