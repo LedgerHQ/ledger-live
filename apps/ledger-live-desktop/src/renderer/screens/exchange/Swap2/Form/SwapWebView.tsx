@@ -80,7 +80,7 @@ export const useSwapLiveAppManifestID = () => {
   }
 };
 
-const SwapWebAppWrapper = styled.div<{ isDevelopment: boolean }>`
+const SwapWebAppWrapper = styled.div`
   width: 100%;
 `
 
