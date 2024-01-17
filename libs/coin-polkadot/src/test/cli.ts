@@ -10,10 +10,10 @@ import {
 import {
   SidecarValidatorsParamAddresses,
   SidecarValidatorsParamStatus,
-} from "../api/sidecar.types";
+} from "../network/sidecar.types";
 import { AccountLike } from "@ledgerhq/types-live";
 import { PolkadotAccount, PolkadotValidator, Transaction } from "../types";
-import { PolkadotAPI } from "../api";
+import { PolkadotAPI } from "../network";
 import { NetworkRequestCall } from "@ledgerhq/coin-framework/network";
 import { LRUCacheFn } from "@ledgerhq/coin-framework/cache";
 type Options =

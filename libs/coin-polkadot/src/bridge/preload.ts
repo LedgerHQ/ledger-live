@@ -4,7 +4,7 @@ import { Observable, Subject } from "rxjs";
 import { log } from "@ledgerhq/logs";
 import type { PolkadotPreloadData, PolkadotStakingProgress, PolkadotValidator } from "../types";
 import { loadPolkadotCrypto } from "./polkadot-crypto";
-import { PolkadotAPI } from "../api";
+import { PolkadotAPI } from "../network";
 
 const PRELOAD_MAX_AGE = 60 * 1000;
 

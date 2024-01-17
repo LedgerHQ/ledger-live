@@ -15,7 +15,7 @@ import type {
   Operation,
   SignedOperation,
 } from "@ledgerhq/types-live";
-import { PolkadotAPI } from "../api";
+import { PolkadotAPI } from "../network";
 import resolver from "./hw-getAddress";
 import createTransaction from "./createTransaction";
 import estimateMaxSpendable from "./estimateMaxSpendable";

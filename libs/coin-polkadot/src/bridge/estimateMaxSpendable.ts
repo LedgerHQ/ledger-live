@@ -6,7 +6,7 @@ import { calculateAmount } from "./logic";
 import getEstimatedFees from "./getFeesForTransaction";
 import createTransaction from "./createTransaction";
 import { loadPolkadotCrypto } from "./polkadot-crypto";
-import { PolkadotAPI } from "../api";
+import { PolkadotAPI } from "../network";
 
 /**
  * Returns the maximum possible amount for transaction

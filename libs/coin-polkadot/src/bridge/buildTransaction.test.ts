@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import { cryptocurrenciesById } from "@ledgerhq/cryptoassets";
 import { PolkadotAccount, PolkadotOperationMode, Transaction } from "../types";
 import { buildTransaction } from "./buildTransaction";
-import { PolkadotAPI } from "../api";
+import { PolkadotAPI } from "../network";
 import { TypeRegistry } from "@polkadot/types";
 import { NetworkRequestCall } from "@ledgerhq/coin-framework/network";
 import { makeNoCache } from "@ledgerhq/coin-framework/cache";
@@ -24,7 +24,7 @@ const transactionParams = {
   tip: 8,
   transactionVersion: 22,
 };
-jest.mock("../api", () => ({
+jest.mock("../network", () => ({
   PolkadotAPI: jest.fn().mockImplementation(() => {
     return {
       getRegistry: () => {

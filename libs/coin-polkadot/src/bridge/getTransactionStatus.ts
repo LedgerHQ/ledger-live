@@ -39,7 +39,7 @@ import {
 import { isValidAddress } from "../common";
 import { getCurrentPolkadotPreloadData } from "./preload";
 import { loadPolkadotCrypto } from "./polkadot-crypto";
-import { PolkadotAPI } from "../api";
+import { PolkadotAPI } from "../network";
 
 // Should try to refacto
 const getSendTransactionStatus =

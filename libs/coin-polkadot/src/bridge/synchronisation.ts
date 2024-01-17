@@ -1,7 +1,7 @@
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { PolkadotAPI } from "../api";
+import { PolkadotAPI } from "../network";
 import { loadPolkadotCrypto } from "./polkadot-crypto";
 
 export function makeGetAccountShape(polkadotAPI: PolkadotAPI): GetAccountShape {

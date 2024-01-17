@@ -4,7 +4,7 @@ import type { PolkadotAccount, Transaction } from "../types";
 import { calculateAmount } from "./logic";
 import { buildTransaction } from "./buildTransaction";
 import { fakeSignExtrinsic } from "./signOperation";
-import { PolkadotAPI } from "../api";
+import { PolkadotAPI } from "../network";
 
 /**
  * Fetch the transaction fees for a transaction
