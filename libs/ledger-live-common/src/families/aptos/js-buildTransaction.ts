@@ -22,7 +22,7 @@ const buildTransaction = async (
   const txPayload = getPayload(transaction.recipient, amount);
   const txOptions = normalizeTransactionOptions(transaction.options);
   const tx = await aptosClient.generateTransaction(
-    account.freshAddresses[0].address,
+    account.freshAddresses[0]?.address || account.freshAddress,
     txPayload,
     txOptions,
   );

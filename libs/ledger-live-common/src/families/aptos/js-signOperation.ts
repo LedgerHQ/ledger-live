@@ -32,7 +32,7 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
           o.next({ type: "device-signature-requested" });
 
           const ledgerAccount = new LedgerAccount(
-            account.freshAddresses[0].derivationPath,
+            account.freshAddresses[0]?.derivationPath || account.freshAddressPath,
             account.xpub as string,
           );
           await ledgerAccount.init(transport);
