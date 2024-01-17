@@ -41,7 +41,6 @@ import openTransportAsSubject, { BidirectionalEvent } from "../hw/openTransportA
 import { AppResult } from "../hw/actions/app";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { Transaction } from "../generated/types";
-import { useManifests } from "../platform/providers/RemoteLiveAppProvider";
 import { DISCOVER_INITIAL_CATEGORY, MAX_RECENTLY_USED_LENGTH } from "./constants";
 import { DiscoverDB } from "./types";
 
@@ -775,12 +774,6 @@ export enum ExchangeType {
 }
 
 export interface Categories {
-  manifests: {
-    all: AppManifest[];
-    complete: AppManifest[];
-    searchable: AppManifest[];
-  };
-  searchable: AppManifest[];
   categories: string[];
   manifestsByCategories: Map<string, AppManifest[]>;
   selected: string;
@@ -788,48 +781,19 @@ export interface Categories {
   reset: () => void;
 }
 
-export function useCategories(): Categories {
-  const all = useManifests();
-  const complete = useMemo(() => all.filter(m => m.visibility === "complete"), [all]);
-  const searchable = useMemo(
-    () => all.filter(m => ["complete", "searchable"].includes(m.visibility)),
-    [all],
-  );
-  const { categories, manifestsByCategories } = useCategoriesRaw(complete);
+export function useCategories(manifests): Categories {
   const [selected, setSelected] = useState(DISCOVER_INITIAL_CATEGORY);
 
   const reset = useCallback(() => {
     setSelected(DISCOVER_INITIAL_CATEGORY);
   }, []);
 
-  return useMemo(
-    () => ({
-      manifests: {
-        all,
-        complete,
-        searchable,
-      },
-      searchable,
-      categories,
-      manifestsByCategories,
-      selected,
-      setSelected,
-      reset,
-    }),
-    [all, complete, searchable, categories, manifestsByCategories, selected, setSelected, reset],
-  );
-}
-
-function useCategoriesRaw(manifests: AppManifest[]): {
-  categories: string[];
-  manifestsByCategories: Map<string, AppManifest[]>;
-} {
   const manifestsByCategories = useMemo(() => {
     const res = manifests.reduce(
-      (res, m) => {
-        m.categories.forEach(c => {
-          const list = res.has(c) ? [...res.get(c), m] : [m];
-          res.set(c, list);
+      (res, manifest) => {
+        manifest.categories.forEach(category => {
+          const list = res.has(category) ? [...res.get(category), manifest] : [manifest];
+          res.set(category, list);
         });
 
         return res;
@@ -842,10 +806,16 @@ function useCategoriesRaw(manifests: AppManifest[]): {
 
   const categories = useMemo(() => [...manifestsByCategories.keys()], [manifestsByCategories]);
 
-  return {
-    categories,
-    manifestsByCategories,
-  };
+  return useMemo(
+    () => ({
+      categories,
+      manifestsByCategories,
+      selected,
+      setSelected,
+      reset,
+    }),
+    [categories, manifestsByCategories, selected, reset],
+  );
 }
 
 export type RecentlyUsedDB = StateDB<DiscoverDB, DiscoverDB["recentlyUsed"]>;

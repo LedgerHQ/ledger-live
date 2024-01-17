@@ -50,10 +50,7 @@ export function Catalog() {
             bodyContent={
               <AnimatedView animation="fadeInUp" delay={50} duration={300}>
                 <Flex paddingTop={4}>
-                  <ManifestList
-                    manifests={categories.manifestsByCategories.get(categories.selected) ?? []}
-                    onSelect={disclaimer.onSelect}
-                  />
+                  <ManifestList manifests={search.result} onSelect={disclaimer.onSelect} />
                 </Flex>
               </AnimatedView>
             }

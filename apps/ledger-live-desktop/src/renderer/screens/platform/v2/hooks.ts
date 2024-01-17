@@ -20,17 +20,20 @@ import { dismissBanner } from "~/renderer/actions/settings";
 import { useCallback, useMemo } from "react";
 import { useHistory } from "react-router";
 import { closePlatformAppDrawer, openPlatformAppDisclaimerDrawer } from "~/renderer/actions/UI";
+import { useManifests } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 
 export function useCatalog(db: RecentlyUsedDB) {
-  const categories = useCategories();
-  const recentlyUsed = useRecentlyUsed(categories.manifests.all, db);
+  const completeManifests = useManifests({ visibility: ["complete"] });
+  const combinedManifests = useManifests({ visibility: ["searchable", "complete"] });
+  const categories = useCategories(completeManifests);
+  const recentlyUsed = useRecentlyUsed(combinedManifests, db);
+
   const search = useSearch({
-    listInput: categories.manifests.searchable,
-    listFilter: categories.manifests.complete,
+    list: combinedManifests,
     options: BROWSE_SEARCH_OPTIONS,
-    filter: item => {
-      if (categories.selected === "all") return true;
-      return item.categories.includes(categories.selected);
+    filter: (item: AppManifest, input: string) => {
+      if (categories.selected === "all" || input) return true;
+      return completeManifests.includes(item) && item.categories.includes(categories.selected);
     },
   });
   const disclaimer = useDisclaimer(recentlyUsed.append);

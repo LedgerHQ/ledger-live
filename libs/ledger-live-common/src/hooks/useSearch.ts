@@ -3,17 +3,15 @@ import Fuse from "fuse.js";
 import { useDebounce } from "../hooks/useDebounce";
 
 export function useSearch<Item, T extends TextInput | undefined = undefined>({
-  listInput,
-  listFilter,
+  list,
   options,
   defaultInput = "",
   filter,
 }: {
-  listInput: Item[];
-  listFilter: Item[];
+  list: Item[];
   defaultInput?: string;
   options: Fuse.IFuseOptions<Item>;
-  filter?: (item: Item) => void;
+  filter?: (item: Item, input: string) => void;
 }): SearchRaw<Item, T> {
   const inputRef = useRef<T>(null);
   const [isActive, setIsActive] = useState(false);
@@ -23,8 +21,8 @@ export function useSearch<Item, T extends TextInput | undefined = undefined>({
 
   const [isSearching, setIsSearching] = useState(false);
 
-  const [result, setResult] = useState(listInput);
-  const fuse = useRef(new Fuse(listInput, options));
+  const [result, setResult] = useState(list);
+  const fuse = useRef(new Fuse(list, options));
 
   const onChange = useCallback((value: string) => {
     if (value.length !== 0) {
@@ -63,14 +61,10 @@ export function useSearch<Item, T extends TextInput | undefined = undefined>({
   }, []);
 
   const resultOut = useMemo(() => {
-    // filter using the input
-    if (input !== "") {
-      return result;
-    }
+    const res = input === "" ? list : result;
 
-    // filter using the categories
-    return filter ? listFilter.filter(filter) : listFilter;
-  }, [filter, input, listFilter, result]);
+    return filter ? res.filter(item => filter(item, input)) : res;
+  }, [list, result, input, filter]);
 
   return {
     inputRef,

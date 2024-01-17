@@ -28,12 +28,12 @@ interface Props {
   title: React.ReactNode;
   subtitle?: React.ReactNode;
   listTitle?: React.ReactNode;
-  categories: Pick<Categories, "manifests">;
+  categories: Categories;
   disclaimer: Pick<Disclaimer, "onSelect">;
   search: SearchType;
 }
 
-export function Search({ title, categories, disclaimer, search }: Props) {
+export function Search({ title, disclaimer, search }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
 
@@ -103,10 +103,7 @@ export function Search({ title, categories, disclaimer, search }: Props) {
                 {!!search.input.length && !search.result.length ? (
                   noResultFoundComponent
                 ) : (
-                  <ManifestList
-                    manifests={search.input ? search.result : categories.manifests.complete}
-                    onSelect={disclaimer.onSelect}
-                  />
+                  <ManifestList manifests={search.result} onSelect={disclaimer.onSelect} />
                 )}
               </Flex>
             </AnimatedView>
