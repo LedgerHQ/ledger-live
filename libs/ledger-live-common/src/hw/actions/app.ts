@@ -26,7 +26,6 @@ import { getImplementation, ImplementationType } from "./implementations";
 
 export type State = {
   isLoading: boolean;
-  isDisconnected: boolean;
   requestQuitApp: boolean;
   requestOpenApp: string | null | undefined;
   requiresAppInstallation:
@@ -134,7 +133,6 @@ const mapResult = ({
 
 const getInitialState = (device?: Device | null | undefined, request?: AppRequest): State => ({
   isLoading: !!device,
-  isDisconnected: false,
   requestQuitApp: false,
   requestOpenApp: null,
   unresponsive: false,
@@ -188,18 +186,10 @@ const reducer = (state: State, e: Event): State => {
       return {
         ...getInitialState(null, state.request),
         isLoading: !!e.expected,
-        isDisconnected: true,
       };
 
     case "deviceChange":
-      // Preserve the current state when the device is disconnected to avoid displaying
-      // the loader drawer above the disconnected one.
-      if (state.isDisconnected) return state;
-
-      return {
-        ...getInitialState(e.device, state.request),
-        device: e.device,
-      };
+      return { ...getInitialState(e.device, state.request), device: e.device };
 
     case "some-apps-skipped":
       return {
@@ -239,10 +229,6 @@ const reducer = (state: State, e: Event): State => {
       };
 
     case "error":
-      // Preserve the current state when the device is disconnected to avoid displaying
-      // an additional error message above the disconnected one.
-      if (state.isDisconnected) return state;
-
       return {
         ...getInitialState(state.device, state.request),
         device: state.device || null,
