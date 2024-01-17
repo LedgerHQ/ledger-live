@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 33.5.0-next.2
+
+### Patch Changes
+
+- [#5939](https://github.com/LedgerHQ/ledger-live/pull/5939) [`2502530`](https://github.com/LedgerHQ/ledger-live/commit/2502530cdc41b65b65f67bbaf380da690b8d64bf) Thanks [@RamyEB](https://github.com/RamyEB)! - revert usage-of-description-for-search-manifest
+
 ## 33.5.0-next.1
 
 ### Patch Changes
