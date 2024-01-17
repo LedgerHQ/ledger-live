@@ -447,18 +447,6 @@ const SwapForm = () => {
         </Hide>
       )}
 
-      {pageState === "loaded" && (
-        <>
-          <SwapFormSummary swapTransaction={swapTransaction} provider={provider} />
-          <SwapFormRates
-            swap={swapTransaction.swap}
-            provider={provider}
-            refreshTime={refreshTime}
-            countdown={!pauseRefreshing}
-          />
-        </>
-      )}
-
       {isSwapLiveAppEnabled.enabled ? (
         <SwapWebView
           swapState={swapWebProps}
