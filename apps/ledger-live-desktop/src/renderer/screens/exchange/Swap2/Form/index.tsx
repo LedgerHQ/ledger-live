@@ -39,7 +39,6 @@ import { SWAP_RATES_TIMEOUT } from "../../config";
 import { OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
 import { v4 } from "uuid";
 import SwapWebView, { SwapWebProps } from "./SwapWebView";
-import { maybeTezosAccountUnrevealedAccount } from "@ledgerhq/live-common/exchange/swap/index";
 
 const DAPP_PROVIDERS = ["paraswap", "oneinch", "moonpay"];
 
@@ -118,10 +117,7 @@ const SwapForm = () => {
   }, []);
 
   const exchangeRatesState = swapTransaction.swap?.rates;
-  const swapError =
-    swapTransaction.fromAmountError ||
-    exchangeRatesState?.error ||
-    maybeTezosAccountUnrevealedAccount(swapTransaction);
+  const swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
   const swapWarning = swapTransaction.fromAmountWarning;
   const pageState = usePageState(swapTransaction, swapError);
   const provider = useMemo(() => exchangeRate?.provider, [exchangeRate?.provider]);

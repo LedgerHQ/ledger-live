@@ -40,10 +40,7 @@ import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/Ba
 import { SwapFormNavigatorParamList } from "~/components/RootNavigator/types/SwapFormNavigator";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import type { DetailsSwapParamList } from "../types";
-import {
-  getAvailableProviders,
-  maybeTezosAccountUnrevealedAccount,
-} from "@ledgerhq/live-common/exchange/swap/index";
+import { getAvailableProviders } from "@ledgerhq/live-common/exchange/swap/index";
 
 type Navigation = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.Account>;
 
@@ -124,10 +121,7 @@ export function SwapForm({
     );
   }, [exchangeRatesState.value, swapTransaction.swap.to.currency]);
 
-  const swapError =
-    swapTransaction.fromAmountError ||
-    exchangeRatesState?.error ||
-    maybeTezosAccountUnrevealedAccount(swapTransaction);
+  const swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
   const swapWarning = swapTransaction.fromAmountWarning;
   const pageState = usePageState(swapTransaction, swapError || swapWarning);
   const provider = exchangeRate?.provider;
