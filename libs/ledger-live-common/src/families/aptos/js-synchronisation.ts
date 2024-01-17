@@ -28,7 +28,7 @@ const getAccountShape: GetAccountShape = async info => {
     const { xpubOrAddress } = decodeAccountId(initialAccount.id);
     xpub = xpubOrAddress;
   }
-  if (xpub) {
+  if (!xpub) {
     // This is the corner case. We don't expect this happens
     throw new Error("Unable to retrieve public key");
   }
