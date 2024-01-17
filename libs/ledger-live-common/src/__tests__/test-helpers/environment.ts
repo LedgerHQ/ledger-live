@@ -99,6 +99,7 @@ setSupportedCurrencies([
   "lukso",
   "linea",
   "linea_goerli",
+  "ton",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);
