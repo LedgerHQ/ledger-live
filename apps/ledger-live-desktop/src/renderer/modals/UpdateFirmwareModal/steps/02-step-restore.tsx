@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from "react";
-import { StepProps } from "..";
+import { StepProps } from "../types";
 
 import Language from "./restore/Language";
 import CLS from "./restore/CLS";

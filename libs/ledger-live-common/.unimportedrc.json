@@ -272,6 +272,7 @@
     "src/utils/runOnceWhen.ts",
     "src/user.ts",
     "src/walletConnect/index.ts",
+    "src/wallet-api/Exchange/server.ts",
     "src/wallet-api/CustomLogger/client.ts",
     "src/wallet-api/constants.ts",
     "src/wallet-api/converters.ts",

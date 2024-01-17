@@ -70,7 +70,7 @@ const AmountField = <T extends TransactionCommon>({
 
   const { useAllAmount } = transaction;
   const { amount, errors, warnings } = status;
-  const { amount: amountError, dustLimit: messageDust, gasPrice: messageGas } = errors;
+  const { amount: amountError, dustLimit: messageDust } = errors;
   const { amount: amountWarning } = warnings;
 
   let amountErrMessage: Error | undefined = amountError;
@@ -123,7 +123,7 @@ const AmountField = <T extends TransactionCommon>({
       <RequestAmount
         disabled={!!useAllAmount || walletConnectProxy}
         account={account}
-        validTransactionError={amountErrMessage || messageGas || messageDust}
+        validTransactionError={amountErrMessage || messageDust}
         validTransactionWarning={amountWarnMessage}
         onChange={onChange}
         value={walletConnectProxy ? transaction.amount : amount}

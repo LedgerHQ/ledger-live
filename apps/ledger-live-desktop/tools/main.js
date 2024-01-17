@@ -8,9 +8,9 @@ const {
   processNativeModules,
   copyFolderRecursively,
   esBuildExternalsPlugin,
-} = require("native-modules-tools");
+} = require("@ledgerhq/native-modules-tools");
 const path = require("path");
-const { esbuild, NodeExternalsPlugin } = require("esbuild-utils");
+const { esbuild, NodeExternalsPlugin } = require("@ledgerhq/esbuild-utils");
 const { createServer } = require("vite");
 
 const { buildMainEnv, buildRendererEnv, buildViteConfig, lldRoot } = require("./utils");

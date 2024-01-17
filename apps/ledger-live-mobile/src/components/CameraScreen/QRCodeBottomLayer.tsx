@@ -24,7 +24,7 @@ function QrCodeBottomLayer({ progress, liveQrCode, instruction }: Props) {
       mx={6}
       mb={7}
     >
-      <Text variant={"h5"} fontWeight={"semiBold"} mb={6}>
+      <Text variant={"h5"} fontWeight={"semiBold"} mb={6} testID="onboarding-import-accounts-title">
         {instruction || (
           <Trans i18nKey={liveQrCode ? "account.import.newScan.title" : "send.scan.descBottom"} />
         )}

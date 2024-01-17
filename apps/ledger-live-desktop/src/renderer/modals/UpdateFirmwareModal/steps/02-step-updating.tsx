@@ -11,7 +11,7 @@ import Box from "~/renderer/components/Box";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { renderFirmwareUpdating } from "~/renderer/components/DeviceAction/rendering";
 import useTheme from "~/renderer/hooks/useTheme";
-import { StepProps } from "..";
+import { StepProps } from "../types";
 
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",

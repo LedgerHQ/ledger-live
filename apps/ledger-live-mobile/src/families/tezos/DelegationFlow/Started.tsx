@@ -32,7 +32,8 @@ export default function DelegationStarted({ navigation, route }: Props) {
         <Flex m={6}>
           <TrackScreen
             category="DelegationFlow"
-            name="Started"
+            name="Step Starter"
+            screen="Started"
             flow="stake"
             action="delegation"
             currency="xtz"

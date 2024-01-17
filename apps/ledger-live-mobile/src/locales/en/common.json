@@ -492,7 +492,7 @@
       "description": "Try reinstalling the app from My Ledger"
     },
     "NotEnoughGas": {
-      "title": "The parent account balance is insufficient for network fees",
+      "title": "You need {{fees}} {{ticker}} for network fees to swap as you are on {{cryptoName}} network. <link0>Buy {{ticker}}</link0>",
       "description": "Please send some coins to your account to pay for token transactions."
     },
     "NotEnoughGasSwap": {
@@ -911,6 +911,9 @@
     "FirmwareNotRecognized": {
       "title": "Invalid Provider",
       "description": "You have to change \"My Ledger provider\" setting. To change it, open Ledger Live \"Settings\", select \"Experimental features\", and then select a different provider."
+    },
+    "TezosUnrevealedAccount": {
+      "title": "Swap unavailable: Initial send/delegate needed with Tezos account or change pair."
     }
   },
   "crash": {

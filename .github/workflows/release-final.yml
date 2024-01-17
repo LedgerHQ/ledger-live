@@ -104,7 +104,7 @@ jobs:
       - name: tag mobile
         if: ${{ steps.mobile-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), inputs.app) }}
         run: |
-          git tag @ledgerhq/live-mobile@${{ steps.mobile-version.outputs.version }}
+          git tag live-mobile@${{ steps.mobile-version.outputs.version }}
       - name: push changes
         run: |
           git push origin main --tags
@@ -119,7 +119,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: ${{ steps.mobile-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLM", "ALL"]'), inputs.app) }}
         run: |
-          gh release create @ledgerhq/live-mobile@${{ steps.mobile-version.outputs.version }} -F ${{ steps.mobile-changelog.outputs.path }}
+          gh release create live-mobile@${{ steps.mobile-version.outputs.version }} -F ${{ steps.mobile-changelog.outputs.path }}
       - uses: actions/github-script@v6
         name: trigger release build for desktop
         if: ${{ steps.desktop-changed.outputs.status != 0 || github.event_name == 'workflow_dispatch' && contains(fromJson('["LLD", "ALL"]'), inputs.app) }}

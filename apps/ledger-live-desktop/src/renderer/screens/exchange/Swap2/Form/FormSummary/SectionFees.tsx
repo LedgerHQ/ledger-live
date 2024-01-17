@@ -166,6 +166,16 @@ const SectionFees = ({
         alwaysShowValue
       />
     </>
+  ) : estimatedFees ? (
+    <FormattedVal
+      color="palette.text.shade100"
+      val={estimatedFees}
+      unit={mainAccountUnit}
+      fontSize={3}
+      ff="Inter|SemiBold"
+      showCode
+      alwaysShowValue
+    />
   ) : (
     <NoValuePlaceholder />
   );

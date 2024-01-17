@@ -182,7 +182,7 @@ const StorageBar = ({
                   name,
                   currency,
                 })}
-                ratio={blocks / (distribution.totalBlocks - distribution.osBlocks)}
+                ratio={blocks / distribution.appsSpaceBlocks}
               >
                 <Tooltip
                   hideOnClick={false}
