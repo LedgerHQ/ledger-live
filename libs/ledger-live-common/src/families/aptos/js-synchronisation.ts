@@ -4,7 +4,7 @@ import type { GetAccountShape } from "../../bridge/jsHelpers";
 import type { AptosAccount } from "./types";
 import { makeSync, makeScanAccounts, mergeOps } from "../../bridge/jsHelpers";
 
-import { encodeAccountId } from "../../account";
+import { encodeAccountId, decodeAccountId } from "../../account";
 
 import { AptosAPI } from "./api";
 import { txsToOps } from "./logic";
@@ -24,6 +24,14 @@ const getAccountShape: GetAccountShape = async info => {
     );
     xpub = Buffer.from(result.publicKey).toString("hex");
   }
+  if (!xpub && initialAccount?.id) {
+    const { xpubOrAddress } = decodeAccountId(initialAccount.id);
+    xpub = xpubOrAddress;
+  }
+  if (xpub) {
+    // This is the corner case. We don't expect this happens
+    throw new Error("Unable to retrieve public key");
+  }
 
   const oldOperations = initialAccount?.operations || [];
   const startAt = (oldOperations[0]?.extra as any)?.version;
@@ -32,7 +40,7 @@ const getAccountShape: GetAccountShape = async info => {
     type: "js",
     version: "2",
     currencyId: currency.id,
-    xpubOrAddress: address,
+    xpubOrAddress: xpub as string,
     derivationMode,
   });
 
