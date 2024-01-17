@@ -5,10 +5,10 @@ import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { LlmAnalyticsOptInPromptVariants } from "@ledgerhq/types-live";
 import { ScreenName } from "~/const";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
-import AnalyticsOptInPromptMain1 from "~/screens/AnalyticsOptInPrompt/variant1/Main";
-import AnalyticsOptInPromptDetails1 from "~/screens/AnalyticsOptInPrompt/variant1/Details";
-import AnalyticsOptInPromptMain2 from "~/screens/AnalyticsOptInPrompt/variant2/Main";
-import AnalyticsOptInPromptDetails2 from "~/screens/AnalyticsOptInPrompt/variant2/Details";
+import AnalyticsOptInPromptMain1 from "~/screens/AnalyticsOptInPrompt/variantA/Main";
+import AnalyticsOptInPromptDetails1 from "~/screens/AnalyticsOptInPrompt/variantA/Details";
+import AnalyticsOptInPromptMain2 from "~/screens/AnalyticsOptInPrompt/variantB/Main";
+import AnalyticsOptInPromptDetails2 from "~/screens/AnalyticsOptInPrompt/variantB/Details";
 import { AnalyticsOptInPromptNavigatorParamList } from "./types/AnalyticsOptInPromptNavigator";
 
 export default function AnalyticsOptInPromptNavigator() {
@@ -17,20 +17,20 @@ export default function AnalyticsOptInPromptNavigator() {
   const llmAnalyticsOptInPromptFeature = useFeature("llmAnalyticsOptInPrompt");
 
   const screensByVariant = {
-    [LlmAnalyticsOptInPromptVariants.variant1]: {
+    [LlmAnalyticsOptInPromptVariants.variantA]: {
       main: AnalyticsOptInPromptMain1,
       details: AnalyticsOptInPromptDetails1,
     },
-    [LlmAnalyticsOptInPromptVariants.variant2]: {
+    [LlmAnalyticsOptInPromptVariants.variantB]: {
       main: AnalyticsOptInPromptMain2,
       details: AnalyticsOptInPromptDetails2,
     },
   };
 
   const activeVariant =
-    llmAnalyticsOptInPromptFeature?.params?.variant === LlmAnalyticsOptInPromptVariants.variant2
-      ? LlmAnalyticsOptInPromptVariants.variant2
-      : LlmAnalyticsOptInPromptVariants.variant1;
+    llmAnalyticsOptInPromptFeature?.params?.variant === LlmAnalyticsOptInPromptVariants.variantB
+      ? LlmAnalyticsOptInPromptVariants.variantB
+      : LlmAnalyticsOptInPromptVariants.variantA;
 
   return (
     <Stack.Navigator screenOptions={stackNavigationConfig}>
