@@ -32,8 +32,11 @@ export function useCatalog(db: RecentlyUsedDB) {
     list: combinedManifests,
     options: BROWSE_SEARCH_OPTIONS,
     filter: (item: AppManifest, input: string) => {
-      if (categories.selected === "all" || input) return true;
-      return completeManifests.includes(item) && item.categories.includes(categories.selected);
+      if (input) return true;
+      return (
+        completeManifests.includes(item) &&
+        (item.categories.includes(categories.selected) || categories.selected === "all")
+      );
     },
   });
   const disclaimer = useDisclaimer(recentlyUsed.append);
