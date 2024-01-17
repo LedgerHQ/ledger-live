@@ -66,9 +66,8 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
     dispatch(setAnalytics(true));
 
     if (llmAnalyticsOptInPromptFeature?.enabled) {
-      navigation.navigate({
-        name: NavigatorName.AnalyticsOptInPrompt,
-        params: {},
+      navigation.navigate(NavigatorName.AnalyticsOptInPrompt, {
+        screen: ScreenName.AnalyticsOptInPromptMain,
       });
     } else {
       navigation.navigate({

@@ -438,7 +438,7 @@ export const DEFAULT_FEATURES: Features = {
   llmAnalyticsOptInPrompt: {
     enabled: false,
     params: {
-      variant: LlmAnalyticsOptInPromptVariants.variant1,
+      variant: LlmAnalyticsOptInPromptVariants.variantA,
     },
   },
 };
