@@ -18,10 +18,10 @@ const saveLogs = async (path: Electron.SaveDialogReturnValue) => {
     // Serializes ourself with `stringify` to avoid "object could not be cloned" errors from the electron IPC serializer.
     const memoryLogsStr = JSON.stringify(memoryLogs, null, 2);
 
-    // Requests the main thread to save logs in a file
+    // Requests the main process to save logs in a file
     await ipcRenderer.invoke("save-logs", path, memoryLogsStr);
   } catch (error) {
-    console.error("Error while requesting to save logs from the renderer thread", error);
+    console.error("Error while requesting to save logs from the renderer process", error);
   }
 };
 
