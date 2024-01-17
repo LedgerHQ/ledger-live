@@ -5,10 +5,10 @@ import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { LlmAnalyticsOptInPromptVariants } from "@ledgerhq/types-live";
 import { ScreenName } from "~/const";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
-import AnalyticsOptInPromptMain1 from "~/screens/AnalyticsOptInPrompt/variantA/Main";
-import AnalyticsOptInPromptDetails1 from "~/screens/AnalyticsOptInPrompt/variantA/Details";
-import AnalyticsOptInPromptMain2 from "~/screens/AnalyticsOptInPrompt/variantB/Main";
-import AnalyticsOptInPromptDetails2 from "~/screens/AnalyticsOptInPrompt/variantB/Details";
+import AnalyticsOptInPromptMainA from "~/screens/AnalyticsOptInPrompt/variantA/Main";
+import AnalyticsOptInPromptDetailsA from "~/screens/AnalyticsOptInPrompt/variantA/Details";
+import AnalyticsOptInPromptMainB from "~/screens/AnalyticsOptInPrompt/variantB/Main";
+import AnalyticsOptInPromptDetailsB from "~/screens/AnalyticsOptInPrompt/variantB/Details";
 import { AnalyticsOptInPromptNavigatorParamList } from "./types/AnalyticsOptInPromptNavigator";
 
 export default function AnalyticsOptInPromptNavigator() {
@@ -18,12 +18,12 @@ export default function AnalyticsOptInPromptNavigator() {
 
   const screensByVariant = {
     [LlmAnalyticsOptInPromptVariants.variantA]: {
-      main: AnalyticsOptInPromptMain1,
-      details: AnalyticsOptInPromptDetails1,
+      main: AnalyticsOptInPromptMainA,
+      details: AnalyticsOptInPromptDetailsA,
     },
     [LlmAnalyticsOptInPromptVariants.variantB]: {
-      main: AnalyticsOptInPromptMain2,
-      details: AnalyticsOptInPromptDetails2,
+      main: AnalyticsOptInPromptMainB,
+      details: AnalyticsOptInPromptDetailsB,
     },
   };
 
