@@ -60,11 +60,16 @@ export type SwapWebProps = {
   liveAppUnavailable(): void;
 };
 
-export const SWAP_WEB_MANIFEST_ID = "swap-live-app-demo-0";
+export const SwapWebManifestIDs = {
+  Demo0: "swap-live-app-demo-0",
+  Demo1: "swap-live-app-demo-1",
+};
+
+export const SWAP_WEB_MANIFEST_ID = SwapWebManifestIDs.Demo1;
 
 const SwapWebAppWrapper = styled.div<{ isDevelopment: boolean }>(
   ({ isDevelopment }) => `
-  ${!isDevelopment ? "height: 0px;" : ""}
+  ${!isDevelopment ? "height: 0px;" : "flex: 1;"}
   width: 100%;
 `,
 );
