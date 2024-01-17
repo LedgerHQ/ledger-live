@@ -1,5 +1,11 @@
 # @ledgerhq/coin-framework
 
+## 0.11.0-nightly.2
+
+### Minor Changes
+
+- [#5796](https://github.com/LedgerHQ/ledger-live/pull/5796) [`b74faea`](https://github.com/LedgerHQ/ledger-live/commit/b74faea05f856860a253c5b94a9333810a3446ca) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - switch default derivation scheme to native filecoin wallet one
+
 ## 0.10.2-nightly.1
 
 ### Patch Changes

@@ -1,5 +1,18 @@
 # live-mobile
 
+## 3.37.1-nightly.0
+
+### Patch Changes
+
+- [#5893](https://github.com/LedgerHQ/ledger-live/pull/5893) [`288ad3a`](https://github.com/LedgerHQ/ledger-live/commit/288ad3a8361b49059869624afec8dd40a5ae19d2) Thanks [@CremaFR](https://github.com/CremaFR)! - prevent swap when using never used tezos account
+
+- [#5908](https://github.com/LedgerHQ/ledger-live/pull/5908) [`46298ae`](https://github.com/LedgerHQ/ledger-live/commit/46298aec703e6a0dcb47ab8f2a612dcb3bc4065a) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Fix the free storage available for all devices
+
+- Updated dependencies [[`6f012ed`](https://github.com/LedgerHQ/ledger-live/commit/6f012eda136d641836e839721a8ffba6bdc3d93f), [`b74faea`](https://github.com/LedgerHQ/ledger-live/commit/b74faea05f856860a253c5b94a9333810a3446ca), [`52abfc5`](https://github.com/LedgerHQ/ledger-live/commit/52abfc5af4ec5af9c47e72c7a661993e0432d84b), [`7021a71`](https://github.com/LedgerHQ/ledger-live/commit/7021a71c8fbe153656c778c314cda4e8725b1047), [`288ad3a`](https://github.com/LedgerHQ/ledger-live/commit/288ad3a8361b49059869624afec8dd40a5ae19d2), [`46298ae`](https://github.com/LedgerHQ/ledger-live/commit/46298aec703e6a0dcb47ab8f2a612dcb3bc4065a), [`0079378`](https://github.com/LedgerHQ/ledger-live/commit/00793785dd4f1fcba25e49b436af43b702e54f6b), [`b74faea`](https://github.com/LedgerHQ/ledger-live/commit/b74faea05f856860a253c5b94a9333810a3446ca)]:
+  - @ledgerhq/live-common@33.5.0-nightly.3
+  - @ledgerhq/coin-framework@0.11.0-nightly.2
+  - @ledgerhq/coin-evm@0.11.3-nightly.2
+
 ## 3.37.1-nightly.2
 
 ### Patch Changes

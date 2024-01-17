@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/wallet-api-exchange-module",
-  "version": "0.1.0",
+  "version": "0.2.0-nightly.0",
   "description": "Wallet-API Exchange Module for Ledger Live",
   "license": "Apache-2.0",
   "keywords": [

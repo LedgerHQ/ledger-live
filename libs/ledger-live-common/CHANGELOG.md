@@ -1,5 +1,34 @@
 # @ledgerhq/live-common
 
+## 33.5.0-nightly.3
+
+### Minor Changes
+
+- [#5648](https://github.com/LedgerHQ/ledger-live/pull/5648) [`6f012ed`](https://github.com/LedgerHQ/ledger-live/commit/6f012eda136d641836e839721a8ffba6bdc3d93f) Thanks [@Justkant](https://github.com/Justkant)! - feat: wallet-api custom echange
+
+- [#5796](https://github.com/LedgerHQ/ledger-live/pull/5796) [`b74faea`](https://github.com/LedgerHQ/ledger-live/commit/b74faea05f856860a253c5b94a9333810a3446ca) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - add support to send FIL tokens to eth address on the Filecoin blockchain
+
+- [#5904](https://github.com/LedgerHQ/ledger-live/pull/5904) [`7021a71`](https://github.com/LedgerHQ/ledger-live/commit/7021a71c8fbe153656c778c314cda4e8725b1047) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Change Pool ID of Ledger Cardano validator
+
+- [#5796](https://github.com/LedgerHQ/ledger-live/pull/5796) [`b74faea`](https://github.com/LedgerHQ/ledger-live/commit/b74faea05f856860a253c5b94a9333810a3446ca) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - switch default derivation scheme to native filecoin wallet one
+
+### Patch Changes
+
+- [#5913](https://github.com/LedgerHQ/ledger-live/pull/5913) [`52abfc5`](https://github.com/LedgerHQ/ledger-live/commit/52abfc5af4ec5af9c47e72c7a661993e0432d84b) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Mitigate Solana error when fetching fees for an address
+
+- [#5893](https://github.com/LedgerHQ/ledger-live/pull/5893) [`288ad3a`](https://github.com/LedgerHQ/ledger-live/commit/288ad3a8361b49059869624afec8dd40a5ae19d2) Thanks [@CremaFR](https://github.com/CremaFR)! - prevent swap when using never used tezos account
+
+- [#5908](https://github.com/LedgerHQ/ledger-live/pull/5908) [`46298ae`](https://github.com/LedgerHQ/ledger-live/commit/46298aec703e6a0dcb47ab8f2a612dcb3bc4065a) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Fix the free storage available for all devices
+
+- [#5898](https://github.com/LedgerHQ/ledger-live/pull/5898) [`0079378`](https://github.com/LedgerHQ/ledger-live/commit/00793785dd4f1fcba25e49b436af43b702e54f6b) Thanks [@RamyEB](https://github.com/RamyEB)! - Use description for the search bar
+
+- Updated dependencies [[`6f012ed`](https://github.com/LedgerHQ/ledger-live/commit/6f012eda136d641836e839721a8ffba6bdc3d93f), [`b74faea`](https://github.com/LedgerHQ/ledger-live/commit/b74faea05f856860a253c5b94a9333810a3446ca)]:
+  - @ledgerhq/wallet-api-exchange-module@0.2.0-nightly.0
+  - @ledgerhq/coin-framework@0.11.0-nightly.2
+  - @ledgerhq/coin-algorand@0.3.9-nightly.2
+  - @ledgerhq/coin-evm@0.11.3-nightly.2
+  - @ledgerhq/coin-polkadot@0.5.2-nightly.2
+
 ## 33.4.1-nightly.2
 
 ### Patch Changes
