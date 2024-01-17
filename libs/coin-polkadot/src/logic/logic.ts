@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import type { Account, OperationType } from "@ledgerhq/types-live";
 import type { PolkadotAccount, Transaction } from "../types";
-import { getCurrentPolkadotPreloadData } from "./preload";
+import { getCurrentPolkadotPreloadData } from "./state";
 
 export const EXISTENTIAL_DEPOSIT = new BigNumber(10000000000);
 export const EXISTENTIAL_DEPOSIT_RECOMMENDED_MARGIN = new BigNumber(1000000000); // Polkadot recommended Existential Deposit error margin

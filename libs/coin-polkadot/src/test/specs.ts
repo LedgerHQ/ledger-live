@@ -2,8 +2,7 @@ import expect from "expect";
 import invariant from "invariant";
 import sampleSize from "lodash/sampleSize";
 import { BigNumber } from "bignumber.js";
-//FIXME
-import { getCurrentPolkadotPreloadData } from "../bridge/preload";
+import { getCurrentPolkadotPreloadData } from "../logic/state";
 import type { PolkadotAccount, PolkadotResources, Transaction } from "../types";
 import {
   getCryptoCurrencyById,
@@ -24,7 +23,7 @@ import {
   isFirstBond,
   hasMinimumBondBalance,
   getMinimumBalance,
-} from "../bridge/logic"; //FIXME
+} from "../logic/logic";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { acceptTransaction } from "./speculos-deviceActions";
 

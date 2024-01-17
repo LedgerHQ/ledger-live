@@ -8,8 +8,8 @@ export function makeGetAccountShape(polkadotAPI: PolkadotAPI): GetAccountShape {
   return async info => {
     await loadPolkadotCrypto();
     const { address, initialAccount, currency, derivationMode } = info;
-    const oldOperations = initialAccount?.operations || [];
-    const startAt = oldOperations.length ? (oldOperations[0].blockHeight || 0) + 1 : 0;
+
+    // Retrieve account info
     const {
       blockHeight,
       balance,
@@ -24,6 +24,8 @@ export function makeGetAccountShape(polkadotAPI: PolkadotAPI): GetAccountShape {
       nominations,
       numSlashingSpans,
     } = await polkadotAPI.getAccount(address);
+
+    // Retrieve operations associated
     const accountId = encodeAccountId({
       type: "js",
       version: "2",
@@ -31,8 +33,11 @@ export function makeGetAccountShape(polkadotAPI: PolkadotAPI): GetAccountShape {
       xpubOrAddress: address,
       derivationMode,
     });
+    const oldOperations = initialAccount?.operations || [];
+    const startAt = oldOperations.length ? (oldOperations[0].blockHeight || 0) + 1 : 0;
     const newOperations = await polkadotAPI.getOperations(accountId, address, startAt);
     const operations = mergeOps(oldOperations, newOperations);
+
     return {
       id: accountId,
       balance,

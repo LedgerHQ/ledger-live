@@ -3,7 +3,7 @@ import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
 import type { PolkadotAccount, Transaction } from "../types";
 import { calculateAmount } from "./logic";
 import { buildTransaction } from "./buildTransaction";
-import { fakeSignExtrinsic } from "./signOperation";
+import { fakeSignExtrinsic } from "./signTransaction";
 import { PolkadotAPI } from "../network";
 
 /**

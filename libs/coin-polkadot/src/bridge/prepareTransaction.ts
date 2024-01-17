@@ -1,6 +1,5 @@
 import type { PolkadotAccount, Transaction } from "../types";
-import getEstimatedFees from "./getFeesForTransaction";
-import { loadPolkadotCrypto } from "./polkadot-crypto";
+import getEstimatedFees from "../logic/getFeesForTransaction";
 import { PolkadotAPI } from "../network";
 import BigNumber from "bignumber.js";
 
@@ -13,7 +12,6 @@ const sameFees = (a: BigNumber, b?: BigNumber | null) => (!a || !b ? a === b : a
  */
 const prepareTransaction =
   (polkadotAPI: PolkadotAPI) => async (a: PolkadotAccount, t: Transaction) => {
-    await loadPolkadotCrypto();
     let fees = t.fees;
     fees = await getEstimatedFees(polkadotAPI)({
       a,

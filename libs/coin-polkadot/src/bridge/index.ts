@@ -6,44 +6,22 @@ import {
   makeSync,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import type { NetworkRequestCall } from "@ledgerhq/coin-framework/network";
-import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
 import { LRUCacheFn } from "@ledgerhq/coin-framework/cache";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type {
-  AccountBridge,
-  CurrencyBridge,
-  Operation,
-  SignedOperation,
-} from "@ledgerhq/types-live";
+import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { PolkadotAPI } from "../network";
-import resolver from "./hw-getAddress";
-import createTransaction from "./createTransaction";
-import estimateMaxSpendable from "./estimateMaxSpendable";
-import getTransactionStatus from "./getTransactionStatus";
+import resolver from "../signer/hw-getAddress";
+import createTransaction from "../logic/createTransaction";
+import estimateMaxSpendable from "../logic/estimateMaxSpendable";
+import getTransactionStatus from "../logic/getTransactionStatus";
 import prepareTransaction from "./prepareTransaction";
 import buildSignOperation from "./signOperation";
-import { makeGetAccountShape } from "./synchronisation";
-import { loadPolkadotCrypto } from "./polkadot-crypto";
+import broadcast from "../logic/broadcast";
+import { makeGetAccountShape } from "../logic/synchronisation";
 import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
 import { getPreloadStrategy, hydrate, preload } from "./preload";
 import type { PolkadotAddress, PolkadotSignature, Transaction } from "../types";
 import { PolkadotSigner } from "../types";
-
-/**
- * Broadcast the signed transaction
- * @param {signature: string, operation: string} signedOperation
- */
-const broadcast =
-  (polkadotAPI: PolkadotAPI) =>
-  async ({
-    signedOperation: { signature, operation },
-  }: {
-    signedOperation: SignedOperation;
-  }): Promise<Operation> => {
-    await loadPolkadotCrypto();
-    const hash = await polkadotAPI.submitExtrinsic(signature);
-    return patchOperationWithHash(operation, hash);
-  };
 
 export function buildCurrencyBridge(
   signerContext: SignerContext<PolkadotSigner, PolkadotAddress | PolkadotSignature>,

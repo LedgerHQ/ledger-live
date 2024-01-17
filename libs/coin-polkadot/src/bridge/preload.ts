@@ -1,18 +1,12 @@
 /* eslint-disable no-prototype-builtins */
 import { BigNumber } from "bignumber.js";
-import { Observable, Subject } from "rxjs";
 import { log } from "@ledgerhq/logs";
 import type { PolkadotPreloadData, PolkadotStakingProgress, PolkadotValidator } from "../types";
-import { loadPolkadotCrypto } from "./polkadot-crypto";
 import { PolkadotAPI } from "../network";
+import { loadPolkadotCrypto } from "../logic/polkadot-crypto";
+import { getCurrentPolkadotPreloadData, setPolkadotPreloadData } from "../logic/state";
 
 const PRELOAD_MAX_AGE = 60 * 1000;
-
-let currentPolkadotPreloadedData: PolkadotPreloadData = {
-  validators: [],
-  staking: undefined,
-  minimumBondBalance: "0",
-};
 
 function fromHydrateValidator(validatorRaw: Record<string, any>): PolkadotValidator {
   return {
@@ -69,22 +63,6 @@ function fromHydratePreloadData(data: any): PolkadotPreloadData {
   };
 }
 
-const updates = new Subject<PolkadotPreloadData>();
-
-export function getCurrentPolkadotPreloadData(): PolkadotPreloadData {
-  return currentPolkadotPreloadedData;
-}
-
-export function setPolkadotPreloadData(data: PolkadotPreloadData) {
-  if (data === currentPolkadotPreloadedData) return;
-  currentPolkadotPreloadedData = data;
-  updates.next(data);
-}
-
-export function getPolkadotPreloadDataUpdates(): Observable<PolkadotPreloadData> {
-  return updates.asObservable();
-}
-
 /**
  * load max cache time for the validators
  */
@@ -102,12 +80,11 @@ const shouldRefreshValidators = (
 export const preload = (polkadotAPI: PolkadotAPI) => async (): Promise<PolkadotPreloadData> => {
   await loadPolkadotCrypto();
   await polkadotAPI.getRegistry(); // ensure registry is already in cache.
-  const minimumBondBalance = await polkadotAPI.getMinimumBondBalance();
-  const minimumBondBalanceStr = minimumBondBalance.toString();
+  const minimumBondBalance = await polkadotAPI.getMinimumBondBalance().toString();
 
   const currentStakingProgress = await polkadotAPI.getStakingProgress();
   const { validators: previousValidators, staking: previousStakingProgress } =
-    currentPolkadotPreloadedData;
+    getCurrentPolkadotPreloadData();
   let validators = previousValidators;
 
   if (
@@ -129,7 +106,7 @@ export const preload = (polkadotAPI: PolkadotAPI) => async (): Promise<PolkadotP
   return {
     validators,
     staking: currentStakingProgress,
-    minimumBondBalance: minimumBondBalanceStr,
+    minimumBondBalance,
   };
 };
 

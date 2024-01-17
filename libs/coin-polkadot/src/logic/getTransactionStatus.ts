@@ -37,7 +37,7 @@ import {
   EXISTENTIAL_DEPOSIT_RECOMMENDED_MARGIN,
 } from "./logic";
 import { isValidAddress } from "../common";
-import { getCurrentPolkadotPreloadData } from "./preload";
+import { getCurrentPolkadotPreloadData } from "./state";
 import { loadPolkadotCrypto } from "./polkadot-crypto";
 import { PolkadotAPI } from "../network";
 
