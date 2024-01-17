@@ -31,7 +31,8 @@
       "*": [
         "lib/*",
         "lib/bridge/*",
-        "lib/test/*"
+        "lib/test/*",
+        "lib/types/*"
       ]
     }
   },
@@ -41,6 +42,10 @@
     "./deviceTransactionConfig": {
       "require": "./lib/bridge/deviceTransactionConfig.js",
       "default": "./lib-es/bridge/deviceTransactionConfig.js"
+    },
+    "./errors": {
+      "require": "./lib/types/errors.js",
+      "default": "./lib-es/types/errors.js"
     },
     "./logic": {
       "require": "./lib/bridge/logic.js",

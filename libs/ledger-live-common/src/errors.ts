@@ -132,7 +132,7 @@ export const EConnResetError = createCustomErrorClass("EConnReset");
 
 export { ClaimRewardsFeesWarning } from "@ledgerhq/errors";
 export * from "@ledgerhq/coin-framework/errors";
-export * from "@ledgerhq/coin-polkadot/types/errors";
+export * from "@ledgerhq/coin-polkadot/errors";
 export * from "@ledgerhq/coin-algorand/errors";
 export * from "./families/stellar/errors";
 export * from "./families/solana/errors";
