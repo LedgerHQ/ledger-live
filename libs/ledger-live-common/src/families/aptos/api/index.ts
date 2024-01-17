@@ -12,6 +12,7 @@ import {
   DelegatedStakingActivity,
   GetDelegatedStakingActivitiesQuery,
   StakePrincipals,
+  StakeDetails,
 } from "./graphql/types";
 import {
   GetAccountTransactionsData,
@@ -272,15 +273,53 @@ export class AptosAPI {
     return { activePrincipals, pendingInactivePrincipals };
   }
 
+  async getStake(delegatorAddress: string, poolAddress: string): Promise<StakeDetails> {
+    const getStakePromise = this.aptosClient.view({
+      function: "0x1::delegation_pool::get_stake",
+      type_arguments: [],
+      arguments: [poolAddress, delegatorAddress],
+    });
+    const canWithdrawPromise = this.aptosClient.view({
+      function: "0x1::delegation_pool::can_withdraw_pending_inactive",
+      type_arguments: [],
+      arguments: [poolAddress],
+    });
+    const [stake, canWithdraw] = await Promise.all([getStakePromise, canWithdrawPromise]);
+
+    return {
+      active: parseInt(stake[0].toString()),
+      inactive: parseInt(stake[1].toString()),
+      pendingInactive: parseInt(stake[2].toString()),
+      canWithdrawPendingInactive: canWithdraw[0].valueOf() as boolean,
+      poolAddress,
+    };
+  }
+
   async getTotalStakedAmount(delegatorAddress: string): Promise<BigNumber> {
     const partitionedData = await this.getDelegatedStakingActivitiesForAllPools(delegatorAddress);
 
-    const stakedBalance = Object.values(partitionedData).reduce((total, activities) => {
-      const { activePrincipals, pendingInactivePrincipals } =
-        this.getStakeOperationPrincipals(activities);
-      return total + activePrincipals + pendingInactivePrincipals;
+    const stakePromises = Object.keys(partitionedData).map(poolAddress =>
+      this.getStake(delegatorAddress, poolAddress),
+    );
+    const stakes: StakeDetails[] = await Promise.all(stakePromises);
+
+    const amount = stakes.reduce((total, stake) => {
+      const { activePrincipals, pendingInactivePrincipals } = this.getStakeOperationPrincipals(
+        partitionedData[stake.poolAddress],
+      );
+      const { active, pendingInactive } = stake;
+      const activeRewards = Math.max(0, active - activePrincipals);
+      const pendingInactiveRewards = Math.abs(pendingInactive - pendingInactivePrincipals);
+
+      return (
+        total +
+        activeRewards +
+        pendingInactiveRewards +
+        activePrincipals +
+        pendingInactivePrincipals
+      );
     }, 0);
 
-    return new BigNumber(stakedBalance);
+    return new BigNumber(amount);
   }
 }
