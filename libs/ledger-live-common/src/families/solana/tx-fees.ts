@@ -5,9 +5,9 @@ import { Transaction, TransactionModel } from "./types";
 import { assertUnreachable } from "./utils";
 import { VersionedTransaction as OnChainTransaction } from "@solana/web3.js";
 import { log } from "@ledgerhq/logs";
-import { NetworkError } from "@ledgerhq/errors";
 
 const MAX_RETRIES = 10; // TODO Candidate to put in coin config
+const DEFAULT_TX_FEE = 5000;
 
 export async function estimateTxFee(
   api: ChainAPI,
@@ -27,8 +27,11 @@ export async function estimateTxFee(
   }
 
   if (typeof fee !== "number") {
-    log("error", `unexpected fee: <${fee}>, after retry with a new blockhash`);
-    throw new NetworkError();
+    log(
+      "error",
+      `unexpected fee: <${fee}>, after retry with a new blockhash. Fallback to the default.`,
+    );
+    fee = DEFAULT_TX_FEE;
   }
   return fee;
 }
