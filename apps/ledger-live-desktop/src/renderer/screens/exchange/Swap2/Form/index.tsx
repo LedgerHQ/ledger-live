@@ -34,8 +34,8 @@ import BigNumber from "bignumber.js";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { SWAP_RATES_TIMEOUT } from "../../config";
 import { OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
-import SwapWebView, { SWAP_WEB_MANIFEST_ID, SwapWebProps } from "./SwapWebView";
-import { SwapMigrationNativeUI } from "./Migrations/SwapMigrationNativeUI";
+import SwapWebView, { SwapWebProps, useSwapLiveAppManifestID } from "./SwapWebView";
+import { SwapMigrationUI } from "./Migrations/SwapMigrationUI";
 import { useSwapLiveAppHook } from "~/renderer/hooks/swap-migrations/useSwapLiveAppHook";
 import { maybeTezosAccountUnrevealedAccount } from "@ledgerhq/live-common/exchange/swap/index";
 import SwapFormSummary from "./FormSummary";
@@ -407,9 +407,12 @@ const SwapForm = () => {
     swapTransaction.toggleMax();
   };
 
+  const swapLiveAppManifestID = useSwapLiveAppManifestID();
+
+  console.log('[swap] swapLiveAppManifestID', swapLiveAppManifestID)
   useSwapLiveAppHook({
     isSwapLiveAppEnabled: isSwapLiveAppEnabled.enabled,
-    manifestID: SWAP_WEB_MANIFEST_ID,
+    manifestID: swapLiveAppManifestID,
     swapTransaction,
     updateSwapWebProps: setSwapWebProps,
     swapError,
@@ -453,27 +456,29 @@ const SwapForm = () => {
           <SwapFormSummary swapTransaction={swapTransaction} provider={provider} />
         </>
       )}
-
-      {isSwapLiveAppEnabled.enabled ? (
-        <SwapWebView
-          swapState={swapWebProps}
-          liveAppUnavailable={isSwapLiveAppEnabled.onLiveAppCrashed}
-        />
-      ) : (
-        // Progressive UI migration based on current swap app id.
-        <SwapMigrationNativeUI
-          manifestID={SWAP_WEB_MANIFEST_ID}
-          // Demo 1 props
-          pageState={pageState}
-          swapTransaction={swapTransaction}
-          provider={provider}
-          refreshTime={refreshTime}
-          countdown={!pauseRefreshing}
-          // Demo 0 props
-          disabled={!isSwapReady}
-          onClick={onSubmit}
-        />
-      )}
+      <SwapMigrationUI
+        manifestID={swapLiveAppManifestID}
+        liveAppEnabled={isSwapLiveAppEnabled.enabled}
+        liveApp={
+          swapLiveAppManifestID ? (
+            <SwapWebView
+              manifestID={swapLiveAppManifestID}
+              swapState={swapWebProps}
+              // When live app crash, it should disable live app and fall back to native UI
+              liveAppUnavailable={isSwapLiveAppEnabled.onLiveAppCrashed}
+            />
+          ) : null
+        }
+        // Demo 1 props
+        pageState={pageState}
+        swapTransaction={swapTransaction}
+        provider={provider}
+        refreshTime={refreshTime}
+        countdown={!pauseRefreshing}
+        // Demo 0 props
+        disabled={!isSwapReady}
+        onClick={onSubmit}
+      />
     </Wrapper>
   );
 };
