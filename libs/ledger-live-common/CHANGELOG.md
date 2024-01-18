@@ -1,5 +1,38 @@
 # @ledgerhq/live-common
 
+## 33.5.0-nightly.4
+
+### Patch Changes
+
+- [#5749](https://github.com/LedgerHQ/ledger-live/pull/5749) [`eadebff`](https://github.com/LedgerHQ/ledger-live/commit/eadebff3fe58aef6a5befb033d5147afc49663d3) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Fix: HID USB reconnection on LLD during the sync onboarding
+
+  - Refactoring of the disconnect after inactivity of the transport implementation
+    hw-transport-node-hid-singleton
+  - Better logs and documentation
+
+- [#5935](https://github.com/LedgerHQ/ledger-live/pull/5935) [`35e7a3b`](https://github.com/LedgerHQ/ledger-live/commit/35e7a3b976a300df3abfb1427a35275ee6fa6da1) Thanks [@Wozacosta](https://github.com/Wozacosta)! - Remove usage of description in discover search bar
+
+- Updated dependencies [[`eadebff`](https://github.com/LedgerHQ/ledger-live/commit/eadebff3fe58aef6a5befb033d5147afc49663d3)]:
+  - @ledgerhq/hw-transport@6.30.2-nightly.1
+  - @ledgerhq/hw-app-algorand@6.28.2-nightly.1
+  - @ledgerhq/hw-app-btc@10.2.0-nightly.2
+  - @ledgerhq/hw-app-cosmos@6.29.2-nightly.1
+  - @ledgerhq/hw-app-eth@6.35.3-nightly.2
+  - @ledgerhq/hw-app-exchange@0.4.3-nightly.0
+  - @ledgerhq/hw-app-near@6.28.2-nightly.1
+  - @ledgerhq/hw-app-polkadot@6.28.2-nightly.1
+  - @ledgerhq/hw-app-solana@7.1.2-nightly.1
+  - @ledgerhq/hw-app-str@6.28.2-nightly.1
+  - @ledgerhq/hw-app-tezos@6.28.2-nightly.1
+  - @ledgerhq/hw-app-trx@6.28.2-nightly.1
+  - @ledgerhq/hw-app-vet@0.1.2-nightly.1
+  - @ledgerhq/hw-app-xrp@6.28.2-nightly.1
+  - @ledgerhq/hw-transport-mocker@6.28.2-nightly.1
+  - @ledgerhq/hw-transport-node-speculos@6.28.2-nightly.1
+  - @ledgerhq/hw-transport-node-speculos-http@6.28.2-nightly.1
+  - @ledgerhq/coin-evm@0.11.3-nightly.3
+  - @ledgerhq/coin-framework@0.11.0-nightly.2
+
 ## 33.5.0-nightly.3
 
 ### Minor Changes

@@ -1,5 +1,34 @@
 # ledger-live-desktop
 
+## 2.75.0-nightly.4
+
+### Minor Changes
+
+- [#5749](https://github.com/LedgerHQ/ledger-live/pull/5749) [`eadebff`](https://github.com/LedgerHQ/ledger-live/commit/eadebff3fe58aef6a5befb033d5147afc49663d3) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Feat: refactor on the IPC Transport logic
+
+  Simpler implementation of the Transport logic using Electron IPC
+  in order to have a 1 <-> 1 relationship between the transport living
+  on the `renderer` process and the transport living on the `internal` process
+
+### Patch Changes
+
+- [#5749](https://github.com/LedgerHQ/ledger-live/pull/5749) [`eadebff`](https://github.com/LedgerHQ/ledger-live/commit/eadebff3fe58aef6a5befb033d5147afc49663d3) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Fix: HID USB reconnection on LLD during the sync onboarding
+
+  - Refactoring of the disconnect after inactivity of the transport implementation
+    hw-transport-node-hid-singleton
+  - Better logs and documentation
+
+- [#5934](https://github.com/LedgerHQ/ledger-live/pull/5934) [`577bec1`](https://github.com/LedgerHQ/ledger-live/commit/577bec1dcbdccfb80255045502f8d355e5c0e8d7) Thanks [@cng-ledger](https://github.com/cng-ledger)! - feat(LIVE-9328): display quotes in swap live app
+
+- Updated dependencies [[`eadebff`](https://github.com/LedgerHQ/ledger-live/commit/eadebff3fe58aef6a5befb033d5147afc49663d3), [`35e7a3b`](https://github.com/LedgerHQ/ledger-live/commit/35e7a3b976a300df3abfb1427a35275ee6fa6da1)]:
+  - @ledgerhq/hw-transport-node-hid-singleton@6.30.2-nightly.1
+  - @ledgerhq/hw-transport@6.30.2-nightly.1
+  - @ledgerhq/live-common@33.5.0-nightly.4
+  - @ledgerhq/hw-transport-http@6.29.2-nightly.1
+  - @ledgerhq/coin-evm@0.11.3-nightly.3
+  - @ledgerhq/hw-transport-vault@1.2.2-nightly.1
+  - @ledgerhq/coin-framework@0.11.0-nightly.2
+
 ## 2.75.0-nightly.3
 
 ### Minor Changes

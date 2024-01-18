@@ -1,5 +1,18 @@
 # @ledgerhq/hw-transport-node-hid-noevents
 
+## 6.29.2-nightly.1
+
+### Patch Changes
+
+- [#5749](https://github.com/LedgerHQ/ledger-live/pull/5749) [`eadebff`](https://github.com/LedgerHQ/ledger-live/commit/eadebff3fe58aef6a5befb033d5147afc49663d3) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Fix: HID USB reconnection on LLD during the sync onboarding
+
+  - Refactoring of the disconnect after inactivity of the transport implementation
+    hw-transport-node-hid-singleton
+  - Better logs and documentation
+
+- Updated dependencies [[`eadebff`](https://github.com/LedgerHQ/ledger-live/commit/eadebff3fe58aef6a5befb033d5147afc49663d3)]:
+  - @ledgerhq/hw-transport@6.30.2-nightly.1
+
 ## 6.29.2-nightly.0
 
 ### Patch Changes

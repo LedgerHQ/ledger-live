@@ -1,5 +1,22 @@
 # live-mobile
 
+## 3.38.0-nightly.1
+
+### Minor Changes
+
+- [#5905](https://github.com/LedgerHQ/ledger-live/pull/5905) [`d1271cb`](https://github.com/LedgerHQ/ledger-live/commit/d1271cb52ffc7fa47d9f7f00ae863b7f668cb409) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Added the my_ledger location to the new content cards system
+
+### Patch Changes
+
+- Updated dependencies [[`eadebff`](https://github.com/LedgerHQ/ledger-live/commit/eadebff3fe58aef6a5befb033d5147afc49663d3), [`35e7a3b`](https://github.com/LedgerHQ/ledger-live/commit/35e7a3b976a300df3abfb1427a35275ee6fa6da1)]:
+  - @ledgerhq/hw-transport@6.30.2-nightly.1
+  - @ledgerhq/live-common@33.5.0-nightly.4
+  - @ledgerhq/hw-transport-http@6.29.2-nightly.1
+  - @ledgerhq/react-native-hid@6.31.2-nightly.1
+  - @ledgerhq/react-native-hw-transport-ble@6.32.1-nightly.1
+  - @ledgerhq/coin-evm@0.11.3-nightly.3
+  - @ledgerhq/coin-framework@0.11.0-nightly.2
+
 ## 3.37.1-nightly.0
 
 ### Patch Changes
