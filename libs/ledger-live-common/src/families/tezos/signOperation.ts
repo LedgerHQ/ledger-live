@@ -67,9 +67,9 @@ export const signOperation: SignOperationFnSignature<Transaction> = ({
             }
             case "delegate": {
               const res = await tezos.contract.setDelegate({
-                ...params,
                 source: freshAddress,
                 delegate: transaction.recipient,
+                ...params,
               });
               opbytes = res.raw.opbytes;
               type = "DELEGATE";
@@ -77,9 +77,10 @@ export const signOperation: SignOperationFnSignature<Transaction> = ({
             }
             case "undelegate": {
               const res = await tezos.contract.setDelegate({
-                ...params,
                 source: freshAddress,
+                ...params,
               });
+
               opbytes = res.raw.opbytes;
               type = "UNDELEGATE";
               break;
