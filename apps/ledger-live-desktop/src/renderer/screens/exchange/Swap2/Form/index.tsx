@@ -409,7 +409,6 @@ const SwapForm = () => {
 
   const swapLiveAppManifestID = useSwapLiveAppManifestID();
 
-  console.log('[swap] swapLiveAppManifestID', swapLiveAppManifestID)
   useSwapLiveAppHook({
     isSwapLiveAppEnabled: isSwapLiveAppEnabled.enabled,
     manifestID: swapLiveAppManifestID,

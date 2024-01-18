@@ -30,7 +30,7 @@ export const SwapLiveAppNativeUI = (props: SwapLiveAppNativeUIProps) => {
   const { t } = useTranslation();
 
   /**
-   * Show quotes for Demo 0 
+   * Show quotes for Demo 0
    */
   return (
     <>
