@@ -10,6 +10,10 @@ const prepareTransaction = async (
   account: Account,
   transaction: Transaction,
 ): Promise<Transaction> => {
+  if (!transaction.recipient) {
+    return transaction;
+  }
+
   if (transaction.amount.isZero() && !transaction.useAllAmount) {
     return {
       ...transaction,

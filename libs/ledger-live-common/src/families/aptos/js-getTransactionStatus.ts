@@ -5,6 +5,7 @@ import {
   InvalidAddress,
   FeeNotLoaded,
   GasLessThanEstimate,
+  InvalidAddressBecauseDestinationIsAlsoSource,
 } from "@ledgerhq/errors";
 import type { Account } from "@ledgerhq/types-live";
 import type { TransactionStatus } from "../..//generated/types";
@@ -39,7 +40,9 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
   if (!t.recipient) {
     errors.recipient = new RecipientRequired();
   } else if (!isValidAddress(t.recipient)) {
-    errors.recipient = new InvalidAddress();
+    errors.recipient = new InvalidAddress("", { currencyName: a.currency.name });
+  } else if (t.recipient === a.freshAddress) {
+    errors.recepient = new InvalidAddressBecauseDestinationIsAlsoSource();
   }
 
   if (
