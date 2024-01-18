@@ -39,8 +39,8 @@ const getMaxSendBalance = (amount: BigNumber, gas: BigNumber, gasPrice: BigNumbe
 
 const getPayload = (sendTo: string, amount: BigNumber) => {
   return {
-    function: "0x1::aptos_account::transfer_coins",
-    type_arguments: ["0x1::aptos_coin::AptosCoin"],
+    function: "0x1::aptos_account::transfer",
+    type_arguments: [],
     arguments: [sendTo, amount.toString()],
   };
 };
