@@ -13,7 +13,6 @@ import { ManifestList } from "../ManifestList";
 import { SearchBar } from "./SearchBar";
 import { Disclaimer } from "../../hooks";
 import { Search as SearchType } from "../../types";
-import { Categories } from "@ledgerhq/live-common/wallet-api/react";
 
 export * from "./SearchBar";
 
@@ -28,7 +27,6 @@ interface Props {
   title: React.ReactNode;
   subtitle?: React.ReactNode;
   listTitle?: React.ReactNode;
-  categories: Categories;
   disclaimer: Pick<Disclaimer, "onSelect">;
   search: SearchType;
 }

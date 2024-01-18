@@ -37,7 +37,7 @@ export function useCatalog() {
     filter: (item: AppManifest, input: string) => {
       if (input) return true;
       return (
-        completeManifests.includes(item) &&
+        item.visibility === "complete" &&
         (item.categories.includes(categories.selected) || categories.selected === "all")
       );
     },
