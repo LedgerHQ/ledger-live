@@ -5,7 +5,7 @@ import "./families"; // families may set up their own things
 import VaultTransport from "@ledgerhq/hw-transport-vault";
 import { registerTransportModule } from "@ledgerhq/live-common/hw/index";
 import { retry } from "@ledgerhq/live-common/promise";
-import { listen as listenLogs } from "@ledgerhq/logs";
+import { TraceContext, listen as listenLogs, trace } from "@ledgerhq/logs";
 import { getUserId } from "~/helpers/user";
 import { setEnvOnAllThreads } from "./../helpers/env";
 import { IPCTransport } from "./IPCTransport";
@@ -17,7 +17,7 @@ setEnvOnAllThreads("USER_ID", getUserId());
 const originalDeviceMode = currentMode;
 const vaultTransportPrefixID = "vault-transport:";
 
-// Listens to logs from `@ledgerhq/logs` (happening on the renderer thread) and transfers them to the LLD logger system
+// Listens to logs from `@ledgerhq/logs` (happening on the renderer process) and transfers them to the LLD logger system
 listenLogs(({ id, date, ...log }) => {
   if (log.type === "hid-frame") return;
 
@@ -27,14 +27,31 @@ listenLogs(({ id, date, ...log }) => {
 // This defines our IPC Transport that will proxy to an internal process (we shouldn't use node-hid on renderer)
 registerTransportModule({
   id: "ipc",
-  open: (id: string) => {
+  open: (id: string, timeoutMs?: number, context?: TraceContext) => {
     // id could be another type of transport such as vault-transport
     if (id.startsWith(vaultTransportPrefixID)) return;
 
     if (originalDeviceMode !== currentMode) {
       setDeviceMode(originalDeviceMode);
     }
-    return retry(() => IPCTransport.open(id));
+
+    trace({
+      type: "renderer-setup",
+      message: "Open called on registered module",
+      data: {
+        transport: "IPCTransport",
+        timeoutMs,
+      },
+      context: {
+        openContext: context,
+      },
+    });
+
+    // Retries in the `renderer` process if the open failed. No retry is done in the `internal` process to avoid multiplying retries.
+    return retry(() => IPCTransport.open(id, timeoutMs, context), {
+      interval: 500,
+      maxRetry: 4,
+    });
   },
   disconnect: () => Promise.resolve(),
 });

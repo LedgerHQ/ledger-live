@@ -4,7 +4,7 @@ import { v4 as uuid } from "uuid";
 import * as Sentry from "@sentry/react-native";
 import Config from "react-native-config";
 import { Platform } from "react-native";
-import { createClient, SegmentClient } from "@segment/analytics-react-native";
+import { createClient, SegmentClient, UserTraits } from "@segment/analytics-react-native";
 import VersionNumber from "react-native-version-number";
 import RNLocalize from "react-native-localize";
 import { ReplaySubject } from "rxjs";
@@ -67,7 +67,6 @@ export function setAnalyticsFeatureFlagMethod(method: typeof analyticsFeatureFla
 const getFeatureFlagProperties = () => {
   if (!analyticsFeatureFlagMethod || !segmentClient) return {};
   (async () => {
-    const { user } = await getOrCreateUser();
     const ptxEarnFeatureFlag = analyticsFeatureFlagMethod("ptxEarn");
     const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
 
@@ -78,7 +77,7 @@ const getFeatureFlagProperties = () => {
     const isBatch3Enabled =
       !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 3;
 
-    segmentClient.identify(user.id, {
+    updateIdentify({
       ptxEarnEnabled: !!ptxEarnFeatureFlag?.enabled,
       isBatch1Enabled,
       isBatch2Enabled,
@@ -194,7 +193,6 @@ export const start = async (store: AppStore): Promise<SegmentClient | undefined>
   }
 
   console.log("START ANALYTICS", ANALYTICS_LOGS);
-  const userExtraProperties = await extraProperties(store);
   if (token) {
     segmentClient = createClient({
       writeKey: token,
@@ -208,13 +206,14 @@ export const start = async (store: AppStore): Promise<SegmentClient | undefined>
     if (created) {
       segmentClient.reset();
     }
-    await segmentClient.identify(user.id, userExtraProperties);
+    await updateIdentify();
   }
-  await track("Start", userExtraProperties, true);
+  await track("Start");
 
   return segmentClient;
 };
-export const updateIdentify = async () => {
+
+export const updateIdentify = async (additionalProperties?: UserTraits) => {
   Sentry.addBreadcrumb({
     category: "identify",
     level: "debug",
@@ -225,10 +224,15 @@ export const updateIdentify = async () => {
   }
 
   const userExtraProperties = await extraProperties(storeInstance);
-  if (ANALYTICS_LOGS) console.log("analytics:identify", userExtraProperties);
+  const allProperties = {
+    ...userExtraProperties,
+    ...(additionalProperties || {}),
+  };
+  if (ANALYTICS_LOGS) console.log("analytics:identify", allProperties);
   if (!token) return;
-  await segmentClient?.identify(userExtraProperties.userId, userExtraProperties);
+  await segmentClient?.identify(userExtraProperties.userId, allProperties);
 };
+
 export const stop = () => {
   if (ANALYTICS_LOGS) console.log("analytics:stop");
   storeInstance = null;
@@ -247,12 +251,11 @@ type EventType = string | "button_clicked" | "error_message";
 
 export function getIsTracking(
   state: State | null | undefined,
-  mandatory?: boolean | null | undefined,
 ): { enabled: true } | { enabled: false; reason?: string } {
   if (!state) return { enabled: false, reason: "store not initialised" };
   const analyticsEnabled = state && analyticsEnabledSelector(state);
 
-  if (!mandatory && !analyticsEnabled) {
+  if (!analyticsEnabled) {
     return {
       enabled: false,
       reason: "analytics not enabled",
@@ -264,7 +267,6 @@ export function getIsTracking(
 export const track = async (
   event: EventType,
   eventProperties?: Error | Record<string, unknown> | null,
-  mandatory?: boolean | null,
 ) => {
   Sentry.addBreadcrumb({
     message: event,
@@ -275,7 +277,7 @@ export const track = async (
 
   const state = storeInstance && storeInstance.getState();
 
-  const isTracking = getIsTracking(state, mandatory);
+  const isTracking = getIsTracking(state);
   if (!isTracking.enabled) {
     if (ANALYTICS_LOGS) console.log("analytics:track: not tracking because: ", isTracking.reason);
     return;
@@ -310,20 +312,19 @@ export const trackWithRoute = (
   event: EventType,
   route: RouteProp<ParamListBase>,
   properties?: Record<string, unknown> | null,
-  mandatory?: boolean | null,
 ) => {
   const newProperties = {
     page: getPageNameFromRoute(route),
     // don't override page if it's already set
     ...(properties || {}),
   };
-  track(event, newProperties, mandatory);
+  track(event, newProperties);
 };
 export const useTrack = () => {
   const route = useRoute();
   const track = useCallback(
-    (event: EventType, properties?: Record<string, unknown> | null, mandatory?: boolean | null) =>
-      trackWithRoute(event, route, properties, mandatory),
+    (event: EventType, properties?: Record<string, unknown> | null) =>
+      trackWithRoute(event, route, properties),
     [route],
   );
   return track;

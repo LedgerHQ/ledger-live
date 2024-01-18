@@ -144,6 +144,7 @@
     "@jest/globals": "^29.7.0",
     "@ledgerhq/react-devtools": "workspace:^",
     "@ledgerhq/test-utils": "workspace:^",
+    "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@octokit/rest": "^18.12.0",
     "@playwright/test": "^1.39.0",
     "@sentry/cli": "^2.23.0",

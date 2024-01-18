@@ -1,5 +1,5 @@
 import React from "react";
-import Animated, { FadeOut, Layout, useAnimatedStyle, withSpring } from "react-native-reanimated";
+import Animated, { FadeIn, Layout, useAnimatedStyle, withSpring } from "react-native-reanimated";
 import { useTheme } from "styled-components/native";
 import { ItemStatus } from "./types";
 
@@ -58,7 +58,7 @@ const Bullet = ({ type }: { type: ItemStatus }) => {
   return (
     <Animated.View
       layout={Layout.duration(100)}
-      exiting={FadeOut.duration(250)}
+      entering={FadeIn.duration(500)}
       style={[bulletStyles[type], animatedStyles]}
     />
   );
