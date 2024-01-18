@@ -25,6 +25,8 @@ const bitcoin = getCryptoCurrencyById("bitcoin");
 const usd = getFiatCurrencyByTicker("USD");
 const now = Date.now();
 
+const DAY = 24 * 60 * 60 * 1000;
+
 jest.setTimeout(60000);
 
 describe("API sanity", () => {
@@ -34,7 +36,7 @@ describe("API sanity", () => {
         {
           from: bitcoin,
           to: usd,
-          startDate: new Date(now - 200 * 24 * 60 * 60 * 1000),
+          startDate: new Date(now - 200 * DAY),
         },
       ],
       autofillGaps: false,
@@ -43,7 +45,7 @@ describe("API sanity", () => {
 
     for (let i = 0; i < 7; i++) {
       const value = calculate(state, {
-        date: new Date(now - i * 24 * 60 * 60 * 1000),
+        date: new Date(now - i * DAY),
         disableRounding: true,
         from: bitcoin,
         to: usd,
@@ -58,7 +60,7 @@ describe("API sanity", () => {
         {
           from: bitcoin,
           to: usd,
-          startDate: new Date(now - 200 * 24 * 60 * 60 * 1000),
+          startDate: new Date(now - 200 * DAY),
         },
       ],
       autofillGaps: true,
@@ -73,7 +75,7 @@ describe("API sanity", () => {
 
     for (let i = 1; i < 7; i++) {
       const value = calculate(state, {
-        date: new Date(now - i * 24 * 60 * 60 * 1000),
+        date: new Date(now - i * DAY),
         disableRounding: true,
         from: bitcoin,
         to: usd,
@@ -156,7 +158,7 @@ describe("WETH rules", () => {
         {
           from: ethereum,
           to: usd,
-          startDate: new Date(now - 10 * 24 * 60 * 60 * 1000),
+          startDate: new Date(now - 10 * DAY),
         },
       ],
       autofillGaps: true,
@@ -178,7 +180,7 @@ describe("WETH rules", () => {
         {
           from: bitcoin,
           to: ethereum,
-          startDate: new Date(now - 10 * 24 * 60 * 60 * 1000),
+          startDate: new Date(now - 10 * DAY),
         },
       ],
       autofillGaps: true,
@@ -200,7 +202,7 @@ describe("WETH rules", () => {
         {
           from: ethereum,
           to: usd,
-          startDate: new Date(now - 1 * 24 * 60 * 60 * 1000),
+          startDate: new Date(now - 1 * DAY),
         },
       ],
       autofillGaps: true,
@@ -227,12 +229,12 @@ test("export and import it back", async () => {
       {
         from: bitcoin,
         to: usd,
-        startDate: new Date(now - 10 * 24 * 60 * 60 * 1000),
+        startDate: new Date(now - 10 * DAY),
       },
       {
         from: ethereum,
         to: usd,
-        startDate: new Date(now - 100 * 24 * 60 * 60 * 1000),
+        startDate: new Date(now - 100 * DAY),
       },
     ],
     autofillGaps: true,

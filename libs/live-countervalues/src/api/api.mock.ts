@@ -5,8 +5,10 @@ import { formatPerGranularity } from "../helpers";
 import Prando from "prando";
 import { findCurrencyByTicker } from "@ledgerhq/coin-framework/currencies/index";
 
+const DAY = 24 * 60 * 60 * 1000;
+
 function btcTrend(t: number) {
-  const daysSinceGenesis = (t - 1230937200000) / (24 * 60 * 60 * 1000);
+  const daysSinceGenesis = (t - 1230937200000) / DAY;
   return Math.pow(daysSinceGenesis / 693, 5.526);
 }
 
@@ -21,13 +23,13 @@ function temporalFactor(from: string, to: string, maybeDate: Date | undefined) {
   const t = (maybeDate || new Date()).getTime();
   const r = fromToRandom(from); // make it varies between rates...
 
-  const wave1 = Math.cos(r * 0.5 + t / (200 * 24 * 60 * 60 * 1000 * (0.5 + 0.5 * r)));
+  const wave1 = Math.cos(r * 0.5 + t / (200 * DAY * (0.5 + 0.5 * r)));
   // long term wave
-  const wave2 = Math.sin(r + t / (30 * 24 * 60 * 60 * 1000)); // short term wave
+  const wave2 = Math.sin(r + t / (30 * DAY)); // short term wave
 
   const wave3 = // random market perturbation
-    Math.max(0, Math.sin(t / (66 * 24 * 60 * 60 * 1000))) *
-    Math.cos(wave2 + Math.cos(r) + t / (3 * 24 * 60 * 60 * 1000 * (1 - 0.1 * r)));
+    Math.max(0, Math.sin(t / (66 * DAY))) *
+    Math.cos(wave2 + Math.cos(r) + t / (3 * DAY * (1 - 0.1 * r)));
 
   // This is essentially randomness!
   if (maybeDate && Math.cos(7 * r + t * 0.1) > 0.9 + 0.1 * r) {
@@ -68,7 +70,7 @@ function rate(from: string, to: string, date?: Date): number | undefined {
 }
 
 const increment = {
-  daily: 24 * 60 * 60 * 1000,
+  daily: DAY,
   hourly: 60 * 60 * 1000,
 };
 

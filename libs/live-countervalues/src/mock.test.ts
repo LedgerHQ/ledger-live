@@ -9,8 +9,12 @@ import {
 } from "@ledgerhq/cryptoassets";
 import { formatCounterValueDay, formatCounterValueHour, parseFormattedDate } from "./helpers";
 import api from "./api";
+
 setEnv("MOCK", "1");
 setEnv("MOCK_COUNTERVALUES", "1");
+
+const DAY = 24 * 60 * 60 * 1000;
+
 test("helpers", () => {
   expect(formatCounterValueDay(new Date())).toBe("2018-03-14");
   expect(formatCounterValueHour(new Date())).toBe("2018-03-14T17");
@@ -40,7 +44,7 @@ test("mock load with btc-usd to track", async () => {
       {
         from: getCryptoCurrencyById("bitcoin"),
         to: getFiatCurrencyByTicker("USD"),
-        startDate: new Date(Date.now() - 200 * 24 * 60 * 60 * 1000),
+        startDate: new Date(Date.now() - 200 * DAY),
       },
     ],
     autofillGaps: false,
@@ -51,7 +55,7 @@ test("mock load with btc-usd to track", async () => {
       value: 100000000,
       from: getCryptoCurrencyById("bitcoin"),
       to: getFiatCurrencyByTicker("USD"),
-      date: new Date(Date.now() - 210 * 24 * 60 * 60 * 1000),
+      date: new Date(Date.now() - 210 * DAY),
     }),
   ).toBeUndefined();
   expect(
@@ -89,7 +93,7 @@ test("mock load with eth-btc to track", async () => {
       {
         from: getCryptoCurrencyById("ethereum"),
         to: getCryptoCurrencyById("bitcoin"),
-        startDate: new Date(Date.now() - 200 * 24 * 60 * 60 * 1000),
+        startDate: new Date(Date.now() - 200 * DAY),
       },
     ],
     autofillGaps: false,
@@ -109,7 +113,7 @@ test("mock load with btc-eth to track", async () => {
       {
         from: getCryptoCurrencyById("bitcoin"),
         to: getCryptoCurrencyById("ethereum"),
-        startDate: new Date(Date.now() - 200 * 24 * 60 * 60 * 1000),
+        startDate: new Date(Date.now() - 200 * DAY),
       },
     ],
     autofillGaps: false,
@@ -176,7 +180,7 @@ test("missing rate in mock", async () => {
       {
         from: getCryptoCurrencyById("bitcoin"),
         to: getFiatCurrencyByTicker("USD"),
-        startDate: new Date(Date.now() - 200 * 24 * 60 * 60 * 1000),
+        startDate: new Date(Date.now() - 200 * DAY),
       },
     ],
     autofillGaps: false,
@@ -197,7 +201,7 @@ test("missing rate in mock is filled by autofillGaps", async () => {
       {
         from: getCryptoCurrencyById("bitcoin"),
         to: getFiatCurrencyByTicker("USD"),
-        startDate: new Date(Date.now() - 200 * 24 * 60 * 60 * 1000),
+        startDate: new Date(Date.now() - 200 * DAY),
       },
     ],
     autofillGaps: true,
