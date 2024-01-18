@@ -1,6 +1,5 @@
 import React from "react";
 import { Trans } from "react-i18next";
-import invariant from "invariant";
 import type { Account } from "@ledgerhq/types-live";
 import type { TronAccount } from "@ledgerhq/live-common/families/tron/types";
 import { getLastVotedDate } from "@ledgerhq/live-common/families/tron/react";
@@ -15,11 +14,10 @@ const getSecondaryActions = ({
   parentAccount: Account;
 }): ActionButtonEvent[] => {
   const { tronResources } = account;
-  invariant(tronResources, "tron resources required");
-  const { tronPower } = tronResources;
+  const tronPower = tronResources?.tronPower || 0;
 
   const accountId = account.id;
-  const canVote = (tronPower || 0) > 0;
+  const canVote = tronPower > 0;
   const lastVotedDate = getLastVotedDate(account as TronAccount);
 
   return [
