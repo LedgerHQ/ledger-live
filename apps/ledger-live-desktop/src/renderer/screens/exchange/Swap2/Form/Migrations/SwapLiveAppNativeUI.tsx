@@ -32,7 +32,6 @@ export const SwapLiveAppNativeUI = (props: SwapLiveAppNativeUIProps) => {
   /**
    * Show quotes for Demo 0 
    */
-  // const showQuote
   return (
     <>
       {pageState === "loaded" && (

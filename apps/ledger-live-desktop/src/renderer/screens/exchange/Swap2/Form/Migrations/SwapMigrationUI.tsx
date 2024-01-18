@@ -76,10 +76,6 @@ export const SwapMigrationUI = (props: SwapMigrationUIProps) => {
    * Live app disabled or unavailable, fallback to native UI
    */
   if (!liveAppEnabled || !liveApp) {
-    console.log('[swap] live app disabled or live app missing', {
-      liveAppEnabled,
-      liveApp: Boolean(liveApp)
-    })
     return allNativeUI;
   }
 
@@ -89,7 +85,6 @@ export const SwapMigrationUI = (props: SwapMigrationUIProps) => {
      * Rest should be in native UI (e.g quotes)
      */
     case SwapWebManifestIDs.Demo0:
-      console.log('[swap] demo 0 live app')
       return (
         <>
           {nativeQuotesUI}
@@ -97,7 +92,6 @@ export const SwapMigrationUI = (props: SwapMigrationUIProps) => {
         </>
       );
     case SwapWebManifestIDs.Demo1:
-      console.log('[swap] demo 1 live app')
       /**
        * Demo 1 live app should contain:
        *  - Exchange Button
@@ -109,7 +103,6 @@ export const SwapMigrationUI = (props: SwapMigrationUIProps) => {
      * Fall back to show all native UI
      */
     default:
-      console.log('[swap] live app enabled but native fall back')
       return allNativeUI;
   }
 };

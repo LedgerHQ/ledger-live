@@ -70,10 +70,6 @@ export const SwapWebManifestIDs = {
 export const useSwapLiveAppManifestID = () => {
   const demo0 = useFeature("ptxSwapLiveAppDemoZero");
   const demo1 = useFeature("ptxSwapLiveAppDemoOne");
-  console.log('swap live app manifest', {
-    demo0,
-    demo1
-  })
   switch (true) {
     case demo1?.enabled:
       return SwapWebManifestIDs.Demo1;
