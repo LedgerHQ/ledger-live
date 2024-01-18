@@ -77,7 +77,7 @@ const TargetAccount = memo(function TargetAccount({
       : account.balance;
 
   const onClick = useCallback(() => {
-    track("button_clicked", {
+    track("button_clicked2", {
       page: "Swap accounts",
       ...swapDefaultTrack,
       button: "account",

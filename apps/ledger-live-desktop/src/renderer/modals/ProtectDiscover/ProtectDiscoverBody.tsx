@@ -31,7 +31,7 @@ const ProtectDiscoverBody = ({ onClose }: Props) => {
   const discoverTheBenefitsLink = protectServicesDesktopFeature?.params?.discoverTheBenefitsLink;
   const onDiscoverClick = useCallback(() => {
     if (!discoverTheBenefitsLink) return;
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "Discover the benefits",
     });
     openURL(discoverTheBenefitsLink);

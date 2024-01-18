@@ -331,7 +331,7 @@ const MainSideBar = () => {
     } else if (enabled) {
       dispatch(openModal("MODAL_PROTECT_DISCOVER", undefined));
     }
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "Protect",
     });
   }, [

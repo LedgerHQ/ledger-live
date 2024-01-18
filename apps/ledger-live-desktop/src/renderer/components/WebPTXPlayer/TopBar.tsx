@@ -134,7 +134,7 @@ export const TopBar = ({ manifest, webviewAPIRef, webviewState }: Props) => {
     if (manifestId) {
       const flowName = localStorage.getItem("flow-name") || "";
 
-      track("button_clicked", {
+      track("button_clicked2", {
         button: ["buy", "sell"].includes(flowName) ? "back to quote" : "back to liveapp",
         provider: manifestId,
         flow: flowName,
@@ -155,7 +155,7 @@ export const TopBar = ({ manifest, webviewAPIRef, webviewState }: Props) => {
       const urlParams = new URLSearchParams(url.searchParams);
       const flowName = urlParams.get("liveAppFlow");
 
-      track("button_clicked", {
+      track("button_clicked2", {
         button: flowName === "compare_providers" ? "back to quote" : "back to liveapp",
         provider: currentHostname,
         flow: flowName,

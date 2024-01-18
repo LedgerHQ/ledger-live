@@ -127,7 +127,7 @@ function MarketRowItem({
       if (currency?.internalCurrency?.id) {
         e.preventDefault();
         e.stopPropagation();
-        track("button_clicked", {
+        track("button_clicked2", {
           button: "swap",
           currency: currency?.ticker,
           page: "Page Market",
@@ -170,7 +170,7 @@ function MarketRowItem({
     (e: React.SyntheticEvent<HTMLButtonElement>) => {
       e.preventDefault();
       e.stopPropagation();
-      track("button_clicked", {
+      track("button_clicked2", {
         button: "stake",
         currency: currency?.ticker,
         page: "Page Market",

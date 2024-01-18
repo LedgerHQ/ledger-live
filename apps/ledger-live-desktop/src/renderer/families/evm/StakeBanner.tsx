@@ -37,7 +37,7 @@ const StakeBanner: React.FC<{ account: Account }> = ({ account }) => {
   if (stakeProvider === "kiln" && !stakeAccountBannerParams?.eth?.kiln) return null;
 
   const stakeOnClick = (providerLiveAppId: string) => {
-    track("button_clicked", {
+    track("button_clicked2", {
       ...stakeDefaultTrack,
       delegation: "stake",
       page: "Page Account",

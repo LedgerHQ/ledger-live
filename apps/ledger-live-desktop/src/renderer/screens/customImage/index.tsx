@@ -163,7 +163,7 @@ const CustomImage: React.FC<Props> = props => {
   const error = stepError[step];
 
   const handleErrorRetryClicked = useCallback(() => {
-    error?.name && track("button_clicked", { button: "Retry" });
+    error?.name && track("button_clicked2", { button: "Retry" });
     setStepWrapper(Step.chooseImage);
   }, [error?.name, setStepWrapper, track]);
 
