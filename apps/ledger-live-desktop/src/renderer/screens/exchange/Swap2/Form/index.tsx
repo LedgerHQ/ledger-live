@@ -351,7 +351,7 @@ const SwapForm = () => {
   const onSubmit = () => {
     if (!exchangeRate) return;
 
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "Request",
       page: "Page Swap Form",
       ...swapDefaultTrack,

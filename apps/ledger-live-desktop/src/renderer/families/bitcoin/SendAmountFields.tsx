@@ -84,7 +84,7 @@ const Fields: Props = ({
 
   const onFeeStrategyClick = useCallback(
     ({ amount, feesStrategy }: OnClickType) => {
-      track("button_clicked", {
+      track("button_clicked2", {
         ...trackProperties,
         button: feesStrategy,
         feePerByte: amount,
@@ -102,7 +102,7 @@ const Fields: Props = ({
   );
   const setAdvanceModeAndTrack = useCallback(
     (state: boolean) => {
-      track("button_clicked", {
+      track("button_clicked2", {
         ...trackProperties,
         button: state ? "advanced" : "standard",
       });
@@ -112,7 +112,7 @@ const Fields: Props = ({
   );
   const onChangeAndTrack = useCallback(
     (params: Transaction) => {
-      track("button_clicked", {
+      track("button_clicked2", {
         ...trackProperties,
         button: "fees",
         value: params,
