@@ -10,7 +10,7 @@ import type {
 } from "@ledgerhq/types-live";
 import { useEffect, useRef, useState } from "react";
 import { getAccountCurrency, flattenAccounts } from "../../account";
-import { useCountervaluesState } from "@ledgerhq/live-countervalues/react";
+import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import { useThrottledValues } from "../../hooks/useThrottledFunction";
 import {
   getBalanceHistoryWithCountervalue,

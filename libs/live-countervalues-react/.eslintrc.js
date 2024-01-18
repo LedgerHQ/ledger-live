@@ -12,8 +12,13 @@ module.exports = {
     Atomics: "readonly",
     SharedArrayBuffer: "readonly",
   },
-  extends: ["plugin:import/typescript", "plugin:jsx-a11y/recommended"],
-  plugins: ["import", "jsx-a11y"],
+  extends: [
+    "plugin:import/typescript",
+    "plugin:jsx-a11y/recommended",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+  ],
+  plugins: ["react", "react-hooks", "import", "jsx-a11y"],
   rules: {
     "no-console": ["error", { allow: ["warn", "error"] }],
     "linebreak-style": ["error", "unix"],

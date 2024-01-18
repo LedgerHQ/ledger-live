@@ -17,16 +17,17 @@ import {
   exportCountervalues,
   importCountervalues,
   inferTrackingPairForAccounts,
-} from "./logic";
+} from "@ledgerhq/live-countervalues/logic";
 import type {
   CounterValuesState,
   CounterValuesStateRaw,
   CountervaluesSettings,
   TrackingPair,
-} from "./types";
+} from "@ledgerhq/live-countervalues/types";
 import { useDebounce } from "@ledgerhq/live-hooks/useDebounce";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
+
 // Polling is the control object you get from the high level <PollingConsumer>{ polling => ...
 export type Polling = {
   // completely wipe all countervalues

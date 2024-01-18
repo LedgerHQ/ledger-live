@@ -2,7 +2,7 @@ import React, { useState, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { useBridgeSync, useGlobalSyncState } from "@ledgerhq/live-common/bridge/react/index";
-import { useCountervaluesPolling } from "@ledgerhq/live-countervalues/react";
+import { useCountervaluesPolling } from "@ledgerhq/live-countervalues-react";
 import { getEnv } from "@ledgerhq/live-env";
 import { track } from "~/renderer/analytics/segment";
 import { isUpToDateSelector } from "~/renderer/reducers/accounts";

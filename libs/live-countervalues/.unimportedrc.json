@@ -1,5 +1,5 @@
 {
-  "entry": ["src/react.tsx", "src/logic.ts", "src/api/index.ts", "src/types.ts"],
+  "entry": ["src/logic.ts", "src/api/index.ts", "src/types.ts"],
   "ignoreUnimported": [],
   "ignoreUnresolved": []
 }

@@ -160,6 +160,7 @@
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-hooks": "workspace:*",
     "@ledgerhq/live-countervalues": "workspace:^",
+    "@ledgerhq/live-countervalues-react": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/live-promise": "workspace:^",
     "@ledgerhq/logs": "workspace:^",

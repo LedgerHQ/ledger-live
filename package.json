@@ -76,6 +76,7 @@
     "utils": "pnpm --filter live-utils",
     "hooks": "pnpm --filter live-hooks",
     "countervalues": "pnpm --filter live-countervalues",
+    "countervalues-react": "pnpm --filter live-countervalues-react",
     "bot:github": "pnpm --filter live-github-bot",
     "ljs:cryptoassets": "pnpm --filter cryptoassets",
     "ljs:devices": "pnpm --filter devices",

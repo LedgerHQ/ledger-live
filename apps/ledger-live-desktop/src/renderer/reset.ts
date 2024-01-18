@@ -3,7 +3,7 @@ import { useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { log } from "@ledgerhq/logs";
 import { delay } from "@ledgerhq/live-common/promise";
-import { useCountervaluesPolling } from "@ledgerhq/live-countervalues/react";
+import { useCountervaluesPolling } from "@ledgerhq/live-countervalues-react";
 import resolveUserDataDirectory from "~/helpers/resolveUserDataDirectory";
 import { resetAll, cleanCache } from "~/renderer/storage";
 import { resetStore } from "~/renderer/store";

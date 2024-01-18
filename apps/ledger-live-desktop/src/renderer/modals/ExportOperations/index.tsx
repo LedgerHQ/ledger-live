@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import styled from "styled-components";
 import moment from "moment";
 import { createStructuredSelector } from "reselect";
-import { useCountervaluesState } from "@ledgerhq/live-countervalues/react";
+import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import { accountsOpToCSV } from "@ledgerhq/live-common/csvExport";
 import { Account } from "@ledgerhq/types-live";
 import { Currency } from "@ledgerhq/types-cryptoassets";

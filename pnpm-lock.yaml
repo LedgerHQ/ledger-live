@@ -271,6 +271,9 @@ importers:
       '@ledgerhq/live-countervalues':
         specifier: workspace:^
         version: link:../../libs/live-countervalues
+      '@ledgerhq/live-countervalues-react':
+        specifier: workspace:^
+        version: link:../../libs/live-countervalues-react
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../libs/env
@@ -764,6 +767,9 @@ importers:
       '@ledgerhq/live-countervalues':
         specifier: workspace:^
         version: link:../../libs/live-countervalues
+      '@ledgerhq/live-countervalues-react':
+        specifier: workspace:^
+        version: link:../../libs/live-countervalues-react
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../libs/env
@@ -2101,6 +2107,9 @@ importers:
       '@ledgerhq/live-countervalues':
         specifier: workspace:^
         version: link:../live-countervalues
+      '@ledgerhq/live-countervalues-react':
+        specifier: workspace:^
+        version: link:../live-countervalues-react
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../env
@@ -4254,9 +4263,6 @@ importers:
       '@ledgerhq/live-env':
         specifier: workspace:*
         version: link:../env
-      '@ledgerhq/live-hooks':
-        specifier: workspace:*
-        version: link:../live-hooks
       '@ledgerhq/live-network':
         specifier: workspace:*
         version: link:../live-network
@@ -4266,6 +4272,40 @@ importers:
       '@ledgerhq/logs':
         specifier: workspace:*
         version: link:../ledgerjs/packages/logs
+      '@ledgerhq/types-cryptoassets':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/types-cryptoassets
+      '@ledgerhq/types-live':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/types-live
+    devDependencies:
+      '@types/jest':
+        specifier: ^29.5.10
+        version: 29.5.10
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0
+      prando:
+        specifier: '6'
+        version: 6.0.1
+      ts-jest:
+        specifier: ^29.1.1
+        version: 29.1.1(jest@29.7.0)(typescript@5.1.3)
+
+  libs/live-countervalues-react:
+    dependencies:
+      '@ledgerhq/coin-framework':
+        specifier: workspace:*
+        version: link:../coin-framework
+      '@ledgerhq/cryptoassets':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/cryptoassets
+      '@ledgerhq/live-countervalues':
+        specifier: workspace:*
+        version: link:../live-countervalues
+      '@ledgerhq/live-hooks':
+        specifier: workspace:*
+        version: link:../live-hooks
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:*
         version: link:../ledgerjs/packages/types-cryptoassets
@@ -4288,9 +4328,6 @@ importers:
       jest-environment-jsdom:
         specifier: ^29.7.0
         version: 29.7.0
-      prando:
-        specifier: '6'
-        version: 6.0.1
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -22478,7 +22515,7 @@ packages:
       react-docgen-typescript: 2.2.2(typescript@5.1.3)
       tslib: 2.6.2
       typescript: 5.1.3
-      webpack: 5.89.0(esbuild@0.19.3)
+      webpack: 5.89.0(metro@0.80.0)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -27597,7 +27634,7 @@ packages:
       '@babel/core': 7.23.2
       find-cache-dir: 4.0.0
       schema-utils: 4.2.0
-      webpack: 5.89.0(@swc/core@1.3.95)(esbuild@0.19.3)
+      webpack: 5.89.0(@swc/core@1.3.95)(metro@0.80.0)
     dev: true
 
   /babel-plugin-add-react-displayname@0.0.5:
@@ -27914,7 +27951,7 @@ packages:
       babel-plugin-syntax-jsx: 6.18.0
       lodash: 4.17.21
       picomatch: 2.3.1
-      styled-components: 5.3.5(react-dom@18.2.0)(react-is@17.0.2)(react@18.2.0)
+      styled-components: 5.3.5(react-is@18.1.0)(react@18.2.0)
 
   /babel-plugin-syntax-jsx@6.18.0:
     resolution: {integrity: sha512-qrPaCSo9c8RHNRHIotaufGbuOBN8rtdC4QrrFFc43vyWCCz7Kl7GL1PGaXtMGQZUXrkCjNEgxDfmAuAabr/rlw==}
@@ -36299,7 +36336,7 @@ packages:
       semver: 7.5.4
       tapable: 2.2.1
       typescript: 5.1.3
-      webpack: 5.89.0(@swc/core@1.3.95)(esbuild@0.19.3)
+      webpack: 5.89.0(@swc/core@1.3.95)(metro@0.80.0)
     dev: true
 
   /form-data@2.3.3:
@@ -39684,7 +39721,7 @@ packages:
       pretty-format: 29.7.0
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.9.1(typescript@5.2.2)
+      ts-node: 10.9.1(@swc/core@1.3.95)(typescript@5.1.3)
     transitivePeerDependencies:
       - babel-plugin-macros
       - metro
@@ -39725,7 +39762,7 @@ packages:
       pretty-format: 29.7.0
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.9.1(typescript@5.2.2)
+      ts-node: 10.9.1(@swc/core@1.3.95)(typescript@5.1.3)
     transitivePeerDependencies:
       - babel-plugin-macros
       - metro
@@ -41381,7 +41418,7 @@ packages:
         optional: true
     dependencies:
       abab: 2.0.6
-      acorn: 8.10.0
+      acorn: 8.11.2
       acorn-globals: 7.0.1
       cssom: 0.5.0
       cssstyle: 2.3.0
@@ -52937,7 +52974,6 @@ packages:
       react-is: 18.1.0
       shallowequal: 1.1.0
       supports-color: 5.5.0
-    dev: false
 
   /styled-components@6.0.7(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-xIwWuiRMYR43mskVsW9MGTRjSo7ol4bcVjT595fGUp3OLBJOlOgaiKaxsHdC4a2HqWKqKnh0CmcRbk5ogyDjTg==}
@@ -53332,7 +53368,7 @@ packages:
       webpack: '>=2'
     dependencies:
       '@swc/core': 1.3.95
-      webpack: 5.89.0(@swc/core@1.3.95)(esbuild@0.19.3)
+      webpack: 5.89.0(@swc/core@1.3.95)(metro@0.80.0)
     dev: true
 
   /swiper@7.4.1:
@@ -57533,7 +57569,7 @@ packages:
       mime-types: 2.1.35
       range-parser: 1.2.1
       schema-utils: 4.2.0
-      webpack: 5.89.0(@swc/core@1.3.95)(esbuild@0.19.3)
+      webpack: 5.89.0(@swc/core@1.3.95)(metro@0.80.0)
     dev: true
 
   /webpack-dev-server@4.12.0(webpack@5.76.1):

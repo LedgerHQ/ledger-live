@@ -3,7 +3,7 @@ import {
   Countervalues,
   useCountervaluesPolling,
   useCountervaluesExport,
-} from "@ledgerhq/live-countervalues/react";
+} from "@ledgerhq/live-countervalues-react";
 import {
   CountervaluesSettings,
   CounterValuesStateRaw,

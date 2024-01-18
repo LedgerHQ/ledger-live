@@ -1,9 +1,9 @@
-import { useTrackingPairForAccounts } from "./react";
+import { useTrackingPairForAccounts } from ".";
 import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
 import { renderHook, act } from "@testing-library/react";
 import { getFiatCurrencyByTicker } from "@ledgerhq/cryptoassets";
-import { inferTrackingPairForAccounts } from "./logic";
-import { TrackingPair } from "./types";
+import { inferTrackingPairForAccounts } from "@ledgerhq/live-countervalues/logic";
+import { TrackingPair } from "@ledgerhq/live-countervalues/types";
 
 describe("useTrackingPairForAccounts", () => {
   const accounts = Array(20)
