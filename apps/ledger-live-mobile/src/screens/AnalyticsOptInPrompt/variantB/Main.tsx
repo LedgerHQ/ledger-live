@@ -4,39 +4,13 @@ import { Flex, IconsLegacy, Link, Text } from "@ledgerhq/native-ui";
 import { TrackScreen } from "~/analytics";
 import { useTranslation } from "react-i18next";
 import Button from "~/components/Button";
-
-const Container = styled(Flex).attrs({
-  paddingVertical: 20,
-  paddingHorizontal: 16,
-  flex: 1,
-  justifyContent: "space-between",
-})``;
-
-const View = styled(Flex).attrs({
-  width: "100%",
-})``;
+import { View, Container, Titles, Content, Bottom } from "../Common";
 
 const Image = styled(Flex).attrs({
   width: "100%",
   height: 180,
   backgroundColor: "primary.c30",
   borderRadius: "24px",
-})``;
-
-const Titles = styled(Flex).attrs({
-  pt: 6,
-  width: "100%",
-})``;
-
-const Content = styled(Flex).attrs({
-  pt: 6,
-  width: "100%",
-})``;
-
-const Bottom = styled(Flex).attrs({
-  paddingBottom: 7,
-  paddingTop: 0,
-  width: "100%",
 })``;
 
 function Main() {

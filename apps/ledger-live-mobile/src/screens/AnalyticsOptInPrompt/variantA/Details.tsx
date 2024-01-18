@@ -3,36 +3,9 @@ import styled from "styled-components/native";
 import { Flex, IconsLegacy, Link, Text, Toggle } from "@ledgerhq/native-ui";
 import { TrackScreen } from "~/analytics";
 import { useTranslation } from "react-i18next";
-import { Check, Close } from "@ledgerhq/native-ui/assets/icons";
 import Button from "~/components/Button";
 import Switch from "~/components/Switch";
-
-const Container = styled(Flex).attrs({
-  paddingVertical: 20,
-  paddingHorizontal: 16,
-  flex: 1,
-  justifyContent: "space-between",
-})``;
-
-const View = styled(Flex).attrs({
-  width: "100%",
-})``;
-
-const Titles = styled(Flex).attrs({
-  py: 3,
-  width: "100%",
-})``;
-
-const Content = styled(Flex).attrs({
-  py: 6,
-  width: "100%",
-})``;
-
-const Bottom = styled(Flex).attrs({
-  paddingBottom: 7,
-  paddingTop: 0,
-  width: "100%",
-})``;
+import { View, Container, Titles, Content, Bottom } from "../Common";
 
 const OptionContainer = styled(Flex).attrs({
   width: "100%",
