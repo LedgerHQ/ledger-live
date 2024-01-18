@@ -35,11 +35,13 @@ function Main() {
           <Text color="neutral.c80" fontSize={14}>
             {t("analyticsOptIn.variantB.main.description")}
           </Text>
-          {bulletPoints.map((item, index) => (
-            <View key={index}>
-              <Text pt={6} color="neutral.c80" fontSize={14}>{`\u2022 ${item}`}</Text>
-            </View>
-          ))}
+          <Flex pl={2}>
+            {bulletPoints.map((item, index) => (
+              <View key={index}>
+                <Text pt={6} color="neutral.c80" fontSize={14}>{`\u2022 ${item}`}</Text>
+              </View>
+            ))}
+          </Flex>
         </Content>
       </View>
       <Bottom>
