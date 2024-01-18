@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 33.5.0-next.4
+
+### Patch Changes
+
+- [#5957](https://github.com/LedgerHQ/ledger-live/pull/5957) [`50e03bf`](https://github.com/LedgerHQ/ledger-live/commit/50e03bfe3dbb08f1dee00d04d655990d7abdc7fc) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - use fallback tx fee amount in case of failed retries
+
 ## 33.5.0-next.3
 
 ### Patch Changes
