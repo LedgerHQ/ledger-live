@@ -46,7 +46,7 @@ const api: CounterValuesAPI = {
     }
     batches.push(batch);
 
-    const all = await promiseAllBatched(4, batches, async ([froms, to]) => {
+    const all = await promiseAllBatched(4, batches, async ([froms, to]): Promise<number[]> => {
       const fromIds = froms.map(inferCurrencyAPIID);
       const url = URL.format({
         pathname: `${baseURL()}/v3/spot/simple`,
@@ -62,7 +62,7 @@ const api: CounterValuesAPI = {
       return fromIds.map(id => data[id] || 0);
     });
 
-    const data = all.reduce((acc, data) => acc.concat(data), []);
+    const data = all.flat();
 
     return data;
   },
