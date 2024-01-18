@@ -4,6 +4,7 @@ export const maybeTezosAccountUnrevealedAccount = (
   swapTransaction: SwapTransactionType,
 ): Error | undefined => {
   if (
+    swapTransaction.swap?.rates.status == "success" &&
     swapTransaction?.transaction?.family == "tezos" &&
     swapTransaction?.transaction?.estimatedFees &&
     swapTransaction?.transaction?.fees !== swapTransaction?.transaction?.estimatedFees
