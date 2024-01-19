@@ -1,5 +1,14 @@
 # ledger-live-desktop
 
+## 2.75.0-nightly.5
+
+### Patch Changes
+
+- [#5897](https://github.com/LedgerHQ/ledger-live/pull/5897) [`4f141c7`](https://github.com/LedgerHQ/ledger-live/commit/4f141c74f263f12927e67b2478535bbccb0b5165) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Improve stax connect screen before ESC by polling device onboarding state
+
+- Updated dependencies [[`56f43b1`](https://github.com/LedgerHQ/ledger-live/commit/56f43b10d9a996932ec210ff67f5d327d630fa41)]:
+  - @ledgerhq/live-common@33.5.0-nightly.5
+
 ## 2.75.0-nightly.4
 
 ### Minor Changes

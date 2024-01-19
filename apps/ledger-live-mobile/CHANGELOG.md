@@ -1,5 +1,14 @@
 # live-mobile
 
+## 3.38.0-nightly.2
+
+### Patch Changes
+
+- [#5950](https://github.com/LedgerHQ/ledger-live/pull/5950) [`0b18d6a`](https://github.com/LedgerHQ/ledger-live/commit/0b18d6ad8792e749042853f9bf3f75c7927c9434) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Fix ci lint issues
+
+- Updated dependencies [[`56f43b1`](https://github.com/LedgerHQ/ledger-live/commit/56f43b10d9a996932ec210ff67f5d327d630fa41)]:
+  - @ledgerhq/live-common@33.5.0-nightly.5
+
 ## 3.38.0-nightly.1
 
 ### Minor Changes
