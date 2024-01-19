@@ -83,7 +83,7 @@ export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account) {
 
 export function fromOperationExtraRaw(extraRaw: OperationExtraRaw): OperationExtra {
   if (!isCeloOperationExtraRaw(extraRaw)) {
-    throw new Error();
+    throw new Error("Unsupported OperationExtra");
   }
 
   const extra: CeloOperationExtra = {
@@ -99,7 +99,7 @@ export function fromOperationExtraRaw(extraRaw: OperationExtraRaw): OperationExt
 
 export function toOperationExtraRaw(extra: OperationExtra): OperationExtraRaw {
   if (!isCeloOperationExtra(extra)) {
-    throw new Error();
+    throw new Error("Unsupported OperationExtra");
   }
 
   const extraRaw: CeloOperationExtraRaw = {

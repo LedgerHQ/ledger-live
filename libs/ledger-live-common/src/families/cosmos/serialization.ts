@@ -96,11 +96,11 @@ export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account) {
 }
 
 export function fromOperationExtraRaw(extraRaw: OperationExtraRaw): OperationExtra {
+  const extra: CosmosOperationExtra = {};
   if (!isCosmosOperationExtraRaw(extraRaw)) {
-    throw new Error();
+    return extra;
   }
 
-  const extra: CosmosOperationExtra = {};
   if (extraRaw.validator) {
     extra.validator = {
       address: extraRaw.validator.address,
@@ -131,11 +131,10 @@ export function fromOperationExtraRaw(extraRaw: OperationExtraRaw): OperationExt
 }
 
 export function toOperationExtraRaw(extra: OperationExtra): OperationExtraRaw {
-  if (!isCosmosOperationExtraRaw(extra)) {
-    throw new Error();
-  }
-
   const extraRaw: CosmosOperationExtraRaw = {};
+  if (!isCosmosOperationExtraRaw(extra)) {
+    return extraRaw;
+  }
 
   if (extra.validator) {
     extraRaw.validator = {

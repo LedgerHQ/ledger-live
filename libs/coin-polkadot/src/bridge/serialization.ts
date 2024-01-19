@@ -71,7 +71,7 @@ export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account) {
 
 export function fromOperationExtraRaw(extraRaw: OperationExtraRaw): OperationExtra {
   if (!isPolkadotOperationExtraRaw(extraRaw)) {
-    throw Error("PokadotOperationExtraRaw");
+    throw Error("Unsupported OperationExtraRaw");
   }
 
   const extra: PolkadotOperationExtra = {
@@ -101,7 +101,7 @@ export function fromOperationExtraRaw(extraRaw: OperationExtraRaw): OperationExt
 
 export function toOperationExtraRaw(extra: OperationExtra): OperationExtraRaw {
   if (!isPolkadotOperationExtra(extra)) {
-    throw Error("PokadotOperationExtra");
+    throw Error("Unsupported OperationExtra");
   }
 
   const extraRaw: PolkadotOperationExtraRaw = {

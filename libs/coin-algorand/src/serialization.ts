@@ -43,11 +43,11 @@ export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account): 
 }
 
 export function fromOperationExtraRaw(extraRaw: AlgorandOperationExtraRaw) {
+  const extra: AlgorandOperationExtra = {};
   if (!isAlgorandOperationExtraRaw(extraRaw)) {
-    throw new Error("");
+    return extra;
   }
 
-  const extra: AlgorandOperationExtra = {};
   if (extraRaw.rewards) {
     extra.rewards = new BigNumber(extraRaw.rewards);
   }
@@ -64,11 +64,11 @@ export function fromOperationExtraRaw(extraRaw: AlgorandOperationExtraRaw) {
 }
 
 export function toOperationExtraRaw(extra: AlgorandOperationExtra) {
+  const extraRaw: AlgorandOperationExtraRaw = {};
   if (!isAlgorandOperationExtra(extra)) {
-    throw new Error("");
+    return extraRaw;
   }
 
-  const extraRaw: AlgorandOperationExtraRaw = {};
   if (extra.rewards) {
     extraRaw.rewards = extra.rewards.toString();
   }
