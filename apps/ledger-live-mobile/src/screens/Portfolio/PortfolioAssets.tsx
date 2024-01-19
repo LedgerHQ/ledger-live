@@ -33,6 +33,7 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
   const discreetMode = useSelector(discreetModeSelector);
 
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
+  const blacklistedTokenIdsSet = useMemo(() => new Set(blacklistedTokenIds), [blacklistedTokenIds]);
 
   const assetsToDisplay = useMemo(
     () =>
@@ -40,11 +41,11 @@ const PortfolioAssets = ({ hideEmptyTokenAccount, openAddModal }: Props) => {
         .filter(asset => {
           return (
             asset.currency.type !== "TokenCurrency" ||
-            !blacklistedTokenIds.includes(asset.currency.id)
+            !blacklistedTokenIdsSet.has(asset.currency.id)
           );
         })
         .slice(0, maxAssetsToDisplay),
-    [distribution, blacklistedTokenIds],
+    [distribution, blacklistedTokenIdsSet],
   );
 
   const goToAssets = useCallback(
