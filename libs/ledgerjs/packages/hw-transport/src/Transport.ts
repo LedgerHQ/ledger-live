@@ -175,6 +175,11 @@ export default class Transport {
 
   /**
    * Close the connection with the device.
+   *
+   * Note: for certain transports (hw-transport-node-hid-singleton for ex), once the promise resolved,
+   * the transport instance is actually still cached, and the device is disconnected only after a defined timeout.
+   * But for the consumer of the Transport, this does not matter and it can consider the transport to be closed.
+   *
    * @returns {Promise<void>} A promise that resolves when the transport is closed.
    */
   close(): Promise<void> {
@@ -327,7 +332,10 @@ export default class Transport {
    * @returns a Promise resolving with the output of the given job
    */
   async exchangeAtomicImpl<Output>(f: () => Promise<Output>): Promise<Output> {
-    const tracer = this.tracer.withUpdatedContext({ function: "exchangeAtomicImpl" });
+    const tracer = this.tracer.withUpdatedContext({
+      function: "exchangeAtomicImpl",
+      unresponsiveTimeout: this.unresponsiveTimeout,
+    });
 
     if (this.exchangeBusyPromise) {
       tracer.trace("Atomic exchange is already busy");

@@ -6,7 +6,6 @@ type Props = {
   onUnmount?: boolean;
   onUpdate?: boolean;
   event: string;
-  mandatory?: boolean;
   [key: string]: unknown;
 };
 
@@ -14,8 +13,8 @@ export default memo((props: Props): null => {
   const { event, onMount, onUnmount, onUpdate } = props;
 
   const doTrack = useCallback(() => {
-    const { event, onMount, onUnmount, onUpdate, mandatory, ...properties } = props;
-    track(event, properties, mandatory);
+    const { event, onMount, onUnmount, onUpdate, ...properties } = props;
+    track(event, properties);
   }, [props]);
 
   useEffect(function mount() {

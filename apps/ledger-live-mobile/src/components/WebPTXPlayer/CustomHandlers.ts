@@ -23,23 +23,14 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"]) {
 
   const tracking = useMemo(
     () =>
-      trackingWrapper(
-        (
-          eventName: string,
-          properties?: Record<string, unknown> | null,
-          mandatory?: boolean | null,
-        ) =>
-          track(
-            eventName,
-            {
-              ...properties,
-              flowInitiatedFrom:
-                currentRouteNameRef.current === "Platform Catalog"
-                  ? "Discover"
-                  : currentRouteNameRef.current,
-            },
-            mandatory,
-          ),
+      trackingWrapper((eventName: string, properties?: Record<string, unknown> | null) =>
+        track(eventName, {
+          ...properties,
+          flowInitiatedFrom:
+            currentRouteNameRef.current === "Platform Catalog"
+              ? "Discover"
+              : currentRouteNameRef.current,
+        }),
       ),
     [],
   );

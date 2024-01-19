@@ -57,7 +57,7 @@ const AnalyticsRow = () => {
 
   return (
     <>
-      <Track event={analyticsEnabled ? "EnableAnalytics" : "DisableAnalytics"} mandatory onUpdate />
+      <Track event={analyticsEnabled ? "EnableAnalytics" : "DisableAnalytics"} onUpdate />
       <SettingsRow
         event="AnalyticsRow"
         title={t("settings.display.analytics")}
