@@ -101,6 +101,8 @@ setSupportedCurrencies([
   "filecoin",
   "linea",
   "linea_goerli",
+  "aptos",
+  "aptos_testnet",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);
