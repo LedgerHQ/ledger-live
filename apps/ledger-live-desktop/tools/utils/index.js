@@ -94,7 +94,7 @@ const buildViteConfig = argv =>
     optimizeDeps: {
       // The common.js dependencies and files need to be force-added below:
       include: ["@ledgerhq/hw-app-eth/erc20"],
-      exclude: ["@braze/web-sdk"],
+      exclude: ["@braze/web-sdk", "@ledgerhq/errors"],
       esbuildOptions: {
         target: ["es2020"],
         plugins: [

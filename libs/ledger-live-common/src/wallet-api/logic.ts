@@ -44,6 +44,7 @@ export function receiveOnAccountLogic(
     parentAccount: Account | undefined,
     accountAddress: string,
   ) => Promise<string>,
+  tokenCurrency?: string,
 ): Promise<string> {
   tracking.receiveRequested(manifest);
 
@@ -61,9 +62,12 @@ export function receiveOnAccountLogic(
   }
 
   const parentAccount = getParentAccount(account, accounts);
-  const accountAddress = accountToWalletAPIAccount(account, parentAccount).address;
 
-  return uiNavigation(account, parentAccount, accountAddress);
+  const mainAccount = getMainAccount(account);
+  const currency = tokenCurrency ? findTokenById(tokenCurrency) : null;
+  const receivingAccount = currency ? makeEmptyTokenAccount(mainAccount, currency) : account;
+  const accountAddress = accountToWalletAPIAccount(account, parentAccount).address;
+  return uiNavigation(receivingAccount, mainAccount, accountAddress);
 }
 
 export function signTransactionLogic(
@@ -101,15 +105,15 @@ export function signTransactionLogic(
     return Promise.reject(new Error("Account required"));
   }
 
-  const currency = tokenCurrency ? findTokenById(tokenCurrency) : null;
-  const signerAccount = currency ? makeEmptyTokenAccount(account as Account, currency) : account;
-  const parentAccount = getParentAccount(signerAccount, accounts); // todo or signer?
+  const parentAccount = getParentAccount(account, accounts);
 
   const accountFamily = isTokenAccount(account)
     ? parentAccount?.currency.family
     : account.currency.family;
 
   const mainAccount = getMainAccount(account, parentAccount);
+  const currency = tokenCurrency ? findTokenById(tokenCurrency) : null;
+  const signerAccount = currency ? makeEmptyTokenAccount(mainAccount, currency) : account;
 
   const { canEditFees, liveTx, hasFeesProvided } = getWalletAPITransactionSignFlowInfos({
     walletApiTransaction: transaction,
@@ -161,8 +165,15 @@ export function broadcastTransactionLogic(
   }
 
   const currency = tokenCurrency ? findTokenById(tokenCurrency) : null;
-  const signerAccount = currency ? makeEmptyTokenAccount(account as Account, currency) : account;
-  const parentAccount = getParentAccount(signerAccount, accounts);
+  // const signerAccount = currency ? makeEmptyTokenAccount(account, currency) : account;
+  // debugger;
+  const parentAccount = getParentAccount(account, accounts);
+  // debugger;
+  const mainAccount = getMainAccount(account, parentAccount);
+
+  // const currency = tokenCurrency ? findTokenById(tokenCurrency) : null;
+  // debugger;
+  const signerAccount = currency ? makeEmptyTokenAccount(mainAccount, currency) : account;
 
   return uiNavigation(signerAccount, parentAccount, signedOperation);
 }

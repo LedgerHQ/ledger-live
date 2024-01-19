@@ -372,7 +372,7 @@ export function useWalletAPIServer({
   useEffect(() => {
     if (!uiAccountReceive) return;
 
-    server.setHandler("account.receive", ({ account }) =>
+    server.setHandler("account.receive", ({ account, tokenCurrency }) =>
       receiveOnAccountLogic(
         { manifest, accounts, tracking },
         account.id,
@@ -396,6 +396,7 @@ export function useWalletAPIServer({
               },
             }),
           ),
+        tokenCurrency,
       ),
     );
   }, [accounts, manifest, server, tracking, uiAccountReceive]);
