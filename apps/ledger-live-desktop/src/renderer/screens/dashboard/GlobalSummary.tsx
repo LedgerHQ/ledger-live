@@ -11,7 +11,7 @@ import PlaceholderChart from "~/renderer/components/PlaceholderChart";
 import { discreetModeSelector } from "~/renderer/reducers/settings";
 import BalanceInfos from "~/renderer/components/BalanceInfos";
 import { usePortfolio } from "~/renderer/actions/portfolio";
-import FormattedDate from "~/renderer/components/FormattedDate";
+import { hourFormat, dayFormat, useDateFormatter } from "~/renderer/hooks/useDateFormatter";
 type Props = {
   counterValue: Currency;
   chartColor: string;
@@ -24,9 +24,18 @@ export default function PortfolioBalanceSummary({ range, chartColor, counterValu
     (val: number | string) => formatShort(counterValue.units[0], BigNumber(val)),
     [counterValue],
   );
+  const dayFormatter = useDateFormatter(dayFormat);
+  const hourFormatter = useDateFormatter(hourFormat);
   const renderTooltip = useCallback(
-    (data: BalanceHistoryData) => <Tooltip data={data} counterValue={counterValue} />,
-    [counterValue],
+    (data: BalanceHistoryData) => (
+      <Tooltip
+        data={data}
+        counterValue={counterValue}
+        dayFormatter={dayFormatter}
+        hourFormatter={hourFormatter}
+      />
+    ),
+    [counterValue, dayFormatter, hourFormatter],
   );
   return (
     <Card p={0} py={5}>
@@ -71,7 +80,17 @@ export default function PortfolioBalanceSummary({ range, chartColor, counterValu
     </Card>
   );
 }
-function Tooltip({ data, counterValue }: { data: BalanceHistoryData; counterValue: Currency }) {
+function Tooltip({
+  data,
+  counterValue,
+  hourFormatter,
+  dayFormatter,
+}: {
+  data: BalanceHistoryData;
+  counterValue: Currency;
+  dayFormatter: (date: Date) => string;
+  hourFormatter: (date: Date) => string;
+}) {
   return (
     <>
       <FormattedVal
@@ -83,10 +102,10 @@ function Tooltip({ data, counterValue }: { data: BalanceHistoryData; counterValu
         val={data.value}
       />
       <Box ff="Inter|Regular" color="palette.text.shade60" fontSize={3} mt={2}>
-        <FormattedDate date={data.date} format="L" />
+        {dayFormatter(data.date)}
       </Box>
       <Box ff="Inter|Regular" color="palette.text.shade60" fontSize={3}>
-        <FormattedDate date={data.date} format="LT" />
+        {hourFormatter(data.date)}
       </Box>
     </>
   );

@@ -43,7 +43,6 @@ import CounterValue from "~/renderer/components/CounterValue";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import Ellipsis from "~/renderer/components/Ellipsis";
 import FakeLink from "~/renderer/components/FakeLink";
-import FormattedDate from "~/renderer/components/FormattedDate";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import LabelInfoTooltip from "~/renderer/components/LabelInfoTooltip";
 import Link from "~/renderer/components/Link";
@@ -79,6 +78,7 @@ import {
   Separator,
   TextEllipsis,
 } from "./styledComponents";
+import { dayAndHourFormat, useDateFormatted } from "~/renderer/hooks/useDateFormatter";
 
 const mapStateToProps = (
   state: State,
@@ -144,6 +144,8 @@ const OperationD = (props: Props) => {
   const location = useLocation();
   const mainAccount = getMainAccount(account, parentAccount);
   const { hash, date, senders, type, fee, recipients: _recipients, contract, tokenId } = operation;
+
+  const dateFormatted = useDateFormatted(date, dayAndHourFormat);
   const uniqueSenders = uniq(senders);
   const recipients = _recipients.filter(Boolean);
   const { name } = mainAccount;
@@ -625,9 +627,7 @@ const OperationD = (props: Props) => {
       {isNftOperation ? <NFTOperationDetails operation={operation} /> : null}
       <OpDetailsSection>
         <OpDetailsTitle>{t("operationDetails.date")}</OpDetailsTitle>
-        <OpDetailsData>
-          <FormattedDate date={date} />
-        </OpDetailsData>
+        <OpDetailsData>{dateFormatted}</OpDetailsData>
       </OpDetailsSection>
       <B />
       <OpDetailsSection>

@@ -11,7 +11,6 @@ import Chart from "~/renderer/components/Chart";
 import Box, { Card } from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import AccountBalanceSummaryHeader from "./AccountBalanceSummaryHeader";
-import FormattedDate from "~/renderer/components/FormattedDate";
 import { Data, Item } from "~/renderer/components/Chart/types";
 import { getLLDCoinFamily } from "~/renderer/families";
 
@@ -19,6 +18,7 @@ import PlaceholderChart from "~/renderer/components/PlaceholderChart";
 import Alert from "~/renderer/components/Alert";
 import { useTranslation } from "react-i18next";
 import { tokensWithUnsupportedGraph } from "~/helpers/tokensWithUnsupportedGraph";
+import { hourFormat, dayFormat, useDateFormatter } from "~/renderer/hooks/useDateFormatter";
 
 type Props = {
   chartColor: string;
@@ -46,6 +46,8 @@ export default function AccountBalanceSummary({
       range,
     });
   const discreetMode = useSelector(discreetModeSelector);
+  const dayFormatter = useDateFormatter(dayFormat);
+  const hourFormatter = useDateFormatter(hourFormat);
   const renderTooltip = useCallback(
     (d: Item) => {
       const displayCountervalue = countervalueFirst && countervalueAvailable;
@@ -68,15 +70,22 @@ export default function AccountBalanceSummary({
             <FormattedVal fontSize={4} color="warmGrey" showCode {...data[1]} />
           ) : null}
           <Box ff="Inter|Regular" color="palette.text.shade60" fontSize={3} mt={2}>
-            <FormattedDate date={d.date} format="L" />
+            {dayFormatter(d.date)}
           </Box>
           <Box ff="Inter|Regular" color="palette.text.shade60" fontSize={3}>
-            <FormattedDate date={d.date} format="LT" />
+            {hourFormatter(d.date)}
           </Box>
         </>
       );
     },
-    [account, counterValue.units, countervalueAvailable, countervalueFirst],
+    [
+      account,
+      counterValue.units,
+      countervalueAvailable,
+      countervalueFirst,
+      dayFormatter,
+      hourFormatter,
+    ],
   );
   const renderTickYCryptoValue = useCallback(
     (val: number | string) => {

@@ -9,13 +9,13 @@ import FormattedVal from "~/renderer/components/FormattedVal";
 import { useCurrencyPortfolio, usePortfolio } from "~/renderer/actions/portfolio";
 import AssetBalanceSummaryHeader from "./AssetBalanceSummaryHeader";
 import { discreetModeSelector } from "~/renderer/reducers/settings";
-import FormattedDate from "~/renderer/components/FormattedDate";
 import { Data } from "~/renderer/components/Chart/types";
 import { PortfolioRange } from "@ledgerhq/types-live";
 import PlaceholderChart from "~/renderer/components/PlaceholderChart";
 import Alert from "~/renderer/components/Alert";
 import { useTranslation } from "react-i18next";
 import { tokensWithUnsupportedGraph } from "~/helpers/tokensWithUnsupportedGraph";
+import { dayFormat, useDateFormatter } from "~/renderer/hooks/useDateFormatter";
 
 type Props = {
   counterValue: Currency;
@@ -42,6 +42,7 @@ export default function BalanceSummary({
     },
   );
   const discreetMode = useSelector(discreetModeSelector);
+  const formatDate = useDateFormatter(dayFormat);
 
   const displayCountervalue = countervalueFirst && countervalueAvailable;
   const chartMagnitude = displayCountervalue ? counterValue.units[0].magnitude : unit.magnitude;
@@ -65,12 +66,12 @@ export default function BalanceSummary({
             <FormattedVal fontSize={4} color="warmGrey" showCode {...data[1]} />
           ) : null}
           <Box ff="Inter|Regular" color="palette.text.shade60" fontSize={3} mt={2}>
-            <FormattedDate date={d.date} format="L" />
+            {formatDate(d.date)}
           </Box>
         </>
       );
     },
-    [counterValue.units, countervalueAvailable, displayCountervalue, unit],
+    [counterValue.units, countervalueAvailable, displayCountervalue, unit, formatDate],
   );
   const renderTickYCryptoValue = useCallback(
     (val: number | string) => formatShort(unit, BigNumber(val)),
