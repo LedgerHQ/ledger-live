@@ -26,7 +26,7 @@ export function Catalog() {
       <DAppDisclaimer disclaimer={disclaimer} />
 
       {search.isActive ? (
-        <Search title={title} categories={categories} disclaimer={disclaimer} search={search} />
+        <Search title={title} disclaimer={disclaimer} search={search} />
       ) : (
         <>
           <Layout
