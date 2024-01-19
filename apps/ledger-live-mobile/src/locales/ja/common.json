@@ -901,18 +901,6 @@
     "FirmwareNotRecognized" : {
       "title" : "プロバイダーが無効です",
       "description" : "「My Ledgerプロバイダー」の設定を変更する必要があります。変更するには、Ledger Liveの「設定」を開き、「試験的機能」を選択して、別のプロバイダーを選択します。"
-    },
-    "GasLessThanEstimate": {
-      "title": "これでは低すぎる可能性があります。 増やしてください"
-    },
-    "SequenseNumberTooNew": {
-      "title": "シーケンス番号が新しすぎます"
-    },
-    "SequenseNumberTooOld": {
-      "title": "シーケンス番号が古すぎます"
-    },
-    "TransactionExpired": {
-      "title": "トランザクションの有効期限が切れました"
     }
   },
   "crash" : {
@@ -2412,8 +2400,7 @@
       "gasLimit" : "ガスリミット",
       "id" : "ID",
       "autoClaimedRewards" : "自動獲得報酬",
-      "stakedAmount" : "ステーキング済み量",
-      "version": "バージョン"
+      "stakedAmount" : "ステーキング済み量"
     },
     "multipleAddresses" : "なぜ複数のアドレスがあるのですか？",
     "tokenName" : "トークン名",
@@ -3629,15 +3616,7 @@
         "title" : "単位を選択"
       },
       "networkInfo" : "トランザクションに含めるネットワーク手数料を選択してください。手数料の額は、トランザクションの処理速度に影響します。",
-      "networkInfoMaxFees" : "これは、このトランザクションに対して請求される可能性のある最大金額です。最大ネットワーク手数料と実際の手数料の差額は返金されます。","aptos": {
-        "options": "オプション",
-        "gasLimit": "ガスリミット",
-        "gasPrice": "ガス価格 (OCTAS)",
-        "sequenceNumber": "シーケンス番号",
-        "expTimestamp": "有効期限のタイムスタンプ",
-        "setOptimalGas": "最適なガスを設定",
-        "resetSettings": "設定をリセット"
-      }
+      "networkInfoMaxFees" : "これは、このトランザクションに対して請求される可能性のある最大金額です。最大ネットワーク手数料と実際の手数料の差額は返金されます。"
     },
     "verification" : {
       "streaming" : {

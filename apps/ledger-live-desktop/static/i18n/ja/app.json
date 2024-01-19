@@ -1743,8 +1743,7 @@
       "withdrawUnbondedAmount" : "引き出し数量",
       "palletMethod" : "方法",
       "transferAmount" : "送付額",
-      "validatorsCount" : "バリデータ（{{number}}）",
-      "version": "バージョン"
+      "validatorsCount" : "バリデータ（{{number}}）"
     }
   },
   "operationList" : {
@@ -2223,14 +2222,6 @@
         "ethereumGasPrice" : "ガス価格",
         "ethereumMaxFee" : "最大手数料 ({{unitName}})",
         "ethereumPriorityFee" : "最大優先手数料 ({{unitName}})",
-        "aptosGasFee": "ガス料金",
-        "aptosGasLimit": "ガスリミット",
-        "aptosGasPrice": "ガス価格 (OCTAS)",
-        "aptosSetOptimalGas": "最適なガスを設定する",
-        "aptosAdditionalSettings": "追加の設定",
-        "aptosSequenceNumber": "シーケンス番号",
-        "aptosExpTimestamp": "経験値 タイムスタンプ",
-        "aptosResetSettings": "設定をリセット",
         "nextBlock" : "次のブロック",
         "suggested" : "提案済み",
         "unitPerByte" : "1バイトあたり{{unit}}",
@@ -3471,11 +3462,6 @@
           "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
         }
       }
-    }
-  },
-  "aptos": {
-    "delegation": {
-      "delegatedInfoTooltip" : "バリデーターにデリゲートされる合計額。"
     }
   },
   "solana" : {

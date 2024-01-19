@@ -901,18 +901,6 @@
     "FirmwareNotRecognized" : {
       "title" : "مزوّد غير صالح",
       "description" : "يجب عليك تغيير إعداد \"My Ledger Provider (مزوّد جهازي Ledger)\". لتغييره، افتح \"Settings (إعدادات)\" في Ledger Live، واختر \"Experimental features (الميزات التجريبية)\"، ثم اختر مزوّداً آخر."
-    },
-    "GasLessThanEstimate": {
-      "title": "قد يكون هذا منخفضًا جدًا. يرجى زيادة"
-    },
-    "SequenseNumberTooNew": {
-      "title": "الرقم التسلسلي جديد جدًا"
-    },
-    "SequenseNumberTooOld": {
-      "title": "الرقم التسلسلي قديم جدًا"
-    },
-    "TransactionExpired": {
-      "title": "انتهت الصفقة"
     }
   },
   "crash" : {
@@ -2412,8 +2400,7 @@
       "gasLimit" : "حد الغاز",
       "id" : "المُعرّف",
       "autoClaimedRewards" : "المكافآت المطالب بها تلقائياً",
-      "stakedAmount" : "المبلغ المُكدَّس",
-      "version": "إصدار"
+      "stakedAmount" : "المبلغ المُكدَّس"
     },
     "multipleAddresses" : "لماذا عناوين متعددة؟",
     "tokenName" : "اسم رمز التوكن",
@@ -3629,16 +3616,7 @@
         "title" : "اختر الوحدة"
       },
       "networkInfo" : "اختر مبلغ رسوم الشبكة المراد تضمينها في المعاملة. يؤثر مبلغ الرسوم على سرعة معالجة المعاملة",
-      "networkInfoMaxFees" : "هذا هو الحد الأقصى للمبلغ الذي قد تدفعه مقابل هذه المعاملة. سيتم رد أي فرق بين الحد الأقصى لرسوم الشبكة والرسوم الفعلية.",
-      "aptos": {
-        "options": "خيارات",
-        "gasLimit": "حد الغاز",
-        "gasPrice": "سعر الغاز (OCTAS)",
-        "sequenceNumber": "رقم التسلسل",
-        "expTimestamp": "الطابع الزمني لانتهاء الصلاحية",
-        "setOptimalGas": "ضبط الغاز الأمثل",
-        "resetSettings": "اعادة الضبط"
-      }
+      "networkInfoMaxFees" : "هذا هو الحد الأقصى للمبلغ الذي قد تدفعه مقابل هذه المعاملة. سيتم رد أي فرق بين الحد الأقصى لرسوم الشبكة والرسوم الفعلية."
     },
     "verification" : {
       "streaming" : {

@@ -1743,8 +1743,7 @@
       "withdrawUnbondedAmount" : "Abgehobener Betrag",
       "palletMethod" : "Methode",
       "transferAmount" : "Betrag transferieren",
-      "validatorsCount" : "Validatoren ({{number}})",
-      "version": "Ausführung"
+      "validatorsCount" : "Validatoren ({{number}})"
     }
   },
   "operationList" : {
@@ -2223,14 +2222,6 @@
         "ethereumGasPrice" : "Gaspreis",
         "ethereumMaxFee" : "Max. Gebühr ({{unitName}})",
         "ethereumPriorityFee" : "Max. Prioritätsgebühr ({{unitName}})",
-        "aptosGasFee": "Gasgebühr",
-        "aptosGasLimit": "Gaslimit",
-        "aptosGasPrice": "Gaspreis (OCTAS)",
-        "aptosSetOptimalGas": "OPTIMALES GAS EINSTELLEN",
-        "aptosAdditionalSettings": "Zusätzliche Einstellungen",
-        "aptosSequenceNumber": "Sequenznummer",
-        "aptosExpTimestamp": "Exp. Zeitstempel",
-        "aptosResetSettings": "EINSTELLUNGEN ZURÜCKSETZEN",
         "nextBlock" : "Nächster Block",
         "suggested" : "Empfohlen",
         "unitPerByte" : "{{unit}} pro Byte",
@@ -3471,11 +3462,6 @@
           "broadcastError" : "Ihre Transaktion ist möglicherweise fehlgeschlagen. Bitte warten Sie einen Moment und prüfen Sie den Transaktionsverlauf, bevor Sie es erneut versuchen."
         }
       }
-    }
-  },
-  "aptos": {
-    "delegation": {
-      "delegatedInfoTooltip" : "Gesamtbetrag, der an Validatoren delegiert ist."
     }
   },
   "solana" : {

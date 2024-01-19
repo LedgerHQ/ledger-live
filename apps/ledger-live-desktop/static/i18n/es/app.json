@@ -1743,8 +1743,7 @@
       "withdrawUnbondedAmount" : "Importe retirado",
       "palletMethod" : "Método",
       "transferAmount" : "Transferir importe",
-      "validatorsCount" : "Validadores ({{number}})",
-      "version": "Versión"
+      "validatorsCount" : "Validadores ({{number}})"
     }
   },
   "operationList" : {
@@ -2223,14 +2222,6 @@
         "ethereumGasPrice" : "Precio de gas",
         "ethereumMaxFee" : "Tarifa máxima ({{unitName}})",
         "ethereumPriorityFee" : "Tarifa de prioridad máxima ({{unitName}})",
-        "aptosGasFee": "Tarifa de gasolina",
-        "aptosGasLimit": "Límite de gas",
-        "aptosGasPrice": "Precio Gas (OCTAS)",
-        "aptosSetOptimalGas": "ESTABLECER GAS ÓPTIMO",
-        "aptosAdditionalSettings": "Ajustes adicionales",
-        "aptosSequenceNumber": "Secuencia de números",
-        "aptosExpTimestamp": "Exp. marca de tiempo",
-        "aptosResetSettings": "REINICIAR AJUSTES",
         "nextBlock" : "Siguiente bloque",
         "suggested" : "Sugerida",
         "unitPerByte" : "{{unit}} por byte",
@@ -3471,11 +3462,6 @@
           "broadcastError" : "Es posible que la transacción haya fallado. Espera un momento y comprueba el historial de transacciones antes de intentarlo de nuevo."
         }
       }
-    }
-  },
-  "aptos": {
-    "delegation": {
-      "delegatedInfoTooltip" : "Cantidad total delegada a validadores."
     }
   },
   "solana" : {

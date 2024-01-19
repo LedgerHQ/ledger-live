@@ -901,18 +901,6 @@
     "FirmwareNotRecognized" : {
       "title" : "提供商无效",
       "description" : "您必须更改“我的 Ledger 提供商”设置。要更改该设置，请打开 Ledger Live“设置”，选择“实验性功能”，然后选择其他提供商。"
-    },
-    "GasLessThanEstimate": {
-      "title": "这可能太低了。 请增加"
-    },
-    "SequenseNumberTooNew": {
-      "title": "序列号太新"
-    },
-    "SequenseNumberTooOld": {
-      "title": "序列号太旧"
-    },
-    "TransactionExpired": {
-      "title": "交易已过期"
     }
   },
   "crash" : {
@@ -2412,8 +2400,7 @@
       "gasLimit" : "矿工费限值",
       "id" : "Id",
       "autoClaimedRewards" : "自动领取的奖励",
-      "stakedAmount" : "权益质押数额",
-      "version": "版本"
+      "stakedAmount" : "权益质押数额"
     },
     "multipleAddresses" : "为什么有多个地址？",
     "tokenName" : "代币名称",
@@ -3629,16 +3616,7 @@
         "title" : "选择单位"
       },
       "networkInfo" : "选择该交易包含的网络费用数额。费用数额的多少会影响到该交易的处理速度",
-      "networkInfoMaxFees" : "这是您可以为此交易支付的最高金额。最高网络费用与实际费用之间的任何差额都会退还。",
-      "aptos": {
-        "options": "选项",
-        "gasLimit": "气体限制",
-        "gasPrice": "天然气价格（OCTAS）",
-        "sequenceNumber": "序列号",
-        "expTimestamp": "过期时间戳",
-        "setOptimalGas": "设置最佳气体",
-        "resetSettings": "重新设置"
-      }
+      "networkInfoMaxFees" : "这是您可以为此交易支付的最高金额。最高网络费用与实际费用之间的任何差额都会退还。"
     },
     "verification" : {
       "streaming" : {

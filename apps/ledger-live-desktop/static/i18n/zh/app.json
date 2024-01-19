@@ -1743,8 +1743,7 @@
       "withdrawUnbondedAmount" : "已提取数额",
       "palletMethod" : "方法",
       "transferAmount" : "转移数额",
-      "validatorsCount" : "验证者 ({{number}})",
-      "version": "版本"
+      "validatorsCount" : "验证者 ({{number}})"
     }
   },
   "operationList" : {
@@ -2221,14 +2220,6 @@
         "edit" : "编辑",
         "ethereumGasLimit" : "Gas 限值",
         "ethereumGasPrice" : "Gas 价格",
-        "aptosGasFee": "煤气费",
-        "aptosGasLimit": "气体限制",
-        "aptosGasPrice": "天然气价格 (OCTAS)",
-        "aptosSetOptimalGas": "设置最优气体",
-        "aptosAdditionalSettings": "附加设置",
-        "aptosSequenceNumber": "序列号",
-        "aptosExpTimestamp": "Exp.时间戳",
-        "aptosResetSettings": "重置设置",
         "ethereumMaxFee" : "最高费用 ({{unitName}})",
         "ethereumPriorityFee" : "最高优先费用 ({{unitName}})",
         "nextBlock" : "下一个区块",
@@ -3471,11 +3462,6 @@
           "broadcastError" : "您的交易可能已失败。请稍候片刻并在重试之前查看交易记录。"
         }
       }
-    }
-  },
-  "aptos": {
-    "delegation": {
-      "delegatedInfoTooltip" : "委托至验证者的总数额。"
     }
   },
   "solana" : {

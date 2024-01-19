@@ -901,18 +901,6 @@
     "FirmwareNotRecognized" : {
       "title" : "Fournisseur non valide",
       "description" : "Vous devez modifier le paramètre \"Fournisseur de My Ledger\". Dans Ledger Live, accédez aux Paramètres, sélectionnez \"Fonctionnalités expérimentales\", puis choisissez un autre fournisseur."
-    },
-    "GasLessThanEstimate": {
-      "title": "C'est peut-être trop bas. Veuillez augmenter"
-    },
-    "SequenseNumberTooNew": {
-      "title": "Numéro de séquence trop nouveau"
-    },
-    "SequenseNumberTooOld": {
-      "title": "Numéro de séquence trop ancien"
-    },
-    "TransactionExpired": {
-      "title": "Transaction expirée"
     }
   },
   "crash" : {
@@ -2412,8 +2400,7 @@
       "gasLimit" : "Limite de gaz",
       "id" : "Identifiant (ID)",
       "autoClaimedRewards" : "Récompenses automatiques",
-      "stakedAmount" : "Montant en staking",
-      "version": "Version"
+      "stakedAmount" : "Montant en staking"
     },
     "multipleAddresses" : "Pourquoi plusieurs adresses ?",
     "tokenName" : "Nom du token",
@@ -3629,15 +3616,7 @@
         "title" : "Choisir une unité"
       },
       "networkInfo" : "Choisissez le montant des frais de réseau à inclure dans la transaction. Le montant des frais affecte la vitesse de traitement de la transaction.",
-      "networkInfoMaxFees" : "Il s’agit du montant maximal que vous êtes prêt(e) à payer pour cette transaction. Toute différence entre les frais de réseau maximaux et les frais réels sera remboursée.","aptos": {
-        "options": "Possibilités",
-        "gasLimit": "Limite de gaz",
-        "gasPrice": "Prix du gaz (OCTAS)",
-        "sequenceNumber": "Numéro de séquence",
-        "expTimestamp": "Horodatage d'expiration",
-        "setOptimalGas": "Définir le gaz optimal",
-        "resetSettings": "Réinitialiser les options"
-      }
+      "networkInfoMaxFees" : "Il s’agit du montant maximal que vous êtes prêt(e) à payer pour cette transaction. Toute différence entre les frais de réseau maximaux et les frais réels sera remboursée."
     },
     "verification" : {
       "streaming" : {

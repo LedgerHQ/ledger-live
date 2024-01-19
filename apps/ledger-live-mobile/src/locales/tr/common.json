@@ -901,18 +901,6 @@
     "FirmwareNotRecognized" : {
       "title" : "Geçersiz Sağlayıcı",
       "description" : "\"My Ledger sağlayıcım\" ayarını değiştirmeniz gerekmektedir. Bunu değiştirmek için Ledger Live'da \"Ayarlar\"ı açın, \"Deneysel özellikler\"i seçin ve ardından farklı bir sağlayıcı seçin."
-    },
-    "GasLessThanEstimate": {
-      "title": "Bu çok düşük olabilir. Lütfen artırın"
-    },
-    "SequenseNumberTooNew": {
-      "title": "Sıra numarası çok yeni"
-    },
-    "SequenseNumberTooOld": {
-      "title": "Sıra numarası çok eski"
-    },
-    "TransactionExpired": {
-      "title": "İşlemin süresi doldu"
     }
   },
   "crash" : {
@@ -2412,8 +2400,7 @@
       "gasLimit" : "Gas limiti",
       "id" : "Kimlik (ID)",
       "autoClaimedRewards" : "Otomatik Alınan Ödüller",
-      "stakedAmount" : "Stake edilen miktar",
-      "version": "Sürüm"
+      "stakedAmount" : "Stake edilen miktar"
     },
     "multipleAddresses" : "Neden birden fazla adres var?",
     "tokenName" : "Token Adı",
@@ -3629,16 +3616,7 @@
         "title" : "Birim seçin"
       },
       "networkInfo" : "İşleme dahil edilecek ağ ücretlerinin miktarını seçin. Ücret miktarı, işlemin onaylanma hızını etkiler",
-      "networkInfoMaxFees" : "Bu ücret, bu işlem için ödeyebileceğiniz azami tutardır. Maks. ağ ücretleri ile gerçek ücretler arasındaki fark iade edilecektir.",
-      "aptos": {
-        "options": "Seçenekler",
-        "gasLimit": "Gaz Limiti",
-        "gasPrice": "Gaz Fiyatı (OCTAS)",
-        "sequenceNumber": "Sıra numarası",
-        "expTimestamp": "Sona erme zaman damgası",
-        "setOptimalGas": "Optimum gazı ayarlayın",
-        "resetSettings": "Ayarları Sıfırla"
-      }
+      "networkInfoMaxFees" : "Bu ücret, bu işlem için ödeyebileceğiniz azami tutardır. Maks. ağ ücretleri ile gerçek ücretler arasındaki fark iade edilecektir."
     },
     "verification" : {
       "streaming" : {

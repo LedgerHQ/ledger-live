@@ -1519,8 +1519,7 @@
       "withdrawUnbondedAmount" : "Quantia Sacada",
       "palletMethod" : "Método",
       "transferAmount" : "Transferir Quantia",
-      "validatorsCount" : "Validadores ({{number}})",
-      "version": "Versão"
+      "validatorsCount" : "Validadores ({{number}})"
     }
   },
   "operationList" : {
@@ -1938,14 +1937,6 @@
         "rippleTagPlaceholder" : "Opcional",
         "ethereumGasLimit" : "Limite de gas",
         "ethereumGasPrice" : "Preço do gás",
-        "aptosGasFee": "Taxa de gás",
-        "aptosGasLimit": "Limite de Gás",
-        "aptosGasPrice": "Preço do Gás (OCTAS)",
-        "aptosSetOptimalGas": "DEFINIR GÁS IDEAL",
-        "aptosAdditionalSettings": "Configurações adicionais",
-        "aptosSequenceNumber": "Número sequencial",
-        "aptosExpTimestamp": "Exp. carimbo de data/hora",
-        "aptosResetSettings": "REDEFINIR AS CONFIGURAÇÕES",
         "unitPerByte" : "{{unit}} por byte",
         "nft" : "NFT",
         "nftQuantity" : "Quantidade"
@@ -2791,11 +2782,6 @@
           "broadcastError" : "Sua transação pode ter falhado. Aguarde um momento e verifique seu histórico de transações antes de tentar novamente."
         }
       }
-    }
-  },
-  "aptos": {
-    "delegation": {
-      "delegatedInfoTooltip" : "Quantia total que é delegada aos validadores."
     }
   },
   "solana" : {

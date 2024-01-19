@@ -1743,8 +1743,7 @@
       "withdrawUnbondedAmount" : "المبلغ المسحوب",
       "palletMethod" : "الطريقة",
       "transferAmount" : "مبلغ التحويل",
-      "validatorsCount" : "({{number}}) مدقق",
-      "version": "إصدار"
+      "validatorsCount" : "({{number}}) مدقق"
     }
   },
   "operationList" : {
@@ -2223,14 +2222,6 @@
         "ethereumGasPrice" : "سعر الغاز",
         "ethereumMaxFee" : "الحد الأقصى للرسوم ({{unitName}})",
         "ethereumPriorityFee" : "الحد الأقصى لرسوم الأولوية ({{unitName}})",
-        "aptosGasFee": "رسوم الغاز",
-        "aptosGasLimit": "حد الغاز",
-        "aptosGasPrice": "(OCTAS) سعر الغاز",
-        "aptosSetOptimalGas": "ضبط الغاز الأمثل",
-        "aptosAdditionalSettings": "إعدادات إضافية",
-        "aptosSequenceNumber": "رقم التسلسل",
-        "aptosExpTimestamp": "إكسب. الطابع الزمني",
-        "aptosResetSettings": "اعادة الضبط",
         "nextBlock" : "الكتلة التالية",
         "suggested" : "مُقترح",
         "unitPerByte" : "{{unit}} لكل بايت",
@@ -3471,11 +3462,6 @@
           "broadcastError" : "ربما تكون معاملتك قد فشلت. يُرجى الانتظار لحظة ثم تحقق من سجل المعاملات قبل المحاولة مرة أخرى."
         }
       }
-    }
-  },
-  "aptos": {
-    "delegation": {
-      "delegatedInfoTooltip" : "إجمالي المبلغ الذي تم تفويضه لمدققين."
     }
   },
   "solana" : {

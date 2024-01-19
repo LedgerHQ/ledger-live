@@ -901,18 +901,6 @@
     "FirmwareNotRecognized" : {
       "title" : "Proveedor no válido",
       "description" : "Tienes que cambiar el ajuste \"Proveedor de Mi Ledger\". Para cambiarlo, abre los \"Ajustes\" de Ledger Live, selecciona \"Funciones experimentales\" y, a continuación, elige un proveedor distinto."
-    },
-    "GasLessThanEstimate": {
-      "title": "Puede que sea demasiado bajo. por favor aumentar"
-    },
-    "SequenseNumberTooNew": {
-      "title": "Número de secuencia demasiado nuevo"
-    },
-    "SequenseNumberTooOld": {
-      "title": "Número de secuencia demasiado viejo"
-    },
-    "TransactionExpired": {
-      "title": "La transacción expiró"
     }
   },
   "crash" : {
@@ -2412,8 +2400,7 @@
       "gasLimit" : "Límite de gas",
       "id" : "Id",
       "autoClaimedRewards" : "Recompensas Autoreclamadas",
-      "stakedAmount" : "Cantidad en participación",
-      "version": "Versión"
+      "stakedAmount" : "Cantidad en participación"
     },
     "multipleAddresses" : "¿Por qué hay múltiples direcciones?",
     "tokenName" : "Nombre del token",
@@ -3629,15 +3616,7 @@
         "title" : "Elegir unidad"
       },
       "networkInfo" : "Elige el importe de las tarifas de red que se incluirán en la transacción. El importe de las tarifas afecta a la velocidad de procesamiento de la transacción",
-      "networkInfoMaxFees" : "Es la máxima cantidad que se puede pagar por esta transacción. Se reembolsará la diferencia entre las tarifas de red máx. y las tarifas reales.","aptos": {
-        "options": "Opciones",
-        "gasLimit": "Límite de gas",
-        "gasPrice": "Precio de la gasolina (OCTAS)",
-        "sequenceNumber": "Secuencia de números",
-        "expTimestamp": "Marca de tiempo de vencimiento",
-        "setOptimalGas": "Establecer gas óptimo",
-        "resetSettings": "Reiniciar ajustes"
-      }
+      "networkInfoMaxFees" : "Es la máxima cantidad que se puede pagar por esta transacción. Se reembolsará la diferencia entre las tarifas de red máx. y las tarifas reales."
     },
     "verification" : {
       "streaming" : {
