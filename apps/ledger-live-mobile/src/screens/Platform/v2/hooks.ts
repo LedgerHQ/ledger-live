@@ -35,11 +35,15 @@ export function useCatalog() {
     list: combinedManifests,
     options: BROWSE_SEARCH_OPTIONS,
     filter: (item: AppManifest, input: string) => {
+      // Return all manifests when searching
       if (input) return true;
-      return (
-        item.visibility === "complete" &&
-        (item.categories.includes(categories.selected) || categories.selected === "all")
-      );
+
+      // Only return complete manifests when not searching
+      if (item.visibility !== "complete") return false;
+
+      if (categories.selected === "all") return true;
+
+      return item.categories.includes(categories.selected);
     },
   });
 
