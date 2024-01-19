@@ -1,5 +1,4 @@
 import { BigNumber } from "bignumber.js";
-import BN from "bn.js";
 import flatMap from "lodash/flatMap";
 import { Account, Address, Operation } from "@ledgerhq/types-live";
 import {
@@ -37,14 +36,14 @@ export const getTxToBroadcast = async (
   const { anchorMode, network, xpub } = rawData;
 
   const options: UnsignedTokenTransferOptions = {
-    amount: new BN(BigNumber(value).minus(fee).toFixed()),
+    amount: BigNumber(value).minus(fee).toFixed(),
     recipient: recipients[0],
     anchorMode,
     memo,
     network: StacksNetwork[network],
     publicKey: xpub,
-    fee: new BN(BigNumber(fee).toFixed()),
-    nonce: new BN(operation.transactionSequenceNumber ?? 0),
+    fee: BigNumber(fee).toFixed(),
+    nonce: operation.transactionSequenceNumber ?? 0,
   };
 
   const tx = await makeUnsignedSTXTokenTransfer(options);
