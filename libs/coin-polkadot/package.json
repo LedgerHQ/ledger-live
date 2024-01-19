@@ -49,6 +49,10 @@
       "require": "./lib/types/errors.js",
       "default": "./lib-es/types/errors.js"
     },
+    "./formatters": {
+      "require": "./lib/bridge/formatters.js",
+      "default": "./lib-es/bridge/formatters.js"
+    },
     "./logic": {
       "require": "./lib/logic/logic.js",
       "default": "./lib-es/logic/logic.js"
