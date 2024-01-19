@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import styled from "styled-components/native";
-import { Flex, IconsLegacy, Link, Text } from "@ledgerhq/native-ui";
+import { Flex, Link, Text } from "@ledgerhq/native-ui";
 import { TrackScreen } from "~/analytics";
 import { useTranslation } from "react-i18next";
 import Button from "~/components/Button";
@@ -25,12 +25,11 @@ const OptionRow = styled(Flex).attrs({
 interface OptionProps {
   title: string;
   description: string;
-  link: string;
   checked: boolean;
   onToggle?: (_: boolean) => void;
 }
 
-function Option({ title, description, link, checked, onToggle }: OptionProps): React.ReactElement {
+function Option({ title, description, checked, onToggle }: OptionProps): React.ReactElement {
   return (
     <OptionContainer>
       <OptionRow>
@@ -42,9 +41,6 @@ function Option({ title, description, link, checked, onToggle }: OptionProps): R
       <Text fontSize={14} pt={4} pb={2} color="neutral.c70">
         {description}
       </Text>
-      <Link size="small" type="color" onPress={() => {}}>
-        {link}
-      </Link>
     </OptionContainer>
   );
 }
@@ -66,7 +62,6 @@ function Details() {
           <Option
             title={t("analyticsOptIn.variantA.details.analytics.title")}
             description={t("analyticsOptIn.variantA.details.analytics.description")}
-            link={t("analyticsOptIn.variantA.details.analytics.link")}
             checked={false}
             onToggle={() => {}}
           />
@@ -74,7 +69,6 @@ function Details() {
             <Option
               title={t("analyticsOptIn.variantA.details.personalizedExp.title")}
               description={t("analyticsOptIn.variantA.details.personalizedExp.description")}
-              link={t("analyticsOptIn.variantA.details.personalizedExp.link")}
               checked={true}
               onToggle={() => {}}
             />
@@ -94,8 +88,8 @@ function Details() {
           <Button
             title={t(
               bothSelected
-                ? "analyticsOptIn.variantA.details.ctas.allowAll"
-                : "analyticsOptIn.variantA.details.ctas.allow",
+                ? "analyticsOptIn.variantA.details.ctas.acceptAll"
+                : "analyticsOptIn.variantA.details.ctas.accept",
             )}
             onPress={() => {}}
             type="main"
@@ -108,13 +102,7 @@ function Details() {
         <Text fontWeight="semiBold" pt={2} color="neutral.c70" textAlign="center" pb="2">
           {t("analyticsOptIn.variantA.details.infoText.info")}
         </Text>
-        <Link
-          size="small"
-          type="color"
-          onPress={() => {}}
-          Icon={IconsLegacy.ExternalLinkMedium}
-          iconPosition="left"
-        >
+        <Link size="small" type="color" onPress={() => {}}>
           {t("analyticsOptIn.variantA.details.infoText.link")}
         </Link>
       </Bottom>
