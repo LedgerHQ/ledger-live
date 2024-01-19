@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 33.5.0-next.5
+
+### Minor Changes
+
+- [#5960](https://github.com/LedgerHQ/ledger-live/pull/5960) [`e38e71b`](https://github.com/LedgerHQ/ledger-live/commit/e38e71b6f956452367fd148cf7dd43160f1fc2bf) Thanks [@CremaFR](https://github.com/CremaFR)! - fix tezos crash when unrevealed account
+
 ## 33.5.0-next.4
 
 ### Patch Changes
