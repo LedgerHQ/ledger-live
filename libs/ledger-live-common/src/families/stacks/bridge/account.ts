@@ -2,7 +2,6 @@ import BlockstackApp from "@zondax/ledger-stacks";
 import { c32address } from "c32check";
 import { StacksMainnet } from "@stacks/network";
 import { BigNumber } from "bignumber.js";
-import BN from "bn.js";
 import { Observable } from "rxjs";
 import invariant from "invariant";
 import {
@@ -143,7 +142,7 @@ const estimateMaxSpendable = async ({
     memo,
     network,
     publicKey: xpub,
-    amount: new BN(amount.toFixed()),
+    amount: amount.toFixed(),
   };
 
   const tx = await makeUnsignedSTXTokenTransfer(options);
@@ -172,7 +171,7 @@ const prepareTransaction = async (a: Account, t: Transaction): Promise<Transacti
       memo,
       network,
       publicKey: xpub,
-      amount: new BN(amount.toFixed()),
+      amount: amount.toFixed(),
     };
 
     const tx = await makeUnsignedSTXTokenTransfer(options);
@@ -226,14 +225,14 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
           const blockstack = new BlockstackApp(transport);
 
           const options: UnsignedTokenTransferOptions = {
-            amount: new BN(amount.toFixed()),
+            amount: amount.toFixed(),
             recipient,
             anchorMode,
             network: StacksNetwork[network],
             memo,
             publicKey: xpub,
-            fee: new BN(fee.toFixed()),
-            nonce: new BN(nonce.toFixed()),
+            fee: fee.toFixed(),
+            nonce: nonce.toFixed(),
           };
 
           const tx = await makeUnsignedSTXTokenTransfer(options);
