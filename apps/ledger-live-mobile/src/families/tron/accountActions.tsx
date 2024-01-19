@@ -6,7 +6,7 @@ import { getLastVotedDate } from "@ledgerhq/live-common/families/tron/react";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { NavigatorName, ScreenName } from "~/const";
 import { ActionButtonEvent } from "~/components/FabActions";
-import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { isSubAccount } from "@ledgerhq/live-common/account/index";
 
 const getSecondaryActions = ({
   account,
@@ -20,10 +20,10 @@ const getSecondaryActions = ({
   const accountId = account.id;
   const canVote = tronPower > 0;
   const lastVotedDate = getLastVotedDate(account as TronAccount);
-  const mainAccount = getMainAccount(account);
 
-  return mainAccount.id === accountId
-    ? [
+  return isSubAccount(account)
+    ? []
+    : [
         {
           id: "freeze",
           disabled: true,
@@ -80,8 +80,7 @@ const getSecondaryActions = ({
             outline: false,
           },
         },
-      ]
-    : [];
+      ];
 };
 
 export default {
