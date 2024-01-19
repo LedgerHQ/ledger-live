@@ -1,6 +1,6 @@
 ---
 "ledger-live-desktop": patch
-"ledger-live-mobile": patch
+"live-mobile": patch
 "@ledgerhq/live-common": patch
 ---
 
