@@ -6658,7 +6658,7 @@
          "description": "Allow us to give you the best experience possible",
          "bulletPoints": {
            "1": "Personnalized recommandations",
-           "2": "Personnalized notifications",
+           "2": "Personnalized notifications"
          },
          "ctas": {
           "refuse": "Refuse",
