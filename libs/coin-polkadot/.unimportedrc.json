@@ -11,10 +11,7 @@
     "src/test/index.ts",
     "src/test/specs.ts",
     "src/types/errors.ts",
-    "src/account.ts",
-    "src/index.ts",
-    "src/platformAdapter.ts"
+    "src/index.ts"
   ],
-  "ignoreUnimported": ["src/api/subscan.ts", "src/api/websocket.ts"],
   "ignoreUnresolved": []
 }
