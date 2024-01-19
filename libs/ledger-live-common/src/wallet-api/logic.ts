@@ -62,7 +62,6 @@ export function receiveOnAccountLogic(
   }
 
   const parentAccount = getParentAccount(account, accounts);
-
   const mainAccount = getMainAccount(account);
   const currency = tokenCurrency ? findTokenById(tokenCurrency) : null;
   const receivingAccount = currency ? makeEmptyTokenAccount(mainAccount, currency) : account;

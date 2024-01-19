@@ -3,12 +3,8 @@ import semver from "semver";
 import { formatDistanceToNow } from "date-fns";
 import { Account, AccountLike, AnyMessage, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import {
-  WalletHandlers,
-  ServerConfig,
-  WalletAPIServer,
-  useWalletAPIServer as useWalletAPIServerRaw,
-} from "@ledgerhq/wallet-api-server";
+import { WalletHandlers, ServerConfig, WalletAPIServer } from "@ledgerhq/wallet-api-server";
+import { useWalletAPIServer as useWalletAPIServerRaw } from "@ledgerhq/wallet-api-server/lib/react";
 import {
   ServerError,
   createCurrencyNotFound,
