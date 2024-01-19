@@ -128,7 +128,7 @@ export function signTransactionLogic(
   }
 
   // return uiNavigation(account, parentAccount, {
-  return uiNavigation(signerAccount, parentAccount, {
+  return uiNavigation(signerAccount, mainAccount, {
     canEditFees,
     liveTx,
     hasFeesProvided,
@@ -165,16 +165,16 @@ export function broadcastTransactionLogic(
 
   const currency = tokenCurrency ? findTokenById(tokenCurrency) : null;
   // const signerAccount = currency ? makeEmptyTokenAccount(account, currency) : account;
-  // debugger;
+  debugger;
   const parentAccount = getParentAccount(account, accounts);
-  // debugger;
+  debugger;
   const mainAccount = getMainAccount(account, parentAccount);
 
   // const currency = tokenCurrency ? findTokenById(tokenCurrency) : null;
   // debugger;
   const signerAccount = currency ? makeEmptyTokenAccount(mainAccount, currency) : account;
 
-  return uiNavigation(signerAccount, parentAccount, signedOperation);
+  return uiNavigation(signerAccount, mainAccount, signedOperation);
 }
 
 export function signMessageLogic(
