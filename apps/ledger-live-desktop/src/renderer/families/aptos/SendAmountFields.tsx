@@ -17,7 +17,7 @@ type AptosTransaction = Extract<Transaction, { family: "aptos" }>;
 
 type Props = NonNullable<AptosFamily["sendAmountFields"]>["component"];
 
-const Fields = ({ account, parentAccount, transaction, updateTransaction, status }: Props) => {
+const Fields: Props = ({ account, parentAccount, transaction, updateTransaction, status }) => {
   invariant(transaction.family === "aptos", "SendAmountFields: aptos family expected");
   const mainAccount = getMainAccount(account, parentAccount);
   invariant(mainAccount, "Account required");
@@ -26,10 +26,10 @@ const Fields = ({ account, parentAccount, transaction, updateTransaction, status
   const [isFee, setIsFee] = useState<boolean>(true);
   const [isSettings, setIsSettings] = useState<boolean>(true);
 
-  const gasPriceFieldElement = useRef<any>();
-  const gasLimitElement = useRef<any>();
-  const sequenceNumberElement = useRef<any>();
-  const expirationTimestampElement = useRef<any>();
+  const gasPriceFieldElement = useRef<{ resetData: () => void }>();
+  const gasLimitElement = useRef<{ resetData: () => void }>();
+  const sequenceNumberElement = useRef<{ resetData: () => void }>();
+  const expirationTimestampElement = useRef<{ resetData: () => void }>();
 
   const setOptimalGas = useCallback(() => {
     gasPriceFieldElement.current?.resetData();

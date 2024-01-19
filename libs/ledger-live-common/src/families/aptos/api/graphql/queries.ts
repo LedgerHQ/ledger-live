@@ -2,7 +2,10 @@ import { gql } from "@apollo/client";
 
 export const GetDelegatedStakingActivities = gql`
   query getDelegatedStakingActivities($delegatorAddress: String) {
-    delegated_staking_activities(where: { delegator_address: { _eq: $delegatorAddress } }, order_by: { transaction_version: asc }) {
+    delegated_staking_activities(
+      where: { delegator_address: { _eq: $delegatorAddress } }
+      order_by: { transaction_version: asc }
+    ) {
       amount
       delegator_address
       event_index

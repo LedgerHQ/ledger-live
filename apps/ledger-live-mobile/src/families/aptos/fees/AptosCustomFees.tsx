@@ -26,12 +26,11 @@ import SequenceNumberField from "./SequenceNumberField";
 import ExpirationTimestampField from "./ExpirationTimestampField";
 
 import { accountScreenSelector } from "../../../reducers/accounts";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "../../../components/RootNavigator/types/SendFundsNavigator";
 import { ScreenName } from "../../../const";
+import type { CompositeScreenProps } from "@react-navigation/native";
+import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 
 type AptosTransaction = Extract<Transaction, { family: "aptos" }>;
 
@@ -40,8 +39,9 @@ const options = {
   headerLeft: null,
 };
 
-type NavigationProps = BaseComposite<
-  StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.AptosCustomFees>
+type NavigationProps = CompositeScreenProps<
+  StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.AptosCustomFees>,
+  StackNavigatorProps<BaseNavigatorStackParamList>
 >;
 
 const AptosCustomFees = ({ navigation, route }: NavigationProps) => {
@@ -103,7 +103,7 @@ const AptosCustomFees = ({ navigation, route }: NavigationProps) => {
   }, [account, updateTransaction]);
 
   const applyChanges = useCallback(() => {
-    route.params.setCustomFees({ options: transaction.options, fees: transaction.fees });
+    route.params.setCustomFees?.({ options: transaction.options, fees: transaction.fees });
     navigation.goBack();
   }, [navigation, route, transaction]);
 

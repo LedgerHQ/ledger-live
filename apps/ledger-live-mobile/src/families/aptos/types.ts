@@ -1,8 +1,12 @@
-import { RouteProp } from "@react-navigation/native";
+import { RouteProp, CompositeScreenProps } from "@react-navigation/native";
 import { ScreenName } from "../../const";
-import { StackNavigatorNavigation } from "../../components/RootNavigator/types/helpers";
-import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
+import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 
-export type Navigation = StackNavigatorNavigation<SendFundsNavigatorStackParamList>;
+export type Navigation = CompositeScreenProps<
+  StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.AptosCustomFees>,
+  StackNavigatorProps<BaseNavigatorStackParamList>
+>;
 
 export type RouteProps = RouteProp<SendFundsNavigatorStackParamList, ScreenName.AptosCustomFees>;

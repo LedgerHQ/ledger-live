@@ -2,10 +2,11 @@ import {
   AptosAccount,
   Transaction,
   TransactionStatus,
-} from "../../../../../../libs/ledger-live-common/src/families/aptos/types.ts"; // TODO: use correct path after hw-app-aptos release
+} from "@ledgerhq/live-common/families/aptos/types";
+import { Operation } from "@ledgerhq/types-live";
 import { FieldComponentProps, LLDCoinFamily } from "../types";
 
-export type AptosFamily = LLDCoinFamily<AptosAccount, Transaction, TransactionStatus>;
+export type AptosFamily = LLDCoinFamily<AptosAccount, Transaction, TransactionStatus, Operation>;
 export type AptosFieldComponentProps = FieldComponentProps<
   AptosAccount,
   Transaction,

@@ -171,8 +171,8 @@ export type SendFundsNavigatorStackParamList = {
     accountId: string;
     parentId?: string;
     transaction: AptosTransaction;
-    setCustomFees: (transaction: Partial<AptosTransaction>) => void;
-    setTransaction: Result<AptosTransaction>["setTransaction"];
+    setCustomFees?: (transaction: Partial<AptosTransaction>) => void;
+    setTransaction?: Result<AptosTransaction>["setTransaction"];
     currentNavigation:
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary

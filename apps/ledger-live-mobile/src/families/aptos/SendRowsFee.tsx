@@ -11,18 +11,27 @@ import CounterValue from "../../components/CounterValue";
 import { ScreenName } from "../../const";
 import Edit from "../../icons/Edit";
 
-import type { Transaction } from "@ledgerhq/live-common/families/aptos/types";
-import { Account } from "@ledgerhq/types-live";
-import { Navigation, RouteProps } from "./types";
+import type { Transaction as AptosTransaction } from "@ledgerhq/live-common/families/aptos/types";
+import type { AccountLike } from "@ledgerhq/types-live";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
+import { CompositeScreenProps } from "@react-navigation/native";
+import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import type { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
+import type { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
+import type { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
+import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 
 type Props = {
   transaction: Transaction;
-  account: Account;
-  navigation: Navigation;
-  route: RouteProps;
+  account: AccountLike;
   setTransaction: (_: Transaction) => void;
-};
+} & CompositeScreenProps<
+  | StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
+  | StackNavigatorProps<SignTransactionNavigatorParamList, ScreenName.SignTransactionSummary>
+  | StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapSelectFees>,
+  StackNavigatorProps<BaseNavigatorStackParamList>
+>;
 
 export default function SendRowsFee({
   transaction,
@@ -33,7 +42,7 @@ export default function SendRowsFee({
 }: Props) {
   const unit = getAccountUnit(account);
   const currency = getAccountCurrency(account);
-  const { fees } = transaction;
+  const { fees } = transaction as AptosTransaction;
   const { colors } = useTheme();
 
   const setCustomFees = useCallback(
@@ -49,7 +58,7 @@ export default function SendRowsFee({
     navigation.navigate(ScreenName.AptosCustomFees, {
       ...route.params,
       accountId: account.id,
-      transaction,
+      transaction: transaction as AptosTransaction,
       setCustomFees,
     });
   }, [navigation, route.params, transaction, account.id, setCustomFees]);
