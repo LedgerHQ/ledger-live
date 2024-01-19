@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import styled from "styled-components/native";
-import { Flex, IconsLegacy, Link, Text, Toggle } from "@ledgerhq/native-ui";
+import { Flex, IconsLegacy, Link, Text } from "@ledgerhq/native-ui";
 import { TrackScreen } from "~/analytics";
 import { useTranslation } from "react-i18next";
 import Button from "~/components/Button";
@@ -52,6 +52,8 @@ function Option({ title, description, link, checked, onToggle }: OptionProps): R
 function Details() {
   const { t } = useTranslation();
 
+  const bothSelected = false;
+
   return (
     <Container alignItems="center">
       <View>
@@ -84,13 +86,17 @@ function Details() {
           <Button
             title={t("analyticsOptIn.variantA.details.ctas.notNow")}
             onPress={() => {}}
-            type="secondary"
+            type="shade"
             size="large"
             mr="2"
             flex={1}
           />
           <Button
-            title={t("analyticsOptIn.variantA.details.ctas.allow")}
+            title={t(
+              bothSelected
+                ? "analyticsOptIn.variantA.details.ctas.allowAll"
+                : "analyticsOptIn.variantA.details.ctas.allow",
+            )}
             onPress={() => {}}
             type="main"
             size="large"
@@ -99,7 +105,7 @@ function Details() {
             flex={1}
           />
         </Flex>
-        <Text variant="small" pt={2} color="neutral.c70" textAlign="center" pb="2">
+        <Text fontWeight="semiBold" pt={2} color="neutral.c70" textAlign="center" pb="2">
           {t("analyticsOptIn.variantA.details.infoText.info")}
         </Text>
         <Link

@@ -92,7 +92,7 @@ function Main() {
           <Button
             title={t("analyticsOptIn.variantA.main.content.ctas.refuse")}
             onPress={() => {}}
-            type="secondary"
+            type="shade"
             size="large"
             mr="2"
             flex={1}
@@ -107,7 +107,7 @@ function Main() {
             flex={1}
           />
         </Flex>
-        <Text variant="small" pt={2} color="neutral.c70" textAlign="center" pb="2">
+        <Text fontWeight="semiBold" pt={2} color="neutral.c70" textAlign="center" pb="2">
           {t("analyticsOptIn.variantA.main.content.infoText.info")}
         </Text>
         <Link

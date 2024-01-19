@@ -1,17 +1,11 @@
 import React, { memo } from "react";
-import styled from "styled-components/native";
 import { Flex, IconsLegacy, Link, Text } from "@ledgerhq/native-ui";
 import { TrackScreen } from "~/analytics";
 import { useTranslation } from "react-i18next";
 import Button from "~/components/Button";
 import { View, Container, Titles, Content, Bottom } from "../Common";
-
-const Image = styled(Flex).attrs({
-  width: "100%",
-  height: 180,
-  backgroundColor: "primary.c30",
-  borderRadius: "24px",
-})``;
+import headerPersonnalized from "./illustrations/header_personnalized.png";
+import { Image } from "react-native";
 
 function Details() {
   const { t } = useTranslation();
@@ -24,7 +18,11 @@ function Details() {
   return (
     <Container alignItems="center">
       <View>
-        <Image />
+        <Image
+          source={headerPersonnalized}
+          style={{ width: "100%", height: 190 }}
+          resizeMode="contain"
+        />
         <Titles>
           <Text variant="h3Inter" fontSize={24} fontWeight="semiBold" color="neutral.c100">
             {t("analyticsOptIn.variantB.details.title")}
@@ -48,7 +46,7 @@ function Details() {
           <Button
             title={t("analyticsOptIn.variantB.details.ctas.refuse")}
             onPress={() => {}}
-            type="secondary"
+            type="shade"
             size="large"
             mr="2"
             flex={1}
@@ -63,7 +61,7 @@ function Details() {
             flex={1}
           />
         </Flex>
-        <Text variant="small" pt={2} color="neutral.c70" textAlign="center" pb="2">
+        <Text fontWeight="semiBold" pt={2} color="neutral.c70" textAlign="center" pb="2">
           {t("analyticsOptIn.variantB.details.infoText.info")}
         </Text>
         <Link
