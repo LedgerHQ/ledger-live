@@ -627,8 +627,8 @@ importers:
         specifier: ^3.1.0
         version: 3.1.0(vite@4.5.1)
       allure-playwright:
-        specifier: 2.9.2
-        version: 2.9.2
+        specifier: 2.11.1
+        version: 2.11.1
       axios:
         specifier: ^1.3.4
         version: 1.3.4
@@ -22381,7 +22381,7 @@ packages:
       react-docgen-typescript: 2.2.2(typescript@5.1.3)
       tslib: 2.6.2
       typescript: 5.1.3
-      webpack: 5.89.0(esbuild@0.19.3)
+      webpack: 5.89.0(metro@0.80.0)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -26592,17 +26592,17 @@ packages:
       uuid: 3.4.0
     dev: true
 
-  /allure-js-commons@2.9.2:
-    resolution: {integrity: sha512-Qvi+zMZQruklqcnqG/zHCnE209v1YiWGhO3H2aPW2aXC8Ockqd01a+w2lP4Qqp3SfC+WQDeAK2+pp+v+eNl8xQ==}
+  /allure-js-commons@2.11.1:
+    resolution: {integrity: sha512-A7Eiofwj46JBbK2XsM9FKmbhTYrdok+5M2EzI5ueJ/S+T12xvINBrrKdtjkqFvz/oH9qA/iKHawlJc4MSQbxLQ==}
     dependencies:
       properties: 1.2.1
     dev: true
 
-  /allure-playwright@2.9.2:
-    resolution: {integrity: sha512-N0X1c1GGLg74vdDAuq86KCekuvQ5BaqqpgcBpJj5x3y/RlQPBn84wlg8PT/ViKQM4EdbNFMXOXpa5Opufv6qCg==}
+  /allure-playwright@2.11.1:
+    resolution: {integrity: sha512-xzSFJ5Xrc8AxMM9fkpvvEOwjcuGWUiksx3mQiWFHALpUS1cgsJxm5M30omgqe6/rfbMBsIM2w4ufMts4N37+2w==}
     dependencies:
-      '@playwright/test': 1.39.0
-      allure-js-commons: 2.9.2
+      '@playwright/test': 1.40.0
+      allure-js-commons: 2.11.1
     dev: true
 
   /anser@1.4.10:
@@ -27500,7 +27500,7 @@ packages:
       '@babel/core': 7.23.2
       find-cache-dir: 4.0.0
       schema-utils: 4.2.0
-      webpack: 5.89.0(@swc/core@1.3.95)(esbuild@0.19.3)
+      webpack: 5.89.0(@swc/core@1.3.95)(metro@0.80.0)
     dev: true
 
   /babel-plugin-add-react-displayname@0.0.5:
@@ -36202,7 +36202,7 @@ packages:
       semver: 7.5.4
       tapable: 2.2.1
       typescript: 5.1.3
-      webpack: 5.89.0(@swc/core@1.3.95)(esbuild@0.19.3)
+      webpack: 5.89.0(@swc/core@1.3.95)(metro@0.80.0)
     dev: true
 
   /form-data@2.3.3:
@@ -53235,7 +53235,7 @@ packages:
       webpack: '>=2'
     dependencies:
       '@swc/core': 1.3.95
-      webpack: 5.89.0(@swc/core@1.3.95)(esbuild@0.19.3)
+      webpack: 5.89.0(@swc/core@1.3.95)(metro@0.80.0)
     dev: true
 
   /swiper@7.4.1:
@@ -57436,7 +57436,7 @@ packages:
       mime-types: 2.1.35
       range-parser: 1.2.1
       schema-utils: 4.2.0
-      webpack: 5.89.0(@swc/core@1.3.95)(esbuild@0.19.3)
+      webpack: 5.89.0(@swc/core@1.3.95)(metro@0.80.0)
     dev: true
 
   /webpack-dev-server@4.12.0(webpack@5.76.1):
