@@ -6626,7 +6626,8 @@
         },
         "ctas": {
           "notNow": "Not now",
-          "allow": "Allow"
+          "allow": "Allow",
+          "allowAll": "Allow All"
         },
         "infoText": {
           "info": "You can withdraw your consent at any time in the settings of the app.",
