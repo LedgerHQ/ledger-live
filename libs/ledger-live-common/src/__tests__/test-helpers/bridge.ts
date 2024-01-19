@@ -36,19 +36,45 @@ const { createHash } = require("crypto");
 const fs = require("fs");
 const nock = require("nock");
 
-import { EntryType, PerformanceObserver, PerformanceObserverCallback } from "node:perf_hooks";
+import { PerformanceObserver, PerformanceObserverCallback } from "node:perf_hooks";
 import { createMock, initBackendMocks, StdRequest } from "./bridgeMocker";
 
-const useBackendMocks = true;
+const useBackendMocks = false;
 
 const requests: any = [];
+
+let performanceObserver: PerformanceObserver;
+
+beforeAll(() => {
+  if (useBackendMocks) {
+    initBackendMocks();
+    // disable network attempt not registered in mocks
+    nock.disableNetConnect();
+  } else {
+    performanceObserver = new PerformanceObserver(onPerformanceEntry);
+    performanceObserver.observe({ entryTypes: ["http", "http2"] });
+  }
+});
+
+afterAll(() => {
+  if (!useBackendMocks) {
+    performanceObserver.disconnect();
+    for (const request of requests) {
+      const dir = __dirname + "/bridgeMocks/";
+      const filePath = `${dir}/${request.fileName}.json`;
+      createMock(request, filePath).then(() => {
+        // console.log("Created mock file " + filePath);
+      });
+    }
+  }
+});
 
 function reqToStdRequest(nodeRequest: any, nodeResponse: any): StdRequest {
   return {
     method: nodeRequest.method,
     url: nodeRequest.url,
     headers: nodeRequest.headers,
-    body: nodeRequest.body || {},
+    body: nodeRequest.body != null ? nodeRequest.body : {},
     fileName: sha256(`${nodeRequest.method}${nodeRequest.url}`),
     response: nodeResponse,
   };
@@ -64,9 +90,8 @@ const onPerformanceEntry: PerformanceObserverCallback = (items, _observer) => {
     if (entry.entryType === "http") {
       const req = (entry as any).detail?.req;
       const res = (entry as any).detail?.res;
-      if (res && req) {
+      if (res != null && req != null) {
         if (req.url !== "http://localhost/apdu") {
-          console.log(entry.toJSON());
           requests.push(reqToStdRequest(req, res));
         }
       }
@@ -96,42 +121,18 @@ export function syncAccount<T extends TransactionCommon>(
   account: Account,
   syncConfig: SyncConfig = defaultSyncConfig,
 ): Promise<Account> {
-  if (useBackendMocks) {
-    //initBackendMocks();
-  }
-
-  delay(5000);
-
-  const promise = initBackendMocks().then(() =>
-    firstValueFrom(
-      bridge
-        .sync(account, syncConfig)
-        .pipe(reduce((a, f: (arg0: Account) => Account) => f(a), account)),
-    ),
+  const promise = firstValueFrom(
+    bridge
+      .sync(account, syncConfig)
+      .pipe(reduce((a, f: (arg0: Account) => Account) => f(a), account)),
   );
-  if (useBackendMocks) {
-    // nock.disableNetConnect();
+
+  /*if (useBackendMocks) {
+    nock.disableNetConnect();
     promise.finally(() => {
       console.log(nock.activeMocks());
     });
-  }
-
-  if (!useBackendMocks) {
-    const performanceObserver = new PerformanceObserver(onPerformanceEntry);
-    performanceObserver.observe({ entryTypes: ["http", "http2"] });
-    promise.finally(() => {
-      performanceObserver.disconnect();
-      for (const request of requests) {
-        const dir =
-          __dirname + "/bridgeMocks/" + account.currency.family + "/" + account.currency.id;
-        if (!fs.existsSync(dir)) {
-          fs.mkdirSync(dir, { recursive: true });
-        }
-        createMock(request, `${dir}/${request.fileName}.json`).then(() => {});
-        // fs.writeFileSync(dir + "/" + request.fileName + ".json", JSON.stringify(request));
-      }
-    });
-  }
+  }*/
   return promise;
 }
 
@@ -144,11 +145,14 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
     accountData: any;
     impl: string;
   }> = [];
+
   const currenciesRelated: Array<{
     currencyData: CurrenciesData<T>;
     currency: CryptoCurrency;
   }> = [];
+
   const { implementations, currencies } = data;
+
   Object.keys(currencies).forEach(currencyId => {
     const currencyData = currencies[currencyId];
     const currency = getCryptoCurrencyById(currencyId);
