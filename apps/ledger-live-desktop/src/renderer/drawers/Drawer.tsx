@@ -63,8 +63,11 @@ export const Drawer = () => {
   const track = useTrack();
   const onRequestClose = useCallback(() => {
     track("button_clicked", { button: "Close" });
+    if (state?.props?.onRequestClose) {
+      onRequestClose();
+    }
     setDrawer();
-  }, [setDrawer, track]);
+  }, [setDrawer, state?.props?.onRequestClose, track]);
   return (
     <SideDrawer
       isOpen={!!state.open}
