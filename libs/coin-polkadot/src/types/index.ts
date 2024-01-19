@@ -7,6 +7,8 @@ import type {
   TransactionStatusCommonRaw,
   Operation,
   OperationRaw,
+  OperationExtra,
+  OperationExtraRaw,
 } from "@ledgerhq/types-live";
 import type { BigNumber } from "bignumber.js";
 
@@ -130,6 +132,9 @@ export type PolkadotOperationExtra = {
   validatorStash?: string;
   validators?: string[];
 };
+export function isPolkadotOperationExtra(op: OperationExtra): op is PolkadotOperationExtra {
+  return "palletMethod" in op;
+}
 export type PolkadotOperationExtraRaw = {
   transferAmount?: string;
   palletMethod: string;
@@ -139,3 +144,8 @@ export type PolkadotOperationExtraRaw = {
   validatorStash?: string;
   validators?: string[];
 };
+export function isPolkadotOperationExtraRaw(
+  op: OperationExtraRaw,
+): op is PolkadotOperationExtraRaw {
+  return "palletMethod" in op;
+}

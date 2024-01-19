@@ -13,7 +13,7 @@ import { CosmosAPI } from "../api/Cosmos";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { CosmosValidatorsManager } from "../CosmosValidatorsManager";
-import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
+import { assignFromAccountRaw, assignToAccountRaw, fromOperationExtraRaw, toOperationExtraRaw } from "../serialization";
 import { getCurrencyConfiguration } from "../../../config";
 import cryptoFactory from "../chain/chain";
 
@@ -74,6 +74,8 @@ const accountBridge: AccountBridge<Transaction> = {
       signedOperation,
     });
   },
+  fromOperationExtraRaw,
+  toOperationExtraRaw,
 };
 
 export default {

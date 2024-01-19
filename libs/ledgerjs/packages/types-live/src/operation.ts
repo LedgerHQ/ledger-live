@@ -53,6 +53,7 @@ export type OperationType =
   | "UNSTAKE"
   | "WITHDRAW_UNSTAKED";
 
+export type OperationExtra = object;
 /**
  * An Operation is the Ledger Live abstraction of a transaction for any blockchain
  */
@@ -110,6 +111,7 @@ export type Operation<Extra = unknown> = {
   extra: Extra;
 };
 
+export type OperationExtraRaw = object;
 export type OperationRaw<ExtraRaw = unknown> = {
   id: string;
   hash: string;

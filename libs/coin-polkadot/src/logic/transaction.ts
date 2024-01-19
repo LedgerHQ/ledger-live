@@ -6,7 +6,7 @@ import type { Transaction } from "../types";
  *
  * @returns {Transaction}
  */
-const createTransaction = (): Transaction => ({
+export const createTransaction = (): Transaction => ({
   family: "polkadot",
   mode: "send",
   amount: new BigNumber(0),
@@ -18,5 +18,3 @@ const createTransaction = (): Transaction => ({
   rewardDestination: null,
   numSlashingSpans: Number(0),
 });
-
-export default createTransaction;

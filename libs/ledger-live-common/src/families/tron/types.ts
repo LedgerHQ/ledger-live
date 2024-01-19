@@ -2,6 +2,8 @@ import {
   Account,
   AccountRaw,
   Operation,
+  OperationExtra,
+  OperationExtraRaw,
   OperationRaw,
   TransactionCommon,
   TransactionCommonRaw,
@@ -87,20 +89,26 @@ export type TrongridTxInfo = {
 export type TronOperation = Operation<TrongridExtraTxInfo>;
 export type TronOperationRaw = OperationRaw<TrongridExtraTxInfoRaw>;
 
-export type TrongridExtraTxInfo = {
+export type TrongridExtraTxInfo = OperationExtra & {
   frozenAmount?: BigNumber;
   unfreezeAmount?: BigNumber;
   votes?: Vote[];
   unDelegatedAmount?: BigNumber;
   receiverAddress?: string;
 };
-export type TrongridExtraTxInfoRaw = {
+export function isTrongridExtraTxInfo(op: OperationExtra): op is TrongridExtraTxInfo {
+  return "frozenAmount" in op || "unfreezeAmount" in op || "votes" in op;
+}
+export type TrongridExtraTxInfoRaw = OperationExtraRaw & {
   frozenAmount?: string;
   unfreezeAmount?: string;
   votes?: Vote[];
   unDelegatedAmount?: string;
   receiverAddress?: string;
 };
+export function isTrongridExtraTxInfoRaw(op: OperationExtraRaw): op is TrongridExtraTxInfoRaw {
+  return "frozenAmount" in op || "unfreezeAmount" in op || "votes" in op;
+}
 
 /** Payload types to send to trongrid */
 export type SendTransactionData = {

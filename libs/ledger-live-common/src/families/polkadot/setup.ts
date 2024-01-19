@@ -4,7 +4,7 @@ import { createBridges } from "@ledgerhq/coin-polkadot/bridge/index";
 import type { Transaction } from "@ledgerhq/coin-polkadot/types/index";
 import makeCliTools from "@ledgerhq/coin-polkadot/test/cli";
 import type { CliTools } from "@ledgerhq/coin-polkadot/test/cli";
-import polkadotResolver from "@ledgerhq/coin-polkadot/bridge/hw-getAddress";
+import polkadotResolver from "@ledgerhq/coin-polkadot/signer/hw-getAddress";
 import Polkadot from "@ledgerhq/hw-app-polkadot";
 import Transport from "@ledgerhq/hw-transport";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";

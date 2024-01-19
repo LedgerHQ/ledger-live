@@ -1,14 +1,8 @@
 import { getAccountUnit } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
-import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
-import type {
-  AlgorandAccount,
-  AlgorandOperation,
-  AlgorandOperationExtra,
-  AlgorandOperationExtraRaw,
-} from "./types";
+import type { AlgorandAccount, AlgorandOperation } from "./types";
 
 function formatOperationSpecifics(op: AlgorandOperation, unit: Unit | null | undefined): string {
   const { rewards } = op.extra;
@@ -43,43 +37,7 @@ function formatAccountSpecifics(account: AlgorandAccount): string {
   return str;
 }
 
-export function fromOperationExtraRaw(extraRaw: AlgorandOperationExtraRaw) {
-  const extra: AlgorandOperationExtra = {};
-  if (extraRaw.rewards) {
-    extra.rewards = new BigNumber(extraRaw.rewards);
-  }
-
-  if (extraRaw.memo) {
-    extra.memo = extraRaw.memo;
-  }
-
-  if (extraRaw.assetId) {
-    extra.assetId = extraRaw.assetId;
-  }
-
-  return extra;
-}
-
-export function toOperationExtraRaw(extra: AlgorandOperationExtra) {
-  const extraRaw: AlgorandOperationExtraRaw = {};
-  if (extra.rewards) {
-    extraRaw.rewards = extra.rewards.toString();
-  }
-
-  if (extra.memo) {
-    extraRaw.memo = extra.memo;
-  }
-
-  if (extra.assetId) {
-    extraRaw.assetId = extra.assetId;
-  }
-
-  return extraRaw;
-}
-
 export default {
   formatAccountSpecifics,
   formatOperationSpecifics,
-  fromOperationExtraRaw,
-  toOperationExtraRaw,
 };

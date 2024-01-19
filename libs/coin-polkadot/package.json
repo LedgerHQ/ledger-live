@@ -31,6 +31,8 @@
       "*": [
         "lib/*",
         "lib/bridge/*",
+        "lib/logic/*",
+        "lib/signer/*",
         "lib/test/*",
         "lib/types/*"
       ]
@@ -48,8 +50,8 @@
       "default": "./lib-es/types/errors.js"
     },
     "./logic": {
-      "require": "./lib/bridge/logic.js",
-      "default": "./lib-es/bridge/logic.js"
+      "require": "./lib/logic/logic.js",
+      "default": "./lib-es/logic/logic.js"
     },
     "./preload": {
       "require": "./lib/bridge/preload.js",

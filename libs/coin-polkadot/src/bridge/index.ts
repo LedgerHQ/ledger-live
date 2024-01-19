@@ -11,14 +11,19 @@ import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { PolkadotAPI } from "../network";
 import resolver from "../signer/hw-getAddress";
-import createTransaction from "../logic/createTransaction";
+import createTransaction from "./createTransaction";
 import estimateMaxSpendable from "../logic/estimateMaxSpendable";
 import getTransactionStatus from "../logic/getTransactionStatus";
 import prepareTransaction from "./prepareTransaction";
 import buildSignOperation from "./signOperation";
 import broadcast from "../logic/broadcast";
 import { makeGetAccountShape } from "../logic/synchronisation";
-import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
+import {
+  assignFromAccountRaw,
+  assignToAccountRaw,
+  fromOperationExtraRaw,
+  toOperationExtraRaw,
+} from "./serialization";
 import { getPreloadStrategy, hydrate, preload } from "./preload";
 import type { PolkadotAddress, PolkadotSignature, Transaction } from "../types";
 import { PolkadotSigner } from "../types";
@@ -70,6 +75,8 @@ export function buildAccountBridge(
     broadcast: broadcast(polkadotAPI),
     assignFromAccountRaw,
     assignToAccountRaw,
+    fromOperationExtraRaw,
+    toOperationExtraRaw,
   };
 }
 

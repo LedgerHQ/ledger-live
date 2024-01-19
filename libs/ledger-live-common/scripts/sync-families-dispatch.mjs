@@ -13,6 +13,7 @@ const targets = [
   "deviceTransactionConfig.ts",
   "mock.ts",
   "account.ts",
+  "formatters.ts",
   "exchange.ts",
   "platformAdapter.ts",
   "walletApiAdapter.ts",

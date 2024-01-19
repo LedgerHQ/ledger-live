@@ -1,15 +1,8 @@
 import invariant from "invariant";
-import { BigNumber } from "bignumber.js";
 import type { Operation } from "@ledgerhq/types-live";
 import { getAccountUnit } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
-import {
-  PolkadotAccount,
-  PolkadotOperation,
-  PolkadotOperationExtra,
-  PolkadotOperationExtraRaw,
-  PolkadotResources,
-} from "./types";
+import { PolkadotAccount, PolkadotOperation, PolkadotResources } from "../types";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 
 function formatOperationSpecifics(op: Operation, unit: Unit | null | undefined): string {
@@ -79,61 +72,7 @@ function formatAccountSpecifics(account: PolkadotAccount): string {
   return str;
 }
 
-export function fromOperationExtraRaw(extraRaw: PolkadotOperationExtraRaw): PolkadotOperationExtra {
-  const extra: PolkadotOperationExtra = {
-    palletMethod: extraRaw.palletMethod,
-    validatorStash: extraRaw.validatorStash,
-    validators: extraRaw.validators,
-  };
-
-  if (extraRaw.transferAmount) {
-    extra.transferAmount = new BigNumber(extraRaw.transferAmount);
-  }
-
-  if (extraRaw.bondedAmount) {
-    extra.bondedAmount = new BigNumber(extraRaw.bondedAmount);
-  }
-
-  if (extraRaw.unbondedAmount) {
-    extra.unbondedAmount = new BigNumber(extraRaw.unbondedAmount);
-  }
-
-  if (extraRaw.withdrawUnbondedAmount) {
-    extra.withdrawUnbondedAmount = new BigNumber(extraRaw.withdrawUnbondedAmount);
-  }
-
-  return extra;
-}
-
-export function toOperationExtraRaw(extra: PolkadotOperationExtra): PolkadotOperationExtraRaw {
-  const extraRaw: PolkadotOperationExtraRaw = {
-    palletMethod: extra.palletMethod,
-    validatorStash: extra.validatorStash,
-    validators: extra.validators,
-  };
-
-  if (extra.transferAmount) {
-    extraRaw.transferAmount = extra.transferAmount.toString();
-  }
-
-  if (extra.bondedAmount) {
-    extraRaw.bondedAmount = extra.bondedAmount.toString();
-  }
-
-  if (extra.unbondedAmount) {
-    extraRaw.unbondedAmount = extra.unbondedAmount.toString();
-  }
-
-  if (extra.withdrawUnbondedAmount) {
-    extraRaw.withdrawUnbondedAmount = extra.withdrawUnbondedAmount.toString();
-  }
-
-  return extraRaw;
-}
-
 export default {
   formatAccountSpecifics,
   formatOperationSpecifics,
-  fromOperationExtraRaw,
-  toOperationExtraRaw,
 };

@@ -26,7 +26,7 @@ import {
   toBitcoinInputRaw,
   toBitcoinOutputRaw,
 } from "./serialization";
-import { formatInput, formatOutput } from "./account";
+import { formatInput, formatOutput } from "./formatters";
 
 const fromFeeItemsRaw = (fir: FeeItemsRaw): FeeItems => ({
   items: fir.items.map(fi => ({

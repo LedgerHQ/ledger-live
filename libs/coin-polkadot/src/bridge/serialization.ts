@@ -1,11 +1,15 @@
 import { BigNumber } from "bignumber.js";
-import type {
-  PolkadotResourcesRaw,
-  PolkadotResources,
-  PolkadotAccount,
-  PolkadotAccountRaw,
+import {
+  type PolkadotResourcesRaw,
+  type PolkadotResources,
+  type PolkadotAccount,
+  type PolkadotAccountRaw,
+  type PolkadotOperationExtra,
+  type PolkadotOperationExtraRaw,
+  isPolkadotOperationExtraRaw,
+  isPolkadotOperationExtra,
 } from "../types";
-import { Account, AccountRaw } from "@ledgerhq/types-live";
+import { Account, AccountRaw, OperationExtra, OperationExtraRaw } from "@ledgerhq/types-live";
 
 function toPolkadotResourcesRaw(r: PolkadotResources): PolkadotResourcesRaw {
   const { nonce, controller, stash } = r;
@@ -63,4 +67,64 @@ export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account) {
   const polkadotResourcesRaw = (accountRaw as PolkadotAccountRaw).polkadotResources;
   if (polkadotResourcesRaw)
     (account as PolkadotAccount).polkadotResources = fromPolkadotResourcesRaw(polkadotResourcesRaw);
+}
+
+export function fromOperationExtraRaw(extraRaw: OperationExtraRaw): OperationExtra {
+  if (!isPolkadotOperationExtraRaw(extraRaw)) {
+    throw Error("PokadotOperationExtraRaw");
+  }
+
+  const extra: PolkadotOperationExtra = {
+    palletMethod: extraRaw.palletMethod,
+    validatorStash: extraRaw.validatorStash,
+    validators: extraRaw.validators,
+  };
+
+  if (extraRaw.transferAmount) {
+    extra.transferAmount = new BigNumber(extraRaw.transferAmount);
+  }
+
+  if (extraRaw.bondedAmount) {
+    extra.bondedAmount = new BigNumber(extraRaw.bondedAmount);
+  }
+
+  if (extraRaw.unbondedAmount) {
+    extra.unbondedAmount = new BigNumber(extraRaw.unbondedAmount);
+  }
+
+  if (extraRaw.withdrawUnbondedAmount) {
+    extra.withdrawUnbondedAmount = new BigNumber(extraRaw.withdrawUnbondedAmount);
+  }
+
+  return extra;
+}
+
+export function toOperationExtraRaw(extra: OperationExtra): OperationExtraRaw {
+  if (!isPolkadotOperationExtra(extra)) {
+    throw Error("PokadotOperationExtra");
+  }
+
+  const extraRaw: PolkadotOperationExtraRaw = {
+    palletMethod: extra.palletMethod,
+    validatorStash: extra.validatorStash,
+    validators: extra.validators,
+  };
+
+  if (extra.transferAmount) {
+    extraRaw.transferAmount = extra.transferAmount.toString();
+  }
+
+  if (extra.bondedAmount) {
+    extraRaw.bondedAmount = extra.bondedAmount.toString();
+  }
+
+  if (extra.unbondedAmount) {
+    extraRaw.unbondedAmount = extra.unbondedAmount.toString();
+  }
+
+  if (extra.withdrawUnbondedAmount) {
+    extraRaw.withdrawUnbondedAmount = extra.withdrawUnbondedAmount.toString();
+  }
+
+  return extraRaw;
 }

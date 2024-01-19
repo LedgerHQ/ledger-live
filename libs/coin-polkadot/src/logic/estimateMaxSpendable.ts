@@ -4,7 +4,7 @@ import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 import type { PolkadotAccount, Transaction } from "../types";
 import { calculateAmount } from "./logic";
 import getEstimatedFees from "./getFeesForTransaction";
-import createTransaction from "./createTransaction";
+import { createTransaction } from "./transaction";
 import { loadPolkadotCrypto } from "./polkadot-crypto";
 import { PolkadotAPI } from "../network";
 
