@@ -533,6 +533,7 @@ export function useWalletAPIServer({
 
             return optimisticOperation.hash;
           },
+          tokenCurrency,
         );
       },
     );
