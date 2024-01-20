@@ -2735,6 +2735,8 @@
       "developerModeDesc": "Show developer apps in My Ledger and enable Testnet apps.",
       "analytics": "Analytics",
       "analyticsDesc": "Enable analytics to help Ledger improve user experience.",
+      "personnalizedRecommendations": "Personalized experience",
+      "personnalizedRecommendationsDesc": "Receive personalised recommendations that match your preferences.",
       "analyticsModal": {
         "title": "Share analytics",
         "desc": "Enable analytics to help Ledger improve user experience",
@@ -6614,12 +6616,12 @@
       },
       "details": {
         "title": "Manage your preferences",
-        "analytics":{
+        "analytics": {
           "title": "Analytics",
           "description": "Help Ledger improve the application by sharing app usage and diagnostic data.",
           "link": "Learn more"
         },
-        "personalizedExp":{
+        "personalizedExp": {
           "title": "Personalized experience",
           "description": "Receive personalised recommendations that match your preferences.",
           "link": "Learn more"
@@ -6638,36 +6640,36 @@
     "variantB": {
       "main": {
         "title": "Lets improve Ledger Live together",
-         "description": "Sharing your Ledger Live usage and diagnostics data helps us understand how people are using Ledger Live and fix technical issues.",
-         "bulletPoints": {
-           "1": "Usage and diagnostics data includes page visits, clicks, conversion, and bug reports.",
-           "2": "We won’t collect or see your addresses, accounts, balance, NFTs or any other information related to your portfolio.",
-           "3": "Analytics are totally anonymous. We can’t see or collect your personal information."
-         },
-         "ctas": {
+        "description": "Sharing your Ledger Live usage and diagnostics data helps us understand how people are using Ledger Live and fix technical issues.",
+        "bulletPoints": {
+          "1": "Usage and diagnostics data includes page visits, clicks, conversion, and bug reports.",
+          "2": "We won’t collect or see your addresses, accounts, balance, NFTs or any other information related to your portfolio.",
+          "3": "Analytics are totally anonymous. We can’t see or collect your personal information."
+        },
+        "ctas": {
           "refuse": "Refuse",
           "share": "Share"
         },
-         "infoText": {
-            "info": "You can withdraw your consent at any time in the settings of the app.",
-            "link": "Learn more about revoking consent"
-         }
+        "infoText": {
+          "info": "You can withdraw your consent at any time in the settings of the app.",
+          "link": "Learn more about revoking consent"
+        }
       },
       "details": {
         "title": "Get a personnalized experience.",
-         "description": "Allow us to give you the best experience possible",
-         "bulletPoints": {
-           "1": "Personnalized recommandations",
-           "2": "Personnalized notifications",
-         },
-         "ctas": {
+        "description": "Allow us to give you the best experience possible",
+        "bulletPoints": {
+          "1": "Personnalized recommandations",
+          "2": "Personnalized notifications",
+        },
+        "ctas": {
           "refuse": "Refuse",
           "allow": "Allow"
         },
-         "infoText": {
-            "info": "You can withdraw your consent at any time in the settings of the app.",
-            "link": "Learn more about revoking consent"
-         }
+        "infoText": {
+          "info": "You can withdraw your consent at any time in the settings of the app.",
+          "link": "Learn more about revoking consent"
+        }
       }
     }
   }

@@ -29,6 +29,7 @@ import type {
   SettingsPayload,
   SettingsRemoveStarredMarketcoinsPayload,
   SettingsSetAnalyticsPayload,
+  SettingsSetPersonnalizedRecommendationsPayload,
   SettingsSetAvailableUpdatePayload,
   SettingsSetCountervaluePayload,
   SettingsSetDiscreetModePayload,
@@ -98,6 +99,7 @@ export const INITIAL_STATE: SettingsState = {
   privacy: null,
   reportErrorsEnabled: true,
   analyticsEnabled: true,
+  personnalizedRecommendationsEnabled: true,
   currenciesSettings: {},
   pairExchanges: {},
   selectedTimeRange: "month",
@@ -251,6 +253,13 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
   [SettingsActionTypes.SETTINGS_SET_ANALYTICS]: (state, action) => ({
     ...state,
     analyticsEnabled: (action as Action<SettingsSetAnalyticsPayload>).payload,
+  }),
+
+  [SettingsActionTypes.SETTINGS_SET_PERSONNALIZED_RECOMMENDATIONS]: (state, action) => ({
+    ...state,
+    personnalizedRecommendationsEnabled: (
+      action as Action<SettingsSetPersonnalizedRecommendationsPayload>
+    ).payload,
   }),
 
   [SettingsActionTypes.SETTINGS_SET_COUNTERVALUE]: (state, action) => ({
@@ -684,6 +693,10 @@ export const reportErrorsEnabledSelector = createSelector(
   s => s.reportErrorsEnabled,
 );
 export const analyticsEnabledSelector = createSelector(storeSelector, s => s.analyticsEnabled);
+export const personnalizedRecommendationsEnabledSelector = createSelector(
+  storeSelector,
+  s => s.personnalizedRecommendationsEnabled,
+);
 export const lastSeenCustomImageSelector = createSelector(
   storeSelector,
   s => s.lastSeenCustomImage,

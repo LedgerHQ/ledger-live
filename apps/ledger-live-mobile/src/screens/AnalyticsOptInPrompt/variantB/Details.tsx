@@ -6,9 +6,11 @@ import Button from "~/components/Button";
 import { View, Container, Titles, Content, Bottom } from "../Common";
 import headerPersonnalized from "./illustrations/header_personnalized.png";
 import { Image } from "react-native";
+import useAnalyticsOptInPrompt from "~/hooks/useAnalyticsOptInPromptVariantB";
 
 function Details() {
   const { t } = useTranslation();
+  const { clickOnAllowPersonnalizedExperience, clickOnRefusePersonnalizedExperience, clickOnLearnMore } = useAnalyticsOptInPrompt();
 
   const bulletPoints = [
     t("analyticsOptIn.variantB.details.bulletPoints.1"),
@@ -45,7 +47,7 @@ function Details() {
         <Flex flexDirection="row" py="20px">
           <Button
             title={t("analyticsOptIn.variantB.details.ctas.refuse")}
-            onPress={() => {}}
+            onPress={clickOnRefusePersonnalizedExperience}
             type="shade"
             size="large"
             mr="2"
@@ -53,7 +55,7 @@ function Details() {
           />
           <Button
             title={t("analyticsOptIn.variantB.details.ctas.allow")}
-            onPress={() => {}}
+            onPress={clickOnAllowPersonnalizedExperience}
             type="main"
             size="large"
             outline={false}
@@ -67,7 +69,7 @@ function Details() {
         <Link
           size="small"
           type="color"
-          onPress={() => {}}
+          onPress={clickOnLearnMore}
           Icon={IconsLegacy.ExternalLinkMedium}
           iconPosition="left"
         >

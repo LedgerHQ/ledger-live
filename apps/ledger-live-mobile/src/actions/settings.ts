@@ -19,6 +19,7 @@ import {
   SettingsLastSeenDevicePayload,
   SettingsRemoveStarredMarketcoinsPayload,
   SettingsSetAnalyticsPayload,
+  SettingsSetPersonnalizedRecommendationsPayload,
   SettingsSetAvailableUpdatePayload,
   SettingsSetLastSeenCustomImagePayload,
   SettingsSetCountervaluePayload,
@@ -93,6 +94,10 @@ export const setReportErrors = createAction<SettingsSetReportErrorsPayload>(
 export const setAnalytics = createAction<SettingsSetAnalyticsPayload>(
   SettingsActionTypes.SETTINGS_SET_ANALYTICS,
 );
+export const setPersonnalizedRecommendations =
+  createAction<SettingsSetPersonnalizedRecommendationsPayload>(
+    SettingsActionTypes.SETTINGS_SET_PERSONNALIZED_RECOMMENDATIONS,
+  );
 export const setReadOnlyMode = createAction<SettingsSetReadOnlyModePayload>(
   SettingsActionTypes.SETTINGS_SET_READONLY_MODE,
 );

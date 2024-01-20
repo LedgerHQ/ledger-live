@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import Button from "~/components/Button";
 import Switch from "~/components/Switch";
 import { View, Container, Titles, Content, Bottom } from "../Common";
+import useAnalyticsOptInPrompt from "~/hooks/useAnalyticsOptInPromptVariantA";
 
 const OptionContainer = styled(Flex).attrs({
   width: "100%",
@@ -31,6 +32,8 @@ interface OptionProps {
 }
 
 function Option({ title, description, link, checked, onToggle }: OptionProps): React.ReactElement {
+  const { clickOnLearnMore } = useAnalyticsOptInPrompt();
+
   return (
     <OptionContainer>
       <OptionRow>
@@ -42,7 +45,7 @@ function Option({ title, description, link, checked, onToggle }: OptionProps): R
       <Text fontSize={14} pt={4} pb={2} color="neutral.c70">
         {description}
       </Text>
-      <Link size="small" type="color" onPress={() => {}}>
+      <Link size="small" type="color" onPress={clickOnLearnMore}>
         {link}
       </Link>
     </OptionContainer>
@@ -51,8 +54,17 @@ function Option({ title, description, link, checked, onToggle }: OptionProps): R
 
 function Details() {
   const { t } = useTranslation();
+  const {
+    analyticsEnabled,
+    personnalizedRecommendationsEnabled,
+    toggleAnalytics,
+    togglePersonnalizedRecommendations,
+    clickOnMoreOptionsNotNow,
+    clickOnMoreOptionsAllow,
+    clickOnLearnMore,
+  } = useAnalyticsOptInPrompt();
 
-  const bothSelected = false;
+  const bothSelected = analyticsEnabled && personnalizedRecommendationsEnabled;
 
   return (
     <Container alignItems="center">
@@ -67,16 +79,16 @@ function Details() {
             title={t("analyticsOptIn.variantA.details.analytics.title")}
             description={t("analyticsOptIn.variantA.details.analytics.description")}
             link={t("analyticsOptIn.variantA.details.analytics.link")}
-            checked={false}
-            onToggle={() => {}}
+            checked={analyticsEnabled}
+            onToggle={toggleAnalytics}
           />
           <Flex pt={7}>
             <Option
-              title={t("analyticsOptIn.variantA.details.personalizedExp.title")}
-              description={t("analyticsOptIn.variantA.details.personalizedExp.description")}
+              title={t("settings.display.personnalizedRecommendations")}
+              description={t("settings.display.personnalizedRecommendationsDesc")}
               link={t("analyticsOptIn.variantA.details.personalizedExp.link")}
-              checked={true}
-              onToggle={() => {}}
+              checked={personnalizedRecommendationsEnabled}
+              onToggle={togglePersonnalizedRecommendations}
             />
           </Flex>
         </Content>
@@ -85,7 +97,7 @@ function Details() {
         <Flex flexDirection="row" py="20px">
           <Button
             title={t("analyticsOptIn.variantA.details.ctas.notNow")}
-            onPress={() => {}}
+            onPress={clickOnMoreOptionsNotNow}
             type="shade"
             size="large"
             mr="2"
@@ -97,7 +109,7 @@ function Details() {
                 ? "analyticsOptIn.variantA.details.ctas.allowAll"
                 : "analyticsOptIn.variantA.details.ctas.allow",
             )}
-            onPress={() => {}}
+            onPress={clickOnMoreOptionsAllow}
             type="main"
             size="large"
             outline={false}
@@ -111,7 +123,7 @@ function Details() {
         <Link
           size="small"
           type="color"
-          onPress={() => {}}
+          onPress={clickOnLearnMore}
           Icon={IconsLegacy.ExternalLinkMedium}
           iconPosition="left"
         >
