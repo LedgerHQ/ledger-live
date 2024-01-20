@@ -206,17 +206,13 @@ export function SwapForm({
   const onSubmit = useCallback(() => {
     if (!exchangeRate) return;
     const { provider, providerURL, providerType } = exchangeRate;
-    track(
-      "button_clicked",
-      {
-        ...sharedSwapTracking,
-        sourceCurrency: swapTransaction.swap.from.currency?.name,
-        targetCurrency: swapTransaction.swap.to.currency?.name,
-        provider,
-        button: "exchange",
-      },
-      undefined,
-    );
+    track("button_clicked", {
+      ...sharedSwapTracking,
+      sourceCurrency: swapTransaction.swap.from.currency?.name,
+      targetCurrency: swapTransaction.swap.to.currency?.name,
+      provider,
+      button: "exchange",
+    });
 
     if (providerType === "DEX") {
       const from = swapTransaction.swap.from;
@@ -289,14 +285,10 @@ export function SwapForm({
       const account = flattenAccounts(enhancedAccounts).find(a => a.id === accountId);
 
       if (target === "from") {
-        track(
-          "Page Swap Form - New Source Account",
-          {
-            ...sharedSwapTracking,
-            provider,
-          },
-          undefined,
-        );
+        track("Page Swap Form - New Source Account", {
+          ...sharedSwapTracking,
+          provider,
+        });
         swapTransaction.setFromAccount(account);
       }
 

@@ -73,7 +73,7 @@ const spawnCoreProcess = () => {
   internal.configure(path.resolve(__dirname, "main.bundle.js"), [], {
     silent: true,
     env,
-    // Passes a list of env variables set on `LEDGER_INTERNAL_ARGS` to the internal thread
+    // Passes a list of env variables set on `LEDGER_INTERNAL_ARGS` to the internal process
     execArgv: (process.env.LEDGER_INTERNAL_ARGS || "").split(/[ ]+/).filter(Boolean),
   });
   internal.start();
@@ -211,29 +211,42 @@ ipcMain.on("setEnv", async (event, env) => {
   }
 });
 
-// Routes a (request) message from the renderer process to the internal process,
-// and sets a handler to receive the response from the internal thread and reply it to the renderer process
-// Only 1 response from the internal process is expected.
-const internalHandlerPromise = (channel: string) => {
+/**
+ * Setups a request/response handler on requests from the renderer process that are sent to the internal process.
+ *
+ * The handler sets a listener to receive responses from the internal process (identified with `requestId`),
+ * and it routes (requests) messages from the renderer process to the internal process.
+ * Only one response from the internal process per request is expected.
+ *
+ * @param channel the channel name to create the handler for
+ */
+const setupSingleResponseHandlerForChannel = (channel: string) => {
   ipcMain.on(channel, (event, { data, requestId }) => {
+    // Channel to send response to the renderer process
     const replyChannel = `${channel}_RESPONSE_${requestId}`;
-    const handler = (message: FromInternalMessage) => {
+
+    const responseHandler = (message: FromInternalMessage) => {
+      // Only handles a response associated to the current request
       if (message.type === channel && message.requestId === requestId) {
         if (message.error) {
-          // reject
+          // Sends back the error to the renderer process which will trigger a reject
           event.reply(replyChannel, {
             error: message.error,
           });
         } else {
-          // resolve
+          // Sends back the response to the renderer process which will trigger a resolve
           event.reply(replyChannel, {
             data: message.data,
           });
         }
-        internal.process?.removeListener("message", handler);
+
+        internal.process?.removeListener("message", responseHandler);
       }
     };
-    internal.process?.on("message", handler);
+
+    // Adding a listener does not override the previous ones.
+    internal.process?.on("message", responseHandler);
+
     internal.send({
       type: channel,
       data,
@@ -242,31 +255,45 @@ const internalHandlerPromise = (channel: string) => {
   });
 };
 
-// Multi event version of internalHandlerPromise:
-// Several response from the internal process can be expected
-const internalHandlerObservable = (channel: string) => {
+/**
+ * Setups a request/multi responses handler on requests from the renderer process that are sent to the internal process.
+ *
+ * The handler sets a listener to receive responses from the internal process (identified with `requestId`),
+ * and it routes (requests) messages from the renderer process to the internal process.
+ * Several responses from the internal process per request can be expected.
+ *
+ * @param channel the channel name to create the handler for
+ */
+const setupMultiResponsesHandlerForChannel = (channel: string) => {
   ipcMain.on(channel, (event, { data, requestId }) => {
+    // Channel to send response to the renderer process
     const replyChannel = `${channel}_RESPONSE_${requestId}`;
-    const handler = (message: FromInternalMessage) => {
+
+    const responsesHandler = (message: FromInternalMessage) => {
+      // Only handles responses associated to the current request
       if (message.type === channel && message.requestId === requestId) {
         if (message.error) {
-          // error
+          // Sends back the error to the renderer process which will be considered an error event
           event.reply(replyChannel, {
             error: message.error,
           });
         } else if (message.data) {
-          // next
+          // Sends back the response to the renderer process which will be considered a next event
           event.reply(replyChannel, {
             data: message.data,
           });
         } else {
-          // complete
+          // Sends back an empty response to the renderer process which will be considered a complete event
           event.reply(replyChannel, {});
-          internal.process?.removeListener("message", handler);
+
+          internal.process?.removeListener("message", responsesHandler);
         }
       }
     };
-    internal.process?.on("message", handler);
+
+    // Listens to responses from the internal process
+    internal.process?.on("message", responsesHandler);
+
     internal.send({
       type: channel,
       data,
@@ -275,9 +302,15 @@ const internalHandlerObservable = (channel: string) => {
   });
 };
 
-// Only routes a (request) message from the renderer process to the internal process
-// No response from the internal process is expected.
-const internalHandlerEvent = (channel: string) => {
+/**
+ * Setups a request/no response handler on requests from the renderer process that are sent to the internal process.
+ *
+ * Only routes (requests) messages from the renderer process to the internal process.
+ * No response from the internal process is expected.
+ *
+ * @param channel the channel name to create the handler for
+ */
+const setupNoResponseHandlerForChannel = (channel: string) => {
   ipcMain.on(channel, (event, { data, requestId }) => {
     internal.send({
       type: channel,
@@ -287,10 +320,10 @@ const internalHandlerEvent = (channel: string) => {
   });
 };
 
-internalHandlerPromise(transportOpenChannel);
-internalHandlerPromise(transportExchangeChannel);
-internalHandlerPromise(transportCloseChannel);
-internalHandlerObservable(transportExchangeBulkChannel);
-internalHandlerObservable(transportListenChannel);
-internalHandlerEvent(transportExchangeBulkUnsubscribeChannel);
-internalHandlerEvent(transportListenUnsubscribeChannel);
+setupSingleResponseHandlerForChannel(transportOpenChannel);
+setupSingleResponseHandlerForChannel(transportExchangeChannel);
+setupSingleResponseHandlerForChannel(transportCloseChannel);
+setupMultiResponsesHandlerForChannel(transportExchangeBulkChannel);
+setupMultiResponsesHandlerForChannel(transportListenChannel);
+setupNoResponseHandlerForChannel(transportExchangeBulkUnsubscribeChannel);
+setupNoResponseHandlerForChannel(transportListenUnsubscribeChannel);

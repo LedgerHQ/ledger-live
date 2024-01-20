@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { Flex, IconsLegacy, Link, Text } from "@ledgerhq/native-ui";
+import { Flex, Link, Text } from "@ledgerhq/native-ui";
 import { TrackScreen } from "~/analytics";
 import { useTranslation } from "react-i18next";
 import Button from "~/components/Button";
@@ -20,7 +20,7 @@ function Details() {
       <View>
         <Image
           source={headerPersonnalized}
-          style={{ width: "100%", height: 190 }}
+          style={{ width: "100%", height: 180 }}
           resizeMode="contain"
         />
         <Titles>
@@ -45,7 +45,7 @@ function Details() {
         <Flex flexDirection="row" py="20px">
           <Button
             title={t("analyticsOptIn.variantB.details.ctas.refuse")}
-            onPress={() => {}}
+            onPress={() => { }}
             type="shade"
             size="large"
             mr="2"
@@ -53,7 +53,7 @@ function Details() {
           />
           <Button
             title={t("analyticsOptIn.variantB.details.ctas.allow")}
-            onPress={() => {}}
+            onPress={() => { }}
             type="main"
             size="large"
             outline={false}
@@ -64,13 +64,7 @@ function Details() {
         <Text fontWeight="semiBold" pt={2} color="neutral.c70" textAlign="center" pb="2">
           {t("analyticsOptIn.variantB.details.infoText.info")}
         </Text>
-        <Link
-          size="small"
-          type="color"
-          onPress={() => {}}
-          Icon={IconsLegacy.ExternalLinkMedium}
-          iconPosition="left"
-        >
+        <Link size="small" type="color" onPress={() => { }}>
           {t("analyticsOptIn.variantB.details.infoText.link")}
         </Link>
       </Bottom>

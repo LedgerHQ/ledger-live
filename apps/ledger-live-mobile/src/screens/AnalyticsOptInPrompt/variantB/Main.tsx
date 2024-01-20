@@ -1,11 +1,9 @@
 import React, { memo } from "react";
-import { Flex, IconsLegacy, Link, Text } from "@ledgerhq/native-ui";
+import { Flex, Link, Text } from "@ledgerhq/native-ui";
 import { TrackScreen } from "~/analytics";
 import { useTranslation } from "react-i18next";
 import Button from "~/components/Button";
 import { View, Container, Titles, Content, Bottom } from "../Common";
-import headerAnalytics from "./illustrations/header_analytics.png";
-import { Image } from "react-native";
 
 function Main() {
   const { t } = useTranslation();
@@ -19,11 +17,6 @@ function Main() {
   return (
     <Container alignItems="center">
       <View>
-        <Image
-          source={headerAnalytics}
-          style={{ width: "100%", height: 190 }}
-          resizeMode="contain"
-        />
         <Titles>
           <Text variant="h3Inter" fontSize={24} fontWeight="semiBold" color="neutral.c100">
             {t("analyticsOptIn.variantB.main.title")}
@@ -46,7 +39,7 @@ function Main() {
         <Flex flexDirection="row" py="20px">
           <Button
             title={t("analyticsOptIn.variantB.main.ctas.refuse")}
-            onPress={() => {}}
+            onPress={() => { }}
             type="shade"
             size="large"
             mr="2"
@@ -54,7 +47,7 @@ function Main() {
           />
           <Button
             title={t("analyticsOptIn.variantB.main.ctas.share")}
-            onPress={() => {}}
+            onPress={() => { }}
             type="main"
             size="large"
             outline={false}
@@ -65,13 +58,7 @@ function Main() {
         <Text fontWeight="semiBold" pt={2} color="neutral.c70" textAlign="center" pb="2">
           {t("analyticsOptIn.variantB.main.infoText.info")}
         </Text>
-        <Link
-          size="small"
-          type="color"
-          onPress={() => {}}
-          Icon={IconsLegacy.ExternalLinkMedium}
-          iconPosition="left"
-        >
+        <Link size="small" type="color" onPress={() => { }}>
           {t("analyticsOptIn.variantB.main.infoText.link")}
         </Link>
       </Bottom>

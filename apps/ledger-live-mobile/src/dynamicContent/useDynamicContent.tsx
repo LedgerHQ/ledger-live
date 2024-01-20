@@ -61,8 +61,9 @@ const useDynamicContent = () => {
     (cardId: string) => {
       dispatch(setDismissedDynamicCards([...hiddenCards, cardId]));
       dispatch(setDynamicContentMobileCards(mobileCards.filter(n => n.id !== cardId)));
+      logDismissCard(cardId);
     },
-    [dispatch, hiddenCards, mobileCards],
+    [dispatch, hiddenCards, mobileCards, logDismissCard],
   );
 
   const trackContentCardEvent = useCallback(
