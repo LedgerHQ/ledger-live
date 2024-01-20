@@ -1,5 +1,14 @@
 # ledger-live-desktop
 
+## 2.75.0-nightly.6
+
+### Patch Changes
+
+- [#5889](https://github.com/LedgerHQ/ledger-live/pull/5889) [`0a03cf1`](https://github.com/LedgerHQ/ledger-live/commit/0a03cf10343e7b79295c1467c8964cc943f16840) Thanks [@RamyEB](https://github.com/RamyEB)! - Make the searchable Dapp only visible through the search bar for both LLD and LLM
+
+- Updated dependencies [[`0a03cf1`](https://github.com/LedgerHQ/ledger-live/commit/0a03cf10343e7b79295c1467c8964cc943f16840)]:
+  - @ledgerhq/live-common@33.5.0-nightly.6
+
 ## 2.75.0-nightly.5
 
 ### Patch Changes

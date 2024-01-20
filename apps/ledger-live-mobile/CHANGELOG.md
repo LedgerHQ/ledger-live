@@ -1,5 +1,16 @@
 # live-mobile
 
+## 3.38.0-nightly.3
+
+### Patch Changes
+
+- [#5889](https://github.com/LedgerHQ/ledger-live/pull/5889) [`0a03cf1`](https://github.com/LedgerHQ/ledger-live/commit/0a03cf10343e7b79295c1467c8964cc943f16840) Thanks [@RamyEB](https://github.com/RamyEB)! - Make the searchable Dapp only visible through the search bar for both LLD and LLM
+
+- [#5863](https://github.com/LedgerHQ/ledger-live/pull/5863) [`06e05e0`](https://github.com/LedgerHQ/ledger-live/commit/06e05e0aa91ba242bc99ffa3a7d3ce9db4bf3518) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - "Hide empty token accounts" setting or "Hide token" hides accounts from your account page and from the main Portfolio page
+
+- Updated dependencies [[`0a03cf1`](https://github.com/LedgerHQ/ledger-live/commit/0a03cf10343e7b79295c1467c8964cc943f16840)]:
+  - @ledgerhq/live-common@33.5.0-nightly.6
+
 ## 3.38.0-nightly.2
 
 ### Patch Changes
