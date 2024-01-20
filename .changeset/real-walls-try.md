@@ -1,6 +1,6 @@
 ---
 "@ledgerhq/types-live": patch
-"@ledgerhq/live-mobile": patch
+"live-mobile": patch
 "@ledgerhq/live-config": patch
 ---
 

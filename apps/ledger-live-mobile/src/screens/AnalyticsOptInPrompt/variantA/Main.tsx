@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { Flex, IconsLegacy, Link, Text } from "@ledgerhq/native-ui";
+import { Flex, Link, Text } from "@ledgerhq/native-ui";
 import { TrackScreen } from "~/analytics";
 import { useTranslation } from "react-i18next";
 import { Check, Close } from "@ledgerhq/native-ui/assets/icons";
@@ -50,7 +50,7 @@ function Main() {
           <Text variant="h3Inter" fontSize={24} fontWeight="semiBold" color="neutral.c100">
             {t("analyticsOptIn.variantA.main.title")}
           </Text>
-          <Text pt={2} color="neutral.c80">
+          <Text pt={2} fontSize={14} color="neutral.c80">
             {t("analyticsOptIn.variantA.main.subtitle")}
           </Text>
         </Titles>
@@ -107,8 +107,6 @@ function Main() {
           size="small"
           type="color"
           onPress={clickOnLearnMore}
-          Icon={IconsLegacy.ExternalLinkMedium}
-          iconPosition="left"
         >
           {t("analyticsOptIn.variantA.main.content.infoText.link")}
         </Link>

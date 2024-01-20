@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import styled from "styled-components/native";
-import { Flex, IconsLegacy, Link, Text } from "@ledgerhq/native-ui";
+import { Flex, Link, Text } from "@ledgerhq/native-ui";
 import { TrackScreen } from "~/analytics";
 import { useTranslation } from "react-i18next";
 import Button from "~/components/Button";
@@ -26,14 +26,11 @@ const OptionRow = styled(Flex).attrs({
 interface OptionProps {
   title: string;
   description: string;
-  link: string;
   checked: boolean;
   onToggle?: (_: boolean) => void;
 }
 
-function Option({ title, description, link, checked, onToggle }: OptionProps): React.ReactElement {
-  const { clickOnLearnMore } = useAnalyticsOptInPrompt();
-
+function Option({ title, description, checked, onToggle }: OptionProps): React.ReactElement {
   return (
     <OptionContainer>
       <OptionRow>
@@ -45,9 +42,6 @@ function Option({ title, description, link, checked, onToggle }: OptionProps): R
       <Text fontSize={14} pt={4} pb={2} color="neutral.c70">
         {description}
       </Text>
-      <Link size="small" type="color" onPress={clickOnLearnMore}>
-        {link}
-      </Link>
     </OptionContainer>
   );
 }
@@ -78,15 +72,13 @@ function Details() {
           <Option
             title={t("analyticsOptIn.variantA.details.analytics.title")}
             description={t("analyticsOptIn.variantA.details.analytics.description")}
-            link={t("analyticsOptIn.variantA.details.analytics.link")}
             checked={analyticsEnabled}
             onToggle={toggleAnalytics}
           />
           <Flex pt={7}>
             <Option
-              title={t("settings.display.personnalizedRecommendations")}
-              description={t("settings.display.personnalizedRecommendationsDesc")}
-              link={t("analyticsOptIn.variantA.details.personalizedExp.link")}
+              title={t("analyticsOptIn.variantA.details.personalizedExp.title")}
+              description={t("analyticsOptIn.variantA.details.personalizedExp.description")}
               checked={personnalizedRecommendationsEnabled}
               onToggle={togglePersonnalizedRecommendations}
             />
@@ -106,8 +98,8 @@ function Details() {
           <Button
             title={t(
               bothSelected
-                ? "analyticsOptIn.variantA.details.ctas.allowAll"
-                : "analyticsOptIn.variantA.details.ctas.allow",
+                ? "analyticsOptIn.variantA.details.ctas.acceptAll"
+                : "analyticsOptIn.variantA.details.ctas.accept",
             )}
             onPress={clickOnMoreOptionsAllow}
             type="main"
@@ -124,8 +116,6 @@ function Details() {
           size="small"
           type="color"
           onPress={clickOnLearnMore}
-          Icon={IconsLegacy.ExternalLinkMedium}
-          iconPosition="left"
         >
           {t("analyticsOptIn.variantA.details.infoText.link")}
         </Link>

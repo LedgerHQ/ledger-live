@@ -21,6 +21,7 @@ import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-ap
 import { useRedirectToSwapHistory } from "../utils/index";
 
 import { captureException } from "~/sentry/internal";
+import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 
 const isDevelopment = process.env.NODE_ENV === "development";
 
@@ -56,20 +57,37 @@ export type SwapProps = {
 };
 
 export type SwapWebProps = {
+  manifestID: string;
   swapState?: Partial<SwapProps>;
   liveAppUnavailable(): void;
 };
 
-export const SWAP_WEB_MANIFEST_ID = "swap-live-app-demo-0";
+export const SwapWebManifestIDs = {
+  Demo0: "swap-live-app-demo-0",
+  Demo1: "swap-live-app-demo-1",
+};
+
+export const useSwapLiveAppManifestID = () => {
+  const demo0 = useFeature("ptxSwapLiveAppDemoZero");
+  const demo1 = useFeature("ptxSwapLiveAppDemoOne");
+  switch (true) {
+    case demo1?.enabled:
+      return SwapWebManifestIDs.Demo1;
+    case demo0?.enabled:
+      return SwapWebManifestIDs.Demo0;
+    default:
+      return null;
+  }
+};
 
 const SwapWebAppWrapper = styled.div<{ isDevelopment: boolean }>(
   ({ isDevelopment }) => `
-  ${!isDevelopment ? "height: 0px;" : ""}
+  ${!isDevelopment ? "height: 0px;" : "flex: 1;"}
   width: 100%;
 `,
 );
 
-const SwapWebView = ({ swapState, liveAppUnavailable }: SwapWebProps) => {
+const SwapWebView = ({ manifestID, swapState, liveAppUnavailable }: SwapWebProps) => {
   const {
     colors: {
       palette: { type: themeType },
@@ -81,8 +99,8 @@ const SwapWebView = ({ swapState, liveAppUnavailable }: SwapWebProps) => {
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
   const fiatCurrency = useSelector(counterValueCurrencySelector);
   const locale = useSelector(languageSelector);
-  const localManifest = useLocalLiveAppManifest(SWAP_WEB_MANIFEST_ID);
-  const remoteManifest = useRemoteLiveAppManifest(SWAP_WEB_MANIFEST_ID);
+  const localManifest = useLocalLiveAppManifest(manifestID);
+  const remoteManifest = useRemoteLiveAppManifest(manifestID);
   const redirectToHistory = useRedirectToSwapHistory();
 
   const manifest = localManifest || remoteManifest;

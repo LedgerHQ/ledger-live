@@ -429,6 +429,10 @@ export const DEFAULT_FEATURES: Features = {
     enabled: false,
   },
 
+  ptxSwapLiveAppDemoOne: {
+    enabled: false,
+  },
+
   ptxSwapMoonpayProvider: DEFAULT_FEATURE,
 
   llmAnalyticsOptInPrompt: {

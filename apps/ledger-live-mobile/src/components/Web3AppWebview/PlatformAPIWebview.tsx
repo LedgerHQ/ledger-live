@@ -59,23 +59,14 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
   ({ manifest, inputs = {}, onStateChange }, ref) => {
     const tracking = useMemo(
       () =>
-        trackingWrapper(
-          (
-            eventName: string,
-            properties?: Record<string, unknown> | null,
-            mandatory?: boolean | null,
-          ) =>
-            track(
-              eventName,
-              {
-                ...properties,
-                flowInitiatedFrom:
-                  currentRouteNameRef.current === "Platform Catalog"
-                    ? "Discover"
-                    : currentRouteNameRef.current,
-              },
-              mandatory,
-            ),
+        trackingWrapper((eventName: string, properties?: Record<string, unknown> | null) =>
+          track(eventName, {
+            ...properties,
+            flowInitiatedFrom:
+              currentRouteNameRef.current === "Platform Catalog"
+                ? "Discover"
+                : currentRouteNameRef.current,
+          }),
         ),
       [],
     );

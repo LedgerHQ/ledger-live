@@ -6,7 +6,6 @@ export const View = styled(Flex).attrs({
 })``;
 
 export const Container = styled(Flex).attrs({
-  paddingVertical: 20,
   paddingHorizontal: 16,
   flex: 1,
   justifyContent: "space-between",

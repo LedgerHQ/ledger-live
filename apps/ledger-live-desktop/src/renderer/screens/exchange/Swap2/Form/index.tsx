@@ -5,8 +5,8 @@ import {
   SetExchangeRateCallback,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import {
-  getCustomFeesPerFamily,
   convertToNonAtomicUnit,
+  getCustomFeesPerFamily,
 } from "@ledgerhq/live-common/exchange/swap/webApp/index";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import React, { useCallback, useEffect, useRef, useState, useMemo } from "react";
@@ -19,15 +19,12 @@ import { rateSelector, updateRateAction, updateTransactionAction } from "~/rende
 import { track } from "~/renderer/analytics/segment";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
-import ButtonBase from "~/renderer/components/Button";
 import { context } from "~/renderer/drawers/Provider";
-import { shallowAccountsSelector, flattenAccountsSelector } from "~/renderer/reducers/accounts";
+import { flattenAccountsSelector, shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import { trackSwapError, useGetSwapTrackingProperties } from "../utils/index";
 import ExchangeDrawer from "./ExchangeDrawer/index";
 import SwapFormSelectors from "./FormSelectors";
-import SwapFormSummary from "./FormSummary";
-import SwapFormRates from "./FormRates";
-import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 import useRefreshRates from "./hooks/useRefreshRates";
 import LoadingState from "./Rates/LoadingState";
@@ -37,9 +34,11 @@ import BigNumber from "bignumber.js";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { SWAP_RATES_TIMEOUT } from "../../config";
 import { OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
-import { v4 } from "uuid";
-import SwapWebView, { SwapWebProps } from "./SwapWebView";
+import SwapWebView, { SwapWebProps, useSwapLiveAppManifestID } from "./SwapWebView";
+import { SwapMigrationUI } from "./Migrations/SwapMigrationUI";
+import { useSwapLiveAppHook } from "~/renderer/hooks/swap-migrations/useSwapLiveAppHook";
 import { maybeTezosAccountUnrevealedAccount } from "@ledgerhq/live-common/exchange/swap/index";
+import SwapFormSummary from "./FormSummary";
 
 const DAPP_PROVIDERS = ["paraswap", "oneinch", "moonpay"];
 
@@ -57,18 +56,14 @@ const Hide = styled.div`
 
 const idleTime = 60 * 60000; // 1 hour
 
-const Button = styled(ButtonBase)`
-  justify-content: center;
-`;
-
 const SwapForm = () => {
   const [idleState, setIdleState] = useState(false);
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { state: locationState } = useLocation();
   const history = useHistory();
-  const accounts = useSelector(shallowAccountsSelector);
   const totalListedAccounts = useSelector(flattenAccountsSelector);
+  const accounts = useSelector(shallowAccountsSelector);
   const exchangeRate = useSelector(rateSelector);
   const walletApiPartnerList = useFeature("swapWalletApiPartnerList");
   const swapDefaultTrack = useGetSwapTrackingProperties();
@@ -412,36 +407,17 @@ const SwapForm = () => {
     swapTransaction.toggleMax();
   };
 
-  useEffect(() => {
-    if (isSwapLiveAppEnabled.enabled) {
-      const providerRedirectURLSearch = getProviderRedirectURLSearch();
-      const { parentAccount: fromParentAccount } = swapTransaction.swap.from;
-      const fromParentAccountId = fromParentAccount
-        ? accountToWalletAPIAccount(fromParentAccount)?.id
-        : undefined;
-      const providerRedirectURL = `ledgerlive://discover/${getProviderName(
-        provider ?? "",
-      ).toLowerCase()}?${providerRedirectURLSearch.toString()}`;
-      setSwapWebProps({
-        provider,
-        ...getExchangeSDKParams(),
-        fromParentAccountId,
-        cacheKey: v4(),
-        error: !!swapError,
-        loading: swapTransaction.bridgePending || exchangeRatesState.status === "loading",
-        providerRedirectURL,
-      });
-    }
-  }, [
-    provider,
-    isSwapLiveAppEnabled.enabled,
+  const swapLiveAppManifestID = useSwapLiveAppManifestID();
+
+  useSwapLiveAppHook({
+    isSwapLiveAppEnabled: isSwapLiveAppEnabled.enabled,
+    manifestID: swapLiveAppManifestID,
+    swapTransaction,
+    updateSwapWebProps: setSwapWebProps,
+    swapError,
     getExchangeSDKParams,
     getProviderRedirectURLSearch,
-    swapTransaction.swap.from,
-    swapError,
-    swapTransaction.bridgePending,
-    exchangeRatesState.status,
-  ]);
+  });
 
   return (
     <Wrapper>
@@ -477,27 +453,31 @@ const SwapForm = () => {
       {pageState === "loaded" && (
         <>
           <SwapFormSummary swapTransaction={swapTransaction} provider={provider} />
-          <SwapFormRates
-            swap={swapTransaction.swap}
-            provider={provider}
-            refreshTime={refreshTime}
-            countdown={!pauseRefreshing}
-          />
         </>
       )}
-
-      {isSwapLiveAppEnabled.enabled ? (
-        <SwapWebView
-          swapState={swapWebProps}
-          liveAppUnavailable={isSwapLiveAppEnabled.onLiveAppCrashed}
-        />
-      ) : (
-        <Box>
-          <Button primary disabled={!isSwapReady} onClick={onSubmit} data-test-id="exchange-button">
-            {t("common.exchange")}
-          </Button>
-        </Box>
-      )}
+      <SwapMigrationUI
+        manifestID={swapLiveAppManifestID}
+        liveAppEnabled={isSwapLiveAppEnabled.enabled}
+        liveApp={
+          swapLiveAppManifestID ? (
+            <SwapWebView
+              manifestID={swapLiveAppManifestID}
+              swapState={swapWebProps}
+              // When live app crash, it should disable live app and fall back to native UI
+              liveAppUnavailable={isSwapLiveAppEnabled.onLiveAppCrashed}
+            />
+          ) : null
+        }
+        // Demo 1 props
+        pageState={pageState}
+        swapTransaction={swapTransaction}
+        provider={provider}
+        refreshTime={refreshTime}
+        countdown={!pauseRefreshing}
+        // Demo 0 props
+        disabled={!isSwapReady}
+        onClick={onSubmit}
+      />
     </Wrapper>
   );
 };
