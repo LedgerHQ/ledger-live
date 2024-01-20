@@ -146,9 +146,6 @@ jobs:
           workspace: ${{ github.workspace }}
           os: windows
           group-name: ${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_number }}
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_S3_SCREENSHOTS_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_S3_SCREENSHOTS_SECRET_ACCESS_KEY }}
       - name: upload ci suggested screenshots
         if: always() && !cancelled()
         uses: actions/upload-artifact@v3
@@ -219,9 +216,6 @@ jobs:
           workspace: ${{ github.workspace }}
           os: linux
           group-name: ${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_number }}
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_S3_SCREENSHOTS_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_S3_SCREENSHOTS_SECRET_ACCESS_KEY }}
       - name: upload ci suggested screenshots
         if: always() && !cancelled()
         uses: actions/upload-artifact@v3
@@ -292,9 +286,6 @@ jobs:
           workspace: ${{ github.workspace }}
           os: macos
           group-name: ${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_number }}
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_S3_SCREENSHOTS_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_S3_SCREENSHOTS_SECRET_ACCESS_KEY }}
       - name: upload ci suggested screenshots
         if: always() && !cancelled()
         uses: actions/upload-artifact@v3

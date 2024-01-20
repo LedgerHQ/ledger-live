@@ -126,18 +126,18 @@ jobs:
         id: tests
         run: |
           xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright:smoke
-      - name: upload diffs to s3
-        if: always() && !cancelled()
-        uses: ./tools/actions/upload-images
-        id: s3
-        with:
-          path: apps/ledger-live-desktop/tests/artifacts/test-results
-          workspace: ${{ github.workspace }}
-          os: linux
-          group-name: ${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_number }}
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_S3_SCREENSHOTS_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_S3_SCREENSHOTS_SECRET_ACCESS_KEY }}
+      # - name: upload diffs to s3
+      #   if: always() && !cancelled()
+      #   uses: ./tools/actions/upload-images
+      #   id: s3
+      #   with:
+      #     path: apps/ledger-live-desktop/tests/artifacts/test-results
+      #     workspace: ${{ github.workspace }}
+      #     os: linux
+      #     group-name: ${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_number }}
+      #   env:
+      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_S3_SCREENSHOTS_ACCESS_KEY }}
+      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_S3_SCREENSHOTS_SECRET_ACCESS_KEY }}
       - name: upload ci suggested screenshots
         if: always() && !cancelled()
         uses: actions/upload-artifact@v3
