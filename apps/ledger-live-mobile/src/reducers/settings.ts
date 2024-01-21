@@ -29,7 +29,7 @@ import type {
   SettingsPayload,
   SettingsRemoveStarredMarketcoinsPayload,
   SettingsSetAnalyticsPayload,
-  SettingsSetPersonnalizedRecommendationsPayload,
+  SettingsSetPersonalizedRecommendationsPayload,
   SettingsSetAvailableUpdatePayload,
   SettingsSetCountervaluePayload,
   SettingsSetDiscreetModePayload,
@@ -98,8 +98,8 @@ export const INITIAL_STATE: SettingsState = {
   counterValueExchange: null,
   privacy: null,
   reportErrorsEnabled: true,
-  analyticsEnabled: true,
-  personnalizedRecommendationsEnabled: true,
+  analyticsEnabled: false,
+  personalizedRecommendationsEnabled: false,
   currenciesSettings: {},
   pairExchanges: {},
   selectedTimeRange: "month",
@@ -255,10 +255,10 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     analyticsEnabled: (action as Action<SettingsSetAnalyticsPayload>).payload,
   }),
 
-  [SettingsActionTypes.SETTINGS_SET_PERSONNALIZED_RECOMMENDATIONS]: (state, action) => ({
+  [SettingsActionTypes.SETTINGS_SET_PERSONALIZED_RECOMMENDATIONS]: (state, action) => ({
     ...state,
-    personnalizedRecommendationsEnabled: (
-      action as Action<SettingsSetPersonnalizedRecommendationsPayload>
+    personalizedRecommendationsEnabled: (
+      action as Action<SettingsSetPersonalizedRecommendationsPayload>
     ).payload,
   }),
 
@@ -693,9 +693,9 @@ export const reportErrorsEnabledSelector = createSelector(
   s => s.reportErrorsEnabled,
 );
 export const analyticsEnabledSelector = createSelector(storeSelector, s => s.analyticsEnabled);
-export const personnalizedRecommendationsEnabledSelector = createSelector(
+export const personalizedRecommendationsEnabledSelector = createSelector(
   storeSelector,
-  s => s.personnalizedRecommendationsEnabled,
+  s => s.personalizedRecommendationsEnabled,
 );
 export const lastSeenCustomImageSelector = createSelector(
   storeSelector,

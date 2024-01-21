@@ -63,13 +63,13 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
 
   const next = useCallback(() => {
     acceptTerms();
-    dispatch(setAnalytics(true));
 
     if (llmAnalyticsOptInPromptFeature?.enabled) {
       navigation.navigate(NavigatorName.AnalyticsOptInPrompt, {
         screen: ScreenName.AnalyticsOptInPromptMain,
       });
     } else {
+      dispatch(setAnalytics(true));
       navigation.navigate({
         name: ScreenName.OnboardingPostWelcomeSelection,
         params: {

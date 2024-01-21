@@ -8,7 +8,8 @@ import useAnalyticsOptInPrompt from "~/hooks/useAnalyticsOptInPromptVariantB";
 
 function Main() {
   const { t } = useTranslation();
-  const { clickOnAllowAnalytics, clickOnRefuseAnalytics, clickOnLearnMore } = useAnalyticsOptInPrompt();
+  const { clickOnAllowAnalytics, clickOnRefuseAnalytics, clickOnLearnMore } =
+    useAnalyticsOptInPrompt();
 
   const bulletPoints = [
     t("analyticsOptIn.variantB.main.bulletPoints.1"),
@@ -60,15 +61,11 @@ function Main() {
         <Text fontWeight="semiBold" pt={2} color="neutral.c70" textAlign="center" pb="2">
           {t("analyticsOptIn.variantB.main.infoText.info")}
         </Text>
-        <Link
-          size="small"
-          type="color"
-          onPress={clickOnLearnMore}
-        >
+        <Link size="small" type="color" onPress={clickOnLearnMore}>
           {t("analyticsOptIn.variantB.main.infoText.link")}
         </Link>
       </Bottom>
-      <TrackScreen category="Analytics Opt In Prompt" name="Main" />
+      <TrackScreen category="Analytics Opt In Prompt" name="Main" variant="B" />
     </Container>
   );
 }

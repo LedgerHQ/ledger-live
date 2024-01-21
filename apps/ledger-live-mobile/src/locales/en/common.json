@@ -2735,8 +2735,8 @@
       "developerModeDesc": "Show developer apps in My Ledger and enable Testnet apps.",
       "analytics": "Analytics",
       "analyticsDesc": "Enable analytics to help Ledger improve user experience.",
-      "personnalizedRecommendations": "Personalized experience",
-      "personnalizedRecommendationsDesc": "Receive personalised recommendations that match your preferences.",
+      "personalizedRecommendations": "Personalized experience",
+      "personalizedRecommendationsDesc": "Receive personalised recommendations that match your preferences.",
       "analyticsModal": {
         "title": "Share analytics",
         "desc": "Enable analytics to help Ledger improve user experience",
@@ -6638,7 +6638,7 @@
     },
     "variantB": {
       "main": {
-        "title": "Lets improve Ledger Live together",
+        "title": "Let's improve Ledger Live together",
         "description": "Sharing your Ledger Live usage data helps us understand how you are using Ledger Live.",
         "bulletPoints": {
           "1": "Usage data includes page visits, clicks and conversion.",
@@ -6655,11 +6655,11 @@
         }
       },
       "details": {
-        "title": "Get a personnalized experience",
+        "title": "Get a personalized experience",
         "description": "By analyzing your usage data, we customize your experience and assess content performance, tracking metrics such as clicks, views, and opens to ensure maximum relevance.",
         "bulletPoints": {
           "1": "Personalized recommendations and content",
-          "2": "Personnalized notifications"
+          "2": "Personalized notifications"
         },
         "ctas": {
           "refuse": "Refuse",

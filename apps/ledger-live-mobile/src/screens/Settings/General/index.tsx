@@ -8,7 +8,7 @@ import AnalyticsRow from "./AnalyticsRow";
 import LanguageRow from "./LanguageRow";
 import SettingsNavigationScrollView from "../SettingsNavigationScrollView";
 import DateFormatRow from "./DateFormatRow";
-import PersonnalizedRecommendationsRow from "./PersonnalizedRecommendationsRow";
+import PersonalizedRecommendationsRow from "./PersonalizedRecommendationsRow";
 import { FeatureToggle } from "@ledgerhq/live-config/featureFlags/index";
 
 export default function GeneralSettings() {
@@ -23,7 +23,7 @@ export default function GeneralSettings() {
       <ReportErrorsRow />
       <AnalyticsRow />
       <FeatureToggle featureId="llmAnalyticsOptInPrompt">
-        <PersonnalizedRecommendationsRow />
+        <PersonalizedRecommendationsRow />
       </FeatureToggle>
     </SettingsNavigationScrollView>
   );

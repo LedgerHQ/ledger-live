@@ -50,9 +50,9 @@ function Details() {
   const { t } = useTranslation();
   const {
     analyticsEnabled,
-    personnalizedRecommendationsEnabled,
+    personalizedRecommendationsEnabled,
     toggleAnalytics,
-    togglePersonnalizedRecommendations,
+    togglePersonalizedRecommendations,
     clickOnMoreOptionsConfirm,
     clickOnLearnMore,
   } = useAnalyticsOptInPrompt();
@@ -76,8 +76,8 @@ function Details() {
             <Option
               title={t("analyticsOptIn.variantA.details.personalizedExp.title")}
               description={t("analyticsOptIn.variantA.details.personalizedExp.description")}
-              checked={personnalizedRecommendationsEnabled}
-              onToggle={togglePersonnalizedRecommendations}
+              checked={personalizedRecommendationsEnabled}
+              onToggle={togglePersonalizedRecommendations}
             />
           </Flex>
         </Content>
@@ -97,15 +97,11 @@ function Details() {
         <Text fontWeight="semiBold" pt={2} color="neutral.c70" textAlign="center" pb="2">
           {t("analyticsOptIn.variantA.details.infoText.info")}
         </Text>
-        <Link
-          size="small"
-          type="color"
-          onPress={clickOnLearnMore}
-        >
+        <Link size="small" type="color" onPress={clickOnLearnMore}>
           {t("analyticsOptIn.variantA.details.infoText.link")}
         </Link>
       </Bottom>
-      <TrackScreen category="Analytics Opt In Prompt" name="Details" />
+      <TrackScreen category="Analytics Opt In Prompt" name="Details" variant="A" />
     </Container>
   );
 }
