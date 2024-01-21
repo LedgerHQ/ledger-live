@@ -53,12 +53,9 @@ function Details() {
     personnalizedRecommendationsEnabled,
     toggleAnalytics,
     togglePersonnalizedRecommendations,
-    clickOnMoreOptionsNotNow,
-    clickOnMoreOptionsAllow,
+    clickOnMoreOptionsConfirm,
     clickOnLearnMore,
   } = useAnalyticsOptInPrompt();
-
-  const bothSelected = analyticsEnabled && personnalizedRecommendationsEnabled;
 
   return (
     <Container alignItems="center">
@@ -88,20 +85,8 @@ function Details() {
       <Bottom>
         <Flex flexDirection="row" py="20px">
           <Button
-            title={t("analyticsOptIn.variantA.details.ctas.notNow")}
-            onPress={clickOnMoreOptionsNotNow}
-            type="shade"
-            size="large"
-            mr="2"
-            flex={1}
-          />
-          <Button
-            title={t(
-              bothSelected
-                ? "analyticsOptIn.variantA.details.ctas.acceptAll"
-                : "analyticsOptIn.variantA.details.ctas.accept",
-            )}
-            onPress={clickOnMoreOptionsAllow}
+            title={t("analyticsOptIn.variantA.details.ctas.confirm")}
+            onPress={clickOnMoreOptionsConfirm}
             type="main"
             size="large"
             outline={false}

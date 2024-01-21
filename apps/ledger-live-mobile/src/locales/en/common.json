@@ -6627,7 +6627,8 @@
         "ctas": {
           "notNow": "Not now",
           "accept": "Accept",
-          "acceptAll": "Accept All"
+          "acceptAll": "Accept All",
+          "confirm": "Confirm"
         },
         "infoText": {
           "info": "You can revoke your consent at any time in app settings.",
