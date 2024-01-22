@@ -4,6 +4,8 @@ import { TrackScreen } from "~/analytics";
 import { useTranslation } from "react-i18next";
 import Button from "~/components/Button";
 import { View, Container, Titles, Content, Bottom } from "../Common";
+import headerAnalytics from "./illustrations/header_analytics.png";
+import { Image } from "react-native";
 import useAnalyticsOptInPrompt from "~/hooks/useAnalyticsOptInPromptVariantB";
 
 function Main() {
@@ -20,6 +22,11 @@ function Main() {
   return (
     <Container alignItems="center">
       <View>
+        <Image
+          source={headerAnalytics}
+          style={{ width: "100%", height: 180 }}
+          resizeMode="contain"
+        />
         <Titles>
           <Text variant="h3Inter" fontSize={24} fontWeight="semiBold" color="neutral.c100">
             {t("analyticsOptIn.variantB.main.title")}

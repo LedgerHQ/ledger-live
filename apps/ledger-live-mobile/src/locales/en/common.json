@@ -6622,7 +6622,7 @@
         },
         "personalizedExp": {
           "title": "Personalized experience",
-          "description": "Receive personalised recommendations that match your preferences."
+          "description": "Receive personalized recommendations matching your preferences and share content performance to optimize relevance."
         },
         "ctas": {
           "notNow": "Not now",

@@ -24,7 +24,7 @@ const screensByVariant = {
 
 export default function AnalyticsOptInPromptNavigator() {
   const { colors } = useTheme();
-  const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
+  const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, false), [colors]);
   const llmAnalyticsOptInPromptFeature = useFeature("llmAnalyticsOptInPrompt");
 
   const activeVariant =
@@ -37,12 +37,12 @@ export default function AnalyticsOptInPromptNavigator() {
       <Stack.Screen
         name={ScreenName.AnalyticsOptInPromptMain}
         component={screensByVariant[activeVariant].main}
-        options={{ title: "", headerRight: undefined }}
+        options={{ title: "" }}
       />
       <Stack.Screen
         name={ScreenName.AnalyticsOptInPromptDetails}
         component={screensByVariant[activeVariant].details}
-        options={{ title: "", headerRight: undefined }}
+        options={{ title: "" }}
       />
     </Stack.Navigator>
   );
