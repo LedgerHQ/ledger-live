@@ -207,7 +207,7 @@ const NftViewer = ({ route }: Props) => {
   };
 
   const goToRecipientSelection = useCallback(() => {
-    const bridge = getAccountBridge<Transaction>(account);
+    const bridge = getAccountBridge(account);
 
     const defaultTransaction = bridge.createTransaction(account);
     const transaction = bridge.updateTransaction(defaultTransaction, {
