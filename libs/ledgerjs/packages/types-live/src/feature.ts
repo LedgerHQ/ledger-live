@@ -189,6 +189,7 @@ export type Features = CurrencyFeatures & {
   myLedgerDisplayAppDeveloperName: Feature_MyLedgerDisplayAppDeveloperName;
   nftsFromSimplehash: Feature_NftsFromSimpleHash;
   lldPortfolioCarousel: Feature_LldPortfolioCarousel;
+  llmMarketNewArch: Feature_LlmMarketNewArch;
 };
 
 /**
@@ -518,9 +519,13 @@ export type Feature_LlmNewDeviceSelection = DefaultFeature;
 export type Feature_LlmWalletQuickActions = DefaultFeature;
 export type Feature_PtxSwapMoonpayProvider = DefaultFeature;
 export type Feature_FlexibleContentCards = DefaultFeature;
+<<<<<<< HEAD
 export type Feature_MyLedgerDisplayAppDeveloperName = DefaultFeature;
 export type Feature_NftsFromSimpleHash = DefaultFeature;
 
+=======
+export type Feature_LlmMarketNewArch = DefaultFeature;
+>>>>>>> 930e3d52de (feat: deliver behind feature flag new market)
 /**
  * Utils types.
  */

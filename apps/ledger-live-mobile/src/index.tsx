@@ -12,9 +12,6 @@ import { log } from "@ledgerhq/logs";
 import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
 import { useCountervaluesExport } from "@ledgerhq/live-countervalues-react";
 import { pairId } from "@ledgerhq/live-countervalues/helpers";
-import { NftMetadataProvider } from "@ledgerhq/live-nft-react";
-import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
-import { ToastProvider } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import "./config/configInit";
 import isEqual from "lodash/isEqual";
 import { postOnboardingSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
@@ -36,37 +33,30 @@ import { accountsSelector, exportSelector as accountsExportSelector } from "~/re
 import { exportSelector as bleSelector } from "~/reducers/ble";
 import LocaleProvider, { i18n } from "~/context/Locale";
 import RebootProvider from "~/context/Reboot";
-import ButtonUseTouchableContext from "~/context/ButtonUseTouchableContext";
 import AuthPass from "~/context/AuthPass";
 import LedgerStoreProvider from "~/context/LedgerStore";
+import { store } from "~/context/store";
 import LoadingApp from "~/components/LoadingApp";
 import StyledStatusBar from "~/components/StyledStatusBar";
 import AnalyticsConsole from "~/components/AnalyticsConsole";
 import DebugTheme from "~/components/DebugTheme";
-import { BridgeSyncProvider } from "~/bridge/BridgeSyncContext";
 import useDBSaveEffect from "~/components/DBSave";
 import useAppStateListener from "~/components/useAppStateListener";
 import SyncNewAccounts from "~/bridge/SyncNewAccounts";
-import { OnboardingContextProvider } from "~/screens/Onboarding/onboardingContext";
 
 import SegmentSetup from "~/analytics/SegmentSetup";
 import HookSentry from "~/components/HookSentry";
 import HookNotifications from "~/notifications/HookNotifications";
 import RootNavigator from "~/components/RootNavigator";
 import SetEnvsFromSettings from "~/components/SetEnvsFromSettings";
-import CounterValuesProvider from "~/components/CounterValuesProvider";
 import type { State } from "~/reducers/types";
 import { useTrackingPairs } from "~/actions/general";
 import ExperimentalHeader from "~/screens/Settings/Experimental/ExperimentalHeader";
 import Modals from "~/screens/Modals";
-import NotificationsProvider from "~/screens/NotificationCenter/NotificationsProvider";
-import SnackbarContainer from "~/screens/NotificationCenter/Snackbar/SnackbarContainer";
 import NavBarColorHandler from "~/components/NavBarColorHandler";
 import { FirebaseRemoteConfigProvider } from "~/components/FirebaseRemoteConfig";
 import { FirebaseFeatureFlagsProvider } from "~/components/FirebaseFeatureFlags";
-import MarketDataProvider from "~/screens/Market/MarketDataProviderWrapper";
 import AdjustSetup from "~/components/AdjustSetup";
-import PostOnboardingProviderWrapped from "~/logic/postOnboarding/PostOnboardingProviderWrapped";
 import { TermsAndConditionMigrateLegacyData } from "~/logic/terms";
 import HookDynamicContentCards from "~/dynamicContent/useContentCards";
 import PlatformAppProviderWrapper from "./PlatformAppProviderWrapper";
@@ -83,9 +73,10 @@ import {
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import useAccountsWithFundsListener from "@ledgerhq/live-common/hooks/useAccountsWithFundsListener";
 import { updateIdentify } from "./analytics";
+import { getFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { StorylyProvider } from "./components/StorylyStories/StorylyProvider";
 import { useSettings } from "~/hooks";
-import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+import AppProviders from "./AppProviders";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -103,8 +94,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
-
-const queryClient = new QueryClient();
 
 function App() {
   const accounts = useSelector(accountsSelector);
@@ -274,7 +263,7 @@ export default class Root extends Component {
   render() {
     return (
       <RebootProvider onRebootStart={this.onRebootStart}>
-        <LedgerStoreProvider onInitFinished={this.onInitFinished}>
+        <LedgerStoreProvider onInitFinished={this.onInitFinished} store={store}>
           {(ready, initialCountervalues) =>
             ready ? (
               <>
@@ -287,7 +276,7 @@ export default class Root extends Component {
                 <TermsAndConditionMigrateLegacyData />
                 <PlatformAppProviderWrapper>
                   <FirebaseRemoteConfigProvider>
-                    <FirebaseFeatureFlagsProvider>
+                    <FirebaseFeatureFlagsProvider getFeature={getFeature}>
                       <SafeAreaProvider>
                         <PerformanceProvider>
                           <StorylyProvider>
@@ -297,30 +286,9 @@ export default class Root extends Component {
                               <I18nextProvider i18n={i18n}>
                                 <LocaleProvider>
                                   <AuthPass>
-                                    <BridgeSyncProvider>
-                                      <CounterValuesProvider initialState={initialCountervalues}>
-                                        <ButtonUseTouchableContext.Provider value={true}>
-                                          <OnboardingContextProvider>
-                                            <PostOnboardingProviderWrapped>
-                                              <ToastProvider>
-                                                <NotificationsProvider>
-                                                  <SnackbarContainer />
-                                                  <NftMetadataProvider
-                                                    getCurrencyBridge={getCurrencyBridge}
-                                                  >
-                                                    <MarketDataProvider>
-                                                      <QueryClientProvider client={queryClient}>
-                                                        <App />
-                                                      </QueryClientProvider>
-                                                    </MarketDataProvider>
-                                                  </NftMetadataProvider>
-                                                </NotificationsProvider>
-                                              </ToastProvider>
-                                            </PostOnboardingProviderWrapped>
-                                          </OnboardingContextProvider>
-                                        </ButtonUseTouchableContext.Provider>
-                                      </CounterValuesProvider>
-                                    </BridgeSyncProvider>
+                                    <AppProviders initialCountervalues={initialCountervalues}>
+                                      <App />
+                                    </AppProviders>
                                   </AuthPass>
                                 </LocaleProvider>
                               </I18nextProvider>
