@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import { Alert, Button, Text, Switch } from "@ledgerhq/native-ui";
@@ -10,6 +10,7 @@ import { analyticsEnabledSelector } from "~/reducers/settings";
 import Track from "~/analytics/Track";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import { FeatureToggle, useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { updateIdentify } from "~/analytics";
 
 const AnalyticsRow = () => {
   const { t } = useTranslation();
@@ -57,6 +58,14 @@ const AnalyticsRow = () => {
     },
   ];
 
+  const toggleAnalytics = useCallback(
+    (value: boolean) => {
+      dispatch(setAnalytics(value));
+      updateIdentify();
+    },
+    [dispatch],
+  );
+
   return (
     <>
       <Track event={analyticsEnabled ? "EnableAnalytics" : "DisableAnalytics"} onUpdate />
@@ -66,7 +75,7 @@ const AnalyticsRow = () => {
         desc={t("settings.display.analyticsDesc")}
         onHelpPress={llmAnalyticsOptInPromptFeature?.enabled ? () => setIsOpened(true) : undefined}
       >
-        <Switch checked={analyticsEnabled} onChange={value => dispatch(setAnalytics(value))} />
+        <Switch checked={analyticsEnabled} onChange={toggleAnalytics} />
       </SettingsRow>
       <FeatureToggle featureId="llmAnalyticsOptInPrompt">
         <QueuedDrawer
