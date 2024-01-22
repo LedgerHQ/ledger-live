@@ -1,5 +1,4 @@
 {
   "entry": ["src/logic.ts", "src/api/index.ts", "src/types.ts"],
-  "ignoreUnimported": [],
-  "ignoreUnresolved": []
+  "ignoreUnused": ["@ledgerhq/cryptoassets"]
 }

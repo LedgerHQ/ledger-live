@@ -149,14 +149,13 @@ describe("extreme cases", () => {
 });
 
 describe("WETH rules", () => {
+  // this test is created to confirm the recent removal of weth/eth specific management is still functional in v3 context
   test("ethereum WETH have countervalues", async () => {
     const weth = getTokenById("ethereum/erc20/weth");
     const state = await loadCountervalues(initialState, {
-      // NB: inferTrackingPairForAccounts would infer eth->usd with the WETH module
-      // we set this explicitly just to confirm that asking weth->usd will make it work
       trackingPairs: [
         {
-          from: ethereum,
+          from: weth,
           to: usd,
           startDate: new Date(now - 10 * DAY),
         },
@@ -171,50 +170,6 @@ describe("WETH rules", () => {
       value: 1000000,
     });
     expect(value).toBeGreaterThan(0);
-  });
-
-  test("ethereum WETH have reversed countervalues", async () => {
-    const weth = getTokenById("ethereum/erc20/weth");
-    const state = await loadCountervalues(initialState, {
-      trackingPairs: [
-        {
-          from: bitcoin,
-          to: ethereum,
-          startDate: new Date(now - 10 * DAY),
-        },
-      ],
-      autofillGaps: true,
-      disableAutoRecoverErrors: true,
-    });
-    const value = calculate(state, {
-      disableRounding: true,
-      from: bitcoin,
-      to: weth,
-      value: 1000000,
-    });
-    expect(value).toBeGreaterThan(0);
-  });
-
-  test("ethereum goerli WETH doesn't countervalues", async () => {
-    const weth = getTokenById("ethereum_goerli/erc20/wrapped_ether");
-    const state = await loadCountervalues(initialState, {
-      trackingPairs: [
-        {
-          from: ethereum,
-          to: usd,
-          startDate: new Date(now - 1 * DAY),
-        },
-      ],
-      autofillGaps: true,
-      disableAutoRecoverErrors: true,
-    });
-    const value = calculate(state, {
-      disableRounding: true,
-      from: weth,
-      to: usd,
-      value: 1000000,
-    });
-    expect(value).toBe(undefined);
   });
 });
 

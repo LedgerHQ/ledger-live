@@ -25,7 +25,6 @@ import {
   incrementPerGranularity,
   datapointLimits,
 } from "./helpers";
-import { aliasPair, resolveTrackingPair } from "./modules";
 import type { Account } from "@ledgerhq/types-live";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
 import api from "./api";
@@ -364,10 +363,7 @@ export function calculate(
     reverse?: boolean;
   },
 ): number | null | undefined {
-  const { from, to } = aliasPair({
-    from: initialQuery.from,
-    to: initialQuery.to,
-  });
+  const { from, to } = initialQuery;
   if (from === to) return initialQuery.value;
   const { date, value, disableRounding, reverse } = initialQuery;
   const query = {
@@ -405,10 +401,9 @@ export function calculateMany(
   },
 ): Array<number | null | undefined> {
   const { reverse, disableRounding } = initialQuery;
-  const query = aliasPair(initialQuery);
-  const { from, to } = query;
+  const { from, to } = initialQuery;
   if (from === to) return dataPoints.map(d => d.value);
-  const map = lenseRateMap(state, query);
+  const map = lenseRateMap(state, initialQuery);
   if (!map) return Array(dataPoints.length).fill(undefined); // undefined array
 
   const mult = reverse
@@ -508,10 +503,7 @@ export function resolveTrackingPairs(pairs: TrackingPair[]): TrackingPair[] {
   const trackingPairs: Record<string, TrackingPair> = {};
 
   for (const pair of pairs) {
-    const { from, to } = resolveTrackingPair({
-      from: pair.from,
-      to: pair.to,
-    });
+    const { from, to } = pair;
 
     if (from === to) continue;
 
