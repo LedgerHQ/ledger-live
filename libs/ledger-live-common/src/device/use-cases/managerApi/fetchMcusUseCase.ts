@@ -1,7 +1,9 @@
 import { version } from "../../../../package.json";
 import { getEnv } from "@ledgerhq/live-env";
-import { fetchMcus } from "../../../device-core/use-cases/managerApi/fetchMcus";
+import { ManagerApiHttpRepository } from "../../../device-core/repositories/ManagerApiRepository";
 
-export default function fetchMcusUseCase() {
-  return fetchMcus({ managerApiBase: getEnv("MANAGER_API_BASE"), liveCommonVersion: version });
+export default function fetchMcusUseCase(
+  managerApiRepository = new ManagerApiHttpRepository(getEnv("MANAGER_API_BASE"), version),
+) {
+  return managerApiRepository.fetchMcus();
 }
