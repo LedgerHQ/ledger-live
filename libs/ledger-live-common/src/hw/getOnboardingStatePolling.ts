@@ -12,6 +12,7 @@ import {
   LockedDeviceError,
   UnexpectedBootloader,
   TransportExchangeTimeoutError,
+  DisconnectedDeviceDuringOperation,
 } from "@ledgerhq/errors";
 import { FirmwareInfo } from "@ledgerhq/types-live";
 import { extractOnboardingState, OnboardingState } from "./extractOnboardingState";
@@ -136,6 +137,7 @@ export const isAllowedOnboardingStatePollingError = (error: unknown): boolean =>
     (error instanceof TimeoutError ||
       error instanceof TransportExchangeTimeoutError ||
       error instanceof DisconnectedDevice ||
+      error instanceof DisconnectedDeviceDuringOperation ||
       error instanceof CantOpenDevice ||
       error instanceof TransportRaceCondition ||
       error instanceof TransportStatusError ||

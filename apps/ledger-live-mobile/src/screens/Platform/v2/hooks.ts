@@ -21,15 +21,30 @@ import { ScreenName } from "~/const";
 import { useBanner } from "~/components/banners/hooks";
 import { readOnlyModeEnabledSelector } from "../../../reducers/settings";
 import { NavigationProps } from "./types";
+import { useManifests } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 
 export function useCatalog() {
   const db = useDiscoverDB();
-  const categories = useCategories();
-  const recentlyUsed = useRecentlyUsed(categories.manifests.all, db);
+  const allManifests = useManifests();
+  const completeManifests = useManifests({ visibility: ["complete"] });
+  const combinedManifests = useManifests({ visibility: ["searchable", "complete"] });
+  const categories = useCategories(completeManifests);
+  const recentlyUsed = useRecentlyUsed(combinedManifests, db);
 
   const search = useSearch<AppManifest, TextInput>({
-    list: categories.searchable,
+    list: combinedManifests,
     options: BROWSE_SEARCH_OPTIONS,
+    filter: (item: AppManifest, input: string) => {
+      // Return all manifests when searching
+      if (input) return true;
+
+      // Only return complete manifests when not searching
+      if (item.visibility !== "complete") return false;
+
+      if (categories.selected === "all") return true;
+
+      return item.categories.includes(categories.selected);
+    },
   });
 
   const { reset } = categories;
@@ -39,7 +54,7 @@ export function useCatalog() {
 
   const disclaimer = useDisclaimer(recentlyUsed.append);
 
-  useDeeplinkEffect(categories.manifests.all, disclaimer.openApp);
+  useDeeplinkEffect(allManifests, disclaimer.openApp);
 
   return useMemo(
     () => ({
