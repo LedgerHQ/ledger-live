@@ -35,7 +35,11 @@ const customRender = (
       getDefaultMiddleware({ serializableCheck: false, immutableCheck: false }),
     preloadedState: {
       ...initialState,
-      settings: { ...SETTINGS_INITIAL_STATE, overriddenFeatureFlags: featureFlags },
+      settings: {
+        ...SETTINGS_INITIAL_STATE,
+        ...(initialState.settings || {}),
+        overriddenFeatureFlags: featureFlags,
+      },
     },
     devTools: false,
   });
