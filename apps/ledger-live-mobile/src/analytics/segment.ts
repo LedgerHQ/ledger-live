@@ -36,6 +36,7 @@ import {
   knownDeviceModelIdsSelector,
   customImageTypeSelector,
   userNpsSelector,
+  personalizedRecommendationsEnabledSelector,
 } from "../reducers/settings";
 import { knownDevicesSelector } from "../reducers/ble";
 import { DeviceLike, State } from "../reducers/types";
@@ -145,6 +146,9 @@ const extraProperties = async (store: AppStore) => {
   const hasGenesisPass = hasNftInAccounts(GENESIS_PASS_COLLECTION_CONTRACT, accounts);
   const hasInfinityPass = hasNftInAccounts(INFINITY_PASS_COLLECTION_CONTRACT, accounts);
   const nps = userNpsSelector(state);
+  const analyticsEnabled: boolean = analyticsEnabledSelector(state);
+  const personalizedRecommendationsEnabled: boolean =
+    personalizedRecommendationsEnabledSelector(state);
 
   return {
     appVersion,
@@ -180,6 +184,8 @@ const extraProperties = async (store: AppStore) => {
     staxDeviceUser: knownDeviceModelIds.stax,
     staxLockscreen: customImageType || "none",
     nps,
+    optInAnalytics: analyticsEnabled,
+    optInPersonalRecommendations: personalizedRecommendationsEnabled,
   };
 };
 

@@ -11,21 +11,21 @@ import AnalyticsOptInPromptMainB from "~/screens/AnalyticsOptInPrompt/variantB/M
 import AnalyticsOptInPromptDetailsB from "~/screens/AnalyticsOptInPrompt/variantB/Details";
 import { AnalyticsOptInPromptNavigatorParamList } from "./types/AnalyticsOptInPromptNavigator";
 
+const screensByVariant = {
+  [LlmAnalyticsOptInPromptVariants.variantA]: {
+    main: AnalyticsOptInPromptMainA,
+    details: AnalyticsOptInPromptDetailsA,
+  },
+  [LlmAnalyticsOptInPromptVariants.variantB]: {
+    main: AnalyticsOptInPromptMainB,
+    details: AnalyticsOptInPromptDetailsB,
+  },
+};
+
 export default function AnalyticsOptInPromptNavigator() {
   const { colors } = useTheme();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
   const llmAnalyticsOptInPromptFeature = useFeature("llmAnalyticsOptInPrompt");
-
-  const screensByVariant = {
-    [LlmAnalyticsOptInPromptVariants.variantA]: {
-      main: AnalyticsOptInPromptMainA,
-      details: AnalyticsOptInPromptDetailsA,
-    },
-    [LlmAnalyticsOptInPromptVariants.variantB]: {
-      main: AnalyticsOptInPromptMainB,
-      details: AnalyticsOptInPromptDetailsB,
-    },
-  };
 
   const activeVariant =
     llmAnalyticsOptInPromptFeature?.params?.variant === LlmAnalyticsOptInPromptVariants.variantB

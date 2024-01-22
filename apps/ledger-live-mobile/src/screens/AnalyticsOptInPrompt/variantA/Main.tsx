@@ -4,9 +4,8 @@ import { TrackScreen } from "~/analytics";
 import { useTranslation } from "react-i18next";
 import { Check, Close } from "@ledgerhq/native-ui/assets/icons";
 import Button from "~/components/Button";
-import { useNavigation } from "@react-navigation/native";
-import { NavigatorName, ScreenName } from "~/const";
 import { View, Container, Titles, Content, Bottom } from "../Common";
+import useAnalyticsOptInPrompt from "~/hooks/useAnalyticsOptInPromptVariantA";
 
 interface RenderItemsProps {
   items: string[];
@@ -32,6 +31,8 @@ function renderItems({ items, IconComponent }: RenderItemsProps): React.ReactEle
 
 function Main() {
   const { t } = useTranslation();
+  const { navigateToMoreOptions, clickOnRefuseAll, clickOnAcceptAll, clickOnLearnMore } =
+    useAnalyticsOptInPrompt();
 
   const trackable = [t("analyticsOptIn.variantA.main.content.able.diagAndUsage")];
 
@@ -41,14 +42,6 @@ function Main() {
     t("analyticsOptIn.variantA.main.content.unable.nfts"),
     t("analyticsOptIn.variantA.main.content.unable.personnalInfos"),
   ];
-
-  const navigation = useNavigation();
-
-  const handleMoreOptions = () => {
-    navigation.navigate(NavigatorName.AnalyticsOptInPrompt, {
-      screen: ScreenName.AnalyticsOptInPromptDetails,
-    });
-  };
 
   return (
     <Container alignItems="center">
@@ -84,14 +77,14 @@ function Main() {
       </View>
       <Bottom>
         <Flex flexDirection="row" justifyContent="center">
-          <Link type="color" onPress={handleMoreOptions}>
+          <Link type="color" onPress={navigateToMoreOptions}>
             {t("analyticsOptIn.variantA.main.content.moreOptions")}
           </Link>
         </Flex>
         <Flex flexDirection="row" py="20px">
           <Button
             title={t("analyticsOptIn.variantA.main.content.ctas.refuse")}
-            onPress={() => { }}
+            onPress={clickOnRefuseAll}
             type="shade"
             size="large"
             mr="2"
@@ -99,7 +92,7 @@ function Main() {
           />
           <Button
             title={t("analyticsOptIn.variantA.main.content.ctas.accept")}
-            onPress={() => { }}
+            onPress={clickOnAcceptAll}
             type="main"
             size="large"
             outline={false}
@@ -110,11 +103,11 @@ function Main() {
         <Text fontWeight="semiBold" pt={2} color="neutral.c70" textAlign="center" pb="2">
           {t("analyticsOptIn.variantA.main.content.infoText.info")}
         </Text>
-        <Link size="small" type="color" onPress={() => { }}>
+        <Link size="small" type="color" onPress={clickOnLearnMore}>
           {t("analyticsOptIn.variantA.main.content.infoText.link")}
         </Link>
       </Bottom>
-      <TrackScreen category="Analytics Opt In Prompt" name="Main" />
+      <TrackScreen category="Analytics Opt In Prompt" name="Main" variant="A" />
     </Container>
   );
 }

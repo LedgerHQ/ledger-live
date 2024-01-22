@@ -4,9 +4,12 @@ import { TrackScreen } from "~/analytics";
 import { useTranslation } from "react-i18next";
 import Button from "~/components/Button";
 import { View, Container, Titles, Content, Bottom } from "../Common";
+import useAnalyticsOptInPrompt from "~/hooks/useAnalyticsOptInPromptVariantB";
 
 function Main() {
   const { t } = useTranslation();
+  const { clickOnAllowAnalytics, clickOnRefuseAnalytics, clickOnLearnMore } =
+    useAnalyticsOptInPrompt();
 
   const bulletPoints = [
     t("analyticsOptIn.variantB.main.bulletPoints.1"),
@@ -39,7 +42,7 @@ function Main() {
         <Flex flexDirection="row" py="20px">
           <Button
             title={t("analyticsOptIn.variantB.main.ctas.refuse")}
-            onPress={() => { }}
+            onPress={clickOnRefuseAnalytics}
             type="shade"
             size="large"
             mr="2"
@@ -47,7 +50,7 @@ function Main() {
           />
           <Button
             title={t("analyticsOptIn.variantB.main.ctas.share")}
-            onPress={() => { }}
+            onPress={clickOnAllowAnalytics}
             type="main"
             size="large"
             outline={false}
@@ -58,11 +61,11 @@ function Main() {
         <Text fontWeight="semiBold" pt={2} color="neutral.c70" textAlign="center" pb="2">
           {t("analyticsOptIn.variantB.main.infoText.info")}
         </Text>
-        <Link size="small" type="color" onPress={() => { }}>
+        <Link size="small" type="color" onPress={clickOnLearnMore}>
           {t("analyticsOptIn.variantB.main.infoText.link")}
         </Link>
       </Bottom>
-      <TrackScreen category="Analytics Opt In Prompt" name="Main" />
+      <TrackScreen category="Analytics Opt In Prompt" name="Main" variant="B" />
     </Container>
   );
 }
