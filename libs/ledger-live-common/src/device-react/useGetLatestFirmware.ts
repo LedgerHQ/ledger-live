@@ -1,23 +1,43 @@
 import { useEffect, useState } from "react";
-import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
-import fetchLatestFirmwareUseCase from "../device/use-cases/fetchLatestFirmwareUseCase";
+import { DeviceInfoEntity } from "../device-core/entities/DeviceInfoEntity";
+import { ManagerApiRepository } from "../device-core/repositories/ManagerApiRepository";
+import { getLatestFirmwareForDevice } from "../device-core/use-cases/getLatestFirmwareForDevice";
+import { FirmwareUpdateContextEntity } from "../device-core/entities/FirmwareUpdateContextEntity";
+
+type UseGetLatestFirmwareForDeviceParams = {
+  deviceInfo?: DeviceInfoEntity | null;
+  providerId: number;
+  userId: string;
+  managerApiRepository: ManagerApiRepository;
+};
 
 export const useGetLatestFirmware: (
-  _?: DeviceInfo | null,
-) => FirmwareUpdateContext | null = deviceInfo => {
-  const [latestFirmware, setLatestFirmware] = useState<FirmwareUpdateContext | null>(null);
+  params: UseGetLatestFirmwareForDeviceParams,
+) => FirmwareUpdateContextEntity | null = ({
+  deviceInfo,
+  providerId,
+  userId,
+  managerApiRepository,
+}) => {
+  const [latestFirmware, setLatestFirmware] = useState<FirmwareUpdateContextEntity | null>(null);
 
   useEffect(() => {
-    const getLatestFirmwareForDevice = async () => {
-      if (deviceInfo) {
-        const fw = await fetchLatestFirmwareUseCase(deviceInfo);
-        setLatestFirmware(fw);
-      }
+    let unmounted = false;
+    if (deviceInfo) {
+      getLatestFirmwareForDevice({
+        deviceInfo,
+        providerId,
+        userId,
+        managerApiRepository,
+      }).then(latestFirmware => {
+        if (unmounted) return;
+        setLatestFirmware(latestFirmware);
+      });
+    }
+    return () => {
+      unmounted = true;
     };
-
-    getLatestFirmwareForDevice();
-    // TODO: no cleanup action in this useEffect
-  }, [deviceInfo, setLatestFirmware]);
+  }, [deviceInfo, managerApiRepository, providerId, setLatestFirmware, userId]);
 
   return latestFirmware;
 };

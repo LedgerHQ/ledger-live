@@ -37,7 +37,6 @@ export type FinalFirmware = BaseFirmware & {
   updateAvailable?: FirmwareUpdateContextEntity | null | undefined;
 };
 
-
 export type FirmwareUpdateContextEntity = {
   osu: OsuFirmware;
   final: FinalFirmware;
