@@ -83,7 +83,7 @@ export const useSwapLiveAppManifestID = () => {
 const SwapWebAppWrapper = styled.div`
   width: 100%;
   flex: 1;
-`
+`;
 
 const SwapWebView = ({ manifestID, swapState, liveAppUnavailable }: SwapWebProps) => {
   const {
