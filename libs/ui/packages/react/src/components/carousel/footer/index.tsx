@@ -2,7 +2,7 @@ import { Icons } from "@ledgerhq/react-ui";
 import { UseEmblaCarouselType } from "embla-carousel-react";
 import React from "react";
 import styled from "styled-components";
-import Pagination from "~/renderer/components/NewCarousel/footer/pagination";
+import Pagination from "./pagination";
 
 type Props = {
   slides: {
@@ -13,7 +13,7 @@ type Props = {
 
 const FooterContainer = styled.div`
   padding: 6px 16px 6px 16px;
-  border-top: 1px solid ${p => p.theme.colors.palette.divider};
+  border-top: 1px solid ${p => p.theme.colors.constant.white};
   display: flex;
   justify-content: space-between;
 `;

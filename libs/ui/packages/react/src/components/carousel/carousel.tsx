@@ -1,3 +1,7 @@
+/**
+ * This component use the https://github.com/davidjerleke/embla-carousel library.
+ */
+
 import useEmblaCarousel from "embla-carousel-react";
 import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";

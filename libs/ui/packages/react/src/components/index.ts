@@ -1,5 +1,5 @@
 export * from "./asorted";
-export * from "./cards";
+export * from "./carousel";
 export { default as Chart } from "./Chart";
 export * from "./cta";
 export * from "./form";
