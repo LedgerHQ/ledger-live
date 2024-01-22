@@ -271,56 +271,6 @@ const getLanguagePackagesForDevice = async (deviceInfo: DeviceInfo): Promise<Lan
   return packages;
 };
 
-const getLatestFirmware: (arg0: {
-  current_se_firmware_final_version: Id;
-  device_version: Id;
-  provider: number;
-  userId: string;
-  managerApiBase: string;
-}) => Promise<OsuFirmware | null | undefined> = makeLRUCache(
-  async ({
-    current_se_firmware_final_version,
-    device_version,
-    provider,
-    userId,
-    managerApiBase,
-  }) => {
-    const salt = getUserHashes(userId).firmwareSalt;
-    const {
-      data,
-    }: {
-      data: {
-        result: string;
-        se_firmware_osu_version: OsuFirmware;
-      };
-    } = await network({
-      method: "POST",
-      url: URL.format({
-        pathname: `${managerApiBase}/get_latest_firmware`,
-        query: {
-          livecommonversion,
-          salt,
-        },
-      }),
-      data: {
-        current_se_firmware_final_version,
-        device_version,
-        provider,
-      },
-    });
-
-    if (data.result === "null") {
-      return null;
-    }
-
-    return data.se_firmware_osu_version;
-  },
-  a =>
-    `${getEnv("MANAGER_API_BASE")}_${a.current_se_firmware_final_version}_${a.device_version}_${
-      a.provider
-    }`,
-);
-
 const getCurrentOSU: (input: {
   version: string;
   deviceId: string | number;
@@ -651,7 +601,6 @@ const API = {
   listInstalledApps,
   listCategories,
   getLanguagePackagesForDevice,
-  getLatestFirmware,
   getAppsByHash,
   getCurrentOSU,
   compatibleMCUForDeviceInfo,
