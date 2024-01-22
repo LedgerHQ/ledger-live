@@ -1,5 +1,4 @@
-import { Icons } from "@ledgerhq/react-ui";
-import useEmblaCarousel, { UseEmblaCarouselType } from "embla-carousel-react";
+import useEmblaCarousel from "embla-carousel-react";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Footer from "./footer";

@@ -1,6 +1,7 @@
 import React from "react";
 import { ItemStatus } from "./types";
 import { useTheme } from "styled-components";
+import { useSpring, animated } from "react-spring";
 
 const useBulletStyles = () => {
   const { colors } = useTheme();
@@ -45,7 +46,14 @@ const useBulletStyles = () => {
 const Bullet = ({ type }: { type: ItemStatus }) => {
   const bulletStyles = useBulletStyles();
 
-  return <div style={bulletStyles[type]} />;
+  const props = useSpring({
+    width: bulletStyles[type].width,
+    height: bulletStyles[type].height,
+    backgroundColor: bulletStyles[type].backgroundColor,
+    borderRadius: bulletStyles[type].borderRadius,
+  });
+
+  return <animated.div style={props} />;
 };
 
 export default Bullet;
