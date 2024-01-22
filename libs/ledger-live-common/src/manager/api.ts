@@ -45,7 +45,6 @@ import {
   resultMock,
   secureChannelMock,
 } from "../socket/socket.mock";
-import { getUserHashes } from "../user";
 import { getProviderId } from "./provider";
 import fetchMcusUseCase from "../device/use-cases/managerApi/fetchMcusUseCase";
 
