@@ -3,7 +3,6 @@ import React from "react";
 import styled from "styled-components";
 import { getItemStatus } from "../utils";
 import Bullet from "./bullets";
-import { ItemStatus } from "./types";
 
 type Props = {
   slides: {

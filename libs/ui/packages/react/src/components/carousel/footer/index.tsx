@@ -1,4 +1,4 @@
-import { Icons } from "@ledgerhq/react-ui";
+import { ArrowLeft, ArrowRight } from "@ledgerhq/icons-ui/react";
 import { UseEmblaCarouselType } from "embla-carousel-react";
 import React from "react";
 import styled from "styled-components";
@@ -41,10 +41,10 @@ const Footer = ({
 
       <FooterArrowsContainer>
         <FooterArrowContainer onClick={() => emblaApi?.scrollPrev()}>
-          <Icons.ArrowLeft size="S" />
+          <ArrowLeft size="S" />
         </FooterArrowContainer>
         <FooterArrowContainer onClick={() => emblaApi?.scrollNext()}>
-          <Icons.ArrowRight size="S" />
+          <ArrowRight size="S" />
         </FooterArrowContainer>
       </FooterArrowsContainer>
     </FooterContainer>
