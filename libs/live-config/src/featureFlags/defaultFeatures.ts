@@ -422,15 +422,15 @@ export const DEFAULT_FEATURES: Features = {
   ptxSwapLiveAppDemoZero: {
     enabled: false,
     params: {
-      manifest_id: 'swap-live-app-demo-0'
-    }
+      manifest_id: "swap-live-app-demo-0",
+    },
   },
 
   ptxSwapLiveAppDemoOne: {
     enabled: false,
     params: {
-      manifest_id: 'swap-live-app-demo-1'
-    }
+      manifest_id: "swap-live-app-demo-1",
+    },
   },
 
   ptxSwapMoonpayProvider: DEFAULT_FEATURE,
