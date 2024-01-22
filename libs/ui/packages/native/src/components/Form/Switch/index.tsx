@@ -34,9 +34,9 @@ const Switch = ({ checked, onChange, disabled, label, testID }: SwitchProps): JS
       <NativeSwitch
         trackColor={{
           false: colors.neutral.c50,
-          true: colors.primary.c80,
+          true: colors.primary.c70,
         }}
-        thumbColor={colors.neutral.c00}
+        thumbColor={colors.neutral.c100}
         onValueChange={onChange}
         value={checked}
         disabled={disabled}

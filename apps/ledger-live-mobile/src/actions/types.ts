@@ -227,6 +227,7 @@ export enum SettingsActionTypes {
   SETTINGS_DISABLE_PRIVACY = "SETTINGS_DISABLE_PRIVACY",
   SETTINGS_SET_REPORT_ERRORS = "SETTINGS_SET_REPORT_ERRORS",
   SETTINGS_SET_ANALYTICS = "SETTINGS_SET_ANALYTICS",
+  SETTINGS_SET_PERSONALIZED_RECOMMENDATIONS = "SETTINGS_SET_PERSONALIZED_RECOMMENDATIONS",
   SETTINGS_SET_COUNTERVALUE = "SETTINGS_SET_COUNTERVALUE",
   SETTINGS_SET_ORDER_ACCOUNTS = "SETTINGS_SET_ORDER_ACCOUNTS",
   SETTINGS_SET_PAIRS = "SETTINGS_SET_PAIRS",
@@ -302,6 +303,8 @@ export type SettingsSetPrivacyPayload = Privacy;
 export type SettingsSetPrivacyBiometricsPayload = boolean;
 export type SettingsSetReportErrorsPayload = SettingsState["reportErrorsEnabled"];
 export type SettingsSetAnalyticsPayload = SettingsState["analyticsEnabled"];
+export type SettingsSetPersonalizedRecommendationsPayload =
+  SettingsState["personalizedRecommendationsEnabled"];
 export type SettingsSetCountervaluePayload = SettingsState["counterValue"];
 export type SettingsSetOrderAccountsPayload = SettingsState["orderAccounts"];
 export type SettingsSetPairsPayload = { pairs: Array<Pair> };
@@ -396,6 +399,7 @@ export type SettingsPayload =
   | SettingsSetPrivacyBiometricsPayload
   | SettingsSetReportErrorsPayload
   | SettingsSetAnalyticsPayload
+  | SettingsSetPersonalizedRecommendationsPayload
   | SettingsSetCountervaluePayload
   | SettingsSetOrderAccountsPayload
   | SettingsSetPairsPayload

@@ -1,4 +1,10 @@
-import { DefaultFeature, Feature, Features, FeatureMap } from "@ledgerhq/types-live";
+import {
+  DefaultFeature,
+  Feature,
+  Features,
+  FeatureMap,
+  LlmAnalyticsOptInPromptVariants,
+} from "@ledgerhq/types-live";
 import { reduce } from "lodash";
 import { formatToFirebaseFeatureId } from "./firebaseFeatureFlags";
 
@@ -428,6 +434,13 @@ export const DEFAULT_FEATURES: Features = {
   },
 
   ptxSwapMoonpayProvider: DEFAULT_FEATURE,
+
+  llmAnalyticsOptInPrompt: {
+    enabled: false,
+    params: {
+      variant: LlmAnalyticsOptInPromptVariants.variantA,
+    },
+  },
 };
 
 // Firebase SDK treat JSON values as strings
