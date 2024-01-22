@@ -12,6 +12,7 @@ const useBulletStyles = () => {
       height: string;
       backgroundColor: string;
       borderRadius: string;
+      opacity?: number;
     };
   } = {
     [ItemStatus.active]: {
@@ -19,24 +20,28 @@ const useBulletStyles = () => {
       height: "6px",
       backgroundColor: colors.opacityDefault.c80,
       borderRadius: "1000px",
+      opacity: 1,
     },
     [ItemStatus.nearby]: {
       width: "8px",
       height: "6px",
       backgroundColor: colors.opacityDefault.c30,
       borderRadius: "1000px",
+      opacity: 1,
     },
     [ItemStatus.far]: {
       width: "4px",
       height: "6px",
       backgroundColor: colors.opacityDefault.c10,
       borderRadius: "1000px",
+      opacity: 1,
     },
     [ItemStatus.none]: {
       width: "0px",
       height: "6px",
       backgroundColor: colors.opacityDefault.c10,
       borderRadius: "1000px",
+      opacity: 0,
     },
   };
 
@@ -51,6 +56,7 @@ const Bullet = ({ type }: { type: ItemStatus }) => {
     height: bulletStyles[type].height,
     backgroundColor: bulletStyles[type].backgroundColor,
     borderRadius: bulletStyles[type].borderRadius,
+    opacity: bulletStyles[type].opacity,
   });
 
   return <animated.div style={props} />;
