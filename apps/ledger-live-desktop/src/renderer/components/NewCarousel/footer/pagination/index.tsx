@@ -19,7 +19,6 @@ const FooterCarouselBullets = styled.div`
 
 const Pagination = ({
   slides,
-  emblaApi,
   index: carouselIndex,
 }: Props & { emblaApi: UseEmblaCarouselType[1]; index: number }) => {
   return (

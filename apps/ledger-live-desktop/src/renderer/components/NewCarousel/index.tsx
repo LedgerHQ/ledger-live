@@ -1,5 +1,5 @@
 import useEmblaCarousel from "embla-carousel-react";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import Footer from "./footer";
 
@@ -31,11 +31,11 @@ const Carousel = ({ slides }: Props) => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const onSelect = () => {
+  const onSelect = useCallback(() => {
     if (!emblaApi) return;
     setCurrentIndex(emblaApi.selectedScrollSnap());
     emblaApi.scrollTo(emblaApi.selectedScrollSnap());
-  };
+  }, [emblaApi]);
 
   useEffect(() => {
     if (!emblaApi) return;
