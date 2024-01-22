@@ -1,6 +1,8 @@
 import { device } from "detox";
 import * as serverBridge from "./bridge/server";
 import net from "net";
+import { getLogs } from "./bridge/server";
+import { getState } from "expect";
 
 let port: number;
 
@@ -26,6 +28,14 @@ export async function launchApp() {
     },
   });
 }
+
+afterEach(async () => {
+  if (process.env.CI) {
+    const testFile = (getState().testPath?.split("/").pop() || "logs").split(".")[0];
+    const testName = (getState().currentTestName || "").replace(/[^a-z0-9]/gi, "_").toLowerCase();
+    getLogs(`${testFile}_${testName}`);
+  }
+});
 
 afterAll(async () => {
   serverBridge.close();
