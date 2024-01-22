@@ -7,15 +7,13 @@ export type FetchLatestFirmwareUseCaseParams = {
   current_se_firmware_final_version: Id;
   device_version: Id;
   provider: number;
-  managerApiRepository: ManagerApiHttpRepository;
+  managerApiRepository: ManagerApiHttpRepository
 };
 
-export default function fetchLatestFirmwareUseCase({
-  current_se_firmware_final_version,
-  device_version,
-  provider,
+export default function fetchLatestFirmwareUseCase(
+  { current_se_firmware_final_version, device_version, provider }: FetchLatestFirmwareUseCaseParams,
   managerApiRepository = new ManagerApiHttpRepository(getEnv("MANAGER_API_BASE"), version),
-}: FetchLatestFirmwareUseCaseParams) {
+) {
   return managerApiRepository.fetchLatestFirmware({
     current_se_firmware_final_version,
     device_version,
