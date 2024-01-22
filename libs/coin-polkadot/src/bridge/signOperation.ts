@@ -20,9 +20,7 @@ import type {
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { PolkadotAPI } from "../network";
-import { buildTransaction } from "../logic/buildTransaction";
-import { calculateAmount, getNonce, isFirstBond } from "../logic/logic";
-import { signExtrinsic } from "../logic/signTransaction";
+import { buildTransaction, calculateAmount, getNonce, isFirstBond, signExtrinsic } from "../logic";
 
 const MODE_TO_TYPE = {
   send: "OUT",

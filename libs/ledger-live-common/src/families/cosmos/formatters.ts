@@ -3,12 +3,7 @@ import { BigNumber } from "bignumber.js";
 import { getCurrentCosmosPreloadData } from "./preloadedData";
 import { getAccountUnit } from "../../account";
 import { formatCurrencyUnit } from "../../currencies";
-import {
-  CosmosOperation,
-  CosmosOperationExtra,
-  CosmosOperationExtraRaw,
-  CosmosAccount,
-} from "./types";
+import { CosmosOperation, CosmosAccount } from "./types";
 import { mapDelegations, mapUnbondings, mapRedelegations } from "./logic";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 

@@ -12,12 +12,14 @@ import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { PolkadotAPI } from "../network";
 import resolver from "../signer/hw-getAddress";
 import createTransaction from "./createTransaction";
-import estimateMaxSpendable from "../logic/estimateMaxSpendable";
-import getTransactionStatus from "../logic/getTransactionStatus";
+import {
+  estimateMaxSpendable,
+  getTransactionStatus,
+  broadcast,
+  makeGetAccountShape,
+} from "../logic";
 import prepareTransaction from "./prepareTransaction";
 import buildSignOperation from "./signOperation";
-import broadcast from "../logic/broadcast";
-import { makeGetAccountShape } from "../logic/synchronisation";
 import {
   assignFromAccountRaw,
   assignToAccountRaw,

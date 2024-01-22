@@ -1,5 +1,5 @@
 import type { PolkadotAccount, Transaction } from "../types";
-import getEstimatedFees from "../logic/getFeesForTransaction";
+import { getEstimatedFees } from "../logic";
 import { PolkadotAPI } from "../network";
 import BigNumber from "bignumber.js";
 

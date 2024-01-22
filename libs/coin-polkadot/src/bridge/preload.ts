@@ -3,8 +3,8 @@ import { BigNumber } from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import type { PolkadotPreloadData, PolkadotStakingProgress, PolkadotValidator } from "../types";
 import { PolkadotAPI } from "../network";
-import { loadPolkadotCrypto } from "../logic/polkadot-crypto";
-import { getCurrentPolkadotPreloadData, setPolkadotPreloadData } from "../logic/state";
+import { loadPolkadotCrypto } from "../logic/polkadot-crypto"; //FIXME: Polkadot SDK should not be used in bridge
+import { getCurrentPolkadotPreloadData, setPolkadotPreloadData } from "../logic";
 
 const PRELOAD_MAX_AGE = 60 * 1000;
 

@@ -6,7 +6,7 @@ import {
   formatCurrencyUnit,
   getCryptoCurrencyById,
 } from "@ledgerhq/coin-framework/currencies/index";
-import { isStash } from "../logic//logic";
+import { isStash } from "../logic";
 const currency = getCryptoCurrencyById("polkadot");
 export type ExtraDeviceTransactionField = {
   type: "polkadot.validators";

@@ -4,3 +4,16 @@
  * and therefore can be used with "any Ledger product"
  */
 
+export { createTransaction } from "./transaction";
+export { isStash, calculateAmount, getNonce, isFirstBond } from "./logic";
+export { makeGetAccountShape } from "./synchronisation";
+export { getCurrentPolkadotPreloadData, setPolkadotPreloadData } from "./state";
+export { buildTransaction } from "./buildTransaction";
+export { signExtrinsic } from "./signTransaction";
+
+import broadcast from "./broadcast";
+import estimateMaxSpendable from "./estimateMaxSpendable";
+import getEstimatedFees from "./getFeesForTransaction";
+import getTransactionStatus from "./getTransactionStatus";
+
+export { broadcast, estimateMaxSpendable, getEstimatedFees, getTransactionStatus };

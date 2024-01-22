@@ -1,3 +1,3 @@
-import { createTransaction } from "../logic/transaction";
+import { createTransaction } from "../logic";
 
 export default createTransaction;

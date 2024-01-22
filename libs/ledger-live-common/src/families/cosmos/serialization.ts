@@ -1,5 +1,13 @@
 import { BigNumber } from "bignumber.js";
-import { type CosmosResourcesRaw, type CosmosResources, type CosmosAccountRaw, type CosmosAccount, isCosmosOperationExtraRaw, CosmosOperationExtra, CosmosOperationExtraRaw } from "./types";
+import {
+  type CosmosResourcesRaw,
+  type CosmosResources,
+  type CosmosAccountRaw,
+  type CosmosAccount,
+  isCosmosOperationExtraRaw,
+  CosmosOperationExtra,
+  CosmosOperationExtraRaw,
+} from "./types";
 import { Account, AccountRaw, OperationExtra, OperationExtraRaw } from "@ledgerhq/types-live";
 
 export function toCosmosResourcesRaw(r: CosmosResources): CosmosResourcesRaw {
