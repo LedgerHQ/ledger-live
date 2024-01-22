@@ -72,9 +72,9 @@ export const useSwapLiveAppManifestID = () => {
   const demo1 = useFeature("ptxSwapLiveAppDemoOne");
   switch (true) {
     case demo1?.enabled:
-      return SwapWebManifestIDs.Demo1;
+      return demo1.params?.manifest_id ?? SwapWebManifestIDs.Demo1;
     case demo0?.enabled:
-      return SwapWebManifestIDs.Demo0;
+      return demo0.params?.manifest_id ?? SwapWebManifestIDs.Demo0;
     default:
       return null;
   }

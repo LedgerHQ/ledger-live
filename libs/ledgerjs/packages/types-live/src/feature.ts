@@ -471,6 +471,7 @@ export type Feature_PtxSwapLiveApp = Feature<{
 }>;
 
 export type Feature_PtxSwapLiveAppDemoZero = Feature<{
+  manifest_id: string
   currencies?: string[];
   families?: string[];
 }>;
