@@ -6,7 +6,7 @@ import { getEnabled } from "./components/HookSentry";
 import { getAllDivergedFlags } from "./components/FirebaseFeatureFlags";
 import { enabledExperimentalFeatures } from "./experimental";
 import { languageSelector } from "./reducers/settings";
-import { store } from "./context/LedgerStore";
+import { store } from "./context/store";
 
 // we exclude errors related to user's environment, not fixable by us
 const excludedErrorName = [

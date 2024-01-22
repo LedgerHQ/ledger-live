@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
 import remoteConfig from "@react-native-firebase/remote-config";
 import { DEFAULT_FEATURES, formatDefaultFeatures } from "@ledgerhq/live-common/featureFlags/index";
-import type { FirebaseFeatureFlagsProviderProps as Props } from "@ledgerhq/live-common/featureFlags/index";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { FirebaseRemoteConfigProvider as FirebaseProvider } from "@ledgerhq/live-config/providers/index";
 
-export const FirebaseRemoteConfigProvider = ({ children }: Props): JSX.Element | null => {
+export const FirebaseRemoteConfigProvider = ({
+  children,
+}: {
+  children: React.ReactElement;
+}): JSX.Element | null => {
   const [loaded, setLoaded] = useState<boolean>(false);
 
   useEffect(() => {
