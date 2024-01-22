@@ -2,6 +2,7 @@
   "entry": [
     "src/bridge/index.ts",
     "src/bridge/deviceTransactionConfig.ts",
+    "src/bridge/formatters.ts",
     "src/bridge/hw-getAddress.ts",
     "src/bridge/logic.ts",
     "src/bridge/preload.ts",
