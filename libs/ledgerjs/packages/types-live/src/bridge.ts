@@ -13,7 +13,7 @@ import type {
   TransactionCommon,
   TransactionStatusCommon,
 } from "./transaction";
-import type { Operation, OperationExtra, OperationExtraRaw, OperationRaw } from "./operation";
+import type { Operation, OperationExtra, OperationExtraRaw } from "./operation";
 import type { DerivationMode } from "./derivation";
 import type { SyncConfig } from "./pagination";
 import {
