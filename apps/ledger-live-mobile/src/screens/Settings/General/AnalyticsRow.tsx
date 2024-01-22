@@ -73,7 +73,7 @@ const AnalyticsRow = () => {
         event="AnalyticsRow"
         title={t("settings.display.analytics")}
         desc={t("settings.display.analyticsDesc")}
-        onHelpPress={llmAnalyticsOptInPromptFeature?.enabled ? () => setIsOpened(true) : undefined}
+        onHelpPress={llmAnalyticsOptInPromptFeature?.enabled ? undefined : () => setIsOpened(true)}
       >
         <Switch checked={analyticsEnabled} onChange={toggleAnalytics} />
       </SettingsRow>
