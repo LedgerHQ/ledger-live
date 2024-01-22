@@ -80,12 +80,10 @@ export const useSwapLiveAppManifestID = () => {
   }
 };
 
-const SwapWebAppWrapper = styled.div<{ isDevelopment: boolean }>(
-  ({ isDevelopment }) => `
-  ${!isDevelopment ? "height: 0px;" : "flex: 1;"}
+const SwapWebAppWrapper = styled.div`
   width: 100%;
-`,
-);
+  flex: 1;
+`;
 
 const SwapWebView = ({ manifestID, swapState, liveAppUnavailable }: SwapWebProps) => {
   const {
@@ -220,7 +218,7 @@ const SwapWebView = ({ manifestID, swapState, liveAppUnavailable }: SwapWebProps
           webviewState={webviewState}
         />
       )}
-      <SwapWebAppWrapper isDevelopment={isDevelopment}>
+      <SwapWebAppWrapper>
         <Web3AppWebview
           manifest={{ ...manifest, url: `${manifest.url}#${swapState.cacheKey}` }}
           inputs={{
