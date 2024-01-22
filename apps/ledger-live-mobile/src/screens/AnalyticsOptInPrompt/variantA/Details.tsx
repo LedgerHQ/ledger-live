@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useState } from "react";
 import styled from "styled-components/native";
 import { Flex, Link, Text } from "@ledgerhq/native-ui";
 import { TrackScreen } from "~/analytics";
@@ -48,14 +48,9 @@ function Option({ title, description, checked, onToggle }: OptionProps): React.R
 
 function Details() {
   const { t } = useTranslation();
-  const {
-    analyticsEnabled,
-    personalizedRecommendationsEnabled,
-    toggleAnalytics,
-    togglePersonalizedRecommendations,
-    clickOnMoreOptionsConfirm,
-    clickOnLearnMore,
-  } = useAnalyticsOptInPrompt();
+  const [isAnalyticsEnabled, setIsAnalyticsEnabled] = useState(false);
+  const [isPersonalRecommendationsEnabled, setIsPersonalRecommendationsEnabled] = useState(false);
+  const { clickOnMoreOptionsConfirm, clickOnLearnMore } = useAnalyticsOptInPrompt();
 
   return (
     <Container alignItems="center">
@@ -69,15 +64,15 @@ function Details() {
           <Option
             title={t("analyticsOptIn.variantA.details.analytics.title")}
             description={t("analyticsOptIn.variantA.details.analytics.description")}
-            checked={analyticsEnabled}
-            onToggle={toggleAnalytics}
+            checked={isAnalyticsEnabled}
+            onToggle={setIsAnalyticsEnabled}
           />
           <Flex pt={7}>
             <Option
               title={t("analyticsOptIn.variantA.details.personalizedExp.title")}
               description={t("analyticsOptIn.variantA.details.personalizedExp.description")}
-              checked={personalizedRecommendationsEnabled}
-              onToggle={togglePersonalizedRecommendations}
+              checked={isPersonalRecommendationsEnabled}
+              onToggle={setIsPersonalRecommendationsEnabled}
             />
           </Flex>
         </Content>
@@ -86,7 +81,9 @@ function Details() {
         <Flex flexDirection="row" py="20px">
           <Button
             title={t("analyticsOptIn.variantA.details.ctas.confirm")}
-            onPress={clickOnMoreOptionsConfirm}
+            onPress={() =>
+              clickOnMoreOptionsConfirm(isAnalyticsEnabled, isPersonalRecommendationsEnabled)
+            }
             type="main"
             size="large"
             outline={false}

@@ -1,8 +1,4 @@
-import { useSelector, useDispatch } from "react-redux";
-import {
-  analyticsEnabledSelector,
-  personalizedRecommendationsEnabledSelector,
-} from "~/reducers/settings";
+import { useDispatch } from "react-redux";
 import { setAnalytics, setPersonalizedRecommendations } from "~/actions/settings";
 import { useNavigation } from "@react-navigation/native";
 import { NavigatorName, ScreenName } from "~/const";
@@ -23,14 +19,6 @@ const useAnalyticsOptInPrompt = () => {
     useNavigation<
       RootNavigationComposite<StackNavigatorNavigation<OnboardingNavigatorParamList>>
     >();
-  const analyticsEnabled: boolean = useSelector(analyticsEnabledSelector);
-  const personalizedRecommendationsEnabled: boolean = useSelector(
-    personalizedRecommendationsEnabledSelector,
-  );
-
-  const toggleAnalytics = (value: boolean) => dispatch(setAnalytics(value));
-  const togglePersonalizedRecommendations = (value: boolean) =>
-    dispatch(setPersonalizedRecommendations(value));
 
   const continueOnboarding = () => {
     navigation.navigate(NavigatorName.BaseOnboarding, {
@@ -71,7 +59,12 @@ const useAnalyticsOptInPrompt = () => {
       variant: "A",
     });
   };
-  const clickOnMoreOptionsConfirm = () => {
+  const clickOnMoreOptionsConfirm = (
+    isAnalyticsEnabled: boolean,
+    isPersonalRecommendationsEnabled: boolean,
+  ) => {
+    dispatch(setAnalytics(isAnalyticsEnabled));
+    dispatch(setPersonalizedRecommendations(isPersonalRecommendationsEnabled));
     continueOnboarding();
     track("button_clicked", {
       button: "Confirm",
@@ -89,10 +82,6 @@ const useAnalyticsOptInPrompt = () => {
   };
 
   return {
-    analyticsEnabled,
-    personalizedRecommendationsEnabled,
-    toggleAnalytics,
-    togglePersonalizedRecommendations,
     clickOnAcceptAll,
     clickOnRefuseAll,
     navigateToMoreOptions,

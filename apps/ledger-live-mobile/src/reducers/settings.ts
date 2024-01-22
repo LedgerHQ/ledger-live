@@ -697,6 +697,10 @@ export const personalizedRecommendationsEnabledSelector = createSelector(
   storeSelector,
   s => s.personalizedRecommendationsEnabled,
 );
+export const trackingEnabledSelector = createSelector(
+  storeSelector,
+  s => s.analyticsEnabled || s.personalizedRecommendationsEnabled,
+);
 export const lastSeenCustomImageSelector = createSelector(
   storeSelector,
   s => s.lastSeenCustomImage,

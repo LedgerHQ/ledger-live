@@ -27,6 +27,7 @@ import { getAndroidArchitecture, getAndroidVersionCode } from "../logic/cleanBui
 import getOrCreateUser from "../user";
 import {
   analyticsEnabledSelector,
+  trackingEnabledSelector,
   languageSelector,
   localeSelector,
   lastSeenDeviceSelector,
@@ -225,7 +226,7 @@ export const updateIdentify = async (additionalProperties?: UserTraits) => {
     level: "debug",
   });
 
-  if (!storeInstance || !analyticsEnabledSelector(storeInstance.getState())) {
+  if (!storeInstance || !trackingEnabledSelector(storeInstance.getState())) {
     return;
   }
 
@@ -259,9 +260,9 @@ export function getIsTracking(
   state: State | null | undefined,
 ): { enabled: true } | { enabled: false; reason?: string } {
   if (!state) return { enabled: false, reason: "store not initialised" };
-  const analyticsEnabled = state && analyticsEnabledSelector(state);
+  const trackingEnabled = state && trackingEnabledSelector(state);
 
-  if (!analyticsEnabled) {
+  if (!trackingEnabled) {
     return {
       enabled: false,
       reason: "analytics not enabled",

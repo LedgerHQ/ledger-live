@@ -28,10 +28,6 @@ const useAnalyticsOptInPrompt = () => {
     personalizedRecommendationsEnabledSelector,
   );
 
-  const toggleAnalytics = (value: boolean) => dispatch(setAnalytics(value));
-  const togglePersonalizedRecommendations = (value: boolean) =>
-    dispatch(setPersonalizedRecommendations(value));
-
   const continueOnboarding = () => {
     navigation.navigate(NavigatorName.BaseOnboarding, {
       screen: NavigatorName.Onboarding,
@@ -95,8 +91,6 @@ const useAnalyticsOptInPrompt = () => {
   return {
     analyticsEnabled,
     personalizedRecommendationsEnabled,
-    toggleAnalytics,
-    togglePersonalizedRecommendations,
     clickOnRefuseAnalytics,
     clickOnAllowAnalytics,
     clickOnAllowPersonalizedExperience,
