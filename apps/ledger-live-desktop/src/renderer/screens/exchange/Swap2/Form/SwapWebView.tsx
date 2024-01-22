@@ -218,7 +218,7 @@ const SwapWebView = ({ manifestID, swapState, liveAppUnavailable }: SwapWebProps
           webviewState={webviewState}
         />
       )}
-      <SwapWebAppWrapper isDevelopment={isDevelopment}>
+      <SwapWebAppWrapper>
         <Web3AppWebview
           manifest={{ ...manifest, url: `${manifest.url}#${swapState.cacheKey}` }}
           inputs={{
