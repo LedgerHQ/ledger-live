@@ -8,6 +8,7 @@
     "src/bridge/preload.ts",
     "src/bridge/serialization.ts",
     "src/bridge/transaction.ts",
+    "src/signer/index.ts",
     "src/test/cli.ts",
     "src/test/index.ts",
     "src/test/specs.ts",
