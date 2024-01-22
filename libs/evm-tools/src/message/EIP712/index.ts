@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
+import axios from "axios";
 import SHA224 from "crypto-js/sha224";
 import { getEnv } from "@ledgerhq/live-env";
-import network from "@ledgerhq/live-network/network";
 import { EIP712Message } from "@ledgerhq/types-live";
 import EIP712CAL from "@ledgerhq/cryptoassets/data/eip712";
 import { MessageFilters } from "./types";
@@ -63,10 +63,9 @@ export const getFiltersForMessage = async (
 
   try {
     if (remoteCryptoAssetsListURI) {
-      const { data: dynamicCAL } = await network<Record<string, MessageFilters>>({
-        method: "GET",
-        url: `${remoteCryptoAssetsListURI}/eip712.json`,
-      });
+      const { data: dynamicCAL } = await axios.get<Record<string, MessageFilters>>(
+        `${remoteCryptoAssetsListURI}/eip712.json`,
+      );
 
       return dynamicCAL[messageId] || EIP712CAL[messageId as keyof typeof EIP712CAL];
     }
