@@ -343,9 +343,6 @@ importers:
       electron-updater:
         specifier: ^6.0.0
         version: 6.1.4
-      embla-carousel-react:
-        specifier: 7.1.0
-        version: 7.1.0(react@18.2.0)
       firebase:
         specifier: ^9.6.6
         version: 9.8.1
@@ -405,7 +402,7 @@ importers:
         version: 17.0.2
       react-key-handler:
         specifier: ^1.2.0-beta.3
-        version: 1.2.0-beta.3(eslint@8.51.0)(react@18.2.0)
+        version: 1.2.0-beta.3(react@18.2.0)
       react-lottie:
         specifier: ^1.2.3
         version: 1.2.3(prop-types@15.8.1)(react@18.2.0)
@@ -664,13 +661,13 @@ importers:
         version: 3.2.0
       eslint-plugin-jest:
         specifier: ^27.4.2
-        version: 27.4.2(@typescript-eslint/eslint-plugin@6.2.0)(eslint@8.51.0)(jest@29.7.0)(typescript@5.2.2)
+        version: 27.4.2(jest@29.7.0)(typescript@5.2.2)
       eslint-plugin-react:
         specifier: ^7.33.2
-        version: 7.33.2(eslint@8.51.0)
+        version: 7.33.2
       eslint-plugin-react-hooks:
         specifier: ^4.6.0
-        version: 4.6.0(eslint@8.51.0)
+        version: 4.6.0
       execa:
         specifier: ^8.0.0
         version: 8.0.1
@@ -13018,6 +13015,15 @@ packages:
     os: [win32]
     requiresBuild: true
     optional: true
+
+  /@eslint-community/eslint-utils@4.4.0:
+    resolution: {integrity: sha512-1/sA4dwrzBAyeUoQ6oxahHKmrZvsnLCg4RfxW3ZFGGmQkSNQPFNLV9CUEFQP1x9EYXHTo5p6xdhZM1Ne9p/AfA==}
+    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+    peerDependencies:
+      eslint: ^6.0.0 || ^7.0.0 || >=8.0.0
+    dependencies:
+      eslint-visitor-keys: 3.4.3
+    dev: true
 
   /@eslint-community/eslint-utils@4.4.0(eslint@8.51.0):
     resolution: {integrity: sha512-1/sA4dwrzBAyeUoQ6oxahHKmrZvsnLCg4RfxW3ZFGGmQkSNQPFNLV9CUEFQP1x9EYXHTo5p6xdhZM1Ne9p/AfA==}
@@ -25404,19 +25410,18 @@ packages:
       - typescript
     dev: true
 
-  /@typescript-eslint/utils@5.59.6(eslint@8.51.0)(typescript@5.2.2):
+  /@typescript-eslint/utils@5.59.6(typescript@5.2.2):
     resolution: {integrity: sha512-vzaaD6EXbTS29cVH0JjXBdzMt6VBlv+hE31XktDRMX1j3462wZCJa7VzO2AxXEXcIl8GQqZPcOPuW/Z1tZVogg==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     peerDependencies:
       eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
     dependencies:
-      '@eslint-community/eslint-utils': 4.4.0(eslint@8.51.0)
+      '@eslint-community/eslint-utils': 4.4.0
       '@types/json-schema': 7.0.12
       '@types/semver': 7.5.0
       '@typescript-eslint/scope-manager': 5.59.6
       '@typescript-eslint/types': 5.59.6
       '@typescript-eslint/typescript-estree': 5.59.6(typescript@5.2.2)
-      eslint: 8.51.0
       eslint-scope: 5.1.1
       semver: 7.5.4
     transitivePeerDependencies:
@@ -32993,15 +32998,6 @@ packages:
       minimalistic-assert: 1.0.1
       minimalistic-crypto-utils: 1.0.1
 
-  /embla-carousel-react@7.1.0(react@18.2.0):
-    resolution: {integrity: sha512-tbYRPRZSDNd2QLNqYDcArAakGIxtUbhS7tkP0dGXktXHGgcX+3ji3VrOUTOftBiujZrMV8kRxtrRUe/1soloIQ==}
-    peerDependencies:
-      react: ^16.8.0 || ^17.0.1 || ^18.0.0
-    dependencies:
-      embla-carousel: 7.1.0
-      react: 18.2.0
-    dev: false
-
   /embla-carousel-react@8.0.0-rc19(react@18.2.0):
     resolution: {integrity: sha512-4BBj1HvlUqhWXFyDJOL/JbQ74jtekfdH646B1wQzM9QmWn6CEcbD/SmovKqc6B5jYTKaaGEGEEw7bpUJRajA8w==}
     peerDependencies:
@@ -33018,10 +33014,6 @@ packages:
       embla-carousel: 8.0.0-rc19
     dependencies:
       embla-carousel: 8.0.0-rc19
-    dev: false
-
-  /embla-carousel@7.1.0:
-    resolution: {integrity: sha512-Bh8Pa8NWzgugLkf8sAGexQlBCNDFaej5BXiKgQdRJ1mUC9NWBrw9Z23YVPVGkguWoz5LMjZXXFVGCobl3UPt/Q==}
     dev: false
 
   /embla-carousel@8.0.0-rc19:
@@ -33843,13 +33835,12 @@ packages:
       requireindex: 1.1.0
     dev: true
 
-  /eslint-plugin-flowtype@2.50.3(eslint@8.51.0):
+  /eslint-plugin-flowtype@2.50.3:
     resolution: {integrity: sha512-X+AoKVOr7Re0ko/yEXyM5SSZ0tazc6ffdIOocp2fFUlWoDt7DV0Bz99mngOkAFLOAWjqRA5jPwqUCbrx13XoxQ==}
     engines: {node: '>=4'}
     peerDependencies:
       eslint: '>=2.0.0'
     dependencies:
-      eslint: 8.51.0
       lodash: 4.17.21
     dev: false
 
@@ -34057,7 +34048,7 @@ packages:
       - typescript
     dev: true
 
-  /eslint-plugin-jest@27.4.2(@typescript-eslint/eslint-plugin@6.2.0)(eslint@8.51.0)(jest@29.7.0)(typescript@5.2.2):
+  /eslint-plugin-jest@27.4.2(jest@29.7.0)(typescript@5.2.2):
     resolution: {integrity: sha512-3Nfvv3wbq2+PZlRTf2oaAWXWwbdBejFRBR2O8tAO67o+P8zno+QGbcDYaAXODlreXVg+9gvWhKKmG2rgfb8GEg==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     peerDependencies:
@@ -34070,9 +34061,7 @@ packages:
       jest:
         optional: true
     dependencies:
-      '@typescript-eslint/eslint-plugin': 6.2.0(@typescript-eslint/parser@6.2.0)(eslint@8.51.0)(typescript@5.1.3)
-      '@typescript-eslint/utils': 5.59.6(eslint@8.51.0)(typescript@5.2.2)
-      eslint: 8.51.0
+      '@typescript-eslint/utils': 5.59.6(typescript@5.2.2)
       jest: 29.7.0(ts-node@10.9.1)
     transitivePeerDependencies:
       - supports-color
@@ -34157,6 +34146,13 @@ packages:
       synckit: 0.8.5
     dev: true
 
+  /eslint-plugin-react-hooks@4.6.0:
+    resolution: {integrity: sha512-oFc7Itz9Qxh2x4gNHStv3BqJq54ExXmfC+a1NjAta66IAN87Wu0R/QArgIS9qKzX3dXKPI9H5crl9QchNMY9+g==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      eslint: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0
+    dev: true
+
   /eslint-plugin-react-hooks@4.6.0(eslint@8.51.0):
     resolution: {integrity: sha512-oFc7Itz9Qxh2x4gNHStv3BqJq54ExXmfC+a1NjAta66IAN87Wu0R/QArgIS9qKzX3dXKPI9H5crl9QchNMY9+g==}
     engines: {node: '>=10'}
@@ -34189,6 +34185,30 @@ packages:
       eslint: '>=7'
     dependencies:
       eslint: 8.55.0
+    dev: true
+
+  /eslint-plugin-react@7.33.2:
+    resolution: {integrity: sha512-73QQMKALArI8/7xGLNI/3LylrEYrlKZSb5C9+q3OtOewTnMQi5cT+aE9E41sLCmli3I9PGGmD1yiZydyo4FEPw==}
+    engines: {node: '>=4'}
+    peerDependencies:
+      eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8
+    dependencies:
+      array-includes: 3.1.6
+      array.prototype.flatmap: 1.3.1
+      array.prototype.tosorted: 1.1.1
+      doctrine: 2.1.0
+      es-iterator-helpers: 1.0.15
+      estraverse: 5.3.0
+      jsx-ast-utils: 3.3.3
+      minimatch: 3.1.2
+      object.entries: 1.1.6
+      object.fromentries: 2.0.6
+      object.hasown: 1.1.2
+      object.values: 1.1.6
+      prop-types: 15.8.1
+      resolve: 2.0.0-next.4
+      semver: 6.3.1
+      string.prototype.matchall: 4.0.8
     dev: true
 
   /eslint-plugin-react@7.33.2(eslint@8.51.0):
@@ -49028,12 +49048,12 @@ packages:
   /react-is@18.2.0:
     resolution: {integrity: sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==}
 
-  /react-key-handler@1.2.0-beta.3(eslint@8.51.0)(react@18.2.0):
+  /react-key-handler@1.2.0-beta.3(react@18.2.0):
     resolution: {integrity: sha512-Isd5O3JKDbPNCERVThPyJ0tTUDkeuTrGHE4+7lNT+6isXlLykroOaGuJ8A22hq6SpbSUKaPmGhxGAFtkag7Bgg==}
     peerDependencies:
       react: ^16.2.0-0
     dependencies:
-      eslint-plugin-flowtype: 2.50.3(eslint@8.51.0)
+      eslint-plugin-flowtype: 2.50.3
       exenv: 1.2.2
       prop-types: 15.8.1
       react: 18.2.0

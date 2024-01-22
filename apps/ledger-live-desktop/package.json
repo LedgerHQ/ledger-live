@@ -86,7 +86,6 @@
     "electron-context-menu": "^3.6.0",
     "electron-store": "^8.1.0",
     "electron-updater": "^6.0.0",
-    "embla-carousel-react": "7.1.0",
     "firebase": "^9.6.6",
     "focus-trap": "^6.6.1",
     "fuse.js": "^6.6.2",
