@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 33.5.0-next.6
+
+### Patch Changes
+
+- [#5973](https://github.com/LedgerHQ/ledger-live/pull/5973) [`1500f09`](https://github.com/LedgerHQ/ledger-live/commit/1500f09ff786548d673433a7dc15370b07c8e4e6) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Fix stacks transactions low fee issue
+
 ## 33.5.0-next.5
 
 ### Minor Changes
