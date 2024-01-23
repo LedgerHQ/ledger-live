@@ -1,5 +1,5 @@
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
-import network from "@ledgerhq/live-network/lib/network";
+import network from "@ledgerhq/live-network/network";
 import { getUserHashes } from "../../../user";
 import URL from "url";
 import { FirmwareNotRecognized } from "@ledgerhq/errors";
