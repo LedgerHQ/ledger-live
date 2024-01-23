@@ -48,6 +48,7 @@ import { StackNavigatorProps } from "./types/helpers";
 import ProtectConnectionInformationModal from "~/screens/Onboarding/steps/setupDevice/drawers/ProtectConnectionInformationModal";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import AccessExistingWallet from "~/screens/Onboarding/steps/accessExistingWallet";
+import AnalyticsOptInPromptNavigator from "./AnalyticsOptInPromptNavigator";
 
 const Stack = createStackNavigator<OnboardingNavigatorParamList>();
 const OnboardingPreQuizModalStack =
@@ -233,6 +234,12 @@ export default function OnboardingNavigator() {
       <Stack.Screen name={ScreenName.OnboardingQuiz} component={OnboardingQuiz} />
 
       <Stack.Screen name={ScreenName.OnboardingQuizFinal} component={OnboardingQuizFinal} />
+
+      <Stack.Screen
+        name={NavigatorName.AnalyticsOptInPrompt}
+        options={{ headerShown: false }}
+        component={AnalyticsOptInPromptNavigator}
+      />
     </Stack.Navigator>
   );
 }

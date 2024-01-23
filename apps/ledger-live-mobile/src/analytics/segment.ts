@@ -27,6 +27,7 @@ import { getAndroidArchitecture, getAndroidVersionCode } from "../logic/cleanBui
 import getOrCreateUser from "../user";
 import {
   analyticsEnabledSelector,
+  trackingEnabledSelector,
   languageSelector,
   localeSelector,
   lastSeenDeviceSelector,
@@ -36,6 +37,7 @@ import {
   knownDeviceModelIdsSelector,
   customImageTypeSelector,
   userNpsSelector,
+  personalizedRecommendationsEnabledSelector,
 } from "../reducers/settings";
 import { knownDevicesSelector } from "../reducers/ble";
 import { DeviceLike, State } from "../reducers/types";
@@ -145,6 +147,9 @@ const extraProperties = async (store: AppStore) => {
   const hasGenesisPass = hasNftInAccounts(GENESIS_PASS_COLLECTION_CONTRACT, accounts);
   const hasInfinityPass = hasNftInAccounts(INFINITY_PASS_COLLECTION_CONTRACT, accounts);
   const nps = userNpsSelector(state);
+  const analyticsEnabled: boolean = analyticsEnabledSelector(state);
+  const personalizedRecommendationsEnabled: boolean =
+    personalizedRecommendationsEnabledSelector(state);
 
   return {
     appVersion,
@@ -180,6 +185,8 @@ const extraProperties = async (store: AppStore) => {
     staxDeviceUser: knownDeviceModelIds.stax,
     staxLockscreen: customImageType || "none",
     nps,
+    optInAnalytics: analyticsEnabled,
+    optInPersonalRecommendations: personalizedRecommendationsEnabled,
   };
 };
 
@@ -219,7 +226,7 @@ export const updateIdentify = async (additionalProperties?: UserTraits) => {
     level: "debug",
   });
 
-  if (!storeInstance || !analyticsEnabledSelector(storeInstance.getState())) {
+  if (!storeInstance || !trackingEnabledSelector(storeInstance.getState())) {
     return;
   }
 
@@ -253,9 +260,9 @@ export function getIsTracking(
   state: State | null | undefined,
 ): { enabled: true } | { enabled: false; reason?: string } {
   if (!state) return { enabled: false, reason: "store not initialised" };
-  const analyticsEnabled = state && analyticsEnabledSelector(state);
+  const trackingEnabled = state && trackingEnabledSelector(state);
 
-  if (!analyticsEnabled) {
+  if (!trackingEnabled) {
     return {
       enabled: false,
       reason: "analytics not enabled",
