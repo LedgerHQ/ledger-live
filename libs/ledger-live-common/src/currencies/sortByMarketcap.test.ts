@@ -1,6 +1,6 @@
 import { sortCurrenciesByIds } from "./sortByMarketcap";
 import { findCurrencyByTicker, listCryptoCurrencies, listTokens } from ".";
-import { getBTCValues } from "../countervalues/mock";
+import { getBTCValues } from "@ledgerhq/live-countervalues/mock";
 import { CURRENCIES_LIST, IDS } from "./mock";
 
 test("sortCurrenciesByIds snapshot", () => {

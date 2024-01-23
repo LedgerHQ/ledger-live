@@ -3748,7 +3748,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       chainId: 421613,
       node: { type: "external", uri: "https://goerli-rollup.arbitrum.io/rpc" },
       explorer: {
-        uri: "https://api-goerli.arbiscan.io/",
+        uri: "https://api-goerli.arbiscan.io",
         type: "etherscan",
       },
     },
@@ -4504,7 +4504,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "linea_goerli",
     color: "#000000",
     family: "evm",
-    units: ethereumUnits("ETH", "ETH"),
+    units: ethereumUnits("ETH", "ETH").map(makeTestnetUnit),
     disableCountervalue: false,
     isTestnetFor: "linea",
     ethereumLikeInfo: {
@@ -4512,7 +4512,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       node: { type: "external", uri: "https://rpc.goerli.linea.build" },
       explorer: {
         type: "etherscan",
-        uri: "https://api-testnet.lineascan.build/api",
+        uri: "https://explorer.goerli.linea.build",
       },
     },
     explorerViews: [

@@ -2,7 +2,7 @@ import { BigNumber } from "bignumber.js";
 import React, { useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { Currency } from "@ledgerhq/types-cryptoassets";
-import { useCalculate, useCountervaluesPolling } from "@ledgerhq/live-common/countervalues/react";
+import { useCalculate, useCountervaluesPolling } from "@ledgerhq/live-countervalues-react";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import FormattedVal, { OwnProps as FormattedValProps } from "~/renderer/components/FormattedVal";
 import ToolTip from "./Tooltip";
@@ -80,6 +80,7 @@ export default function CounterValue({
       addExtraSessionTrackingPair({
         from: currency,
         to: counterValueCurrency,
+        startDate: new Date(),
       });
       const t = setTimeout(cvPolling.poll, 2000); // poll after 2s to ensure debounced CV userSettings are effective after this update
       return () => clearTimeout(t);

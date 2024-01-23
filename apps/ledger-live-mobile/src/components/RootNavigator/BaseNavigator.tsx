@@ -84,6 +84,7 @@ import {
 import { RootDrawer } from "../RootDrawer/RootDrawer";
 import EditTransactionNavigator from "~/families/evm/EditTransactionFlow/EditTransactionNavigator";
 import { DrawerProps } from "../RootDrawer/types";
+import AnalyticsOptInPromptNavigator from "./AnalyticsOptInPromptNavigator";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
@@ -539,6 +540,11 @@ export default function BaseNavigator() {
           name={NavigatorName.EvmEditTransaction}
           options={{ headerShown: false }}
           component={EditTransactionNavigator}
+        />
+        <Stack.Screen
+          name={NavigatorName.AnalyticsOptInPrompt}
+          options={{ headerShown: false }}
+          component={AnalyticsOptInPromptNavigator}
         />
       </Stack.Navigator>
     </>

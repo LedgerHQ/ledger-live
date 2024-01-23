@@ -6,7 +6,6 @@ import { assertUnreachable } from "./utils";
 import { VersionedTransaction as OnChainTransaction } from "@solana/web3.js";
 import { log } from "@ledgerhq/logs";
 
-const MAX_RETRIES = 10; // TODO Candidate to put in coin config
 const DEFAULT_TX_FEE = 5000;
 
 export async function estimateTxFee(
@@ -18,19 +17,20 @@ export async function estimateTxFee(
   const [onChainTx] = await buildTransactionWithAPI(address, tx, api);
 
   let fee = await api.getFeeForMessage(onChainTx.message);
-  let retries = 0;
 
-  while (typeof fee !== "number" && retries++ < MAX_RETRIES) {
-    // FIXME HACK: sometimes fee is not a number, retrying with a next blockhash
-    log("debug", `api.getFeeForMessage returned invalid fee: <${fee}>`);
+  if (typeof fee !== "number") {
+    // Sometimes getFeeForMessage doesn't return valid fees, because onChainTx.message.recentBlockhash
+    // is outdated --> retrying with a next blockhash
+    log("debug", `Solana api.getFeeForMessage returned invalid fee: <${fee}>`);
     fee = await retryWithNewBlockhash(api, onChainTx);
   }
 
   if (typeof fee !== "number") {
     log(
       "error",
-      `unexpected fee: <${fee}>, after retry with a new blockhash. Fallback to the default.`,
+      `Solana unexpected fee: <${fee}>, after retry with a new blockhash. Fallback to the default.`,
     );
+    // If still failing, fallback to a default fees value
     fee = DEFAULT_TX_FEE;
   }
   return fee;

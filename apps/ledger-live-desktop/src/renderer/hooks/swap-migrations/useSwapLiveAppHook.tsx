@@ -8,7 +8,7 @@ import { SwapProps, SwapWebManifestIDs } from "~/renderer/screens/exchange/Swap2
 import { rateSelector } from "~/renderer/actions/swap";
 
 export type UseSwapLiveAppHookProps = {
-  manifestID: string;
+  manifestID: string | null;
   isSwapLiveAppEnabled: boolean;
   swapTransaction: SwapTransactionType;
   swapError?: Error;

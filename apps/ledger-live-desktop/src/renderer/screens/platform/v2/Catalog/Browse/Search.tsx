@@ -37,6 +37,7 @@ export function Search({ categories, search }: Props) {
         </Text>
 
         <SelectInput
+          isDisabled={!!search.input.length}
           options={options}
           defaultValue={options[0]}
           // @ts-expect-error another SelectInput hell
