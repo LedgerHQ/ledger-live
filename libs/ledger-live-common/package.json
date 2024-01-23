@@ -123,7 +123,7 @@
     "@crypto-org-chain/chain-jslib": "1.1.2",
     "@dfinity/agent": "^0.15.6",
     "@dfinity/candid": "^0.15.6",
-    "@dfinity/principal": "^0.15.6",
+    "@dfinity/principal": "^0.21.0",
     "@elrondnetwork/erdjs": "11.0.0",
     "@elrondnetwork/erdjs-network-providers": "^1.1.2",
     "@hashgraph/sdk": "^2.10.1",
