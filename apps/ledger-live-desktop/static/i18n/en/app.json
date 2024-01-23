@@ -3609,22 +3609,32 @@
     "stake": {
       "title": "Grow your ETH holdings",
       "subTitle": "Stake your ETH and grow your holdings by receiving daily rewards directly into your Ledger Live.",
-      "lido": {
-        "title": "Earn with Lido",
-        "description": "Stake your Ethereum with Lido and earn rewards daily. No lock-up period. No minimum.",
-        "supportLink": "Learn more about Lido"
-      },
-      "kiln": {
-        "title": "Kiln dedicated staking",
-        "tag": "Requires 32 ETH",
-        "description": "Stake with dedicated validators. Requires multiples of 32 ETH. Rewards are manually claimed. Exit anytime.",
-        "supportLink": "Learn more about Kiln validator"
-      },
       "kiln_pooling": {
         "title": "Kiln staking pool",
-        "tag": "No minimum",
-        "description": "Join a staking pool. No minimum ETH is required. Rewards are compounded automatically. Exit anytime.",
+        "description": "Rewards are compounded automatically.",
         "supportLink": "Learn more about Kiln pooling"
+      },
+      "lido": {
+        "title": "Earn with Lido",
+        "description": "Earn rewards daily. No lock-up period.",
+        "supportLink": "Learn more about Lido"
+      },
+      "stader-eth": {
+        "title": "Stader",
+        "description": "Earn rewards daily. No lock-up period.",
+        "supportLink": "Learn more about Stader pooling"
+      },
+      "kiln": {
+        "title": "Kiln solo staking",
+        "tag": "Requires 32 ETH",
+        "description": "Stake with dedicated validators. Rewards are manually claimed.",
+        "supportLink": "Learn more about Kiln validator"
+      },
+      "figment": {
+        "title": "Figment",
+        "tag": "Requires 32 ETH",
+        "description": "Stake with dedicated validators. Rewards are manually claimed.",
+        "supportLink": "Learn more about Figment validator"
       }
     }
   },
