@@ -1,7 +1,7 @@
 import { getEnv } from "@ledgerhq/live-env";
 import { Id } from "@ledgerhq/types-live";
 import { version } from "../../../../package.json";
-import { HttpManagerApiRepository } from "../../../device-core/repositories/HttpManagerApiRepository";
+import { HttpManagerApiRepository } from "../../../device-core/managerApi/repositories/HttpManagerApiRepository";
 
 export type FetchLatestFirmwareUseCaseParams = {
   current_se_firmware_final_version: Id;
