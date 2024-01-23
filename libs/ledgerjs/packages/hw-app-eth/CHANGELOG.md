@@ -1,5 +1,29 @@
 # @ledgerhq/hw-app-eth
 
+## 6.35.3
+
+### Patch Changes
+
+- Updated dependencies [[`fc2cf04`](https://github.com/LedgerHQ/ledger-live/commit/fc2cf04c8d3cd55503ea19aeb21fd12ee55046f6), [`a4a72da`](https://github.com/LedgerHQ/ledger-live/commit/a4a72da33ddfefd5ba69ac4d9ecb33d7775583f1), [`2358e87`](https://github.com/LedgerHQ/ledger-live/commit/2358e8748d9ae9398cfc05a0ec20a6b191fc7324), [`65772fb`](https://github.com/LedgerHQ/ledger-live/commit/65772fbcc1e6887d60ca585147123d356914ba56), [`69bbdce`](https://github.com/LedgerHQ/ledger-live/commit/69bbdce5c88d69248cbddb94ac4627334c1df626), [`16b4d7a`](https://github.com/LedgerHQ/ledger-live/commit/16b4d7ab4702022d4967f3c054d3c62a76716947), [`0375de1`](https://github.com/LedgerHQ/ledger-live/commit/0375de19ca909b0b013992c114b0fa2ead2a08f3)]:
+  - @ledgerhq/cryptoassets@11.4.0
+  - @ledgerhq/types-live@6.44.0
+  - @ledgerhq/hw-transport@6.30.2
+  - @ledgerhq/evm-tools@1.0.14
+  - @ledgerhq/domain-service@1.1.17
+  - @ledgerhq/hw-transport-mocker@6.28.2
+
+## 6.35.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`fc2cf04`](https://github.com/LedgerHQ/ledger-live/commit/fc2cf04c8d3cd55503ea19aeb21fd12ee55046f6), [`a4a72da`](https://github.com/LedgerHQ/ledger-live/commit/a4a72da33ddfefd5ba69ac4d9ecb33d7775583f1), [`2358e87`](https://github.com/LedgerHQ/ledger-live/commit/2358e8748d9ae9398cfc05a0ec20a6b191fc7324), [`65772fb`](https://github.com/LedgerHQ/ledger-live/commit/65772fbcc1e6887d60ca585147123d356914ba56), [`69bbdce`](https://github.com/LedgerHQ/ledger-live/commit/69bbdce5c88d69248cbddb94ac4627334c1df626), [`16b4d7a`](https://github.com/LedgerHQ/ledger-live/commit/16b4d7ab4702022d4967f3c054d3c62a76716947), [`0375de1`](https://github.com/LedgerHQ/ledger-live/commit/0375de19ca909b0b013992c114b0fa2ead2a08f3)]:
+  - @ledgerhq/cryptoassets@11.4.0-next.0
+  - @ledgerhq/types-live@6.44.0-next.0
+  - @ledgerhq/hw-transport@6.30.2-next.0
+  - @ledgerhq/evm-tools@1.0.14-next.0
+  - @ledgerhq/domain-service@1.1.17-next.0
+  - @ledgerhq/hw-transport-mocker@6.28.2-next.0
+
 ## 6.35.2
 
 ### Patch Changes

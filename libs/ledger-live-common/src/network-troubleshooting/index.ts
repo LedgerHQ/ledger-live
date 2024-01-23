@@ -41,7 +41,7 @@ export function troubleshoot(): Troubleshoot[] {
     },
     {
       title: "Countervalues API",
-      ...httpGet(`${getEnv("LEDGER_COUNTERVALUES_API")}/latest/direct?pairs=btc:usd`),
+      ...httpGet(`${getEnv("LEDGER_COUNTERVALUES_API")}/v3/spot/simple?froms=bitcoin&to=eur`),
     },
     {
       title: "Announcements",

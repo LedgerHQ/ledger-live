@@ -8,6 +8,7 @@ export const textVariants = [
   "h1Inter",
   "h2",
   "h3",
+  "h3Inter",
   "h4",
   "h5",
   "large",

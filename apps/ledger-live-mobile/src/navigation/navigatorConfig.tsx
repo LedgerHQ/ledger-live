@@ -4,13 +4,13 @@ import { NavigationHeaderCloseButtonAdvanced } from "~/components/NavigationHead
 import HeaderTitle, { Props as HeaderTitleProps } from "~/components/HeaderTitle";
 import styles from "./styles";
 import { Theme } from "../colors";
-import { NavigationHeaderBackImage } from "~/components/NavigationHeaderBackButton";
+import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
 
 export const defaultNavigationOptions = {
   headerStyle: styles.header,
   headerTitle: (props: HeaderTitleProps) => <HeaderTitle {...props} />,
   headerBackTitleVisible: false,
-  headerBackImage: () => <NavigationHeaderBackImage />,
+  headerLeft: () => <NavigationHeaderBackButton />,
   headerTitleAllowFontScaling: false,
 };
 

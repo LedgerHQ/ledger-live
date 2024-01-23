@@ -2748,6 +2748,8 @@
       "developerModeDesc": "Show developer apps in My Ledger and enable Testnet apps.",
       "analytics": "Analytics",
       "analyticsDesc": "Enable analytics to help Ledger improve user experience.",
+      "personalizedRecommendations": "Personalized experience",
+      "personalizedRecommendationsDesc": "Receive personalised recommendations that match your preferences.",
       "analyticsModal": {
         "title": "Share analytics",
         "desc": "Enable analytics to help Ledger improve user experience",
@@ -6604,6 +6606,92 @@
     "getFundsModal": {
       "text": "Get {{coin}} to stake",
       "description": "Buy, swap or receive crypto directly to your Ledger using Ledger Live."
+    }
+  },
+  "analyticsOptIn": {
+    "variantA": {
+      "main": {
+        "title": "Help us improve and personalize your experience.",
+        "subtitle": "Sharing your Ledger Live usage data helps us understand your preferences. This allows us to tailor your experience and optimize content performance, including clicks, views, and opens, for maximum relevance.",
+        "content": {
+          "able": {
+            "title": "Ledger Live will be able to track:",
+            "diagAndUsage": "Usage data"
+          },
+          "unable": {
+            "title": "Ledger Live will never collect:",
+            "adresses": "Your addresses",
+            "balance": "Your balances",
+            "nfts": "Your NFTs",
+            "personnalInfos": "Personal identifying information"
+          },
+          "moreOptions": "More options",
+          "ctas": {
+            "refuse": "Refuse all",
+            "accept": "Accept all"
+          },
+          "infoText": {
+            "info": "You can revoke your consent at any time in app settings.",
+            "link": "Click here to learn more."
+          }
+        }
+      },
+      "details": {
+        "title": "Manage your preferences",
+        "analytics": {
+          "title": "Analytics",
+          "description": "Help Ledger improve the application by sharing app usage."
+        },
+        "personalizedExp": {
+          "title": "Personalized experience",
+          "description": "Receive personalized recommendations matching your preferences and share content performance to optimize relevance."
+        },
+        "ctas": {
+          "notNow": "Not now",
+          "accept": "Accept",
+          "acceptAll": "Accept All",
+          "confirm": "Confirm"
+        },
+        "infoText": {
+          "info": "You can revoke your consent at any time in app settings.",
+          "link": "Click here to learn more."
+        }
+      }
+    },
+    "variantB": {
+      "main": {
+        "title": "Let's improve Ledger Live together",
+        "description": "Sharing your Ledger Live usage data helps us understand how you are using Ledger Live.",
+        "bulletPoints": {
+          "1": "Usage data includes page visits, clicks and conversion.",
+          "2": "We won’t collect or see your addresses, accounts, balance, NFTs or any other information related to your portfolio.",
+          "3": "We can't and don't want to identify you and we don't collect personal information."
+        },
+        "ctas": {
+          "refuse": "Refuse",
+          "share": "Share"
+        },
+        "infoText": {
+          "info": "You can revoke your consent at any time in app settings.",
+          "link": "Learn more about revoking consent"
+        }
+      },
+      "details": {
+        "title": "Get a personalized experience",
+        "description": "By analyzing your usage data, we customize your experience and assess content performance, tracking metrics such as clicks, views, and opens to ensure maximum relevance.",
+        "bulletPoints": {
+          "1": "Personalized recommendations and content",
+          "2": "Personalized notifications"
+        },
+        "ctas": {
+          "refuse": "Refuse",
+          "allow": "Allow"
+        },
+        "infoText": {
+          "info": "You can revoke your consent at any time in app settings.",
+          "link": "Learn more about revoking consent"
+        }
+      }
     }
   }
 }

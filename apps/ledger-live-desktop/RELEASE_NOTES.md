@@ -1,3 +1,17 @@
+# 2.75.0
+
+### 🚀 Features
+
+Starting today, you can swap an additional 300 Ethereum and 100 Binance Smart Chain tokens through Ledger Live. 
+
+### 🐛 Fix
+
+Internal transactions for Ethereum, Polygon, and Binance Smart Chain are now visible in the transaction history.
+
+The bug that prevented the hiding of token accounts has been fixed.
+
+You can now clear nominations for your bonded DOT. 
+
 # 2.73.1
 
 ### 🐛 Fix

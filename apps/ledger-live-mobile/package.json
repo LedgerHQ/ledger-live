@@ -1,6 +1,6 @@
 {
   "name": "live-mobile",
-  "version": "3.37.0",
+  "version": "3.38.0",
   "private": true,
   "scripts": {
     "postinstall": "zx ./scripts/post.mjs",
@@ -80,6 +80,8 @@
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/hw-transport-http": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
+    "@ledgerhq/live-countervalues": "workspace:^",
+    "@ledgerhq/live-countervalues-react": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/logs": "workspace:^",

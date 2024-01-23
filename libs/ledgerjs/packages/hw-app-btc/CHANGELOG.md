@@ -1,5 +1,27 @@
 # @ledgerhq/hw-app-btc
 
+## 10.2.0
+
+### Minor Changes
+
+- [#5675](https://github.com/LedgerHQ/ledger-live/pull/5675) [`5fdd5f0`](https://github.com/LedgerHQ/ledger-live/commit/5fdd5f0acab5f990d46ad20d245315f38be0f08a) Thanks [@chabroA](https://github.com/chabroA)! - make Qtum work with old and new nano app interfaces
+
+### Patch Changes
+
+- Updated dependencies [[`16b4d7a`](https://github.com/LedgerHQ/ledger-live/commit/16b4d7ab4702022d4967f3c054d3c62a76716947)]:
+  - @ledgerhq/hw-transport@6.30.2
+
+## 10.2.0-next.0
+
+### Minor Changes
+
+- [#5675](https://github.com/LedgerHQ/ledger-live/pull/5675) [`5fdd5f0`](https://github.com/LedgerHQ/ledger-live/commit/5fdd5f0acab5f990d46ad20d245315f38be0f08a) Thanks [@chabroA](https://github.com/chabroA)! - make Qtum work with old and new nano app interfaces
+
+### Patch Changes
+
+- Updated dependencies [[`16b4d7a`](https://github.com/LedgerHQ/ledger-live/commit/16b4d7ab4702022d4967f3c054d3c62a76716947)]:
+  - @ledgerhq/hw-transport@6.30.2-next.0
+
 ## 10.1.1
 
 ### Patch Changes

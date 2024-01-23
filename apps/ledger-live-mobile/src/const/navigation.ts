@@ -507,6 +507,9 @@ export enum ScreenName {
   Stake = "Stake",
 
   RedirectToOnboardingRecoverFlow = "RedirectToOnboardingRecoverFlow",
+
+  AnalyticsOptInPromptMain = "AnalyticsOptInPromptMain",
+  AnalyticsOptInPromptDetails = "AnalyticsOptInPromptDetails",
 }
 
 export enum NavigatorName {
@@ -617,4 +620,6 @@ export enum NavigatorName {
 
   PostOnboarding = "PostOnboarding",
   SyncOnboarding = "SyncOnboarding",
+
+  AnalyticsOptInPrompt = "AnalyticsOptInPrompt",
 }

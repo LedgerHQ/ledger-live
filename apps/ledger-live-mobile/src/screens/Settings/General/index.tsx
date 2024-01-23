@@ -8,6 +8,8 @@ import AnalyticsRow from "./AnalyticsRow";
 import LanguageRow from "./LanguageRow";
 import SettingsNavigationScrollView from "../SettingsNavigationScrollView";
 import DateFormatRow from "./DateFormatRow";
+import PersonalizedRecommendationsRow from "./PersonalizedRecommendationsRow";
+import { FeatureToggle } from "@ledgerhq/live-config/featureFlags/index";
 
 export default function GeneralSettings() {
   return (
@@ -20,6 +22,9 @@ export default function GeneralSettings() {
       <AuthSecurityToggle />
       <ReportErrorsRow />
       <AnalyticsRow />
+      <FeatureToggle featureId="llmAnalyticsOptInPrompt">
+        <PersonalizedRecommendationsRow />
+      </FeatureToggle>
     </SettingsNavigationScrollView>
   );
 }
