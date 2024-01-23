@@ -1,6 +1,14 @@
 import { useMemo, useState, useEffect, useRef, useCallback, RefObject } from "react";
 import semver from "semver";
-import { formatDistanceToNow } from "date-fns";
+import {
+  differenceInSeconds,
+  differenceInMinutes,
+  differenceInHours,
+  differenceInDays,
+  differenceInWeeks,
+  differenceInMonths,
+} from "date-fns";
+
 import { Account, AccountLike, AnyMessage, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { WalletHandlers, ServerConfig, WalletAPIServer } from "@ledgerhq/wallet-api-server";
@@ -839,6 +847,24 @@ export interface RecentlyUsed {
 
 export type RecentlyUsedManifest = AppManifest & { usedAt?: Date };
 
+function calculateTimeDiff(usedAt: string) {
+  const now = new Date();
+  const date = new Date(usedAt);
+
+  const units = [
+    { translationKey: "months", diff: differenceInMonths(now, date) },
+    { translationKey: "weeks", diff: differenceInWeeks(now, date) },
+    { translationKey: "days", diff: differenceInDays(now, date) },
+    { translationKey: "hours", diff: differenceInHours(now, date) },
+    { translationKey: "minutes", diff: differenceInMinutes(now, date) },
+    { translationKey: "seconds", diff: differenceInSeconds(now, date) },
+  ];
+
+  const relevantUnit = units.find(({ diff }) => diff > 0) || { translationKey: "seconds", diff: 1 };
+  if (relevantUnit.diff > 1) relevantUnit.translationKey += "_plural";
+  return relevantUnit;
+}
+
 export function useRecentlyUsed(
   manifests: AppManifest[],
   [recentlyUsed, setState]: RecentlyUsedDB,
@@ -848,11 +874,10 @@ export function useRecentlyUsed(
       recentlyUsed
         .map(r => {
           const res = manifests.find(m => m.id === r.id);
-          const distance = formatDistanceToNow(new Date(r.usedAt));
           return res
             ? {
                 ...res,
-                usedAt: distance[0].toUpperCase() + distance.slice(1) + " ago",
+                usedAt: calculateTimeDiff(r.usedAt),
               }
             : res;
         })
