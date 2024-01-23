@@ -324,7 +324,7 @@ export function completeExchangeLogic(
   const toParentAccount = toAccount ? getParentAccount(toAccount, accounts) : undefined;
   const exchange = {
     fromAccount,
-    fromParentAccount,
+    fromParentAccount: fromAccount !== fromParentAccount ? fromParentAccount : undefined,
     toAccount: newTokenAccount ? newTokenAccount : toAccount,
     toParentAccount: newTokenAccount ? toAccount : toParentAccount,
   };
@@ -350,7 +350,7 @@ export function completeExchangeLogic(
    * 'subAccountId' is used for ETH and it's ERC-20 tokens.
    * This field is ignored for BTC
    */
-  const subAccountId = fromParentAccount ? fromAccount.id : undefined;
+  const subAccountId = exchange.fromParentAccount ? fromAccount.id : undefined;
 
   const bridgeTx = accountBridge.createTransaction(mainFromAccount);
   /**
