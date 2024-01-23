@@ -3,11 +3,8 @@ import semver from "semver";
 import { formatDistanceToNow } from "date-fns";
 import { Account, AccountLike, AnyMessage, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import {
-  WalletHandlers,
-  useWalletAPIServer as useWalletAPIServerRaw,
-  ServerConfig,
-} from "@ledgerhq/wallet-api-server";
+import { WalletHandlers, ServerConfig, WalletAPIServer } from "@ledgerhq/wallet-api-server";
+import { useWalletAPIServer as useWalletAPIServerRaw } from "@ledgerhq/wallet-api-server/lib/react";
 import {
   ServerError,
   createCurrencyNotFound,
@@ -160,7 +157,7 @@ export interface UiHook {
     onCancel: () => void;
   }) => void;
   "exchange.start": (params: {
-    exchangeType: "FUND" | "SELL" | "SWAP";
+    exchangeType: "SWAP" | "FUND" | "SELL" | "SWAP_NG" | "SELL_NG" | "FUND_NG";
     onSuccess: (nonce: string) => void;
     onCancel: (error: Error) => void;
   }) => void;
@@ -299,10 +296,11 @@ export function useWalletAPIServer({
   customHandlers,
 }: useWalletAPIServerOptions): {
   onMessage: (event: string) => void;
-  widgetLoaded: boolean;
+  server: WalletAPIServer;
   onLoad: () => void;
   onReload: () => void;
   onLoadError: () => void;
+  widgetLoaded: boolean;
 } {
   const permission = usePermission(manifest);
   const transport = useTransport(webviewHook.postMessage);
@@ -697,7 +695,7 @@ export function useWalletAPIServer({
       return startExchangeLogic(
         { manifest, accounts, tracking },
         exchangeType,
-        (exchangeType: "SWAP" | "FUND" | "SELL") =>
+        exchangeType =>
           new Promise((resolve, reject) =>
             uiExchangeStart({
               exchangeType,
@@ -763,6 +761,7 @@ export function useWalletAPIServer({
     onLoad,
     onReload,
     onLoadError,
+    server,
   };
 }
 
@@ -770,6 +769,9 @@ export enum ExchangeType {
   SWAP = 0x00,
   SELL = 0x01,
   FUND = 0x02,
+  SWAP_NG = 0x03,
+  SELL_NG = 0x04,
+  FUND_NG = 0x05,
 }
 
 export interface Categories {

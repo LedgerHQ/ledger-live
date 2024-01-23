@@ -35,6 +35,7 @@ function AddAccount({ currencyId }: { currencyId?: string }) {
         alignItems={"center"}
         justifyContent={"center"}
         borderRadius={32}
+        testID="add-account-button"
       >
         <PlusMedium size={20} color={"neutral.c00"} />
       </Flex>

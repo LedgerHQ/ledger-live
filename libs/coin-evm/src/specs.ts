@@ -42,8 +42,12 @@ const minBalancePerCurrencyId: Partial<Record<CryptoCurrency["id"], number>> = {
   polygon: 0.005,
   ethereum: 0.001,
   ethereum_goerli: 0.001,
+  ethereum_sepolia: 0.001,
+  ethereum_holesky: 0.001,
   ethereum_classic: 0.05,
   lukso: 0.01,
+  linea: 0.001,
+  linea_goerli: 0.001,
 };
 
 /**
@@ -373,5 +377,6 @@ export default Object.values(cryptocurrenciesById)
       mutations: getMutations(currency.id),
       genericDeviceAction: getGenericDeviceAction(currency.id),
     };
+
     return acc;
   }, {});

@@ -1,6 +1,6 @@
 import React, { memo, useMemo, useCallback, useRef, useState } from "react";
 import { NativeScrollEvent, NativeSyntheticEvent, ScrollView } from "react-native";
-import useDynamicContent from "~/dynamicContent/dynamicContent";
+import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import { width } from "~/helpers/normalizeSize";
 import CarouselCard from "./CarouselCard";
 

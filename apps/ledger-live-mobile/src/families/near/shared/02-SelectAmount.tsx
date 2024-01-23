@@ -18,7 +18,6 @@ import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
 import { accountScreenSelector } from "~/reducers/accounts";
-import { localeSelector } from "~/reducers/settings";
 import Button from "~/components/Button";
 import CurrencyInput from "~/components/CurrencyInput";
 import LText from "~/components/LText";
@@ -31,6 +30,7 @@ import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpe
 import { NearStakingFlowParamList } from "../StakingFlow/types";
 import { NearUnstakingFlowParamList } from "../UnstakingFlow/types";
 import { NearWithdrawingFlowParamList } from "../WithdrawingFlow/types";
+import { useSettings } from "~/hooks";
 
 type Props =
   | StackNavigatorProps<NearStakingFlowParamList, ScreenName.NearStakingAmount>
@@ -40,7 +40,8 @@ type Props =
 function StakingAmount({ navigation, route }: Props) {
   const { colors } = useTheme();
   const account = useSelector(accountScreenSelector(route)).account as NearAccount;
-  const locale = useSelector(localeSelector);
+  const { locale } = useSettings();
+
   invariant(
     account && account.nearResources && route.params.transaction,
     "account and near transaction required",
@@ -173,7 +174,7 @@ function StakingAmount({ navigation, route }: Props) {
                       values={{
                         amount: formatCurrencyUnit(unit, remaining, {
                           showCode: true,
-                          locale,
+                          locale: locale,
                         }),
                       }}
                     >

@@ -167,6 +167,9 @@
       "VOTE" : "投票済み",
       "FREEZE" : "凍結中",
       "UNFREEZE" : "凍結解除済み",
+      "UNDELEGATE_RESOURCE" : "デリゲート解除済み",
+      "WITHDRAW_EXPIRE_UNFREEZE" : "出金",
+      "LEGACYUNFREEZE" : "凍結解除済み",
       "REWARD" : "獲得した報酬",
       "FEES" : "手数料",
       "OPT_IN" : "オプトイン",
@@ -1237,11 +1240,12 @@
         "firmwareUpdate" : {
           "title" : {
             "active" : "OSアップデートチェック",
-            "completed" : "現在の{{modelName}}OSは、最新の状態です",
+            "completed" : "{{modelName}} OSは最新の状態です。",
             "updateAvailable" : "OSアップデート{{firmwareVersion}}をご利用いただけます"
           },
           "subtitle" : {
             "active" : "これにより、{{modelName}}のオペレーティングシステムが最新かどうかがチェックされます。",
+            "completed" : "「Restore apps（アプリを復元）」ボタンを選択して{{modelName}}でアプリの復元を開始します。",
             "updateAvailable" : "最適なセキュリティを確保し、最新機能へアクセスするためにアップデートしてください。"
           },
           "viewUpdateCTA" : "{{modelName}} OSをアップデートする",
@@ -1752,13 +1756,13 @@
   "DeviceAction" : {
     "allowAppPermission" : "デバイスで{{wording}} アプリを開く",
     "allowAppPermissionSubtitleToken" : "{{token}} トークンを管理",
-    "allowManagerPermission" : "デバイスでLedger Managerを許可する",
+    "allowManagerPermission" : "{{productName}}でLedger Managerを許可する",
     "allowRenaming" : "デバイスで名前の変更を許可する",
     "loading" : "読み込み中...",
     "connectAndUnlockDevice" : "デバイスを接続してロックを解除する",
     "unlockDevice" : "デバイスのロックを解除する",
-    "unlockDeviceAfterFirmwareUpdateStep1" : "{{productName}}のインストールが完了するまでお待ちください",
-    "unlockDeviceAfterFirmwareUpdateStep2" : "{{productName}}のロックを解除してインストールを完了",
+    "unlockDeviceAfterFirmwareUpdateStep1" : "{{productName}}でインストールが完了するまで待機してください。",
+    "unlockDeviceAfterFirmwareUpdateStep2" : "PINコードを使用して{{productName}}のロックを解除し、アップデートを完了します。",
     "quitApp" : "デバイスのアプリケーションを終了する",
     "appNotInstalledTitle" : "必要なアプリが揃っていません。",
     "appNotInstalledTitle_plural" : "必要なアプリが揃っていません。",
@@ -1931,11 +1935,13 @@
       "latest" : "ファームウェアバージョン{{version}}が利用可能です",
       "contactSupport" : "サポートへのお問い合わせ",
       "deprecated" : "デバイスのファームウェアのバージョンが古いため、アップデートできません。Ledgerサポートに連絡して、デバイスを交換してください。",
-      "prepareSeed" : "万が一に備えて、24単語のリカバリーフレーズを書き留めたリカバリーシートを用意してください。",
+      "prepareSeed" : "念のために、24単語のリカバリーフレーズがリカバリーシートに書き留められており、利用可能であることを確認してください。",
       "disclaimerTitle" : "<1>ファームウェアバージョン{{version}}</1>をインストールします。",
-      "cancelUpdate" : "アップデートをキャンセル",
-      "continueUpdate" : "アップデートを続行",
-      "cancelUpdateWarning" : "今アップデートをキャンセルすると、設定とアプリが正しく復元されない可能性があります。",
+      "cancelUpdate" : "OSアップデートをキャンセル",
+      "continueUpdate" : "OSアップデートを続行",
+      "restartUpdate" : "OSアップデートを再開",
+      "skipRestore" : "復元をスキップ",
+      "cancelUpdateWarning" : "今アップデートをキャンセルすると、\n設定とアプリが正しく復元されない可能性があります。",
       "updateInProgress" : "OSアップデート中"
     },
     "modal" : {
@@ -1948,6 +1954,7 @@
         "install" : "アップデートをインストール",
         "installDone" : "アップデートが\nインストール済み",
         "restore" : "設定の復元",
+        "restoreDone" : "設定を復元完了",
         "apps" : "アプリの復元",
         "updateMCU" : "ファームウェアをアップデート",
         "updating" : "ファームウェアをアップデート",
@@ -1974,9 +1981,10 @@
       "mcuBlueFirst" : "ボタンを10秒間長押しして、デバイスの電源をオフにする。ボタンから指を離す。",
       "mcuBlueSecond" : "ブートオプションが表示されるまで、少なくとも5秒間ボタンを押し続けます。Bootloaderモードをタップしてください。",
       "successTitle" : "{{deviceName}} のOSは\n最新の状態です",
-      "sucessCTAApps" : "アプリを再インストール",
-      "SuccessCTANoApps" : "アプリをインストール",
-      "cancelReinstallCTA" : "アップデートをインストール",
+      "successTitleApps" : "{{deviceName}}のOSは\n最新の状態です。最後に...",
+      "successSubtitleApps" : "Ledger Staxでアプリの復元を開始するには、\n下の「Restore apps（アプリを復元）」ボタンを選択します。",
+      "sucessCTAApps" : "アプリを復元",
+      "SuccessCTANoApps" : "終了する",
       "resetSteps" : {
         "first" : "1. デバイスをリセットする",
         "connect" : "USBケーブルを使用して、 {{deviceName}}をコンピュータに接続。",
@@ -2027,7 +2035,7 @@
         "energyDescription" : "スマートコントラクトの実行には、Energy(エネルギー)ポイントが必要です。スマートコントラクトを実行しない場合は、エネルギーポイントで報酬を得る必要はありません。",
         "amountLabel" : "凍結する額",
         "available" : "利用可能: {{amountAvailable}}",
-        "info" : "凍結したTRXは3日間送付ができなくなります。"
+        "info" : "凍結された資産はすぐに凍結解除でき、14日間の凍結解除期間後にアクセスできるようになります。"
       },
       "connectDevice" : {
         "title" : "デバイス"
@@ -2288,6 +2296,13 @@
     "confirmation" : "Ledger Staxの画像の削除を確定する",
     "success" : "ロック画面の画像が削除されました"
   },
+  "changeCustomLockscreen" : {
+    "cta" : "変更"
+  },
+  "removeCurrentPicture" : {
+    "cta" : "現在の画像を削除する"
+  },
+  "appsInstallingDisabledTooltip" : "アプリのインストールが完了するまで無効になります",
   "deviceLocalization" : {
     "language" : "言語",
     "deviceLanguage" : "デバイスの言語を変更する",
@@ -2302,7 +2317,7 @@
       "title" : "{{deviceName}}を{{language}}に設定しますか？",
       "description" : "{{language}}が{{deviceName}}でご利用可能になりました。今すぐ設定できます。また、My Ledgerからいつでもデバイスの言語を変更することが可能です。"
     },
-    "allowLanguageInstallation" : "言語のインストールを許可する",
+    "allowLanguageInstallation" : "言語をインストールするには\n「Allow（許可）」をタップする",
     "languageInstalled" : "言語が{{language}}に変更されました",
     "installingLanguage" : "言語をインストール",
     "languages" : {
@@ -2612,7 +2627,7 @@
             "description" : "安全かつ完全に資産を所有しながら、TRXを凍結して報酬を獲得しましょう。",
             "bullet" : {
               "delegate" : "資産をデリゲートしても、資産の所有者は変わりません。",
-              "access" : "資産の凍結は3日後に解除できます。",
+              "access" : "凍結された資産はすぐに凍結解除でき、14日間の凍結解除期間後にアクセスできるようになります。",
               "ledger" : "Ledgerデバイスを使って、資産の凍結と投票を安全に行いましょう。"
             },
             "help" : "投票の仕組み",
@@ -3057,7 +3072,7 @@
         "steps" : {
           "starter" : {
             "title" : "再デリゲート",
-            "description" : "再デリゲートを使用すると、別のバリデーターに変更できます。しかし、再び気が変わった場合は、再デリゲートによって21日間ロックされるため、待機する必要があります。",
+            "description" : "再デリゲートを使用すると、別のバリデーターに簡単に変更できます。しかし、再度変更する場合は、再デリゲートによって{{ numberOfDays }}日間ロックされるため、待機する必要があります。",
             "warning" : "バリデーターは慎重に選択してください。不適切なバリデーターに資産を預けると、資産の一部がペナルティによって失われてしまう危険があります。保留中の最大再デリゲート数は<0>7 つ</0>です。",
             "howDelegationWorks" : "デリゲートの仕組み"
           },
@@ -3086,7 +3101,7 @@
     },
     "undelegation" : {
       "header" : "デリゲート解除",
-      "headerTooltip" : "21日間のロック後に利用可能",
+      "headerTooltip" : "{{numberOfDays}}日間のロック後に利用可能",
       "inactiveTooltip" : "デリゲートされていない金額は報酬を生成しません。",
       "flow" : {
         "title" : "資産のデリゲートを解除",
@@ -3510,7 +3525,8 @@
             "title" : "バリデータ"
           },
           "amount" : {
-            "title" : "数量"
+            "title" : "数量",
+            "reserveWarning" : "今後ステーキングを無効化して引き出す際に必要となるネットワーク手数料として、ウォレットに少なくとも{{amount}}SOLを確保してください。"
           },
           "confirmation" : {
             "success" : {
@@ -3869,9 +3885,7 @@
       "region" : "地域",
       "regionDesc" : "地域を選択して日付や時間、通貨をアップデートする。",
       "stock" : "マーケットインジケーターの色分け",
-      "stockDesc" : "マーケットの上昇を緑色で表示したい場合は「ウエスタン」、赤色で表示したい場合は「イースタン」を選択してください。",
-      "carouselVisibility" : "カルーセルの表示／非表示",
-      "carouselVisibilityDesc" : "ポートフォリオ上でカルーセルの表示を有効にします"
+      "stockDesc" : "マーケットの上昇を緑色で表示したい場合は「ウエスタン」、赤色で表示したい場合は「イースタン」を選択してください。"
     },
     "developer" : {
       "search" : "検索",
@@ -4085,7 +4099,7 @@
     "accounts" : {
       "hideEmptyTokens" : {
         "title" : "未使用アカウントを非表示にする",
-        "desc" : "アカウントページで、残高がゼロのトークンアカウントを非表示にする。"
+        "desc" : "残高がゼロのトークンアカウントを非表示にする。"
       },
       "tokenBlacklist" : {
         "title" : "トークンを非表示",
@@ -4891,6 +4905,9 @@
       "claimReward" : "操作を完了するために、デバイスで確認してください。",
       "freeze" : "操作を完了するために、デバイスで確認してください。",
       "unfreeze" : "操作を完了するために、デバイスで確認してください。",
+      "withdrawExpireUnfreeze" : "操作を完了するために、デバイスで確認してください。",
+      "unDelegateResource" : "操作を完了するために、デバイスで確認してください。",
+      "legacyUnfreeze" : "操作を完了するために、デバイスで確認してください。",
       "vote" : "操作を完了するために、デバイスで確認してください。",
       "delegate" : "操作を完了するために、デバイスで確認してください。",
       "undelegate" : "操作を完了するために、デバイスで確認してください。",
@@ -5192,15 +5209,16 @@
     },
     "FirmwareNotRecognized" : {
       "title" : "プロバイダーが無効です",
-      "description" : "「My Ledgerプロバイダー」の設定を変更する必要があります。変更するには、Ledger Live の「設定」を開き、「試験的機能」を選択して、別のプロバイダーを選択します。"
+      "description" : "「My Ledgerプロバイダー」の設定を変更する必要があります。変更するには、Ledger Live の「設定」を開き、「試験的機能」を選択して、別のプロバイダーを選択します。",
+      "goToSettingsCTA" : "設定を開く"
     },
     "HardResetFail" : {
       "title" : "リセットできませんでした。",
       "description" : "問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにお問い合わせください。"
     },
     "LanguageInstallRefusedOnDevice" : {
-      "title" : "言語のインストールがデバイス上で拒否されました",
-      "description" : "もう一度お試しください。問題が解決しない場合は、以下のボタンを使ってログを保存し、Ledgerサポートに提出してください。"
+      "title" : "デバイスで言語の復元が\nキャンセルされました",
+      "description" : "これが間違いである場合は、今すぐ再試行してください。"
     },
     "RestoreLanguageInstallRefusedOnDevice" : {
       "title" : "Ledger Staxで言語の復元がキャンセルされました",
@@ -5321,7 +5339,7 @@
       "title" : "送付先アドレスが無効です。少なくとも{{minimalAmount}}以上を送付して有効化してください。"
     },
     "NotEnoughGas" : {
-      "title" : "親アカウントで、ネットワーク手数料用の残高が不足しています"
+      "title" : "{{cryptoName}}ネットワークを使用しているため、スワップするにはネットワーク手数料{{fees}}{{ticker}}が必要です。<link0>{{ticker}}を購入する</link0>"
     },
     "NotEnoughGasSwap" : {
       "title" : "{{cryptoName}}ネットワークを使用しているため、スワップするにはネットワーク手数料{{fees}}{{ticker}}が必要です。<link0>{{ticker}}を購入する</link0>"
@@ -5405,8 +5423,8 @@
       "title" : "My Ledgerがデバイスで拒否されました"
     },
     "UserRefusedFirmwareUpdate" : {
-      "title" : "デバイス上でアップデートがキャンセルされました",
-      "description" : "デバイスでOSアップデートのインストールが拒否されました。誤った操作である場合は、アップデートを再開してください。"
+      "title" : "デバイスでOSアップデートのインストールが\nキャンセルされました",
+      "description" : "誤った操作である場合は、アップデートを再開してください。"
     },
     "UserRefusedOnDevice" : {
       "title" : "アクションが拒否されました。",
@@ -5561,8 +5579,7 @@
       "description" : "最新版のBitcoinアプリとEthereumアプリを、最初にインストールしてください。"
     },
     "UserRefusedDeviceNameChange" : {
-      "title" : "デバイス上で名前の変更がキャンセルされました。",
-      "description" : "もう一度やり直して、デバイスの名前を変更してください。"
+      "title" : "デバイスで名前の変更がキャンセルされました"
     },
     "SyncError" : {
       "title" : "同期エラー",
@@ -5576,7 +5593,7 @@
       "title" : "凍結解除する資産がありません。",
       "description" : "Energy(エネルギー)に連携している凍結解除アカウントがありません。"
     },
-    "TronUnfreezeNotExpired" : {
+    "TronLegacyUnfreezeNotExpired" : {
       "title" : "凍結解除はまだ利用できません。",
       "description" : "前回の凍結から3日後にご利用ください。"
     },
@@ -5613,6 +5630,16 @@
     },
     "TronNotEnoughEnergy" : {
       "title" : "エネルギーが必要額を満たしていません。手数料には最大50TRXが必要となります。"
+    },
+    "TronNoUnfrozenResource" : {
+      "title" : "凍結解除された引き出し可能なリソースはありません"
+    },
+    "TronInvalidUnDelegateResourceAmount" : {
+      "title" : "デリゲートされたリソースが不足しています"
+    },
+    "TronUnfreezeNotExpired" : {
+      "title" : "リソースはまだ凍結解除されていません",
+      "description" : "出金するには{{time}}まで待つ必要があります"
     },
     "PairingFailed" : {
       "title" : "ペアリングに失敗しました",
@@ -5812,12 +5839,12 @@
       "description" : "別の画像でもう一度お試しください"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "Ledger Staxでロック画面がキャンセルされました",
-      "description" : "この画像が正しくない場合は、別の画像で再度お試しいただけます。"
+      "title" : "Ledger Staxでロック画面画像のインストールが\nキャンセルされました",
+      "description" : "これが間違いである場合は、今すぐ再試行してください。"
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "Ledger Staxでロック画面がキャンセルされました",
-      "description" : "この画像が正しくない場合は、別の画像で再度お試しいただけます。"
+      "title" : "Ledger Staxでロック画面画像のインストールが\nキャンセルされました",
+      "description" : "これが間違いである場合は、今すぐ再試行してください。"
     },
     "ImageDoesNotExistOnDevice" : {
       "title" : "お持ちのLedger Staxには削除するロック画面の画像がありません",
@@ -5861,11 +5888,9 @@
       "descriptionWithProductName" : "{{ productName }}のロックを解除して、再度お試しください。"
     },
     "DeviceNotOnboardedError" : {
-      "title" : "お使いのデバイスはまだ使用できません",
-      "titleWithProductName" : "{{ productName }}はまだ使用準備ができていません",
-      "description" : "最初にデバイスをセットアップする必要があります。\nセットアッププロセスをご案内します。",
-      "descriptionWithProductName" : "最初に{{ productName }}をセットアップする必要があります。\nセットアッププロセスをご案内します。",
-      "goToOnboardingButton" : "デバイスをセットアップ",
+      "title" : "Ledgerが設定されていません",
+      "description" : "セットアップして使用を開始してください。セットアッププロセスをご案内します。",
+      "goToOnboardingButton" : "Ledgerをセットアップ",
       "goToOnboardingButtonWithProductName" : "{{ productName }}をセットアップする"
     },
     "EtherscanAPIError" : {
@@ -5878,6 +5903,9 @@
     "FailedToRetrieveFirmwareUpdateInfo" : {
       "title" : "OSアップデートチェックに失敗しました",
       "description" : "問題が発生しました。再試行するか、疑わしい場合はLedgerサポートにお問い合わせください。"
+    },
+    "TezosUnrevealedAccount" : {
+      "title" : "スワップ利用不可：Tezosアカウントで最初の送付/デリゲートを行うか、ペアを変更する必要があります。"
     }
   },
   "cryptoOrg" : {
@@ -5939,13 +5967,13 @@
       "transfer" : {
         "stepLabel" : "読み込む",
         "useAnotherPicture" : "別の写真をアップロード",
-        "allowPreview" : "「Load picture（画像を読み込む）」をタップしてロック画面をカスタマイズ",
-        "allowConfirmPreview" : "{{productName}}でロック画面の画像の復元を許可する",
-        "loadingPicture" : "読み込み中...",
+        "allowPreview" : "「Load picture（画像を読み込む）」をタップして\nロック画面画像をカスタマイズする",
+        "allowConfirmPreview" : "「Load picture（画像を読み込む）」をタップして\nロック画面画像を復元する",
+        "loadingPicture" : "インストール中...",
         "voila" : "これで完了です！",
         "imageLoaded" : "{{productName}}に画像が読み込まれました",
         "confirmPicture" : "気に入りましたか？\n",
-        "confirmRestorePicture" : "ロック画面の画像の復元を確定する",
+        "confirmRestorePicture" : "「Keep（保持）」をタップすると\nロック画面画像が確定されます",
         "doThisLater" : "後で"
       }
     },

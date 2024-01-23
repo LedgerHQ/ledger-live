@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { StepProps } from "../..";
+import { StepProps } from "../../types";
 import { idsToLanguage, Language as DeviceLanguages, languageIds } from "@ledgerhq/types-live";
 import { Flex } from "@ledgerhq/react-ui";
 import { useSelector } from "react-redux";

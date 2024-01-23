@@ -167,6 +167,9 @@
       "VOTE" : "투표 완료",
       "FREEZE" : "동결됨",
       "UNFREEZE" : "동결 해제",
+      "UNDELEGATE_RESOURCE" : "Undelegated",
+      "WITHDRAW_EXPIRE_UNFREEZE" : "Withdrawal",
+      "LEGACYUNFREEZE" : "Unfrozen",
       "REWARD" : "보상 수령됨",
       "FEES" : "수수료",
       "OPT_IN" : "참여",
@@ -1237,11 +1240,12 @@
         "firmwareUpdate" : {
           "title" : {
             "active" : "OS 업데이트 확인",
-            "completed" : "사용 중인 {{modelName}} OS가 최신 상태입니다",
+            "completed" : "사용 중인 {{modelName}} OS가 최신 상태입니다. ",
             "updateAvailable" : "OS 업데이트 {{firmwareVersion}} 사용 가능"
           },
           "subtitle" : {
             "active" : "이를 통해 사용 중인 {{modelName}} 운영 시스템이 최신 상태인지 확인합니다.",
+            "completed" : "{{modelName}}에서 앱 복구를 시작하려면, 아래의 “앱 복구” 버튼을 선택하세요.",
             "updateAvailable" : "업데이트하여 최적의 보안과 최신 기능에 대한 액세스를 누리세요."
           },
           "viewUpdateCTA" : "{{modelName}} OS 업데이트",
@@ -1752,13 +1756,13 @@
   "DeviceAction" : {
     "allowAppPermission" : "내 장치에서 {{wording}} 앱 열기",
     "allowAppPermissionSubtitleToken" : "나의 {{token}} 토큰 관리",
-    "allowManagerPermission" : "장치에서 Ledger 관리자를 허용하세요",
+    "allowManagerPermission" : "{{productName}}에서 Ledger 관리자를 허용하세요",
     "allowRenaming" : "장치에서 이름 변경을 허용하세요",
     "loading" : "로딩...",
     "connectAndUnlockDevice" : "장치를 연결하고 잠금 해제하세요",
     "unlockDevice" : "장치를 잠금 해제하세요",
-    "unlockDeviceAfterFirmwareUpdateStep1" : "{{productName}}에 설치를 완료할 때까지 기다려주세요",
-    "unlockDeviceAfterFirmwareUpdateStep2" : "{{productName}}의 잠금을 해제해 설치를 완료하세요",
+    "unlockDeviceAfterFirmwareUpdateStep1" : "{{productName}}에 설치를 완료할 때까지 기다려주세요.",
+    "unlockDeviceAfterFirmwareUpdateStep2" : "PIN을 통해 {{productName}}의 잠금을 해제하고 업데이트를 완료하세요.",
     "quitApp" : "장치에서 앱을 중단하세요",
     "appNotInstalledTitle" : "필수 앱 없음",
     "appNotInstalledTitle_plural" : "필수 앱 없음",
@@ -1931,10 +1935,12 @@
       "latest" : "펌웨어 버전 {{version}}을 사용할 수 있습니다.",
       "contactSupport" : "지원 부서 연락",
       "deprecated" : "장치 펌웨어가 오래되어 업데이트가 불가능합니다. Leger 지원에 연락하여 교체를 요청하세요.",
-      "prepareSeed" : "만약을 대비하여 24개의 단어 복구 문구를 복구 시트에 반드시 기록해 두고 언제든 사용 가능한 상태로 준비해 두세요.",
+      "prepareSeed" : "만약을 대비하여 24개의 단어 복구 문구를 복구 시트에 반드시 기록해 두고 언제든 사용할 수 있도록 준비해 두세요.",
       "disclaimerTitle" : "곧 <1>펌웨어 버전 {{version}}</1> 설치가 시작됩니다.",
-      "cancelUpdate" : "업데이트 취소",
-      "continueUpdate" : "업데이트 계속하기",
+      "cancelUpdate" : "OS 업데이트 취소",
+      "continueUpdate" : "OS 업데이트 계속",
+      "restartUpdate" : "OS 업데이트 재시작",
+      "skipRestore" : "복구 건너뛰기",
       "cancelUpdateWarning" : "지금 업데이트를 취소하면 설정 및 앱이 제대로 복구되지 않을 수 있습니다.",
       "updateInProgress" : "OS 업데이트 진행 중"
     },
@@ -1948,6 +1954,7 @@
         "install" : "업데이트 설치",
         "installDone" : "업데이트\n설치 완료",
         "restore" : "설정 복원",
+        "restoreDone" : "설정이 복원되었습니다",
         "apps" : "앱 복원",
         "updateMCU" : "펌웨어 업데이트",
         "updating" : "펌웨어 업데이트",
@@ -1974,9 +1981,10 @@
       "mcuBlueFirst" : "측면 버튼을 10초간 길게 눌러 장치를 끄세요. 버튼에서 손을 떼세요.",
       "mcuBlueSecond" : "부팅 옵션이 표시될 때까지 버튼을 5초 이상 누르세요. Bootloader 모드 탭",
       "successTitle" : "사용 중인 {{deviceName}} OS가 최신 상태입니다.",
-      "sucessCTAApps" : "앱 재설치",
-      "SuccessCTANoApps" : "앱 설치하기",
-      "cancelReinstallCTA" : "업데이트 설치",
+      "successTitleApps" : "사용 중인 {{deviceName}} OS가\n최신 상태입니다. 마지막으로...",
+      "successSubtitleApps" : "Ledger Stax에서 앱 복구를 시작하려면, 아래\n\"앱 복구\" 버튼을 선택하세요.",
+      "sucessCTAApps" : "앱 복원",
+      "SuccessCTANoApps" : "완료",
       "resetSteps" : {
         "first" : "1. 장치 리셋",
         "connect" : "USB 케이블을 이용해서 컴퓨터에 {{deviceName}}(을)를 연결하세요.",
@@ -2027,7 +2035,7 @@
         "energyDescription" : "스마트 계약을 시행하려면 에너지 포인트가 필요합니다. 스마트 계약을 실행하지 않으면, 에너지 보상을 선택할 필요가 없습니다.",
         "amountLabel" : "동결 금액",
         "available" : "이용 가능: {{amountAvailable}}",
-        "info" : "동결 자산은 3일간 전송할 수 없습니다."
+        "info" : "Frozen assets can be unfrozen immediately and accessible after the 14-day unfreezing period."
       },
       "connectDevice" : {
         "title" : "장치"
@@ -2288,6 +2296,13 @@
     "confirmation" : "Ledger Stax에서 이미지 삭제 확인",
     "success" : "잠금 화면 사진이 삭제됨"
   },
+  "changeCustomLockscreen" : {
+    "cta" : "변경"
+  },
+  "removeCurrentPicture" : {
+    "cta" : "현재 사진 삭제"
+  },
+  "appsInstallingDisabledTooltip" : "앱 설치가 완료될 때까지 비활성화",
   "deviceLocalization" : {
     "language" : "언어",
     "deviceLanguage" : "장치 언어 변경",
@@ -2302,7 +2317,7 @@
       "title" : "{{deviceName}} 장치 언어를 {{language}}로 설정하시겠습니까?",
       "description" : "이제 {{deviceName}}에서 {{language}}가 지원됩니다. 지금 장치 언어를 설정하거나 My Ledger에서 언제든지 변경하세요."
     },
-    "allowLanguageInstallation" : "언어 설치 허용",
+    "allowLanguageInstallation" : "언어를 복구하려면\n“허용”을 탭하세요",
     "languageInstalled" : "{{language}}로 언어가 변경되었습니다",
     "installingLanguage" : "언어 설치 중",
     "languages" : {
@@ -2612,7 +2627,7 @@
             "description" : "TRX를 동결하여 리워드를 받으면서 자산에 대한 보안과 권한도 계속 유지할 수 있습니다.",
             "bullet" : {
               "delegate" : "위임된 자산의 소유권은 사용자에게 있습니다.",
-              "access" : "3일 후 자산을 동결 해제할 수 있습니다.",
+              "access" : "Frozen assets can be unfrozen immediately and will become accessible after the 14-day unfreezing period.",
               "ledger" : "Ledger 장치로 자산을 동결하고 안전하게 투표하세요."
             },
             "help" : "투표는 어떤 원리인가요?",
@@ -3057,7 +3072,7 @@
         "steps" : {
           "starter" : {
             "title" : "재위임",
-            "description" : "재위임 기능을 이용하여 손쉽게 검증인을 변경하세요. 하지만 재위임 시 21일 타임 락이 적용되기 때문에, 다시 변경을 원하는 경우 21일을 기다려야 합니다.",
+            "description" : "재위임 기능을 이용해 손쉽게 검증인을 변경하세요. 하지만 재위임 시 {{ numberOfDays }}일 타임 락이 적용되기 때문에, 다시 변경을 원하는 경우 기다려야 합니다.",
             "warning" : "검증인을 현명하게 선택하세요. 검증인이 부적절한 행동을 하는 경우 위임된 자산의 일부가 영구 손실될 수 있습니다. 최대 <0>7개의 대기 중 재위임</0>이 있을 수 있습니다.",
             "howDelegationWorks" : "위임은 어떤 원리인가요?"
           },
@@ -3086,7 +3101,7 @@
     },
     "undelegation" : {
       "header" : "위임 해제",
-      "headerTooltip" : "21일 타임 락이 끝나면 이용할 수 있습니다",
+      "headerTooltip" : "{{numberOfDays}}일 타임 락이 끝나면 이용할 수 있습니다",
       "inactiveTooltip" : "위임되지 않은 금액은 보상을 생성하지 않습니다",
       "flow" : {
         "title" : "위임 해제 자산",
@@ -3510,7 +3525,8 @@
             "title" : "검증인"
           },
           "amount" : {
-            "title" : "금액"
+            "title" : "금액",
+            "reserveWarning" : "지갑에 {{amount}}이상의 SOL을 확보하여 지분을 비활성화하고 인출하는 데 필요한 네트워크 수수료를 충당하세요."
           },
           "confirmation" : {
             "success" : {
@@ -3869,9 +3885,7 @@
       "region" : "지역",
       "regionDesc" : "날짜, 시간 및 통화 형식을 업데이트하려면 지역을 선택해 주세요.",
       "stock" : "지역 시장 지표",
-      "stockDesc" : "서부를 선택하면 파란색, 동부를 선택하면 빨간색으로 시장 증가율이 표시됩니다.",
-      "carouselVisibility" : "슬라이드 활성화",
-      "carouselVisibilityDesc" : "포트폴리오 화면에서 슬라이드 기능을 활성화합니다."
+      "stockDesc" : "서부를 선택하면 파란색, 동부를 선택하면 빨간색으로 시장 증가율이 표시됩니다."
     },
     "developer" : {
       "search" : "검색",
@@ -4085,7 +4099,7 @@
     "accounts" : {
       "hideEmptyTokens" : {
         "title" : "빈 토큰 계정 숨기기",
-        "desc" : "계정 페이지에서 잔금이 0인 토큰 계정을 숨기세요."
+        "desc" : "잔액이 0인 토큰 계정을 숨기기."
       },
       "tokenBlacklist" : {
         "title" : "숨겨진 토큰",
@@ -4891,6 +4905,9 @@
       "claimReward" : "거래를 장치에서 확인하고 완료하세요",
       "freeze" : "거래를 장치에서 확인하고 완료하세요",
       "unfreeze" : "거래를 장치에서 확인하고 완료하세요",
+      "withdrawExpireUnfreeze" : "Please confirm on your device to finalize the operation",
+      "unDelegateResource" : "Please confirm on your device to finalize the operation",
+      "legacyUnfreeze" : "Please confirm on your device to finalize the operation",
       "vote" : "거래를 장치에서 확인하고 완료하세요",
       "delegate" : "거래를 장치에서 확인하고 완료하세요",
       "undelegate" : "거래를 장치에서 확인하고 완료하세요",
@@ -5192,15 +5209,16 @@
     },
     "FirmwareNotRecognized" : {
       "title" : "유효하지 않은 공급자",
-      "description" : "\"My Ledger 공급자\" 설정을 변경해야 합니다. 이를 변경하려면 Ledger Live \"설정\"을 열고 \"실험 기능\"을 선택한 다음 다른 공급자를 선택합니다."
+      "description" : "\"My Ledger 공급자\" 설정을 변경해야 합니다. 이를 변경하려면 Ledger Live \"설정\"을 열고 \"실험 기능\"을 선택한 다음 다른 공급자를 선택합니다.",
+      "goToSettingsCTA" : "설정으로 이동"
     },
     "HardResetFail" : {
       "title" : "죄송하지만 리셋할 수 없습니다",
       "description" : "문제가 지속되면 다시 시도하거나 Ledger 지원 부서에 연락하세요."
     },
     "LanguageInstallRefusedOnDevice" : {
-      "title" : "장치에서 언어 설치가 거부되었습니다",
-      "description" : "다시 시도해 주세요. 문제가 지속될 경우, 아래 버튼을 이용해 로그를 저장하고 Ledger 지원 부서로 보내주세요."
+      "title" : "장치에서 언어 복구가\n취소되었습니다",
+      "description" : "실수인 경우 지금 다시 시도하세요."
     },
     "RestoreLanguageInstallRefusedOnDevice" : {
       "title" : "Ledger Stax에서 언어 복구가 취소되었습니다.",
@@ -5321,7 +5339,7 @@
       "title" : "수취인 주소가 비활성화되어 있습니다. 활성화하려면 최소 {{minimalAmount}}를 보내주세요"
     },
     "NotEnoughGas" : {
-      "title" : "상위 계정 잔액이 네트워크 수수료에 충분하지 않습니다"
+      "title" : "{{cryptoName}} 네트워크에서 스왑하려면 네트워크 수수료 명목으로 {{fees}} {{ticker}}가 필요합니다. <link0>{{ticker}} 구매</link0>"
     },
     "NotEnoughGasSwap" : {
       "title" : "{{cryptoName}} 네트워크에서 스왑하려면 네트워크 수수료 명목으로 {{fees}} {{ticker}}가 필요합니다. <link0>{{ticker}} 구매</link0>"
@@ -5405,8 +5423,8 @@
       "title" : "장치에서 내 Ledger가 거부됨"
     },
     "UserRefusedFirmwareUpdate" : {
-      "title" : "장치의 업데이트가 취소되었습니다",
-      "description" : "장치에서 OS 업데이트 설치가 거부되었습니다. 실수로 거절한 경우, 업데이트를 다시 시작하세요."
+      "title" : "장치에서 OS 업데이트 설치가\n취소되었습니다",
+      "description" : "실수로 거절한 경우, 업데이트를 다시 시작하세요."
     },
     "UserRefusedOnDevice" : {
       "title" : "거부된 조치",
@@ -5561,8 +5579,7 @@
       "description" : "최신 비트코인 앱과 이더리움 앱을 우선 설치하세요."
     },
     "UserRefusedDeviceNameChange" : {
-      "title" : "장치에서 이름 변경이 취소되었습니다",
-      "description" : "다시 시도하고 장치에서 이름 변경을 허용하세요"
+      "title" : "장치에서 이름 변경이 취소됨"
     },
     "SyncError" : {
       "title" : "동기화 오류",
@@ -5576,9 +5593,9 @@
       "title" : "동결 해제할 자산 없음",
       "description" : "동결 해제할 에너지와 관련 자산이 없습니다"
     },
-    "TronUnfreezeNotExpired" : {
-      "title" : "아직 동결 해제할 수 없습니다",
-      "description" : "최종 동결 거래 후 3일을 기다려야 합니다"
+    "TronLegacyUnfreezeNotExpired" : {
+      "title" : "Unfreeze is not available yet",
+      "description" : "You need to wait 3 days after your last Freeze operation"
     },
     "TronVoteRequired" : {
       "title" : "최소 하나의 득표수가 필요합니다."
@@ -5613,6 +5630,16 @@
     },
     "TronNotEnoughEnergy" : {
       "title" : "에너지가 필요한 것보다 낮습니다. 수수료로 최대 50 TRX를 지불할 수 있습니다."
+    },
+    "TronNoUnfrozenResource" : {
+      "title" : "No unfrozen resources to withdraw"
+    },
+    "TronInvalidUnDelegateResourceAmount" : {
+      "title" : "Not enough delegated resources"
+    },
+    "TronUnfreezeNotExpired" : {
+      "title" : "Resources not unfrozen yet",
+      "description" : "You need to wait until {{time}} to withdraw"
     },
     "PairingFailed" : {
       "title" : "페어링 실패",
@@ -5812,12 +5839,12 @@
       "description" : "다른 이미지로 다시 시도하세요"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "Ledger Stax에서 잠금 화면이 취소되었습니다.",
-      "description" : "적합한 이미지가 아니라면 다른 이미지로 다시 시도해볼 수 있습니다."
+      "title" : "Ledger Stax에서 잠금 화면 사진 설치가\n취소되었습니다",
+      "description" : "실수였다면 지금 바로 다시 시도하세요."
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "Ledger Stax에서 잠금 화면이 취소되었습니다.",
-      "description" : "적합한 이미지가 아니라면 다른 이미지로 다시 시도해볼 수 있습니다."
+      "title" : "Ledger Stax에서 잠금 화면 사진 설치가\n취소되었습니다",
+      "description" : "실수였다면 지금 바로 다시 시도하세요."
     },
     "ImageDoesNotExistOnDevice" : {
       "title" : "Ledger Stax에 제거할 잠금 화면 이미지가 없습니다",
@@ -5861,11 +5888,9 @@
       "descriptionWithProductName" : "{{ productName }}의 잠금을 해제하고 다시 시도하세요."
     },
     "DeviceNotOnboardedError" : {
-      "title" : "귀하의 장치가 아직 사용될 준비가 되지 않았습니다",
-      "titleWithProductName" : "{{ productName }} 장치는 아직 사용 준비가 되지 않았습니다.",
-      "description" : "먼저 장치 설정이 필요합니다.\n설정 절차를 안내해드리겠습니다.",
-      "descriptionWithProductName" : "먼저 {{ productName }} 장치 설정이 필요합니다.\n설정 절차를 안내해드리겠습니다.",
-      "goToOnboardingButton" : "내 장치 설정",
+      "title" : "Ledger 설정이 완료되지 않았습니다",
+      "description" : "장치를 사용하려면 먼저 설정이 필요합니다. 설정 절차를 안내해드리겠습니다.",
+      "goToOnboardingButton" : "내 Ledger 설정",
       "goToOnboardingButtonWithProductName" : "내 {{ productName }} 설정"
     },
     "EtherscanAPIError" : {
@@ -5878,6 +5903,9 @@
     "FailedToRetrieveFirmwareUpdateInfo" : {
       "title" : "OS 업데이트 확인 실패",
       "description" : "문제가 발생했습니다. 확실하지 않을 경우 다시 시도하거나 Ledger 지원 부서에 연락하세요."
+    },
+    "TezosUnrevealedAccount" : {
+      "title" : "Swap unavailable: Initial send/delegate needed with Tezos account or change pair."
     }
   },
   "cryptoOrg" : {
@@ -5939,13 +5967,13 @@
       "transfer" : {
         "stepLabel" : "로드",
         "useAnotherPicture" : "다른 사진을 업로드하세요",
-        "allowPreview" : "잠금 화면을 사용자 정의하려면 \"사진 로드\"를 탭하세요.",
-        "allowConfirmPreview" : "{{productName}}에서 잠금 화면 이미지 복원 허용",
-        "loadingPicture" : "로딩 중...",
+        "allowPreview" : "잠금 화면 사진을 사용자 정의하려면\n\"사진 로드\"를 탭하세요",
+        "allowConfirmPreview" : "잠금 화면 사진을 복구하려면\n\"사진 로드\"를 탭하세요",
+        "loadingPicture" : "설치 중...",
         "voila" : "짜잔!",
         "imageLoaded" : "{{productName}}에서 로드한 이미지",
         "confirmPicture" : "마음에 드시나요?\n그러면 저장하세요!",
-        "confirmRestorePicture" : "잠금 화면 이미지 복원 확인",
+        "confirmRestorePicture" : "잠금 화면 사진 설정을 확인하려면\n'유지'를 탭하세요",
         "doThisLater" : "다음에 결정하기"
       }
     },

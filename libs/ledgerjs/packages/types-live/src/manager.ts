@@ -213,7 +213,6 @@ export type Application = {
   supportURL: string | null | undefined;
   contactURL: string | null | undefined;
   sourceURL: string | null | undefined;
-  compatibleWalletsJSON: string | null | undefined;
 };
 
 export type ApplicationV2 = {
@@ -230,7 +229,6 @@ export type ApplicationV2 = {
   supportURL: string;
   contactURL: string;
   sourceURL: string;
-  compatibleWallets: string;
   hash: string;
   perso: string;
   parentName: string | null;
@@ -269,10 +267,6 @@ export type App = {
   supportURL: string | null | undefined;
   contactURL: string | null | undefined;
   sourceURL: string | null | undefined;
-  compatibleWallets: Array<{
-    name: string;
-    url: string | null | undefined;
-  }>;
   hash: string;
   perso: string;
   firmware: string;

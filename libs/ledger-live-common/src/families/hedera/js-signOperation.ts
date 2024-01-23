@@ -66,7 +66,7 @@ async function buildOptimisticOperation({
     hash: "",
     type: "OUT",
     value: transaction.amount,
-    fee: await getEstimatedFees(),
+    fee: await getEstimatedFees(account),
     blockHash: null,
     blockHeight: null,
     senders: [account.freshAddress.toString()],

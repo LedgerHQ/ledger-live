@@ -167,6 +167,9 @@
       "VOTE" : "Abgestimmt",
       "FREEZE" : "Eingefroren",
       "UNFREEZE" : "Einfrieren aufgehoben",
+      "UNDELEGATE_RESOURCE" : "Nicht delegiert",
+      "WITHDRAW_EXPIRE_UNFREEZE" : "Abhebung",
+      "LEGACYUNFREEZE" : "Einfrieren aufgehoben",
       "REWARD" : "Beanspruchte Prämie",
       "FEES" : "Gebühren",
       "OPT_IN" : "Zustimmen",
@@ -1237,11 +1240,12 @@
         "firmwareUpdate" : {
           "title" : {
             "active" : "Prüfung auf Betriebssystem-Update",
-            "completed" : "Das Betriebssystem Ihres {{modelName}}-Geräts ist auf dem neuesten Stand",
+            "completed" : "Das Betriebssystem Ihres {{modelName}}-Geräts ist auf dem neuesten Stand.",
             "updateAvailable" : "Betriebssystem-Update {{firmwareVersion}} verfügbar"
           },
           "subtitle" : {
             "active" : "Hiermit wird geprüft, ob das Betriebssystem Ihres {{modelName}}-Geräts auf dem neuesten Stand ist.",
+            "completed" : "Um die App-Wiederherstellung auf Ihrem {{modelName}}-Gerät zu starten, wählen Sie unten den Button „Restore apps“ (Apps wiederherstellen).",
             "updateAvailable" : "Für optimale Sicherheit und Zugriff auf die neuesten Funktionen führen Sie bitte ein Update durch."
           },
           "viewUpdateCTA" : "Betriebssystem-Update für {{modelName}}",
@@ -1752,13 +1756,13 @@
   "DeviceAction" : {
     "allowAppPermission" : "Öffnen Sie die {{wording}} App auf Ihrem Gerät",
     "allowAppPermissionSubtitleToken" : "zum Verwalten Ihrer {{token}}-Tokens",
-    "allowManagerPermission" : "Ledger Manager auf Ihrem Gerät zulassen",
+    "allowManagerPermission" : "Ledger Manager auf Ihrem {{productName}}-Gerät zulassen",
     "allowRenaming" : "Umbenennen auf Ihrem Gerät zulassen",
     "loading" : "Lade Daten...",
     "connectAndUnlockDevice" : "Verbinden und entsperren Sie Ihr Gerät",
     "unlockDevice" : "Entsperren Sie Ihr Gerät",
-    "unlockDeviceAfterFirmwareUpdateStep1" : "Warten Sie, bis die Installation auf Ihrem {{productName}} abgeschlossen ist",
-    "unlockDeviceAfterFirmwareUpdateStep2" : "Geben Sie das {{productName}} frei, um die Installation abzuschließen",
+    "unlockDeviceAfterFirmwareUpdateStep1" : "Warten Sie, bis die Installation auf Ihrem {{productName}}-Gerät abgeschlossen ist.",
+    "unlockDeviceAfterFirmwareUpdateStep2" : "Entsperren Sie Ihr {{productName}}-Gerät mit Ihrer PIN, um das Update abzuschließen.",
     "quitApp" : "Beenden Sie die Anwendung auf Ihrem Gerät",
     "appNotInstalledTitle" : "Fehlende, erforderliche App",
     "appNotInstalledTitle_plural" : "Fehlende, erforderliche Apps",
@@ -1933,8 +1937,10 @@
       "deprecated" : "Geräte-Firmware-Version zu alt, um aktualisiert zu werden. Kontaktieren Sie den Ledger-Support für einen Ersatz.",
       "prepareSeed" : "Vergewissern Sie sich vorsichtshalber, dass Ihre 24-Wort-Wiederherstellungsphrase auf dem Wiederherstellungszettel notiert ist und Ihnen vorliegt.",
       "disclaimerTitle" : "Sie sind dabei, die <1>Firmware-Version {{version}}</1> zu installieren.",
-      "cancelUpdate" : "Update abbrechen",
-      "continueUpdate" : "Update fortsetzen",
+      "cancelUpdate" : "Betriebssystem-Update abbrechen",
+      "continueUpdate" : "Betriebssystem-Update fortsetzen",
+      "restartUpdate" : "BS-Update erneut starten",
+      "skipRestore" : "Wiederherstellung überspringen",
       "cancelUpdateWarning" : "Wenn Sie das Update jetzt abbrechen, werden möglicherweise nicht alle Einstellungen und Apps korrekt wiederhergestellt.",
       "updateInProgress" : "Betriebssystem-Update in Bearbeitung"
     },
@@ -1948,6 +1954,7 @@
         "install" : "Update installieren",
         "installDone" : "Update\ninstalliert",
         "restore" : "Einstellungen wiederherstellen",
+        "restoreDone" : "Einstellungen wiederhergestellt",
         "apps" : "Apps wiederherstellen",
         "updateMCU" : "Firmware-Update",
         "updating" : "Firmware-Update",
@@ -1974,9 +1981,10 @@
       "mcuBlueFirst" : "Halten Sie die seitliche Taste 10 Sekunden lang gedrückt, um das Gerät auszuschalten. Lassen Sie die Taste danach los.",
       "mcuBlueSecond" : "Halten Sie die Taste für mindestens 5 Sekunden gedrückt, bis die Boot-Optionen angezeigt werden. Tippen Sie auf Bootloader-Modus",
       "successTitle" : "Das Betriebssystem Ihres {{deviceName}}-Geräts ist auf dem neuesten Stand.",
-      "sucessCTAApps" : "Apps neu installieren",
-      "SuccessCTANoApps" : "Installieren Sie Apps",
-      "cancelReinstallCTA" : "Update installieren",
+      "successTitleApps" : "Das Betriebssystem Ihres {{deviceName}}-Geräts ist\nauf dem neuesten Stand. Noch eine letzte Sache ...",
+      "successSubtitleApps" : "Um die App-Wiederherstellung auf Ihrem Ledger Stax zu starten, wählen Sie\nunten den Button „Restore apps“ (Apps wiederherstellen).",
+      "sucessCTAApps" : "Apps wiederherstellen",
+      "SuccessCTANoApps" : "Beenden",
       "resetSteps" : {
         "first" : "1. Ihr Gerät zurücksetzen",
         "connect" : "Schließen Sie das {{deviceName}} über das USB-Kabel an Ihren Computer an.",
@@ -2027,7 +2035,7 @@
         "energyDescription" : "Energiepunkte werden benötigt, um Smart Contracts auszuführen. Wenn Sie keine Smart Contracts ausführen, ist es nicht nötig, Prämien in Energie auszuwählen.",
         "amountLabel" : "Betrag zum Sperren",
         "available" : "Verfügbar: {{amountAvailable}}",
-        "info" : "Gesperrte Vermögenswerte können erst nach 3 Tagen versendet werden."
+        "info" : "Sie können eingefrorene Vermögenswerte gleich entsperren, sie sind jedoch erst nach einer 14-tägigen Wartezeit zugänglich."
       },
       "connectDevice" : {
         "title" : "Gerät"
@@ -2288,6 +2296,13 @@
     "confirmation" : "Bestätigen Sie die Entfernung des Bildes auf Ihrem Ledger Stax",
     "success" : "Bild für Sperrbildschirm entfernt"
   },
+  "changeCustomLockscreen" : {
+    "cta" : "Ändern"
+  },
+  "removeCurrentPicture" : {
+    "cta" : "Aktuelles Bild entfernen"
+  },
+  "appsInstallingDisabledTooltip" : "Deaktiviert, bis die Installation der Apps vollständig abgeschlossen ist",
   "deviceLocalization" : {
     "language" : "Sprache",
     "deviceLanguage" : "Gerätesprache wechseln",
@@ -2302,7 +2317,7 @@
       "title" : "Ihr {{deviceName}} auf {{language}} einstellen?",
       "description" : "{{language}} ist jetzt für {{deviceName}} verfügbar. Sie können die Sprache Ihres Geräts jetzt einstellen oder jederzeit über My Ledger ändern."
     },
-    "allowLanguageInstallation" : "Sprachinstallation zulassen",
+    "allowLanguageInstallation" : "Tippen Sie auf „Allow“ (Erlauben), um\ndie Sprache zu installieren",
     "languageInstalled" : "Sprache umgestellt auf {{language}}",
     "installingLanguage" : "Sprache installieren",
     "languages" : {
@@ -2612,7 +2627,7 @@
             "description" : "Sperren Sie TRX, um Prämien zu verdienen und behalten Sie trotzdem die volle Sicherheit und Kontrolle über Ihr Vermögen.",
             "bullet" : {
               "delegate" : "Delegierte Vermögenswerte bleiben in Ihrem Besitz.",
-              "access" : "Sie können Ihre Vermögenswerte nach 3 Tagen wieder entsperren.",
+              "access" : "Sie können eingefrorene Vermögenswerte gleich entsperren, sie sind jedoch erst nach einer 14-tägigen Wartezeit zugänglich.",
               "ledger" : "Sicher sperren und abstimmen mit Ihrem Ledger-Gerät."
             },
             "help" : "Wie die Abstimmung funktioniert",
@@ -3057,7 +3072,7 @@
         "steps" : {
           "starter" : {
             "title" : "Erneute Delegierung",
-            "description" : "Verwenden Sie die erneute Delegierung, um einfach von einem Validator zu einem anderen zu wechseln. Wenn Sie es sich aber wieder anders überlegen, müssen Sie dann warten, weil die erneute Delegierung eine 21-tägige Zeitsperre auslöst.",
+            "description" : "Verwenden Sie die erneute Delegierung, um einfach von einem Validator zu einem anderen zu wechseln. Wenn Sie es sich jedoch noch einmal anders überlegen, müssen Sie warten, da die erneute Delegierung eine {{ numberOfDays }}-tägige Sperrzeit auslöst.",
             "warning" : "Wählen Sie Ihren Validator mit Bedacht: Ein Teil Ihrer delegierten Vermögenswerte kann unwiderruflich verloren gehen, wenn sich der Validator nicht angemessen verhält. Sie können maximal <0>7 ausstehende, erneute Delegierungen durchführen.",
             "howDelegationWorks" : "Wie funktioniert die Delegierung?"
           },
@@ -3086,7 +3101,7 @@
     },
     "undelegation" : {
       "header" : "Aufgehobene Delegierung(en)",
-      "headerTooltip" : "Verfügbar nach der 21-tägigen Zeitsperre",
+      "headerTooltip" : "Verfügbar nach der {{numberOfDays}}-tägigen Sperrzeit",
       "inactiveTooltip" : "Beträge mit aufgehobener Delegierung generieren keine Prämien.",
       "flow" : {
         "title" : "Vermögenswerte mit aufgehobener Delegierung",
@@ -3510,7 +3525,8 @@
             "title" : "Validator"
           },
           "amount" : {
-            "title" : "Betrag"
+            "title" : "Betrag",
+            "reserveWarning" : "Bitte stellen Sie sicher, dass Sie mindestens {{amount}} SOL in Ihrer Wallet haben, um zukünftige Netzwerkgebühren für die Deaktivierung und Auszahlung Ihres Stakes zu decken."
           },
           "confirmation" : {
             "success" : {
@@ -3869,9 +3885,7 @@
       "region" : "Region",
       "regionDesc" : "Wählen Sie Ihre Region, um Datums-, Zeit- und Währungsformate zu aktualisieren.",
       "stock" : "Regionaler Marktindikator",
-      "stockDesc" : "Wählen Sie Westlich, um Marktsteigerungen in Blau anzuzeigen, oder Östlich, um sie in Rot anzuzeigen.",
-      "carouselVisibility" : "Karussell-Sichtbarkeit",
-      "carouselVisibilityDesc" : "Aktivieren Sie die Sichtbarkeit des Karussells auf Portfolio"
+      "stockDesc" : "Wählen Sie Westlich, um Marktsteigerungen in Blau anzuzeigen, oder Östlich, um sie in Rot anzuzeigen."
     },
     "developer" : {
       "search" : "Suchen nach",
@@ -4085,7 +4099,7 @@
     "accounts" : {
       "hideEmptyTokens" : {
         "title" : "Leere Token-Konten ausblenden",
-        "desc" : "Token-Konten mit Nullsaldo auf der Seite Konten ausblenden."
+        "desc" : "Token-Konten mit Nullsaldo ausblenden."
       },
       "tokenBlacklist" : {
         "title" : "Ausgeblendete Token",
@@ -4891,6 +4905,9 @@
       "claimReward" : "Bitte bestätigen Sie auf Ihrem Gerät, um den Vorgang abzuschließen",
       "freeze" : "Bitte bestätigen Sie auf Ihrem Gerät, um den Vorgang abzuschließen",
       "unfreeze" : "Bitte bestätigen Sie auf Ihrem Gerät, um den Vorgang abzuschließen",
+      "withdrawExpireUnfreeze" : "Bitte bestätigen Sie auf Ihrem Gerät, um den Vorgang abzuschließen",
+      "unDelegateResource" : "Bitte bestätigen Sie auf Ihrem Gerät, um den Vorgang abzuschließen",
+      "legacyUnfreeze" : "Bitte bestätigen Sie auf Ihrem Gerät, um den Vorgang abzuschließen",
       "vote" : "Bitte bestätigen Sie auf Ihrem Gerät, um den Vorgang abzuschließen",
       "delegate" : "Bitte bestätigen Sie auf Ihrem Gerät, um den Vorgang abzuschließen",
       "undelegate" : "Bitte bestätigen Sie auf Ihrem Gerät, um den Vorgang abzuschließen",
@@ -5192,15 +5209,16 @@
     },
     "FirmwareNotRecognized" : {
       "title" : "Ungültiger Anbieter",
-      "description" : "Sie müssen die Einstellung „Mein Ledger-Anbieter“ ändern. Öffnen Sie dazu die Einstellungen in Ledger Live, navigieren Sie zu „Experimentelle Features“ und wählen Sie einen anderen Anbieter aus."
+      "description" : "Sie müssen die Einstellung „Mein Ledger-Anbieter“ ändern. Öffnen Sie dazu die Einstellungen in Ledger Live, navigieren Sie zu „Experimentelle Features“ und wählen Sie einen anderen Anbieter aus.",
+      "goToSettingsCTA" : "Gehen Sie zu Einstellungen"
     },
     "HardResetFail" : {
       "title" : "Entschuldigung, die Verbindung konnte nicht zurückgesetzt werden",
       "description" : "Bitte versuchen Sie es erneut oder wenden Sie sich an den Ledger Kundenservice, falls das Problem weiterhin besteht."
     },
     "LanguageInstallRefusedOnDevice" : {
-      "title" : "Sprachinstallation auf dem Gerät abgelehnt",
-      "description" : "Bitte versuchen Sie es erneut. Wenn das Problem weiterhin besteht, speichern Sie bitte Ihre Protokolle über die Schaltfläche unten und stellen Sie sie dem Ledger-Support zur Verfügung."
+      "title" : "Sprachwiederherstellung\nauf dem Gerät wurde abgebrochen",
+      "description" : "Im Falle eines Irrtums wiederholen Sie den Vorgang."
     },
     "RestoreLanguageInstallRefusedOnDevice" : {
       "title" : "Die Wiederherstellung der Sprache auf dem Ledger Stax wurde abgebrochen",
@@ -5321,7 +5339,7 @@
       "title" : "Die Adresse des Empfängers ist inaktiv. Senden Sie mindestens {{minimalAmount}}, um sie zu aktivieren"
     },
     "NotEnoughGas" : {
-      "title" : "Der übergeordnete Kontostand reicht für Netzwerkgebühren nicht aus"
+      "title" : "Für den Umtausch benötigen Sie {{fees}} {{ticker}} für Netzwerkgebühren, da Sie sich im {{cryptoName}}-Netzwerk befinden. <link0>{{ticker}} kaufen</link0>"
     },
     "NotEnoughGasSwap" : {
       "title" : "Für den Umtausch benötigen Sie {{fees}} {{ticker}} für Netzwerkgebühren, da Sie sich im {{cryptoName}}-Netzwerk befinden. <link0>{{ticker}} kaufen</link0>"
@@ -5405,8 +5423,8 @@
       "title" : "My Ledger auf Gerät nicht zulässig"
     },
     "UserRefusedFirmwareUpdate" : {
-      "title" : "Update wurde auf dem Gerät abgebrochen",
-      "description" : "Die Installation des Betriebssystem-Updates wurde auf Ihrem Gerät abgelehnt. Wenn dies irrtümlich geschehen ist, starten Sie das Update erneut."
+      "title" : "Installation des Betriebssystem-Updates auf\n dem Gerät wurde abgebrochen",
+      "description" : "Wenn dies irrtümlich geschehen ist, starten Sie das Update erneut."
     },
     "UserRefusedOnDevice" : {
       "title" : "Aktion abgelehnt",
@@ -5561,8 +5579,7 @@
       "description" : "Installieren Sie zuerst die neuesten Bitcoin- und Ethereum-Apps."
     },
     "UserRefusedDeviceNameChange" : {
-      "title" : "Umbenennen auf dem Gerät abgebrochen",
-      "description" : "Versuchen Sie es erneut und erlauben Sie das Umbenennen auf Ihrem Gerät"
+      "title" : "Umbenennen auf dem Gerät abgebrochen"
     },
     "SyncError" : {
       "title" : "Synchronisierungsfehler",
@@ -5576,7 +5593,7 @@
       "title" : "Keine Vermögenswerte zum Entsperren",
       "description" : "Sie haben keine Vermögenswerte zum Entsperren im Zusammenhang mit Energie"
     },
-    "TronUnfreezeNotExpired" : {
+    "TronLegacyUnfreezeNotExpired" : {
       "title" : "Entsperren ist noch nicht verfügbar",
       "description" : "Sie müssen 3 Tage nach Ihrem letzten Sperrvorgang warten"
     },
@@ -5613,6 +5630,16 @@
     },
     "TronNotEnoughEnergy" : {
       "title" : "Energie ist niedriger als notwendig. Es können bis zu 50 TRX an Gebühren anfallen."
+    },
+    "TronNoUnfrozenResource" : {
+      "title" : "Keine entsperrten Vermögenswerte zum Abheben vorhanden"
+    },
+    "TronInvalidUnDelegateResourceAmount" : {
+      "title" : "Nicht genügend delegierte Vermögenswerte"
+    },
+    "TronUnfreezeNotExpired" : {
+      "title" : "Vermögenswerte noch nicht entsperrt",
+      "description" : "Bitte warten Sie bis {{time}}, um Auszahlungen vorzunehmen"
     },
     "PairingFailed" : {
       "title" : "Kopplung fehlgeschlagen",
@@ -5812,12 +5839,12 @@
       "description" : "Bitte versuchen Sie es noch einmal mit einem anderen Bild"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "Sperrbildschirm auf Ledger Stax deaktiviert",
-      "description" : "Sollte dieses Bild nicht passen, können Sie es mit einem anderen Bild erneut versuchen."
+      "title" : "Die Installation des Sperrbildschirmbildes\nauf dem Ledger Stax wurde abgebrochen",
+      "description" : "Wenn dies ein Fehler war, versuchen Sie es jetzt erneut."
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "Sperrbildschirm auf Ledger Stax deaktiviert",
-      "description" : "Sollte dieses Bild nicht passen, können Sie es mit einem anderen Bild erneut versuchen."
+      "title" : "Die Installation des Sperrbildschirmbildes\nauf dem Ledger Stax wurde abgebrochen",
+      "description" : "Wenn dies ein Fehler war, versuchen Sie es jetzt erneut."
     },
     "ImageDoesNotExistOnDevice" : {
       "title" : "Ihr Ledger Stax hat kein entfernbares Sperrbildschirm-Bild",
@@ -5861,11 +5888,9 @@
       "descriptionWithProductName" : "Entsperren Sie Ihr {{ productName }} und versuchen Sie es erneut."
     },
     "DeviceNotOnboardedError" : {
-      "title" : "Ihr Gerät kann noch nicht verwendet werden",
-      "titleWithProductName" : "{{ productName }} kann noch nicht verwendet werden",
-      "description" : "Sie müssen Ihr Gerät zuerst einrichten.\nWir führen Sie durch den Einrichtungsprozess.",
-      "descriptionWithProductName" : "Sie müssen Ihr {{ productName }} zuerst einrichten.\nWir führen Sie durch den Einrichtungsprozess.",
-      "goToOnboardingButton" : "Mein Gerät einrichten",
+      "title" : "Ihr Ledger-Gerät ist nicht eingerichtet",
+      "description" : "Richten Sie es für die Nutzung ein. Wir führen Sie durch den Einrichtungsprozess.",
+      "goToOnboardingButton" : "Meinen Ledger einrichten",
       "goToOnboardingButtonWithProductName" : "Mein {{ productName }} einrichten"
     },
     "EtherscanAPIError" : {
@@ -5878,6 +5903,9 @@
     "FailedToRetrieveFirmwareUpdateInfo" : {
       "title" : "Prüfung auf Betriebssystem-Update fehlgeschlagen",
       "description" : "Etwas ist schief gelaufen. Bitte versuchen Sie es erneut oder wenden Sie sich im Zweifelsfall an den Ledger-Support."
+    },
+    "TezosUnrevealedAccount" : {
+      "title" : "Umtauschen nicht möglich: Erfordert initiales Senden/Delegieren bei Tezos-Konto oder Austausch des Paares."
     }
   },
   "cryptoOrg" : {
@@ -5939,13 +5967,13 @@
       "transfer" : {
         "stepLabel" : "Laden",
         "useAnotherPicture" : "Ein weiteres Bild hochladen",
-        "allowPreview" : "Tippen Sie auf „Load picture“ (Bild laden), um den Sperrbildschirm anzupassen",
-        "allowConfirmPreview" : "Wiederherstellung des Sperrbildschirmbildes auf {{productName}} erlauben",
-        "loadingPicture" : "Lade Daten...",
+        "allowPreview" : "Tippen Sie auf „Load picture“ (Bild laden), um\nden Sperrbildschirm anzupassen",
+        "allowConfirmPreview" : "Tippen Sie auf „Load picture“ (Bild laden), um\ndas Sperrbildschirm-Bild wiederherzustellen",
+        "loadingPicture" : "Installiere...",
         "voila" : "Voilà!",
         "imageLoaded" : "Bild geladen auf {{productName}}",
         "confirmPicture" : "Gefällt Ihnen, was Sie sehen?\nBehalten Sie es!",
-        "confirmRestorePicture" : "Wiederherstellung des Sperrbildschirmbildes bestätigen",
+        "confirmRestorePicture" : "Tippen Sie auf „Keep“ (Behalten), um\nIhr Sperrbildschirm-Bild zu bestätigen",
         "doThisLater" : "Vielleicht später"
       }
     },

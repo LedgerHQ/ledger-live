@@ -1,5 +1,25 @@
 # @ledgerhq/hw-transport-node-hid-singleton
 
+## 6.30.2
+
+### Patch Changes
+
+- [#5750](https://github.com/LedgerHQ/ledger-live/pull/5750) [`16b4d7a`](https://github.com/LedgerHQ/ledger-live/commit/16b4d7ab4702022d4967f3c054d3c62a76716947) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Arrange verbosity and improve typing
+
+- Updated dependencies [[`16b4d7a`](https://github.com/LedgerHQ/ledger-live/commit/16b4d7ab4702022d4967f3c054d3c62a76716947)]:
+  - @ledgerhq/hw-transport@6.30.2
+  - @ledgerhq/hw-transport-node-hid-noevents@6.29.2
+
+## 6.30.2-next.0
+
+### Patch Changes
+
+- [#5750](https://github.com/LedgerHQ/ledger-live/pull/5750) [`16b4d7a`](https://github.com/LedgerHQ/ledger-live/commit/16b4d7ab4702022d4967f3c054d3c62a76716947) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Arrange verbosity and improve typing
+
+- Updated dependencies [[`16b4d7a`](https://github.com/LedgerHQ/ledger-live/commit/16b4d7ab4702022d4967f3c054d3c62a76716947)]:
+  - @ledgerhq/hw-transport@6.30.2-next.0
+  - @ledgerhq/hw-transport-node-hid-noevents@6.29.2-next.0
+
 ## 6.30.1
 
 ### Patch Changes

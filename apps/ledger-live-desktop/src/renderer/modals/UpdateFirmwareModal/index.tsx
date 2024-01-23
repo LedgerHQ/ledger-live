@@ -6,56 +6,16 @@ import { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import { hasFinalFirmware } from "@ledgerhq/live-common/hw/hasFinalFirmware";
 import logger from "~/renderer/logger";
-import StepResetDevice, { StepResetFooter } from "./steps/00-step-reset-device";
-import StepPrepare from "./steps/01-step-prepare";
-import StepFlashMcu from "./steps/02-step-flash-mcu";
-import StepRestore from "./steps/02-step-restore";
-import StepUpdating from "./steps/02-step-updating";
-import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/manager/localization";
-import StepConfirmation, { StepConfirmFooter } from "./steps/03-step-confirmation";
 import { Divider, Flex, FlowStepper, Text } from "@ledgerhq/react-ui";
 import Disclaimer from "./Disclaimer";
 import Cancel from "./errors/Cancel";
 import DeviceCancel from "./errors/DeviceError";
+import { DisconnectedDevice, DisconnectedDeviceDuringOperation } from "@ledgerhq/errors";
 import SideDrawerHeader from "~/renderer/components/SideDrawerHeader";
+import { createFirmwareUpdateSteps } from "./helpers/createFirmwareUpdateSteps";
+import { StepId, STEPS } from "./types";
 
 type MaybeError = Error | undefined | null;
-
-export type StepProps = {
-  firmware?: FirmwareUpdateContext;
-  appsToBeReinstalled: boolean;
-  onDrawerClose: (reinstall?: boolean) => void;
-  error?: Error | null | undefined;
-  setError: (e: Error | null) => void;
-  CLSBackup?: string;
-  deviceModelId: DeviceModelId;
-  deviceInfo: DeviceInfo;
-  updatedDeviceInfo?: DeviceInfo;
-  setUpdatedDeviceInfo: (d: DeviceInfo) => void;
-  transitionTo: (step: StepId) => void;
-  onRetry: () => void;
-  setCLSBackup: (hexImage: string) => void;
-
-  completedRestoreSteps: string[];
-  setCompletedRestoreSteps: (arg0: string[]) => void;
-  currentRestoreStep: string;
-  setCurrentRestoreStep: (arg0: string) => void;
-  isLanguagePromptOpen: boolean;
-  setIsLanguagePromptOpen: (arg0: boolean) => void;
-  confirmedPrompt: boolean;
-  setConfirmedPrompt: (arg0: boolean) => void;
-  nonce: number;
-  setNonce: (arg0: number) => void;
-  setFirmwareUpdateCompleted: (arg0: boolean) => void;
-
-  finalStepSuccessDescription?: string;
-  finalStepSuccessButtonLabel?: string;
-  finalStepSuccessButtonOnClick?: () => void;
-  shouldReloadManagerOnCloseIfUpdateRefused?: boolean;
-  deviceHasPin?: boolean;
-};
-
-export type StepId = "resetDevice" | "idCheck" | "updateMCU" | "updating" | "restore" | "finish";
 
 export type Props = {
   withResetStep: boolean;
@@ -67,17 +27,9 @@ export type Props = {
   error?: Error | null | undefined;
   deviceModelId: DeviceModelId;
   deviceInfo: DeviceInfo;
-  setFirmwareUpdateOpened: (isOpen: boolean) => void;
   setFirmwareUpdateCompleted: (completed: boolean) => void;
   // This is bad practice but it seems to be needed since we spread additional props in the stepper and down below…
   [key: string]: unknown;
-};
-
-type Step = {
-  id: StepId;
-  label: string;
-  component: React.FunctionComponent<StepProps>;
-  footer?: React.FunctionComponent<StepProps>;
 };
 
 const UpdateModal = ({
@@ -106,84 +58,22 @@ const UpdateModal = ({
   const withFinal = useMemo(() => hasFinalFirmware(firmware?.final), [firmware]);
   const [cancel, setCancel] = useState<boolean>(false);
 
+  const isDisconnectedDeviceError = err instanceof DisconnectedDevice;
+  const isDisconnectedDeviceDuringOperationError = err instanceof DisconnectedDeviceDuringOperation;
+  const isDeviceDisconnected =
+    isDisconnectedDeviceError || isDisconnectedDeviceDuringOperationError;
+
   const onRequestCancel = useCallback(() => {
-    showDisclaimer || stateStepId === "finish" ? onRequestClose() : setCancel(state => !state);
-  }, [showDisclaimer, stateStepId, onRequestClose]);
+    (showDisclaimer && !isDeviceDisconnected) || stateStepId === STEPS.FINISH || cancel
+      ? onRequestClose()
+      : setCancel(true);
+  }, [cancel, showDisclaimer, isDeviceDisconnected, stateStepId, onRequestClose]);
 
-  const createSteps = useCallback(
-    ({ withResetStep }: { withResetStep: boolean }) => {
-      const hasRestoreStep =
-        firmware && isDeviceLocalizationSupported(firmware.final.name, deviceModelId);
-      const restoreStepLabel = t("manager.modal.steps.restore");
-      const installUpdateLabel =
-        stateStepId === "finish"
-          ? t("manager.modal.steps.installDone")
-          : t("manager.modal.steps.install");
-
-      const resetStep: Step = {
-        id: "resetDevice",
-        label: t("manager.modal.steps.reset"),
-        component: StepResetDevice,
-        footer: StepResetFooter,
-      };
-
-      const prepareStep: Step = {
-        id: "idCheck",
-        label: firmware?.osu?.hash
-          ? t("manager.modal.identifier")
-          : stateStepId === "resetDevice" || stateStepId === "idCheck"
-          ? t("manager.modal.steps.prepare")
-          : t("manager.modal.steps.prepareDone"),
-        component: StepPrepare,
-      };
-
-      const mcuStep: Step = {
-        id: "updateMCU",
-        label: installUpdateLabel,
-        component: StepFlashMcu,
-      };
-
-      const updatingStep: Step = {
-        id: "updating",
-        label: installUpdateLabel,
-        component: StepUpdating,
-      };
-
-      const restoreStep: Step = {
-        id: "restore",
-        label: restoreStepLabel,
-        component: StepRestore,
-      };
-
-      const finalStep: Step = {
-        id: "finish",
-        label: hasRestoreStep ? restoreStepLabel : installUpdateLabel,
-        component: StepConfirmation,
-        footer: StepConfirmFooter,
-      };
-
-      const steps: Step[] = [];
-      if (withResetStep) {
-        steps.push(resetStep);
-      }
-      steps.push(prepareStep);
-      if (firmware?.shouldFlashMCU || withFinal) {
-        steps.push(mcuStep);
-      } else {
-        steps.push(updatingStep);
-      }
-
-      if (hasRestoreStep) {
-        steps.push(restoreStep);
-      }
-
-      steps.push(finalStep);
-      return steps;
-    },
-    [t, firmware, withFinal, deviceModelId, stateStepId],
+  const steps = useMemo(
+    () =>
+      createFirmwareUpdateSteps({ firmware, withFinal, withResetStep, deviceModelId, stateStepId }),
+    [firmware, withFinal, withResetStep, deviceModelId, stateStepId],
   );
-
-  const steps = useMemo(() => createSteps({ withResetStep }), [createSteps, withResetStep]);
 
   const setError = useCallback(
     (e: Error | null) => {
@@ -201,6 +91,11 @@ const UpdateModal = ({
     },
     [steps],
   );
+
+  const onContinue = useCallback(() => {
+    setCancel(false);
+    handleReset();
+  }, [handleReset]);
 
   const onSkip = useCallback(() => {
     setCompletedRestoreSteps([...completedRestoreSteps, currentRestoreStep]);
@@ -248,7 +143,7 @@ const UpdateModal = ({
   };
 
   const getMainContent = () => {
-    if (err) {
+    if (err && !isDeviceDisconnected) {
       return (
         <DeviceCancel
           error={err}
@@ -260,8 +155,8 @@ const UpdateModal = ({
           onSkip={onSkip}
         />
       );
-    } else if (cancel) {
-      return <Cancel onContinue={onRequestCancel} onCancel={onRequestClose} />;
+    } else if (cancel || isDeviceDisconnected) {
+      return <Cancel onContinue={onContinue} onCancel={onRequestClose} />;
     } else if (showDisclaimer) {
       return <Disclaimer onContinue={() => setShowDisclaimer(false)} t={t} firmware={firmware} />;
     } else {
@@ -272,14 +167,18 @@ const UpdateModal = ({
           extraStepperProps={{
             errored: !!error,
             filterDuplicate: true,
-            isOver: stateStepId === "finish",
+            isOver: stateStepId === STEPS.FINISH,
           }}
           extraContainerProps={{ overflowY: "hidden" }}
           extraChildrenContainerProps={{ overflowY: "hidden" }}
           renderChildren={undefined}
         >
           {steps.map(step => (
-            <FlowStepper.Indexed.Step key={step.id} itemKey={step.id} label={step.label as string}>
+            <FlowStepper.Indexed.Step
+              key={step.id}
+              itemKey={step.id}
+              label={t(step.label) as string}
+            >
               <Flex
                 flex={1}
                 flexDirection="column"

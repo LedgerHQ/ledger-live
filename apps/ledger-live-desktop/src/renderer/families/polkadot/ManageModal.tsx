@@ -126,10 +126,11 @@ const ManageModal = ({ account, source, ...rest }: Props) => {
   );
 
   const electionOpen = staking?.electionClosed !== undefined ? !staking?.electionClosed : false;
+  const accountCanNominate = canNominate(account);
   const hasUnlockedBalance = unlockedBalance && unlockedBalance.gt(0);
   const hasPendingWithdrawUnbondedOperation = hasPendingOperationType(account, "WITHDRAW_UNBONDED");
-  const nominationEnabled = !electionOpen && canNominate(account);
-  const chillEnabled = !electionOpen && canNominate(account) && nominations?.length;
+  const nominationEnabled = !electionOpen && accountCanNominate;
+  const chillEnabled = !electionOpen && nominations?.length;
   const bondingEnabled = !electionOpen && canBond(account);
   const unbondingEnabled = !electionOpen && canUnbond(account);
   const withdrawEnabled =

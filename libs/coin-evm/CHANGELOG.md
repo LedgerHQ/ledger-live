@@ -1,5 +1,59 @@
 # @ledgerhq/coin-evm
 
+## 0.12.0
+
+### Minor Changes
+
+- [#5722](https://github.com/LedgerHQ/ledger-live/pull/5722) [`2358e87`](https://github.com/LedgerHQ/ledger-live/commit/2358e8748d9ae9398cfc05a0ec20a6b191fc7324) Thanks [@chabroA](https://github.com/chabroA)! - Add Ethereum Sepolia and Holesky
+
+- [#5744](https://github.com/LedgerHQ/ledger-live/pull/5744) [`ed23f46`](https://github.com/LedgerHQ/ledger-live/commit/ed23f4680d4ed1020bf34ac05b064ff659a282f5) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for internal transactions in transactions' history
+
+### Patch Changes
+
+- [#5743](https://github.com/LedgerHQ/ledger-live/pull/5743) [`e494a2b`](https://github.com/LedgerHQ/ledger-live/commit/e494a2b984fb0406fe9225bb4eccde3d9585efe1) Thanks [@chabroA](https://github.com/chabroA)! - remove unreachable statement
+
+- [#5780](https://github.com/LedgerHQ/ledger-live/pull/5780) [`2b627ae`](https://github.com/LedgerHQ/ledger-live/commit/2b627aebddef859b9cb62467353e7d868bfbc4f9) Thanks [@mle-gall](https://github.com/mle-gall)! - Parent Account Error on gas fees LLD
+
+- [#5780](https://github.com/LedgerHQ/ledger-live/pull/5780) [`17d1f86`](https://github.com/LedgerHQ/ledger-live/commit/17d1f86022f0122ac85ca6489eb4698c7d9045fb) Thanks [@mle-gall](https://github.com/mle-gall)! - New LLM gas fees parent account error
+
+- Updated dependencies [[`fc2cf04`](https://github.com/LedgerHQ/ledger-live/commit/fc2cf04c8d3cd55503ea19aeb21fd12ee55046f6), [`dd5d930`](https://github.com/LedgerHQ/ledger-live/commit/dd5d9308e0e3ef8ca78f879c15bc07313ef3c8c4), [`a4a72da`](https://github.com/LedgerHQ/ledger-live/commit/a4a72da33ddfefd5ba69ac4d9ecb33d7775583f1), [`acc0605`](https://github.com/LedgerHQ/ledger-live/commit/acc06050b622f8d4265be9f962c6c83b1fbaefd5), [`2358e87`](https://github.com/LedgerHQ/ledger-live/commit/2358e8748d9ae9398cfc05a0ec20a6b191fc7324), [`65772fb`](https://github.com/LedgerHQ/ledger-live/commit/65772fbcc1e6887d60ca585147123d356914ba56), [`69bbdce`](https://github.com/LedgerHQ/ledger-live/commit/69bbdce5c88d69248cbddb94ac4627334c1df626), [`b74faea`](https://github.com/LedgerHQ/ledger-live/commit/b74faea05f856860a253c5b94a9333810a3446ca), [`0375de1`](https://github.com/LedgerHQ/ledger-live/commit/0375de19ca909b0b013992c114b0fa2ead2a08f3)]:
+  - @ledgerhq/cryptoassets@11.4.0
+  - @ledgerhq/live-network@1.1.11
+  - @ledgerhq/types-live@6.44.0
+  - @ledgerhq/coin-framework@0.11.0
+  - @ledgerhq/types-cryptoassets@7.9.0
+  - @ledgerhq/live-env@0.9.0
+  - @ledgerhq/evm-tools@1.0.14
+  - @ledgerhq/hw-app-eth@6.35.3
+  - @ledgerhq/domain-service@1.1.17
+
+## 0.12.0-next.0
+
+### Minor Changes
+
+- [#5722](https://github.com/LedgerHQ/ledger-live/pull/5722) [`2358e87`](https://github.com/LedgerHQ/ledger-live/commit/2358e8748d9ae9398cfc05a0ec20a6b191fc7324) Thanks [@chabroA](https://github.com/chabroA)! - Add Ethereum Sepolia and Holesky
+
+- [#5744](https://github.com/LedgerHQ/ledger-live/pull/5744) [`ed23f46`](https://github.com/LedgerHQ/ledger-live/commit/ed23f4680d4ed1020bf34ac05b064ff659a282f5) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Add support for internal transactions in transactions' history
+
+### Patch Changes
+
+- [#5743](https://github.com/LedgerHQ/ledger-live/pull/5743) [`e494a2b`](https://github.com/LedgerHQ/ledger-live/commit/e494a2b984fb0406fe9225bb4eccde3d9585efe1) Thanks [@chabroA](https://github.com/chabroA)! - remove unreachable statement
+
+- [#5780](https://github.com/LedgerHQ/ledger-live/pull/5780) [`2b627ae`](https://github.com/LedgerHQ/ledger-live/commit/2b627aebddef859b9cb62467353e7d868bfbc4f9) Thanks [@mle-gall](https://github.com/mle-gall)! - Parent Account Error on gas fees LLD
+
+- [#5780](https://github.com/LedgerHQ/ledger-live/pull/5780) [`17d1f86`](https://github.com/LedgerHQ/ledger-live/commit/17d1f86022f0122ac85ca6489eb4698c7d9045fb) Thanks [@mle-gall](https://github.com/mle-gall)! - New LLM gas fees parent account error
+
+- Updated dependencies [[`fc2cf04`](https://github.com/LedgerHQ/ledger-live/commit/fc2cf04c8d3cd55503ea19aeb21fd12ee55046f6), [`dd5d930`](https://github.com/LedgerHQ/ledger-live/commit/dd5d9308e0e3ef8ca78f879c15bc07313ef3c8c4), [`a4a72da`](https://github.com/LedgerHQ/ledger-live/commit/a4a72da33ddfefd5ba69ac4d9ecb33d7775583f1), [`acc0605`](https://github.com/LedgerHQ/ledger-live/commit/acc06050b622f8d4265be9f962c6c83b1fbaefd5), [`2358e87`](https://github.com/LedgerHQ/ledger-live/commit/2358e8748d9ae9398cfc05a0ec20a6b191fc7324), [`65772fb`](https://github.com/LedgerHQ/ledger-live/commit/65772fbcc1e6887d60ca585147123d356914ba56), [`69bbdce`](https://github.com/LedgerHQ/ledger-live/commit/69bbdce5c88d69248cbddb94ac4627334c1df626), [`b74faea`](https://github.com/LedgerHQ/ledger-live/commit/b74faea05f856860a253c5b94a9333810a3446ca), [`0375de1`](https://github.com/LedgerHQ/ledger-live/commit/0375de19ca909b0b013992c114b0fa2ead2a08f3)]:
+  - @ledgerhq/cryptoassets@11.4.0-next.0
+  - @ledgerhq/live-network@1.1.11-next.0
+  - @ledgerhq/types-live@6.44.0-next.0
+  - @ledgerhq/coin-framework@0.11.0-next.0
+  - @ledgerhq/types-cryptoassets@7.9.0-next.0
+  - @ledgerhq/live-env@0.9.0-next.0
+  - @ledgerhq/evm-tools@1.0.14-next.0
+  - @ledgerhq/hw-app-eth@6.35.3-next.0
+  - @ledgerhq/domain-service@1.1.17-next.0
+
 ## 0.11.2
 
 ### Patch Changes

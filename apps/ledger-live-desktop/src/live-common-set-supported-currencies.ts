@@ -1,6 +1,7 @@
 import { setSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
 import { setWalletAPIVersion } from "@ledgerhq/live-common/wallet-api/version";
 import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
+
 setWalletAPIVersion(WALLET_API_VERSION);
 setSupportedCurrencies([
   "axelar",
@@ -49,6 +50,8 @@ setSupportedCurrencies([
   "bitcoin_testnet",
   "ethereum_ropsten",
   "ethereum_goerli",
+  "ethereum_sepolia",
+  "ethereum_holesky",
   "hedera",
   "cardano",
   "filecoin",
@@ -88,4 +91,6 @@ setSupportedCurrencies([
   "casper",
   "neon_evm",
   "lukso",
+  "linea",
+  "linea_goerli",
 ]);

@@ -31,7 +31,6 @@
       "discreetMode": false,
       "preferredDeviceModel": "nanoS",
       "hasInstalledApps": true,
-      "carouselVisibility": 0,
       "hasAcceptedSwapKYC": false,
       "lastSeenDevice": null,
       "blacklistedTokenIds": [],
@@ -81,7 +80,6 @@
         },
         "version": 1
       },
-
       {
         "data": {
           "id": "mock:1:tron:1_tron_1:INVALID_DERIVATION_MODE",

@@ -21,6 +21,9 @@ export async function launchApp() {
       language: "en-US",
       locale: "en-US",
     },
+    permissions: {
+      camera: "YES", // Give iOS permissions for the camera
+    },
   });
 }
 

@@ -15,6 +15,7 @@ import {
   NearStakingPosition,
 } from "./sdk.types";
 import { MIN_ACCOUNT_BALANCE_BUFFER } from "../constants";
+import { makeLRUCache } from "@ledgerhq/live-network/cache";
 
 export const fetchAccountDetails = async (address: string): Promise<NearAccountDetails> => {
   const { data } = await network({
@@ -248,46 +249,54 @@ export const getStakingPositions = async (
   };
 };
 
-export const getValidators = async (): Promise<NearRawValidator[]> => {
-  const { data } = await network({
-    method: "POST",
-    url: getEnv("API_NEAR_ARCHIVE_NODE"),
-    data: {
-      jsonrpc: "2.0",
-      id: "id",
-      method: "validators",
-      params: [null],
-    },
-  });
-
-  return data?.result?.current_validators || [];
-};
-
-export const getCommission = async (address: string): Promise<number | null> => {
-  const { data } = await network({
-    method: "POST",
-    url: getEnv("API_NEAR_ARCHIVE_NODE"),
-    data: {
-      jsonrpc: "2.0",
-      id: "id",
-      method: "query",
-      params: {
-        request_type: "call_function",
-        account_id: address,
-        method_name: "get_reward_fee_fraction",
-        args_base64: "e30=",
-        finality: "optimistic",
+export const getValidators = makeLRUCache(
+  async (): Promise<NearRawValidator[]> => {
+    const { data } = await network({
+      method: "POST",
+      url: getEnv("API_NEAR_ARCHIVE_NODE"),
+      data: {
+        jsonrpc: "2.0",
+        id: "id",
+        method: "validators",
+        params: [null],
       },
-    },
-  });
+    });
 
-  const result = data?.result?.result;
+    return data?.result?.current_validators || [];
+  },
+  () => "",
+  { ttl: 30 * 60 * 1000 },
+);
 
-  if (Array.isArray(result) && result.length) {
-    const parsedResult = JSON.parse(Buffer.from(result).toString());
+export const getCommission = makeLRUCache(
+  async (address: string): Promise<number | null> => {
+    const { data } = await network({
+      method: "POST",
+      url: getEnv("API_NEAR_ARCHIVE_NODE"),
+      data: {
+        jsonrpc: "2.0",
+        id: "id",
+        method: "query",
+        params: {
+          request_type: "call_function",
+          account_id: address,
+          method_name: "get_reward_fee_fraction",
+          args_base64: "e30=",
+          finality: "optimistic",
+        },
+      },
+    });
 
-    return Math.round((parsedResult.numerator / parsedResult.denominator) * 100);
-  }
+    const result = data?.result?.result;
 
-  return null;
-};
+    if (Array.isArray(result) && result.length) {
+      const parsedResult = JSON.parse(Buffer.from(result).toString());
+
+      return Math.round((parsedResult.numerator / parsedResult.denominator) * 100);
+    }
+
+    return null;
+  },
+  () => "",
+  { ttl: 30 * 60 * 1000 },
+);

@@ -167,6 +167,9 @@
       "VOTE" : "Votado",
       "FREEZE" : "Inmovilizado",
       "UNFREEZE" : "Desinmovilizado",
+      "UNDELEGATE_RESOURCE" : "Desdelegado",
+      "WITHDRAW_EXPIRE_UNFREEZE" : "Retiro",
+      "LEGACYUNFREEZE" : "Desinmovilizado",
       "REWARD" : "Recompensa reclamada",
       "FEES" : "Tarifas",
       "OPT_IN" : "Adherir",
@@ -390,7 +393,7 @@
     "decentralizedSwapAvailable" : "Para determinadas transacciones, quizás deberías considerar la opción de usar la permuta descentralizada. Descubre <0>ParaSwap</0> y <1>1inch</1>.",
     "paraswap" : {
       "cta" : " Échale un vistazo",
-      "description" : "¿Buscas Paraswap? Está en a la pestaña Discover."
+      "description" : "¿Buscas ParaSwap? Está en a la pestaña Discover."
     },
     "tabs" : {
       "exchange" : "Cambia",
@@ -1176,7 +1179,7 @@
         "title" : "Frase de recuperación secreta",
         "titleCompleted" : "Frase de recuperación secreta confirmada",
         "recoverSeed" : "Marcador de posición: Recover",
-        "restoreSeed" : "Para que tus activos estén lo más seguros posible, utiliza una Frase de recuperación secreta generada por un dispositivo Ledger.\n\n¿No tienes uno?Usa tu {{productName}} para generar una Frase nueva.",
+        "restoreSeed" : "Para que tus activos estén lo más seguros posible, utiliza una Frase de recuperación secreta generada por un dispositivo Ledger.\n\n¿No tienes uno? Usa tu {{productName}} para generar una Frase nueva.",
         "selection" : "Elige la opción de configuración que mejor se ajuste a tus necesidades:",
         "selectionNewLedger" : "<0>“Configura tu dispositivo como un nuevo Ledger”</0> te permitirá crear una nueva billetera. Esta acción generará una Frase de recuperación secreta nueva.",
         "selectionRestore" : "<0>“Restaurar”</0> te permitirá restaurar el acceso a activos que ya tengas con tu Frase de recuperación secreta o mediante Ledger Recover.",
@@ -1237,11 +1240,12 @@
         "firmwareUpdate" : {
           "title" : {
             "active" : "Verificación de actualización del SO",
-            "completed" : "El SO de tu {{modelName}} está actualizado",
+            "completed" : "El SO de tu {{modelName}} está actualizado.",
             "updateAvailable" : "Actualización del SO {{firmwareVersion}} disponible"
           },
           "subtitle" : {
             "active" : "Se verificará si el sistema operativo de tu {{modelName}} está actualizado o no.",
+            "completed" : "Para iniciar la restauración de la aplicación en tu {{modelName}}, selecciona el botón “Restaurar aplicaciones” a continuación.",
             "updateAvailable" : "Actualízalo para disfrutar de una seguridad óptima y acceder a las funciones más recientes."
           },
           "viewUpdateCTA" : "Actualizar SO del {{modelName}}",
@@ -1752,13 +1756,13 @@
   "DeviceAction" : {
     "allowAppPermission" : "Abre la aplicación {{wording}} en tu dispositivo",
     "allowAppPermissionSubtitleToken" : "para administrar los tokens {{token}}",
-    "allowManagerPermission" : "Permitir Ledger Manager en tu dispositivo",
+    "allowManagerPermission" : "Permitir Ledger Manager en tu {{productName}}",
     "allowRenaming" : "Permitir renombrar en tu dispositivo",
     "loading" : "Cargando...",
     "connectAndUnlockDevice" : "Conecta y desbloquea tu dispositivo",
     "unlockDevice" : "Desbloquea tu dispositivo",
-    "unlockDeviceAfterFirmwareUpdateStep1" : "Espera a que finalice la instalación en {{productName}}",
-    "unlockDeviceAfterFirmwareUpdateStep2" : "Desbloquear {{productName}} para finalizar la instalación",
+    "unlockDeviceAfterFirmwareUpdateStep1" : "Espera a que finalice la instalación en tu {{productName}}.",
+    "unlockDeviceAfterFirmwareUpdateStep2" : "Desbloquea {{productName}} con tu PIN para terminar de completar la actualización.",
     "quitApp" : "Cierra la aplicación en tu dispositivo",
     "appNotInstalledTitle" : "Falta una aplicación necesaria",
     "appNotInstalledTitle_plural" : "Faltan aplicaciones necesarias",
@@ -1931,10 +1935,12 @@
       "latest" : "La versión {{version}} del firmware está disponible",
       "contactSupport" : "Ponte en contacto con Soporte",
       "deprecated" : "La versión de firmware del dispositivo es demasiado antigua para poder actualizarla. Contacta al Soporte de Ledger para obtener un reemplazo.",
-      "prepareSeed" : "Como precaución, asegúrate de que la Frase de recuperación de 24 Palabras esté escrita en la Hoja de recuperación y de tener fácil acceso a ella.",
+      "prepareSeed" : "Como precaución, asegúrate de que la Frase de recuperación de 24 palabras esté escrita en la Hoja de recuperación y de tener fácil acceso a ella.",
       "disclaimerTitle" : "Estás a punto de instalar <1>la versión de firmware {{version}}</1>.",
-      "cancelUpdate" : "Cancelar actualización",
-      "continueUpdate" : "Continuar con la actualización",
+      "cancelUpdate" : "Cancelar actualización del SO",
+      "continueUpdate" : "Continuar con actualización del SO",
+      "restartUpdate" : "Reiniciar actualización de SO",
+      "skipRestore" : "Omitir restauración",
       "cancelUpdateWarning" : "Si cancelas la actualización ahora, tus ajustes y aplicaciones podrían no restaurarse correctamente.",
       "updateInProgress" : "Actualización del SO en curso"
     },
@@ -1948,6 +1954,7 @@
         "install" : "Instalar actualización",
         "installDone" : "Actualización\ninstalada",
         "restore" : "Restaurando ajustes",
+        "restoreDone" : "Ajustes restaurados",
         "apps" : "Restaurando aplicaciones",
         "updateMCU" : "Actualización de firmware",
         "updating" : "Actualización de firmware",
@@ -1974,9 +1981,10 @@
       "mcuBlueFirst" : "Mantén presionado el botón lateral durante 10 segundos para apagar el dispositivo. Suelta el botón.",
       "mcuBlueSecond" : "Mantén presionado el botón durante al menos 5 segundos hasta que se muestren las “Boot Options” (\"Opciones de arranque\"). Toca en Bootloader Mode",
       "successTitle" : "El SO de tu {{deviceName}} está actualizado.",
-      "sucessCTAApps" : "Volver a instalar las aplicaciones",
-      "SuccessCTANoApps" : "Instalar aplicaciones",
-      "cancelReinstallCTA" : "Instalar actualización",
+      "successTitleApps" : "El SO de tu {{deviceName}}\nestá actualizado. Una última cosa...",
+      "successSubtitleApps" : "Para iniciar la restauración de la aplicación en tu Ledger Stax, selecciona\nel botón “Restaurar aplicaciones” a continuación.",
+      "sucessCTAApps" : "Restaurando aplicaciones",
+      "SuccessCTANoApps" : "Finalizar",
       "resetSteps" : {
         "first" : "1. Restablece tu dispositivo",
         "connect" : "Conecta el {{deviceName}} a tu PC utilizando el cable USB.",
@@ -2027,7 +2035,7 @@
         "energyDescription" : "Se requieren puntos de Energía para ejecutar contratos inteligentes. Si no tienes ningún contrato inteligente, no es necesario que elijas recompensas en Energía.",
         "amountLabel" : "Importe a inmovilizar",
         "available" : "Disponibles: {{amountAvailable}}",
-        "info" : "No es posible enviar los activos inmovilizados por un periodo de tres días."
+        "info" : "Los activos inmovilizados se pueden desinmovilizar de inmediato y se puede acceder a ellos después del periodo de desinmovilización de 14 días."
       },
       "connectDevice" : {
         "title" : "Dispositivo"
@@ -2041,7 +2049,7 @@
         "success" : {
           "title" : "",
           "textNRG" : "Empezarás a ganar Energía una vez que la red haya confirmado la inmovilización. En breve podrás votar por superrepresentantes para recibir recompensas.",
-          "text" : "Empezarás a ganar Ancho de banda una vez que la red haya confirmado la inmovilización. En breve podrás votar por superrepresentates para recibir recompensas.",
+          "text" : "Empezarás a ganar Ancho de banda una vez que la red haya confirmado la inmovilización. En breve podrás votar por superrepresentantes  para recibir recompensas.",
           "votePending" : "Votar en {{time}}",
           "vote" : "Votar",
           "later" : "Votar más tarde"
@@ -2267,7 +2275,7 @@
     "title" : "Diagnosticar problemas de red"
   },
   "systemLanguageAvailable" : {
-    "title" : "¿Deseas cambiar el idioma de tu app?",
+    "title" : "¿Deseas cambiar el idioma de tu aplicación?",
     "description" : {
       "newSupport" : "¡Buenas noticias! Nuestros equipos han trabajado arduamente y Ledger Live ahora está disponible en {{language}}",
       "advice" : "Puedes cambiar el idioma más adelante desde los Ajustes."
@@ -2288,6 +2296,13 @@
     "confirmation" : "Confirmar eliminación de imagen en tu Ledger Stax",
     "success" : "Imagen de pantalla de bloqueo eliminada"
   },
+  "changeCustomLockscreen" : {
+    "cta" : "Cambiar"
+  },
+  "removeCurrentPicture" : {
+    "cta" : "Eliminar imagen actual"
+  },
+  "appsInstallingDisabledTooltip" : "Opción deshabilitada hasta que terminen de instalarse las aplicaciones",
   "deviceLocalization" : {
     "language" : "Idioma",
     "deviceLanguage" : "Cambiar el idioma del dispositivo",
@@ -2300,9 +2315,9 @@
     },
     "firmwareUpdatePrompt" : {
       "title" : "¿Cambiar tu {{deviceName}} a {{language}}?",
-      "description" : "Ya está disponible el idioma {{language}} para tu {{deviceName}}. Puedes cambiar el idioma de tu dispositivo ahora o en cualquier momento desde My Ledger."
+      "description" : "Ya está disponible el idioma {{language}} para tu {{deviceName}}. Puedes cambiar el idioma de tu dispositivo ahora o en cualquier momento desde Mi Ledger."
     },
-    "allowLanguageInstallation" : "Permitir instalación de idioma",
+    "allowLanguageInstallation" : "Pulsa “Allow” (Permitir) para\ninstalar el idioma",
     "languageInstalled" : "Idioma cambiado al {{language}}",
     "installingLanguage" : "Instalando idioma",
     "languages" : {
@@ -2612,7 +2627,7 @@
             "description" : "Congela TRX para recibir recompensas al tiempo que conservas un pleno control de tus activos bajo una completa seguridad.",
             "bullet" : {
               "delegate" : "Los activos delegados siguen siendo tuyos.",
-              "access" : "Podrás desinmovilizar los activos después de 3 días.",
+              "access" : "Los activos inmovilizados se pueden desinmovilizar de inmediato y se puede acceder a ellos después del periodo de desinmovilización de 14 días.",
               "ledger" : "Inmoviliza y vota de forma segura con tu dispositivo Ledger."
             },
             "help" : "Cómo funciona la votación",
@@ -3057,7 +3072,7 @@
         "steps" : {
           "starter" : {
             "title" : "Redelegación",
-            "description" : "Utiliza la redelagación para cambiar fácilmente de un validador a otro. No obstante, si cambias de idea de nuevo, tendrás que esperar porque la redelegación activa un bloqueo temporal de 21 días.",
+            "description" : "Utiliza la redelegación para cambiar con facilidad de un validador a otro. Aunque debes tener en cuenta de que si cambias de opinión de nuevo, deberás esperar ya que la redelegación genera un bloqueo de {{ numberOfDays }} días.",
             "warning" : "Elige tu validador con cuidado: Puedes perder definitivamente parte de tus activos delegados si el validador no se comporta apropiadamente. Puedes tener un máximo de <0>7 redelegaciones pendientes</0>.",
             "howDelegationWorks" : "¿Cómo funciona la delegación?"
           },
@@ -3086,7 +3101,7 @@
     },
     "undelegation" : {
       "header" : "Desdelegaciones",
-      "headerTooltip" : "Disponible después de un bloqueo temporal de 21 días",
+      "headerTooltip" : "Disponible después de un bloqueo temporal de {{numberOfDays}} días",
       "inactiveTooltip" : "Los importes desdelegados no generan recompensas.",
       "flow" : {
         "title" : "Desdelegar activos",
@@ -3510,7 +3525,8 @@
             "title" : "Validador"
           },
           "amount" : {
-            "title" : "Importe"
+            "title" : "Importe",
+            "reserveWarning" : "Asegúrate de reservar al menos {{amount}} SOL en tu billetera para cubrir las futuras tarifas de red, necesarias para quitar de participación tus activos y retirarlos."
           },
           "confirmation" : {
             "success" : {
@@ -3869,9 +3885,7 @@
       "region" : "Región",
       "regionDesc" : "Elige tu región para actualizar el formato de fecha, hora y moneda.",
       "stock" : "Indicador de mercado regional",
-      "stockDesc" : "Elige Occidental para mostrar las subidas del mercado en azul u Oriental para mostrarlas en rojo.",
-      "carouselVisibility" : "Visibilidad del carrusel",
-      "carouselVisibilityDesc" : "Muestra u oculta el carrusel en el Portfolio"
+      "stockDesc" : "Elige Occidental para mostrar las subidas del mercado en azul u Oriental para mostrarlas en rojo."
     },
     "developer" : {
       "search" : "Buscar",
@@ -4085,7 +4099,7 @@
     "accounts" : {
       "hideEmptyTokens" : {
         "title" : "Ocultar cuentas de tokens sin saldo",
-        "desc" : "Oculta las cuentas de tokens sin saldo en la página de Cuentas."
+        "desc" : "Ocultar cuentas de tokens sin saldo."
       },
       "tokenBlacklist" : {
         "title" : "Tokens ocultos",
@@ -4321,7 +4335,7 @@
         }
       },
       "selectDevice" : {
-        "title" : "¿Para qué sirve tu Ledger?",
+        "title" : "¿Qué Ledger tienes?",
         "selectLabel" : "Seleccionar"
       },
       "selectUseCase" : {
@@ -4521,7 +4535,7 @@
             },
             "warning" : {
               "title" : "No utilices una Frase de recuperación que no hayas generado tú mismo.",
-              "desc" : "Tú y solo tú debes crear el código PIN y generar la Frase de recuperación de la billetera de hardware Ledger. Si has recibido un dispositivo con una Frase semilla o un código PIN ya existentes,no utilices el producto y ponte en contacto con el Soporte.",
+              "desc" : "Tú y solo tú debes crear el código PIN y generar la Frase de recuperación de la billetera de hardware Ledger. Si has recibido un dispositivo con una Frase semilla o un código PIN ya existentes, no utilices el producto y ponte en contacto con el Soporte.",
               "supportLink" : "Ponte en contacto con Soporte"
             }
           },
@@ -4891,6 +4905,9 @@
       "claimReward" : "Confirma en tu dispositivo para finalizar la operación",
       "freeze" : "Confirma en tu dispositivo para finalizar la operación",
       "unfreeze" : "Confirma en tu dispositivo para finalizar la operación",
+      "withdrawExpireUnfreeze" : "Confirma en tu dispositivo para finalizar la operación",
+      "unDelegateResource" : "Confirma en tu dispositivo para finalizar la operación",
+      "legacyUnfreeze" : "Confirma en tu dispositivo para finalizar la operación",
       "vote" : "Confirma en tu dispositivo para finalizar la operación",
       "delegate" : "Confirma en tu dispositivo para finalizar la operación",
       "undelegate" : "Confirma en tu dispositivo para finalizar la operación",
@@ -5006,7 +5023,7 @@
   "errors" : {
     "ReplacementTransactionUnderpriced" : {
       "title" : "El precio de la transacción de sustitución es más bajo",
-      "description" : "La tarifa de red podría ser demasiado baja.Auméntala."
+      "description" : "La tarifa de red podría ser demasiado baja. Auméntala."
     },
     "NoSuchAppOnProvider" : {
       "title" : "No es posible encontrar la aplicación {{appName}} para tu configuración específica.",
@@ -5192,15 +5209,16 @@
     },
     "FirmwareNotRecognized" : {
       "title" : "Proveedor no válido",
-      "description" : "Tienes que cambiar el ajuste \"Proveedor de Mi Ledger\". Para cambiarlo, abre los \"Ajustes\" de Ledger Live, selecciona \"Funciones experimentales\" y, a continuación, elige un proveedor distinto."
+      "description" : "Tienes que cambiar el ajuste \"Proveedor de Mi Ledger\". Para cambiarlo, abre los \"Ajustes\" de Ledger Live, selecciona \"Funciones experimentales\" y, a continuación, elige un proveedor distinto.",
+      "goToSettingsCTA" : "Ir a Ajustes"
     },
     "HardResetFail" : {
       "title" : "No fue posible restablecer",
       "description" : "Inténtalo de nuevo o contacta a Soporte de Ledger si persiste el problema."
     },
     "LanguageInstallRefusedOnDevice" : {
-      "title" : "Se ha rechazado la instalación del idioma en el dispositivo",
-      "description" : "Inténtalo de nuevo. Si el problema persiste, guarda los registros con el botón que aparece a continuación y envíalos al Soporte de Ledger."
+      "title" : "Restauración de idioma\ncancelada en el dispositivo",
+      "description" : "Si hubo un error, inténtalo de nuevo."
     },
     "RestoreLanguageInstallRefusedOnDevice" : {
       "title" : "La restauración del idioma se canceló en Ledger Stax",
@@ -5252,17 +5270,17 @@
     },
     "ManagerQuitPage" : {
       "install" : {
-        "title" : "¿Finalizar instalación de aplicaciones en curso?",
+        "title" : "¿Esperar y finalizar la instalación de aplicaciones en curso?",
         "description" : "Al salir de Mi Ledger, se interrumpirá la instalación de aplicaciones. Finaliza la instalación para instalar las aplicaciones en cola.",
         "stay" : "Finalizar instalación"
       },
       "uninstall" : {
-        "title" : "¿Finalizar la desinstalación de la aplicación en curso?",
+        "title" : "¿Esperar y finalizar la desinstalación de la aplicación en curso?",
         "description" : "Al salir de Mi Ledger, se interrumpirán las desinstalaciones de aplicaciones en curso.",
         "stay" : "Finalizar la desinstalación"
       },
       "update" : {
-        "title" : "¿Finalizar la actualización de aplicación en curso?",
+        "title" : "¿Esperar y finalizar la actualización de aplicaciones en curso?",
         "description" : "Al salir de Mi Ledger, se interrumpirán las actualizaciones de aplicaciones en curso.",
         "stay" : "Finalizar actualizaciones"
       },
@@ -5321,7 +5339,7 @@
       "title" : "La dirección del destinatario está inactiva. Envía al menos {{minimalAmount}} para activarla."
     },
     "NotEnoughGas" : {
-      "title" : "El saldo de la cuenta principal es insuficiente para las comisiones de red"
+      "title" : "En la red {{cryptoName}} debes pagar una tarifa de red de {{fees}} {{ticker}} para realizar permutas. <link0>Comprar {{ticker}}</link0>"
     },
     "NotEnoughGasSwap" : {
       "title" : "En la red {{cryptoName}} es necesaria una tarifa de red de {{fees}} {{ticker}} para realizar permutas. <link0>Comprar {{ticker}}</link0>"
@@ -5405,8 +5423,8 @@
       "title" : "Mi Ledger denegado en el dispositivo"
     },
     "UserRefusedFirmwareUpdate" : {
-      "title" : "La actualización se canceló en el dispositivo",
-      "description" : "Se ha rechazado la instalación de la actualización del SO en tu dispositivo. Si se trata de un error, vuelve a iniciar la actualización."
+      "title" : "Instalación de actualización de SO\ncancelada en el dispositivo",
+      "description" : "Si se trata de un error, vuelve a iniciar la actualización."
     },
     "UserRefusedOnDevice" : {
       "title" : "Acción rechazada",
@@ -5561,8 +5579,7 @@
       "description" : "Primero instala las aplicaciones de Bitcoin y de Ethereum más recientes."
     },
     "UserRefusedDeviceNameChange" : {
-      "title" : "Cambio de nombre cancelado en el dispositivo",
-      "description" : "Inténtalo de nuevo y permite el cambio de nombre en tu dispositivo"
+      "title" : "Cambio de nombre cancelado en el dispositivo"
     },
     "SyncError" : {
       "title" : "Error de sincronización",
@@ -5576,9 +5593,9 @@
       "title" : "No hay activos a desinmovilizar",
       "description" : "No tienes activos que desinmovilizar asociados a Energía"
     },
-    "TronUnfreezeNotExpired" : {
+    "TronLegacyUnfreezeNotExpired" : {
       "title" : "La desinmovilización todavía no está disponible",
-      "description" : "Debes esperar 3 días después de la última operación de Inmovilización"
+      "description" : "You need to wait 3 days after your last Freeze operation"
     },
     "TronVoteRequired" : {
       "title" : "Se necesita al menos 1 voto"
@@ -5613,6 +5630,16 @@
     },
     "TronNotEnoughEnergy" : {
       "title" : "La energía es menor que la requerida. Es posible que pagues hasta 50 TRX en tarifas."
+    },
+    "TronNoUnfrozenResource" : {
+      "title" : "No hay ningún activo desinmovilizado que retirar"
+    },
+    "TronInvalidUnDelegateResourceAmount" : {
+      "title" : "No hay suficientes activos delegados"
+    },
+    "TronUnfreezeNotExpired" : {
+      "title" : "Los activos aún no están desinmovilizados",
+      "description" : "Tienes que esperar hasta las {{time}} para realizar el retiro"
     },
     "PairingFailed" : {
       "title" : "Emparejamiento fallido",
@@ -5812,12 +5839,12 @@
       "description" : "Vuelve a intentarlo con otra imagen"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "Pantalla de bloqueo cancelada en Ledger Stax",
-      "description" : "Si la imagen no era la adecuada, puedes intentarlo de nuevo con una diferente."
+      "title" : "Instalación de la imagen de pantalla de bloqueo\ncancelada en Ledger Stax",
+      "description" : "Si ha sido un error, inténtalo de nuevo."
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "Pantalla de bloqueo cancelada en Ledger Stax",
-      "description" : "Si la imagen no era la adecuada, puedes intentarlo de nuevo con una diferente."
+      "title" : "Instalación de la imagen de pantalla de bloqueo\ncancelada en Ledger Stax",
+      "description" : "Si ha sido un error, inténtalo de nuevo."
     },
     "ImageDoesNotExistOnDevice" : {
       "title" : "Tu Ledger Stax no tiene una imagen de pantalla de bloqueo que quitar",
@@ -5861,11 +5888,9 @@
       "descriptionWithProductName" : "Desbloquea tu {{ productName }} e inténtalo de nuevo."
     },
     "DeviceNotOnboardedError" : {
-      "title" : "Tu dispositivo aún no está listo para usar",
-      "titleWithProductName" : "{{ productName }} aún no está listo para que lo uses.",
-      "description" : "Primero debes configurar tu dispositivo.\nTe guiaremos a lo largo del proceso de configuración.",
-      "descriptionWithProductName" : "Primero debes configurar tu {{ productName }}.\nTe guiaremos a lo largo del proceso de configuración.",
-      "goToOnboardingButton" : "Configurar mi dispositivo",
+      "title" : "Tu Ledger no está configurado",
+      "description" : "Configúralo para empezar a usarlo. Te guiaremos a lo largo del proceso de configuración.",
+      "goToOnboardingButton" : "Configurar mi Ledger",
       "goToOnboardingButtonWithProductName" : "Configurar mi {{ productName }}"
     },
     "EtherscanAPIError" : {
@@ -5878,6 +5903,9 @@
     "FailedToRetrieveFirmwareUpdateInfo" : {
       "title" : "Error al verificar la actualización del SO",
       "description" : "Algo ha salido mal. Inténtalo de nuevo o contacta al Soporte de Ledger en caso de duda."
+    },
+    "TezosUnrevealedAccount" : {
+      "title" : "Permuta no disponible: es necesario un envío o delegación inicial con la cuenta de Tezos o el cambio de par."
     }
   },
   "cryptoOrg" : {
@@ -5939,13 +5967,13 @@
       "transfer" : {
         "stepLabel" : "Cargar",
         "useAnotherPicture" : "Cargar otra imagen",
-        "allowPreview" : "Toca “Cargar imagen” para personalizar la pantalla de bloqueo.",
-        "allowConfirmPreview" : "Permitir la restauración de la imagen de pantalla de bloqueo en {{productName}}",
-        "loadingPicture" : "Cargando...",
+        "allowPreview" : "Toca “Cargar imagen” para\npersonalizar la imagen de pantalla de bloqueo",
+        "allowConfirmPreview" : "Toca “Cargar imagen” para\nrestaurar la imagen de pantalla de bloqueo",
+        "loadingPicture" : "Instalando...",
         "voila" : "¡Voilà!",
         "imageLoaded" : "Imagen cargada en {{productName}}",
         "confirmPicture" : "¿Te gusta lo que ves?\n¡Pues consérvalo!",
-        "confirmRestorePicture" : "Confirmar la restauración de la imagen de pantalla de bloqueo",
+        "confirmRestorePicture" : "Toca \"Conservar\" para\nconfirmar la selección de tu imagen de pantalla de bloqueo",
         "doThisLater" : "Quizás más tarde"
       }
     },

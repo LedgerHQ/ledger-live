@@ -38,7 +38,8 @@ import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { SWAP_RATES_TIMEOUT } from "../../config";
 import { OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
 import { v4 } from "uuid";
-import SwapWebView, { SWAP_WEB_MANIFEST_ID, SwapWebProps } from "./SwapWebView";
+import SwapWebView, { SwapWebProps } from "./SwapWebView";
+import { maybeTezosAccountUnrevealedAccount } from "@ledgerhq/live-common/exchange/swap/index";
 
 const DAPP_PROVIDERS = ["paraswap", "oneinch", "moonpay"];
 
@@ -102,7 +103,6 @@ const SwapForm = () => {
 
   const isSwapLiveAppEnabled = useIsSwapLiveApp({
     currencyFrom: swapTransaction.swap.from.currency,
-    swapWebManifestId: SWAP_WEB_MANIFEST_ID,
   });
 
   // @TODO: Try to check if we can directly have the right state from `useSwapTransaction`
@@ -118,7 +118,10 @@ const SwapForm = () => {
   }, []);
 
   const exchangeRatesState = swapTransaction.swap?.rates;
-  const swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
+  const swapError =
+    swapTransaction.fromAmountError ||
+    exchangeRatesState?.error ||
+    maybeTezosAccountUnrevealedAccount(swapTransaction);
   const swapWarning = swapTransaction.fromAmountWarning;
   const pageState = usePageState(swapTransaction, swapError);
   const provider = useMemo(() => exchangeRate?.provider, [exchangeRate?.provider]);
@@ -126,7 +129,6 @@ const SwapForm = () => {
   const [swapWebProps, setSwapWebProps] = useState<SwapWebProps["swapState"] | undefined>(
     undefined,
   );
-
   const { setDrawer } = React.useContext(context);
 
   const pauseRefreshing = !!swapError || idleState;
@@ -227,7 +229,7 @@ const SwapForm = () => {
       exchangeRate?.providerURL && providerRedirectURLSearch.set("goToURL", moonpayURL.toString());
     } else {
       exchangeRate?.providerURL &&
-        providerRedirectURLSearch.set("goToURL", exchangeRate.providerURL || "");
+        providerRedirectURLSearch.set("customDappUrl", exchangeRate.providerURL || "");
     }
 
     providerRedirectURLSearch.set("returnTo", "/swap");
