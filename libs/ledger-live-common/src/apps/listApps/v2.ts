@@ -17,7 +17,7 @@ import ManagerAPI from "../../manager/api";
 import { getEnv } from "@ledgerhq/live-env";
 
 import getDeviceName from "../../hw/getDeviceName";
-import fetchLatestFirmwareUseCase from "../../device/use-cases/fetchLatestFirmwareUseCase";
+import getLatestFirmwareForDeviceUseCase from "../../device/use-cases/getLatestFirmwareForDeviceUseCase";
 
 // Hash discrepancies for these apps do NOT indicate a potential update,
 // these apps have a mechanism that makes their hash change every time.
@@ -118,7 +118,7 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
       );
 
       const latestFirmwarePromise = currentFirmwarePromise.then(currentFirmware =>
-        fetchLatestFirmwareUseCase(deviceInfo).then(updateAvailable => ({
+        getLatestFirmwareForDeviceUseCase(deviceInfo).then(updateAvailable => ({
           ...currentFirmware,
           updateAvailable,
         })),

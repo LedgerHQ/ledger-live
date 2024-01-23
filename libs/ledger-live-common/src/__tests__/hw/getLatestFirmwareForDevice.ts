@@ -1,6 +1,6 @@
 import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
 import getDeviceInfo from "../../hw/getDeviceInfo";
-import fetchLatestFirmwareUseCase from "../../device/use-cases/fetchLatestFirmwareUseCase";
+import getLatestFirmwareForDeviceUseCase from "../../device/use-cases/getLatestFirmwareForDeviceUseCase";
 import { fetchNextFirmware } from "../../hw/installFinalFirmware";
 import { firstValueFrom } from "rxjs";
 jest.setTimeout(20000);
@@ -35,7 +35,7 @@ test("1.3.1", async () => {
     managerAllowed: true,
     pinValidated: true,
   };
-  const res = await fetchLatestFirmwareUseCase(deviceInfo);
+  const res = await getLatestFirmwareForDeviceUseCase(deviceInfo);
   expect(res).toMatchObject({
     final: {},
     osu: {},
@@ -53,7 +53,7 @@ test("1.4.2", async () => {
     majMin: "1.4",
     targetId: 823132163,
   };
-  const res = await fetchLatestFirmwareUseCase(deviceInfo);
+  const res = await getLatestFirmwareForDeviceUseCase(deviceInfo);
   expect(res).toMatchObject({
     final: {},
     osu: {},
@@ -89,7 +89,7 @@ test("nano x 1.1.6", async () => {
     providerName: null,
     targetId: 855638020,
   };
-  const res = await fetchLatestFirmwareUseCase(deviceInfo);
+  const res = await getLatestFirmwareForDeviceUseCase(deviceInfo);
   expect(res).toBe(null);
 });
 // TODO waiting it to be stable
@@ -123,7 +123,7 @@ test("nanoS das", async () => {
     targetId: 823132163,
     version: "1.4.2-das",
   };
-  const res = await fetchLatestFirmwareUseCase(deviceInfo);
+  const res = await getLatestFirmwareForDeviceUseCase(deviceInfo);
   expect(res).toBe(null);
 });
 test("OSU 1.4.2", async () => {

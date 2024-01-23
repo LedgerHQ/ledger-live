@@ -17,7 +17,7 @@ import { getEnv } from "@ledgerhq/live-env";
 
 import { calculateDependencies, polyfillApp, polyfillApplication } from "../polyfill";
 import getDeviceName from "../../hw/getDeviceName";
-import fetchLatestFirmwareUseCase from "../../device/use-cases/fetchLatestFirmwareUseCase";
+import getLatestFirmwareForDeviceUseCase from "../../device/use-cases/getLatestFirmwareForDeviceUseCase";
 
 const appsThatKeepChangingHashes = ["Fido U2F", "Security Key"];
 
@@ -87,7 +87,7 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
         }),
       );
 
-      const latestFirmwareForDeviceP = fetchLatestFirmwareUseCase(deviceInfo);
+      const latestFirmwareForDeviceP = getLatestFirmwareForDeviceUseCase(deviceInfo);
 
       const firmwareP = Promise.all([firmwareDataP, latestFirmwareForDeviceP]).then(
         ([firmwareData, updateAvailable]) => ({
