@@ -1,5 +1,13 @@
 # @ledgerhq/hw-app-eth
 
+## 6.35.4-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`eadebff`](https://github.com/LedgerHQ/ledger-live/commit/eadebff3fe58aef6a5befb033d5147afc49663d3)]:
+  - @ledgerhq/hw-transport@6.30.3-next.0
+  - @ledgerhq/hw-transport-mocker@6.28.3-next.0
+
 ## 6.35.3
 
 ### Patch Changes

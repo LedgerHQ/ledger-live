@@ -1,5 +1,39 @@
 # live-mobile
 
+## 3.39.0-next.0
+
+### Minor Changes
+
+- [#5905](https://github.com/LedgerHQ/ledger-live/pull/5905) [`d1271cb`](https://github.com/LedgerHQ/ledger-live/commit/d1271cb52ffc7fa47d9f7f00ae863b7f668cb409) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Added the my_ledger location to the new content cards system
+
+### Patch Changes
+
+- [#5889](https://github.com/LedgerHQ/ledger-live/pull/5889) [`0a03cf1`](https://github.com/LedgerHQ/ledger-live/commit/0a03cf10343e7b79295c1467c8964cc943f16840) Thanks [@RamyEB](https://github.com/RamyEB)! - Make the searchable Dapp only visible through the search bar for both LLD and LLM
+
+- [#5919](https://github.com/LedgerHQ/ledger-live/pull/5919) [`040e591`](https://github.com/LedgerHQ/ledger-live/commit/040e5918eb7ad5a861b2f6eda09f71d3ce565991) Thanks [@gre](https://github.com/gre)! - Update to Countervalues V3 API with better price coverage and better performance.
+
+- [#5945](https://github.com/LedgerHQ/ledger-live/pull/5945) [`f551cd4`](https://github.com/LedgerHQ/ledger-live/commit/f551cd4d9798fddb4286f46bfa4632510af6d637) Thanks [@mle-gall](https://github.com/mle-gall)! - Created analytics prompt screens for variant A and B (main and secondary screens)
+
+- [#5863](https://github.com/LedgerHQ/ledger-live/pull/5863) [`06e05e0`](https://github.com/LedgerHQ/ledger-live/commit/06e05e0aa91ba242bc99ffa3a7d3ce9db4bf3518) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - "Hide empty token accounts" setting or "Hide token" hides accounts from your account page and from the main Portfolio page
+
+- [#5959](https://github.com/LedgerHQ/ledger-live/pull/5959) [`801b16f`](https://github.com/LedgerHQ/ledger-live/commit/801b16fa7a440d914b1e76cd8785a3c7c85b474b) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - List apps v2: fix polyfill of application type
+
+- [#5908](https://github.com/LedgerHQ/ledger-live/pull/5908) [`46298ae`](https://github.com/LedgerHQ/ledger-live/commit/46298aec703e6a0dcb47ab8f2a612dcb3bc4065a) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Fix the free storage available for all devices
+
+- [#5958](https://github.com/LedgerHQ/ledger-live/pull/5958) [`a740084`](https://github.com/LedgerHQ/ledger-live/commit/a740084d4c994d898b566da741bdbe99eee59093) Thanks [@lvndry](https://github.com/lvndry)! - tronResource not mandatory in accountActions
+
+- [#5950](https://github.com/LedgerHQ/ledger-live/pull/5950) [`0b18d6a`](https://github.com/LedgerHQ/ledger-live/commit/0b18d6ad8792e749042853f9bf3f75c7927c9434) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Fix ci lint issues
+
+- Updated dependencies [[`0a03cf1`](https://github.com/LedgerHQ/ledger-live/commit/0a03cf10343e7b79295c1467c8964cc943f16840), [`eadebff`](https://github.com/LedgerHQ/ledger-live/commit/eadebff3fe58aef6a5befb033d5147afc49663d3), [`040e591`](https://github.com/LedgerHQ/ledger-live/commit/040e5918eb7ad5a861b2f6eda09f71d3ce565991), [`52abfc5`](https://github.com/LedgerHQ/ledger-live/commit/52abfc5af4ec5af9c47e72c7a661993e0432d84b), [`35e7a3b`](https://github.com/LedgerHQ/ledger-live/commit/35e7a3b976a300df3abfb1427a35275ee6fa6da1), [`56f43b1`](https://github.com/LedgerHQ/ledger-live/commit/56f43b10d9a996932ec210ff67f5d327d630fa41), [`f551cd4`](https://github.com/LedgerHQ/ledger-live/commit/f551cd4d9798fddb4286f46bfa4632510af6d637), [`6aac2b9`](https://github.com/LedgerHQ/ledger-live/commit/6aac2b977454daa67a02f5695d58746fde4d83f3), [`801b16f`](https://github.com/LedgerHQ/ledger-live/commit/801b16fa7a440d914b1e76cd8785a3c7c85b474b), [`46298ae`](https://github.com/LedgerHQ/ledger-live/commit/46298aec703e6a0dcb47ab8f2a612dcb3bc4065a)]:
+  - @ledgerhq/live-common@33.5.1-next.0
+  - @ledgerhq/hw-transport@6.30.3-next.0
+  - @ledgerhq/native-ui@0.22.6-next.0
+  - @ledgerhq/hw-transport-http@6.29.3-next.0
+  - @ledgerhq/react-native-hid@6.31.3-next.0
+  - @ledgerhq/react-native-hw-transport-ble@6.32.2-next.0
+  - @ledgerhq/coin-evm@0.12.1-next.0
+  - @ledgerhq/coin-framework@0.11.0
+
 ## 3.38.0
 
 ### Minor Changes

@@ -1,5 +1,48 @@
 # ledger-live-desktop
 
+## 2.76.0-next.0
+
+### Minor Changes
+
+- [#5749](https://github.com/LedgerHQ/ledger-live/pull/5749) [`eadebff`](https://github.com/LedgerHQ/ledger-live/commit/eadebff3fe58aef6a5befb033d5147afc49663d3) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Feat: refactor on the IPC Transport logic
+
+  Simpler implementation of the Transport logic using Electron IPC
+  in order to have a 1 <-> 1 relationship between the transport living
+  on the `renderer` process and the transport living on the `internal` process
+
+### Patch Changes
+
+- [#5889](https://github.com/LedgerHQ/ledger-live/pull/5889) [`0a03cf1`](https://github.com/LedgerHQ/ledger-live/commit/0a03cf10343e7b79295c1467c8964cc943f16840) Thanks [@RamyEB](https://github.com/RamyEB)! - Make the searchable Dapp only visible through the search bar for both LLD and LLM
+
+- [#5749](https://github.com/LedgerHQ/ledger-live/pull/5749) [`eadebff`](https://github.com/LedgerHQ/ledger-live/commit/eadebff3fe58aef6a5befb033d5147afc49663d3) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Fix: HID USB reconnection on LLD during the sync onboarding
+
+  - Refactoring of the disconnect after inactivity of the transport implementation
+    hw-transport-node-hid-singleton
+  - Better logs and documentation
+
+- [#5934](https://github.com/LedgerHQ/ledger-live/pull/5934) [`577bec1`](https://github.com/LedgerHQ/ledger-live/commit/577bec1dcbdccfb80255045502f8d355e5c0e8d7) Thanks [@cng-ledger](https://github.com/cng-ledger)! - feat(LIVE-9328): display quotes in swap live app
+
+- [#5959](https://github.com/LedgerHQ/ledger-live/pull/5959) [`801b16f`](https://github.com/LedgerHQ/ledger-live/commit/801b16fa7a440d914b1e76cd8785a3c7c85b474b) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - My Ledger: app in app catalog, fix layout of items
+
+- [#5919](https://github.com/LedgerHQ/ledger-live/pull/5919) [`040e591`](https://github.com/LedgerHQ/ledger-live/commit/040e5918eb7ad5a861b2f6eda09f71d3ce565991) Thanks [@gre](https://github.com/gre)! - Update to Countervalues V3 API with better price coverage and better performance.
+
+- [#5897](https://github.com/LedgerHQ/ledger-live/pull/5897) [`4f141c7`](https://github.com/LedgerHQ/ledger-live/commit/4f141c74f263f12927e67b2478535bbccb0b5165) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Improve stax connect screen before ESC by polling device onboarding state
+
+- [#5941](https://github.com/LedgerHQ/ledger-live/pull/5941) [`f8e4aa7`](https://github.com/LedgerHQ/ledger-live/commit/f8e4aa765d7cbf026d81229f4ee1a0258fdbb5b2) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - bugfix remove height swap web view
+
+- [#5959](https://github.com/LedgerHQ/ledger-live/pull/5959) [`801b16f`](https://github.com/LedgerHQ/ledger-live/commit/801b16fa7a440d914b1e76cd8785a3c7c85b474b) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - List apps v2: fix polyfill of application type
+
+- [#5908](https://github.com/LedgerHQ/ledger-live/pull/5908) [`46298ae`](https://github.com/LedgerHQ/ledger-live/commit/46298aec703e6a0dcb47ab8f2a612dcb3bc4065a) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Fix the free storage available for all devices
+
+- Updated dependencies [[`0a03cf1`](https://github.com/LedgerHQ/ledger-live/commit/0a03cf10343e7b79295c1467c8964cc943f16840), [`eadebff`](https://github.com/LedgerHQ/ledger-live/commit/eadebff3fe58aef6a5befb033d5147afc49663d3), [`040e591`](https://github.com/LedgerHQ/ledger-live/commit/040e5918eb7ad5a861b2f6eda09f71d3ce565991), [`52abfc5`](https://github.com/LedgerHQ/ledger-live/commit/52abfc5af4ec5af9c47e72c7a661993e0432d84b), [`35e7a3b`](https://github.com/LedgerHQ/ledger-live/commit/35e7a3b976a300df3abfb1427a35275ee6fa6da1), [`56f43b1`](https://github.com/LedgerHQ/ledger-live/commit/56f43b10d9a996932ec210ff67f5d327d630fa41), [`6aac2b9`](https://github.com/LedgerHQ/ledger-live/commit/6aac2b977454daa67a02f5695d58746fde4d83f3), [`801b16f`](https://github.com/LedgerHQ/ledger-live/commit/801b16fa7a440d914b1e76cd8785a3c7c85b474b), [`46298ae`](https://github.com/LedgerHQ/ledger-live/commit/46298aec703e6a0dcb47ab8f2a612dcb3bc4065a)]:
+  - @ledgerhq/live-common@33.5.1-next.0
+  - @ledgerhq/hw-transport-node-hid-singleton@6.30.3-next.0
+  - @ledgerhq/hw-transport@6.30.3-next.0
+  - @ledgerhq/hw-transport-http@6.29.3-next.0
+  - @ledgerhq/coin-evm@0.12.1-next.0
+  - @ledgerhq/hw-transport-vault@1.2.3-next.0
+  - @ledgerhq/coin-framework@0.11.0
+
 ## 2.75.0
 
 ### Minor Changes

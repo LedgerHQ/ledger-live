@@ -97,5 +97,25 @@
     "@ledgerhq/pnpm-utils": "1.0.1",
     "@ledgerhq/react-devtools": "0.0.0"
   },
-  "changesets": []
+  "changesets": [
+    "brown-crews-hammer",
+    "chilly-scissors-talk",
+    "early-ladybugs-shake",
+    "fuzzy-frogs-smash",
+    "green-pumas-buy",
+    "lemon-spies-leave",
+    "metal-lemons-perform",
+    "neat-beers-applaud",
+    "nice-islands-double",
+    "odd-chefs-sell",
+    "purple-pears-mix",
+    "real-parents-doubt",
+    "rotten-apples-remember",
+    "selfish-files-trade",
+    "seven-bobcats-smash",
+    "shaggy-cherries-prove",
+    "slow-mugs-attack",
+    "smooth-mails-love",
+    "witty-laws-join"
+  ]
 }
