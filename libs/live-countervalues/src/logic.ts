@@ -1,6 +1,10 @@
 import { log } from "@ledgerhq/logs";
-import { flattenAccounts, getAccountCurrency } from "../account/helpers";
-import { promiseAllBatched } from "../promise";
+import {
+  flattenAccounts,
+  getAccountCurrency,
+  isAccountEmpty,
+} from "@ledgerhq/coin-framework/account/helpers";
+import { promiseAllBatched } from "@ledgerhq/live-promise";
 import type {
   CounterValuesState,
   CounterValuesStateRaw,
@@ -9,6 +13,7 @@ import type {
   RateMap,
   RateGranularity,
   PairRateMapCache,
+  RateMapRaw,
 } from "./types";
 import {
   pairId,
@@ -20,18 +25,16 @@ import {
   incrementPerGranularity,
   datapointLimits,
 } from "./helpers";
-import { fetchHistorical, fetchLatest, aliasPair, mapRate, resolveTrackingPair } from "./modules";
 import type { Account } from "@ledgerhq/types-live";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
+import api from "./api";
 
 // yield raw version of the countervalues state to be saved in a db
 export function exportCountervalues({ data, status }: CounterValuesState): CounterValuesStateRaw {
-  const out = {
-    status,
-  };
+  const out = { status } as CounterValuesStateRaw;
 
   for (const path in data) {
-    const obj = {};
+    const obj: RateMapRaw = {};
 
     for (const [k, v] of data[path]) {
       obj[k] = v;
@@ -40,7 +43,7 @@ export function exportCountervalues({ data, status }: CounterValuesState): Count
     out[path] = obj;
   }
 
-  return <CounterValuesStateRaw>out;
+  return out;
 }
 
 // restore a countervalues state from the raw version
@@ -48,7 +51,7 @@ export function importCountervalues(
   { status, ...rest }: CounterValuesStateRaw,
   settings: CountervaluesSettings,
 ): CounterValuesState {
-  const data = {};
+  const data: Record<string, RateMap> = {};
 
   for (const path in rest) {
     const obj = rest[path];
@@ -85,15 +88,24 @@ export function inferTrackingPairForAccounts(
   yearAgo.setHours(0, 0, 0, 0);
 
   return resolveTrackingPairs(
-    flattenAccounts(accounts).map(account => {
-      const currency = getAccountCurrency(account);
-      return {
-        from: currency,
-        to: countervalue,
-        startDate: account.creationDate < yearAgo ? account.creationDate : yearAgo,
-      };
-    }),
+    flattenAccounts(accounts)
+      .filter(a => !isAccountEmpty(a))
+      .map(account => {
+        const currency = getAccountCurrency(account);
+        return {
+          from: currency,
+          to: countervalue,
+          startDate: account.creationDate < yearAgo ? account.creationDate : yearAgo,
+        };
+      }),
   );
+}
+
+/**
+ * yield the ids of the tracking pairs as stored in the database
+ */
+export function trackingPairIds(trackingPairs: TrackingPair[]): string[] {
+  return trackingPairs.map(pairId);
 }
 
 export const initialState: CounterValuesState = {
@@ -156,7 +168,7 @@ export async function loadCountervalues(
         }
       }
 
-      let start = startDate || nowDate;
+      let start = startDate;
       const limitDate = Date.now() - limit;
 
       if (limitDate && start.valueOf() < limitDate) {
@@ -203,16 +215,15 @@ export async function loadCountervalues(
   // Fetch it all
   const [histo, latest] = await Promise.all([
     promiseAllBatched(10, histoToFetch, ([granularity, pair, key]) =>
-      fetchHistorical(granularity, pair)
+      api
+        .fetchHistorical(granularity, pair)
         .then(rates => {
           // Update status infos
           const id = pairId(pair);
           let oldestDateRequested = status[id]?.oldestDateRequested;
 
-          if (pair.startDate) {
-            if (!oldestDateRequested || pair.startDate < new Date(oldestDateRequested)) {
-              oldestDateRequested = pair.startDate.toISOString();
-            }
+          if (!oldestDateRequested || pair.startDate < new Date(oldestDateRequested)) {
+            oldestDateRequested = pair.startDate.toISOString();
           }
 
           status[id] = {
@@ -250,9 +261,10 @@ export async function loadCountervalues(
           return null;
         }),
     ),
-    fetchLatest(latestToFetch, settings.disableAutoRecoverErrors)
+    api
+      .fetchLatest(latestToFetch)
       .then(rates => {
-        const out = {};
+        const out: Record<string, { latest: number | null | undefined }> = {};
         let hasData = false;
         latestToFetch.forEach((pair, i) => {
           const key = pairId(pair);
@@ -279,9 +291,17 @@ export async function loadCountervalues(
       }),
   ]);
 
-  const updates: any[] = histo.concat(latest).filter(Boolean);
+  const updates = [];
+  for (const patch of histo) {
+    if (patch) {
+      updates.push(patch);
+    }
+  }
+  if (latest) {
+    updates.push(latest);
+  }
   log("countervalues", updates.length + " updates to apply");
-  const changesKeys = {};
+  const changesKeys: Record<string, unknown> = {};
   updates.forEach(patch => {
     Object.keys(patch).forEach(key => {
       changesKeys[key] = 1;
@@ -343,10 +363,7 @@ export function calculate(
     reverse?: boolean;
   },
 ): number | null | undefined {
-  const { from, to } = aliasPair({
-    from: initialQuery.from,
-    to: initialQuery.to,
-  });
+  const { from, to } = initialQuery;
   if (from === to) return initialQuery.value;
   const { date, value, disableRounding, reverse } = initialQuery;
   const query = {
@@ -361,7 +378,6 @@ export function calculate(
   const mult = reverse
     ? magFromTo(initialQuery.to, initialQuery.from)
     : magFromTo(initialQuery.from, initialQuery.to);
-  rate = mapRate(initialQuery, rate);
 
   if (reverse && rate) {
     rate = 1 / rate;
@@ -385,10 +401,9 @@ export function calculateMany(
   },
 ): Array<number | null | undefined> {
   const { reverse, disableRounding } = initialQuery;
-  const query = aliasPair(initialQuery);
-  const { from, to } = query;
+  const { from, to } = initialQuery;
   if (from === to) return dataPoints.map(d => d.value);
-  const map = lenseRateMap(state, query);
+  const map = lenseRateMap(state, initialQuery);
   if (!map) return Array(dataPoints.length).fill(undefined); // undefined array
 
   const mult = reverse
@@ -402,7 +417,6 @@ export function calculateMany(
       date,
     });
     if (!rate) return;
-    rate = mapRate(initialQuery, rate);
 
     if (reverse && rate) {
       rate = 1 / rate;
@@ -488,13 +502,10 @@ function generateCache(
 export function resolveTrackingPairs(pairs: TrackingPair[]): TrackingPair[] {
   const trackingPairs: Record<string, TrackingPair> = {};
 
-  pairs.map(pair => {
-    const { from, to } = resolveTrackingPair({
-      from: pair.from,
-      to: pair.to,
-    });
+  for (const pair of pairs) {
+    const { from, to } = pair;
 
-    if (from === to) return;
+    if (from === to) continue;
 
     // dedup and keep oldest date
     let date = pair.startDate;
@@ -503,7 +514,7 @@ export function resolveTrackingPairs(pairs: TrackingPair[]): TrackingPair[] {
     if (trackingPairs[id]) {
       const { startDate } = trackingPairs[id];
 
-      if (startDate && date) {
+      if (date) {
         date = date < startDate ? date : startDate;
       }
     }
@@ -513,7 +524,10 @@ export function resolveTrackingPairs(pairs: TrackingPair[]): TrackingPair[] {
       to,
       startDate: date,
     };
-  });
+  }
 
-  return Object.values(trackingPairs);
+  // to reach more deterministic order, notably in API calls, we sort by from/to
+  return Object.keys(trackingPairs)
+    .sort()
+    .map(id => trackingPairs[id]);
 }

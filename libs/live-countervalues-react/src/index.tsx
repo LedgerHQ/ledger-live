@@ -9,25 +9,25 @@ import React, {
   useCallback,
   ReactElement,
 } from "react";
-import { getAccountCurrency, getAccountUnit } from "../account/helpers";
+import { getAccountCurrency, getAccountUnit } from "@ledgerhq/coin-framework/account/helpers";
 import {
   initialState,
   calculate,
-  calculateMany,
   loadCountervalues,
   exportCountervalues,
   importCountervalues,
   inferTrackingPairForAccounts,
-} from "./logic";
+} from "@ledgerhq/live-countervalues/logic";
 import type {
   CounterValuesState,
   CounterValuesStateRaw,
   CountervaluesSettings,
   TrackingPair,
-} from "./types";
-import { useDebounce } from "../hooks/useDebounce";
+} from "@ledgerhq/live-countervalues/types";
+import { useDebounce } from "@ledgerhq/live-hooks/useDebounce";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
+
 // Polling is the control object you get from the high level <PollingConsumer>{ polling => ...
 export type Polling = {
   // completely wipe all countervalues
@@ -70,7 +70,7 @@ const CountervaluesContext = createContext<CounterValuesState>(initialState);
 
 function trackingPairsHash(a: TrackingPair[]) {
   return a
-    .map(p => `${p.from.ticker}:${p.to.ticker}:${p.startDate?.toISOString().slice(0, 10) || ""}`)
+    .map(p => `${p.from.ticker}:${p.to.ticker}:${p.startDate.toISOString().slice(0, 10) || ""}`)
     .sort()
     .join("|");
 }
@@ -259,22 +259,6 @@ export function useCalculate(query: {
 }): number | null | undefined {
   const state = useCountervaluesState();
   return calculate(state, query);
-}
-export function useCalculateMany(
-  dataPoints: Array<{
-    value: number;
-    date: Date | null | undefined;
-  }>,
-  query: {
-    from: Currency;
-    to: Currency;
-    disableRounding?: boolean;
-    reverse?: boolean;
-  },
-): Array<number | null | undefined> {
-  const state = useCountervaluesState();
-  // TODO how to approach perf for this? hash function of the datapoints? responsability on user land?
-  return calculateMany(state, dataPoints, query);
 }
 
 export function useCalculateCountervalueCallback({
