@@ -14,6 +14,7 @@ import solana from "../families/solana/specs";
 import stacks from "../families/stacks/specs";
 import stellar from "../families/stellar/specs";
 import tezos from "../families/tezos/specs";
+import ton from "../families/ton/specs";
 import tron from "../families/tron/specs";
 import vechain from "../families/vechain/specs";
 import algorand from "@ledgerhq/coin-algorand/specs";
@@ -37,6 +38,7 @@ export default {
   stacks,
   stellar,
   tezos,
+  ton,
   tron,
   vechain,
   algorand,
