@@ -1,6 +1,5 @@
 import { BigNumber } from "bignumber.js";
 import { InvalidAddressBecauseDestinationIsAlsoSource, NotEnoughBalance } from "@ledgerhq/errors";
-import "../../__tests__/test-helpers/setup";
 import type { DatasetTest, CurrenciesData } from "@ledgerhq/types-live";
 import type { Transaction } from "./types";
 import { fromTransactionRaw } from "./transaction";
@@ -223,3 +222,20 @@ export const dataset: DatasetTest<Transaction> = {
     near,
   },
 };
+
+describe("Near bridge", () => {
+  test.todo(
+    "This is an empty test to make jest command pass. Remove it once there is a real test.",
+  );
+});
+
+/**
+ * NOTE: if tests are added to this file,
+ * like done in libs/coin-polkadot/src/bridge.integration.test.ts for example,
+ * this file fill need to be imported in ledger-live-common
+ * libs/ledger-live-common/src/families/algorand/bridge.integration.test.ts
+ * like done for polkadot.
+ * cf.
+ * - libs/coin-polkadot/src/bridge.integration.test.ts
+ * - libs/ledger-live-common/src/families/polkadot/bridge.integration.test.ts
+ */
