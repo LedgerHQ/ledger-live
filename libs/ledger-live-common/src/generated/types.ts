@@ -46,10 +46,10 @@ import { Transaction as internet_computerTransaction } from "../families/interne
 import { TransactionRaw as internet_computerTransactionRaw } from "../families/internet_computer/types";
 import { TransactionStatus as internet_computerTransactionStatus } from "../families/internet_computer/types";
 import { TransactionStatusRaw as internet_computerTransactionStatusRaw } from "../families/internet_computer/types";
-import { Transaction as nearTransaction } from "../families/near/types";
-import { TransactionRaw as nearTransactionRaw } from "../families/near/types";
-import { TransactionStatus as nearTransactionStatus } from "../families/near/types";
-import { TransactionStatusRaw as nearTransactionStatusRaw } from "../families/near/types";
+import { Transaction as nearTransaction } from "@ledgerhq/coin-near/types";
+import { TransactionRaw as nearTransactionRaw } from "@ledgerhq/coin-near/types";
+import { TransactionStatus as nearTransactionStatus } from "@ledgerhq/coin-near/types";
+import { TransactionStatusRaw as nearTransactionStatusRaw } from "@ledgerhq/coin-near/types";
 import { Transaction as polkadotTransaction } from "@ledgerhq/coin-polkadot/types/index";
 import { TransactionRaw as polkadotTransactionRaw } from "@ledgerhq/coin-polkadot/types/index";
 import { TransactionStatus as polkadotTransactionStatus } from "@ledgerhq/coin-polkadot/types/index";

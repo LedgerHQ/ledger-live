@@ -1,6 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import { utils } from "near-api-js";
-import { formatCurrencyUnit } from "../../currencies";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 import {
   NearMappedStakingPosition,
@@ -79,7 +79,7 @@ export const getMaxAmount = (a: NearAccount, t: Transaction, fees?: BigNumber): 
       }
   }
 
-  if (maxAmount.lt(0)) {
+  if (maxAmount === undefined || maxAmount.lt(0)) {
     return new BigNumber(0);
   }
 
