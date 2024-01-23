@@ -1,9 +1,9 @@
-import { Id } from "@ledgerhq/types-live";
+import { IdEntity } from "../entities/IdEntity";
 import { HttpManagerApiRepository } from "../repositories/HttpManagerApiRepository";
 
 export type FetchLatestFirmwareParams = {
-  current_se_firmware_final_version: Id;
-  device_version: Id;
+  current_se_firmware_final_version: IdEntity;
+  device_version: IdEntity;
   provider: number;
   userId: string;
   managerApiRepository: HttpManagerApiRepository;

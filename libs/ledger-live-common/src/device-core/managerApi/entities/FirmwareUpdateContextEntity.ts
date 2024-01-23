@@ -1,7 +1,7 @@
-export type Id = number;
+import { IdEntity } from "./IdEntity";
 
 type BaseFirmware = {
-  id: Id;
+  id: IdEntity;
   name: string;
   description: string | null | undefined;
   display_name: string | null | undefined;
@@ -12,16 +12,16 @@ type BaseFirmware = {
   hash: string;
   date_creation: string;
   date_last_modified: string;
-  device_versions: Array<Id>;
-  providers: Array<Id>;
+  device_versions: Array<IdEntity>;
+  providers: Array<IdEntity>;
 };
 
 /**
  *
  */
 export type OsuFirmware = BaseFirmware & {
-  next_se_firmware_final_version: Id;
-  previous_se_firmware_final_version: Array<Id>;
+  next_se_firmware_final_version: IdEntity;
+  previous_se_firmware_final_version: Array<IdEntity>;
 };
 
 /**
@@ -29,10 +29,10 @@ export type OsuFirmware = BaseFirmware & {
  */
 export type FinalFirmware = BaseFirmware & {
   version: string;
-  se_firmware: Id;
+  se_firmware: IdEntity;
   osu_versions: Array<OsuFirmware>;
-  mcu_versions: Array<Id>;
-  application_versions: Array<Id>;
+  mcu_versions: Array<IdEntity>;
+  application_versions: Array<IdEntity>;
   bytes?: number;
   updateAvailable?: FirmwareUpdateContextEntity | null | undefined;
 };

@@ -1,11 +1,13 @@
 // To refactor: use own entities
-import { DeviceVersion, FinalFirmware, Id, OsuFirmware } from "@ledgerhq/types-live";
+import { DeviceVersionEntity } from "../entities/DeviceVersionEntity";
+import { FinalFirmware, OsuFirmware } from "../entities/FirmwareUpdateContextEntity";
+import { IdEntity } from "../entities/IdEntity";
 
 // Used to name interfaces like this "Port"
 export interface ManagerApiRepository {
   fetchLatestFirmware(params: {
-    current_se_firmware_final_version: Id;
-    device_version: Id;
+    current_se_firmware_final_version: IdEntity;
+    device_version: IdEntity;
     providerId: number;
     userId: string;
   }): Promise<OsuFirmware | null | undefined>;
@@ -18,7 +20,7 @@ export interface ManagerApiRepository {
   }: {
     targetId: string | number;
     providerId: number;
-  }): Promise<DeviceVersion>;
+  }): Promise<DeviceVersionEntity>;
 
   getCurrentOSU(params: {
     deviceId: string | number;
