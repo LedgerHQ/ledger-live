@@ -11,7 +11,7 @@ import {
   isAccount,
   getMainAccount,
   makeEmptyTokenAccount,
-  findTokenAccountByCurrency,
+  getParentAccount,
 } from "../account/index";
 import { Transaction } from "../generated/types";
 import { prepareMessageToSign } from "../hw/signMessage/index";
@@ -29,12 +29,6 @@ export type WalletAPIContext = {
   accounts: AccountLike[];
   tracking: TrackingAPI;
 };
-
-function getParentAccount(account: AccountLike, fromAccounts: AccountLike[]): Account | undefined {
-  return isTokenAccount(account)
-    ? (fromAccounts.find(a => a.id === account.parentId) as Account)
-    : undefined;
-}
 
 export function receiveOnAccountLogic(
   { manifest, accounts, tracking }: WalletAPIContext,
@@ -62,7 +56,7 @@ export function receiveOnAccountLogic(
   }
 
   const parentAccount = getParentAccount(account, accounts);
-  const mainAccount = getMainAccount(account);
+  const mainAccount = getMainAccount(account, parentAccount);
   const currency = tokenCurrency ? findTokenById(tokenCurrency) : null;
   const receivingAccount = currency ? makeEmptyTokenAccount(mainAccount, currency) : account;
   const accountAddress = accountToWalletAPIAccount(account, parentAccount).address;
