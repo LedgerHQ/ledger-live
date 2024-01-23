@@ -139,7 +139,12 @@ const SyncOnboardingScreen: React.FC<SyncOnboardingScreenProps> = ({
           setDrawer();
         },
       };
-      setDrawer(TroubleshootingDrawer, props, { forceDisableFocusTrap: true });
+      setDrawer(TroubleshootingDrawer, props, {
+        forceDisableFocusTrap: true,
+        onRequestClose: () => {
+          history.push("/onboarding/select-device");
+        },
+      });
     }
     return () => setDrawer();
   }, [deviceModelId, history, isTroubleshootingDrawerOpen, lockedDevice]);
