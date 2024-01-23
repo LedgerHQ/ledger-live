@@ -1,22 +1,12 @@
 /**
- * This component use the https://github.com/davidjerleke/embla-carousel library.
+ * This component uses the https://github.com/davidjerleke/embla-carousel library.
  */
 
 import useEmblaCarousel from "embla-carousel-react";
 import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import Footer from "./footer";
-
-type Props = {
-  slides: {
-    id: number | string;
-    Component: () => React.JSX.Element;
-  }[];
-};
-
-const CarouselContainer = styled.div`
-  padding: 12px 16px 12px 16px;
-`;
+import { Props } from "./types";
 
 const Embla = styled.div`
   overflow: hidden;
@@ -31,7 +21,7 @@ const EmblaSlide = styled.div`
   min-width: 0;
 `;
 
-const Carousel = ({ slides }: Props) => {
+const Carousel = (props: Props) => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -50,19 +40,17 @@ const Carousel = ({ slides }: Props) => {
 
   return (
     <div>
-      <CarouselContainer>
-        <Embla ref={emblaRef}>
-          <EmblaContainer>
-            {slides.map(({ id, Component }) => (
-              <EmblaSlide key={id}>
-                <Component />
-              </EmblaSlide>
-            ))}
-          </EmblaContainer>
-        </Embla>
-      </CarouselContainer>
+      <Embla ref={emblaRef}>
+        <EmblaContainer>
+          {props.slides.map(({ id, Component }) => (
+            <EmblaSlide key={id}>
+              <Component />
+            </EmblaSlide>
+          ))}
+        </EmblaContainer>
+      </Embla>
 
-      <Footer slides={slides} emblaApi={emblaApi} index={currentIndex} />
+      <Footer {...props} emblaApi={emblaApi} index={currentIndex} />
     </div>
   );
 };

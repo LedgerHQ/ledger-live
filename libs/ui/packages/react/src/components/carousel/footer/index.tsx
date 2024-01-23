@@ -1,54 +1,25 @@
-import { ArrowLeft, ArrowRight } from "@ledgerhq/icons-ui/react";
 import { UseEmblaCarouselType } from "embla-carousel-react";
-import React from "react";
-import styled from "styled-components";
-import Pagination from "./pagination";
+import React, { FC } from "react";
+import { Props, FooterVariant } from "../types";
+import FooterContentCard from "./variant-content-card";
+import FooterDefault from "./variant-default";
 
-type Props = {
-  slides: {
-    id: number | string;
-    Component: () => React.JSX.Element;
-  }[];
+const Footers: {
+  [key in FooterVariant]: FC<Props & { emblaApi: UseEmblaCarouselType[1]; index: number }>;
+} = {
+  "content-card": FooterContentCard,
+  default: FooterDefault,
 };
-
-const FooterContainer = styled.div`
-  padding: 6px 16px 6px 16px;
-  border-top: 1px solid ${p => p.theme.colors.constant.white};
-  display: flex;
-  justify-content: space-between;
-`;
-
-const FooterArrowsContainer = styled.div`
-  display: flex;
-  gap: 8px;
-  align-items: center;
-`;
-
-const FooterArrowContainer = styled.div`
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-`;
 
 const Footer = ({
   slides,
   emblaApi,
   index,
+  footerVariant = "default",
 }: Props & { emblaApi: UseEmblaCarouselType[1]; index: number }) => {
-  return (
-    <FooterContainer>
-      <Pagination slides={slides} emblaApi={emblaApi} index={index} />
+  const Component = Footers[footerVariant];
 
-      <FooterArrowsContainer>
-        <FooterArrowContainer onClick={() => emblaApi?.scrollPrev()}>
-          <ArrowLeft size="S" />
-        </FooterArrowContainer>
-        <FooterArrowContainer onClick={() => emblaApi?.scrollNext()}>
-          <ArrowRight size="S" />
-        </FooterArrowContainer>
-      </FooterArrowsContainer>
-    </FooterContainer>
-  );
+  return <Component slides={slides} emblaApi={emblaApi} index={index} />;
 };
 
 export default Footer;

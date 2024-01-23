@@ -5,9 +5,18 @@ const CarouselStory = () => {
   return (
     <div>
       <Carousel
-        slides={[...Array(10)].map((item, index) => ({
+        slides={[...Array(10)].map((_, index) => ({
           id: index,
-          Component: () => <div>Item {index}</div>,
+          Component: () => (
+            <div
+              style={{
+                height: "35px",
+                backgroundColor: "beige",
+              }}
+            >
+              Item {index}
+            </div>
+          ),
         }))}
       />
     </div>
@@ -22,11 +31,14 @@ export default {
     slides: {
       description: "The elements to be displayed.",
     },
+    footerVariant: {
+      description: "Styling variant for the footer.",
+    },
   },
   parameters: {
     docs: {
       description: {
-        component: "A simple Carousel component",
+        component: "A simple Carousel component.",
       },
     },
   },

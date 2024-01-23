@@ -3,13 +3,7 @@ import React from "react";
 import styled from "styled-components";
 import { getItemStatus } from "../utils";
 import Bullet from "./bullets";
-
-type Props = {
-  slides: {
-    id: number | string;
-    Component: () => React.JSX.Element;
-  }[];
-};
+import { Props } from "../../types";
 
 const FooterCarouselBullets = styled.div`
   display: flex;
