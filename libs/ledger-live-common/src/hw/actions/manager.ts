@@ -5,7 +5,6 @@ import { log } from "@ledgerhq/logs";
 import type { DeviceInfo } from "@ledgerhq/types-live";
 import type { ListAppsResult } from "../../apps/types";
 import { useReplaySubject } from "../../observable";
-import manager from "../../manager";
 import type { Input as ConnectManagerInput, ConnectManagerEvent } from "../connectManager";
 import type { Action, Device } from "./types";
 import { currentMode } from "./app";

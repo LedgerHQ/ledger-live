@@ -7,7 +7,7 @@ export type FetchLatestFirmwareUseCaseParams = {
   current_se_firmware_final_version: Id;
   device_version: Id;
   provider: number;
-  managerApiRepository: HttpManagerApiRepository
+  managerApiRepository: HttpManagerApiRepository;
 };
 
 export default function fetchLatestFirmwareUseCase(
