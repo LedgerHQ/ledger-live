@@ -1,8 +1,8 @@
-import { Flex, IconsLegacy } from "@ledgerhq/native-ui";
+import { Flex } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import Touchable from "./Touchable";
-
+import { ArrowLeft } from "@ledgerhq/native-ui/assets/icons";
 type Props = {
   /**
    * Function called when user presses on the back arrow.
@@ -13,7 +13,7 @@ type Props = {
 
 export const NavigationHeaderBackImage = () => (
   <Flex p={6}>
-    <IconsLegacy.ArrowLeftMedium size={24} />
+    <ArrowLeft size={"M"} />
   </Flex>
 );
 

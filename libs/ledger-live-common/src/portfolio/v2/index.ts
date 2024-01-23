@@ -1,5 +1,5 @@
-import type { CounterValuesState } from "../../countervalues/types";
-import { calculate, calculateMany } from "../../countervalues/logic";
+import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
+import { calculate, calculateMany } from "@ledgerhq/live-countervalues/logic";
 import { flattenAccounts, getAccountCurrency, getAccountHistoryBalances } from "../../account";
 import { getEnv } from "@ledgerhq/live-env";
 import type {

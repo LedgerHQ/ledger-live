@@ -43,6 +43,7 @@
     "@ledgerhq/hw-transport-node-hid": "workspace:^",
     "@ledgerhq/hw-transport-node-speculos": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
+    "@ledgerhq/live-countervalues": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "workspace:^",

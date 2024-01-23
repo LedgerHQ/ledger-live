@@ -4,7 +4,7 @@ import { v4 as uuid } from "uuid";
 import * as Sentry from "@sentry/react-native";
 import Config from "react-native-config";
 import { Platform } from "react-native";
-import { createClient, SegmentClient } from "@segment/analytics-react-native";
+import { createClient, SegmentClient, UserTraits } from "@segment/analytics-react-native";
 import VersionNumber from "react-native-version-number";
 import RNLocalize from "react-native-localize";
 import { ReplaySubject } from "rxjs";
@@ -27,6 +27,7 @@ import { getAndroidArchitecture, getAndroidVersionCode } from "../logic/cleanBui
 import getOrCreateUser from "../user";
 import {
   analyticsEnabledSelector,
+  trackingEnabledSelector,
   languageSelector,
   localeSelector,
   lastSeenDeviceSelector,
@@ -36,6 +37,7 @@ import {
   knownDeviceModelIdsSelector,
   customImageTypeSelector,
   userNpsSelector,
+  personalizedRecommendationsEnabledSelector,
 } from "../reducers/settings";
 import { knownDevicesSelector } from "../reducers/ble";
 import { DeviceLike, State } from "../reducers/types";
@@ -67,7 +69,6 @@ export function setAnalyticsFeatureFlagMethod(method: typeof analyticsFeatureFla
 const getFeatureFlagProperties = () => {
   if (!analyticsFeatureFlagMethod || !segmentClient) return {};
   (async () => {
-    const { user } = await getOrCreateUser();
     const ptxEarnFeatureFlag = analyticsFeatureFlagMethod("ptxEarn");
     const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
 
@@ -78,7 +79,7 @@ const getFeatureFlagProperties = () => {
     const isBatch3Enabled =
       !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 3;
 
-    segmentClient.identify(user.id, {
+    updateIdentify({
       ptxEarnEnabled: !!ptxEarnFeatureFlag?.enabled,
       isBatch1Enabled,
       isBatch2Enabled,
@@ -146,6 +147,9 @@ const extraProperties = async (store: AppStore) => {
   const hasGenesisPass = hasNftInAccounts(GENESIS_PASS_COLLECTION_CONTRACT, accounts);
   const hasInfinityPass = hasNftInAccounts(INFINITY_PASS_COLLECTION_CONTRACT, accounts);
   const nps = userNpsSelector(state);
+  const analyticsEnabled: boolean = analyticsEnabledSelector(state);
+  const personalizedRecommendationsEnabled: boolean =
+    personalizedRecommendationsEnabledSelector(state);
 
   return {
     appVersion,
@@ -181,6 +185,8 @@ const extraProperties = async (store: AppStore) => {
     staxDeviceUser: knownDeviceModelIds.stax,
     staxLockscreen: customImageType || "none",
     nps,
+    optInAnalytics: analyticsEnabled,
+    optInPersonalRecommendations: personalizedRecommendationsEnabled,
   };
 };
 
@@ -194,7 +200,6 @@ export const start = async (store: AppStore): Promise<SegmentClient | undefined>
   }
 
   console.log("START ANALYTICS", ANALYTICS_LOGS);
-  const userExtraProperties = await extraProperties(store);
   if (token) {
     segmentClient = createClient({
       writeKey: token,
@@ -208,27 +213,33 @@ export const start = async (store: AppStore): Promise<SegmentClient | undefined>
     if (created) {
       segmentClient.reset();
     }
-    await segmentClient.identify(user.id, userExtraProperties);
+    await updateIdentify();
   }
-  await track("Start", userExtraProperties, true);
+  await track("Start");
 
   return segmentClient;
 };
-export const updateIdentify = async () => {
+
+export const updateIdentify = async (additionalProperties?: UserTraits) => {
   Sentry.addBreadcrumb({
     category: "identify",
     level: "debug",
   });
 
-  if (!storeInstance || !analyticsEnabledSelector(storeInstance.getState())) {
+  if (!storeInstance || !trackingEnabledSelector(storeInstance.getState())) {
     return;
   }
 
   const userExtraProperties = await extraProperties(storeInstance);
-  if (ANALYTICS_LOGS) console.log("analytics:identify", userExtraProperties);
+  const allProperties = {
+    ...userExtraProperties,
+    ...(additionalProperties || {}),
+  };
+  if (ANALYTICS_LOGS) console.log("analytics:identify", allProperties);
   if (!token) return;
-  await segmentClient?.identify(userExtraProperties.userId, userExtraProperties);
+  await segmentClient?.identify(userExtraProperties.userId, allProperties);
 };
+
 export const stop = () => {
   if (ANALYTICS_LOGS) console.log("analytics:stop");
   storeInstance = null;
@@ -247,12 +258,11 @@ type EventType = string | "button_clicked" | "error_message";
 
 export function getIsTracking(
   state: State | null | undefined,
-  mandatory?: boolean | null | undefined,
 ): { enabled: true } | { enabled: false; reason?: string } {
   if (!state) return { enabled: false, reason: "store not initialised" };
-  const analyticsEnabled = state && analyticsEnabledSelector(state);
+  const trackingEnabled = state && trackingEnabledSelector(state);
 
-  if (!mandatory && !analyticsEnabled) {
+  if (!trackingEnabled) {
     return {
       enabled: false,
       reason: "analytics not enabled",
@@ -264,7 +274,6 @@ export function getIsTracking(
 export const track = async (
   event: EventType,
   eventProperties?: Error | Record<string, unknown> | null,
-  mandatory?: boolean | null,
 ) => {
   Sentry.addBreadcrumb({
     message: event,
@@ -275,7 +284,7 @@ export const track = async (
 
   const state = storeInstance && storeInstance.getState();
 
-  const isTracking = getIsTracking(state, mandatory);
+  const isTracking = getIsTracking(state);
   if (!isTracking.enabled) {
     if (ANALYTICS_LOGS) console.log("analytics:track: not tracking because: ", isTracking.reason);
     return;
@@ -310,20 +319,19 @@ export const trackWithRoute = (
   event: EventType,
   route: RouteProp<ParamListBase>,
   properties?: Record<string, unknown> | null,
-  mandatory?: boolean | null,
 ) => {
   const newProperties = {
     page: getPageNameFromRoute(route),
     // don't override page if it's already set
     ...(properties || {}),
   };
-  track(event, newProperties, mandatory);
+  track(event, newProperties);
 };
 export const useTrack = () => {
   const route = useRoute();
   const track = useCallback(
-    (event: EventType, properties?: Record<string, unknown> | null, mandatory?: boolean | null) =>
-      trackWithRoute(event, route, properties, mandatory),
+    (event: EventType, properties?: Record<string, unknown> | null) =>
+      trackWithRoute(event, route, properties),
     [route],
   );
   return track;
