@@ -121,8 +121,7 @@ export function signTransactionLogic(
     );
   }
 
-  // return uiNavigation(account, parentAccount, {
-  return uiNavigation(signerAccount, mainAccount, {
+  return uiNavigation(signerAccount, parentAccount, {
     canEditFees,
     liveTx,
     hasFeesProvided,
