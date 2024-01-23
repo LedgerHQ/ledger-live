@@ -4,7 +4,6 @@ import { I18nextProvider } from "react-i18next";
 import { Provider } from "react-redux";
 import { NavigationContainer } from "@react-navigation/native";
 import { AnalyticsContextProvider } from "~/analytics/AnalyticsContext";
-import NotificationsProvider from "~/screens/NotificationCenter/NotificationsProvider";
 import { FirebaseFeatureFlagsProvider } from "~/components/FirebaseFeatureFlags";
 import { getFeature } from "./featureFlags";
 import { i18n } from "~/context/Locale";
@@ -51,9 +50,7 @@ const customRender = (
           <FirebaseFeatureFlagsProvider getFeature={getFeature}>
             <AnalyticsContextProvider>
               <I18nextProvider i18n={i18n}>
-                <NotificationsProvider>
-                  <NavigationContainer>{children}</NavigationContainer>
-                </NotificationsProvider>
+                <NavigationContainer>{children}</NavigationContainer>
               </I18nextProvider>
             </AnalyticsContextProvider>
           </FirebaseFeatureFlagsProvider>
@@ -67,6 +64,8 @@ const customRender = (
     ...render(ui, { wrapper: ProvidersWrapper, ...renderOptions }),
   };
 };
+
+export const LONG_TIMEOUT = 30000;
 
 // re-export everything
 export * from "@testing-library/react-native";
