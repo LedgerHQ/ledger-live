@@ -170,9 +170,9 @@ export const ButtonlabelStyles: {
   },
 };
 
-export const Button = ({ label, size }: LabelProps) => {
+export const Button = ({ label, size, action }: LabelProps & { action?: () => void }) => {
   return (
-    <SystemButton {...ButtonStyles[size]} type="main" style={ButtonStyles[size]}>
+    <SystemButton {...ButtonStyles[size]} type="main" style={ButtonStyles[size]} onPress={action}>
       <Text color="neutral.c00" {...ButtonlabelStyles[size]}>
         {label}
       </Text>

@@ -40,7 +40,7 @@ const VerticalCard = ContentCardBuilder<Props>(
             <Title size={size} label={title} />
             <Subtitle size={size} label={subtitle} />
             <Price size={size} label={price} />
-            {cta && <Button size={size} label={cta} />}
+            {cta && <Button size={size} label={cta} action={metadata.actions?.onClick} />}
           </Flex>
         </Container>
       </TouchableOpacity>
