@@ -1,13 +1,11 @@
 // From libs/ledger-live-common/src/manager/api.ts
 import { DeviceInfo } from "@ledgerhq/types-live";
 import { getProviderId } from "../../manager/index";
-import { getLatestFirmwareForDevice } from "../../device-core/use-cases/getLatestFirmwareForDevice";
+import { getLatestFirmwareForDevice } from "../../device-core/managerApi/use-cases/getLatestFirmwareForDevice";
 import { getEnv } from "@ledgerhq/live-env";
 import { version } from "../../../package.json";
-import {
-  ManagerApiRepository,
-} from "../../device-core/repositories/ManagerApiRepository";
-import { HttpManagerApiRepository } from "../../device-core/repositories/HttpManagerApiRepository";
+import { ManagerApiRepository } from "../../device-core/managerApi/repositories/ManagerApiRepository";
+import { HttpManagerApiRepository } from "../../device-core/managerApi/repositories/HttpManagerApiRepository";
 
 export default function fetchLatestFirmwareUseCase(
   deviceInfo: DeviceInfo,

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { DeviceInfoEntity } from "../device-core/entities/DeviceInfoEntity";
-import { ManagerApiRepository } from "../device-core/repositories/ManagerApiRepository";
-import { getLatestFirmwareForDevice } from "../device-core/use-cases/getLatestFirmwareForDevice";
-import { FirmwareUpdateContextEntity } from "../device-core/entities/FirmwareUpdateContextEntity";
+import { DeviceInfoEntity } from "../../device-core/managerApi/entities/DeviceInfoEntity";
+import { ManagerApiRepository } from "../../device-core/managerApi/repositories/ManagerApiRepository";
+import { getLatestFirmwareForDevice } from "../../device-core/managerApi/use-cases/getLatestFirmwareForDevice";
+import { FirmwareUpdateContextEntity } from "../../device-core/managerApi/entities/FirmwareUpdateContextEntity";
 
 type UseGetLatestFirmwareForDeviceParams = {
   deviceInfo?: DeviceInfoEntity | null;

@@ -1,6 +1,6 @@
 import { getLatestFirmwareForDevice } from "./getLatestFirmwareForDevice";
 import { ManagerApiRepository } from "../repositories/ManagerApiRepository";
-import { aDeviceInfoBuilder } from "../../mock/fixtures/aDeviceInfo";
+import { aDeviceInfoBuilder } from "../../../mock/fixtures/aDeviceInfo";
 import { DeviceVersion, OsuFirmware } from "@ledgerhq/types-live";
 import { UnknownMCU } from "@ledgerhq/errors";
 jest.mock("../repositories/ManagerApiRepository");

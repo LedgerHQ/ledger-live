@@ -1,7 +1,7 @@
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import network from "@ledgerhq/live-network/lib/network";
 import { DeviceVersion, FinalFirmware, Id, OsuFirmware } from "@ledgerhq/types-live";
-import { getUserHashes } from "../../user";
+import { getUserHashes } from "../../../user";
 import URL from "url";
 import { FirmwareNotRecognized } from "@ledgerhq/errors";
 import { ManagerApiRepository } from "./ManagerApiRepository";
