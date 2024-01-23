@@ -5,13 +5,13 @@ import { getLatestFirmwareForDevice } from "../../device-core/use-cases/getLates
 import { getEnv } from "@ledgerhq/live-env";
 import { version } from "../../../package.json";
 import {
-  ManagerApiHttpRepository,
   ManagerApiRepository,
 } from "../../device-core/repositories/ManagerApiRepository";
+import { HttpManagerApiRepository } from "../../device-core/repositories/HttpManagerApiRepository";
 
 export default function fetchLatestFirmwareUseCase(
   deviceInfo: DeviceInfo,
-  managerApiRepository: ManagerApiRepository = new ManagerApiHttpRepository(
+  managerApiRepository: ManagerApiRepository = new HttpManagerApiRepository(
     getEnv("MANAGER_API_BASE"),
     version,
   ),
