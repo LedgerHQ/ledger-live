@@ -1,5 +1,23 @@
 # @ledgerhq/native-ui
 
+## 0.22.5
+
+### Patch Changes
+
+- [#5859](https://github.com/LedgerHQ/ledger-live/pull/5859) [`e1f967e`](https://github.com/LedgerHQ/ledger-live/commit/e1f967eb617a749a9f6dc58a7d1f4b6633f56d1c) Thanks [@mle-gall](https://github.com/mle-gall)! - Fixed warning on animatedInput (forwardRef not needed)
+
+- Updated dependencies [[`fc2cf04`](https://github.com/LedgerHQ/ledger-live/commit/fc2cf04c8d3cd55503ea19aeb21fd12ee55046f6)]:
+  - @ledgerhq/crypto-icons-ui@1.0.1
+
+## 0.22.5-next.0
+
+### Patch Changes
+
+- [#5859](https://github.com/LedgerHQ/ledger-live/pull/5859) [`e1f967e`](https://github.com/LedgerHQ/ledger-live/commit/e1f967eb617a749a9f6dc58a7d1f4b6633f56d1c) Thanks [@mle-gall](https://github.com/mle-gall)! - Fixed warning on animatedInput (forwardRef not needed)
+
+- Updated dependencies [[`fc2cf04`](https://github.com/LedgerHQ/ledger-live/commit/fc2cf04c8d3cd55503ea19aeb21fd12ee55046f6)]:
+  - @ledgerhq/crypto-icons-ui@1.0.1-next.0
+
 ## 0.22.4
 
 ### Patch Changes

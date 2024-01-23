@@ -2144,11 +2144,11 @@ importers:
         specifier: 1.77.3
         version: 1.77.3
       '@stacks/network':
-        specifier: 1.2.2
-        version: 1.2.2
+        specifier: 6.10.0
+        version: 6.10.0
       '@stacks/transactions':
-        specifier: 1.3.5
-        version: 1.3.5
+        specifier: 6.11.0
+        version: 6.11.0
       '@stricahq/bip32ed25519':
         specifier: ^1.0.3
         version: 1.0.4
@@ -2242,9 +2242,6 @@ importers:
       blakejs:
         specifier: ^1.2.1
         version: 1.2.1
-      bn.js:
-        specifier: ^5.2.1
-        version: 5.2.1
       bs58:
         specifier: ^4.0.1
         version: 4.0.1
@@ -16844,6 +16841,10 @@ packages:
     resolution: {integrity: sha512-iR8GBkDt0Q3GyaVcIu7mSsVIqnFbkbRzGLWlvhwunacoLwt4J3swfKhfaM6rN6WY+TBGoYT1GtT1mIh2/jGbRQ==}
     dev: false
 
+  /@noble/hashes@1.1.5:
+    resolution: {integrity: sha512-LTMZiiLc+V4v1Yi16TD6aX2gmtKszNye0pQgbaLqkvhIqP7nVsSaJsWloGQjJfJ8offaoP5GtX3yY5swbcJxxQ==}
+    dev: false
+
   /@noble/hashes@1.3.1:
     resolution: {integrity: sha512-EbqwksQwz9xDRGfDST86whPBgM65E0OH/pCgqW0GBVzO22bNE+NuIbeTb714+IfSjU3aRk47EUvXIb5bTsenKA==}
     engines: {node: '>= 16'}
@@ -20873,14 +20874,6 @@ packages:
     resolution: {integrity: sha512-WfqfX/eXGiAd3RJe4VU2snh/ZPwtSjLG4ynQ/vYzvghTh7dHFcI1wl+nrkWG6lGhukOxOsUHfv8dUXr58D0ayg==}
     dev: false
 
-  /@stacks/common@1.2.2:
-    resolution: {integrity: sha512-knCqq88EBRCN8AhS7+Sx2PJuRv0EFNChEpqLqCAchCHCQfp5bWad/47Zw+fLP9ccBwFXh4pl1wDtbQLBfDo0+A==}
-    dependencies:
-      cross-fetch: 3.1.5
-    transitivePeerDependencies:
-      - encoding
-    dev: false
-
   /@stacks/common@4.3.5:
     resolution: {integrity: sha512-UuViiQ7fn3vdtTe3739aRzbl+wbukekeQuXgqt8d7nB2HC2HodD7GcHhpUga165cO35CD6lQUtj3vXxJb5Ga+A==}
     dependencies:
@@ -20889,12 +20882,11 @@ packages:
       buffer: 6.0.3
     dev: false
 
-  /@stacks/network@1.2.2:
-    resolution: {integrity: sha512-xcWwuRrLJn9qqi3PEBcP2UPZHQztTZd31C0aVlzYHttNMir/sY9SrUqSnw45z2Jo4O9pIYYPIiPRtdV91Ho3fw==}
+  /@stacks/common@6.10.0:
+    resolution: {integrity: sha512-6x5Z7AKd9/kj3+DYE9xIDIkFLHihBH614i2wqrZIjN02WxVo063hWSjIlUxlx8P4gl6olVzlOy5LzhLJD9OP0A==}
     dependencies:
-      '@stacks/common': 1.2.2
-    transitivePeerDependencies:
-      - encoding
+      '@types/bn.js': 5.1.5
+      '@types/node': 18.16.19
     dev: false
 
   /@stacks/network@4.3.5:
@@ -20906,25 +20898,11 @@ packages:
       - encoding
     dev: false
 
-  /@stacks/transactions@1.3.5:
-    resolution: {integrity: sha512-KhZ9y48KnOB+Es3whxbpxtPm6o5CYLrhxCCG5Tfglmj9AcFtpWCBjkcFwZJ/R3eI4OYthD5aMB9nYY31xGiULA==}
+  /@stacks/network@6.10.0:
+    resolution: {integrity: sha512-mbiZ8nlsyy77ndmBdaqhHXii22IFdK4ThRcOQs9j/O00DkAr04jCM4GV5Q+VLUnZ9OBoJq7yOV7Pf6jglh+0hw==}
     dependencies:
-      '@stacks/common': 1.2.2
-      '@stacks/network': 1.2.2
-      '@types/bn.js': 4.11.6
-      '@types/elliptic': 6.4.14
-      '@types/randombytes': 2.0.0
-      '@types/sha.js': 2.4.0
-      bn.js: 4.12.0
-      c32check: 1.1.3
+      '@stacks/common': 6.10.0
       cross-fetch: 3.1.5
-      elliptic: 6.5.4
-      lodash: 4.17.21
-      lodash-es: 4.17.20
-      randombytes: 2.1.0
-      ripemd160-min: 0.0.6
-      sha.js: 2.4.11
-      smart-buffer: 4.2.0
     transitivePeerDependencies:
       - encoding
     dev: false
@@ -20943,6 +20921,19 @@ packages:
       ripemd160-min: 0.0.6
       sha.js: 2.4.11
       smart-buffer: 4.2.0
+    transitivePeerDependencies:
+      - encoding
+    dev: false
+
+  /@stacks/transactions@6.11.0:
+    resolution: {integrity: sha512-+zIDqn9j4H/+o1ER8C9rFpig1fyrQcj2hVGNIrp+YbpPyja+cxv3fPk6kI/gePzwggzxRgUkIWhBc+mZAXuXyQ==}
+    dependencies:
+      '@noble/hashes': 1.1.5
+      '@noble/secp256k1': 1.7.1
+      '@stacks/common': 6.10.0
+      '@stacks/network': 6.10.0
+      c32check: 2.0.0
+      lodash.clonedeep: 4.5.0
     transitivePeerDependencies:
       - encoding
     dev: false
@@ -22515,7 +22506,7 @@ packages:
       react-docgen-typescript: 2.2.2(typescript@5.1.3)
       tslib: 2.6.2
       typescript: 5.1.3
-      webpack: 5.89.0(metro@0.80.0)
+      webpack: 5.89.0(esbuild@0.19.3)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -27634,7 +27625,7 @@ packages:
       '@babel/core': 7.23.2
       find-cache-dir: 4.0.0
       schema-utils: 4.2.0
-      webpack: 5.89.0(@swc/core@1.3.95)(metro@0.80.0)
+      webpack: 5.89.0(@swc/core@1.3.95)(esbuild@0.19.3)
     dev: true
 
   /babel-plugin-add-react-displayname@0.0.5:
@@ -29076,6 +29067,14 @@ packages:
       base-x: 3.0.9
       buffer: 5.7.1
       cross-sha256: 1.2.0
+    dev: false
+
+  /c32check@2.0.0:
+    resolution: {integrity: sha512-rpwfAcS/CMqo0oCqDf3r9eeLgScRE3l/xHDCXhM3UyrfvIn7PrLq63uHh7yYbv8NzaZn5MVsVhIRpQ+5GZ5HyA==}
+    engines: {node: '>=8'}
+    dependencies:
+      '@noble/hashes': 1.3.2
+      base-x: 4.0.0
     dev: false
 
   /c8@7.11.2:
@@ -36336,7 +36335,7 @@ packages:
       semver: 7.5.4
       tapable: 2.2.1
       typescript: 5.1.3
-      webpack: 5.89.0(@swc/core@1.3.95)(metro@0.80.0)
+      webpack: 5.89.0(@swc/core@1.3.95)(esbuild@0.19.3)
     dev: true
 
   /form-data@2.3.3:
@@ -42417,10 +42416,6 @@ packages:
     dependencies:
       p-locate: 6.0.0
     dev: true
-
-  /lodash-es@4.17.20:
-    resolution: {integrity: sha512-JD1COMZsq8maT6mnuz1UMV0jvYD0E0aUsSOdrr1/nAG3dhqQXwRRgeW0cSqH1U43INKcqxaiVIQNOUDld7gRDA==}
-    dev: false
 
   /lodash-es@4.17.21:
     resolution: {integrity: sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==}
@@ -53368,7 +53363,7 @@ packages:
       webpack: '>=2'
     dependencies:
       '@swc/core': 1.3.95
-      webpack: 5.89.0(@swc/core@1.3.95)(metro@0.80.0)
+      webpack: 5.89.0(@swc/core@1.3.95)(esbuild@0.19.3)
     dev: true
 
   /swiper@7.4.1:
@@ -57569,7 +57564,7 @@ packages:
       mime-types: 2.1.35
       range-parser: 1.2.1
       schema-utils: 4.2.0
-      webpack: 5.89.0(@swc/core@1.3.95)(metro@0.80.0)
+      webpack: 5.89.0(@swc/core@1.3.95)(esbuild@0.19.3)
     dev: true
 
   /webpack-dev-server@4.12.0(webpack@5.76.1):
