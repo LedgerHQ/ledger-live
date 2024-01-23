@@ -2,6 +2,7 @@ import { Flex, Text } from "@ledgerhq/react-ui";
 import { Account } from "@ledgerhq/types-live";
 import React, { useCallback, useState } from "react";
 import { useHistory } from "react-router-dom";
+import BigNumber from "bignumber.js";
 
 import { appendQueryParamsToDappURL } from "@ledgerhq/live-common/platform/utils/appendQueryParamsToDappURL";
 import { useTranslation } from "react-i18next";
@@ -18,6 +19,10 @@ import { getTrackProperties } from "./utils/getTrackProperties";
 
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import ProviderItem from "./component/ProviderItem";
+
+const MAGNITUDE = 18;
+// Scale Eth to 18 decimals
+const eth = (n: number | BigNumber) => BigNumber(n).times(BigNumber(10).pow(MAGNITUDE));
 
 type Props = {
   account: Account;
@@ -98,6 +103,11 @@ export function EthStakingModalBody({
     });
   }, [doNotShowAgain, account?.currency?.id, source]);
 
+
+  const listProvidersFiltered = listProviders
+    .filter(provider => account.spendableBalance.isGreaterThanOrEqualTo(eth(provider?.min || 0)))
+    .sort((a, b) => (a?.min || 0) - (b?.min || 0));
+
   return (
     <Flex flexDirection={"column"} alignItems="center" width={"100%"}>
       <Flex flexDirection="column" alignItems="center" rowGap={16}>
@@ -115,11 +125,10 @@ export function EthStakingModalBody({
       </Flex>
       <Flex flexDirection={"column"} mt={5} px={20} width="100%">
         <Flex flexDirection={"column"} width="100%">
-          {listProviders.map(item => (
+          {listProvidersFiltered.map(item => (
             <Flex key={item.id} width="100%" flexDirection={"column"}>
               <ProviderItem
                 provider={item}
-                infoOnClick={infoOnClick}
                 stakeOnClick={stakeOnClick}
                 redirectIfOnlyProvider={redirectIfOnlyProvider}
               />
