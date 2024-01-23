@@ -35,37 +35,49 @@ import { firstValueFrom } from "rxjs";
 const { createHash } = require("crypto");
 const fs = require("fs");
 const nock = require("nock");
+jest.setTimeout(60 * 60 * 1000);
 
 import { PerformanceObserver, PerformanceObserverCallback } from "node:perf_hooks";
 import { createMock, initBackendMocks, StdRequest } from "./bridgeMocker";
 
-const useBackendMocks = false;
+const useBackendMocks = true;
 
-const requests: any = [];
+const requests: StdRequest[] = [];
 
 let performanceObserver: PerformanceObserver;
 
-beforeAll(() => {
+beforeAll(async () => {
   if (useBackendMocks) {
-    initBackendMocks();
-    // disable network attempt not registered in mocks
-    nock.disableNetConnect();
+    // disable network attempts not registered in mocks
+    await nock.disableNetConnect();
+    await nock.enableNetConnect("localhost");
+    await initBackendMocks();
   } else {
+    // we start sniffing traffic
     performanceObserver = new PerformanceObserver(onPerformanceEntry);
     performanceObserver.observe({ entryTypes: ["http", "http2"] });
   }
 });
 
-afterAll(() => {
+afterAll(async () => {
   if (!useBackendMocks) {
     performanceObserver.disconnect();
-    for (const request of requests) {
-      const dir = __dirname + "/bridgeMocks/";
-      const filePath = `${dir}/${request.fileName}.json`;
-      createMock(request, filePath).then(() => {
-        // console.log("Created mock file " + filePath);
-      });
+    const dir = __dirname + "/bridgeMocks/";
+    const knownUrls: string[] = [];
+    const filteredRequests: StdRequest[] = [];
+    for (const r of requests) {
+      if (!knownUrls.includes(r.url)) {
+        knownUrls.push(r.url);
+        filteredRequests.push(r);
+      }
     }
+    // for each network request, we create a mock file
+    const mockCreations = filteredRequests.map(request =>
+      createMock(request, `${dir}/${request.fileName}.json`),
+    );
+    await Promise.all(mockCreations);
+  } else {
+    await Promise.resolve();
   }
 });
 

@@ -3,6 +3,7 @@ import axios from "axios";
 
 const nock = require("nock");
 const fs = require("fs");
+const fsp = require("fs").promises;
 
 export type StdRequest = {
   method: string;
@@ -13,76 +14,104 @@ export type StdRequest = {
   response: any;
 };
 
+/* Loop through each mock and apply them to nock */
 export async function initBackendMocks() {
-  try {
-    const root = `${__dirname}/bridgeMocks`;
-    await fs.readdir(root, async function (err, mocks) {
-      for (const mock of mocks) {
-        const backendMock = fs.readFileSync(`${root}/${mock}`);
+  const root = `${__dirname}/bridgeMocks`;
+  await fsp.readdir(root).then(async mocks => {
+    console.log(`Found ${mocks.length} to apply`);
+    let appliedMocks = 0;
+    for (const mock of mocks) {
+      appliedMocks++;
+      //console.log("applied mock" + appliedMocks);
+      const backendMock = await fsp.readFile(`${root}/${mock}`);
+      try {
         const jsonBackendMock = JSON.parse(backendMock);
-        applyBackendMock(jsonBackendMock as StdRequest);
+        applyBackendMock(jsonBackendMock);
+      } catch (err) {
+        console.log(err, mock);
       }
-    });
-  } catch (err) {
-    console.error(err);
-    return [];
-  }
+    }
+    console.log(`Applied ${appliedMocks} out of ${mocks.length} files`);
+  });
 }
 
+/* Creates a mock file from registered request */
 export async function createMock(stdRequest: StdRequest, path: string) {
-  axios({
+  const uninterceptedAxiosInstance = axios.create();
+
+  const createMockObject = async (response: any) => {
+    const responseInfo = { ...stdRequest.response };
+    // Stores headers etc but no data
+    delete stdRequest.response;
+    delete responseInfo.body;
+    await fsp.writeFile(
+      path,
+      JSON.stringify({
+        request: stdRequest,
+        response: { ...responseInfo, body: response?.data },
+      }),
+    );
+  };
+
+  try {
+    const response = await uninterceptedAxiosInstance({
+      method: stdRequest.method as any,
+      url: stdRequest.url,
+      data: stdRequest.body,
+      headers: stdRequest.headers,
+    });
+    await createMockObject(response);
+  } catch (error: any) {
+    await createMockObject(error.response);
+  }
+  /*await uninterceptedAxiosInstance({
     method: stdRequest.method as any,
     url: stdRequest.url,
     data: stdRequest.body,
     headers: stdRequest.headers,
   })
-    .then(response => {
-      const content = { ...stdRequest, response: { ...stdRequest.response, body: response.data } };
-      fs.writeFileSync(path, JSON.stringify(content));
+    .catch(async error => {
+      // We want to register error as it is real usage
+      // happens on 404, example on cosmos account that has never been used
+      return error.response;
     })
-    .catch(error => {
-      if (error.response) {
-        // happens on 404, example on cosmos account that has never been used
-        const content = {
-          ...stdRequest,
-          response: { ...stdRequest.response, body: error.response.data },
-        };
-        fs.writeFileSync(path, JSON.stringify(content));
-      } else {
-        // internet dead ?
-      }
-    });
+    .then(async response => {
+      const responseInfo = { ...stdRequest.response };
+      // Stores headers etc but no data
+      delete stdRequest.response;
+      delete responseInfo.body;
+      await fsp.writeFile(
+        path,
+        JSON.stringify({
+          request: stdRequest,
+          response: { ...responseInfo, body: response?.data },
+        }),
+      );
+    });*/
 }
 
-function applyBackendMock(stdRequest: StdRequest) {
-  const url = new URL(stdRequest.url);
+function applyBackendMock(mockContent: { request: StdRequest; response: any }) {
+  const url = new URL(mockContent.request.url);
 
   const originWithoutPort =
     url.port && url.origin.includes(`:${url.port}`)
       ? url.origin.replace(`:${url.port}`, "")
       : url.origin;
 
-  const endpoint = stdRequest.url.replace(url.origin, "");
+  const endpoint = mockContent.request.url.replace(url.origin, "");
 
-  if (
-    stdRequest.url ===
-    "https://osmosis-api.polkachu.com/cosmos/auth/v1beta1/accounts/osmo19h8cennrkf09sjxqt36lmk93fzyrcwrfxw784y"
-  ) {
-    console.log("FOUND YOU");
-  }
-
-  switch (stdRequest.method) {
+  switch (mockContent.request.method) {
     case "GET":
       nock(originWithoutPort)
         .persist()
         .get(endpoint)
-        .reply(stdRequest.response.statusCode, stdRequest.response.body);
+        .reply(mockContent.response.statusCode, () => mockContent.response.body);
       break;
     case "POST":
       nock(originWithoutPort)
         .persist()
         .post(endpoint)
-        .reply(stdRequest.response.statusCode, stdRequest.response.body);
+        .reply(mockContent.response.statusCode, () => mockContent.response.body);
       break;
     default:
       throw new Error("unknown method");
