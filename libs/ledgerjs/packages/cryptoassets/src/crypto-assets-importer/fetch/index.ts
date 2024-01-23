@@ -1,6 +1,7 @@
 import axios, { AxiosError } from "axios";
 
-const CRYPTO_ASSETS_BASE_URL = "https://cdn.live.ledger.com/cryptoassets";
+const CRYPTO_ASSETS_BASE_URL =
+  "https://cdn.live.ledger-stg.com/cryptoassets/branches/BACK-6071-lowercase-identifiers-are-back/cryptoassets";
 
 export const fetchTokens = async <T>(filename: string): Promise<T> => {
   try {

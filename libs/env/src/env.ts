@@ -736,7 +736,7 @@ const envDefinitions = {
     desc: "use the staging URL for the learn page",
   },
   DYNAMIC_CAL_BASE_URL: {
-    def: "https://cdn.live.ledger.com/cryptoassets",
+    def: "https://cdn.live.ledger-stg.com/cryptoassets/branches/BACK-6071-lowercase-identifiers-are-back/cryptoassets",
     parser: stringParser,
     desc: "bucket S3 of the dynamic cryptoassets list",
   },
