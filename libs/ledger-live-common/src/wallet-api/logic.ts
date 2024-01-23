@@ -161,7 +161,7 @@ export function broadcastTransactionLogic(
   const mainAccount = getMainAccount(account, parentAccount);
   const signerAccount = currency ? makeEmptyTokenAccount(mainAccount, currency) : account;
 
-  return uiNavigation(signerAccount, mainAccount, signedOperation);
+  return uiNavigation(signerAccount, parentAccount, signedOperation);
 }
 
 export function signMessageLogic(
