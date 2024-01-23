@@ -19,7 +19,7 @@ test("1.2.0", async () => {
     managerAllowed: false,
     pinValidated: false
   };
-  const res = await fetchLatestFirmwareUseCase(deviceInfo);
+  const res = await getLatestFirmwareForDeviceUseCase(deviceInfo);
   expect(res).toMatchObject({ final: {}, osu: {} });
 });
 */
@@ -73,7 +73,7 @@ test("1.5.5", async () => {
     majMin: "1.5",
     targetId: 823132164
   };
-  const res = await fetchLatestFirmwareUseCase(deviceInfo);
+  const res = await getLatestFirmwareForDeviceUseCase(deviceInfo);
   expect(res).toMatchObject({ final: {}, osu: {} });
 });
 */
@@ -107,7 +107,7 @@ test("nano x 1.2.4-1", async () => {
     managerAllowed: true,
     pinValidated: true,
   };
-  const res = await fetchLatestFirmwareUseCase(deviceInfo);
+  const res = await getLatestFirmwareForDeviceUseCase(deviceInfo);
   expect(res).toBe(null);
 });
 */

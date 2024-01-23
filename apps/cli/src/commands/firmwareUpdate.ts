@@ -12,6 +12,7 @@ import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import prepareFirmwareUpdate from "@ledgerhq/live-common/hw/firmwareUpdate-prepare";
 import mainFirmwareUpdate from "@ledgerhq/live-common/hw/firmwareUpdate-main";
+import getLatestFirmwareForDeviceUseCase from "@ledgerhq/live-common/device/use-cases/getLatestFirmwareForDeviceUseCase";
 import { deviceOpt } from "../scan";
 
 const listFirmwareOSU = async () => {
@@ -101,7 +102,7 @@ export default {
           mergeMap(
             osuVersion
               ? deviceInfo => customGetLatestFirmwareForDevice(deviceInfo, osuVersion)
-              : fetchLatestFirmwareUseCase,
+              : deviceInfo => getLatestFirmwareForDeviceUseCase(deviceInfo),
           ),
           mergeMap(firmware => {
             if (!firmware) return of("already up to date");
