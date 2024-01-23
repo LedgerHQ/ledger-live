@@ -7,7 +7,7 @@ import { version } from "../../../package.json";
 import { ManagerApiRepository } from "../../device-core/managerApi/repositories/ManagerApiRepository";
 import { HttpManagerApiRepository } from "../../device-core/managerApi/repositories/HttpManagerApiRepository";
 
-export default function fetchLatestFirmwareUseCase(
+export default function getLatestFirmwareForDeviceUseCase(
   deviceInfo: DeviceInfo,
   managerApiRepository: ManagerApiRepository = new HttpManagerApiRepository(
     getEnv("MANAGER_API_BASE"),
