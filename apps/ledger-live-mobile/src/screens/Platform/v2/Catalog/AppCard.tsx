@@ -9,6 +9,8 @@ import { AppIcon } from "../AppIcon";
 import { Theme } from "../../../../colors";
 import { BackgroundGradientHorizontal } from "~/components/TabBar/BackgroundGradient";
 import { Cta } from "./Cta";
+import { useLocale } from "~/context/Locale";
+import { translateContent } from "@ledgerhq/live-common/platform/logic";
 
 function getBranchStyle(branch: AppBranch, colors: Theme["colors"]) {
   switch (branch) {
@@ -85,8 +87,17 @@ export const AppCard = memo(({ manifest, onPress }: Props) => {
   );
 
   const url = useMemo(() => manifest.homepageUrl, [manifest.homepageUrl]);
+  const { locale } = useLocale();
 
-  const subtitle = manifest.content.subtitle?.en || url;
+  const subtitle = useMemo(
+    () => translateContent(manifest.content.subtitle, locale),
+    [locale, manifest.content.subtitle],
+  );
+  const cta = useMemo(
+    () => translateContent(manifest.content.cta, locale),
+    [locale, manifest.content.cta],
+  );
+
   return (
     <TouchableOpacity disabled={isDisabled} onPress={handlePress} style={{ padding: 0 }}>
       <View
@@ -153,11 +164,11 @@ export const AppCard = memo(({ manifest, onPress }: Props) => {
               ]}
               numberOfLines={1}
             >
-              {subtitle}
+              {subtitle || url}
             </LText>
           </View>
 
-          {!!manifest.content.cta && <Cta text={manifest.content.cta.en} />}
+          {cta && <Cta text={cta} />}
         </View>
       </View>
     </TouchableOpacity>

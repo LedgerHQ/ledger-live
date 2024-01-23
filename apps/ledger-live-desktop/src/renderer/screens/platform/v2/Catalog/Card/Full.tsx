@@ -23,7 +23,6 @@ export function FullCard(props: PropsRaw) {
   const { manifest } = props;
   const highlighted = !!manifest.highlight;
   const textColor = highlighted ? "white" : theme.colors.palette.text.shade100;
-  const subtitle = manifest.content.subtitle?.en || hostname;
 
   return (
     <Container highlighted={highlighted} disabled={disabled} onClick={onClick} flex={1}>
@@ -58,7 +57,9 @@ export function FullCard(props: PropsRaw) {
               </Text>
             )}
           </Flex>
-          <Subtitle>{subtitle}</Subtitle>
+          <Subtitle>
+            {(manifest.content.subtitle && manifest.content.subtitle[language]) || hostname}
+          </Subtitle>
         </Flex>
       </Flex>
       <Flex flexDirection="row" flexWrap={"wrap"} rowGap={20} columnGap={20} mt={20} mb={0}>
@@ -68,7 +69,7 @@ export function FullCard(props: PropsRaw) {
           </Text>
         </Flex>
 
-        {!!manifest.content.cta && <Cta text={manifest.content.cta.en} />}
+        {!!manifest.content.cta && <Cta text={manifest.content.cta[language]} />}
       </Flex>
     </Container>
   );
