@@ -1,4 +1,4 @@
-import { Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { Flex, Icons, Text, Button as SystemButton } from "@ledgerhq/native-ui";
 import React, { PropsWithChildren } from "react";
 import { Image as NativeImage, Pressable, StyleProp, View, ViewStyle } from "react-native";
 import { useTheme } from "styled-components/native";
@@ -130,6 +130,53 @@ export const Price = ({ label, size }: LabelProps) => {
     <Text {...PriceStyles[size]} color={colors.neutral.c70} style={PriceStyles[size]}>
       {label}
     </Text>
+  );
+};
+
+export const ButtonStyles: {
+  [key in Size]: object;
+} = {
+  L: {
+    paddingX: 12,
+    paddingY: 20,
+  },
+  M: {
+    paddingX: 12,
+    paddingY: 20,
+  },
+  S: {
+    paddingX: 12,
+    paddingY: 20,
+  },
+};
+
+export const ButtonlabelStyles: {
+  [key in Size]: object;
+} = {
+  L: {
+    variant: "paragraph",
+    fontWeight: "semiBold",
+    numberOfLine: 1,
+  },
+  M: {
+    variant: "paragraph",
+    fontWeight: "semiBold",
+    numberOfLine: 1,
+  },
+  S: {
+    variant: "paragraph",
+    fontWeight: "semiBold",
+    numberOfLine: 1,
+  },
+};
+
+export const Button = ({ label, size }: LabelProps) => {
+  return (
+    <SystemButton {...ButtonStyles[size]} type="main" style={ButtonStyles[size]}>
+      <Text color="neutral.c00" {...ButtonlabelStyles[size]}>
+        {label}
+      </Text>
+    </SystemButton>
   );
 };
 
