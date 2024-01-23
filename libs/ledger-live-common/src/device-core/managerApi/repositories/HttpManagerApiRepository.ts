@@ -1,10 +1,12 @@
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import network from "@ledgerhq/live-network/lib/network";
-import { DeviceVersion, FinalFirmware, Id, OsuFirmware } from "@ledgerhq/types-live";
 import { getUserHashes } from "../../../user";
 import URL from "url";
 import { FirmwareNotRecognized } from "@ledgerhq/errors";
 import { ManagerApiRepository } from "./ManagerApiRepository";
+import { FinalFirmware, OsuFirmware } from "../entities/FirmwareUpdateContextEntity";
+import { IdEntity } from "../entities/IdEntity";
+import { DeviceVersionEntity } from "../entities/DeviceVersionEntity";
 
 export class HttpManagerApiRepository implements ManagerApiRepository {
   private readonly managerApiBase: string;
@@ -16,8 +18,8 @@ export class HttpManagerApiRepository implements ManagerApiRepository {
   }
 
   async fetchLatestFirmware(params: {
-    current_se_firmware_final_version: Id;
-    device_version: Id;
+    current_se_firmware_final_version: IdEntity;
+    device_version: IdEntity;
     providerId: number;
     userId: string;
   }): Promise<OsuFirmware | null | undefined> {
@@ -81,13 +83,13 @@ export class HttpManagerApiRepository implements ManagerApiRepository {
   }: {
     targetId: string | number;
     providerId: number;
-  }): Promise<DeviceVersion> {
+  }): Promise<DeviceVersionEntity> {
     return makeLRUCache(
       async ({ targetId, providerId }) => {
         const {
           data,
         }: {
-          data: DeviceVersion;
+          data: DeviceVersionEntity;
         } = await network({
           method: "POST",
           url: URL.format({
