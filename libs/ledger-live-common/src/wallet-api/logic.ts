@@ -66,7 +66,7 @@ export function receiveOnAccountLogic(
   const currency = tokenCurrency ? findTokenById(tokenCurrency) : null;
   const receivingAccount = currency ? makeEmptyTokenAccount(mainAccount, currency) : account;
   const accountAddress = accountToWalletAPIAccount(account, parentAccount).address;
-  return uiNavigation(receivingAccount, mainAccount, accountAddress);
+  return uiNavigation(receivingAccount, parentAccount, accountAddress);
 }
 
 export function signTransactionLogic(
@@ -164,14 +164,8 @@ export function broadcastTransactionLogic(
   }
 
   const currency = tokenCurrency ? findTokenById(tokenCurrency) : null;
-  // const signerAccount = currency ? makeEmptyTokenAccount(account, currency) : account;
-  debugger;
   const parentAccount = getParentAccount(account, accounts);
-  debugger;
   const mainAccount = getMainAccount(account, parentAccount);
-
-  // const currency = tokenCurrency ? findTokenById(tokenCurrency) : null;
-  // debugger;
   const signerAccount = currency ? makeEmptyTokenAccount(mainAccount, currency) : account;
 
   return uiNavigation(signerAccount, mainAccount, signedOperation);
