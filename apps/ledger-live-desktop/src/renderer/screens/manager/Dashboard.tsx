@@ -6,7 +6,7 @@ import { App, DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { AppOp, ListAppsResult } from "@ledgerhq/live-common/apps/types";
 import { distribute, initState } from "@ledgerhq/live-common/apps/logic";
 import { mockExecWithInstalledContext } from "@ledgerhq/live-common/apps/mock";
-import getLatestAvailableFirmwareActionUseCase from "@ledgerhq/live-common/device/use-cases/getLatestFirmwareForDeviceUseCase";
+import { getLatestFirmwareForDeviceUseCase } from "@ledgerhq/live-common/device/use-cases/getLatestFirmwareForDeviceUseCase";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import DeviceDashboard from "./DeviceDashboard";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -45,7 +45,7 @@ const Dashboard = ({
   const params = new URLSearchParams(search || "");
   const openFirmwareUpdate = params.get("firmwareUpdate") === "true";
   useEffect(() => {
-    getLatestAvailableFirmwareActionUseCase(deviceInfo).then(setFirmware, setFirmwareError);
+    getLatestFirmwareForDeviceUseCase(deviceInfo).then(setFirmware, setFirmwareError);
   }, [deviceInfo]);
 
   // on disconnect, go back to connect
