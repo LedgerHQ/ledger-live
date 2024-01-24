@@ -3,13 +3,14 @@ import { Account } from "@ledgerhq/types-live";
 import React, { useCallback, useState } from "react";
 import { useHistory } from "react-router-dom";
 import BigNumber from "bignumber.js";
+import { useTranslation } from "react-i18next";
 
 import { appendQueryParamsToDappURL } from "@ledgerhq/live-common/platform/utils/appendQueryParamsToDappURL";
-import { useTranslation } from "react-i18next";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { track } from "~/renderer/analytics/segment";
 import CheckBox from "~/renderer/components/CheckBox";
 import EthStakeIllustration from "~/renderer/icons/EthStakeIllustration";
-import { openURL } from "~/renderer/linking";
+
 import {
   CheckBoxContainer,
   LOCAL_STORAGE_KEY_PREFIX,
@@ -17,12 +18,14 @@ import {
 import { ListProvider, ListProviders } from "./types";
 import { getTrackProperties } from "./utils/getTrackProperties";
 
-import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import ProviderItem from "./component/ProviderItem";
 
 const MAGNITUDE = 18;
 // Scale Eth to 18 decimals
 const eth = (n: number | BigNumber) => BigNumber(n).times(BigNumber(10).pow(MAGNITUDE));
+
+const ascending = (a: ListProvider, b: ListProvider) => (a?.min || 0) - (b?.min || 0);
+const descending = (a: ListProvider, b: ListProvider) => (b?.min || 0) - (a?.min || 0);
 
 type Props = {
   account: Account;
@@ -73,17 +76,6 @@ export function EthStakingModalBody({
     [history, account.id, onClose, source],
   );
 
-  const infoOnClick = useCallback(({ supportLink, id: providerConfigID }: ListProvider) => {
-    if (supportLink) {
-      track("button_clicked2", {
-        button: `learn_more_${providerConfigID}`,
-        ...getTrackProperties({ value: supportLink }),
-        link: supportLink,
-      });
-      openURL(supportLink, "OpenURL", getTrackProperties({ value: supportLink }));
-    }
-  }, []);
-
   const redirectIfOnlyProvider = useCallback(
     (stakeOnClickProps: StakeOnClickProps) => {
       if (singleProviderRedirectMode && listProviders.length === 1) {
@@ -103,10 +95,11 @@ export function EthStakingModalBody({
     });
   }, [doNotShowAgain, account?.currency?.id, source]);
 
+  const has32Eth = account.spendableBalance.isGreaterThan(eth(32));
 
-  const listProvidersFiltered = listProviders
-    .filter(provider => account.spendableBalance.isGreaterThanOrEqualTo(eth(provider?.min || 0)))
-    .sort((a, b) => (a?.min || 0) - (b?.min || 0));
+  const listProvidersSorted = listProviders.sort((a, b) =>
+    has32Eth ? descending(a, b) : ascending(a, b),
+  );
 
   return (
     <Flex flexDirection={"column"} alignItems="center" width={"100%"}>
@@ -125,7 +118,7 @@ export function EthStakingModalBody({
       </Flex>
       <Flex flexDirection={"column"} mt={5} px={20} width="100%">
         <Flex flexDirection={"column"} width="100%">
-          {listProvidersFiltered.map(item => (
+          {listProvidersSorted.map(item => (
             <Flex key={item.id} width="100%" flexDirection={"column"}>
               <ProviderItem
                 provider={item}
