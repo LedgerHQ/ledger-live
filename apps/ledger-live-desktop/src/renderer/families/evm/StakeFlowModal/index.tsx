@@ -9,6 +9,7 @@ import { EthStakingModalBody } from "./EthStakingModalBody";
 type Props = {
   account: Account;
   singleProviderRedirectMode?: boolean;
+  /** Analytics source */
   source?: string;
   hasCheckbox?: boolean;
 };
