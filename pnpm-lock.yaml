@@ -3316,6 +3316,18 @@ importers:
       '@ton/core':
         specifier: ^0.56.1
         version: 0.56.3
+      '@ton-community/ton-ledger':
+        specifier: ^7.0.1
+        version: 7.0.1(@ton/core@0.56.3)
+      '@ton/core':
+        specifier: ^0.56.1
+        version: 0.56.3(@ton/crypto@3.2.0)
+      '@ton/crypto':
+        specifier: ^3.2.0
+        version: 3.2.0
+      '@ton/ton':
+        specifier: ^13.11.1
+        version: 13.11.1(@ton/core@0.56.3)(@ton/crypto@3.2.0)
       '@types/bchaddrjs':
         specifier: ^0.4.0
         version: 0.4.3
@@ -24020,6 +24032,55 @@ packages:
       '@ton/crypto': '>=3.2.0'
     dependencies:
       symbol.inspect: 1.0.1
+    dev: false
+
+  /@ton/core@0.56.3(@ton/crypto@3.2.0):
+    resolution: {integrity: sha512-HVkalfqw8zqLLPehtq0CNhu5KjVzc7IrbDwDHPjGoOSXmnqSobiWj8a5F+YuWnZnEbQKtrnMGNOOjVw4LG37rg==}
+    peerDependencies:
+      '@ton/crypto': '>=3.2.0'
+    dependencies:
+      '@ton/crypto': 3.2.0
+      symbol.inspect: 1.0.1
+    dev: false
+
+  /@ton/crypto-primitives@2.0.0:
+    resolution: {integrity: sha512-wttiNClmGbI6Dfy/8oyNnsIV0b/qYkCJz4Gn4eP62lJZzMtVQ94Ko7nikDX1EfYHkLI1xpOitWpW+8ZuG6XtDg==}
+    dependencies:
+      jssha: 3.2.0
+    dev: false
+
+  /@ton/crypto@3.2.0:
+    resolution: {integrity: sha512-50RkwReEuV2FkxSZ8ht/x9+n0ZGtwRKGsJ0ay4I/HFhkYVG/awIIBQeH0W4j8d5lADdO5h01UtX8PJ8AjiejjA==}
+    dependencies:
+      '@ton/crypto-primitives': 2.0.0
+      jssha: 3.2.0
+      tweetnacl: 1.0.3
+    dev: false
+
+  /@ton/ton@13.11.1(@ton/core@0.56.3)(@ton/crypto@3.2.0):
+    resolution: {integrity: sha512-tcLdHzwhS5bmS0EGstcmfYK0ZeRrNz1AUIzUGKq/Xh0MGEwfP1qZBMloGGHLQnyZdRQ1D7Wx4g4mBKNrvG6DcQ==}
+    peerDependencies:
+      '@ton/core': '>=0.56.0'
+      '@ton/crypto': '>=3.2.0'
+    dependencies:
+      '@ton/core': 0.56.3(@ton/crypto@3.2.0)
+      '@ton/crypto': 3.2.0
+      axios: 1.6.8
+      dataloader: 2.2.2
+      symbol.inspect: 1.0.1
+      teslabot: 1.5.0
+      zod: 3.22.4
+    dev: false
+
+  /@ton-community/ton-ledger@7.0.1(@ton/core@0.56.3):
+    resolution: {integrity: sha512-4QDjG9D/c3vKyApKa36KfqyE0UcPn/ExSJvCb8Cd03BdhMiZQNvm7tJsKg12lslPCIbl1dW9ZC6fg1RvqAAqnQ==}
+    peerDependencies:
+      '@ton/core': '>=0.52.2'
+    dependencies:
+      '@ledgerhq/hw-transport': 6.30.5
+      '@ton/core': 0.56.3(@ton/crypto@3.2.0)
+      '@ton/crypto': 3.2.0
+      teslabot: 1.5.0
     dev: false
 
   /@ton/core@0.56.3(@ton/crypto@3.2.0):
