@@ -1,10 +1,8 @@
-import { version } from "../../../package.json";
-import { getEnv } from "@ledgerhq/live-env";
-import { HttpManagerApiRepository } from "../../device-core/managerApi/repositories/HttpManagerApiRepository";
 import { fetchMcus } from "../../device-core/managerApi/use-cases/fetchMcus";
+import { HttpManagerApiRepositoryFactory } from "../factories/HttpManagerApiRepositoryFactory";
 
 export function fetchMcusUseCase(
-  managerApiRepository = new HttpManagerApiRepository(getEnv("MANAGER_API_BASE"), version),
+  managerApiRepository = HttpManagerApiRepositoryFactory.getInstance(),
 ) {
   return fetchMcus(managerApiRepository);
 }

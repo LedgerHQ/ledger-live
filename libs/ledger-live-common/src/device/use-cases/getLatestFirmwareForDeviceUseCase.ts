@@ -3,16 +3,12 @@ import { DeviceInfo } from "@ledgerhq/types-live";
 import { getProviderId } from "../../manager/index";
 import { getLatestFirmwareForDevice } from "../../device-core/managerApi/use-cases/getLatestFirmwareForDevice";
 import { getEnv } from "@ledgerhq/live-env";
-import { version } from "../../../package.json";
 import { ManagerApiRepository } from "../../device-core/managerApi/repositories/ManagerApiRepository";
-import { HttpManagerApiRepository } from "../../device-core/managerApi/repositories/HttpManagerApiRepository";
+import { HttpManagerApiRepositoryFactory } from "../factories/HttpManagerApiRepositoryFactory";
 
 export function getLatestFirmwareForDeviceUseCase(
   deviceInfo: DeviceInfo,
-  managerApiRepository: ManagerApiRepository = new HttpManagerApiRepository(
-    getEnv("MANAGER_API_BASE"),
-    version,
-  ),
+  managerApiRepository: ManagerApiRepository = HttpManagerApiRepositoryFactory.getInstance(),
 ) {
   return getLatestFirmwareForDevice({
     deviceInfo,
