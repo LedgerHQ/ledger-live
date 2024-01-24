@@ -803,9 +803,8 @@ const envDefinitions = {
     parser: boolParser,
     desc: "Enable logs for drawers",
   },
-  // TODO: TON switch to mainnet
   API_TON_ENDPOINT: {
-    def: "https://testnet.toncenter.com/api/v3",
+    def: "https://toncenter.com/api/v3",
     parser: stringParser,
     desc: "Toncenter API for TON",
   },
