@@ -6,29 +6,7 @@
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
   },
-  "bugs": {
-    "url": "https://github.com/LedgerHQ/ledger-live/issues"
-  },
-  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/ledger-live-common",
-  "main": "lib/index.js",
-  "module": "lib-es/index.js",
-  "types": "lib/index.d.ts",
-  "typesVersions": {
-    "*": {
-      "*.json": [
-        "*.json"
-      ],
-      "*": [
-        "lib/*"
-      ],
-      "lib/*": [
-        "lib/*"
-      ],
-      "lib-es/*": [
-        "lib-es/*"
-      ]
-    }
-  },
+  "license": "Apache-2.0",
   "exports": {
     "./lib/*": "./lib/*.js",
     "./lib/*.js": "./lib/*.js",
@@ -56,21 +34,27 @@
     },
     "./package.json": "./package.json"
   },
-  "license": "Apache-2.0",
-  "scripts": {
-    "build": "zx ./scripts/build-ts.mjs",
-    "watch": "zx ./scripts/watch-ts.mjs",
-    "updateAppSupportsQuitApp": "node scripts/updateAppSupportsQuitApp.js",
-    "prettier": "prettier --write 'src/**/*.?s'",
-    "lint": "eslint src --cache",
-    "lint:fix": "pnpm lint --fix",
-    "jest": "cross-env TZ=America/New_York jest",
-    "typecheck": "tsc --noEmit -p src/tsconfig.json",
-    "ci-lint": "pnpm lint",
-    "test": "pnpm ci-test-unit",
-    "ci-test-unit": "env-cmd -f .ci.unit.env pnpm jest --ci --updateSnapshot && git diff --exit-code src",
-    "ci-test-integration": "env-cmd -f .ci.integration.env pnpm jest --ci --updateSnapshot --passWithNoTests",
-    "unimported": "unimported"
+  "main": "lib/index.js",
+  "module": "lib-es/index.js",
+  "react-native": {
+    "https": false
+  },
+  "types": "lib/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "*.json": [
+        "*.json"
+      ],
+      "*": [
+        "lib/*"
+      ],
+      "lib/*": [
+        "lib/*"
+      ],
+      "lib-es/*": [
+        "lib-es/*"
+      ]
+    }
   },
   "files": [
     "lib",
@@ -79,36 +63,20 @@
     "react.js",
     "reactNative.js"
   ],
-  "peerDependencies": {
-    "react": ">=16",
-    "react-dom": ">=16",
-    "react-native": ">=0.65.1",
-    "react-native-svg": ">=12.1.1",
-    "react-redux": "^7.2.9",
-    "redux-actions": "2.6.5"
-  },
-  "peerDependenciesMeta": {
-    "react": {
-      "optional": true
-    },
-    "react-dom": {
-      "optional": true
-    },
-    "react-native": {
-      "optional": true
-    },
-    "react-redux": {
-      "optional": true
-    },
-    "redux-actions": {
-      "optional": true
-    },
-    "react-native-svg": {
-      "optional": true
-    }
-  },
-  "react-native": {
-    "https": false
+  "scripts": {
+    "build": "zx ./scripts/build-ts.mjs",
+    "ci-lint": "pnpm lint",
+    "ci-test-integration": "env-cmd -f .ci.integration.env pnpm jest --ci --updateSnapshot --passWithNoTests",
+    "ci-test-unit": "env-cmd -f .ci.unit.env pnpm jest --ci --updateSnapshot && git diff --exit-code src",
+    "jest": "cross-env TZ=America/New_York jest",
+    "lint": "eslint src --cache",
+    "lint:fix": "pnpm lint --fix",
+    "prettier": "prettier --write 'src/**/*.?s'",
+    "test": "pnpm ci-test-unit",
+    "typecheck": "tsc --noEmit -p src/tsconfig.json",
+    "unimported": "unimported",
+    "updateAppSupportsQuitApp": "node scripts/updateAppSupportsQuitApp.js",
+    "watch": "zx ./scripts/watch-ts.mjs"
   },
   "dependencies": {
     "@cardano-foundation/ledgerjs-hw-app-cardano": "^5.1.0",
@@ -175,14 +143,9 @@
     "@stacks/transactions": "6.11.0",
     "@stricahq/bip32ed25519": "^1.0.3",
     "@stricahq/typhonjs": "^1.2.6",
-    "@taquito/ledger-signer": "^13.0.1",
-    "@taquito/taquito": "^13.0.1",
-    "@taquito/utils": "^13.0.1",
-    "@types/bchaddrjs": "^0.4.0",
-    "@types/bs58check": "^2.1.0",
-    "@types/pako": "^2.0.0",
-    "@types/qs": "^6.9.7",
-    "@types/redux-actions": "^2.6.2",
+    "@taquito/ledger-signer": "^17.5.2",
+    "@taquito/taquito": "^17.5.2",
+    "@taquito/utils": "^17.5.2",
     "@xstate/react": "^1.6.3",
     "@zondax/cbor": "v8.1.0-zondax-no-bigint",
     "@zondax/izari-filecoin": "^1.2.0",
@@ -254,15 +217,20 @@
     "@svgr/core": "^5.5.0",
     "@testing-library/react": "^14.1.2",
     "@testing-library/react-hooks": "^8.0.1",
+    "@types/bchaddrjs": "^0.4.0",
     "@types/bn.js": "^5.1.1",
     "@types/bs58": "^4.0.1",
+    "@types/bs58check": "^2.1.0",
     "@types/cbor": "^6.0.0",
     "@types/invariant": "^2.2.36",
     "@types/jest": "^29.5.10",
     "@types/lodash": "^4.14.179",
     "@types/node": "^20.8.10",
     "@types/object-hash": "^2.1.0",
+    "@types/pako": "^2.0.0",
+    "@types/qs": "^6.9.7",
     "@types/react": "^18.2.21",
+    "@types/redux-actions": "^2.6.2",
     "@types/uuid": "^8.3.4",
     "benchmark": "^2.1.4",
     "camelcase": "^6.2.1",
@@ -291,5 +259,33 @@
     "ts-node": "^10.4.0",
     "uuid": "^8.3.2",
     "ws": "7"
+  },
+  "peerDependencies": {
+    "react": ">=16",
+    "react-dom": ">=16",
+    "react-native": ">=0.65.1",
+    "react-native-svg": ">=12.1.1",
+    "react-redux": "^7.2.9",
+    "redux-actions": "2.6.5"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    },
+    "react-native": {
+      "optional": true
+    },
+    "react-native-svg": {
+      "optional": true
+    },
+    "react-redux": {
+      "optional": true
+    },
+    "redux-actions": {
+      "optional": true
+    }
   }
 }

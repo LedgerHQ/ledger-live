@@ -59,7 +59,6 @@ export const signOperation: SignOperationFnSignature<Transaction> = ({
                 mutez: true,
                 to: transaction.recipient,
                 amount: transaction.amount.toNumber(),
-                ...params,
               });
 
               opbytes = res.raw.opbytes;
