@@ -1,13 +1,6 @@
 import { useMemo, useState, useEffect, useRef, useCallback, RefObject } from "react";
 import semver from "semver";
-import {
-  differenceInSeconds,
-  differenceInMinutes,
-  differenceInHours,
-  differenceInDays,
-  differenceInWeeks,
-  differenceInMonths,
-} from "date-fns";
+import { intervalToDuration } from "date-fns";
 
 import { Account, AccountLike, AnyMessage, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -837,21 +830,20 @@ export interface RecentlyUsed {
 export type RecentlyUsedManifest = AppManifest & { usedAt?: Date };
 
 function calculateTimeDiff(usedAt: string) {
-  const now = new Date();
-  const date = new Date(usedAt);
+  const start = new Date();
+  const end = new Date(usedAt);
+  const interval = intervalToDuration({ start, end });
+  const units = ["years", "months", "weeks", "days", "hours", "minutes", "seconds"];
+  let timeDiff = { unit: "second", diff: 0 };
 
-  const units = [
-    { translationKey: "months", diff: differenceInMonths(now, date) },
-    { translationKey: "weeks", diff: differenceInWeeks(now, date) },
-    { translationKey: "days", diff: differenceInDays(now, date) },
-    { translationKey: "hours", diff: differenceInHours(now, date) },
-    { translationKey: "minutes", diff: differenceInMinutes(now, date) },
-    { translationKey: "seconds", diff: differenceInSeconds(now, date) },
-  ];
+  for (const unit of units) {
+    if (interval[unit] > 0) {
+      timeDiff = { unit, diff: interval[unit] };
+      break;
+    }
+  }
 
-  const relevantUnit = units.find(({ diff }) => diff > 0) || { translationKey: "seconds", diff: 1 };
-  if (relevantUnit.diff > 1) relevantUnit.translationKey += "_plural";
-  return relevantUnit;
+  return timeDiff;
 }
 
 export function useRecentlyUsed(
