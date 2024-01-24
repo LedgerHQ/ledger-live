@@ -4,13 +4,14 @@ import { Logo } from "./Logo";
 import { PropsRaw } from "./types";
 import { useCard } from "./hooks";
 import { Container, Subtitle } from "./Layout";
-import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
+import { languageSelector } from "~/renderer/reducers/settings";
 
 export function MinimumCard(props: PropsRaw) {
   const { disabled, onClick } = useCard(props);
   const { manifest } = props;
 
-  const { t } = useTranslation();
+  const rtf = new Intl.RelativeTimeFormat(useSelector(languageSelector));
 
   return (
     <Container disabled={disabled} onClick={onClick} width={300}>
@@ -21,11 +22,7 @@ export function MinimumCard(props: PropsRaw) {
           <Text overflow="hidden" whiteSpace="nowrap" textOverflow="ellipsis" fontSize={14}>
             {manifest.name}
           </Text>
-          <Subtitle>
-            {t(`common.timeAgo.${manifest.usedAt.translationKey}`, {
-              time: manifest.usedAt.diff,
-            })}
-          </Subtitle>
+          <Subtitle>{rtf.format(-manifest.usedAt.diff, manifest.usedAt.unit)}</Subtitle>
         </Flex>
       </Flex>
     </Container>

@@ -123,20 +123,6 @@
     "searchWithoutEllipsis": "Search",
     "manage": "Manage",
     "tryAgain": "Try again",
-    "timeAgo": {
-      "seconds": "One second ago",
-      "seconds_plural": "{{time}} seconds ago",
-      "minutes": "One minute ago",
-      "minutes_plural": "{{time}} minutes ago",
-      "hours": "One hour ago",
-      "hours_plural": "{{time}} hours ago",
-      "days": "yesterday",
-      "days_plural": "{{time}} days ago",
-      "weeks": "One week ago",
-      "weeks_plural": "{{time}} weeks ago",
-      "months": "One month ago",
-      "months_plural": "{{time}} months ago"
-    },
     "lockScreen": {
       "title": "Welcome back",
       "description": "Enter your password to continue",
