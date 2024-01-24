@@ -30,7 +30,7 @@ import { LatestFirmwareVersionRequired } from "../errors";
 import { mustUpgrade } from "../apps";
 import isUpdateAvailable from "./isUpdateAvailable";
 import { LockedDeviceEvent } from "./actions/types";
-import getLatestFirmwareForDeviceUseCase from "../device/use-cases/getLatestFirmwareForDeviceUseCase";
+import { getLatestFirmwareForDeviceUseCase } from "../device/use-cases/getLatestFirmwareForDeviceUseCase";
 
 export type RequiresDerivation = {
   currencyId: string;
