@@ -1,6 +1,6 @@
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import React from "react";
-import { Image as NativeImage, Pressable, View } from "react-native";
+import { Image as NativeImage, Pressable } from "react-native";
 import { useTheme } from "styled-components/native";
 import { ButtonAction } from "~/contentCards/cards/types";
 

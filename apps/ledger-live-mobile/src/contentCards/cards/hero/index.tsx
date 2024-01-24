@@ -5,12 +5,9 @@ import { ContentCardBuilder } from "~/contentCards/cards/utils";
 import { Image, Subtitle, Tag } from "./elements";
 
 type Props = {
-  description: string;
   image: string;
-  cta: {
-    label: string;
-    fct: Function;
-  };
+  description: string;
+  cta: string;
   tag?: string;
 };
 
@@ -23,7 +20,7 @@ const HeroCard = ContentCardBuilder<Props>(({ description, image, cta, tag, meta
         <Image uri={image} />
         {tag && <Tag label={tag} />}
         <Subtitle label={description} />
-        <Button type="main">{cta.label}</Button>
+        <Button type="main">{cta}</Button>
       </Flex>
     </TouchableOpacity>
   );
