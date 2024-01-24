@@ -46,7 +46,7 @@ import {
   secureChannelMock,
 } from "../socket/socket.mock";
 import { getProviderId } from "./provider";
-import fetchMcusUseCase from "../device/use-cases/fetchMcusUseCase";
+import { fetchMcusUseCase } from "../device/use-cases/fetchMcusUseCase";
 
 declare global {
   namespace NodeJS {

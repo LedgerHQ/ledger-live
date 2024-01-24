@@ -9,7 +9,7 @@ import type { Input as ConnectManagerInput, ConnectManagerEvent } from "../conne
 import type { Action, Device } from "./types";
 import { currentMode } from "./app";
 import { getImplementation } from "./implementations";
-import getLatestFirmwareForDeviceUseCase from "../../device/use-cases/getLatestFirmwareForDeviceUseCase";
+import { getLatestFirmwareForDeviceUseCase } from "../../device/use-cases/getLatestFirmwareForDeviceUseCase";
 
 type State = {
   isLoading: boolean;

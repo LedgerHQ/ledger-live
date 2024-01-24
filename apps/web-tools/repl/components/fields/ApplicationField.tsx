@@ -3,7 +3,7 @@ import Select from "react-select";
 import manager, { getProviderId } from "@ledgerhq/live-common/manager/index";
 import ManagerAPI from "@ledgerhq/live-common/manager/api";
 import type { ApplicationVersion, DeviceInfo } from "@ledgerhq/types-live";
-import getLatestFirmwareForDeviceUseCase from "@ledgerhq/live-common/lib/device/use-cases/getLatestFirmwareForDeviceUseCase";
+import { getLatestFirmwareForDeviceUseCase } from "@ledgerhq/live-common/device/use-cases/getLatestFirmwareForDeviceUseCase";
 
 export type DataTypeApplication = {
   type: "application";

@@ -6,7 +6,7 @@ import ManagerAPI from "../manager/api";
 import { getProviderId } from "../manager/provider";
 import getDeviceInfo from "./getDeviceInfo";
 import type { DeviceInfo, FinalFirmware, McuVersion } from "@ledgerhq/types-live";
-import fetchMcusUseCase from "../device/use-cases/fetchMcusUseCase";
+import { fetchMcusUseCase } from "../device/use-cases/fetchMcusUseCase";
 const blVersionAliases = {
   "0.0": "0.6",
 };

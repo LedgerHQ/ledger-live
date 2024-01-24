@@ -1,6 +1,6 @@
 import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
 import getDeviceInfo from "../../hw/getDeviceInfo";
-import getLatestFirmwareForDeviceUseCase from "../../device/use-cases/getLatestFirmwareForDeviceUseCase";
+import { getLatestFirmwareForDeviceUseCase } from "../../device/use-cases/getLatestFirmwareForDeviceUseCase";
 import { fetchNextFirmware } from "../../hw/installFinalFirmware";
 import { firstValueFrom } from "rxjs";
 jest.setTimeout(20000);

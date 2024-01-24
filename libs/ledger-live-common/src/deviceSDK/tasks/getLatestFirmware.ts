@@ -6,7 +6,7 @@ import { withDevice } from "../../hw/deviceAccess";
 import { from, Observable, of } from "rxjs";
 import { switchMap, catchError } from "rxjs/operators";
 import { SharedTaskEvent, sharedLogicTaskWrapper } from "./core";
-import getLatestFirmwareForDeviceUseCase from "../../device/use-cases/getLatestFirmwareForDeviceUseCase";
+import { getLatestFirmwareForDeviceUseCase } from "../../device/use-cases/getLatestFirmwareForDeviceUseCase";
 
 export type GetLatestFirmwareTaskArgs = {
   deviceId: DeviceId;
