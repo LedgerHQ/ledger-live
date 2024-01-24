@@ -27,7 +27,7 @@ const CardContainer = styled.div`
   gap: 16px;
 `;
 
-const Header = styled.div`
+const Header = styled.img`
   height: 36px;
   width: 36px;
   border-radius: 1000px;
@@ -67,7 +67,7 @@ const Actions = styled.div`
 const ActionCard = ({ img, title, subtitle, actions }: Props) => {
   return (
     <CardContainer>
-      <Header>1</Header>
+      <Header src={img} />
       <Body>
         <Title>{title}</Title>
         <Subtitle>{subtitle}</Subtitle>
