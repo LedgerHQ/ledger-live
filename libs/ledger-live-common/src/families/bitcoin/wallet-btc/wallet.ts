@@ -239,9 +239,8 @@ class BitcoinLikeWallet {
 
     const orderedOutputs: TransactionInfo["outputs"] =
       utils.lexicographicalIndexingTransactionOutputs({
-        outputs: txInfo.outputs,
+        outputs: [...txInfo.outputs],
       });
-
     let hasTimestamp = params.hasTimestamp;
 
     let length = orderedOutputs.reduce((sum, output) => {
@@ -308,7 +307,6 @@ class BitcoinLikeWallet {
     });
 
     const lastOutputIndex = txInfo.outputs.length - 1;
-
     log("hw", `createPaymentTransaction`, {
       inputs,
       associatedKeysets: orderedAssociatedKeysets,
