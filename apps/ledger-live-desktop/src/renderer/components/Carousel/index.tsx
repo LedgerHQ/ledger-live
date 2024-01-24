@@ -176,12 +176,14 @@ const Carousel = ({
   );
 
   const onDismiss = useCallback(() => {
-    track("contentcard_dismissed", {
-      card: slides[index].id,
-      page: "Portfolio",
-    });
-    dismissCard(index);
-    changeVisibleSlide((index + 1) % slides.length);
+    if (slides[index]) {
+      track("contentcard_dismissed", {
+        card: slides[index].id,
+        page: "Portfolio",
+      });
+      dismissCard(index);
+      changeVisibleSlide(0);
+    }
   }, [index, slides, dismissCard, changeVisibleSlide]);
 
   const onNext = useCallback(() => {
