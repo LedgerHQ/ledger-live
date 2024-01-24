@@ -38,14 +38,14 @@ export class HttpManagerApiRepository implements ManagerApiRepository {
           url: URL.format({
             pathname: `${this.managerApiBase}/get_latest_firmware`,
             query: {
-              liveCommonVersion: this.liveCommonVersion,
+              livecommonversion: this.liveCommonVersion,
               salt,
             },
           }),
           data: {
             current_se_firmware_final_version,
             device_version,
-            providerId,
+            provider: providerId,
           },
         });
 
@@ -99,7 +99,7 @@ export class HttpManagerApiRepository implements ManagerApiRepository {
             },
           }),
           data: {
-            providerId,
+            provider: providerId,
             target_id: targetId,
           },
         }).catch(error => {
