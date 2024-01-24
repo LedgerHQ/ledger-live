@@ -5,7 +5,7 @@ import manager from ".";
 import { getProviderId } from "./provider";
 import ManagerAPI from "./api";
 import type { DeviceModelInfo, DeviceInfo, Language } from "@ledgerhq/types-live";
-import getLatestFirmwareForDeviceUseCase from "../device/use-cases/getLatestFirmwareForDeviceUseCase";
+import { getLatestFirmwareForDeviceUseCase } from "../device/use-cases/getLatestFirmwareForDeviceUseCase";
 
 async function hasOudatedApps({ deviceInfo, apps }: DeviceModelInfo): Promise<boolean> {
   const provider = getProviderId(deviceInfo);

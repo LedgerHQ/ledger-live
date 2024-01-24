@@ -15,7 +15,7 @@ import {
   followDeviceUpdate,
 } from "../deviceWordings";
 import { getDeviceRunningMode } from "./getDeviceRunningMode";
-import fetchMcusUseCase from "../device/use-cases/fetchMcusUseCase";
+import { fetchMcusUseCase } from "../device/use-cases/fetchMcusUseCase";
 
 const wait2s = of({
   type: "wait",
