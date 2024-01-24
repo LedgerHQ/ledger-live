@@ -283,8 +283,15 @@
     "src/wallet-api/types.ts",
     "src/wallet-api/version.ts"
   ],
-  "extensions": [".ts", ".js", ".jsx", ".tsx"],
-  "ignorePatterns": ["**/node_modules/**"],
+  "extensions": [
+    ".ts",
+    ".js",
+    ".jsx",
+    ".tsx"
+  ],
+  "ignorePatterns": [
+    "**/node_modules/**"
+  ],
   "ignoreUnimported": [
     "**/__tests__/**",
     "**/*.test.*",
@@ -307,6 +314,7 @@
     "src/migrations/accounts-dataset.ts",
     "src/notifications/AnnouncementProvider/helpers.ts",
     "src/rxjs/operators/throwIf.ts",
+    "src/socket/__snapshots__/socket.test.ts.snap",
     "src/socket/scenarios.mock.ts",
     "src/index.ts",
     "src/jest.d.ts",
@@ -315,11 +323,11 @@
     "src/currencies/mock.ts"
   ],
   "ignoreUnused": [
+    "@ledgerhq/hw-transport-mocker",
     "@types/bchaddrjs",
     "@types/bs58check",
     "@types/pako",
     "@types/qs",
-    "@ledgerhq/hw-transport-mocker",
     "bip32",
     "bip39"
   ],
@@ -360,6 +368,12 @@
     "deprecated-react-native-prop-types",
     "event-target-shim",
     "hoist-non-react-statics",
+    [
+      "just-curry-it",
+      [
+        "node_modules/redux-actions/lib/createCurriedAction.js"
+      ]
+    ],
     "memoize-one",
     "metro-runtime/src/modules/HMRClient",
     "nullthrows",
@@ -371,10 +385,22 @@
     "react-devtools-core",
     "react-is",
     "react-refresh/runtime",
+    [
+      "reduce-reducers",
+      [
+        "node_modules/redux-actions/lib/handleActions.js"
+      ]
+    ],
     "regenerator-runtime",
     "regenerator-runtime/runtime",
     "scheduler",
     "stacktrace-parser",
+    [
+      "to-camel-case",
+      [
+        "node_modules/redux-actions/lib/utils/camelCase.js"
+      ]
+    ],
     "use-sync-external-store/shim",
     "whatwg-fetch"
   ]
