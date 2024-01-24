@@ -90,6 +90,9 @@ libs/**/types-devices/                                   @ledgerhq/live-devices
 libs/ledger-live-common/src/apps/                        @ledgerhq/live-devices
 libs/ledger-live-common/src/hw/                          @ledgerhq/live-devices
 libs/ledger-live-common/src/manager/                     @ledgerhq/live-devices
+libs/ledger-live-common/src/device/                      @ledgerhq/live-devices
+libs/ledger-live-common/src/device-react/                @ledgerhq/live-devices
+libs/ledger-live-common/src/device-core/                 @ledgerhq/live-devices
 
 # Recover team
 apps/ledger-live-desktop/src/renderer/components/RecoverBanner/         @ledgerhq/recover-software
