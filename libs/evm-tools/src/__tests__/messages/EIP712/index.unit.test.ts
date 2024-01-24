@@ -124,7 +124,7 @@ describe("evm-tools", () => {
 
       describe("getFiltersForMessage", () => {
         it("should find the filters for a message from dynamic CAL", async () => {
-          axios.get.mockReturnValueOnce({
+          (axios.get as jest.Mock).mockReturnValueOnce({
             data: dynamicCAL,
           });
 
@@ -133,7 +133,7 @@ describe("evm-tools", () => {
         });
 
         it("should find the filters for a message in static CAL if the message is not in dynamic CAL return", async () => {
-          axios.get.mockReturnValueOnce({
+          (axios.get as jest.Mock).mockReturnValueOnce({
             data: {},
           });
           const schemaHash = "d8e4f2bd77f7562e99ea5df4adb127291a2bfbc225ae55450038f27f";
@@ -150,7 +150,7 @@ describe("evm-tools", () => {
         });
 
         it("should find the filters for a message not in dynamic CAL if in static CAL", async () => {
-          axios.get.mockRejectedValue(new Error());
+          (axios.get as jest.Mock).mockRejectedValue(new Error());
           const schemaHash = "d8e4f2bd77f7562e99ea5df4adb127291a2bfbc225ae55450038f27f";
 
           const result = await getFiltersForMessage(messageInCAL, "http://CAL-ADDRESS");
@@ -161,7 +161,7 @@ describe("evm-tools", () => {
       describe("getEIP712FieldsDisplayedOnNano", () => {
         beforeEach(() => {
           jest.resetAllMocks();
-          axios.get.mockReturnValueOnce({
+          (axios.get as jest.Mock).mockReturnValueOnce({
             data: {},
           });
         });
