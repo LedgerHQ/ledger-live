@@ -1,18 +1,18 @@
 # @ledgerhq/hw-transport-vault
 
-## 1.2.2-nightly.1
+## 1.2.2
 
 ### Patch Changes
 
 - Updated dependencies []:
-  - @ledgerhq/hw-transport-http@6.29.2-nightly.1
+  - @ledgerhq/hw-transport-http@6.29.2
 
-## 1.2.2-nightly.0
+## 1.2.2-next.0
 
 ### Patch Changes
 
 - Updated dependencies []:
-  - @ledgerhq/hw-transport-http@6.29.2-nightly.0
+  - @ledgerhq/hw-transport-http@6.29.2-next.0
 
 ## 1.2.1
 

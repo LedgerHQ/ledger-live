@@ -1,0 +1,4 @@
+{
+  "entry": ["src/index.tsx"],
+  "ignoreUnused": ["@ledgerhq/cryptoassets"]
+}

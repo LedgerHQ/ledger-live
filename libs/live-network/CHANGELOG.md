@@ -1,17 +1,22 @@
 # @ledgerhq/live-network
 
-## 1.1.11-nightly.1
+## 1.1.11
 
 ### Patch Changes
 
 - [#5785](https://github.com/LedgerHQ/ledger-live/pull/5785) [`dd5d930`](https://github.com/LedgerHQ/ledger-live/commit/dd5d9308e0e3ef8ca78f879c15bc07313ef3c8c4) Thanks [@lvndry](https://github.com/lvndry)! - Inject https agent in all platform other than mobile
 
-## 1.1.11-nightly.0
+- Updated dependencies [[`2358e87`](https://github.com/LedgerHQ/ledger-live/commit/2358e8748d9ae9398cfc05a0ec20a6b191fc7324)]:
+  - @ledgerhq/live-env@0.9.0
+
+## 1.1.11-next.0
 
 ### Patch Changes
 
+- [#5785](https://github.com/LedgerHQ/ledger-live/pull/5785) [`dd5d930`](https://github.com/LedgerHQ/ledger-live/commit/dd5d9308e0e3ef8ca78f879c15bc07313ef3c8c4) Thanks [@lvndry](https://github.com/lvndry)! - Inject https agent in all platform other than mobile
+
 - Updated dependencies [[`2358e87`](https://github.com/LedgerHQ/ledger-live/commit/2358e8748d9ae9398cfc05a0ec20a6b191fc7324)]:
-  - @ledgerhq/live-env@0.9.0-nightly.0
+  - @ledgerhq/live-env@0.9.0-next.0
 
 ## 1.1.10
 

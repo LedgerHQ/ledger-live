@@ -13,7 +13,7 @@
   "license": "MIT",
   "private": true,
   "main": "./.webpack/main.bundle.js",
-  "version": "2.75.0-nightly.6",
+  "version": "2.75.0",
   "scripts": {
     "start:prod": "electron ./.webpack/main.bundle.js",
     "start": "cross-env NODE_ENV=development node ./tools/main.js",
@@ -63,6 +63,8 @@
     "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
+    "@ledgerhq/live-countervalues": "workspace:^",
+    "@ledgerhq/live-countervalues-react": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/react-ui": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",

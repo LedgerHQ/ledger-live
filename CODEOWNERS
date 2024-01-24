@@ -17,6 +17,9 @@ libs/env/                                                @ledgerhq/live-hub
 libs/ledger-live-common/                                 @ledgerhq/live-hub
 libs/promise/                                            @ledgerhq/live-hub
 libs/ui/                                                 @ledgerhq/live-hub
+libs/live-hooks/										 @ledgerhq/live-hub
+libs/live-countervalues/								 @ledgerhq/live-hub
+libs/live-countervalues-react/ 						     @ledgerhq/live-hub
 
 # Blockchain team
 .github/**/bot-*.yml                                     @ledgerhq/live-blockchain-support
@@ -56,6 +59,7 @@ apps/ledger-live-mobile/src/screens/Exchange/                   @ledgerhq/ptx
 apps/ledger-live-mobile/src/screens/PTX/                        @ledgerhq/ptx
 apps/ledger-live-mobile/src/screens/Swap/                       @ledgerhq/ptx
 libs/ledger-live-common/src/exchange/                           @ledgerhq/ptx
+libs/exchange-module/                                           @ledgerhq/ptx
 
 # Wallet API team
 **/PlatformAppProviderWrapper.tsx                        @ledgerhq/wallet-api

@@ -1,18 +1,18 @@
 # @ledgerhq/react-native-hid
 
-## 6.31.2-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`eadebff`](https://github.com/LedgerHQ/ledger-live/commit/eadebff3fe58aef6a5befb033d5147afc49663d3)]:
-  - @ledgerhq/hw-transport@6.30.2-nightly.1
-
-## 6.31.2-nightly.0
+## 6.31.2
 
 ### Patch Changes
 
 - Updated dependencies [[`16b4d7a`](https://github.com/LedgerHQ/ledger-live/commit/16b4d7ab4702022d4967f3c054d3c62a76716947)]:
-  - @ledgerhq/hw-transport@6.30.2-nightly.0
+  - @ledgerhq/hw-transport@6.30.2
+
+## 6.31.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`16b4d7a`](https://github.com/LedgerHQ/ledger-live/commit/16b4d7ab4702022d4967f3c054d3c62a76716947)]:
+  - @ledgerhq/hw-transport@6.30.2-next.0
 
 ## 6.31.1
 
