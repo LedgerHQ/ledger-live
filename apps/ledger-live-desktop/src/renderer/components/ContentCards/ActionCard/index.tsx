@@ -11,11 +11,11 @@ type Props = {
   actions: {
     primary: {
       label: string;
-      fct: Function;
+      action: Function;
     };
     secondary: {
       label: string;
-      fct: Function;
+      action: Function;
     };
   };
 };
@@ -29,10 +29,10 @@ const ActionCard = ({ img, title, subtitle, actions }: Props) => {
         <Subtitle>{subtitle}</Subtitle>
       </Body>
       <Actions>
-        <ButtonV3 big onClick={() => actions.secondary.fct()}>
+        <ButtonV3 big onClick={() => actions.secondary.action()}>
           {actions.secondary.label}
         </ButtonV3>
-        <ButtonV3 big variant="main" onClick={() => actions.primary.fct()}>
+        <ButtonV3 big variant="main" onClick={() => actions.primary.action()}>
           {actions.primary.label}
         </ButtonV3>
       </Actions>
