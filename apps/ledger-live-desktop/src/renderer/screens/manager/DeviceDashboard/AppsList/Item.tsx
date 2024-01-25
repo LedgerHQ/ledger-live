@@ -27,16 +27,44 @@ const AppRowContainer = styled.div`
   font-size: 12px;
 `;
 
-const AppName = styled.div`
+const AppTitleAndSubtitleContainer = styled.div`
   flex: 1;
   flex-direction: column;
-  padding-left: 15px;
+  padding: 0px 15px;
   max-height: 40px;
   min-width: 160px;
   & > * {
     display: block;
   }
+  :hover {
+    background-color: ${p => p.theme.colors.palette.background.paper};
+    position: absolute;
+  }
 `;
+
+const AppTitleText = styled(Text).attrs({
+  ff: "Inter|Bold",
+  fontSize: 3,
+  color: "palette.text.shade100",
+})`
+  flex-shrink: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+const AppSubtitleText = styled(Text).attrs({
+  ff: "Inter|Regular",
+  fontSize: 3,
+  color: "palette.text.shade60",
+})`
+  flex-shrink: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+const appInfoSeparatorString = " • ";
 
 type Props = {
   optimisticState: State;
@@ -67,7 +95,7 @@ const Item = ({
   setAppUninstallDep,
   addAccount,
 }: Props) => {
-  const { name, type, currencyId } = app;
+  const { name, type, currencyId, authorName } = app;
   const { deviceModel, deviceInfo } = state;
   const notEnoughMemoryToInstall = useNotEnoughMemoryToInstall(optimisticState, name);
   const currency = useMemo(
@@ -101,29 +129,39 @@ const Item = ({
     [app.bytes, availableApp?.bytes, deviceInfo.version, deviceModel, installed, onlyUpdate],
   );
 
+  const { enabled: displayAppDeveloperName } = useFeature("myLedgerDisplayAppDeveloperName") || {};
+
+  const appSubtitle = (
+    <>
+      <Trans
+        i18nKey="manager.applist.item.version"
+        values={{
+          version: onlyUpdate && newVersion && newVersion !== version ? newVersion : version,
+        }}
+      />
+      {appInfoSeparatorString}
+      {authorName && displayAppDeveloperName ? (
+        <>
+          {authorName}
+          {appInfoSeparatorString}
+        </>
+      ) : null}
+      <ByteSize value={bytes} deviceModel={deviceModel} firmwareVersion={deviceInfo.version} />
+    </>
+  );
+
   return (
     <AppRowContainer id={`managerAppsList-${name}`}>
       <Box flex="0.7" horizontal>
         <AppIcon app={app} />
-        <AppName>
-          <Text ff="Inter|Bold" color="palette.text.shade100" fontSize={3}>{`${app.displayName}${
-            currency ? ` (${currency.ticker})` : ""
-          }`}</Text>
-          <Text ff="Inter|Regular" color="palette.text.shade60" fontSize={3}>
-            <Trans
-              i18nKey="manager.applist.item.version"
-              values={{
-                version: onlyUpdate && newVersion && newVersion !== version ? newVersion : version,
-              }}
-            />{" "}
-            •{" "}
-            <ByteSize
-              value={bytes}
-              deviceModel={deviceModel}
-              firmwareVersion={deviceInfo.version}
-            />
-          </Text>
-        </AppName>
+        <Box flex={1} horizontal position="relative">
+          <AppTitleAndSubtitleContainer>
+            <AppTitleText>{`${app.displayName}${
+              currency ? ` (${currency.ticker})` : ""
+            }`}</AppTitleText>
+            <AppSubtitleText>{appSubtitle}</AppSubtitleText>
+          </AppTitleAndSubtitleContainer>
+        </Box>
       </Box>
       <Box flex="0.7" horizontal alignContent="center" justifyContent="flex-start" ml={5}>
         {isLiveSupported && currencyFlagEnabled ? (
