@@ -94,10 +94,9 @@ type HorizontalContentCard = ContentCardCommonProperties & {
 };
 
 type HeroContentCard = ContentCardCommonProperties & {
-  title?: string; // Unused but still need to be provided to log the content card title
+  title?: string;
   image?: string;
   tag?: string;
-  description?: string;
   cta: string;
   link?: string;
 };

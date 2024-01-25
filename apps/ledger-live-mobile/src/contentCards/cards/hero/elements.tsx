@@ -47,7 +47,7 @@ export const Tag = ({ label }: LabelProps) => {
   );
 };
 
-export const Subtitle = ({ label }: LabelProps) => {
+export const Title = ({ label }: LabelProps) => {
   const { colors } = useTheme();
 
   return (
