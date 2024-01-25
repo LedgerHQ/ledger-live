@@ -17,6 +17,7 @@ const mockedManagerApiRepository: ManagerApiRepository = {
   getFinalFirmwareById: jest.fn(),
 };
 
+// TODO: complete this test
 describe("getLatestFirmwareForDevice", () => {
   beforeEach(() => {
     // Clear the methods we are using in our test
