@@ -10,7 +10,6 @@ import {
   loadWindow,
 } from "./window-lifecycle";
 import { getSentryEnabled, setUserId } from "./internal-lifecycle";
-import resolveUserDataDirectory from "~/helpers/resolveUserDataDirectory";
 import db from "./db";
 import debounce from "lodash/debounce";
 import sentry from "~/sentry/main";
@@ -20,7 +19,9 @@ import { User } from "~/renderer/storage";
 Store.initRenderer();
 
 const gotLock = app.requestSingleInstanceLock();
-const userDataDirectory = resolveUserDataDirectory();
+const { LEDGER_CONFIG_DIRECTORY } = process.env;
+const userDataDirectory = LEDGER_CONFIG_DIRECTORY || app.getPath("userData");
+
 if (!gotLock) {
   app.quit();
 } else {
