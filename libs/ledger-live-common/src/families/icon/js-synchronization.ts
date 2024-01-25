@@ -2,7 +2,7 @@ import { encodeAccountId } from "../../account";
 import type { GetAccountShape } from "../../bridge/jsHelpers";
 import { makeSync, makeScanAccounts, mergeOps } from "../../bridge/jsHelpers";
 
-import { getAccount, getOperations } from "./api/node";
+import { getAccount, getOperations } from "./api/indexer";
 import BigNumber from "bignumber.js";
 import { getDelegation } from "./api/node";
 import { IconResources } from "./types";
