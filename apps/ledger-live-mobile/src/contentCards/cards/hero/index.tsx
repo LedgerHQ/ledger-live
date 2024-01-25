@@ -2,16 +2,16 @@ import { Button, Flex } from "@ledgerhq/native-ui";
 import React, { useEffect } from "react";
 import { TouchableOpacity } from "react-native";
 import { ContentCardBuilder } from "~/contentCards/cards/utils";
-import { Image, Subtitle, Tag } from "./elements";
+import { Image, Title, Tag } from "./elements";
 
 type Props = {
   image: string;
-  description: string;
+  title: string;
   cta: string;
   tag?: string;
 };
 
-const HeroCard = ContentCardBuilder<Props>(({ description, image, cta, tag, metadata }) => {
+const HeroCard = ContentCardBuilder<Props>(({ title, image, cta, tag, metadata }) => {
   useEffect(() => metadata.actions?.onView?.());
 
   return (
@@ -19,7 +19,7 @@ const HeroCard = ContentCardBuilder<Props>(({ description, image, cta, tag, meta
       <Flex alignItems="start" rowGap={16} position="relative">
         <Image uri={image} />
         {tag && <Tag label={tag} />}
-        <Subtitle label={description} />
+        <Title label={title} />
         <Button type="main">{cta}</Button>
       </Flex>
     </TouchableOpacity>

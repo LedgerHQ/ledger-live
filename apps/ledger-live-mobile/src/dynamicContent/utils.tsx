@@ -168,7 +168,7 @@ const mapAsSquareContentCard = (
 export const mapAsHeroContentCard = (card: BrazeContentCard): HeroContentCard => ({
   id: card.id,
   tag: card.extras.tag,
-  description: card.extras.description,
+  title: card.extras.title,
   image: card.extras.image,
   cta: card.extras.cta,
   link: card.extras.link,
