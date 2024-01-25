@@ -87,6 +87,7 @@ const DrawerContainer = styled.div.attrs(({ state }: { state: TransitionStatus }
   bottom: 0;
   right: 0;
   overflow: hidden;
+  -webkit-app-region: no-drag;
   z-index: 50;
 `;
 export type DrawerProps = {

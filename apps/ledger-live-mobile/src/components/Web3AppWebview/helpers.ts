@@ -24,7 +24,7 @@ import { WebviewAPI, WebviewProps, WebviewState } from "./types";
 import prepareSignTransaction from "./liveSDKLogic";
 import { StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
-import { analyticsEnabledSelector } from "../../reducers/settings";
+import { trackingEnabledSelector } from "../../reducers/settings";
 import deviceStorage from "../../logic/storeWrapper";
 import { track } from "../../analytics";
 import getOrCreateUser from "../../user";
@@ -45,23 +45,14 @@ export function useWebView(
 
   const tracking = useMemo(
     () =>
-      trackingWrapper(
-        (
-          eventName: string,
-          properties?: Record<string, unknown> | null,
-          mandatory?: boolean | null,
-        ) =>
-          track(
-            eventName,
-            {
-              ...properties,
-              flowInitiatedFrom:
-                currentRouteNameRef.current === "Platform Catalog"
-                  ? "Discover"
-                  : currentRouteNameRef.current,
-            },
-            mandatory,
-          ),
+      trackingWrapper((eventName: string, properties?: Record<string, unknown> | null) =>
+        track(eventName, {
+          ...properties,
+          flowInitiatedFrom:
+            currentRouteNameRef.current === "Platform Catalog"
+              ? "Discover"
+              : currentRouteNameRef.current,
+        }),
       ),
     [],
   );
@@ -79,12 +70,12 @@ export function useWebView(
   const accounts = useSelector(flattenAccountsSelector);
 
   const uiHook = useUiHook();
-  const analyticsEnabled = useSelector(analyticsEnabledSelector);
+  const trackingEnabled = useSelector(trackingEnabledSelector);
   const userId = useGetUserId();
   const config = useConfig({
     appId: manifest.id,
     userId,
-    tracking: analyticsEnabled,
+    tracking: trackingEnabled,
     wallet,
   });
 

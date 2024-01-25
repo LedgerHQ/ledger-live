@@ -2,7 +2,7 @@ import Transport from "@ledgerhq/hw-transport";
 import { DeviceModelId, getDeviceModel, identifyTargetId } from "@ledgerhq/devices";
 import { UnexpectedBootloader } from "@ledgerhq/errors";
 import { Observable, throwError } from "rxjs";
-import { App, AppType, DeviceInfo } from "@ledgerhq/types-live";
+import { App, AppType, DeviceInfo, idsToLanguage, languageIds } from "@ledgerhq/types-live";
 import { LocalTracer } from "@ledgerhq/logs";
 import type { ListAppsEvent, ListAppsResult } from "../types";
 import manager, { getProviderId } from "../../manager";
@@ -104,18 +104,22 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
           }),
       );
 
+      const languagePackForDeviceP = ManagerAPI.getLanguagePackagesForDevice(deviceInfo);
+
       const [
         [partialInstalledList, installedAvailable],
         applicationsList,
         compatibleAppVersionsList,
         firmware,
         sortedCryptoCurrencies,
+        languages,
       ] = await Promise.all([
         installedP,
         ManagerAPI.listApps().then(apps => apps.map(polyfillApplication)),
         applicationsByDeviceP,
         firmwareP,
         currenciesByMarketcap(listCryptoCurrencies(getEnv("MANAGER_DEV_MODE"), true)),
+        languagePackForDeviceP,
       ]);
       calculateDependencies();
 
@@ -252,6 +256,11 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
         }
       }
 
+      const languageId: number = deviceInfo.languageId || languageIds.english;
+      const installedLanguagePack = languages.find(
+        lang => lang.language === idsToLanguage[languageId],
+      );
+
       // Harmless to run here since we are already in a secure channel, leading to
       // no prompt for the user. Introduced for the device renaming for LLD.
       const deviceName = await getDeviceName(transport);
@@ -265,6 +274,7 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
         deviceModelId,
         firmware,
         customImageBlocks,
+        installedLanguagePack,
         deviceName,
       };
       o.next({

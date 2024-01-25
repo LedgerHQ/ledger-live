@@ -131,11 +131,11 @@ exchangeBulk(apdus: Buffer[], observer: Observer<Buffer>): Subscription {
 The event forwarding pattern is generalized in main where you can then find all the definitions.
 
 ```js
-internalHandlerPromise(transportOpenChannel);
-internalHandlerPromise(transportExchangeChannel);
-internalHandlerPromise(transportCloseChannel);
-internalHandlerObservable(transportExchangeBulkChannel);
-internalHandlerObservable(transportListenChannel);
-internalHandlerEvent(transportExchangeBulkUnsubscribeChannel);
-internalHandlerEvent(transportListenUnsubscribeChannel);
+setupSingleResponseHandlerForChannel(transportOpenChannel);
+setupSingleResponseHandlerForChannel(transportExchangeChannel);
+setupSingleResponseHandlerForChannel(transportCloseChannel);
+setupMultiResponsesHandlerForChannel(transportExchangeBulkChannel);
+setupMultiResponsesHandlerForChannel(transportListenChannel);
+setupNoResponseHandlerForChannel(transportExchangeBulkUnsubscribeChannel);
+setupNoResponseHandlerForChannel(transportListenUnsubscribeChannel);
 ```

@@ -25,8 +25,8 @@ import {
   calculateMany,
   loadCountervalues,
   resolveTrackingPairs,
-} from "@ledgerhq/live-common/countervalues/logic";
-import CountervaluesAPI from "@ledgerhq/live-common/countervalues/api/index";
+} from "@ledgerhq/live-countervalues/logic";
+import CountervaluesAPI from "@ledgerhq/live-countervalues/api/index";
 const histoFormatters = {
   stats: (histo, currency, countervalue) =>
     (currency.ticker + " to " + countervalue.ticker).padEnd(12) +

@@ -1,5 +1,29 @@
 # @ledgerhq/cryptoassets
 
+## 11.4.0
+
+### Minor Changes
+
+- [#5722](https://github.com/LedgerHQ/ledger-live/pull/5722) [`2358e87`](https://github.com/LedgerHQ/ledger-live/commit/2358e8748d9ae9398cfc05a0ec20a6b191fc7324) Thanks [@chabroA](https://github.com/chabroA)! - Add Ethereum Sepolia and Holesky
+
+- [#5830](https://github.com/LedgerHQ/ledger-live/pull/5830) [`0375de1`](https://github.com/LedgerHQ/ledger-live/commit/0375de19ca909b0b013992c114b0fa2ead2a08f3) Thanks [@lvndry](https://github.com/lvndry)! - Add support for linea
+
+### Patch Changes
+
+- [#5820](https://github.com/LedgerHQ/ledger-live/pull/5820) [`fc2cf04`](https://github.com/LedgerHQ/ledger-live/commit/fc2cf04c8d3cd55503ea19aeb21fd12ee55046f6) Thanks [@lvndry](https://github.com/lvndry)! - Rename Coreum ticker to COREUM
+
+## 11.4.0-next.0
+
+### Minor Changes
+
+- [#5722](https://github.com/LedgerHQ/ledger-live/pull/5722) [`2358e87`](https://github.com/LedgerHQ/ledger-live/commit/2358e8748d9ae9398cfc05a0ec20a6b191fc7324) Thanks [@chabroA](https://github.com/chabroA)! - Add Ethereum Sepolia and Holesky
+
+- [#5830](https://github.com/LedgerHQ/ledger-live/pull/5830) [`0375de1`](https://github.com/LedgerHQ/ledger-live/commit/0375de19ca909b0b013992c114b0fa2ead2a08f3) Thanks [@lvndry](https://github.com/lvndry)! - Add support for linea
+
+### Patch Changes
+
+- [#5820](https://github.com/LedgerHQ/ledger-live/pull/5820) [`fc2cf04`](https://github.com/LedgerHQ/ledger-live/commit/fc2cf04c8d3cd55503ea19aeb21fd12ee55046f6) Thanks [@lvndry](https://github.com/lvndry)! - Rename Coreum ticker to COREUM
+
 ## 11.3.1
 
 ### Patch Changes

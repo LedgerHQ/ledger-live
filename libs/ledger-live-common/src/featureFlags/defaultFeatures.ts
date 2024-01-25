@@ -1,4 +1,10 @@
-import { DefaultFeature, Feature, Features, FeatureMap } from "@ledgerhq/types-live";
+import {
+  DefaultFeature,
+  Feature,
+  Features,
+  FeatureMap,
+  LlmAnalyticsOptInPromptVariants,
+} from "@ledgerhq/types-live";
 import { reduce } from "lodash";
 import { formatToFirebaseFeatureId } from "./firebaseFeatureFlags";
 
@@ -421,9 +427,26 @@ export const DEFAULT_FEATURES: Features = {
 
   ptxSwapLiveAppDemoZero: {
     enabled: false,
+    params: {
+      manifest_id: "swap-live-app-demo-0",
+    },
+  },
+
+  ptxSwapLiveAppDemoOne: {
+    enabled: false,
+    params: {
+      manifest_id: "swap-live-app-demo-1",
+    },
   },
 
   ptxSwapMoonpayProvider: DEFAULT_FEATURE,
+
+  llmAnalyticsOptInPrompt: {
+    enabled: false,
+    params: {
+      variant: LlmAnalyticsOptInPromptVariants.variantA,
+    },
+  },
 };
 
 // Firebase SDK treat JSON values as strings

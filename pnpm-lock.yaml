@@ -55,15 +55,18 @@ importers:
       '@commitlint/prompt-cli':
         specifier: ^17.4.2
         version: 17.4.2
+      '@ledgerhq/create-release-hash':
+        specifier: workspace:*
+        version: link:tools/create-release-hash
+      '@ledgerhq/pnpm-utils':
+        specifier: workspace:*
+        version: link:tools/pnpm-utils
       '@typescript-eslint/eslint-plugin':
         specifier: ^6.2.0
         version: 6.2.0(@typescript-eslint/parser@6.2.0)(eslint@8.51.0)(typescript@5.1.3)
       '@typescript-eslint/parser':
         specifier: ^6.2.0
         version: 6.2.0(eslint@8.51.0)(typescript@5.1.3)
-      create-release-hash:
-        specifier: workspace:*
-        version: link:tools/create-release-hash
       eslint:
         specifier: ^8.51.0
         version: 8.51.0
@@ -76,12 +79,6 @@ importers:
       eslint-plugin-prettier:
         specifier: ^5.0.1
         version: 5.0.1(eslint-config-prettier@9.0.0)(eslint@8.51.0)(prettier@3.0.3)
-      migrate-branch:
-        specifier: workspace:*
-        version: link:tools/migrate-branch
-      pnpm-utils:
-        specifier: workspace:*
-        version: link:tools/pnpm-utils
       prettier:
         specifier: ^3.0.3
         version: 3.0.3
@@ -136,6 +133,9 @@ importers:
       '@ledgerhq/live-config':
         specifier: workspace:^
         version: link:../../libs/live-config
+      '@ledgerhq/live-countervalues':
+        specifier: workspace:^
+        version: link:../../libs/live-countervalues
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../libs/env
@@ -267,6 +267,12 @@ importers:
       '@ledgerhq/live-config':
         specifier: workspace:^
         version: link:../../libs/live-config
+      '@ledgerhq/live-countervalues':
+        specifier: workspace:^
+        version: link:../../libs/live-countervalues
+      '@ledgerhq/live-countervalues-react':
+        specifier: workspace:^
+        version: link:../../libs/live-countervalues-react
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../libs/env
@@ -505,6 +511,15 @@ importers:
       '@jest/globals':
         specifier: ^29.7.0
         version: 29.7.0
+      '@ledgerhq/esbuild-utils':
+        specifier: workspace:*
+        version: link:../../tools/esbuild-utils
+      '@ledgerhq/hw-transport-mocker':
+        specifier: workspace:^
+        version: link:../../libs/ledgerjs/packages/hw-transport-mocker
+      '@ledgerhq/native-modules-tools':
+        specifier: workspace:*
+        version: link:../../tools/native-modules-tools
       '@ledgerhq/react-devtools':
         specifier: workspace:^
         version: link:../../tools/react-dev-tools
@@ -643,9 +658,6 @@ importers:
       electron-devtools-installer:
         specifier: ^3.2.0
         version: 3.2.0
-      esbuild-utils:
-        specifier: workspace:*
-        version: link:../../tools/esbuild-utils
       eslint-plugin-jest:
         specifier: ^27.4.2
         version: 27.4.2(@typescript-eslint/eslint-plugin@6.2.0)(eslint@8.51.0)(jest@29.7.0)(typescript@5.2.2)
@@ -676,9 +688,6 @@ importers:
       listr-verbose-renderer:
         specifier: ^0.6.0
         version: 0.6.0
-      native-modules-tools:
-        specifier: workspace:*
-        version: link:../../tools/native-modules-tools
       prebuild-install:
         specifier: ^7.1.1
         version: 7.1.1
@@ -754,6 +763,12 @@ importers:
       '@ledgerhq/live-config':
         specifier: workspace:^
         version: link:../../libs/live-config
+      '@ledgerhq/live-countervalues':
+        specifier: workspace:^
+        version: link:../../libs/live-countervalues
+      '@ledgerhq/live-countervalues-react':
+        specifier: workspace:^
+        version: link:../../libs/live-countervalues-react
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../libs/env
@@ -1145,6 +1160,9 @@ importers:
       '@jest/reporters':
         specifier: ^29.7.0
         version: 29.7.0
+      '@ledgerhq/metro-extra-config':
+        specifier: workspace:*
+        version: link:../../tools/metro-extra-config
       '@ledgerhq/test-utils':
         specifier: workspace:^
         version: link:../../libs/test-utils
@@ -1283,9 +1301,6 @@ importers:
       local-web-server:
         specifier: ^4.2.1
         version: 4.2.1
-      metro-extra-config:
-        specifier: workspace:*
-        version: link:../../tools/metro-extra-config
       metro-react-native-babel-preset:
         specifier: ^0.77.0
         version: 0.77.0(@babel/core@7.23.2)
@@ -1938,6 +1953,19 @@ importers:
         specifier: ^29.1.1
         version: 29.1.1(jest@29.7.0)(typescript@5.1.3)
 
+  libs/exchange-module:
+    dependencies:
+      '@ledgerhq/wallet-api-client':
+        specifier: ^1.5.2
+        version: 1.5.2
+      '@ledgerhq/wallet-api-core':
+        specifier: ^1.6.2
+        version: 1.6.2
+    devDependencies:
+      '@types/node':
+        specifier: ^20.2.5
+        version: 20.8.10
+
   libs/ledger-live-common:
     dependencies:
       '@cardano-foundation/ledgerjs-hw-app-cardano':
@@ -2078,9 +2106,18 @@ importers:
       '@ledgerhq/live-config':
         specifier: workspace:^
         version: link:../live-config
+      '@ledgerhq/live-countervalues':
+        specifier: workspace:^
+        version: link:../live-countervalues
+      '@ledgerhq/live-countervalues-react':
+        specifier: workspace:^
+        version: link:../live-countervalues-react
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../env
+      '@ledgerhq/live-hooks':
+        specifier: workspace:*
+        version: link:../live-hooks
       '@ledgerhq/live-network':
         specifier: workspace:^
         version: link:../live-network
@@ -2091,14 +2128,17 @@ importers:
         specifier: workspace:^
         version: link:../ledgerjs/packages/logs
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.5.0
-        version: 1.5.0
+        specifier: ^1.5.2
+        version: 1.5.2
       '@ledgerhq/wallet-api-core':
-        specifier: ^1.6.0
-        version: 1.6.0
+        specifier: ^1.6.2
+        version: 1.6.2
+      '@ledgerhq/wallet-api-exchange-module':
+        specifier: workspace:^
+        version: link:../exchange-module
       '@ledgerhq/wallet-api-server':
-        specifier: ^1.5.0
-        version: 1.5.0(react@18.2.0)(rxjs@7.8.1)
+        specifier: ^1.5.2
+        version: 1.5.2(react@18.2.0)(rxjs@7.8.1)
       '@solana/spl-token':
         specifier: ^0.3.7
         version: 0.3.8(@solana/web3.js@1.77.3)
@@ -2106,11 +2146,11 @@ importers:
         specifier: 1.77.3
         version: 1.77.3
       '@stacks/network':
-        specifier: 1.2.2
-        version: 1.2.2
+        specifier: 6.10.0
+        version: 6.10.0
       '@stacks/transactions':
-        specifier: 1.3.5
-        version: 1.3.5
+        specifier: 6.11.0
+        version: 6.11.0
       '@stricahq/bip32ed25519':
         specifier: ^1.0.3
         version: 1.0.4
@@ -2204,9 +2244,6 @@ importers:
       blakejs:
         specifier: ^1.2.1
         version: 1.2.1
-      bn.js:
-        specifier: ^5.2.1
-        version: 5.2.1
       bs58:
         specifier: ^4.0.1
         version: 4.0.1
@@ -4177,6 +4214,116 @@ importers:
         specifier: ^28.0.5
         version: 28.0.8(jest@28.1.3)(typescript@5.1.3)
 
+  libs/live-countervalues:
+    dependencies:
+      '@ledgerhq/coin-framework':
+        specifier: workspace:*
+        version: link:../coin-framework
+      '@ledgerhq/cryptoassets':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/cryptoassets
+      '@ledgerhq/live-env':
+        specifier: workspace:*
+        version: link:../env
+      '@ledgerhq/live-network':
+        specifier: workspace:*
+        version: link:../live-network
+      '@ledgerhq/live-promise':
+        specifier: workspace:*
+        version: link:../promise
+      '@ledgerhq/logs':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/logs
+      '@ledgerhq/types-cryptoassets':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/types-cryptoassets
+      '@ledgerhq/types-live':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/types-live
+    devDependencies:
+      '@types/jest':
+        specifier: ^29.5.10
+        version: 29.5.10
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0
+      prando:
+        specifier: '6'
+        version: 6.0.1
+      ts-jest:
+        specifier: ^29.1.1
+        version: 29.1.1(jest@29.7.0)(typescript@5.1.3)
+
+  libs/live-countervalues-react:
+    dependencies:
+      '@ledgerhq/coin-framework':
+        specifier: workspace:*
+        version: link:../coin-framework
+      '@ledgerhq/cryptoassets':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/cryptoassets
+      '@ledgerhq/live-countervalues':
+        specifier: workspace:*
+        version: link:../live-countervalues
+      '@ledgerhq/live-hooks':
+        specifier: workspace:*
+        version: link:../live-hooks
+      '@ledgerhq/types-cryptoassets':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/types-cryptoassets
+      '@ledgerhq/types-live':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/types-live
+      bignumber.js:
+        specifier: '9'
+        version: 9.1.2
+    devDependencies:
+      '@testing-library/react':
+        specifier: '14'
+        version: 14.1.2(react-dom@18.2.0)(react@18.2.0)
+      '@types/jest':
+        specifier: ^29.5.10
+        version: 29.5.10
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0
+      jest-environment-jsdom:
+        specifier: ^29.7.0
+        version: 29.7.0
+      react:
+        specifier: ^18.2.0
+        version: 18.2.0
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.2.0(react@18.2.0)
+      ts-jest:
+        specifier: ^29.1.1
+        version: 29.1.1(jest@29.7.0)(typescript@5.1.3)
+
+  libs/live-hooks:
+    devDependencies:
+      '@testing-library/react':
+        specifier: '14'
+        version: 14.1.2(react-dom@18.2.0)(react@18.2.0)
+      '@types/jest':
+        specifier: ^29.5.10
+        version: 29.5.10
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0
+      jest-environment-jsdom:
+        specifier: ^29.7.0
+        version: 29.7.0
+      react:
+        specifier: ^18.2.0
+        version: 18.2.0
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.2.0(react@18.2.0)
+      ts-jest:
+        specifier: ^29.1.1
+        version: 29.1.1(jest@29.7.0)(typescript@5.1.3)
+
   libs/live-network:
     dependencies:
       '@ledgerhq/errors':
@@ -4529,6 +4676,9 @@ importers:
       '@expo/webpack-config':
         specifier: ^18.1.2
         version: 18.1.3(expo-constants@14.4.2)(expo-modules-core@1.5.11)(expo@49.0.13)(metro@0.80.0)(react-native@0.72.6)(react@18.2.0)
+      '@ledgerhq/metro-extra-config':
+        specifier: workspace:*
+        version: link:../../../../tools/metro-extra-config
       '@react-native-async-storage/async-storage':
         specifier: 1.17.12
         version: 1.17.12(react-native@0.72.6)
@@ -4679,9 +4829,6 @@ importers:
       metro-core:
         specifier: ^0.80.0
         version: 0.80.0
-      metro-extra-config:
-        specifier: workspace:*
-        version: link:../../../../tools/metro-extra-config
       metro-minify-uglify:
         specifier: ^0.76.8
         version: 0.76.8
@@ -4993,11 +5140,11 @@ importers:
         specifier: workspace:*
         version: link:../../libs/ledger-live-common
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.5.0
-        version: 1.5.0
+        specifier: ^1.5.2
+        version: 1.5.2
       '@ledgerhq/wallet-api-client-react':
-        specifier: ^1.3.0
-        version: 1.3.0(react@18.2.0)
+        specifier: ^1.3.2
+        version: 1.3.2(react@18.2.0)
       '@ledgerhq/wallet-api-simulator':
         specifier: ^1.1.4
         version: 1.1.4(react@18.2.0)
@@ -5365,15 +5512,6 @@ importers:
       metro-resolver:
         specifier: ^0.80.0
         version: 0.80.0
-
-  tools/migrate-branch:
-    dependencies:
-      chalk:
-        specifier: ^4.1.2
-        version: 4.1.2
-      yargs:
-        specifier: ^17.1.1-candidate.0
-        version: 17.4.1
 
   tools/native-modules-tools: {}
 
@@ -16039,12 +16177,12 @@ packages:
     resolution: {integrity: sha512-K3SETlNUJAjU/bN6dNJf56gfpxOhGldmClezIU5puw1PcGDvNf4y8vmEouVz5Htc2a/0vetklf0eIQD8Wk3Hww==}
     dev: false
 
-  /@ledgerhq/wallet-api-client-react@1.3.0(react@18.2.0):
-    resolution: {integrity: sha512-UYNKQ1Yp/ZieqY4SGKgkoxKXJ3t0Zj/PPnZDoOrG/YbAFd4r3bL4XvTMa5T+bIdjbqITTo7VRiA9mhk5ootLrA==}
+  /@ledgerhq/wallet-api-client-react@1.3.2(react@18.2.0):
+    resolution: {integrity: sha512-MdJva3eCj3VTQoEYp3JImcGxAdfzdmg92YrRAaIsCGWBMV4Y8tfK4o3g/byZiZXroGbZkowJhEJ0bX4zv+9C7Q==}
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18
     dependencies:
-      '@ledgerhq/wallet-api-client': 1.5.0
+      '@ledgerhq/wallet-api-client': 1.5.2
       react: 18.2.0
     dev: false
 
@@ -16056,8 +16194,25 @@ packages:
       bignumber.js: 9.1.2
     dev: false
 
+  /@ledgerhq/wallet-api-client@1.5.2:
+    resolution: {integrity: sha512-dyMaPg4htex+b4DQ/rMJBXSJxUwbGktxwJmxYwI4IAuteOaGRxB7d6jNvpFQ7FQhNsrMPfPegWO8Osfz43+F0Q==}
+    dependencies:
+      '@ledgerhq/hw-transport': 6.30.0
+      '@ledgerhq/wallet-api-core': 1.6.2
+      bignumber.js: 9.1.2
+    dev: false
+
   /@ledgerhq/wallet-api-core@1.6.0:
     resolution: {integrity: sha512-nVPN3yu5+5pbhfFYh0iKmij5U7KVKZfpDkusXbj4yKvueKY8ZXU1wgvw1rDhgxlqu+s7JTA50MX56doyhm46Qg==}
+    dependencies:
+      '@ledgerhq/errors': 6.16.0
+      bignumber.js: 9.1.2
+      uuid: 9.0.1
+      zod: 3.22.4
+    dev: false
+
+  /@ledgerhq/wallet-api-core@1.6.2:
+    resolution: {integrity: sha512-bGgKb1IR9vphZISD0G95YUfZSDcvNJskE+RN7HAAYN/0PFO7nkP+wPeIibw9UfMQ8pKgHeVPAduijFGzwiTaAQ==}
     dependencies:
       '@ledgerhq/errors': 6.16.0
       bignumber.js: 9.1.2
@@ -16075,6 +16230,22 @@ packages:
         optional: true
     dependencies:
       '@ledgerhq/wallet-api-core': 1.6.0
+      bignumber.js: 9.1.2
+      picomatch: 2.3.1
+      react: 18.2.0
+      rxjs: 7.8.1
+    dev: false
+
+  /@ledgerhq/wallet-api-server@1.5.2(react@18.2.0)(rxjs@7.8.1):
+    resolution: {integrity: sha512-Qk/c4qKrGtLf2pi3ATwucuTmXl6DXcQLWkd+cuIy11UGhaVs0Qxl1JFiCX1PV/jESvwTwgIHZZuyVnDy4Ii1wg==}
+    peerDependencies:
+      react: ^17.x || ^18.x
+      rxjs: ^7.x
+    peerDependenciesMeta:
+      react:
+        optional: true
+    dependencies:
+      '@ledgerhq/wallet-api-core': 1.6.2
       bignumber.js: 9.1.2
       picomatch: 2.3.1
       react: 18.2.0
@@ -16664,6 +16835,10 @@ packages:
 
   /@noble/ed25519@1.7.3:
     resolution: {integrity: sha512-iR8GBkDt0Q3GyaVcIu7mSsVIqnFbkbRzGLWlvhwunacoLwt4J3swfKhfaM6rN6WY+TBGoYT1GtT1mIh2/jGbRQ==}
+    dev: false
+
+  /@noble/hashes@1.1.5:
+    resolution: {integrity: sha512-LTMZiiLc+V4v1Yi16TD6aX2gmtKszNye0pQgbaLqkvhIqP7nVsSaJsWloGQjJfJ8offaoP5GtX3yY5swbcJxxQ==}
     dev: false
 
   /@noble/hashes@1.3.1:
@@ -19226,7 +19401,7 @@ packages:
     dependencies:
       invariant: 2.2.4
       nullthrows: 1.1.1
-      react-native: 0.72.6(@babel/core@7.23.2)(react@18.2.0)
+      react-native: 0.72.6(react@18.2.0)
 
   /@react-navigation/bottom-tabs@6.4.0(@react-navigation/native@6.0.13)(react-native-safe-area-context@4.5.0)(react-native-screens@3.27.0)(react-native@0.72.6)(react@18.2.0):
     resolution: {integrity: sha512-90CapiXjiWudbCiki9e6fOr/CECQRguIxv5OD7IBfbAMGX5GGiJpX8aqiHAz2DxpAz31v4JZcUr945+lFhXBfA==}
@@ -20695,14 +20870,6 @@ packages:
     resolution: {integrity: sha512-WfqfX/eXGiAd3RJe4VU2snh/ZPwtSjLG4ynQ/vYzvghTh7dHFcI1wl+nrkWG6lGhukOxOsUHfv8dUXr58D0ayg==}
     dev: false
 
-  /@stacks/common@1.2.2:
-    resolution: {integrity: sha512-knCqq88EBRCN8AhS7+Sx2PJuRv0EFNChEpqLqCAchCHCQfp5bWad/47Zw+fLP9ccBwFXh4pl1wDtbQLBfDo0+A==}
-    dependencies:
-      cross-fetch: 3.1.5
-    transitivePeerDependencies:
-      - encoding
-    dev: false
-
   /@stacks/common@4.3.5:
     resolution: {integrity: sha512-UuViiQ7fn3vdtTe3739aRzbl+wbukekeQuXgqt8d7nB2HC2HodD7GcHhpUga165cO35CD6lQUtj3vXxJb5Ga+A==}
     dependencies:
@@ -20711,12 +20878,11 @@ packages:
       buffer: 6.0.3
     dev: false
 
-  /@stacks/network@1.2.2:
-    resolution: {integrity: sha512-xcWwuRrLJn9qqi3PEBcP2UPZHQztTZd31C0aVlzYHttNMir/sY9SrUqSnw45z2Jo4O9pIYYPIiPRtdV91Ho3fw==}
+  /@stacks/common@6.10.0:
+    resolution: {integrity: sha512-6x5Z7AKd9/kj3+DYE9xIDIkFLHihBH614i2wqrZIjN02WxVo063hWSjIlUxlx8P4gl6olVzlOy5LzhLJD9OP0A==}
     dependencies:
-      '@stacks/common': 1.2.2
-    transitivePeerDependencies:
-      - encoding
+      '@types/bn.js': 5.1.5
+      '@types/node': 18.16.19
     dev: false
 
   /@stacks/network@4.3.5:
@@ -20728,25 +20894,11 @@ packages:
       - encoding
     dev: false
 
-  /@stacks/transactions@1.3.5:
-    resolution: {integrity: sha512-KhZ9y48KnOB+Es3whxbpxtPm6o5CYLrhxCCG5Tfglmj9AcFtpWCBjkcFwZJ/R3eI4OYthD5aMB9nYY31xGiULA==}
+  /@stacks/network@6.10.0:
+    resolution: {integrity: sha512-mbiZ8nlsyy77ndmBdaqhHXii22IFdK4ThRcOQs9j/O00DkAr04jCM4GV5Q+VLUnZ9OBoJq7yOV7Pf6jglh+0hw==}
     dependencies:
-      '@stacks/common': 1.2.2
-      '@stacks/network': 1.2.2
-      '@types/bn.js': 4.11.6
-      '@types/elliptic': 6.4.14
-      '@types/randombytes': 2.0.0
-      '@types/sha.js': 2.4.0
-      bn.js: 4.12.0
-      c32check: 1.1.3
+      '@stacks/common': 6.10.0
       cross-fetch: 3.1.5
-      elliptic: 6.5.4
-      lodash: 4.17.21
-      lodash-es: 4.17.20
-      randombytes: 2.1.0
-      ripemd160-min: 0.0.6
-      sha.js: 2.4.11
-      smart-buffer: 4.2.0
     transitivePeerDependencies:
       - encoding
     dev: false
@@ -20765,6 +20917,19 @@ packages:
       ripemd160-min: 0.0.6
       sha.js: 2.4.11
       smart-buffer: 4.2.0
+    transitivePeerDependencies:
+      - encoding
+    dev: false
+
+  /@stacks/transactions@6.11.0:
+    resolution: {integrity: sha512-+zIDqn9j4H/+o1ER8C9rFpig1fyrQcj2hVGNIrp+YbpPyja+cxv3fPk6kI/gePzwggzxRgUkIWhBc+mZAXuXyQ==}
+    dependencies:
+      '@noble/hashes': 1.1.5
+      '@noble/secp256k1': 1.7.1
+      '@stacks/common': 6.10.0
+      '@stacks/network': 6.10.0
+      c32check: 2.0.0
+      lodash.clonedeep: 4.5.0
     transitivePeerDependencies:
       - encoding
     dev: false
@@ -28835,6 +29000,14 @@ packages:
       cross-sha256: 1.2.0
     dev: false
 
+  /c32check@2.0.0:
+    resolution: {integrity: sha512-rpwfAcS/CMqo0oCqDf3r9eeLgScRE3l/xHDCXhM3UyrfvIn7PrLq63uHh7yYbv8NzaZn5MVsVhIRpQ+5GZ5HyA==}
+    engines: {node: '>=8'}
+    dependencies:
+      '@noble/hashes': 1.3.2
+      base-x: 4.0.0
+    dev: false
+
   /c8@7.11.2:
     resolution: {integrity: sha512-6ahJSrhS6TqSghHm+HnWt/8Y2+z0hM/FQyB1ybKhAR30+NYL9CTQ1uwHxuWw6U7BHlHv6wvhgOrH81I+lfCkxg==}
     engines: {node: '>=10.12.0'}
@@ -34476,7 +34649,6 @@ packages:
       is-hex-prefixed: 1.0.0
       strip-hex-prefix: 1.0.0
     dev: false
-    bundledDependencies: false
 
   /ev-emitter@1.1.1:
     resolution: {integrity: sha512-ipiDYhdQSCZ4hSbX4rMW+XzNKMD1prg/sTvoVmSLkuQ1MVlwjJQQA+sW8tMYR3BLUr9KjodFV4pvzunvRhd33Q==}
@@ -41176,7 +41348,7 @@ packages:
         optional: true
     dependencies:
       abab: 2.0.6
-      acorn: 8.10.0
+      acorn: 8.11.2
       acorn-globals: 7.0.1
       cssom: 0.5.0
       cssstyle: 2.3.0
@@ -42175,10 +42347,6 @@ packages:
     dependencies:
       p-locate: 6.0.0
     dev: true
-
-  /lodash-es@4.17.20:
-    resolution: {integrity: sha512-JD1COMZsq8maT6mnuz1UMV0jvYD0E0aUsSOdrr1/nAG3dhqQXwRRgeW0cSqH1U43INKcqxaiVIQNOUDld7gRDA==}
-    dev: false
 
   /lodash-es@4.17.21:
     resolution: {integrity: sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==}
@@ -58838,6 +59006,7 @@ packages:
       string-width: 4.2.3
       y18n: 5.0.8
       yargs-parser: 21.1.1
+    dev: true
 
   /yargs@17.5.1:
     resolution: {integrity: sha512-t6YAJcxDkNX7NFYiVtKvWUz8l+PaKTLiL63mJYWR2GnHq2gjEWISzsLp9wg3aY36dY1j+gfIEL3pIF+XlJJfbA==}
@@ -58941,7 +59110,7 @@ packages:
     resolution: {directory: libs/ui/packages/crypto-icons, type: directory}
     id: file:libs/ui/packages/crypto-icons
     name: '@ledgerhq/crypto-icons-ui'
-    version: 0.7.0
+    version: 1.0.1
     peerDependencies:
       '@types/react': '*'
       react: '*'
@@ -58985,7 +59154,3 @@ packages:
     dependencies:
       commander: 2.20.3
     dev: false
-
-settings:
-  autoInstallPeers: false
-  excludeLinksFromLockfile: false

@@ -11,7 +11,7 @@ export default class LiveAppWebview {
 
   async startLiveApp(liveAppDirectory: string, liveAppPort = 3000) {
     try {
-      const port = await startDummyServer(`${liveAppDirectory}/build`, liveAppPort);
+      const port = await startDummyServer(`${liveAppDirectory}/dist`, liveAppPort);
 
       const url = `http://localhost:${port}`;
       const response = await fetch(url);

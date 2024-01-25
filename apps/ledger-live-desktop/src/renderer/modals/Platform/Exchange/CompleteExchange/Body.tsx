@@ -14,6 +14,7 @@ import { BodyContent } from "./BodyContent";
 import { getMagnitudeAwareRate } from "@ledgerhq/live-common/exchange/swap/webApp/index";
 import { BigNumber } from "bignumber.js";
 import { AccountLike } from "@ledgerhq/types-live";
+import { WrongDeviceForAccount } from "@ledgerhq/errors";
 
 export type Data = {
   provider: string;
@@ -86,7 +87,9 @@ const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined 
   useEffect(() => {
     if (error) {
       onCancel(error);
-      onClose?.();
+      if (!(error instanceof WrongDeviceForAccount)) {
+        onClose?.();
+      }
     }
   }, [onCancel, error, onClose]);
 

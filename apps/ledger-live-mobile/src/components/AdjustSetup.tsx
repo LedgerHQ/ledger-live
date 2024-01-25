@@ -8,10 +8,10 @@ import {
 } from "react-native-adjust";
 import Config from "react-native-config";
 import { useSelector } from "react-redux";
-import { analyticsEnabledSelector } from "~/reducers/settings";
+import { trackingEnabledSelector } from "~/reducers/settings";
 
 export default function AdjustSetup() {
-  const analyticsEnabled: boolean = useSelector(analyticsEnabledSelector);
+  const trackingEnabled: boolean = useSelector(trackingEnabledSelector);
 
   useEffect(() => {
     const adjustConfig = new AdjustConfig(
@@ -46,8 +46,8 @@ export default function AdjustSetup() {
   }, []);
 
   useEffect(() => {
-    Adjust.setEnabled(analyticsEnabled);
-  }, [analyticsEnabled]);
+    Adjust.setEnabled(trackingEnabled);
+  }, [trackingEnabled]);
 
   return null;
 }

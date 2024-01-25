@@ -152,7 +152,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
         {showAssets ? (
           <ContentCardsLocation
             key="contentCardsLocationPortfolio"
-            locationId={ContentCardLocation.Wallet}
+            locationId={ContentCardLocation.TopWallet}
             mt={7}
           />
         ) : null}

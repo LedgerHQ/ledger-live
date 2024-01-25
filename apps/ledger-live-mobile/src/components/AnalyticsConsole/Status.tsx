@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { getIsTracking } from "~/analytics";
 import { State } from "~/reducers/types";
 
-const trackingSelector = (state: State) => getIsTracking(state, false);
+const trackingSelector = (state: State) => getIsTracking(state);
 
 const Status = () => {
   const isTracking = useSelector(trackingSelector);

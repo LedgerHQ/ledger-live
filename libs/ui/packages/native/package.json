@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/native-ui",
-  "version": "0.22.4",
+  "version": "0.22.5",
   "description": "Ledger Live - Mobile UI",
   "repository": {
     "type": "git",
@@ -138,7 +138,7 @@
     "metro": "^0.80.0",
     "metro-config": "^0.80.0",
     "metro-core": "^0.80.0",
-    "metro-extra-config": "workspace:*",
+    "@ledgerhq/metro-extra-config": "workspace:*",
     "metro-minify-uglify": "^0.76.8",
     "metro-react-native-babel-preset": "^0.77.0",
     "metro-react-native-babel-transformer": "^0.77.0",

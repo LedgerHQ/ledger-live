@@ -2,7 +2,7 @@ import Transport from "@ledgerhq/hw-transport";
 import { DeviceModelId, getDeviceModel, identifyTargetId } from "@ledgerhq/devices";
 import { UnexpectedBootloader } from "@ledgerhq/errors";
 import { Observable, throwError, Subscription } from "rxjs";
-import { App, DeviceInfo } from "@ledgerhq/types-live";
+import { App, DeviceInfo, idsToLanguage, languageIds } from "@ledgerhq/types-live";
 import { LocalTracer } from "@ledgerhq/logs";
 import type { ListAppsEvent, ListAppsResult, ListAppResponse } from "../types";
 import manager, { getProviderId } from "../../manager";
@@ -141,13 +141,20 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
         listCryptoCurrencies(isDevMode, true),
       );
 
-      /* Running all sequences 1 2 3 4 defined above in parallel */
-      const [[listApps, matches], catalogForDevice, firmware, sortedCryptoCurrencies] =
+      /**
+       * Sequence 5: get language pack available for the device
+       */
+
+      const languagePackForDevicePromise = ManagerAPI.getLanguagePackagesForDevice(deviceInfo);
+
+      /* Running all sequences 1 2 3 4 5 defined above in parallel */
+      const [[listApps, matches], catalogForDevice, firmware, sortedCryptoCurrencies, languages] =
         await Promise.all([
           listAppsAndMatchesPromise,
           catalogForDevicesPromise,
           latestFirmwarePromise,
           sortedCryptoCurrenciesPromise,
+          languagePackForDevicePromise,
         ]);
 
       /**
@@ -228,6 +235,7 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
       /**
        * Obtain remaining metadata:
        * - Ledger Stax custom picture: number of blocks taken in storage
+       * - Installed language pack
        * - Device name
        * */
 
@@ -240,6 +248,11 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
         }
       }
 
+      const languageId: number = deviceInfo.languageId || languageIds.english;
+      const installedLanguagePack = languages.find(
+        lang => lang.language === idsToLanguage[languageId],
+      );
+
       // Will not prompt user since we've allowed secure channel already.
       const deviceName = await getDeviceName(transport);
 
@@ -250,6 +263,7 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
         deviceModelId,
         installed,
         installedAvailable: !!installedList,
+        installedLanguagePack,
 
         // Not strictly listApps content.
         firmware,

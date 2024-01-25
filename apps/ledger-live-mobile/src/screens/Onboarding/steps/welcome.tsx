@@ -42,6 +42,7 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const acceptTerms = useAcceptGeneralTerms();
+  const llmAnalyticsOptInPromptFeature = useFeature("llmAnalyticsOptInPrompt");
 
   const {
     i18n: { language: locale },
@@ -62,15 +63,21 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
 
   const next = useCallback(() => {
     acceptTerms();
-    dispatch(setAnalytics(true));
 
-    navigation.navigate({
-      name: ScreenName.OnboardingPostWelcomeSelection,
-      params: {
-        userHasDevice: true,
-      },
-    });
-  }, [acceptTerms, dispatch, navigation]);
+    if (llmAnalyticsOptInPromptFeature?.enabled) {
+      navigation.navigate(NavigatorName.AnalyticsOptInPrompt, {
+        screen: ScreenName.AnalyticsOptInPromptMain,
+      });
+    } else {
+      dispatch(setAnalytics(true));
+      navigation.navigate({
+        name: ScreenName.OnboardingPostWelcomeSelection,
+        params: {
+          userHasDevice: true,
+        },
+      });
+    }
+  }, [acceptTerms, dispatch, navigation, llmAnalyticsOptInPromptFeature?.enabled]);
 
   const videoMounted = !useIsAppInBackground();
 

@@ -14,10 +14,12 @@ import { fromTransactionRaw } from "./transaction";
 import { testBridge } from "../../__tests__/test-helpers/bridge";
 
 const SEED_IDENTIFIER = "SP3KS7VMY2ZNE6SB88PHR4SKRK2EEPHS8N8MCCBR9";
+const DUMMY_PUBKEY = "022d82baea2d041ac281bebafab11571f45db4f163a9e3f8640b1c804a4ac6f662";
 const ACCOUNT_1 = "SP2DV2RVZP1A69Q6VAG5PHEQ6ZHQHZPCV84TMYNGN";
 
 const stacks: CurrenciesData<Transaction> = {
   FIXME_ignoreAccountFields: [],
+  IgnorePrepareTransactionFields: ["fee"],
   scanAccounts: [
     {
       name: "stacks seed 1",
@@ -34,7 +36,7 @@ const stacks: CurrenciesData<Transaction> = {
   accounts: [
     {
       raw: {
-        id: `js:2:stacks:${SEED_IDENTIFIER}:`,
+        id: `js:2:stacks:${DUMMY_PUBKEY}:`,
         seedIdentifier: SEED_IDENTIFIER,
         name: "Stacks 1",
         derivationMode: "",

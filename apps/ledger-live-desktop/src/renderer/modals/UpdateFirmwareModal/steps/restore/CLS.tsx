@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { StepProps } from "../..";
+import { StepProps } from "../../types";
 import CustomImageDeviceAction from "~/renderer/components/CustomImage/CustomImageDeviceAction";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { useSelector } from "react-redux";

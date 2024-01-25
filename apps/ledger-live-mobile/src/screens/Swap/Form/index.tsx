@@ -40,7 +40,10 @@ import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/Ba
 import { SwapFormNavigatorParamList } from "~/components/RootNavigator/types/SwapFormNavigator";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import type { DetailsSwapParamList } from "../types";
-import { getAvailableProviders } from "@ledgerhq/live-common/exchange/swap/index";
+import {
+  getAvailableProviders,
+  maybeTezosAccountUnrevealedAccount,
+} from "@ledgerhq/live-common/exchange/swap/index";
 
 type Navigation = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.Account>;
 
@@ -121,7 +124,10 @@ export function SwapForm({
     );
   }, [exchangeRatesState.value, swapTransaction.swap.to.currency]);
 
-  const swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
+  const swapError =
+    swapTransaction.fromAmountError ||
+    exchangeRatesState?.error ||
+    maybeTezosAccountUnrevealedAccount(swapTransaction);
   const swapWarning = swapTransaction.fromAmountWarning;
   const pageState = usePageState(swapTransaction, swapError || swapWarning);
   const provider = exchangeRate?.provider;
@@ -200,17 +206,13 @@ export function SwapForm({
   const onSubmit = useCallback(() => {
     if (!exchangeRate) return;
     const { provider, providerURL, providerType } = exchangeRate;
-    track(
-      "button_clicked",
-      {
-        ...sharedSwapTracking,
-        sourceCurrency: swapTransaction.swap.from.currency?.name,
-        targetCurrency: swapTransaction.swap.to.currency?.name,
-        provider,
-        button: "exchange",
-      },
-      undefined,
-    );
+    track("button_clicked", {
+      ...sharedSwapTracking,
+      sourceCurrency: swapTransaction.swap.from.currency?.name,
+      targetCurrency: swapTransaction.swap.to.currency?.name,
+      provider,
+      button: "exchange",
+    });
 
     if (providerType === "DEX") {
       const from = swapTransaction.swap.from;
@@ -283,14 +285,10 @@ export function SwapForm({
       const account = flattenAccounts(enhancedAccounts).find(a => a.id === accountId);
 
       if (target === "from") {
-        track(
-          "Page Swap Form - New Source Account",
-          {
-            ...sharedSwapTracking,
-            provider,
-          },
-          undefined,
-        );
+        track("Page Swap Form - New Source Account", {
+          ...sharedSwapTracking,
+          provider,
+        });
         swapTransaction.setFromAccount(account);
       }
 

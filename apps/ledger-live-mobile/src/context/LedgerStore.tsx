@@ -4,7 +4,7 @@ import Config from "react-native-config";
 import thunk from "redux-thunk";
 import { createStore, applyMiddleware, compose, type Middleware } from "redux";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
-import { CounterValuesStateRaw } from "@ledgerhq/live-common/countervalues/types";
+import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import {
   getAccounts,

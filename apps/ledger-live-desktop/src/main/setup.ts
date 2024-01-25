@@ -12,10 +12,10 @@ import { InMemoryLogger } from "./logger";
 import { setEnvUnsafe } from "@ledgerhq/live-env";
 
 /**
- * Sets env variables for the main thread.
+ * Sets env variables for the main process.
  *
- * The renderer thread will also set some env variables via the `setEnv` IPC channel
- * but we might need some envs before the renderer thread is spawned.
+ * The renderer process will also set some env variables via the `setEnv` IPC channel
+ * but we might need some envs before the renderer process is spawned.
  */
 for (const k in process.env) {
   setEnvUnsafe(k, process.env[k]);
@@ -30,7 +30,7 @@ ipcMain.on("updater", (e, type) => {
 });
 
 /**
- * Saves logs from the renderer thread and logs recorded from the internal thread to a file.
+ * Saves logs from the renderer process and logs recorded from the internal process to a file.
  */
 ipcMain.handle(
   "save-logs",
@@ -45,19 +45,19 @@ ipcMain.handle(
       try {
         rendererLogs = JSON.parse(rendererLogsStr) as unknown[];
       } catch (error) {
-        console.error("Error while parsing logs from the renderer thread", error);
+        console.error("Error while parsing logs from the renderer process", error);
         return;
       }
 
       console.log(
-        `Saving ${rendererLogs.length} logs from the renderer thread and ${internalLogs.length} logs from the internal thread`,
+        `Saving ${rendererLogs.length} logs from the renderer process and ${internalLogs.length} logs from the internal process`,
       );
 
       // Merging according to a `date` (internal logs) / `timestamp` (most of renderer logs) does not seem necessary.
       // Simply pushes all the internal logs after the renderer logs.
       // Note: this is not respecting the `EXPORT_MAX_LOGS` env var, but this is fine.
       rendererLogs.push(
-        { type: "logs-separator", message: "Logs coming from the internal thread" },
+        { type: "logs-separator", message: "Logs coming from the internal process" },
         ...internalLogs,
       );
 

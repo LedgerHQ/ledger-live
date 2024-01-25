@@ -65,6 +65,7 @@ jobs:
           brew update
           brew tap wix/brew
           brew install applesimutils
+
       - name: Cache LLM pods
         uses: actions/cache@v3
         with:
@@ -74,22 +75,32 @@ jobs:
             ~/.cocoapods
           key: ${{ runner.os }}-pods-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock') }}
 
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        id: aws
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
+          aws-region: ${{ secrets.AWS_CACHE_REGION }}
+
       - name: cache detox build
         uses: tespkg/actions-cache@v1
+        if: steps.aws.conclusion == 'success'
         id: detox-build
         with:
           path: ${{ github.workspace }}/apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
           key: ${{ runner.os }}-detox-${{ hashFiles('apps/ledger-live-mobile/ios/Podfile.lock', 'apps/ledger-live-mobile/ios/ledgerlivemobile.xcodeproj/project.pbxproj') }}
           restore-keys: |
             ${{ runner.os }}-detox-
-          accessKey: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          secretKey: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
           bucket: ll-gha-s3-cache
-          region: eu-west-1
+          region: ${{ secrets.AWS_CACHE_REGION }}
           use-fallback: false
+
       - name: install dependencies
         run: |
-          pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="dummy-*-app..." --no-frozen-lockfile --unsafe-perm
+          pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
       - name: Build dependencies
         run: |
           pnpm build:llm:deps --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
@@ -189,7 +200,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="dummy-*-app..." --no-frozen-lockfile --unsafe-perm
+          pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
       - name: Build dependencies
         run: |
           pnpm build:llm:deps --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"

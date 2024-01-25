@@ -41,7 +41,6 @@ import openTransportAsSubject, { BidirectionalEvent } from "../hw/openTransportA
 import { AppResult } from "../hw/actions/app";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { Transaction } from "../generated/types";
-import { useManifests } from "../platform/providers/RemoteLiveAppProvider";
 import { DISCOVER_INITIAL_CATEGORY, MAX_RECENTLY_USED_LENGTH } from "./constants";
 import { DiscoverDB } from "./types";
 
@@ -369,7 +368,7 @@ export function useWalletAPIServer({
   useEffect(() => {
     if (!uiAccountReceive) return;
 
-    server.setHandler("account.receive", ({ account }) =>
+    server.setHandler("account.receive", ({ account, tokenCurrency }) =>
       receiveOnAccountLogic(
         { manifest, accounts, tracking },
         account.id,
@@ -393,6 +392,7 @@ export function useWalletAPIServer({
               },
             }),
           ),
+        tokenCurrency,
       ),
     );
   }, [accounts, manifest, server, tracking, uiAccountReceive]);
@@ -443,90 +443,100 @@ export function useWalletAPIServer({
   useEffect(() => {
     if (!uiTxSign) return;
 
-    server.setHandler("transaction.sign", async ({ account, transaction, options }) => {
-      const signedOperation = await signTransactionLogic(
-        { manifest, accounts, tracking },
-        account.id,
-        transaction,
-        (account, parentAccount, signFlowInfos) =>
-          new Promise((resolve, reject) =>
-            uiTxSign({
-              account,
-              parentAccount,
-              signFlowInfos,
-              options,
-              onSuccess: signedOperation => {
-                tracking.signTransactionSuccess(manifest);
-                resolve(signedOperation);
-              },
-              onError: error => {
-                tracking.signTransactionFail(manifest);
-                reject(error);
-              },
-            }),
-          ),
-      );
+    server.setHandler(
+      "transaction.sign",
+      async ({ account, tokenCurrency, transaction, options }) => {
+        const signedOperation = await signTransactionLogic(
+          { manifest, accounts, tracking },
+          account.id,
+          transaction,
+          (account, parentAccount, signFlowInfos) =>
+            new Promise((resolve, reject) =>
+              uiTxSign({
+                account,
+                parentAccount,
+                signFlowInfos,
+                options,
+                onSuccess: signedOperation => {
+                  tracking.signTransactionSuccess(manifest);
+                  resolve(signedOperation);
+                },
+                onError: error => {
+                  tracking.signTransactionFail(manifest);
+                  reject(error);
+                },
+              }),
+            ),
+          tokenCurrency,
+        );
 
-      return Buffer.from(signedOperation.signature);
-    });
+        return Buffer.from(signedOperation.signature);
+      },
+    );
   }, [accounts, manifest, server, tracking, uiTxSign]);
 
   useEffect(() => {
     if (!uiTxSign) return;
 
-    server.setHandler("transaction.signAndBroadcast", async ({ account, transaction, options }) => {
-      const signedTransaction = await signTransactionLogic(
-        { manifest, accounts, tracking },
-        account.id,
-        transaction,
-        (account, parentAccount, signFlowInfos) =>
-          new Promise((resolve, reject) =>
-            uiTxSign({
-              account,
-              parentAccount,
-              signFlowInfos,
-              options,
-              onSuccess: signedOperation => {
-                tracking.signTransactionSuccess(manifest);
-                resolve(signedOperation);
-              },
-              onError: error => {
-                tracking.signTransactionFail(manifest);
-                reject(error);
-              },
-            }),
-          ),
-      );
+    server.setHandler(
+      "transaction.signAndBroadcast",
+      async ({ account, tokenCurrency, transaction, options }) => {
+        const signedTransaction = await signTransactionLogic(
+          { manifest, accounts, tracking },
+          account.id,
+          transaction,
+          (account, parentAccount, signFlowInfos) =>
+            new Promise((resolve, reject) =>
+              uiTxSign({
+                account,
+                parentAccount,
+                signFlowInfos,
+                options,
+                onSuccess: signedOperation => {
+                  tracking.signTransactionSuccess(manifest);
+                  resolve(signedOperation);
+                },
+                onError: error => {
+                  tracking.signTransactionFail(manifest);
+                  reject(error);
+                },
+              }),
+            ),
+          tokenCurrency,
+        );
 
-      return broadcastTransactionLogic(
-        { manifest, accounts, tracking },
-        account.id,
-        signedTransaction,
-        async (account, parentAccount, signedOperation) => {
-          const bridge = getAccountBridge(account, parentAccount);
-          const mainAccount = getMainAccount(account, parentAccount);
+        return broadcastTransactionLogic(
+          { manifest, accounts, tracking },
+          account.id,
+          signedTransaction,
+          async (account, parentAccount, signedOperation) => {
+            const bridge = getAccountBridge(account, parentAccount);
+            const mainAccount = getMainAccount(account, parentAccount);
 
-          let optimisticOperation: Operation = signedOperation.operation;
+            let optimisticOperation: Operation = signedOperation.operation;
 
-          if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
-            try {
-              optimisticOperation = await bridge.broadcast({
-                account: mainAccount,
-                signedOperation,
-              });
-              tracking.broadcastSuccess(manifest);
-            } catch (error) {
-              tracking.broadcastFail(manifest);
-              throw error;
+            if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
+              try {
+                optimisticOperation = await bridge.broadcast({
+                  account: mainAccount,
+                  signedOperation,
+                });
+                tracking.broadcastSuccess(manifest);
+              } catch (error) {
+                tracking.broadcastFail(manifest);
+                throw error;
+              }
             }
-          }
 
-          uiTxBroadcast && uiTxBroadcast(account, parentAccount, mainAccount, optimisticOperation);
+            uiTxBroadcast &&
+              uiTxBroadcast(account, parentAccount, mainAccount, optimisticOperation);
 
-          return optimisticOperation.hash;
-        },
-      );
-    });
+            return optimisticOperation.hash;
+          },
+          tokenCurrency,
+        );
+      },
+    );
   }, [accounts, manifest, server, tracking, uiTxBroadcast, uiTxSign]);
 
   const onLoad = useCallback(() => {
@@ -775,12 +785,6 @@ export enum ExchangeType {
 }
 
 export interface Categories {
-  manifests: {
-    all: AppManifest[];
-    complete: AppManifest[];
-    searchable: AppManifest[];
-  };
-  searchable: AppManifest[];
   categories: string[];
   manifestsByCategories: Map<string, AppManifest[]>;
   selected: string;
@@ -788,48 +792,19 @@ export interface Categories {
   reset: () => void;
 }
 
-export function useCategories(): Categories {
-  const all = useManifests();
-  const complete = useMemo(() => all.filter(m => m.visibility === "complete"), [all]);
-  const searchable = useMemo(
-    () => all.filter(m => ["complete", "searchable"].includes(m.visibility)),
-    [all],
-  );
-  const { categories, manifestsByCategories } = useCategoriesRaw(searchable);
+export function useCategories(manifests): Categories {
   const [selected, setSelected] = useState(DISCOVER_INITIAL_CATEGORY);
 
   const reset = useCallback(() => {
     setSelected(DISCOVER_INITIAL_CATEGORY);
   }, []);
 
-  return useMemo(
-    () => ({
-      manifests: {
-        all,
-        complete,
-        searchable,
-      },
-      searchable,
-      categories,
-      manifestsByCategories,
-      selected,
-      setSelected,
-      reset,
-    }),
-    [all, complete, searchable, categories, manifestsByCategories, selected, setSelected, reset],
-  );
-}
-
-function useCategoriesRaw(manifests: AppManifest[]): {
-  categories: string[];
-  manifestsByCategories: Map<string, AppManifest[]>;
-} {
   const manifestsByCategories = useMemo(() => {
     const res = manifests.reduce(
-      (res, m) => {
-        m.categories.forEach(c => {
-          const list = res.has(c) ? [...res.get(c), m] : [m];
-          res.set(c, list);
+      (res, manifest) => {
+        manifest.categories.forEach(category => {
+          const list = res.has(category) ? [...res.get(category), manifest] : [manifest];
+          res.set(category, list);
         });
 
         return res;
@@ -842,10 +817,16 @@ function useCategoriesRaw(manifests: AppManifest[]): {
 
   const categories = useMemo(() => [...manifestsByCategories.keys()], [manifestsByCategories]);
 
-  return {
-    categories,
-    manifestsByCategories,
-  };
+  return useMemo(
+    () => ({
+      categories,
+      manifestsByCategories,
+      selected,
+      setSelected,
+      reset,
+    }),
+    [categories, manifestsByCategories, selected, reset],
+  );
 }
 
 export type RecentlyUsedDB = StateDB<DiscoverDB, DiscoverDB["recentlyUsed"]>;

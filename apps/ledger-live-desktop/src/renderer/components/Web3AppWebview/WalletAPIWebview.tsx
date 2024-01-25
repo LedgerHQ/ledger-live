@@ -310,6 +310,7 @@ function useWebView(
       opacity: widgetLoaded ? 1 : 0,
       border: "none",
       width: "100%",
+      height: "100%",
       flex: 1,
       transition: "opacity 200ms ease-out",
     };

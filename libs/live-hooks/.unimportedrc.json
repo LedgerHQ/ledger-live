@@ -1,0 +1,5 @@
+{
+  "entry": ["src/useDebounce.ts"],
+  "ignoreUnimported": [],
+  "ignoreUnresolved": []
+}
