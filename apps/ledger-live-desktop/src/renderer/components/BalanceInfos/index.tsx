@@ -150,7 +150,7 @@ export default function BalanceInfos({ totalBalance, valueChange, isAvailable, u
             <Button
               data-test-id="portfolio-swap-button"
               variant="color"
-              event="button_clicked"
+              event="button_clicked2"
               eventProperties={{
                 button: "swap",
                 page: "Page Portfolio",

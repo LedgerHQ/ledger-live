@@ -109,7 +109,7 @@ const SectionFees = ({
     () =>
       (canEdit &&
         (() => {
-          track("button_clicked", {
+          track("button_clicked2", {
             button: "change network fees",
             page: "Page Swap Form",
             ...swapDefaultTrack,

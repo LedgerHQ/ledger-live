@@ -34,7 +34,7 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
     if ("startAction" in props) {
       props.startAction({ openModalCallback, navigationCallback });
       buttonLabelForAnalyticsEvent &&
-        track("button_clicked", { button: buttonLabelForAnalyticsEvent, flow: "post-onboarding" });
+        track("button_clicked2", { button: buttonLabelForAnalyticsEvent, flow: "post-onboarding" });
     }
   }, [props, dispatch, history, buttonLabelForAnalyticsEvent]);
 

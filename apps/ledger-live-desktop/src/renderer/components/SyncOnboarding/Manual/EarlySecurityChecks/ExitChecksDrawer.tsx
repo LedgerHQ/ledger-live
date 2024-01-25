@@ -38,7 +38,7 @@ const ExitChecksDrawer: React.FC<Props> = ({ onClose, onClickExit }) => {
           size="large"
           type="shade"
           onClick={() => {
-            track("button_clicked", { button: "Cancel check", drawer: analyticsDrawerName });
+            track("button_clicked2", { button: "Cancel check", drawer: analyticsDrawerName });
             onClickExit();
           }}
         >
@@ -48,7 +48,7 @@ const ExitChecksDrawer: React.FC<Props> = ({ onClose, onClickExit }) => {
           size="large"
           variant="main"
           onClick={() => {
-            track("button_clicked", { button: "Resume check", drawer: analyticsDrawerName });
+            track("button_clicked2", { button: "Resume check", drawer: analyticsDrawerName });
             onClose();
           }}
         >
