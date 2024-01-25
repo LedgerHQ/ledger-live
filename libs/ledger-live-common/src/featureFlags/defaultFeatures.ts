@@ -447,6 +447,8 @@ export const DEFAULT_FEATURES: Features = {
       variant: LlmAnalyticsOptInPromptVariants.variantA,
     },
   },
+
+  myLedgerDisplayAppDeveloperName: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings
