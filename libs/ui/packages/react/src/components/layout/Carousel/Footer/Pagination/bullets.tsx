@@ -3,6 +3,13 @@ import { ItemStatus } from "./types";
 import { useTheme } from "styled-components";
 import { useSpring, animated } from "react-spring";
 
+const defaultBulletStyle = {
+  height: "6px",
+  borderRadius: "1000px",
+  marginRight: "4px",
+  opacity: 1,
+};
+
 const useBulletStyles = () => {
   const { colors } = useTheme();
 
@@ -17,35 +24,25 @@ const useBulletStyles = () => {
     };
   } = {
     [ItemStatus.active]: {
+      ...defaultBulletStyle,
       width: "16px",
-      height: "6px",
       backgroundColor: colors.opacityDefault.c80,
-      borderRadius: "1000px",
-      opacity: 1,
-      marginRight: "4px",
     },
     [ItemStatus.nearby]: {
+      ...defaultBulletStyle,
       width: "8px",
-      height: "6px",
       backgroundColor: colors.opacityDefault.c30,
-      borderRadius: "1000px",
-      opacity: 1,
-      marginRight: "4px",
     },
     [ItemStatus.far]: {
+      ...defaultBulletStyle,
       width: "4px",
-      height: "6px",
       backgroundColor: colors.opacityDefault.c10,
-      borderRadius: "1000px",
-      opacity: 1,
-      marginRight: "4px",
     },
     [ItemStatus.none]: {
+      ...defaultBulletStyle,
       width: "0px",
-      height: "6px",
-      backgroundColor: colors.opacityDefault.c10,
-      borderRadius: "1000px",
       opacity: 0,
+      backgroundColor: colors.opacityDefault.c10,
       marginRight: "0px",
     },
   };
@@ -54,16 +51,7 @@ const useBulletStyles = () => {
 };
 
 const Bullet = ({ type }: { type: ItemStatus }) => {
-  const bulletStyles = useBulletStyles();
-
-  const props = useSpring({
-    width: bulletStyles[type].width,
-    height: bulletStyles[type].height,
-    backgroundColor: bulletStyles[type].backgroundColor,
-    borderRadius: bulletStyles[type].borderRadius,
-    opacity: bulletStyles[type].opacity,
-    marginRight: bulletStyles[type].marginRight,
-  });
+  const props = useSpring(useBulletStyles()[type]);
 
   return <animated.div style={props} />;
 };

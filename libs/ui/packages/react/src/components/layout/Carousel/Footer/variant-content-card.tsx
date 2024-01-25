@@ -3,7 +3,7 @@ import { UseEmblaCarouselType } from "embla-carousel-react";
 import React from "react";
 import styled from "styled-components";
 import { Props } from "../types";
-import Pagination from "./pagination";
+import Pagination from "./Pagination";
 
 const FooterContainer = styled.div`
   height: 32px;

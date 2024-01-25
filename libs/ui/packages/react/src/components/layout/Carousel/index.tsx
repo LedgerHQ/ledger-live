@@ -5,7 +5,7 @@
 import useEmblaCarousel from "embla-carousel-react";
 import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
-import Footer from "./footer";
+import Footer from "./Footer";
 import { Props } from "./types";
 
 const Embla = styled.div`
@@ -21,7 +21,7 @@ const EmblaSlide = styled.div`
   min-width: 0;
 `;
 
-const Carousel = (props: Props) => {
+const Carousel = ({ slides, footerVariant }: Props) => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -42,7 +42,7 @@ const Carousel = (props: Props) => {
     <div>
       <Embla ref={emblaRef}>
         <EmblaContainer>
-          {props.slides.map(({ id, Component }) => (
+          {slides.map(({ id, Component }) => (
             <EmblaSlide key={id}>
               <Component />
             </EmblaSlide>
@@ -50,7 +50,12 @@ const Carousel = (props: Props) => {
         </EmblaContainer>
       </Embla>
 
-      <Footer {...props} emblaApi={emblaApi} index={currentIndex} />
+      <Footer
+        slides={slides}
+        footerVariant={footerVariant}
+        emblaApi={emblaApi}
+        index={currentIndex}
+      />
     </div>
   );
 };
