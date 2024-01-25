@@ -1,6 +1,6 @@
 import makeCliTools from "./cli";
 
-export * from "./bridge.integration.test";
+export * from "./bridgeDatasetTest";
 export { makeCliTools };
 export * from "./bot-specs";
 export * from "./bot-deviceActions";

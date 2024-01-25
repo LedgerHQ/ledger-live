@@ -1,5 +1,6 @@
 import { BigNumber } from "bignumber.js";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
+import { loadPolkadotCrypto } from "./polkadot-crypto";
 import type { PolkadotAccount, Transaction } from "../types";
 import { calculateAmount } from "./utils";
 import { buildTransaction } from "./buildTransaction";
@@ -15,6 +16,8 @@ import { PolkadotAPI } from "../network";
 const getEstimatedFees =
   (polkadotAPI: PolkadotAPI) =>
   async ({ a, t }: { a: PolkadotAccount; t: Transaction }): Promise<BigNumber> => {
+    await loadPolkadotCrypto();
+
     const transaction = {
       ...t,
       recipient: getAbandonSeedAddress(a.currency.id),

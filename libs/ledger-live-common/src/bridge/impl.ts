@@ -59,7 +59,7 @@ export function getAccountBridgeByFamily(family: string, accountId?: string): Ac
 
   const jsBridge = jsBridges[family];
   if (!jsBridge) {
-    throw new CurrencyNotSupported("currency not supported " + family);
+    throw new CurrencyNotSupported("currency bridge not found " + family);
   }
   return jsBridge.accountBridge;
 }

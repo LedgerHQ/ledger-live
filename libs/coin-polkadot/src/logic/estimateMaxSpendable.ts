@@ -5,7 +5,6 @@ import type { PolkadotAccount, Transaction } from "../types";
 import { calculateAmount } from "./utils";
 import getEstimatedFees from "./getFeesForTransaction";
 import { createTransaction } from "./transaction";
-import { loadPolkadotCrypto } from "./polkadot-crypto";
 import { PolkadotAPI } from "../network";
 
 /**
@@ -24,7 +23,6 @@ const estimateMaxSpendable =
     parentAccount: Account | null | undefined;
     transaction: Transaction | null | undefined;
   }): Promise<BigNumber> => {
-    await loadPolkadotCrypto();
     const a = getMainAccount(account, parentAccount) as PolkadotAccount;
     const t = { ...createTransaction(), ...transaction, useAllAmount: true };
     const fees = await getEstimatedFees(polkadotAPI)({

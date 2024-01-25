@@ -684,9 +684,3 @@ export const dataset: DatasetTest<Transaction> = {
     polkadot,
   },
 };
-
-describe("dummy", () => {
-  it("", () => {
-    expect(true);
-  });
-});
