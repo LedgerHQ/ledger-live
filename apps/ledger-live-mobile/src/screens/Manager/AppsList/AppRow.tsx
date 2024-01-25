@@ -2,11 +2,12 @@ import React, { memo, useMemo, useCallback } from "react";
 
 import { App } from "@ledgerhq/types-live";
 
+import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { State, Action } from "@ledgerhq/live-common/apps/index";
 import { useNotEnoughMemoryToInstall } from "@ledgerhq/live-common/apps/react";
 import { Trans } from "react-i18next";
 import styled from "styled-components/native";
-import { Flex, Text } from "@ledgerhq/native-ui";
+import { Flex, Tag, Text } from "@ledgerhq/native-ui";
 import manager from "@ledgerhq/live-common/manager/index";
 import AppIcon from "./AppIcon";
 
@@ -33,21 +34,11 @@ const RowContainer = styled(Flex).attrs((p: { disabled?: boolean }) => ({
 const LabelContainer = styled(Flex).attrs({
   flexGrow: 0,
   flexShrink: 1,
-  flexBasis: "40%",
+  flexBasis: "50%",
   flexDirection: "column",
   alignItems: "flex-start",
   justifyContent: "center",
   paddingHorizontal: 12,
-})``;
-
-const VersionContainer = styled(Flex).attrs({
-  borderWidth: 1,
-  paddingHorizontal: 4,
-  paddingVertical: 2,
-  borderRadius: 4,
-  alignItems: "center",
-  justifyContent: "center",
-  marginTop: 2,
 })``;
 
 export default memo(function AppRow({
@@ -57,7 +48,7 @@ export default memo(function AppRow({
   setStorageWarning,
   optimisticState,
 }: Props) {
-  const { name: appName, version: appVersion, displayName } = app;
+  const { name: appName, version: appVersion, displayName, authorName } = app;
   const { installed, deviceInfo, deviceModel } = state;
   const canBeInstalled = useMemo(() => manager.canHandleInstall(app), [app]);
 
@@ -78,15 +69,17 @@ export default memo(function AppRow({
     [app.bytes, deviceInfo.version, deviceModel, installedApp?.blocks],
   );
 
+  const { enabled: displayAppDeveloperName } = useFeature("myLedgerDisplayAppDeveloperName") || {};
+
   return (
     <RowContainer disabled={!installedApp && !canBeInstalled}>
       <AppIcon app={app} size={48} />
       <LabelContainer>
-        <Text numberOfLines={1} variant="body" fontWeight="semiBold" color="neutral.c100">
+        <Text numberOfLines={1} variant="body" fontWeight="semiBold" color="neutral.c100" mb={2}>
           {displayName}
         </Text>
-        <VersionContainer borderColor="neutral.c40">
-          <Text numberOfLines={1} variant="tiny" color="neutral.c80" fontWeight="semiBold">
+        <Flex flexDirection={"row"} alignItems={"center"} justifyContent="flex-start">
+          <Tag uppercase={false}>
             <Trans i18nKey="ApplicationVersion" values={{ version: curVersion }} />
             {installedApp && !installedApp.updated && (
               <>
@@ -99,10 +92,22 @@ export default memo(function AppRow({
                 />
               </>
             )}
-          </Text>
-        </VersionContainer>
+          </Tag>
+          {authorName && displayAppDeveloperName ? (
+            <Text
+              variant="small"
+              fontWeight="medium"
+              color="neutral.c70"
+              pl={3}
+              flexShrink={1}
+              numberOfLines={1}
+            >
+              {authorName}
+            </Text>
+          ) : null}
+        </Flex>
       </LabelContainer>
-      <Text variant="body" fontWeight="medium" color="neutral.c70" my={3}>
+      <Text variant="body" fontWeight="medium" color="neutral.c80" my={3}>
         <ByteSize value={appBytes} deviceModel={deviceModel} firmwareVersion={deviceInfo.version} />
       </Text>
       <AppStateButton
