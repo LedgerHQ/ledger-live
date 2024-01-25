@@ -1,5 +1,12 @@
 # live-mobile
 
+## 3.39.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`c8a9d49`](https://github.com/LedgerHQ/ledger-live/commit/c8a9d49bd5b82ba9dde23c8b397256f9d344ceef)]:
+  - @ledgerhq/native-ui@0.22.6-next.1
+
 ## 3.39.0-next.0
 
 ### Minor Changes
