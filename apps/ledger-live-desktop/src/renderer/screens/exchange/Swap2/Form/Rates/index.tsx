@@ -114,7 +114,7 @@ export default function ProviderRate({
 
   const updateFilter = useCallback(
     (newFilter: string[]) => {
-      track("button_clicked", {
+      track("button_clicked2", {
         button: "Filter selected",
         page: "Page Swap Form",
         ...swapDefaultTrack,
