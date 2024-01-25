@@ -5,7 +5,7 @@ import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
 import type { IconAccount, Transaction } from "./types";
 const { IconAmount } = IconService;
-import { BERLIN_TESTNET_NID, IISS_SCORE_ADDRESS, MAINNET_NID } from "./constants";
+import { BERLIN_TESTNET_NID, MAINNET_NID } from "./constants";
 
 export const MAX_AMOUNT = 5000;
 
