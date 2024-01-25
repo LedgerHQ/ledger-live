@@ -99,6 +99,7 @@ type VerticalContentCard = ContentCardCommonProperties & {
   description?: string;
   image?: string;
   price?: string;
+  cta?: string;
   size: Size;
 };
 
