@@ -100,12 +100,11 @@ function genCoinFrameworkTarget(targetFile) {
         }
         break;
       case "specs.ts":
-        if (fs.existsSync(path.join(libsDir, `coin-${family}/src`, targetFile))) {
-          imports += `import ${family} from "${targetImportPath}";\n`;
-          exprts += `\n  ${family},`;
-        }
-        if (fs.existsSync(path.join(libsDir, `coin-${family}/src/test`, targetFile))) {
-          imports += `import ${family} from "@ledgerhq/coin-${family}/test/${targetName}";\n`;
+        if (
+          fs.existsSync(path.join(libsDir, `coin-${family}/src`, targetFile)) ||
+          fs.existsSync(path.join(libsDir, `coin-${family}/src/test/bot-specs.ts`))
+        ) {
+          imports += `import ${family} from "@ledgerhq/coin-${family}/${targetName}";\n`;
           exprts += `\n  ${family},`;
         }
         break;

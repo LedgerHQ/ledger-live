@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
 import type { PolkadotAccount, Transaction } from "../types";
-import { calculateAmount } from "./logic";
+import { calculateAmount } from "./utils";
 import { buildTransaction } from "./buildTransaction";
 import { fakeSignExtrinsic } from "./signTransaction";
 import { PolkadotAPI } from "../network";

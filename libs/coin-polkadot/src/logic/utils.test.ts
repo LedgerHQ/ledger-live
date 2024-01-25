@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { PolkadotAccount } from "../types";
-import { canUnbond, isController, MAX_UNLOCKINGS } from "./logic";
+import { canUnbond, isController, MAX_UNLOCKINGS } from "./utils";
 
 const polkadotAccount: PolkadotAccount = {
   type: "Account",

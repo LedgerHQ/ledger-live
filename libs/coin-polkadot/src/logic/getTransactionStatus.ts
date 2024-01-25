@@ -35,7 +35,7 @@ import {
   getMinimumAmountToBond,
   getMinimumBalance,
   EXISTENTIAL_DEPOSIT_RECOMMENDED_MARGIN,
-} from "./logic";
+} from "./utils";
 import { isValidAddress } from "../common";
 import { getCurrentPolkadotPreloadData } from "./state";
 import { loadPolkadotCrypto } from "./polkadot-crypto";

@@ -5,9 +5,23 @@
  */
 
 export { createTransaction } from "./transaction";
-export { isStash, calculateAmount, getNonce, isFirstBond } from "./logic";
+export {
+  canBond,
+  canUnbond,
+  canNominate,
+  isStash,
+  calculateAmount,
+  getNonce,
+  isFirstBond,
+  hasMinimumBondBalance,
+  getMinimumBalance,
+} from "./utils";
 export { makeGetAccountShape } from "./synchronisation";
-export { getCurrentPolkadotPreloadData, setPolkadotPreloadData } from "./state";
+export {
+  getCurrentPolkadotPreloadData,
+  setPolkadotPreloadData,
+  getPolkadotPreloadDataUpdates,
+} from "./state";
 export { buildTransaction } from "./buildTransaction";
 export { signExtrinsic } from "./signTransaction";
 

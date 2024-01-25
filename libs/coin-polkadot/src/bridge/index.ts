@@ -10,7 +10,7 @@ import { LRUCacheFn } from "@ledgerhq/coin-framework/cache";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { PolkadotAPI } from "../network";
-import resolver from "../signer/hw-getAddress";
+import signerGetAddress from "../signer";
 import createTransaction from "./createTransaction";
 import {
   estimateMaxSpendable,
@@ -36,7 +36,7 @@ export function buildCurrencyBridge(
   cacheFn: LRUCacheFn,
 ): CurrencyBridge {
   const polkadotAPI = new PolkadotAPI(network, cacheFn);
-  const getAddress = resolver(signerContext);
+  const getAddress = signerGetAddress(signerContext);
 
   const getAccountShape = makeGetAccountShape(polkadotAPI);
   const scanAccounts = makeScanAccounts({
@@ -58,7 +58,7 @@ export function buildAccountBridge(
   cacheFn: LRUCacheFn,
 ): AccountBridge<Transaction> {
   const polkadotAPI = new PolkadotAPI(network, cacheFn);
-  const getAddress = resolver(signerContext);
+  const getAddress = signerGetAddress(signerContext);
 
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
   const signOperation = buildSignOperation(signerContext, polkadotAPI);

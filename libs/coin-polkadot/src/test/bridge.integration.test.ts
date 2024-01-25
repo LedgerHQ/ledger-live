@@ -16,7 +16,7 @@ import {
   PolkadotAllFundsWarning,
   PolkadotDoMaxSendInstead,
 } from "../types";
-// FIXME
+
 import { fromTransactionRaw } from "../bridge/transaction";
 import type { PolkadotAccount, Transaction } from "../types";
 const ACCOUNT_SAME_STASHCONTROLLER = "12YA86tRQhHgwU3SSj56aesUKB7GKvdnZTTTXRop4vd3YgDV";

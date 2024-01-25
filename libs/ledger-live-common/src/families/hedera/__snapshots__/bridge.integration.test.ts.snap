@@ -41,6 +41,32 @@ exports[`hedera currency bridge scanAccounts hedera seed 1 2`] = `
       "contract": undefined,
       "extra": {
         "consensusTimestamp": "1704213295.949352003",
+<<<<<<< HEAD
+=======
+      },
+      "fee": "103989",
+      "hash": "1ffb15a93dd686a3705f9230f98fd368888ccbe0bf8cb4cf3428367cb732510aa1da9acfccc850b1ac029b070de44fe9",
+      "id": "js:2:hedera:0.0.1040977:hederaBip44-1ffb15a93dd686a3705f9230f98fd368888ccbe0bf8cb4cf3428367cb732510aa1da9acfccc850b1ac029b070de44fe9-OUT",
+      "operator": undefined,
+      "recipients": [
+        "0.0.98",
+      ],
+      "senders": [
+        "0.0.1040977",
+      ],
+      "standard": undefined,
+      "tokenId": undefined,
+      "type": "OUT",
+      "value": "103989",
+    },
+    {
+      "accountId": "js:2:hedera:0.0.1040977:hederaBip44",
+      "blockHash": null,
+      "blockHeight": 5,
+      "contract": undefined,
+      "extra": {
+        "consensusTimestamp": "1701941251.224927003",
+>>>>>>> 9ab9ae65ec (chore: review feedbacks)
       },
       "fee": "103989",
       "hash": "H_sVqT3WhqNwX5Iw-Y_TaIiMy-C_jLTPNCg2fLcyUQqh2prPzMhQsawCmwcN5E_p",

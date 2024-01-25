@@ -23,9 +23,9 @@ import {
   isFirstBond,
   hasMinimumBondBalance,
   getMinimumBalance,
-} from "../logic/logic";
+} from "../logic";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { acceptTransaction } from "./speculos-deviceActions";
+import { acceptTransaction } from "./bot-deviceActions";
 
 const maxAccounts = 32;
 const currency = getCryptoCurrencyById("polkadot");

@@ -4,7 +4,7 @@ import { useBridgeSync } from "../../bridge/react";
 import {
   getCurrentPolkadotPreloadData,
   getPolkadotPreloadDataUpdates,
-} from "@ledgerhq/coin-polkadot/logic/state";
+} from "@ledgerhq/coin-polkadot/logic";
 import type {
   PolkadotValidator,
   PolkadotNomination,

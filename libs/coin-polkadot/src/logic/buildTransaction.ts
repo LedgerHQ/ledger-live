@@ -1,6 +1,6 @@
 import { stringCamelCase } from "@polkadot/util";
 import type { PolkadotAccount, Transaction } from "../types";
-import { isFirstBond, getNonce } from "./logic";
+import { isFirstBond, getNonce } from "./utils";
 import { loadPolkadotCrypto } from "./polkadot-crypto";
 import { PolkadotAPI } from "../network";
 const EXTRINSIC_VERSION = 4;

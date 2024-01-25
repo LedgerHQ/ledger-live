@@ -244,6 +244,7 @@ export const calculateAmount = ({ a, t }: { a: PolkadotAccount; t: Transaction }
 
   return amount.lt(0) ? new BigNumber(0) : amount;
 };
+
 export const getMinimumBalance = (a: Account): BigNumber => {
   const lockedBalance = a.balance.minus(a.spendableBalance);
   return lockedBalance.lte(EXISTENTIAL_DEPOSIT)

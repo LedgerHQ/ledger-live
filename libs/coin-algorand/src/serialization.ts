@@ -1,4 +1,4 @@
-import type { Account, AccountRaw } from "@ledgerhq/types-live";
+import type { Account, AccountRaw, OperationExtra, OperationExtraRaw } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import {
   isAlgorandOperationExtra,
@@ -42,7 +42,7 @@ export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account): 
   }
 }
 
-export function fromOperationExtraRaw(extraRaw: AlgorandOperationExtraRaw) {
+export function fromOperationExtraRaw(extraRaw: OperationExtraRaw) {
   const extra: AlgorandOperationExtra = {};
   if (!isAlgorandOperationExtraRaw(extraRaw)) {
     return extra;
@@ -63,7 +63,7 @@ export function fromOperationExtraRaw(extraRaw: AlgorandOperationExtraRaw) {
   return extra;
 }
 
-export function toOperationExtraRaw(extra: AlgorandOperationExtra) {
+export function toOperationExtraRaw(extra: OperationExtra) {
   const extraRaw: AlgorandOperationExtraRaw = {};
   if (!isAlgorandOperationExtra(extra)) {
     return extraRaw;

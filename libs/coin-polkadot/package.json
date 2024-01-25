@@ -28,6 +28,12 @@
       "lib-es/*": [
         "lib-es/*"
       ],
+      "logic": [
+        "lib/logic/index"
+      ],
+      "specs": [
+        "lib/test/bot-specs"
+      ],
       "*": [
         "lib/*",
         "lib/bridge/*",
@@ -54,8 +60,8 @@
       "default": "./lib-es/bridge/formatters.js"
     },
     "./logic": {
-      "require": "./lib/logic/logic.js",
-      "default": "./lib-es/logic/logic.js"
+      "require": "./lib/logic/index.js",
+      "default": "./lib-es/logic/index.js"
     },
     "./preload": {
       "require": "./lib/bridge/preload.js",
@@ -64,6 +70,10 @@
     "./serialization": {
       "require": "./lib/bridge/serialization.js",
       "default": "./lib-es/bridge/serialization.js"
+    },
+    "./specs": {
+      "require": "./lib/test/bot-specs.js",
+      "default": "./lib-es/test/bot-specs.js"
     },
     "./transaction": {
       "require": "./lib/bridge/transaction.js",
