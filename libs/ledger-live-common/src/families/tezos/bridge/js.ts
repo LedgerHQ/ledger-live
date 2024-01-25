@@ -273,12 +273,12 @@ const prepareTransaction = async (
     }
 
     tx.storageLimit = new BigNumber(estimate.storageLimit);
-    tx.estimatedFees = tx.fees;
 
     if (!tezosResources.revealed) {
-      tx.estimatedFees = tx.estimatedFees.plus(DEFAULT_FEE.REVEAL);
       tx.fees = tx.fees.plus(DEFAULT_FEE.REVEAL);
     }
+
+    tx.estimatedFees = tx.fees;
   } catch (e) {
     if (typeof e !== "object" || !e) throw e;
     if ("id" in e) {

@@ -314,7 +314,6 @@
     "src/migrations/accounts-dataset.ts",
     "src/notifications/AnnouncementProvider/helpers.ts",
     "src/rxjs/operators/throwIf.ts",
-    "src/socket/__snapshots__/socket.test.ts.snap",
     "src/socket/scenarios.mock.ts",
     "src/index.ts",
     "src/jest.d.ts",
