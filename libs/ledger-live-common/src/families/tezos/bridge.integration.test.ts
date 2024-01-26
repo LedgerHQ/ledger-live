@@ -123,7 +123,7 @@ function makeAccount(name, pubkey, address, derivationMode) {
     currencyId: "tezos",
     unitMagnitude: 6,
     lastSyncDate: "",
-    balance: "500",
+    balance: "0",
     xpub: pubkey,
     subAccounts: [],
   };
