@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { FlatListProps, Platform } from "react-native";
 import { ProtoNFT } from "@ledgerhq/types-live";
-import { Button, Flex } from "@ledgerhq/native-ui";
+import { Button, Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import { BigNumber } from "bignumber.js";
 import { Stop } from "react-native-svg";
 import styled, { useTheme } from "styled-components/native";
@@ -29,6 +29,11 @@ const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl<FlatListPr
 
 type Props = {
   data: ProtoNFT[];
+  fetchNextPage: () => void;
+  hasNextPage: boolean;
+  isLoading: boolean;
+  error: unknown;
+  refetch: () => void;
 };
 
 // Fake ProtoNFT to be able to display "Add new" button at the end of the list
@@ -45,7 +50,7 @@ const NB_COLUMNS = 2;
 
 const keyExtractor = (item: ProtoNFT) => item.id;
 
-const NftList = ({ data }: Props) => {
+const NftList = ({ data, hasNextPage, fetchNextPage, isLoading }: Props) => {
   const { space, colors } = useTheme();
   const dataWithAdd = data.concat(ADD_NEW);
 
@@ -115,6 +120,7 @@ const NftList = ({ data }: Props) => {
   return (
     <>
       <TrackScreen category="NFT Gallery" NFTs_owned={data.length} />
+
       <RefreshableCollapsibleHeaderFlatList
         numColumns={2}
         ListHeaderComponent={
@@ -161,6 +167,13 @@ const NftList = ({ data }: Props) => {
         ListHeaderComponentStyle={{
           marginBottom: multiSelectModeEnabled ? 0 : space[3],
         }}
+        ListFooterComponent={
+          hasNextPage ? (
+            <Flex paddingBottom={25} paddingTop={25}>
+              <InfiniteLoader />
+            </Flex>
+          ) : null
+        }
         ListEmptyComponent={
           <EmptyState
             onPress={() => {
@@ -180,6 +193,8 @@ const NftList = ({ data }: Props) => {
         windowSize={11}
         contentContainerStyle={{ marginTop: 0, marginHorizontal: space[6] }}
         testID={"wallet-nft-gallery-list"}
+        onEndReached={fetchNextPage}
+        onEndReachedThreshold={0.2}
       />
       {data.length > 12 ? <ScrollToTopButton /> : null}
       <Animated.View>
