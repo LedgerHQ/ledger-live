@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 33.5.1-next.1
+
+### Patch Changes
+
+- [#6023](https://github.com/LedgerHQ/ledger-live/pull/6023) [`35d4196`](https://github.com/LedgerHQ/ledger-live/commit/35d41969e00e15b4817f2be558a7c81200b71cc7) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Sanitize account data that may be missing when de/serializing Tron accounts
+
 ## 33.5.1-next.0
 
 ### Patch Changes
