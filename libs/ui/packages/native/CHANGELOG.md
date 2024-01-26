@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.22.6-nightly.0
+
+### Patch Changes
+
+- [#5945](https://github.com/LedgerHQ/ledger-live/pull/5945) [`f551cd4`](https://github.com/LedgerHQ/ledger-live/commit/f551cd4d9798fddb4286f46bfa4632510af6d637) Thanks [@mle-gall](https://github.com/mle-gall)! - Created analytics prompt screens for variant A and B (main and secondary screens)
+
 ## 0.22.5
 
 ### Patch Changes

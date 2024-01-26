@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.44.1-nightly.0
+
+### Patch Changes
+
+- [#5974](https://github.com/LedgerHQ/ledger-live/pull/5974) [`b34f5cd`](https://github.com/LedgerHQ/ledger-live/commit/b34f5cdda0b7bf34750d258cc8b1c91304516360) Thanks [@cng-ledger](https://github.com/cng-ledger)! - feat(LIVE-10989): dynamic manifest id for swap live app in feature flag
+
 ## 6.44.0
 
 ### Minor Changes

@@ -1,5 +1,33 @@
 # ledger-live-desktop
 
+## 2.75.1-nightly.0
+
+### Patch Changes
+
+- [#5997](https://github.com/LedgerHQ/ledger-live/pull/5997) [`7bf7d21`](https://github.com/LedgerHQ/ledger-live/commit/7bf7d21dfda0f24d011e0b9e255e1a59e017d3e4) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Return to device selection screen after clicking the cross button
+
+- [#5959](https://github.com/LedgerHQ/ledger-live/pull/5959) [`801b16f`](https://github.com/LedgerHQ/ledger-live/commit/801b16fa7a440d914b1e76cd8785a3c7c85b474b) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - My Ledger: app in app catalog, fix layout of items
+
+- [#5943](https://github.com/LedgerHQ/ledger-live/pull/5943) [`5e70c4a`](https://github.com/LedgerHQ/ledger-live/commit/5e70c4a88edcad5aacc73a3d3f5a8936369db831) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Open app device action: fix reducer for "deviceChange" and "error" events types, causing issues when the app changes on the device
+
+- [#5919](https://github.com/LedgerHQ/ledger-live/pull/5919) [`040e591`](https://github.com/LedgerHQ/ledger-live/commit/040e5918eb7ad5a861b2f6eda09f71d3ce565991) Thanks [@gre](https://github.com/gre)! - Update to Countervalues V3 API with better price coverage and better performance.
+
+- [#5941](https://github.com/LedgerHQ/ledger-live/pull/5941) [`f8e4aa7`](https://github.com/LedgerHQ/ledger-live/commit/f8e4aa765d7cbf026d81229f4ee1a0258fdbb5b2) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - bugfix remove height swap web view
+
+- [#5959](https://github.com/LedgerHQ/ledger-live/pull/5959) [`801b16f`](https://github.com/LedgerHQ/ledger-live/commit/801b16fa7a440d914b1e76cd8785a3c7c85b474b) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - List apps v2: fix polyfill of application type
+
+- [#5974](https://github.com/LedgerHQ/ledger-live/pull/5974) [`b34f5cd`](https://github.com/LedgerHQ/ledger-live/commit/b34f5cdda0b7bf34750d258cc8b1c91304516360) Thanks [@cng-ledger](https://github.com/cng-ledger)! - feat(LIVE-10989): dynamic manifest id for swap live app in feature flag
+
+- Updated dependencies [[`901c4df`](https://github.com/LedgerHQ/ledger-live/commit/901c4dfd012376a42f8ab9ab186aa2114a7af863), [`5e70c4a`](https://github.com/LedgerHQ/ledger-live/commit/5e70c4a88edcad5aacc73a3d3f5a8936369db831), [`040e591`](https://github.com/LedgerHQ/ledger-live/commit/040e5918eb7ad5a861b2f6eda09f71d3ce565991), [`42322e0`](https://github.com/LedgerHQ/ledger-live/commit/42322e03f830e1af842c1bc46d10df541aceaf7a), [`6aac2b9`](https://github.com/LedgerHQ/ledger-live/commit/6aac2b977454daa67a02f5695d58746fde4d83f3), [`801b16f`](https://github.com/LedgerHQ/ledger-live/commit/801b16fa7a440d914b1e76cd8785a3c7c85b474b), [`b34f5cd`](https://github.com/LedgerHQ/ledger-live/commit/b34f5cdda0b7bf34750d258cc8b1c91304516360)]:
+  - @ledgerhq/live-common@33.5.1-nightly.0
+  - @ledgerhq/types-live@6.44.1-nightly.0
+  - @ledgerhq/live-config@1.0.2-nightly.0
+  - @ledgerhq/coin-evm@0.12.1-nightly.0
+  - @ledgerhq/coin-framework@0.11.1-nightly.0
+  - @ledgerhq/domain-service@1.1.18-nightly.0
+  - @ledgerhq/live-countervalues@0.1.1-nightly.0
+  - @ledgerhq/live-countervalues-react@0.1.1-nightly.0
+
 ## 2.75.0
 
 ### Minor Changes

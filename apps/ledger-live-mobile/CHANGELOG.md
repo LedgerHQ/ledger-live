@@ -1,5 +1,32 @@
 # live-mobile
 
+## 3.38.1-nightly.0
+
+### Patch Changes
+
+- [#5943](https://github.com/LedgerHQ/ledger-live/pull/5943) [`5e70c4a`](https://github.com/LedgerHQ/ledger-live/commit/5e70c4a88edcad5aacc73a3d3f5a8936369db831) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Open app device action: fix reducer for "deviceChange" and "error" events types, causing issues when the app changes on the device
+
+- [#5988](https://github.com/LedgerHQ/ledger-live/pull/5988) [`2963eaf`](https://github.com/LedgerHQ/ledger-live/commit/2963eaf4b2ab7193bdd53c7cd508a2a7b3f5b326) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add CTA to CC in myLedger
+
+- [#5919](https://github.com/LedgerHQ/ledger-live/pull/5919) [`040e591`](https://github.com/LedgerHQ/ledger-live/commit/040e5918eb7ad5a861b2f6eda09f71d3ce565991) Thanks [@gre](https://github.com/gre)! - Update to Countervalues V3 API with better price coverage and better performance.
+
+- [#5945](https://github.com/LedgerHQ/ledger-live/pull/5945) [`f551cd4`](https://github.com/LedgerHQ/ledger-live/commit/f551cd4d9798fddb4286f46bfa4632510af6d637) Thanks [@mle-gall](https://github.com/mle-gall)! - Created analytics prompt screens for variant A and B (main and secondary screens)
+
+- [#5959](https://github.com/LedgerHQ/ledger-live/pull/5959) [`801b16f`](https://github.com/LedgerHQ/ledger-live/commit/801b16fa7a440d914b1e76cd8785a3c7c85b474b) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - List apps v2: fix polyfill of application type
+
+- [#5958](https://github.com/LedgerHQ/ledger-live/pull/5958) [`a740084`](https://github.com/LedgerHQ/ledger-live/commit/a740084d4c994d898b566da741bdbe99eee59093) Thanks [@lvndry](https://github.com/lvndry)! - tronResource not mandatory in accountActions
+
+- Updated dependencies [[`901c4df`](https://github.com/LedgerHQ/ledger-live/commit/901c4dfd012376a42f8ab9ab186aa2114a7af863), [`5e70c4a`](https://github.com/LedgerHQ/ledger-live/commit/5e70c4a88edcad5aacc73a3d3f5a8936369db831), [`040e591`](https://github.com/LedgerHQ/ledger-live/commit/040e5918eb7ad5a861b2f6eda09f71d3ce565991), [`42322e0`](https://github.com/LedgerHQ/ledger-live/commit/42322e03f830e1af842c1bc46d10df541aceaf7a), [`f551cd4`](https://github.com/LedgerHQ/ledger-live/commit/f551cd4d9798fddb4286f46bfa4632510af6d637), [`6aac2b9`](https://github.com/LedgerHQ/ledger-live/commit/6aac2b977454daa67a02f5695d58746fde4d83f3), [`801b16f`](https://github.com/LedgerHQ/ledger-live/commit/801b16fa7a440d914b1e76cd8785a3c7c85b474b), [`b34f5cd`](https://github.com/LedgerHQ/ledger-live/commit/b34f5cdda0b7bf34750d258cc8b1c91304516360)]:
+  - @ledgerhq/live-common@33.5.1-nightly.0
+  - @ledgerhq/native-ui@0.22.6-nightly.0
+  - @ledgerhq/types-live@6.44.1-nightly.0
+  - @ledgerhq/live-config@1.0.2-nightly.0
+  - @ledgerhq/coin-evm@0.12.1-nightly.0
+  - @ledgerhq/coin-framework@0.11.1-nightly.0
+  - @ledgerhq/domain-service@1.1.18-nightly.0
+  - @ledgerhq/live-countervalues@0.1.1-nightly.0
+  - @ledgerhq/live-countervalues-react@0.1.1-nightly.0
+
 ## 3.38.0
 
 ### Minor Changes

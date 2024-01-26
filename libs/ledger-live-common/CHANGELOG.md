@@ -1,5 +1,31 @@
 # @ledgerhq/live-common
 
+## 33.5.1-nightly.0
+
+### Patch Changes
+
+- [#5989](https://github.com/LedgerHQ/ledger-live/pull/5989) [`901c4df`](https://github.com/LedgerHQ/ledger-live/commit/901c4dfd012376a42f8ab9ab186aa2114a7af863) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Revert an earlier change that changed how the internal ledger transaction hash was encoded to a hedera style hash
+
+- [#5943](https://github.com/LedgerHQ/ledger-live/pull/5943) [`5e70c4a`](https://github.com/LedgerHQ/ledger-live/commit/5e70c4a88edcad5aacc73a3d3f5a8936369db831) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Open app device action: fix reducer for "deviceChange" and "error" events types, causing issues when the app changes on the device
+
+- [#5919](https://github.com/LedgerHQ/ledger-live/pull/5919) [`040e591`](https://github.com/LedgerHQ/ledger-live/commit/040e5918eb7ad5a861b2f6eda09f71d3ce565991) Thanks [@gre](https://github.com/gre)! - Update to Countervalues V3 API with better price coverage and better performance.
+
+- [#5925](https://github.com/LedgerHQ/ledger-live/pull/5925) [`42322e0`](https://github.com/LedgerHQ/ledger-live/commit/42322e03f830e1af842c1bc46d10df541aceaf7a) Thanks [@Wozacosta](https://github.com/Wozacosta)! - Handle empty tokens by allowing tokenCurrency field for sign and signAndBroadcast wallet handlers
+
+- [#5951](https://github.com/LedgerHQ/ledger-live/pull/5951) [`6aac2b9`](https://github.com/LedgerHQ/ledger-live/commit/6aac2b977454daa67a02f5695d58746fde4d83f3) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Chore: add DisconnectedDeviceDuringOperation to allowed error during sync onboarding polling
+
+- [#5959](https://github.com/LedgerHQ/ledger-live/pull/5959) [`801b16f`](https://github.com/LedgerHQ/ledger-live/commit/801b16fa7a440d914b1e76cd8785a3c7c85b474b) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - List apps v2: fix polyfill of application type
+
+- Updated dependencies [[`b34f5cd`](https://github.com/LedgerHQ/ledger-live/commit/b34f5cdda0b7bf34750d258cc8b1c91304516360)]:
+  - @ledgerhq/live-config@1.0.2-nightly.0
+  - @ledgerhq/coin-algorand@0.3.10-nightly.0
+  - @ledgerhq/coin-evm@0.12.1-nightly.0
+  - @ledgerhq/coin-framework@0.11.1-nightly.0
+  - @ledgerhq/coin-polkadot@0.5.3-nightly.0
+  - @ledgerhq/hw-app-eth@6.35.4-nightly.0
+  - @ledgerhq/live-countervalues@0.1.1-nightly.0
+  - @ledgerhq/live-countervalues-react@0.1.1-nightly.0
+
 ## 33.5.0
 
 ### Minor Changes
