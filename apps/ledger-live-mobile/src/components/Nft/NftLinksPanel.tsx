@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import { NFTMetadata } from "@ledgerhq/types-live";
 import { View, StyleSheet, TouchableOpacity, Linking, Platform } from "react-native";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Box, Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import styled, { useTheme } from "styled-components/native";
 import { NavigatorName, ScreenName } from "~/const";

@@ -25,6 +25,7 @@
     "@ledgerhq/hw-transport-webhid": "workspace:^",
     "@ledgerhq/hw-transport-webusb": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
+    "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",

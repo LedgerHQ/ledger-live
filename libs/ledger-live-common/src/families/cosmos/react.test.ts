@@ -6,7 +6,8 @@ import { getCryptoCurrencyById } from "../../currencies";
 import { setEnv } from "@ledgerhq/live-env";
 import { makeBridgeCacheSystem } from "../../bridge/cache";
 import { genAccount, genAddingOperationsInAccount } from "../../mock/account";
-import defaultConfig from "../../config/defaultConfig";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import liveConfig from "../../config/sharedConfig";
 import cryptoFactory from "./chain/chain";
 import type {
   CosmosAccount,
@@ -33,11 +34,11 @@ const cache = makeBridgeCacheSystem({
 });
 describe("cosmos/react", () => {
   beforeAll(() => {
-    // FIXME cryptoFactory should just be replaced with defaultConfig
+    LiveConfig.setConfig(liveConfig);
     const cosmos = cryptoFactory("cosmos");
-    cosmos.lcd = defaultConfig.config.cosmos.cosmos.lcd;
-    cosmos.minGasPrice = defaultConfig.config.cosmos.cosmos.minGasPrice;
-    cosmos.ledgerValidator = defaultConfig.config.cosmos.cosmos.ledgerValidator;
+    cosmos.lcd = LiveConfig.getValueByKey("config_currency_cosmos").lcd;
+    cosmos.minGasPrice = LiveConfig.getValueByKey("config_currency_cosmos").minGasPrice;
+    cosmos.ledgerValidator = LiveConfig.getValueByKey("config_currency_cosmos").ledgerValidator;
   });
 
   describe("useCosmosFamilyPreloadData", () => {
