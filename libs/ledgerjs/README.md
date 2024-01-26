@@ -45,7 +45,7 @@ Summary of implementations available per platform
 
 **Beware the current web support:**
 
-| Channels | U2F                    | WebHID.         | WebUSB             | WebBluetooth |
+| Channels | U2F                    | WebHID         | WebUSB             | WebBluetooth |
 | -------- | ---------------------- | --------------- | ------------------ | ------------ |
 | Windows  | DEPRECATED<sup>1</sup> | YES             | OK BUT<sup>2</sup> | YES          |
 | Mac      | DEPRECATED<sup>1</sup> | YES             | YES                | YES          |
