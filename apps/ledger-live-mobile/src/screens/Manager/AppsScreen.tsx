@@ -9,7 +9,7 @@ import {
   predictOptimisticState,
   reducer,
 } from "@ledgerhq/live-common/apps/index";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { App, DeviceInfo } from "@ledgerhq/types-live";
 import { useAppsSections } from "@ledgerhq/live-common/apps/react";
 

@@ -32,7 +32,7 @@ import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import styled, { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
 import Clipboard from "@react-native-clipboard/clipboard";
 import ConfirmationHeaderTitle from "./ConfirmationHeaderTitle";
-import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { BankMedium } from "@ledgerhq/native-ui/assets/icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { hasClosedWithdrawBannerSelector } from "~/reducers/settings";
