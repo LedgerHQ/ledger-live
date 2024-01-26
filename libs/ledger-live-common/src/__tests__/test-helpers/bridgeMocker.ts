@@ -39,31 +39,32 @@ export async function initBackendMocks() {
 export async function createMock(stdRequest: StdRequest, path: string) {
   const uninterceptedAxiosInstance = axios.create();
 
-  const createMockObject = async (response: any) => {
+  const createMockOp = async resp => {
     const responseInfo = { ...stdRequest.response };
     // Stores headers etc but no data
     delete stdRequest.response;
     delete responseInfo.body;
-    await fsp.writeFile(
+    // TODO: replace file fully, erase to 0 before
+    return await fsp.writeFile(
       path,
       JSON.stringify({
         request: stdRequest,
-        response: { ...responseInfo, body: response?.data },
+        response: { ...responseInfo, body: resp?.data },
       }),
+      { flag: "wx" },
     );
   };
 
-  try {
-    const response = await uninterceptedAxiosInstance({
-      method: stdRequest.method as any,
-      url: stdRequest.url,
-      data: stdRequest.body,
-      headers: stdRequest.headers,
-    });
-    await createMockObject(response);
-  } catch (error: any) {
-    await createMockObject(error.response);
-  }
+  return uninterceptedAxiosInstance({
+    method: stdRequest.method as any,
+    url: stdRequest.url,
+    data: stdRequest.body,
+    headers: stdRequest.headers,
+    timeout: 1 * 60 * 1000,
+  }).then(
+    response => createMockOp(response),
+    error => createMockOp(error.response),
+  );
   /*await uninterceptedAxiosInstance({
     method: stdRequest.method as any,
     url: stdRequest.url,
