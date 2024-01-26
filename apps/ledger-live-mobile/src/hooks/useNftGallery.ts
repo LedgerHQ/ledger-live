@@ -64,7 +64,6 @@ export function useNftGallery() {
       ),
     [nftsOwned],
   );
-  console.log(nftsOwned.length);
   const addresses = useMemo(
     () => [
       ...new Set(
@@ -124,11 +123,11 @@ export function useNftGallery() {
     parsedData:
       result.data?.pages
         .flatMap(x => x?.nfts || [])
-        .map(elem => ({
-          ...whiteList.get(
+        .map(elem =>
+          whiteList.get(
             encodeNftId("", elem.contract ?? "", elem.tokenId ?? "", elem.currencyId ?? ""),
           ),
-        }))
+        )
         .filter(elem => !!elem) ?? [],
   };
 }
