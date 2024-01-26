@@ -26,7 +26,7 @@ const getPreloadStrategy = _currency => ({
 const currencyBridge: CurrencyBridge = {
   getPreloadStrategy,
   preload: async (currency: CryptoCurrency) => {
-    const config = await getCurrencyConfiguration(currency);
+    const config = getCurrencyConfiguration(currency);
     const cosmosValidatorsManager = new CosmosValidatorsManager(
       getCryptoCurrencyById(currency.id),
       { endPoint: (config as unknown as CosmosCurrencyConfig).lcd },

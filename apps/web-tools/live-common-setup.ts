@@ -1,7 +1,10 @@
 import { setSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
 import { setWalletAPIVersion } from "@ledgerhq/live-common/wallet-api/version";
 import { WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import liveConfigSchema from "@ledgerhq/live-common/config/sharedConfig";
 
+LiveConfig.setConfig(liveConfigSchema);
 setWalletAPIVersion(WALLET_API_VERSION);
 
 setSupportedCurrencies([

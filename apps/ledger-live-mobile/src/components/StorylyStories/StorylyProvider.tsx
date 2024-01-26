@@ -1,4 +1,4 @@
-import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { Flex } from "@ledgerhq/native-ui";
 import { Feature_Storyly, StorylyInstanceType } from "@ledgerhq/types-live";
 import React, { createContext, useState, useContext, ReactNode, useRef, useEffect } from "react";

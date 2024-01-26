@@ -32,10 +32,12 @@ const reloadApp = (event: KeyboardEvent) => {
     window.api?.reloadRenderer();
   }
 };
+
 type Props = {
   store: Store<State>;
   initialCountervalues: CounterValuesStateRaw;
 };
+
 const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValuesStateRaw }) => {
   const [reloadEnabled, setReloadEnabled] = useState(true);
 
@@ -50,7 +52,9 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
     window.addEventListener("keydown", reload);
     return () => window.removeEventListener("keydown", reload);
   }, [reloadEnabled]);
+
   const selectedPalette = useSelector(themeSelector) || "light";
+
   return (
     <StyleProvider selectedPalette={selectedPalette}>
       <ThrowBlock
@@ -90,6 +94,7 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
     </StyleProvider>
   );
 };
+
 const App = ({ store, initialCountervalues }: Props) => {
   return (
     <LiveStyleSheetManager>

@@ -9,7 +9,7 @@ import LanguageRow from "./LanguageRow";
 import SettingsNavigationScrollView from "../SettingsNavigationScrollView";
 import DateFormatRow from "./DateFormatRow";
 import PersonalizedRecommendationsRow from "./PersonalizedRecommendationsRow";
-import { FeatureToggle } from "@ledgerhq/live-config/featureFlags/index";
+import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 
 export default function GeneralSettings() {
   return (

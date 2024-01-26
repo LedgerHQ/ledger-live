@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import SelectDevice from "~/components/SelectDevice";
 import SelectDevice2, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";

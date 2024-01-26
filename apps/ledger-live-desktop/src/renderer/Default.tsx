@@ -39,7 +39,7 @@ import FirmwareUpdateBanner from "~/renderer/components/FirmwareUpdateBanner";
 import VaultSignerBanner from "~/renderer/components/VaultSignerBanner";
 import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
 import { updateIdentify } from "./analytics/segment";
-import { useFeature, FeatureToggle } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature, FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import { enableListAppsV2 } from "@ledgerhq/live-common/apps/hw";
 import {
   useFetchCurrencyAll,

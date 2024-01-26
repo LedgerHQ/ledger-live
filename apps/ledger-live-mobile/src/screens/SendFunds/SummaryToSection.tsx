@@ -6,7 +6,7 @@ import { useTheme } from "@react-navigation/native";
 import { isLoaded } from "@ledgerhq/domain-service/hooks/logic";
 import { useDomain } from "@ledgerhq/domain-service/hooks/index";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 import SummaryRowCustom from "./SummaryRowCustom";
