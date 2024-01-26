@@ -10,7 +10,7 @@ import { Theme } from "../../../../colors";
 import { BackgroundGradientHorizontal } from "~/components/TabBar/BackgroundGradient";
 import { Cta } from "./Cta";
 import { useLocale } from "~/context/Locale";
-import { translateContent } from "@ledgerhq/live-common/platform/logic";
+import { translateContent } from "@ledgerhq/live-common/wallet-api/logic";
 
 function getBranchStyle(branch: AppBranch, colors: Theme["colors"]) {
   switch (branch) {
@@ -90,11 +90,12 @@ export const AppCard = memo(({ manifest, onPress }: Props) => {
   const { locale } = useLocale();
 
   const subtitle = useMemo(
-    () => translateContent(manifest.content.subtitle, locale),
+    () =>
+      manifest.content.subtitle ? translateContent(manifest.content.subtitle, locale) : undefined,
     [locale, manifest.content.subtitle],
   );
   const cta = useMemo(
-    () => translateContent(manifest.content.cta, locale),
+    () => (manifest.content.cta ? translateContent(manifest.content.cta, locale) : undefined),
     [locale, manifest.content.cta],
   );
 
