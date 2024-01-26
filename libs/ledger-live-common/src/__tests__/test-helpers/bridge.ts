@@ -40,47 +40,6 @@ jest.setTimeout(60 * 60 * 1000);
 import { PerformanceObserver, PerformanceObserverCallback } from "node:perf_hooks";
 import { createMock, initBackendMocks, StdRequest } from "./bridgeMocker";
 
-const useBackendMocks = true;
-
-const requests: StdRequest[] = [];
-
-let performanceObserver: PerformanceObserver;
-
-beforeAll(async () => {
-  if (useBackendMocks) {
-    // disable network attempts not registered in mocks
-    await nock.disableNetConnect();
-    await nock.enableNetConnect("localhost");
-    await initBackendMocks();
-  } else {
-    // we start sniffing traffic
-    performanceObserver = new PerformanceObserver(onPerformanceEntry);
-    performanceObserver.observe({ entryTypes: ["http", "http2"] });
-  }
-});
-
-afterAll(async () => {
-  if (!useBackendMocks) {
-    performanceObserver.disconnect();
-    const dir = __dirname + "/bridgeMocks/";
-    const knownUrls: string[] = [];
-    const filteredRequests: StdRequest[] = [];
-    for (const r of requests) {
-      if (!knownUrls.includes(r.url)) {
-        knownUrls.push(r.url);
-        filteredRequests.push(r);
-      }
-    }
-    // for each network request, we create a mock file
-    const mockCreations = filteredRequests.map(request =>
-      createMock(request, `${dir}/${request.fileName}.json`),
-    );
-    await Promise.all(mockCreations);
-  } else {
-    await Promise.resolve();
-  }
-});
-
 function reqToStdRequest(nodeRequest: any, nodeResponse: any): StdRequest {
   return {
     method: nodeRequest.method,
@@ -95,21 +54,6 @@ function reqToStdRequest(nodeRequest: any, nodeResponse: any): StdRequest {
 function sha256(str) {
   return createHash("sha256").update(str).digest("hex");
 }
-
-const onPerformanceEntry: PerformanceObserverCallback = (items, _observer) => {
-  const entries = items.getEntries();
-  for (const entry of entries) {
-    if (entry.entryType === "http") {
-      const req = (entry as any).detail?.req;
-      const res = (entry as any).detail?.res;
-      if (res != null && req != null) {
-        if (req.url !== "http://localhost/apdu") {
-          requests.push(reqToStdRequest(req, res));
-        }
-      }
-    }
-  }
-};
 
 const warnDev = process.env.CI ? (..._args) => {} : (...msg) => console.warn(...msg);
 // FIXME move out into DatasetTest to be defined in
@@ -133,20 +77,72 @@ export function syncAccount<T extends TransactionCommon>(
   account: Account,
   syncConfig: SyncConfig = defaultSyncConfig,
 ): Promise<Account> {
-  const promise = firstValueFrom(
+  return firstValueFrom(
     bridge
       .sync(account, syncConfig)
       .pipe(reduce((a, f: (arg0: Account) => Account) => f(a), account)),
   );
-
-  /*if (useBackendMocks) {
-    nock.disableNetConnect();
-    promise.finally(() => {
-      console.log(nock.activeMocks());
-    });
-  }*/
-  return promise;
 }
+
+const useBackendMocks = true;
+
+const requests: StdRequest[] = [];
+
+let observer: PerformanceObserver;
+
+const onObserverEntry: PerformanceObserverCallback = (items, _observer) => {
+  const entries = items.getEntries();
+  for (const entry of entries) {
+    if (entry.entryType === "http") {
+      const req = (entry as any).detail?.req;
+      const res = (entry as any).detail?.res;
+      if (res != null && req != null) {
+        //if (req.url !== "http://localhost/apdu") {
+        requests.push(reqToStdRequest(req, res));
+        //}
+      }
+    }
+  }
+};
+
+beforeAll(async () => {
+  if (useBackendMocks) {
+    // disable network attempts not registered in mocks
+    await nock.disableNetConnect();
+    // await nock.enableNetConnect("localhost");
+    await initBackendMocks();
+  } else {
+    // We start sniffing traffic, after all tests we will create a mock for each entry
+    observer = new PerformanceObserver(onObserverEntry);
+    observer.observe({ entryTypes: ["http", "http2"] });
+    console.log("Observer started, starting network sniffing");
+  }
+});
+
+afterAll(async () => {
+  if (!useBackendMocks) {
+    observer.disconnect();
+    const dir = __dirname + "/bridgeMocks";
+    const knownUrls: string[] = [];
+    const filteredRequests: StdRequest[] = [];
+    for (const r of requests) {
+      if (!knownUrls.includes(r.url)) {
+        knownUrls.push(r.url);
+        filteredRequests.push(r);
+      }
+    }
+    console.log(`Starting mock file creation : ${filteredRequests.length} different network calls`);
+    const mockCreations = filteredRequests.map(request =>
+      createMock(request, `${dir}/${request.fileName}.json`),
+    );
+    await Promise.allSettled(mockCreations).then(result => {
+      console.log(`${result.filter(r => r.status === "fulfilled").length} new mocks !`);
+    });
+    console.log("Finished mock file creation");
+  } else {
+    await Promise.resolve();
+  }
+});
 
 export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): void {
   // covers all bridges through many different accounts
@@ -220,10 +216,32 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
         return implicitMigration(accounts);
       } catch (e: any) {
         console.error(e.message);
+        releaseMockDevice(deviceId);
         throw e;
       } finally {
         releaseMockDevice(deviceId);
       }
+      /*try {
+        const accounts = await firstValueFrom(
+          bridge
+            .scanAccounts({
+              currency,
+              deviceId,
+              syncConfig: defaultSyncConfig,
+            })
+            .pipe(
+              filter(e => e.type === "discovered"),
+              map(e => e.account),
+              reduce((all, a) => all.concat(a), [] as Account[]),
+            ),
+        );
+        return implicitMigration(accounts);
+      } catch (e: any) {
+        console.error(e.message);
+        throw e;
+      } finally {
+        releaseMockDevice(deviceId);
+      }*/
     };
 
     const scanAccountsCaches = {};
