@@ -1,9 +1,7 @@
-// To refactor: use own entities
 import { DeviceVersionEntity } from "../entities/DeviceVersionEntity";
 import { FinalFirmware, OsuFirmware } from "../entities/FirmwareUpdateContextEntity";
 import { IdEntity } from "../entities/IdEntity";
 
-// Used to name interfaces like this "Port"
 export interface ManagerApiRepository {
   fetchLatestFirmware(params: {
     current_se_firmware_final_version: IdEntity;
