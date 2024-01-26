@@ -12,7 +12,7 @@ function getDeviceTransactionConfig({
   transaction,
   account,
   parentAccount,
-  status: { amount, estimatedFees },
+  status: { amount },
 }: {
   account: AccountLike;
   parentAccount?: Account;
@@ -22,13 +22,6 @@ function getDeviceTransactionConfig({
   const fields: Array<DeviceTransactionField> = [];
   const mainAccount = getMainAccount(account, parentAccount);
   const { mode } = transaction;
-
-  if (!estimatedFees.isZero()) {
-    fields.push({
-      type: "icon.fees",
-      label: "Fees",
-    });
-  }
 
   if (!amount.isZero()) {
     fields.push({
