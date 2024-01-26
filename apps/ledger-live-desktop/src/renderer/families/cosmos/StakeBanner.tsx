@@ -42,7 +42,7 @@ const StakeBanner: React.FC<{ account: CosmosAccount }> = ({ account }) => {
     : t("account.banner.delegation.cta");
 
   const onClick = () => {
-    track("button_clicked", {
+    track("button_clicked2", {
       ...stakeDefaultTrack,
       delegation: "stake",
       page: "Page Account",

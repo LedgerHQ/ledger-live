@@ -24,7 +24,7 @@ const PostOnboardingHubBanner = () => {
   const navigateToPostOnboardingHub = useNavigateToPostOnboardingHubCallback();
 
   const handleNavigateToPostOnboardingHub = useCallback(() => {
-    track("button_clicked", { button: "What’s next for your device" });
+    track("button_clicked2", { button: "What’s next for your device" });
     navigateToPostOnboardingHub();
   }, [navigateToPostOnboardingHub]);
 

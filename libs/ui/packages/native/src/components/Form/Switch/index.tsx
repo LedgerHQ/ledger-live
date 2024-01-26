@@ -36,7 +36,7 @@ const Switch = ({ checked, onChange, disabled, label, testID }: SwitchProps): JS
           false: colors.neutral.c50,
           true: colors.primary.c70,
         }}
-        thumbColor={colors.neutral.c100}
+        thumbColor={colors.constant.white}
         onValueChange={onChange}
         value={checked}
         disabled={disabled}

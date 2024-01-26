@@ -47,7 +47,7 @@ const useStakeFlow = () => {
         {
           currencies: cryptoCurrencies,
           onAccountSelected: (account: AccountLike, parentAccount: Account | null = null) => {
-            track("button_clicked", {
+            track("button_clicked2", {
               ...stakeDefaultTrack,
               button: "asset",
               page: history.location.pathname,
@@ -80,7 +80,7 @@ const useStakeFlow = () => {
         {
           onRequestClose: () => {
             setDrawer();
-            track("button_clicked", {
+            track("button_clicked2", {
               ...stakeDefaultTrack,
               button: "close",
               page: history.location.pathname,

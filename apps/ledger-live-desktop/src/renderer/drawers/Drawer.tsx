@@ -62,7 +62,7 @@ export const Drawer = () => {
   }, [queue]);
   const track = useTrack();
   const onRequestClose = useCallback(() => {
-    track("button_clicked", { button: "Close" });
+    track("button_clicked2", { button: "Close" });
     if (state?.props?.onRequestClose) {
       onRequestClose();
     }

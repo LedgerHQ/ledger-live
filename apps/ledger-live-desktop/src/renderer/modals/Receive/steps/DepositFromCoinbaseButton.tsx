@@ -77,7 +77,7 @@ export const DepositFromCoinbaseButton = ({ location, source }: Props) => {
     if (path) {
       history.push(path);
       dispatch(closeModal("MODAL_RECEIVE"));
-      track("button_clicked", {
+      track("button_clicked2", {
         button: "deposit from coinbase",
         page: source,
       });

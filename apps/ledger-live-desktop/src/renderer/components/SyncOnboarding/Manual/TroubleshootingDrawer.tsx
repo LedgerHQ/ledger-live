@@ -26,7 +26,7 @@ const TroubleshootingDrawer: React.FC<Props> = ({ onClose, lastKnownDeviceId }) 
 
   const handleFixClicked = useCallback(() => {
     history.replace("/USBTroubleshooting");
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "fix it",
       page: "drawer troubleshoot USB connection",
       flow: analyticsFlowName,

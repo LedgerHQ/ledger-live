@@ -47,7 +47,7 @@ const StakeBanner: React.FC<{ account: ElrondAccount }> = ({ account }) => {
     ? t("account.banner.delegation.linkText")
     : t("account.banner.redelegation.linkText");
   const onClick = () => {
-    track("button_clicked", {
+    track("button_clicked2", {
       ...stakeDefaultTrack,
       delegation: "stake",
       page: "Page Account",

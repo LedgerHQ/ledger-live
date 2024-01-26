@@ -48,7 +48,7 @@ const StakeBanner: React.FC<{ account: SolanaAccount }> = ({ account }) => {
     ? "https://support.ledger.com/hc/en-us/articles/4731749170461-Staking-Solana-SOL-in-Ledger-Live?support=true"
     : "https://www.ledger.com/staking/ledger-node/solana";
   const onClick = () => {
-    track("button_clicked", {
+    track("button_clicked2", {
       ...stakeDefaultTrack,
       delegation: "stake",
       page: "Page Account",

@@ -206,7 +206,7 @@ const StepReceiveFunds = (props: StepProps) => {
       receiveStakingFlowConfig?.enabled &&
       receiveStakingFlowConfig?.params?.[id]?.enabled
     ) {
-      track("button_clicked", {
+      track("button_clicked2", {
         button: "continue",
         page: window.location.hash
           .split("/")

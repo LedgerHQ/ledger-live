@@ -156,6 +156,7 @@ const mapAsSquareContentCard = (
   description: card.extras.description,
   image: card.extras.image,
   price: card.extras.subtitle,
+  cta: card.extras.cta,
   size,
   link: card.extras.link,
   createdAt: card.created,
