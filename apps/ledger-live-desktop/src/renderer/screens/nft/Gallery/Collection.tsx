@@ -2,8 +2,8 @@ import React, { useMemo, useCallback, useRef, useState, useEffect, memo } from "
 import { useParams, useHistory } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { nftsByCollections } from "@ledgerhq/live-common/nft/index";
-import { useNftMetadata } from "@ledgerhq/live-common/nft/NftMetadataProvider/index";
+import { nftsByCollections } from "@ledgerhq/live-nft";
+import { useNftMetadata } from "@ledgerhq/live-nft-react";
 import { accountSelector } from "~/renderer/reducers/accounts";
 import { openModal } from "~/renderer/actions/modals";
 import styled from "styled-components";

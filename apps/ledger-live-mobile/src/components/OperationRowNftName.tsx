@@ -2,7 +2,7 @@ import React, { memo } from "react";
 
 import { Account, AccountLike, NFTMetadata, Operation } from "@ledgerhq/types-live";
 import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
+import { useNftMetadata } from "@ledgerhq/live-nft-react";
 import { View, StyleSheet, ViewStyle, StyleProp } from "react-native";
 import { Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";

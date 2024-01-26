@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, useMemo, memo } from "react";
-import { nftsByCollections } from "@ledgerhq/live-common/nft/index";
+import { nftsByCollections } from "@ledgerhq/live-nft";
 import { Account, NFT, ProtoNFT } from "@ledgerhq/types-live";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";

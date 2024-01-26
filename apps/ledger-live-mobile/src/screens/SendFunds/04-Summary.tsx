@@ -7,7 +7,7 @@ import { Trans } from "react-i18next";
 import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import type { Account } from "@ledgerhq/types-live";
 import type { TransactionStatus as BitcoinTransactionStatus } from "@ledgerhq/live-common/families/bitcoin/types";
-import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
+import { isNftTransaction } from "@ledgerhq/live-nft";
 import { NotEnoughGas } from "@ledgerhq/errors";
 import { useTheme } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";

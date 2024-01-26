@@ -14,8 +14,8 @@ import {
 } from "@react-navigation/native";
 import { StackNavigationEventMap } from "@react-navigation/stack";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
-import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
+import { useNftMetadata } from "@ledgerhq/live-nft-react";
+import { NFTResource } from "@ledgerhq/live-nft/types";
 import { NFTMetadata } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/types-devices";
 

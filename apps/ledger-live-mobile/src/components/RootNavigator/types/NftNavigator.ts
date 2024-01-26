@@ -1,4 +1,4 @@
-import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
+import { NFTResource } from "@ledgerhq/live-nft/types";
 import type { NFTMediaSize, NFTMetadata, ProtoNFT } from "@ledgerhq/types-live";
 import { ScreenName } from "~/const";
 

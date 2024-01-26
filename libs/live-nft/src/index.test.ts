@@ -1,15 +1,9 @@
+import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { Account, NFTStandard, ProtoNFT } from "@ledgerhq/types-live";
-import BigNumber from "bignumber.js";
-import { genAccount } from "../mock/account";
-import {
-  getNFT,
-  getNftCollectionKey,
-  getNftKey,
-  groupByCurrency,
-  orderByLastReceived,
-} from "./helpers";
 import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
+import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
+import { getNFT, getNftCollectionKey, getNftKey, groupByCurrency, orderByLastReceived } from ".";
 
 const NFT_1 = {
   id: encodeNftId("js:2:0ddkdlsPmds", "contract", "nft.tokenId", "ethereum"),

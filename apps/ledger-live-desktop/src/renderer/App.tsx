@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Provider, useSelector } from "react-redux";
 import { Store } from "redux";
 import { HashRouter as Router } from "react-router-dom";
-import { NftMetadataProvider } from "@ledgerhq/live-common/nft/NftMetadataProvider/index";
+import { NftMetadataProvider } from "@ledgerhq/live-nft-react";
+import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import "./global.css";
 import "tippy.js/dist/tippy.css";
 import "tippy.js/animations/shift-away.css";
@@ -75,7 +76,7 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
                       <PostOnboardingProviderWrapped>
                         <PlatformAppProviderWrapper>
                           <DrawerProvider>
-                            <NftMetadataProvider>
+                            <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
                               <MarketDataProvider>
                                 <Default />
                               </MarketDataProvider>
