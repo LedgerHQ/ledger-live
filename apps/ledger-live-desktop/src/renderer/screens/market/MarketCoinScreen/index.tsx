@@ -161,7 +161,7 @@ export default function MarketCoinScreen() {
       if (currency?.internalCurrency?.id) {
         e.preventDefault();
         e.stopPropagation();
-        track("button_clicked", {
+        track("button_clicked2", {
           button: "swap",
           currency: currency?.ticker,
           page: "Page Market Coin",
@@ -204,7 +204,7 @@ export default function MarketCoinScreen() {
     (e: React.SyntheticEvent<HTMLButtonElement>) => {
       e.preventDefault();
       e.stopPropagation();
-      track("button_clicked", {
+      track("button_clicked2", {
         button: "stake",
         currency: currency?.ticker,
         page: "Page Market Coin",

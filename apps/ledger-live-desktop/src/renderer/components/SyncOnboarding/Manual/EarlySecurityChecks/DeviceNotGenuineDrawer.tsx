@@ -63,7 +63,7 @@ const GenuineCheckErrorDrawer: React.FC<Props> = ({ productName }) => {
           size="large"
           variant="main"
           onClick={() => {
-            track("button_clicked", {
+            track("button_clicked2", {
               button: "Contact Ledger support",
               drawer: analyticsDrawerName,
             });

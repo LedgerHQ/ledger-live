@@ -10,6 +10,7 @@ import {
   Subtitle,
   Tag,
   Title,
+  Button,
 } from "~/contentCards/cards/vertical/elements";
 import { Size } from "~/contentCards/cards/vertical/types";
 
@@ -20,10 +21,11 @@ type Props = {
   price: string;
   size: Size;
   tag?: string;
+  cta?: string;
 };
 
 const VerticalCard = ContentCardBuilder<Props>(
-  ({ title, description: subtitle, price, image, tag, size, metadata }) => {
+  ({ title, description: subtitle, price, image, tag, size, metadata, cta }) => {
     useEffect(() => metadata.actions?.onView?.());
 
     return (
@@ -38,6 +40,7 @@ const VerticalCard = ContentCardBuilder<Props>(
             <Title size={size} label={title} />
             <Subtitle size={size} label={subtitle} />
             <Price size={size} label={price} />
+            {cta && <Button size={size} label={cta} action={metadata.actions?.onClick} />}
           </Flex>
         </Container>
       </TouchableOpacity>

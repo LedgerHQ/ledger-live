@@ -95,7 +95,7 @@ export default function AssetBalanceSummaryHeader({
   }, [currency.id, history]);
 
   const onSwap = useCallback(() => {
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "swap",
       currency: currency?.ticker,
       page: "Page Asset",
@@ -111,7 +111,7 @@ export default function AssetBalanceSummaryHeader({
   }, [currency, history, swapDefaultTrack]);
 
   const onStake = useCallback(() => {
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "stake",
       currency: currency?.ticker,
       page: "Page Asset",
