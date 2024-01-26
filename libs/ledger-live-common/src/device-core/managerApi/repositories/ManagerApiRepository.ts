@@ -1,11 +1,11 @@
 import { DeviceVersionEntity } from "../entities/DeviceVersionEntity";
 import { FinalFirmware, OsuFirmware } from "../entities/FirmwareUpdateContextEntity";
-import { IdEntity } from "../entities/IdEntity";
+import { Id } from "../entities/Id";
 
 export interface ManagerApiRepository {
   fetchLatestFirmware(params: {
-    current_se_firmware_final_version: IdEntity;
-    device_version: IdEntity;
+    current_se_firmware_final_version: Id;
+    device_version: Id;
     providerId: number;
     userId: string;
   }): Promise<OsuFirmware | null | undefined>;
