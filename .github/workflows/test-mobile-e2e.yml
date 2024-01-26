@@ -128,6 +128,22 @@ jobs:
         if: always()
         run: |
           xcrun simctl delete ${{ steps.simulator.outputs.id }}
+      - name: setup JRE 11 for Allure
+        uses: actions/setup-java@v3
+        if: always()
+        with:
+          distribution: "zulu"
+          java-version: "11"
+          java-package: "jre"
+      - name: Generate single file Allure report
+        if: always()
+        run: pnpx allure-commandline generate apps/ledger-live-mobile/allure-results --single-file
+      - name: Upload Allure single file report
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: ios-global-report
+          path: allure-report/index.html
       - name: Upload test artifacts
         uses: actions/upload-artifact@v3
         if: always()
@@ -260,6 +276,14 @@ jobs:
         timeout-minutes: 45
         env:
           DETOX_INSTALL_TIMEOUT: 120000
+      - name: Generate single file Allure report
+        run: pnpx allure-commandline generate apps/ledger-live-mobile/allure-results --single-file
+      - name: Upload Allure single file report
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: android-global-report
+          path: allure-report/index.html
       - name: Upload test artifacts
         if: always()
         uses: actions/upload-artifact@v3
