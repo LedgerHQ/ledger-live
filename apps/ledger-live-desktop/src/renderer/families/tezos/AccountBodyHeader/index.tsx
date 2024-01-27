@@ -9,7 +9,7 @@ import styled from "styled-components";
 import { SubAccount } from "@ledgerhq/types-live";
 import Label from "~/renderer/components/Label";
 import Button from "~/renderer/components/ButtonV3";
-import { FeatureToggle } from "@ledgerhq/live-config/featureFlags/index";
+import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import { TezosAccount } from "@ledgerhq/live-common/families/tezos/types";
 
 type Props = {

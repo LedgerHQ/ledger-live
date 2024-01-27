@@ -1,6 +1,6 @@
 import type { CosmosPreloadData } from "./types";
-import defaultConfig from "../../config/defaultConfig";
-const LEDGER_VALIDATOR_ADDRESS = defaultConfig.config.cosmos.cosmos.ledgerValidator;
+import liveConfig from "../../config/sharedConfig";
+const LEDGER_VALIDATOR_ADDRESS = liveConfig["config_currency_cosmos"].default["ledgerValidator"];
 // Data manually fetched from the network between heights
 // 1685677 and 1685679
 const data: CosmosPreloadData = {

@@ -16,7 +16,7 @@ import IconInfoCircleFull from "~/renderer/icons/InfoCircleFull";
 import AppActions from "./AppActions";
 import AppIcon from "./AppIcon";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const AppRowContainer = styled.div`
   display: flex;

@@ -3,7 +3,7 @@ import { useMemo, useLayoutEffect, useCallback } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import { listCurrencies, filterCurrencies } from "@ledgerhq/live-common/currencies/helpers";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { NavigatorName, ScreenName } from "~/const";
 import type { StackNavigatorProps, BaseComposite } from "../RootNavigator/types/helpers";
 import type { StakeNavigatorParamList } from "../RootNavigator/types/StakeNavigator";

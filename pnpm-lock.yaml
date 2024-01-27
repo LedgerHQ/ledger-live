@@ -1,9 +1,5 @@
 lockfileVersion: '6.0'
 
-settings:
-  autoInstallPeers: false
-  excludeLinksFromLockfile: false
-
 neverBuiltDependencies:
   - blake2
 
@@ -134,6 +130,9 @@ importers:
       '@ledgerhq/live-common':
         specifier: workspace:^
         version: link:../../libs/ledger-live-common
+      '@ledgerhq/live-config':
+        specifier: workspace:^
+        version: link:../../libs/live-config
       '@ledgerhq/live-countervalues':
         specifier: workspace:^
         version: link:../../libs/live-countervalues
@@ -1377,6 +1376,9 @@ importers:
       '@ledgerhq/live-common':
         specifier: workspace:^
         version: link:../../libs/ledger-live-common
+      '@ledgerhq/live-config':
+        specifier: workspace:^
+        version: link:../../libs/live-config
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../libs/env
@@ -4192,41 +4194,10 @@ importers:
         version: 10.7.0(@types/node@20.8.10)(source-map-support@0.5.21)(typescript@5.1.3)
 
   libs/live-config:
-    dependencies:
-      '@ledgerhq/errors':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/errors
-      '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../env
-      '@ledgerhq/live-promise':
-        specifier: workspace:^
-        version: link:../promise
-      '@ledgerhq/logs':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/logs
-      '@ledgerhq/types-live':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/types-live
-      lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
     devDependencies:
-      '@testing-library/react':
-        specifier: '12'
-        version: 12.1.5(react-dom@18.2.0)(react@18.2.0)
-      '@testing-library/react-hooks':
-        specifier: ^8.0.0
-        version: 8.0.1(react-dom@18.2.0)(react@18.2.0)
-      '@types/invariant':
-        specifier: ^2.2.35
-        version: 2.2.36
       '@types/jest':
         specifier: ^29.5.4
         version: 29.5.4
-      '@types/lodash':
-        specifier: ^4.14.182
-        version: 4.14.198
       '@types/node':
         specifier: ^20.2.5
         version: 20.8.10
@@ -4235,13 +4206,7 @@ importers:
         version: 28.1.3(@types/node@20.8.10)
       jest-environment-jsdom:
         specifier: '28'
-        version: 28.1.3
-      react:
-        specifier: ^18.2.0
-        version: 18.2.0
-      react-dom:
-        specifier: 18.2.0
-        version: 18.2.0(react@18.2.0)
+        version: 28.0.0
       semver:
         specifier: ^7.3.5
         version: 7.5.4
@@ -6470,7 +6435,7 @@ packages:
   /@babel/code-frame@7.10.4:
     resolution: {integrity: sha512-vG6SvB6oYEhvgisZNFRmRCUkLz11c7rp+tbNTynGqc6mS1d5ATd/sGyV6W0KZZnXRKMTzZDRgQT3Ou9jhpAfUg==}
     dependencies:
-      '@babel/highlight': 7.22.13
+      '@babel/highlight': 7.23.4
 
   /@babel/code-frame@7.22.13:
     resolution: {integrity: sha512-XktuhWlJ5g+3TJXc5upd9Ks1HutSArik6jf2eAjYFyIOf4ej3RN+184cZbzDvbPnuTJIUhPKKJE3cIsYTiAT3w==}
@@ -6485,7 +6450,6 @@ packages:
     dependencies:
       '@babel/highlight': 7.23.4
       chalk: 2.4.2
-    dev: true
 
   /@babel/compat-data@7.22.9:
     resolution: {integrity: sha512-5UamI7xkUcJ3i9qVDS+KFDEK8/7oJ55/sJMB1Ge7IEapr7KfdfV/HErR+koZwOfd+SgtFKOKRhRakdg++DcJpQ==}
@@ -7242,7 +7206,6 @@ packages:
       '@babel/helper-validator-identifier': 7.22.20
       chalk: 2.4.2
       js-tokens: 4.0.0
-    dev: true
 
   /@babel/parser@7.18.11:
     resolution: {integrity: sha512-9JKn5vN+hDt0Hdqn1PiJ2guflwP+B6Ga8qbDuoF0PzzVhrzsKIJo8yGqVk6CmMHiMei9w1C1Bp9IMJSIK+HPIQ==}
@@ -10658,7 +10621,7 @@ packages:
     resolution: {integrity: sha512-QPErUVm4uyJa60rkI73qneDacvdvzxshT3kksGqlGWYdOTIUOwJ7RDUL8sGqslY1uXWSL6xMFKEXDS3ox2uF0w==}
     engines: {node: '>=6.9.0'}
     dependencies:
-      '@babel/code-frame': 7.22.13
+      '@babel/code-frame': 7.23.5
       '@babel/parser': 7.23.0
       '@babel/types': 7.23.0
 
@@ -10666,7 +10629,7 @@ packages:
     resolution: {integrity: sha512-TG9PiM2R/cWCAy6BPJKeHzNbu4lPzOSZpeMfeNErskGpTJx6trEvFaVCbDvpcxwy49BKWmEPwiW8mrysNiDvIQ==}
     engines: {node: '>=6.9.0'}
     dependencies:
-      '@babel/code-frame': 7.22.13
+      '@babel/code-frame': 7.23.5
       '@babel/generator': 7.23.0
       '@babel/helper-environment-visitor': 7.22.20
       '@babel/helper-function-name': 7.23.0
@@ -10719,7 +10682,7 @@ packages:
     resolution: {integrity: sha512-azpe59SQ48qG6nu2CzcMLbxUudtN+dOM9kDbUqGq3HXUJRlo7i8fvPoxQUzYgLZ4cMVmuZgm8vvBpNeRhd6XSw==}
     engines: {node: '>=6.9.0'}
     dependencies:
-      '@babel/code-frame': 7.22.13
+      '@babel/code-frame': 7.23.5
       '@babel/generator': 7.23.0
       '@babel/helper-environment-visitor': 7.22.20
       '@babel/helper-function-name': 7.23.0
@@ -19438,7 +19401,7 @@ packages:
     dependencies:
       invariant: 2.2.4
       nullthrows: 1.1.1
-      react-native: 0.72.6(@babel/core@7.23.2)(react@18.2.0)
+      react-native: 0.72.6(react@18.2.0)
 
   /@react-navigation/bottom-tabs@6.4.0(@react-navigation/native@6.0.13)(react-native-safe-area-context@4.5.0)(react-native-screens@3.27.0)(react-native@0.72.6)(react@18.2.0):
     resolution: {integrity: sha512-90CapiXjiWudbCiki9e6fOr/CECQRguIxv5OD7IBfbAMGX5GGiJpX8aqiHAz2DxpAz31v4JZcUr945+lFhXBfA==}
@@ -23358,20 +23321,6 @@ packages:
       typedarray-to-buffer: 4.0.0
     dev: false
 
-  /@testing-library/dom@8.17.1:
-    resolution: {integrity: sha512-KnH2MnJUzmFNPW6RIKfd+zf2Wue8mEKX0M3cpX6aKl5ZXrJM1/c/Pc8c2xDNYQCnJO48Sm5ITbMXgqTr3h4jxQ==}
-    engines: {node: '>=12'}
-    dependencies:
-      '@babel/code-frame': 7.22.13
-      '@babel/runtime': 7.23.2
-      '@types/aria-query': 4.2.2
-      aria-query: 5.1.3
-      chalk: 4.1.2
-      dom-accessibility-api: 0.5.14
-      lz-string: 1.5.0
-      pretty-format: 27.5.1
-    dev: true
-
   /@testing-library/dom@9.3.3:
     resolution: {integrity: sha512-fB0R+fa3AUqbLHWyxXa2kGVtf1Fe1ZZFr0Zp6AIbIAzXb2mKbEXl+PCQNUOaq5lbTab5tfctfXRNsWXxa2f7Aw==}
     engines: {node: '>=14'}
@@ -23511,28 +23460,6 @@ packages:
       react-test-renderer: 18.2.0(react@18.2.0)
     dev: true
 
-  /@testing-library/react-hooks@8.0.1(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-Aqhl2IVmLt8IovEVarNDFuJDVWVvhnr9/GCU6UUnrYXwgDFF9h2L2o2P9KBni1AST5sT6riAyoukFLyjQUgD/g==}
-    engines: {node: '>=12'}
-    peerDependencies:
-      '@types/react': ^16.9.0 || ^17.0.0
-      react: ^16.9.0 || ^17.0.0
-      react-dom: ^16.9.0 || ^17.0.0
-      react-test-renderer: ^16.9.0 || ^17.0.0
-    peerDependenciesMeta:
-      '@types/react':
-        optional: true
-      react-dom:
-        optional: true
-      react-test-renderer:
-        optional: true
-    dependencies:
-      '@babel/runtime': 7.23.2
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-      react-error-boundary: 3.1.4(react@18.2.0)
-    dev: true
-
   /@testing-library/react-native@12.3.2(jest@29.7.0)(react-native@0.72.6)(react-test-renderer@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-S8ggbK5A8leTMp9ETiAMjUCMVdy7SHFH7566TLsF06sHEDqOB05ohQU28Qv0EQY6jr8P73qmQXUpWlPwnhJOUQ==}
     peerDependencies:
@@ -23551,22 +23478,6 @@ packages:
       react-native: 0.72.6(@babel/core@7.23.2)(react@18.2.0)
       react-test-renderer: 18.2.0(react@18.2.0)
       redent: 3.0.0
-    dev: true
-
-  /@testing-library/react@12.1.5(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-OfTXCJUFgjd/digLUuPxa0+/3ZxsQmE7ub9kcbW/wi96Bh3o/p5vrETcBGfP17NWPGqeYYl5LTRpwyGoMC4ysg==}
-    engines: {node: '>=12'}
-    peerDependencies:
-      react: <18.0.0
-      react-dom: <18.0.0
-    dependencies:
-      '@babel/runtime': 7.23.2
-      '@testing-library/dom': 8.17.1
-      '@types/react-dom': 17.0.21
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-    transitivePeerDependencies:
-      - '@types/react'
     dev: true
 
   /@testing-library/react@14.1.2(@types/react@18.2.28)(react-dom@18.2.0)(react@18.2.0):
@@ -23682,10 +23593,6 @@ packages:
     dependencies:
       '@types/estree': 1.0.3
     dev: false
-
-  /@types/aria-query@4.2.2:
-    resolution: {integrity: sha512-HnYpAE1Y6kRyKM/XkEuiRQhTHvkzMBurTHnpFLYLBGPIylZNPs9jJcuOOYWxPLJCSEtmZT0Y8rHDokKN7rRTig==}
-    dev: true
 
   /@types/aria-query@5.0.1:
     resolution: {integrity: sha512-XTIieEY+gvJ39ChLcB4If5zHtPxt3Syj5rgZR+e1ctpmK8NjPf0zFqsz4JpLJT0xla9GFDKjy8Cpu331nrmE1Q==}
@@ -24365,15 +24272,6 @@ packages:
 
   /@types/range-parser@1.2.4:
     resolution: {integrity: sha512-EEhsLsD6UsDM1yFhAvy0Cjr6VwmpMWqFBCb9w07wVugF7w9nfajxLuVmngTIpgS6svCnm6Vaw+MZhoDCKnOfsw==}
-
-  /@types/react-dom@17.0.21:
-    resolution: {integrity: sha512-3rQEFUNUUz2MYiRwJJj6UekcW7rFLOtmK7ajQP7qJpjNdggInl3I/xM4I3Hq1yYPdCGVMgax1gZsB7BBTtayXg==}
-    peerDependencies:
-      '@types/react': '*'
-    peerDependenciesMeta:
-      '@types/react':
-        optional: true
-    dev: true
 
   /@types/react-dom@18.2.13:
     resolution: {integrity: sha512-eJIUv7rPP+EC45uNYp/ThhSpE16k22VJUknt5OLoH9tbXoi8bMhwLf5xRuWMywamNbWzhrSmU7IBJfPup1+3fw==}
@@ -25729,7 +25627,7 @@ packages:
       '@vue/component-compiler-utils': 3.3.0(lodash@4.17.21)(react-dom@18.2.0)(react@18.2.0)
       '@vue/vue-loader-v15': /vue-loader@15.10.2(css-loader@6.7.1)(lodash@4.17.21)(prettier@3.0.3)(react-dom@18.2.0)(react@18.2.0)(vue-template-compiler@2.7.14)(webpack@5.88.2)
       '@vue/web-component-wrapper': 1.3.0
-      acorn: 8.10.0
+      acorn: 8.11.2
       acorn-walk: 8.2.0
       address: 1.2.0
       autoprefixer: 10.4.8(postcss@8.4.32)
@@ -27975,7 +27873,7 @@ packages:
       babel-plugin-syntax-jsx: 6.18.0
       lodash: 4.17.21
       picomatch: 2.3.1
-      styled-components: 5.3.5(react-is@18.1.0)(react@18.2.0)
+      styled-components: 5.3.5(react-dom@18.2.0)(react-is@17.0.2)(react@18.2.0)
 
   /babel-plugin-syntax-jsx@6.18.0:
     resolution: {integrity: sha512-qrPaCSo9c8RHNRHIotaufGbuOBN8rtdC4QrrFFc43vyWCCz7Kl7GL1PGaXtMGQZUXrkCjNEgxDfmAuAabr/rlw==}
@@ -29544,6 +29442,7 @@ packages:
   /chokidar@3.5.3:
     resolution: {integrity: sha512-Dr3sfKRP6oTcjf2JmUmFJfeVMvXBdegxB0iVQ5eb2V10uFJUCAS8OByZdVAyVb8xXNz3GjjTgj9kLWsZTqE6kw==}
     engines: {node: '>= 8.10.0'}
+    requiresBuild: true
     dependencies:
       anymatch: 3.1.3
       braces: 3.0.2
@@ -36296,7 +36195,7 @@ packages:
       vue-template-compiler:
         optional: true
     dependencies:
-      '@babel/code-frame': 7.22.13
+      '@babel/code-frame': 7.23.5
       '@types/json-schema': 7.0.14
       chalk: 4.1.2
       chokidar: 3.5.3
@@ -36329,7 +36228,7 @@ packages:
       vue-template-compiler:
         optional: true
     dependencies:
-      '@babel/code-frame': 7.22.13
+      '@babel/code-frame': 7.23.5
       '@types/json-schema': 7.0.14
       chalk: 4.1.2
       chokidar: 3.5.3
@@ -36354,7 +36253,7 @@ packages:
       typescript: '>3.6.0'
       webpack: ^5.11.0
     dependencies:
-      '@babel/code-frame': 7.22.13
+      '@babel/code-frame': 7.23.5
       chalk: 4.1.2
       chokidar: 3.5.3
       cosmiconfig: 7.1.0
@@ -39752,7 +39651,7 @@ packages:
       pretty-format: 29.7.0
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.9.1(@swc/core@1.3.95)(typescript@5.1.3)
+      ts-node: 10.9.1(typescript@5.2.2)
     transitivePeerDependencies:
       - babel-plugin-macros
       - metro
@@ -39793,7 +39692,7 @@ packages:
       pretty-format: 29.7.0
       slash: 3.0.0
       strip-json-comments: 3.1.1
-      ts-node: 10.9.1(@swc/core@1.3.95)(typescript@5.1.3)
+      ts-node: 10.9.1(typescript@5.2.2)
     transitivePeerDependencies:
       - babel-plugin-macros
       - metro
@@ -39911,9 +39810,9 @@ packages:
       - utf-8-validate
     dev: false
 
-  /jest-environment-jsdom@28.1.3:
-    resolution: {integrity: sha512-HnlGUmZRdxfCByd3GM2F100DgQOajUBzEitjGqIREcb45kGjZvRrKUdlaF6escXBdcXNl0OBh+1ZrfeZT3GnAg==}
-    engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
+  /jest-environment-jsdom@28.0.0:
+    resolution: {integrity: sha512-lUP/Lo62AD6n+der7CDz6INQiz5HoZyxq5XvmDTZhSAn83vwFAQvGFr82UPahFUokbkpQYrmsdXrGZILrZb45A==}
+    engines: {node: ^12.13.0 || ^14.15.0 || ^16.13.0 || >=17.0.0}
     dependencies:
       '@jest/environment': 28.1.3
       '@jest/fake-timers': 28.1.3
@@ -40201,7 +40100,7 @@ packages:
     resolution: {integrity: sha512-PFdn9Iewbt575zKPf1286Ht9EPoJmYT7P0kY+RibeYZ2XtOr53pDLEFoTWXbd1h4JiGiWpTBC84fc8xMXQMb7g==}
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
     dependencies:
-      '@babel/code-frame': 7.22.13
+      '@babel/code-frame': 7.23.5
       '@jest/types': 28.1.3
       '@types/stack-utils': 2.0.2
       chalk: 4.1.2
@@ -40215,7 +40114,7 @@ packages:
     resolution: {integrity: sha512-GBEV4GRADeP+qtB2+6u61stea8mGcOT4mCtrYISZwfu9/ISHFJ/5zOMXYbpBE9RsS5+Gb63DW4FgmnKJ79Kf6w==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     dependencies:
-      '@babel/code-frame': 7.22.13
+      '@babel/code-frame': 7.23.5
       '@jest/types': 29.6.3
       '@types/stack-utils': 2.0.2
       chalk: 4.1.2
@@ -41407,7 +41306,7 @@ packages:
         optional: true
     dependencies:
       abab: 2.0.6
-      acorn: 8.10.0
+      acorn: 8.11.2
       acorn-globals: 6.0.0
       cssom: 0.5.0
       cssstyle: 2.3.0
@@ -44064,7 +43963,7 @@ packages:
     engines: {node: '>=16'}
     hasBin: true
     dependencies:
-      '@babel/code-frame': 7.22.13
+      '@babel/code-frame': 7.23.5
       '@babel/core': 7.23.2
       '@babel/generator': 7.23.0
       '@babel/parser': 7.23.0
@@ -46322,7 +46221,7 @@ packages:
     resolution: {integrity: sha512-ayCKvm/phCGxOkYRSCM82iDwct8/EonSEgCSxWxD7ve6jHggsFl4fZVQBPRNgQoKiuV/odhFrGzQXZwbifC8Rg==}
     engines: {node: '>=8'}
     dependencies:
-      '@babel/code-frame': 7.22.13
+      '@babel/code-frame': 7.23.5
       error-ex: 1.3.2
       json-parse-even-better-errors: 2.3.1
       lines-and-columns: 1.2.4
@@ -48784,7 +48683,7 @@ packages:
       typescript:
         optional: true
     dependencies:
-      '@babel/code-frame': 7.22.13
+      '@babel/code-frame': 7.23.5
       address: 1.2.2
       browserslist: 4.22.1
       chalk: 4.1.2
@@ -51205,7 +51104,7 @@ packages:
     peerDependencies:
       rollup: ^2.0.0
     dependencies:
-      '@babel/code-frame': 7.22.13
+      '@babel/code-frame': 7.23.5
       jest-worker: 26.6.2
       rollup: 2.79.1
       serialize-javascript: 4.0.0
@@ -53001,6 +52900,7 @@ packages:
       react-is: 18.1.0
       shallowequal: 1.1.0
       supports-color: 5.5.0
+    dev: false
 
   /styled-components@6.0.7(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-xIwWuiRMYR43mskVsW9MGTRjSo7ol4bcVjT595fGUp3OLBJOlOgaiKaxsHdC4a2HqWKqKnh0CmcRbk5ogyDjTg==}
@@ -59210,6 +59110,7 @@ packages:
     resolution: {directory: libs/ui/packages/crypto-icons, type: directory}
     id: file:libs/ui/packages/crypto-icons
     name: '@ledgerhq/crypto-icons-ui'
+    version: 1.0.1
     peerDependencies:
       '@types/react': '*'
       react: '*'
@@ -59229,6 +59130,7 @@ packages:
     resolution: {directory: libs/ui/packages/icons, type: directory}
     id: file:libs/ui/packages/icons
     name: '@ledgerhq/icons-ui'
+    version: 0.6.2
     peerDependencies:
       '@types/react': '*'
       react: '*'

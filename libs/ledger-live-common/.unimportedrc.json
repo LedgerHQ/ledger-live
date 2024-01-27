@@ -291,6 +291,7 @@
     "**/datasets/**",
     "**/mock/fixtures/**",
     "src/deviceSDK/**",
+    "src/config/sharedConfig.ts",
     "src/consoleWarnExpectToEqual.native.ts",
     "src/consoleWarnExpectToEqual.ts",
     "src/deposit/mock.ts",
