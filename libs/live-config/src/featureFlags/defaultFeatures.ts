@@ -3,7 +3,7 @@ import {
   Feature,
   Features,
   FeatureMap,
-  LlmAnalyticsOptInPromptVariants,
+  ABTestingVariants,
 } from "@ledgerhq/types-live";
 import { reduce } from "lodash";
 import { formatToFirebaseFeatureId } from "./firebaseFeatureFlags";
@@ -444,7 +444,14 @@ export const DEFAULT_FEATURES: Features = {
   llmAnalyticsOptInPrompt: {
     enabled: false,
     params: {
-      variant: LlmAnalyticsOptInPromptVariants.variantA,
+      variant: ABTestingVariants.variantA,
+    },
+  },
+
+  lldPortfolioCarousel: {
+    enabled: false,
+    params: {
+      variant: ABTestingVariants.variantA,
     },
   },
 };
