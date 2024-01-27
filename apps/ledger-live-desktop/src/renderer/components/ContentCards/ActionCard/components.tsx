@@ -32,7 +32,7 @@ const Title = styled.div`
   text-overflow: ellipsis;
 `;
 
-const Subtitle = styled.div`
+const Description = styled.div`
   font-weight: 500;
   font-size: 13px;
 
@@ -43,7 +43,7 @@ const Subtitle = styled.div`
 
 const Actions = styled.div`
   display: flex;
-  gap: 12px;
+  gap: 16px;
 `;
 
-export { CardContainer, Header, Body, Title, Subtitle, Actions };
+export { CardContainer, Header, Body, Title, Description, Actions };

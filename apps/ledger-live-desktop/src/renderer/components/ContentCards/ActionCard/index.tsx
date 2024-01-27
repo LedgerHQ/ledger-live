@@ -1,40 +1,45 @@
 import React from "react";
 import ButtonV3 from "~/renderer/components/ButtonV3";
-import { Actions, Body, CardContainer, Header, Subtitle, Title } from "./components";
+import { Actions, Body, CardContainer, Header, Description, Title } from "./components";
+import { Link } from "@ledgerhq/react-ui";
+import { ContentCardBuilder } from "~/renderer/components/ContentCards/utils";
 
 type Props = {
-  img: string;
+  img?: string;
 
   title: string;
-  subtitle: string;
+  description: string;
 
   actions: {
     primary: {
-      label: string;
+      label?: string;
       action: Function;
     };
-    secondary: {
+    dismiss: {
       label: string;
       action: Function;
     };
   };
 };
 
-const ActionCard = ({ img, title, subtitle, actions }: Props) => {
+const ActionCard = ({ img, title, description, actions }: Props) => {
   return (
     <CardContainer>
-      <Header src={img} />
+      {img && <Header src={img} />}
       <Body>
         <Title>{title}</Title>
-        <Subtitle>{subtitle}</Subtitle>
+        <Description>{description}</Description>
       </Body>
       <Actions>
-        <ButtonV3 big onClick={() => actions.secondary.action()}>
-          {actions.secondary.label}
-        </ButtonV3>
-        <ButtonV3 big variant="main" onClick={() => actions.primary.action()}>
-          {actions.primary.label}
-        </ButtonV3>
+        <Link size="small" onClick={() => actions.dismiss.action()}>
+          {actions.dismiss.label}
+        </Link>
+
+        {actions.primary.label && (
+          <ButtonV3 big variant="main" onClick={() => actions.primary.action()}>
+            {actions.primary.label}
+          </ButtonV3>
+        )}
       </Actions>
     </CardContainer>
   );

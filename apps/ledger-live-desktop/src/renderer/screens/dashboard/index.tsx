@@ -1,10 +1,9 @@
 import React, { useCallback, useMemo } from "react";
 import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
 import { isAddressPoisoningOperation } from "@ledgerhq/live-common/operation";
-import Box from "~/renderer/components/Box";
+import Box, { Card } from "~/renderer/components/Box";
 import { accountsSelector, currenciesSelector } from "~/renderer/reducers/accounts";
 import BalanceSummary from "./GlobalSummary";
-import { colors } from "~/renderer/styles/theme";
 import {
   counterValueCurrencySelector,
   hasInstalledAppsSelector,
@@ -12,10 +11,9 @@ import {
   hiddenNftCollectionsSelector,
 } from "~/renderer/reducers/settings";
 import { useTranslation } from "react-i18next";
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import OperationsList from "~/renderer/components/OperationsList";
-import Carousel from "~/renderer/components/Carousel";
 import AssetDistribution from "./AssetDistribution";
 import ClearCacheBanner from "~/renderer/components/ClearCacheBanner";
 import RecoverBanner from "~/renderer/components/RecoverBanner/RecoverBanner";
@@ -29,7 +27,9 @@ import { useRefreshAccountsOrderingEffect } from "~/renderer/actions/general";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
 import PostOnboardingHubBanner from "~/renderer/components/PostOnboardingHub/PostOnboardingHubBanner";
 import FeaturedButtons from "~/renderer/screens/dashboard/FeaturedButtons";
-import { AccountLike, Operation } from "@ledgerhq/types-live";
+import { ABTestingVariants, AccountLike, Operation } from "@ledgerhq/types-live";
+import { Carousel } from "@ledgerhq/react-ui";
+import usePortfolioCards from "~/renderer/hooks/usePortfolioCards";
 
 // This forces only one visible top banner at a time
 export const TopBannerContainer = styled.div`
@@ -75,13 +75,27 @@ export default function DashboardPage() {
     },
     [hiddenNftCollections, shouldFilterTokenOpsZeroAmount],
   );
+  const { colors } = useTheme();
+  const slides = usePortfolioCards();
+  const lldPortfolioCarousel = useFeature("lldPortfolioCarousel");
+
   return (
     <>
       <TopBannerContainer>
         <ClearCacheBanner />
         <CurrencyDownStatusAlert currencies={currencies} hideStatusIncidents />
       </TopBannerContainer>
-      {showCarousel ? <Carousel /> : null}
+
+      {showCarousel && lldPortfolioCarousel?.enabled ? (
+        lldPortfolioCarousel?.params?.variant === ABTestingVariants.variantA ? (
+          <Card style={{ backgroundColor: colors.opacityPurple.c10 }}>
+            <Carousel variant="content-card" children={slides} />
+          </Card>
+        ) : (
+          <Card style={{ backgroundColor: colors.opacityPurple.c10 }}></Card>
+        )
+      ) : null}
+
       <RecoverBanner />
       {isPostOnboardingBannerVisible && <PostOnboardingHubBanner />}
       <FeaturedButtons />
