@@ -1,29 +1,26 @@
-import React from "react";
+import React, { useState } from "react";
 import Carousel from "./";
 
-const CarouselStory = () => {
+const Slide = ({ color, slideNb }: { color?: string; slideNb: number }) => {
   return (
-    <div>
-      <Carousel
-        slides={[...Array(10)].map((_, index) => ({
-          id: index,
-          Component: () => (
-            <div
-              style={{
-                height: "35px",
-                backgroundColor: "beige",
-              }}
-            >
-              Item {index}
-            </div>
-          ),
-        }))}
-      />
+    <div style={{ backgroundColor: color, padding: "15px", borderRadius: "5px" }}>
+      Slide {slideNb}
     </div>
   );
 };
 
-export const Default = CarouselStory.bind({});
+const CarouselStory = () => {
+  const [arr] = useState(
+    [...Array(10)].map((_, index) => (
+      <Slide
+        key={index}
+        slideNb={index}
+        color={"#" + ((Math.random() * 0xcbbfbb) << 0).toString(16)}
+      />
+    )),
+  );
+  return <Carousel children={arr} />;
+};
 
 export default {
   title: "Layout/Carousel",
@@ -43,3 +40,5 @@ export default {
     },
   },
 };
+
+export const Default = CarouselStory.bind({});

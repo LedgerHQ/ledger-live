@@ -1,4 +1,4 @@
-import { ItemStatus } from "./Pagination/types";
+import { ItemStatus } from "./types";
 
 /**
  * Returns the status of an indexed item from the carousel index.

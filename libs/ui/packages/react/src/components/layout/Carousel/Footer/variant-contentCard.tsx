@@ -1,9 +1,8 @@
 import { ArrowLeft, ArrowRight } from "@ledgerhq/icons-ui/react";
-import { UseEmblaCarouselType } from "embla-carousel-react";
 import React from "react";
 import styled from "styled-components";
-import { Props } from "../types";
-import Pagination from "./Pagination";
+import Pagination from "./pagination";
+import { SubProps } from "src/components/layout/Carousel/types";
 
 const FooterContainer = styled.div`
   height: 32px;
@@ -25,14 +24,15 @@ const FooterArrowContainer = styled.div`
   cursor: pointer;
 `;
 
-const FooterContentCard = ({
-  slides,
-  emblaApi,
-  index,
-}: Props & { emblaApi: UseEmblaCarouselType[1]; index: number }) => {
+const FooterContentCard = ({ children, emblaApi, currentIndex, variant }: SubProps) => {
   return (
     <FooterContainer>
-      <Pagination slides={slides} emblaApi={emblaApi} index={index} />
+      <Pagination
+        variant={variant}
+        children={children}
+        emblaApi={emblaApi}
+        currentIndex={currentIndex}
+      />
 
       <FooterArrowsContainer>
         <FooterArrowContainer onClick={() => emblaApi?.scrollPrev()}>

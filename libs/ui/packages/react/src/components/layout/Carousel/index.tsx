@@ -1,11 +1,7 @@
-/**
- * This component uses the https://github.com/davidjerleke/embla-carousel library.
- */
-
 import useEmblaCarousel from "embla-carousel-react";
 import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
-import Footer from "./Footer";
+import Footer from "./footer";
 import { Props } from "./types";
 
 const Embla = styled.div`
@@ -21,43 +17,51 @@ const EmblaSlide = styled.div`
   min-width: 0;
 `;
 
-const Carousel = ({ slides, footerVariant }: Props) => {
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
+/**
+ * This component uses the https://github.com/davidjerleke/embla-carousel library.
+ */
+const Carousel = ({ children, variant = "default" }: Props) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
 
-  const onSelect = useCallback(() => {
+  const updateIndex = useCallback(() => {
     if (!emblaApi) return;
-    setCurrentIndex(emblaApi.selectedScrollSnap());
-    emblaApi.scrollTo(emblaApi.selectedScrollSnap());
+
+    const newIndex = emblaApi.selectedScrollSnap();
+    setCurrentIndex(newIndex);
+    emblaApi.scrollTo(newIndex);
   }, [emblaApi]);
 
   useEffect(() => {
     if (!emblaApi) return;
-    onSelect();
-    emblaApi.on("select", onSelect);
-    emblaApi.on("reInit", onSelect);
-  }, [emblaApi, onSelect]);
+
+    // Initial call to update carousel index
+    updateIndex();
+
+    // When the selected scroll snap changes
+    emblaApi.on("select", updateIndex);
+
+    // When `reInit` is called or when window is resized
+    emblaApi.on("reInit", updateIndex);
+  }, [emblaApi, updateIndex]);
 
   return (
     <div>
       <Embla ref={emblaRef}>
         <EmblaContainer>
-          {slides.map(({ id, Component }) => (
-            <EmblaSlide key={id}>
-              <Component />
-            </EmblaSlide>
+          {children.map((child, index) => (
+            <EmblaSlide key={child.key}>{child}</EmblaSlide>
           ))}
         </EmblaContainer>
       </Embla>
 
       <Footer
-        slides={slides}
-        footerVariant={footerVariant}
+        children={children}
+        variant={variant}
         emblaApi={emblaApi}
-        index={currentIndex}
+        currentIndex={currentIndex}
       />
     </div>
   );
 };
-
 export default Carousel;

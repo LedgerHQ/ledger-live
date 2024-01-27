@@ -1,8 +1,7 @@
-import { UseEmblaCarouselType } from "embla-carousel-react";
 import React from "react";
 import styled from "styled-components";
-import { Props } from "../types";
-import Pagination from "./Pagination";
+import Pagination from "./pagination";
+import { SubProps } from "src/components/layout/Carousel/types";
 
 const FooterContainer = styled.div`
   height: 32px;
@@ -11,14 +10,10 @@ const FooterContainer = styled.div`
   align-items: center;
 `;
 
-const FooterDefault = ({
-  slides,
-  emblaApi,
-  index,
-}: Props & { emblaApi: UseEmblaCarouselType[1]; index: number }) => {
+const FooterDefault = (props: SubProps) => {
   return (
     <FooterContainer>
-      <Pagination slides={slides} emblaApi={emblaApi} index={index} />
+      <Pagination {...props} />
     </FooterContainer>
   );
 };

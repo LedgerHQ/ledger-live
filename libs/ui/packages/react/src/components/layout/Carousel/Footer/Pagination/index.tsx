@@ -1,23 +1,19 @@
-import { UseEmblaCarouselType } from "embla-carousel-react";
 import React from "react";
+import { SubProps } from "src/components/layout/Carousel/types";
 import styled from "styled-components";
-import { getItemStatus } from "../utils";
+import { getItemStatus } from "./utils";
 import Bullet from "./bullets";
-import { Props } from "../../types";
 
 const FooterCarouselBullets = styled.div`
   display: flex;
   align-items: center;
 `;
 
-const Pagination = ({
-  slides,
-  index: carouselIndex,
-}: Props & { emblaApi: UseEmblaCarouselType[1]; index: number }) => {
+const Pagination = ({ children, currentIndex }: SubProps) => {
   return (
     <FooterCarouselBullets>
-      {slides.map((item, index) => (
-        <Bullet key={item.id} type={getItemStatus(index, carouselIndex)} />
+      {children.map((child, index) => (
+        <Bullet key={child.key} type={getItemStatus(index, currentIndex)} />
       ))}
     </FooterCarouselBullets>
   );
