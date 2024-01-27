@@ -129,6 +129,8 @@
     "@ledgerhq/live-hooks": "0.1.0"
   },
   "changesets": [
+    "blue-berries-flash",
+    "bright-papayas-relate",
     "brown-crews-hammer",
     "chilly-scissors-talk",
     "clean-dots-tickle",
@@ -144,6 +146,7 @@
     "nice-islands-double",
     "odd-chefs-sell",
     "olive-lies-buy",
+    "proud-dragons-tan",
     "purple-pears-mix",
     "real-parents-doubt",
     "rotten-apples-remember",
@@ -153,6 +156,7 @@
     "shaggy-gifts-marry",
     "slow-mugs-attack",
     "smooth-mails-love",
+    "thin-snails-drum",
     "witty-laws-join"
   ]
 }

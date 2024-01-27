@@ -1,5 +1,15 @@
 # @ledgerhq/live-common
 
+## 33.5.1-nightly.1
+
+### Patch Changes
+
+- [#5731](https://github.com/LedgerHQ/ledger-live/pull/5731) [`18f170a`](https://github.com/LedgerHQ/ledger-live/commit/18f170afae57ce1a8f4553f865179b9b0d3a9180) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - update live config lib
+
+- Updated dependencies [[`18f170a`](https://github.com/LedgerHQ/ledger-live/commit/18f170afae57ce1a8f4553f865179b9b0d3a9180), [`97bafa2`](https://github.com/LedgerHQ/ledger-live/commit/97bafa2573436572fca63469b13214bfcd7eb85c)]:
+  - @ledgerhq/live-config@2.0.0-nightly.1
+  - @ledgerhq/crypto-icons-ui@1.0.2-nightly.0
+
 ## 33.5.1-nightly.0
 
 ### Patch Changes

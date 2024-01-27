@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-config",
-  "version": "1.0.2-nightly.0",
+  "version": "2.0.0-nightly.1",
   "description": "Ledger Live configuration tools",
   "license": "Apache-2.0",
   "keywords": [
@@ -26,8 +26,7 @@
     "lint:fix": "pnpm lint --fix",
     "test": "jest"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/jest": "^29.5.4",
     "@types/node": "^20.2.5",
