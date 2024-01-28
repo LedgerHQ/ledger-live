@@ -1,8 +1,8 @@
 import React from "react";
-import { SubProps } from "src/components/layout/Carousel/types";
 import styled from "styled-components";
-import { getItemStatus } from "./utils";
+import { SubProps } from "../../types";
 import Bullet from "./bullets";
+import { getItemStatus } from "./utils";
 
 const FooterCarouselBullets = styled.div`
   display: flex;
