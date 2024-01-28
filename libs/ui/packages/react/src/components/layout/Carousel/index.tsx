@@ -15,8 +15,6 @@ const EmblaContainer = styled.div`
 const EmblaSlide = styled.div`
   flex: 0 0 100%;
   min-width: 0;
-  margin-right: 25px;
-  margin-left: 25px;
 `;
 
 /**
