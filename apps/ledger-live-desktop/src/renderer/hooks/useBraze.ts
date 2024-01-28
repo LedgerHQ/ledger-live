@@ -27,38 +27,37 @@ export const compareCards = (a: LedgerContentCard, b: LedgerContentCard) => {
   if (!a.order && b.order) {
     return 1;
   }
-  if ((!a.order && !b.order) || a.order === b.order) {
-    return b.createdAt.getTime() - a.createdAt.getTime();
+  if (a.created && b.created && ((!a.order && !b.order) || a.order === b.order)) {
+    return b.created.getTime() - a.created.getTime();
   }
   return (a.order || 0) - (b.order || 0);
 };
 
-export const mapAsPortfolioContentCard = (card: ClassicCard) =>
-  ({
-    id: card.id,
-    title: card.extras?.title,
-    description: card.extras?.description,
-    location: LocationContentCard.Portfolio,
-    image: card.extras?.image,
-    url: card.extras?.url,
-    path: card.extras?.path,
-    createdAt: card.created,
-    order: parseInt(card.extras?.order) ? parseInt(card.extras?.order) : undefined,
-  }) as PortfolioContentCard;
+export const mapAsPortfolioContentCard = (card: ClassicCard): PortfolioContentCard => ({
+  id: String(card.id),
+  title: card.extras?.title,
+  description: card.extras?.description,
+  location: LocationContentCard.Portfolio,
+  image: card.extras?.image,
+  link: card.extras?.link,
+  created: card.created,
+  cta: card.extras?.cta,
+  dismissCta: card.extras?.dismissCta,
+  order: parseInt(card.extras?.order) ? parseInt(card.extras?.order) : undefined,
+});
 
-export const mapAsNotificationContentCard = (card: ClassicCard) =>
-  ({
-    id: card.id,
-    title: card.extras?.title,
-    description: card.extras?.description,
-    location: LocationContentCard.NotificationCenter,
-    url: card.extras?.url,
-    path: card.extras?.path,
-    cta: card.extras?.cta,
-    createdAt: card.created,
-    viewed: card.viewed,
-    order: parseInt(card.extras?.order) ? parseInt(card.extras?.order) : undefined,
-  }) as NotificationContentCard;
+export const mapAsNotificationContentCard = (card: ClassicCard): NotificationContentCard => ({
+  id: String(card.id),
+  title: card.extras?.title,
+  description: card.extras?.description,
+  location: LocationContentCard.NotificationCenter,
+  url: card.extras?.url,
+  path: card.extras?.path,
+  cta: card.extras?.cta,
+  created: card.created,
+  viewed: card.viewed,
+  order: parseInt(card.extras?.order) ? parseInt(card.extras?.order) : undefined,
+});
 
 export async function useBraze() {
   const dispatch = useDispatch();
