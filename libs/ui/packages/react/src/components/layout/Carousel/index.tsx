@@ -51,7 +51,7 @@ const Carousel = ({ children, variant = "default" }: Props) => {
     <div>
       <Embla ref={emblaRef}>
         <EmblaContainer>
-          {children.map((child, index) => (
+          {children.map(child => (
             <EmblaSlide key={child.key}>{child}</EmblaSlide>
           ))}
         </EmblaContainer>
