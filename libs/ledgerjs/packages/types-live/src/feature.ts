@@ -1,4 +1,4 @@
-import { LlmAnalyticsOptInPromptVariants } from "./analyticsOptInPrompt";
+import { ABTestingVariants } from "./ABTesting";
 import {
   CexDepositEntryPointsLocationsDesktop,
   CexDepositEntryPointsLocationsMobile,
@@ -188,6 +188,7 @@ export type Features = CurrencyFeatures & {
   llmAnalyticsOptInPrompt: Feature_LlmAnalyticsOptInPrompt;
   myLedgerDisplayAppDeveloperName: Feature_MyLedgerDisplayAppDeveloperName;
   nftsFromSimplehash: Feature_NftsFromSimpleHash;
+  lldPortfolioCarousel: Feature_LldPortfolioCarousel;
 };
 
 /**
@@ -485,7 +486,11 @@ export type Feature_FetchAdditionalCoins = Feature<{
 }>;
 
 export type Feature_LlmAnalyticsOptInPrompt = Feature<{
-  variant: LlmAnalyticsOptInPromptVariants;
+  variant: ABTestingVariants;
+}>;
+
+export type Feature_LldPortfolioCarousel = Feature<{
+  variant: ABTestingVariants;
 }>;
 
 export type Feature_LlmNewFirmwareUpdateUx = DefaultFeature;
