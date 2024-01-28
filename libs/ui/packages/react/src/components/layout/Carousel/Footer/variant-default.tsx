@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import Pagination from "./pagination";
-import { SubProps } from "src/components/layout/Carousel/types";
+import { SubProps } from "../types";
 
 const FooterContainer = styled.div`
   height: 32px;

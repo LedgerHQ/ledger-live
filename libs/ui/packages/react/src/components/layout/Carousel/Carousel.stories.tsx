@@ -15,7 +15,7 @@ const CarouselStory = () => {
     </div>
   ));
 
-  return <Carousel variant="content-card" children={slides} />;
+  return <Carousel children={slides} />;
 };
 
 export default {
