@@ -16,12 +16,14 @@ import {
   mapAsSmallSquareContentCard,
   mapAsMediumSquareContentCard,
   mapAsBigSquareContentCard,
+  mapAsHeroContentCard,
 } from "~/dynamicContent/utils";
 import Carousel, { WidthFactor } from "../../contentCards/layouts/carousel";
 import useDynamicContent from "../useDynamicContent";
 import { ContentCardsType } from "../types";
 import Grid from "~/contentCards/layouts/grid";
 import VerticalCard from "~/contentCards/cards/vertical";
+import HeroCard from "~/contentCards/cards/hero";
 
 // TODO : Better type to remove any (maybe use AnyContentCard)
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -46,6 +48,10 @@ const contentCardsTypes: {
   [ContentCardsType.action]: {
     contentCardComponent: HorizontalCard,
     mappingFunction: mapAsHorizontalContentCard,
+  },
+  [ContentCardsType.hero]: {
+    contentCardComponent: HeroCard,
+    mappingFunction: mapAsHeroContentCard,
   },
   // TODO : To remove once we extract category from ContentCardsType
   [ContentCardsType.category]: {
