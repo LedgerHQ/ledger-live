@@ -14,6 +14,7 @@ import {
   HorizontalContentCard,
   ContentCardsLayout,
   VerticalContentCard,
+  HeroContentCard,
 } from "~/dynamicContent/types";
 
 export const getMobileContentCards = (array: BrazeContentCard[]) =>
@@ -163,6 +164,18 @@ const mapAsSquareContentCard = (
   viewed: card.viewed,
   order: parseInt(card.extras.order) ? parseInt(card.extras.order) : undefined,
   carouselWidthFactor: widthFactor,
+});
+
+export const mapAsHeroContentCard = (card: BrazeContentCard): HeroContentCard => ({
+  id: card.id,
+  tag: card.extras.tag,
+  title: card.extras.title,
+  image: card.extras.image,
+  cta: card.extras.cta,
+  link: card.extras.link,
+  createdAt: card.created,
+  viewed: card.viewed,
+  order: parseInt(card.extras.order) ? parseInt(card.extras.order) : undefined,
 });
 
 export const mapAsSmallSquareContentCard = (card: BrazeContentCard): VerticalContentCard =>
