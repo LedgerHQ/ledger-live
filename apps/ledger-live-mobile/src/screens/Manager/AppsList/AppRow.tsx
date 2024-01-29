@@ -2,7 +2,7 @@ import React, { memo, useMemo, useCallback } from "react";
 
 import { App } from "@ledgerhq/types-live";
 
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { State, Action } from "@ledgerhq/live-common/apps/index";
 import { useNotEnoughMemoryToInstall } from "@ledgerhq/live-common/apps/react";
 import { Trans } from "react-i18next";
