@@ -1,10 +1,7 @@
 import { ProtoNFT } from "@ledgerhq/types-live";
 import { useMemo } from "react";
 import { useInfiniteQuery } from "react-query";
-import { useSelector } from "react-redux";
-import { accountsSelector, filteredNftsSelector } from "~/reducers/accounts";
-import { galleryChainFiltersSelector } from "~/reducers/nft";
-import { isEqual } from "lodash";
+
 import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 interface SimpleHashResponse {
   readonly next_cursor: string | null;
@@ -34,6 +31,12 @@ export interface SimpleHashNft {
   };
 }
 
+type Props = {
+  addresses: string[];
+  nftsOwned: ProtoNFT[];
+  chains: string[];
+};
+
 const SPAM_FILTER = true;
 const BASE_PATH = "https://simplehash.api.live.ledger.com/api/v0";
 const SPAM_FILTER_THRESHOLD = 80;
@@ -52,30 +55,14 @@ function mapAsPartialProtoNft(nfts: Array<SimpleHashNft>) {
   );
 }
 
-export function useNftGallery() {
-  const accounts = useSelector(accountsSelector);
-  const chainFilters = useSelector(galleryChainFiltersSelector);
-  const nftsOwned = useSelector(filteredNftsSelector, isEqual);
-
-  const whiteList = useMemo(
+export function useNftGallery({ addresses, nftsOwned, chains }: Props) {
+  const nftsWithProperties = useMemo(
     () =>
       new Map(
         nftsOwned.map(obj => [encodeNftId("", obj.contract, obj.tokenId, obj.currencyId), obj]),
       ),
     [nftsOwned],
   );
-  const addresses = useMemo(
-    () => [
-      ...new Set(
-        accounts.map(account => account.freshAddress).filter(addr => addr.startsWith("0x")),
-      ),
-    ],
-    [accounts],
-  );
-
-  const chains = Object.entries(chainFilters)
-    .filter(([_, value]) => value)
-    .map(([key, _]) => key);
 
   const url = useMemo(
     () =>
@@ -87,7 +74,7 @@ export function useNftGallery() {
     [addresses, chains],
   );
 
-  const result = useInfiniteQuery(
+  const queryResult = useInfiniteQuery(
     [url],
     async ({ pageParam }) => {
       const response = await fetch(`${url}${pageParam ? `&cursor=${pageParam}` : ""}`, {
@@ -106,7 +93,7 @@ export function useNftGallery() {
       const result = (await response.json()) as SimpleHashResponse;
       const res = mapAsPartialProtoNft(result.nfts);
 
-      return { ...result, nfts: res };
+      return { ...result, whiteList: res };
     },
     {
       enabled: !!addresses.length,
@@ -118,13 +105,13 @@ export function useNftGallery() {
   );
 
   return {
-    ...result,
+    ...queryResult,
 
     parsedData:
-      result.data?.pages
-        .flatMap(x => x?.nfts || [])
+      queryResult.data?.pages
+        .flatMap(x => x?.whiteList || [])
         .map(elem =>
-          whiteList.get(
+          nftsWithProperties.get(
             encodeNftId("", elem.contract ?? "", elem.tokenId ?? "", elem.currencyId ?? ""),
           ),
         )
