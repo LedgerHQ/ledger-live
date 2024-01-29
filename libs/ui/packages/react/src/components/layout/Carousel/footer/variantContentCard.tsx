@@ -1,7 +1,7 @@
 import { ArrowLeft, ArrowRight } from "@ledgerhq/icons-ui/react";
 import React from "react";
 import styled from "styled-components";
-import Pagination from "./pagination";
+import Pagination from "./Pagination";
 import { SubProps } from "../types";
 
 const FooterContainer = styled.div`

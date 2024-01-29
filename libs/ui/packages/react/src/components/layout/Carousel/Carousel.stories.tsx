@@ -1,7 +1,8 @@
 import React from "react";
 import Carousel from "./";
+import { Props } from "./types";
 
-const CarouselStory = () => {
+const CarouselStory = (args: Props) => {
   const slides = [...Array(5)].map((_, index) => (
     <div
       key={index}
@@ -15,7 +16,7 @@ const CarouselStory = () => {
     </div>
   ));
 
-  return <Carousel children={slides} />;
+  return <Carousel variant={args.variant} children={slides} />;
 };
 
 export default {
@@ -26,7 +27,13 @@ export default {
     },
     variant: {
       description: "Variant for the carousel.",
+      options: ["default", "content-card"],
+      defaultValue: "default",
+      control: { type: "select" },
     },
+  },
+  args: {
+    variant: "default",
   },
   parameters: {
     docs: {

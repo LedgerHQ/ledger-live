@@ -1,7 +1,7 @@
 import useEmblaCarousel from "embla-carousel-react";
 import React, { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
-import Footer from "./footer";
+import Footer from "./Footer";
 import { Props } from "./types";
 
 const Embla = styled.div`
