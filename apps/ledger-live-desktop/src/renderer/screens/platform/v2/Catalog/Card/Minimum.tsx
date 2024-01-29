@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import { Logo } from "./Logo";
 import { PropsRaw } from "./types";
@@ -11,7 +11,11 @@ export function MinimumCard(props: PropsRaw) {
   const { disabled, onClick } = useCard(props);
   const { manifest } = props;
 
-  const rtf = new Intl.RelativeTimeFormat(useSelector(languageSelector));
+  const lang = useSelector(languageSelector);
+  const usedAt = useMemo(() => {
+    const rtf = new Intl.RelativeTimeFormat(lang);
+    return rtf.format(-manifest.usedAt.diff, manifest.usedAt.unit);
+  }, [lang, manifest.usedAt.diff, manifest.usedAt.unit]);
 
   return (
     <Container disabled={disabled} onClick={onClick} width={300}>
@@ -22,7 +26,7 @@ export function MinimumCard(props: PropsRaw) {
           <Text overflow="hidden" whiteSpace="nowrap" textOverflow="ellipsis" fontSize={14}>
             {manifest.name}
           </Text>
-          <Subtitle>{rtf.format(-manifest.usedAt.diff, manifest.usedAt.unit)}</Subtitle>
+          <Subtitle>{usedAt}</Subtitle>
         </Flex>
       </Flex>
     </Container>
