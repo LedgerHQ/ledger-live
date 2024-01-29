@@ -85,8 +85,7 @@ import useAccountsWithFundsListener from "@ledgerhq/live-common/hooks/useAccount
 import { updateIdentify } from "./analytics";
 import { StorylyProvider } from "./components/StorylyStories/StorylyProvider";
 import { useSettings } from "~/hooks";
-
-import { QueryClient, QueryClientProvider } from "react-query";
+import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();

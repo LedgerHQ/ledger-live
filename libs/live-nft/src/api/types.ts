@@ -1,11 +1,9 @@
-import { ProtoNFT } from "@ledgerhq/types-live";
-
-interface SimpleHashResponse {
+export interface SimpleHashResponse {
   readonly next_cursor: string | null;
   readonly nfts: SimpleHashNft[];
 }
 
-interface SimpleHashNft {
+export interface SimpleHashNft {
   readonly nft_id: string;
   readonly chain: string;
   readonly contract_address: string;
@@ -28,13 +26,3 @@ interface SimpleHashNft {
     readonly animation_original_url: string;
   };
 }
-
-type HookProps = {
-  addresses: string[];
-  nftsOwned: ProtoNFT[];
-  chains: string[];
-};
-
-type PartialProtoNFT = Partial<ProtoNFT>;
-
-export type { HookProps, SimpleHashNft, SimpleHashResponse, PartialProtoNFT };
