@@ -6542,22 +6542,34 @@
       "subTitle": "Stake your ETH and grow your holdings by earning daily rewards directly into your Ledger Live.",
       "close": "Close",
       "providers": {
+        "kiln_pooling": {
+          "title": "Kiln staking pool",
+          "description": "Stake with no minimum. Earn auto-compounded rewards with no lock-up period.",
+          "supportLink": "Learn more about Kiln pooling",
+          "tag": "No minimum"
+        },
+        "stader-eth": {
+          "title": "Stader Labs",
+          "description": "Stake with no minimum. Earn auto-compounded rewards with access to instant liquidity.",
+          "supportLink": "Learn more about Stader",
+          "tag": "No minimum"
+        },
         "lido": {
           "title": "Earn with Lido",
-          "description": "Stake your Ethereum with Lido and earn rewards daily. No minimum ETH is required. No lock-up period.",
+          "description": "Stake any amount of ETH for instant liquidity and daily rewards.",
           "supportLink": "Learn more about Lido"
+        },
+        "figment": {
+          "title": "Figment",
+          "tag": "Requires 32 ETH",
+          "description": "Stake over 32 ETH on dedicated validators and get rewards automatically sent to your account.",
+          "supportLink": "Learn more about Figment"
         },
         "kiln": {
           "title": "Kiln dedicated staking",
           "tag": "Requires 32 ETH",
-          "description": "Stake with dedicated validators. Requires multiples of 32 ETH. Rewards are manually claimed. Exit anytime.",
-          "supportLink": "Learn more about Kiln validator"
-        },
-        "kiln_pooling": {
-          "title": "Kiln staking pool",
-          "description": "Join a staking pool. No minimum ETH is required. Rewards are compounded automatically. Exit anytime.",
-          "supportLink": "Learn more about Kiln pooling",
-          "tag": "No minimum"
+          "description": "Stake over 32 ETH on dedicated validators and easily claim rewards.",
+          "supportLink": "Learn more about Kiln"
         }
       }
     },
