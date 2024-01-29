@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import { SubProps, Variant } from "../types";
-import FooterContentCard from "./variant-contentCard";
-import FooterDefault from "./variant-default";
+import FooterContentCard from "./variantContentCard";
+import FooterDefault from "./variantDefault";
 
 const Footers: { [key in Variant]: FC<SubProps> } = {
   "content-card": FooterContentCard,

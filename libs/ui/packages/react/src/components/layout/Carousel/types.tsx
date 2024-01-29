@@ -1,14 +1,8 @@
 import { ReactElement } from "react";
 import { UseEmblaCarouselType } from "embla-carousel-react";
 
-/**
- * Carousel's variants.
- */
 export type Variant = "content-card" | "default";
 
-/**
- * Carousel's props.
- */
 export type Props = {
   children: ReactElement[];
   variant?: Variant;
