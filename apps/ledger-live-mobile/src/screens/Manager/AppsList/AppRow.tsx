@@ -50,22 +50,36 @@ const VersionContainer = styled(Flex).attrs({
   marginTop: 2,
 })``;
 
-const AppRow = ({ app, state, dispatch, setStorageWarning, optimisticState }: Props) => {
-  const { name, bytes, version: appVersion, displayName } = app;
-  const { installed, deviceInfo } = state;
+export default memo(function AppRow({
+  app,
+  state,
+  dispatch,
+  setStorageWarning,
+  optimisticState,
+}: Props) {
+  const { name: appName, version: appVersion, displayName } = app;
+  const { installed, deviceInfo, deviceModel } = state;
   const canBeInstalled = useMemo(() => manager.canHandleInstall(app), [app]);
 
-  const isInstalled = useMemo(() => installed.find(i => i.name === name), [installed, name]);
+  const installedApp = useMemo(
+    () => installed.find(({ name }) => name === appName),
+    [appName, installed],
+  );
 
-  const version = (isInstalled && isInstalled.version) || appVersion;
-  const availableVersion = (isInstalled && isInstalled.availableVersion) || appVersion;
+  const curVersion = installedApp?.version || appVersion;
+  const nextVersion = installedApp?.availableVersion ?? "";
 
-  const notEnoughMemoryToInstall = useNotEnoughMemoryToInstall(optimisticState, name);
+  const notEnoughMemoryToInstall = useNotEnoughMemoryToInstall(optimisticState, appName);
 
-  const onSizePress = useCallback(() => setStorageWarning(name), [setStorageWarning, name]);
+  const onSizePress = useCallback(() => setStorageWarning(appName), [setStorageWarning, appName]);
+
+  const appBytes = useMemo(
+    () => (installedApp?.blocks || 0) * deviceModel.getBlockSize(deviceInfo.version) || app.bytes,
+    [app.bytes, deviceInfo.version, deviceModel, installedApp?.blocks],
+  );
 
   return (
-    <RowContainer disabled={!isInstalled && !canBeInstalled}>
+    <RowContainer disabled={!installedApp && !canBeInstalled}>
       <AppIcon app={app} size={48} />
       <LabelContainer>
         <Text numberOfLines={1} variant="body" fontWeight="semiBold" color="neutral.c100">
@@ -73,14 +87,14 @@ const AppRow = ({ app, state, dispatch, setStorageWarning, optimisticState }: Pr
         </Text>
         <VersionContainer borderColor="neutral.c40">
           <Text numberOfLines={1} variant="tiny" color="neutral.c80" fontWeight="semiBold">
-            <Trans i18nKey="ApplicationVersion" values={{ version }} />
-            {isInstalled && !isInstalled.updated && (
+            <Trans i18nKey="ApplicationVersion" values={{ version: curVersion }} />
+            {installedApp && !installedApp.updated && (
               <>
                 {" "}
                 <Trans
                   i18nKey="manager.appList.versionNew"
                   values={{
-                    newVersion: availableVersion !== version ? ` ${availableVersion}` : "",
+                    newVersion: nextVersion,
                   }}
                 />
               </>
@@ -89,22 +103,16 @@ const AppRow = ({ app, state, dispatch, setStorageWarning, optimisticState }: Pr
         </VersionContainer>
       </LabelContainer>
       <Text variant="body" fontWeight="medium" color="neutral.c70" my={3}>
-        <ByteSize
-          value={bytes}
-          deviceModel={state.deviceModel}
-          firmwareVersion={deviceInfo.version}
-        />
+        <ByteSize value={appBytes} deviceModel={deviceModel} firmwareVersion={deviceInfo.version} />
       </Text>
       <AppStateButton
         app={app}
         state={state}
         dispatch={dispatch}
         notEnoughMemoryToInstall={notEnoughMemoryToInstall}
-        isInstalled={!!isInstalled}
+        isInstalled={!!installedApp}
         storageWarning={onSizePress}
       />
     </RowContainer>
   );
-};
-
-export default memo(AppRow);
+});
