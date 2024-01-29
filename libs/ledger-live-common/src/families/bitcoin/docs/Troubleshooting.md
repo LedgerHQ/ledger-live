@@ -16,7 +16,7 @@ Mostly due to UTXO calculation errors, using already spent UTXOs as inputs for n
 #### Debugging Steps
 1. **Find Account ID in Ledger Live:** Look for a unique ID in the account's settings page.
 2. **Check `app.json` File:** This file contains all account IDs in the current Ledger Live.
-3. **Bitcoin ID Components:** For Bitcoin, the ID contains currency id(bitcoin, dogecoin...) and xpub and a derivation mode (legacy, segwit, native_segwit, taproot). e.g. `js:2:bitcoin:xpub6C3xxFdpsuBPQegeJHvf1G6YMRkay4YJCERUmsWW3DbfcREPeEbcML7nmk79AMgcCu1YkC5CA2s1TZ5ubmVsWuEr7N97X6z2vtrpRzvQbhG:native_segwit`
+3. **Bitcoin ID Components:** For Bitcoin, the ID contains a currency id(bitcoin, dogecoin...) and a xpub and a derivation mode (legacy, segwit, native_segwit, taproot). e.g. `js:2:bitcoin:xpub6C3xxFdpsuBPQegeJHvf1G6YMRkay4YJCERUmsWW3DbfcREPeEbcML7nmk79AMgcCu1YkC5CA2s1TZ5ubmVsWuEr7N97X6z2vtrpRzvQbhG:native_segwit`
 4. **Retrieve Account Data:** Use CLI tool with the ID to get the account's UTXOs, transactions, and balance.
 
 ##### Example Commands
@@ -48,17 +48,17 @@ curl -X POST https://explorers.api.live.ledger.com/blockchain/v4/doge/tx/send
 -H "Content-Type: application/json"
 -d '{ "tx": "0200000004adb06f542f75ad3677ea505215f4..." }'
 ```
-2. **Check response error from our explorer:** If an error is returned, further debugging can be conducted based on the error information.
+2. **Check response error from our explorer:** If an error from step 1 is returned, further debugging can be conducted based on the error information.
 3. **Decode Transaction:** Use [BlockCypher](https://live.blockcypher.com/btc/decodetx/) to decode the transaction. This allows us to see the specific details of the transaction, such as inputs, outputs, etc., enabling more in-depth debugging.
 
 ### Error 3: Sync Issues in Ledger Live
 
 #### Description
-Sync account errors in Ledger Live, indicated by UI errors. These can be due to exceptions thrown in the program or errors returned by backend endpoints.
+Sync account errors in Ledger Live, indicated by UI errors. These can be due to exceptions thrown in the typescript code or errors returned by backend endpoints.
 
 #### Debugging Steps
 1. **Use Dev Tools:** Start Ledger Live Desktop with `pnpm dev:lld:debug` and check the console for errors.
-2. **Inspect Backend Responses:** Look for HTTP request and response details in the network tab.
+2. **Inspect Backend Responses:** Look for HTTP request and response details in the network tab to find potential http errors.
 
 ### Error 4: Bridge Integration Test Failures
 
