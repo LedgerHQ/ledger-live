@@ -3,13 +3,13 @@ import { snakeCase } from "lodash";
 import semver from "semver";
 import { Feature, FeatureId } from "@ledgerhq/types-live";
 import { getEnv } from "@ledgerhq/live-env";
-import { LiveConfig } from "./LiveConfig";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 
 export type FirebaseFeatureFlagsProviderProps = PropsWithChildren<unknown>;
 export const formatToFirebaseFeatureId = (id: string) => `feature_${snakeCase(id)}`;
 
 export const checkFeatureFlagVersion = (feature: Feature) => {
-  const platform = LiveConfig.getInstance().platform;
+  const platform = LiveConfig.instance.platform;
   if (!feature?.enabled || !platform) {
     return feature;
   }
@@ -26,7 +26,7 @@ export const checkFeatureFlagVersion = (feature: Feature) => {
   })();
   if (
     featureSpecificVersion &&
-    !semver.satisfies(LiveConfig.getInstance().appVersion, featureSpecificVersion, {
+    !semver.satisfies(LiveConfig.instance.appVersion, featureSpecificVersion, {
       includePrerelease: true,
     })
   ) {
@@ -40,14 +40,12 @@ export const checkFeatureFlagVersion = (feature: Feature) => {
 };
 
 export const isFeature = (key: string): boolean => {
-  if (!LiveConfig.getInstance().providerGetvalueMethod) {
+  if (!LiveConfig.instance?.provider?.getValueByKey) {
     return false;
   }
   try {
-    const value = LiveConfig.getInstance().providerGetvalueMethod!["firebaseRemoteConfig"](
-      formatToFirebaseFeatureId(key),
-    );
-    if (!value || !value.asString()) {
+    const value = LiveConfig.getValueByKey(formatToFirebaseFeatureId(key));
+    if (!value) {
       return false;
     }
     return true;
@@ -63,7 +61,7 @@ export const getFeature = (args: {
   localOverrides?: { [key in FeatureId]?: Feature };
   allowOverride?: boolean;
 }) => {
-  if (!LiveConfig.getInstance().providerGetvalueMethod) {
+  if (!LiveConfig.instance?.provider?.getValueByKey) {
     return null;
   }
   const { key, appLanguage, localOverrides, allowOverride = true } = args;
@@ -87,13 +85,7 @@ export const getFeature = (args: {
           overriddenByEnv: true,
         };
     }
-
-    const value = LiveConfig.getInstance().providerGetvalueMethod!["firebaseRemoteConfig"](
-      formatToFirebaseFeatureId(key),
-    );
-
-    const feature = JSON.parse(value.asString());
-
+    const feature = LiveConfig.getValueByKey(formatToFirebaseFeatureId(key));
     if (
       feature.enabled &&
       appLanguage &&

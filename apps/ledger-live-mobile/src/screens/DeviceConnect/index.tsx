@@ -5,7 +5,7 @@ import { TFunction, useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Flex } from "@ledgerhq/native-ui";
 import { TrackScreen } from "~/analytics";
 import SelectDevice2, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";

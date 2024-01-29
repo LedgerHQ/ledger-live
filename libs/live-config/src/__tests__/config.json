@@ -1,0 +1,9 @@
+{
+    "developer_mode": true,
+    "app_name": "test app",
+    "requests_per_seconds": 8,
+    "explorer": {
+        "url": "https://myexplorer1.com",
+        "supportedCurrencies": ["btc", "eth"]
+    }
+}

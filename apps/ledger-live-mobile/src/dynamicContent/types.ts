@@ -8,6 +8,7 @@ enum ContentCardsType {
   bigSquare = "big_square",
   action = "action",
   category = "category",
+  hero = "hero",
 }
 
 enum ContentCardsLayout {
@@ -92,6 +93,14 @@ type HorizontalContentCard = ContentCardCommonProperties & {
   image?: string;
 };
 
+type HeroContentCard = ContentCardCommonProperties & {
+  title?: string;
+  image?: string;
+  tag?: string;
+  cta: string;
+  link?: string;
+};
+
 type VerticalContentCard = ContentCardCommonProperties & {
   tag?: string;
   title?: string;
@@ -99,6 +108,7 @@ type VerticalContentCard = ContentCardCommonProperties & {
   description?: string;
   image?: string;
   price?: string;
+  cta?: string;
   size: Size;
 };
 
@@ -108,6 +118,7 @@ type AnyContentCard =
   | AssetContentCard
   | LearnContentCard
   | NotificationContentCard
+  | HeroContentCard
   | HorizontalContentCard
   | VerticalContentCard;
 
@@ -119,6 +130,7 @@ export type {
   LearnContentCard,
   CategoryContentCard,
   HorizontalContentCard,
+  HeroContentCard,
   VerticalContentCard,
   BrazeContentCard,
   AnyContentCard,

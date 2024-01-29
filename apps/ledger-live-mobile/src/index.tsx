@@ -14,7 +14,7 @@ import { useCountervaluesExport } from "@ledgerhq/live-countervalues-react";
 import { pairId } from "@ledgerhq/live-countervalues/helpers";
 import { NftMetadataProvider } from "@ledgerhq/live-common/nft/index";
 import { ToastProvider } from "@ledgerhq/live-common/notifications/ToastProvider/index";
-
+import "./config/configInit";
 import { isEqual } from "lodash";
 import { postOnboardingSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import Config from "react-native-config";
@@ -82,9 +82,6 @@ import {
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import useAccountsWithFundsListener from "@ledgerhq/live-common/hooks/useAccountsWithFundsListener";
 import { updateIdentify } from "./analytics";
-import { LiveConfig } from "@ledgerhq/live-config/featureFlags/index";
-import VersionNumber from "react-native-version-number";
-import { Platform } from "react-native";
 import { StorylyProvider } from "./components/StorylyStories/StorylyProvider";
 import { useSettings } from "~/hooks";
 
@@ -103,12 +100,6 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
   },
-});
-
-LiveConfig.init({
-  appVersion: VersionNumber.appVersion,
-  platform: Platform.OS,
-  environment: process.env.NODE_ENV ?? "development",
 });
 
 function App() {

@@ -24,7 +24,7 @@ import { flattenAccountsSelector, shallowAccountsSelector } from "~/renderer/red
 import { trackSwapError, useGetSwapTrackingProperties } from "../utils/index";
 import ExchangeDrawer from "./ExchangeDrawer/index";
 import SwapFormSelectors from "./FormSelectors";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 import useRefreshRates from "./hooks/useRefreshRates";
 import LoadingState from "./Rates/LoadingState";
@@ -351,7 +351,7 @@ const SwapForm = () => {
   const onSubmit = () => {
     if (!exchangeRate) return;
 
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "Request",
       page: "Page Swap Form",
       ...swapDefaultTrack,

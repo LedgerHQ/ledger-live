@@ -366,29 +366,29 @@ const EarlySecurityChecks = ({
         modelName={productName}
         updateSkippable={latestFirmware?.final.id === fwUpdateInterrupted?.id}
         onClickStartChecks={() => {
-          track("button_clicked", { button: "Start checks" });
+          track("button_clicked2", { button: "Start checks" });
           setGenuineCheckStatus(SoftwareCheckStatus.active);
           resetGenuineCheckState();
         }}
         onClickWhyPerformSecurityChecks={() => {
-          track("button_clicked", { button: "Why perform these security checks" });
+          track("button_clicked2", { button: "Why perform these security checks" });
           openURL(whySecurityChecksUrl);
         }}
         onClickResumeGenuineCheck={() => {
-          track("button_clicked", { button: "Resume genuine check" });
+          track("button_clicked2", { button: "Resume genuine check" });
           setGenuineCheckStatus(SoftwareCheckStatus.active);
           resetGenuineCheckState();
         }}
         onClickViewUpdate={() => {
-          track("button_clicked", { button: "View update" });
+          track("button_clicked2", { button: "View update" });
           startFirmwareUpdate();
         }}
         onClickSkipUpdate={() => {
-          track("button_clicked", { button: "Skip update" });
+          track("button_clicked2", { button: "Skip update" });
           handleCompletion();
         }}
         onClickContinueToSetup={() => {
-          track("button_clicked", { button: "Continue to setup" });
+          track("button_clicked2", { button: "Continue to setup" });
           handleCompletion();
         }}
         onClickRetryUpdate={() => {

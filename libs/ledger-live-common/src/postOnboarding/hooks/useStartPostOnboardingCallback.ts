@@ -2,7 +2,7 @@ import { useDispatch } from "react-redux";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { usePostOnboardingContext } from "./usePostOnboardingContext";
 import { useCallback } from "react";
-import { useFeatureFlags } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeatureFlags } from "../../featureFlags";
 import { initPostOnboarding, postOnboardingSetFinished } from "../actions";
 
 type StartPostOnboardingOptions = {

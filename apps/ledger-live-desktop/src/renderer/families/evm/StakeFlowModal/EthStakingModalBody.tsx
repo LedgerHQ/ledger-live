@@ -52,7 +52,7 @@ export function EthStakingModalBody({
     }: StakeOnClickProps) => {
       const value = `/platform/${liveAppId}`;
       const customDappUrl = queryParams && appendQueryParamsToDappURL(manifest, queryParams);
-      track("button_clicked", {
+      track("button_clicked2", {
         button: providerConfigID,
         ...getTrackProperties({ value, modal: source }),
       });
@@ -70,7 +70,7 @@ export function EthStakingModalBody({
 
   const infoOnClick = useCallback(({ supportLink, id: providerConfigID }: ListProvider) => {
     if (supportLink) {
-      track("button_clicked", {
+      track("button_clicked2", {
         button: `learn_more_${providerConfigID}`,
         ...getTrackProperties({ value: supportLink }),
         link: supportLink,
@@ -92,7 +92,7 @@ export function EthStakingModalBody({
     const value = !doNotShowAgain;
     global.localStorage.setItem(`${LOCAL_STORAGE_KEY_PREFIX}${account?.currency?.id}`, `${value}`);
     setDoNotShowAgain(value);
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "not_show",
       ...getTrackProperties({ value, modal: source }),
     });

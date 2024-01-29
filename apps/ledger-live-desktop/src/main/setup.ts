@@ -1,12 +1,11 @@
 import "./env";
 import "~/live-common-setup-base";
 import { captureException } from "~/sentry/main";
-import { ipcMain } from "electron";
+import { app, ipcMain, shell } from "electron";
 import contextMenu from "electron-context-menu";
 import { log } from "@ledgerhq/logs";
 import fs from "fs/promises";
 import updater from "./updater";
-import resolveUserDataDirectory from "~/helpers/resolveUserDataDirectory";
 import path from "path";
 import { InMemoryLogger } from "./logger";
 import { setEnvUnsafe } from "@ledgerhq/live-env";
@@ -68,6 +67,12 @@ ipcMain.handle(
   },
 );
 
+ipcMain.handle("openUserDataDirectory", () => shell.openPath(app.getPath("userData")));
+
+ipcMain.handle("getPathUserData", () => app.getPath("userData"));
+
+ipcMain.handle("getPathHome", () => app.getPath("home"));
+
 ipcMain.handle(
   "export-operations",
   async (
@@ -92,7 +97,7 @@ ipcMain.handle(
 
 const lssFileName = "lss.json";
 ipcMain.handle("generate-lss-config", async (event, data: string): Promise<boolean> => {
-  const userDataDirectory = resolveUserDataDirectory();
+  const userDataDirectory = app.getPath("userData");
   const filePath = path.resolve(userDataDirectory, lssFileName);
   if (filePath) {
     if (filePath && data) {
@@ -105,7 +110,7 @@ ipcMain.handle("generate-lss-config", async (event, data: string): Promise<boole
 });
 
 ipcMain.handle("delete-lss-config", async (): Promise<boolean> => {
-  const userDataDirectory = resolveUserDataDirectory();
+  const userDataDirectory = app.getPath("userData");
   const filePath = path.resolve(userDataDirectory, lssFileName);
   if (filePath) {
     await fs.unlink(filePath);
@@ -117,7 +122,7 @@ ipcMain.handle("delete-lss-config", async (): Promise<boolean> => {
 
 ipcMain.handle("load-lss-config", async (): Promise<string | undefined | null> => {
   try {
-    const userDataDirectory = resolveUserDataDirectory();
+    const userDataDirectory = app.getPath("userData");
     const filePath = path.resolve(userDataDirectory, lssFileName);
     if (filePath) {
       const contents = await fs.readFile(filePath, "utf8");

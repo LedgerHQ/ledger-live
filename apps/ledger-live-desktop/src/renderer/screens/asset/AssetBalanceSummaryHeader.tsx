@@ -17,7 +17,7 @@ import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import useStakeFlow from "~/renderer/screens/stake";
 import { stakeDefaultTrack } from "~/renderer/screens/stake/constants";
 import { BalanceHistoryWithCountervalue, ValueChange } from "@ledgerhq/types-live";
@@ -95,7 +95,7 @@ export default function AssetBalanceSummaryHeader({
   }, [currency.id, history]);
 
   const onSwap = useCallback(() => {
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "swap",
       currency: currency?.ticker,
       page: "Page Asset",
@@ -111,7 +111,7 @@ export default function AssetBalanceSummaryHeader({
   }, [currency, history, swapDefaultTrack]);
 
   const onStake = useCallback(() => {
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "stake",
       currency: currency?.ticker,
       page: "Page Asset",

@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { useFeatureFlags } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
 import { Text, Flex, Tag } from "@ledgerhq/react-ui";
 import { FeatureId } from "@ledgerhq/types-live";
 import Box from "~/renderer/components/Box";

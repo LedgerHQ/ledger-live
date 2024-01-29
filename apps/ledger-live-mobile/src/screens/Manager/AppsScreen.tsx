@@ -9,7 +9,7 @@ import {
   predictOptimisticState,
   reducer,
 } from "@ledgerhq/live-common/apps/index";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { App, DeviceInfo } from "@ledgerhq/types-live";
 import { useAppsSections } from "@ledgerhq/live-common/apps/react";
 
@@ -19,7 +19,7 @@ import { Trans } from "react-i18next";
 import { ListAppsResult } from "@ledgerhq/live-common/apps/types";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { AppType, SortOptions } from "@ledgerhq/live-common/apps/filtering";
-import useLatestFirmware from "@ledgerhq/live-common/hooks/useLatestFirmware";
+import { useLatestFirmware } from "@ledgerhq/live-common/device/hooks/useLatestFirmware";
 import { ManagerTab } from "~/const/manager";
 
 import AppFilter from "./AppsList/AppFilter";

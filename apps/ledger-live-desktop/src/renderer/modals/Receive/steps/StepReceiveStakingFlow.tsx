@@ -2,7 +2,7 @@ import React, { useCallback, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { Flex, Text, IconsLegacy, Link } from "@ledgerhq/react-ui";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { StepProps } from "../Body";
 import StakingIllustration from "../assets/StakingIllustration";
 import { track } from "~/renderer/analytics/segment";
@@ -55,7 +55,7 @@ const StepReceiveStakingFlow = (props: StepProps) => {
   }, []);
 
   const openLink = useCallback(() => {
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "learn_more",
       ...getTrackProperties(),
       link: supportLink,
@@ -70,7 +70,7 @@ const StepReceiveStakingFlow = (props: StepProps) => {
     const value = !doNotShowAgain;
     global.localStorage.setItem(`${LOCAL_STORAGE_KEY_PREFIX}${id}`, "" + value);
     setDoNotShowAgain(value);
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "not_show",
       ...getTrackProperties(),
       value,
@@ -136,7 +136,7 @@ export const StepReceiveStakingFooter = (props: StepProps) => {
 
   const onStake = useCallback(() => {
     if (action && "onClick" in action && action?.onClick) {
-      track("button_clicked", {
+      track("button_clicked2", {
         button: "stake",
         ...getTrackProperties(),
       });
@@ -149,7 +149,7 @@ export const StepReceiveStakingFooter = (props: StepProps) => {
   }, [action, closeModal, getTrackProperties]);
 
   const onCloseModal = useCallback(() => {
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "skip",
       ...getTrackProperties(),
     });

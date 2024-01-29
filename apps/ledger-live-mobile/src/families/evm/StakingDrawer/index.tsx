@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { Button, Flex } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { EvmStakingDrawerBody } from "./EvmStakingDrawerBody";
