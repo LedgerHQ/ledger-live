@@ -7,7 +7,7 @@ import { CommonActions } from "@react-navigation/native";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import isFirmwareUpdateVersionSupported from "@ledgerhq/live-common/hw/isFirmwareUpdateVersionSupported";
-import useLatestFirmware from "@ledgerhq/live-common/hooks/useLatestFirmware";
+import { useLatestFirmware } from "@ledgerhq/live-common/device/hooks/useLatestFirmware";
 import { useApps } from "./shared";
 import AppsScreen from "./AppsScreen";
 import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";

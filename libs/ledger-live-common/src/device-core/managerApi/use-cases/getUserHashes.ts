@@ -1,5 +1,7 @@
-import { sha256 } from "./crypto";
-
+import sha from "sha.js";
+function sha256(buffer: Buffer | string) {
+  return sha("sha256").update(buffer).digest();
+}
 const userHashesPerUserId = (userId: string) => {
   const firmwareSalt = sha256(userId + "|firmwareSalt")
     .toString("hex")
