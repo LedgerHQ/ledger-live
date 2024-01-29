@@ -20,7 +20,7 @@ import {
 import { decodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 import { getNftCapabilities } from "@ledgerhq/coin-framework/nft/support";
 import { useNftMetadata, useNftCollectionMetadata } from "@ledgerhq/live-nft-react";
-import { getFloorPrice } from "@ledgerhq/live-nft/api";
+import { getFloorPrice } from "@ledgerhq/live-nft/api/index";
 import { BigNumber } from "bignumber.js";
 import { useDispatch, useSelector } from "react-redux";
 import { Box, Button, IconsLegacy, Text, Flex } from "@ledgerhq/native-ui";

@@ -1,6 +1,6 @@
 import React, { useMemo, useCallback, useState, useEffect, memo } from "react";
 import { useNftMetadata, useNftCollectionMetadata } from "@ledgerhq/live-nft-react";
-import { getFloorPrice } from "@ledgerhq/live-nft/api";
+import { getFloorPrice } from "@ledgerhq/live-nft/api/index";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
