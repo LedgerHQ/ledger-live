@@ -22,6 +22,8 @@ import { useRedirectToSwapHistory } from "../utils/index";
 
 import { captureException } from "~/sentry/internal";
 import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { usePTXCustomHandlers } from "~/renderer/components/WebPTXPlayer/CustomHandlers";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
 const isDevelopment = process.env.NODE_ENV === "development";
 
@@ -67,6 +69,24 @@ export const SwapWebManifestIDs = {
   Demo1: "swap-live-app-demo-1",
 };
 
+// todo clean see apps/ledger-live-mobile/src/screens/Platform/LiveApp.tsx
+const defaultManifest: LiveAppManifest = {
+  id: "string",
+  name: "string",
+  url: "",
+  homepageUrl: "",
+  platforms: [],
+  apiVersion: "1",
+  manifestVersion: "",
+  branch: "soon",
+  permissions: [],
+  domains: [],
+  categories: [],
+  currencies: [],
+  visibility: "deep",
+  content: { description: { en: "" }, shortDescription: { en: "" } },
+};
+
 export const useSwapLiveAppManifestID = () => {
   const demo0 = useFeature("ptxSwapLiveAppDemoZero");
   const demo1 = useFeature("ptxSwapLiveAppDemoOne");
@@ -105,10 +125,11 @@ const SwapWebView = ({ manifestID, swapState, liveAppUnavailable }: SwapWebProps
 
   const hasManifest = !!manifest;
   const hasSwapState = !!swapState;
-
+  const customPTXHandlers = usePTXCustomHandlers(manifest ?? defaultManifest);
   const customHandlers = useMemo(() => {
     return {
       ...loggerHandlers,
+      ...customPTXHandlers,
       "custom.swapStateGet": () => {
         return Promise.resolve(swapState);
       },
@@ -187,6 +208,7 @@ const SwapWebView = ({ manifestID, swapState, liveAppUnavailable }: SwapWebProps
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [webviewState.url]);
 
+  // return loader???
   if (!hasManifest || !hasSwapState) {
     return null;
   }
