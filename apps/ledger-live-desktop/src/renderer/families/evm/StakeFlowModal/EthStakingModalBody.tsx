@@ -97,9 +97,7 @@ export function EthStakingModalBody({
 
   const has32Eth = account.spendableBalance.isGreaterThan(eth(32));
 
-  const listProvidersSorted = listProviders.sort((a, b) =>
-    has32Eth ? descending(a, b) : ascending(a, b),
-  );
+  const listProvidersSorted = listProviders.sort(has32Eth ? descending : ascending);
 
   return (
     <Flex flexDirection={"column"} alignItems="center" width={"100%"}>
