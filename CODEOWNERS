@@ -20,6 +20,8 @@ libs/ui/                                                 @ledgerhq/live-hub
 libs/live-hooks/										 @ledgerhq/live-hub
 libs/live-countervalues/								 @ledgerhq/live-hub
 libs/live-countervalues-react/ 						     @ledgerhq/live-hub
+libs/live-nft/                                           @ledgerhq/live-hub
+libs/live-nft-react/                                     @ledgerhq/live-hub
 
 # Blockchain team
 .github/**/bot-*.yml                                     @ledgerhq/live-blockchain-support

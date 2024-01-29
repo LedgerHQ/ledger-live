@@ -12,7 +12,7 @@ import {
   getTransactionExplorer as getDefaultTransactionExplorer,
 } from "@ledgerhq/live-common/explorers";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { useNftMetadata } from "@ledgerhq/live-common/nft/NftMetadataProvider/index";
+import { useNftMetadata } from "@ledgerhq/live-nft-react";
 import {
   findOperationInAccount,
   getOperationAmountNumber,
