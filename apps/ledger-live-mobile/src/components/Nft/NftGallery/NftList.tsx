@@ -168,22 +168,28 @@ const NftList = ({ data, hasNextPage, fetchNextPage, isLoading }: Props) => {
           marginBottom: multiSelectModeEnabled ? 0 : space[3],
         }}
         ListFooterComponent={
-          hasNextPage ? (
+          !isLoading && hasNextPage ? (
             <Flex paddingBottom={25} paddingTop={25}>
-              <InfiniteLoader />
+              <InfiniteLoader color="yellow" />
             </Flex>
           ) : null
         }
         ListEmptyComponent={
-          <EmptyState
-            onPress={() => {
-              track("button_clicked", {
-                button: "Reset Filters",
-                page: ScreenName.WalletNftGallery,
-              });
-              openFilterDrawer();
-            }}
-          />
+          isLoading ? (
+            <Flex flexGrow={1} justifyContent="center" paddingBottom={150}>
+              <InfiniteLoader />
+            </Flex>
+          ) : (
+            <EmptyState
+              onPress={() => {
+                track("button_clicked", {
+                  button: "Reset Filters",
+                  page: ScreenName.WalletNftGallery,
+                });
+                openFilterDrawer();
+              }}
+            />
+          )
         }
         data={data.length > 0 ? dataWithAdd : data}
         renderItem={renderItem}

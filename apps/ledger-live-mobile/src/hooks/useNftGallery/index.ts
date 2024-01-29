@@ -72,13 +72,14 @@ export function useNftGallery({ addresses, nftsOwned, chains }: HookProps) {
 
   return {
     ...queryResult,
-    nfts: queryResult.data?.pages
-      .flatMap(x => x?.whiteList || [])
-      .map(elem =>
-        nftsWithProperties.get(
-          encodeNftId("", elem.contract ?? "", elem.tokenId ?? "", elem.currencyId ?? ""),
-        ),
-      )
-      .filter(Boolean) as ProtoNFT[],
+    nfts:
+      (queryResult.data?.pages
+        .flatMap(x => x?.whiteList || [])
+        .map(elem =>
+          nftsWithProperties.get(
+            encodeNftId("", elem.contract ?? "", elem.tokenId ?? "", elem.currencyId ?? ""),
+          ),
+        )
+        .filter(Boolean) as ProtoNFT[]) || [],
   };
 }
