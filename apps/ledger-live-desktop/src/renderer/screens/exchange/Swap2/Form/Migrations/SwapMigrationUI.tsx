@@ -79,19 +79,20 @@ export const SwapMigrationUI = (props: SwapMigrationUIProps) => {
     return allNativeUI;
   }
 
-  switch (manifestID) {
-    /**
-     * Demo 0 live app should only contain Exchange Button
-     * Rest should be in native UI (e.g quotes)
-     */
-    case SwapWebManifestIDs.Demo0:
+  switch (true) {
+    case manifestID?.startsWith(SwapWebManifestIDs.Demo0):
+      /**
+       * Demo 0 live app should only contain Exchange Button
+       * Rest should be in native UI (e.g quotes)
+       */
       return (
         <>
           {nativeQuotesUI}
           {liveApp}
         </>
       );
-    case SwapWebManifestIDs.Demo1:
+
+    case manifestID?.startsWith(SwapWebManifestIDs.Demo1):
       /**
        * Demo 1 live app should contain:
        *  - Exchange Button
