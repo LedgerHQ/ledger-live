@@ -16,21 +16,20 @@ Mostly due to UTXO calculation errors, using already spent UTXOs as inputs for n
 #### Debugging Steps
 1. **Find Account ID in Ledger Live:** Look for a unique ID in the account's settings page.
 2. **Check `app.json` File:** This file contains all account IDs in the current Ledger Live.
-3. **Bitcoin ID Components:** For Bitcoin, the ID contains xpub and a derivation mode (legacy, segwit, native_segwit, taproot). e.g. `js:2:bitcoin:xpub6C3xxFdpsuBPQegeJHvf1G6YMRkay4YJCERUmsWW3DbfcREPeEbcML7nmk79AMgcCu1YkC5CA2s1TZ5ubmVsWuEr7N97X6z2vtrpRzvQbhG:native_segwit`
+3. **Bitcoin ID Components:** For Bitcoin, the ID contains currency id(bitcoin, dogecoin...) and xpub and a derivation mode (legacy, segwit, native_segwit, taproot). e.g. `js:2:bitcoin:xpub6C3xxFdpsuBPQegeJHvf1G6YMRkay4YJCERUmsWW3DbfcREPeEbcML7nmk79AMgcCu1YkC5CA2s1TZ5ubmVsWuEr7N97X6z2vtrpRzvQbhG:native_segwit`
 4. **Retrieve Account Data:** Use CLI tool with the ID to get the account's UTXOs, transactions, and balance.
 
 ##### Example Commands
 - Bitcoin (native_segwit):
-pnpm run:cli sync --id js:2:bitcoin:xpub6C3xxFdpsuBPQegeJHvf1G6YMRkay4YJCERUmsWW3DbfcREPeEbcML7nmk79AMgcCu1YkC5CA2s1TZ5ubmVsWuEr7N97X6z2vtrpRzvQbhG:native_segwit
+```pnpm run:cli sync --id js:2:bitcoin:xpub6C3xxFdpsuBPQegeJHvf1G6YMRkay4YJCERUmsWW3DbfcREPeEbcML7nmk79AMgcCu1YkC5CA2s1TZ5ubmVsWuEr7N97X6z2vtrpRzvQbhG:native_segwit```
 - Dogecoin (legacy):
-pnpm run:cli sync --id js:2:dogecoin:dgub8rLBz9DzvDxQTL2JqCcwRwzdz53mYZFNim9pPNM2np5BRFaoFfsV13wkhC43ENdSXYgc2tRvztLmtW7jDjArjaqsU1xJDKAwNLpJax9c38h:
+```pnpm run:cli sync --id js:2:dogecoin:dgub8rLBz9DzvDxQTL2JqCcwRwzdz53mYZFNim9pPNM2np5BRFaoFfsV13wkhC43ENdSXYgc2tRvztLmtW7jDjArjaqsU1xJDKAwNLpJax9c38h:```
 
 The CLI tool returns transactions, UTXOs for each address and the overall balance for the account.
 
-#### Additional Resources
-- Compare against public Bitcoin explorers like [Wallet Explorer](https://www.walletexplorer.com/) or [Blockchain.com Explorer](https://www.blockchain.com/explorer) to identify problematic Bitcoin addresses for further debugging.
+5. **Identify problematic addresses:** Compare against public Bitcoin explorers like [Wallet Explorer](https://www.walletexplorer.com/) or [Blockchain.com Explorer](https://www.blockchain.com/explorer) to identify problematic Bitcoin addresses for further debugging.
 
-A potential issue is incorrect transactions returned by Ledger Live's REST API call to:
+6. **Check backend response:** A potential issue is incorrect transactions returned by Ledger Live's REST API call to:
 https://explorers.api.live.ledger.com/blockchain/v4/[coin]/address/[address]/txs?batch_size=1000&order=ascending
 e.g. to fetch transactions of a bitcoin address:
 https://explorers.api.live.ledger.com/blockchain/v4/btc/address/bc1qhspn08x9yyy2w6lqsz3re4qa2k753c0zw3wq8x/txs?batch_size=1000&order=ascending
@@ -43,10 +42,14 @@ An error occurs when Ledger Live broadcasts a transaction by calling an HTTP RES
 
 #### Debugging Steps
 1. **Manual Broadcast:** Manually call the REST API to broadcast the transaction.
+Example: transaction hex: "0200000004adb06f542f75ad3677ea505215f4..."
+```
 curl -X POST https://explorers.api.live.ledger.com/blockchain/v4/doge/tx/send
 -H "Content-Type: application/json"
 -d '{ "tx": "0200000004adb06f542f75ad3677ea505215f4..." }'
-2. **Decode Transaction:** Use [BlockCypher](https://live.blockcypher.com/btc/decodetx/) to decode the transaction.
+```
+2. **Check response error from our explorer:** If an error is returned, further debugging can be conducted based on the error information.
+3. **Decode Transaction:** Use [BlockCypher](https://live.blockcypher.com/btc/decodetx/) to decode the transaction. This allows us to see the specific details of the transaction, such as inputs, outputs, etc., enabling more in-depth debugging.
 
 ### Error 3: Sync Issues in Ledger Live
 
@@ -64,7 +67,7 @@ Failures in `bridge.integration.test.ts` may be due to nano app updates or `hw-a
 
 #### Debugging Steps
 - Update APDU datasets using:
-pnpm run:cli generateTestScanAccounts -c [mycoin]
+```pnpm run:cli generateTestScanAccounts -c [mycoin]```
 - For comprehensive details on handling bridge integration tests and APDU updates, please refer to [Ledger Developers Documentation](https://developers.ledger.com/docs/blockchain/testing#writing-bridgeintegrationtestts).
 
 ---
