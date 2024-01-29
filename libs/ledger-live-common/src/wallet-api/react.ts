@@ -838,7 +838,7 @@ export interface RecentlyUsed {
   clear: () => void;
 }
 
-export type RecentlyUsedManifest = AppManifest & { usedAt?: Date };
+export type RecentlyUsedManifest = AppManifest & { usedAt: { unit: string; diff: number } };
 
 function calculateTimeDiff(usedAt: string) {
   const start = new Date();
@@ -859,24 +859,23 @@ function calculateTimeDiff(usedAt: string) {
 
 export function useRecentlyUsed(
   manifests: AppManifest[],
-  [recentlyUsed, setState]: RecentlyUsedDB,
+  [recentlyUsedManifestsDb, setState]: RecentlyUsedDB,
 ): RecentlyUsed {
   const data = useMemo(
     () =>
-      recentlyUsed
-        .map(r => {
-          const res = manifests.find(m => m.id === r.id);
+      recentlyUsedManifestsDb
+        .map(recentlyUsed => {
+          const res = manifests.find(manifest => manifest.id === recentlyUsed.id);
           return res
             ? {
                 ...res,
-                usedAt: calculateTimeDiff(r.usedAt),
+                usedAt: calculateTimeDiff(recentlyUsed.usedAt),
               }
             : res;
         })
-        .filter(m => m !== undefined) as AppManifest[],
-    [recentlyUsed, manifests],
+        .filter(manifest => manifest !== undefined) as RecentlyUsedManifest[],
+    [recentlyUsedManifestsDb, manifests],
   );
-
   const append = useCallback(
     (manifest: AppManifest) => {
       setState(state => {

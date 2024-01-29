@@ -63,10 +63,10 @@ export type ConvertToLiveTransaction<T extends WalletAPITransaction, U extends T
 }) => Partial<U>;
 
 export type DiscoverDB = {
-  recentlyUsed: RecentlyUsed[];
+  recentlyUsed: RecentlyUsedIdDb[];
 };
 
-export type RecentlyUsed = {
+export type RecentlyUsedIdDb = {
   id: string;
   usedAt: string;
 };
