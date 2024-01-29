@@ -2,7 +2,7 @@ import React, { useCallback, useEffect } from "react";
 import { TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
 
-import { Flex, Icon, Text, Link, IconsLegacy, Tag } from "@ledgerhq/native-ui";
+import { Flex, Icon, Text, Tag } from "@ledgerhq/native-ui";
 import { useManifest } from "@ledgerhq/live-common/platform/hooks/useManifest";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
@@ -25,14 +25,12 @@ type Props = {
     manifest: LiveAppManifest;
     provider: ListProvider;
   }): void;
-  onSupportLinkPress({ provider }: { provider: ListProvider }): Promise<void>;
 };
 
 export function EvmStakingDrawerProvider({
   provider,
   onProviderPress,
   redirectIfOneProvider,
-  onSupportLinkPress,
 }: Props) {
   const { t, i18n } = useTranslation();
   const manifest = useManifest(provider.liveAppId);
@@ -43,10 +41,6 @@ export function EvmStakingDrawerProvider({
       onProviderPress({ manifest, provider });
     }
   }, [manifest, provider, onProviderPress]);
-
-  const supportLinkPress = useCallback(() => {
-    onSupportLinkPress({ provider });
-  }, [provider, onSupportLinkPress]);
 
   useEffect(() => {
     if (manifest) {
@@ -70,15 +64,6 @@ export function EvmStakingDrawerProvider({
               {t(`stake.ethereum.providers.${provider.id}.description`)}
             </Text>
           </Flex>
-          <Link
-            size="medium"
-            type="color"
-            iconPosition="right"
-            onPress={supportLinkPress}
-            Icon={IconsLegacy.ExternalLinkMedium}
-          >
-            {t(`stake.ethereum.providers.${provider.id}.supportLink`)}
-          </Link>
         </Flex>
         <Flex alignSelf="center">
           <Icon name="ChevronRight" size={32} color="neutral.c100" />
