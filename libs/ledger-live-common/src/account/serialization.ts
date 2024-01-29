@@ -11,7 +11,6 @@ import {
   emptyHistoryCache,
   generateHistoryFromOperations,
 } from "@ledgerhq/coin-framework/account/balanceHistoryCache";
-import { inferFamilyFromAccountId } from "@ledgerhq/coin-framework/account/index";
 
 import type {
   Account,
@@ -36,7 +35,7 @@ import {
   fromOperationRaw as commonFromOperationRaw,
 } from "@ledgerhq/coin-framework/account/serialization";
 import { getAccountBridge } from "../bridge";
-import { getAccountBridgeByFamily } from "../bridge/impl";
+import { getAccountBridgeFromAccount } from "../bridge/impl";
 
 export function toBalanceHistoryRaw(b: BalanceHistory): BalanceHistoryRaw {
   return b.map(({ date, value }) => [date.toISOString(), value.toString()]);
@@ -54,13 +53,9 @@ export const toOperationRaw = (
   const operationRaw: OperationRaw = commonToOperationRaw(operation, preserveSubOperation);
 
   if (operation.extra) {
-    const family = inferFamilyFromAccountId(operation.accountId);
-
-    if (family) {
-      const bridge = getAccountBridgeByFamily(family, operation.accountId);
-      if (bridge.toOperationExtraRaw) {
-        operationRaw.extra = bridge.toOperationExtraRaw(operation.extra);
-      }
+    const bridge = getAccountBridgeFromAccount(operation.accountId);
+    if (bridge.toOperationExtraRaw) {
+      operationRaw.extra = bridge.toOperationExtraRaw(operation.extra);
     }
   }
 
@@ -75,13 +70,9 @@ export const fromOperationRaw = (
   const operation: Operation = commonFromOperationRaw(operationRaw, accountId, subAccounts);
 
   if (operationRaw.extra) {
-    const family = inferFamilyFromAccountId(operationRaw.accountId);
-
-    if (family) {
-      const bridge = getAccountBridgeByFamily(family, accountId);
-      if (bridge.fromOperationExtraRaw) {
-        operation.extra = bridge.fromOperationExtraRaw(operationRaw.extra);
-      }
+    const bridge = getAccountBridgeFromAccount(accountId);
+    if (bridge.fromOperationExtraRaw) {
+      operation.extra = bridge.fromOperationExtraRaw(operationRaw.extra);
     }
   }
 

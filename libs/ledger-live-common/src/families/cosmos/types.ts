@@ -146,11 +146,13 @@ export type CosmosOperationExtra = OperationExtra & {
 };
 export function isCosmosOperationExtra(op: OperationExtra): op is CosmosOperationExtra {
   return (
-    "validators" in op ||
-    "validator" in op ||
-    "sourceValidator" in op ||
-    "autoClaimedRewards" in op ||
-    "memo" in op
+    op !== null &&
+    typeof op === "object" &&
+    ("validators" in op ||
+      "validator" in op ||
+      "sourceValidator" in op ||
+      "autoClaimedRewards" in op ||
+      "memo" in op)
   );
 }
 
@@ -163,11 +165,13 @@ export type CosmosOperationExtraRaw = OperationExtraRaw & {
 };
 export function isCosmosOperationExtraRaw(op: OperationExtraRaw): op is CosmosOperationExtraRaw {
   return (
-    "validators" in op ||
-    "validator" in op ||
-    "sourceValidator" in op ||
-    "autoClaimedRewards" in op ||
-    "memo" in op
+    op !== null &&
+    typeof op === "object" &&
+    ("validators" in op ||
+      "validator" in op ||
+      "sourceValidator" in op ||
+      "autoClaimedRewards" in op ||
+      "memo" in op)
   );
 }
 

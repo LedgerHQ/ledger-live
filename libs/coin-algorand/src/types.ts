@@ -58,7 +58,9 @@ export type AlgorandOperationExtra = {
   assetId?: string;
 };
 export function isAlgorandOperationExtra(op: OperationExtra): op is AlgorandOperationExtra {
-  return "rewards" in op || "memo" in op || "assetId" in op;
+  return (
+    op !== null && typeof op === "object" && ("rewards" in op || "memo" in op || "assetId" in op)
+  );
 }
 
 export type AlgorandOperationExtraRaw = {
@@ -69,7 +71,9 @@ export type AlgorandOperationExtraRaw = {
 export function isAlgorandOperationExtraRaw(
   op: OperationExtraRaw,
 ): op is AlgorandOperationExtraRaw {
-  return "rewards" in op || "memo" in op || "assetId" in op;
+  return (
+    op !== null && typeof op === "object" && ("rewards" in op || "memo" in op || "assetId" in op)
+  );
 }
 
 export type AlgorandAccount = Account & {

@@ -97,7 +97,11 @@ export type TrongridExtraTxInfo = OperationExtra & {
   receiverAddress?: string;
 };
 export function isTrongridExtraTxInfo(op: OperationExtra): op is TrongridExtraTxInfo {
-  return "frozenAmount" in op || "unfreezeAmount" in op || "votes" in op;
+  return (
+    op !== null &&
+    typeof op === "object" &&
+    ("frozenAmount" in op || "unfreezeAmount" in op || "votes" in op)
+  );
 }
 export type TrongridExtraTxInfoRaw = OperationExtraRaw & {
   frozenAmount?: string;
@@ -107,7 +111,11 @@ export type TrongridExtraTxInfoRaw = OperationExtraRaw & {
   receiverAddress?: string;
 };
 export function isTrongridExtraTxInfoRaw(op: OperationExtraRaw): op is TrongridExtraTxInfoRaw {
-  return "frozenAmount" in op || "unfreezeAmount" in op || "votes" in op;
+  return (
+    op !== null &&
+    typeof op === "object" &&
+    ("frozenAmount" in op || "unfreezeAmount" in op || "votes" in op)
+  );
 }
 
 /** Payload types to send to trongrid */

@@ -221,12 +221,12 @@ export type ElrondOperationExtra = {
   amount?: BigNumber;
 };
 export function isElrondOperationExtra(op: OperationExtra): op is ElrondOperationExtra {
-  return "amount" in op;
+  return op !== null && typeof op === "object" && "amount" in op;
 }
 
 export type ElrondOperationExtraRaw = {
   amount?: string;
 };
 export function isElrondOperationExtraRaw(op: OperationExtraRaw): op is ElrondOperationExtraRaw {
-  return "amount" in op;
+  return op !== null && typeof op === "object" && "amount" in op;
 }

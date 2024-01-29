@@ -130,7 +130,7 @@ export type PolkadotOperationExtra = {
   validators?: string[];
 };
 export function isPolkadotOperationExtra(op: OperationExtra): op is PolkadotOperationExtra {
-  return "palletMethod" in op;
+  return op !== null && typeof op === "object" && "palletMethod" in op;
 }
 export type PolkadotOperationExtraRaw = {
   transferAmount?: string;
@@ -144,5 +144,5 @@ export type PolkadotOperationExtraRaw = {
 export function isPolkadotOperationExtraRaw(
   op: OperationExtraRaw,
 ): op is PolkadotOperationExtraRaw {
-  return "palletMethod" in op;
+  return op !== null && typeof op === "object" && "palletMethod" in op;
 }
