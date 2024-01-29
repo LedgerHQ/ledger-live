@@ -35,7 +35,7 @@ const WalletNftGallery = () => {
     [chainFilters],
   );
 
-  const { isLoading, hasNextPage, error, fetchNextPage, refetch, parsedData } = useNftGallery({
+  const { isLoading, hasNextPage, error, fetchNextPage, refetch, nfts } = useNftGallery({
     addresses,
     chains,
     nftsOwned,
@@ -45,7 +45,7 @@ const WalletNftGallery = () => {
     <Flex flex={1} testID="wallet-nft-gallery-screen">
       {hasNFTs ? (
         <NftList
-          data={parsedData}
+          data={nfts}
           isLoading={isLoading}
           error={error}
           refetch={refetch}
