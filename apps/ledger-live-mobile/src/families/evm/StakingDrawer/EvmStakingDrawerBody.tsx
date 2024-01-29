@@ -1,7 +1,7 @@
-import { Flex, ScrollListContainer, Text } from "@ledgerhq/native-ui";
+import { Flex, Text } from "@ledgerhq/native-ui";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Linking } from "react-native";
+
 import { ParamListBase, useNavigation } from "@react-navigation/native";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { appendQueryParamsToDappURL } from "@ledgerhq/live-common/platform/utils/appendQueryParamsToDappURL";
@@ -53,21 +53,6 @@ export function EvmStakingDrawerBody({
     [track, page, navigation, accountId, onClose],
   );
 
-  const onSupportLinkPress = useCallback(
-    async ({ provider }: { provider: ListProvider }) => {
-      if (provider.supportLink) {
-        const supported = await Linking.canOpenURL(provider.supportLink);
-        if (supported) {
-          track("button_clicked", {
-            page,
-          });
-          await Linking.openURL(provider.supportLink);
-        }
-      }
-    },
-    [track, page],
-  );
-
   const redirectIfOneProvider = useCallback(
     ({ manifest, provider }: { manifest: LiveAppManifest; provider: ListProvider }) => {
       if (singleProviderRedirectMode && providers.length === 1) {
@@ -78,27 +63,23 @@ export function EvmStakingDrawerBody({
   );
 
   return (
-    <ScrollListContainer borderWidth={1} borderColor={"cyan"} pb={56}>
-      <Flex rowGap={56} pb={18} borderWidth={1} borderColor={"red"}>
-        <Flex rowGap={16}>
-          <Text variant="h4">{t("stake.ethereum.title")}</Text>
-          <Text variant="body" lineHeight="21px" color="neutral.c70">
-            {t("stake.ethereum.subTitle")}
-          </Text>
-        </Flex>
-
-        <Flex rowGap={52} pb={26}>
-          {providers.map(provider => (
-            <EvmStakingDrawerProvider
-              key={provider.id}
-              provider={provider}
-              onProviderPress={onProviderPress}
-              onSupportLinkPress={onSupportLinkPress}
-              redirectIfOneProvider={redirectIfOneProvider}
-            />
-          ))}
-        </Flex>
+    <Flex rowGap={16}>
+      <Flex rowGap={24} pb={8}>
+        <Text variant="h4">{t("stake.ethereum.title")}</Text>
+        <Text variant="body" lineHeight="21px" color="neutral.c70">
+          {t("stake.ethereum.subTitle")}
+        </Text>
       </Flex>
-    </ScrollListContainer>
+      <Flex rowGap={32} pb={32}>
+        {providers.map(provider => (
+          <EvmStakingDrawerProvider
+            key={provider.id}
+            provider={provider}
+            onProviderPress={onProviderPress}
+            redirectIfOneProvider={redirectIfOneProvider}
+          />
+        ))}
+      </Flex>
+    </Flex>
   );
 }
