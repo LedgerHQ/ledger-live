@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { getAccountBannerState as getElrondBannerState } from "@ledgerhq/live-common/families/elrond/banner";
 import { AccountBanner } from "~/renderer/screens/account/AccountBanner";
 import React from "react";
@@ -47,7 +47,7 @@ const StakeBanner: React.FC<{ account: ElrondAccount }> = ({ account }) => {
     ? t("account.banner.delegation.linkText")
     : t("account.banner.redelegation.linkText");
   const onClick = () => {
-    track("button_clicked", {
+    track("button_clicked2", {
       ...stakeDefaultTrack,
       delegation: "stake",
       page: "Page Account",

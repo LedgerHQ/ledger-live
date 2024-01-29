@@ -5,11 +5,11 @@ import { log } from "@ledgerhq/logs";
 import type { DeviceInfo } from "@ledgerhq/types-live";
 import type { ListAppsResult } from "../../apps/types";
 import { useReplaySubject } from "../../observable";
-import manager from "../../manager";
 import type { Input as ConnectManagerInput, ConnectManagerEvent } from "../connectManager";
 import type { Action, Device } from "./types";
 import { currentMode } from "./app";
 import { getImplementation } from "./implementations";
+import { getLatestFirmwareForDeviceUseCase } from "../../device/use-cases/getLatestFirmwareForDeviceUseCase";
 
 type State = {
   isLoading: boolean;
@@ -207,7 +207,7 @@ export const createAction = (
     useEffect(() => {
       if (!deviceInfo) return;
       // Preload latest firmware in parallel
-      manager.getLatestFirmwareForDevice(deviceInfo).catch((e: Error) => {
+      getLatestFirmwareForDeviceUseCase(deviceInfo).catch((e: Error) => {
         log("warn", e.message);
       });
     }, [deviceInfo]);

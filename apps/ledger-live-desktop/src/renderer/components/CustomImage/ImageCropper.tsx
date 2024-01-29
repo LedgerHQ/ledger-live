@@ -185,7 +185,7 @@ const ImageCropper: React.FC<Props> = props => {
   }, [debouncedCompleteCropPixel, targetDimensions, onResult, setLoading]);
 
   const rotateCounterClockwise: () => void = useCallback(() => {
-    track("button_clicked", { button: "Rotate" });
+    track("button_clicked2", { button: "Rotate" });
     setLoading(true);
     /** the increments are of 90° so 360°/4 */
     setRotationIncrements((rotationIncrements - 1) % 4);

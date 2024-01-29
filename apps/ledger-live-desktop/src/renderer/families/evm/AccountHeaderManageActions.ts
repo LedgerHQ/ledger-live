@@ -37,7 +37,7 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
       {
         key: "Stake",
         onClick,
-        event: "button_clicked",
+        event: "button_clicked2",
         eventProperties: {
           button: "stake",
         },

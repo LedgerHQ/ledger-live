@@ -1,9 +1,8 @@
 import React, { useCallback } from "react";
-
 import { Linking } from "react-native";
 import { Text } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useNavigation } from "@react-navigation/native";
 
 import { urls } from "~/utils/urls";

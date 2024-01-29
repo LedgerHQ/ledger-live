@@ -166,7 +166,9 @@ export function getBalanceHistoryWithCountervalue(
   for (let i = 0; i < balanceHistory.length; i++) {
     const { date, value } = balanceHistory[i];
     const countervalue = counterValues[i];
-    if (countervalue) countervalueAvailable = true;
+    if (countervalue !== undefined && countervalue !== null) {
+      countervalueAvailable = true;
+    }
     history.push({
       date,
       value,

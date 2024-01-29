@@ -6,6 +6,7 @@ import ManagerAPI from "../manager/api";
 import { getProviderId } from "../manager/provider";
 import getDeviceInfo from "./getDeviceInfo";
 import type { DeviceInfo, FinalFirmware, McuVersion } from "@ledgerhq/types-live";
+import { fetchMcusUseCase } from "../device/use-cases/fetchMcusUseCase";
 const blVersionAliases = {
   "0.0": "0.6",
 };
@@ -23,7 +24,7 @@ export default (finalFirmware: FinalFirmware) =>
           ? of(blVersionAliases[deviceInfo.majMin])
           : from(
               // we pick the best MCU to install in the context of the firmware
-              ManagerAPI.getMcus()
+              fetchMcusUseCase()
                 .then(mcus => mcus.filter(filterMCUForDeviceInfo(deviceInfo)))
                 .then(mcus => mcus.filter(mcu => mcu.from_bootloader_version !== "none"))
                 .then(mcus =>

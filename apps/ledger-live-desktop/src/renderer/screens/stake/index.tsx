@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { listCurrencies, filterCurrencies } from "@ledgerhq/live-common/currencies/helpers";
 import SelectAccountAndCurrencyDrawer from "~/renderer/drawers/DataSelector/SelectAccountAndCurrencyDrawer";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { useHistory } from "react-router-dom";
 import { stakeDefaultTrack } from "./constants";
@@ -47,7 +47,7 @@ const useStakeFlow = () => {
         {
           currencies: cryptoCurrencies,
           onAccountSelected: (account: AccountLike, parentAccount: Account | null = null) => {
-            track("button_clicked", {
+            track("button_clicked2", {
               ...stakeDefaultTrack,
               button: "asset",
               page: history.location.pathname,
@@ -80,7 +80,7 @@ const useStakeFlow = () => {
         {
           onRequestClose: () => {
             setDrawer();
-            track("button_clicked", {
+            track("button_clicked2", {
               ...stakeDefaultTrack,
               button: "close",
               page: history.location.pathname,

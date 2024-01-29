@@ -8,8 +8,7 @@ import { getOperatingSystemSupportStatus } from "~/support/os";
 /* eslint-disable no-continue */
 
 // will be overriden by setShouldSendCallback
-// initially we will send errors (anonymized as we don't initially know "userId" neither)
-let shouldSendCallback = () => true;
+let shouldSendCallback = () => false;
 let productionBuildSampleRate = 1;
 let tracesSampleRate = 0.0002;
 if (process.env.SENTRY_SAMPLE_RATE) {
@@ -138,12 +137,18 @@ export function init(Sentry: typeof SentryMainModule, opts?: Partial<ElectronMai
         console.log("before-send", {
           data,
           hint,
+          shouldSend: shouldSendCallback(),
         });
       if (!shouldSendCallback()) return null;
       if (typeof data !== "object" || !data) return data;
 
       delete data.server_name; // hides the user machine name
-      anonymizer.filepathRecursiveReplacer(data as unknown as Record<string, unknown>);
+      try {
+        anonymizer.filepathRecursiveReplacer(data as unknown as Record<string, unknown>);
+      } catch (e) {
+        console.error("can't anonymize", e);
+        throw e;
+      }
       console.log("SENTRY REPORT", data);
       return data;
     },
