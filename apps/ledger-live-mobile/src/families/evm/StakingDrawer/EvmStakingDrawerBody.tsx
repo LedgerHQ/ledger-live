@@ -1,4 +1,4 @@
-import { Flex, Text } from "@ledgerhq/native-ui";
+import { Flex, ScrollListContainer, Text } from "@ledgerhq/native-ui";
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Linking } from "react-native";
@@ -78,25 +78,27 @@ export function EvmStakingDrawerBody({
   );
 
   return (
-    <Flex rowGap={56}>
-      <Flex rowGap={16}>
-        <Text variant="h4">{t("stake.ethereum.title")}</Text>
-        <Text variant="body" lineHeight="21px" color="neutral.c70">
-          {t("stake.ethereum.subTitle")}
-        </Text>
-      </Flex>
+    <ScrollListContainer borderWidth={1} borderColor={"cyan"} pb={56}>
+      <Flex rowGap={56} pb={18} borderWidth={1} borderColor={"red"}>
+        <Flex rowGap={16}>
+          <Text variant="h4">{t("stake.ethereum.title")}</Text>
+          <Text variant="body" lineHeight="21px" color="neutral.c70">
+            {t("stake.ethereum.subTitle")}
+          </Text>
+        </Flex>
 
-      <Flex rowGap={52}>
-        {providers.map(provider => (
-          <EvmStakingDrawerProvider
-            key={provider.id}
-            provider={provider}
-            onProviderPress={onProviderPress}
-            onSupportLinkPress={onSupportLinkPress}
-            redirectIfOneProvider={redirectIfOneProvider}
-          />
-        ))}
+        <Flex rowGap={52} pb={26}>
+          {providers.map(provider => (
+            <EvmStakingDrawerProvider
+              key={provider.id}
+              provider={provider}
+              onProviderPress={onProviderPress}
+              onSupportLinkPress={onSupportLinkPress}
+              redirectIfOneProvider={redirectIfOneProvider}
+            />
+          ))}
+        </Flex>
       </Flex>
-    </Flex>
+    </ScrollListContainer>
   );
 }
