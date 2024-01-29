@@ -51,7 +51,7 @@ export type CompleteExchangeUiRequest = {
 
 export type ExchangeUiHooks = {
   "custom.exchange.start": (params: {
-    exchangeType: ExchangeStartParams["exchangeType"];
+    exchangeParams: ExchangeStartParams;
     onSuccess: (nonce: string) => void;
     onCancel: (error: Error) => void;
   }) => void;
@@ -88,7 +88,10 @@ export const handlers = ({
 
         return new Promise((resolve, reject) =>
           uiExchangeStart({
-            exchangeType: params.exchangeType,
+            exchangeParams: {
+              exchangeType: params.exchangeType,
+              provider: params.provider,
+            },
             onSuccess: (nonce: string) => {
               tracking.startExchangeSuccess(manifest);
               resolve({ transactionId: nonce });
@@ -192,8 +195,8 @@ export const handlers = ({
               exchangeType: ExchangeType[params.exchangeType],
               provider: params.provider,
               transaction: tx,
-              signature: Buffer.from(params.hexSignature, "hex").toString(),
-              binaryPayload: Buffer.from(params.hexBinaryPayload, "hex").toString(),
+              signature: params.hexSignature,
+              binaryPayload: params.hexBinaryPayload,
               exchange: {
                 fromAccount,
                 fromParentAccount,

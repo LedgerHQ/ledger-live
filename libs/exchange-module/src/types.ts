@@ -11,7 +11,7 @@ export enum ExchangeType {
 
 export type ExchangeStartParams = {
   exchangeType: "FUND" | "SELL" | "SWAP" | "FUND_NG" | "SELL_NG" | "SWAP_NG";
-  providerId: string;
+  provider: string;
 };
 
 export type ExchangeStartResult = {

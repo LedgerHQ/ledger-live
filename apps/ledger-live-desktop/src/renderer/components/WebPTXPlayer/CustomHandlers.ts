@@ -47,11 +47,13 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"]) {
         tracking,
         manifest,
         uiHooks: {
-          "custom.exchange.start": ({ exchangeType, onSuccess, onCancel }) => {
+          "custom.exchange.start": ({ exchangeParams, onSuccess, onCancel }) => {
             dispatch(
               openExchangeDrawer({
                 type: "EXCHANGE_START",
-                exchangeType: ExchangeType[exchangeType],
+                exchangeType: ExchangeType[exchangeParams.exchangeType],
+                provider: exchangeParams.provider,
+
                 onResult: (nonce: string) => {
                   onSuccess(nonce);
                 },
