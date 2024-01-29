@@ -52,7 +52,9 @@ const NftGalleryEmptyState = () => {
         Icon={IconsLegacy.ExternalLinkMedium}
         iconPosition="right"
       >
-        {t("wallet.nftGallery.empty.supportLink")}
+        <Text fontWeight="semiBold" variant="paragraph">
+          {t("wallet.nftGallery.empty.supportLink")}
+        </Text>
       </Link>
 
       <ReceiveNFTsModal isOpened={isModalOpened} onClose={closeModal} />
