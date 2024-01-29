@@ -76,7 +76,14 @@ const FlatListContainer = styled(FlatList).attrs({
   marginBottom: 20,
 })`` as unknown as typeof FlatList;
 
-const UpdateAllModal = ({ isOpened, onClose, onConfirm, apps, installed, state }: Props) => {
+export default memo(function UpdateAllModal({
+  isOpened,
+  onClose,
+  onConfirm,
+  apps,
+  installed,
+  state,
+}: Props) {
   const { deviceInfo } = state;
 
   const data = apps.map(app => ({
@@ -91,7 +98,7 @@ const UpdateAllModal = ({ isOpened, onClose, onConfirm, apps, installed, state }
     }: {
       item: App & { installed: InstalledItem | null | undefined };
     }) => {
-      const version = (installed && installed.version) || appVersion;
+      const version = installed?.availableVersion || appVersion;
 
       return (
         <AppLine>
@@ -159,6 +166,4 @@ const UpdateAllModal = ({ isOpened, onClose, onConfirm, apps, installed, state }
       </Flex>
     </QueuedDrawer>
   );
-};
-
-export default memo(UpdateAllModal);
+});
