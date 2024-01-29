@@ -1,48 +1,14 @@
-import { ProtoNFT } from "@ledgerhq/types-live";
 import { useMemo } from "react";
 import { useInfiniteQuery } from "react-query";
 
 import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
-interface SimpleHashResponse {
-  readonly next_cursor: string | null;
-  readonly nfts: SimpleHashNft[];
-}
-export interface SimpleHashNft {
-  readonly nft_id: string;
-  readonly chain: string;
-  readonly contract_address: string;
-  readonly token_id: string;
-  readonly image_url: string;
-  readonly name: string;
-  readonly description: string;
-  readonly token_count: number;
-  readonly collection: {
-    readonly name: string;
-  };
-  readonly contract: {
-    readonly type: string;
-  };
-  readonly extra_metadata?: {
-    readonly ledger_metadata?: {
-      readonly ledger_stax_image: string;
-    };
-    readonly image_original_url: string;
-    readonly animation_original_url: string;
-  };
-}
-
-type Props = {
-  addresses: string[];
-  nftsOwned: ProtoNFT[];
-  chains: string[];
-};
+import { HookProps, PartialProtoNFT, SimpleHashNft, SimpleHashResponse } from "./type";
+import { ProtoNFT } from "@ledgerhq/types-live";
 
 const SPAM_FILTER = true;
 const BASE_PATH = "https://simplehash.api.live.ledger.com/api/v0";
 const SPAM_FILTER_THRESHOLD = 80;
 const PAGE_SIZE = 50;
-
-type PartialProtoNFT = Partial<ProtoNFT>;
 
 function mapAsPartialProtoNft(nfts: Array<SimpleHashNft>) {
   return nfts.map(
@@ -55,7 +21,7 @@ function mapAsPartialProtoNft(nfts: Array<SimpleHashNft>) {
   );
 }
 
-export function useNftGallery({ addresses, nftsOwned, chains }: Props) {
+export function useNftGallery({ addresses, nftsOwned, chains }: HookProps) {
   const nftsWithProperties = useMemo(
     () =>
       new Map(
@@ -106,15 +72,13 @@ export function useNftGallery({ addresses, nftsOwned, chains }: Props) {
 
   return {
     ...queryResult,
-
-    parsedData:
-      queryResult.data?.pages
-        .flatMap(x => x?.whiteList || [])
-        .map(elem =>
-          nftsWithProperties.get(
-            encodeNftId("", elem.contract ?? "", elem.tokenId ?? "", elem.currencyId ?? ""),
-          ),
-        )
-        .filter(elem => !!elem) ?? [],
+    nfts: queryResult.data?.pages
+      .flatMap(x => x?.whiteList || [])
+      .map(elem =>
+        nftsWithProperties.get(
+          encodeNftId("", elem.contract ?? "", elem.tokenId ?? "", elem.currencyId ?? ""),
+        ),
+      )
+      .filter(Boolean) as ProtoNFT[],
   };
 }
