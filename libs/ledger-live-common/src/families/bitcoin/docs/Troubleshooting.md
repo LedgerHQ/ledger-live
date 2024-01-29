@@ -21,17 +21,21 @@ Mostly due to UTXO calculation errors, using already spent UTXOs as inputs for n
 
 ##### Example Commands
 - Bitcoin (native_segwit):
-```pnpm run:cli sync --id js:2:bitcoin:xpub6C3xxFdpsuBPQegeJHvf1G6YMRkay4YJCERUmsWW3DbfcREPeEbcML7nmk79AMgcCu1YkC5CA2s1TZ5ubmVsWuEr7N97X6z2vtrpRzvQbhG:native_segwit```
+```
+pnpm run:cli sync --id js:2:bitcoin:xpub6C3xxFdpsuBPQegeJHvf1G6YMRkay4YJCERUmsWW3DbfcREPeEbcML7nmk79AMgcCu1YkC5CA2s1TZ5ubmVsWuEr7N97X6z2vtrpRzvQbhG:native_segwit
+```
 - Dogecoin (legacy):
-```pnpm run:cli sync --id js:2:dogecoin:dgub8rLBz9DzvDxQTL2JqCcwRwzdz53mYZFNim9pPNM2np5BRFaoFfsV13wkhC43ENdSXYgc2tRvztLmtW7jDjArjaqsU1xJDKAwNLpJax9c38h:```
+```
+pnpm run:cli sync --id js:2:dogecoin:dgub8rLBz9DzvDxQTL2JqCcwRwzdz53mYZFNim9pPNM2np5BRFaoFfsV13wkhC43ENdSXYgc2tRvztLmtW7jDjArjaqsU1xJDKAwNLpJax9c38h:
+```
 
 The CLI tool returns transactions, UTXOs for each address and the overall balance for the account.
 
-5. **Identify problematic addresses:** Compare against public Bitcoin explorers like [Wallet Explorer](https://www.walletexplorer.com/) or [Blockchain.com Explorer](https://www.blockchain.com/explorer) to identify problematic Bitcoin addresses for further debugging.
+5. **Identify problematic addresses:** Compare UTXOs/transactions against public Bitcoin explorers like [Wallet Explorer](https://www.walletexplorer.com/) or [Blockchain.com Explorer](https://www.blockchain.com/explorer) to identify problematic Bitcoin addresses for further debugging.
 
 6. **Check backend response:** A potential issue is incorrect transactions returned by Ledger Live's REST API call to:
 https://explorers.api.live.ledger.com/blockchain/v4/[coin]/address/[address]/txs?batch_size=1000&order=ascending
-e.g. to fetch transactions of a bitcoin address:
+e.g. to fetch transactions of the bitcoin address `bc1qhspn08x9yyy2w6lqsz3re4qa2k753c0zw3wq8x`:
 https://explorers.api.live.ledger.com/blockchain/v4/btc/address/bc1qhspn08x9yyy2w6lqsz3re4qa2k753c0zw3wq8x/txs?batch_size=1000&order=ascending
 
 
@@ -67,7 +71,9 @@ Failures in `bridge.integration.test.ts` may be due to nano app updates or `hw-a
 
 #### Debugging Steps
 - Update APDU datasets using:
-```pnpm run:cli generateTestScanAccounts -c [mycoin]```
+```
+pnpm run:cli generateTestScanAccounts -c [mycoin]
+```
 - For comprehensive details on handling bridge integration tests and APDU updates, please refer to [Ledger Developers Documentation](https://developers.ledger.com/docs/blockchain/testing#writing-bridgeintegrationtestts).
 
 ---
