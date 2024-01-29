@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.38.1-nightly.2
+
+### Patch Changes
+
+- [#6011](https://github.com/LedgerHQ/ledger-live/pull/6011) [`1de3cf0`](https://github.com/LedgerHQ/ledger-live/commit/1de3cf00b0569851a282c0371204323252520f5f) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Add Hero Content Card to LLM
+
 ## 3.38.1-nightly.1
 
 ### Patch Changes
