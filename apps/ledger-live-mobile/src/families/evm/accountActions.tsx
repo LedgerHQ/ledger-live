@@ -6,6 +6,10 @@ import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
 import { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
 import { NavigatorName, ScreenName } from "~/const";
+import BigNumber from "bignumber.js";
+
+// Scale Eth to 18 decimals
+const eth = (n: number | BigNumber) => BigNumber(n).times(BigNumber(10).pow(18));
 
 type Props = {
   account: Account;
@@ -34,6 +38,7 @@ function getNavigatorParams({ parentRoute, account, parentAccount }: Props): Nav
       props: {
         singleProviderRedirectMode: true,
         accountId: account.id,
+        has32Eth: account.spendableBalance.gt(eth(32)),
       },
     },
     params: {
