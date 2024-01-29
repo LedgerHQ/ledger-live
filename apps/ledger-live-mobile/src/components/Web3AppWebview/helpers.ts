@@ -414,6 +414,7 @@ function useUiHook(): Partial<UiHook> {
           params: {
             request: {
               exchangeType: ExchangeType[exchangeType],
+              provider: "",
             },
             onResult: (result: {
               startExchangeResult?: string;
