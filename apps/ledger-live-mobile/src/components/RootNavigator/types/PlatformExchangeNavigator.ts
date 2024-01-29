@@ -17,7 +17,7 @@ export type ResultComplete = {
 
 export type PlatformExchangeNavigatorParamList = {
   [ScreenName.PlatformStartExchange]: {
-    request: { exchangeType: number; provider: string };
+    request: { exchangeType: number; provider?: string };
     onResult: (_: ResultStart) => void;
   };
   [ScreenName.PlatformCompleteExchange]: {

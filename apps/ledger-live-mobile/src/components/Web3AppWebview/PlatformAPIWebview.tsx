@@ -323,7 +323,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     );
 
     const startExchange = useCallback(
-      ({ exchangeType, provider }: { exchangeType: number; provider: string }) => {
+      ({ exchangeType, provider }: { exchangeType: number; provider?: string }) => {
         tracking.platformStartExchangeRequested(manifest);
 
         return new Promise((resolve, reject) => {

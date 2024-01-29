@@ -34,7 +34,7 @@ export const openExchangeDrawer = createAction(
     | {
         type: "EXCHANGE_START";
         exchangeType: ExchangeType;
-        provider: string;
+        provider?: string;
         onResult: (nonce: string) => void;
         onCancel: (error: Error) => void;
       }
