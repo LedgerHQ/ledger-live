@@ -3,16 +3,10 @@ import { FlatList } from "react-native";
 import { Box, Flex, Text, IconsLegacy } from "@ledgerhq/native-ui";
 import { useDispatch, useSelector } from "react-redux";
 import { Account, NFTMetadata } from "@ledgerhq/types-live";
-import {
-  useNftCollectionMetadata,
-  useNftMetadata,
-} from "@ledgerhq/live-common/nft/NftMetadataProvider/index";
+import { useNftCollectionMetadata, useNftMetadata } from "@ledgerhq/live-nft-react";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import styled from "styled-components/native";
-import {
-  NFTResource,
-  NFTResourceLoaded,
-} from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
+import { NFTResource, NFTResourceLoaded } from "@ledgerhq/live-nft/types";
 import { hiddenNftCollectionsSelector } from "~/reducers/settings";
 import { accountSelector } from "~/reducers/accounts";
 import NftMedia from "~/components/Nft/NftMedia";

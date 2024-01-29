@@ -3,18 +3,18 @@ import type {
   NFTCollectionMetadataResponse,
   NFTMetadataResponse,
   ProtoNFT,
+  CurrencyBridge,
 } from "@ledgerhq/types-live";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import React, { createContext, useContext, useMemo, useState, useEffect } from "react";
-import { getNftCollectionKey, getNftKey } from "../helpers";
-import { getCurrencyBridge } from "../../bridge";
-import { isOutdated } from "./logic";
+import { getNftCollectionKey, getNftKey, isOutdated } from "@ledgerhq/live-nft";
 import {
   NFTMetadataContextAPI,
   NFTMetadataContextState,
   NFTMetadataContextType,
   NFTResource,
-} from "./types";
+} from "@ledgerhq/live-nft/types";
 
 const NftMetadataContext = createContext<NFTMetadataContextType>({
   cache: {},
@@ -110,9 +110,13 @@ export function useNftAPI(): NFTMetadataContextAPI {
 
 type NFTMetadataProviderProps = {
   children: React.ReactNode;
+  getCurrencyBridge: (currency: CryptoCurrency) => CurrencyBridge;
 };
 
-export function NftMetadataProvider({ children }: NFTMetadataProviderProps): React.ReactElement {
+export function NftMetadataProvider({
+  children,
+  getCurrencyBridge,
+}: NFTMetadataProviderProps): React.ReactElement {
   const [state, setState] = useState<NFTMetadataContextState>({
     cache: {},
   });

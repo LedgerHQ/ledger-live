@@ -1,6 +1,7 @@
 import { getEnv } from "@ledgerhq/live-env";
-import { groupAccountsOperationsByDay } from "../account";
+import { groupAccountsOperationsByDay } from "@ledgerhq/coin-framework/account/index";
 import type { Operation, ProtoNFT, NFT, Account } from "@ledgerhq/types-live";
+import { NFTResource } from "./types";
 
 /**
  * Helper to group NFTs by their collection/contract.
@@ -17,7 +18,7 @@ export const nftsByCollections = (
 ): Record<string, Array<ProtoNFT | NFT>> | Array<ProtoNFT | NFT> => {
   return collectionAddress
     ? nfts.filter(n => n.contract === collectionAddress)
-    : nfts.reduce((acc, nft) => {
+    : nfts.reduce((acc: Record<string, Array<ProtoNFT | NFT>>, nft) => {
         const { contract } = nft;
 
         if (!acc[contract]) {
@@ -63,6 +64,7 @@ export function orderByLastReceived(accounts: Account[], nfts: ProtoNFT[]): Prot
   const orderedNFTs: ProtoNFT[] = [];
   let operationMapping: Operation[] = [];
 
+  // TODO optimize: there is no need to use this grouping logic as we just want a sorted merge of all operations
   const res = groupAccountsOperationsByDay(accounts, {
     count: Infinity,
   });
@@ -95,3 +97,35 @@ export const INFINITY_PASS_COLLECTION_CONTRACT = "0xfe399E9a4B0bE4087a701fF0B1c8
 export const hasNftInAccounts = (nftCollection: string, accounts: Account[]): boolean =>
   accounts &&
   accounts.some(account => account?.nfts?.some((nft: ProtoNFT) => nft?.contract === nftCollection));
+
+// Handle lifecycle of cached data.
+// Expiration date depend on the resource's status.
+export function isOutdated(resource: NFTResource): boolean {
+  const now = Date.now();
+
+  switch (resource.status) {
+    case "loaded": {
+      return now - resource.updatedAt > 14 * 24 * 60 * 60 * 1 * 1000; // 14 days
+    }
+    case "error": {
+      return now - resource.updatedAt > 1 * 1000; // 1 second
+    }
+    case "nodata": {
+      return now - resource.updatedAt > 24 * 60 * 60 * 1 * 1000; // 1 day
+    }
+  }
+  return false;
+}
+
+/**
+ * TODO reverse the dependency on this. it's on coin side to be declarative on what is a nft transaction, not for the generic NFT library.
+ * due to this, we can't type things correctly
+ */
+export const isNftTransaction = <T>(transaction: T | undefined | null): boolean => {
+  type EvmT = { family: "evm"; mode: string };
+  if ((transaction as undefined | EvmT)?.family === "evm") {
+    return ["erc721", "erc1155"].includes((transaction as EvmT)?.mode);
+  }
+
+  return false;
+};

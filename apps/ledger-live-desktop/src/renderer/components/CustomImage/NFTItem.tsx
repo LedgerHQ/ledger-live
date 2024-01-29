@@ -8,7 +8,7 @@ import { NFTMetadata } from "@ledgerhq/types-live";
 import { getNFTById } from "~/renderer/reducers/accounts";
 import Media from "~/renderer/components/Nft/Media";
 import Skeleton from "~/renderer/components/Nft/Skeleton";
-import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
+import { useNftMetadata } from "@ledgerhq/live-nft-react";
 import { State } from "~/renderer/reducers";
 
 const Wrapper = styled(Flex).attrs({

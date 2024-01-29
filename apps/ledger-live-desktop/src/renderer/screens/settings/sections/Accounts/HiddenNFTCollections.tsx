@@ -2,10 +2,7 @@ import React, { useCallback, useState, useMemo } from "react";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  useNftMetadata,
-  useNftCollectionMetadata,
-} from "@ledgerhq/live-common/nft/NftMetadataProvider/index";
+import { useNftMetadata, useNftCollectionMetadata } from "@ledgerhq/live-nft-react";
 import { SettingsSection as Section, SettingsSectionRow as Row } from "../../SettingsSection";
 import Text from "~/renderer/components/Text";
 import Box from "~/renderer/components/Box";

@@ -17,13 +17,10 @@ import {
   ViewStyle,
   Animated,
 } from "react-native";
-import {
-  useNftMetadata,
-  decodeNftId,
-  getNftCapabilities,
-  useNftCollectionMetadata,
-  getFloorPrice,
-} from "@ledgerhq/live-common/nft/index";
+import { decodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
+import { getNftCapabilities } from "@ledgerhq/coin-framework/nft/support";
+import { useNftMetadata, useNftCollectionMetadata } from "@ledgerhq/live-nft-react";
+import { getFloorPrice } from "@ledgerhq/live-nft/api";
 import { BigNumber } from "bignumber.js";
 import { useDispatch, useSelector } from "react-redux";
 import { Box, Button, IconsLegacy, Text, Flex } from "@ledgerhq/native-ui";
