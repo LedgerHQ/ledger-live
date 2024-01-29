@@ -367,12 +367,7 @@
     "deprecated-react-native-prop-types",
     "event-target-shim",
     "hoist-non-react-statics",
-    [
-      "just-curry-it",
-      [
-        "node_modules/redux-actions/lib/createCurriedAction.js"
-      ]
-    ],
+    "just-curry-it",
     "memoize-one",
     "metro-runtime/src/modules/HMRClient",
     "nullthrows",
@@ -384,22 +379,12 @@
     "react-devtools-core",
     "react-is",
     "react-refresh/runtime",
-    [
-      "reduce-reducers",
-      [
-        "node_modules/redux-actions/lib/handleActions.js"
-      ]
-    ],
+    "reduce-reducers",
     "regenerator-runtime",
     "regenerator-runtime/runtime",
     "scheduler",
     "stacktrace-parser",
-    [
-      "to-camel-case",
-      [
-        "node_modules/redux-actions/lib/utils/camelCase.js"
-      ]
-    ],
+    "to-camel-case",
     "use-sync-external-store/shim",
     "whatwg-fetch"
   ]
