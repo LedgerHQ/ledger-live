@@ -170,7 +170,7 @@ const NftList = ({ data, hasNextPage, fetchNextPage, isLoading }: Props) => {
         ListFooterComponent={
           !isLoading && hasNextPage ? (
             <Flex paddingBottom={25} paddingTop={25}>
-              <InfiniteLoader color="yellow" />
+              <InfiniteLoader />
             </Flex>
           ) : null
         }
