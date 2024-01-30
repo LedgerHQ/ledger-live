@@ -28,6 +28,8 @@ import { ConnectEnvsToSentry } from "~/renderer/components/ConnectEnvsToSentry";
 import PostOnboardingProviderWrapped from "~/renderer/components/PostOnboardingHub/logic/PostOnboardingProviderWrapped";
 import { useBraze } from "./hooks/useBraze";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
+import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+
 const reloadApp = (event: KeyboardEvent) => {
   if ((event.ctrlKey || event.metaKey) && event.key === "r") {
     window.api?.reloadRenderer();
@@ -38,6 +40,8 @@ type Props = {
   store: Store<State>;
   initialCountervalues: CounterValuesStateRaw;
 };
+
+const queryClient = new QueryClient();
 
 const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValuesStateRaw }) => {
   const [reloadEnabled, setReloadEnabled] = useState(true);
@@ -78,7 +82,9 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
                           <DrawerProvider>
                             <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
                               <MarketDataProvider>
-                                <Default />
+                                <QueryClientProvider client={queryClient}>
+                                  <Default />
+                                </QueryClientProvider>
                               </MarketDataProvider>
                             </NftMetadataProvider>
                           </DrawerProvider>
