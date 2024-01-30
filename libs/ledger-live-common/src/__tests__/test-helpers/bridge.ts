@@ -79,7 +79,7 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
   Object.keys(currencies).forEach(currencyId => {
     if (
       process.env["USE_BACKEND_MOCKS"] &&
-      process.env[`BRIDGE_SUPPORTED_${currencyId.toUpperCase()}`] == null
+      process.env[`BRIDGE_SUPPORTED_CURRENCY_${currencyId.toUpperCase()}`] == null
     ) {
       // Currency is not supported in bridge mock mode
       return;
