@@ -1,0 +1,17 @@
+{
+  "entry": [
+    "src/account.ts",
+    "src/bridge/js.ts",
+    "src/cli-transaction.ts",
+    "src/deviceTransactionConfig.ts",
+    "src/errors.ts",
+    "src/hw-getAddress.ts",
+    "src/initAccount.ts",
+    "src/mock.ts",
+    "src/serialization.ts",
+    "src/specs.ts",
+    "src/transaction.ts",
+    "src/tokens.ts"
+  ],
+  "ignoreUnimported": []
+}
