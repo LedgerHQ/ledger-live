@@ -8,5 +8,5 @@ export function listAppsV2UseCase(
   transport: Transport,
   deviceInfo: DeviceInfo,
 ): Observable<ListAppsEvent> {
-  return listAppsV2(transport, deviceInfo);
+  return listAppsV2({transport, deviceInfo, deviceProxyModel: getEnv("DEVICE_PROXY_MODEL") as DeviceModelId});
 }
