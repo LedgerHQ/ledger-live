@@ -7,7 +7,7 @@ import uninstallApp from "../hw/uninstallApp";
 import type { ListAppsEvent } from "./types";
 
 import listAppsV1 from "./listApps/v1";
-import listAppsV2 from "./listApps/v2";
+import { listAppsV2UseCase } from "../device/use-cases/listAppsV2UseCase";
 
 export const execWithTransport =
   (transport: Transport): Exec =>
@@ -32,4 +32,4 @@ export const listApps = (
   transport: Transport,
   deviceInfo: DeviceInfo,
 ): Observable<ListAppsEvent> =>
-  listAppsV2Enabled ? listAppsV2(transport, deviceInfo) : listAppsV1(transport, deviceInfo);
+  listAppsV2Enabled ? listAppsV2UseCase(transport, deviceInfo) : listAppsV1(transport, deviceInfo);
