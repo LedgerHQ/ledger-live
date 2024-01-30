@@ -6,15 +6,20 @@
 
 export { createTransaction } from "./transaction";
 export {
+  calculateAmount,
   canBond,
   canUnbond,
   canNominate,
-  isStash,
-  calculateAmount,
-  getNonce,
-  isFirstBond,
-  hasMinimumBondBalance,
   getMinimumBalance,
+  getNonce,
+  hasExternalController,
+  hasExternalStash,
+  hasMinimumBondBalance,
+  hasPendingOperationType,
+  isElectionOpen,
+  isStash,
+  isFirstBond,
+  MAX_NOMINATIONS,
 } from "./utils";
 export { makeGetAccountShape } from "./synchronisation";
 export {
