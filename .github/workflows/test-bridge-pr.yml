@@ -1,9 +1,9 @@
-name: "[Test] Integration"
+name: "[Test] Bridge"
 
 on: pull_request
 
 concurrency:
-  group: ci-integration-${{ github.ref }}
+  group: ci-bridge-${{ github.ref }}
 
 permissions:
   id-token: write
@@ -35,8 +35,8 @@ jobs:
         with:
           ref: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.event.pull_request.base.ref) || 'HEAD^' }}
 
-  integration-tests:
-    name: "Integration Tests"
+  bridge-tests:
+    name: "Bridge Tests"
     needs: is-affected
     if: ${{ needs.is-affected.outputs.is-affected == 'true' }}
     env:
