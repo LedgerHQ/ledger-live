@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.39.0-next.3
+
+### Patch Changes
+
+- [#5994](https://github.com/LedgerHQ/ledger-live/pull/5994) [`8366eac`](https://github.com/LedgerHQ/ledger-live/commit/8366eac6bcbd3aa0f8a673fd4410fcd9c5f9231f) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix : type error in StorylyProvider
+
 ## 3.39.0-next.2
 
 ### Patch Changes
