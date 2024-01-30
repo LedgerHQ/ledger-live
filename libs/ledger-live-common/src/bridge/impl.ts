@@ -1,5 +1,5 @@
-import { BrigeAccountNotFound, CurrencyNotSupported } from "@ledgerhq/errors";
-import { decodeAccountId, getMainAccount, inferFamilyFromAccountId } from "../account";
+import { CurrencyNotSupported } from "@ledgerhq/errors";
+import { decodeAccountId, getMainAccount } from "../account";
 import { getEnv } from "@ledgerhq/live-env";
 import { checkAccountSupported } from "../account/index";
 import jsBridges from "../generated/bridge/js";
@@ -39,7 +39,7 @@ export const getAccountBridge = (
   }
 
   try {
-    return resolveAccountBridgeByFamily(currency.family, mainAccount.id);
+    return getAccountBridgeByFamily(currency.family, mainAccount.id);
   } catch {
     throw new CurrencyNotSupported("currency not supported " + currency.id, {
       currencyName: currency.name,
@@ -47,16 +47,7 @@ export const getAccountBridge = (
   }
 };
 
-export function getAccountBridgeFromAccount(accountId: string): AccountBridge<any> {
-  const family = inferFamilyFromAccountId(accountId);
-  if (!family) {
-    throw new BrigeAccountNotFound("bridge not found for account id" + accountId);
-  }
-
-  return resolveAccountBridgeByFamily(family, accountId);
-}
-
-function resolveAccountBridgeByFamily(family: string, accountId: string): AccountBridge<any> {
+export function getAccountBridgeByFamily(family: string, accountId?: string): AccountBridge<any> {
   if (accountId) {
     const { type } = decodeAccountId(accountId);
 
