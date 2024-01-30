@@ -2,7 +2,11 @@ import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { getAccountName, getAccountUnit } from "@ledgerhq/live-common/account/index";
+import {
+  getAccountName,
+  getAccountSpendableBalance,
+  getAccountUnit,
+} from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import {
   useFetchCurrencyFrom,
@@ -20,6 +24,8 @@ import { useAnalytics } from "~/analytics";
 import { sharedSwapTracking } from "../../utils";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 import { useSelector } from "react-redux";
+import BigNumber from "bignumber.js";
+import { AccountLike } from "@ledgerhq/types-live";
 
 interface Props {
   provider?: string;
@@ -38,17 +44,17 @@ export function From({ swapTx, provider, swapError, swapWarning, isSendMaxLoadin
   const accounts = useSwapableAccounts({ accounts: flattenedAccounts });
   const { name, balance, unit } = useMemo(() => {
     const { currency, account } = swapTx.swap.from;
-
+    const getAccountBalance = () => {
+      if (!account || !currency) return "";
+      const balance = getAccountSpendableBalance(account);
+      return formatCurrencyUnit(currency.units[0], balance, {
+        showCode: true,
+      });
+    };
     return {
       account,
       name: account && getAccountName(account),
-      balance:
-        (account &&
-          currency &&
-          formatCurrencyUnit(currency.units[0], account.balance, {
-            showCode: true,
-          })) ??
-        "",
+      balance: getAccountBalance(),
       unit: account && getAccountUnit(account),
     };
   }, [swapTx.swap.from]);
