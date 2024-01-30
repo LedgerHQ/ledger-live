@@ -1,2 +1,2 @@
 export * from "./NftMetadataProvider";
-export * from "./hooks/useNftGallery";
+export * from "./hooks/useNftGalleryFilter";
