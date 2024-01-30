@@ -32,28 +32,6 @@ import type {
 } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { firstValueFrom } from "rxjs";
-const { createHash } = require("crypto");
-const fs = require("fs");
-const nock = require("nock");
-jest.setTimeout(60 * 60 * 1000);
-
-import { PerformanceObserver, PerformanceObserverCallback } from "node:perf_hooks";
-import { createMock, initBackendMocks, StdRequest } from "./bridgeMocker";
-
-function reqToStdRequest(nodeRequest: any, nodeResponse: any): StdRequest {
-  return {
-    method: nodeRequest.method,
-    url: nodeRequest.url,
-    headers: nodeRequest.headers,
-    body: nodeRequest.body != null ? nodeRequest.body : {},
-    fileName: sha256(`${nodeRequest.method}${nodeRequest.url}`),
-    response: nodeResponse,
-  };
-}
-
-function sha256(str) {
-  return createHash("sha256").update(str).digest("hex");
-}
 
 const warnDev = process.env.CI ? (..._args) => {} : (...msg) => console.warn(...msg);
 // FIXME move out into DatasetTest to be defined in
@@ -83,66 +61,6 @@ export function syncAccount<T extends TransactionCommon>(
       .pipe(reduce((a, f: (arg0: Account) => Account) => f(a), account)),
   );
 }
-
-const useBackendMocks = true;
-
-const requests: StdRequest[] = [];
-
-let observer: PerformanceObserver;
-
-const onObserverEntry: PerformanceObserverCallback = (items, _observer) => {
-  const entries = items.getEntries();
-  for (const entry of entries) {
-    if (entry.entryType === "http") {
-      const req = (entry as any).detail?.req;
-      const res = (entry as any).detail?.res;
-      if (res != null && req != null) {
-        //if (req.url !== "http://localhost/apdu") {
-        requests.push(reqToStdRequest(req, res));
-        //}
-      }
-    }
-  }
-};
-
-beforeAll(async () => {
-  if (useBackendMocks) {
-    // disable network attempts not registered in mocks
-    await nock.disableNetConnect();
-    // await nock.enableNetConnect("localhost");
-    await initBackendMocks();
-  } else {
-    // We start sniffing traffic, after all tests we will create a mock for each entry
-    observer = new PerformanceObserver(onObserverEntry);
-    observer.observe({ entryTypes: ["http", "http2"] });
-    console.log("Observer started, starting network sniffing");
-  }
-});
-
-afterAll(async () => {
-  if (!useBackendMocks) {
-    observer.disconnect();
-    const dir = __dirname + "/bridgeMocks";
-    const knownUrls: string[] = [];
-    const filteredRequests: StdRequest[] = [];
-    for (const r of requests) {
-      if (!knownUrls.includes(r.url)) {
-        knownUrls.push(r.url);
-        filteredRequests.push(r);
-      }
-    }
-    console.log(`Starting mock file creation : ${filteredRequests.length} different network calls`);
-    const mockCreations = filteredRequests.map(request =>
-      createMock(request, `${dir}/${request.fileName}.json`),
-    );
-    await Promise.allSettled(mockCreations).then(result => {
-      console.log(`${result.filter(r => r.status === "fulfilled").length} new mocks !`);
-    });
-    console.log("Finished mock file creation");
-  } else {
-    await Promise.resolve();
-  }
-});
 
 export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): void {
   // covers all bridges through many different accounts
