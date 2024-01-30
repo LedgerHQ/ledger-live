@@ -22,6 +22,7 @@ export const AlgorandOperationTypeEnum = {
 export type AlgorandResources = {
   rewards: BigNumber;
   // This is the actual number of ASA opted-in for the Algo account
+  // test
   nbAssets: number;
 };
 export type AlgorandResourcesRaw = {
