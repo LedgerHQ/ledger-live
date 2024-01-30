@@ -186,6 +186,7 @@ export type Features = CurrencyFeatures & {
   ptxSwapMoonpayProvider: Feature_PtxSwapMoonpayProvider;
   flexibleContentCards: Feature_FlexibleContentCards;
   llmAnalyticsOptInPrompt: Feature_LlmAnalyticsOptInPrompt;
+  nftsFromSimplehash: Feature_NftsFromSimpleHash;
 };
 
 /**
@@ -511,6 +512,7 @@ export type Feature_LlmNewDeviceSelection = DefaultFeature;
 export type Feature_LlmWalletQuickActions = DefaultFeature;
 export type Feature_PtxSwapMoonpayProvider = DefaultFeature;
 export type Feature_FlexibleContentCards = DefaultFeature;
+export type Feature_NftsFromSimpleHash = DefaultFeature;
 
 /**
  * Utils types.

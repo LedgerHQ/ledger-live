@@ -447,6 +447,9 @@ export const DEFAULT_FEATURES: Features = {
       variant: LlmAnalyticsOptInPromptVariants.variantA,
     },
   },
+  nftsFromSimplehash: {
+    enabled: false,
+  },
 };
 
 // Firebase SDK treat JSON values as strings
