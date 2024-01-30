@@ -17,6 +17,7 @@ import AppActions from "./AppActions";
 import AppIcon from "./AppIcon";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import ToolTip from "~/renderer/components/Tooltip";
 
 const AppRowContainer = styled.div`
   display: flex;
@@ -35,10 +36,6 @@ const AppTitleAndSubtitleContainer = styled.div`
   min-width: 160px;
   & > * {
     display: block;
-  }
-  :hover {
-    background-color: ${p => p.theme.colors.palette.background.paper};
-    position: absolute;
   }
 `;
 
@@ -131,6 +128,8 @@ const Item = ({
 
   const { enabled: displayAppDeveloperName } = useFeature("myLedgerDisplayAppDeveloperName") || {};
 
+  const appTitle = `${app.displayName}${currency ? ` (${currency.ticker})` : ""}`;
+
   const appSubtitle = (
     <>
       <Trans
@@ -154,14 +153,20 @@ const Item = ({
     <AppRowContainer id={`managerAppsList-${name}`}>
       <Box flex="0.7" horizontal>
         <AppIcon app={app} />
-        <Box flex={1} horizontal position="relative">
+        <ToolTip
+          content={
+            <>
+              {appTitle}
+              {appInfoSeparatorString}
+              {appSubtitle}
+            </>
+          }
+        >
           <AppTitleAndSubtitleContainer>
-            <AppTitleText>{`${app.displayName}${
-              currency ? ` (${currency.ticker})` : ""
-            }`}</AppTitleText>
+            <AppTitleText>{appTitle}</AppTitleText>
             <AppSubtitleText>{appSubtitle}</AppSubtitleText>
           </AppTitleAndSubtitleContainer>
-        </Box>
+        </ToolTip>
       </Box>
       <Box flex="0.7" horizontal alignContent="center" justifyContent="flex-start" ml={5}>
         {isLiveSupported && currencyFlagEnabled ? (
