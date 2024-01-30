@@ -70,6 +70,7 @@
     "test": "pnpm ci-test-unit",
     "ci-test-unit": "env-cmd -f .ci.unit.env pnpm jest --ci --updateSnapshot && git diff --exit-code src",
     "ci-test-integration": "env-cmd -f .ci.integration.env pnpm jest --ci --updateSnapshot --passWithNoTests",
+    "ci-test-bridge": "env-cmd -f .ci.bridge.env pnpm jest --ci --passWithNoTests",
     "unimported": "unimported"
   },
   "files": [

@@ -79,7 +79,7 @@ jobs:
           FILTER: ${{ needs.is-affected.outputs.paths }}
           VERBOSE_FILE: logs.txt
         run: |
-          echo $FILTER | xargs pnpm common ci-test-integration
+          echo $FILTER | xargs pnpm common ci-test-bridge
           git diff --exit-code libs/ledger-live-common/src
       - name: (On Failure) Upload live-common snapshots and source
         uses: actions/upload-artifact@v3
