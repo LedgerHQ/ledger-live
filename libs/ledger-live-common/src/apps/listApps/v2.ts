@@ -5,7 +5,6 @@ import { Observable, throwError, Subscription } from "rxjs";
 import { App, DeviceInfo, idsToLanguage, languageIds } from "@ledgerhq/types-live";
 import { LocalTracer } from "@ledgerhq/logs";
 import type { ListAppsEvent, ListAppsResult, ListAppResponse } from "../types";
-import { getProviderId } from "../../manager";
 import hwListApps from "../../hw/listApps";
 import staxFetchImageSize from "../../hw/staxFetchImageSize";
 import {
@@ -14,10 +13,10 @@ import {
   findCryptoCurrencyById,
 } from "../../currencies";
 import ManagerAPI from "../../manager/api";
-import { getEnv } from "@ledgerhq/live-env";
 
 import getDeviceName from "../../hw/getDeviceName";
 import { getLatestFirmwareForDeviceUseCase } from "../../device/use-cases/getLatestFirmwareForDeviceUseCase";
+import { getProviderIdPure } from "../../manager/provider";
 
 // Hash discrepancies for these apps do NOT indicate a potential update,
 // these apps have a mechanism that makes their hash change every time.
@@ -26,10 +25,21 @@ const appsWithDynamicHashes = ["Fido U2F", "Security Key"];
 // Empty hash data means we won't have information on the app.
 const emptyHashData = "0".repeat(64);
 
-export const listAppsV2 = (
-  transport: Transport,
-  deviceInfo: DeviceInfo,
-): Observable<ListAppsEvent> => {
+type ListAppsV2Params = {
+  transport: Transport;
+  deviceInfo: DeviceInfo;
+  deviceProxyModel?: DeviceModelId; // TODO: this should be optional, but then the logic below should handle it properly
+  managerDevMode?: boolean;
+  forceProvider?: number;
+};
+
+export const listAppsV2 = ({
+  transport,
+  deviceInfo,
+  deviceProxyModel,
+  managerDevMode,
+  forceProvider,
+}: ListAppsV2Params): Observable<ListAppsEvent> => {
   const tracer = new LocalTracer("list-apps", { transport: transport.getTraceContext() });
   tracer.trace("Using new version", { deviceInfo });
 
@@ -40,13 +50,14 @@ export const listAppsV2 = (
   const deviceModelId =
     (transport.deviceModel && transport.deviceModel.id) ||
     (deviceInfo && identifyTargetId(deviceInfo.targetId as number))?.id ||
-    (getEnv("DEVICE_PROXY_MODEL") as DeviceModelId);
+    deviceProxyModel;
 
   return new Observable(o => {
     let sub: Subscription;
     async function main() {
-      const isDevMode = getEnv("MANAGER_DEV_MODE");
-      const provider = getProviderId(deviceInfo);
+      const provider = getProviderIdPure({ deviceInfo, forceProvider });
+
+      if (!deviceModelId) throw new Error("Bad usage of listAppsV2: missing deviceModelId");
       const deviceModel = getDeviceModel(deviceModelId);
       const bytesPerBlock = deviceModel.getBlockSize(deviceInfo.version);
 
@@ -142,7 +153,7 @@ export const listAppsV2 = (
        */
 
       const sortedCryptoCurrenciesPromise = currenciesByMarketcap(
-        listCryptoCurrencies(isDevMode, true),
+        listCryptoCurrencies(managerDevMode, true),
       );
 
       /**
@@ -233,7 +244,9 @@ export const listAppsV2 = (
 
       // Used to hide apps that are dev tools if user didn't opt-in.
       const appsListNames = catalogForDevice
-        .filter(({ isDevTools, name }) => isDevMode || !isDevTools || name in installedAppNames)
+        .filter(
+          ({ isDevTools, name }) => managerDevMode || !isDevTools || name in installedAppNames,
+        )
         .map(({ name }) => name);
 
       /**
