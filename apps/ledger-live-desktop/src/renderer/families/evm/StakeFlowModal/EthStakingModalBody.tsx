@@ -20,10 +20,9 @@ import { getTrackProperties } from "./utils/getTrackProperties";
 
 import ProviderItem from "./component/ProviderItem";
 
-const MAGNITUDE = 18;
-// Scale Eth to 18 decimals
-const eth = (n: number | BigNumber) => BigNumber(n).times(BigNumber(10).pow(MAGNITUDE));
+const ETH_LIMIT = BigNumber(32).times(BigNumber(10).pow(18));
 
+// Comparison fns for sorting providers by minimum ETH required
 const ascending = (a: ListProvider, b: ListProvider) => (a?.min || 0) - (b?.min || 0);
 const descending = (a: ListProvider, b: ListProvider) => (b?.min || 0) - (a?.min || 0);
 
@@ -95,7 +94,7 @@ export function EthStakingModalBody({
     });
   }, [doNotShowAgain, account?.currency?.id, source]);
 
-  const has32Eth = account.spendableBalance.isGreaterThan(eth(32));
+  const has32Eth = account.spendableBalance.isGreaterThan(ETH_LIMIT);
 
   const listProvidersSorted = listProviders.sort(has32Eth ? descending : ascending);
 
