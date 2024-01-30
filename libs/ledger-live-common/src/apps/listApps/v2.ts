@@ -26,7 +26,10 @@ const appsWithDynamicHashes = ["Fido U2F", "Security Key"];
 // Empty hash data means we won't have information on the app.
 const emptyHashData = "0".repeat(64);
 
-const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<ListAppsEvent> => {
+export const listAppsV2 = (
+  transport: Transport,
+  deviceInfo: DeviceInfo,
+): Observable<ListAppsEvent> => {
   const tracer = new LocalTracer("list-apps", { transport: transport.getTraceContext() });
   tracer.trace("Using new version", { deviceInfo });
 
@@ -292,5 +295,3 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
     };
   });
 };
-
-export default listApps;
