@@ -1,5 +1,18 @@
 # live-mobile
 
+## 3.38.1-nightly.3
+
+### Patch Changes
+
+- [#6034](https://github.com/LedgerHQ/ledger-live/pull/6034) [`b69bbdc`](https://github.com/LedgerHQ/ledger-live/commit/b69bbdc4428638c43d0eaf694a426d8bcc750d23) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Show installed app capacity correctly and update version number.
+
+- [#5977](https://github.com/LedgerHQ/ledger-live/pull/5977) [`30105a4`](https://github.com/LedgerHQ/ledger-live/commit/30105a44d4fe68ee9b195a9fb075652734ea3e0e) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Refactor getLatestFirmwareForDevice, useLatestFirmware and all related API calls
+
+- [#6030](https://github.com/LedgerHQ/ledger-live/pull/6030) [`667151f`](https://github.com/LedgerHQ/ledger-live/commit/667151f565359240f2d8c19eac3c028bf88944ec) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix link display in French
+
+- Updated dependencies [[`30105a4`](https://github.com/LedgerHQ/ledger-live/commit/30105a44d4fe68ee9b195a9fb075652734ea3e0e), [`4178cfb`](https://github.com/LedgerHQ/ledger-live/commit/4178cfba8107d16b04f585468344bc6b74de8da4)]:
+  - @ledgerhq/live-common@33.6.0-nightly.2
+
 ## 3.38.1-nightly.2
 
 ### Patch Changes

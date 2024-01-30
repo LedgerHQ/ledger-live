@@ -1,5 +1,16 @@
 # ledger-live-desktop
 
+## 2.75.1-nightly.2
+
+### Patch Changes
+
+- [#5977](https://github.com/LedgerHQ/ledger-live/pull/5977) [`30105a4`](https://github.com/LedgerHQ/ledger-live/commit/30105a44d4fe68ee9b195a9fb075652734ea3e0e) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Refactor getLatestFirmwareForDevice, useLatestFirmware and all related API calls
+
+- [#6021](https://github.com/LedgerHQ/ledger-live/pull/6021) [`d73f3c1`](https://github.com/LedgerHQ/ledger-live/commit/d73f3c116cd89ebcfc4ddf51c7f65ffc8f566166) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - check starts with to catch ppd and stg in swap live app
+
+- Updated dependencies [[`30105a4`](https://github.com/LedgerHQ/ledger-live/commit/30105a44d4fe68ee9b195a9fb075652734ea3e0e), [`4178cfb`](https://github.com/LedgerHQ/ledger-live/commit/4178cfba8107d16b04f585468344bc6b74de8da4)]:
+  - @ledgerhq/live-common@33.6.0-nightly.2
+
 ## 2.75.1-nightly.1
 
 ### Patch Changes

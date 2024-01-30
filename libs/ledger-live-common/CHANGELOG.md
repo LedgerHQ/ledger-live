@@ -1,5 +1,15 @@
 # @ledgerhq/live-common
 
+## 33.6.0-nightly.2
+
+### Minor Changes
+
+- [#5977](https://github.com/LedgerHQ/ledger-live/pull/5977) [`30105a4`](https://github.com/LedgerHQ/ledger-live/commit/30105a44d4fe68ee9b195a9fb075652734ea3e0e) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Refactor getLatestFirmwareForDevice, useLatestFirmware and all related API calls
+
+### Patch Changes
+
+- [#6022](https://github.com/LedgerHQ/ledger-live/pull/6022) [`4178cfb`](https://github.com/LedgerHQ/ledger-live/commit/4178cfba8107d16b04f585468344bc6b74de8da4) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Sanitize account data that may be missing when de/serializing Tron accounts
+
 ## 33.5.1-nightly.1
 
 ### Patch Changes

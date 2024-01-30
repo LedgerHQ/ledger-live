@@ -126,10 +126,13 @@
     "@ledgerhq/pnpm-utils": "1.0.1",
     "@ledgerhq/live-countervalues": "0.1.0",
     "@ledgerhq/live-countervalues-react": "0.1.0",
-    "@ledgerhq/live-hooks": "0.1.0"
+    "@ledgerhq/live-hooks": "0.1.0",
+    "@ledgerhq/live-nft": "0.1.0",
+    "@ledgerhq/live-nft-react": "0.1.0"
   },
   "changesets": [
     "blue-berries-flash",
+    "bright-books-join",
     "bright-papayas-relate",
     "brown-crews-hammer",
     "chilly-scissors-talk",
@@ -146,18 +149,22 @@
     "nice-islands-double",
     "odd-chefs-sell",
     "olive-lies-buy",
+    "polite-bears-tickle",
     "proud-dragons-tan",
     "purple-pears-mix",
     "real-parents-doubt",
     "rotten-apples-remember",
+    "rotten-cycles-approve",
     "selfish-files-trade",
     "seven-bobcats-smash",
     "shaggy-cherries-prove",
     "shaggy-gifts-marry",
+    "silly-ears-cry",
     "slow-mugs-attack",
     "smooth-mails-love",
     "swift-socks-complain",
     "thin-snails-drum",
+    "wicked-socks-relate",
     "witty-laws-join"
   ]
 }
