@@ -23,7 +23,7 @@ release:
   catalog:
     en-US:
       name: "Ledger Live: Crypto & NFT App"
-      short_description: Ledger Live Mobile 3.28.0
+      short_description: Ledger Live Mobile 3.39.0
       long_description: >-
         From the company that produced the world's most secure crypto hardware
         device comes the world's most accessible and complete Web3 wallet:
@@ -115,16 +115,14 @@ release:
         **Rewards are not guaranteed. Ledger provides no advice or
         recommendations on use of staking services.
       new_in_version: >-
-        Features
-        Managing your NFT collection in Ledger Live just got better. You can now filter your NFTs by blockchain. This will help you view all your NFTs for a specific blockchain in one glance.
-
-        This filter also provides easy access to your hidden NFT collections directly from the Gallery. You no longer need to go to Settings to unhide NFTs.
-
-        Improvements
-        Want to get a closer look at your NFT? We’ve made some UI improvements to help you view NFT details.
-
         Fixes
-        Optimism is now Op Mainnet. We’ve made the name change in Ledger Live.
+        You can now clear nominations for your bonded DOT.
+
+        A bug that caused the app to crash when accessing TRC20 accounts has been resolved.
+
+        We've fixed the bug that prevented the hiding of token accounts.
+
+        Adding a Solana (SOL) account or sending a transaction would sometimes result in an error. We've patched this up.
       saga_features: ""
   media:
     - purpose: screenshot
