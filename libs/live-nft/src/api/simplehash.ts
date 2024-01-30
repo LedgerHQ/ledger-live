@@ -1,10 +1,6 @@
 import network from "@ledgerhq/live-network/network";
 import { SimpleHashResponse } from "./types";
-
-// TODO move to live-env
-// import { getEnv } from "@ledgerhq/live-env";
-const SIMPLE_HASH_API_BASE = "https://simplehash.api.live.ledger.com/api/v0";
-////////////////////////
+import { getEnv } from "@ledgerhq/live-env";
 
 const SPAM_FILTER_THRESHOLD = 80;
 const PAGE_SIZE = 50;
@@ -45,7 +41,7 @@ export async function fetchNftsFromSimpleHash(opts: NftFetchOpts): Promise<Simpl
 
   const { data } = await network<SimpleHashResponse>({
     method: "GET",
-    url: `${SIMPLE_HASH_API_BASE}/nfts/owners_v2?chains=${chains.join(
+    url: `${getEnv("SIMPLE_HASH_API_BASE")}/nfts/owners_v2?chains=${chains.join(
       ",",
     )}&wallet_addresses=${addresses}&limit=${limit}${filters ? `&filters=${filters}` : ""}${
       cursor ? `&cursor=${cursor}` : ""
