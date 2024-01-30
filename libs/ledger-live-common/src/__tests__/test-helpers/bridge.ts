@@ -77,6 +77,13 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
   }> = [];
   const { implementations, currencies } = data;
   Object.keys(currencies).forEach(currencyId => {
+    if (
+      process.env["USE_BACKEND_MOCKS"] &&
+      process.env[`BRIDGE_SUPPORTED_${currencyId.toUpperCase()}`] == null
+    ) {
+      // Currency is not supported in bridge mock mode
+      return;
+    }
     const currencyData = currencies[currencyId];
     const currency = getCryptoCurrencyById(currencyId);
     currenciesRelated.push({
@@ -131,7 +138,7 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
         return implicitMigration(accounts);
       } catch (e: any) {
         console.error(e.message);
-        releaseMockDevice(deviceId);
+        //releaseMockDevice(deviceId);
         throw e;
       } finally {
         releaseMockDevice(deviceId);
