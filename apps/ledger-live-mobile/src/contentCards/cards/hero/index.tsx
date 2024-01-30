@@ -20,7 +20,11 @@ const HeroCard = ContentCardBuilder<Props>(({ title, image, cta, tag, metadata }
         <Image uri={image} />
         {tag && <Tag label={tag} />}
         <Title label={title} />
-        <Button type="main">{cta}</Button>
+        <Flex flexDirection="row">
+          <Button onPress={metadata.actions?.onClick} type="main">
+            {cta}
+          </Button>
+        </Flex>
       </Flex>
     </TouchableOpacity>
   );
