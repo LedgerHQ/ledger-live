@@ -12,7 +12,7 @@ import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/accou
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
+import { isNftTransaction } from "@ledgerhq/live-nft";
 import { isOldestPendingOperation } from "@ledgerhq/live-common/operation";
 import { getEnv } from "@ledgerhq/live-env";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";

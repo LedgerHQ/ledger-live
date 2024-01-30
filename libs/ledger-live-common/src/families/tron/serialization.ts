@@ -21,8 +21,10 @@ export const toTronResourcesRaw = ({
   const delegatedFrozenBandwidth = delegatedFrozen.bandwidth;
   const delegatedFrozenEnergy = delegatedFrozen.energy;
   const cacheTransactionInfoById = {};
-  const legacyFrozenBandwidth = legacyFrozen.bandwidth;
-  const legacyFrozenEnergy = legacyFrozen.energy;
+  const unFrozenBandwidth = unFrozen?.bandwidth;
+  const unFrozenEnergy = unFrozen?.energy;
+  const legacyFrozenBandwidth = legacyFrozen?.bandwidth;
+  const legacyFrozenEnergy = legacyFrozen?.energy;
 
   for (const k in cacheTx) {
     const { fee, blockNumber, withdraw_amount, unfreeze_amount } = cacheTx[k];
@@ -55,13 +57,13 @@ export const toTronResourcesRaw = ({
         : undefined,
     },
     unFrozen: {
-      bandwidth: unFrozen.bandwidth
-        ? unFrozen.bandwidth.map(entry => {
+      bandwidth: unFrozenBandwidth
+        ? unFrozenBandwidth.map(entry => {
             return { amount: entry.amount.toString(), expireTime: entry.expireTime.toISOString() };
           })
         : undefined,
-      energy: unFrozen.energy
-        ? unFrozen.energy.map(entry => {
+      energy: unFrozenEnergy
+        ? unFrozenEnergy.map(entry => {
             return { amount: entry.amount.toString(), expireTime: entry.expireTime.toISOString() };
           })
         : undefined,
@@ -115,8 +117,10 @@ export const fromTronResourcesRaw = ({
   const frozenEnergy = frozen.energy;
   const delegatedFrozenBandwidth = delegatedFrozen.bandwidth;
   const delegatedFrozenEnergy = delegatedFrozen.energy;
-  const legacyFrozenBandwidth = legacyFrozen.bandwidth;
-  const legacyFrozenEnergy = legacyFrozen.energy;
+  const unFrozenBandwidth = unFrozen?.bandwidth;
+  const unFrozenEnergy = unFrozen?.energy;
+  const legacyFrozenBandwidth = legacyFrozen?.bandwidth;
+  const legacyFrozenEnergy = legacyFrozen?.energy;
 
   const cacheTransactionInfoById = {};
 
@@ -158,13 +162,13 @@ export const fromTronResourcesRaw = ({
         : undefined,
     },
     unFrozen: {
-      bandwidth: unFrozen.bandwidth
-        ? unFrozen.bandwidth.map(entry => {
+      bandwidth: unFrozenBandwidth
+        ? unFrozenBandwidth.map(entry => {
             return { amount: new BigNumber(entry.amount), expireTime: new Date(entry.expireTime) };
           })
         : undefined,
-      energy: unFrozen.energy
-        ? unFrozen.energy.map(entry => {
+      energy: unFrozenEnergy
+        ? unFrozenEnergy.map(entry => {
             return { amount: new BigNumber(entry.amount), expireTime: new Date(entry.expireTime) };
           })
         : undefined,

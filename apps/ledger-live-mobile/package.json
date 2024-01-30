@@ -82,6 +82,8 @@
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-countervalues": "workspace:^",
     "@ledgerhq/live-countervalues-react": "workspace:^",
+    "@ledgerhq/live-nft": "workspace:^",
+    "@ledgerhq/live-nft-react": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/logs": "workspace:^",

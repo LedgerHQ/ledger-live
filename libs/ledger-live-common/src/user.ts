@@ -1,4 +1,3 @@
-import { getEnv } from "@ledgerhq/live-env";
 import { sha256 } from "./crypto";
 
 const userHashesPerUserId = (userId: string) => {
@@ -13,9 +12,7 @@ const userHashesPerUserId = (userId: string) => {
 };
 
 let cache;
-export const getUserHashes = () => {
-  const userId = getEnv("USER_ID");
-
+export const getUserHashes = (userId: string) => {
   if (cache && userId === cache.userId) {
     return cache.value;
   }
