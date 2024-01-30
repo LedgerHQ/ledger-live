@@ -1,6 +1,6 @@
 import invariant from "invariant";
 import { BigNumber } from "bignumber.js";
-import { reduce, filter, map, delay } from "rxjs/operators";
+import { reduce, filter, map } from "rxjs/operators";
 import flatMap from "lodash/flatMap";
 import omit from "lodash/omit";
 import { InvalidAddress, RecipientRequired, AmountRequired } from "@ledgerhq/errors";
@@ -71,14 +71,11 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
     accountData: any;
     impl: string;
   }> = [];
-
   const currenciesRelated: Array<{
     currencyData: CurrenciesData<T>;
     currency: CryptoCurrency;
   }> = [];
-
   const { implementations, currencies } = data;
-
   Object.keys(currencies).forEach(currencyId => {
     const currencyData = currencies[currencyId];
     const currency = getCryptoCurrencyById(currencyId);
@@ -139,27 +136,6 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
       } finally {
         releaseMockDevice(deviceId);
       }
-      /*try {
-        const accounts = await firstValueFrom(
-          bridge
-            .scanAccounts({
-              currency,
-              deviceId,
-              syncConfig: defaultSyncConfig,
-            })
-            .pipe(
-              filter(e => e.type === "discovered"),
-              map(e => e.account),
-              reduce((all, a) => all.concat(a), [] as Account[]),
-            ),
-        );
-        return implicitMigration(accounts);
-      } catch (e: any) {
-        console.error(e.message);
-        throw e;
-      } finally {
-        releaseMockDevice(deviceId);
-      }*/
     };
 
     const scanAccountsCaches = {};
