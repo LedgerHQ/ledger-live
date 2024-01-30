@@ -15,6 +15,7 @@ import {
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
 import { WarningSolidMedium } from "@ledgerhq/native-ui/assets/icons";
+import { Currency } from "@ledgerhq/types-cryptoassets";
 import { Selector } from "./Selector";
 import { AmountInput } from "./AmountInput";
 import { SwapFormParamList } from "../../types";
@@ -24,7 +25,6 @@ import { useAnalytics } from "~/analytics";
 import { sharedSwapTracking } from "../../utils";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 import { useSelector } from "react-redux";
-import BigNumber from "bignumber.js";
 import { AccountLike } from "@ledgerhq/types-live";
 
 interface Props {
@@ -42,22 +42,27 @@ export function From({ swapTx, provider, swapError, swapWarning, isSendMaxLoadin
   const { data: currenciesFrom } = useFetchCurrencyFrom();
   const flattenedAccounts = useSelector(flattenAccountsSelector);
   const accounts = useSwapableAccounts({ accounts: flattenedAccounts });
-  const { name, balance, unit } = useMemo(() => {
-    const { currency, account } = swapTx.swap.from;
-    const getAccountBalance = () => {
-      if (!account || !currency) return "";
-      const balance = getAccountSpendableBalance(account);
-      return formatCurrencyUnit(currency.units[0], balance, {
+
+  const getAccountBalance = useCallback(
+    (inputs: { account?: AccountLike; currency?: Currency }) => {
+      if (!inputs.account || !inputs.currency) return "";
+      const balance = getAccountSpendableBalance(inputs.account);
+      return formatCurrencyUnit(inputs.currency.units[0], balance, {
         showCode: true,
       });
-    };
+    },
+    [],
+  );
+
+  const { name, balance, unit } = useMemo(() => {
+    const { currency, account } = swapTx.swap.from;
     return {
       account,
       name: account && getAccountName(account),
-      balance: getAccountBalance(),
+      balance: getAccountBalance({ account, currency }),
       unit: account && getAccountUnit(account),
     };
-  }, [swapTx.swap.from]);
+  }, [swapTx.swap.from, getAccountBalance]);
 
   usePickDefaultAccount(accounts, swapTx.swap.from.account, swapTx.setFromAccount);
 
