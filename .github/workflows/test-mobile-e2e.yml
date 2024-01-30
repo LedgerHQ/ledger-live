@@ -125,18 +125,18 @@ jobs:
         timeout-minutes: 45
         run: pnpm mobile e2e:ci -p ios -t
       - name: Delete iOS simulator
-        if: always()
+        if: ${{ steps.simulator.outputs.id }}
         run: |
           xcrun simctl delete ${{ steps.simulator.outputs.id }}
       - name: Upload test artifacts
         uses: actions/upload-artifact@v3
-        if: always()
+        if: ${{ !cancelled() }}
         with:
           name: test-ios-artifacts
           path: apps/ledger-live-mobile/artifacts
       - name: Upload Allure report
         uses: actions/upload-artifact@v3
-        if: always()
+        if: ${{ !cancelled() }}
         with:
           name: "allure-ios-reports"
           path: apps/ledger-live-mobile/allure-results
@@ -144,7 +144,7 @@ jobs:
   allure-report-ios:
     name: "Allure Reports Export on Server"
     runs-on: [ledger-live-medium-linux]
-    if: ${{ always() && !cancelled() && github.ref_name == 'develop' }}
+    if: ${{ !cancelled() && github.ref_name == 'develop' }}
     needs: [detox-tests-ios]
     steps:
       - uses: actions/checkout@v4
@@ -263,14 +263,14 @@ jobs:
           emulator-options: -read-only -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           script: pnpm mobile e2e:ci -p android -t
       - name: Upload test artifacts
-        if: always()
+        if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v3
         with:
           name: test-android-artifacts
           path: apps/ledger-live-mobile/artifacts/
       - name: Upload Allure Report
         uses: actions/upload-artifact@v3
-        if: always()
+        if: ${{ !cancelled() }}
         with:
           name: "allure-android-reports"
           path: apps/ledger-live-mobile/allure-results
@@ -278,7 +278,7 @@ jobs:
   allure-report-android:
     name: "Allure Reports Export on Server"
     runs-on: [ledger-live-medium-linux]
-    if: ${{ always() && !cancelled() && github.ref_name == 'develop' }}
+    if: ${{ !cancelled() && github.ref_name == 'develop' }}
     needs: [detox-tests-android]
     steps:
       - name: checkout
@@ -295,7 +295,7 @@ jobs:
   report:
     needs: [detox-tests-android, detox-tests-ios]
     runs-on: ubuntu-latest
-    if: always() && !cancelled() && github.event_name == 'workflow_dispatch'
+    if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' }}
     steps:
       - uses: actions/checkout@v4
         with:
