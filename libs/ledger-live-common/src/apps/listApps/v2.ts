@@ -48,8 +48,8 @@ export const listApps = ({
   }
 
   const deviceModelId =
-    (transport.deviceModel && transport.deviceModel.id) ||
-    (deviceInfo && identifyTargetId(deviceInfo.targetId as number))?.id ||
+    transport?.deviceModel?.id ||
+    identifyTargetId(deviceInfo.targetId as number)?.id ||
     deviceProxyModel;
 
   return new Observable(o => {
@@ -245,7 +245,8 @@ export const listApps = ({
       // Used to hide apps that are dev tools if user didn't opt-in.
       const appsListNames = catalogForDevice
         .filter(
-          ({ isDevTools, name }) => managerDevModeEnabled || !isDevTools || name in installedAppNames,
+          ({ isDevTools, name }) =>
+            managerDevModeEnabled || !isDevTools || name in installedAppNames,
         )
         .map(({ name }) => name);
 
