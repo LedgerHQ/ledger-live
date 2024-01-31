@@ -8,6 +8,7 @@ export type FilterParams = {
   private?: boolean;
   apiVersion?: string[] | string;
   llVersion?: string;
+  lang?: string;
 };
 
 export type AccountFilters = {
