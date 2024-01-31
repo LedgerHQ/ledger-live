@@ -1,5 +1,5 @@
 import { useMemo, useCallback } from "react";
-import { PropsRaw } from "./types";
+import { PropsRawMinimumCard, PropsRawFullCard } from "./types";
 import { LiveAppManifestParams } from "@ledgerhq/live-common/platform/types";
 import { LiveAppManifestParamsDapp } from "@ledgerhq/live-common/platform/types";
 
@@ -7,7 +7,10 @@ const hasDappUrl = (params: LiveAppManifestParams): params is LiveAppManifestPar
   return "dappUrl" in params;
 };
 
-export function useCard({ manifest, onClick: onClickProp }: PropsRaw) {
+export function useCard({
+  manifest,
+  onClick: onClickProp,
+}: PropsRawMinimumCard | PropsRawFullCard) {
   let url = manifest.url;
   if (manifest.params && hasDappUrl(manifest.params)) {
     url = manifest.params.dappUrl;
