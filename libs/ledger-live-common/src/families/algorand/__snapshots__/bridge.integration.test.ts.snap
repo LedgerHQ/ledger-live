@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`testBridge algorand currency bridge scanAccounts algorand seed 1 1`] = `
+exports[`algorand currency bridge scanAccounts algorand seed 1 1`] = `
 [
   {
     "algorandResources": {
@@ -227,7 +227,7 @@ exports[`testBridge algorand currency bridge scanAccounts algorand seed 1 1`] = 
 ]
 `;
 
-exports[`testBridge algorand currency bridge scanAccounts algorand seed 1 2`] = `
+exports[`algorand currency bridge scanAccounts algorand seed 1 2`] = `
 [
   [
     {
