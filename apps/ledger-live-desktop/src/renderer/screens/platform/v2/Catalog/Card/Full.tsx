@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import { Logo } from "./Logo";
-import { PropsRaw } from "./types";
+import { PropsRawFullCard } from "./types";
 import { useCard } from "./hooks";
 import { Container, Subtitle } from "./Layout";
 import { useTranslation } from "react-i18next";
@@ -15,7 +15,7 @@ export const Highlight = styled(Container).attrs({})`
   background: linear-gradient(${p => p.theme.colors.palette.background.default}, rgba(0, 0, 0, 0));
 `;
 
-export function FullCard(props: PropsRaw) {
+export function FullCard(props: PropsRawFullCard) {
   const language = useSelector(languageSelector);
   const { t } = useTranslation();
   const theme = useTheme();
