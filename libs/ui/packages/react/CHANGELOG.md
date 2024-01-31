@@ -1,5 +1,11 @@
 # @ledgerhq/react-ui
 
+## 0.14.15-nightly.1
+
+### Patch Changes
+
+- [#6031](https://github.com/LedgerHQ/ledger-live/pull/6031) [`ca5625c`](https://github.com/LedgerHQ/ledger-live/commit/ca5625c9f5a4293e9a78d630e24c884efed00a9f) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Add new Carousel and remove old and unused one
+
 ## 0.14.15-nightly.0
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # live-mobile
 
+## 3.38.1-nightly.4
+
+### Patch Changes
+
+- [#6044](https://github.com/LedgerHQ/ledger-live/pull/6044) [`9f49142`](https://github.com/LedgerHQ/ledger-live/commit/9f49142241b44b010f740486c5ddbd42b1904665) Thanks [@cng-ledger](https://github.com/cng-ledger)! - fix(LIVE-11047): display spendable balance in swap account from input in LLM
+
+- [#6043](https://github.com/LedgerHQ/ledger-live/pull/6043) [`e8513e6`](https://github.com/LedgerHQ/ledger-live/commit/e8513e6b309292b85ced4002d2f988c65f3ae139) Thanks [@mle-gall](https://github.com/mle-gall)! - Fix : type error in StorylyProvider
+
 ## 3.38.1-nightly.3
 
 ### Patch Changes
