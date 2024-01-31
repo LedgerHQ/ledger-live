@@ -2188,6 +2188,21 @@ importers:
       '@taquito/utils':
         specifier: ^17.5.2
         version: 17.5.2
+      '@types/bchaddrjs':
+        specifier: ^0.4.0
+        version: 0.4.0
+      '@types/bs58check':
+        specifier: ^2.1.0
+        version: 2.1.0
+      '@types/pako':
+        specifier: ^2.0.0
+        version: 2.0.0
+      '@types/qs':
+        specifier: ^6.9.7
+        version: 6.9.7
+      '@types/redux-actions':
+        specifier: ^2.6.2
+        version: 2.6.2
       '@xstate/react':
         specifier: ^1.6.3
         version: 1.6.3(@types/react@18.2.28)(react@18.2.0)(xstate@4.32.0)
@@ -2396,18 +2411,12 @@ importers:
       '@testing-library/react-hooks':
         specifier: ^8.0.1
         version: 8.0.1(@types/react@18.2.28)(react-dom@18.2.0)(react-test-renderer@18.2.0)(react@18.2.0)
-      '@types/bchaddrjs':
-        specifier: ^0.4.0
-        version: 0.4.0
       '@types/bn.js':
         specifier: ^5.1.1
         version: 5.1.1
       '@types/bs58':
         specifier: ^4.0.1
         version: 4.0.1
-      '@types/bs58check':
-        specifier: ^2.1.0
-        version: 2.1.0
       '@types/cbor':
         specifier: ^6.0.0
         version: 6.0.0
@@ -2426,18 +2435,9 @@ importers:
       '@types/object-hash':
         specifier: ^2.1.0
         version: 2.2.1
-      '@types/pako':
-        specifier: ^2.0.0
-        version: 2.0.0
-      '@types/qs':
-        specifier: ^6.9.7
-        version: 6.9.7
       '@types/react':
         specifier: ^18.2.21
         version: 18.2.28
-      '@types/redux-actions':
-        specifier: ^2.6.2
-        version: 2.6.2
       '@types/uuid':
         specifier: ^8.3.4
         version: 8.3.4
@@ -23686,7 +23686,7 @@ packages:
 
   /@types/bchaddrjs@0.4.0:
     resolution: {integrity: sha512-Nvv3haWpXNWYfKasVoEp3VBgVsBTLTh45anhHUN8xVUPhn4ErU3FPS5AEcZtACWc5ICGUxbaiLTWOnwDkwYF1Q==}
-    dev: true
+    dev: false
 
   /@types/bn.js@4.11.6:
     resolution: {integrity: sha512-pqr857jrp2kPuO9uRjZ3PwnJTjoQy+fcdxvBTvHm6dkmEL9q+hDD/2j/0ELOBPtPnS8LjCX0gI9nbl8lVkadpg==}
@@ -24235,7 +24235,6 @@ packages:
 
   /@types/pako@2.0.0:
     resolution: {integrity: sha512-10+iaz93qR5WYxTo+PMifD5TSxiOtdRaxBf7INGGXMQgTCu8Z/7GYWYFUOS3q/G0nE5boj1r4FEB+WSy7s5gbA==}
-    dev: true
 
   /@types/parse-json@4.0.0:
     resolution: {integrity: sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==}
@@ -24641,7 +24640,6 @@ packages:
 
   /@types/redux-actions@2.6.2:
     resolution: {integrity: sha512-TvcINy8rWFANcpc3EiEQX9Yv3owM3d3KIrqr2ryUIOhYIYzXA/bhDZeGSSSuai62iVR2qMZUgz9tQ5kr0Kl+Tg==}
-    dev: true
 
   /@types/resolve@1.17.1:
     resolution: {integrity: sha512-yy7HuzQhj0dhGpD8RLXSZWEkLsV9ibvxvi6EiJ3bkqLAO1RGo0WbkWQiwpRlSFymTJRz0d3k5LM3kkx8ArDbLw==}
