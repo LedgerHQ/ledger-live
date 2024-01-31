@@ -45,7 +45,7 @@ export default class ManagerPage {
     const numberOutdated = installedDesc.filter(element => element.includes("(outdated)")).length;
     await expect(this.updateAppField()).toHaveText(this.updateAppText(numberOutdated));
 
-    for (let app of appDesc) {
+    for (const app of appDesc) {
       const status = installedDesc.includes(app)
         ? "installed"
         : installedDesc.some(installedElement => installedElement.includes(app + " (outdated)"))
