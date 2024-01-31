@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-transport-vault",
-  "version": "1.2.2",
+  "version": "1.2.3-start-exchange.0",
   "description": "Ledger Vault transport",
   "keywords": [
     "Ledger",

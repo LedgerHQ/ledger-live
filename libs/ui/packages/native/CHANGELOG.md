@@ -1,5 +1,16 @@
 # @ledgerhq/native-ui
 
+## 0.22.6-start-exchange.0
+
+### Patch Changes
+
+- [#5945](https://github.com/LedgerHQ/ledger-live/pull/5945) [`f551cd4`](https://github.com/LedgerHQ/ledger-live/commit/f551cd4d9798fddb4286f46bfa4632510af6d637) Thanks [@mle-gall](https://github.com/mle-gall)! - Created analytics prompt screens for variant A and B (main and secondary screens)
+
+- [#6017](https://github.com/LedgerHQ/ledger-live/pull/6017) [`0a152fd`](https://github.com/LedgerHQ/ledger-live/commit/0a152fd4f51d189cf3b8d6b82975c252c246f9b8) Thanks [@mle-gall](https://github.com/mle-gall)! - Fix : Switch has a black thumb in light-mode. Thumb should always be white, in both dark and light mode.
+
+- Updated dependencies [[`97bafa2`](https://github.com/LedgerHQ/ledger-live/commit/97bafa2573436572fca63469b13214bfcd7eb85c)]:
+  - @ledgerhq/crypto-icons-ui@1.0.2-start-exchange.0
+
 ## 0.22.5
 
 ### Patch Changes

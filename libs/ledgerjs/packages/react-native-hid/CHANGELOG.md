@@ -1,5 +1,12 @@
 # @ledgerhq/react-native-hid
 
+## 6.31.3-start-exchange.0
+
+### Patch Changes
+
+- Updated dependencies [[`eadebff`](https://github.com/LedgerHQ/ledger-live/commit/eadebff3fe58aef6a5befb033d5147afc49663d3)]:
+  - @ledgerhq/hw-transport@6.30.3-start-exchange.0
+
 ## 6.31.2
 
 ### Patch Changes

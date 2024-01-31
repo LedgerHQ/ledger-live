@@ -1,5 +1,70 @@
 # ledger-live-desktop
 
+## 2.76.0-start-exchange.0
+
+### Minor Changes
+
+- [#5749](https://github.com/LedgerHQ/ledger-live/pull/5749) [`eadebff`](https://github.com/LedgerHQ/ledger-live/commit/eadebff3fe58aef6a5befb033d5147afc49663d3) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Feat: refactor on the IPC Transport logic
+
+  Simpler implementation of the Transport logic using Electron IPC
+  in order to have a 1 <-> 1 relationship between the transport living
+  on the `renderer` process and the transport living on the `internal` process
+
+- [#6009](https://github.com/LedgerHQ/ledger-live/pull/6009) [`67da88e`](https://github.com/LedgerHQ/ledger-live/commit/67da88e89dfdddf570d1256586447501632b3d03) Thanks [@CremaFR](https://github.com/CremaFR)! - update start exchange to support swap based on provider
+
+### Patch Changes
+
+- [#5731](https://github.com/LedgerHQ/ledger-live/pull/5731) [`18f170a`](https://github.com/LedgerHQ/ledger-live/commit/18f170afae57ce1a8f4553f865179b9b0d3a9180) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - update live config lib
+
+- [#5889](https://github.com/LedgerHQ/ledger-live/pull/5889) [`0a03cf1`](https://github.com/LedgerHQ/ledger-live/commit/0a03cf10343e7b79295c1467c8964cc943f16840) Thanks [@RamyEB](https://github.com/RamyEB)! - Make the searchable Dapp only visible through the search bar for both LLD and LLM
+
+- [#5749](https://github.com/LedgerHQ/ledger-live/pull/5749) [`eadebff`](https://github.com/LedgerHQ/ledger-live/commit/eadebff3fe58aef6a5befb033d5147afc49663d3) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Fix: HID USB reconnection on LLD during the sync onboarding
+
+  - Refactoring of the disconnect after inactivity of the transport implementation
+    hw-transport-node-hid-singleton
+  - Better logs and documentation
+
+- [#5997](https://github.com/LedgerHQ/ledger-live/pull/5997) [`7bf7d21`](https://github.com/LedgerHQ/ledger-live/commit/7bf7d21dfda0f24d011e0b9e255e1a59e017d3e4) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Return to device selection screen after clicking the cross button
+
+- [#5934](https://github.com/LedgerHQ/ledger-live/pull/5934) [`577bec1`](https://github.com/LedgerHQ/ledger-live/commit/577bec1dcbdccfb80255045502f8d355e5c0e8d7) Thanks [@cng-ledger](https://github.com/cng-ledger)! - feat(LIVE-9328): display quotes in swap live app
+
+- [#5959](https://github.com/LedgerHQ/ledger-live/pull/5959) [`801b16f`](https://github.com/LedgerHQ/ledger-live/commit/801b16fa7a440d914b1e76cd8785a3c7c85b474b) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - My Ledger: app in app catalog, fix layout of items
+
+- [#5943](https://github.com/LedgerHQ/ledger-live/pull/5943) [`5e70c4a`](https://github.com/LedgerHQ/ledger-live/commit/5e70c4a88edcad5aacc73a3d3f5a8936369db831) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Open app device action: fix reducer for "deviceChange" and "error" events types, causing issues when the app changes on the device
+
+- [#5919](https://github.com/LedgerHQ/ledger-live/pull/5919) [`040e591`](https://github.com/LedgerHQ/ledger-live/commit/040e5918eb7ad5a861b2f6eda09f71d3ce565991) Thanks [@gre](https://github.com/gre)! - Update to Countervalues V3 API with better price coverage and better performance.
+
+- [#5897](https://github.com/LedgerHQ/ledger-live/pull/5897) [`4f141c7`](https://github.com/LedgerHQ/ledger-live/commit/4f141c74f263f12927e67b2478535bbccb0b5165) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Improve stax connect screen before ESC by polling device onboarding state
+
+- [#5941](https://github.com/LedgerHQ/ledger-live/pull/5941) [`f8e4aa7`](https://github.com/LedgerHQ/ledger-live/commit/f8e4aa765d7cbf026d81229f4ee1a0258fdbb5b2) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - bugfix remove height swap web view
+
+- [#5977](https://github.com/LedgerHQ/ledger-live/pull/5977) [`30105a4`](https://github.com/LedgerHQ/ledger-live/commit/30105a44d4fe68ee9b195a9fb075652734ea3e0e) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Refactor getLatestFirmwareForDevice, useLatestFirmware and all related API calls
+
+- [#5731](https://github.com/LedgerHQ/ledger-live/pull/5731) [`18f170a`](https://github.com/LedgerHQ/ledger-live/commit/18f170afae57ce1a8f4553f865179b9b0d3a9180) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fetch config from firebase every 12 hours
+
+- [#5959](https://github.com/LedgerHQ/ledger-live/pull/5959) [`801b16f`](https://github.com/LedgerHQ/ledger-live/commit/801b16fa7a440d914b1e76cd8785a3c7c85b474b) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - List apps v2: fix polyfill of application type
+
+- [#5974](https://github.com/LedgerHQ/ledger-live/pull/5974) [`b34f5cd`](https://github.com/LedgerHQ/ledger-live/commit/b34f5cdda0b7bf34750d258cc8b1c91304516360) Thanks [@cng-ledger](https://github.com/cng-ledger)! - feat(LIVE-10989): dynamic manifest id for swap live app in feature flag
+
+- [#6021](https://github.com/LedgerHQ/ledger-live/pull/6021) [`d73f3c1`](https://github.com/LedgerHQ/ledger-live/commit/d73f3c116cd89ebcfc4ddf51c7f65ffc8f566166) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - check starts with to catch ppd and stg in swap live app
+
+- [#5908](https://github.com/LedgerHQ/ledger-live/pull/5908) [`46298ae`](https://github.com/LedgerHQ/ledger-live/commit/46298aec703e6a0dcb47ab8f2a612dcb3bc4065a) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Fix the free storage available for all devices
+
+- Updated dependencies [[`18f170a`](https://github.com/LedgerHQ/ledger-live/commit/18f170afae57ce1a8f4553f865179b9b0d3a9180), [`0a03cf1`](https://github.com/LedgerHQ/ledger-live/commit/0a03cf10343e7b79295c1467c8964cc943f16840), [`eadebff`](https://github.com/LedgerHQ/ledger-live/commit/eadebff3fe58aef6a5befb033d5147afc49663d3), [`901c4df`](https://github.com/LedgerHQ/ledger-live/commit/901c4dfd012376a42f8ab9ab186aa2114a7af863), [`5e70c4a`](https://github.com/LedgerHQ/ledger-live/commit/5e70c4a88edcad5aacc73a3d3f5a8936369db831), [`040e591`](https://github.com/LedgerHQ/ledger-live/commit/040e5918eb7ad5a861b2f6eda09f71d3ce565991), [`52abfc5`](https://github.com/LedgerHQ/ledger-live/commit/52abfc5af4ec5af9c47e72c7a661993e0432d84b), [`35e7a3b`](https://github.com/LedgerHQ/ledger-live/commit/35e7a3b976a300df3abfb1427a35275ee6fa6da1), [`56f43b1`](https://github.com/LedgerHQ/ledger-live/commit/56f43b10d9a996932ec210ff67f5d327d630fa41), [`42322e0`](https://github.com/LedgerHQ/ledger-live/commit/42322e03f830e1af842c1bc46d10df541aceaf7a), [`30105a4`](https://github.com/LedgerHQ/ledger-live/commit/30105a44d4fe68ee9b195a9fb075652734ea3e0e), [`4178cfb`](https://github.com/LedgerHQ/ledger-live/commit/4178cfba8107d16b04f585468344bc6b74de8da4), [`6aac2b9`](https://github.com/LedgerHQ/ledger-live/commit/6aac2b977454daa67a02f5695d58746fde4d83f3), [`801b16f`](https://github.com/LedgerHQ/ledger-live/commit/801b16fa7a440d914b1e76cd8785a3c7c85b474b), [`b34f5cd`](https://github.com/LedgerHQ/ledger-live/commit/b34f5cdda0b7bf34750d258cc8b1c91304516360), [`46298ae`](https://github.com/LedgerHQ/ledger-live/commit/46298aec703e6a0dcb47ab8f2a612dcb3bc4065a), [`67da88e`](https://github.com/LedgerHQ/ledger-live/commit/67da88e89dfdddf570d1256586447501632b3d03)]:
+  - @ledgerhq/live-config@2.0.0-start-exchange.0
+  - @ledgerhq/live-common@33.6.0-start-exchange.0
+  - @ledgerhq/hw-transport-node-hid-singleton@6.30.3-start-exchange.0
+  - @ledgerhq/hw-transport@6.30.3-start-exchange.0
+  - @ledgerhq/types-live@6.44.1-start-exchange.0
+  - @ledgerhq/react-ui@0.14.15-start-exchange.0
+  - @ledgerhq/hw-transport-http@6.29.3-start-exchange.0
+  - @ledgerhq/coin-evm@0.12.1-start-exchange.0
+  - @ledgerhq/coin-framework@0.11.1-start-exchange.0
+  - @ledgerhq/domain-service@1.1.18-start-exchange.0
+  - @ledgerhq/live-countervalues@0.1.1-start-exchange.0
+  - @ledgerhq/live-countervalues-react@0.1.1-start-exchange.0
+  - @ledgerhq/hw-transport-vault@1.2.3-start-exchange.0
+
 ## 2.75.0
 
 ### Minor Changes

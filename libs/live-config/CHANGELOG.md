@@ -1,5 +1,15 @@
 # @ledgerhq/live-config
 
+## 2.0.0-start-exchange.0
+
+### Major Changes
+
+- [#5731](https://github.com/LedgerHQ/ledger-live/pull/5731) [`18f170a`](https://github.com/LedgerHQ/ledger-live/commit/18f170afae57ce1a8f4553f865179b9b0d3a9180) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - update live config lib
+
+### Patch Changes
+
+- [#5974](https://github.com/LedgerHQ/ledger-live/pull/5974) [`b34f5cd`](https://github.com/LedgerHQ/ledger-live/commit/b34f5cdda0b7bf34750d258cc8b1c91304516360) Thanks [@cng-ledger](https://github.com/cng-ledger)! - feat(LIVE-10989): dynamic manifest id for swap live app in feature flag
+
 ## 1.0.1
 
 ### Patch Changes
