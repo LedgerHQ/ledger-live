@@ -2,8 +2,11 @@ import { Observable, from, of, EMPTY } from "rxjs";
 import { concatMap } from "rxjs/operators";
 import invariant from "invariant";
 import bs58 from "bs58";
-import type { DerivationMode, GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
-import type { Result } from "../../hw/getAddress/types";
+import type {
+  GetAddressOptions,
+  StepAddressInput,
+  Result,
+} from "@ledgerhq/coin-framework/derivation";
 import { hash256, hash160 } from "./crypto-util";
 import {
   walletDerivation,
@@ -11,11 +14,11 @@ import {
   runAccountDerivationScheme,
   getDerivationScheme,
 } from "@ledgerhq/coin-framework/derivation";
-import { withDevice } from "../../hw/deviceAccess";
 import getAddress from "./hw-getAddress";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, DerivationMode } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { decodeAccountId } from "@ledgerhq/coin-framework/account/index";
+import { SignerContext } from "./signer";
 
 export type AccountDescriptor = {
   internal: string;
@@ -86,7 +89,21 @@ function asBufferUInt32BE(n) {
 const compressPublicKeySECP256 = (publicKey: Buffer) =>
   Buffer.concat([Buffer.from([0x02 + (publicKey[64] & 0x01)]), publicKey.slice(1, 33)]);
 
-function makeXpub({ version, depth, parentFingerprint, index, chainCode, pubKey }) {
+function makeXpub({
+  version,
+  depth,
+  parentFingerprint,
+  index,
+  chainCode,
+  pubKey,
+}: {
+  version: number;
+  depth: number;
+  parentFingerprint: Buffer;
+  index: number;
+  chainCode: Buffer;
+  pubKey: Buffer;
+}) {
   const indexBuffer = asBufferUInt32BE(index);
   indexBuffer[0] |= 0x80;
   const extendedKeyBytes = Buffer.concat([
@@ -147,12 +164,18 @@ export function inferDescriptorFromDeviceInfo({
 export function scanDescriptors(
   deviceId: string,
   currency: CryptoCurrency,
+  signerContext: SignerContext,
   limit = 10,
 ): Observable<AccountDescriptor> {
   const derivateAddress = (opts: GetAddressOptions) =>
-    withDevice(deviceId)(transport => from(getAddress(transport, opts)));
+    from(getAddress(signerContext)(deviceId, opts));
 
-  function stepAddress({ index, accountDerivation, parentDerivation, derivationMode }) {
+  function stepAddress({
+    index,
+    accountDerivation,
+    parentDerivation,
+    derivationMode,
+  }: StepAddressInput) {
     const result = inferDescriptorFromDeviceInfo({
       derivationMode,
       currency,

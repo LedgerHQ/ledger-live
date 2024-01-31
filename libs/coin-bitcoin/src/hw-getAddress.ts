@@ -1,47 +1,52 @@
-import Btc, { AddressFormat } from "@ledgerhq/hw-app-btc";
 import { log } from "@ledgerhq/logs";
-import { getAddressFormatDerivationMode } from "@ledgerhq/coin-framework/derivation";
-import type { Resolver, GetAddressOptions, Result } from "../../hw/getAddress/types";
+import {
+  getAddressFormatDerivationMode,
+  type GetAddressOptions,
+} from "@ledgerhq/coin-framework/derivation";
 import { UnsupportedDerivation } from "@ledgerhq/coin-framework/errors";
-import Transport from "@ledgerhq/hw-transport";
+import { AddressFormat, BitcoinAddress, SignerContext } from "./signer";
+import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 
-export const getAddress = async (
-  transport: Transport,
-  { currency, path, verify, derivationMode, forceFormat }: GetAddressOptions,
-): Promise<Result> => {
-  const format = forceFormat || getAddressFormatDerivationMode(derivationMode);
-  const btc = new Btc({ transport, currency: currency.id });
-  let result;
-  try {
-    result = await btc.getWalletPublicKey(path, {
-      verify,
-      format: format as AddressFormat,
-    });
-  } catch (e: any) {
-    // TODO Should normalize error returned from ledgerjs
-    if (
-      e &&
-      e.message &&
-      (e.message.includes("invalid format") || e.message.includes("Unsupported address format"))
-    ) {
-      throw new UnsupportedDerivation();
+const resolver = (signerContext: SignerContext): GetAddressFn => {
+  return async (
+    deviceId: string,
+    { currency, path, verify, derivationMode, forceFormat }: GetAddressOptions,
+  ) => {
+    const format = forceFormat || getAddressFormatDerivationMode(derivationMode);
+
+    let result;
+    try {
+      result = (await signerContext(deviceId, currency, signer =>
+        signer.getWalletPublicKey(path, {
+          verify,
+          format: format as AddressFormat,
+        }),
+      )) as BitcoinAddress;
+    } catch (e: any) {
+      // TODO Should normalize error returned from ledgerjs
+      if (
+        e &&
+        e.message &&
+        (e.message.includes("invalid format") || e.message.includes("Unsupported address format"))
+      ) {
+        throw new UnsupportedDerivation();
+      }
+      throw e;
     }
-    throw e;
-  }
 
-  const { bitcoinAddress, publicKey, chainCode } = result;
+    const { bitcoinAddress, publicKey, chainCode } = result;
 
-  log(
-    "hw",
-    `getAddress ${currency.id} path=${path} address=${bitcoinAddress} publicKey=${publicKey} chainCode=${chainCode}`,
-  );
-  return {
-    address: bitcoinAddress,
-    path,
-    publicKey,
-    chainCode,
+    log(
+      "hw",
+      `getAddress ${currency.id} path=${path} address=${bitcoinAddress} publicKey=${publicKey} chainCode=${chainCode}`,
+    );
+    return {
+      address: bitcoinAddress,
+      path,
+      publicKey,
+      chainCode,
+    };
   };
 };
 
-const resolver: Resolver = (transport, opts) => getAddress(transport, opts);
 export default resolver;

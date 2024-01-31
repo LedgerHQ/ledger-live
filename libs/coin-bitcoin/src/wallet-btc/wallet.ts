@@ -1,8 +1,6 @@
 import flatten from "lodash/flatten";
 import BigNumber from "bignumber.js";
-import Btc from "@ledgerhq/hw-app-btc";
 import { log } from "@ledgerhq/logs";
-import { Transaction } from "@ledgerhq/hw-app-btc/types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
@@ -19,6 +17,7 @@ import cryptoFactory from "./crypto/factory";
 import BitcoinLikeExplorer from "./explorer";
 import { TX, Address } from "./storage/types";
 import { blockchainBaseURL } from "../explorer";
+import { BitcoinSigner, SignerTransaction } from "../signer";
 
 class BitcoinLikeWallet {
   explorers: { [currencyId: string]: IExplorer } = {};
@@ -193,7 +192,7 @@ class BitcoinLikeWallet {
   }
 
   async signAccountTx(params: {
-    btc: Btc;
+    btc: BitcoinSigner;
     fromAccount: Account;
     txInfo: TransactionInfo;
     lockTime?: number;
@@ -251,7 +250,12 @@ class BitcoinLikeWallet {
       ([account, index]) =>
         `${fromAccount.params.path}/${fromAccount.params.index}'/${account}/${index}`,
     );
-    type Inputs = [Transaction, number, string | null | undefined, number | null | undefined][];
+    type Inputs = [
+      SignerTransaction,
+      number,
+      string | null | undefined,
+      number | null | undefined,
+    ][];
     const inputs: Inputs = txInfo.inputs.map(i => {
       if (additionals && additionals.includes("peercoin")) {
         // remove timestamp for new version of peercoin input, refer to https://github.com/peercoin/rfcs/issues/5 and https://github.com/LedgerHQ/ledgerjs/issues/701

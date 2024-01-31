@@ -3,6 +3,7 @@ import { BigNumber } from "bignumber.js";
 import type { Transaction } from "./types";
 import { bitcoinPickingStrategy } from "./types";
 import type { AccountLike } from "@ledgerhq/types-live";
+
 const options = [
   {
     name: "feePerByte",
@@ -57,7 +58,9 @@ function inferTransactions(
   });
 }
 
-export default {
-  options,
-  inferTransactions,
-};
+export default function makeCliTools() {
+  return {
+    options,
+    inferTransactions,
+  };
+}

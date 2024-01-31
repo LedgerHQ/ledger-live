@@ -38,6 +38,7 @@ class Decred extends Base {
   static readonly _blake256x2 = (buffer: Buffer): Buffer =>
     Decred.blake256(Decred.blake256(buffer));
   static readonly bs58check = bs58checkBase(Decred._blake256x2);
+
   toOutputScript(address: string): Buffer {
     if (!this.validateAddress(address)) {
       throw new InvalidAddress();

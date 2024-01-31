@@ -1,11 +1,10 @@
 import type { Currency, Output as WalletOutput } from "./wallet-btc";
 import { DerivationModes as WalletDerivationModes } from "./wallet-btc";
 import { BigNumber } from "bignumber.js";
-import Btc from "@ledgerhq/hw-app-btc";
 import { log } from "@ledgerhq/logs";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { makeSync, makeScanAccounts, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import {
   isSegwitDerivationMode,
@@ -13,14 +12,15 @@ import {
   isTaprootDerivationMode,
   DerivationMode,
 } from "@ledgerhq/coin-framework/derivation";
-import { BitcoinAccount, BitcoinOutput, Transaction } from "./types";
+import { BitcoinAccount, BitcoinOutput } from "./types";
 import { perCoinLogic } from "./logic";
 import wallet from "./wallet-btc";
 import { mapTxToOperations } from "./logic";
-import { Account, AccountBridge, CurrencyBridge, Operation } from "@ledgerhq/types-live";
+import { Account, Operation } from "@ledgerhq/types-live";
 import { decodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { startSpan } from "../../performance";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { BitcoinXPub, SignerContext } from "./signer";
 
 // Map LL's DerivationMode to wallet-btc's
 const toWalletDerivationMode = (mode: DerivationMode): WalletDerivationModes => {
@@ -73,15 +73,8 @@ const deduplicateOperations = (operations: (Operation | undefined)[]): Operation
   return out;
 };
 
-export type SignerContext = (
-  deviceId: string,
-  crypto: CryptoCurrency,
-  fn: (signer: Btc) => Promise<string>,
-) => Promise<string>;
-
-const makeGetAccountShape =
-  (signerContext: SignerContext): GetAccountShape =>
-  async info => {
+export function makeGetAccountShape(signerContext: SignerContext): GetAccountShape {
+  return async info => {
     let span;
     const { currency, index, derivationPath, derivationMode, initialAccount, deviceId } = info;
     // In case we get a full derivation path, extract the seed identification part
@@ -92,27 +85,12 @@ const makeGetAccountShape =
 
     const paramXpub = initialAccount ? decodeAccountId(initialAccount.id).xpubOrAddress : undefined;
 
-    let generatedXpub;
-    if (!paramXpub) {
-      // Xpub not provided, generate it using the hwapp
-
-      if (deviceId === undefined || deviceId === null) {
-        throw new Error("deviceId required to generate the xpub");
-      }
-      const { bitcoinLikeInfo } = currency;
-      const { XPUBVersion: xpubVersion } = bitcoinLikeInfo as {
-        // FIXME It's supposed to be optional
-        //XPUBVersion?: number;
-        XPUBVersion: number;
-      };
-      generatedXpub = await signerContext(deviceId, currency, signer =>
-        signer.getWalletXpub({
-          path: accountPath,
-          xpubVersion,
-        }),
-      );
-    }
-    const xpub = paramXpub || generatedXpub;
+    const xpub = await generateXpubIfNeeded(paramXpub, {
+      deviceId,
+      currency,
+      signerContext,
+      accountPath,
+    });
 
     const accountId = encodeAccountId({
       type: "js",
@@ -198,8 +176,44 @@ const makeGetAccountShape =
       },
     };
   };
+}
 
-const postSync = (initial: Account, synced: Account) => {
+type XpubGenerateParameter = {
+  deviceId?: string;
+  currency: CryptoCurrency;
+  signerContext: SignerContext;
+  accountPath: string;
+};
+async function generateXpubIfNeeded(
+  providedXpub: string | undefined,
+  params: XpubGenerateParameter,
+): Promise<BitcoinXPub> {
+  if (providedXpub) {
+    return Promise.resolve(providedXpub);
+  }
+
+  // Xpub not provided, generate it using the hwapp
+
+  const { deviceId, currency, signerContext, accountPath } = params;
+  if (deviceId === undefined || deviceId === null) {
+    throw new Error("deviceId required to generate the xpub");
+  }
+  const { bitcoinLikeInfo } = currency;
+  const { XPUBVersion: xpubVersion } = bitcoinLikeInfo as {
+    // FIXME It's supposed to be optional
+    //XPUBVersion?: number;
+    XPUBVersion: number;
+  };
+
+  return signerContext(deviceId, currency, signer =>
+    signer.getWalletXpub({
+      path: accountPath,
+      xpubVersion,
+    }),
+  );
+}
+
+export const postSync = (initial: Account, synced: Account) => {
   log("bitcoin/postSync", "bitcoinResources");
   const perCoin = perCoinLogic[synced.currency.id];
   const syncedBtc = synced as BitcoinAccount;
@@ -228,11 +242,3 @@ const postSync = (initial: Account, synced: Account) => {
   log("bitcoin/postSync", "bitcoinResources DONE");
   return syncedBtc;
 };
-
-export const scanAccounts = (signerContext: SignerContext): CurrencyBridge["scanAccounts"] =>
-  makeScanAccounts({
-    getAccountShape: makeGetAccountShape(signerContext),
-  });
-
-export const sync = (signerContext: SignerContext): AccountBridge<Transaction>["sync"] =>
-  makeSync({ getAccountShape: makeGetAccountShape(signerContext), postSync });

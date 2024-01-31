@@ -1605,12 +1605,6 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
-      '@ledgerhq/hw-app-btc':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/hw-app-btc
-      '@ledgerhq/hw-transport':
-        specifier: workspace:^
-        version: link:../ledgerjs/packages/hw-transport
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../env
@@ -1732,6 +1726,9 @@ importers:
       '@types/secp256k1':
         specifier: ^4.0.6
         version: 4.0.6
+      '@types/sha.js':
+        specifier: ^2.4.4
+        version: 2.4.4
       axios:
         specifier: 0.26.1
         version: 0.26.1
@@ -21105,7 +21102,7 @@ packages:
       '@stacks/common': 4.3.5
       '@stacks/network': 4.3.5
       '@types/node': 18.16.19
-      '@types/sha.js': 2.4.0
+      '@types/sha.js': 2.4.4
       c32check: 1.1.3
       lodash.clonedeep: 4.5.0
       ripemd160-min: 0.0.6
@@ -24991,11 +24988,10 @@ packages:
       '@types/mime': 1.3.2
       '@types/node': 20.8.10
 
-  /@types/sha.js@2.4.0:
-    resolution: {integrity: sha512-amxKgPy6WJTKuw8mpUwjX2BSxuBtBmZfRwIUDIuPJKNwGN8CWDli8JTg5ONTWOtcTkHIstvT7oAhhYXqEjStHQ==}
+  /@types/sha.js@2.4.4:
+    resolution: {integrity: sha512-Qukd+D6S2Hm0wLVt2Vh+/eWBIoUt+wF8jWjBsG4F8EFQRwKtYvtXCPcNl2OEUQ1R+eTr3xuSaBYUyM3WD1x/Qw==}
     dependencies:
       '@types/node': 20.8.10
-    dev: false
 
   /@types/sockjs@0.3.33:
     resolution: {integrity: sha512-f0KEEe05NvUnat+boPTZ0dgaLZ4SfSouXUgv5noUiefG2ajgKjmETo9ZJyuqsl7dfl2aHlLJUiki6B4ZYldiiw==}
