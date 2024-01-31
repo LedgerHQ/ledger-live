@@ -75,7 +75,9 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
       }
     });
     afterAll(() => {
-      nock.cleanAll();
+      if (process.env.USE_BACKEND_MOCKS) {
+        nock.cleanAll();
+      }
     });
     // covers all bridges through many different accounts
     // to test the common shared properties of bridges.
