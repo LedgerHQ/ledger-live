@@ -10,7 +10,7 @@ export interface ManagerApiRepository {
     userId: string;
   }): Promise<OsuFirmware | null | undefined>;
 
-  fetchMcus(): Promise<any>;
+  fetchMcus(): Promise<any>; // TODO: type properly
 
   getDeviceVersion({
     targetId,
