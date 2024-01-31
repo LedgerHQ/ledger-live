@@ -19,7 +19,7 @@ if (process.env.ONLY_INTEGRATION_TESTS) {
 }
 
 if (process.env.USE_BACKEND_MOCKS) {
-  testRegex = ["algorand/bridge.integration.test.ts", "ripple/bridge.integration.test.ts"];
+  testRegex = ["algorand/bridge.integration.test.ts"];
 }
 
 const reporters = ["default"];
@@ -61,8 +61,6 @@ export default {
   // moduleDirectories: ["node_modules", "src"],
   globalSetup: process.env.UPDATE_BACKEND_MOCKS
     ? "<rootDir>/src/__tests__/test-helpers/bridgeSetupUpdateMocks.ts"
-    : process.env.USE_BACKEND_MOCKS
-    ? "<rootDir>/src/__tests__/test-helpers/bridgeSetupUseMocks.ts"
     : undefined,
   globalTeardown: process.env.UPDATE_BACKEND_MOCKS
     ? "<rootDir>/src/__tests__/test-helpers/bridgeTeardownUpdateMocks.ts"
