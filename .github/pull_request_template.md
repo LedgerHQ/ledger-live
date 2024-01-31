@@ -27,7 +27,7 @@ Pull Requests must pass the CI and be code reviewed. Set as Draft if the PR is n
 - [ ] `npx changeset` was attached.
 - [ ] **Covered by automatic tests.** <!-- if not, please explain. (Feature must be tested / Bugfix must bring non-regression) -->
 - [ ] **Impact of the changes:** <!-- Please take some time to list the impact & what specific areas Quality Assurance (QA) should focus on -->
-  - 
+  - ...
 
 ---
 

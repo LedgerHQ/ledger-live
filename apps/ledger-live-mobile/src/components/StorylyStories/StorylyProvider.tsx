@@ -29,10 +29,8 @@ const StorylyProvider: React.FC<StorylyProviderProps> = ({ children }) => {
 
   const storylyRef = useRef<Storyly>(null);
 
-  const {
-    // @ts-expect-error TYPINGS
-    params: { stories },
-  } = useFeature("storyly") || {};
+  const { params } = useFeature("storyly") || {};
+  const stories = params?.stories;
 
   useEffect(() => {
     if (url) {
