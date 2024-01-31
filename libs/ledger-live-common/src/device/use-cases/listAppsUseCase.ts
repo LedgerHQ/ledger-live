@@ -1,13 +1,14 @@
-import Transport from "@ledgerhq/hw-transport";
-import { App, DeviceInfo } from "@ledgerhq/types-live";
 import { Observable } from "rxjs";
-import { AppOp, Exec } from "./types";
-import installApp from "../hw/installApp";
-import uninstallApp from "../hw/uninstallApp";
-import type { ListAppsEvent } from "./types";
-
-import listAppsV1 from "./listApps/v1";
-import { listAppsV2UseCase } from "../device/use-cases/listAppsV2UseCase";
+import Transport from "@ledgerhq/hw-transport";
+import { DeviceInfo } from "@ledgerhq/types-live";
+import { listApps as listAppsV2 } from "../../apps/listApps/v2";
+import { listApps as listAppsV1 } from "../../apps/listApps/v1";
+import { AppOp, Exec, ListAppsEvent } from "../../apps";
+import { getEnv } from "@ledgerhq/live-env";
+import { DeviceModelId } from "@ledgerhq/devices";
+import { App } from "@ledgerhq/types-live";
+import installApp from "../../hw/installApp";
+import uninstallApp from "../../hw/uninstallApp";
 
 export const execWithTransport =
   (transport: Transport): Exec =>
@@ -28,8 +29,16 @@ export const execWithTransport =
  */
 let listAppsV2Enabled = false;
 export const enableListAppsV2 = (enabled: boolean) => (listAppsV2Enabled = enabled);
-export const listApps = (
+
+export function listAppsUseCase(
   transport: Transport,
   deviceInfo: DeviceInfo,
-): Observable<ListAppsEvent> =>
-  listAppsV2Enabled ? listAppsV2UseCase(transport, deviceInfo) : listAppsV1(transport, deviceInfo);
+): Observable<ListAppsEvent> {
+  return listAppsV2Enabled
+    ? listAppsV1(transport, deviceInfo)
+    : listAppsV2({
+        transport,
+        deviceInfo,
+        deviceProxyModel: getEnv("DEVICE_PROXY_MODEL") as DeviceModelId,
+      });
+}

@@ -25,7 +25,7 @@ const emptyHashData = "000000000000000000000000000000000000000000000000000000000
 
 //TODO if you are reading this, don't worry, a big rewrite is coming and we'll be able
 //to simplify this a lot. Stay calm.
-const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<ListAppsEvent> => {
+export const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<ListAppsEvent> => {
   const tracer = new LocalTracer("list-apps", { transport: transport.getTraceContext() });
   tracer.trace("Using legacy version", { deviceInfo });
 
@@ -297,5 +297,3 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
     };
   });
 };
-
-export default listApps;
