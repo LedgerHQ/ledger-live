@@ -8,6 +8,9 @@ import * as utils from "../utils";
 import { log } from "@ledgerhq/logs";
 import { OutputInfo } from "..";
 
+/**
+ * prioritizes the smallest UTXOs
+ */
 export class Merge extends PickingStrategy {
   async selectUnspentUtxosToUse(
     xpub: Xpub,
