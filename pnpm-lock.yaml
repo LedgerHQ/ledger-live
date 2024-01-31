@@ -4287,13 +4287,16 @@ importers:
 
   libs/live-config:
     dependencies:
-      mergician:
-        specifier: ^2.0.0
-        version: 2.0.0
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
     devDependencies:
       '@types/jest':
         specifier: ^29.5.4
         version: 29.5.4
+      '@types/lodash':
+        specifier: ^4.14.202
+        version: 4.14.202
       '@types/node':
         specifier: ^20.2.5
         version: 20.8.10
@@ -24194,6 +24197,10 @@ packages:
     resolution: {integrity: sha512-trNJ/vtMZYMLhfN45uLq4ShQSw0/S7xCTLLVM+WM1rmFpba/VS42jVUgaO3w/NOLiWR/09lnYk0yMaA/atdIsg==}
     dev: true
 
+  /@types/lodash@4.14.202:
+    resolution: {integrity: sha512-OvlIYQK9tNneDlS0VN54LLd5uiPCBOp7gS5Z0f1mjoJYBrtStzgmJBxONW3U6OZqdtNzZPmn9BS/7WI7BFFcFQ==}
+    dev: true
+
   /@types/long@4.0.2:
     resolution: {integrity: sha512-MqTGEo5bj5t157U6fA/BiDynNkn0YknVdh48CMPkTSpFTVmvao5UQmm7uEF6xBEo7qIMAlY/JSleYaE6VOdpaA==}
     dev: false
@@ -43537,11 +43544,6 @@ packages:
   /merge2@1.4.1:
     resolution: {integrity: sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg==}
     engines: {node: '>= 8'}
-
-  /mergician@2.0.0:
-    resolution: {integrity: sha512-iws4icDgAOMryAiKEtIj+MxljRPLf56oe7aJpaTVPvPnAran+BwwsGsEXAtlEwtNy81B4q2sNqMHBXRTGhEQ+Q==}
-    engines: {node: '>=10.0.0'}
-    dev: false
 
   /merkle-lib@2.0.10:
     resolution: {integrity: sha512-XrNQvUbn1DL5hKNe46Ccs+Tu3/PYOlrcZILuGUhb95oKBPjc/nmIC8D462PQkipVDGKRvwhn+QFg2cCdIvmDJA==}

@@ -1,5 +1,5 @@
 import { Provider } from "./providers";
-import { mergician } from "mergician";
+import _ from "lodash";
 
 export type ValidConfigTypes = {
   string: string;
@@ -64,9 +64,9 @@ export class LiveConfig {
     if (LiveConfig.instance.config[key].type === "object") {
       // we spread the default values first and then the values from the provider
       // this is for backward compatiblity, a value could be renamed or deleted in a remote provider
-      // but the devault value will not change for a given version of Ledger Live
+      // but the default value will not change for a given version of Ledger Live
       // so we make sure that there's always a fallback in a case the value changed remotely
-      return mergician(LiveConfig.instance.config[key].default as object, providerValue as object);
+      return _.merge(LiveConfig.instance.config[key].default as object, providerValue as object);
     }
 
     return providerValue;
