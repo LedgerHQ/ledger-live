@@ -37,7 +37,7 @@ export async function getAccountNetworkInfo(account: Account): Promise<NetworkIn
   ])(rawFees);
 
   if (feesPerByte.length !== 3) {
-    throw new Error("cardinality of feesPerByte should be exactly 3");
+    throw new Error("We are experiencing an issue with our Bitcoin infrastructure.");
   }
   const feeItems = {
     items: feesPerByte.map((feePerByte, i) => ({
