@@ -15,7 +15,7 @@ class MockJsonProvider implements Provider {
       test_coin: {
         chainId: 23,
         rpc_nodes: {
-          main: "https://rpc-node.com",
+          first: "https://rpc-node-first.com",
           secondary: "https://rpc-node-secondary.com",
         },
       },
@@ -105,6 +105,7 @@ describe("LiveConfig", () => {
 
     expect(test_coin.chainId).toBe(23);
     expect(test_coin.rpc_nodes).toStrictEqual({
+      first: "https://rpc-node-first.com",
       main: "https://rpc-node.com",
       secondary: "https://rpc-node-secondary.com",
       other: "https://rpc-node-other.com",
