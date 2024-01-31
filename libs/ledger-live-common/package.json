@@ -70,7 +70,7 @@
     "test": "pnpm ci-test-unit",
     "ci-test-unit": "env-cmd -f .ci.unit.env pnpm jest --ci --updateSnapshot && git diff --exit-code src",
     "ci-test-integration": "env-cmd -f .ci.integration.env pnpm jest --ci --updateSnapshot --passWithNoTests",
-    "test-bridge": "env-cmd -f .ci.bridge.env pnpm jest --ci --updateSnapshot --passWithNoTests",
+    "test-bridge": "env-cmd -f .ci.bridge.env pnpm jest --ci --updateSnapshot --passWithNoTests --runInBand",
     "test-bridge-update": "UPDATE_BACKEND_MOCKS=1 env-cmd -f .ci.integration.env pnpm jest --ci --updateSnapshot --passWithNoTests",
     "unimported": "unimported"
   },
