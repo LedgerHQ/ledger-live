@@ -14,7 +14,7 @@ import {
   initialState,
   loadCountervalues,
   inferTrackingPairForAccounts,
-} from "@ledgerhq/live-common/countervalues/logic";
+} from "@ledgerhq/live-countervalues/logic";
 
 function asPortfolioRange(period: string): PortfolioRange {
   const ranges = getRanges();

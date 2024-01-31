@@ -3,7 +3,7 @@ import { setEnv } from "@ledgerhq/live-env";
 import { genAccount } from "../mock/account";
 import { getCryptoCurrencyById } from "../currencies";
 import { accountsOpToCSV } from "../csvExport";
-import { initialState, loadCountervalues } from "../countervalues/logic";
+import { initialState, loadCountervalues } from "@ledgerhq/live-countervalues/logic";
 import { getFiatCurrencyByTicker, setSupportedCurrencies } from "../currencies";
 
 setSupportedCurrencies(["ethereum", "ripple"]);

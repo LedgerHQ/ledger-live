@@ -60,7 +60,7 @@ async function init() {
 
   const logVerbose = getEnv("VERBOSE");
 
-  // Sets up a debug console printing of logs (from the renderer thread)
+  // Sets up a debug console printing of logs (from the renderer process)
   //
   // Usage: a filtering (only on console printing) on Ledger libs are possible:
   // - VERBOSE="apdu,hw,transport,hid-verbose" : filtering on a list of log `type` separated by a `,`
@@ -73,7 +73,7 @@ async function init() {
 
     // eslint-disable-next-line no-console
     console.log(
-      `Logs console display setup (renderer thread): ${JSON.stringify({
+      `Logs console display setup (renderer process): ${JSON.stringify({
         everyLogs,
         filters,
       })}`,

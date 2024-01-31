@@ -150,7 +150,12 @@ export const mapApplicationV2ToApp = ({
   delete_key,
   dependencies: parentName ? [parentName] : [],
   indexOfMarketCap: -1, // We don't know at this point.
-  type: name === "Exchange" ? AppType.swap : type,
+  type:
+    name === "Exchange"
+      ? AppType.swap
+      : Object.values(AppType).includes(type)
+      ? type
+      : AppType.currency,
   ...rest,
   currencyId: findCryptoCurrencyById(currencyId) ? currencyId : getCurrencyIdFromAppName(name),
 });
