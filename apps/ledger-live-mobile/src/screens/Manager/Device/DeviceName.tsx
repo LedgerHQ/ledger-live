@@ -55,6 +55,7 @@ export default function DeviceName({ device, initialDeviceName, disabled, device
         numberOfLines={2}
         ellipsizeMode="tail"
         flexShrink={1}
+        testID="manager-device-name"
       >
         {displayedName}
       </Text>
