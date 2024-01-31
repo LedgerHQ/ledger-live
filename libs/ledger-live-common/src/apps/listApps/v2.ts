@@ -25,11 +25,11 @@ const appsWithDynamicHashes = ["Fido U2F", "Security Key"];
 // Empty hash data means we won't have information on the app.
 const emptyHashData = "0".repeat(64);
 
-type ListAppsV2Params = {
+type ListAppsParams = {
   transport: Transport;
   deviceInfo: DeviceInfo;
-  deviceProxyModel?: DeviceModelId; // TODO: this should be optional, but then the logic below should handle it properly
-  managerDevMode?: boolean;
+  deviceProxyModel?: DeviceModelId;
+  managerDevModeEnabled?: boolean;
   forceProvider?: number;
 };
 
@@ -37,9 +37,9 @@ export const listApps = ({
   transport,
   deviceInfo,
   deviceProxyModel,
-  managerDevMode,
+  managerDevModeEnabled,
   forceProvider,
-}: ListAppsV2Params): Observable<ListAppsEvent> => {
+}: ListAppsParams): Observable<ListAppsEvent> => {
   const tracer = new LocalTracer("list-apps", { transport: transport.getTraceContext() });
   tracer.trace("Using new version", { deviceInfo });
 
@@ -153,7 +153,7 @@ export const listApps = ({
        */
 
       const sortedCryptoCurrenciesPromise = currenciesByMarketcap(
-        listCryptoCurrencies(managerDevMode, true),
+        listCryptoCurrencies(managerDevModeEnabled, true),
       );
 
       /**
@@ -245,7 +245,7 @@ export const listApps = ({
       // Used to hide apps that are dev tools if user didn't opt-in.
       const appsListNames = catalogForDevice
         .filter(
-          ({ isDevTools, name }) => managerDevMode || !isDevTools || name in installedAppNames,
+          ({ isDevTools, name }) => managerDevModeEnabled || !isDevTools || name in installedAppNames,
         )
         .map(({ name }) => name);
 
