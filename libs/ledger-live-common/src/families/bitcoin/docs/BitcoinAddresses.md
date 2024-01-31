@@ -21,7 +21,7 @@ In Ledger Live, the Bitcoin family includes the following cryptocurrencies:
 - Decred
 
 ## Derivation Paths
-Each account in Ledger Live has a derivation path formatted as `m / purpose' / coin_type' / account' / change`. The `purpose` is determined by the derivation mode: 44 for legacy addresses, 49 for segwit, 84 for native segwit, and 86 for taproot.
+Each account in Ledger Live has a derivation path formatted as `m / purpose' / coin_type' / account' / change`.(BIP44) The `purpose` is determined by the derivation mode: 44 for legacy addresses, 49 for segwit, 84 for native segwit, and 86 for taproot.
 
 `coin_type` is a fixed value for each coin, for example:
 - Bitcoin: 0
