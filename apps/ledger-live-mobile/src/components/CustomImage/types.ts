@@ -1,4 +1,4 @@
-import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
+import { useNftMetadata } from "@ledgerhq/live-nft-react";
 
 export type ImageType = "staxEnabledImage" | "originalNFTImage" | "customImage";
 

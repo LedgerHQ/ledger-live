@@ -3,16 +3,10 @@ import { InvalidAddress } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
 import { Unit } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
-import { CLPublicKey, DeployUtil } from "casper-js-sdk";
+import { DeployUtil } from "casper-js-sdk";
 import { encodeOperationId } from "../../../../operation";
 import { CASPER_NETWORK } from "../../consts";
-import {
-  casperAddressEncode,
-  casperPubKeyToAccountHash,
-  getPubKeySignature,
-  getPublicKeyFromCasperAddress,
-  isAddressValid,
-} from "./addresses";
+import { casperAccountHashFromPublicKey, casperGetCLPublicKey, isAddressValid } from "./addresses";
 import { ITxnHistoryData } from "../../api/types";
 import { getEstimatedFees } from "./fee";
 import { CasperOperation } from "../../types";
@@ -27,7 +21,7 @@ export function mapTxToOps(
   return (tx: ITxnHistoryData): CasperOperation[] => {
     const ops: CasperOperation[] = [];
     const { timestamp, caller_public_key, args: txArgs, deploy_hash, error_message } = tx;
-    const fromAccount = casperPubKeyToAccountHash(caller_public_key);
+    const fromAccount = casperAccountHashFromPublicKey(caller_public_key);
     const toAccount = txArgs.target.parsed;
 
     const date = new Date(timestamp);
@@ -95,15 +89,11 @@ export const createNewDeploy = (
     throw InvalidAddress(`Invalid recipient Address ${recipient}`);
   }
 
-  const deployParams = new DeployUtil.DeployParams(
-    new CLPublicKey(Buffer.from(getPublicKeyFromCasperAddress(sender), "hex"), 2),
-    network,
-  );
-  const recipientBuff = Buffer.from(getPublicKeyFromCasperAddress(recipient), "hex");
+  const deployParams = new DeployUtil.DeployParams(casperGetCLPublicKey(sender), network);
 
   const session = DeployUtil.ExecutableDeployItem.newTransferWithOptionalTransferId(
     amount?.toNumber() ?? 0,
-    new CLPublicKey(recipientBuff, getPubKeySignature(recipient ?? sender)),
+    casperGetCLPublicKey(recipient),
     undefined,
     transferId,
   );
@@ -115,10 +105,3 @@ export const createNewDeploy = (
 
   return txnFromRaw;
 };
-
-export function deployHashToString(hash: Uint8Array, toLowerCase?: boolean): string {
-  const str = casperAddressEncode(Buffer.from(hash));
-
-  if (toLowerCase) return str.toLowerCase();
-  return str;
-}

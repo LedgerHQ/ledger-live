@@ -21,8 +21,8 @@ import {
   makeEmptyTokenAccount,
   isAccountBalanceUnconfirmed,
 } from "@ledgerhq/live-common/account/index";
-import { decodeNftId } from "@ledgerhq/live-common/nft/index";
-import { orderByLastReceived } from "@ledgerhq/live-common/nft/helpers";
+import { decodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
+import { orderByLastReceived } from "@ledgerhq/live-nft";
 import type { AccountsState, State } from "./types";
 import type {
   AccountsDeleteAccountPayload,

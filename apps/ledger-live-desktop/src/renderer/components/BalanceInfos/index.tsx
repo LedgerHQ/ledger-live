@@ -12,7 +12,7 @@ import { PlaceholderLine } from "./Placeholder";
 import Button from "~/renderer/components/ButtonV3";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { useHistory } from "react-router-dom";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 type BalanceSinceProps = {
   valueChange: ValueChange;
@@ -150,7 +150,7 @@ export default function BalanceInfos({ totalBalance, valueChange, isAvailable, u
             <Button
               data-test-id="portfolio-swap-button"
               variant="color"
-              event="button_clicked"
+              event="button_clicked2"
               eventProperties={{
                 button: "swap",
                 page: "Page Portfolio",

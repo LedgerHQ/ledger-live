@@ -101,7 +101,7 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
 
   await test.step("choose Kiln", async () => {
     const analyticsPromise = analytics.waitForTracking({
-      event: "button_clicked",
+      event: "button_clicked2",
       properties: {
         button: "kiln",
         path: "account/mock:1:ethereum:true_ethereum_1:",
@@ -169,7 +169,7 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
     await expect.soft(page).toHaveScreenshot("stake-drawer-opened-from-market-coin-page.png");
     await drawer.selectAccount("Ethereum", 1);
     const analyticsPromise = analytics.waitForTracking({
-      event: "button_clicked",
+      event: "button_clicked2",
       properties: {
         button: "kiln_pooling",
         path: "account/mock:1:ethereum:true_ethereum_0:",

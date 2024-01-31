@@ -11,7 +11,7 @@ import { formatCurrencyUnit } from "../currencies";
 import { getOperationAmountNumber } from "../operation";
 import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import byFamily from "../generated/account";
-import { nftsByCollections } from "../nft";
+import { nftsByCollections } from "@ledgerhq/live-nft";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 import type { Account, Operation, ProtoNFT } from "@ledgerhq/types-live";
 

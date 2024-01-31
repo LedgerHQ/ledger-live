@@ -7,8 +7,8 @@ import {
   SyncSkipUnderPriority,
 } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
-import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { isNftTransaction } from "@ledgerhq/live-nft";
 import { getStuckAccountAndOperation } from "@ledgerhq/live-common/operation";
 import { Operation } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";

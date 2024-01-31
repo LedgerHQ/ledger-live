@@ -29,7 +29,7 @@ import ModalBody from "~/renderer/components/Modal/ModalBody";
 import QRCode from "~/renderer/components/QRCode";
 import { getEnv } from "@ledgerhq/live-env";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
-import { useFeature } from "@ledgerhq/live-config/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { LOCAL_STORAGE_KEY_PREFIX } from "./StepReceiveStakingFlow";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
@@ -206,7 +206,7 @@ const StepReceiveFunds = (props: StepProps) => {
       receiveStakingFlowConfig?.enabled &&
       receiveStakingFlowConfig?.params?.[id]?.enabled
     ) {
-      track("button_clicked", {
+      track("button_clicked2", {
         button: "continue",
         page: window.location.hash
           .split("/")

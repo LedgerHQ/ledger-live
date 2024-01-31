@@ -4,14 +4,15 @@ import { mergeMap } from "rxjs/operators";
 import type { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/types-live";
 import { UnknownMCU } from "@ledgerhq/errors";
 import ManagerAPI from "@ledgerhq/live-common/manager/api";
+import { fetchMcusUseCase } from "@ledgerhq/live-common/device/use-cases/fetchMcusUseCase";
 import network from "@ledgerhq/live-network/network";
 import { getEnv } from "@ledgerhq/live-env";
 import { getProviderId } from "@ledgerhq/live-common/manager/provider";
-import manager from "@ledgerhq/live-common/manager/index";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import prepareFirmwareUpdate from "@ledgerhq/live-common/hw/firmwareUpdate-prepare";
 import mainFirmwareUpdate from "@ledgerhq/live-common/hw/firmwareUpdate-main";
+import { getLatestFirmwareForDeviceUseCase } from "@ledgerhq/live-common/device/use-cases/getLatestFirmwareForDeviceUseCase";
 import { deviceOpt } from "../scan";
 
 const listFirmwareOSU = async () => {
@@ -26,7 +27,7 @@ const customGetLatestFirmwareForDevice = async (
   deviceInfo: DeviceInfo,
   osuVersion: string,
 ): Promise<FirmwareUpdateContext | null | undefined> => {
-  const mcusPromise = ManagerAPI.getMcus();
+  const mcusPromise = fetchMcusUseCase();
   // Get device infos from targetId
   const deviceVersion = await ManagerAPI.getDeviceVersion(
     deviceInfo.targetId,
@@ -101,7 +102,7 @@ export default {
           mergeMap(
             osuVersion
               ? deviceInfo => customGetLatestFirmwareForDevice(deviceInfo, osuVersion)
-              : manager.getLatestFirmwareForDevice,
+              : deviceInfo => getLatestFirmwareForDeviceUseCase(deviceInfo),
           ),
           mergeMap(firmware => {
             if (!firmware) return of("already up to date");

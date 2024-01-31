@@ -1,6 +1,7 @@
 import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { getNftCapabilities, useNftMetadata } from "@ledgerhq/live-common/nft/index";
+import { getNftCapabilities } from "@ledgerhq/coin-framework/nft/support";
+import { useNftMetadata } from "@ledgerhq/live-nft-react";
 import { Account, ProtoNFT } from "@ledgerhq/types-live";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import BigNumber from "bignumber.js";
