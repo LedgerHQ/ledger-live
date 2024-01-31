@@ -33,7 +33,7 @@ type ListAppsV2Params = {
   forceProvider?: number;
 };
 
-export const listAppsV2 = ({
+export const listApps = ({
   transport,
   deviceInfo,
   deviceProxyModel,
