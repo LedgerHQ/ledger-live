@@ -14,12 +14,16 @@ async function main() {
         maxBuffer: 2048 * 1024,
       },
     );
+    core.info(`Turbo output: ${turboOutput}`);
     const pnpmOutput = execSync(`npx pnpm list -r --depth=0 --json`, {
       encoding: "utf-8",
       maxBuffer: 2048 * 1024,
     });
+    core.info(`pnpm output: ${pnpmOutput}`);
 
     const turboAffected = JSON.parse(turboOutput);
+
+    core.info(`Turbo affected: ${turboAffected}`);
 
     if (turboAffected === null) {
       core.error(`Failed to parse JSON output from "${turboOutput}"`);
@@ -29,6 +33,7 @@ async function main() {
 
     const { packages } = turboAffected;
     if (packages.length) {
+      core.info(`affected packages: ${packages.length}`);
       const workspaceInfos = JSON.parse(pnpmOutput);
 
       const isPackageAffected = (packages as string[]).includes(pkg);
@@ -40,6 +45,7 @@ async function main() {
           };
         }
       });
+      core.info(`affected packages: ${affectedPackages}`);
       const affected = JSON.stringify(affectedPackages);
       core.info(`Affected packages since ${ref} (${packages.length}):\n${affected}`);
       core.setOutput("affected", affected);
