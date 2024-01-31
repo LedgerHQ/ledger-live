@@ -1,7 +1,7 @@
 import { URL } from "url";
 import { StdRequest } from "./types";
 const fsp = require("fs").promises;
-const nock = require("nock");
+import nock from "nock";
 
 /* Loop through each mock and apply them to nock */
 export async function initBackendMocks() {
@@ -52,10 +52,3 @@ function applyBackendMock(mockContent: { request: StdRequest; response: any }) {
 
   //console.log(nock.activeMocks());
 }
-
-export default async () => {
-  // disable network attempts not registered in mocks
-  await nock.disableNetConnect();
-  // await nock.enableNetConnect("localhost");
-  await initBackendMocks();
-};
