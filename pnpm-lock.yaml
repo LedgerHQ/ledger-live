@@ -4286,6 +4286,10 @@ importers:
         version: 10.7.0(@types/node@20.8.10)(source-map-support@0.5.21)(typescript@5.1.3)
 
   libs/live-config:
+    dependencies:
+      mergician:
+        specifier: ^2.0.0
+        version: 2.0.0
     devDependencies:
       '@types/jest':
         specifier: ^29.5.4
@@ -43533,6 +43537,11 @@ packages:
   /merge2@1.4.1:
     resolution: {integrity: sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg==}
     engines: {node: '>= 8'}
+
+  /mergician@2.0.0:
+    resolution: {integrity: sha512-iws4icDgAOMryAiKEtIj+MxljRPLf56oe7aJpaTVPvPnAran+BwwsGsEXAtlEwtNy81B4q2sNqMHBXRTGhEQ+Q==}
+    engines: {node: '>=10.0.0'}
+    dev: false
 
   /merkle-lib@2.0.10:
     resolution: {integrity: sha512-XrNQvUbn1DL5hKNe46Ccs+Tu3/PYOlrcZILuGUhb95oKBPjc/nmIC8D462PQkipVDGKRvwhn+QFg2cCdIvmDJA==}
