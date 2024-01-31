@@ -1,13 +1,13 @@
 import React, { useMemo } from "react";
 import { Flex, Text } from "@ledgerhq/react-ui";
 import { Logo } from "./Logo";
-import { PropsRaw } from "./types";
+import { PropsRawMinimumCard } from "./types";
 import { useCard } from "./hooks";
 import { Container, Subtitle } from "./Layout";
 import { useSelector } from "react-redux";
 import { languageSelector } from "~/renderer/reducers/settings";
 
-export function MinimumCard(props: PropsRaw) {
+export function MinimumCard(props: PropsRawMinimumCard) {
   const { disabled, onClick } = useCard(props);
   const { manifest } = props;
 
