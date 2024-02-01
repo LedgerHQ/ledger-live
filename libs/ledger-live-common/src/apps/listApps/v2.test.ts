@@ -1,22 +1,46 @@
-import { UnexpectedBootloader } from "@ledgerhq/errors";
 import { aTransportBuilder } from "@ledgerhq/hw-transport-mocker";
 import { listApps } from "./v2";
 import { aDeviceInfoBuilder } from "../../mock/fixtures/aDeviceInfo";
 import ManagerAPI from "../../manager/api";
-import { from } from "rxjs";
 import { aDeviceVersionBuilder } from "../../mock/fixtures/aDeviceVersion";
+import { ManagerApiRepository } from "../../device-core/managerApi/repositories/ManagerApiRepository";
+import { StubManagerApiRepository } from "../../device-core/managerApi/repositories/StubManagerApiRepository";
+import { from } from "rxjs";
+import { UnexpectedBootloader } from "@ledgerhq/errors";
 
 jest.useFakeTimers();
 
 describe("listApps v2", () => {
+  let mockedGetDeviceVersion;
+  let mockedManagerApiRepository: ManagerApiRepository;
+
   beforeEach(() => {
+    jest
+      .spyOn(
+        jest.requireActual("../../device/use-cases/getLatestFirmwareForDeviceUseCase"),
+        "getLatestFirmwareForDeviceUseCase",
+      )
+      .mockReturnValue(Promise.resolve(null));
+    mockedGetDeviceVersion = jest.fn().mockReturnValue(Promise.resolve(aDeviceVersionBuilder()));
+    mockedManagerApiRepository = {
+      ...new StubManagerApiRepository(),
+      getDeviceVersion: mockedGetDeviceVersion,
+    };
+  });
+
+  afterEach(() => {
+    jest.clearAllTimers();
     jest.clearAllMocks();
   });
 
   it("should return an observable that errors if deviceInfo.isOSU is true", done => {
     const transport = aTransportBuilder();
     const deviceInfo = aDeviceInfoBuilder({ isOSU: true, isBootloader: false });
-    const result = listApps({ transport, deviceInfo });
+    const result = listApps({
+      transport,
+      deviceInfo,
+      managerApiRepository: mockedManagerApiRepository,
+    });
 
     result.subscribe({
       error: err => {
@@ -33,7 +57,11 @@ describe("listApps v2", () => {
   it("should return an observable that errors if deviceInfo.isBootloader is true", done => {
     const transport = aTransportBuilder();
     const deviceInfo = aDeviceInfoBuilder({ isOSU: false, isBootloader: true });
-    const result = listApps({ transport, deviceInfo });
+    const result = listApps({
+      transport,
+      deviceInfo,
+      managerApiRepository: mockedManagerApiRepository,
+    });
 
     result.subscribe({
       error: err => {
@@ -51,7 +79,11 @@ describe("listApps v2", () => {
     const transport = aTransportBuilder({ deviceModel: null });
     const deviceInfo = aDeviceInfoBuilder({ isOSU: false, isBootloader: false, targetId: 0 });
 
-    const result = listApps({ transport, deviceInfo });
+    const result = listApps({
+      transport,
+      deviceInfo,
+      managerApiRepository: mockedManagerApiRepository,
+    });
 
     result.subscribe({
       error: err => {
@@ -65,11 +97,14 @@ describe("listApps v2", () => {
     jest.advanceTimersByTime(1);
   });
 
-  it("should call hwListApps() if deviceInfo.managerAllowed is true", () => {
+  it("should call hwListApps() if deviceInfo.managerAllowed is true", done => {
     const listAppsCommandSpy = jest
       .spyOn(jest.requireActual("../../hw/listApps"), "default")
       .mockReturnValue(Promise.resolve([]));
     const listInstalledAppsSpy = jest.spyOn(ManagerAPI, "listInstalledApps");
+    mockedGetDeviceVersion.mockReturnValue(Promise.resolve(aDeviceVersionBuilder()));
+    jest.spyOn(ManagerAPI, "catalogForDevice").mockReturnValue(Promise.resolve([]));
+    jest.spyOn(ManagerAPI, "getLanguagePackagesForDevice").mockReturnValue(Promise.resolve([]));
 
     const transport = aTransportBuilder();
     const deviceInfo = aDeviceInfoBuilder({
@@ -79,7 +114,18 @@ describe("listApps v2", () => {
       targetId: 0x33200000,
     });
 
-    listApps({ transport, deviceInfo }).subscribe({});
+    listApps({
+      transport,
+      deviceInfo,
+      managerApiRepository: mockedManagerApiRepository,
+    }).subscribe({
+      complete: () => {
+        done();
+      },
+      error: () => {
+        done();
+      },
+    });
     jest.advanceTimersByTime(1);
 
     expect(listAppsCommandSpy).toHaveBeenCalled();
@@ -100,16 +146,20 @@ describe("listApps v2", () => {
       targetId: 0x33200000,
     });
 
-    listApps({ transport, deviceInfo }).subscribe();
+    listApps({
+      transport,
+      deviceInfo,
+      managerApiRepository: mockedManagerApiRepository,
+    }).subscribe();
     jest.advanceTimersByTime(1);
 
     expect(listAppsCommandSpy).not.toHaveBeenCalled();
     expect(listInstalledAppsSpy).toHaveBeenCalled();
   });
 
-  it("should return an observable that errors if ManagerAPI.getDeviceVersion() throws", () => {
+  it("should return an observable that errors if getDeviceVersion() throws", done => {
     jest.spyOn(ManagerAPI, "listInstalledApps").mockReturnValue(from([]));
-    jest.spyOn(ManagerAPI, "getDeviceVersion").mockImplementation(() => {
+    mockedGetDeviceVersion.mockImplementation(() => {
       throw new Error("getDeviceVersion failed");
     });
     jest.spyOn(ManagerAPI, "catalogForDevice").mockReturnValue(Promise.resolve([]));
@@ -123,9 +173,14 @@ describe("listApps v2", () => {
       targetId: 0x33200000,
     });
 
-    listApps({ transport, deviceInfo }).subscribe({
+    listApps({
+      transport,
+      deviceInfo,
+      managerApiRepository: mockedManagerApiRepository,
+    }).subscribe({
       error: err => {
         expect(err.message).toBe("getDeviceVersion failed");
+        done();
       },
       complete: () => {
         fail("this observable should not complete");
@@ -134,11 +189,8 @@ describe("listApps v2", () => {
     jest.advanceTimersByTime(1);
   });
 
-  it("should return an observable that errors if ManagerAPI.catalogForDevice() throws", () => {
+  it("should return an observable that errors if ManagerAPI.catalogForDevice() throws", done => {
     jest.spyOn(ManagerAPI, "listInstalledApps").mockReturnValue(from([]));
-    jest
-      .spyOn(ManagerAPI, "getDeviceVersion")
-      .mockReturnValue(Promise.resolve(aDeviceVersionBuilder()));
     jest.spyOn(ManagerAPI, "catalogForDevice").mockImplementation(() => {
       throw new Error("catalogForDevice failed");
     });
@@ -152,9 +204,14 @@ describe("listApps v2", () => {
       targetId: 0x33200000,
     });
 
-    listApps({ transport, deviceInfo }).subscribe({
+    listApps({
+      transport,
+      deviceInfo,
+      managerApiRepository: mockedManagerApiRepository,
+    }).subscribe({
       error: err => {
         expect(err.message).toBe("catalogForDevice failed");
+        done();
       },
       complete: () => {
         fail("this observable should not complete");
@@ -163,11 +220,8 @@ describe("listApps v2", () => {
     jest.advanceTimersByTime(1);
   });
 
-  it("should return an observable that errors if ManagerAPI.getLanguagePackagesForDevice() throws", () => {
+  it("should return an observable that errors if ManagerAPI.getLanguagePackagesForDevice() throws", done => {
     jest.spyOn(ManagerAPI, "listInstalledApps").mockReturnValue(from([]));
-    jest
-      .spyOn(ManagerAPI, "getDeviceVersion")
-      .mockReturnValue(Promise.resolve(aDeviceVersionBuilder()));
     jest.spyOn(ManagerAPI, "catalogForDevice").mockReturnValue(Promise.resolve([]));
     jest.spyOn(ManagerAPI, "getLanguagePackagesForDevice").mockImplementation(() => {
       throw new Error("getLanguagePackagesForDevice failed");
@@ -181,9 +235,14 @@ describe("listApps v2", () => {
       targetId: 0x33200000,
     });
 
-    listApps({ transport, deviceInfo }).subscribe({
+    listApps({
+      transport,
+      deviceInfo,
+      managerApiRepository: mockedManagerApiRepository,
+    }).subscribe({
       error: err => {
         expect(err.message).toBe("getLanguagePackagesForDevice failed");
+        done();
       },
       complete: () => {
         fail("this observable should not complete");

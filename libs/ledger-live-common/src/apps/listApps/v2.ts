@@ -17,6 +17,8 @@ import ManagerAPI from "../../manager/api";
 import getDeviceName from "../../hw/getDeviceName";
 import { getLatestFirmwareForDeviceUseCase } from "../../device/use-cases/getLatestFirmwareForDeviceUseCase";
 import { getProviderIdPure } from "../../manager/provider";
+import { ManagerApiRepository } from "../../device-core/managerApi/repositories/ManagerApiRepository";
+import { mapApplicationV2ToApp } from "../polyfill";
 
 // Hash discrepancies for these apps do NOT indicate a potential update,
 // these apps have a mechanism that makes their hash change every time.
@@ -31,6 +33,7 @@ type ListAppsParams = {
   deviceProxyModel?: DeviceModelId;
   managerDevModeEnabled?: boolean;
   forceProvider?: number;
+  managerApiRepository: ManagerApiRepository;
 };
 
 export const listApps = ({
@@ -39,6 +42,7 @@ export const listApps = ({
   deviceProxyModel,
   managerDevModeEnabled,
   forceProvider,
+  managerApiRepository,
 }: ListAppsParams): Observable<ListAppsEvent> => {
   const tracer = new LocalTracer("list-apps", { transport: transport.getTraceContext() });
   tracer.trace("Using new version", { deviceInfo });
@@ -112,7 +116,11 @@ export const listApps = ({
 
       const listAppsAndMatchesPromise = filteredListAppsPromise.then(result => {
         const hashes = result.map(({ hash }) => hash);
-        const matches = result.length ? ManagerAPI.getAppsByHash(hashes) : [];
+        const matches = result.length
+          ? managerApiRepository
+              .getAppsByHash(hashes)
+              .then(matches => matches.map(appV2 => (appV2 ? mapApplicationV2ToApp(appV2) : null)))
+          : []; // TODO: replace by managerApiRepository
         return Promise.all([result, matches]);
       });
 
@@ -121,21 +129,26 @@ export const listApps = ({
        * for the device
        */
 
-      const deviceVersionPromise = ManagerAPI.getDeviceVersion(deviceInfo.targetId, provider);
+      const deviceVersionPromise = managerApiRepository.getDeviceVersion({
+        targetId: deviceInfo.targetId,
+        providerId: provider,
+      });
 
       const currentFirmwarePromise = deviceVersionPromise.then(deviceVersion =>
-        ManagerAPI.getCurrentFirmware({
+        managerApiRepository.getCurrentFirmware({
           deviceId: deviceVersion.id,
           version: deviceInfo.version,
-          provider,
+          providerId: provider,
         }),
       );
 
       const latestFirmwarePromise = currentFirmwarePromise.then(currentFirmware =>
-        getLatestFirmwareForDeviceUseCase(deviceInfo).then(updateAvailable => ({
-          ...currentFirmware,
-          updateAvailable,
-        })),
+        getLatestFirmwareForDeviceUseCase(deviceInfo, managerApiRepository).then(
+          updateAvailable => ({
+            ...currentFirmware,
+            updateAvailable,
+          }),
+        ),
       );
 
       /**
@@ -143,6 +156,7 @@ export const listApps = ({
        */
 
       const catalogForDevicesPromise = ManagerAPI.catalogForDevice({
+        // TODO: replace by repository
         provider,
         targetId: deviceInfo.targetId,
         firmwareVersion: deviceInfo.version,
@@ -160,7 +174,7 @@ export const listApps = ({
        * Sequence 5: get language pack available for the device
        */
 
-      const languagePackForDevicePromise = ManagerAPI.getLanguagePackagesForDevice(deviceInfo);
+      const languagePackForDevicePromise = ManagerAPI.getLanguagePackagesForDevice(deviceInfo); // TODO: replace by repository
 
       /* Running all sequences 1 2 3 4 5 defined above in parallel */
       const [[listApps, matches], catalogForDevice, firmware, sortedCryptoCurrencies, languages] =

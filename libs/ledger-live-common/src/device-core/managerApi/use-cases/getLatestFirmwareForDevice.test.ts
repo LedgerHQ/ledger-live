@@ -15,6 +15,7 @@ const mockedManagerApiRepository: ManagerApiRepository = {
   getCurrentOSU: mockedGetCurrentOSU,
   getCurrentFirmware: jest.fn(),
   getFinalFirmwareById: jest.fn(),
+  getAppsByHash: jest.fn(),
 };
 
 // TODO: complete this test
