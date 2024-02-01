@@ -45,7 +45,6 @@ export function EvmStakingDrawer() {
           paddingX={4}
           alwaysBounceVertical={false}
           indicatorStyle={themeName === "dark" ? "white" : "default"}
-          scrollIndicatorInsets={{ left: 2, bottom: 64 }}
         >
           <EvmStakingDrawerBody
             onClose={onClose}
@@ -53,7 +52,6 @@ export function EvmStakingDrawer() {
             accountId={drawer.props.accountId}
             providers={listProvidersSorted}
           />
-          <Flex mt={4} mb={2} height={100} />
         </ScrollListContainer>
       </Flex>
     </QueuedDrawer>
