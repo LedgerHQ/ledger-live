@@ -6,7 +6,11 @@ import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index
 import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
 import { SwapProps, SwapWebManifestIDs } from "~/renderer/screens/exchange/Swap2/Form/SwapWebView";
 import { rateSelector } from "~/renderer/actions/swap";
-import { getAccountUnit, getFeesCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
+import {
+  getAccountUnit,
+  getFeesCurrency,
+  getMainAccount,
+} from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import BigNumber from "bignumber.js";
 
@@ -33,11 +37,14 @@ export const useSwapLiveAppHook = (props: UseSwapLiveAppHookProps) => {
   const exchangeRate = useSelector(rateSelector);
   const provider = exchangeRate?.provider;
   const exchangeRatesState = swapTransaction.swap?.rates;
-  const mainFromAccount = swapTransaction.swap.from.account && getMainAccount(swapTransaction.swap.from.account, swapTransaction.swap.from.parentAccount)
-  const unit = mainFromAccount && getAccountUnit(mainFromAccount)
-  const estimatedFees = unit && BigNumber(formatCurrencyUnit(unit, swapTransaction.status.estimatedFees))
+  const mainFromAccount = getMainAccount(
+    swapTransaction.swap.from.account,
+    swapTransaction.swap.from.parentAccount,
+  );
+  const unit = getAccountUnit(mainFromAccount);
+  const estimatedFees = BigNumber(formatCurrencyUnit(unit, swapTransaction.status.estimatedFees));
   const estimatedFeesUnit = mainFromAccount && getFeesCurrency(mainFromAccount);
-  
+
   useEffect(() => {
     if (isSwapLiveAppEnabled) {
       const providerRedirectURLSearch = getProviderRedirectURLSearch();
@@ -78,5 +85,7 @@ export const useSwapLiveAppHook = (props: UseSwapLiveAppHookProps) => {
     swapTransaction.bridgePending,
     exchangeRatesState.status,
     updateSwapWebProps,
+    estimatedFees,
+    estimatedFeesUnit?.id,
   ]);
 };
