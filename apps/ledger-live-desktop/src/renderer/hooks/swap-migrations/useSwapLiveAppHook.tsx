@@ -46,12 +46,12 @@ export const useSwapLiveAppHook = (props: UseSwapLiveAppHookProps) => {
   const provider = exchangeRate?.provider;
   const exchangeRatesState = swapTransaction.swap?.rates;
   const swapWebPropsRef = useRef<SwapWebProps["swapState"] | undefined>(undefined);
-  const mainFromAccount =
-    swapTransaction.swap.from.account &&
-    getMainAccount(swapTransaction.swap.from.account, swapTransaction.swap.from.parentAccount);
-  const unit = mainFromAccount && getAccountUnit(mainFromAccount);
-  const estimatedFees =
-    unit && BigNumber(formatCurrencyUnit(unit, swapTransaction.status.estimatedFees));
+  const mainFromAccount = getMainAccount(
+    swapTransaction.swap.from.account,
+    swapTransaction.swap.from.parentAccount,
+  );
+  const unit = getAccountUnit(mainFromAccount);
+  const estimatedFees = BigNumber(formatCurrencyUnit(unit, swapTransaction.status.estimatedFees));
   const estimatedFeesUnit = mainFromAccount && getFeesCurrency(mainFromAccount);
 
   useEffect(() => {
