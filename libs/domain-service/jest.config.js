@@ -7,9 +7,6 @@ if (process.env.IGNORE_INTEGRATION_TESTS) {
 if (process.env.ONLY_INTEGRATION_TESTS) {
   testRegex = ".integration.(test|spec).[jt]sx?$";
 }
-if (process.env.ONLY_BRIDGE_TESTS) {
-  testRegex = "bridge.integration.(test|spec).[jt]sx?$";
-}
 const reporters = ["default"];
 if (process.env.CI) {
   reporters.push("github-actions");
