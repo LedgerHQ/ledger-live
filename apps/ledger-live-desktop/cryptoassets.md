@@ -146,7 +146,7 @@
 | lisk | LSK | NO | lisk |
 | æternity | AE | NO | aeternity |
 
-## Tokens (15843)
+## Tokens (16642)
 | parent currency | ticker | contract | name | status | ledger id |
 |--|--|--|--|--|--|
 | Algorand | GEMS | 5XU7ASL2PLB2C43N6JNFPMSXGATO2VIVNF7X6NTJ4BRCCKRGETEYS3LOAQ | AlgoGems |  | algorand/asa/230946361 |
@@ -188,10 +188,12 @@
 | Binance Smart Chain | POOLZ | 0x77018282fD033DAF370337A5367E62d8811Bc885 | $Poolz Finance [via ChainPort.io] |  | bsc/bep20/poolz_finance_via_chainport_io |
 | Binance Smart Chain | $REKT | 0x4F8b986ECFFe7beD5dBEb2B49310fB00CA85a539 | $REKT |  | bsc/bep20/rekt |
 | Binance Smart Chain | DEL | 0xec6432B90e7fD4d9f872cc5C781f05B617DB861E | (DEL) |  | bsc/bep20/(del) |
+| Binance Smart Chain | ZEROVM | 0x1a8E64b7D6c34D46671F817C0fFa041Cd9CEe87d | 0VM |  | bsc/bep20/0vm |
 | Binance Smart Chain | 0XMR | 0x22A213852Cee93EB6d41601133414d180c5684C2 | 0xMonero on xDai from xDai |  | bsc/bep20/0xmonero_on_xdai_from_xdai |
 | Binance Smart Chain | 10SET | 0x1F64fdAD335ED784898EFFb5ce22D54d8f432523 | 10Set Token |  | bsc/bep20/10set_token |
 | Binance Smart Chain | 10SET | 0x1AE369A6AB222aFF166325B7b87Eb9aF06C86E57 | 10Set Token | delisted | bsc/bep20/10set_token_ |
 | Binance Smart Chain | 1INCH | 0x111111111117dC0aa78b770fA6A738034120C302 | 1INCH Token |  | bsc/bep20/1inch_token |
+| Binance Smart Chain | 1LONG | 0x3ea535758B9e728a303e0CC7fEcb91E505De5ABB | 1LONG |  | bsc/bep20/1long |
 | Binance Smart Chain | 1MT | 0x7c56D81EcB5E1d287a1E22B89b01348f07bE3541 | 1move |  | bsc/bep20/1move |
 | Binance Smart Chain | 1RT | 0x012a6A39eeC345A0Ea2B994B17875E721d17eE45 | 1move |  | bsc/bep20/1move_ee45 |
 | Binance Smart Chain | T23 | 0x897F2BE515373Cf1F899D864B5Be2bD5eFd4e653 | 2023 |  | bsc/bep20/2023 |
@@ -402,6 +404,7 @@
 | Binance Smart Chain | ATLAS | 0xcf87Ccf958d728f50d8ae5E4f15Bc4cA5733cDf5 | Atlantis Token |  | bsc/bep20/atlantis_token |
 | Binance Smart Chain | AUC | 0x3028b4395F98777123C7da327010c40f3c7Cc4Ef | Auctus |  | bsc/bep20/auctus |
 | Binance Smart Chain | AURA | 0x23c5D1164662758b3799103Effe19cC064d897D6 | Aura |  | bsc/bep20/aura |
+| Binance Smart Chain | ARK | 0x0fCC512b1BEC40dc50df797a159BF8FF0DB09A7C | Aurinko Network |  | bsc/bep20/aurinko_network |
 | Binance Smart Chain | AURORA | 0x11Fe7a37f2923566cAA0dE7D37C868631c695205 | Aurora dimension |  | bsc/bep20/aurora_dimension |
 | Binance Smart Chain | URUS | 0xc6DdDB5bc6E61e0841C54f3e723Ae1f3A807260b | Aurox Token |  | bsc/bep20/aurox_token |
 | Binance Smart Chain | ASS | 0x7c63F96fEAFACD84e75a594C00faC3693386FBf0 | Australian Shepherd Token |  | bsc/bep20/australian_shepherd_token |
@@ -479,6 +482,7 @@
 | Binance Smart Chain | YU | 0x3e098C23DCFBbE0A3f468A6bEd1cf1a59DC1770D | BOUNTYKINDS YU |  | bsc/bep20/bountykinds_yu |
 | Binance Smart Chain | BPAD | 0x29132062319AA375e764Ef8ef756F2B28c77a9C9 | BPAD |  | bsc/bep20/bpad |
 | Binance Smart Chain | BRANK | 0x39aE9A782b1f9C60d0F1839EF4C2d0174c5Edae4 | BRANK |  | bsc/bep20/brank |
+| Binance Smart Chain | BRCT | 0x455ad1Bc4E18fD4e369234b6e11D88acBC416758 | BRCT |  | bsc/bep20/brct |
 | Binance Smart Chain | BRD | 0x4950C48Ccf576d185eB3A0820728A6cFE435d493 | BRD |  | bsc/bep20/brd |
 | Binance Smart Chain | BRICK | 0x4e5aB517719a2BDbafEFC22C712d7b5BC5F5544E | BRICK Token |  | bsc/bep20/brick_token |
 | Binance Smart Chain | BRICKS | 0x13E1070E3a388e53Ec35480Ff494538f9FFc5b8D | BRICKS | delisted | bsc/bep20/bricks |
@@ -512,6 +516,8 @@
 | Binance Smart Chain | BABYCEO | 0xEd1a89fa419e3d1042d4EA2e938fB62A216594C6 | Baby Doge CEO |  | bsc/bep20/baby_doge_ceo |
 | Binance Smart Chain | BABYDOGE | 0xc748673057861a797275CD8A068AbB95A902e8de | Baby Doge Coin |  | bsc/bep20/baby_doge_coin |
 | Binance Smart Chain | $BABYDOGEINU | 0x5E5C9001Aa81332D405D993FFd1468751D659d1e | Baby Doge Inu |  | bsc/bep20/baby_doge_inu |
+| Binance Smart Chain | BABYDRAGON | 0xd7935bF3a576E997021789F895F0E898fC1aADd6 | Baby Dragon |  | bsc/bep20/baby_dragon |
+| Binance Smart Chain | BABYELON | 0x258903A8e68d5248dE85CF8a0a173d9e046EdD98 | Baby Elon |  | bsc/bep20/baby_elon |
 | Binance Smart Chain | BABYFLOKI | 0x71E80e96Af604Afc23Ca2AED4C1C7466DB6dd0c4 | Baby Floki |  | bsc/bep20/baby_floki |
 | Binance Smart Chain | BABYFB | 0x112Fbe7f60329E9E2D232008E56F94D1582aE3bc | Baby Floki Billionaire |  | bsc/bep20/baby_floki_billionaire |
 | Binance Smart Chain | BFLOKI | 0x02a9D7162BD73c2b35c5Cf6cDD585e91928c850A | Baby Floki Inu |  | bsc/bep20/baby_floki_inu |
@@ -565,6 +571,7 @@
 | Binance Smart Chain | BTD | 0xD1102332a213E21faF78B69C03572031F3552c33 | Bat True Dollar |  | bsc/bep20/bat_true_dollar |
 | Binance Smart Chain | BTS | 0xc2e1acef50aE55661855E8dcB72adB182A3cC259 | Bat True Share |  | bsc/bep20/bat_true_share |
 | Binance Smart Chain | BTL | 0x708955Db0d4c52FFBf9AA34aF7f3CA8bf07390a8 | Battle Saga |  | bsc/bep20/battle_saga |
+| Binance Smart Chain | BGS | 0xF339E8c294046E6E7ef6AD4F6fa9E202B59b556B | Battle of Guardians Share |  | bsc/bep20/battle_of_guardians_share |
 | Binance Smart Chain | BFT | 0x2Bc8c2Ae9dAD57948FA4168E56E177A29AE0c0b1 | BattleForTEN |  | bsc/bep20/battleforten |
 | Binance Smart Chain | IBAT | 0x19cd9B8e42d4EF62c3EA124110D5Cfd283CEaC43 | BattleInfinity |  | bsc/bep20/battleinfinity |
 | Binance Smart Chain | BVC | 0x9BEe0c15676a65ef3c8cdb38cB3DD31c675BbD12 | BattleVerse Coin |  | bsc/bep20/battleverse_coin |
@@ -595,6 +602,7 @@
 | Binance Smart Chain | BIDZ | 0xC2EBAA5F640b30c0D6712A6E0656fB816C10a7d4 | Bidz Coin |  | bsc/bep20/bidz_coin |
 | Binance Smart Chain | CRYPTO | 0xF0997486D784C0EC4aD2ee5B413bD318813dd518 | Big Crypto Game Token |  | bsc/bep20/big_crypto_game_token |
 | Binance Smart Chain | PANDA | 0x8F2714b178676bA0f9CFB226F6519b92dD8DEf9d | Big Panda |  | bsc/bep20/big_panda |
+| Binance Smart Chain | BCAT | 0x47a9B109Cfb8f89D16e8B34036150eE112572435 | BilliCat |  | bsc/bep20/billicat |
 | Binance Smart Chain | BIC | 0xA7751516e06e1715264306A51437774BF94266dC | Billiard Crypto |  | bsc/bep20/billiard_crypto |
 | Binance Smart Chain | BHC | 0x6fd7c98458a943f469E1Cf4eA85B173f5Cd342F4 | Billion Happiness |  | bsc/bep20/billion_happiness |
 | Binance Smart Chain | BPC | 0x098A138FD939aE6BDE61deB9aB82c838e85D98E3 | Billionaires Pixel Club |  | bsc/bep20/billionaires_pixel_club |
@@ -739,6 +747,7 @@
 | Binance Smart Chain | BOXCH | 0x74d23DB8fD35fd20e1964F7197147c8a22d92A8d | Boxch |  | bsc/bep20/boxch |
 | Binance Smart Chain | SYNCBRAIN | 0xE82546b56B1b8A5f031Bcd23Ff6332282cB0124B | Brain Sync |  | bsc/bep20/brain_sync |
 | Binance Smart Chain | BRAND | 0x4d993ec7b44276615bB2F6F20361AB34FbF0ec49 | BrandPad |  | bsc/bep20/brandpad |
+| Binance Smart Chain | BEX | 0x5D1480652B7DE79c76c6A29C8476aB3C5123DaFB | BrcExchange |  | bsc/bep20/brcexchange |
 | Binance Smart Chain | BREWLABS | 0x6aAc56305825f712Fd44599E59f2EdE51d42C3e7 | Brewlabs |  | bsc/bep20/brewlabs |
 | Binance Smart Chain | BKN | 0x0e28bC9B03971E95acF9ae1326E51ecF9C55B498 | Brickken |  | bsc/bep20/brickken |
 | Binance Smart Chain | BRG | 0x6e4a971B81CA58045a2AA982EaA3d50C4Ac38F42 | Bridge |  | bsc/bep20/bridge |
@@ -821,6 +830,7 @@
 | Binance Smart Chain | MONSTA | 0x8A5d7FCD4c90421d21d30fCC4435948aC3618B2f | Cake Monster |  | bsc/bep20/cake_monster |
 | Binance Smart Chain | CAKEBOT | 0x39132dAa2082e12Ac33a08478A74362E3c394357 | CakeBot |  | bsc/bep20/cakebot |
 | Binance Smart Chain | CAKESWAP | 0xF24d63e8B354736C97148B8Fc2FfB4F7789FE453 | CakeSwap Token |  | bsc/bep20/cakeswap_token |
+| Binance Smart Chain | CKP | 0x2B5D9ADea07B590b638FFc165792b2C610EdA649 | Cakepie |  | bsc/bep20/cakepie |
 | Binance Smart Chain | CKT | 0x3837e18B901629fcB200e0aD9c2f2441804bd6c8 | Caketools |  | bsc/bep20/caketools |
 | Binance Smart Chain | CAL | 0x76d99EF970711D5e25A940c2B80933911425757a | Calcium |  | bsc/bep20/calcium |
 | Binance Smart Chain | CAN | 0x007EA5C0Ea75a8DF45D288a4debdD5bb633F9e56 | CanYaCoin |  | bsc/bep20/canyacoin |
@@ -856,12 +866,14 @@
 | Binance Smart Chain | CELL | 0xd98438889Ae7364c7E2A3540547Fad042FB24642 | Cellframe ERC20 v2 |  | bsc/bep20/cellframe_erc20_v2 |
 | Binance Smart Chain | CELL | 0xf3E1449DDB6b218dA2C9463D4594CEccC8934346 | Cellframe Token |  | bsc/bep20/cellframe_token |
 | Binance Smart Chain | CELLS | 0x3022d80e02075F5A2a442A318229487f9Ea66D82 | CellsToken |  | bsc/bep20/cellstoken |
+| Binance Smart Chain | CBIT | 0x31913aa5DE81Ff679C603053c3554AB90d5dbAf8 | CentBit |  | bsc/bep20/centbit |
 | Binance Smart Chain | CENT | 0xB9b41dA7FA895b093b95340a3379383Bba36735E | Centaurify |  | bsc/bep20/centaurify |
 | Binance Smart Chain | CENX | 0x739e81BCd49854d7BDF526302989f14A2E7994B2 | Centcex |  | bsc/bep20/centcex |
 | Binance Smart Chain | CNS | 0xF6Cb4ad242BaB681EfFc5dE40f7c8FF921a12d63 | Centric SWAP |  | bsc/bep20/centric_swap |
 | Binance Smart Chain | CENTRO | 0xE870aEC45088Bfd4a43852B39d9c3560a8cB9B14 | CentroFi |  | bsc/bep20/centrofi |
 | Binance Smart Chain | CERBY | 0xdef1fac7Bf08f173D286BbBDcBeeADe695129840 | Cerby Token |  | bsc/bep20/cerby_token |
 | Binance Smart Chain | CTK | 0xA8c2B8eec3d368C0253ad3dae65a5F2BBB89c929 | CertiK Token |  | bsc/bep20/certik_token |
+| Binance Smart Chain | CERT | 0x194a3e48796305c148C5c8E82FbeBfEad26F32fE | Certicos V2 |  | bsc/bep20/certicos_v2 |
 | Binance Smart Chain | BCHAIN | 0x35DE111558F691F77f791fb0c08b2D6B931A9d47 | Chain Games |  | bsc/bep20/chain_games |
 | Binance Smart Chain | CLEG | 0x4027d91eCD3140e53AE743d657549adfeEbB27AB | Chain of Legends Token |  | bsc/bep20/chain_of_legends_token |
 | Binance Smart Chain | CHAINCADE | 0x2FFEE7b4DF74F7C6508A4Af4D6D91058dA5420D0 | ChainCade |  | bsc/bep20/chaincade |
@@ -886,6 +898,7 @@
 | Binance Smart Chain | CHEX | 0x9Ce84F6A69986a83d92C324df10bC8E64771030f | Chintai Exchange Token |  | bsc/bep20/chintai_exchange_token |
 | Binance Smart Chain | CHRP | 0xeD00Fc7D48B57B81FE65D1cE71c0985e4CF442CB | Chirpley Token |  | bsc/bep20/chirpley_token |
 | Binance Smart Chain | FLOC | 0xe5765E33E349B2Dcf22A37b2b4E87c10ad43F165 | Christmas Floki |  | bsc/bep20/christmas_floki |
+| Binance Smart Chain | CHRISTMAS | 0x4bE54E484b306eBFcb9c04f33f3d5fD05Be967a4 | Christmas Pump |  | bsc/bep20/christmas_pump |
 | Binance Smart Chain | CHR | 0xf9CeC8d50f6c8ad3Fb6dcCEC577e05aA32B224FE | Chroma |  | bsc/bep20/chroma |
 | Binance Smart Chain | XNL | 0x5F26Fa0C2Ee5d3c0323D861d0C503f31Ac212662 | Chronicle [via ChainPort.io] |  | bsc/bep20/chronicle_via_chainport_io |
 | Binance Smart Chain | CAKITA | 0xCA3c1dC12b0dD0D65964abaA533106CF4F372C78 | ChubbyAkita |  | bsc/bep20/chubbyakita |
@@ -1036,6 +1049,7 @@
 | Binance Smart Chain | APP | 0x81e07CfF8a9331eF2A837B15a3560fb186bF5E8D | DAPPSY | delisted | bsc/bep20/dappsy |
 | Binance Smart Chain | DUT | 0xbccf768576eb4d28Fe3dD21f9EBCf9784E4e092c | DAR UTILITIES TOKEN |  | bsc/bep20/dar_utilities_token |
 | Binance Smart Chain | DARC | 0x8ebC361536094fD5B4FFB8521E31900614C9F55D | DARC Token |  | bsc/bep20/darc_token |
+| Binance Smart Chain | DBK | 0x6D0185068D960404223D456a57a3B6F6bb62dDeC | DBK |  | bsc/bep20/dbk |
 | Binance Smart Chain | DCNX | 0xF106f153bd77bE6d5191a07159C99c4219a1cec4 | DCNTRL Network |  | bsc/bep20/dcntrl_network |
 | Binance Smart Chain | DCO | 0x25102C5aF2D4FAA83DDBd36d9f6AF5d9c2b84093 | DCOREUM |  | bsc/bep20/dcoreum |
 | Binance Smart Chain | DEP | 0xcaF5191fc480F43e4DF80106c7695ECA56E48B18 | DEAPCOIN |  | bsc/bep20/deapcoin |
@@ -1085,6 +1099,7 @@
 | Binance Smart Chain | DYNMT | 0xb1ce906C610004E27e74415Aa9BCC90E46366F90 | DYNAMITE |  | bsc/bep20/dynamite |
 | Binance Smart Chain | DYZILLA | 0xdAcA7C8e16DDfA5d5B266380228Ca9e2288F3931 | DYZilla |  | bsc/bep20/dyzilla |
 | Binance Smart Chain | DADDYDOGE | 0x7ccE94C0B2C8aE7661f02544E62178377Fe8cF92 | Daddy Doge |  | bsc/bep20/daddy_doge |
+| Binance Smart Chain | DLY | 0x4D829D37460d2490446255B15d52C81DF3093290 | Daily Finance |  | bsc/bep20/daily_finance |
 | Binance Smart Chain | DAR | 0x23CE9e926048273eF83be0A3A8Ba9Cb6D45cd978 | Dalarnia |  | bsc/bep20/dalarnia |
 | Binance Smart Chain | DALMA | 0x2C7dF6aA715f77a8EBE2E14c10fabF72d0063015 | Dalma Inu |  | bsc/bep20/dalma_inu |
 | Binance Smart Chain | DAOP | 0xAf7c3e578621aABAB184c706BAD94fFb1a2e0179 | DaoSpace |  | bsc/bep20/daospace |
@@ -1168,6 +1183,7 @@
 | Binance Smart Chain | DOGS | 0xBcCD27062ae1A2BeA5731c904b96EDfb163Aba21 | Dogcoin |  | bsc/bep20/dogcoin |
 | Binance Smart Chain | DOGEBLUE | 0xB38A5CDC7304aD3d53ce280A8DC63b2921D0A72F | Doge Blue |  | bsc/bep20/doge_blue |
 | Binance Smart Chain | DOFI | 0xF63143e7899616479f7Ba52c0B9fC255b3a51CBf | Doge Floki Coin |  | bsc/bep20/doge_floki_coin |
+| Binance Smart Chain | DOGEGROK | 0x1A2662f7195d4a4636BF56868055d529937f8e10 | Doge Grok |  | bsc/bep20/doge_grok |
 | Binance Smart Chain | DIPA | 0x7a45d24aFfE81e98a03eE68D10cB2Dc1f857676b | Doge Ipa |  | bsc/bep20/doge_ipa |
 | Binance Smart Chain | KAKI | 0x42414624C55A9CBa80789f47c8F9828A7974e40f | Doge KaKi |  | bsc/bep20/doge_kaki |
 | Binance Smart Chain | DOGETREND | 0xE5f30eFA4526D86c4DC020fd8087aDF1D3AFFf2A | Doge Trend Token |  | bsc/bep20/doge_trend_token |
@@ -1250,6 +1266,7 @@
 | Binance Smart Chain | EARNX | 0x0f76142D83ddEF359753ccA33647Cc4dCEe1C6d1 | EarnX |  | bsc/bep20/earnx |
 | Binance Smart Chain | EBYT | 0x0D1AfEcE252fF513C5D210AEAE88f6C7D37e6ab2 | EarthByt |  | bsc/bep20/earthbyt |
 | Binance Smart Chain | EZ | 0x5512014efa6Cd57764Fa743756F7a6Ce3358cC83 | Easy V2 |  | bsc/bep20/easy_v2 |
+| Binance Smart Chain | EOTH | 0x2d35C695BE9080D27ef5c6eFE80BeefcfAAB8573 | Echo Of The Horizon |  | bsc/bep20/echo_of_the_horizon |
 | Binance Smart Chain | ERW | 0x77e5Cce02139814E7efF377244cAC8B802cDdAb8 | Eco Rewards Token |  | bsc/bep20/eco_rewards_token |
 | Binance Smart Chain | ECO | 0xeDe2F059545e8Cde832d8Da3985cAacf795B8765 | EcoToken |  | bsc/bep20/ecotoken |
 | Binance Smart Chain | ECT | 0x6Bfd4cA8eC078d613eD6a5248Eb2c7a0d5c38b7b | Ecochaintoken |  | bsc/bep20/ecochaintoken |
@@ -1301,6 +1318,7 @@
 | Binance Smart Chain | ETHFIN | 0x17Bd2E09fA4585c15749F40bb32a6e3dB58522bA | Ethernal Finance II |  | bsc/bep20/ethernal_finance_ii |
 | Binance Smart Chain | ERN | 0xce1E3cc1950D2aAEb47dE04DE2dec2Dc86380E0A | Ethos Reserve Note |  | bsc/bep20/ethos_reserve_note |
 | Binance Smart Chain | EVP | 0xC3cB94Acf162F1f8E738Df6cEb78f540840Eb60B | Event Promoter Value |  | bsc/bep20/event_promoter_value |
+| Binance Smart Chain | EVEX | 0xdE8e7DA502c15eDf9E6b7D092105A260CafC021E | EventsX |  | bsc/bep20/eventsx |
 | Binance Smart Chain | EVERETH | 0x16dCc0eC78E91e868DCa64bE86aeC62bf7C61037 | EverETH |  | bsc/bep20/evereth |
 | Binance Smart Chain | EGC | 0xC001BBe2B87079294C63EcE98BdD0a88D761434e | EverGrow Coin | delisted | bsc/bep20/evergrow_coin |
 | Binance Smart Chain | EVRF | 0x3C2e501B08CF5C16061468c96b19b32bae451dA3 | EverReflect |  | bsc/bep20/everreflect |
@@ -1335,6 +1353,7 @@
 | Binance Smart Chain | FINX | 0xAEd361021D6fB2EF2CE65049e7B0E814Ce5FA2C1 | FINXTOKEN |  | bsc/bep20/finxtoken |
 | Binance Smart Chain | FITZ | 0x2af97C7199c42Df83278CbEA98ed2a957796Dc7F | FITZEN TOKEN |  | bsc/bep20/fitzen_token |
 | Binance Smart Chain | FIFI | 0x04F69b0258550e5210b6b2F7DdB57777A8A5A65A | FIfi |  | bsc/bep20/fifi |
+| Binance Smart Chain | FKUINU | 0x981121B88F839236D384DaeEb68282C0BC58Fa07 | FKUINU |  | bsc/bep20/fkuinu |
 | Binance Smart Chain | FLIGHT | 0xF397680d99A92E4B60637E9f5C71a4deF1f6c7b5 | FLIGHT CLUP COIN |  | bsc/bep20/flight_clup_coin |
 | Binance Smart Chain | FLMC | 0x575C2274460642838bbA1fd1b686884d684d44Da | FLMC Token |  | bsc/bep20/flmc_token |
 | Binance Smart Chain | FLOKI | 0xfb5B838b6cfEEdC2873aB27866079AC55363D37E | FLOKI |  | bsc/bep20/floki |
@@ -1348,6 +1367,7 @@
 | Binance Smart Chain | FFE | 0x9E0335fb61958Fe19Bb120F3F8408B4297921820 | FORBIDDEN FRUIT ENERGY |  | bsc/bep20/forbidden_fruit_energy |
 | Binance Smart Chain | FORS | 0xC54A4640907044283e8E4885090E205992B9813e | FORUS |  | bsc/bep20/forus |
 | Binance Smart Chain | FREE | 0x12e34cDf6A031a10FE241864c32fB03a4FDaD739 | FREE coin BSC |  | bsc/bep20/free_coin_bsc |
+| Binance Smart Chain | FRGX | 0xC703dA39aE3B9Db67C207c7Bad8100E1AfdC0F9c | FRGX |  | bsc/bep20/frgx |
 | Binance Smart Chain | FRMX | 0x8523518001ad5d24b2A04e8729743C0643A316c0 | FRMx Token |  | bsc/bep20/frmx_token |
 | Binance Smart Chain | FROG | 0xDCD103Bc6D14829C39Afc9c10c9c373CE385D2C5 | FROG |  | bsc/bep20/frog |
 | Binance Smart Chain | FROG CEO | 0xBBf8B05EF7Af53ccbfF8e3673E73714F939Bfd84 | FROG CEO |  | bsc/bep20/frog_ceo |
@@ -1366,6 +1386,7 @@
 | Binance Smart Chain | CROP | 0xEe0736c93E98B2e9fbf11f47dB19E7B68Db71E94 | FarmerDoge |  | bsc/bep20/farmerdoge |
 | Binance Smart Chain | FAST | 0xF6c2D8D863A325846Ac4f37d2c4432F6683ae442 | FastSwap Token |  | bsc/bep20/fastswap_token |
 | Binance Smart Chain | FATHOM | 0x56513627e7CEA535B9b5a18Da7643A4b21999994 | Fathom |  | bsc/bep20/fathom |
+| Binance Smart Chain | FAYD | 0x696b2518190211879d6ea281664B690Ef327B717 | Fayda |  | bsc/bep20/fayda |
 | Binance Smart Chain | FGC | 0xA5eDC3D0d0e0A170DfC2fB6d4cfb6b8db1976E20 | Fedral Gold Coin |  | bsc/bep20/fedral_gold_coin |
 | Binance Smart Chain | FEED | 0x67d66e8Ec1Fd25d98B3Ccd3B19B7dc4b4b7fC493 | Feeder.finance |  | bsc/bep20/feeder_finance |
 | Binance Smart Chain | FLX | 0x34E4A7454cAE15990850166A8771CB8408b62a26 | Felix |  | bsc/bep20/felix |
@@ -1392,6 +1413,7 @@
 | Binance Smart Chain | FICO | 0x29CABF2a1E5De6f0ebC39ca6Fe83c687FE90fB6c | FishCrypto Token |  | bsc/bep20/fishcrypto_token |
 | Binance Smart Chain | TUNA | 0x75AdB3f6D788C344C409278263F70C5b60FeB33a | Fishing Tuna |  | bsc/bep20/fishing_tuna |
 | Binance Smart Chain | FIST | 0xC9882dEF23bc42D53895b8361D0b1EDC7570Bc6A | FistToken |  | bsc/bep20/fisttoken |
+| Binance Smart Chain | BEET | 0x684eAfeb7E5be043842D892980695C68e15152b7 | FlappyBee |  | bsc/bep20/flappybee |
 | Binance Smart Chain | FLASH | 0x311E015E2e255Dd14edDc4a2107e39649dc81c5D | Flash Token |  | bsc/bep20/flash_token |
 | Binance Smart Chain | FSXU | 0xa94b7a842aADB617a0B08fA744e033C6De2f7595 | FlashX Ultra |  | bsc/bep20/flashx_ultra |
 | Binance Smart Chain | FCC | 0xabC66bFD5FBA9C5985c01805413D0beeDD5D4267 | Floki CEO Coin |  | bsc/bep20/floki_ceo_coin |
@@ -1525,6 +1547,7 @@
 | Binance Smart Chain | GENA | 0x7f4959528D4C9c7379b3437C7Eea40376fD96B8a | Genta |  | bsc/bep20/genta |
 | Binance Smart Chain | GLT | 0x5bACf846595cd00379592f07831f734653e6fEB2 | GeoLeaf |  | bsc/bep20/geoleaf |
 | Binance Smart Chain | KICKS | 0xfEB4e9B932eF708c498Cc997ABe51D0EE39300cf | GetKicks |  | bsc/bep20/getkicks |
+| Binance Smart Chain | GHACOIN | 0x1196F907C8FF87C068D07FBbD440Fc5f68e96c1F | GhaCoin |  | bsc/bep20/ghacoin |
 | Binance Smart Chain | GDE | 0x742F1fbEC70b81Ed0a32093D0c9054264fd850B2 | GianniDoge Esport |  | bsc/bep20/giannidoge_esport |
 | Binance Smart Chain | GHD | 0xfDFD27aE39cebefDBaAc8615F18aa68DDD0F15f5 | Giftedhands on BSC |  | bsc/bep20/giftedhands_on_bsc |
 | Binance Smart Chain | GFT | 0x72fF5742319eF07061836F5C924aC6D72c919080 | Gifto |  | bsc/bep20/gifto |
@@ -1534,11 +1557,13 @@
 | Binance Smart Chain | GF | 0xB6307CC320C76101E87456e06557fa939AcCC71F | GirlFriend |  | bsc/bep20/girlfriend |
 | Binance Smart Chain | GLCH | 0xF0902eB0049A4003793BAb33F3566A22D2834442 | Glitch |  | bsc/bep20/glitch |
 | Binance Smart Chain | GM | 0x76760bF2b1b4b16cb24a20A076ABCb36897a73ad | Global Miracle |  | bsc/bep20/global_miracle |
+| Binance Smart Chain | GBL | 0xC14A7747cFec02CfeA62E72BB93538DE6B2078E6 | Global Token |  | bsc/bep20/global_token |
 | Binance Smart Chain | GVC | 0xe1443170faB91fBA2c535b3f78935d6fcE55348d | Global Virtual Coin |  | bsc/bep20/global_virtual_coin |
 | Binance Smart Chain | GLR | 0x1fc71fE3e333d5262828f3d348C12c7E52306B8A | Glory |  | bsc/bep20/glory |
 | Binance Smart Chain | GLOW | 0x606379220AB266bBE4b0FeF8469e6E602f295a84 | Glow Token |  | bsc/bep20/glow_token |
 | Binance Smart Chain | GNOX | 0x132f6f1743e45880aF91D25257e02DB1839bb5Ed | Gnox |  | bsc/bep20/gnox |
 | Binance Smart Chain | GCME | 0x9528cCEb678B90dAf02cA5cA45622D5cBaF58A30 | Go Crypto Me |  | bsc/bep20/go_crypto_me |
+| Binance Smart Chain | GWGW | 0x9baE1A6BD435CD0DEB62E7517Ea948B5eb6EB497 | Go Wrap |  | bsc/bep20/go_wrap |
 | Binance Smart Chain | GOC | 0x4B85a666deC7C959e88b97814E46113601B07e57 | GoCrypto |  | bsc/bep20/gocrypto |
 | Binance Smart Chain | GMT | 0x7Ddc52c4De30e94Be3A6A0A2b259b2850f421989 | GoMining |  | bsc/bep20/gomining_token |
 | Binance Smart Chain | GOFI | 0x6B8227A0E18bd35A10849601dB194B24aAB2C8ea | GoSwapp |  | bsc/bep20/goswapp |
@@ -1585,6 +1610,8 @@
 | Binance Smart Chain | GHNY | 0xa045E37a0D1dd3A45fefb8803D22457abc0A728a | Grizzly Honey |  | bsc/bep20/grizzly_honey |
 | Binance Smart Chain | GROKKY | 0xADdc5cE5CB80eA434E85c71589159716ab00b53c | GroKKy |  | bsc/bep20/grokky |
 | Binance Smart Chain | XAI | 0x0009Ae5a69B037eA74A900783fab457fa605ae5d | Grok |  | bsc/bep20/grok_ae5d |
+| Binance Smart Chain | GROKBANK | 0xC1A8f8Bb27958C92Ca1Ed00340a50297cD4CCdd8 | Grok Bank |  | bsc/bep20/grok_bank |
+| Binance Smart Chain | GROKBULL | 0xe4B3Ada498ef476fbFd4aC30C41fF5d63dd3D1E2 | Grok Bull |  | bsc/bep20/grok_bull |
 | Binance Smart Chain | GROK CM | 0x69cCbc8C611c1D7196e5C0Fe19A4b10C6Ef474E4 | Grok Community |  | bsc/bep20/grok_community |
 | Binance Smart Chain | GELO | 0xdeD8893858419baD2fA43970aB29776D6C171455 | Grok Elo |  | bsc/bep20/grok_elo |
 | Binance Smart Chain | GROKGIRL | 0x6d57F5c286E04850c2c085350F2e60aaA7B7c15B | Grok Girl |  | bsc/bep20/grok_girl |
@@ -1596,6 +1623,7 @@
 | Binance Smart Chain | GROKBOY | 0xAF27e0C18D1c63884eC73CEe8838a2aa49C58517 | GrokBoy |  | bsc/bep20/grokboy |
 | Binance Smart Chain | GROKDOGE | 0x176054aE3e2755140e2ecacF7fB29e2EE9d899C2 | GrokDoge |  | bsc/bep20/grokdoge |
 | Binance Smart Chain | GROKKING | 0x010b0293d810cdE17A4D31D027b1C1797fabeED0 | GrokKing |  | bsc/bep20/grokking |
+| Binance Smart Chain | $GROKTETHER | 0x3d2C6366226e044374C5F72Ff9fBd470c395E6E8 | GrokTether |  | bsc/bep20/groktether |
 | Binance Smart Chain | GRVG | 0x8BAC4Ea7c7B96C01489c46c7F8C3541F8DdaaC8c | Grove Gold |  | bsc/bep20/grove_gold |
 | Binance Smart Chain | GVR | 0xaFb64E73dEf6fAa8B6Ef9a6fb7312d5C4C15ebDB | Grove Token |  | bsc/bep20/grove_token |
 | Binance Smart Chain | GRV | 0xF33893DE6eB6aE9A67442E066aE9aBd228f5290c | GroveC |  | bsc/bep20/grovec |
@@ -1687,6 +1715,7 @@
 | Binance Smart Chain | HOD | 0x19A4866a85c652EB4a2ED44c42e4CB2863a62D51 | Hodooi.com Token |  | bsc/bep20/hodooi_com_token |
 | Binance Smart Chain | HOKK | 0xe87e15B9c7d989474Cb6d8c56b3DB4eFAD5b21E8 | Hokkaido Inu |  | bsc/bep20/hokkaido_inu |
 | Binance Smart Chain | HOKA | 0xbFdfa2143d1aa3EFEA094E5177295df9E77202a8 | Hokkaido Inu |  | bsc/bep20/hokkaido_inu_02a8 |
+| Binance Smart Chain | HOL | 0xa797Fa4BDa7C5A4B3afe73573B9d2Ab942365C6f | Hololoot Coin |  | bsc/bep20/hololoot_coin |
 | Binance Smart Chain | HOMIECOIN | 0xB534B21082e44A9C5865876F41F8dd348278fDf2 | Homie Wars |  | bsc/bep20/homie_wars |
 | Binance Smart Chain | HONEY | 0xFa363022816aBf82f18a9C2809dCd2BB393F6AC5 | Honey token |  | bsc/bep20/honey_token |
 | Binance Smart Chain | MOON | 0xE8c93310af068aa50bd7bF0ebFa459Df2a02ceba | HoneyMoon |  | bsc/bep20/honeymoon |
@@ -1905,6 +1934,7 @@
 | Binance Smart Chain | PTA | 0x3843F234B35A311e195608D32283a68284B3c44D | LA PESETA |  | bsc/bep20/la_peseta_c44d |
 | Binance Smart Chain | LBL | 0x77edFaE59a7948d66E9911A30cC787d2172343d4 | LABEL |  | bsc/bep20/label |
 | Binance Smart Chain | LABS | 0x510Ca7D22A84599e7d0f15F09E674056a6255389 | LABS Group V2 |  | bsc/bep20/labs_group_v2 |
+| Binance Smart Chain | LCSN | 0xc47b0443f8608943c596168504BB6D4a062E0edc | LACOSTOKEN |  | bsc/bep20/lacostoken |
 | Binance Smart Chain | LAN | 0xF5469e4ecc5afb3AC13Da5737f88DC4563ce8454 | LAN Network |  | bsc/bep20/lan_network |
 | Binance Smart Chain | LRCC | 0xf31da2bBd0Cc88cF204F76b21425a865ad9acC31 | LARO CLASSIC |  | bsc/bep20/laro_classic |
 | Binance Smart Chain | LBVV | 0x0ba45F3AA9ACa408DcbAcEBd21096602498b7B10 | LBViVi |  | bsc/bep20/lbvivi |
@@ -2045,6 +2075,7 @@
 | Binance Smart Chain | MARCO | 0x963556de0eb8138E97A85F0A86eE0acD159D210b | MELEGA |  | bsc/bep20/melega |
 | Binance Smart Chain | MELI | 0xaD04AC36791d923DeB082dA4f91Ab71675dD18fB | MELI |  | bsc/bep20/meli |
 | Binance Smart Chain | MEME | 0x4a645fB8AE60979eDf7f47C5c1A4569b7Fb07851 | MEME |  | bsc/bep20/meme |
+| Binance Smart Chain | MEMEMINT | 0xabCAd2648fD27538e44BBd91109835aadaF981Bc | MEME MINT |  | bsc/bep20/meme_mint |
 | Binance Smart Chain | META | 0x26165a5a3Dd21FA528bECf3Ff7F114D00a517344 | META |  | bsc/bep20/meta |
 | Binance Smart Chain | MEFA | 0x6Ad0F087501Eee603AeDa0407c52864bc7f83322 | META FACE |  | bsc/bep20/meta_face |
 | Binance Smart Chain | MEGALAND | 0x7CD8c22D3F4b66230F73D7FfCB48576233c3fe33 | METAGALAXY LAND |  | bsc/bep20/metagalaxy_land |
@@ -2285,6 +2316,7 @@
 | Binance Smart Chain | MYST | 0x2fF0B946A6782190C4Fe5D4971CFE79F0b6E4df2 | Mysterium |  | bsc/bep20/mysterium |
 | Binance Smart Chain | MYRA | 0x6ef238E9E8CD2A96740897761C18894Fc086B9d0 | Mytheria |  | bsc/bep20/mytheria |
 | Binance Smart Chain | MORE | 0xd6163ceC51F2e7C5974F3F4Ce8FDb9c80ABF142e | Mythic Ore |  | bsc/bep20/mythic_ore |
+| Binance Smart Chain | NGY | 0x48c9473E28d0d76E9691149c9C0816E6B030AC62 | NAGAYA |  | bsc/bep20/nagaya |
 | Binance Smart Chain | NAOS | 0x758d08864fB6cCE3062667225ca10b8F00496cc2 | NAOSToken |  | bsc/bep20/naostoken |
 | Binance Smart Chain | NAR | 0xA1303E6199b319a891b79685F0537D289af1FC83 | NAR Token |  | bsc/bep20/nar_token |
 | Binance Smart Chain | NDB | 0xf8028b65005B0B45f76988d2A77910186E7af4eF | NDB |  | bsc/bep20/ndb |
@@ -2438,6 +2470,7 @@
 | Binance Smart Chain | OPIP | 0x4C906B99A2f45A47C8570b7A41ffe940F71676AF | OpiPets Token |  | bsc/bep20/opipets_token |
 | Binance Smart Chain | OPTCM | 0x7A2277F34f275dED630deFF758FBC818409Ca36D | Optimus |  | bsc/bep20/optimus |
 | Binance Smart Chain | OPTIMUS AI | 0xAd3063FE9dF7355fC6E008c04f8Da6e02B40304E | Optimus AI |  | bsc/bep20/optimus_ai |
+| Binance Smart Chain | OPTIMUS ELON AI | 0xecd042fe089473194dCe264A4686298003fC173e | Optimus Elon AI |  | bsc/bep20/optimus_elon_ai |
 | Binance Smart Chain | OPINU | 0x674aA28Ac436834051fff3fC7b6e59D6f9c57a1c | Optimus Inu |  | bsc/bep20/optimus_inu |
 | Binance Smart Chain | OPX | 0x6eC9A568881755C9698384cc6b5b13Bf4064E12b | Optimus X |  | bsc/bep20/optimus_x |
 | Binance Smart Chain | ROOM | 0x3C45A24d36Ab6fc1925533C1F57bC7e1b6fbA8a4 | OptionRoom Token |  | bsc/bep20/optionroom_token |
@@ -2737,6 +2770,7 @@
 | Binance Smart Chain | RPTR | 0x44C99Ca267C2b2646cEEc72e898273085aB87ca5 | Raptor v3 |  | bsc/bep20/raptor_v3 |
 | Binance Smart Chain | RBP | 0x563cA064E41f3B5D80ADEEcfE49Ab375fd7afBEf | Rare Ball Portion |  | bsc/bep20/rare_ball_portion |
 | Binance Smart Chain | FND | 0x264387Ad73d19408e34b5d5E13A93174a35CEA33 | Rare Fnd |  | bsc/bep20/rare_fnd |
+| Binance Smart Chain | RASP | 0x6F8a4f26Ebfd2B85e0f59AbE5F734FB244d1C14A | Rasper.ai |  | bsc/bep20/rasper_ai |
 | Binance Smart Chain | RAVEN | 0xcD7C5025753a49f1881B31C48caA7C517Bb46308 | Raven Protocol |  | bsc/bep20/raven_protocol |
 | Binance Smart Chain | RAYONS | 0x81b24Bd68791f970dbe0Cff281445E3486866b4c | Rayons Energy |  | bsc/bep20/rayons_energy |
 | Binance Smart Chain | RAZE | 0x65e66a61D0a8F1e686C2D6083ad611a10D84D97A | Raze Network |  | bsc/bep20/raze_network |
@@ -2840,6 +2874,7 @@
 | Binance Smart Chain | SHIKO | 0xB6D053E260d410eAc02eA28755696F90A8ECca2B | SHIKOKU INU |  | bsc/bep20/shikoku_inu |
 | Binance Smart Chain | SHOOTER | 0xBaf928369Eb10c71461Cda6972F35eEDe6D2F5FD | SHOOTER |  | bsc/bep20/shooter |
 | Binance Smart Chain | SHRAP | 0x31e4efe290973ebE91b3a875a7994f650942D28F | SHRAPToken |  | bsc/bep20/shraptoken |
+| Binance Smart Chain | SINDI | 0x8Ae8663Cd26D58Bf51CcD78Cd95CCA3fda1690de | SINDI |  | bsc/bep20/sindi |
 | Binance Smart Chain | SU | 0x937dCCa207128Af363470A711D0C2b1Cf76C49b1 | SKYUP |  | bsc/bep20/skyup |
 | Binance Smart Chain | SLAM | 0x000851476180bfc499ea68450A5327D21C9b050e | SLAM TOKEN |  | bsc/bep20/slam_token |
 | Binance Smart Chain | SLM | 0x1123E16aBEA3A59E16d2b5614668481F7d15a706 | SLM Token |  | bsc/bep20/slm_token |
@@ -2990,12 +3025,14 @@
 | Binance Smart Chain | SATA | 0x6b1C8765C7EFf0b60706b0ae489EB9bb9667465A | Signata |  | bsc/bep20/signata |
 | Binance Smart Chain | SILVA | 0x68b5edb385b59E30a7A7Db1E681a449E94DF0213 | Silva Token |  | bsc/bep20/silva_token |
 | Binance Smart Chain | SSTX | 0x5396734569e26101677Eb39C89413F7fa7d8006f | Silver Stonks |  | bsc/bep20/silver_stonks |
+| Binance Smart Chain | SIMBA | 0x8F4E64d92ADc4681093aeacb3D60d862a0536b0f | Simba Coin |  | bsc/bep20/simba_coin |
 | Binance Smart Chain | SIMPLI | 0x71F69AFeD8825d6D9300Ba4d74103e1DCc263B93 | Simpli Finance Token |  | bsc/bep20/simpli_finance_token |
 | Binance Smart Chain | SIN | 0x6397de0F9aEDc0F7A8Fa8B438DDE883B9c201010 | SinCity Token | delisted | bsc/bep20/sincity_token |
 | Binance Smart Chain | SGLY | 0x5f50411CDE3eEC27b0eaC21691b4e500c69a5a2e | Singularity |  | bsc/bep20/singularity |
 | Binance Smart Chain | SDAO | 0x90Ed8F1dc86388f14b64ba8fb4bbd23099f18240 | Singularity Dao |  | bsc/bep20/singularity_dao |
 | Binance Smart Chain | SKYNET | 0x78819cc8e56B2508e2028ED4050826789FFb2dbb | Skynet |  | bsc/bep20/skynet |
 | Binance Smart Chain | SKTL | 0xD5F932911879df6d09F92Cc86605596e2392aB47 | Skytale |  | bsc/bep20/skytale |
+| Binance Smart Chain | SLAFAC | 0xFba8D4AF65c6D54612bA962Bb3de3fC06B05f20a | SlapFace |  | bsc/bep20/slapface |
 | Binance Smart Chain | SLEEPEE | 0x80CD73baDb406eA36B9a7CDeb8df06AeFa7E12d9 | Sleep Future | delisted | bsc/bep20/sleep_future |
 | Binance Smart Chain | SDEX | 0xFdc66A08B0d0Dc44c17bbd471B88f49F50CdD20F | SmarDex Token |  | bsc/bep20/smardex_token |
 | Binance Smart Chain | SATT | 0x448BEE2d93Be708b54eE6353A7CC35C4933F1156 | Smart Advertising Transaction Token |  | bsc/bep20/smart_advertising_transaction_token |
@@ -3156,6 +3193,7 @@
 | Binance Smart Chain | T99 | 0xe9A5C635c51002Fa5f377F956A8CE58573D63d91 | TETHEREUM |  | bsc/bep20/tethereum |
 | Binance Smart Chain | TFT | 0x8f0FB159380176D324542b3a7933F0C2Fd0c2bbf | TFT on BSC |  | bsc/bep20/tft_on_bsc |
 | Binance Smart Chain | TGDAO | 0x46F275321107d7c49cF80216371AbF1a1599c36F | TGDAO |  | bsc/bep20/tgdao |
+| Binance Smart Chain | TWD | 0xf00cD9366A13e725AB6764EE6FC8Bd21dA22786e | THE WORD |  | bsc/bep20/the_word |
 | Binance Smart Chain | THE-REAL-WORLD | 0x22d8A55d029A6A6FdCB1e205DF3dB496933dCf8D | THE-REAL-WORLD |  | bsc/bep20/the_real_world |
 | Binance Smart Chain | THE | 0xF4C8E32EaDEC4BFe97E0F595AdD0f4450a863a11 | THENA |  | bsc/bep20/thena |
 | Binance Smart Chain | THUGS | 0xE10e9822A5de22F8761919310DDA35CD997d63c0 | THUGS |  | bsc/bep20/thugs |
@@ -3180,6 +3218,7 @@
 | Binance Smart Chain | TC | 0x659049786cB66E4486b8C0E0cCC90a5929a21162 | TTcoin |  | bsc/bep20/ttcoin |
 | Binance Smart Chain | TUK | 0x84E03e21dA9B32555885a85b7c23e5FC123C25DD | TUK Token |  | bsc/bep20/tuk_token |
 | Binance Smart Chain | TRN | 0x19eD34d112d0D20Db619d728CE96745600abaFc3 | TURAN NETWORK |  | bsc/bep20/turan_network |
+| Binance Smart Chain | TXT | 0xbaBBeBa2a02cBfAfAAE4eB119Ed1813c6B1254AB | TX Token |  | bsc/bep20/tx_token |
 | Binance Smart Chain | TYLT | 0x7d8156d75495Def6181Ca6FFCF7631C1965dCa2E | TYLT |  | bsc/bep20/tylt |
 | Binance Smart Chain | TACO | 0x9066e87Bac891409D690cfEfA41379b34af06391 | Taco |  | bsc/bep20/taco |
 | Binance Smart Chain | TALK | 0x7606267A4bfff2c5010c92924348C3e4221955f2 | Talkado |  | bsc/bep20/talkado |
@@ -3206,6 +3245,7 @@
 | Binance Smart Chain | DOG | 0xaA88C603d142C371eA0eAC8756123c5805EdeE03 | The Doge NFT |  | bsc/bep20/the_doge_nft |
 | Binance Smart Chain | ESC | 0x4c48cca6153Db911002F965D22fdeFcD95f33BE9 | The Essential Coin |  | bsc/bep20/the_essential_coin |
 | Binance Smart Chain | FOR | 0x658A109C5900BC6d2357c87549B651670E5b0539 | The Force Token |  | bsc/bep20/the_force_token |
+| Binance Smart Chain | VOID | 0x2F03D0b2f702884fA43aee8e092E83650C5670e9 | The Great Void Token |  | bsc/bep20/the_great_void_token |
 | Binance Smart Chain | HUSL | 0x284AC5aF363BDe6eF5296036aF8fb0e9Cc347B41 | The HUSL [via ChainPort.io] |  | bsc/bep20/the_husl_via_chainport_io |
 | Binance Smart Chain | TKC | 0x06Dc293c250e2fB2416A4276d291803fc74fb9B5 | The Kingdom Coin |  | bsc/bep20/the_kingdom_coin |
 | Binance Smart Chain | 2MOON | 0x817b32d386cFc1F872de306DfAeDfDa36429cA1E | The Moon Metaverse |  | bsc/bep20/the_moon_metaverse |
@@ -3302,6 +3342,7 @@
 | Binance Smart Chain | UNICE | 0xA0CF89eE581313D84d28409Eb6BB1D1F9B55d410 | UNICE |  | bsc/bep20/unice |
 | Binance Smart Chain | UFARM | 0x0A356f512f6fCE740111ee04Ab1699017a908680 | UNIFARM Token |  | bsc/bep20/unifarm_token |
 | Binance Smart Chain | UTED | 0x951Df2682ff9a963C4243a38d3841C9bA471b8aE | UNITED |  | bsc/bep20/united |
+| Binance Smart Chain | CWF | 0x07869C388A4dEcf49bDC61eC1ED2B3AF8a27f116 | UNIVERSAL CONTACT |  | bsc/bep20/universal_contact |
 | Binance Smart Chain | USDM | 0xD08f276Fc324A7e9b3b51bfc7Da1BBca6144f180 | USD Mono |  | bsc/bep20/usd_mono |
 | Binance Smart Chain | USDZ | 0x734D66f635523D7ddb7d2373C128333DA313041b | USD ZEDXION |  | bsc/bep20/usd_zedxion |
 | Binance Smart Chain | USD+ | 0xe80772Eaf6e2E18B651F160Bc9158b2A5caFCA65 | USD+ |  | bsc/bep20/usd |
@@ -3553,6 +3594,7 @@
 | Binance Smart Chain | WUDO | 0x70802Af0Ba10Dd5bB33276B5b37574b6451Db3D9 | Wrapped Unido |  | bsc/bep20/wrapped_unido |
 | Binance Smart Chain | WVBK | 0xD347DEfFBb2e750C752b2d4Aa5C26fd57ab90D64 | Wrapped VeriBlock |  | bsc/bep20/wrapped_veriblock |
 | Binance Smart Chain | WZYX | 0x377c6E37633e390aEf9AFB4F5E0B16689351EeD4 | Wrapped ZYX |  | bsc/bep20/wrapped_zyx |
+| Binance Smart Chain | WAGORA | 0xdd19A94D9e283C896AaBfc72eC7A76D51D9bE058 | WrappedAGORA |  | bsc/bep20/wrappedagora |
 | Binance Smart Chain | WARC | 0x86FAC768241B4133d131EdcCBd47F143A4FA9D32 | WrappedARC |  | bsc/bep20/wrappedarc |
 | Binance Smart Chain | WNCG | 0x52242cbAb41e290E9E17CCC50Cc437bB60020a9d | WrappedNCG |  | bsc/bep20/wrappedncg |
 | Binance Smart Chain | WWE | 0x421F9D1B2147F534e3AeFc6AF95EdD4Cf2430874 | Wrestling Shiba |  | bsc/bep20/wrestling_shiba |
@@ -3674,6 +3716,7 @@
 | Binance Smart Chain | ZB | 0x0400Ff00fFd395Ef93E701aE27087A7eeeb84f32 | ZooBit.Org |  | bsc/bep20/zoobit_org |
 | Binance Smart Chain | ZUM | 0x54C2c07b3Af037567269Ad6A168D5bD527867b58 | ZumToken |  | bsc/bep20/zumtoken |
 | Binance Smart Chain | ZUNA | 0x5D07eDAbA2151a3C6802B28636eCC23082398EdB | Zuna |  | bsc/bep20/zuna |
+| Binance Smart Chain | ACM | 0x1BD9ABF284e893705104E64B564B414620b722F1 | acmFinance |  | bsc/bep20/acmfinance |
 | Binance Smart Chain | AGEUR | 0x12f31B73D812C6Bb0d735a218c086d44D5fe5f89 | agEUR |  | bsc/bep20/ageur |
 | Binance Smart Chain | AIRI | 0x7e2A35C746F2f7C240B664F1Da4DD100141AE71F | aiRight Token |  | bsc/bep20/airight_token |
 | Binance Smart Chain | ALEPH | 0x82D2f8E02Afb160Dd5A480a617692e62de9038C4 | aleph.im v2 |  | bsc/bep20/aleph.im_v2 |
@@ -3700,11 +3743,13 @@
 | Binance Smart Chain | DEGO | 0x3FdA9383A84C05eC8f7630Fe10AdF1fAC13241CC | dego.finance |  | bsc/bep20/dego.finance |
 | Binance Smart Chain | DEGOV2 | 0x3Da932456D082CBa208FEB0B096d49b202Bf89c8 | dego.finance |  | bsc/bep20/dego_finance |
 | Binance Smart Chain | DKEY | 0xF3ED4770E6eFe9168c3f2F50A6D9d0F97a550DF1 | dkey |  | bsc/bep20/dkey |
+| Binance Smart Chain | WIF | 0x09Ab61BD94d05b8AC5FAc95743B59417df936F5C | dogwifhat |  | bsc/bep20/dogwifhat |
 | Binance Smart Chain | DMOON | 0x7D18f3fE6e638faD0AdACC5dB1A47f871a2C2cC4 | dollarmoon |  | bsc/bep20/dollarmoon |
 | Binance Smart Chain | MOOV | 0x0ebd9537A25f56713E34c45b38F421A1e7191469 | dotmoovs |  | bsc/bep20/dotmoovs |
 | Binance Smart Chain | EFUN | 0x6746E37A756DA9E34f0BBF1C0495784Ba33b79B4 | e-Fun Token |  | bsc/bep20/e_fun_token |
 | Binance Smart Chain | EBOX | 0x33840024177A7DacA3468912363BeD8b425015c5 | ethbox Token |  | bsc/bep20/ethbox_token |
 | Binance Smart Chain | XDNA | 0x80dbA9C32b7aB5445e482387A5522e24C0Ba4C24 | extraDNA |  | bsc/bep20/extradna |
+| Binance Smart Chain | FR | 0xe9BEEA8F4448267a151f744572C57A3Cc309fA92 | ferscoin |  | bsc/bep20/ferscoin |
 | Binance Smart Chain | FVT | 0x0A232cb2005Bda62D3DE7Ab5DEb3ffe4c456165a | finance.vote Token |  | bsc/bep20/finance_vote_token |
 | Binance Smart Chain | FROGE | 0x93AB30c08421750d5C7993Fb621c6FF32FE3F89E | froge.finance |  | bsc/bep20/froge_finance |
 | Binance Smart Chain | KHP | 0x15B3d410fCd0d695E1bbe4F717F8E1B6D0Fb2D0C | fry.KetchupV2 |  | bsc/bep20/fry.ketchupv2 |
@@ -12493,16 +12538,41 @@
 | Polygon | USDT | 0xc2132D05D31c914a87C6611C10748AEb04B58e8F | (PoS) Tether USD |  | polygon/erc20/(pos)_tether_usd |
 | Polygon | WBTC | 0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6 | (PoS) Wrapped BTC |  | polygon/erc20/(pos)_wrapped_btc |
 | Polygon | YFI | 0xDA537104D6A5edd53c6fBba9A898708E465260b6 | (PoS) yearn.finance |  | polygon/erc20/(pos)_yearn.finance |
+| Polygon | ZCN | 0x8bB30E0e67b11b978a5040144c410e1ccDDcba30 | 0chain (PoS) |  | polygon/erc20/0chain_pos |
 | Polygon | 0XBTC | 0x71B821aa52a49F32EEd535fCA6Eb5aa130085978 | 0xBitcoin Token |  | polygon/erc20/0xbitcoin_token |
+| Polygon | 0XMR | 0x52eDe6bbA83B7b4Ba1D738Df0dF713D6A2036B71 | 0xMonero (PoS) |  | polygon/erc20/0xmonero_pos |
+| Polygon | 16DAO | 0x4A5599a249fDC53bD4746e7d9078eDb7543bD0A9 | 16DAO |  | polygon/erc20/16dao |
 | Polygon | 1INCH | 0x9c2C5fd7b07E95EE044DDeba0E97a665F142394f | 1INCH Token |  | polygon/erc20/1inch_token |
+| Polygon | 20WETH-80BAL | 0x3d468AB2329F296e1b9d8476Bb54Dd77D8c2320f | 20WETH-80BAL |  | polygon/erc20/20weth_80bal |
 | Polygon | 20WMATIC_80SPHERE | 0xf3312968c7D768C19107731100Ece7d4780b47B2 | 20WMATIC_80SPHERE |  | polygon/erc20/20wmatic_80sphere |
 | Polygon | 2BRL_BRZ | 0xE22483774bd8611bE2Ad2F4194078DaC9159F4bA | 2BRL (BRZ) |  | polygon/erc20/2brl_brz |
 | Polygon | 2BRLUSD_BOOSTED | 0x4A0b73f0D13fF6d43e304a174697e3d5CFd310a4 | 2BRLUSD_boosted |  | polygon/erc20/2brlusd_boosted |
 | Polygon | 2EUR_PAR | 0x7d60a4Cb5cA92E2Da965637025122296ea6854f9 | 2EUR (PAR) |  | polygon/erc20/2eur_par |
 | Polygon | 2EUR_AGEUR | 0xa48D164F6eB0EDC68bd03B56fa59E12F24499aD1 | 2eur (agEUR) |  | polygon/erc20/2eur_ageur |
+| Polygon | FXA3A | 0x58c7B2828e7F2B2CaA0cC7fEef242fA3196d03df | 3A Utility Token (FXERC20) |  | polygon/erc20/3a_utility_token_fxerc20 |
+| Polygon | 4INT | 0x5CEeBB0947d58Fabde2fc026Ffe4B33ccFE1bA8B | 4INT |  | polygon/erc20/4int |
+| Polygon | 50C | 0x0102bbfDdFFBd8d28d3a1b9C47017F62F42768f2 | 50 Cent |  | polygon/erc20/50_cent |
+| Polygon | 5MC | 0xA1FD25F9d59768dFaA376b25A46DF2ab2729FB83 | 5MC |  | polygon/erc20/5mc |
+| Polygon | 8PAY V2 | 0x06DDb3a8BC0aBc14f85e974CF1A93a6f8d4909d9 | 8PAY Network v2 |  | polygon/erc20/8pay_network_v2 |
 | Polygon | STZ | 0x2c92a8A41f4b806a6f6F1F7C9D9DEc78DCd8c18e | 99Starz |  | polygon/erc20/99starz |
+| Polygon | A4 | 0x9767203e89dcD34851240B3919d4900d3E5069f1 | A4 |  | polygon/erc20/a4 |
+| Polygon | META | 0xEDcFb6984a3c70501BAA8b7f5421Ae795ecC1496 | ABCMETA Token |  | polygon/erc20/abcmeta_token |
+| Polygon | AGAC | 0x669ddc70273084Ea30e6cd4f28CA6e2C70735065 | AGA Carbon Credit (PoS) |  | polygon/erc20/aga_carbon_credit_pos |
+| Polygon | AGACR | 0xcBce9f77921C2E90522d438dF4C5582F4c617768 | AGA Carbon Rewards |  | polygon/erc20/aga_carbon_rewards |
+| Polygon | AGA | 0x033d942A6b495C4071083f4CDe1f17e986FE856c | AGA Token (PoS) |  | polygon/erc20/aga_token_pos |
+| Polygon | AGOS | 0xA3d315e8e0A62E9Abd4a910d07B4768a1B3fF525 | AGOS |  | polygon/erc20/agos |
 | Polygon | AIOZ | 0xe2341718c6C0CbFa8e6686102DD8FbF4047a9e9B | AIOZ Network |  | polygon/erc20/aioz_network |
+| Polygon | AMA | 0x372246175d50dB4fd42c2aBa4E3292A0Fe41Ce2e | AMAUROT |  | polygon/erc20/amaurot |
 | Polygon | APW | 0x6C0AB120dBd11BA701AFF6748568311668F63FE0 | APWine Token (PoS) |  | polygon/erc20/apwine_token_(pos) |
+| Polygon | ARCADIUM | 0x3F374ed3C8e61A0d250f275609be2219005c021e | ARCADIUM |  | polygon/erc20/arcadium |
+| Polygon | ARIA20 | 0x46F48FbdedAa6F5500993BEDE9539ef85F4BeE8e | ARIANEE (PoS) |  | polygon/erc20/arianee_pos |
+| Polygon | ARPA | 0xEE800B277A96B0f490a1A732e1D6395FAD960A26 | ARPA Token (PoS) |  | polygon/erc20/arpa_token_pos |
+| Polygon | EEUR | 0x735fa792e731a2e8F83F32eb539841b7B72e6d8f | ARYZE eEUR |  | polygon/erc20/aryze_eeur |
+| Polygon | EGBP | 0xD711D7D893de57dc13Ff465763218770Bd42DB1D | ARYZE eGBP |  | polygon/erc20/aryze_egbp |
+| Polygon | EUSD | 0xa4335da338ec4C07C391Fc1A9bF75F306adadc08 | ARYZE eUSD |  | polygon/erc20/aryze_eusd |
+| Polygon | ASIA | 0x50bCBC40306230713239Ae1BdDD5eefEEaa273Dc | ASIA COIN (PoS) |  | polygon/erc20/asia_coin_pos |
+| Polygon | ATRNO | 0x29b4ccD16D630Df19f768F68f43A0229EAE26250 | ATRNO |  | polygon/erc20/atrno |
+| Polygon | AWT | 0x0c705862f56cD8eC70337F5f5184feA4158a3c00 | AWT |  | polygon/erc20/awt |
 | Polygon | AAVE | 0xD6DF932A45C0f255f85145f286eA0b292B21C90B | Aave (PoS) |  | polygon/erc20/aave_(pos) |
 | Polygon | AMAAVE | 0x1d2a0E5EC8E5bBDCA5CB219e649B565d8e5c3360 | Aave Matic Market AAVE |  | polygon/erc20/aave_matic_market_aave |
 | Polygon | AMDAI | 0x27F8D03b3a2196956ED754baDc28D73be8830A6e | Aave Matic Market DAI |  | polygon/erc20/aave_matic_market_dai |
@@ -12511,22 +12581,63 @@
 | Polygon | AMWBTC | 0x5c2ed810328349100A66B82b78a1791B101C9D61 | Aave Matic Market WBTC |  | polygon/erc20/aave_matic_market_wbtc |
 | Polygon | AMWETH | 0x28424507fefb6f7f8E9D3860F56504E4e5f5f390 | Aave Matic Market WETH |  | polygon/erc20/aave_matic_market_weth |
 | Polygon | AMWMATIC | 0x8dF3aad3a84da6b69A4DA8aeC3eA40d9091B2Ac4 | Aave Matic Market WMATIC |  | polygon/erc20/aave_matic_market_wmatic |
+| Polygon | APOLAAVE | 0xf329e36C7bF6E5E86ce2150875a84Ce77f477375 | Aave Polygon AAVE |  | polygon/erc20/aave_polygon_aave |
+| Polygon | APOLAGEUR | 0x8437d7C167dFB82ED4Cb79CD44B7a32A1dd95c77 | Aave Polygon AGEUR |  | polygon/erc20/aave_polygon_ageur |
+| Polygon | APOLBAL | 0x8ffDf2DE812095b1D19CB146E4c004587C0A0692 | Aave Polygon BAL |  | polygon/erc20/aave_polygon_bal |
+| Polygon | APOLCRV | 0x513c7E3a9c69cA3e22550eF58AC1C0088e918FFf | Aave Polygon CRV |  | polygon/erc20/aave_polygon_crv |
+| Polygon | APOLDAI | 0x82E64f49Ed5EC1bC6e43DAD4FC8Af9bb3A2312EE | Aave Polygon DAI |  | polygon/erc20/aave_polygon_dai |
+| Polygon | APOLDPI | 0x724dc807b04555b71ed48a6896b6F41593b8C637 | Aave Polygon DPI |  | polygon/erc20/aave_polygon_dpi |
+| Polygon | APOLGHST | 0x8Eb270e296023E9D92081fdF967dDd7878724424 | Aave Polygon GHST |  | polygon/erc20/aave_polygon_ghst |
+| Polygon | APOLLINK | 0x191c10Aa4AF7C30e871E70C95dB0E4eb77237530 | Aave Polygon LINK |  | polygon/erc20/aave_polygon_link |
+| Polygon | APOLMATICX | 0x80cA0d8C38d2e2BcbaB66aA1648Bd1C7160500FE | Aave Polygon MATICX |  | polygon/erc20/aave_polygon_maticx |
+| Polygon | APOLSTMATIC | 0xEA1132120ddcDDA2F119e99Fa7A27a0d036F7Ac9 | Aave Polygon STMATIC |  | polygon/erc20/aave_polygon_stmatic |
+| Polygon | APOLSUSHI | 0xc45A479877e1e9Dfe9FcD4056c699575a1045dAA | Aave Polygon SUSHI |  | polygon/erc20/aave_polygon_sushi |
+| Polygon | APOLUSDC | 0x625E7708f30cA75bfd92586e17077590C60eb4cD | Aave Polygon USDC |  | polygon/erc20/aave_polygon_usdc |
+| Polygon | APOLUSDT | 0x6ab707Aca953eDAeFBc4fD23bA73294241490620 | Aave Polygon USDT |  | polygon/erc20/aave_polygon_usdt |
+| Polygon | APOLWBTC | 0x078f358208685046a11C85e8ad32895DED33A249 | Aave Polygon WBTC |  | polygon/erc20/aave_polygon_wbtc |
+| Polygon | APOLWETH | 0xe50fA9b3c56FfB159cB0FCA61F5c9D750e8128c8 | Aave Polygon WETH |  | polygon/erc20/aave_polygon_weth |
 | Polygon | APWMATIC | 0x6d80113e533a2C0fe82EaBD35f1875DcEA89Ea97 | Aave Polygon WMATIC | delisted | polygon/erc20/aave_polygon_wmatic |
+| Polygon | APOLWSTETH | 0xf59036CAEBeA7dC4b86638DFA2E3C97dA9FcCd40 | Aave Polygon wstETH |  | polygon/erc20/aave_polygon_wsteth |
+| Polygon | ALPHA | 0x6a3E7C3c6EF65Ee26975b12293cA1AAD7e1dAeD2 | Aavegotchi ALPHA |  | polygon/erc20/aavegotchi_alpha |
+| Polygon | FOMO | 0x44A6e0BE76e1D9620A7F76588e4509fE4fa8E8C8 | Aavegotchi FOMO |  | polygon/erc20/aavegotchi_fomo |
+| Polygon | FUD | 0x403E967b044d4Be25170310157cB1A4Bf10bdD0f | Aavegotchi FUD |  | polygon/erc20/aavegotchi_fud |
+| Polygon | GHST | 0x385Eeac5cB85A38A9a07A70c73e0a3271CfB54A7 | Aavegotchi GHST Token (PoS) |  | polygon/erc20/aavegotchi_ghst_token_pos |
+| Polygon | KEK | 0x42E5E06EF5b90Fe15F853F59299Fc96259209c5C | Aavegotchi KEK |  | polygon/erc20/aavegotchi_kek |
 | Polygon | ABI | 0x6d5f5317308C6fE7D6CE16930353a8Dfd92Ba4D7 | Abachi |  | polygon/erc20/abachi |
+| Polygon | ACX | 0xF328b73B6c685831F238c30a23Fc19140CB4D8FC | Across Protocol Token (PoS) |  | polygon/erc20/across_protocol_token_pos |
+| Polygon | ADX | 0xdDa7b23D2D72746663E7939743f929a3d85FC975 | AdEx Network (PoS) |  | polygon/erc20/adex_network_pos |
 | Polygon | ADDY | 0xc3FdbadC7c795EF1D6Ba111e06fF8F16A20Ea539 | Adamant |  | polygon/erc20/adamant |
 | Polygon | ACDC | 0x1f02Ec2dD0fF3E31CA893AEC6C3585FE88243dF3 | Adept Camp Doge Coin |  | polygon/erc20/adept_camp_doge_coin |
+| Polygon | ADS | 0x598e49f01bEfeB1753737934a5b11fea9119C796 | Adshares (PoS) |  | polygon/erc20/adshares_pos |
 | Polygon | FYN | 0x3B56a704C01D650147ADE2b8cEE594066b3F9421 | Affyn |  | polygon/erc20/affyn |
+| Polygon | AIMX | 0x33B6d77c607ea499ab5DB7e2201C5A516a78a5db | Aimedis |  | polygon/erc20/aimedis |
+| Polygon | AKI | 0x1A7e49125a6595588c9556f07a4c006461b24545 | Aki Protocol |  | polygon/erc20/aki_protocol |
 | Polygon | ALGB | 0x0169eC1f8f639B32Eec6D923e24C2A2ff45B9DD6 | Algebra |  | polygon/erc20/algebra |
+| Polygon | ALM | 0x1581929770bE3275a82068c1135b6dD59c5334Ed | AliumToken on Polygon |  | polygon/erc20/aliumtoken_on_polygon |
+| Polygon | ABR | 0x04429fbb948BBD09327763214b45e505A5293346 | Allbridge |  | polygon/erc20/allbridge |
+| Polygon | NXRA | 0x644192291cc835A93d6330b24EA5f5FEdD0eEF9e | AllianceBlock Nexera Token |  | polygon/erc20/allianceblock_nexera_token |
+| Polygon | AMKT | 0xB87904DB461005FC716a6BF9F2d451c33b10b80b | Alongside Crypto Market Index (PoS) |  | polygon/erc20/alongside_crypto_market_index_pos |
 | Polygon | APKA | 0x35B72cA980aE863bC9C47C4b571eec37fcb2D1ee | Alpacka |  | polygon/erc20/alpacka |
 | Polygon | ALTA | 0xe0cCa86B254005889aC3a81e737f56a14f4A38F5 | Alta Finance |  | polygon/erc20/alta_finance |
+| Polygon | ALTD | 0x8929e9DbD2785e3BA16175E596CDD61520feE0D1 | Altitude |  | polygon/erc20/altitude |
 | Polygon | AL | 0x041b4394F2a1A2EAF7e21460Ef59370789cb1F42 | Aluminium |  | polygon/erc20/aluminium |
 | Polygon | ALN | 0xa8fcEe762642f156b5D757b6FabC36E06b6d4A1A | Aluna |  | polygon/erc20/aluna |
 | Polygon | AMBER | 0x8865BC57c58Be23137ACE9ED1Ae1A05fE5c8B209 | Amber Soul Stone |  | polygon/erc20/amber_soul_stone |
+| Polygon | WALLET | 0x564906ec1DF8399F00e4ad32c0eCAC0404a27A1c | Ambire Wallet |  | polygon/erc20/ambire_wallet |
 | Polygon | AMP | 0x0621d647cecbFb64b79E44302c1933cB4f27054d | Amp |  | polygon/erc20/amp |
 | Polygon | FORTH | 0x5eCbA59DAcc1ADc5bDEA35f38A732823fc3dE977 | Ampleforth Governance |  | polygon/erc20/ampleforth_governance |
+| Polygon | $ANRX | 0x554f074d9cCda8F483d1812d4874cBebD682644E | AnRKey X (PoS) |  | polygon/erc20/anrkey_x_pos |
+| Polygon | ANGEL | 0x0B6afe834dab840335F87d99b45C2a4bd81A93c7 | Angel (PoS) |  | polygon/erc20/angel_pos |
+| Polygon | AGLA | 0xD6A33F67b733d422c821C36F0f79ca145B930d01 | Angola Coin (PoS) |  | polygon/erc20/angola_coin_pos |
 | Polygon | ANML | 0xEcc4176B90613Ed78185f01bd1E42C5640C4F09d | Animal Concerts Token (PoS) |  | polygon/erc20/animal_concerts_token_(pos) |
+| Polygon | ANIV | 0x04Cc80c7665E4D57f57E16A1212A57c0C11927Ce | Aniverse |  | polygon/erc20/aniverse |
+| Polygon | ANKR | 0x101A023270368c0D50BFfb62780F4aFd4ea79C35 | Ankr (PoS) |  | polygon/erc20/ankr_pos |
 | Polygon | AETHC | 0xC4e82BA0Fe6763cbE5E9CbCA0ba7cbD6F91C6018 | Ankr Eth2 Reward Bearing Certificate |  | polygon/erc20/ankr_eth2_reward_bearing_certificate |
+| Polygon | ANKRMATIC | 0x0E9b89007eEE9c958c0EDA24eF70723C2C93dD58 | Ankr Staked MATIC |  | polygon/erc20/ankr_staked_matic |
 | Polygon | ANX | 0x24236e003E31B9DBD4fa84bdF2bfB47eFAdCAC3e | Anxtrom (PoS) |  | polygon/erc20/anxtrom_(pos) |
+| Polygon | ANY | 0x6aB6d61428fde76768D7b45D8BFeec19c6eF91A8 | Anyswap |  | polygon/erc20/anyswap |
+| Polygon | ABOND | 0xe6828D65bf5023AE1851D90D8783Cc821ba7eeE1 | ApeBond |  | polygon/erc20/apebond |
+| Polygon | APE | 0xB7b31a6BC18e48888545CE79e83E06003bE70930 | ApeCoin (PoS) |  | polygon/erc20/apecoin_pos |
 | Polygon | BANANA | 0x5d47bAbA0d66083C52009271faF3F50DCc01023C | ApeSwapFinance Banana |  | polygon/erc20/apeswapfinance_banana |
 | Polygon | APE_LP | 0x034293F21F1cCE5908BC605CE5850dF2b1059aC0 | ApeSwapFinance LPs 0x034293f2 |  | polygon/erc20/apeswapfinance_lps_0x034293f2 |
 | Polygon | APE_LP | 0x0359001070cF696D5993E0697335157a6f7dB289 | ApeSwapFinance LPs 0x03590010 |  | polygon/erc20/apeswapfinance_lps_0x03590010 |
@@ -12536,29 +12647,64 @@
 | Polygon | APE_LP | 0xd32f3139A214034A0f9777c87eE0a064c1FF6AE2 | ApeSwapFinance LPs 0xd32f3139 |  | polygon/erc20/apeswapfinance_lps_0xd32f3139 |
 | Polygon | APE_LP | 0xe82635a105c520fd58e597181cBf754961d51E3e | ApeSwapFinance LPs 0xe82635a1 |  | polygon/erc20/apeswapfinance_lps_0xe82635a1 |
 | Polygon | APU | 0xC155504787e9430180F33F35eDd7C5eC06Cd5761 | Apreum | delisted | polygon/erc20/apreum |
+| Polygon | ACRE | 0x011734f6Ed20E8D011d85Cf7894814B897420acf | Arable Protocol |  | polygon/erc20/arable_protocol |
 | Polygon | AAGG | 0xAfb6E8331355faE99C8E8953bB4c6Dc5d11E9F3c | Arch Aggressive Portfolio |  | polygon/erc20/arch_aggressive_portfolio |
 | Polygon | ABAL | 0xF401E2c1ce8F252947b60BFB92578f84217A1545 | Arch Balanced Portfolio |  | polygon/erc20/arch_balanced_portfolio |
 | Polygon | CHAIN | 0x9a41E03fEF7f16f552C6FbA37fFA7590fb1Ec0c4 | Arch Blockchains (PoS) |  | polygon/erc20/arch_blockchains_pos |
 | Polygon | FXAEDY | 0x027aF1E12a5869eD329bE4c05617AD528E997D5A | Arch Ethereum Diversified Yield (FXERC20) |  | polygon/erc20/arch_ethereum_diversified_yield_fxerc20 |
 | Polygon | WEB3 | 0xBcD2C5C78000504EFBC1cE6489dfcaC71835406A | Arch Ethereum Web3 (PoS) |  | polygon/erc20/arch_ethereum_web3_pos |
 | Polygon | FXADDY | 0xAb1B1680f6037006e337764547fb82d17606c187 | Arch USD Diversified Yield (FXERC20) |  | polygon/erc20/arch_usd_diversified_yield_fxerc20 |
+| Polygon | AES | 0x2A07461a493b994C2a32f549Fd185524f306aB38 | Aree Shards |  | polygon/erc20/aree_shards |
+| Polygon | ARES | 0x181FEAECcA4A69a793272EA06DF40edF2Dd0804c | Ares3 Network |  | polygon/erc20/ares3_network |
+| Polygon | AGC | 0x2Ad2934d5BFB7912304754479Dd1f096D5C807Da | Argocoin |  | polygon/erc20/argocoin |
 | Polygon | ARMOR | 0x5de4005155933c0e1612Ce808f12B4cd8DAabc82 | Armor |  | polygon/erc20/armor |
+| Polygon | ADF | 0x6BD10299f4f1d31b3489Dc369eA958712d27c81b | Art De Finance Token |  | polygon/erc20/art_de_finance_token |
+| Polygon | ALI | 0xbFc70507384047Aa74c29Cdc8c5Cb88D0f7213AC | Artificial Liquid Intelligence Token |  | polygon/erc20/artificial_liquid_intelligence_token |
+| Polygon | MNTL | 0x38A536A31bA4d8C1Bcca016AbBf786ecD25877E8 | AssetMantle (PoS) |  | polygon/erc20/assetmantle_pos |
 | Polygon | ASTRAFER | 0xDfCe1e99A31C4597a3f8A8945cBfa9037655e335 | Astrafer |  | polygon/erc20/astrafer |
+| Polygon | ATRI | 0xB140665ddE25c644c6B418e417C930dE8A8a6Ac9 | Atari (PoS) |  | polygon/erc20/atari_pos |
 | Polygon | ATK | 0xF868939Ee81F04f463010BC52EAb91c0839eF08c | Attack |  | polygon/erc20/attack |
 | Polygon | OMEN | 0x76e63a3E7Ba1e2E61D3DA86a87479f983dE89a7E | Augury Finance |  | polygon/erc20/augury_finance |
+| Polygon | AURORA | 0x0c8C8Ae8bc3a69dC8482C01CEacfB588bb516B01 | AuroraToken |  | polygon/erc20/auroratoken |
 | Polygon | AWX | 0x56A0eFEFC9F1FBb54FBd25629Ac2aA764F1b56F7 | AurusDeFi | delisted | polygon/erc20/aurusdefi |
 | Polygon | AWG | 0xAEe0ffb690B37449B7f1C49B199E1E3ec6084490 | AurusGOLD (old) | delisted | polygon/erc20/aurusgold |
 | Polygon | AWS | 0xA96D47c621a8316d4F9539E3B38180C7067e84CA | AurusSILVER (old) | delisted | polygon/erc20/aurussilver |
 | Polygon | AX | 0x1a763170B96F23f15576D0fa0b2619d1254c437d | AurusX |  | polygon/erc20/aurusx |
+| Polygon | AUTOS | 0x925FAdb35B73720238cc78777d02ED4dD3100816 | AutoSingle Token |  | polygon/erc20/autosingle_token |
+| Polygon | ATA | 0x0df0f72EE0e5c9B7ca761ECec42754992B2Da5BF | Automata (PoS) |  | polygon/erc20/automata_pos |
+| Polygon | NIOX | 0xad684e79CE4b6D464f2Ff7c3FD51646892e24b96 | Autonio (PoS) |  | polygon/erc20/autonio_pos |
+| Polygon | OLAS | 0xFEF5d947472e72Efbb2E388c730B7428406F2F95 | Autonolas(PoS) |  | polygon/erc20/autonolas_pos |
 | Polygon | AVAX | 0x2C89bbc92BD86F8075d1DEcc58C7F4E0107f286b | Avalanche Token |  | polygon/erc20/avalanche_token |
+| Polygon | AVTM | 0x4E67b4598BcE5F0B2706407407da0D4D8e1D7433 | Aventis Metaverse |  | polygon/erc20/aventis_metaverse |
+| Polygon | AXLETH | 0x1280830F690D0E65195B3c61b028244C3A49f26D | Axelar Wrapped ETH |  | polygon/erc20/axelar_wrapped_eth |
+| Polygon | AXLLQDR | 0x0294D8eB7857D43FEb1210Db72456d41481f9Ede | Axelar Wrapped Lqdr |  | polygon/erc20/axelar_wrapped_lqdr |
+| Polygon | AXLUSDC | 0x750e4C4984a9e0f12978eA6742Bc1c5D248f40ed | Axelar Wrapped USDC |  | polygon/erc20/axelar_wrapped_usdc |
+| Polygon | AXLUSDT | 0xCeED2671d8634e3ee65000EDbbEe66139b132fBf | Axelar Wrapped USDT |  | polygon/erc20/axelar_wrapped_usdt |
+| Polygon | AXL-WSTETH | 0xd7Bb095a60D7666D4A6f236423B47DDD6ae6Cfa7 | Axelar Wrapped wstETH |  | polygon/erc20/axelar_wrapped_wsteth |
+| Polygon | AXIA | 0x49690541E3f6E933A9aa3cFFEe6010a7BB5B72d7 | Axia (axiaprotocol.io) |  | polygon/erc20/axia_axiaprotocol_io |
+| Polygon | AXN | 0x839F1a22A59eAAf26c85958712aB32F80FEA23d9 | Axion |  | polygon/erc20/axion |
 | Polygon | BAC | 0xcdE5E3D90631cacB842fA86f62dD0fc08A3ce43d | BAC |  | polygon/erc20/bac |
+| Polygon | BASV2 | 0x83A6DA342099835bCAA9C219DD76a5033c837de5 | BASv2 (PoS) |  | polygon/erc20/basv2_pos |
 | Polygon | BAT | 0x3Cef98bb43d732E2F285eE605a8158cDE967D219 | BAT |  | polygon/erc20/bat |
 | Polygon | BBG | 0x3Afe98235d680e8d7A52e1458a59D60f45F935C0 | BBGO |  | polygon/erc20/bbgo |
+| Polygon | BIM | 0xe78649874bcDB7a9D1666E665F340723a0187482 | BIM |  | polygon/erc20/bim |
+| Polygon | BIOS | 0xe20D2Df5041f8Ed06976846470f727295cDd4D23 | BIOS (PoS) |  | polygon/erc20/bios_pos |
+| Polygon | BTMT | 0x0fCed30234C3ea94A7B47cC88006ECb7A39Dc30E | BITMarketsToken |  | polygon/erc20/bitmarketstoken |
+| Polygon | BITT | 0xfd0cbdDec28a93bB86B9db4A62258F5EF25fEfdE | BITTOKEN (PoS) |  | polygon/erc20/bittoken_pos |
 | Polygon | VEE | 0xf1c1A3C2481A3a8A3f173A9ab5Ade275292A6fA3 | BLOCKv |  | polygon/erc20/blockv |
 | Polygon | BLOK | 0x229b1b6C23ff8953D663C4cBB519717e323a0a84 | BLOK |  | polygon/erc20/blok |
 | Polygon | BNB | 0x3BA4c387f786bFEE076A58914F5Bd38d668B42c3 | BNB |  | polygon/erc20/bnb |
+| Polygon | BOB | 0xB0B195aEFA3650A6908f15CdaC7D92F8a5791B0B | BOB |  | polygon/erc20/bob |
+| Polygon | BRZ | 0x4eD141110F6EeeAbA9A1df36d8c26f684d2475Dc | BRZ Token |  | polygon/erc20/brz_token |
+| Polygon | START | 0x6Ccf12B480A99C54b23647c995f4525D544A7E72 | BSCstarter |  | polygon/erc20/bscstarter |
 | Polygon | BTC2X-FLI | 0x4b54Bc363f5F9c6E0fcd82EaC6919aE213464Cc6 | BTC 2x Flexible Leverage Index |  | polygon/erc20/btc_2x_flexible_leverage_index |
+| Polygon | BTCPX | 0x9C32185b81766a051E08dE671207b34466DD1021 | BTC Proxy |  | polygon/erc20/btc_proxy |
 | Polygon | BTU | 0xFdc26CDA2d2440d0E83CD1DeE8E8bE48405806DC | BTU Protocol |  | polygon/erc20/btu_protocol |
+| Polygon | BCSPX | 0x1e2C4fb7eDE391d116E6B41cD0608260e8801D59 | Backed CSPX Core S&amp;P 500 |  | polygon/erc20/backed_cspx_core_s_amp_p_500 |
+| Polygon | BCOIN | 0xbbcb0356bB9e6B3Faa5CbF9E5F36185d53403Ac9 | Backed Coinbase Global |  | polygon/erc20/backed_coinbase_global |
+| Polygon | BC3M | 0x2F123cF3F37CE3328CC9B5b8415f9EC5109b45e7 | Backed GOVIES 0-6 months EURO investment grade |  | polygon/erc20/backed_govies_0_6_months_euro_investment_grade |
+| Polygon | BIBTA | 0x52d134c6DB5889FaD3542A09eAf7Aa90C0fdf9E4 | Backed IBTA $ Treasury Bond 1-3yr |  | polygon/erc20/backed_ibta_treasury_bond_1_3yr |
+| Polygon | BAKED | 0x32515ffdc3a84cfbf9AD4dB14EF8f0A535c7Afd6 | BakedToken (PoS) |  | polygon/erc20/bakedtoken_pos |
 | Polygon | BAL | 0x9a71012B13CA4d3D0Cdc72A177DF3ef03b0E76A3 | Balancer |  | polygon/erc20/balancer |
 | Polygon | B_50WBTC_50WETH | 0xCF354603A9AEbD2Ff9f33E1B04246d8Ea204ae95 | Balancer 50 WBTC 50 WETH |  | polygon/erc20/balancer_50_wbtc_50_weth |
 | Polygon | B_50WETH_50USDC | 0x10f21C9bD8128a29Aa785Ab2dE0d044DCdd79436 | Balancer 50 WETH 50 USDC |  | polygon/erc20/balancer_50_weth_50_usdc |
@@ -12572,33 +12718,64 @@
 | Polygon | B_STMATIC_STABLE | 0x8159462d255C1D24915CB51ec361F700174cD994 | Balancer stMATIC Stable Pool |  | polygon/erc20/balancer_stmatic_stable_pool |
 | Polygon | B_WUSDR_STABLE | 0x34A81e8956BF20b7448b31990A2c06F96830a6e4 | Balancer wUSDR Stable Pool |  | polygon/erc20/balancer_wusdr_stable_pool |
 | Polygon | B_STETH_BPT | 0x65Fe9314bE50890Fb01457be076fAFD05Ff32B9A | Balancer wstETH StablePool |  | polygon/erc20/balancer_wsteth_stablepool |
+| Polygon | BALL | 0x883aBe4168705d2e5dA925d28538B7a6AA9d8419 | Ball Token |  | polygon/erc20/ball_token |
 | Polygon | BNT | 0xc26D47d5c33aC71AC5CF9F776D63Ba292a4F7842 | Bancor |  | polygon/erc20/bancor |
 | Polygon | BAND | 0xA8b1E0764f85f53dfe21760e8AfE5446D82606ac | BandToken |  | polygon/erc20/bandtoken |
+| Polygon | BED | 0xeEDa694439C6FB56CbAA011cC849650b7273285B | Bankless BED Index (PoS) |  | polygon/erc20/bankless_bed_index_pos |
 | Polygon | GMI | 0x7FB27EE135dB455de5Ab1CcEC66a24cBC82E712D | Bankless DeFi Innovation Index (PoS) |  | polygon/erc20/bankless_defi_innovation_index_(pos) |
+| Polygon | BANK | 0xDB7Cb471dd0b49b29CAB4a1C14d070f27216a0Ab | Bankless Token (PoS) |  | polygon/erc20/bankless_token_pos |
+| Polygon | BWO | 0xC1543024DC71247888a7e139c644F44E75E96d38 | Battle World |  | polygon/erc20/battle_world |
+| Polygon | BELUGA | 0x47536F17F4fF30e64A96a7555826b8f9e66ec468 | BelugaToken |  | polygon/erc20/belugatoken |
 | Polygon | BEPRO | 0x07CC1cC3628Cc1615120DF781eF9fc8EC2feAE09 | BetProtocolToken |  | polygon/erc20/betprotocoltoken |
+| Polygon | BETS | 0x94025780a1aB58868D9B2dBBB775f44b32e8E6e5 | BetSwirl v2 |  | polygon/erc20/betswirl_v2 |
+| Polygon | BYN | 0x11602A402281974a70C2B4824d58ebeDe967E2bE | Beyond Finance (PoS) |  | polygon/erc20/beyond_finance_pos |
+| Polygon | TRYB | 0x4Fb71290Ac171E1d144F7221D882BECAc7196EB5 | BiLira (PoS) |  | polygon/erc20/bilira_pos |
 | Polygon | BUSD | 0x9C9e5fD8bbc25984B178FdCE6117Defa39d2db39 | Binance-Peg BUSD |  | polygon/erc20/busd_token |
 | Polygon | B2M | 0xE613a914bbb433855378183c3aB13003285da40A | Bit2Me |  | polygon/erc20/bit2me |
 | Polygon | CONE | 0xbA777aE3a3C91fCD83EF85bfe65410592Bdd0f7c | BitCone |  | polygon/erc20/bitcone |
+| Polygon | BITS | 0x5f5f7ca63A9d2c5200BC03CA3335a975D8f771d9 | BitStarters |  | polygon/erc20/bitstarters |
+| Polygon | BTCBR | 0xB355f4F4CC84a9429a59d5c2B98d77016f7EC482 | BitcoinBR |  | polygon/erc20/bitcoinbr |
+| Polygon | BXC | 0x05f52cc483c50C2a7E25a13DAc17D736Fa50F259 | BitcoinX |  | polygon/erc20/bitcoinx |
 | Polygon | LEO | 0x06D02e9D62A13fC76BB229373FB3BBBD1101D2fC | Bitfinex LEO Token |  | polygon/erc20/bitfinex_leo_token |
+| Polygon | XXX | 0xa288e965E86Ac4E5c03352F199Cc7a66022E15A8 | Black Whale |  | polygon/erc20/black_whale |
+| Polygon | BLKC | 0x8626264B6a1B4e920905Efd381002abA52EA0Eea | BlackHat |  | polygon/erc20/blackhat |
 | Polygon | BPT | 0x6863BD30C9e313B264657B107352bA246F8Af8e0 | BlackPool Token (PoS) |  | polygon/erc20/blackpool_token_(pos) |
+| Polygon | BS | 0x0C47298beEe5203358e7Bc30B9954B584361eAB5 | BlackStallion |  | polygon/erc20/blackstallion |
+| Polygon | BLES | 0x1B599bEB7b1F50807dD58Fd7e8fFcf073b435e71 | Blind Boxes Token (PoS) |  | polygon/erc20/blind_boxes_token_pos |
+| Polygon | XCCX | 0x2075828cdEdc356B5358d79cFd314548842E4A2E | BlockChainCoinX |  | polygon/erc20/blockchaincoinx |
+| Polygon | BCMC | 0xc10358f062663448a3489fC258139944534592ac | Blockchain Monster Coin |  | polygon/erc20/blockchain_monster_coin |
 | Polygon | BLZ | 0x438B28C5AA5F00a817b7Def7cE2Fb3d5d1970974 | Bluzelle |  | polygon/erc20/bluzelle |
+| Polygon | BLID | 0x4b27Cd6E6a5E83d236eAD376D256Fe2F9e9f0d2E | Bolide |  | polygon/erc20/bolide |
+| Polygon | BOLLY | 0x7Dc47Cfb674bEb5827283F6140F635680A5cE992 | Bollycoin (PoS) |  | polygon/erc20/bollycoin_pos |
+| Polygon | BOMB | 0xB2C63830D4478cB331142FAc075A39671a5541dC | Bombcrypto Coin |  | polygon/erc20/bombcrypto_coin |
 | Polygon | BONDLY | 0x64ca1571d1476b7a21C5aaf9f1a750A193A103C0 | Bondly (PoS) |  | polygon/erc20/bondly_(pos) |
 | Polygon | BONE | 0x80244C2441779361F35803b8C711C6c8fC6054a3 | Bone Token (BoneSwap) |  | polygon/erc20/bone_token_(boneswap) |
+| Polygon | BONK | 0xe5B49820e5A1063F6F4DdF851327b5E8B2301048 | Bonk |  | polygon/erc20/bonk |
+| Polygon | BOM | 0xc59132FBdF8dE8fbE510F568a5D831C991B4fC38 | Borderless Money |  | polygon/erc20/borderless_money |
 | Polygon | BORING | 0xff88434E29d1E2333aD6baa08D358b436196da6b | BoringDAO (PoS) |  | polygon/erc20/boringdao_(pos) |
 | Polygon | BOSON | 0x9B3B0703D392321AD24338Ff1f846650437A43C9 | Boson Token (PoS) |  | polygon/erc20/boson_token_(pos) |
 | Polygon | BNTY | 0x0f40D69Ff494a9e74b1F20A89EfF299B2A05918F | Bounty0x |  | polygon/erc20/bounty0x |
+| Polygon | FXBREED | 0x6949804b60DD9Dcea43Fd8d10CcdC640B55f9F7F | BreederDAO (FXERC20) |  | polygon/erc20/breederdao_fxerc20 |
+| Polygon | BUILD | 0xe94845Ac6782A2E71C407ABe4D5201445C26a62B | Build Token |  | polygon/erc20/build_token |
 | Polygon | BULL | 0x9f95e17b2668AFE01F8fbD157068b0a4405Cc08D | Bullieverse |  | polygon/erc20/bullieverse |
 | Polygon | BUND | 0x47dae46d31f31f84336Ac120b15eFdA261D484FB | Bund V2.0 |  | polygon/erc20/bund_v2_0 |
+| Polygon | BURP | 0x538D47D142F6993038a667E9D6210d3735749B36 | Burp (PoS) |  | polygon/erc20/burp_pos |
 | Polygon | CADC | 0x9de41aFF9f55219D5bf4359F167d1D0c772A396D | CAD Coin |  | polygon/erc20/cad_coin |
 | Polygon | CADC_ | 0x5d146d8B1dACb1EBBA5cb005ae1059DA8a1FbF57 | CAD Coin (old) | delisted | polygon/erc20/cad_coin_old |
+| Polygon | CASH | 0x5D066D022EDE10eFa2717eD3D79f22F949F8C175 | CASH |  | polygon/erc20/cash |
 | Polygon | CVR | 0x6AE96Cc93331c19148541D4D2f31363684917092 | CAVIAR |  | polygon/erc20/caviar |
 | Polygon | CBOMBER | 0xcf74Ae52ae2c848387e6cD0048e1eC5a93ee2c66 | CBomber Token |  | polygon/erc20/cbomber_token |
+| Polygon | CHU | 0x24878dfB65693f975D825e157a0685aec2300aD8 | CHU |  | polygon/erc20/chu |
+| Polygon | CPR | 0xaa404804Ba583c025Fa64c9a276A6127CEB355c6 | CIPHER |  | polygon/erc20/cipher |
 | Polygon | CLK | 0x44f777a333c08Bd844f51157CEeF49222bEb7c8d | CLOCKS_Token |  | polygon/erc20/clocks_token |
 | Polygon | COG | 0x54E38Ca1aaAfD4CA90637c8C3E50758eEaDAF67d | COG |  | polygon/erc20/cog |
 | Polygon | CONCH | 0x7cC9E49E10c9924F74f90C09f8f30F1f055acdd1 | CONCH COIN |  | polygon/erc20/conch_coin |
 | Polygon | XCRE8R | 0x00F22A2B5c40CE03FA4c96bA97605e5A40cC97D4 | CRE8R DAO |  | polygon/erc20/cre8r_dao |
 | Polygon | CRE8R | 0x079202AD852ccc46d8E73815f10Ff055049D3916 | CRE8R DAO (PoS) |  | polygon/erc20/cre8r_dao_(pos) |
 | Polygon | CRETA | 0x202655af326dE310491Cb54f120E02eE0da92b55 | CRETA TOKEN |  | polygon/erc20/creta_token |
+| Polygon | CRI3X | 0x304243A820D4A3718BecC89a3F33513586162CF0 | CRI3X |  | polygon/erc20/cri3x |
+| Polygon | CRISP-C | 0x672688C6Ee3E750dfaA4874743Ef693A6f2538ED | CRISP Scored Cookstoves |  | polygon/erc20/crisp_scored_cookstoves |
+| Polygon | CRISP-M | 0xEF6Ab48ef8dFe984FAB0d5c4cD6AFF2E54dfdA14 | CRISP Scored Mangroves |  | polygon/erc20/crisp_scored_mangroves |
 | Polygon | CRV | 0x172370d5Cd63279eFa6d502DAB29171933a610AF | CRV (PoS) |  | polygon/erc20/crv_(pos) |
 | Polygon | RIA | 0xF9cea445c2Ac1668f50CAa2c2924F93606a4a37d | Calvaria Duels of Eternity |  | polygon/erc20/calvaria_duels_of_eternity |
 | Polygon | CML | 0xd1A2192D57bb0E7bf3251Dc9b7b582270c7b85da | Camel |  | polygon/erc20/camel |
@@ -12606,23 +12783,61 @@
 | Polygon | CBY | 0xB6a5ae40e79891E4DeAdAd06C8A7cA47396Df21C | Carbify |  | polygon/erc20/carbify |
 | Polygon | CARD | 0x3A4BeD49Ab592A227bAe8F41eFd0d38E6e06d96c | Cardstack |  | polygon/erc20/cardstack |
 | Polygon | CXO | 0xf2ae0038696774d65E67892c9D301C5f2CbbDa58 | CargoX |  | polygon/erc20/cargox |
+| Polygon | CARR | 0x9b765735C82BB00085e9DBF194F20E3Fa754258E | Carnomaly |  | polygon/erc20/carnomaly |
+| Polygon | CVTX | 0x40F97Ec376aC1c503E755433BF57f21e3a49f440 | CarrieVerse Token |  | polygon/erc20/carrieverse_token |
+| Polygon | CTSI | 0x2727Ab1c2D22170ABc9b595177B2D5C6E1Ab7B7B | Cartesi Token (PoS) |  | polygon/erc20/cartesi_token_pos |
+| Polygon | CATHEON | 0x7e7737C40878e720b32e7bC9CD096259f876d69f | Catheon Gaming |  | polygon/erc20/catheon_gaming |
+| Polygon | CATS | 0x38B501279f1b78F2AA8F2117bf26f64252Fe3F2F | CatsApes |  | polygon/erc20/catsapes |
 | Polygon | CEL | 0xD85d1e945766Fea5Eda9103F918Bd915FbCa63E6 | Celsius |  | polygon/erc20/celsius |
+| Polygon | CXETH | 0xfe4546feFe124F30788c4Cc1BB9AA6907A7987F9 | CelsiusX Wrapped ETH |  | polygon/erc20/celsiusx_wrapped_eth |
+| Polygon | CNTR | 0xdae89dA41a96956e9e70320Ac9c0dd077070D3a5 | Centaur Token (PoS) |  | polygon/erc20/centaur_token_pos |
 | Polygon | CERBY | 0xdef1fac7Bf08f173D286BbBDcBeeADe695129840 | Cerby Token |  | polygon/erc20/cerby_token |
 | Polygon | CHAIN | 0xd55fCe7CDaB84d84f2EF3F99816D765a2a94a509 | Chain Games |  | polygon/erc20/chain_games |
+| Polygon | CGG | 0x2Ab4f9aC80F33071211729e45Cfc346C1f8446d5 | ChainGuardians Governance Token (PoS) |  | polygon/erc20/chainguardians_governance_token_pos |
 | Polygon | LINK | 0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39 | ChainLink Token |  | polygon/erc20/chainlink_token |
+| Polygon | PORTX | 0x189586b5f6317538ae50c20a976597Da38984A24 | ChainPort Token [via ChainPort.io] |  | polygon/erc20/chainport_token_via_chainport_io |
+| Polygon | CDT | 0x26c80854C36FF62BBa7414a358C8C23BBb8dEC39 | CheckDot |  | polygon/erc20/checkdot |
+| Polygon | CCAKE | 0xBC2597D3f1F9565100582CDe02E3712D03B8B0f6 | CheesecakeSwap Token |  | polygon/erc20/cheesecakeswap_token |
+| Polygon | CHER | 0x8f36Cc333F55B09Bb71091409A3d7ADE399e3b1C | Cherry Token |  | polygon/erc20/cherry_token |
+| Polygon | COVAL | 0x4597c8A59Ab28B36840B82B3A674994A279593D0 | Circuits of Value V2 |  | polygon/erc20/circuits_of_value_v2 |
 | Polygon | COB | 0x9F3c31838312fcB6f3A59e81Aa052d5aAA40d6eF | City Of Block |  | polygon/erc20/city_of_block |
+| Polygon | CVC | 0x66Dc5A08091d1968e08C16aA5b27BAC8398b02Be | Civic (PoS) |  | polygon/erc20/civic_pos |
+| Polygon | CIV | 0x42F6bdCfd82547e89F1069Bf375aa60e6c6c063d | Civilization (PoS) |  | polygon/erc20/civilization_pos |
+| Polygon | CSMATIC | 0xFcBB00dF1d663eeE58123946A30AB2138bF9eb2A | ClayStack Staked MATIC |  | polygon/erc20/claystack_staked_matic |
 | Polygon | CPOOL | 0xb08b3603C5F2629eF83510E6049eDEeFdc3A2D91 | Clearpool |  | polygon/erc20/clearpool |
 | Polygon | CPOOL_ | 0x23e7288164Da25CBeBa222837B004bce6Fa96E67 | Clearpool (old) |  | polygon/erc20/clearpool_ |
+| Polygon | CLEO | 0xfc2d761544C335df930ef9863C671CFE953e4EA4 | Cleo |  | polygon/erc20/cleo |
 | Polygon | CTI | 0x8Ba941b64901E306667a287A370F145d98811096 | ClinTex |  | polygon/erc20/clintex |
+| Polygon | CBK | 0x4EC203dD0699Fac6adAF483CDd2519BC05D2c573 | Cobak Token (PoS) |  | polygon/erc20/cobak_token_pos |
+| Polygon | C98 | 0x77f56cf9365955486B12C4816992388eE8606f0E | Coin98 |  | polygon/erc20/coin98 |
+| Polygon | CHP | 0x59B5654a17Ac44F3068b3882F298881433bB07Ef | CoinPoker Chips (PoS) |  | polygon/erc20/coinpoker_chips_pos |
+| Polygon | CNW | 0x0A307BD521701F9D70FB29BfA9E2e36DC998daDB | CoinWealth (PoS) |  | polygon/erc20/coinwealth_pos |
+| Polygon | FXCBETH | 0x4b4327dB1600B8B1440163F667e199CEf35385f5 | Coinbase Wrapped Staked ETH (FXERC20) |  | polygon/erc20/coinbase_wrapped_staked_eth_fxerc20 |
+| Polygon | CFI | 0xc71A7e46266A9a78212a5d87b030F8D1Ce942Efd | Coinbet Finance |  | polygon/erc20/coinbet_finance |
+| Polygon | CPD | 0x1cE4A2C355F0DcC24E32A9Af19F1836D6F4f98ae | Coinspaid (PoS) |  | polygon/erc20/coinspaid_pos |
+| Polygon | NEXT | 0x58b9cB810A68a7f3e1E4f8Cb45D1B9B3c79705E8 | Connext |  | polygon/erc20/connext |
+| Polygon | UM | 0x3B1A0c9252ee7403093fF55b4a5886d49a3d837a | Continuum |  | polygon/erc20/continuum |
 | Polygon | CP | 0xf9D3d8B25b95BCDA979025B74fDFa7ac3F380f9f | Cookies Protocol |  | polygon/erc20/cookies_protocol |
+| Polygon | CRST | 0x91F0484f9B65dc5187e414dae5ED37Ea7a4b8aF4 | Coorest |  | polygon/erc20/coorest |
 | Polygon | CU | 0xf6351c1163314e95d025575c5CeA314b055b7ED3 | Copper |  | polygon/erc20/copper |
+| Polygon | COR | 0x4fdCE518fE527439Fe76883e6b51A1c522B61b7C | Coreto (PoS) |  | polygon/erc20/coreto_pos |
+| Polygon | COSMIC | 0xa5Eb60CA85898f8b26e18fF7c7E43623ccbA772C | CosmicSwap |  | polygon/erc20/cosmicswap |
+| Polygon | COT | 0x8d520c8E66091cfD6743fe37Fbe3A09505616C4b | CosplayToken (PoS) |  | polygon/erc20/cosplaytoken_pos |
 | Polygon | XCRE | 0xFA3c05C2023918A4324fDE7163591Fe6BEBd1692 | Cresio |  | polygon/erc20/cresio |
 | Polygon | CRO | 0xAdA58DF0F643D959C2A47c9D4d4c1a4deFe3F11C | Cronos Coin | delisted | polygon/erc20/crypto.com_coin |
+| Polygon | BRIDGE | 0x92868A5255C628dA08F550a858A802f5351C5223 | Cross-Chain Bridge Token |  | polygon/erc20/cross_chain_bridge_token |
+| Polygon | CIOTX | 0x300211Def2a644b036A9bdd3e58159bb2074d388 | Crosschain IOTX |  | polygon/erc20/crosschain_iotx |
 | Polygon | CROWD | 0x483dd3425278C1f79F377f1034d9d2CaE55648B6 | CrowdToken |  | polygon/erc20/crowdtoken |
 | Polygon | CNT | 0xD1e6354fb05bF72A8909266203dAb80947dcEccF | Cryption Network Token |  | polygon/erc20/cryption_network_token |
 | Polygon | CDS | 0x23f07a1C03e7C6D0C88e0E05E79B6E3511073fD5 | Crypto Development Services |  | polygon/erc20/crypto_development_services |
+| Polygon | CGU | 0x709D140925272ee606825781b1bEF7bE6b1412CD | Crypto Gaming United |  | polygon/erc20/crypto_gaming_united |
+| Polygon | CGL | 0x2627C26B33F5193Da4ADFB26df60202479CcD2D3 | Crypto Gladiator League |  | polygon/erc20/crypto_gladiator_league |
+| Polygon | PUFFS | 0x70048335a8BCD746a2f45Bd4bb15f99da5e0EB05 | Crypto Puffs |  | polygon/erc20/crypto_puffs |
 | Polygon | CSPN | 0x9A0b381394fbE689B344d1ebd2d4DccFF31adf87 | Crypto Sports Network | delisted | polygon/erc20/crypto_sports_network |
+| Polygon | CVOL | 0x9CD552551EC130b50c1421649C8d11E76aC821e1 | Crypto Volatility Token |  | polygon/erc20/crypto_volatility_token |
+| Polygon | TECH | 0x6286A9e6f7e745A6D884561D88F94542d6715698 | Cryptomeda |  | polygon/erc20/cryptomeda |
 | Polygon | YAE | 0x4eE438be38F8682ABB089F2BFeA48851C5E71EAF | Cryptonovae |  | polygon/erc20/cryptonovae |
+| Polygon | CRYSTL | 0x76bF0C28e604CC3fE9967c83b3C3F31c213cfE64 | CrystalToken |  | polygon/erc20/crystaltoken |
 | Polygon | CRVEURTUSD | 0x600743B1d8A96438bD46836fD34977a00293f6Aa | Curve EURT_3Crv |  | polygon/erc20/curve_eurt_3crv |
 | Polygon | CRVUSDBTCETH | 0xdAD97F7713Ae9437fa9249920eC8507e5FbB23d3 | Curve USD_BTC_ETH |  | polygon/erc20/curve_usd_btc_eth |
 | Polygon | CRVTRI_F | 0xA73EdCf18421B56D9AF1cE08A34E102E23b2C4B6 | Curve.fi Factory Crypto Pool CRV_TRICRYPTO |  | polygon/erc20/curve.fi_factory_crypto_pool_crv_tricrypto |
@@ -12636,154 +12851,330 @@
 | Polygon | 2NZD_F | 0x976A750168801F58E8AEdbCfF9328138D544cc09 | Curve.fi Factory Plain Pool 2nzd |  | polygon/erc20/curve.fi_factory_plain_pool_2nzd |
 | Polygon | 4EURF | 0xAd326c253A84e9805559b73A08724e11E49ca651 | Curve.fi Factory Plain Pool 4eur |  | polygon/erc20/curve_factory_plain_pool_4eur |
 | Polygon | AM3CRV | 0xE7a24EF0C5e95Ffb0f6684b813A78F2a3AD7D171 | Curve.fi amDAIamUSDCamUSDT |  | polygon/erc20/curve_amdaiamusdcamusdt |
+| Polygon | CYFM | 0xDa5949544aAf6124D06F398BFdE4C86Cc33B0Ee7 | CyberFM Radio |  | polygon/erc20/cyberfm_radio |
+| Polygon | CYC | 0xcFb54a6D2dA14ABeCD231174FC5735B4436965D8 | Cyclone Protocol |  | polygon/erc20/cyclone_protocol |
+| Polygon | CYG | 0xc553a5A789f1BB56a72847b3FDA1DE3E16e6763f | CygnusDAO |  | polygon/erc20/cygnusdao |
+| Polygon | DAFI | 0x638Df98Ad8069a15569dA5a6b01181804c47e34c | DAFI Token (PoS) |  | polygon/erc20/dafi_token_pos |
+| Polygon | VEST | 0x381caf412B45dAc0f62FBEeC89DE306D3eABE384 | DAO Invest |  | polygon/erc20/dao_invest |
 | Polygon | DATA | 0x1D607Faa0A51518a7728580C238d912747e71F7a | DATA Economy Index (PoS) |  | polygon/erc20/data_economy_index_(pos) |
+| Polygon | DOP | 0x103965213122805C9aA63D8036Ed0ef692c19650 | DDrops |  | polygon/erc20/ddrops |
+| Polygon | DECATS | 0x198f1D316aad1C0Bfd36a79bd1A8e9dba92DAa18 | DECATS |  | polygon/erc20/decats |
+| Polygon | DDAO | 0x90F3edc7D5298918F7BB51694134b07356F7d0C7 | DEFI HUNTERS DAO Token |  | polygon/erc20/defi_hunters_dao_token |
+| Polygon | DEFY | 0xBF9f916bBda29A7F990F5F55c7607D94D7C3A60b | DEFY (PoS) |  | polygon/erc20/defy_pos |
+| Polygon | DGEN | 0xdBb5Da27FFcFeBea8799a5832D4607714fc6aBa8 | DEGEN (PoS) |  | polygon/erc20/degen_pos |
+| Polygon | DELOT | 0x86A298581388bc199e61BFeCDcA8eA22Cf6C0Da3 | DELOT.IO |  | polygon/erc20/delot_io |
 | Polygon | DEUS | 0xDE5ed76E7c05eC5e4572CfC88d1ACEA165109E44 | DEUS |  | polygon/erc20/deus |
 | Polygon | DFX | 0x27f485b62C4A7E635F561A87560Adf5090239E93 | DFX Token (L2) |  | polygon/erc20/dfx_token_l2 |
 | Polygon | DFX | 0xE7804D91dfCDE7F776c90043E03eAa6Df87E6395 | DFX Token (PoS) |  | polygon/erc20/dfx_token_(pos) |
 | Polygon | DFYN | 0xC168E40227E4ebD8C1caE80F7a55a4F0e6D66C97 | DFYN Token (PoS) |  | polygon/erc20/dfyn_token_(pos) |
+| Polygon | DODO | 0xe4Bf2864ebeC7B7fDf6Eeca9BaCAe7cDfDAffe78 | DODO bird (PoS) |  | polygon/erc20/dodo_bird_pos |
+| Polygon | COLLAR | 0xd5fa77A860FeA9cFf31DA91BbF9e0FaEa9538290 | DOG COLLAR (PoS) |  | polygon/erc20/dog_collar_pos |
+| Polygon | DOGA | 0x2F3E306d9F02ee8e8850F9040404918d0b345207 | DOGAMI |  | polygon/erc20/dogami |
 | Polygon | DOSE | 0x81382e9693dE2aFc33F69B70a6C12CA9B3a73F47 | DOSE |  | polygon/erc20/dose |
 | Polygon | DOV | 0x0E0ffc562d72316b783E887bbAAe1FD794ADb530 | DOVU |  | polygon/erc20/dovu |
+| Polygon | DPEX | 0x3eD4c2D63DEf617F436EB031BAcAE16f478f3B00 | DPEX |  | polygon/erc20/dpex |
+| Polygon | DPLAT | 0xbe7702Dc9c3fB80B96B7AD894cC012f6405E54ce | DPlat Token |  | polygon/erc20/dplat_token |
 | Polygon | DSLA | 0xa0E390e9ceA0D0e8cd40048ced9fA9EA10D71639 | DSLA |  | polygon/erc20/dsla |
+| Polygon | DUST | 0x4987A49C253c38B3259092E9AAC10ec0C7EF7542 | DUST Protocol |  | polygon/erc20/dust_protocol |
+| Polygon | DUX | 0x623EBdA5fc6B271DD597E20ae99927eA9eF8515e | DUX |  | polygon/erc20/dux |
+| Polygon | DKN | 0x727CD3b1FCAEe2EE44218119Ef3B1F5fC370E67e | DYKAN Coin |  | polygon/erc20/dykan_coin |
 | Polygon | DUS | 0x867D46fd484358A6f25655a705aa6AD804E6C6eB | Dallor |  | polygon/erc20/dallor |
 | Polygon | DUSX | 0x1963e341FF5a75C41ca5Ac400c828E636B70546E | DallorX |  | polygon/erc20/dallorx |
 | Polygon | RADAR | 0x5E30d25675b6541950b967EB216CEFdA92C408BE | DappRadar |  | polygon/erc20/dappradar |
+| Polygon | DMAGIC | 0x61dAECaB65EE2A1D5b6032df030f3fAA3d116Aa7 | Dark Magic |  | polygon/erc20/dark_magic |
+| Polygon | DMT | 0xd28449BB9bB659725aCcAd52947677ccE3719fD7 | Dark Matter Token (PoS) |  | polygon/erc20/dark_matter_token_pos |
+| Polygon | RING | 0x9C1C23E60B72Bc88a043bf64aFdb16A02540Ae8f | Darwinia (PoS) |  | polygon/erc20/darwinia_pos |
+| Polygon | DAM | 0xb75bBd79985a8092B05224f62D7fED25924B075d | Datamine (PoS) |  | polygon/erc20/datamine_pos |
+| Polygon | DUSD | 0xEC38621e72D86775a89C7422746de1f52bbA5320 | Davos.xyz USD |  | polygon/erc20/davos_xyz_usd |
+| Polygon | DBD | 0x72b9f88e822cf08B031c2206612B025a82fb303C | Day By Day Token (PoS) |  | polygon/erc20/day_by_day_token_pos |
 | Polygon | DBEAT | 0x92e918ea7aa872F91BF7EC9BcD248a5920C9f3CB | Dbeats Token |  | polygon/erc20/dbeats_token |
+| Polygon | DHV | 0x5fCB9de282Af6122ce3518CDe28B7089c9F97b26 | DeHive.finance |  | polygon/erc20/dehive_finance |
+| Polygon | DE | 0x081Ec4c0e30159C8259BAD8F4887f83010a681DC | DeNet File Token |  | polygon/erc20/denet_file_token |
 | Polygon | DERC | 0xB35fcBCF1fD489fCe02Ee146599e893FDCdC60e6 | DeRace Token |  | polygon/erc20/derace_token |
 | Polygon | DEC | 0x314338767151e6Ed23DB8A41c6F6943c1958Ee56 | Decentr |  | polygon/erc20/decentr |
+| Polygon | DWEB | 0x8839e639F210B80ffea73AedF51baed8DAc04499 | DecentraWeb (PoS) |  | polygon/erc20/decentraweb_pos |
+| Polygon | ART | 0xC3F6434df5Ef44798610c921942E49822c6f5108 | Decentral ART |  | polygon/erc20/decentral_art |
 | Polygon | DG | 0xef938b6da8576a896f6E0321ef80996F4890f9c4 | Decentral Games (PoS) |  | polygon/erc20/decentral_games_(pos) |
 | Polygon | XDG | 0xc6480Da81151B2277761024599E8Db2Ad4C388C8 | Decentral Games Governance (PoS) |  | polygon/erc20/decentral_games_governance_(pos) |
 | Polygon | MANA | 0xA1c57f48F0Deb89f569dFbE6E2B7f46D33606fD4 | Decentraland |  | polygon/erc20/decentraland |
+| Polygon | DUBI | 0x950e1561B7A7dEB1A32A6419FD435410daf851B0 | Decentralized Universal Basic Income |  | polygon/erc20/decentralized_universal_basic_income |
+| Polygon | DEOD | 0xE77aBB1E75D2913B2076DD16049992FFeACa5235 | Decentrawood |  | polygon/erc20/decentrawood |
 | Polygon | FACTR | 0xe0bCEEF36F3a6eFDd5EEBFACD591423f8549B9D5 | Defactor (PoS) |  | polygon/erc20/defactor_(pos) |
+| Polygon | DWC | 0x96F0a7167ab7ba6e59FfB68707C9d1B049524B0F | Defi World |  | polygon/erc20/defi_world |
 | Polygon | DPI | 0x85955046DF4668e1DD369D2DE9f3AEB98DD2A369 | DefiPulse Index (PoS) |  | polygon/erc20/defipulse_index_(pos) |
+| Polygon | DHC | 0xf9c1F70f9bF57FAD5f63c6E1E25C2e895f04c0A6 | DeltaHub Community |  | polygon/erc20/deltahub_community |
+| Polygon | DSRUN | 0xFf76c0B48363A7C7307868a81548d340049b0023 | DerbyStarsRUN |  | polygon/erc20/derbystarsrun |
 | Polygon | DERI | 0x3D1D2aFd191b165D140e3E8329E634665fFB0E5e | Deri |  | polygon/erc20/deri |
+| Polygon | KIT | 0x4D0Def42Cf57D6f27CD4983042a55dce1C9F853c | DexKit (PoS) |  | polygon/erc20/dexkit_pos |
+| Polygon | DGBN | 0x9B79Fe702e2508dc61d6dB44574462128E626222 | DigiBunnies |  | polygon/erc20/digibunnies |
 | Polygon | DEFIT | 0x428360b02C1269bc1c79fbC399ad31d58C1E8fdA | Digital Fitness |  | polygon/erc20/digital_fitness |
+| Polygon | DRC | 0xFeD16c746CB5BFeD009730f9E3e6A673006105c7 | Digital Reserve Currency (PoS) |  | polygon/erc20/digital_reserve_currency_pos |
+| Polygon | DGTX | 0xE749Ea14A2D18E361eD092EbefbA64D77a8B4EaC | DigitexFutures (PoS) |  | polygon/erc20/digitexfutures_pos |
 | Polygon | DIMO | 0xE261D618a959aFfFd53168Cd07D12E37B26761db | Dimo |  | polygon/erc20/dimo |
+| Polygon | DINO | 0xAa9654BECca45B5BDFA5ac646c939C62b527D394 | DinoSwap (PoS) |  | polygon/erc20/dinoswap_pos |
+| Polygon | DNXC | 0xcaF5191fc480F43e4DF80106c7695ECA56E48B18 | DinoX Coin |  | polygon/erc20/dinox_coin |
+| Polygon | TAG | 0x8a6F1738b2Ff63C7C29F7E2B0073D96C839b0B23 | Dog Tag (PoS) |  | polygon/erc20/dog_tag_pos |
+| Polygon | DOGEGF | 0x0e7252706393470FfB0629DA2CAa39Fc9340F2d4 | DogeGF |  | polygon/erc20/dogegf |
 | Polygon | ELON | 0xE0339c80fFDE91F3e20494Df88d4206D86024cdF | Dogelon |  | polygon/erc20/dogelon |
 | Polygon | DOGIRA | 0xdDa40cdfe4A0090f42Ff49f264A831402ADB801A | Dogira |  | polygon/erc20/dogira |
+| Polygon | AZUKI | 0x7CdC0421469398e0F3aA8890693d86c840Ac8931 | DokiDokiAzuki |  | polygon/erc20/dokidokiazuki |
+| Polygon | DOKI | 0x5C7F7Fe4766fE8f0fa9b41E2E4194d939488ff1C | DokiDokiFinance (PoS) |  | polygon/erc20/dokidokifinance_pos |
 | Polygon | DOLZ | 0x6ab4E20f36ca48B61ECd66c0450fDf665Fa130be | Dolz (PoS) |  | polygon/erc20/dolz_(pos) |
 | Polygon | DOM | 0x0e2c818FEa38E7df50410F772b7d59aF20589A62 | Dominium |  | polygon/erc20/dominium |
+| Polygon | DMA | 0x16DFb898cf7029303c2376031392cb9baC450f94 | Dragoma |  | polygon/erc20/dragoma |
 | Polygon | DQUICK | 0x958d208Cdf087843e9AD98d23823d32E17d723A1 | Dragon QUICK |  | polygon/erc20/dragon_quick |
 | Polygon | DQUICK_ | 0xf28164A485B0B2C90639E47b0f377b4a438a16B1 | Dragon QUICK (old) |  | polygon/erc20/dragon_quick_old |
+| Polygon | DST | 0x3b7E1ce09aFe2bB3A23919AFb65a38E627CfbE97 | Dragon Soul Token |  | polygon/erc20/dragon_soul_token |
+| Polygon | DTE | 0xA9806851eB87aD27E8d75660CEC2FE6297F92a59 | DriveToEarn |  | polygon/erc20/drivetoearn |
+| Polygon | DUDE | 0xb6169E71144B4DEbd9CAa2dbb851fC8FFde6119F | DuDe Peoples Money (metalbacked.money) |  | polygon/erc20/dude_peoples_money_metalbacked_money |
+| Polygon | DUBBZ | 0x38029C62DfA30D9FD3CaDf4C64e9b2ab21DbDa17 | Dubbz |  | polygon/erc20/dubbz |
+| Polygon | DUEL | 0xFFC4B25557bB4327d437C3B3eAD6b2B15fAb391A | Duel Token |  | polygon/erc20/duel_token |
+| Polygon | SALE | 0x8f6196901a4a153d8eE8F3fa779A042F6092D908 | DxSale.Network (PoS) |  | polygon/erc20/dxsale_network_pos |
 | Polygon | DYST | 0x39aB6574c289c3Ae4d88500eEc792AB5B947A5Eb | Dystopia token |  | polygon/erc20/dystopia_token |
+| Polygon | EZ | 0x34C1b299A74588D6Abdc1b85A53345A48428a521 | EASY V2 |  | polygon/erc20/easy_v2 |
+| Polygon | ECG | 0x3050731a7Ab18D05eAa5E01D66DF33E04444e72c | ECS GOLD |  | polygon/erc20/ecs_gold |
+| Polygon | EDNS | 0x14EE88cD0e3C1534bFF13d6d716B8575532C7138 | EDNS Token |  | polygon/erc20/edns_token |
+| Polygon | EDU | 0xB03E3b00BaF9954bF1604d09A4dbd5Cf88E1f695 | EDU Coin |  | polygon/erc20/edu_coin |
+| Polygon | EMGS | 0xA0aF9f13e067562AaE8E52a5Fb6A74FebfCF7D41 | EMG SuperApp |  | polygon/erc20/emg_superapp |
 | Polygon | EGX | 0x8Db0A6d1b06950b4e81c4F67D1289Fc7B9359c7f | ENEGRA |  | polygon/erc20/enegra |
+| Polygon | EPILLO | 0x7a6168E5a0EcC9841AD8faD20dcfCc4458fef0FB | EPILLO |  | polygon/erc20/epillo |
+| Polygon | EQ9 | 0x3963a400b42377376d6c3d92Ddf2d6288D8EE0d6 | EQ9 |  | polygon/erc20/eq9 |
 | Polygon | ETH2X-FLI | 0x66d7FDCc7403f18cAE9b0e2e8385649D2AcBC12A | ETH 2x Flexible Leverage Index |  | polygon/erc20/eth_2x_flexible_leverage_index |
+| Polygon | ETH2X-FLI-P | 0x3Ad707dA309f3845cd602059901E39C4dcd66473 | ETH 2x Flexible Leverage Index |  | polygon/erc20/eth_2x_flexible_leverage_index_6473 |
+| Polygon | EUROT | 0x14Eb40fb7900185C01ADC6a5b8ac506d8a600e3c | EURO Token |  | polygon/erc20/euro_token |
+| Polygon | EURO3 | 0xA0e4c84693266a9d3BBef2f394B33712c76599Ab | EURO3 |  | polygon/erc20/euro3 |
 | Polygon | EUROE | 0x820802Fa8a99901F52e39acD21177b0BE6EE2974 | EUROe Stablecoin |  | polygon/erc20/euroe_stablecoin |
 | Polygon | EVE | 0xaE29AC47A9E3b0a52840E547aDf74B912999F7fc | EVE Exchange (PoS) |  | polygon/erc20/eve_exchange_(pos) |
+| Polygon | ETV | 0xC77AEa972F862df1F6A520BE673Df63A01255ff9 | EarnTV |  | polygon/erc20/earntv |
 | Polygon | EWT | 0xd9E838dd60c8ea1e7dD4E670913323bB87DB112c | Ecowatt Token |  | polygon/erc20/ecowatt_token |
+| Polygon | ELK | 0xeEeEEb57642040bE42185f49C52F7E9B38f8eeeE | Elk |  | polygon/erc20/elk |
+| Polygon | EMPIRE | 0xf124eD9Ec309907808b1FBc6BEdB2a76927B3665 | Empire Network |  | polygon/erc20/empire_network |
+| Polygon | END | 0x0C087f8D6A1F14F71bB7Cc7E1B061CA297AF7555 | Endblock |  | polygon/erc20/endblock |
 | Polygon | EDR | 0x1Ac417f1dD23504aAC2076D854581f03196403Fd | Endor Protocol Token |  | polygon/erc20/endor_protocol_token |
 | Polygon | EWTB | 0x43E4B063F96c33F0433863A927F5bad34bb4B03d | Energy Web Token Bridged |  | polygon/erc20/energy_web_token_bridged |
+| Polygon | E8 | 0x08e175A1eac9744a0F1cCaeb8F669af6a2BDa3Ce | Energy8 |  | polygon/erc20/energy8 |
 | Polygon | ENJ | 0x7eC26842F195c852Fa843bB9f6D8B583a274a157 | EnjinCoin |  | polygon/erc20/enjincoin |
+| Polygon | EDAT | 0xdd9bA3B2571BEA0854beb0508CE10FeD0eCa7e3e | EnviDa |  | polygon/erc20/envida |
+| Polygon | EQZ | 0xEAf631ac57F3CDDDd261770dD47F85066131a156 | Equalizer (PoS) |  | polygon/erc20/equalizer_pos |
+| Polygon | EAPE | 0x2e2992688EE4B2b7229118F2f4cfd9b8Ab13C520 | EraApe |  | polygon/erc20/eraape |
+| Polygon | ESPRO | 0x1c2E7118591ec1b6122e4fE3d645706a9747b10E | EsportsPro |  | polygon/erc20/esportspro |
 | Polygon | LEND | 0x313d009888329C9d1cf4f75CA3f32566335bd604 | EthLend |  | polygon/erc20/ethlend |
 | Polygon | BLUE | 0xe7f960685aba7327ADA3b161Ea252703C87be0bF | Ethereum Blue |  | polygon/erc20/ethereum_blue |
+| Polygon | ETHM | 0x55b1a124c04A54eeFDEFE5FA2Ef5f852FB5f2f26 | Ethereum Meta |  | polygon/erc20/ethereum_meta |
+| Polygon | PUSH | 0x58001cC1A9E17A20935079aB40B1B8f4Fc19EFd1 | Ethereum Push Notification Service (PoS) |  | polygon/erc20/ethereum_push_notification_service_pos |
+| Polygon | ELAND | 0xb0f61C597BBcc29f3f38396B01f9C0f0C2e8BFf0 | Etherland (PoS) |  | polygon/erc20/etherland_pos |
 | Polygon | EMON | 0xd6A5aB46ead26f49b03bBB1F9EB1Ad5c1767974a | EthermonToken |  | polygon/erc20/ethermontoken |
+| Polygon | ERN | 0xC3a9a54c043f348027fffAac0F2F996123A19bF4 | Ethos Reserve Note |  | polygon/erc20/ethos_reserve_note |
 | Polygon | RISE | 0xC17c30e98541188614dF99239cABD40280810cA3 | EverRise |  | polygon/erc20/everrise |
 | Polygon | IQ | 0xB9638272aD6998708de56BBC0A290a1dE534a578 | Everipedia IQ (PoS) |  | polygon/erc20/everipedia_iq_(pos) |
+| Polygon | XGEM | 0x02649C1Ff4296038De4b9bA8F491b42b940A8252 | Exchange Genesis Ethlas Medium |  | polygon/erc20/exchange_genesis_ethlas_medium |
+| Polygon | XED | 0x2fe8733dcb25BFbbA79292294347415417510067 | Exeedme (PoS) |  | polygon/erc20/exeedme_pos |
+| Polygon | EXO | 0xbd8005612124DC30601E22D8B5d188A89767c640 | Exohood |  | polygon/erc20/exohood |
 | Polygon | WELT | 0x23E8B6A3f6891254988B84Da3738D2bfe5E703b9 | FABWELT |  | polygon/erc20/fabwelt |
 | Polygon | FEG | 0xF391F574C63d9b8764B7a1F56D6383762E07B75B | FEGtoken |  | polygon/erc20/fegtoken |
 | Polygon | FIBO | 0x2b3B16826719bF0B494c8ddebaA5E882093eE37e | FIBO |  | polygon/erc20/fibo |
+| Polygon | FLOYX | 0x7067BeBfA1720132DFb9373d65B522AfBe3A201e | FLOYX TOKEN |  | polygon/erc20/floyx_token |
 | Polygon | FOAM | 0x66e16D50c07A01BB473eC794349d45aa1a0E5Dc2 | FOAM Token |  | polygon/erc20/foam_token |
 | Polygon | FOX | 0x65A05DB8322701724c197AF82C9CaE41195B0aA8 | FOX |  | polygon/erc20/fox |
+| Polygon | FRK | 0x2cb7285733A30BB08303B917A7a519C88146C6Eb | FR KUMA Interest Bearing Token |  | polygon/erc20/fr_kuma_interest_bearing_token |
+| Polygon | FTRB | 0xC3f56d567E7663e8932E65d85ae4be7Eb5575cA7 | Faith Tribe |  | polygon/erc20/faith_tribe |
+| Polygon | FSW | 0xad5dc12E88C6534Eea8cFe2265851D9d4A1472AD | FalconSwap Token (PoS) |  | polygon/erc20/falconswap_token_pos |
 | Polygon | FNC | 0x7f280daC515121DcdA3EaC69eB4C13a52392CACE | Fancy Games |  | polygon/erc20/fancy_games |
 | Polygon | FTM | 0xC9c1c1c20B3658F8787CC2FD702267791f224Ce1 | Fantom Token |  | polygon/erc20/fantom_token |
+| Polygon | FARMS | 0xf2dA37643c25Ca14291c2A69F51423ed9B7Ff4b0 | Farmsent |  | polygon/erc20/farmsent |
 | Polygon | FAR | 0x05A79b208bed516fEF370e196d27B1d8207ec458 | Farthing |  | polygon/erc20/farthing |
+| Polygon | FEAR | 0xa2CA40DBe72028D3Ac78B5250a8CB8c404e7Fb8C | Fear NFTs (PoS) |  | polygon/erc20/fear_nfts_pos |
+| Polygon | FRM | 0xd99baFe5031cC8B345cb2e8c80135991F12D7130 | Ferrum Network Token |  | polygon/erc20/ferrum_network_token |
 | Polygon | FET | 0x7583FEDDbceFA813dc18259940F76a02710A8905 | Fetch |  | polygon/erc20/fetch |
+| Polygon | FEVR | 0xE6B9d092223f39013656702A40dbE6B7DeCc5746 | FevrToken |  | polygon/erc20/fevrtoken |
 | Polygon | FNCT | 0x13590c53dF63B52E159328C5b4FfB5f6dC5163C0 | FiNANCiE Token (PoS) |  | polygon/erc20/financie_token_(pos) |
 | Polygon | FID | 0x9A4Eb698e5DE3D3Df0a68F681789072DE1E50222 | Fidira |  | polygon/erc20/fidira |
+| Polygon | FIRE | 0xe118e8b6dc166CD83695825eB1d30e792435Bb00 | FireBall |  | polygon/erc20/fireball |
+| Polygon | FBX | 0xD125443F38A69d776177c2B9c041f462936F8218 | FireBotToken |  | polygon/erc20/firebottoken |
 | Polygon | FLAME | 0x22e3f02f86Bc8eA0D73718A2AE8851854e62adc5 | FireStarter |  | polygon/erc20/firestarter |
 | Polygon | FISH | 0x3a3Df212b7AA91Aa0402B9035b098891d276572B | Fish |  | polygon/erc20/fish |
+| Polygon | FITT | 0x656Bf6767Fa8863aC0dD0b7d2a26602B838A2E70 | Fitmint Token |  | polygon/erc20/fitmint_token |
+| Polygon | FEVO | 0xAa1e97614Eaf8D85DBf58F7F0b3080B2AffCfEfc | Flappy bird evolution |  | polygon/erc20/flappy_bird_evolution |
 | Polygon | 1FLR | 0x5f0197Ba06860DaC7e31258BdF749F92b6a636d4 | Flare Token |  | polygon/erc20/flare_token |
 | Polygon | FLOAT | 0xF0Ae1EFdE60BAb0a830673747138F12367858e8D | Float Protocol FLOAT (PoS) |  | polygon/erc20/float_protocol_float_(pos) |
+| Polygon | FXY | 0x4Ec465D5DB20A01Bc8404dc84f33bb7A398B8335 | Floxypay |  | polygon/erc20/floxypay |
+| Polygon | FODL | 0x5314bA045a459f63906Aa7C76d9F337DcB7d6995 | Fodl (PoS) |  | polygon/erc20/fodl_pos |
 | Polygon | FOOD | 0x6F06e6beD64cF4c4187c06Ee2a4732f6a171BC4e | FoodChain Global |  | polygon/erc20/foodchain_global |
+| Polygon | FLAG - POS | 0x9111D6446Ac5b88A84cf06425c6286658368542F | ForLootAndGlory |  | polygon/erc20/forlootandglory |
+| Polygon | KNIGHT | 0x4455eF8B4B4A007a93DaA12DE63a47EEAC700D9D | Forest Knight |  | polygon/erc20/forest_knight |
+| Polygon | FORT | 0x9ff62d1FC52A907B6DCbA8077c2DDCA6E6a9d3e1 | Forta |  | polygon/erc20/forta |
 | Polygon | AUDF | 0x28F732962ebcACdCD94f419d301E6Be21cc3025a | Forte AUD |  | polygon/erc20/forte_aud |
 | Polygon | FCL | 0x6f934b45fc6043527d73C7c99313dd838E723DB7 | Fractal Protocol Token |  | polygon/erc20/fractal_protocol_token |
+| Polygon | FRF | 0x99083d1b9c6744c71d0cf70b8965FaCA37684527 | France REV Finance |  | polygon/erc20/france_rev_finance |
 | Polygon | FRAX | 0x45c32fA6DF82ead1e2EF74d17b76547EDdFaFF89 | Frax |  | polygon/erc20/frax |
+| Polygon | FRXETH | 0xEe327F889d5947c1dc1934Bb208a1E792F953E96 | Frax Ether |  | polygon/erc20/frax_ether |
 | Polygon | FXS | 0x1a3acf6D19267E2d3e7f898f42803e90C9219062 | Frax Share |  | polygon/erc20/frax_share |
 | Polygon | FREE | 0x7cef6ed1e07079e174601d39066AD0856cB47988 | Free Coin |  | polygon/erc20/free_coin |
 | Polygon | FRONT | 0xa3eD22EEE92a3872709823a6970069e12A4540Eb | Frontier Token |  | polygon/erc20/frontier_token |
 | Polygon | COMBO | 0x6DdB31002abC64e1479Fc439692F7eA061e78165 | Furucombo |  | polygon/erc20/furucombo |
+| Polygon | FUSE | 0x6b021b3f68491974bE6D4009fEe61a4e3C708fD6 | Fuse Token |  | polygon/erc20/fuse_token |
 | Polygon | FSN | 0xFA1171334CB3a0f0A91E8cA6765F10e9638D1cBF | Fusion |  | polygon/erc20/fusion |
+| Polygon | GAIA | 0x723B17718289A91AF252D616DE2C77944962d122 | GAIA Everworld |  | polygon/erc20/gaia_everworld |
 | Polygon | GMEE | 0xcf32822ff397Ef82425153a9dcb726E5fF61DCA7 | GAMEE |  | polygon/erc20/gamee |
+| Polygon | GLTR | 0x3801C3B3B5c98F88a9c9005966AA96aa440B9Afc | GAX Liquidity Token Reward |  | polygon/erc20/gax_liquidity_token_reward |
 | Polygon | GFC | 0x071AC29d569a47EbfFB9e57517F855Cb577DCc4C | GCOIN | delisted | polygon/erc20/gcoin |
 | Polygon | GEO | 0xf1428850f92B87e629c6f3A3B75BffBC496F7Ba6 | GEOPOLY |  | polygon/erc20/geopoly |
+| Polygon | GGTK | 0x49B1bE61A8Ca3f9A9F178d6550e41E00D9162159 | GGToken (PoS) |  | polygon/erc20/ggtoken_pos |
+| Polygon | GNFT | 0xE58e8391BA17731C5671F9c6E00e420608Dca10e | GNFT |  | polygon/erc20/gnft |
 | Polygon | GOAL | 0x468aC716493c51184162681130035b61BaFf040B | GOAL (PoS) |  | polygon/erc20/goal_(pos) |
+| Polygon | GOGO | 0xdD2AF2E723547088D3846841fbDcC6A8093313d6 | GOGOcoin |  | polygon/erc20/gogocoin |
+| Polygon | GONE | 0x162539172b53E9a93b7d98Fb6c41682De558a320 | GONE |  | polygon/erc20/gone |
+| Polygon | GOVI | 0x43Df9c0a1156c96cEa98737b511ac89D0e2A1F46 | GOVI (PoS) |  | polygon/erc20/govi_pos |
 | Polygon | GRAMZ | 0xF40D9de56b1fBAfF388f4d1B97Dc8Dfc184d34cE | GRAMZ |  | polygon/erc20/gramz |
+| Polygon | GREENGOLD | 0x21a00838E6b2D4aa3ac4BbC11111Be011E1ca111 | GREENGOLD |  | polygon/erc20/greengold |
 | Polygon | GNS | 0xE5417Af564e4bFDA1c483642db72007871397896 | Gains Network |  | polygon/erc20/gains_network |
+| Polygon | GAMER | 0x3f6b3595ecF70735D3f48D69b09C4E4506DB3F47 | GameStation |  | polygon/erc20/gamestation |
 | Polygon | GSWIFT | 0x580E933D90091b9cE380740E3a4A39c67eB85B4c | GameSwift |  | polygon/erc20/gameswift |
+| Polygon | GFX | 0x65ad6A2288b2Dd23E466226397c8F5D1794e58fC | GamyFi |  | polygon/erc20/gamyfi |
 | Polygon | GCN | 0xb1Cb9D9c85aA10C332083Bcd03D2FCf871556E52 | Gascoin |  | polygon/erc20/gascoin |
 | Polygon | GEL | 0x15b7c0c907e4C6b9AdaAaabC300C08991D6CEA05 | Gelato Network Token |  | polygon/erc20/gelato_network_token |
 | Polygon | GUSD | 0xC8A94a3d3D2dabC3C1CaffFFDcA6A7543c3e3e65 | Gemini dollar |  | polygon/erc20/gemini_dollar |
+| Polygon | GENESIS | 0x51869836681BcE74a514625c856aFb697a013797 | Genesis |  | polygon/erc20/genesis |
 | Polygon | IUX | 0x346404079b3792a6c548B072B9C4DDdFb92948d5 | GeniuX |  | polygon/erc20/geniux |
+| Polygon | GENI | 0x444444444444C1a66F394025Ac839A535246FCc8 | Genius |  | polygon/erc20/genius |
+| Polygon | GENE | 0x34667ED7C36cBBbF2d5d5c5c8d6Eb76a094EDb9F | GenomesDAO (PoS) |  | polygon/erc20/genomesdao_pos |
+| Polygon | GNOME | 0x6E8a8726639d12935b3219892155520bdC57366B | GenomesDAO Governance (PoS) |  | polygon/erc20/genomesdao_governance_pos |
 | Polygon | GEOD | 0xAC0F66379A6d7801D7726d5a943356A172549Adb | Geodnet Token | delisted | polygon/erc20/geodnet_token |
+| Polygon | GYSR | 0xc48F61a288A08F1B80c2edd74652e1276B6A168c | Geyser (PoS) |  | polygon/erc20/geyser_pos |
+| Polygon | GM | 0xFFcd553464a00D7B30a48960611E5032f544700A | GhostMarket Token |  | polygon/erc20/ghostmarket_token |
+| Polygon | GDDY | 0x67eB41A14C0fe5CD701FC9d5A3D6597A72F641a6 | Giddy Token |  | polygon/erc20/giddy_token |
 | Polygon | GTC | 0xdb95f9188479575F3F718a245EcA1B3BF74567EC | Gitcoin (PoS) |  | polygon/erc20/gitcoin_(pos) |
+| Polygon | GLCH | 0xbE5cf150E1fF59ca7F2499Eaa13BFC40AAE70e78 | Glitch (PoS) |  | polygon/erc20/glitch_pos |
+| Polygon | USDGLO | 0x4F604735c1cF31399C6E711D5962b2B3E0225AD3 | Glo Dollar |  | polygon/erc20/glo_dollar |
+| Polygon | GCR | 0xa69d14d6369E414a32a5C7E729B7afbAfd285965 | Global Coin Research (PoS) |  | polygon/erc20/global_coin_research_pos |
+| Polygon | GBL | 0xC14A7747cFec02CfeA62E72BB93538DE6B2078E6 | Global Token |  | polygon/erc20/global_token |
 | Polygon | GNO | 0x5FFD62D3C3eE2E81C00A7b9079FB248e7dF024A8 | Gnosis |  | polygon/erc20/gnosis |
 | Polygon | BLANK | 0xf4C83080E80AE530d6f8180572cBbf1Ac9D5d435 | GoBlank Token (PoS) | delisted | polygon/erc20/goblank_token_(pos) |
+| Polygon | GOC | 0x4B85a666deC7C959e88b97814E46113601B07e57 | GoCrypto |  | polygon/erc20/gocrypto |
 | Polygon | GP | 0x3fB5807292c98BffD773e89B774016b0FE5650d1 | Gold Pieces |  | polygon/erc20/gold_pieces |
+| Polygon | GPO | 0x0308a3a9c433256aD7eF24dBEF9c49C8cb01300A | GoldPesa Option |  | polygon/erc20/goldpesa_option |
 | Polygon | GLM | 0x0B220b82F3eA3B7F6d9A1D8ab58930C064A2b5Bf | Golem Network Token |  | polygon/erc20/golem_network_token |
+| Polygon | GOO | 0x6F3Cc27E17a0f2e52D8e7693FF0d892Cea1854bF | Goo |  | polygon/erc20/goo |
 | Polygon | GABI | 0xEd6AAb1615AaC7BC4C108dFd4Fdc9AD0c8304d47 | Governance ABI |  | polygon/erc20/governance_abi |
+| Polygon | GOHM | 0xd8cA34fd379d9ca3C6Ee3b3905678320F5b45195 | Governance OHM |  | polygon/erc20/governance_ohm |
+| Polygon | GC | 0xBD9C89536e406478d8A42C51b35bCfb6bF8A1384 | GrabClub |  | polygon/erc20/grabclub |
+| Polygon | GRAMG | 0xaE55ab6A966863cb4c774Ba8E6C0A37CFBeA01f9 | Gram Gold |  | polygon/erc20/gram_gold |
+| Polygon | GRAMP | 0xE229b734251dD48ddA27bB908D90329F229C3531 | Gram Platinum |  | polygon/erc20/gram_platinum |
 | Polygon | GRAND | 0xC41214fC9f2bD9705e7A271409471161aa0e8808 | Grand token | delisted | polygon/erc20/grand_token |
 | Polygon | GRT | 0x5fe2B58c013d7601147DcdD68C143A77499f5531 | Graph Token |  | polygon/erc20/graph_token |
 | Polygon | GFI | 0x874e178A2f3f3F9d34db862453Cd756E7eAb0381 | Gravity Finance |  | polygon/erc20/gravity_finance |
 | Polygon | GGT | 0x00D0E26E0053f2B3Be0664827dF439d1418E494F | Green Gold Token |  | polygon/erc20/green_gold_token |
+| Polygon | GMT | 0x714DB550b574b3E927af3D93E26127D15721D4C2 | GreenMetaverseToken |  | polygon/erc20/greenmetaversetoken |
+| Polygon | GNC | 0x36eC6622B5227e3A7E4d085f1dfc1dC8F5192289 | Greenercoin |  | polygon/erc20/greenercoin |
 | Polygon | GND | 0x9ad4E87618591162196B3D34300a734A0035395F | Ground Coin |  | polygon/erc20/ground_coin |
 | Polygon | GRUMPY | 0x733726968Ae55dC58c26dBDc193FEa256a704ba4 | Grumpy Cat |  | polygon/erc20/grumpy_cat |
 | Polygon | GET | 0xdb725f82818De83e99F1dAc22A9b5B51d3d04DD4 | Guaranteed Entrance Token |  | polygon/erc20/guaranteed_entrance_token |
+| Polygon | GUARD | 0xB0B2Ef34D412d73b0Ff90A709D1779A20655165A | Guardian |  | polygon/erc20/guardian |
 | Polygon | GTT | 0xB5cB47A8f85628dea29AC7153544867e87Ae6937 | Guppy Treat Token |  | polygon/erc20/guppy_treat_token |
+| Polygon | H3RO3S | 0x480fD103973357266813EcfcE9faABAbF3C4ca3A | H3RO3S |  | polygon/erc20/h3ro3s |
 | Polygon | GARD | 0xf89250E83fA2F33058385C98c7c44e723B040359 | HASHGARD |  | polygon/erc20/hashgard |
 | Polygon | HEX | 0x23D29D30e35C5e8D321e1dc9A8a61BFD846D4C5C | HEX |  | polygon/erc20/hex |
+| Polygon | HNY | 0x1FA2F83BA2DF61c3d370071d61B17Be01e224f3a | HONEY |  | polygon/erc20/honey |
 | Polygon | HONOR | 0xb82A20B4522680951F11c94c54B8800c1C237693 | HONOR |  | polygon/erc20/honor |
 | Polygon | HOPR | 0x6cCBF3627b2C83AFEF05bf2F035E7f7B210Fe30D | HOPR Token |  | polygon/erc20/hopr_token |
 | Polygon | HOTOK | 0x71544Ebf5d68d8D397059f79408162f155367D74 | HOTOK |  | polygon/erc20/hotok |
 | Polygon | HUSD | 0x2088C47Fc0c78356c622F79dBa4CbE1cCfA84A91 | HUSD |  | polygon/erc20/husd |
+| Polygon | HYVE | 0x61aEe582896064ecD5D85D66a32DDEB5574A699D | HYVE |  | polygon/erc20/hyve |
+| Polygon | HANU | 0x709A4B6217584188DDb93c82f5d716D969accE1C | Hanu Yokia (PoS) |  | polygon/erc20/hanu_yokia_pos |
+| Polygon | MIFARM | 0xab0b2ddB9C7e440fAc8E140A89c0dbCBf2d7Bbff | Harvest Interest Token |  | polygon/erc20/harvest_interest_token |
+| Polygon | HUT | 0x3e15Cd00B456B0Fb33827e3c9B49952bB0Ec126C | Hibiki Utility Token |  | polygon/erc20/hibiki_utility_token |
 | Polygon | HOT | 0x0C51f415cF478f8D08c246a6C6Ee180C5dC3A012 | HoloToken |  | polygon/erc20/holotoken |
+| Polygon | HOM | 0x12A4CeBF81F8671fAF1AB0aCEa4e3429E42869e7 | Homeety |  | polygon/erc20/homeety |
+| Polygon | HOP | 0xc5102fE9359FD9a28f877a67E36B0F050d81a3CC | Hop |  | polygon/erc20/hop |
 | Polygon | HMT | 0xc748B2A084F8eFc47E086ccdDD9b7e67aEb571BF | Human Token (PoS) |  | polygon/erc20/human_token_(pos) |
+| Polygon | HCFW | 0xd4Cce747e623CE2D72322892e5DB238e2A5eb4F3 | Humans Care Foundation: Water |  | polygon/erc20/humans_care_foundation_water |
 | Polygon | HT | 0xFAD65Eb62a97fF5Ed91B23aFD039956aaCa6e93b | HuobiToken |  | polygon/erc20/huobitoken |
+| Polygon | HBD | 0x7B6838c155f2800a0Fb99b0382002dBFEEE8Ce22 | Hybrid Token |  | polygon/erc20/hybrid_token |
 | Polygon | HYPEX | 0x3b6Bc2B494FA008f71f7371dE93847F456e630Ca | HypeX |  | polygon/erc20/hypex |
+| Polygon | HID | 0x87847703D4bb4FCD42DB887FfdcB94496e77e3ab | Hypersign Identity Token (PoS) |  | polygon/erc20/hypersign_identity_token_pos |
 | Polygon | ICBT | 0x0F93119bDAc9e80Ca845E9a56Ae027507CB24C6A | ICB Token (PoS) |  | polygon/erc20/icb_token_(pos) |
+| Polygon | ICHI | 0x111111517e4929D3dcbdfa7CCe55d30d4B6BC4d6 | ICHI |  | polygon/erc20/ichi |
+| Polygon | IDEX | 0x9Cb74C8032b007466865f060ad2c46145d45553D | IDEX Token (PoS) |  | polygon/erc20/idex_token_pos |
 | Polygon | IGG | 0xe6FC6C7CB6d2c31b359A49A33eF08aB87F4dE7CE | IG Gold (PoS) |  | polygon/erc20/ig_gold_(pos) |
 | Polygon | ORB | 0x5a2fdF906ada9353eBe496Fa5D351B39f8908d19 | IG Orb (PoS) |  | polygon/erc20/ig_orb_(pos) |
+| Polygon | INK | 0x0731D0C0D123382C163AAe78A09390cAd2FFC941 | INK |  | polygon/erc20/ink |
+| Polygon | INTD | 0x8Bb93979901cd159bF6763B223FBb315C31CCF7b | INTDESTCOIN |  | polygon/erc20/intdestcoin |
 | Polygon | XIV | 0xde799636aF0d8D65a17AAa83b66cBBE9B185EB01 | INVERSE |  | polygon/erc20/inverse |
+| Polygon | IOI | 0xAF24765F631C8830B5528B57002241eE7eef1C14 | IOI Token |  | polygon/erc20/ioi_token |
+| Polygon | IPMB | 0xFF22c94FFb6bB5d1DF18bEb5fd1dFE7583D3B214 | IPMB Token |  | polygon/erc20/ipmb_token |
 | Polygon | IRON | 0xD86b5923F3AD7b585eD81B448170ae026c65ae9a | IRON Stablecoin |  | polygon/erc20/iron_stablecoin |
 | Polygon | TITAN | 0xaAa5B9e6c589642f98a1cDA99B9D024B8407285A | IRON Titanium Token |  | polygon/erc20/iron_titanium_token |
 | Polygon | ISLAMI | 0x9c891326Fd8b1a713974f73bb604677E1E63396D | ISLAMICOIN |  | polygon/erc20/islamicoin |
+| Polygon | ITSB | 0x998013798440d44C1dD4c767bdD9580E16E46e28 | ITSBLOC |  | polygon/erc20/itsbloc |
 | Polygon | IDLE | 0xC25351811983818c9Fe6D8c580531819c8ADe90f | Idle (PoS) |  | polygon/erc20/idle_(pos) |
 | Polygon | IDLEWETHY | 0xfdA25D931258Df948ffecb66b5518299Df6527C4 | IdleWETH [Best yield] |  | polygon/erc20/idleweth_[best_yield] |
+| Polygon | IMRTL | 0x2df54842cD85C60f21b4871E09bcc6047b2dcC4d | Immortl |  | polygon/erc20/immortl |
 | Polygon | IMX | 0x60bB3D364B765C497C8cE50AE0Ae3f0882c5bD05 | Impermax |  | polygon/erc20/impermax |
+| Polygon | IBEX | 0xf972DACEd7C6b03223710C11413036D17eB298f6 | Impermax (PoS) |  | polygon/erc20/impermax_pos |
 | Polygon | IMXB | 0x6d24195060e20C2d717408B8dEcCA487B945c78b | Impermax Borrowable |  | polygon/erc20/impermax_borrowable |
+| Polygon | GBYTE | 0xAB5F7a0e20b0d056Aed4Aa4528C78da45BE7308b | Imported GBYTE |  | polygon/erc20/imported_gbyte |
+| Polygon | INDEX | 0xfBd8A3b908e764dBcD51e27992464B4432A1132b | Index (PoS) |  | polygon/erc20/index_pos |
 | Polygon | INJ | 0x4E8dc2149EaC3f3dEf36b1c281EA466338249371 | Injective Token |  | polygon/erc20/injective_token |
 | Polygon | INST | 0xf50D05A1402d0adAfA880D36050736f9f6ee7dee | Instadapp (PoS) |  | polygon/erc20/instadapp_(pos) |
+| Polygon | INSUR | 0x8a0e8b4b0903929f47C3ea30973940D4a9702067 | InsurAce (PoS) |  | polygon/erc20/insurace_pos |
 | Polygon | IOEN | 0xd0e9c8f5Fae381459cf07Ec506C1d2896E8b5df6 | Internet of Energy Network | delisted | polygon/erc20/internet_of_energy_network |
 | Polygon | INXT | 0xE64106154816A252da7728E35A0060F15d66cb34 | Internxt |  | polygon/erc20/internxt |
+| Polygon | ITP | 0x2b1D36f5B61AdDAf7DA7ebbd11B35FD8cfb0DE31 | Interport Token |  | polygon/erc20/interport_token |
 | Polygon | IBA | 0xa610854dEF3988165c905A46890892A895f33FB6 | Invictus Bitcoin Alpha |  | polygon/erc20/invictus_bitcoin_alpha |
 | Polygon | C10 | 0x7619E393b0AE60F1780ACD9C9BAf326EEA15A3F0 | Invictus Crypto10 Hedged |  | polygon/erc20/invictus_crypto10_hedged |
 | Polygon | C20 | 0xf9faaAfA1b57b742d718FDbdF6bc1D5Ca4D6841e | Invictus Crypto20 |  | polygon/erc20/invictus_crypto20 |
 | Polygon | ISG | 0x0088cDEb8e93CDC56975c4527705eC5b19D195d0 | Invictus Stable Growth |  | polygon/erc20/invictus_stable_growth |
 | Polygon | IOTX | 0xf6372cDb9c1d3674E83842e3800F2A62aC9F3C66 | IoTeX Network |  | polygon/erc20/iotex_network |
+| Polygon | IRIS | 0xdaB35042e63E93Cc8556c9bAE482E5415B5Ac4B1 | Iris |  | polygon/erc20/iris |
 | Polygon | ICE | 0x4A81f8796e0c6Ad4877A51C86693B0dE8093F2ef | Iron Finance ICE Token |  | polygon/erc20/iron_finance_ice_token |
 | Polygon | JED | 0xF6D0762C645E873E5884E69BBcB2F074E6067A70 | JED |  | polygon/erc20/jed |
+| Polygon | JOY | 0x218645F85Ff27FC456ef46c3CdacBF5c40B2F9E8 | JOY |  | polygon/erc20/joy |
 | Polygon | JPYC | 0x431D5dfF03120AFA4bDf332c61A6e1766eF37BDB | JPY Coin |  | polygon/erc20/jpy_coin |
 | Polygon | JPYC | 0x6AE7Dfc73E0dDE2aa99ac063DcF7e8A63265108c | JPY Coin (PoS) |  | polygon/erc20/jpy_coin_(pos) |
 | Polygon | JUICE | 0x28E96FFe75CdCc97044585b866BD02bD79C12dc0 | JUICE (PoS) |  | polygon/erc20/juice_(pos) |
+| Polygon | JUSD | 0x0BA8A6ce46D369d779299DeDADe864318097B703 | JUSD Stable Token |  | polygon/erc20/jusd_stable_token |
 | Polygon | JAMON | 0x2594C5B25EdAb3eBe937e27650c02922D9A62BF2 | JamonSwapV2 |  | polygon/erc20/jamonswapv2 |
 | Polygon | JRT | 0x596eBE76e2DB4470966ea395B0d063aC6197A8C5 | Jarvis Reward Token |  | polygon/erc20/jarvis_reward_token |
+| Polygon | JBRL | 0xf2f77FE7b8e66571E0fca7104c4d670BF1C8d722 | Jarvis Synthetic Brazilian Real |  | polygon/erc20/jarvis_synthetic_brazilian_real |
 | Polygon | JGBP | 0x767058F11800FBA6A682E73A6e79ec5eB74Fac8c | Jarvis Synthetic British Pound |  | polygon/erc20/jarvis_synthetic_british_pound |
 | Polygon | JCAD | 0x8ca194A3b22077359b5732DE53373D4afC11DeE3 | Jarvis Synthetic Canadian Dollar |  | polygon/erc20/jarvis_synthetic_canadian_dollar |
 | Polygon | JEUR | 0x4e3Decbb3645551B8A19f0eA1678079FCB33fB4c | Jarvis Synthetic Euro |  | polygon/erc20/jarvis_synthetic_euro |
+| Polygon | JJPY | 0x8343091F2499FD4b6174A46D067A920a3b851FF9 | Jarvis Synthetic Japanese Yen |  | polygon/erc20/jarvis_synthetic_japanese_yen |
 | Polygon | JCHF | 0xbD1463F02f61676d53fd183C2B19282BFF93D099 | Jarvis Synthetic Swiss Franc |  | polygon/erc20/jarvis_synthetic_swiss_franc |
 | Polygon | JCO | 0x8105f88e77a5D102099bf73Db4469d3F1e3B0cD6 | JennyCoToken |  | polygon/erc20/jennycotoken |
 | Polygon | JCO_ | 0xd03f53882a6B48CD16a04FEB8AC5d0d955E763c2 | JennyCoToken (old) | delisted | polygon/erc20/jennycotoken_ |
+| Polygon | JUGNI | 0xE313bcB77dbA15F39Ff0B9cEABe140cedD0953cB | Jugni |  | polygon/erc20/jugni |
 | Polygon | JMPT | 0x03cf5d93cA7c70Ce0A21a09F4D70779D2c66B25A | JumpToken |  | polygon/erc20/jumptoken |
 | Polygon | JM | 0x388D819724dD6d71760A38F00dc01D310d879771 | JustMoney |  | polygon/erc20/justmoney |
+| Polygon | FXKAP | 0xc27158bB8E08899d38765752F91d7d778e16AB8e | KAP Games Token (FXERC20) |  | polygon/erc20/kap_games_token_fxerc20 |
 | Polygon | KEEP | 0x42f37A1296b2981F7C3cAcEd84c5096b2Eb0C72C | KEEP Token |  | polygon/erc20/keep_token |
 | Polygon | KLMN | 0x700A6eBf972dC6b2dc47d3b7654526AEa1462435 | KIWI LEMON |  | polygon/erc20/kiwi_lemon |
 | Polygon | KMC | 0x44d09156c7b4ACf0C64459Fbcced7613F5519918 | KMC | delisted | polygon/erc20/kmc |
+| Polygon | KEN | 0x0835cDd017eA7bC4cC187C6e0f8ea2DBE0feA0Dd | KOHENOOR |  | polygon/erc20/kohenoor |
 | Polygon | KOLO | 0xe1240e13FDA129845d17b73eaE548Cd690e8DEC8 | KOLO Music (PoS) | delisted | polygon/erc20/kolo_music_(pos) |
+| Polygon | KOLNET | 0xfd195a17e2a60D248a7148A919c5166AE907479A | KOLnet Token |  | polygon/erc20/kolnet_token |
+| Polygon | KOOP | 0x7614BD00E0560Ec9214E4Fcb36d5Ae23b3eCd3c5 | KOOP 360 |  | polygon/erc20/koop_360 |
 | Polygon | KRED | 0x5e6602B762F76d8BFDC7321AA0B787B1E67b187F | KRED |  | polygon/erc20/kred |
+| Polygon | KRW | 0x6c3B2f402CD7d22AE2C319B9d2f16f57927a4A17 | KROWN |  | polygon/erc20/krown |
+| Polygon | KABY | 0x5198E7cC1640049dE37D1Bd10b03Fa5A3AFDA120 | Kaby Arena |  | polygon/erc20/kaby_arena |
+| Polygon | KZEN | 0x4550003152F12014558e5CE025707E4DD841100F | Kaizen.Finance |  | polygon/erc20/kaizen_finance |
 | Polygon | KLX | 0xcfB4C7f9b5F363AE162015479345CB2f0C76F3a9 | Kalima Token |  | polygon/erc20/kalima_token |
+| Polygon | KAMPAY | 0x39fC9e94Caeacb435842FADeDeCB783589F50f5f | Kampay |  | polygon/erc20/kampay |
+| Polygon | KNG | 0x17D342b29F054030a455b4191f977C3b0aA62Fd9 | Kanga Exchange Token (PoS) |  | polygon/erc20/kanga_exchange_token_pos |
+| Polygon | KANGAL | 0x34f380a4e3389e99C0369264453523Bbe5aF7faB | Kangal |  | polygon/erc20/kangal |
+| Polygon | KNOT | 0xb763F1177E9B2Fb66FBe0d50372E3e2575c043e5 | Karmaverse Knot |  | polygon/erc20/karmaverse_knot |
+| Polygon | SERUM | 0x623a1350f6B749575F92Ea54D0F745f9F07D3665 | Karmaverse Zombie Serum |  | polygon/erc20/karmaverse_zombie_serum |
 | Polygon | KRL | 0xc17b109E146934D36c33E55FADE9cBDa791b0366 | Kart Racing League |  | polygon/erc20/kart_racing_league |
+| Polygon | KAS | 0x3562Ddf1f5Ce2c02Ef109E9d5A72e2FDB702711D | Kaspa |  | polygon/erc20/kaspa |
 | Polygon | KASTA | 0x235737dBb56e8517391473f7c964DB31fA6ef280 | KastaToken |  | polygon/erc20/kastatoken |
+| Polygon | KEYFI | 0xD1A5f2A049343fc4D5F8d478f734eBa51B22375E | KeyFi Token |  | polygon/erc20/keyfi_token |
+| Polygon | KEYSATIN | 0xB7f1219dB39EA0CB029E4DcC3daFFDCFd233DEFD | KeyofLife.fi/keySATIN |  | polygon/erc20/keyoflife_fi_keysatin |
+| Polygon | KIRO | 0xB382C1cfA622795a534e5bd56Fac93d59BAc8B0D | Kirobo (PoS) |  | polygon/erc20/kirobo_pos |
 | Polygon | KLIMA | 0x4e78011Ce80ee02d2c3e649Fb657E45898257815 | Klima DAO |  | polygon/erc20/klima_dao |
 | Polygon | KOM | 0xC004e2318722EA2b15499D6375905d75Ee5390B8 | Kommunitas |  | polygon/erc20/kommunitas |
+| Polygon | KRIDA | 0x3c5A5885F6EE4aCC2597069FE3C19F49c6EfBA96 | Krida Fans |  | polygon/erc20/krida_fans |
 | Polygon | KRILL | 0x05089C9EBFFa4F0AcA269e32056b1b36B37ED71b | Krill |  | polygon/erc20/krill |
+| Polygon | KROM | 0x14Af1F2f02DCcB1e43402339099A05a5E363b83c | Kromatika (PoS) |  | polygon/erc20/kromatika_pos |
 | Polygon | KNC | 0x1C954E8fe737F99f68Fa1CCda3e51ebDB291948C | Kyber Network Crystal v2 (PoS) |  | polygon/erc20/kyber_network_crystal_v2_(pos) |
 | Polygon | DMM_LP_2EUR_PAR_F_JRT_MIMO_NOV22 | 0x946bE3eCAebaA3fe2eBb73864ab555A8cfdF49Fd | KyberDMM LP 2eur (PAR)_f_JRT_MIMO_NOV22 |  | polygon/erc20/kyberdmm_lp_2eur_(par)_f_jrt_mimo_nov22 |
 | Polygon | DMM_LP_2EUR_PAR_F_JRT_MIMO_SEP22 | 0x181650dde0A3a457F9e82B00052184AC3FEAAdF3 | KyberDMM LP 2eur (PAR)_f_JRT_MIMO_SEP22 |  | polygon/erc20/kyberdmm_lp_2eur_(par)_f_jrt_mimo_sep22 |
@@ -12807,33 +13198,82 @@
 | Polygon | DMM_LP_AGEURJEUR_F_JRT_ANGLE_SEP22 | 0x8c2fe36E51657385d3091E92FbACb79263867F16 | KyberDMM LP agEURjEUR_f_JRT_ANGLE_SEP22 |  | polygon/erc20/kyberdmm_lp_ageurjeur_f_jrt_angle_sep22 |
 | Polygon | DMM_LP_AGEURJEUR_F_AGDEN_JUL22 | 0x7d85cCf1B7cbAAB68c580E14fA8C92E32704404f | KyberDMM LP agEURjEUR_f_agDEN_JUL22 |  | polygon/erc20/kyberdmm_lp_ageurjeur_f_agden_jul22 |
 | Polygon | DMM_LP_JCAD_CADC_F_QUI_MAR22 | 0x32d8513eDDa5AEf930080F15270984A043933A95 | KyberDMM LP jCAD_CADC_f_QUI_MAR22 |  | polygon/erc20/kyberdmm_lp_jcad_cadc_f_qui_mar22 |
+| Polygon | L3USD | 0x2C2D8a078B33bf7782a16AcCE2C5BA6653a90D5f | L3USD |  | polygon/erc20/l3usd |
 | Polygon | LCX | 0xE8A51D0dD1b4525189ddA2187F90ddF0932b5482 | LCX |  | polygon/erc20/lcx |
+| Polygon | LEAP | 0xa47150F5c615dcf4f2e47aad1862a0f2b54C3973 | LEAP Token |  | polygon/erc20/leap_token |
+| Polygon | LFG | 0x411bE1E071675dF40fE1c08CA760Bb7aA707CEdF | LFG Token [via ChainPort.io] |  | polygon/erc20/lfg_token_via_chainport_io |
+| Polygon | LFI | 0x9b760D11F63cb80BFFBCf69421cd46511E429f83 | LFi |  | polygon/erc20/lfi |
+| Polygon | LIBERA | 0xF0f14634971C43d872d1cF1785195C0Ce1000a9d | LIBERA - Multichain High APR Farming |  | polygon/erc20/libera_multichain_high_apr_farming |
+| Polygon | LIF3 | 0x110B25D2B21eE73eB401F3aE7833f7072912A0Bf | LIF3 |  | polygon/erc20/lif3 |
+| Polygon | LPI | 0xd32DFEFD9D00F772DB460A3b542F0A736d80662f | LOCKON Passive Index |  | polygon/erc20/lockon_passive_index |
+| Polygon | LSHARE | 0x5eAB32Fe1D104cE0C5436feDC3433B646096e47C | LSHARE |  | polygon/erc20/lshare |
+| Polygon | LUNA | 0x9cd6746665D9557e1B9a775819625711d0693439 | LUNA (Wormhole) |  | polygon/erc20/luna_wormhole |
+| Polygon | LUSD | 0x23001f892c0C82b79303EDC9B9033cD190BB21c7 | LUSD Stablecoin (PoS) |  | polygon/erc20/lusd_stablecoin_pos |
 | Polygon | LUXY | 0xD4945a3D0De9923035521687D4bf18cC9B0c7c2A | LUXY |  | polygon/erc20/luxy |
 | Polygon | LPOOL | 0x9e7Deba360c77949bb75d16DC81b2393C15005Eb | Launchpool token |  | polygon/erc20/launchpool_token |
 | Polygon | LMA1 | 0x045a982104854B7f2CaA109aC4C047CBe9ce5C3C | Lemonaid-Crowdinvesting | delisted | polygon/erc20/lemonaid-crowdinvesting |
 | Polygon | LDO | 0xC3C7d422809852031b44ab29EEC9F1EfF2A58756 | Lido DAO Token (PoS) |  | polygon/erc20/lido_dao_token_(pos) |
+| Polygon | LFT | 0x7fB09e55d55CcD89929e31ba77f64931087c09CB | Lifti |  | polygon/erc20/lifti |
 | Polygon | LCN | 0x5f90da089D90389323AeFafDd4Ce5B5d2f6CCe7E | Lincoin |  | polygon/erc20/lincoin |
 | Polygon | MATICX | 0xfa68FB4628DFF1028CFEc22b4162FCcd0d45efb6 | Liquid Staking Matic (PoS) |  | polygon/erc20/liquid_staking_matic_(pos) |
+| Polygon | TRYT | 0x95E376390F472fcaA21995169E11D523954b3bbb | LiraT |  | polygon/erc20/lirat |
 | Polygon | LIT | 0xe6E320b7bB22018D6CA1F4D8cea1365eF5d25ced | Litentry |  | polygon/erc20/litentry |
+| Polygon | IONS | 0xd6d3B4254B4526c3095d8AB00B75f186c56dD72C | Lithium IONs |  | polygon/erc20/lithium_ions |
 | Polygon | LPT | 0x3962F4A0A0051DccE0be73A7e09cEf5756736712 | Livepeer Token |  | polygon/erc20/livepeer_token |
 | Polygon | LRC | 0x84e1670F61347CDaeD56dcc736FB990fBB47ddC1 | LoopringCoin V2 |  | polygon/erc20/loopringcoin_v2 |
 | Polygon | LOPES | 0xCEBdc775E9f18156EC2e04Fb4150f1bc54DE690f | Lopes |  | polygon/erc20/lopes |
+| Polygon | EGG | 0x245e5ddb65eFea6522Fa913229dF1f4957fB2e21 | LoserchickEgg |  | polygon/erc20/loserchickegg |
+| Polygon | LUCHA | 0x6749441Fdc8650b5b5a854ed255C82EF361f1596 | Luchadores.io LUCHA Token |  | polygon/erc20/luchadores_io_lucha_token |
+| Polygon | LCD | 0xc2A45FE7d40bCAc8369371B08419DDAFd3131b4a | Lucidao |  | polygon/erc20/lucidao |
 | Polygon | SLIVER | 0xA95b410743e8c2F7b64f1373D3Ca2B3454864a94 | Lucky Races Sliver | delisted | polygon/erc20/lucky_races_sliver |
 | Polygon | LDN | 0x7dF5638222BBe24cCe39f726c3B61cC03610622a | Ludena Protocol (PoS) |  | polygon/erc20/ludena_protocol_(pos) |
+| Polygon | LUMIII | 0xED88227296943857409A8e0f15Ad7134e70D0F73 | LumiiiToken |  | polygon/erc20/lumiiitoken |
+| Polygon | LUCHOW | 0xc4BB7277A74678f053259CB1F96140347efbfd46 | LunaChow |  | polygon/erc20/lunachow |
+| Polygon | LUNR | 0xBBfE0B60dE96a189BF09079DE86A2Db7bF0C7883 | Lunr Token |  | polygon/erc20/lunr_token |
 | Polygon | MAIX | 0x992446B88a7E62C7235Bd88108f44543C1887C1F | MAI (miMATIC) |  | polygon/erc20/mai_(mimatic) |
+| Polygon | MAKERX | 0x1ED02954D60Ba14e26c230EeC40CbaC55fa3aEea | MAKERX |  | polygon/erc20/makerx |
 | Polygon | OM | 0xC3Ec80343D2bae2F8E680FDADDe7C17E71E114ea | MANTRA DAO |  | polygon/erc20/mantra_dao |
 | Polygon | MASQ | 0xEe9A352F6aAc4aF1A5B9f467F6a93E0ffBe9Dd35 | MASQ (PoS) |  | polygon/erc20/masq_(pos) |
+| Polygon | MATIC2X-FLI-P | 0xf287D97B6345bad3D88856b26Fb7c0ab3F2C7976 | MATIC 2x Flexible Leverage Index |  | polygon/erc20/matic_2x_flexible_leverage_index |
+| Polygon | MCHC | 0xee7666aACAEFaa6efeeF62ea40176d3eB21953B9 | MCHCoin (PoS) |  | polygon/erc20/mchcoin_pos |
+| Polygon | MEAN | 0x4867B60aD7C6aDc98653f661f1AEA31740986bA5 | MEAN |  | polygon/erc20/mean |
+| Polygon | FAKT | 0xCb64CdeB45deF1C513fd890E7E76a865baE46060 | MEDIFAKT |  | polygon/erc20/medifakt |
 | Polygon | MEE | 0xEB7eaB87837f4Dad1bb80856db9E4506Fc441f3D | MEE Governance Token |  | polygon/erc20/mee_governance_token |
+| Polygon | FXMETOD | 0x65aD509DB5924Ef0001d977590985f965eF1aaaa | META TOY DRAGONZ TOKEN (FXERC20) |  | polygon/erc20/meta_toy_dragonz_token_fxerc20 |
+| Polygon | METAL | 0x200C234721b5e549c3693CCc93cF191f90dC2aF9 | METAL |  | polygon/erc20/metal |
+| Polygon | MIMO | 0xADAC33f543267c4D59a8c299cF804c303BC3e4aC | MIMO Parallel Governance Token (PoS) |  | polygon/erc20/mimo_parallel_governance_token_pos |
+| Polygon | MINNA | 0xfBe59eBf7a188045c87c4A65093Ed1E50520408b | MINNA |  | polygon/erc20/minna |
 | Polygon | MOD | 0x8346Ab8d5EA7A9Db0209aEd2d1806AFA0E2c4C21 | MODEFI (PoS) |  | polygon/erc20/modefi_(pos) |
+| Polygon | MOMA | 0xE3AB61371ECc88534C522922a026f2296116C109 | MOchi MArket |  | polygon/erc20/mochi_market |
+| Polygon | MSQ | 0x6A8Ec2d9BfBDD20A7F5A4E89D640F7E7cebA4499 | MSQUARE |  | polygon/erc20/msquare |
+| Polygon | MT | 0x0Da6A7a0A2E7525950204Bb2C511E47a52235B17 | MT TOWER |  | polygon/erc20/mt_tower |
+| Polygon | MUBI | 0xB1A91036e4a3C144efeD953e0b6CC5f6B98AD256 | MUBI |  | polygon/erc20/mubi |
 | Polygon | XVMC | 0x6d0c966c8A09e354Df9C48b446A474CE3343D912 | Mac&Cheese Token |  | polygon/erc20/mac&cheese_token |
+| Polygon | MCRN | 0xBA25B552C8A098AFdf276324C32C71fE28e0Ad40 | MacaronSwap Token |  | polygon/erc20/macaronswap_token |
+| Polygon | MMO | 0x859a50979fdB2A2fD8Ba1AdCC66977C6f6b1CD5B | Mad Meerkat Optimizer |  | polygon/erc20/mad_meerkat_optimizer |
+| Polygon | MIM | 0x49a0400587A7F65072c87c4910449fDcC5c47242 | Magic Internet Money |  | polygon/erc20/magic_internet_money |
+| Polygon | MCT | 0x13eFAA3D5E2C86E7ABa168F925FeF9827648Cff4 | MagicClub Token |  | polygon/erc20/magicclub_token |
 | Polygon | MST | 0xa353dEb6Fb81dF3844D8bd614D33d040fDBb8188 | MagicStone | delisted | polygon/erc20/magicstone |
 | Polygon | MG | 0x2b70b0dDb96E2581a311dEB25A1424C7167E4A53 | Magnesium |  | polygon/erc20/magnesium |
 | Polygon | MFT | 0x91cA694d2B293f70Fe722fbA7d8A5259188959c3 | Mainframe Token |  | polygon/erc20/mainframe_token |
+| Polygon | MFTU | 0xC46A37fBBe433EF24bc7b9388C8728DDcf3cA87c | Mainstream For The Underground |  | polygon/erc20/mainstream_for_the_underground |
 | Polygon | MKR | 0x6f7C932e7684666C9fd1d44527765433e01fF61d | Maker |  | polygon/erc20/maker |
+| Polygon | MNI | 0x22F991E509102ED4C2bABd82424c46bd3D203Bd3 | Map Node |  | polygon/erc20/map_node |
+| Polygon | MCOIN | 0x34ad6A664B4112a9C6Bac7B54B4094a05E3ff775 | MariCoin |  | polygon/erc20/maricoin |
 | Polygon | POND | 0x73580A2416A57f1C4b6391DBA688A9e4f7DBECE0 | Marlin POND |  | polygon/erc20/marlin_pond |
+| Polygon | MRST | 0x411bc96881A62572FF33c9d8CE60dF99E3d96cd8 | Mars Token |  | polygon/erc20/mars_token |
+| Polygon | MNFT | 0xd281aF594Cbb99E8469f3591D57A0C72EB725bdB | MarvelousNFT (PoS) |  | polygon/erc20/marvelousnft_pos |
 | Polygon | MASK | 0x2B9E7ccDF0F4e5B24757c1E1a80e311E34Cb10c7 | Mask Network |  | polygon/erc20/mask_network |
+| Polygon | MAAAVE | 0x823CD4264C1b951C9209aD0DeAea9988fE8429bF | Matic Aave interest bearing AAVE |  | polygon/erc20/matic_aave_interest_bearing_aave |
 | Polygon | MAUSDC | 0x9719d867A500Ef117cC201206B8ab51e794d3F82 | Matic Aave interest bearing USDC |  | polygon/erc20/matic_aave_interest_bearing_usdc |
 | Polygon | MATIC | 0x0000000000000000000000000000000000001010 | Matic Token | delisted | polygon/erc20/matic_token |
+| Polygon | MATRIX | 0x211F4e76fcB811ed2B310A232a24B3445d95E3bC | MatrixSwapToken (PoS) |  | polygon/erc20/matrixswaptoken_pos |
+| Polygon | MAXX | 0x6D9C0b104e5Af90A6d11a13Eb77288e533333301 | Maxx Finance |  | polygon/erc20/maxx_finance |
+| Polygon | $MECHA | 0xaCd4E2d936Be9B16c01848A3742A34B3D5A5bDfa | Mechanium |  | polygon/erc20/mechanium |
+| Polygon | MEEB | 0x64aFDF9e28946419E325d801Fb3053d8B8FFdC23 | MeebMaster.com Token |  | polygon/erc20/meebmaster_com_token |
+| Polygon | MEED | 0x6acA77CF3BaB0C4E8210A09B57B07854a995289a | Meeds Token (PoS) |  | polygon/erc20/meeds_token_pos |
+| Polygon | MEM | 0x42dbBd5ae373FEA2FC320F62d44C058522Bb3758 | Memecoin |  | polygon/erc20/memecoin |
+| Polygon | MRCH | 0x4dF071FB2D145bE595b767f997C91818694A6CE1 | MerchDAO (PoS) |  | polygon/erc20/merchdao_pos |
 | Polygon | MSLP | 0x5b1E475933C802117212ce2A4240A4e7999a52A2 | Meshswap LP MESH_oMOOI |  | polygon/erc20/meshswap_lp_mesh_omooi |
 | Polygon | MSLP | 0x6fC01D72960Af0De3dD97D544FE785b751D752E2 | Meshswap LP MESH_oZEMIT |  | polygon/erc20/meshswap_lp_mesh_ozemit |
 | Polygon | MSLP | 0x111D7a73b40Aa5EE52BF651e8F07Aa26F8e9EFe8 | Meshswap LP USDC_oUSDC |  | polygon/erc20/meshswap_lp_usdc_ousdc |
@@ -12841,147 +13281,352 @@
 | Polygon | MSLP | 0x07A7Ab21b582058B71d2AEe1b1719926E3451ADF | Meshswap LP WMATIC_MESH |  | polygon/erc20/meshswap_lp_wmatic_mesh |
 | Polygon | MSLP | 0x6Ffe747579eD4E807Dec9B40dBA18D15226c32dC | Meshswap LP WMATIC_USDC |  | polygon/erc20/meshswap_lp_wmatic_usdc |
 | Polygon | MSLP | 0x24af68fF6e3501EAf8b52a9F7935225E524FE617 | Meshswap LP WMATIC_USDT |  | polygon/erc20/meshswap_lp_wmatic_usdt |
+| Polygon | MESH | 0x82362Ec182Db3Cf7829014Bc61E9BE8a2E82868a | Meshswap Protocol |  | polygon/erc20/meshswap_protocol |
 | Polygon | MTA | 0xF501dd45a1198C2E1b5aEF5314A68B9006D842E0 | Meta |  | polygon/erc20/meta |
+| Polygon | MEN | 0x94b959c93761835f634B8d6E655070C58E2CAa12 | MetaHub Finance |  | polygon/erc20/metahub_finance |
+| Polygon | MHUNT | 0x61f95bd637e3034133335C1baA0148E518D438ad | MetaShooter |  | polygon/erc20/metashooter |
+| Polygon | MSU | 0xe8377A076adAbb3F9838afB77Bee96Eac101ffB1 | MetaSoccer Universe |  | polygon/erc20/metasoccer_universe |
+| Polygon | TRC | 0x40d9fc77027A281d85de1fa660C887E645AE26C3 | MetaTrace |  | polygon/erc20/metatrace |
+| Polygon | MTBL | 0x0C1eb50007974C4E017A6ECcF751110bAc287eBB | Metable |  | polygon/erc20/metable |
+| Polygon | XMT | 0xadBe0eac80F955363f4Ff47B0f70189093908c04 | MetalSwap |  | polygon/erc20/metalswap |
+| Polygon | PVP | 0xFD290daB8EC58FB7E9c7ce6e36b9a5a1A90EC164 | Metalands |  | polygon/erc20/metalands |
 | Polygon | MVX | 0x2760E46d9BB43dafCbEcaad1F64b93207f9f0eD7 | Metavault Trade |  | polygon/erc20/metavault_trade |
+| Polygon | MV | 0xA3c322Ad15218fBFAEd26bA7f616249f7705D945 | Metaverse (PoS) |  | polygon/erc20/metaverse_pos |
 | Polygon | MVI | 0xfe712251173A2cd5F5bE2B46Bb528328EA3565E1 | Metaverse Index (PoS) |  | polygon/erc20/metaverse_index_(pos) |
+| Polygon | MILK | 0x1599fE55Cda767b1F631ee7D414b41F5d6dE393d | Milk |  | polygon/erc20/milk |
+| Polygon | MILO | 0xd0AC5Be680Bfbc0f1958413f4201f91934F61BEA | Milo |  | polygon/erc20/milo |
+| Polygon | MIMIR | 0xd1790c5435b9fB7C9444c749ceFE53D40D751eaC | Mimir Token |  | polygon/erc20/mimir_token |
+| Polygon | MNTO | 0x4C9f66B2806538cf00ef596E09FB05bcb0D17Dc8 | Minato (PoS) |  | polygon/erc20/minato_pos |
 | Polygon | MIVA | 0xC0b2983A17573660053BEEED6FDb1053107cf387 | Minerva Wallet SuperToken |  | polygon/erc20/minerva_wallet_supertoken |
+| Polygon | MPT | 0x87d6F8eDECcbCcA766D2880D19b2C3777D322C22 | Miracleplay Token |  | polygon/erc20/miracleplay_token |
+| Polygon | MOFI | 0xF689E85988d3a7921E852867CE49F53388985E6d | MobiFi (PoS) |  | polygon/erc20/mobifi_pos |
+| Polygon | MOT | 0x2db0Db271a10661e7090b6758350E18F6798a49D | Mobius Token |  | polygon/erc20/mobius_token |
+| Polygon | MONA | 0x6968105460f67c3BF751bE7C15f92F5286Fd0CE5 | Monavale |  | polygon/erc20/monavale |
+| Polygon | EURE | 0x18ec0A6E18E5bc3784fDd3a3634b31245ab704F6 | Monerium EUR emoney |  | polygon/erc20/monerium_eur_emoney |
+| Polygon | MLD | 0x5D089336f95E649e491c054279d64A86565e8b25 | Monolend |  | polygon/erc20/monolend |
+| Polygon | MCASH | 0xa25610a77077390A75aD9072A084c5FbC7d43A0d | Monsoon Finance |  | polygon/erc20/monsoon_finance |
 | Polygon | MOOCATC3 | 0x5A0801BAd20B6c62d86C566ca90688A6b9ea1d3f | Moo Curve aTriCrypto3 |  | polygon/erc20/moo_curve_atricrypto3 |
 | Polygon | MCSTM-M | 0xE0570ddFca69E5E90d83Ea04bb33824D3BbE6a85 | Moo Curve stMATIC-MATIC |  | polygon/erc20/moo_curve_stmatic-matic |
 | Polygon | MOOMUCMIM | 0xebe0c8d842AA5A57D7BEf8e524dEabA676F91cD1 | Moo Mai USDC-miMATIC |  | polygon/erc20/moo_mai_usdc-mimatic |
+| Polygon | MOONED | 0x7E4c577ca35913af564ee2a24d882a4946Ec492B | MoonEdge |  | polygon/erc20/moonedge |
+| Polygon | AAA | 0x2EBD50AE084e71eed419cB6C620B3BbD3927bF7e | MoonRabbit |  | polygon/erc20/moonrabbit |
+| Polygon | MITX | 0x31042A4E66eDa0d12143ffc8cC1552D611dA4cbA | Morpheus Infrastructure Token (PoS) |  | polygon/erc20/morpheus_infrastructure_token_pos |
+| Polygon | MNW | 0x3c59798620e5fEC0Ae6dF1A19c6454094572Ab92 | Morpheus.Network (PoS) |  | polygon/erc20/morpheus_network_pos |
 | Polygon | MS | 0x476718Ea98525f6EEBa3689b321E709522aE0930 | Morphswap |  | polygon/erc20/morphswap |
+| Polygon | USDM | 0x59D9356E565Ab3A36dD77763Fc0d87fEaf85508C | Mountain Protocol USD |  | polygon/erc20/mountain_protocol_usd |
 | Polygon | MOVE | 0x521CddC0CBa84F14c69C1E99249F781AA73Ee0BC | Mover |  | polygon/erc20/mover |
+| Polygon | MULTI | 0x9Fb9a33956351cf4fa040f65A13b835A3C8764E3 | Multichain |  | polygon/erc20/multichain |
+| Polygon | MULTIBTC | 0xf5b9b4A0534cf508ab9953c64c5310DFa0B303A1 | Multichain BTC |  | polygon/erc20/multichain_btc |
 | Polygon | MOCA | 0xcE899f26928a2B21c6a2Fddd393EF37c61dbA918 | Museum of Crypto Art |  | polygon/erc20/museum_of_crypto_art |
 | Polygon | MUST | 0x9C78EE466D6Cb57A4d01Fd887D2b5dFb2D46288f | Must |  | polygon/erc20/must |
 | Polygon | MYST | 0x1379E8886A944d2D9d440b3d88DF536Aea08d9F3 | Mysterium (PoS) |  | polygon/erc20/mysterium_(pos) |
+| Polygon | NACHO | 0xcD86152047e800d67BDf00A4c635A8B6C0e5C4c2 | NACHO |  | polygon/erc20/nacho |
+| Polygon | NSDX | 0xE8d17b127BA8b9899a160D9a07b69bCa8E08bfc6 | NASDEX Token |  | polygon/erc20/nasdex_token |
+| Polygon | NPT | 0x306ee01a6bA3b4a8e993fA2C1ADC7ea24462000c | NEOPIN Token |  | polygon/erc20/neopin_token |
+| Polygon | NTVRK | 0x73A4dC4215Dc3eb6AaE3C7AaFD2514cB34e5D983 | NETVRK [via ChainPort.io] |  | polygon/erc20/netvrk_via_chainport_io |
+| Polygon | NEUY | 0x62a872d9977Db171d9e213A5dc2b782e72ca0033 | NEUY (PoS) |  | polygon/erc20/neuy_pos |
 | Polygon | CHAMP | 0x8f9E8e833A69Aa467E42c46cCA640da84DD4585f | NFT Champions |  | polygon/erc20/nft_champions |
 | Polygon | WRLD | 0xD5d86FC8d5C0Ea1aC1Ac5Dfab6E529c9967a45E9 | NFT Worlds |  | polygon/erc20/nft_worlds |
 | Polygon | NFTBS | 0x6396252377F54ad33cFF9131708Da075b21d9B88 | NFTBOOKS |  | polygon/erc20/nftbooks |
+| Polygon | NFTE | 0x492Fa53b88614923937B7197C87E0F7F8EEb7B20 | NFTEarthOFT |  | polygon/erc20/nftearthoft |
+| Polygon | NFTY | 0xCC081220542a60A8Ea7963C4F53D522b503272c1 | NFTY Token |  | polygon/erc20/nfty_token |
+| Polygon | GEM | 0x4A7b9A4589A88A06ca29F99556dB08234078D727 | NFTmall GEM Token |  | polygon/erc20/nftmall_gem_token |
+| Polygon | NSHARE | 0x948D0a28b600BDBd77AF4ea30E6F338167034181 | NSHARE |  | polygon/erc20/nshare |
 | Polygon | NTDL | 0xD735b487B9018eEaDA2cC0464DB02Aa4B90cA711 | NTDL |  | polygon/erc20/ntdl |
+| Polygon | NX7 | 0x97d45Ec651d25b90701ec49c959E75efe4E1F36c | NX7 |  | polygon/erc20/nx7 |
 | Polygon | NAKA | 0x311434160D7537be358930def317AfB606C0D737 | Nakamoto.Games |  | polygon/erc20/nakamoto.games |
 | Polygon | NPX | 0x106035DEDcA635d75d6Ff05F98F25916829eDB77 | NapoleonX |  | polygon/erc20/napoleonx |
 | Polygon | NEX | 0xA486c6BC102f409180cCB8a94ba045D39f8fc7cB | Nash Exchange Token (PoS) |  | polygon/erc20/nash_exchange_token_(pos) |
+| Polygon | NGOLD | 0xa64a329876a27192c7f8BdE4430bDEc70eA4B2f9 | NaturesGold Token |  | polygon/erc20/naturesgold_token |
+| Polygon | NCT | 0x4985E0B13554fB521840e893574D3848C10Fcc6f | Nectar (PoS) |  | polygon/erc20/nectar_pos |
 | Polygon | NHT | 0x84342e932797FC62814189f01F0Fb05F52519708 | Neighbourhoods Token |  | polygon/erc20/neighbourhoods_token |
 | Polygon | NCR | 0xDA6f726E2088F129D3Ecb2257206AdF7D8537Ba5 | Neos Credits (PoS) |  | polygon/erc20/neos_credits_(pos) |
+| Polygon | NPM | 0x57f12FE6A4e5fe819eec699FAdf9Db2D06606bB4 | Neptune Mutual |  | polygon/erc20/neptune_mutual |
+| Polygon | USDN | 0x013F9c3fAc3e2759d7e90AcA4F9540F75194A0d7 | Neutrino USD |  | polygon/erc20/neutrino_usd |
 | Polygon | NEXO | 0x41b3966B4FF7b427969ddf5da3627d6AEAE9a48E | Nexo |  | polygon/erc20/nexo |
 | Polygon | NXTT | 0x0d0B8488222F7f83B23E365320a4021b12eAD608 | NextEarthToken |  | polygon/erc20/nextearthtoken |
+| Polygon | NEXM | 0xC88640B734fEA3b35c132Fe757AeB5ca6C8cDC66 | Nexum Coin (Wormhole) |  | polygon/erc20/nexum_coin_wormhole |
+| Polygon | NXD | 0x228b5C21ac00155cf62c57bcc704c0dA8187950b | Nexus Dubai |  | polygon/erc20/nexus_dubai |
+| Polygon | NKO | 0xca3C652e994D88740b8Ab3b33B4935592aB1DfbA | Niko Token |  | polygon/erc20/niko_token |
+| Polygon | NWT | 0xd6E274f6899ed9D1EA49FDD1beaae9DCDF3081A6 | Ninja Warriors |  | polygon/erc20/ninja_warriors |
+| Polygon | NITRO | 0x695FC8B80F344411F34bDbCb4E621aA69AdA384b | Nitro (PoS) |  | polygon/erc20/nitro_pos |
+| Polygon | NWS | 0x57c453e7A4D73Ac1Db8aE07da5dda3B398D17577 | Nodewaves |  | polygon/erc20/nodewaves |
+| Polygon | NORD | 0xF6F85b3f9fd581C2eE717c404F7684486F057F95 | Nord Token (PoS) |  | polygon/erc20/nord_token_pos |
+| Polygon | NARS | 0x65517425AC3Ce259A34400bB67cEB39ff3dDC0BD | Num Finance ARS |  | polygon/erc20/num_finance_ars |
+| Polygon | O3 | 0xEe9801669C6138E84bD50dEB500827b776777d28 | O3 Swap Token |  | polygon/erc20/o3_swap_token |
 | Polygon | OAT | 0x6b90f248d10a93072eCE74ED03D281269d017DC9 | OAT Token | delisted | polygon/erc20/oat_token |
+| Polygon | OBOT | 0x221743dc9E954bE4f86844649Bf19B43D6F8366d | OBORTECH |  | polygon/erc20/obortech |
 | Polygon | OCC | 0xF30355BA14B2d3b31597EC71a4542f57e902Cb80 | OCC |  | polygon/erc20/occ |
 | Polygon | OMG | 0x62414D03084EeB269E18C970a21f45D2967F0170 | OMG Network |  | polygon/erc20/omg_network |
+| Polygon | OMMI | 0xBc2659EaD8d2D13A157A75BfC5acC156E1eA06DF | OMMNIVERSE |  | polygon/erc20/ommniverse |
+| Polygon | ONSTON | 0xA4Ce4a467E51aEfEc683a649C3F14427f104667f | ONSTON |  | polygon/erc20/onston |
+| Polygon | ONUS | 0xc0A1AdCe1c62dAEDF1B5F07B31266090bc5Cc6d2 | ONUS |  | polygon/erc20/onus |
+| Polygon | OSS | 0x655304E9Cc103b47f0afa0825767D6cCe426717C | OSSChain |  | polygon/erc20/osschain |
+| Polygon | OVL3 | 0x7C6C69bafBE40B2C76a25dcdF9854C77f086e2C6 | OVAL3 |  | polygon/erc20/oval3 |
 | Polygon | OVR | 0x1631244689EC1fEcbDD22fb5916E920dFC9b8D30 | OVR |  | polygon/erc20/ovr |
+| Polygon | OATH | 0x7c603C3C0C97a565cf202c94AB5298bF8510f7dc | Oath Token |  | polygon/erc20/oath_token |
+| Polygon | OCAVU | 0xf796969fA47Fb0748c80b8B153cBb895E88cBD54 | Ocavu Network Token |  | polygon/erc20/ocavu_network_token |
 | Polygon | OCEAN | 0x282d8efCe846A88B159800bd4130ad77443Fa1A1 | Ocean Token |  | polygon/erc20/ocean_token |
+| Polygon | ODDZ | 0x4e830F67Ec499E69930867f9017AEb5B3f629c73 | OddzToken |  | polygon/erc20/oddztoken |
 | Polygon | OIL | 0x65DfA90171e1bd9060209405026C4E1f4A8E58df | Oiler |  | polygon/erc20/oiler |
+| Polygon | OJA | 0x26373EC913876C9e6d38494dde458Cb8649cb30c | Ojamu |  | polygon/erc20/ojamu |
+| Polygon | OKLP | 0x5D48a5E5a3e737322Ae27e25897F1c9E19EcC941 | OkLetsPlay |  | polygon/erc20/okletsplay |
+| Polygon | OK | 0xd3Ac016b1B8C80EeAdDe4D186A9138C9324e4189 | Okcash |  | polygon/erc20/okcash |
+| Polygon | OMNI | 0x9e20461bc2c4c980f62f1B279D71734207a6A356 | OmniCat |  | polygon/erc20/omnicat |
+| Polygon | OSEA | 0xd57f8b6F3e5d1e0ab85118F5E0Dd893A08C43346 | Omnisea |  | polygon/erc20/omnisea |
+| Polygon | ONX | 0xEb94A5e2C643403E29fa1d7197e7E0708B09aD84 | OnX.finance (PoS) |  | polygon/erc20/onx_finance_pos |
+| Polygon | OUSG | 0xbA11C5effA33c4D6F8f593CFA394241CfE925811 | Ondo Short-Term U.S. Government Bond Fund |  | polygon/erc20/ondo_short_term_u_s_government_bond_fund |
+| Polygon | ORARE | 0xFF2382Bd52efaceF02Cc895bcBFc4618608AA56F | One Rare Token |  | polygon/erc20/one_rare_token |
+| Polygon | OORT | 0xCCE87C5b269C94b31Ec437b1d7D85bF1413b7804 | Oort Digital |  | polygon/erc20/oort_digital |
+| Polygon | OPCT | 0xce6bF09e5c7A3E65B84F88DcC6475c88d38BA5eF | Opacity (PoS) |  | polygon/erc20/opacity_pos |
+| Polygon | OX | 0x78a0A62Fba6Fb21A83FE8a3433d44C73a4017A6f | Open Exchange Token |  | polygon/erc20/open_exchange_token |
+| Polygon | OPIUM | 0xE8F157E041Df3B28151B667364e9c90789Da7923 | Opium Governance Token (PoS) |  | polygon/erc20/opium_governance_token_pos |
 | Polygon | OPT2 | 0x9E25126EBCD57C8eb6eb6c2ffC67810d365CFC3E | Optimus V2 | delisted | polygon/erc20/optimus_v2 |
 | Polygon | OPT3 | 0xCf630283E8Ff2e30C29093bC8aa58CADD8613039 | Optimus V3 |  | polygon/erc20/optimus_v3 |
+| Polygon | ORETRO | 0x3A29CAb2E124919d14a6F735b6033a3AaD2B260F | Option to buy RETRO |  | polygon/erc20/option_to_buy_retro |
 | Polygon | ORAI | 0xF4310Adb83694Bc4808e0C5ca8F7027C6127921D | Oraichain Token |  | polygon/erc20/oraichain_token |
+| Polygon | PAUTO | 0x7f426F6Dc648e50464a0392E60E1BB465a67E9cf | Orbit Bridge Polygon AUTOv2 |  | polygon/erc20/orbit_bridge_polygon_autov2 |
+| Polygon | OMPWR | 0x47C52F93A359dB9F4509005CF982DFc440790561 | Orbit Bridge Polygon Empower Token |  | polygon/erc20/orbit_bridge_polygon_empower_token |
+| Polygon | OEPL | 0x1236ea13c7339287Cd00AB196aAA8217006b04dc | Orbit Bridge Polygon EpicLeague |  | polygon/erc20/orbit_bridge_polygon_epicleague |
 | Polygon | ORBS | 0x614389EaAE0A6821DC49062D56BDA3d9d45Fa2ff | Orbs |  | polygon/erc20/orbs |
 | Polygon | OXT | 0x9880e3dDA13c8e7D4804691A45160102d31F6060 | Orchid |  | polygon/erc20/orchid |
 | Polygon | OGN | 0xa63Beffd33AB3a2EfD92a39A7D2361CEE14cEbA8 | OriginToken |  | polygon/erc20/origintoken |
+| Polygon | ORION | 0x5E0294Af1732498C77F8dB015a2d52a76298542B | Orion Money Token (Wormhole) |  | polygon/erc20/orion_money_token_wormhole |
+| Polygon | OSHI | 0x09cAD96Bc28f55e9253cfB9a84a3A1Ab79061E54 | Oshi Token |  | polygon/erc20/oshi_token |
 | Polygon | SWOOP | 0xf67bf182655C29C4202a9654BD509a8c703Ff217 | Osprey Coin |  | polygon/erc20/osprey_coin |
 | Polygon | FRACTION | 0xbD80CFA9d93A87D1bb895f810ea348E496611cD4 | Own a fraction |  | polygon/erc20/own_a_fraction |
 | Polygon | PAID | 0xeAEf6cAf6d5894EDB2D4EA7ec11eC4AB655f1cBF | PAID Network |  | polygon/erc20/paid_network |
+| Polygon | PAPER | 0x11a1779ae6b02bb8E7ff847919bcA3e55BcbB3D5 | PAPER |  | polygon/erc20/paper |
 | Polygon | PAR | 0x7b367a058f370c0057762280547d0b974cf3ac10 | PAR Stablecoin |  | polygon/erc20/par_stablecoin |
 | Polygon | PEN | 0x9008D70A5282a936552593f410AbcBcE2F891A97 | PEN |  | polygon/erc20/pen |
+| Polygon | $PGEM | 0xcDa6c923458cA9faC8e3354999e866FeAa80B72f | PGEM |  | polygon/erc20/pgem |
+| Polygon | PIKA | 0xFFb89d7637Cf4860884ED48b57Ae5562bF64e10F | PIKA |  | polygon/erc20/pika |
+| Polygon | PLR | 0xa6b37fC85d870711C56FbcB8afe2f8dB049AE774 | PILLAR (PoS) |  | polygon/erc20/pillar_pos |
+| Polygon | PIVN | 0x38A232CABb8A7f745c7D6E0A5bf300E3499aa8A6 | PIVN |  | polygon/erc20/pivn |
 | Polygon | PLEX | 0x1bE9425AB42897F0C14759ee36493Fd7Db895c22 | PLEX |  | polygon/erc20/plex |
 | Polygon | PKR | 0x140a4e80dD8184536acc45F1C452D7540472e6E1 | POLKER |  | polygon/erc20/polker |
+| Polygon | POLYPAD | 0x30eA765D4DDA26e0f89e1B23A7c7b2526B7d29ec | POLYPAD.com |  | polygon/erc20/polypad_com |
 | Polygon | PTRN | 0x324165Db0A8D41f2eEBb38d68E75Edd5F8f48963 | PTRN |  | polygon/erc20/ptrn |
 | Polygon | PUSD | 0x9aF3b7DC29D3C4B1A5731408B6A9656fA7aC3b72 | PUSD |  | polygon/erc20/pusd |
 | Polygon | PYQ | 0x5a3064CbDCCF428ae907796cF6aD5a664CD7F3d8 | PYQ |  | polygon/erc20/pyq |
 | Polygon | PYR | 0x430EF9263E76DAE63c84292C3409D61c598E9682 | PYR Token |  | polygon/erc20/pyr_token |
+| Polygon | PAINT | 0x7c28F627eA3aEc8B882b51eb1935f66e5b875714 | Paint |  | polygon/erc20/paint |
 | Polygon | ZKP | 0x9A06Db14D639796B25A6ceC6A1bf614fd98815EC | Panther |  | polygon/erc20/panther |
 | Polygon | PSP | 0x42d61D766B85431666B39B89C43011f24451bFf6 | ParaSwap (PoS) |  | polygon/erc20/paraswap_(pos) |
 | Polygon | PBIRB | 0x60EeC374a1Ba3907e9BdD8a74cE368D041d89C79 | Parrotly |  | polygon/erc20/parrotly |
 | Polygon | PRQ | 0x9377Eeb7419486FD4D485671d50baa4BF77c2222 | Parsiq Token |  | polygon/erc20/parsiq_token |
+| Polygon | PPY | 0xFd55e4a6767fF7FfC0b8105262A8cDAabE7FBF3F | Patriot Pay |  | polygon/erc20/patriot_pay |
+| Polygon | PAW | 0xBC5b59EA1b6f8Da8258615EE38D40e999EC5D74F | Paw V2 |  | polygon/erc20/paw_v2 |
 | Polygon | PAXG | 0x553d3D295e0f695B9228246232eDF400ed3560B5 | Paxos Gold |  | polygon/erc20/paxos_gold |
 | Polygon | PAX | 0x6F3B3286fd86d8b47EC737CEB3D0D354cc657B3e | Paxos Standard |  | polygon/erc20/paxos_standard |
+| Polygon | PIN | 0xA2C638b78783E9aFe26a16EC8b11DE54Eb169360 | Pay it Now |  | polygon/erc20/pay_it_now |
+| Polygon | PAY | 0xe580074A10360404AF3ABfe2d524D5806D993ea3 | PayBolt |  | polygon/erc20/paybolt |
+| Polygon | PKTK | 0x55BB4d4b4545a886df159354e5fA5791c2d13496 | Peak Token |  | polygon/erc20/peak_token |
 | Polygon | PEARL | 0x7238390d5f6F64e67c3211C343A410E2A3DEc142 | Pearl |  | polygon/erc20/pearl |
 | Polygon | PGX | 0xc1c93D475dc82Fe72DBC7074d55f5a734F8cEEAE | Pegaxy Stone |  | polygon/erc20/pegaxy_stone |
+| Polygon | PMXX | 0x8C069b6cEf3453bAbb15fA97784AFFeB95d398Fa | Peoples Money MBMX Reinvented metalbacked.money |  | polygon/erc20/peoples_money_mbmx_reinvented_metalbacked_money |
 | Polygon | PPDEX | 0x127984b5E6d5c59f81DACc9F1C8b3Bdc8494572e | Pepedex |  | polygon/erc20/pepedex |
+| Polygon | PERI | 0xDC0E17eAE3B9651875030244b971fa0223a1764f | Peri Finance Token |  | polygon/erc20/peri_finance_token |
+| Polygon | PERL | 0xB121FCD122DAAa153bB8a102754127b2682645CB | Perlin (PoS) |  | polygon/erc20/perlin_pos |
 | Polygon | ASK | 0xaA3717090CDDc9B227e49d0D84A28aC0a996e6Ff | Permission Token | delisted | polygon/erc20/permission_token |
+| Polygon | PBOS | 0x421b9B487D5a9b76E4B81809C0f1b9Bb8cb24cb9 | Phobos Token |  | polygon/erc20/phobos_token |
+| Polygon | PHX | 0x9C6BfEdc14b5C23E3900889436Edca7805170f01 | Phoenix Token |  | polygon/erc20/phoenix_token |
+| Polygon | PHNX | 0x92C59F1cC9A322670CCa29594e4D994d48BDFd36 | PhoenixDAO (PoS) |  | polygon/erc20/phoenixdao_pos |
+| Polygon | PICKLE | 0x2b88aD57897A8b496595925F43048301C37615Da | PickleToken (PoS) |  | polygon/erc20/pickletoken_pos |
 | Polygon | DOUGH | 0x990F860968714c2D16e91Ec0cd9709A94264Cf64 | PieDAO DOUGH v2 |  | polygon/erc20/piedao_dough_v2 |
 | Polygon | PNK | 0xad93E067e149f0A5ecd12D8EA83B05581dD6374C | Pinakion |  | polygon/erc20/pinakion |
+| Polygon | FXPINE | 0x612D833c0c7A54cdfBe9a4328B6d658020563Ec0 | Pine Token (FXERC20) |  | polygon/erc20/pine_token_fxerc20 |
 | Polygon | PNODE | 0x4E92f6f10496F3fCB790Cc6969Cc15B87c8F9199 | Pinknode Token |  | polygon/erc20/pinknode_token |
 | Polygon | IXT | 0xE06Bd4F5aAc8D0aA337D13eC88dB6defC6eAEefE | PlanetIX | delisted | polygon/erc20/planetix |
+| Polygon | PPAY | 0x08158A6b5d4018340387d1A302f882E98a8bC5b4 | Plasma (PoS) |  | polygon/erc20/plasma_pos |
+| Polygon | PLA | 0x8765f05ADce126d70bcdF1b0a48Db573316662eB | PlayDapp Token (PoS) |  | polygon/erc20/playdapp_token_pos |
 | Polygon | PYM | 0x0bD49815EA8e2682220BCB41524c0dd10Ba71d41 | Playermon | delisted | polygon/erc20/playermon |
 | Polygon | NSFW | 0x8f006D1e1D9dC6C98996F50a4c810F17a47fBF19 | Pleasure Coin | delisted | polygon/erc20/pleasure_coin |
+| Polygon | PLOT | 0xe82808eaA78339b06a691fd92E1Be79671cAd8D3 | PlotX |  | polygon/erc20/plotx |
 | Polygon | PLU | 0x7dc0cb65EC6019330a6841e9c274f2EE57A6CA6C | Pluton |  | polygon/erc20/pluton |
+| Polygon | POI$ON | 0x31C91D8Fb96BfF40955DD2dbc909B36E8b104Dde | Poison.Finance Poison |  | polygon/erc20/poison_finance_poison |
+| Polygon | POLI | 0x6fb54Ffe60386aC33b722be13d2549dd87BF63AF | Polinate (PoS) |  | polygon/erc20/polinate_pos |
 | Polygon | PBR | 0x0D6ae2a429df13e44A07Cd2969E085e4833f64A0 | PolkaBridge |  | polygon/erc20/polkabridge |
+| Polygon | XP | 0x180cFBE9843d79BcAFcbcDF23590247793DFc95B | PolkaFantasy |  | polygon/erc20/polkafantasy |
+| Polygon | LKR | 0xA5Ff48e326958E0CE6FdF9518de561F2B5f57dA3 | Polkalokr |  | polygon/erc20/polkalokr |
+| Polygon | POLLY | 0x4C392822D4bE8494B798cEA17B43d48B2308109C | Polly Finance |  | polygon/erc20/polly_finance |
+| Polygon | NDEFI | 0xd3f07EA86DDf7BAebEfd49731D7Bbd207FedC53B | Polly nDefi Nest |  | polygon/erc20/polly_ndefi_nest |
+| Polygon | POLYCUB | 0x7cC15fEf543f205Bf21018F038F591C6BaDa941c | PolyCub |  | polygon/erc20/polycub |
 | Polygon | POLYDOGE | 0x8A953CfE442c5E8855cc6c61b1293FA648BAE472 | PolyDoge |  | polygon/erc20/polydoge |
 | Polygon | GAJ | 0xF4B0903774532AEe5ee567C02aaB681a81539e92 | PolyGaj Token |  | polygon/erc20/polygaj_token |
+| Polygon | GAMMA | 0x329F5e8Aff351327E63ACdB264389c798a46c2D3 | PolyGamma Finance |  | polygon/erc20/polygamma_finance |
+| Polygon | POLYGOLD | 0x0184316f58B9A44aCDD3e683257259dC0CF2202a | PolyGold Token |  | polygon/erc20/polygold_token |
+| Polygon | SHARK | 0xD201B8511aaB3E9b094b35ABcD5d7863c78D6d0e | PolyShark Token |  | polygon/erc20/polyshark_token |
+| Polygon | SHI3LD | 0xF239E69ce434c7Fb408b05a0Da416b14917d934e | PolyShield |  | polygon/erc20/polyshield |
 | Polygon | YELD | 0xd0f3121A190d85dE0AB6131f2bCEcdbfcfB38891 | PolyYeld Token |  | polygon/erc20/polyyeld_token |
+| Polygon | YELD V2 | 0x1fd6cF265fd3428F655378a803658942095b4C4e | PolyYeld V2 |  | polygon/erc20/polyyeld_v2 |
+| Polygon | YIELD | 0xCE4e6DA9c509Cb33C23d748713c681C959f68658 | PolyYield Token |  | polygon/erc20/polyyield_token |
+| Polygon | PZAP | 0xeb2778f74E5ee038E67AA6c77f0F0451ABd748FD | PolyZap |  | polygon/erc20/polyzap |
+| Polygon | PMON | 0x1796ae0b0fa4862485106a0de9b654eFE301D0b2 | Polychain Monsters |  | polygon/erc20/polychain_monsters |
+| Polygon | PGEN | 0x01d35cbC2070a3B76693Ce2b6364Eae24eb88591 | Polygen (PoS) |  | polygon/erc20/polygen_pos |
 | Polygon | POLYBUNNY | 0x4C16f69302CcB511c5Fac682c7626B9eF0Dc126a | Polygon BUNNY Token |  | polygon/erc20/polygon_bunny_token |
+| Polygon | PHBD | 0x6D969cEA201e427d2875724Fd4E8044833fBc7f4 | Polygon HBD |  | polygon/erc20/polygon_hbd |
+| Polygon | TBTC | 0x236aa50979D5f3De3Bd1Eeb40E81137F22ab794b | Polygon tBTC v2 |  | polygon/erc20/polygon_tbtc_v2 |
+| Polygon | SPADE | 0xf5EA626334037a2cf0155D49eA6462fDdC6Eff19 | PolygonFarm Finance |  | polygon/erc20/polygonfarm_finance |
 | Polygon | POLX | 0x187Ae45f2D361CbCE37c6A8622119c91148F261b | Polylastic |  | polygon/erc20/polylastic |
 | Polygon | POLY | 0xcB059C5573646047D6d88dDdb87B745C18161d3b | Polymath |  | polygon/erc20/polymath |
 | Polygon | ROLL | 0xC68e83a305b0FaD69E264A1769a0A070F190D2d6 | Polyroll Token |  | polygon/erc20/polyroll_token |
+| Polygon | PS1 | 0x32Cd1BCB75473845b5d1dB6ecE60AEC6E41d8518 | PolysportsToken |  | polygon/erc20/polysportstoken |
 | Polygon | TRADE | 0x692AC1e363ae34b6B489148152b12e2785a3d8d6 | Polytrade (PoS) |  | polygon/erc20/polytrade_pos |
 | Polygon | MOON | 0xc56d17dD519e5eB43a19C9759b5D5372115220BD | Polywolf |  | polygon/erc20/polywolf |
+| Polygon | PET | 0xb7486718ea21C79BBd894126f79F504fd3625f68 | Poodl Exchange Token |  | polygon/erc20/poodl_exchange_token |
 | Polygon | POOL | 0x25788a1a171ec66Da6502f9975a15B609fF54CF6 | PoolTogether |  | polygon/erc20/pooltogether |
+| Polygon | POP | 0xC5B57e9a1E7914FDA753A88f24E5703e617Ee50c | Popcorn (PoS) |  | polygon/erc20/popcorn_pos |
+| Polygon | PORY | 0xF86Df9B91f002cfEB2AEd0E6D05C4C4eAef7cf02 | Porygon |  | polygon/erc20/porygon |
+| Polygon | POT | 0xd7c8469c7eC40f853dA5f651DE81b45aeD47e5aB | PotCoin.com POT |  | polygon/erc20/potcoin_com_pot |
+| Polygon | PODO | 0x52468c88e8b4F5bCCA20a6A7813355637Dc5e3Ad | Power Of Deep Ocean |  | polygon/erc20/power_of_deep_ocean |
 | Polygon | POWR | 0x0AaB8DC887D34f00D50E19aee48371a941390d14 | PowerLedger |  | polygon/erc20/powerledger |
+| Polygon | PROPEL | 0xe0Ce60AF0850bF54072635e66E79Df17082A1109 | Propel |  | polygon/erc20/propel |
 | Polygon | PROS | 0x6109cB051c5C64093830121ed76272aB04bBDD7C | Prosper |  | polygon/erc20/prosper |
+| Polygon | P-GYD | 0x37b8E1152fB90A867F3dccA6e8d537681B04705E | Proto Gyro Dollar |  | polygon/erc20/proto_gyro_dollar |
 | Polygon | PRO | 0xeF274c75cc3d32c989ffbf9476e0212a1caF1836 | Proton Gaming (PoS) |  | polygon/erc20/proton_gaming_(pos) |
+| Polygon | PRXY | 0xab3D689C22a2Bb821f50A4Ff0F21A7980dCB8591 | Proxy |  | polygon/erc20/proxy |
+| Polygon | PGC | 0x35c2b6826b5C94fD2DfeDe51e7CFD4b94410840A | Pub Game Coin |  | polygon/erc20/pub_game_coin |
 | Polygon | PUP | 0xcFe2cF35D2bDDE84967e67d00aD74237e234CE59 | Pup Token |  | polygon/erc20/pup_token |
+| Polygon | UFI | 0x3c205C8B3e02421Da82064646788c82f7bd753B9 | PureFi Token (PoS) |  | polygon/erc20/purefi_token_pos |
+| Polygon | PRPS | 0x972999c58BbcE63a2e398d4ED3Bde414b8349eB3 | Purpose |  | polygon/erc20/purpose |
+| Polygon | QDO | 0x63c54c41794e14D283123CD38895f7ABdF33C379 | QOODO |  | polygon/erc20/qoodo |
 | Polygon | QUIDD | 0x123706cDD8e60324e610E9A2CC7012D0F45A5b8E | QUIDD |  | polygon/erc20/quidd |
+| Polygon | QWLA | 0x4FAfad147c8Cd0e52f83830484d164e960BdC6C3 | Qawalla Token (PoS) |  | polygon/erc20/qawalla_token_pos |
 | Polygon | QI | 0x580A84C73811E1839F75d86d75d88cCa0c241fF4 | Qi Dao |  | polygon/erc20/qi_dao |
+| Polygon | QUA | 0x87e28BD5499e6846141a85659bc7f0CF815DB11D | Quantum |  | polygon/erc20/quantum |
 | Polygon | QUICK | 0xB5C064F955D8e7F38fE0460C556a72987494eE17 | QuickSwap |  | polygon/erc20/quickswap |
 | Polygon | QUICK_ | 0x831753DD7087CaC61aB5644b308642cc1c33Dc13 | Quickswap (old) | delisted | polygon/erc20/quickswap_old |
+| Polygon | RAMP | 0xaECeBfcF604AD245Eaf0D5BD68459C3a7A6399c2 | RAMP (PoS) |  | polygon/erc20/ramp_pos |
+| Polygon | RAYS | 0x2D027E55B85429e9F205930A8afF6D8E6C8c3021 | RAYS (PoS) |  | polygon/erc20/rays_pos |
+| Polygon | RAZOR | 0xC91c06DB0f7bFFba61e2A5645CC15686F0a8c828 | RAZOR (PoS) |  | polygon/erc20/razor_pos |
+| Polygon | REDAN | 0x1e553688199d99d063c0300a12395F7cFEdB03e1 | REDANCOIN |  | polygon/erc20/redancoin |
+| Polygon | RETRO | 0xBFA35599c7AEbb0dAcE9b5aa3ca5f2a79624D8Eb | RETRO |  | polygon/erc20/retro |
 | Polygon | REVV | 0x70c006878a5A50Ed185ac4C87d837633923De296 | REVV | delisted | polygon/erc20/revv |
+| Polygon | RIOT | 0x4FF0b68ABc2b9E4e1401E9b691DBa7d66B264AC8 | RIOT (PoS) |  | polygon/erc20/riot_pos |
 | Polygon | RLC | 0xbe662058e00849C3Eef2AC9664f37fEfdF2cdbFE | RLC |  | polygon/erc20/rlc |
+| Polygon | ROND | 0x204820B6e6FEae805e376D2C6837446186e57981 | ROND Coin |  | polygon/erc20/rond_coin |
+| Polygon | ROOBEE | 0xFaFA220145DfA5C3Ec85B6FA8a75aEE2451CDe5E | ROOBEE |  | polygon/erc20/roobee |
+| Polygon | RADIO | 0x613a489785C95afEB3b404CC41565cCff107B6E0 | RadioShack Token |  | polygon/erc20/radioshack_token |
+| Polygon | RAI | 0x00e5646f60AC6Fb446f621d146B6E1886f002905 | Rai Reflex Index (PoS) |  | polygon/erc20/rai_reflex_index_pos |
+| Polygon | AURUM | 0x34d4ab47Bee066F361fA52d792e69AC7bD05ee23 | RaiderAurum |  | polygon/erc20/raideraurum |
 | Polygon | RAIDER | 0xcd7361ac3307D1C5a46b63086a90742Ff44c63B3 | RaiderToken | delisted | polygon/erc20/raidertoken |
+| Polygon | RAIN | 0x8E677CA17065eD74675BC27bCaBadB7Eef10A292 | Rain Coin |  | polygon/erc20/rain_coin |
+| Polygon | RBW | 0x431CD3C9AC9Fc73644BF68bF5691f4B83F9E104f | Rainbow Token |  | polygon/erc20/rainbow_token |
 | Polygon | RARI | 0x780053837cE2CeEaD2A90D9151aA21FC89eD49c2 | Rarible |  | polygon/erc20/rarible |
 | Polygon | USDR | 0x40379a439D4F6795B6fc9aa5687dB461677A2dBa | Real USD |  | polygon/erc20/real_usd |
+| Polygon | RVR | 0xf695f9499D18584363aeED0eba4C381d350f81C3 | Reality-VR |  | polygon/erc20/reality_vr |
 | Polygon | RLTM | 0x1b396CF90504686b7edE2760eebb053d30d1f389 | RealityToken |  | polygon/erc20/realitytoken |
+| Polygon | XOIL | 0xA7AaC53F7C860B1F9d610147341C57579c51403e | Rebel Bots Oil |  | polygon/erc20/rebel_bots_oil |
+| Polygon | RBLS | 0xe26cda27c13f4f87cFFc2F437C5900b27eBb5bbB | Rebel Bots Token |  | polygon/erc20/rebel_bots_token |
+| Polygon | REELT | 0x19CcfE396006ffe7A92Ab667b0ef90CE61B66f9f | Reel Token |  | polygon/erc20/reel_token |
+| Polygon | RNT | 0x27Ab6E82F3458eDbC0703DB2756391B899Ce6324 | Reental Utility Token |  | polygon/erc20/reental_utility_token |
+| Polygon | RELAY | 0x904371845Bc56dCbBcf0225ef84a669b2fD6bd0d | Relay Token |  | polygon/erc20/relay_token |
 | Polygon | RNDR | 0x61299774020dA444Af134c82fa83E3810b309991 | Render Token |  | polygon/erc20/render_token |
 | Polygon | REQ | 0xB25e20De2F2eBb4CfFD4D16a55C7B395e8a94762 | Request |  | polygon/erc20/request |
 | Polygon | RVLT | 0xf0f9D895aCa5c8678f706FB8216fa22957685A13 | Revolt 2 Earn |  | polygon/erc20/revolt_2_earn |
 | Polygon | RKL | 0x9fDC23fe295104Ac55fef09363c56451D0E37CFA | Rickle (PoS) | delisted | polygon/erc20/rickle_(pos) |
 | Polygon | RIC | 0x263026E7e53DBFDce5ae55Ade22493f828922965 | Ricochet |  | polygon/erc20/ricochet |
+| Polygon | RGP | 0x4AF5ff1A60a6eF6C7c8f9C4E304cD9051fCa3Ec0 | RigelToken |  | polygon/erc20/rigeltoken |
+| Polygon | GRG | 0xBC0BEA8E634ec838a2a45F8A43E7E16Cd2a8BA99 | Rigo Token (PoS) |  | polygon/erc20/rigo_token_pos |
 | Polygon | RCN | 0x89C296Be2F904F3e99a6125815b4B78F5388d2dd | RipioCreditNetwork |  | polygon/erc20/ripiocreditnetwork |
+| Polygon | RBN | 0xb3bC8daE5A49ed956B5D2207d9040C816c56398f | Robinos Token |  | polygon/erc20/robinos_token |
 | Polygon | RPL | 0x7205705771547cF79201111B4bd8aaF29467b9eC | Rocket Pool |  | polygon/erc20/rocket_pool |
+| Polygon | RETH | 0x0266F4F08D82372CF0FcbCCc0Ff74309089c74d1 | Rocket Pool ETH (PoS) |  | polygon/erc20/rocket_pool_eth_pos |
+| Polygon | RVF | 0x2CE13E4199443FDfFF531ABb30c9B6594446bbC7 | Rocket Vault (PoS) |  | polygon/erc20/rocket_vault_pos |
 | Polygon | ROUTE | 0x16ECCfDbb4eE1A85A33f3A9B21175Cd7Ae753dB4 | Route |  | polygon/erc20/route |
+| Polygon | ROY | 0x68EE0D0aad9e1984aF85CA224117E4D20eaF68BE | Royale |  | polygon/erc20/royale |
+| Polygon | ROYA | 0x0bD820aD2d7Ab7305b5C9538ba824C9b9bEb0561 | Royale (PoS) |  | polygon/erc20/royale_pos |
 | Polygon | RBC | 0xc3cFFDAf8F3fdF07da6D5e3A89B8723D5E385ff8 | Rubic (PoS) |  | polygon/erc20/rubic_(pos) |
+| Polygon | RUNY | 0x578FEE9DEF9a270C20865242CfD4ff86f31d0e5B | Runy |  | polygon/erc20/runy |
+| Polygon | IDRT | 0x554cd6bdD03214b10AafA3e0D4D42De0C5D2937b | Rupiah Token |  | polygon/erc20/rupiah_token |
+| Polygon | RUUF | 0x182f1d39dF9460D7AEf29afBc80bBD68ED0A41d5 | RuufCoin |  | polygon/erc20/ruufcoin |
 | Polygon | SAND | 0xBbba073C31bF03b8ACf7c28EF0738DeCF3695683 | SAND |  | polygon/erc20/sand |
 | Polygon | SAND_ | 0xC6d54D2f624bc83815b49d9c2203b1330B841cA0 | SAND_ |  | polygon/erc20/sand_old |
+| Polygon | SAVG | 0x981AeCC6EB4d382b96A02B75E931900705e95A31 | SAVAGE Token |  | polygon/erc20/savage_token |
+| Polygon | SENDC | 0x688b4231472FDe70c1D30F48638Aa1661725d3CE | SENDCRYPTO |  | polygon/erc20/sendcrypto |
 | Polygon | SENT | 0x48e3883233461C2eF4cB3FcF419D6db07fb86CeA | SENTinel |  | polygon/erc20/sentinel |
+| Polygon | MSHEESHA | 0x88C949b4eB85a90071f2C0beF861BDDEe1a7479D | SHEESHA POLYGON |  | polygon/erc20/sheesha_polygon |
 | Polygon | SHIB | 0x6f8a06447Ff6FcF75d803135a7de15CE88C1d4ec | SHIBA INU (PoS) |  | polygon/erc20/shiba_inu_(pos) |
 | Polygon | SKP | 0x4c665BBafd28Ec9e5D792345f470ebFcA21E3d15 | SKY PLAY |  | polygon/erc20/sky_play |
 | Polygon | STAKE | 0xeb5c9e515629B725D3588A55E2a43964DcfdE8cA | STAKE |  | polygon/erc20/stake |
+| Polygon | STAR | 0xC19669A405067927865B40Ea045a2baabbbe57f5 | STAR |  | polygon/erc20/star |
 | Polygon | EURS | 0xE111178A87A3BFf0c8d18DECBa5798827539Ae99 | STASIS EURS Token |  | polygon/erc20/stasis_eurs_token |
 | Polygon | SWD | 0xaeE24d5296444c007a532696aaDa9dE5cE6caFD0 | SW DAO via ChainPort |  | polygon/erc20/sw_dao_via_chainport |
+| Polygon | SWDTKN | 0x968B493a2B27D03Dad92B9eA1e2E8232a72c9C2C | SWORDSOFBLOOD |  | polygon/erc20/swordsofblood |
+| Polygon | SHA | 0x534F39c5f4DF9cB13E16B24cA07c7C8C0E2eadB7 | Safe Haven Token |  | polygon/erc20/safe_haven_token |
 | Polygon | SDO | 0x66C59Dded4EF01a3412a8B019B6e41D4a8C49A35 | SafeDollar.Fi Dollar 2.0 |  | polygon/erc20/safedollar.fi_dollar_2.0 |
 | Polygon | SDS | 0xAB72EE159Ff70b64beEcBbB0FbBE58b372391C54 | SafeDollar.Fi Share 2.0 |  | polygon/erc20/safedollar.fi_share_2.0 |
+| Polygon | SSGTX | 0xd0cfd20E8bBDb7621B705a4FD61de2E80C2cD02F | SafeSwap |  | polygon/erc20/safeswap |
+| Polygon | SAFLE | 0x04b33078Ea1aEf29bf3fB29c6aB7B200C58ea126 | Safle |  | polygon/erc20/safle |
+| Polygon | SPEPE | 0xfcA466F2fA8E667a517C9C6cfa99Cf985be5d9B1 | Saiyan PEPE |  | polygon/erc20/saiyan_pepe |
+| Polygon | QUARTZ | 0xA91FE5a535967F52D3abEBDFFb3B306D964ace13 | Sandclock |  | polygon/erc20/sandclock |
 | Polygon | SPN | 0xeAb9Cfb094db203e6035c2e7268A86DEbeD5BD14 | Sapien Network |  | polygon/erc20/sapien_network |
+| Polygon | SCA | 0x11a819Beb0AA3327E39f52F90d65Cc9bCA499F33 | ScaleSwapToken |  | polygon/erc20/scaleswaptoken |
+| Polygon | SEED | 0xEAeCC18198a475c921B24b8A6c1C1f0f5F3F7EA0 | Seed (PoS) |  | polygon/erc20/seed_pos |
 | Polygon | SGCN | 0xB72a9796dB06D52cC2f8797765561B612D6Db45A | Seguro Coin |  | polygon/erc20/seguro_coin |
 | Polygon | SKRT | 0xE51E88dD08499762B8e4EB3a9f3Da9b8e79608c3 | Sekuritance (PoS) |  | polygon/erc20/sekuritance_(pos) |
+| Polygon | SBAR | 0x6C526368e1185e4Cd8A50468Eb3429c5AeB674f3 | SelfBar |  | polygon/erc20/selfbar |
 | Polygon | SRM | 0x6Bf2eb299E51Fc5DF30Dec81D9445dDe70e3F185 | Serum |  | polygon/erc20/serum |
+| Polygon | SHACK | 0x6E65Ae5572DF196FAe40Be2545Ebc2A9A24eAcE9 | Shack Token |  | polygon/erc20/shack_token |
 | Polygon | ULT | 0xf0059CC2b3E980065A906940fbce5f9Db7ae40A7 | Shardus (PoS) |  | polygon/erc20/shardus_(pos) |
 | Polygon | SP | 0x23D2b1788D17B70ca6cc638ED75247836302b8c7 | ShibPlus Token |  | polygon/erc20/shibplus_token |
+| Polygon | SHIBAKEN | 0xa0cB0Ce7C6d93A7EBD72952Feb4407Dddee8a194 | ShibaKen.Finance |  | polygon/erc20/shibaken_finance |
+| Polygon | VERSE | 0xA1388e73c51B37383B1Ab9dCe8317eF5A0349CC5 | Shibaverse |  | polygon/erc20/shibaverse |
 | Polygon | SHIBPLUS_ | 0x2B72E322A29964A1172812021A0fd8D84DC26A5a | Shibplus Token (old) |  | polygon/erc20/shibplus_token_ |
 | Polygon | SPI | 0x068180071617528606371c31892EcBF2B70ac1d2 | Shopping.io |  | polygon/erc20/shopping.io |
+| Polygon | SWAVE | 0xD14D1e501b2b52D6134dB1aD0857Aa91f9BFe2dd | Shuts Wave |  | polygon/erc20/shuts_wave |
+| Polygon | EROWAN | 0xa7051C5a22d963b81D71C2BA64D46a877fBc1821 | SifChain (erowan) (PoS) |  | polygon/erc20/sifchain_erowan_pos |
+| Polygon | SIGN | 0xacbDc2b7a577299718309Ed5C4B703fb5ed7af90 | Signed |  | polygon/erc20/signed |
+| Polygon | SING | 0xCB898b0eFb084Df14dd8E018dA37B4d0f06aB26D | Sing Token |  | polygon/erc20/sing_token |
 | Polygon | AGIX | 0x190Eb8a183D22a4bdf278c6791b152228857c033 | SingularityNET Token |  | polygon/erc20/singularitynet_token |
+| Polygon | SKILL | 0x863D6074aFaF02D9D41A5f8Ea83278DF7089aA86 | Skill Token |  | polygon/erc20/skill_token |
+| Polygon | ISKY | 0x5DFD5edFde4d8EC9e632dCA9d09Fc7E833f74210 | Skyblocks |  | polygon/erc20/skyblocks |
 | Polygon | SDEX | 0x6899fAcE15c14348E1759371049ab64A3a06bFA6 | SmarDex Token |  | polygon/erc20/smardex_token |
+| Polygon | SML | 0xfCB54Da3F4193435184F3F647467e12b50754575 | Smell Token |  | polygon/erc20/smell_token |
+| Polygon | SNK | 0x689f8e5913C158fFB5Ac5aeb83b3C875F5d20309 | Snook |  | polygon/erc20/snook |
+| Polygon | SG | 0x79375C41d88F839f551457145066096C5C8944Bc | SocialGood (PoS) |  | polygon/erc20/socialgood_pos |
 | Polygon | SOIL | 0x43C73b90E0C2A355784dCf0Da12f477729b31e77 | Soil |  | polygon/erc20/soil |
+| Polygon | SOLX | 0x6D295DA283c4C0658EAfe608e4145e8a86777B88 | SolarX |  | polygon/erc20/solarx |
 | Polygon | SPACE | 0xB53Ec4aCe420a62Cfb75aFdEba600D284777cd65 | Space Token |  | polygon/erc20/space_token |
 | Polygon | SRAT | 0x1132f58810Ee9fF13E97aECCd8DDa688Cc5eb8F4 | SpaceRat |  | polygon/erc20/spacerat |
 | Polygon | SKOR | 0xeab490c06E17C1f652825dAb7E9C237ef272839E | Sphere | delisted | polygon/erc20/sphere |
 | Polygon | SPHERE | 0x62F594339830b90AE4C084aE7D223fFAFd9658A7 | Sphere Finance |  | polygon/erc20/sphere_finance |
 | Polygon | SPHERE | 0x17e9C5b37283ac5fBE527011CeC257b832f03eb3 | Sphere Finance | delisted | polygon/erc20/sphere_finance_ |
 | Polygon | SPHERE_ | 0x8D546026012bF75073d8A586f24A5d5ff75b9716 | Sphere Finance (Old) | delisted | polygon/erc20/sphere_finance__ |
+| Polygon | SPHRI | 0x2fD4D793c1905D82018d75e3b09d3035856890a1 | Spherium Token |  | polygon/erc20/spherium_token |
+| Polygon | SPICE | 0x66e8617d1Df7ab523a316a6c01D16Aa5beD93681 | Spice |  | polygon/erc20/spice |
+| Polygon | USDS | 0x2f1b1662A895C6Ba01a99DcAf56778E7d77e5609 | Spice USD |  | polygon/erc20/spice_usd |
 | Polygon | SPORT | 0x503836c8c3A453c57f58CC99B070F2E78Ec14fC0 | Sport |  | polygon/erc20/sport |
+| Polygon | SX | 0x840195888Db4D6A99ED9F73FcD3B225Bb3cB1A79 | SportX (PoS) |  | polygon/erc20/sportx_pos |
+| Polygon | RMATIC | 0x9f28e2455f9FFcFac9EBD6084853417362bc5dBb | StaFi rMATIC (PoS) |  | polygon/erc20/stafi_rmatic_pos |
 | Polygon | SROCKET | 0x94788309D420ad9f9f16d79fC13Ab74de83f85F7 | Stable One Rocket |  | polygon/erc20/stable_one_rocket |
 | Polygon | SFUSD | 0x93FEe753b548b4Cf93C41AdA062F80DE12710dB8 | StableFund USD |  | polygon/erc20/stablefund_usd |
+| Polygon | SCOMP | 0xd94A8f9caeD25E63eCc90EDfefAf3635eA1e182a | Stablecomp |  | polygon/erc20/stablecomp |
 | Polygon | STOS | 0x980111ae1B84E50222C8843e3A7a038F36Fecd2b | StackOS |  | polygon/erc20/stackos |
 | Polygon | STACKX | 0xcAE73e9EeE8a01b8B7F94b59133e3821F21470AB | Stacker Ventures Token |  | polygon/erc20/stacker_ventures_token |
 | Polygon | STACK | 0xccBe9B810d6574701d324fD6DbE0A1b68f9d5bf7 | Stacker Ventures Token (PoS) |  | polygon/erc20/stacker_ventures_token_(pos) |
+| Polygon | STSW | 0xFC77cC32e570bAeC16f69DDed556a35811b5A6ce | Stackswap |  | polygon/erc20/stackswap |
+| Polygon | SD | 0x1d734A02eF1e1f5886e66b0673b71Af5B53ffA94 | Stader (PoS) |  | polygon/erc20/stader_pos |
 | Polygon | SDT | 0x361A5a4993493cE00f61C32d4EcCA5512b82CE90 | Stake DAO Token (PoS) |  | polygon/erc20/stake_dao_token_(pos) |
 | Polygon | SSX | 0x9E2d266D6c90F6C0D80a88159b15958f7135B8Af | StakeShare | delisted | polygon/erc20/stakeshare |
 | Polygon | SWISE | 0xBbbe128568222623D21299f019a978C8587B33dC | StakeWise |  | polygon/erc20/stakewise |
 | Polygon | SABI | 0x925a785a347f4a03529b06C50fa1b9a10808CAb5 | Staked ABI |  | polygon/erc20/staked_abi |
 | Polygon | SDOM | 0xb521bF96Ad3800208d0958c8a3af5561a66f57Ec | Staked Dominium |  | polygon/erc20/staked_dominium |
+| Polygon | STERN | 0x281c4746c902A322B9A951F07893AC51a7221Acc | Staked ERN Vault |  | polygon/erc20/staked_ern_vault |
+| Polygon | SFRXETH | 0x6d1FdBB266fCc09A16a22016369210A15bb95761 | Staked Frax Ether |  | polygon/erc20/staked_frax_ether |
 | Polygon | STMATIC | 0x3A58a54C066FdC0f2D55FC9C89F0415C92eBf3C4 | Staked MATIC (PoS) |  | polygon/erc20/staked_matic_(pos) |
 | Polygon | STG | 0x2F6F07CDcf3588944Bf4C42aC74ff24bF56e7590 | StargateToken |  | polygon/erc20/stargatetoken |
+| Polygon | SRX | 0x21a77520d0a25EEDe18a34Ad4Bc7A769d785C6fF | Stars |  | polygon/erc20/stars |
+| Polygon | STS | 0xFc3559771Aa5a0666420f2365cF66139Fbf4B37F | Stasis |  | polygon/erc20/stasis |
 | Polygon | STBU | 0xcf403036bc139d30080D2Cf0F5b48066F98191bB | Stobox Token v2 |  | polygon/erc20/stobox_token_v2 |
 | Polygon | EARTH | 0x9E64282cc9921Cd64556aA1A58cc3872729e4f40 | Story Earth |  | polygon/erc20/story_earth |
 | Polygon | STREA | 0x3a9A81d576d83FF21f26f325066054540720fC34 | Streamr |  | polygon/erc20/streamr |
+| Polygon | STRIX | 0x1A70807F022CBD3aC5380a6A2af3524E56a6184D | Strix |  | polygon/erc20/strix |
+| Polygon | SNE | 0x32934CB16DA43fd661116468c1B225Fc26CF9A8c | StrongNodeEdge Token |  | polygon/erc20/strongnodeedge_token |
+| Polygon | ISHND | 0x9e6b19874e97fe8E8CAD77f2c0AB5E7a693E5dbf | Stronghands Finance |  | polygon/erc20/stronghands_finance |
 | Polygon | STC | 0x779b299eA455D35A44FE9baC48648be22C08DEa2 | Student Coin |  | polygon/erc20/student_coin |
+| Polygon | SFL | 0xD1f9c58e33933a993A3891F8acFe05a68E1afC05 | Sunflower Land |  | polygon/erc20/sunflower_land |
 | Polygon | AMDAIX | 0x133B0cB0F460406601FF060BE281E01e81b1B54c | Super Aave Matic Market DAI |  | polygon/erc20/super_aave_matic_market_dai |
 | Polygon | ACDCX | 0xc49c15350f001efEe91E154F03BdDF38CFD0d96e | Super Adept Camp Doge Coin |  | polygon/erc20/super_adept_camp_doge_coin |
 | Polygon | BPTX | 0x229c5D13452dc302499B5C113768A0db0c9D5c05 | Super BlackPool Token (PoS) |  | polygon/erc20/super_blackpool_token_(pos) |
@@ -13007,103 +13652,245 @@
 | Polygon | SUPER | 0xa1428174F516F527fafdD146b883bB4428682737 | SuperFarm (PoS) |  | polygon/erc20/superfarm_(pos) |
 | Polygon | MOCAX | 0x1ADcA32B906883e474aEbcBA5708B41F3645f941 | SuperMOCA |  | polygon/erc20/supermoca |
 | Polygon | WORKX | 0x61A7B6F0A7737d9bD38fdeaf1d4160E16bf23043 | SuperWork |  | polygon/erc20/superwork |
+| Polygon | BOARD | 0xD8513c22Dd61161ba3872859A6D10eB1612Df742 | SurfBoard |  | polygon/erc20/surfboard |
 | Polygon | SLP | 0x34965ba0ac2451A34a0471F04CCa3F990b8dea27 | SushiSwap LP Token |  | polygon/erc20/sushiswap_lp_token |
 | Polygon | SUSHI | 0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a | SushiToken (PoS) |  | polygon/erc20/sushitoken_(pos) |
+| Polygon | SMT | 0xE631DABeF60c37a37d70d3B4f812871df663226f | Swarm Markets |  | polygon/erc20/swarm_markets |
+| Polygon | SWASH | 0xbA3CB8329D442E6F9Eb70fafe1E214251df3D275 | Swash Token |  | polygon/erc20/swash_token |
 | Polygon | SWAY | 0x262B8AA7542004f023B0eB02bc6b96350A02b728 | Sway Social Protocol |  | polygon/erc20/sway_social_protocol |
 | Polygon | SXP | 0x6aBB753C1893194DE4a83c6e8B4EadFc105Fd5f5 | Swipe |  | polygon/erc20/swipe |
 | Polygon | CHSB | 0x67Ce67ec4fCd4aCa0Fcb738dD080b2a21ff69D75 | SwissBorg |  | polygon/erc20/swissborg |
 | Polygon | SWCH | 0x3ce1327867077B551ae9A6987bF10C9fd08edCE1 | SwissCheese Token |  | polygon/erc20/swisscheese_token |
+| Polygon | SYN | 0xf8F9efC0db77d8881500bb06FF5D6ABc3070E695 | Synapse |  | polygon/erc20/synapse |
+| Polygon | SNP | 0x6911F552842236bd9E8ea8DDBB3fb414e2C5FA9d | Synapse Network |  | polygon/erc20/synapse_network |
+| Polygon | SNG | 0xAD9F61563B104281b14322FEc8b42Eb67711Bf68 | Synergy Land Token |  | polygon/erc20/synergy_land_token |
 | Polygon | SUSD | 0xF81b4Bec6Ca8f9fe7bE01CA734F55B2b6e03A7a0 | Synth sUSD |  | polygon/erc20/synth_susd |
 | Polygon | SNX | 0x50B728D8D964fd00C2d0AAD81718b71311feF68a | Synthetix Network Token (PoS) |  | polygon/erc20/synthetix_network_token_(pos) |
+| Polygon | TCGC | 0x44ACD96620B708162af4A90524F29A6839675533 | TCGCoin (PoS) |  | polygon/erc20/tcgcoin_pos |
 | Polygon | TDL | 0xCD1F2F1a1d1ba631A06b957DB77BB9D7b13bF861 | TDL Fake Token |  | polygon/erc20/tdl_fake_token |
 | Polygon | TDLX | 0xA794221D92d77490Ff319e95dA1461bdF2bd3953 | TDLx |  | polygon/erc20/tdlx |
 | Polygon | TETU | 0x255707B70BF90aa112006E1b07B9AeA6De021424 | TETU Reward Token |  | polygon/erc20/tetu_reward_token |
+| Polygon | TETUBAL | 0x7fC9E0Aa043787BFad28e29632AdA302C790Ce33 | TETU_ST_BAL |  | polygon/erc20/tetu_st_bal |
+| Polygon | TETUQI | 0x4Cd44ced63d9a6FEF595f6AD3F7CED13fCEAc768 | TETU_ST_QI |  | polygon/erc20/tetu_st_qi |
+| Polygon | THX | 0x2934b36ca9A4B31E633C5BE670C8C8b28b6aA015 | THX Network (PoS) |  | polygon/erc20/thx_network_pos |
+| Polygon | TMNG | 0xE57594F829b3d514EE12C41e81DF3861B19c26e3 | TMN Global Wrapper |  | polygon/erc20/tmn_global_wrapper |
+| Polygon | TOMB | 0x0e98C977B943f06075b2D795794238fBfB9b9a34 | TOMB |  | polygon/erc20/tomb |
+| Polygon | TORG | 0xe9993763E0B7f7d915A62A5f22A6E151F91d98A8 | TORG (PoS) |  | polygon/erc20/torg_pos |
 | Polygon | TORN | 0x23fE1Ee2f536427B7e8aC02FB037A7f867037Fe8 | TORN Token |  | polygon/erc20/torn_token |
+| Polygon | TOTEM | 0x1aDCef5c780d8895AC77E6Ee9239B4b3eCb76DA2 | TOTEM |  | polygon/erc20/totem |
 | Polygon | TOWER | 0x2bC07124D8dAc638E290f401046Ad584546BC47b | TOWER |  | polygon/erc20/tower |
+| Polygon | TPRO | 0xD24157Aa1097486DC9d7Cf094A7e15026E566b5D | TPRO |  | polygon/erc20/tpro |
+| Polygon | TRIM | 0xA0EAD927e6C31646cF1D4cc721705c415E515bD4 | TRIMBEX |  | polygon/erc20/trimbex |
+| Polygon | TSUGT | 0x70e29b7E036B14D496431b77e0B6EB0008be6165 | TSUBASA Governance Token |  | polygon/erc20/tsubasa_governance_token |
+| Polygon | TSUBASAUT | 0x5A7BB7B8EFF493625A2bB855445911e63A490E42 | TSUBASA Utility Token |  | polygon/erc20/tsubasa_utility_token |
+| Polygon | TAKI | 0xe78aeE6CCb05471a69677fB74da80F5d251c042B | TakiToken |  | polygon/erc20/takitoken |
 | Polygon | TNGBL | 0x49e6A20f1BBdfEeC2a8222E052000BbB14EE6007 | Tangible |  | polygon/erc20/tangible |
 | Polygon | TAP | 0x10635bF5c17F5E4c0Ed9012aEf7C12f96a57a4Dd | Tapmydata |  | polygon/erc20/tapmydata |
+| Polygon | TAROT | 0xb092e1BF50f518b3Ebf7eD26A40015183aE36AC2 | Tarot |  | polygon/erc20/tarot |
 | Polygon | TAT2 | 0x2596A8B90D39EB89d5668ca5B6deE54E9ae3d4C0 | TattooMoney |  | polygon/erc20/tattoomoney |
+| Polygon | TT | 0x17a011150e9Feb7bEc4CfAda055c8Df436EB730B | Tdex Token |  | polygon/erc20/tdex_token |
 | Polygon | TEL | 0xdF7837DE1F2Fa4631D716CF2502f8b230F1dcc32 | Telcoin |  | polygon/erc20/telcoin |
 | Polygon | TRB | 0xE3322702BEdaaEd36CdDAb233360B939775ae5f1 | Tellor Tributes |  | polygon/erc20/tellor_tributes |
+| Polygon | THALES | 0x692C44990E4F408ba0917f5c78A83160c1557237 | Thales DAO Token (PoS) |  | polygon/erc20/thales_dao_token_pos |
+| Polygon | FOUR | 0x48cBc913dE09317dF2365e6827Df50dA083701D5 | The 4th Pillar Token (PoS) |  | polygon/erc20/the_4th_pillar_token_pos |
+| Polygon | DOG | 0xeEe3371B89FC43Ea970E908536Fcddd975135D8a | The Doge NFT |  | polygon/erc20/the_doge_nft |
 | Polygon | WORK | 0x6002410dDA2Fb88b4D0dc3c1D562F7761191eA80 | The Employment Commons Work Token (PoS) |  | polygon/erc20/the_employment_commons_work_token_(pos) |
 | Polygon | SPORK | 0x9CA6a77C8B38159fd2dA9Bd25bc3E259C33F5E39 | The SporkDAO Token (PoS) |  | polygon/erc20/the_sporkdao_token_(pos) |
+| Polygon | SOULS | 0xefCFEce12A99d1DbBf6F3264ee97F8C045e97F1f | The Unfettered Souls |  | polygon/erc20/the_unfettered_souls |
 | Polygon | THETA | 0xB46E0ae620EFd98516f49bb00263317096C114b2 | Theta Token (PoS) | delisted | polygon/erc20/theta_token_(pos) |
 | Polygon | THIX | 0xD1179e3117Edfdcb0F826D4287Cc8444C5C8Fb4D | ThingsIX |  | polygon/erc20/thingsix |
+| Polygon | TNDR | 0x29E3E6AD4EEAdF767919099Ee23c907946435a70 | Thunder Token |  | polygon/erc20/thunder_token |
 | Polygon | TIDAL | 0xac311fA85E8645bB1DB53ECc04Fa8d41997FACF8 | Tidal Token |  | polygon/erc20/tidal_token |
+| Polygon | TIME | 0x5c59D7Cb794471a9633391c4927ADe06B8787a90 | Time Token |  | polygon/erc20/time_token |
 | Polygon | TI | 0xd0ecD879dC1403697D341c9Db1db51075D2adC69 | Titanium |  | polygon/erc20/titanium |
+| Polygon | TXL | 0x8eEF5a82E6Aa222a60F009ac18c24EE12dBf4b41 | Tixl Token |  | polygon/erc20/tixl_token |
+| Polygon | HITT | 0x00a0d4f2fE50e023AEC0648271cE1a6616c702E2 | TokHit |  | polygon/erc20/tokhit |
 | Polygon | TM20 | 0xf18724502bdB0E6B7154F841F9c3120912b02A5E | Tomorrow Crowdinvesting 2.0 |  | polygon/erc20/tomorrow_crowdinvesting_2.0 |
+| Polygon | BCT | 0x2F800Db0fdb5223b3C3f354886d907A671414A7F | Toucan Protocol: Base Carbon Tonne |  | polygon/erc20/toucan_protocol_base_carbon_tonne |
+| Polygon | TRACE | 0x4287F07CBE6954f9F0DecD91d0705C926d8d03A4 | Trace Network |  | polygon/erc20/trace_network |
 | Polygon | TLF | 0x0F8Db146eC1288FC35C05e3b78c2F27d3fA7c4a5 | Tradeleaf Token |  | polygon/erc20/tradeleaf_token |
+| Polygon | TNT | 0x25C498781cA536547B147e2199f572E5393D36f0 | Travel and Tourism token |  | polygon/erc20/travel_and_tourism_token |
+| Polygon | FXTRUMATIC | 0xC1381c17d29A22dF5c3015C3D83ebd90AbD0e6b3 | TruStake MATIC Vault Shares (FXERC20) |  | polygon/erc20/trustake_matic_vault_shares_fxerc20 |
 | Polygon | TUSD | 0x2e1AD108fF1D8C782fcBbB89AAd783aC49586756 | TrueUSD |  | polygon/erc20/trueusd |
+| Polygon | SWAP | 0x3809dcDd5dDe24B37AbE64A5a339784c3323c44F | TrustSwap Token (PoS) |  | polygon/erc20/trustswap_token_pos |
+| Polygon | TRY | 0xEFeE2de82343BE622Dcb4E545f75a3b9f50c272D | TryHards |  | polygon/erc20/tryhards |
 | Polygon | W | 0x52fc543Bd23D1948F11eb265eAbDEfBbB0131572 | Tungsten |  | polygon/erc20/tungsten |
 | Polygon | TUT | 0x12a34A6759c871C4C1E8A0A42CFc97e4D7Aaf68d | Tutellus token | delisted | polygon/erc20/tutellus_token |
+| Polygon | UCF | 0x315B16BFc91BD6c5d9054f961938b924c7dA4964 | UC Finance |  | polygon/erc20/uc_finance |
 | Polygon | UMA | 0x3066818837c5e6eD6601bd5a91B0762877A6B731 | UMA Voting Token v1 |  | polygon/erc20/uma_voting_token_v1 |
+| Polygon | UMMA | 0x36596A1dC57c695Bed1A063470a7802797Dca133 | UMMA Token |  | polygon/erc20/umma_token |
+| Polygon | UNIC | 0x21CE5251d47AA72d2d1dc849b1Bcce14d2467D1b | UNIC |  | polygon/erc20/unic |
+| Polygon | UFARM | 0xA7305Ae84519fF8Be02484CdA45834C4E7D13Dd6 | UNIFARM Token (PoS) |  | polygon/erc20/unifarm_token_pos |
 | Polygon | IFUND | 0x4ba47B10EA8f544F8969BA61dF3E5bE67692a122 | UNIFUND |  | polygon/erc20/unifund |
 | Polygon | USDC | 0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359 | USD Coin |  | polygon/erc20/usd_coin |
 | Polygon | USDC | 0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174 | USD Coin (PoS) |  | polygon/erc20/usd_coin_(pos) |
 | Polygon | USDPL | 0x236eeC6359fb44CCe8f97E99387aa7F8cd5cdE1f | USD Plus |  | polygon/erc20/usd_plus |
+| Polygon | SCB | 0x72C96C73207936E94066b4C8566C6987c9a1f1dE | USD Stablecolb |  | polygon/erc20/usd_stablecolb |
+| Polygon | USDOT | 0x2F5DE51823E514De04475ba8Db1eEBA5B244ba84 | USD Token |  | polygon/erc20/usd_token |
 | Polygon | USDK | 0xD07A7FAc2857901E4bEC0D89bBDAe764723AAB86 | USDK |  | polygon/erc20/usdk |
+| Polygon | USDV | 0x323665443CEf804A3b5206103304BD4872EA4253 | USDV |  | polygon/erc20/usdv |
+| Polygon | UZX | 0xB3BeC36E9FB41c88B0F0433A3e5F16Cf0DD7e0A3 | UZXCoin |  | polygon/erc20/uzxcoin |
+| Polygon | ULX | 0xfA5d5DD2517EE9C1419534a16B132adDe2e3d948 | Ultron |  | polygon/erc20/ultron |
 | Polygon | ERSDL | 0x5095cC6511B70e287bc525Aa57AfbC60EB73ac47 | UnFederalReserveToken |  | polygon/erc20/unfederalreservetoken |
+| Polygon | UN | 0x754E15f1243F4B8bd319eB760774388A22B049e5 | Unbound |  | polygon/erc20/unbound |
 | Polygon | UBT | 0x7FBc10850caE055B27039aF31bD258430e714c62 | UniBright |  | polygon/erc20/unibright |
+| Polygon | UFT | 0x5B4CF2C120A9702225814E18543ee658c5f8631e | UniLend Finance Token (PoS) |  | polygon/erc20/unilend_finance_token_pos |
+| Polygon | POWER | 0x00D5149cDF7CEC8725bf50073c51c4fa58eCCa12 | UniPower (PoS) |  | polygon/erc20/unipower_pos |
+| Polygon | UNIX | 0x8C4476DFEC8e7EEdf2DE3e9E9461B7c14C828d46 | UniX Gaming (PoS) |  | polygon/erc20/unix_gaming_pos |
+| Polygon | UNIM | 0x64060aB139Feaae7f06Ca4E63189D86aDEb51691 | Unicorn Milk |  | polygon/erc20/unicorn_milk |
 | Polygon | UCO | 0x3C720206bFaCB2d16fA3ac0ed87D2048Dbc401Fc | UnirisToken (PoS) |  | polygon/erc20/uniristoken_(pos) |
 | Polygon | UNI | 0xb33EaAd8d922B1083446DC23f610c2567fB5180f | Uniswap (PoS) |  | polygon/erc20/uniswap_(pos) |
 | Polygon | UNIWEWM | 0xadbF1854e5883eB8aa7BAf50705338739e558E5b | Uniswap V2 | delisted | polygon/erc20/uniswap_v2 |
 | Polygon | UNIWEUSDC | 0x853Ee4b2A13f8a742d64C8F088bE7bA2131f670d | Uniswap V2 | delisted | polygon/erc20/uniswap_v2_ |
 | Polygon | UNIWMUSDC | 0x6e7a5FAFcec6BB1e78bAE2A1F0B612012BF14827 | Uniswap V2 | delisted | polygon/erc20/uniswap_v2__ |
 | Polygon | UNIWMUSDT | 0x604229c960e5CACF2aaEAc8Be68Ac07BA9dF81c3 | Uniswap V2 | delisted | polygon/erc20/uniswap_v2___ |
+| Polygon | USV | 0xAC63686230f64BDEAF086Fe6764085453ab3023F | Universal Store of Value |  | polygon/erc20/universal_store_of_value |
+| Polygon | UNLOCK | 0x930A7Dc10ae084FBbddC6537D7df7d4c65a40944 | Unlock Token |  | polygon/erc20/unlock_token |
+| Polygon | UNV | 0x64Ee4f41A15D6c431AB6607d4e95462169d50f6C | Unvest |  | polygon/erc20/unvest |
 | Polygon | UPO | 0x9dBfc1cbf7a1E711503a29B4b5F9130ebeCcaC96 | UpOnly |  | polygon/erc20/uponly |
 | Polygon | VANRY | 0x8DE5B80a0C1B02Fe4976851D030B36122dbb8624 | VANRY |  | polygon/erc20/vanry |
+| Polygon | VENT | 0xf21441F9ec4c1FE69CB7CF186ECEAb31Af2b658d | VENT [via ChainPort.io] |  | polygon/erc20/vent_via_chainport_io |
+| Polygon | VEUR | 0xE4095d9372E68d108225c306A4491cacfB33B097 | VNX Euro |  | polygon/erc20/vnx_euro |
+| Polygon | VCHF | 0xCdB3867935247049e87c38eA270edD305D84c9AE | VNX Franc |  | polygon/erc20/vnx_franc |
+| Polygon | VNXAU | 0xC8bB8eDa94931cA2F20EF43eA7dBD58E68400400 | VNX Gold |  | polygon/erc20/vnx_gold |
 | Polygon | VOXEL | 0xd0258a3fD00f38aa8090dfee343f10A9D4d30D3F | VOXEL Token |  | polygon/erc20/voxel_token |
+| Polygon | VSC | 0xcDf937995A55a9AB551D81b463AC0f7F02795368 | VSC |  | polygon/erc20/vsc |
+| Polygon | VAB | 0xed28B1890fBB4aA9ded528c1034fED278ff68f5d | Vabble |  | polygon/erc20/vabble |
+| Polygon | VATRENI | 0xD60DebA014459F07BBcC077a5B817f31DaFD5229 | Vatreni Token |  | polygon/erc20/vatreni_token |
+| Polygon | VHC | 0x51b5619F5180e333d18b6310C8D540AEa43a0371 | Vault Hill City (PoS) |  | polygon/erc20/vault_hill_city_pos |
 | Polygon | VEXT | 0x27842334C55c01DDFE81Bf687425F906816c5141 | Veloce |  | polygon/erc20/veloce |
+| Polygon | VERSA | 0x8497842420cFdbc97896C2353D75d89Fc8D5Be5D | VersaGames |  | polygon/erc20/versagames |
+| Polygon | FXVERSE | 0xc708D6F2153933DAA50B2D0758955Be0A93A8FEc | Verse (VERSE) |  | polygon/erc20/verse_verse |
+| Polygon | VVT | 0xd192BAc61522E0Bc13543528173E69c44472c93a | VersoView |  | polygon/erc20/versoview |
 | Polygon | VSP | 0x09C5a4BCA808bD1ba2b8E6B3aAF7442046B4ca5B | VesperToken |  | polygon/erc20/vespertoken |
+| Polygon | VCNT | 0x8a16D4bF8A0a716017e8D2262c4aC32927797a2F | ViciCoin |  | polygon/erc20/vicicoin |
 | Polygon | VIS | 0xcC1B9517460D8aE86fe576f614d091fCa65a28Fc | Vigorus |  | polygon/erc20/vigorus |
+| Polygon | FXVRSW | 0x57999936fC9A9EC0751a8D146CcE11901Be8beD0 | Virtuswap Token (FXERC20) |  | polygon/erc20/virtuswap_token_fxerc20 |
+| Polygon | VISION | 0x034b2090b579228482520c589dbD397c53Fc51cC | Vision Token (PoS) |  | polygon/erc20/vision_token_pos |
+| Polygon | VINU | 0xAFCdd4f666c84Fed1d8BD825aA762e3714F652c9 | Vita Inu |  | polygon/erc20/vita_inu |
+| Polygon | VTC | 0x7d24903B4c4c81456cf9Bf66b73CE95Dc6914950 | VitnixX |  | polygon/erc20/vitnixx |
 | Polygon | VOLT | 0xF16EC50EC49aBc95FA793C7871682833B6bC47E7 | Volt Inu |  | polygon/erc20/volt_inu |
+| Polygon | VP | 0xf46CB10e8c5FB9368bbF497A3176b80c0AF66d44 | Vortex Protocol |  | polygon/erc20/vortex_protocol |
 | Polygon | VLPEN | 0x55CA76E0341ccD35c2E3F34CbF767C6102aea70f | Vote Locked PEN |  | polygon/erc20/vote_locked_pen |
+| Polygon | VOY | 0x823BBb870b0eB86bd7Ec0BCC98c84b46a0f99ac7 | Voy Token |  | polygon/erc20/voy_token |
 | Polygon | VGX | 0x054c42b6414747F5263b4A86f21B1aFAD00326Bf | Voyager |  | polygon/erc20/voyager |
+| Polygon | FXWEN | 0x11A88F949C0592238959142653bB6847c6523D81 | WEN Token (FXERC20) |  | polygon/erc20/wen_token_fxerc20 |
 | Polygon | WERX | 0x9b2CFE1608250BEA375c6199b474B402BaD920da | WERX |  | polygon/erc20/werx |
+| Polygon | WFDP | 0xb541a306DD240EF04Fb5E7e0Db9a3C6CB7DdBb07 | WFDP Coin |  | polygon/erc20/wfdp_coin |
+| Polygon | WHALE | 0xb9585ec9d4C97Ad9DEd7250Bb9a199fe8eED0ECA | WHALE (PoS) |  | polygon/erc20/whale_pos |
+| Polygon | WOW | 0x855D4248672a1fCE482165e8DBE1207b94b1968a | WOWswap |  | polygon/erc20/wowswap |
+| Polygon | WAGMI | 0x07Ed33a242BD9C08CA3C198e01189e35265024Da | Wagmi |  | polygon/erc20/wagmi |
+| Polygon | WSG | 0x3C1BB39bb696B443a1D80BB2b3a3d950Ba9DEE87 | Wall Street Games |  | polygon/erc20/wall_street_games |
+| Polygon | WNOW | 0x5d5530eb3147152FE78d5C4bFEeDe054c8d1442A | WalletNow |  | polygon/erc20/walletnow |
+| Polygon | WAR | 0x95093f8348c6678dF4812c008248D88cad344069 | WarLegends |  | polygon/erc20/warlegends |
 | Polygon | WARPBEAM | 0x5d705f967E40300fd54Eb1a7A278b761039Da993 | WarpBeam |  | polygon/erc20/warpbeam |
 | Polygon | WEXPOLY | 0x4c4BF319237D98a30A929A96112EfFa8DA3510EB | WaultSwap Polygon |  | polygon/erc20/waultswap_polygon |
+| Polygon | WRX | 0x72d6066F486bd0052eefB9114B66ae40e0A6031a | Wazirx (PoS) |  | polygon/erc20/wazirx_pos |
+| Polygon | WEFI | 0xfFA188493C15DfAf2C206c97D8633377847b6a52 | WeFi |  | polygon/erc20/wefi |
 | Polygon | WPR | 0xCBAb27B2D5b468Eea509Bd430100922341BC3f1A | WePower |  | polygon/erc20/wepower |
+| Polygon | WBS | 0x00147F54f9a32608D0E0548A99FC8c7E594BCbFC | WebSea |  | polygon/erc20/websea |
+| Polygon | WET | 0x632B8c4e95B2F8A9309417f8D990ab9C04c77369 | Weble Ecosystem Token |  | polygon/erc20/weble_ecosystem_token |
 | Polygon | WELT | 0xBc95d3BB681A4dfc0c60A9D08ca67301b5764225 | Welthee |  | polygon/erc20/welthee |
 | Polygon | WIFI | 0xE238Ecb42C424E877652AD82d8A939183A04C35f | WiFi Map |  | polygon/erc20/wifi_map |
+| Polygon | WNT | 0x82a0E6c02b91eC9f6ff943C0A933c03dBaa19689 | Wicrypt Network Token |  | polygon/erc20/wicrypt_network_token |
+| Polygon | WINS | 0x1A49E59aB7101D6a66D6B2Fa6d09932079cC80EC | WinsToken |  | polygon/erc20/winstoken |
+| Polygon | WISTA | 0xB7042C40De76CFc607aC05e68F9C28A778F0C8a6 | Wistaverse |  | polygon/erc20/wistaverse |
 | Polygon | WWD | 0xD3144fF5F388D36C0A445686C08540296D8B209b | Wolf Works DAO |  | polygon/erc20/wolf_works_dao |
+| Polygon | WSPP | 0x46D502Fac9aEA7c5bC7B13C8Ec9D02378C33D36F | WolfSafePoorPeople |  | polygon/erc20/wolfsafepoorpeople |
 | Polygon | WOMBAT | 0x0C9c7712C83B3C70e7c5E11100D33D9401BdF9dd | Wombat | delisted | polygon/erc20/wombat |
 | Polygon | WOOFY | 0xfce22AD802Bbc9FE74534575b166D06198bD66ea | Woofy |  | polygon/erc20/woofy |
 | Polygon | WOO | 0x1B815d120B3eF02039Ee11dC2d33DE7aA4a8C603 | Wootrade Network |  | polygon/erc20/wootrade_network |
+| Polygon | W$C | 0x77A6f2e9A9E44fd5D5C3F9bE9E52831fC1C3C0A0 | World$tateCoin |  | polygon/erc20/world_tatecoin |
+| Polygon | WAVAX | 0x7Bb11E7f8b10E9e571E5d8Eace04735fDFB2358a | Wrapped AVAX (Wormhole) |  | polygon/erc20/wrapped_avax_wormhole |
+| Polygon | WBNB | 0xeCDCB5B88F8e3C15f95c720C51c71c9E2080525d | Wrapped BNB (Wormhole) |  | polygon/erc20/wrapped_bnb_wormhole |
 | Polygon | WBAN | 0xe20B9e246db5a0d21BF9209E4858Bc9A3ff7A034 | Wrapped Banano |  | polygon/erc20/wrapped_banano |
+| Polygon | WCHI | 0xE79feAAA457ad7899357E8E2065a3267aC9eE601 | Wrapped CHI (PoS) |  | polygon/erc20/wrapped_chi_pos |
 | Polygon | WCELO | 0xc30DD0cCE2e683aA68c87C280e73beB3DEc9B3BA | Wrapped Celo |  | polygon/erc20/wrapped_celo |
 | Polygon | WETH | 0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619 | Wrapped Ether |  | polygon/erc20/wrapped_ether |
 | Polygon | WETH | 0x11CD37bb86F65419713f30673A480EA33c826872 | Wrapped Ether (Wormhole) |  | polygon/erc20/wrapped_ether_(wormhole) |
+| Polygon | WFRK | 0x01d1a890D40d890d59795aFCce22F5AdbB511A3a | Wrapped FRK |  | polygon/erc20/wrapped_frk |
 | Polygon | WFIL | 0xEde1B77C0Ccc45BFa949636757cd2cA7eF30137F | Wrapped Filecoin (PoS) |  | polygon/erc20/wrapped_filecoin_(pos) |
 | Polygon | WGHOST | 0xb5e0CFe1B4dB501aC003B740665bf43192cC7853 | Wrapped Ghost |  | polygon/erc20/wrapped_ghost |
 | Polygon | WIXS | 0x1BA17C639BdaeCd8DC4AAc37df062d17ee43a1b8 | Wrapped Ixs Token |  | polygon/erc20/wrapped_ixs_token |
 | Polygon | WMATIC | 0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270 | Wrapped Matic |  | polygon/erc20/wrapped_matic |
+| Polygon | WUSDM | 0x57F5E098CaD7A3D1Eed53991D4d66C45C9AF7812 | Wrapped Mountain Protocol USD |  | polygon/erc20/wrapped_mountain_protocol_usd |
+| Polygon | PPRCY | 0xdFC3829b127761a3218bFceE7fc92e1232c9D116 | Wrapped PRCY |  | polygon/erc20/wrapped_prcy |
 | Polygon | SOL | 0xd93f7E271cB87c23AaA73edC008A79646d1F9912 | Wrapped SOL (Wormhole) |  | polygon/erc20/wrapped_sol_(wormhole) |
+| Polygon | WSTA | 0xf629712180bEF6F4c569B704e03d0AcbE276Eb6d | Wrapped STA (PoS) |  | polygon/erc20/wrapped_sta_pos |
+| Polygon | WTPOKT | 0x301595f6fd5f69faD7a488DaCB8971e7c0C2f559 | Wrapped ThunderPOKT |  | polygon/erc20/wrapped_thunderpokt |
 | Polygon | WUSDR | 0x00e8c0E92eB3Ad88189E7125Ec8825eDc03Ab265 | Wrapped USDR |  | polygon/erc20/wrapped_usdr |
 | Polygon | UST | 0x692597b009d13C4049a947CAB2239b7d6517875F | Wrapped UST Token |  | polygon/erc20/wrapped_ust_token |
 | Polygon | WSTETH | 0x03b54A6e9a984069379fae1a4fC4dBAE93B3bCCD | Wrapped liquid staked Ether 2.0 (PoS) |  | polygon/erc20/wrapped_liquid_staked_ether_2.0_(pos) |
+| Polygon | XBBC | 0x0395E3178305E64Ff9e8d942Eb3A470B5D88FAe8 | XBBC |  | polygon/erc20/xbbc |
+| Polygon | XCAD | 0xA55870278d6389ec5B524553D03C04F5677c061E | XCAD Token (PoS) |  | polygon/erc20/xcad_token_pos |
+| Polygon | XDAO | 0x71eebA415A523F5C952Cc2f06361D5443545Ad28 | XDAO |  | polygon/erc20/xdao |
 | Polygon | MXEN | 0x2AB0e9e4eE70FFf1fB9D67031E44F6410170d00e | XEN Crypto |  | polygon/erc20/xen_crypto |
+| Polygon | XEND | 0x86775d0B80B3df266AF5377dB34Ba8f318d715ec | XEND |  | polygon/erc20/xend |
+| Polygon | XIDR | 0x2c826035c1C36986117A0e949bD6ad4baB54afE2 | XIDR |  | polygon/erc20/xidr |
 | Polygon | XNET | 0xbC5EB84C052FD012bb902C258C9fD241b17C0005 | XNET Mobile |  | polygon/erc20/xnet_mobile |
 | Polygon | XSGD | 0xDC3326e71D45186F113a2F448984CA0e8D201995 | XSGD |  | polygon/erc20/xsgd |
+| Polygon | XUSD | 0x81eE105457C4EafC061B8C8FeDC7BB45d22286d2 | XUSD |  | polygon/erc20/xusd |
 | Polygon | XYO | 0xd2507e7b5794179380673870d88B22F94da6abe0 | XY Oracle |  | polygon/erc20/xy_oracle |
+| Polygon | XY | 0x55555555A687343C6Ce28C8E1F6641dc71659fAd | XY Token |  | polygon/erc20/xy_token |
+| Polygon | XGTV3 | 0x9EB8A789Ed1Bd38D281962b523349d5D17A37d47 | Xion Global Token |  | polygon/erc20/xion_global_token |
 | Polygon | XPND | 0x03f61137BFb86be07394f0FD07a33984020F96D8 | XpndToken | delisted | polygon/erc20/xpndtoken |
+| Polygon | YAMP | 0x87f654c4b347230C60CAD8d7ea9cF0D7238bcc79 | YAMP.FINANCE |  | polygon/erc20/yamp_finance |
+| Polygon | YEL | 0xD3b71117E6C1558c1553305b44988cd944e97300 | YEL Token |  | polygon/erc20/yel_token |
 | Polygon | YOP | 0x103308793661879166464cD0d0370Ac3b8A2A1cB | YOP |  | polygon/erc20/yop |
+| Polygon | YVS | 0xb565CF70613ca464D68427106af80C67a8e4b801 | YVS.Finance (PoS) |  | polygon/erc20/yvs_finance_pos |
+| Polygon | DUCKIES | 0x18e73A5333984549484348A94f4D219f4faB7b81 | Yellow Duckies |  | polygon/erc20/yellow_duckies |
+| Polygon | YF-DAI | 0x7E7fF932FAb08A0af569f93Ce65e7b8b23698Ad8 | YfDAI.finance (PoS) |  | polygon/erc20/yfdai_finance_pos |
+| Polygon | YLD | 0x4CEBdBCB286101A17D3eA1f7fe7bbDeD2B2053dd | Yield (PoS) |  | polygon/erc20/yield_pos |
+| Polygon | YGG | 0x82617aA52dddf5Ed9Bb7B370ED777b3182A30fd1 | Yield Guild Games Token (PoS) |  | polygon/erc20/yield_guild_games_token_pos |
 | Polygon | YOUNIVERSE | 0xa02f99E9Fc820BC7942ddEb40ABE10ef420E0dA8 | Youniverse Younit |  | polygon/erc20/youniverse_younit |
+| Polygon | YUP | 0x086373fad3447F7F86252fb59d56107e9E0FaaFa | Yup |  | polygon/erc20/yup |
+| Polygon | ZED | 0x5eC03C1f7fA7FF05EC476d19e34A22eDDb48ACdc | ZED RUN |  | polygon/erc20/zed_run |
+| Polygon | ZLW | 0xb5B8381B67248F832c7961bd265f021CD8D291A4 | ZELWIN |  | polygon/erc20/zelwin |
 | Polygon | PZCX | 0xDD75542611D57C4b6e68168B14C3591C539022eD | ZEN Exchange Token |  | polygon/erc20/zen_exchange_token |
+| Polygon | FXZENF | 0x3A79241a92a4F06952107308057da1991792D372 | ZENF Token (FXERC20) |  | polygon/erc20/zenf_token_fxerc20 |
+| Polygon | ZEXI | 0x0C93709C4389b6eeBdB0a4d3d60092Bb61446382 | ZEXICON |  | polygon/erc20/zexicon |
+| Polygon | ZIZY | 0xAf3CbaeBA9fe7A7d4E7531F1B2553972FD1c4E9c | ZIZY |  | polygon/erc20/zizy |
+| Polygon | ZOLT | 0xd6a5c5ADc3905b354b8D945D9D73142F54254989 | ZOLT |  | polygon/erc20/zolt |
+| Polygon | ZRO | 0x6AcdA5E7EB1117733DC7Cb6158fc67f226b32022 | ZROToken |  | polygon/erc20/zrotoken |
 | Polygon | ZRX | 0x5559Edb74751A0edE9DeA4DC23aeE72cCA6bE3D5 | ZRX |  | polygon/erc20/zrx |
+| Polygon | ZRF | 0x232804231dE32551F13A57Aa3984900428aDf990 | ZURF |  | polygon/erc20/zurf |
+| Polygon | ZEEM | 0x4cA7BF91E4384D7C7a48eD4C04B555f350eB6719 | Zeemcoin |  | polygon/erc20/zeemcoin |
+| Polygon | ZEE | 0xfd4959c06FbCc02250952DAEbf8e0Fb38cF9FD8C | ZeroSwapToken |  | polygon/erc20/zeroswaptoken |
 | Polygon | ZI | 0xc145718228438a045d76d11248fb779e4d23f942 | Zicoin | delisted | polygon/erc20/zicoin |
+| Polygon | ZIG | 0x7BeBd226154E865954A87650FAefA8F485d36081 | ZigCoin |  | polygon/erc20/zigcoin |
+| Polygon | ZIV4 | 0xE003632D97edD30F87c45B2820fC741AF55b2FCD | Ziv4 Labs |  | polygon/erc20/ziv4_labs |
 | Polygon | ZINU | 0x21F9B5b2626603e3F40bfc13d01AfB8c431D382F | Zombie Inu |  | polygon/erc20/zombie_inu |
+| Polygon | ZPT | 0xE09473eD3C1D317D3601290AE7bC511d7E16e62f | Zpunk |  | polygon/erc20/zpunk |
+| Polygon | AUSDC | 0xA48aD8b964BBf2C420e964B648146567ceB6d5E1 | aUSDC |  | polygon/erc20/ausdc |
 | Polygon | AUSDC_WETH | 0x3Cc20A6795c4b57d9817399F68E83e71C8626580 | aUSDC_WETH |  | polygon/erc20/ausdc_weth |
+| Polygon | ACM | 0x1BD9ABF284e893705104E64B564B414620b722F1 | acmFinance |  | polygon/erc20/acmfinance |
 | Polygon | AGEUR | 0xE0B52e49357Fd4DAf2c15e02058DCE6BC0057db4 | agEUR |  | polygon/erc20/ageur |
 | Polygon | AWMATIC_USDC | 0x04d521E2c414E6d898c6F2599FdD863Edf49e247 | awMATIC_USDC |  | polygon/erc20/awmatic_usdc |
 | Polygon | AWMATIC_WETH | 0x02203f2351E7aC6aB5051205172D3f772db7D814 | awMATIC_WETH |  | polygon/erc20/awmatic_weth |
 | Polygon | BZRX | 0x54cFe73f2c7d0c4b62Ab869B473F5512Dc0944D2 | bZx Protocol Token |  | polygon/erc20/bzx_protocol_token |
 | Polygon | BIFI | 0xFbdd194376de19a88118e84E279b977f165d01b8 | beefy.finance |  | polygon/erc20/beefy.finance |
 | Polygon | BUSD | 0xdAb529f40E671A1D4bF91361c21bf9f0C9712ab7 | binance-usd |  | polygon/erc20/binance-usd |
+| Polygon | BNSD | 0xFe457497A2A71bCE1eb93eA9e6a685057dd93dEe | bns.finance |  | polygon/erc20/bns_finance |
+| Polygon | BOBC | 0x590eb2920486486c2D9Bb3EB651f73b81df87bcf | bobcoin |  | polygon/erc20/bobcoin |
+| Polygon | CLFI | 0x08715F5c743F747dE0005ad6C45336C163711137 | cLFi |  | polygon/erc20/clfi |
 | Polygon | CCC | 0xF5eB811ccc9e394b3bca461837383Dc71a610442 | cccash |  | polygon/erc20/cccash |
 | Polygon | CHZ | 0xf1938Ce12400f9a761084E7A80d37e732a4dA056 | chiliZ |  | polygon/erc20/chiliz |
+| Polygon | USX | 0xCf66EB3D546F0415b368d98A95EAF56DeD7aA752 | dForce USD |  | polygon/erc20/dforce_usd |
 | Polygon | DHT | 0x8C92e38eCA8210f4fcBf17F0951b198Dd7668292 | dHedge DAO Token |  | polygon/erc20/dhedge_dao_token |
 | Polygon | $DG | 0x2a93172c8DCCbfBC60a39d56183B7279a2F647b4 | decentral.games | delisted | polygon/erc20/decentral.games |
+| Polygon | MOOV | 0xe46F5128B933e5A6F907Fe73EcE80059c222DB0A | dotmoovs (PoS) |  | polygon/erc20/dotmoovs_pos |
+| Polygon | ECO | 0x21FDB8e43d84420AfbD6351D645F50c9138DAae0 | ecoCREDIT |  | polygon/erc20/ecocredit |
+| Polygon | EBOX | 0xb41c43faBD22A6C6ea135e975769e9051f9ee8ad | ethbox Token |  | polygon/erc20/ethbox_token |
+| Polygon | FVT | 0x72a5a58f79FFc2102227B92fAeBA93B169a3A3F1 | finance.vote Token |  | polygon/erc20/finance_vote_token |
 | Polygon | FRXETH_WETH | 0x5DEe84FfA2DC27419Ba7b3419d7146E53e4F7dEd | frxETH_WETH |  | polygon/erc20/frxeth_weth |
+| Polygon | FOREX | 0xDb298285FE4C5410B05390cA80e8Fbe9DE1F259B | handleFOREX |  | polygon/erc20/handleforex |
+| Polygon | HDAO | 0x72928d5436Ff65e57F72D5566dCd3BaEDC649A88 | humanDAO (PoS) |  | polygon/erc20/humandao_pos |
+| Polygon | LIME | 0x7f67639Ffc8C93dD558d452b8920b28815638c44 | iMe Lab |  | polygon/erc20/ime_lab |
+| Polygon | INS | 0xb988Bd378A0754957d5D9471C96E0F8051645a26 | iNFTspaceToken |  | polygon/erc20/inftspacetoken |
+| Polygon | IUSD | 0x0A3BB08b3a15A19b4De82F8AcFc862606FB69A2D | iZUMi Bond USD |  | polygon/erc20/izumi_bond_usd |
+| Polygon | PACT | 0xf549db6b1E0B79C8F2730e7b7C6F2EdCa2cEBAa6 | impactMarket |  | polygon/erc20/impactmarket |
+| Polygon | SURE | 0xF88332547c680F755481Bf489D890426248BB275 | inSure (PoS) |  | polygon/erc20/insure_pos |
+| Polygon | KOGECOIN | 0x13748d548D95D78a3c83fe3F32604B4796CFfa23 | kogecoin.io |  | polygon/erc20/kogecoin_io |
 | Polygon | LIWMATIC | 0x83E7Ec5550Af266A83807AC508E578388Fb75d96 | lify-v2-maticusdt-beaver-1 | delisted | polygon/erc20/lify-v2-maticusdt-beaver-1 |
 | Polygon | LIWMATIC | 0x3Bc678d6b42957CaB8Ba99D99D5E433cB195746E | lify-v2-maticusdt-tiger-1 | delisted | polygon/erc20/lify-v2-maticusdt-tiger-1 |
 | Polygon | LIWBTC | 0x3263ce926b1dC2Ad55a809F70D8F4EDF3fC587be | lify-v2-wbtcusdt-beaver-1 | delisted | polygon/erc20/lify-v2-wbtcusdt-beaver-1 |
@@ -13118,14 +13905,20 @@
 | Polygon | LIWBTC | 0x5Ba815CD4F13138Aaa8C8eE77e535d01344958f9 | lifyv2-wbtcusdt-medium |  | polygon/erc20/lifyv2_wbtcusdt_medium |
 | Polygon | LIWETH | 0xb450daB50c15Efc6B011Ec8FEbcf8f0AF8b5BfF4 | lifyv2-wethusdt-medium |  | polygon/erc20/lifyv2_wethusdt_medium |
 | Polygon | LIWMATIC | 0xE32bb5C98addc8a47cf146196d356b9A78060069 | lifyv2-wmaticusdt-medium |  | polygon/erc20/lifyv2_wmaticusdt_medium |
+| Polygon | LIVERETRO | 0xCaAF554900E33ae5DBc66ae9f8ADc3049B7D31dB | liveRetro |  | polygon/erc20/liveretro |
+| Polygon | LOWB | 0x1C0a798B5a5273a9e54028eb1524fD337B24145F | loser coin |  | polygon/erc20/loser_coin |
 | Polygon | MSUSD | 0xE840B73E5287865EEc17d250bFb1536704B43B21 | mUSD |  | polygon/erc20/musd |
 | Polygon | MIMATIC | 0xa3Fa99A148fA48D14Ed51d610c367C61876997F1 | miMATIC |  | polygon/erc20/mimatic |
+| Polygon | MODA | 0x5E430F88D1BE82EB3eF92b6fF06125168fD5DCf2 | moda |  | polygon/erc20/moda |
 | Polygon | WOLF | 0x8f18dC399594b451EdA8c5da02d0563c0b2d0f16 | moonwolf.io |  | polygon/erc20/moonwolf_io |
 | Polygon | ONG | 0xB6f10Be9201fb110b3Aa275267a234E84ade8e95 | onG |  | polygon/erc20/ong |
+| Polygon | PMATIC | 0xA0dF47432d9d88bcc040E9ee66dDC7E17A882715 | pMATIC |  | polygon/erc20/pmatic |
 | Polygon | PBTC | 0x121eF177A0489271B4339bc29Ee64609b47D43C4 | pTokens BTC |  | polygon/erc20/ptokens_btc |
+| Polygon | ORE | 0xD52f6CA48882Be8fbaa98ce390db18e1dbe1062d | pTokens ORE (PoS) |  | polygon/erc20/ptokens_ore_pos |
 | Polygon | PAXW | 0xC79Ae93D9C215EAa8c8DA5C77E465baC7dE28891 | pax.world |  | polygon/erc20/pax.world |
 | Polygon | PENDYST | 0x5b0522391d0A5a37FD117fE4C43e8876FB4e91E6 | penDYST |  | polygon/erc20/pendyst |
 | Polygon | PUNKD | 0x06873c7e7020a7845DB8ECEd6cd1041AfCBc9822 | punkd |  | polygon/erc20/punkd |
+| Polygon | RUSD | 0xfC40a4F89b410a1b855b5e205064a38fC29F5eb5 | rUSD |  | polygon/erc20/rusd |
 | Polygon | RENBTC | 0xD6C23852b94FEde6AB571e4b4cFdb745b49Dc9EB | renBTC |  | polygon/erc20/renbtc |
 | Polygon | RENDOGE | 0xcE829A89d4A55a63418bcC43F00145adef0eDB8E | renDOGE |  | polygon/erc20/rendoge |
 | Polygon | RENFIL | 0xc4Ace9278e7E01755B670C0838c3106367639962 | renFIL |  | polygon/erc20/renfil |
@@ -13135,10 +13928,16 @@
 | Polygon | TXPT | 0x2e6978ceeA865948f4c5685e35AEC72652e3Cb88 | tPLATINUM |  | polygon/erc20/tplatinum |
 | Polygon | TXAG | 0x57fCbd6503C8BE3B1AbAD191Bc7799ef414A5b31 | tSILVER |  | polygon/erc20/tsilver |
 | Polygon | TETUBAL_BALWETH | 0xB797AdfB7b268faeaA90CAdBfEd464C76ee599Cd | tetuBal_BPT_80BAL_20WETH Stable Pool |  | polygon/erc20/tetubal_bpt_80bal_20weth_stable_pool |
+| Polygon | MGH | 0xc3C604F1943B8C619c5D65cd11A876e9C8eDCF10 | the metaverse game hub (PoS) |  | polygon/erc20/the_metaverse_game_hub_pos |
 | Polygon | UMX | 0x5dF1a47e05b4caBa0ED3Df13662642f05314764D | unimex.network |  | polygon/erc20/unimex.network |
 | Polygon | WLD_ | 0xA936e1f747d14fC30d08272D065c8aeF4ab7f810 | wLitiDAO (old) |  | polygon/erc20/wlitidao_ |
+| Polygon | XMATIC | 0xF6d5d14C5684FA5853A3Be6D217cAd19c6aB2164 | xMATIC |  | polygon/erc20/xmatic |
+| Polygon | XSHRAP | 0x1e3c6c53F9f60BF8aAe0D7774C21Fa6b1afddC57 | xSHRAP |  | polygon/erc20/xshrap |
 | Polygon | XTK | 0x22308317A4aA9e8196065E0b3647e582d44c4d7b | xToken |  | polygon/erc20/xtoken |
+| Polygon | XWIN | 0x6CD6CB131764c704bA9167C29930Fbdc38901aB7 | xWIN Token |  | polygon/erc20/xwin_token |
+| Polygon | XZOOMER | 0xB962150760F9A3bB00e3E9Cf48297EE20AdA4A33 | xZoomerCoin |  | polygon/erc20/xzoomercoin |
 | Polygon | YPRED | 0xdFaF2680239d678d9551669727b93b62Ad0D18Cc | yPredict |  | polygon/erc20/ypredict |
+| Polygon | WATCH | 0x09211Dc67f9fe98Fb7bBB91Be0ef05f4a12FA2b2 | yieldwatch |  | polygon/erc20/yieldwatch |
 | Stellar | USDC | GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN | USDC |  | stellar/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN |
 | Tron | GOLD | TKjLCYg1aQmtnC8HGLCgbrq89Ru7xifPP5 | !!!!GOLDCOIN | delisted | tron/trc10/1002341 |
 | Tron | GOLD | TP429SKrsp4BoTiEFXHj4TNSJwqDFsygnr | !!!!GoldSpot!!!! | delisted | tron/trc10/1002467 |

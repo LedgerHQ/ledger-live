@@ -492,7 +492,7 @@
       "description" : "Uygulamayı My Ledger'dan yeniden yüklemeyi deneyin"
     },
     "NotEnoughGas" : {
-      "title" : "Ana hesaptaki bakiye ağ ücretlerini karşılamak için yetersiz",
+      "title" : "{{cryptoName}} ağında takas işlemi için {{fees}} {{ticker}} ağ ücreti ödemeniz gerekiyor. <link0>{{ticker}} Satın Al</link0>",
       "description" : "Token işlem ücretlerini ödemek için lütfen hesabınıza biraz coin gönderin."
     },
     "NotEnoughGasSwap" : {
@@ -605,6 +605,16 @@
     },
     "TronNotEnoughEnergy" : {
       "title" : "Enerji yetersiz. Ağ ücreti 50 TRX tutarına ulaşabilir."
+    },
+    "TronNoUnfrozenResource" : {
+      "title" : "Çekilebilecek çözülmüş hiçbir varlık yok"
+    },
+    "TronInvalidUnDelegateResourceAmount" : {
+      "title" : "Yetkisi devredilmiş yeterli varlık yok"
+    },
+    "TronUnfreezeNotExpired" : {
+      "title" : "Varlıklar henüz çözülmedi",
+      "description" : "{{time}} öncesinde çekemezsiniz, o zamana dek beklemeniz gerekiyor"
     },
     "UpdateYourApp" : {
       "title" : "Uygulama güncellemesi gerekiyor",
@@ -901,6 +911,9 @@
     "FirmwareNotRecognized" : {
       "title" : "Geçersiz Sağlayıcı",
       "description" : "\"My Ledger sağlayıcım\" ayarını değiştirmeniz gerekmektedir. Bunu değiştirmek için Ledger Live'da \"Ayarlar\"ı açın, \"Deneysel özellikler\"i seçin ve ardından farklı bir sağlayıcı seçin."
+    },
+    "TezosUnrevealedAccount" : {
+      "title" : "Takas yapılamıyor: Tezos hesabıyla başlangıç gönderimi/yetki devri gerekiyor veya pariteyi değiştirin."
     }
   },
   "crash" : {
@@ -2313,6 +2326,9 @@
       "VOTE" : "Oylandı",
       "FREEZE" : "Donduruldu",
       "UNFREEZE" : "Çözüldü",
+      "UNDELEGATE_RESOURCE" : "Yetki iptal edildi",
+      "WITHDRAW_EXPIRE_UNFREEZE" : "Çekim",
+      "LEGACYUNFREEZE" : "Çözüldü",
       "REWARD" : "Ödül alındı",
       "FEES" : "Ücretler",
       "OPT_IN" : "Onaylama",
@@ -2719,6 +2735,8 @@
       "developerModeDesc" : "Geliştirici uygulamalarını My Ledger'da görün ve Testnet uygulamalarını etkinleştirin.",
       "analytics" : "Analiz",
       "analyticsDesc" : "Ledger'ın kullanıcı deneyimini geliştirmesine yardımcı olmak için analitik verileri etkinleştirin.",
+      "personalizedRecommendations" : "Kişiselleştirilmiş deneyim",
+      "personalizedRecommendationsDesc" : "Tercihlerinizle uyumlu kişiselleştirilmiş öneriler alın.",
       "analyticsModal" : {
         "title" : "Analiz verilerini paylaş",
         "desc" : "Ledger'ın kullanıcı deneyimini geliştirmesine yardımcı olmak için analitik verileri etkinleştirin",
@@ -3687,7 +3705,7 @@
       "description" : "TRX'i dondurarak hem güvenle ödül kazanın hem de varlıklarınızın kontrolünü sağlamayı sürdürün.",
       "steps" : {
         "0" : "Yetkisi devredilen varlıklar size ait olmaya devam eder.",
-        "1" : "Varlıklarınızı 3 gün sonra çözebilirsiniz.",
+        "1" : "Varlıklarınızı istediğiniz zaman çözebilir ve ve 14 günlük çözme döneminden sonra bu varlıklara erişebilirsiniz.",
         "2" : "Ledger cihazınız ile güvenle dondurun ve oylayın."
       },
       "howVotingWorks" : "Oylama nasıl çalışır?",
@@ -3958,7 +3976,7 @@
       },
       "genuineCheck" : {
         "title" : "{{productName}} cihazınızda Ledger Yöneticisini etkinleştirin",
-        "accept" : "Lütfen Nano X'inizi kapatmayın. <1>Ledger Yöneticisine</1>izin verdiğinizden emin olun."
+        "accept" : "Lütfen Nano X'inizi kapatmayın. <1>My Ledger</1>'a izin verdiğinizden emin olun."
       },
       "genuineCheckPending" : {
         "title" : "Cihazın orijinal olup olmadığı kontrol ediliyor..."
@@ -4015,7 +4033,7 @@
     },
     "GenuineCheck" : {
       "title" : "Cihaz orijinallik denetimi",
-      "accept" : "Lütfen Nano X'inizi kapatmayın. <1>Ledger Yöneticisine</1>izin verdiğinizden emin olun.",
+      "accept" : "Lütfen Nano X'inizi kapatmayın. <1>My Ledger</1>'a izin verdiğinizden emin olun.",
       "info" : "Bu adım, Nano cihazınızın orijinal olduğundan emin olmak içindir."
     },
     "ScanningHeader" : {
@@ -5344,7 +5362,7 @@
             "description" : "TRX varlıklarınızla üçüncü bir tarafa yetki devrederek ödül kazanın. Varlıklarınızı dondurmak ve oy vermek için Devam butonuna tıklayın.",
             "bullet" : {
               "delegate" : "Yetkisi devredilen varlıklar size ait olmaya devam eder.",
-              "access" : "Dondurduğunuz varlıklara donduktan 3 gün sonra erişebilirsiniz.",
+              "access" : "Dondurulmuş varlıklar anında çözülebilir ve 14 günlük çözme döneminden sonra bu varlıklara erişilebilir.",
               "ledger" : "Ledger cihazınızı kullanarak güvenle yetki devredin."
             },
             "button" : {
@@ -5362,7 +5380,7 @@
       },
       "unfreeze" : {
         "title" : "Çöz",
-        "description" : "TRX çözerek yeniden bakiyenize ekleyebilirsiniz. Ancak başka ödül kazanamazsınız."
+        "description" : "Kullanılabilir bakiyenize eklemek için TRX'i çözün. Ancak artık başka ödül kazanamazsınız. Varlıklar 14 günlük çözme döneminden sonra kullanılabilir"
       },
       "vote" : {
         "title" : "Oyla",
@@ -5920,6 +5938,9 @@
       "freeze" : "İşlemi tamamlamak için lütfen cihazınızda onaylayın",
       "unfreeze" : "İşlemi tamamlamak için lütfen cihazınızda onaylayın",
       "claimReward" : "İşlemi tamamlamak için lütfen cihazınızda onaylayın",
+      "legacyUnfreeze" : "İşlemi tamamlamak için lütfen cihazınızda onaylayın",
+      "withdrawExpireUnfreeze" : "İşlemi tamamlamak için lütfen cihazınızda onaylayın",
+      "undelegateResource" : "İşlemi tamamlamak için lütfen cihazınızda onaylayın",
       "vote" : "İşlemi tamamlamak için lütfen cihazınızda onaylayın",
       "delegate" : "İşlemi tamamlamak için lütfen cihazınızda onaylayın",
       "redelegate" : "İşlemi tamamlamak için lütfen cihazınızda onaylayın",
@@ -5944,9 +5965,12 @@
     "votes" : "Oylar",
     "validator" : "Doğrulayıcı",
     "infoWording" : {
-      "freeze" : "Dondurulmuş token'lar 3 gün boyunca kilitlenir.",
+      "freeze" : "Bant genişliği veya enerji elde etmek için token'ları dondurun ve eş değer miktarda TRON Power (TP) alın.",
       "unfreeze" : "{{resource}} puanlarınız düşecek ve tüm oylarınız iptal edilecek.",
+      "legacyUnfreeze" : "{{resource}} puanlarınız düşecek ve tüm oylarınız iptal edilecek.",
       "claimReward" : "Ödüller her 24 saatte bir talep edilebilir.",
+      "withdrawExpireUnfreeze" : "Çözme dönemi sona eren çözülmüş varlıklarınız çekilecek",
+      "unDelegateResource" : "{{resource}} için yetki devrini iptal edin",
       "cosmos" : {
         "claimReward" : "Seçilen doğrulayıcıda bekleyen ödüller varsa ödüller otomatik olarak alınır.",
         "redelegate" : "Yetkisi iptal edilen varlıkların kullanılabilir bakiyeye geri dönmesi için {{numberOfDays}} gün beklemeniz gerekir.",
@@ -6554,6 +6578,92 @@
     "getFundsModal" : {
       "text" : "Stake etmek için {{coin}} edinin",
       "description" : "Ledger Live'ı kullanarak doğrudan Ledger'ınızda kripto satın alın, takas edin veya alın."
+    }
+  },
+  "analyticsOptIn" : {
+    "variantA" : {
+      "main" : {
+        "title" : "Deneyiminizi geliştirmemize ve kişiselleştirmemize yardım edin.",
+        "subtitle" : "Ledger Live kullanım verilerinizi paylaşmanız, tercihlerinizi anlamamıza yardımcı oluyor. Bu, deneyiminizi size özel hâle getirmemizi ve tıklama, görüntüleme ve açma eylemleri dâhil olmak üzere içerik performansını sizinle olabildiğince alakalı olacak şekilde optimize etmemizi sağlıyor.",
+        "content" : {
+          "able" : {
+            "title" : "Ledger Live şunları takip edebilecek:",
+            "diagAndUsage" : "Kullanım verileri"
+          },
+          "unable" : {
+            "title" : "Ledger Live şu bilgileri asla toplamaz:",
+            "adresses" : "Adresleriniz",
+            "balance" : "Bakiyeleriniz",
+            "nfts" : "NFT'leriniz",
+            "personnalInfos" : "Kişiyi tanımlayıcı bilgiler"
+          },
+          "moreOptions" : "Daha fazla seçenek",
+          "ctas" : {
+            "refuse" : "Tümünü reddet",
+            "accept" : "Tümünü kabul et"
+          },
+          "infoText" : {
+            "info" : "Onayınızı, dilediğiniz zaman uygulama ayarlarından iptal edebilirsiniz.",
+            "link" : "Daha fazla bilgi edinmek için buraya tıklayın."
+          }
+        }
+      },
+      "details" : {
+        "title" : "Tercihlerinizi yönetin",
+        "analytics" : {
+          "title" : "Analiz",
+          "description" : "Uygulama kullanımını paylaşarak Ledger'ın, uygulamayı geliştirmesine yardımcı olun."
+        },
+        "personalizedExp" : {
+          "title" : "Kişiselleştirilmiş deneyim",
+          "description" : "Tercihlerinizle uyumlu kişiselleştirilmiş öneriler alın ve alakalılık düzeyini optimize etmek için içerik performansını paylaşın."
+        },
+        "ctas" : {
+          "notNow" : "Şimdi değil",
+          "accept" : "Kabul et",
+          "acceptAll" : "Tümünü Kabul Et",
+          "confirm" : "Onayla"
+        },
+        "infoText" : {
+          "info" : "Onayınızı, dilediğiniz zaman uygulama ayarlarından iptal edebilirsiniz.",
+          "link" : "Daha fazla bilgi edinmek için buraya tıklayın."
+        }
+      }
+    },
+    "variantB" : {
+      "main" : {
+        "title" : "Ledger Live'ı birlikte geliştirelim",
+        "description" : "Ledger Live kullanım verilerinizi paylaşmanız, Ledger Live'ı nasıl kullandığınızı anlamamıza yardımcı oluyor.",
+        "bulletPoints" : {
+          "1" : "Kullanım verileri; sayfa ziyaretlerini, tıklamaları ve dönüşümü içerir.",
+          "2" : "Adresleriniz, hesaplarınız, bakiyeniz, NFT'leriniz veya portföyünüzle ilişkili diğer bilgileri toplamayız veya görmeyiz.",
+          "3" : "Kimliğinizi belirleyemeyiz ve böyle bir isteğimiz de yoktur; kişisel bilgileri toplamayız."
+        },
+        "ctas" : {
+          "refuse" : "Reddet",
+          "share" : "Paylaş"
+        },
+        "infoText" : {
+          "info" : "Onayınızı, dilediğiniz zaman uygulama ayarlarından iptal edebilirsiniz.",
+          "link" : "Onay iptali hakkında daha fazla bilgi edinin"
+        }
+      },
+      "details" : {
+        "title" : "Kişiselleştirilmiş bir deneyim elde edin",
+        "description" : "Kullanım verilerinizi analiz ederek deneyiminizi özelleştiririz ve tıklama, görüntüleme ve açma gibi metrikleri izleyerek sizinle olabildiğince alakalı olmasını sağlamak üzere içerik performansını değerlendiririz.",
+        "bulletPoints" : {
+          "1" : "Kişiselleştirilmiş öneriler ve içerikler",
+          "2" : "Kişiselleştirilmiş bildirimler"
+        },
+        "ctas" : {
+          "refuse" : "Reddet",
+          "allow" : "İzin ver"
+        },
+        "infoText" : {
+          "info" : "Onayınızı, dilediğiniz zaman uygulama ayarlarından iptal edebilirsiniz.",
+          "link" : "Onay iptali hakkında daha fazla bilgi edinin"
+        }
+      }
     }
   }
 }

@@ -492,7 +492,7 @@
       "description" : "Prueba a reinstalar la aplicación desde Mi Ledger"
     },
     "NotEnoughGas" : {
-      "title" : "El saldo de la cuenta principal es insuficiente para las comisiones de red",
+      "title" : "En la red {{cryptoName}} debes pagar una tarifa de red de {{fees}} {{ticker}} para realizar permutas. <link0>Comprar {{ticker}}</link0>",
       "description" : "Envía monedas a tu cuenta para pagar por transacciones de tokens."
     },
     "NotEnoughGasSwap" : {
@@ -605,6 +605,16 @@
     },
     "TronNotEnoughEnergy" : {
       "title" : "La energía es menor que la requerida. Es posible que pagues hasta 50 TRX en tarifas."
+    },
+    "TronNoUnfrozenResource" : {
+      "title" : "No hay ningún activo desinmovilizado que retirar"
+    },
+    "TronInvalidUnDelegateResourceAmount" : {
+      "title" : "No hay suficientes activos delegados"
+    },
+    "TronUnfreezeNotExpired" : {
+      "title" : "Los activos aún no están desinmovilizados",
+      "description" : "Tienes que esperar hasta las {{time}} para realizar el retiro"
     },
     "UpdateYourApp" : {
       "title" : "Es necesario actualizar la aplicación",
@@ -901,6 +911,9 @@
     "FirmwareNotRecognized" : {
       "title" : "Proveedor no válido",
       "description" : "Tienes que cambiar el ajuste \"Proveedor de Mi Ledger\". Para cambiarlo, abre los \"Ajustes\" de Ledger Live, selecciona \"Funciones experimentales\" y, a continuación, elige un proveedor distinto."
+    },
+    "TezosUnrevealedAccount" : {
+      "title" : "Permuta no disponible: es necesario un envío o delegación inicial con la cuenta de Tezos o el cambio de par."
     }
   },
   "crash" : {
@@ -2313,6 +2326,9 @@
       "VOTE" : "Votado",
       "FREEZE" : "Inmovilizado",
       "UNFREEZE" : "Desinmovilizado",
+      "UNDELEGATE_RESOURCE" : "Desdelegado",
+      "WITHDRAW_EXPIRE_UNFREEZE" : "Retiro",
+      "LEGACYUNFREEZE" : "Desinmovilizado",
       "REWARD" : "Recompensa reclamada",
       "FEES" : "Tarifas",
       "OPT_IN" : "Adherir",
@@ -2719,6 +2735,8 @@
       "developerModeDesc" : "Muestra las aplicaciones de desarrollador en Mi Ledger y habilita las aplicaciones Testnet.",
       "analytics" : "Análisis",
       "analyticsDesc" : "Habilita los análisis para ayudar a Ledger a mejorar la experiencia de usuario.",
+      "personalizedRecommendations" : "Experiencia personalizada",
+      "personalizedRecommendationsDesc" : "Recibe recomendaciones personalizadas adaptadas a tus preferencias.",
       "analyticsModal" : {
         "title" : "Compartir análisis",
         "desc" : "Habilita los análisis para ayudar a Ledger a mejorar la experiencia de usuario",
@@ -3687,7 +3705,7 @@
       "description" : "Inmoviliza TRX para recibir recompensas de forma segura, al tiempo que conservas el completo control de tus activos.",
       "steps" : {
         "0" : "Los activos delegados siguen siendo tuyos.",
-        "1" : "Podrás desinmovilizar los activos después de 3 días.",
+        "1" : "Puedes desinmovilizar tus activos en cualquier momento y acceder a ellos después del periodo de desinmovilización de 14 días.",
         "2" : "Inmoviliza y vota de forma segura con tu dispositivo Ledger."
       },
       "howVotingWorks" : "Cómo funciona la votación",
@@ -5344,7 +5362,7 @@
             "description" : "Delega TRX a un tercero para recibir recompensas. Haz clic en Continuar para inmovilizar activos y votar.",
             "bullet" : {
               "delegate" : "Los activos delegados siguen siendo tuyos.",
-              "access" : "Podrás acceder a tus activos 3 días después de haberlos inmovilizado.",
+              "access" : "Los activos inmovilizados se pueden desinmovilizar de inmediato y se puede acceder a ellos después del periodo de desinmovilización de 14 días.",
               "ledger" : "Delega y vota de forma segura con tu dispositivo Ledger."
             },
             "button" : {
@@ -5362,7 +5380,7 @@
       },
       "unfreeze" : {
         "title" : "Desinmovilizar",
-        "description" : "Desinmoviliza TRX para agregarlos de nuevo al saldo disponible. Ya no recibirás recompensas."
+        "description" : "Desinmoviliza TRX para devolverlos a tu saldo disponible. Dejarás de ganar recompensas. Los activos estarán disponibles después del periodo de desinmovilización de 14 días"
       },
       "vote" : {
         "title" : "Votar",
@@ -5920,6 +5938,9 @@
       "freeze" : "En el dispositivo, confirma para finalizar la operación",
       "unfreeze" : "En el dispositivo, confirma para finalizar la operación",
       "claimReward" : "En el dispositivo, confirma para finalizar la operación",
+      "legacyUnfreeze" : "En el dispositivo, confirma para finalizar la operación",
+      "withdrawExpireUnfreeze" : "En el dispositivo, confirma para finalizar la operación",
+      "undelegateResource" : "En el dispositivo, confirma para finalizar la operación",
       "vote" : "En el dispositivo, confirma para finalizar la operación",
       "delegate" : "En el dispositivo, confirma para finalizar la operación",
       "redelegate" : "En el dispositivo, confirma para finalizar la operación",
@@ -5944,9 +5965,12 @@
     "votes" : "Votos",
     "validator" : "Validador",
     "infoWording" : {
-      "freeze" : "Los tokens inmovilizados quedan bloqueados durante un período de 3 días.",
+      "freeze" : "Inmoviliza tokens para adquirir ancho de banda o energía y recibe una cantidad equivalente de TRON Power (TP).",
       "unfreeze" : "Tus puntos de {{resource}} se reducirán y se cancelarán todos tus votos.",
+      "legacyUnfreeze" : "Tus puntos de {{resource}} se reducirán y se cancelarán todos tus votos.",
       "claimReward" : "Es posible reclamar las recompensas cada 24 horas.",
+      "withdrawExpireUnfreeze" : "Los recursos desinmovilizados que han superado el periodo de desinmovilización se retirarán",
+      "unDelegateResource" : "Cancelar la delegación de {{resource}}",
       "cosmos" : {
         "claimReward" : "Si el validador seleccionado tiene recompensas pendientes, se reclamarán automáticamente.",
         "redelegate" : "Tendrás que esperar {{numberOfDays}} días para que los activos desdelegados vuelvan al saldo disponible.",
@@ -6554,6 +6578,92 @@
     "getFundsModal" : {
       "text" : "Consigue {{coin}} para poner en participación",
       "description" : "Compra, permuta o recibe cripto directamente en tu Ledger mediante Ledger Live."
+    }
+  },
+  "analyticsOptIn" : {
+    "variantA" : {
+      "main" : {
+        "title" : "Ayúdanos a mejorar y personalizar tu experiencia.",
+        "subtitle" : "Al compartir tus datos de uso de Ledger Live, nos ayudas a comprender tus preferencias. Esto nos permite personalizar tu experiencia y optimizar el rendimiento del contenido, incluidos clics, vistas y visitas, para garantizar la máxima relevancia.",
+        "content" : {
+          "able" : {
+            "title" : "Ledger Live podrá realizar un seguimiento de:",
+            "diagAndUsage" : "Datos de uso"
+          },
+          "unable" : {
+            "title" : "Ledger Live nunca recopilará:",
+            "adresses" : "Tus direcciones",
+            "balance" : "Tus saldos",
+            "nfts" : "Tus NFTs",
+            "personnalInfos" : "Información de identificación personal"
+          },
+          "moreOptions" : "Más opciones",
+          "ctas" : {
+            "refuse" : "Rechazar todo",
+            "accept" : "Aceptar todo"
+          },
+          "infoText" : {
+            "info" : "Puedes retirar tu consentimiento en cualquier momento desde los ajustes de la aplicación.",
+            "link" : "Haz clic aquí para obtener más información."
+          }
+        }
+      },
+      "details" : {
+        "title" : "Gestiona tus preferencias",
+        "analytics" : {
+          "title" : "Análisis",
+          "description" : "Comparte datos de uso para ayudar a Ledger a mejorar la aplicación."
+        },
+        "personalizedExp" : {
+          "title" : "Experiencia personalizada",
+          "description" : "Recibe recomendaciones personalizadas adaptadas a tus preferencias y comparte el rendimiento del contenido para que sea lo más pertinente posible."
+        },
+        "ctas" : {
+          "notNow" : "Ahora no",
+          "accept" : "Aceptar",
+          "acceptAll" : "Aceptar todo",
+          "confirm" : "Confirmar"
+        },
+        "infoText" : {
+          "info" : "Puedes retirar tu consentimiento en cualquier momento desde los ajustes de la aplicación.",
+          "link" : "Haz clic aquí para obtener más información."
+        }
+      }
+    },
+    "variantB" : {
+      "main" : {
+        "title" : "Mejoremos Ledger Live entre todos",
+        "description" : "Al compartir tus datos de uso de Ledger Live, nos ayudas a comprender cómo usas Ledger Live.",
+        "bulletPoints" : {
+          "1" : "Los datos de uso incluyen las visitas a páginas, los clics y las conversiones.",
+          "2" : "No recopilaremos ni veremos tus direcciones, cuentas, saldos, NFTs ni ninguna otra información relacionada con tu portfolio.",
+          "3" : "No podemos ni pretendemos identificar tu identidad y no recopilamos información personal."
+        },
+        "ctas" : {
+          "refuse" : "Rechazar",
+          "share" : "Compartir"
+        },
+        "infoText" : {
+          "info" : "Puedes retirar tu consentimiento en cualquier momento desde los ajustes de la aplicación.",
+          "link" : "Obtén más información sobre la revocación del consentimiento"
+        }
+      },
+      "details" : {
+        "title" : "Disfruta de una experiencia personalizada",
+        "description" : "Mediante el análisis de tus datos de uso, personalizamos tu experiencia y evaluamos el rendimiento del contenido haciendo un seguimiento de distintas métricas, como clics, visualizaciones y visitas, para garantizar la máxima relevancia.",
+        "bulletPoints" : {
+          "1" : "Recomendaciones y contenido personalizados",
+          "2" : "Notificaciones personalizadas"
+        },
+        "ctas" : {
+          "refuse" : "Rechazar",
+          "allow" : "Permitir"
+        },
+        "infoText" : {
+          "info" : "Puedes retirar tu consentimiento en cualquier momento desde los ajustes de la aplicación.",
+          "link" : "Obtén más información sobre la revocación del consentimiento"
+        }
+      }
     }
   }
 }
