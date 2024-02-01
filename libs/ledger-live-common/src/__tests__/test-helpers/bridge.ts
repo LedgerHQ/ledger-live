@@ -32,8 +32,6 @@ import type {
 } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { firstValueFrom } from "rxjs";
-import nock from "nock";
-import { initBackendMocks } from "./bridgeMocker";
 
 const warnDev = process.env.CI ? (..._args) => {} : (...msg) => console.warn(...msg);
 // FIXME move out into DatasetTest to be defined in
