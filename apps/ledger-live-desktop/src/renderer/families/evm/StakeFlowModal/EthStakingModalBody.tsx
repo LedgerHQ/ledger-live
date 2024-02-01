@@ -6,6 +6,7 @@ import BigNumber from "bignumber.js";
 import { useTranslation } from "react-i18next";
 
 import { appendQueryParamsToDappURL } from "@ledgerhq/live-common/platform/utils/appendQueryParamsToDappURL";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { track } from "~/renderer/analytics/segment";
 import CheckBox from "~/renderer/components/CheckBox";
@@ -20,7 +21,9 @@ import { getTrackProperties } from "./utils/getTrackProperties";
 
 import ProviderItem from "./component/ProviderItem";
 
-const ETH_LIMIT = BigNumber(32).times(BigNumber(10).pow(18));
+const ethMagnitude = getCryptoCurrencyById("ethereum").units[0].magnitude;
+
+const ETH_LIMIT = BigNumber(32).times(BigNumber(10).pow(ethMagnitude));
 
 // Comparison fns for sorting providers by minimum ETH required
 const ascending = (a: ListProvider, b: ListProvider) => (a?.min || 0) - (b?.min || 0);
@@ -94,9 +97,9 @@ export function EthStakingModalBody({
     });
   }, [doNotShowAgain, account?.currency?.id, source]);
 
-  const has32Eth = account.spendableBalance.isGreaterThan(ETH_LIMIT);
+  const hasMinValidatorEth = account.spendableBalance.isGreaterThan(ETH_LIMIT);
 
-  const listProvidersSorted = listProviders.sort(has32Eth ? descending : ascending);
+  const listProvidersSorted = listProviders.sort(hasMinValidatorEth ? descending : ascending);
 
   return (
     <Flex flexDirection={"column"} alignItems="center" width={"100%"}>
