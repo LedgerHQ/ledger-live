@@ -16,7 +16,7 @@ import ManagerAPI from "../../manager/api";
 
 import getDeviceName from "../../hw/getDeviceName";
 import { getLatestFirmwareForDeviceUseCase } from "../../device/use-cases/getLatestFirmwareForDeviceUseCase";
-import { getProviderIdPure } from "../../manager/provider";
+import { getProviderIdUseCase } from "../../device-core/managerApi/use-cases/getProviderIdUseCase";
 import { ManagerApiRepository } from "../../device-core/managerApi/repositories/ManagerApiRepository";
 import { mapApplicationV2ToApp } from "../polyfill";
 
@@ -59,7 +59,7 @@ export const listApps = ({
   return new Observable(o => {
     let sub: Subscription;
     async function main() {
-      const provider = getProviderIdPure({ deviceInfo, forceProvider });
+      const provider = getProviderIdUseCase({ deviceInfo, forceProvider });
 
       if (!deviceModelId) throw new Error("Bad usage of listAppsV2: missing deviceModelId");
       const deviceModel = getDeviceModel(deviceModelId);
@@ -86,6 +86,7 @@ export const listApps = ({
         tracer.trace("Using scriptrunner listapps");
 
         listAppsResponsePromise = new Promise<ListAppResponse>((resolve, reject) => {
+          // TODO: migrate this ManagerAPI call to ManagerApiRepository
           sub = ManagerAPI.listInstalledApps(transport, {
             targetId: deviceInfo.targetId,
             perso: "perso_11",
@@ -120,7 +121,7 @@ export const listApps = ({
           ? managerApiRepository
               .getAppsByHash(hashes)
               .then(matches => matches.map(appV2 => (appV2 ? mapApplicationV2ToApp(appV2) : null)))
-          : []; // TODO: replace by managerApiRepository
+          : [];
         return Promise.all([result, matches]);
       });
 
@@ -155,12 +156,13 @@ export const listApps = ({
        * Sequence 3: get catalog of apps available for the device
        */
 
-      const catalogForDevicesPromise = ManagerAPI.catalogForDevice({
-        // TODO: replace by repository
-        provider,
-        targetId: deviceInfo.targetId,
-        firmwareVersion: deviceInfo.version,
-      });
+      const catalogForDevicesPromise = managerApiRepository
+        .catalogForDevice({
+          provider,
+          targetId: deviceInfo.targetId,
+          firmwareVersion: deviceInfo.version,
+        })
+        .then(apps => apps.map(mapApplicationV2ToApp));
 
       /**
        * Sequence 4: list all currencies, sorted by market cp
@@ -174,7 +176,10 @@ export const listApps = ({
        * Sequence 5: get language pack available for the device
        */
 
-      const languagePackForDevicePromise = ManagerAPI.getLanguagePackagesForDevice(deviceInfo); // TODO: replace by repository
+      const languagePackForDevicePromise = managerApiRepository.getLanguagePackagesForDevice(
+        deviceInfo,
+        forceProvider,
+      );
 
       /* Running all sequences 1 2 3 4 5 defined above in parallel */
       const [[listApps, matches], catalogForDevice, firmware, sortedCryptoCurrencies, languages] =
