@@ -1,5 +1,5 @@
 import map from "lodash/map";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ActionCard from "~/renderer/components/ContentCards/ActionCard";
 import { portfolioContentCardSelector } from "~/renderer/reducers/dynamicContent";
@@ -16,7 +16,6 @@ const usePortfolioCards = () => {
     setCachedContentCards(cards);
   }, []);
 
-  // TODO
   const onImpression = (cardId: string) => {
     const currentCard = cachedContentCards.find(card => card.id === cardId);
 
@@ -29,7 +28,7 @@ const usePortfolioCards = () => {
     const currentCard = cachedContentCards.find(card => card.id === cardId);
 
     if (currentCard) {
-      //   braze.logCardDismissal(currentCard);
+      braze.logCardDismissal(currentCard);
       setCachedContentCards(cachedContentCards.filter(n => n.id !== currentCard.id));
       dispatch(setPortfolioCards(portfolioCards.filter(n => n.id !== currentCard.id)));
     }
@@ -57,15 +56,14 @@ const usePortfolioCards = () => {
       actions={{
         primary: {
           label: slide.cta,
-          action: () => {
-            onClick(slide.id);
-          },
+          action: () => onClick(slide.id),
         },
         dismiss: {
-          label: slide.dismissCta || "Maybe later", // TODO translate
+          label: slide.dismissCta,
           action: () => onDismiss(slide.id),
         },
       }}
+      onView={() => onImpression(slide.id)}
     />
   ));
 

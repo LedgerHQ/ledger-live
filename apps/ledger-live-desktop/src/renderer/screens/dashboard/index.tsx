@@ -27,7 +27,7 @@ import EmptyStateAccounts from "~/renderer/screens/dashboard/EmptyStateAccounts"
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
 import PostOnboardingHubBanner from "~/renderer/components/PostOnboardingHub/PostOnboardingHubBanner";
 import FeaturedButtons from "~/renderer/screens/dashboard/FeaturedButtons";
-import { AccountLike, Operation } from "@ledgerhq/types-live";
+import { ABTestingVariants, AccountLike, Operation } from "@ledgerhq/types-live";
 import PortfolioContentCards from "~/renderer/screens/dashboard/PortfolioContentCards";
 
 // This forces only one visible top banner at a time
@@ -77,7 +77,7 @@ export default function DashboardPage() {
         <ClearCacheBanner />
         <CurrencyDownStatusAlert currencies={currencies} hideStatusIncidents />
       </TopBannerContainer>
-      <PortfolioContentCards />
+      <PortfolioContentCards variant={ABTestingVariants.variantA} />
       <RecoverBanner />
       {isPostOnboardingBannerVisible && <PostOnboardingHubBanner />}
       <FeaturedButtons />
