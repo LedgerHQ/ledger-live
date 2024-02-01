@@ -1,50 +1,75 @@
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Carousel } from "@ledgerhq/react-ui";
 import { ABTestingVariants } from "@ledgerhq/types-live";
-import React from "react";
+import React, { PropsWithChildren } from "react";
 import { useSelector } from "react-redux";
-import { useTheme } from "styled-components";
+import styled from "styled-components";
 import { useRefreshAccountsOrderingEffect } from "~/renderer/actions/general";
-import { Card } from "~/renderer/components/Box";
 import usePortfolioCards from "~/renderer/hooks/usePortfolioCards";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { hasInstalledAppsSelector } from "~/renderer/reducers/settings";
 
-const PortfolioContentCards = () => {
-  const theme = useTheme();
+const PortfolioVariantA = styled.div`
+  background-color: ${p => p.theme.colors.opacityPurple.c10};
+`;
+
+const PortfolioVariantBContainer = styled.div`
+  position: relative;
+  margin-left: 24px;
+  margin-right: 24px;
+`;
+
+const PortfolioVariantBC = styled.div`
+  position: absolute;
+  width: 100%;
+  bottom: 30px;
+  zindex: 10000;
+  backdrop-filter: blur(15px);
+  border-radius: 8px;
+  background-color: ${p => p.theme.colors.opacityPurple.c10};
+`;
+
+const PortfolioVariantB = ({ children }: PropsWithChildren) => (
+  <PortfolioVariantBContainer>
+    <PortfolioVariantBC>{children}</PortfolioVariantBC>
+  </PortfolioVariantBContainer>
+);
+
+const PortfolioContentCards = ({ variant }: { variant: ABTestingVariants }) => {
   const slides = usePortfolioCards();
   const lldPortfolioCarousel = useFeature("lldPortfolioCarousel");
   const accounts = useSelector(accountsSelector);
   const hasInstalledApps = useSelector(hasInstalledAppsSelector);
   const totalAccounts = accounts.length;
 
-  const showCarousel = hasInstalledApps && totalAccounts >= 0;
+  const showCarousel = lldPortfolioCarousel?.enabled && hasInstalledApps && totalAccounts >= 0;
   useRefreshAccountsOrderingEffect({
     onMount: true,
   });
 
-  return showCarousel && lldPortfolioCarousel?.enabled ? (
-    lldPortfolioCarousel?.params?.variant === ABTestingVariants.variantA ? (
-      <Card style={{ backgroundColor: theme.colors.opacityPurple.c10 }}>
+  if (!showCarousel) return null;
+
+  if (
+    lldPortfolioCarousel?.params?.variant === ABTestingVariants.variantA &&
+    variant === ABTestingVariants.variantA
+  )
+    return (
+      <PortfolioVariantA>
         <Carousel variant="content-card" children={slides} />
-      </Card>
-    ) : (
-      <div
-        style={{
-          position: "fixed",
-          bottom: "30px",
-          left: "20px",
-          width: "97.5%",
-          zIndex: 10000,
-          backdropFilter: "blur(15px)",
-          borderRadius: "8px",
-          backgroundColor: theme.colors.opacityPurple.c10,
-        }}
-      >
+      </PortfolioVariantA>
+    );
+
+  if (
+    lldPortfolioCarousel?.params?.variant === ABTestingVariants.variantB &&
+    variant === ABTestingVariants.variantB
+  )
+    return (
+      <PortfolioVariantB>
         <Carousel variant="content-card" children={slides} />
-      </div>
-    )
-  ) : null;
+      </PortfolioVariantB>
+    );
+
+  return null;
 };
 
 export default PortfolioContentCards;
