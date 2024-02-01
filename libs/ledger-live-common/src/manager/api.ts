@@ -348,42 +348,6 @@ const getFinalFirmwareById: (id: number) => Promise<FinalFirmware> = makeLRUCach
   id => `${getEnv("MANAGER_API_BASE")}}_${String(id)}`,
 );
 
-/**
- * Resolve applications details by hashes.
- * Order of outputs matches order of inputs.
- * If an application version is not found, a null is returned instead.
- * If several versions match the same hash, only the latest one is returned.
- *
- * Given an array of hashes that we can obtain by either listInstalledApps in this same
- * API (a websocket connection to a scriptrunner) or via direct apdus using hw/listApps.ts
- * retrieve all the information needed from the backend for those applications.
- */
-const getAppsByHash: (hashes: string[]) => Promise<Array<App | null>> = makeLRUCache(
-  async hashes => {
-    const {
-      data,
-    }: {
-      data: Array<ApplicationV2 | null>;
-    } = await network({
-      method: "POST",
-      url: URL.format({
-        pathname: `${getEnv("MANAGER_API_BASE")}/v2/apps/hash`,
-        query: {
-          livecommonversion,
-        },
-      }),
-      data: hashes,
-    });
-
-    if (!data || !Array.isArray(data)) {
-      throw new NetworkDown("");
-    }
-
-    return data.map(appV2 => (appV2 ? mapApplicationV2ToApp(appV2) : null));
-  },
-  hashes => `${getEnv("MANAGER_API_BASE")}_${hashes.join("-")}`,
-);
-
 const getDeviceVersion: (targetId: string | number, provider: number) => Promise<DeviceVersion> =
   makeLRUCache(
     async (targetId, provider) => {
@@ -600,7 +564,6 @@ const API = {
   listInstalledApps,
   listCategories,
   getLanguagePackagesForDevice,
-  getAppsByHash,
   getCurrentOSU,
   compatibleMCUForDeviceInfo,
   findBestMCU,
