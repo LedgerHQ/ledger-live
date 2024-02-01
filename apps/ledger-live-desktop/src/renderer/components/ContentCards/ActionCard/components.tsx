@@ -13,7 +13,6 @@ const Header = styled.img`
   height: 36px;
   width: 36px;
   border-radius: 1000px;
-  background-color: white;
 `;
 
 const Body = styled.div`

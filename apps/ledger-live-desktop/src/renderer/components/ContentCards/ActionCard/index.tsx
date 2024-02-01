@@ -29,7 +29,7 @@ const ActionCard = ({ img, title, description, actions, onView }: Props) => {
 
   useEffect(() => {
     if (inView) onView?.();
-  }, [inView]);
+  }, [onView, inView]);
 
   return (
     <CardContainer ref={ref}>

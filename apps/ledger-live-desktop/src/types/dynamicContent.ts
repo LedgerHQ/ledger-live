@@ -14,7 +14,7 @@ export type ContentCard = {
   description: string;
   location?: LocationContentCard;
   order?: number;
-  created: Date | null;
+  created: Date;
 };
 
 export type PortfolioContentCard = ContentCard & {

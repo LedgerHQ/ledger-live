@@ -40,7 +40,7 @@ export const mapAsPortfolioContentCard = (card: ClassicCard): PortfolioContentCa
   location: LocationContentCard.Portfolio,
   image: card.extras?.image,
   link: card.extras?.link,
-  created: card.created,
+  created: card.created as Date,
   cta: card.extras?.cta,
   dismissCta: card.extras?.dismissCta,
   order: parseInt(card.extras?.order) ? parseInt(card.extras?.order) : undefined,
@@ -54,7 +54,7 @@ export const mapAsNotificationContentCard = (card: ClassicCard): NotificationCon
   url: card.extras?.url,
   path: card.extras?.path,
   cta: card.extras?.cta,
-  created: card.created,
+  created: card.created as Date,
   viewed: card.viewed,
   order: parseInt(card.extras?.order) ? parseInt(card.extras?.order) : undefined,
 });

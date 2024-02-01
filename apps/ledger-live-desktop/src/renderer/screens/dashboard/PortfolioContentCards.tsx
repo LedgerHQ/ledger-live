@@ -19,7 +19,7 @@ const PortfolioVariantBContainer = styled.div`
   margin-right: 24px;
 `;
 
-const PortfolioVariantBC = styled.div`
+const PortfolioVariantBWrapper = styled.div`
   position: absolute;
   width: 100%;
   bottom: 30px;
@@ -31,7 +31,7 @@ const PortfolioVariantBC = styled.div`
 
 const PortfolioVariantB = ({ children }: PropsWithChildren) => (
   <PortfolioVariantBContainer>
-    <PortfolioVariantBC>{children}</PortfolioVariantBC>
+    <PortfolioVariantBWrapper>{children}</PortfolioVariantBWrapper>
   </PortfolioVariantBContainer>
 );
 
@@ -47,7 +47,7 @@ const PortfolioContentCards = ({ variant }: { variant: ABTestingVariants }) => {
     onMount: true,
   });
 
-  if (!showCarousel) return null;
+  if (!showCarousel || slides.length === 0) return null;
 
   if (
     lldPortfolioCarousel?.params?.variant === ABTestingVariants.variantA &&
@@ -55,7 +55,7 @@ const PortfolioContentCards = ({ variant }: { variant: ABTestingVariants }) => {
   )
     return (
       <PortfolioVariantA>
-        <Carousel variant="content-card" children={slides} />
+        <Carousel variant="content-card">{slides}</Carousel>
       </PortfolioVariantA>
     );
 
@@ -65,7 +65,7 @@ const PortfolioContentCards = ({ variant }: { variant: ABTestingVariants }) => {
   )
     return (
       <PortfolioVariantB>
-        <Carousel variant="content-card" children={slides} />
+        <Carousel variant="content-card">{slides}</Carousel>
       </PortfolioVariantB>
     );
 
