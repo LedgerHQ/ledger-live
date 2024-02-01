@@ -2,7 +2,6 @@ import { aTransportBuilder } from "@ledgerhq/hw-transport-mocker";
 import { listApps } from "./v2";
 import { aDeviceInfoBuilder } from "../../mock/fixtures/aDeviceInfo";
 import ManagerAPI from "../../manager/api";
-import { aDeviceVersionBuilder } from "../../mock/fixtures/aDeviceVersion";
 import { ManagerApiRepository } from "../../device-core/managerApi/repositories/ManagerApiRepository";
 import { StubManagerApiRepository } from "../../device-core/managerApi/repositories/StubManagerApiRepository";
 import { from } from "rxjs";
@@ -11,7 +10,6 @@ import { UnexpectedBootloader } from "@ledgerhq/errors";
 jest.useFakeTimers();
 
 describe("listApps v2", () => {
-  let mockedGetDeviceVersion;
   let mockedManagerApiRepository: ManagerApiRepository;
 
   beforeEach(() => {
@@ -21,11 +19,8 @@ describe("listApps v2", () => {
         "getLatestFirmwareForDeviceUseCase",
       )
       .mockReturnValue(Promise.resolve(null));
-    mockedGetDeviceVersion = jest.fn().mockReturnValue(Promise.resolve(aDeviceVersionBuilder()));
-    mockedManagerApiRepository = {
-      ...new StubManagerApiRepository(),
-      getDeviceVersion: mockedGetDeviceVersion,
-    };
+
+    mockedManagerApiRepository = new StubManagerApiRepository();
   });
 
   afterEach(() => {
@@ -102,9 +97,6 @@ describe("listApps v2", () => {
       .spyOn(jest.requireActual("../../hw/listApps"), "default")
       .mockReturnValue(Promise.resolve([]));
     const listInstalledAppsSpy = jest.spyOn(ManagerAPI, "listInstalledApps");
-    mockedGetDeviceVersion.mockReturnValue(Promise.resolve(aDeviceVersionBuilder()));
-    jest.spyOn(ManagerAPI, "catalogForDevice").mockReturnValue(Promise.resolve([]));
-    jest.spyOn(ManagerAPI, "getLanguagePackagesForDevice").mockReturnValue(Promise.resolve([]));
 
     const transport = aTransportBuilder();
     const deviceInfo = aDeviceInfoBuilder({
@@ -159,11 +151,9 @@ describe("listApps v2", () => {
 
   it("should return an observable that errors if getDeviceVersion() throws", done => {
     jest.spyOn(ManagerAPI, "listInstalledApps").mockReturnValue(from([]));
-    mockedGetDeviceVersion.mockImplementation(() => {
+    jest.spyOn(mockedManagerApiRepository, "getDeviceVersion").mockImplementation(() => {
       throw new Error("getDeviceVersion failed");
     });
-    jest.spyOn(ManagerAPI, "catalogForDevice").mockReturnValue(Promise.resolve([]));
-    jest.spyOn(ManagerAPI, "getLanguagePackagesForDevice").mockReturnValue(Promise.resolve([]));
 
     const transport = aTransportBuilder();
     const deviceInfo = aDeviceInfoBuilder({
@@ -189,12 +179,11 @@ describe("listApps v2", () => {
     jest.advanceTimersByTime(1);
   });
 
-  it("should return an observable that errors if ManagerAPI.catalogForDevice() throws", done => {
+  it("should return an observable that errors if catalogForDevice() throws", done => {
     jest.spyOn(ManagerAPI, "listInstalledApps").mockReturnValue(from([]));
-    jest.spyOn(ManagerAPI, "catalogForDevice").mockImplementation(() => {
+    jest.spyOn(mockedManagerApiRepository, "catalogForDevice").mockImplementation(() => {
       throw new Error("catalogForDevice failed");
     });
-    jest.spyOn(ManagerAPI, "getLanguagePackagesForDevice").mockReturnValue(Promise.resolve([]));
 
     const transport = aTransportBuilder();
     const deviceInfo = aDeviceInfoBuilder({
@@ -220,12 +209,13 @@ describe("listApps v2", () => {
     jest.advanceTimersByTime(1);
   });
 
-  it("should return an observable that errors if ManagerAPI.getLanguagePackagesForDevice() throws", done => {
+  it("should return an observable that errors if getLanguagePackagesForDevice() throws", done => {
     jest.spyOn(ManagerAPI, "listInstalledApps").mockReturnValue(from([]));
-    jest.spyOn(ManagerAPI, "catalogForDevice").mockReturnValue(Promise.resolve([]));
-    jest.spyOn(ManagerAPI, "getLanguagePackagesForDevice").mockImplementation(() => {
-      throw new Error("getLanguagePackagesForDevice failed");
-    });
+    jest
+      .spyOn(mockedManagerApiRepository, "getLanguagePackagesForDevice")
+      .mockImplementation(() => {
+        throw new Error("getLanguagePackagesForDevice failed");
+      });
 
     const transport = aTransportBuilder();
     const deviceInfo = aDeviceInfoBuilder({

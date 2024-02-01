@@ -1,5 +1,7 @@
+import { DeviceInfoEntity } from "../entities/DeviceInfoEntity";
 import { DeviceVersionEntity } from "../entities/DeviceVersionEntity";
 import { FinalFirmware, OsuFirmware } from "../entities/FirmwareUpdateContextEntity";
+import { LanguagePackageEntity } from "../entities/LanguagePackageEntity";
 import { ManagerApiRepository } from "./ManagerApiRepository";
 
 export class StubManagerApiRepository implements ManagerApiRepository {
@@ -117,6 +119,14 @@ export class StubManagerApiRepository implements ManagerApiRepository {
   };
 
   readonly getAppsByHash = () => {
+    return Promise.resolve([]);
+  };
+
+  readonly catalogForDevice = () => {
+    return Promise.resolve([]);
+  };
+
+  readonly getLanguagePackagesForDevice = () => {
     return Promise.resolve([]);
   };
 }

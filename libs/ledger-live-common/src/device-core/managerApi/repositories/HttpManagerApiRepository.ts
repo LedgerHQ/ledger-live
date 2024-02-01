@@ -7,6 +7,12 @@ import { ManagerApiRepository } from "./ManagerApiRepository";
 import { FinalFirmware, OsuFirmware } from "../entities/FirmwareUpdateContextEntity";
 import { DeviceVersionEntity } from "../entities/DeviceVersionEntity";
 import { ApplicationV2Entity } from "../entities/AppEntity";
+import { DeviceInfoEntity } from "../entities/DeviceInfoEntity";
+import {
+  LanguagePackageEntity,
+  LanguagePackageResponseEntity,
+} from "../entities/LanguagePackageEntity";
+import { getProviderIdUseCase } from "../use-cases/getProviderIdUseCase";
 
 export class HttpManagerApiRepository implements ManagerApiRepository {
   private readonly managerApiBase: string;
@@ -168,16 +174,6 @@ export class HttpManagerApiRepository implements ManagerApiRepository {
     id => String(id),
   );
 
-  /**
-   * Resolve applications details by hashes.
-   * Order of outputs matches order of inputs.
-   * If an application version is not found, a null is returned instead.
-   * If several versions match the same hash, only the latest one is returned.
-   *
-   * Given an array of hashes that we can obtain by either listInstalledApps in this same
-   * API (a websocket connection to a scriptrunner) or via direct apdus using hw/listApps.ts
-   * retrieve all the information needed from the backend for those applications.
-   */
   readonly getAppsByHash = makeLRUCache(
     async hashes => {
       const {
@@ -203,4 +199,78 @@ export class HttpManagerApiRepository implements ManagerApiRepository {
     },
     hashes => `${this.managerApiBase}_${hashes.join("-")}`,
   );
+
+  readonly catalogForDevice = makeLRUCache(
+    async params => {
+      const { provider, targetId, firmwareVersion } = params;
+      const {
+        data,
+      }: {
+        data: Array<ApplicationV2Entity>;
+      } = await network({
+        method: "GET",
+        url: URL.format({
+          pathname: `${this.managerApiBase}/v2/apps/by-target`,
+          query: {
+            livecommonversion: this.liveCommonVersion,
+            provider,
+            target_id: targetId,
+            firmware_version_name: firmwareVersion,
+          },
+        }),
+      });
+
+      if (!data || !Array.isArray(data)) {
+        throw new NetworkDown("");
+      }
+
+      return data;
+    },
+    a => `${this.managerApiBase}_${a.provider}_${a.targetId}_${a.firmwareVersion}`,
+  );
+
+  readonly getLanguagePackagesForDevice = async (
+    deviceInfo: DeviceInfoEntity,
+    forceProvider?: number,
+  ) => {
+    const deviceVersion = await this.getDeviceVersion({
+      deviceInfo: deviceInfo.targetId,
+      provider: getProviderIdUseCase({ deviceInfo, forceProvider }),
+    });
+
+    const seFirmwareVersion = await this.getCurrentFirmware({
+      version: deviceInfo.version,
+      deviceId: deviceVersion.id,
+      provider: getProviderIdUseCase({ deviceInfo, forceProvider }),
+    });
+
+    const { data }: { data: LanguagePackageResponseEntity[] } = await network({
+      method: "GET",
+      url: URL.format({
+        pathname: `${this.managerApiBase}/language-package`,
+        query: {
+          livecommonversion: this.liveCommonVersion,
+        },
+      }),
+    });
+
+    const allPackages: LanguagePackageEntity[] = data.reduce(
+      (acc, response) => [
+        ...acc,
+        ...response.language_package_version.map(p => ({
+          ...p,
+          language: response.language,
+        })),
+      ],
+      [] as LanguagePackageEntity[],
+    );
+
+    const packages = allPackages.filter(
+      pack =>
+        pack.device_versions.includes(deviceVersion.id) &&
+        pack.se_firmware_final_versions.includes(seFirmwareVersion.id),
+    );
+
+    return packages;
+  };
 }
