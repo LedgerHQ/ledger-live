@@ -9,6 +9,8 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import { App } from "@ledgerhq/types-live";
 import installApp from "../../hw/installApp";
 import uninstallApp from "../../hw/uninstallApp";
+import { ManagerApiRepository } from "../../device-core/managerApi/repositories/ManagerApiRepository";
+import { HttpManagerApiRepositoryFactory } from "../factories/HttpManagerApiRepositoryFactory";
 
 export const execWithTransport =
   (transport: Transport): Exec =>
@@ -33,6 +35,7 @@ export const enableListAppsV2 = (enabled: boolean) => (listAppsV2Enabled = enabl
 export function listAppsUseCase(
   transport: Transport,
   deviceInfo: DeviceInfo,
+  managerApiRepository: ManagerApiRepository = HttpManagerApiRepositoryFactory.getInstance(),
 ): Observable<ListAppsEvent> {
   return listAppsV2Enabled
     ? listAppsV1(transport, deviceInfo)
@@ -40,5 +43,6 @@ export function listAppsUseCase(
         transport,
         deviceInfo,
         deviceProxyModel: getEnv("DEVICE_PROXY_MODEL") as DeviceModelId,
+        managerApiRepository,
       });
 }
