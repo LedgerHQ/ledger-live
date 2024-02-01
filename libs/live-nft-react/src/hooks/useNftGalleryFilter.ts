@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { InfiniteData, useInfiniteQuery, UseInfiniteQueryResult } from "@tanstack/react-query";
-import { fetchNftsFromSimpleHash } from "@ledgerhq/live-nft/api/index";
+import { fetchNftsFromSimpleHash } from "@ledgerhq/live-nft/api/simplehash";
 import { SimpleHashResponse } from "@ledgerhq/live-nft/api/types";
 import { ProtoNFT } from "@ledgerhq/types-live";
 

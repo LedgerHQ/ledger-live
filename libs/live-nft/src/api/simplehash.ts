@@ -2,7 +2,7 @@ import network from "@ledgerhq/live-network/network";
 import { SimpleHashResponse } from "./types";
 import { getEnv } from "@ledgerhq/live-env";
 
-const SPAM_FILTER_THRESHOLD = 80;
+const SPAM_FILTER_THRESHOLD = 20;
 const PAGE_SIZE = 50;
 
 type NftFetchOpts = {
@@ -17,7 +17,7 @@ type NftFetchOpts = {
   /**
    * cursor used to paginate the API
    */
-  cursor: string | undefined;
+  cursor?: string;
   /**
    * number of NFT per page (not required, defaults to a constant)
    */

@@ -56,14 +56,12 @@ for (let i = 0; i < expected.length; i += pagedBy) {
 
 let callCount = 0;
 
-console.warn("apiResults", apiResults.length);
 jest.mock("@ledgerhq/live-nft/api/index", () => ({
   fetchNftsFromSimpleHash: jest.fn().mockImplementation(opts => {
     const { cursor } = opts;
-    const index = cursor === undefined ? 0 : Number(cursor);
+    const index = cursor ? Number(cursor) : 0;
     if (!apiResults[index]) throw new Error("no such page");
     callCount++;
-    console.warn(index, apiResults[index]);
     return Promise.resolve(apiResults[index]);
   }),
 }));
