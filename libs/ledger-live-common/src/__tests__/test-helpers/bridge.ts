@@ -131,7 +131,6 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
         return implicitMigration(accounts);
       } catch (e: any) {
         console.error(e.message);
-        //releaseMockDevice(deviceId);
         throw e;
       } finally {
         releaseMockDevice(deviceId);
