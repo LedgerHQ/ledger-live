@@ -31,13 +31,12 @@ describe("listApps v2", () => {
   it("should return an observable that errors if deviceInfo.isOSU is true", done => {
     const transport = aTransportBuilder();
     const deviceInfo = aDeviceInfoBuilder({ isOSU: true, isBootloader: false });
-    const result = listApps({
+
+    listApps({
       transport,
       deviceInfo,
       managerApiRepository: mockedManagerApiRepository,
-    });
-
-    result.subscribe({
+    }).subscribe({
       error: err => {
         expect(err).toBeInstanceOf(UnexpectedBootloader);
         done();
@@ -46,19 +45,19 @@ describe("listApps v2", () => {
         fail("this observable should not complete");
       },
     });
+
     jest.advanceTimersByTime(1);
   });
 
   it("should return an observable that errors if deviceInfo.isBootloader is true", done => {
     const transport = aTransportBuilder();
     const deviceInfo = aDeviceInfoBuilder({ isOSU: false, isBootloader: true });
-    const result = listApps({
+
+    listApps({
       transport,
       deviceInfo,
       managerApiRepository: mockedManagerApiRepository,
-    });
-
-    result.subscribe({
+    }).subscribe({
       error: err => {
         expect(err).toBeInstanceOf(UnexpectedBootloader);
         done();
@@ -67,6 +66,7 @@ describe("listApps v2", () => {
         fail("this observable should not complete");
       },
     });
+
     jest.advanceTimersByTime(1);
   });
 
@@ -74,13 +74,11 @@ describe("listApps v2", () => {
     const transport = aTransportBuilder({ deviceModel: null });
     const deviceInfo = aDeviceInfoBuilder({ isOSU: false, isBootloader: false, targetId: 0 });
 
-    const result = listApps({
+    listApps({
       transport,
       deviceInfo,
       managerApiRepository: mockedManagerApiRepository,
-    });
-
-    result.subscribe({
+    }).subscribe({
       error: err => {
         expect(err.message).toBe("Bad usage of listAppsV2: missing deviceModelId");
         done();
@@ -89,6 +87,7 @@ describe("listApps v2", () => {
         fail("this observable should not complete");
       },
     });
+
     jest.advanceTimersByTime(1);
   });
 
@@ -118,6 +117,7 @@ describe("listApps v2", () => {
         done();
       },
     });
+
     jest.advanceTimersByTime(1);
 
     expect(listAppsCommandSpy).toHaveBeenCalled();
@@ -176,6 +176,7 @@ describe("listApps v2", () => {
         fail("this observable should not complete");
       },
     });
+
     jest.advanceTimersByTime(1);
   });
 
@@ -206,6 +207,7 @@ describe("listApps v2", () => {
         fail("this observable should not complete");
       },
     });
+
     jest.advanceTimersByTime(1);
   });
 
@@ -238,6 +240,7 @@ describe("listApps v2", () => {
         fail("this observable should not complete");
       },
     });
+
     jest.advanceTimersByTime(1);
   });
 });
