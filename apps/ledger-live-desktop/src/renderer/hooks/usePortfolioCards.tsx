@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ActionCard from "~/renderer/components/ContentCards/ActionCard";
 import { portfolioContentCardSelector } from "~/renderer/reducers/dynamicContent";
@@ -7,13 +7,8 @@ import { setPortfolioCards } from "~/renderer/actions/dynamicContent";
 
 const usePortfolioCards = () => {
   const dispatch = useDispatch();
-  const [cachedContentCards, setCachedContentCards] = useState<braze.Card[]>([]);
+  const [cachedContentCards, setCachedContentCards] = useState(braze.getCachedContentCards().cards);
   const portfolioCards = useSelector(portfolioContentCardSelector);
-
-  useEffect(() => {
-    const cards = braze.getCachedContentCards().cards;
-    setCachedContentCards(cards);
-  }, []);
 
   const findCard = (cardId: string) => cachedContentCards.find(card => card.id === cardId);
 
@@ -36,11 +31,6 @@ const usePortfolioCards = () => {
     const currentCard = findCard(cardId);
 
     if (currentCard) {
-      // For some reason braze won't log the click event if the card url is empty
-      // Setting it as the card id just to have a dummy non empty value
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      currentCard.url = currentCard.id;
       braze.logContentCardClick(currentCard);
     }
   };
