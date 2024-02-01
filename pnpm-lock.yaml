@@ -2280,6 +2280,9 @@ importers:
       '@ledgerhq/crypto-icons-ui':
         specifier: workspace:^
         version: link:../ui/packages/crypto-icons
+      '@ledgerhq/crypto-utils':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/crypto-utils
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../ledgerjs/packages/cryptoassets

@@ -139,6 +139,7 @@
     "@ledgerhq/coin-polkadot": "workspace:^",
     "@ledgerhq/compressjs": "github:LedgerHQ/compressjs#d9e8e4d994923e0ea76a32b97289bcccfe71b82e",
     "@ledgerhq/crypto-icons-ui": "workspace:^",
+    "@ledgerhq/crypto-utils": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/errors": "workspace:^",

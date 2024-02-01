@@ -1,4 +1,4 @@
-import { bip32asBuffer } from "@ledgerhq/hw-app-btc/bip32";
+import { bip32asBuffer } from "@ledgerhq/crypto-utils/bip32";
 
 const getSerializedAddressParameters = (
   path: string,
