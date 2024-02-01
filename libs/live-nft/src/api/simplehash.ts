@@ -2,7 +2,23 @@ import network from "@ledgerhq/live-network/network";
 import { SimpleHashResponse } from "./types";
 import { getEnv } from "@ledgerhq/live-env";
 
-const SPAM_FILTER_THRESHOLD = 20;
+/**
+ *
+ * Doc for spam scores : https://docs.simplehash.com/reference/spam-scores
+ *
+ * https://docs.simplehash.com/reference/nfts-by-wallets-v2
+ *
+ * The score is a numeric value from 0 to 100, with 0 being deemed not spam,
+ *  and 100 being deemed likely spam
+ *
+ * Filter by spam score could be used in many ways:
+ * - spam_score__lte=80 : filter all NFTs with a spam score of 80 or less.
+ * - spam_score__gte=80 : filter all NFTs with a spam score of 80 or more.
+ * - spam_score__lt=80 : filter all NFTs with a spam score below 80.
+ * - spam_score__gt=80 : filter all NFTs with a spam score above 80.
+ */
+
+const SPAM_FILTER_THRESHOLD = 40;
 const PAGE_SIZE = 50;
 
 type NftFetchOpts = {
