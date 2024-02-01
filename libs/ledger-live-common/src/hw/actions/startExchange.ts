@@ -1,12 +1,14 @@
 import { Observable, of, concat } from "rxjs";
 import { scan, tap } from "rxjs/operators";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import type { ConnectAppEvent, Input as ConnectAppInput } from "../connectApp";
 import type { Action, Device } from "./types";
-import type { AppState } from "./app";
+import type { AppRequest, AppState } from "./app";
 import { log } from "@ledgerhq/logs";
 import { createAction as createAppAction } from "./app";
 import { ExchangeType } from "@ledgerhq/live-app-sdk";
+import { getMainAccount } from "../../account";
+import type { Exchange } from "../../exchange/swap/types";
 
 type State = {
   startExchangeResult: string | null | undefined;
@@ -17,7 +19,7 @@ type State = {
 };
 
 type StartExchangeState = AppState & State;
-type StartExchangeRequest = { exchangeType: ExchangeType; provider: string };
+type StartExchangeRequest = { exchangeType: ExchangeType; provider?: string; exchange?: Exchange };
 export type Result =
   | {
       startExchangeResult: string;
@@ -95,13 +97,37 @@ export const createAction = (
   ): StartExchangeState => {
     const [state, setState] = useState(initialState);
     const reduxDeviceFrozen = useFrozenValue(reduxDevice, state.freezeReduxDevice);
+    const { exchangeType, provider, exchange } = startExchangeRequest;
+    const requireLatestFirmware = true;
+    let appState;
+    if (!exchange) {
+      const request: AppRequest = useMemo(() => {
+        return {
+          appName: "Exchange",
+        };
+      }, [requireLatestFirmware]);
+      appState = createAppAction(connectAppExec).useHook(reduxDeviceFrozen, request);
+    } else {
+      const { fromAccount, fromParentAccount, toAccount, toParentAccount } = exchange;
+      const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
+      const maintoAccount = getMainAccount(toAccount, toParentAccount);
 
-    const { exchangeType, provider } = startExchangeRequest;
-
-    const appState = createAppAction(connectAppExec).useHook(reduxDeviceFrozen, {
-      appName: "Exchange",
-    });
-
+      const request: AppRequest = useMemo(() => {
+        return {
+          appName: "Exchange",
+          dependencies: [
+            {
+              account: mainFromAccount,
+            },
+            {
+              account: maintoAccount,
+            },
+          ],
+          requireLatestFirmware,
+        };
+      }, [mainFromAccount, maintoAccount, requireLatestFirmware]);
+      appState = createAppAction(connectAppExec).useHook(reduxDeviceFrozen, request);
+    }
     const { device, opened, error, appAndVersion } = appState;
 
     const hasError = error || state.error;
@@ -133,7 +159,7 @@ export const createAction = (
       return () => {
         sub.unsubscribe();
       };
-    }, [device, opened, exchangeType, hasError, appAndVersion]);
+    }, [exchange, device, opened, exchangeType, hasError, appAndVersion]);
 
     return {
       ...appState,
