@@ -28,6 +28,7 @@ import CompleteExchange, {
   isCompleteExchangeData,
 } from "~/renderer/modals/Platform/Exchange/CompleteExchange/Body";
 import { ExchangeType } from "@ledgerhq/live-common/wallet-api/Exchange/server";
+import { Exchange } from "@ledgerhq/live-common/exchange/swap/types";
 
 const Divider = styled(Box)`
   border: 1px solid ${p => p.theme.colors.palette.divider};
@@ -36,7 +37,8 @@ const Divider = styled(Box)`
 export type StartExchangeData = {
   onCancel?: (error: Error) => void;
   exchangeType: ExchangeType;
-  provider: string;
+  provider?: string;
+  exchange?: Exchange;
   onResult: (startExchangeResult: string) => void;
 };
 
@@ -44,7 +46,7 @@ export function isStartExchangeData(data: unknown): data is StartExchangeData {
   if (data === null || typeof data !== "object") {
     return false;
   }
-  return "exchangeType" in data && "provider" in data;
+  return "exchangeType" in data;
 }
 
 export const LiveAppDrawer = () => {
@@ -147,10 +149,7 @@ export const LiveAppDrawer = () => {
           <Box alignItems={"center"} height={"100%"} px={32}>
             <DeviceAction
               action={action}
-              request={{
-                exchangeType: data.exchangeType,
-                provider: data.provider,
-              }}
+              request={data}
               onResult={(result: StartExchangeResult) => {
                 if ("startExchangeResult" in result) {
                   data.onResult(result.startExchangeResult as unknown as string);

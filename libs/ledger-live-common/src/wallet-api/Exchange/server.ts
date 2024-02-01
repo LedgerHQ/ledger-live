@@ -16,6 +16,7 @@ import {
   ExchangeCompleteParams,
   ExchangeCompleteResult,
   ExchangeStartParams,
+  ExchangeStartSwapParams,
   ExchangeStartResult,
   ExchangeType,
 } from "@ledgerhq/wallet-api-exchange-module";
@@ -32,7 +33,10 @@ import { Transaction } from "../../generated/types";
 export { ExchangeType };
 
 type Handlers = {
-  "custom.exchange.start": RPCHandler<ExchangeStartResult, ExchangeStartParams>;
+  "custom.exchange.start": RPCHandler<
+    ExchangeStartResult,
+    ExchangeStartParams | ExchangeStartSwapParams
+  >;
   "custom.exchange.complete": RPCHandler<ExchangeCompleteResult, ExchangeCompleteParams>;
 };
 
@@ -49,9 +53,15 @@ export type CompleteExchangeUiRequest = {
   amountExpectedTo?: number;
 };
 
+export type ExchangeStartParamsUiRequest = {
+  exchangeType: "FUND" | "SELL" | "SWAP" | "FUND_NG" | "SELL_NG" | "SWAP_NG";
+  provider?: string;
+  exchange?: Exchange;
+};
+
 export type ExchangeUiHooks = {
   "custom.exchange.start": (params: {
-    exchangeParams: ExchangeStartParams;
+    exchangeParams: ExchangeStartParamsUiRequest;
     onSuccess: (nonce: string) => void;
     onCancel: (error: Error) => void;
   }) => void;
@@ -77,20 +87,60 @@ export const handlers = ({
   uiHooks: ExchangeUiHooks;
 }) =>
   ({
-    "custom.exchange.start": customWrapper<ExchangeStartParams, ExchangeStartResult>(
-      async params => {
-        tracking.startExchangeRequested(manifest);
+    "custom.exchange.start": customWrapper<
+      ExchangeStartParams | ExchangeStartSwapParams,
+      ExchangeStartResult
+    >(async params => {
+      tracking.startExchangeRequested(manifest);
 
-        if (!params) {
-          tracking.startExchangeNoParams(manifest);
-          return { transactionId: "" };
+      if (!params) {
+        tracking.startExchangeNoParams(manifest);
+        return { transactionId: "" };
+      }
+      if ("fromAccountId" in params) {
+        const realFromAccountId = getAccountIdFromWalletAccountId(params.fromAccountId);
+        if (!realFromAccountId) {
+          return Promise.reject(new Error(`accountId ${params.fromAccountId} unknown`));
         }
+
+        const fromAccount = accounts.find(acc => acc.id === realFromAccountId);
+
+        if (!fromAccount) {
+          throw new ServerError(createAccountNotFound(params.fromAccountId));
+        }
+
+        let toAccount;
+
+        if (params.exchangeType === "SWAP" && params.toAccountId) {
+          const realToAccountId = getAccountIdFromWalletAccountId(params.toAccountId);
+          if (!realToAccountId) {
+            return Promise.reject(new Error(`accountId ${params.toAccountId} unknown`));
+          }
+
+          toAccount = accounts.find(a => a.id === realToAccountId);
+
+          if (!toAccount) {
+            throw new ServerError(createAccountNotFound(params.toAccountId));
+          }
+        }
+
+        const fromParentAccount = getParentAccount(fromAccount, accounts);
+        const toParentAccount = toAccount ? getParentAccount(toAccount, accounts) : undefined;
+
+        const currency = params.tokenCurrency ? findTokenById(params.tokenCurrency) : null;
+        const newTokenAccount = currency ? makeEmptyTokenAccount(toAccount, currency) : null;
 
         return new Promise((resolve, reject) =>
           uiExchangeStart({
             exchangeParams: {
               exchangeType: params.exchangeType,
               provider: params.provider,
+              exchange: {
+                fromAccount,
+                fromParentAccount,
+                toAccount: newTokenAccount ? newTokenAccount : toAccount,
+                toParentAccount: newTokenAccount ? toAccount : toParentAccount,
+              },
             },
             onSuccess: (nonce: string) => {
               tracking.startExchangeSuccess(manifest);
@@ -102,8 +152,24 @@ export const handlers = ({
             },
           }),
         );
-      },
-    ),
+      } else {
+        return new Promise((resolve, reject) =>
+          uiExchangeStart({
+            exchangeParams: {
+              exchangeType: params.exchangeType,
+            },
+            onSuccess: (nonce: string) => {
+              tracking.startExchangeSuccess(manifest);
+              resolve({ transactionId: nonce });
+            },
+            onCancel: error => {
+              tracking.completeExchangeFail(manifest);
+              reject(error);
+            },
+          }),
+        );
+      }
+    }),
     "custom.exchange.complete": customWrapper<ExchangeCompleteParams, ExchangeCompleteResult>(
       async params => {
         tracking.completeExchangeRequested(manifest);

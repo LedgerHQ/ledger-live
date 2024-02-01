@@ -51,9 +51,8 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"]) {
             dispatch(
               openExchangeDrawer({
                 type: "EXCHANGE_START",
+                ...exchangeParams,
                 exchangeType: ExchangeType[exchangeParams.exchangeType],
-                provider: exchangeParams.provider,
-
                 onResult: (nonce: string) => {
                   onSuccess(nonce);
                 },

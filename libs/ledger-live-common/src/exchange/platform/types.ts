@@ -46,6 +46,8 @@ export type StartExchangeInput = {
   exchangeType: number;
   appVersion?: string;
   provider?: string;
+  fromAccountId?: string;
+  toAccountId?: string;
 };
 
 interface CompleteExchangeInputCommon {

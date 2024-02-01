@@ -47,8 +47,8 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"]) {
               screen: ScreenName.PlatformStartExchange,
               params: {
                 request: {
+                  ...exchangeParams,
                   exchangeType: ExchangeType[exchangeParams.exchangeType],
-                  provider: exchangeParams.provider,
                 },
                 onResult: result => {
                   if (result.startExchangeError) {
