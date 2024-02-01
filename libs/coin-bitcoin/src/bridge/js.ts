@@ -47,7 +47,7 @@ function buildAccountBridge(signerContext: SignerContext, perfLogger: PerfLogger
     if (perCoin && perCoin.injectGetAddressParams) {
       return perCoin.injectGetAddressParams(account);
     }
-  }
+  };
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress), {
     injectGetAddressParams,
   });

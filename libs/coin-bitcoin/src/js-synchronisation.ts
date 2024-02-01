@@ -81,7 +81,7 @@ export type StartSpan = (
   },
 ) => {
   finish: () => void;
-}
+};
 export function makeGetAccountShape(
   signerContext: SignerContext,
   startSpan: StartSpan,
