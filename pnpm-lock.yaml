@@ -4768,7 +4768,7 @@ importers:
         version: 0.10.7
       '@expo/webpack-config':
         specifier: ^18.1.2
-        version: 18.1.3(expo-constants@14.4.2)(expo-modules-core@1.5.11)(expo@49.0.13)(metro@0.80.0)(react-native@0.72.6)(react@18.2.0)
+        version: 18.1.3(expo-constants@14.4.2)(expo-modules-core@1.11.8)(expo@49.0.13)(metro@0.80.0)(react-native@0.72.6)(react@18.2.0)
       '@ledgerhq/metro-extra-config':
         specifier: workspace:*
         version: link:../../../../tools/metro-extra-config
@@ -4894,19 +4894,19 @@ importers:
         version: 0.6.15(eslint@8.51.0)(typescript@5.1.3)
       expo:
         specifier: ^49.0.7
-        version: 49.0.13(@babel/core@7.23.2)(expo-modules-core@1.5.11)(glob@7.2.0)(metro-core@0.80.0)(metro@0.80.0)(minimatch@5.1.0)(react-native@0.72.6)(react@18.2.0)
+        version: 49.0.13(@babel/core@7.23.2)(expo-modules-core@1.11.8)(glob@7.2.0)(metro-core@0.80.0)(metro@0.80.0)(minimatch@5.1.0)(react-native@0.72.6)(react@18.2.0)
       expo-asset:
         specifier: 8.10.1
-        version: 8.10.1(expo-constants@14.4.2)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
+        version: 8.10.1(expo-constants@14.4.2)(expo-modules-core@1.11.8)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
       expo-constants:
         specifier: ^14.4.2
-        version: 14.4.2(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
+        version: 14.4.2(expo-modules-core@1.11.8)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
       expo-font:
         specifier: ^11.4.0
-        version: 11.6.0(expo-asset@8.10.1)(expo-constants@14.4.2)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
+        version: 11.6.0(expo-asset@8.10.1)(expo-constants@14.4.2)(expo-modules-core@1.11.8)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
       expo-modules-core:
-        specifier: 1.5.11
-        version: 1.5.11(expo-constants@14.4.2)(react-native@0.72.6)(react@18.2.0)
+        specifier: 1.11.8
+        version: 1.11.8(expo-constants@14.4.2)(react-native@0.72.6)(react@18.2.0)
       fs-extra:
         specifier: ^10.0.1
         version: 10.1.0
@@ -13966,6 +13966,7 @@ packages:
       - expo-modules-autolinking
       - supports-color
       - utf-8-validate
+    dev: false
 
   /@expo/cli@0.10.13(glob@7.2.0)(metro-core@0.80.0)(metro@0.80.0)(minimatch@5.1.0):
     resolution: {integrity: sha512-8ciyz+yIDih6zCNMWK0IyEv411W7vej/TaWIFGarogPVbFokXrUKr0aKoQG1RU1SLlY4eUpHakbIzqog+rhJdQ==}
@@ -14379,6 +14380,7 @@ packages:
     transitivePeerDependencies:
       - encoding
       - supports-color
+    dev: false
 
   /@expo/rudder-sdk-node@1.1.1:
     resolution: {integrity: sha512-uy/hS/awclDJ1S88w9UGpc6Nm9XnNUjzOAAib1A3PVAnGQIwebg8DpFqOthFBTlZxeuV/BKbZ5jmTbtNZkp1WQ==}
@@ -14406,7 +14408,7 @@ packages:
   /@expo/vector-icons@13.0.0:
     resolution: {integrity: sha512-TI+l71+5aSKnShYclFa14Kum+hQMZ86b95SH6tQUG3qZEmLTarvWpKwqtTwQKqvlJSJrpFiSFu3eCuZokY6zWA==}
 
-  /@expo/webpack-config@18.1.3(expo-constants@14.4.2)(expo-modules-core@1.5.11)(expo@49.0.13)(metro@0.80.0)(react-native@0.72.6)(react@18.2.0):
+  /@expo/webpack-config@18.1.3(expo-constants@14.4.2)(expo-modules-core@1.11.8)(expo@49.0.13)(metro@0.80.0)(react-native@0.72.6)(react@18.2.0):
     resolution: {integrity: sha512-lG2G7KmdW0y70b87Ul9A/1l1DgagSTqA3iIegxOYJCv38X7pNUcq0zIl+suBWtDV1ITkXmrfuYMPFMA1jqgtvA==}
     engines: {node: '>=12'}
     peerDependencies:
@@ -14419,8 +14421,8 @@ packages:
       copy-webpack-plugin: 10.2.4(webpack@5.88.2)
       css-loader: 6.7.1(webpack@5.88.2)
       css-minimizer-webpack-plugin: 3.4.1(metro@0.80.0)(webpack@5.88.2)
-      expo: 49.0.13(@babel/core@7.23.2)(expo-modules-core@1.5.11)(glob@7.2.0)(metro-core@0.80.0)(metro@0.80.0)(minimatch@5.1.0)(react-native@0.72.6)(react@18.2.0)
-      expo-pwa: 0.0.127(expo-constants@14.4.2)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
+      expo: 49.0.13(@babel/core@7.23.2)(expo-modules-core@1.11.8)(glob@7.2.0)(metro-core@0.80.0)(metro@0.80.0)(minimatch@5.1.0)(react-native@0.72.6)(react@18.2.0)
+      expo-pwa: 0.0.127(expo-constants@14.4.2)(expo-modules-core@1.11.8)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
       find-up: 5.0.0
       find-yarn-workspace-root: 2.0.0
       fs-extra: 10.1.0
@@ -30086,6 +30088,7 @@ packages:
 
   /compare-versions@3.6.0:
     resolution: {integrity: sha512-W6Af2Iw1z4CB7q4uU4hv646dW9GQuBM+YpC0UvUCWSD8w90SJjp+ujJuXaEMtAXBtSqGfMPuFOVn4/+FlaqfBA==}
+    dev: false
 
   /component-emitter@1.3.0:
     resolution: {integrity: sha512-Rd3se6QB+sO1TwqZjscQrurpEPIfO0/yYnSin6Q/rD3mOutHvUrCAhJub3r90uNb+SESBuE0QYoB90YdfatsRg==}
@@ -34828,7 +34831,6 @@ packages:
       is-hex-prefixed: 1.0.0
       strip-hex-prefix: 1.0.0
     dev: false
-    bundledDependencies: false
 
   /ev-emitter@1.1.1:
     resolution: {integrity: sha512-ipiDYhdQSCZ4hSbX4rMW+XzNKMD1prg/sTvoVmSLkuQ1MVlwjJQQA+sW8tMYR3BLUr9KjodFV4pvzunvRhd33Q==}
@@ -35040,6 +35042,31 @@ packages:
       jest-util: 29.7.0
     dev: true
 
+  /expo-application@5.3.1(expo-constants@14.4.2)(expo-modules-core@1.11.8)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0):
+    resolution: {integrity: sha512-HR2+K+Hm33vLw/TfbFaHrvUbRRNRco8R+3QaCKy7eJC2LFfT05kZ15ynGaKfB5DJ/oqPV3mxXVR/EfwmE++hoA==}
+    peerDependencies:
+      expo: '*'
+      expo-constants: '*'
+      expo-modules-core: '*'
+      react: '*'
+      react-native: '*'
+    peerDependenciesMeta:
+      expo-constants:
+        optional: true
+      expo-modules-core:
+        optional: true
+      react:
+        optional: true
+      react-native:
+        optional: true
+    dependencies:
+      expo: 49.0.13(@babel/core@7.23.2)(expo-modules-core@1.11.8)(glob@7.2.0)(metro-core@0.80.0)(metro@0.80.0)(minimatch@5.1.0)(react-native@0.72.6)(react@18.2.0)
+      expo-constants: 14.4.2(expo-modules-core@1.11.8)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
+      expo-modules-core: 1.11.8(expo-constants@14.4.2)(react-native@0.72.6)(react@18.2.0)
+      react: 18.2.0
+      react-native: 0.72.6(@babel/core@7.23.2)(@babel/preset-env@7.17.10)(metro-resolver@0.80.0)(metro-transform-worker@0.80.0)(react@18.2.0)
+    dev: true
+
   /expo-application@5.3.1(expo-constants@14.4.2)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0):
     resolution: {integrity: sha512-HR2+K+Hm33vLw/TfbFaHrvUbRRNRco8R+3QaCKy7eJC2LFfT05kZ15ynGaKfB5DJ/oqPV3mxXVR/EfwmE++hoA==}
     peerDependencies:
@@ -35063,8 +35090,9 @@ packages:
       expo-modules-core: 1.5.11(react-native@0.72.6)(react@18.2.0)
       react: 18.2.0
       react-native: 0.72.6(@babel/core@7.23.2)(react@18.2.0)
+    dev: false
 
-  /expo-asset@8.10.1(expo-constants@14.4.2)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0):
+  /expo-asset@8.10.1(expo-constants@14.4.2)(expo-modules-core@1.11.8)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0):
     resolution: {integrity: sha512-5VMTESxgY9GBsspO/esY25SKEa7RyascVkLe/OcL1WgblNFm7xCCEEUIW8VWS1nHJQGYxpMZPr3bEfjMpdWdyA==}
     peerDependencies:
       expo-constants: '*'
@@ -35084,9 +35112,9 @@ packages:
         optional: true
     dependencies:
       blueimp-md5: 2.19.0
-      expo-constants: 14.4.2(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
-      expo-file-system: 15.4.4(expo-constants@14.4.2)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
-      expo-modules-core: 1.5.11(expo-constants@14.4.2)(react-native@0.72.6)(react@18.2.0)
+      expo-constants: 14.4.2(expo-modules-core@1.11.8)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
+      expo-file-system: 15.4.4(expo-constants@14.4.2)(expo-modules-core@1.11.8)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
+      expo-modules-core: 1.11.8(expo-constants@14.4.2)(react-native@0.72.6)(react@18.2.0)
       invariant: 2.2.4
       md5-file: 3.2.3
       path-browserify: 1.0.1
@@ -35097,10 +35125,10 @@ packages:
       - expo
     dev: true
 
-  /expo-asset@8.10.1(expo-file-system@15.4.4)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0):
+  /expo-asset@8.10.1(expo-constants@14.4.2)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0):
     resolution: {integrity: sha512-5VMTESxgY9GBsspO/esY25SKEa7RyascVkLe/OcL1WgblNFm7xCCEEUIW8VWS1nHJQGYxpMZPr3bEfjMpdWdyA==}
     peerDependencies:
-      expo-file-system: '*'
+      expo-constants: '*'
       expo-modules-core: '*'
       react: '*'
       react-native: '*'
@@ -35128,7 +35156,7 @@ packages:
       url-parse: 1.5.10
     transitivePeerDependencies:
       - expo
-      - supports-color
+    dev: false
 
   /expo-barcode-scanner@12.5.3(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0):
     resolution: {integrity: sha512-aIeTiOUzPdngTIhZHhM1mOMx9CPtmYEtEkK8pAgyua3NiAKgsUN8z8bpiQWuZTrxSaqkU8fG1zGOk9E4VnNwyA==}
@@ -35180,6 +35208,35 @@ packages:
       react-native: 0.72.6(@babel/core@7.23.2)(react@18.2.0)
     dev: false
 
+  /expo-constants@14.4.2(expo-modules-core@1.11.8)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0):
+    resolution: {integrity: sha512-nOB122DOAjk+KrJT69lFQAoYVQGQjFHSigCPVBzVdko9S1xGsfiOH9+X5dygTsZTIlVLpQJDdmZ7ONiv3i+26w==}
+    peerDependencies:
+      expo: '*'
+      expo-constants: '*'
+      expo-modules-core: '*'
+      react: '*'
+      react-native: '*'
+    peerDependenciesMeta:
+      expo-constants:
+        optional: true
+      expo-modules-core:
+        optional: true
+      react:
+        optional: true
+      react-native:
+        optional: true
+    dependencies:
+      '@expo/config': 8.1.2
+      expo: 49.0.13(@babel/core@7.23.2)(expo-modules-core@1.11.8)(glob@7.2.0)(metro-core@0.80.0)(metro@0.80.0)(minimatch@5.1.0)(react-native@0.72.6)(react@18.2.0)
+      expo-constants: 14.4.2(expo-modules-core@1.11.8)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
+      expo-modules-core: 1.11.8(expo-constants@14.4.2)(react-native@0.72.6)(react@18.2.0)
+      react: 18.2.0
+      react-native: 0.72.6(@babel/core@7.23.2)(@babel/preset-env@7.17.10)(metro-resolver@0.80.0)(metro-transform-worker@0.80.0)(react@18.2.0)
+      uuid: 3.4.0
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
   /expo-constants@14.4.2(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0):
     resolution: {integrity: sha512-nOB122DOAjk+KrJT69lFQAoYVQGQjFHSigCPVBzVdko9S1xGsfiOH9+X5dygTsZTIlVLpQJDdmZ7ONiv3i+26w==}
     peerDependencies:
@@ -35207,6 +35264,7 @@ packages:
       uuid: 3.4.0
     transitivePeerDependencies:
       - supports-color
+    dev: false
 
   /expo-crypto@10.2.0(react-native@0.72.6)(react@18.2.0):
     resolution: {integrity: sha512-YVFp+DJXBtt4t6oZXepnzb+xwpKzFbXn3B9Oma1Tfh6J0rIlm/I20UW/5apdvEdbj44fxJ5DsiZeyADI3bcZkQ==}
@@ -35229,6 +35287,32 @@ packages:
       react: 18.2.0
       react-native: 0.72.6(react@18.2.0)
     dev: false
+
+  /expo-file-system@15.4.4(expo-constants@14.4.2)(expo-modules-core@1.11.8)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0):
+    resolution: {integrity: sha512-F0xS88D85F7qVQ61r0qBnzh6VW/s6iIl+VaQEEi2nAIOQHw1JIEj4yCXPLTtbyn5VmArbe2dSL3KYz1V+BLkKA==}
+    peerDependencies:
+      expo: '*'
+      expo-constants: '*'
+      expo-modules-core: '*'
+      react: '*'
+      react-native: '*'
+    peerDependenciesMeta:
+      expo-constants:
+        optional: true
+      expo-modules-core:
+        optional: true
+      react:
+        optional: true
+      react-native:
+        optional: true
+    dependencies:
+      expo: 49.0.13(@babel/core@7.23.2)(expo-modules-core@1.11.8)(glob@7.2.0)(metro-core@0.80.0)(metro@0.80.0)(minimatch@5.1.0)(react-native@0.72.6)(react@18.2.0)
+      expo-constants: 14.4.2(expo-modules-core@1.11.8)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
+      expo-modules-core: 1.11.8(expo-constants@14.4.2)(react-native@0.72.6)(react@18.2.0)
+      react: 18.2.0
+      react-native: 0.72.6(@babel/core@7.23.2)(@babel/preset-env@7.17.10)(metro-resolver@0.80.0)(metro-transform-worker@0.80.0)(react@18.2.0)
+      uuid: 3.4.0
+    dev: true
 
   /expo-file-system@15.4.4(expo-constants@14.4.2)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0):
     resolution: {integrity: sha512-F0xS88D85F7qVQ61r0qBnzh6VW/s6iIl+VaQEEi2nAIOQHw1JIEj4yCXPLTtbyn5VmArbe2dSL3KYz1V+BLkKA==}
@@ -35254,6 +35338,7 @@ packages:
       react: 18.2.0
       react-native: 0.72.6(@babel/core@7.23.2)(react@18.2.0)
       uuid: 3.4.0
+    dev: false
 
   /expo-file-system@15.4.4(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0):
     resolution: {integrity: sha512-F0xS88D85F7qVQ61r0qBnzh6VW/s6iIl+VaQEEi2nAIOQHw1JIEj4yCXPLTtbyn5VmArbe2dSL3KYz1V+BLkKA==}
@@ -35280,6 +35365,36 @@ packages:
       uuid: 3.4.0
     dev: false
 
+  /expo-font@11.4.0(expo-asset@8.10.1)(expo-constants@14.4.2)(expo-modules-core@1.11.8)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0):
+    resolution: {integrity: sha512-nkmezCFD7gR/I6R+e3/ry18uEfF8uYrr6h+PdBJu+3dawoLOpo+wFb/RG9bHUekU1/cPanR58LR7G5MEMKHR2w==}
+    peerDependencies:
+      expo: '*'
+      expo-asset: '*'
+      expo-constants: '*'
+      expo-modules-core: '*'
+      react: '*'
+      react-native: '*'
+    peerDependenciesMeta:
+      expo-asset:
+        optional: true
+      expo-constants:
+        optional: true
+      expo-modules-core:
+        optional: true
+      react:
+        optional: true
+      react-native:
+        optional: true
+    dependencies:
+      expo: 49.0.13(@babel/core@7.23.2)(expo-modules-core@1.11.8)(glob@7.2.0)(metro-core@0.80.0)(metro@0.80.0)(minimatch@5.1.0)(react-native@0.72.6)(react@18.2.0)
+      expo-asset: 8.10.1(expo-constants@14.4.2)(expo-modules-core@1.11.8)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
+      expo-constants: 14.4.2(expo-modules-core@1.11.8)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
+      expo-modules-core: 1.11.8(expo-constants@14.4.2)(react-native@0.72.6)(react@18.2.0)
+      fontfaceobserver: 2.1.0
+      react: 18.2.0
+      react-native: 0.72.6(@babel/core@7.23.2)(@babel/preset-env@7.17.10)(metro-resolver@0.80.0)(metro-transform-worker@0.80.0)(react@18.2.0)
+    dev: true
+
   /expo-font@11.4.0(expo-asset@8.10.1)(expo-constants@14.4.2)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0):
     resolution: {integrity: sha512-nkmezCFD7gR/I6R+e3/ry18uEfF8uYrr6h+PdBJu+3dawoLOpo+wFb/RG9bHUekU1/cPanR58LR7G5MEMKHR2w==}
     peerDependencies:
@@ -35302,14 +35417,15 @@ packages:
         optional: true
     dependencies:
       expo: 49.0.13(@babel/core@7.23.2)(expo-modules-autolinking@1.5.1)(expo-modules-core@1.5.11)(react-native@0.72.6)(react@18.2.0)
-      expo-asset: 8.10.1(expo-file-system@15.4.4)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
+      expo-asset: 8.10.1(expo-constants@14.4.2)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
       expo-constants: 14.4.2(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
       expo-modules-core: 1.5.11(react-native@0.72.6)(react@18.2.0)
       fontfaceobserver: 2.1.0
       react: 18.2.0
       react-native: 0.72.6(@babel/core@7.23.2)(react@18.2.0)
+    dev: false
 
-  /expo-font@11.6.0(expo-asset@8.10.1)(expo-constants@14.4.2)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0):
+  /expo-font@11.6.0(expo-asset@8.10.1)(expo-constants@14.4.2)(expo-modules-core@1.11.8)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0):
     resolution: {integrity: sha512-ekfU0MN7vzJNGwQCJhxnhF2M9Fq/RtVF5xSQpr8+f4ISPimmKfEcArMHKCl4oG3saFVjSRX7fLbo38WOv3z5Mw==}
     peerDependencies:
       expo: '*'
@@ -35330,10 +35446,10 @@ packages:
       react-native:
         optional: true
     dependencies:
-      expo: 49.0.13(@babel/core@7.23.2)(expo-modules-core@1.5.11)(glob@7.2.0)(metro-core@0.80.0)(metro@0.80.0)(minimatch@5.1.0)(react-native@0.72.6)(react@18.2.0)
-      expo-asset: 8.10.1(expo-constants@14.4.2)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
-      expo-constants: 14.4.2(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
-      expo-modules-core: 1.5.11(expo-constants@14.4.2)(react-native@0.72.6)(react@18.2.0)
+      expo: 49.0.13(@babel/core@7.23.2)(expo-modules-core@1.11.8)(glob@7.2.0)(metro-core@0.80.0)(metro@0.80.0)(minimatch@5.1.0)(react-native@0.72.6)(react@18.2.0)
+      expo-asset: 8.10.1(expo-constants@14.4.2)(expo-modules-core@1.11.8)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
+      expo-constants: 14.4.2(expo-modules-core@1.11.8)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
+      expo-modules-core: 1.11.8(expo-constants@14.4.2)(react-native@0.72.6)(react@18.2.0)
       fontfaceobserver: 2.1.0
       react: 18.2.0
       react-native: 0.72.6(@babel/core@7.23.2)(@babel/preset-env@7.17.10)(metro-resolver@0.80.0)(metro-transform-worker@0.80.0)(react@18.2.0)
@@ -35388,6 +35504,31 @@ packages:
       react-native: 0.72.6(@babel/core@7.23.2)(react@18.2.0)
     dev: false
 
+  /expo-keep-awake@12.3.0(expo-constants@14.4.2)(expo-modules-core@1.11.8)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0):
+    resolution: {integrity: sha512-ujiJg1p9EdCOYS05jh5PtUrfiZnK0yyLy+UewzqrjUqIT8eAGMQbkfOn3C3fHE7AKd5AefSMzJnS3lYZcZYHDw==}
+    peerDependencies:
+      expo: '*'
+      expo-constants: '*'
+      expo-modules-core: '*'
+      react: '*'
+      react-native: '*'
+    peerDependenciesMeta:
+      expo-constants:
+        optional: true
+      expo-modules-core:
+        optional: true
+      react:
+        optional: true
+      react-native:
+        optional: true
+    dependencies:
+      expo: 49.0.13(@babel/core@7.23.2)(expo-modules-core@1.11.8)(glob@7.2.0)(metro-core@0.80.0)(metro@0.80.0)(minimatch@5.1.0)(react-native@0.72.6)(react@18.2.0)
+      expo-constants: 14.4.2(expo-modules-core@1.11.8)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
+      expo-modules-core: 1.11.8(expo-constants@14.4.2)(react-native@0.72.6)(react@18.2.0)
+      react: 18.2.0
+      react-native: 0.72.6(@babel/core@7.23.2)(@babel/preset-env@7.17.10)(metro-resolver@0.80.0)(metro-transform-worker@0.80.0)(react@18.2.0)
+    dev: true
+
   /expo-keep-awake@12.3.0(expo-constants@14.4.2)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0):
     resolution: {integrity: sha512-ujiJg1p9EdCOYS05jh5PtUrfiZnK0yyLy+UewzqrjUqIT8eAGMQbkfOn3C3fHE7AKd5AefSMzJnS3lYZcZYHDw==}
     peerDependencies:
@@ -35411,6 +35552,7 @@ packages:
       expo-modules-core: 1.5.11(react-native@0.72.6)(react@18.2.0)
       react: 18.2.0
       react-native: 0.72.6(@babel/core@7.23.2)(react@18.2.0)
+    dev: false
 
   /expo-modules-autolinking@1.5.1(expo-modules-core@1.5.11)(react-native@0.72.6)(react@18.2.0):
     resolution: {integrity: sha512-yt5a1VCp2BF9CrsO689PCD5oXKP14MMhnOanQMvDn4BDpURYfzAlDVGC5fZrNQKtwn/eq3bcrxIwZ7D9QjVVRg==}
@@ -35441,9 +35583,10 @@ packages:
       react-native: 0.72.6(@babel/core@7.23.2)(react@18.2.0)
     transitivePeerDependencies:
       - supports-color
+    dev: false
 
-  /expo-modules-core@1.5.11(expo-constants@14.4.2)(react-native@0.72.6)(react@18.2.0):
-    resolution: {integrity: sha512-1Dj2t74nVjxq6xEQf2b9WFfAMhPzVnR0thY0PfRFgob4STyj3sq1U4PIHVWvKQBtDKIa227DrNRb+Hu+LqKWQg==}
+  /expo-modules-core@1.11.8(expo-constants@14.4.2)(react-native@0.72.6)(react@18.2.0):
+    resolution: {integrity: sha512-rlctE3nCNLCGv3LosGQNaTuwGrr2SyQA+hOgci/0l+VRc0gFNtvl0gskph9C0tnN1jzBeb8rRZQYVj5ih1yxcA==}
     peerDependencies:
       expo-constants: '*'
       expo-modules-core: '*'
@@ -35459,9 +35602,8 @@ packages:
       react-native:
         optional: true
     dependencies:
-      compare-versions: 3.6.0
-      expo-constants: 14.4.2(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
-      expo-modules-core: 1.5.11(expo-constants@14.4.2)(react-native@0.72.6)(react@18.2.0)
+      expo-constants: 14.4.2(expo-modules-core@1.11.8)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
+      expo-modules-core: 1.11.8(expo-constants@14.4.2)(react-native@0.72.6)(react@18.2.0)
       invariant: 2.2.4
       react: 18.2.0
       react-native: 0.72.6(@babel/core@7.23.2)(@babel/preset-env@7.17.10)(metro-resolver@0.80.0)(metro-transform-worker@0.80.0)(react@18.2.0)
@@ -35489,8 +35631,9 @@ packages:
       invariant: 2.2.4
       react: 18.2.0
       react-native: 0.72.6(@babel/core@7.23.2)(react@18.2.0)
+    dev: false
 
-  /expo-pwa@0.0.127(expo-constants@14.4.2)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0):
+  /expo-pwa@0.0.127(expo-constants@14.4.2)(expo-modules-core@1.11.8)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0):
     resolution: {integrity: sha512-8D9wEDkEXG9r6TPvAFpWt27IiP1cLm/4RWVRUHzFZflbWYLi8GkYArj5LHbbfokybRm1GVAanSrrYFEqHoIUiA==}
     hasBin: true
     peerDependencies:
@@ -35513,9 +35656,9 @@ packages:
       '@expo/image-utils': 0.3.23
       chalk: 4.1.2
       commander: 2.20.0
-      expo: 49.0.13(@babel/core@7.23.2)(expo-modules-core@1.5.11)(glob@7.2.0)(metro-core@0.80.0)(metro@0.80.0)(minimatch@5.1.0)(react-native@0.72.6)(react@18.2.0)
-      expo-constants: 14.4.2(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
-      expo-modules-core: 1.5.11(expo-constants@14.4.2)(react-native@0.72.6)(react@18.2.0)
+      expo: 49.0.13(@babel/core@7.23.2)(expo-modules-core@1.11.8)(glob@7.2.0)(metro-core@0.80.0)(metro@0.80.0)(minimatch@5.1.0)(react-native@0.72.6)(react@18.2.0)
+      expo-constants: 14.4.2(expo-modules-core@1.11.8)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
+      expo-modules-core: 1.11.8(expo-constants@14.4.2)(react-native@0.72.6)(react@18.2.0)
       react: 18.2.0
       react-native: 0.72.6(@babel/core@7.23.2)(@babel/preset-env@7.17.10)(metro-resolver@0.80.0)(metro-transform-worker@0.80.0)(react@18.2.0)
       update-check: 1.5.3
@@ -35572,7 +35715,7 @@ packages:
       '@expo/vector-icons': 13.0.0
       babel-preset-expo: 9.5.2(@babel/core@7.23.2)
       expo-application: 5.3.1(expo-constants@14.4.2)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
-      expo-asset: 8.10.1(expo-file-system@15.4.4)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
+      expo-asset: 8.10.1(expo-constants@14.4.2)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
       expo-constants: 14.4.2(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
       expo-file-system: 15.4.4(expo-constants@14.4.2)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
       expo-font: 11.4.0(expo-asset@8.10.1)(expo-constants@14.4.2)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
@@ -35598,8 +35741,9 @@ packages:
       - minimatch
       - supports-color
       - utf-8-validate
+    dev: false
 
-  /expo@49.0.13(@babel/core@7.23.2)(expo-modules-core@1.5.11)(glob@7.2.0)(metro-core@0.80.0)(metro@0.80.0)(minimatch@5.1.0)(react-native@0.72.6)(react@18.2.0):
+  /expo@49.0.13(@babel/core@7.23.2)(expo-modules-core@1.11.8)(glob@7.2.0)(metro-core@0.80.0)(metro@0.80.0)(minimatch@5.1.0)(react-native@0.72.6)(react@18.2.0):
     resolution: {integrity: sha512-k2QFmT5XN490ksjKJgogfS5SFj6ZKCu1GwWz4VUV4S9gkPjzr8zQAZoVPKaWxUYRb6xDpTJXdhLt7gSnV3bJvw==}
     hasBin: true
     peerDependencies:
@@ -35623,13 +35767,13 @@ packages:
       '@expo/config-plugins': 7.2.5
       '@expo/vector-icons': 13.0.0
       babel-preset-expo: 9.5.2(@babel/core@7.23.2)
-      expo-application: 5.3.1(expo-constants@14.4.2)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
-      expo-asset: 8.10.1(expo-constants@14.4.2)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
-      expo-constants: 14.4.2(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
-      expo-file-system: 15.4.4(expo-constants@14.4.2)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
-      expo-font: 11.4.0(expo-asset@8.10.1)(expo-constants@14.4.2)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
-      expo-keep-awake: 12.3.0(expo-constants@14.4.2)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
-      expo-modules-core: 1.5.11(expo-constants@14.4.2)(react-native@0.72.6)(react@18.2.0)
+      expo-application: 5.3.1(expo-constants@14.4.2)(expo-modules-core@1.11.8)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
+      expo-asset: 8.10.1(expo-constants@14.4.2)(expo-modules-core@1.11.8)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
+      expo-constants: 14.4.2(expo-modules-core@1.11.8)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
+      expo-file-system: 15.4.4(expo-constants@14.4.2)(expo-modules-core@1.11.8)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
+      expo-font: 11.4.0(expo-asset@8.10.1)(expo-constants@14.4.2)(expo-modules-core@1.11.8)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
+      expo-keep-awake: 12.3.0(expo-constants@14.4.2)(expo-modules-core@1.11.8)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
+      expo-modules-core: 1.11.8(expo-constants@14.4.2)(react-native@0.72.6)(react@18.2.0)
       fbemitter: 3.0.0
       invariant: 2.2.4
       md5-file: 3.2.3
@@ -35855,6 +35999,7 @@ packages:
       glob-parent: 5.1.2
       merge2: 1.4.1
       micromatch: 4.0.5
+    dev: false
 
   /fast-glob@3.3.1:
     resolution: {integrity: sha512-kNFPyjhh5cKjrUltxs+wFx+ZkbRaxxmZ+X0ZU31SOsxCEtP9VPgtq2teZw1DebupL5GmDaNQ6yKMMVcM41iqDg==}
