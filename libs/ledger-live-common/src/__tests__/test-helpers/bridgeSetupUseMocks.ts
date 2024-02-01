@@ -49,8 +49,6 @@ function applyBackendMock(mockContent: { request: StdRequest; response: any }) {
     default:
       throw new Error("unknown method");
   }
-
-  //console.log(nock.activeMocks());
 }
 
 export default async () => {

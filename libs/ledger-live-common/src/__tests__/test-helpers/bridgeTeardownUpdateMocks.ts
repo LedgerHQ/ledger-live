@@ -39,6 +39,7 @@ export default (async function () {
   const dir = __dirname + "/bridgeMocks";
   const knownUrls: string[] = [];
   const filteredRequests: StdRequest[] = [];
+  // TODO: Use SET, this will change with POST parameters support
   for (const req of global.bridgeTestsRequests) {
     if (!knownUrls.includes(req.url)) {
       knownUrls.push(req.url);
