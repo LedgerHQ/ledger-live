@@ -1,41 +1,52 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
 
+import { firstValueFrom, from } from "rxjs";
+import Transport from "@ledgerhq/hw-transport";
+import { Bridge } from "@ledgerhq/types-live";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import Btc from "@ledgerhq/hw-app-btc";
 import { createBridges } from "@ledgerhq/coin-bitcoin/bridge/js";
-import type {
-  BitcoinXPub,
-  BitcoinAddress,
-  BitcoinSignature,
-  SignerContext,
-} from "@ledgerhq/coin-bitcoin/signer";
+import type { SignerContext } from "@ledgerhq/coin-bitcoin/signer";
 import makeCliTools from "@ledgerhq/coin-bitcoin/cli-transaction";
 import bitcoinResolver from "@ledgerhq/coin-bitcoin/hw-getAddress";
+import { signMessage } from "@ledgerhq/coin-bitcoin/hw-signMessage";
 import { Transaction } from "@ledgerhq/coin-bitcoin/types";
-import Btc from "@ledgerhq/hw-app-btc";
-import Transport from "@ledgerhq/hw-transport";
-import { makeLRUCache } from "@ledgerhq/live-network/cache";
-import network from "@ledgerhq/live-network/network";
-import { Bridge } from "@ledgerhq/types-live";
-import { createResolver } from "../../bridge/setup";
-import { Resolver } from "../../hw/getAddress/types";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { firstValueFrom, from } from "rxjs";
+import { GetAddressOptions, Resolver } from "../../hw/getAddress/types";
 import { withDevice } from "../../hw/deviceAccess";
+import { startSpan } from "../../performance";
+import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 
-const signerContext: SignerContext = (
+const signerContext: SignerContext = <T>(
   deviceId: string,
   crypto: CryptoCurrency,
-  fn: (signer: Btc) => Promise<BitcoinXPub | BitcoinAddress | BitcoinSignature>,
-): Promise<BitcoinXPub | BitcoinAddress | BitcoinSignature> =>
+  fn: (signer: Btc) => Promise<T>,
+): Promise<T> =>
   firstValueFrom(
     withDevice(deviceId)((transport: Transport) =>
       from(fn(new Btc({ transport, currency: crypto.id }))),
     ),
   );
 
-const bridge: Bridge<Transaction> = createBridges(signerContext, network, makeLRUCache);
+const createSigner = (transport: Transport, currency: CryptoCurrency) => {
+  return new Btc({ transport, currency: currency.id });
+};
 
-const resolver: Resolver = createResolver(createSigner, bitcoinResolver);
+const bridge: Bridge<Transaction> = createBridges(signerContext, {
+  startSpan,
+});
 
-const cliTools = makeCliTools(network, makeLRUCache);
+const messageSigner = {
+  signMessage: signMessage(signerContext),
+};
 
-export { bridge, cliTools, resolver };
+const resolver: Resolver = (
+  transport: Transport,
+  addressOpt: GetAddressOptions,
+): ReturnType<GetAddressFn> => {
+  const signerContext: SignerContext = (_, crypto, fn) => fn(createSigner(transport, crypto));
+  return bitcoinResolver(signerContext)("", addressOpt);
+};
+
+const cliTools = makeCliTools();
+
+export { bridge, cliTools, resolver, messageSigner };

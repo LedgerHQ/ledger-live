@@ -12,7 +12,7 @@ import createTransaction from "../js-createTransaction";
 import prepareTransaction from "../js-prepareTransaction";
 import getTransactionStatus from "../js-getTransactionStatus";
 import estimateMaxSpendable from "../js-estimateMaxSpendable";
-import signOperation from "../js-signOperation";
+import buildSignOperation from "../js-signOperation";
 import broadcast from "../js-broadcast";
 import { calculateFees } from "./../cache";
 import { perCoinLogic } from "../logic";
@@ -72,7 +72,7 @@ function buildAccountBridge(signerContext: SignerContext, perfLogger: PerfLogger
     getTransactionStatus,
     receive,
     sync,
-    signOperation,
+    signOperation: buildSignOperation(signerContext),
     broadcast: async ({ account, signedOperation }: BroadcastArg) => {
       calculateFees.reset();
       return broadcast({

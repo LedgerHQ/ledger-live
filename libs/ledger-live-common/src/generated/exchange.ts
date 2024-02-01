@@ -5,6 +5,7 @@ import solana from "../families/solana/exchange";
 import stellar from "../families/stellar/exchange";
 import tezos from "../families/tezos/exchange";
 import tron from "../families/tron/exchange";
+import bitcoin from "@ledgerhq/coin-bitcoin/exchange";
 
 export default {
   evm,
@@ -14,4 +15,5 @@ export default {
   stellar,
   tezos,
   tron,
+  bitcoin,
 };

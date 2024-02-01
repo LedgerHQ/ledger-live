@@ -15,6 +15,7 @@ import tezos from "../families/tezos/transaction";
 import tron from "../families/tron/transaction";
 import vechain from "../families/vechain/transaction";
 import algorand from "@ledgerhq/coin-algorand/transaction";
+import bitcoin from "@ledgerhq/coin-bitcoin/transaction";
 import evm from "@ledgerhq/coin-evm/transaction";
 import near from "@ledgerhq/coin-near/transaction";
 import polkadot from "@ledgerhq/coin-polkadot/transaction";
@@ -37,6 +38,7 @@ export default {
   tron,
   vechain,
   algorand,
+  bitcoin,
   evm,
   near,
   polkadot,
