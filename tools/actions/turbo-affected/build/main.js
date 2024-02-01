@@ -18529,13 +18529,203 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
 // src/main.ts
 var import_child_process = require("child_process");
 var core = __toESM(require_core());
+
+// ../../../package.json
+var package_default = {
+  name: "@ledgerhq/ledger-live",
+  version: "0.0.0",
+  license: "MIT AND Apache-2.0",
+  private: true,
+  repository: {
+    type: "git",
+    url: "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  bugs: {
+    url: "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  scripts: {
+    bump: "changeset version",
+    clean: "git clean -fdX",
+    changelog: "changeset add",
+    prerelease: "pnpm run build:libs",
+    release: "changeset publish",
+    "build:libs": 'pnpm turbo build --no-daemon --filter="./libs/**" --filter="!./libs/ui/examples/**"',
+    "build:libs:force": 'pnpm -r --filter="./libs/**" --filter="!./libs/ui/examples/**" build',
+    "build:tests": 'pnpm turbo build --no-daemon  --filter="./tests/**"',
+    "build:dummy-apps": 'pnpm turbo build --filter="@ledgerhq/dummy-*-app"',
+    "build:dummy-wallet-app": 'pnpm turbo build --filter="@ledgerhq/dummy-wallet-app"',
+    "build:dummy-live-app": 'pnpm turbo build --filter="@ledgerhq/dummy-live-app"',
+    "build:actions": "pnpm turbo build --filter=@actions/*",
+    "build:cli": "pnpm turbo build --no-daemon --filter=live-cli",
+    "build:coin": 'pnpm turbo build --no-daemon --filter="./libs/coin-**"',
+    "build:domain": "pnpm turbo build --no-daemon --filter=domain-service",
+    "build:network": "pnpm turbo build --no-daemon --filter=live-network",
+    "build:config": "pnpm turbo build --no-daemon --filter=live-config",
+    "build:llc": 'pnpm turbo build --no-daemon --filter="live-common"',
+    "build:lld": "pnpm turbo build --no-daemon --filter=ledger-live-desktop",
+    "build:lld:deps": 'pnpm turbo build --no-daemon --filter="ledger-live-desktop^..."',
+    "build:llm:android": "pnpm turbo android:apk:local --no-daemon --filter=live-mobile",
+    "build:llm:ios": "pnpm turbo ios:local:ipa --no-daemon --filter=live-mobile",
+    "build:llm:deps": 'pnpm turbo build --no-daemon --filter="live-mobile^..."',
+    "build:ljs": 'pnpm turbo build --no-daemon --filter="./libs/ledgerjs/**"',
+    "build-ci:llm:ios": "pnpm turbo ios:ci:adhoc --no-daemon --filter=live-mobile",
+    "build-ci:llm:android": "pnpm turbo android:apk --no-daemon --filter=live-mobile",
+    "clean:ljs": 'pnpm turbo clean --no-daemon --filter="./libs/ledgerjs/**"',
+    "doc:ljs": 'pnpm turbo doc --no-daemon --filter="./libs/ledgerjs/**"',
+    "watch:ljs": 'pnpm turbo watch --no-daemon --filter="./libs/ledgerjs/**"',
+    "watch:common": "pnpm turbo watch --no-daemon --filter=live-common",
+    "dev:cli": "pnpm turbo watch --no-daemon --filter=live-cli",
+    "dev:lld": "pnpm turbo start --no-daemon --filter=ledger-live-desktop",
+    "dev:lld:debug": "DEV_TOOLS=1 LEDGER_INTERNAL_ARGS=--inspect ELECTRON_ARGS=--remote-debugging-port=8315 pnpm turbo start --no-daemon --filter=ledger-live-desktop",
+    "dev:llm": "pnpm turbo start --no-daemon --filter=live-mobile",
+    "release:lld": "pnpm turbo release --no-daemon --filter=ledger-live-desktop",
+    "pre:lld": "pnpm turbo pre-build --no-daemon --filter=ledger-live-desktop",
+    nightly: "pnpm turbo nightly --no-daemon",
+    "nightly:lld": "pnpm turbo nightly --no-daemon --filter=ledger-live-desktop",
+    test: "pnpm turbo test --no-daemon --concurrency=100%",
+    "run:cli": "./apps/cli/bin/index.js",
+    lint: "pnpm turbo lint --no-daemon",
+    "lint:fix": "pnpm turbo lint:fix --no-daemon",
+    typecheck: "pnpm turbo typecheck --no-daemon",
+    unimported: "pnpm turbo unimported",
+    desktop: "pnpm --filter ledger-live-desktop",
+    cli: "pnpm --filter live-cli",
+    coin: "pnpm --filter coin-framework",
+    "coin:algorand": "pnpm --filter coin-algorand",
+    "coin:polkadot": "pnpm --filter coin-polkadot",
+    "coin:evm": "pnpm --filter coin-evm",
+    "coin:framework": "pnpm --filter coin-framework",
+    "evm-tools": "pnpm --filter evm-tools",
+    domain: "pnpm --filter domain-service",
+    doc: "pnpm --filter docs",
+    mobile: "pnpm --filter live-mobile",
+    common: "pnpm --filter live-common",
+    "web-tools": "pnpm --filter web-tools",
+    "live-env": "pnpm --filter live-env",
+    portfolio: "pnpm --filter live-portfolio",
+    promise: "pnpm --filter live-promise",
+    network: "pnpm --filter live-network",
+    config: "pnpm --filter live-config",
+    utils: "pnpm --filter live-utils",
+    hooks: "pnpm --filter live-hooks",
+    countervalues: "pnpm --filter live-countervalues",
+    "countervalues-react": "pnpm --filter live-countervalues-react",
+    nft: "pnpm --filter live-nft",
+    "nft-react": "pnpm --filter live-nft-react",
+    "bot:github": "pnpm --filter live-github-bot",
+    "ljs:cryptoassets": "pnpm --filter cryptoassets",
+    "ljs:devices": "pnpm --filter devices",
+    "ljs:errors": "pnpm --filter errors",
+    "ljs:hw-app-algorand": "pnpm --filter hw-app-algorand",
+    "ljs:hw-app-btc": "pnpm --filter hw-app-btc",
+    "ljs:hw-app-cosmos": "pnpm --filter hw-app-cosmos",
+    "ljs:hw-app-eth": "pnpm --filter hw-app-eth",
+    "ljs:hw-app-exchange": "pnpm --filter hw-app-exchange",
+    "ljs:hw-app-helium": "pnpm --filter hw-app-helium",
+    "ljs:hw-app-near": "pnpm --filter hw-app-near",
+    "ljs:hw-app-polkadot": "pnpm --filter hw-app-polkadot",
+    "ljs:hw-app-solana": "pnpm --filter hw-app-solana",
+    "ljs:hw-app-str": "pnpm --filter hw-app-str",
+    "ljs:hw-app-tezos": "pnpm --filter hw-app-tezos",
+    "ljs:hw-app-trx": "pnpm --filter hw-app-trx",
+    "ljs:hw-app-xrp": "pnpm --filter hw-app-xrp",
+    "ljs:hw-transport": "pnpm --filter hw-transport",
+    "ljs:hw-transport-http": "pnpm --filter hw-transport-http",
+    "ljs:hw-transport-mocker": "pnpm --filter hw-transport-mocker",
+    "ljs:hw-transport-node-ble": "pnpm --filter hw-transport-node-ble",
+    "ljs:hw-transport-node-hid": "pnpm --filter hw-transport-node-hid",
+    "ljs:hw-transport-node-hid-noevents": "pnpm --filter hw-transport-node-hid-noevents",
+    "ljs:hw-transport-node-hid-singleton": "pnpm --filter hw-transport-node-hid-singleton",
+    "ljs:hw-transport-node-speculos": "pnpm --filter hw-transport-node-speculos",
+    "ljs:hw-transport-node-speculos-http": "pnpm --filter hw-transport-node-speculos-http",
+    "ljs:hw-transport-vault": "pnpm --filter hw-transport-vault",
+    "ljs:hw-transport-web-ble": "pnpm --filter hw-transport-web-ble",
+    "ljs:hw-transport-webhid": "pnpm --filter hw-transport-webhid",
+    "ljs:hw-transport-webusb": "pnpm --filter hw-transport-webusb",
+    "ljs:logs": "pnpm --filter logs",
+    "ljs:react-native-hid": "pnpm --filter react-native-hid",
+    "ljs:react-native-hw-transport-ble": "pnpm --filter react-native-hw-transport-ble",
+    "ljs:swift-bridge-hw-app-eth": "pnpm --filter swift-bridge-hw-app-eth",
+    "ljs:swift-bridge-hw-app-solana": "pnpm --filter swift-bridge-hw-app-solana",
+    "ljs:swift-bridge-hw-transport-ble": "pnpm --filter swift-bridge-hw-transport-ble",
+    "ljs:types-cryptoassets": "pnpm --filter types-cryptoassets",
+    "ljs:types-devices": "pnpm --filter types-devices",
+    "ljs:types-live": "pnpm --filter types-live",
+    "test-utils": "pnpm --filter test-utils",
+    "dummy-live-app": "pnpm --filter dummy-live-app",
+    "dummy-wallet-app": "pnpm --filter dummy-wallet-app",
+    "dummy-ptx-app": "pnpm --filter dummy-ptx-app",
+    ui: "pnpm --filter ui",
+    "ui:react": "pnpm --filter react-ui",
+    "ui:native": "pnpm --filter native-ui",
+    "ui:icons": "pnpm --filter icons-ui",
+    "ui:crypto-icons": "pnpm --filter crypto-icons-ui",
+    "ui:shared": "pnpm --filter ui-shared",
+    "ui:example:next": 'pnpm  --filter="next.js-example"',
+    "ui:example:webpack": 'pnpm  --filter="webpack.js-example"',
+    actions: "pnpm --filter @actions/*",
+    "import:cal-tokens": 'pnpm --filter="@ledgerhq/cryptoassets" import:cal-tokens',
+    "generate:cryptoassets-md": 'pnpm --filter="ledger-live-desktop" generate:cryptoassets-md'
+  },
+  devDependencies: {
+    "@changesets/changelog-github": "^0.5.0",
+    "@changesets/cli": "^2.26.0",
+    "@commitlint/cli": "^17.4.2",
+    "@commitlint/config-conventional": "^17.6.5",
+    "@commitlint/prompt-cli": "^17.4.2",
+    "@typescript-eslint/eslint-plugin": "^6.2.0",
+    "@typescript-eslint/parser": "^6.2.0",
+    "@ledgerhq/create-release-hash": "workspace:*",
+    eslint: "^8.51.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-json": "^3.1.0",
+    "eslint-plugin-prettier": "^5.0.1",
+    "@ledgerhq/pnpm-utils": "workspace:*",
+    prettier: "^3.0.3",
+    rimraf: "^4.4.1",
+    turbo: "1.10.1",
+    typescript: "^5.1.3",
+    unimported: "^1.30.0",
+    zx: "^7.2.2"
+  },
+  pnpm: {
+    neverBuiltDependencies: [
+      "blake2"
+    ],
+    overrides: {
+      "stellar-base>sodium-native": "^3.2.1",
+      "remove-flow-types-loader>flow-remove-types": "^2",
+      "remove-flow-types-loader>loader-utils": "*"
+    },
+    patchedDependencies: {
+      "react-native-fast-crypto@2.2.0": "patches/react-native-fast-crypto@2.2.0.patch",
+      "react-native-video@5.2.0": "patches/react-native-video@5.2.0.patch",
+      "rn-fetch-blob@0.12.0": "patches/rn-fetch-blob@0.12.0.patch",
+      "react-native-image-crop-tools@1.6.4": "patches/react-native-image-crop-tools@1.6.4.patch",
+      "react-native-webview@11.26.1": "patches/react-native-webview@11.26.1.patch",
+      "asyncstorage-down@4.2.0": "patches/asyncstorage-down@4.2.0.patch",
+      "detox@20.13.5": "patches/detox@20.13.5.patch",
+      "usb@2.9.0": "patches/usb@2.9.0.patch"
+    },
+    packageExtensions: {
+      "eslint-config-next@*": {
+        dependencies: {
+          next: "*"
+        }
+      }
+    }
+  }
+};
+
+// src/main.ts
 async function main() {
   const ref = core.getInput("ref");
   const pkg = core.getInput("package") || "";
   const command = core.getInput("command");
+  const turboVersion = package_default.devDependencies.turbo;
   try {
     const turboOutput = (0, import_child_process.execSync)(
-      `npx turbo@^1.10.1 run ${command} --filter=...[${ref}] --dry=json`,
+      `npx turbo@${turboVersion} run ${command} --filter=...[${ref}] --dry=json`,
       {
         encoding: "utf-8",
         maxBuffer: 2048 * 1024
