@@ -1,15 +1,17 @@
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { getEnv } from "@ledgerhq/live-env";
 import { Carousel } from "@ledgerhq/react-ui";
 import { ABTestingVariants } from "@ledgerhq/types-live";
 import React, { PropsWithChildren } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { useRefreshAccountsOrderingEffect } from "~/renderer/actions/general";
+import { Card } from "~/renderer/components/Box";
 import usePortfolioCards from "~/renderer/hooks/usePortfolioCards";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { hasInstalledAppsSelector } from "~/renderer/reducers/settings";
 
-const PortfolioVariantA = styled.div`
+const PortfolioVariantA = styled(Card)`
   background-color: ${p => p.theme.colors.opacityPurple.c10};
 `;
 
@@ -38,17 +40,16 @@ const PortfolioVariantB = ({ children }: PropsWithChildren) => (
 const PortfolioContentCards = ({ variant }: { variant: ABTestingVariants }) => {
   const slides = usePortfolioCards();
   const lldPortfolioCarousel = useFeature("lldPortfolioCarousel");
-  const accounts = useSelector(accountsSelector);
+  const totalAccounts = useSelector(accountsSelector).length;
   const hasInstalledApps = useSelector(hasInstalledAppsSelector);
-  const totalAccounts = accounts.length;
+  const isPlaywright = !!getEnv("PLAYWRIGHT_RUN");
 
   const showCarousel = lldPortfolioCarousel?.enabled && hasInstalledApps && totalAccounts >= 0;
   useRefreshAccountsOrderingEffect({
     onMount: true,
   });
 
-  if (!showCarousel || slides.length === 0) return null;
-
+  if (isPlaywright || !showCarousel || slides.length === 0) return null;
   if (
     lldPortfolioCarousel?.params?.variant === ABTestingVariants.variantA &&
     variant === ABTestingVariants.variantA
