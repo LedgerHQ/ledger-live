@@ -4504,8 +4504,8 @@ importers:
         specifier: workspace:^
         version: link:packages/shared
       '@playwright/test':
-        specifier: ~1.40.0
-        version: 1.40.0
+        specifier: ~1.41.0
+        version: 1.41.2
       concurrently:
         specifier: ^8.0.0
         version: 8.0.0
@@ -17376,12 +17376,12 @@ packages:
       playwright: 1.39.0
     dev: true
 
-  /@playwright/test@1.40.0:
-    resolution: {integrity: sha512-PdW+kn4eV99iP5gxWNSDQCbhMaDVej+RXL5xr6t04nbKLCBwYtA046t7ofoczHOm8u6c+45hpDKQVZqtqwkeQg==}
+  /@playwright/test@1.41.2:
+    resolution: {integrity: sha512-qQB9h7KbibJzrDpkXkYvsmiDJK14FULCCZgEcoe2AvFAS64oCirWTwzTlAYEbKaRxWs5TFesE1Na6izMv3HfGg==}
     engines: {node: '>=16'}
     hasBin: true
     dependencies:
-      playwright: 1.40.0
+      playwright: 1.41.2
     dev: true
 
   /@pmmmwh/react-refresh-webpack-plugin@0.5.11(react-refresh@0.11.0)(webpack-dev-server@4.12.0)(webpack@5.89.0):
@@ -34828,7 +34828,6 @@ packages:
       is-hex-prefixed: 1.0.0
       strip-hex-prefix: 1.0.0
     dev: false
-    bundledDependencies: false
 
   /ev-emitter@1.1.1:
     resolution: {integrity: sha512-ipiDYhdQSCZ4hSbX4rMW+XzNKMD1prg/sTvoVmSLkuQ1MVlwjJQQA+sW8tMYR3BLUr9KjodFV4pvzunvRhd33Q==}
@@ -35095,40 +35094,6 @@ packages:
       url-parse: 1.5.10
     transitivePeerDependencies:
       - expo
-    dev: true
-
-  /expo-asset@8.10.1(expo-file-system@15.4.4)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0):
-    resolution: {integrity: sha512-5VMTESxgY9GBsspO/esY25SKEa7RyascVkLe/OcL1WgblNFm7xCCEEUIW8VWS1nHJQGYxpMZPr3bEfjMpdWdyA==}
-    peerDependencies:
-      expo-file-system: '*'
-      expo-modules-core: '*'
-      react: '*'
-      react-native: '*'
-    peerDependenciesMeta:
-      expo-constants:
-        optional: true
-      expo-file-system:
-        optional: true
-      expo-modules-core:
-        optional: true
-      react:
-        optional: true
-      react-native:
-        optional: true
-    dependencies:
-      blueimp-md5: 2.19.0
-      expo-constants: 14.4.2(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
-      expo-file-system: 15.4.4(expo-constants@14.4.2)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
-      expo-modules-core: 1.5.11(react-native@0.72.6)(react@18.2.0)
-      invariant: 2.2.4
-      md5-file: 3.2.3
-      path-browserify: 1.0.1
-      react: 18.2.0
-      react-native: 0.72.6(@babel/core@7.23.2)(react@18.2.0)
-      url-parse: 1.5.10
-    transitivePeerDependencies:
-      - expo
-      - supports-color
 
   /expo-barcode-scanner@12.5.3(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0):
     resolution: {integrity: sha512-aIeTiOUzPdngTIhZHhM1mOMx9CPtmYEtEkK8pAgyua3NiAKgsUN8z8bpiQWuZTrxSaqkU8fG1zGOk9E4VnNwyA==}
@@ -35302,7 +35267,7 @@ packages:
         optional: true
     dependencies:
       expo: 49.0.13(@babel/core@7.23.2)(expo-modules-autolinking@1.5.1)(expo-modules-core@1.5.11)(react-native@0.72.6)(react@18.2.0)
-      expo-asset: 8.10.1(expo-file-system@15.4.4)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
+      expo-asset: 8.10.1(expo-constants@14.4.2)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
       expo-constants: 14.4.2(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
       expo-modules-core: 1.5.11(react-native@0.72.6)(react@18.2.0)
       fontfaceobserver: 2.1.0
@@ -35465,7 +35430,6 @@ packages:
       invariant: 2.2.4
       react: 18.2.0
       react-native: 0.72.6(@babel/core@7.23.2)(@babel/preset-env@7.17.10)(metro-resolver@0.80.0)(metro-transform-worker@0.80.0)(react@18.2.0)
-    dev: true
 
   /expo-modules-core@1.5.11(react-native@0.72.6)(react@18.2.0):
     resolution: {integrity: sha512-1Dj2t74nVjxq6xEQf2b9WFfAMhPzVnR0thY0PfRFgob4STyj3sq1U4PIHVWvKQBtDKIa227DrNRb+Hu+LqKWQg==}
@@ -35572,7 +35536,7 @@ packages:
       '@expo/vector-icons': 13.0.0
       babel-preset-expo: 9.5.2(@babel/core@7.23.2)
       expo-application: 5.3.1(expo-constants@14.4.2)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
-      expo-asset: 8.10.1(expo-file-system@15.4.4)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
+      expo-asset: 8.10.1(expo-constants@14.4.2)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
       expo-constants: 14.4.2(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
       expo-file-system: 15.4.4(expo-constants@14.4.2)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
       expo-font: 11.4.0(expo-asset@8.10.1)(expo-constants@14.4.2)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
@@ -46861,8 +46825,8 @@ packages:
     hasBin: true
     dev: true
 
-  /playwright-core@1.40.0:
-    resolution: {integrity: sha512-fvKewVJpGeca8t0ipM56jkVSU6Eo0RmFvQ/MaCQNDYm+sdvKkMBBWTE1FdeMqIdumRaXXjZChWHvIzCGM/tA/Q==}
+  /playwright-core@1.41.2:
+    resolution: {integrity: sha512-VaTvwCA4Y8kxEe+kfm2+uUUw5Lubf38RxF7FpBxLPmGe5sdNkSg5e3ChEigaGrX7qdqT3pt2m/98LiyvU2x6CA==}
     engines: {node: '>=16'}
     hasBin: true
     dev: true
@@ -46877,12 +46841,12 @@ packages:
       fsevents: 2.3.2
     dev: true
 
-  /playwright@1.40.0:
-    resolution: {integrity: sha512-gyHAgQjiDf1m34Xpwzaqb76KgfzYrhK7iih+2IzcOCoZWr/8ZqmdBw+t0RU85ZmfJMgtgAiNtBQ/KS2325INXw==}
+  /playwright@1.41.2:
+    resolution: {integrity: sha512-v0bOa6H2GJChDL8pAeLa/LZC4feoAMbSQm1/jF/ySsWWoaNItvrMP7GEkvEEFyCTUYKMxjQKaTSg5up7nR6/8A==}
     engines: {node: '>=16'}
     hasBin: true
     dependencies:
-      playwright-core: 1.40.0
+      playwright-core: 1.41.2
     optionalDependencies:
       fsevents: 2.3.2
     dev: true
