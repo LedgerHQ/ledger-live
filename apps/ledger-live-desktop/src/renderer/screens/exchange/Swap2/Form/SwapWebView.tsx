@@ -54,6 +54,8 @@ export type SwapProps = {
   error: boolean;
   providerRedirectURL: string;
   toNewTokenId: string;
+  estimatedFees: BigNumber;
+  estimatedFeesUnit: string;
 };
 
 export type SwapWebProps = {
