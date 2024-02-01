@@ -6,6 +6,10 @@ function sha256(str) {
   return createHash("sha256").update(str).digest("hex");
 }
 
+/* 
+Maps native object returned by node:perf_hooks into our model StdRequest
+TODO: find types
+*/
 function reqToStdRequest(nodeRequest: any, nodeResponse: any): StdRequest {
   return {
     method: nodeRequest.method,
@@ -17,6 +21,7 @@ function reqToStdRequest(nodeRequest: any, nodeResponse: any): StdRequest {
   };
 }
 
+// TODO: find more accurate type
 const onObserverEntry: PerformanceObserverCallback = (items, _observer) => {
   const entries = items.getEntries();
   for (const entry of entries) {
@@ -29,6 +34,7 @@ const onObserverEntry: PerformanceObserverCallback = (items, _observer) => {
     }
   }
 };
+
 export default () => {
   global.bridgeTestsRequests = [];
   // We start sniffing traffic, after all tests we will create a mock for each entry
