@@ -4,6 +4,7 @@ import { log } from "@ledgerhq/logs";
 import type { Resolver } from "../../hw/getAddress/types";
 import { getPath, isError } from "./msc-utils";
 import { casperAddressFromPubKey } from "./bridge/bridgeHelpers/addresses";
+import { CLPublicKeyTag } from "casper-js-sdk";
 
 const resolver: Resolver = async (transport, { path, verify }) => {
   log("debug", "start getAddress process");
@@ -18,7 +19,9 @@ const resolver: Resolver = async (transport, { path, verify }) => {
 
   return {
     path,
-    address: r.Address.length ? r.Address.toString() : casperAddressFromPubKey(r.publicKey),
+    address: r.Address.length
+      ? r.Address.toString()
+      : casperAddressFromPubKey(r.publicKey, CLPublicKeyTag.SECP256K1),
     publicKey: r.publicKey.toString("hex"),
   };
 };
