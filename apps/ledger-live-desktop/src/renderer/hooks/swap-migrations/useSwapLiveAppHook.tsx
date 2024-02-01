@@ -12,6 +12,13 @@ import {
 } from "~/renderer/screens/exchange/Swap2/Form/SwapWebView";
 import { rateSelector } from "~/renderer/actions/swap";
 import { getEnv } from "@ledgerhq/live-env";
+import {
+  getAccountUnit,
+  getFeesCurrency,
+  getMainAccount,
+} from "@ledgerhq/live-common/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import BigNumber from "bignumber.js";
 
 export type UseSwapLiveAppHookProps = {
   manifestID: string | null;
@@ -39,6 +46,13 @@ export const useSwapLiveAppHook = (props: UseSwapLiveAppHookProps) => {
   const provider = exchangeRate?.provider;
   const exchangeRatesState = swapTransaction.swap?.rates;
   const swapWebPropsRef = useRef<SwapWebProps["swapState"] | undefined>(undefined);
+  const mainFromAccount =
+    swapTransaction.swap.from.account &&
+    getMainAccount(swapTransaction.swap.from.account, swapTransaction.swap.from.parentAccount);
+  const unit = mainFromAccount && getAccountUnit(mainFromAccount);
+  const estimatedFees =
+    unit && BigNumber(formatCurrencyUnit(unit, swapTransaction.status.estimatedFees));
+  const estimatedFeesUnit = mainFromAccount && getFeesCurrency(mainFromAccount);
 
   useEffect(() => {
     if (isSwapLiveAppEnabled) {
@@ -65,6 +79,8 @@ export const useSwapLiveAppHook = (props: UseSwapLiveAppHookProps) => {
         loading,
         providerRedirectURL,
         swapApiBase: `${SWAP_API_BASE}/swap`,
+        estimatedFees,
+        estimatedFeesUnit: estimatedFeesUnit?.id,
       };
 
       if (!isEqual(newSwapWebProps, swapWebPropsRef.current)) {
@@ -83,5 +99,7 @@ export const useSwapLiveAppHook = (props: UseSwapLiveAppHookProps) => {
     swapTransaction.bridgePending,
     exchangeRatesState.status,
     updateSwapWebProps,
+    estimatedFees,
+    estimatedFeesUnit?.id,
   ]);
 };
