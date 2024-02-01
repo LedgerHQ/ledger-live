@@ -1,3 +1,4 @@
+import { ApplicationV2Entity } from "../entities/AppEntity";
 import { DeviceVersionEntity } from "../entities/DeviceVersionEntity";
 import { FinalFirmware, OsuFirmware } from "../entities/FirmwareUpdateContextEntity";
 import { Id } from "../entities/Id";
@@ -33,4 +34,10 @@ export interface ManagerApiRepository {
   }): Promise<FinalFirmware>;
 
   getFinalFirmwareById(id: number): Promise<FinalFirmware>;
+
+  getAppsByHash(hashes: string[]): Promise<Array<ApplicationV2Entity | null>>;
+
+  // TODO: catalogForDevice
+
+  // TODO: getLanguagePackagesForDevice
 }

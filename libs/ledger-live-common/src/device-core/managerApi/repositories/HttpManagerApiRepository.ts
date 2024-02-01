@@ -2,10 +2,11 @@ import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import network from "@ledgerhq/live-network/network";
 import { getUserHashes } from "../../../user";
 import URL from "url";
-import { FirmwareNotRecognized } from "@ledgerhq/errors";
+import { FirmwareNotRecognized, NetworkDown } from "@ledgerhq/errors";
 import { ManagerApiRepository } from "./ManagerApiRepository";
 import { FinalFirmware, OsuFirmware } from "../entities/FirmwareUpdateContextEntity";
 import { DeviceVersionEntity } from "../entities/DeviceVersionEntity";
+import { ApplicationV2Entity } from "../entities/AppEntity";
 
 export class HttpManagerApiRepository implements ManagerApiRepository {
   private readonly managerApiBase: string;
@@ -165,5 +166,41 @@ export class HttpManagerApiRepository implements ManagerApiRepository {
       return data;
     },
     id => String(id),
+  );
+
+  /**
+   * Resolve applications details by hashes.
+   * Order of outputs matches order of inputs.
+   * If an application version is not found, a null is returned instead.
+   * If several versions match the same hash, only the latest one is returned.
+   *
+   * Given an array of hashes that we can obtain by either listInstalledApps in this same
+   * API (a websocket connection to a scriptrunner) or via direct apdus using hw/listApps.ts
+   * retrieve all the information needed from the backend for those applications.
+   */
+  readonly getAppsByHash = makeLRUCache(
+    async hashes => {
+      const {
+        data,
+      }: {
+        data: Array<ApplicationV2Entity | null>;
+      } = await network({
+        method: "POST",
+        url: URL.format({
+          pathname: `${this.managerApiBase}/v2/apps/hash`,
+          query: {
+            livecommonversion: this.liveCommonVersion,
+          },
+        }),
+        data: hashes,
+      });
+
+      if (!data || !Array.isArray(data)) {
+        throw new NetworkDown("");
+      }
+
+      return data;
+    },
+    hashes => `${this.managerApiBase}_${hashes.join("-")}`,
   );
 }
