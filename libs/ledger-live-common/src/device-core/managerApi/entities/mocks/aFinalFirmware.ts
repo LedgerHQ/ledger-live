@@ -1,4 +1,4 @@
-import { FinalFirmware } from "@ledgerhq/types-live";
+import { FinalFirmware } from "../FirmwareUpdateContextEntity";
 
 export const aFinalFirmwareBuilder = (props?: Partial<FinalFirmware>): FinalFirmware => {
   return {
