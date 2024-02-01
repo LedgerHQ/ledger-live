@@ -54,6 +54,7 @@ export type SwapProps = {
   error: boolean;
   providerRedirectURL: string;
   toNewTokenId: string;
+  swapApiBase: string;
 };
 
 export type SwapWebProps = {
