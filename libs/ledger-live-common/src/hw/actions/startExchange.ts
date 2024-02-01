@@ -17,7 +17,7 @@ type State = {
 };
 
 type StartExchangeState = AppState & State;
-type StartExchangeRequest = { exchangeType: ExchangeType };
+type StartExchangeRequest = { exchangeType: ExchangeType; provider: string };
 export type Result =
   | {
       startExchangeResult: string;
@@ -86,6 +86,7 @@ export const createAction = (
     deviceId: string;
     exchangeType: ExchangeType;
     appVersion?: string;
+    provider?: string;
   }) => Observable<ExchangeRequestEvent>,
 ): StartExchangeAction => {
   const useHook = (
@@ -95,7 +96,7 @@ export const createAction = (
     const [state, setState] = useState(initialState);
     const reduxDeviceFrozen = useFrozenValue(reduxDevice, state.freezeReduxDevice);
 
-    const { exchangeType } = startExchangeRequest;
+    const { exchangeType, provider } = startExchangeRequest;
 
     const appState = createAppAction(connectAppExec).useHook(reduxDeviceFrozen, {
       appName: "Exchange",
@@ -118,6 +119,7 @@ export const createAction = (
         startExchangeExec({
           deviceId: device.deviceId,
           exchangeType,
+          provider,
           appVersion: appAndVersion?.version,
         }),
       )
