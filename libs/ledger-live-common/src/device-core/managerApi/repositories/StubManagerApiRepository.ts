@@ -1,6 +1,6 @@
 import { DeviceVersionEntity } from "../entities/DeviceVersionEntity";
 import { FinalFirmware, OsuFirmware } from "../entities/FirmwareUpdateContextEntity";
-import { aDeviceVersionEntityBuilder } from "../entities/mocks/aDeviceVersionEntityBuilder";
+import { aDeviceVersionBuilder } from "../entities/mocks/aDeviceVersion";
 import { aFinalFirmwareBuilder } from "../entities/mocks/aFinalFirmware";
 import { aOsuFirmwareBuilder } from "../entities/mocks/aOsuFirmware";
 import { ManagerApiRepository } from "./ManagerApiRepository";
@@ -16,7 +16,7 @@ export class StubManagerApiRepository implements ManagerApiRepository {
   };
 
   readonly getDeviceVersion = () => {
-    const result: DeviceVersionEntity = aDeviceVersionEntityBuilder();
+    const result: DeviceVersionEntity = aDeviceVersionBuilder();
     return Promise.resolve(result);
   };
 
