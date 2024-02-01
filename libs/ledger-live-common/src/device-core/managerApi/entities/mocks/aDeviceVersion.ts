@@ -1,6 +1,8 @@
-import { DeviceVersion } from "@ledgerhq/types-live";
+import { DeviceVersionEntity } from "../DeviceVersionEntity";
 
-export const aDeviceVersionBuilder = (props?: Partial<DeviceVersion>): DeviceVersion => {
+export const aDeviceVersionBuilder = (
+  props?: Partial<DeviceVersionEntity>,
+): DeviceVersionEntity => {
   return {
     name: "Ledger Nano S",
     device: 3,
