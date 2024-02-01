@@ -1,4 +1,3 @@
-import map from "lodash/map";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ActionCard from "~/renderer/components/ContentCards/ActionCard";
@@ -7,25 +6,24 @@ import * as braze from "@braze/web-sdk";
 import { setPortfolioCards } from "~/renderer/actions/dynamicContent";
 
 const usePortfolioCards = () => {
+  const dispatch = useDispatch();
   const [cachedContentCards, setCachedContentCards] = useState<braze.Card[]>([]);
   const portfolioCards = useSelector(portfolioContentCardSelector);
-  const dispatch = useDispatch();
 
   useEffect(() => {
     const cards = braze.getCachedContentCards().cards;
     setCachedContentCards(cards);
   }, []);
 
-  const onImpression = (cardId: string) => {
-    const currentCard = cachedContentCards.find(card => card.id === cardId);
+  const findCard = (cardId: string) => cachedContentCards.find(card => card.id === cardId);
 
-    if (currentCard) {
-      braze.logContentCardImpressions([currentCard]);
-    }
+  const onImpression = (cardId: string) => {
+    const currentCard = findCard(cardId);
+    currentCard && braze.logContentCardImpressions([currentCard]);
   };
 
   const onDismiss = (cardId: string) => {
-    const currentCard = cachedContentCards.find(card => card.id === cardId);
+    const currentCard = findCard(cardId);
 
     if (currentCard) {
       braze.logCardDismissal(currentCard);
@@ -35,7 +33,7 @@ const usePortfolioCards = () => {
   };
 
   const onClick = (cardId: string) => {
-    const currentCard = cachedContentCards.find(card => card.id === cardId);
+    const currentCard = findCard(cardId);
 
     if (currentCard) {
       // For some reason braze won't log the click event if the card url is empty
