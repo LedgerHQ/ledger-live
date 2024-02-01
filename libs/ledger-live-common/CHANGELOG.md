@@ -1,5 +1,20 @@
 # @ledgerhq/live-common
 
+## 33.6.0-nightly.3
+
+### Patch Changes
+
+- [#5985](https://github.com/LedgerHQ/ledger-live/pull/5985) [`32796a3`](https://github.com/LedgerHQ/ledger-live/commit/32796a39dafc884b44399339d7d87f48d861401b) Thanks [@lawRathod](https://github.com/lawRathod)! - Fix casper invalid recipient error for ed25519 pubkeys
+
+- Updated dependencies [[`2fd465e`](https://github.com/LedgerHQ/ledger-live/commit/2fd465ee730b11594d231503cfb940b984fa2f5a)]:
+  - @ledgerhq/coin-framework@0.11.1-nightly.1
+  - @ledgerhq/coin-algorand@0.3.10-nightly.1
+  - @ledgerhq/coin-evm@0.12.1-nightly.1
+  - @ledgerhq/coin-polkadot@0.5.3-nightly.1
+  - @ledgerhq/live-countervalues@0.1.1-nightly.1
+  - @ledgerhq/live-countervalues-react@0.1.1-nightly.1
+  - @ledgerhq/live-nft@0.1.1-nightly.0
+
 ## 33.6.0-nightly.2
 
 ### Minor Changes

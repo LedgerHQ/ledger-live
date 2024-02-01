@@ -1,5 +1,20 @@
 # ledger-live-desktop
 
+## 2.75.1-nightly.4
+
+### Patch Changes
+
+- [#6005](https://github.com/LedgerHQ/ledger-live/pull/6005) [`d92bd07`](https://github.com/LedgerHQ/ledger-live/commit/d92bd07ee30a82f351d5d16eff8494670f4747cc) Thanks [@RamyEB](https://github.com/RamyEB)! - Add translation to cta and subtitle content in Discover
+
+- Updated dependencies [[`2fd465e`](https://github.com/LedgerHQ/ledger-live/commit/2fd465ee730b11594d231503cfb940b984fa2f5a), [`32796a3`](https://github.com/LedgerHQ/ledger-live/commit/32796a39dafc884b44399339d7d87f48d861401b)]:
+  - @ledgerhq/coin-framework@0.11.1-nightly.1
+  - @ledgerhq/live-common@33.6.0-nightly.3
+  - @ledgerhq/coin-evm@0.12.1-nightly.1
+  - @ledgerhq/live-countervalues@0.1.1-nightly.1
+  - @ledgerhq/live-countervalues-react@0.1.1-nightly.1
+  - @ledgerhq/live-nft@0.1.1-nightly.0
+  - @ledgerhq/live-nft-react@0.1.1-nightly.0
+
 ## 2.75.1-nightly.3
 
 ### Patch Changes

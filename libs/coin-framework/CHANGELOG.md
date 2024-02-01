@@ -1,5 +1,11 @@
 # @ledgerhq/coin-framework
 
+## 0.11.1-nightly.1
+
+### Patch Changes
+
+- [#6038](https://github.com/LedgerHQ/ledger-live/pull/6038) [`2fd465e`](https://github.com/LedgerHQ/ledger-live/commit/2fd465ee730b11594d231503cfb940b984fa2f5a) Thanks [@lvndry](https://github.com/lvndry)! - Remove all invalid bitcoin derivation paths
+
 ## 0.11.1-nightly.0
 
 ### Patch Changes
