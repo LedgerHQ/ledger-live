@@ -1,9 +1,7 @@
-import { ConfigInfo, ValidConfigTypes } from "../LiveConfig";
-
-type ConfigTypes = keyof ValidConfigTypes;
+import { ConfigInfo } from "../LiveConfig";
 
 export interface Provider {
-  getValueByKey(key: string, info: ConfigInfo): ValidConfigTypes[ConfigTypes];
+  getValueByKey(key: string, info: ConfigInfo);
 }
 
 export * from "./firebaseRemoteConfig";

@@ -1,7 +1,7 @@
 import { Provider } from "./providers";
 import _ from "lodash";
 
-export type ValidConfigTypes = {
+type ValidConfigTypes = {
   string: string;
   boolean: boolean;
   number: number;
