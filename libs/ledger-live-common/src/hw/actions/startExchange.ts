@@ -97,22 +97,23 @@ export const createAction = (
   ): StartExchangeState => {
     const [state, setState] = useState(initialState);
     const reduxDeviceFrozen = useFrozenValue(reduxDevice, state.freezeReduxDevice);
+
     const { exchangeType, provider, exchange } = startExchangeRequest;
     const requireLatestFirmware = true;
-    let appState;
-    if (!exchange) {
-      const request: AppRequest = useMemo(() => {
+
+    const mainFromAccount = exchange
+      ? getMainAccount(exchange.fromAccount, exchange.fromParentAccount)
+      : null;
+    const maintoAccount = exchange
+      ? getMainAccount(exchange.toAccount, exchange.toParentAccount)
+      : null;
+
+    const request: AppRequest = useMemo(() => {
+      if (!exchange || !mainFromAccount || !maintoAccount) {
         return {
           appName: "Exchange",
         };
-      }, [requireLatestFirmware]);
-      appState = createAppAction(connectAppExec).useHook(reduxDeviceFrozen, request);
-    } else {
-      const { fromAccount, fromParentAccount, toAccount, toParentAccount } = exchange;
-      const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
-      const maintoAccount = getMainAccount(toAccount, toParentAccount);
-
-      const request: AppRequest = useMemo(() => {
+      } else {
         return {
           appName: "Exchange",
           dependencies: [
@@ -125,9 +126,11 @@ export const createAction = (
           ],
           requireLatestFirmware,
         };
-      }, [mainFromAccount, maintoAccount, requireLatestFirmware]);
-      appState = createAppAction(connectAppExec).useHook(reduxDeviceFrozen, request);
-    }
+      }
+    }, [exchange, mainFromAccount, maintoAccount, requireLatestFirmware]);
+
+    const appState = createAppAction(connectAppExec).useHook(reduxDeviceFrozen, request);
+
     const { device, opened, error, appAndVersion } = appState;
 
     const hasError = error || state.error;
