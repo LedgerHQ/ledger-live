@@ -29,15 +29,11 @@ const StorylyProvider: React.FC<StorylyProviderProps> = ({ children }) => {
 
   const storylyRef = useRef<StorylyRef>(null);
 
-  const {
-    // @ts-expect-error TYPINGS
-    params: { stories },
-  } = useFeature("storyly") || {};
-
-  const storyly = useFeature("storyly");
+  const { params } = useFeature("storyly") || {};
+  const stories = params?.stories;
 
   useEffect(() => {
-    if (!storyly || !token || !query) return;
+    if (!params || !token || !query) return;
     storylyRef.current?.init({
       layout: "classic",
       token: token,
@@ -46,7 +42,7 @@ const StorylyProvider: React.FC<StorylyProviderProps> = ({ children }) => {
       },
     });
     storylyRef.current?.openStory({ group: query?.g, story: query?.s, playMode: query?.play });
-  }, [storyly, token, query]);
+  }, [params, token, query]);
 
   useEffect(() => {
     if (url) {
