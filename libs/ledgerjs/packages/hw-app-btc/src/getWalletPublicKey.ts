@@ -1,5 +1,5 @@
 import type Transport from "@ledgerhq/hw-transport";
-import { bip32asBuffer } from "./bip32";
+import { bip32asBuffer } from "@ledgerhq/crypto-utils/bip32";
 
 /**
  * address format is one of legacy | p2sh | bech32 | bech32m | cashaddr

@@ -1,4 +1,3 @@
-import bitcoin from "../../families/bitcoin/bridge/js";
 import cardano from "../../families/cardano/bridge/js";
 import casper from "../../families/casper/bridge/js";
 import celo from "../../families/celo/bridge/js";
@@ -21,7 +20,6 @@ import { bridge as near } from "../../families/near/setup";
 import { bridge as polkadot } from "../../families/polkadot/setup";
 
 export default {
-  bitcoin,
   cardano,
   casper,
   celo,

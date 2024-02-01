@@ -7,7 +7,7 @@ import {
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import type { Transaction } from "../types";
-import { makeGetAccountShape, postSync } from "../js-synchronisation";
+import { StartSpan, makeGetAccountShape, postSync } from "../js-synchronisation";
 import createTransaction from "../js-createTransaction";
 import prepareTransaction from "../js-prepareTransaction";
 import getTransactionStatus from "../js-getTransactionStatus";
@@ -20,10 +20,10 @@ import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
 import resolver from "../hw-getAddress";
 import { SignerContext } from "../signer";
 
-function buildCurrencyBridge(signerContext: SignerContext) {
+function buildCurrencyBridge(signerContext: SignerContext, perfLogger: PerfLogger) {
   const getAddress = resolver(signerContext);
   const scanAccounts = makeScanAccounts({
-    getAccountShape: makeGetAccountShape(signerContext),
+    getAccountShape: makeGetAccountShape(signerContext, perfLogger.startSpan),
     getAddressFn: getAddressWrapper(getAddress),
   });
 
@@ -34,8 +34,11 @@ function buildCurrencyBridge(signerContext: SignerContext) {
   };
 }
 
-function buildAccountBridge(signerContext: SignerContext) {
-  const sync = makeSync({ getAccountShape: makeGetAccountShape(signerContext), postSync });
+function buildAccountBridge(signerContext: SignerContext, perfLogger: PerfLogger) {
+  const sync = makeSync({
+    getAccountShape: makeGetAccountShape(signerContext, perfLogger.startSpan),
+    postSync,
+  });
 
   const getAddress = resolver(signerContext);
   const injectGetAddressParams = (account: Account): any => {
@@ -82,9 +85,12 @@ function buildAccountBridge(signerContext: SignerContext) {
   };
 }
 
-export function createBridges(signerContext: SignerContext) {
+export type PerfLogger = {
+  startSpan: StartSpan;
+};
+export function createBridges(signerContext: SignerContext, perfLogger: PerfLogger) {
   return {
-    currencyBridge: buildCurrencyBridge(signerContext),
-    accountBridge: buildAccountBridge(signerContext),
+    currencyBridge: buildCurrencyBridge(signerContext, perfLogger),
+    accountBridge: buildAccountBridge(signerContext, perfLogger),
   };
 }

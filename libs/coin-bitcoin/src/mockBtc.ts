@@ -1,18 +1,19 @@
-import Btc, { AddressFormat } from "@ledgerhq/hw-app-btc";
-import { CreateTransactionArg } from "@ledgerhq/hw-app-btc/createTransaction";
-import Transport from "@ledgerhq/hw-transport";
 import hash from "object-hash";
+import type {
+  AddressFormat,
+  BitcoinSignature,
+  BitcoinSigner,
+  BitcoinXPub,
+  CreateTransaction,
+  SignerTransaction,
+} from "./signer";
 
-class MockBtc extends Btc {
-  constructor() {
-    super({ transport: new Transport() });
-  }
-
+class MockBtc implements BitcoinSigner {
   // eslint-disable-next-line class-methods-use-this
   async getWalletPublicKey(
     path: string,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    opts: { verify?: boolean; format?: AddressFormat },
+    _opts: { verify?: boolean; format?: AddressFormat },
   ) {
     switch (path) {
       case "44'/0'":
@@ -36,9 +37,24 @@ class MockBtc extends Btc {
     }
   }
 
-  // eslint-disable-next-line class-methods-use-this,@typescript-eslint/no-unused-vars
-  async createPaymentTransaction(arg: CreateTransactionArg) {
+  async createPaymentTransaction(arg: CreateTransaction) {
     return hash(arg);
+  }
+
+  getWalletXpub(_arg: { path: string; xpubVersion: number }): Promise<BitcoinXPub> {
+    return Promise.reject();
+  }
+  signMessage(_path: string, _messageHex: string): Promise<BitcoinSignature> {
+    return Promise.reject();
+  }
+  splitTransaction(
+    _transactionHex: string,
+    _isSegwitSupported: boolean | null | undefined,
+    _hasTimestamp: boolean | null | undefined,
+    _hasExtraData: boolean | null | undefined,
+    _additionals: Array<string> | null | undefined,
+  ): SignerTransaction {
+    throw new Error("unimplemented");
   }
 }
 

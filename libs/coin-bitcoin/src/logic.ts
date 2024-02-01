@@ -171,7 +171,7 @@ export const perCoinLogic: Partial<
 
 export const mapTxToOperations = (
   tx: TX,
-  currencyId: string,
+  currencyId: CryptoCurrencyId | "LBRY" | "groestcoin" | "osmo",
   accountId: string,
   accountAddresses: Set<string>,
   changeAddresses: Set<string>,

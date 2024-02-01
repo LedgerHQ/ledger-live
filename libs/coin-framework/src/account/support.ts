@@ -7,8 +7,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { getAllDerivationModes, getDerivationModesForCurrency } from "../derivation";
 import { isCurrencySupported } from "../currencies";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
-import type { DerivationMode } from "../derivation";
+import type { Account, AccountLike, DerivationMode } from "@ledgerhq/types-live";
 
 export const shouldShowNewAccount = (
   currency: CryptoCurrency,

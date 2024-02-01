@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import { log } from "@ledgerhq/logs";
-import { DerivationMode, isSegwitDerivationMode } from "@ledgerhq/coin-framework/derivation";
+import { isSegwitDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import type { Transaction } from "./types";
 import { getNetworkParameters } from "./networks";
@@ -9,7 +9,7 @@ import { buildTransaction } from "./js-buildTransaction";
 import { calculateFees } from "./cache";
 import wallet, { getWalletAccount } from "./wallet-btc";
 import { perCoinLogic } from "./logic";
-import type { Operation, SignOperationFnSignature } from "@ledgerhq/types-live";
+import type { DerivationMode, Operation, SignOperationFnSignature } from "@ledgerhq/types-live";
 import { SignerContext } from "./signer";
 
 const buildSignOperation =
@@ -31,7 +31,7 @@ const buildSignOperation =
           account,
           transaction,
         }).then(res => {
-          senders = new Set(res.txInputs.map(i => i.address).filter(Boolean));
+          senders = new Set(res.txInputs.map(i => i.address).filter(Boolean) as string[]);
           recipients = res.txOutputs
             .filter(o => o.address && !o.isChange)
             .map(o => o.address) as string[];

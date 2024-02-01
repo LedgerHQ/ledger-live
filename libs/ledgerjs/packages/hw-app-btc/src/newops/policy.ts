@@ -1,5 +1,5 @@
 import { crypto } from "bitcoinjs-lib";
-import { pathArrayToString } from "../bip32";
+import { pathArrayToString } from "@ledgerhq/crypto-utils/bip32";
 import { BufferWriter } from "../buffertools";
 import { hashLeaf, Merkle } from "./merkle";
 

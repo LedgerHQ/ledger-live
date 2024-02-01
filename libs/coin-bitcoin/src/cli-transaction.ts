@@ -39,15 +39,22 @@ function inferTransactions(
   const feePerByte = new BigNumber(opts.feePerByte === undefined ? 1 : opts.feePerByte);
   return transactions.map(({ transaction }) => {
     invariant(transaction.family === "bitcoin", "bitcoin family");
+
+    const bitcoinStragegy = opts["bitcoin-pick-strategy"];
+    if (typeof bitcoinStragegy !== "string" && !(bitcoinStragegy in bitcoinPickingStrategy)) {
+      throw new Error();
+    }
+
     return {
       ...transaction,
       feePerByte,
       rbf: opts.rbf || false,
       utxoStrategy: {
-        strategy: bitcoinPickingStrategy[opts["bitcoin-pick-strategy"]] || 0,
-        excludeUTXOs: (opts.excludeUTXO || []).map(str => {
+        strategy:
+          bitcoinPickingStrategy[bitcoinStragegy as keyof typeof bitcoinPickingStrategy] || 0,
+        excludeUTXOs: (opts.excludeUTXO || []).map((str: string) => {
           const [hash, index] = str.split("@");
-          invariant(hash && index && !isNaN(index), "invalid format for --excludeUTXO, -E");
+          invariant(hash && index && !isNaN(Number(index)), "invalid format for --excludeUTXO, -E");
           return {
             hash,
             outputIndex: parseInt(index, 10),

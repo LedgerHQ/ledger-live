@@ -80,7 +80,7 @@ export function inferDescriptorFromAccount(account: Account): AccountDescriptor 
   });
 }
 
-function asBufferUInt32BE(n) {
+function asBufferUInt32BE(n: number) {
   const buf = Buffer.allocUnsafe(4);
   buf.writeUInt32BE(n, 0);
   return buf;

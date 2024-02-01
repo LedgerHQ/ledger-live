@@ -1,6 +1,10 @@
-import type { Account as WalletAccount } from "./wallet-btc";
-import { CoinSelect, DeepFirst, Merge } from "./wallet-btc";
-import type { TransactionInfo as WalletTxInfo } from "./wallet-btc";
+import {
+  CoinSelect,
+  DeepFirst,
+  Merge,
+  type Account as WalletAccount,
+  type TransactionInfo as WalletTxInfo,
+} from "./wallet-btc";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 
 import type { Transaction, UtxoStrategy } from "./types";

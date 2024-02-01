@@ -1,4 +1,3 @@
-import bitcoin from "../families/bitcoin/specs";
 import cardano from "../families/cardano/specs";
 import casper from "../families/casper/specs";
 import celo from "../families/celo/specs";
@@ -21,7 +20,6 @@ import near from "@ledgerhq/coin-near/specs";
 import polkadot from "@ledgerhq/coin-polkadot/specs";
 
 export default {
-  bitcoin,
   cardano,
   casper,
   celo,

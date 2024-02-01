@@ -1,5 +1,5 @@
 import Transport from "@ledgerhq/hw-transport";
-import { bip32asBuffer } from "./bip32";
+import { bip32asBuffer } from "@ledgerhq/crypto-utils/bip32";
 import { MAX_SCRIPT_BLOCK } from "./constants";
 export function provideOutputFullChangePath(transport: Transport, path: string): Promise<Buffer> {
   const buffer = bip32asBuffer(path);

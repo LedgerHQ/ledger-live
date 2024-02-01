@@ -10,15 +10,13 @@ import {
   isSegwitDerivationMode,
   isNativeSegwitDerivationMode,
   isTaprootDerivationMode,
-  DerivationMode,
 } from "@ledgerhq/coin-framework/derivation";
 import { BitcoinAccount, BitcoinOutput } from "./types";
 import { perCoinLogic } from "./logic";
 import wallet from "./wallet-btc";
 import { mapTxToOperations } from "./logic";
-import { Account, Operation } from "@ledgerhq/types-live";
+import { Account, DerivationMode, Operation } from "@ledgerhq/types-live";
 import { decodeAccountId } from "@ledgerhq/coin-framework/account/index";
-import { startSpan } from "../../performance";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { BitcoinXPub, SignerContext } from "./signer";
 
@@ -57,14 +55,14 @@ const fromWalletUtxo = (utxo: WalletOutput, changeAddresses: Set<string>): Bitco
 // wallet-btc limitation: returns all transactions twice (for each side of the tx)
 // so we need to deduplicate them...
 const deduplicateOperations = (operations: (Operation | undefined)[]): Operation[] => {
-  const seen = {};
+  const seen = new Map();
   const out: Operation[] = [];
   let j = 0;
 
   for (const operation of operations) {
     if (operation) {
-      if (seen[operation.id] !== 1) {
-        seen[operation.id] = 1;
+      if (seen.get(operation.id) !== 1) {
+        seen.set(operation.id, 1);
         out[j++] = operation;
       }
     }
@@ -73,7 +71,21 @@ const deduplicateOperations = (operations: (Operation | undefined)[]): Operation
   return out;
 };
 
-export function makeGetAccountShape(signerContext: SignerContext): GetAccountShape {
+// For performance monitoring
+export type StartSpan = (
+  op: string,
+  description?: string,
+  rest?: {
+    tags?: any;
+    data?: any;
+  },
+) => {
+  finish: () => void;
+}
+export function makeGetAccountShape(
+  signerContext: SignerContext,
+  startSpan: StartSpan,
+): GetAccountShape {
   return async info => {
     let span;
     const { currency, index, derivationPath, derivationMode, initialAccount, deviceId } = info;

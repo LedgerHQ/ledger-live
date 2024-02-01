@@ -29,11 +29,11 @@ const getEstimatedFees: (currency: CryptoCurrency) => Promise<Fees> = makeLRUCac
   c => c.id,
 );
 
-export const speeds = {
-  "1": "fast",
-  "3": "medium",
-  "6": "slow",
-};
+export const speeds = new Map([
+  [1, "fast"],
+  [3, "medium"],
+  [6, "slow"],
+]);
 
 export const defaultBlockCount = 3;
 
@@ -55,10 +55,10 @@ export const getFeeItems = async (currency: CryptoCurrency): Promise<FeeItems> =
     const blockCount = parseInt(key, 10);
     if (blockCount === defaultBlockCount) defaultFeePerByte = feePerByte;
 
-    if (!Number.isNaN(blockCount) && !feePerByte.isNaN() && blockCount in speeds) {
+    if (!Number.isNaN(blockCount) && !feePerByte.isNaN() && speeds.has(blockCount)) {
       all.push({
         key,
-        speed: speeds[blockCount],
+        speed: speeds.get(blockCount)!,
         blockCount,
         feePerByte,
       });

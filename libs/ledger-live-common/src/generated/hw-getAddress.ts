@@ -1,4 +1,3 @@
-import bitcoin from "../families/bitcoin/hw-getAddress";
 import cardano from "../families/cardano/hw-getAddress";
 import casper from "../families/casper/hw-getAddress";
 import celo from "../families/celo/hw-getAddress";
@@ -21,7 +20,6 @@ import { resolver as near } from "../families/near/setup";
 import { resolver as polkadot } from "../families/polkadot/setup";
 
 export default {
-  bitcoin,
   cardano,
   casper,
   celo,

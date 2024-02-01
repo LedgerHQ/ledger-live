@@ -1,4 +1,3 @@
-import bitcoin from "../families/bitcoin/cli-transaction";
 import cardano from "../families/cardano/cli-transaction";
 import celo from "../families/celo/cli-transaction";
 import cosmos from "../families/cosmos/cli-transaction";
@@ -19,7 +18,6 @@ import { cliTools as near } from "../families/near/setup";
 import { cliTools as polkadot } from "../families/polkadot/setup";
 
 export default {
-  bitcoin,
   cardano,
   celo,
   cosmos,

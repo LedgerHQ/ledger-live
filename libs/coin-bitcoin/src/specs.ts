@@ -231,7 +231,7 @@ const bitcoinLikeMutations = ({
       invariant(utxo, "utxo available");
       botTest("sender is only the utxo address", () => {
         let expectedSender = (utxo as BitcoinOutput).address;
-        if (account.currency.id === "bitcoin_cash") {
+        if (account.currency.id === "bitcoin_cash" && expectedSender) {
           expectedSender = bchToCashaddrAddressWithoutPrefix(expectedSender);
         }
         expect(operation).toMatchObject({
