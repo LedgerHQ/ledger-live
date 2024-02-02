@@ -1,7 +1,8 @@
+/* eslint-disable no-console */
 import nock from "nock";
 import { URL } from "url";
-import { MockContent, StdRequest } from "./types";
-const fsp = require("fs").promises;
+import { MockContent } from "./types";
+import { promises as fsp } from "fs";
 
 /* Loop through each mock and apply them to nock */
 export async function initBackendMocks() {
@@ -13,7 +14,7 @@ export async function initBackendMocks() {
       appliedMocks++;
       const backendMock = await fsp.readFile(`${root}/${mock}`);
       try {
-        const jsonBackendMock: MockContent = JSON.parse(backendMock);
+        const jsonBackendMock: MockContent = JSON.parse(backendMock.toString());
         applyBackendMock(jsonBackendMock);
       } catch (err) {
         console.log(err, mock);
