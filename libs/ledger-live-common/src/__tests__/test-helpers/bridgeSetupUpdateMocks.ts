@@ -1,16 +1,23 @@
 import { PerformanceObserver, PerformanceObserverCallback } from "node:perf_hooks";
-import { StdRequest } from "./types";
+import {
+  HttpPerformanceEntry,
+  HttpPerformanceEntryRequest,
+  HttpPerformanceEntryResponse,
+  StdRequest,
+} from "./types";
 const { createHash } = require("crypto");
 
-function sha256(str) {
+function sha256(str: string) {
   return createHash("sha256").update(str).digest("hex");
 }
 
 /* 
-Maps native object returned by node:perf_hooks into our model StdRequest
-TODO: find types
+Maps objects returned by node:perf_hooks into our model StdRequest
 */
-function reqToStdRequest(nodeRequest: any, nodeResponse: any): StdRequest {
+function reqToStdRequest(
+  nodeRequest: HttpPerformanceEntryRequest,
+  nodeResponse: HttpPerformanceEntryResponse,
+): StdRequest {
   return {
     method: nodeRequest.method,
     url: nodeRequest.url,
@@ -21,13 +28,14 @@ function reqToStdRequest(nodeRequest: any, nodeResponse: any): StdRequest {
   };
 }
 
-// TODO: find more accurate type
+/* Executed for each PerformanceEntry, includes more than http entries so we have to filter */
 const onObserverEntry: PerformanceObserverCallback = (items, _observer) => {
   const entries = items.getEntries();
   for (const entry of entries) {
-    if (entry.entryType === "http") {
-      const req = (entry as any).detail?.req;
-      const res = (entry as any).detail?.res;
+    if (entry.entryType === "http" || entry.entryType === "http2") {
+      const httpEntry: HttpPerformanceEntry = entry as HttpPerformanceEntry;
+      const req = httpEntry.detail?.req;
+      const res = httpEntry.detail?.res;
       if (res != null && req != null) {
         global.bridgeTestsRequests.push(reqToStdRequest(req, res));
       }
