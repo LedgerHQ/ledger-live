@@ -5,7 +5,6 @@ import {
   getTokenById,
   findTokenById,
 } from "../currencies";
-import familySpecific from "../generated/account";
 import { isAccountEmpty } from "./helpers";
 import type { SwapOperation, SwapOperationRaw } from "../exchange/swap/types";
 import {
@@ -37,6 +36,7 @@ import {
   fromOperationRaw as commonFromOperationRaw,
 } from "@ledgerhq/coin-framework/account/serialization";
 import { getAccountBridge } from "../bridge";
+import { getAccountBridgeByFamily } from "../bridge/impl";
 
 export function toBalanceHistoryRaw(b: BalanceHistory): BalanceHistoryRaw {
   return b.map(({ date, value }) => [date.toISOString(), value.toString()]);
@@ -57,9 +57,9 @@ export const toOperationRaw = (
     const family = inferFamilyFromAccountId(operation.accountId);
 
     if (family) {
-      const specific = familySpecific[family];
-      if (specific && specific.toOperationExtraRaw) {
-        operationRaw.extra = specific.toOperationExtraRaw(operation.extra);
+      const bridge = getAccountBridgeByFamily(family, operation.accountId);
+      if (bridge.toOperationExtraRaw) {
+        operationRaw.extra = bridge.toOperationExtraRaw(operation.extra);
       }
     }
   }
@@ -78,9 +78,9 @@ export const fromOperationRaw = (
     const family = inferFamilyFromAccountId(operationRaw.accountId);
 
     if (family) {
-      const specific = familySpecific[family];
-      if (specific && specific.fromOperationExtraRaw) {
-        operation.extra = specific.fromOperationExtraRaw(operationRaw.extra);
+      const bridge = getAccountBridgeByFamily(family, accountId);
+      if (bridge.fromOperationExtraRaw) {
+        operation.extra = bridge.fromOperationExtraRaw(operationRaw.extra);
       }
     }
   }

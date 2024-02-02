@@ -1,7 +1,7 @@
 import React, { useMemo, useEffect, useCallback, useState } from "react";
 import { useSelector } from "react-redux";
 import { Account, NFT, ProtoNFT } from "@ledgerhq/types-live";
-import { nftsByCollections } from "@ledgerhq/live-common/nft/helpers";
+import { nftsByCollections } from "@ledgerhq/live-nft";
 import { hiddenNftCollectionsSelector } from "~/renderer/reducers/settings";
 import Select from "~/renderer/components/Select";
 import Option from "./Option";

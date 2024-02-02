@@ -50,32 +50,9 @@ describe("derivation.ts", () => {
       ["ethereum", ["ethM", "ethMM", ""]], // test for fixing missing legacy derivation
       ["ethereum_classic", ["ethM", "ethMM", "etcM", ""]], // test for fixing missing legacy derivation
       ["polygon", [""]], // test absence of impact on other EVMs
-      [
-        "bitcoin",
-        [
-          "legacy_on_bch",
-          "segwit_on_legacy",
-          "legacy_on_segwit",
-          "legacy_on_native_segwit",
-          "native_segwit",
-          "taproot",
-          "segwit",
-          "",
-        ],
-      ], // supportsSegwit + supportsNativeSegwit + taproot + segwit
+      ["bitcoin", ["native_segwit", "taproot", "segwit", ""]], // supportsSegwit + supportsNativeSegwit + taproot + segwit
       ["bitcoin_cash", ["unsplit", ""]], // forkedFrom
-      [
-        "bitcoin_gold",
-        [
-          "unsplit",
-          "segwit_unsplit",
-          "segwit_on_legacy",
-          "legacy_on_segwit",
-          "legacy_on_native_segwit",
-          "segwit",
-          "",
-        ],
-      ], // forkedFrom + supportsSegwit
+      ["bitcoin_gold", ["unsplit", "segwit_unsplit", "segwit", ""]], // forkedFrom + supportsSegwit
       ["tezos", ["galleonL", "tezboxL", "tezosbip44h", "tezbox"]], // disableBIP44
       ["solana", ["solanaMain", "solanaSub"]], // backward compatible change in getDerivationModesForCurrency
     ];

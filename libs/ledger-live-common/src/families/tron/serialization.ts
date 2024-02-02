@@ -1,6 +1,15 @@
 import { BigNumber } from "bignumber.js";
-import type { TronAccount, TronAccountRaw, TronResources, TronResourcesRaw } from "./types";
-import { Account, AccountRaw } from "@ledgerhq/types-live";
+import {
+  isTrongridExtraTxInfo,
+  isTrongridExtraTxInfoRaw,
+  type TronAccount,
+  type TronAccountRaw,
+  type TronResources,
+  type TronResourcesRaw,
+  type TrongridExtraTxInfo,
+  type TrongridExtraTxInfoRaw,
+} from "./types";
+import { Account, AccountRaw, OperationExtra, OperationExtraRaw } from "@ledgerhq/types-live";
 
 export const toTronResourcesRaw = ({
   frozen,
@@ -216,4 +225,62 @@ export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account) {
   const tronResourcesRaw = (accountRaw as TronAccountRaw).tronResources;
   if (tronResourcesRaw)
     (account as TronAccount).tronResources = fromTronResourcesRaw(tronResourcesRaw);
+}
+
+export function fromOperationExtraRaw(extraRaw: OperationExtraRaw): TrongridExtraTxInfo {
+  const extra: TrongridExtraTxInfo = {};
+  if (!isTrongridExtraTxInfoRaw(extraRaw)) {
+    return extra;
+  }
+
+  if (extraRaw.frozenAmount) {
+    extra.frozenAmount = new BigNumber(extraRaw.frozenAmount);
+  }
+
+  if (extraRaw.unfreezeAmount) {
+    extra.unfreezeAmount = new BigNumber(extraRaw.unfreezeAmount);
+  }
+
+  if (extraRaw.votes) {
+    extra.votes = extraRaw.votes;
+  }
+
+  if (extraRaw.unDelegatedAmount) {
+    extra.unDelegatedAmount = new BigNumber(extraRaw.unDelegatedAmount);
+  }
+
+  if (extraRaw.receiverAddress) {
+    extra.receiverAddress = extraRaw.receiverAddress;
+  }
+
+  return extra;
+}
+
+export function toOperationExtraRaw(extra: OperationExtra): TrongridExtraTxInfoRaw {
+  const extraRaw: TrongridExtraTxInfoRaw = {};
+  if (!isTrongridExtraTxInfo(extra)) {
+    return extraRaw;
+  }
+
+  if (extra.frozenAmount) {
+    extraRaw.frozenAmount = extra.frozenAmount.toString();
+  }
+
+  if (extra.unfreezeAmount) {
+    extraRaw.unfreezeAmount = extra.unfreezeAmount.toString();
+  }
+
+  if (extra.votes) {
+    extraRaw.votes = extra.votes;
+  }
+
+  if (extra.unDelegatedAmount) {
+    extraRaw.unDelegatedAmount = extra.unDelegatedAmount.toString();
+  }
+
+  if (extra.receiverAddress) {
+    extraRaw.receiverAddress = extra.receiverAddress;
+  }
+
+  return extraRaw;
 }

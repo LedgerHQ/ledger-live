@@ -10,7 +10,7 @@ import type { CasperOperation, Transaction, TransactionStatus } from "../types";
 import { makeAccountBridgeReceive, makeSync } from "../../../bridge/jsHelpers";
 
 import { getPath, isError } from "../msc-utils";
-import { CLPublicKey, DeployUtil } from "casper-js-sdk";
+import { DeployUtil } from "casper-js-sdk";
 import BigNumber from "bignumber.js";
 import {
   CASPER_MINIMUM_VALID_AMOUNT_MOTES,
@@ -18,12 +18,7 @@ import {
   MayBlockAccountError,
   InvalidMinimumAmountError,
 } from "../consts";
-import {
-  getAddress,
-  getPubKeySignature,
-  getPublicKeyFromCasperAddress,
-  isAddressValid,
-} from "./bridgeHelpers/addresses";
+import { getAddress, casperGetCLPublicKey, isAddressValid } from "./bridgeHelpers/addresses";
 import { log } from "@ledgerhq/logs";
 import { Observable } from "rxjs";
 import { withDevice } from "../../../hw/deviceAccess";
@@ -39,7 +34,7 @@ import {
 import { CasperInvalidTransferId } from "../errors";
 import { broadcastTx } from "../api";
 import { getMainAccount } from "../../../account/helpers";
-import { createNewDeploy, deployHashToString } from "./bridgeHelpers/txn";
+import { createNewDeploy } from "./bridgeHelpers/txn";
 import { getAccountShape } from "./bridgeHelpers/accountShape";
 import { getEstimatedFees } from "./bridgeHelpers/fee";
 import { isTransferIdValid } from "./bridgeHelpers/transferId";
@@ -211,15 +206,14 @@ const signOperation: SignOperationFnSignature<Transaction> = ({
           });
 
           // signature verification
-          const deployHash = deployHashToString(deploy.hash, true);
+          const deployHash = deploy.hash.toString();
           const signature = result.signatureRS;
 
-          const pkBuffer = Buffer.from(getPublicKeyFromCasperAddress(address), "hex");
           // sign deploy object
           const signedDeploy = DeployUtil.setSignature(
             deploy,
             signature,
-            new CLPublicKey(pkBuffer, getPubKeySignature(address)),
+            casperGetCLPublicKey(address),
           );
 
           const operation: CasperOperation = {

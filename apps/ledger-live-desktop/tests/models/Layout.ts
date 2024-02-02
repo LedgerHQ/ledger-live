@@ -3,6 +3,7 @@ import { Page, Locator } from "@playwright/test";
 export class Layout {
   readonly page: Page;
   readonly renderError: Locator;
+  readonly appVersion: Locator;
   readonly totalBalance: Locator;
   readonly pageScroller: Locator;
   readonly loadingLogo: Locator;
@@ -37,6 +38,7 @@ export class Layout {
     this.page = page;
 
     this.renderError = page.locator("data-test-id=render-error");
+    this.appVersion = page.locator("data-test-id=app-version");
 
     // portfolio && accounts
     this.totalBalance = page.locator("data-test-id=total-balance");

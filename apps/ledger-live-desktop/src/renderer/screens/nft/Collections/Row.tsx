@@ -1,9 +1,6 @@
 import React, { useMemo, memo } from "react";
 import styled from "styled-components";
-import {
-  useNftCollectionMetadata,
-  useNftMetadata,
-} from "@ledgerhq/live-common/nft/NftMetadataProvider/index";
+import { useNftCollectionMetadata, useNftMetadata } from "@ledgerhq/live-nft-react";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
 import { rgba } from "~/renderer/styles/helpers";

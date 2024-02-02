@@ -4,7 +4,7 @@ import type { ListRenderItem } from "react-native";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Account, ProtoNFT } from "@ledgerhq/types-live";
-import { nftsByCollections } from "@ledgerhq/live-common/nft/index";
+import { nftsByCollections } from "@ledgerhq/live-nft";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
