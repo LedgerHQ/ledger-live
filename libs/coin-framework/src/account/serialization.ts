@@ -1,4 +1,3 @@
-import { log } from "@ledgerhq/logs";
 import { BigNumber } from "bignumber.js";
 import type { Operation, OperationRaw, SubAccount } from "@ledgerhq/types-live";
 
@@ -31,34 +30,6 @@ export const toOperationRaw = (
   }: Operation,
   preserveSubOperation?: boolean,
 ): OperationRaw => {
-  // -- THIS CAN BE REMOVED ONCE THE DATE ERROR HAS BEEN FIGURED OUT
-  if (date instanceof Date && isNaN(date as unknown as number)) {
-    log("Ethereum Date Error", "Date is invalid while serializing", {
-      date,
-      value,
-      fee,
-      subOperations,
-      internalOperations,
-      nftOperations,
-      id,
-      hash,
-      type,
-      senders,
-      recipients,
-      blockHeight,
-      blockHash,
-      transactionSequenceNumber,
-      accountId,
-      hasFailed,
-      contract,
-      operator,
-      standard,
-      tokenId,
-      transactionRaw,
-    });
-  }
-  // -- THIS CAN BE REMOVED ONCE THE DATE ERROR HAS BEEN FIGURED OUT
-
   const copy: OperationRaw = {
     id,
     hash,

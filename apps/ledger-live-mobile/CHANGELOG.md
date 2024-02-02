@@ -1,86 +1,94 @@
 # live-mobile
 
-## 3.38.1-nightly.5
+## 3.39.0
+
+### Minor Changes
+
+- [#5905](https://github.com/LedgerHQ/ledger-live/pull/5905) [`d1271cb`](https://github.com/LedgerHQ/ledger-live/commit/d1271cb52ffc7fa47d9f7f00ae863b7f668cb409) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Added the my_ledger location to the new content cards system
 
 ### Patch Changes
 
-- [#6005](https://github.com/LedgerHQ/ledger-live/pull/6005) [`d92bd07`](https://github.com/LedgerHQ/ledger-live/commit/d92bd07ee30a82f351d5d16eff8494670f4747cc) Thanks [@RamyEB](https://github.com/RamyEB)! - Add translation to cta and subtitle content in Discover
+- [#5889](https://github.com/LedgerHQ/ledger-live/pull/5889) [`0a03cf1`](https://github.com/LedgerHQ/ledger-live/commit/0a03cf10343e7b79295c1467c8964cc943f16840) Thanks [@RamyEB](https://github.com/RamyEB)! - Make the searchable Dapp only visible through the search bar for both LLD and LLM
 
-- Updated dependencies [[`2fd465e`](https://github.com/LedgerHQ/ledger-live/commit/2fd465ee730b11594d231503cfb940b984fa2f5a), [`32796a3`](https://github.com/LedgerHQ/ledger-live/commit/32796a39dafc884b44399339d7d87f48d861401b)]:
-  - @ledgerhq/coin-framework@0.11.1-nightly.1
-  - @ledgerhq/live-common@33.6.0-nightly.3
-  - @ledgerhq/coin-evm@0.12.1-nightly.1
-  - @ledgerhq/live-countervalues@0.1.1-nightly.1
-  - @ledgerhq/live-countervalues-react@0.1.1-nightly.1
-  - @ledgerhq/live-nft@0.1.1-nightly.0
-  - @ledgerhq/live-nft-react@0.1.1-nightly.0
+- [#5919](https://github.com/LedgerHQ/ledger-live/pull/5919) [`040e591`](https://github.com/LedgerHQ/ledger-live/commit/040e5918eb7ad5a861b2f6eda09f71d3ce565991) Thanks [@gre](https://github.com/gre)! - Update to Countervalues V3 API with better price coverage and better performance.
 
-## 3.38.1-nightly.4
+- [#5994](https://github.com/LedgerHQ/ledger-live/pull/5994) [`8366eac`](https://github.com/LedgerHQ/ledger-live/commit/8366eac6bcbd3aa0f8a673fd4410fcd9c5f9231f) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix : type error in StorylyProvider
 
-### Patch Changes
+- [#5945](https://github.com/LedgerHQ/ledger-live/pull/5945) [`f551cd4`](https://github.com/LedgerHQ/ledger-live/commit/f551cd4d9798fddb4286f46bfa4632510af6d637) Thanks [@mle-gall](https://github.com/mle-gall)! - Created analytics prompt screens for variant A and B (main and secondary screens)
 
-- [#6044](https://github.com/LedgerHQ/ledger-live/pull/6044) [`9f49142`](https://github.com/LedgerHQ/ledger-live/commit/9f49142241b44b010f740486c5ddbd42b1904665) Thanks [@cng-ledger](https://github.com/cng-ledger)! - fix(LIVE-11047): display spendable balance in swap account from input in LLM
+- [#5863](https://github.com/LedgerHQ/ledger-live/pull/5863) [`06e05e0`](https://github.com/LedgerHQ/ledger-live/commit/06e05e0aa91ba242bc99ffa3a7d3ce9db4bf3518) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - "Hide empty token accounts" setting or "Hide token" hides accounts from your account page and from the main Portfolio page
 
-- [#6043](https://github.com/LedgerHQ/ledger-live/pull/6043) [`e8513e6`](https://github.com/LedgerHQ/ledger-live/commit/e8513e6b309292b85ced4002d2f988c65f3ae139) Thanks [@mle-gall](https://github.com/mle-gall)! - Fix : type error in StorylyProvider
+- [#5959](https://github.com/LedgerHQ/ledger-live/pull/5959) [`801b16f`](https://github.com/LedgerHQ/ledger-live/commit/801b16fa7a440d914b1e76cd8785a3c7c85b474b) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - List apps v2: fix polyfill of application type
 
-## 3.38.1-nightly.3
+- [#5908](https://github.com/LedgerHQ/ledger-live/pull/5908) [`46298ae`](https://github.com/LedgerHQ/ledger-live/commit/46298aec703e6a0dcb47ab8f2a612dcb3bc4065a) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Fix the free storage available for all devices
 
-### Patch Changes
+- [#5958](https://github.com/LedgerHQ/ledger-live/pull/5958) [`a740084`](https://github.com/LedgerHQ/ledger-live/commit/a740084d4c994d898b566da741bdbe99eee59093) Thanks [@lvndry](https://github.com/lvndry)! - tronResource not mandatory in accountActions
 
-- [#6034](https://github.com/LedgerHQ/ledger-live/pull/6034) [`b69bbdc`](https://github.com/LedgerHQ/ledger-live/commit/b69bbdc4428638c43d0eaf694a426d8bcc750d23) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Show installed app capacity correctly and update version number.
+- [#5950](https://github.com/LedgerHQ/ledger-live/pull/5950) [`0b18d6a`](https://github.com/LedgerHQ/ledger-live/commit/0b18d6ad8792e749042853f9bf3f75c7927c9434) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Fix ci lint issues
 
-- [#5977](https://github.com/LedgerHQ/ledger-live/pull/5977) [`30105a4`](https://github.com/LedgerHQ/ledger-live/commit/30105a44d4fe68ee9b195a9fb075652734ea3e0e) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Refactor getLatestFirmwareForDevice, useLatestFirmware and all related API calls
+- Updated dependencies [[`0a03cf1`](https://github.com/LedgerHQ/ledger-live/commit/0a03cf10343e7b79295c1467c8964cc943f16840), [`eadebff`](https://github.com/LedgerHQ/ledger-live/commit/eadebff3fe58aef6a5befb033d5147afc49663d3), [`040e591`](https://github.com/LedgerHQ/ledger-live/commit/040e5918eb7ad5a861b2f6eda09f71d3ce565991), [`52abfc5`](https://github.com/LedgerHQ/ledger-live/commit/52abfc5af4ec5af9c47e72c7a661993e0432d84b), [`35e7a3b`](https://github.com/LedgerHQ/ledger-live/commit/35e7a3b976a300df3abfb1427a35275ee6fa6da1), [`56f43b1`](https://github.com/LedgerHQ/ledger-live/commit/56f43b10d9a996932ec210ff67f5d327d630fa41), [`f551cd4`](https://github.com/LedgerHQ/ledger-live/commit/f551cd4d9798fddb4286f46bfa4632510af6d637), [`35d4196`](https://github.com/LedgerHQ/ledger-live/commit/35d41969e00e15b4817f2be558a7c81200b71cc7), [`6aac2b9`](https://github.com/LedgerHQ/ledger-live/commit/6aac2b977454daa67a02f5695d58746fde4d83f3), [`801b16f`](https://github.com/LedgerHQ/ledger-live/commit/801b16fa7a440d914b1e76cd8785a3c7c85b474b), [`46298ae`](https://github.com/LedgerHQ/ledger-live/commit/46298aec703e6a0dcb47ab8f2a612dcb3bc4065a), [`c8a9d49`](https://github.com/LedgerHQ/ledger-live/commit/c8a9d49bd5b82ba9dde23c8b397256f9d344ceef)]:
+  - @ledgerhq/live-common@33.5.1
+  - @ledgerhq/hw-transport@6.30.3
+  - @ledgerhq/native-ui@0.22.6
+  - @ledgerhq/hw-transport-http@6.29.3
+  - @ledgerhq/react-native-hid@6.31.3
+  - @ledgerhq/react-native-hw-transport-ble@6.32.2
+  - @ledgerhq/coin-evm@0.12.1
+  - @ledgerhq/coin-framework@0.11.0
 
-- [#6030](https://github.com/LedgerHQ/ledger-live/pull/6030) [`667151f`](https://github.com/LedgerHQ/ledger-live/commit/667151f565359240f2d8c19eac3c028bf88944ec) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix link display in French
-
-- Updated dependencies [[`30105a4`](https://github.com/LedgerHQ/ledger-live/commit/30105a44d4fe68ee9b195a9fb075652734ea3e0e), [`4178cfb`](https://github.com/LedgerHQ/ledger-live/commit/4178cfba8107d16b04f585468344bc6b74de8da4)]:
-  - @ledgerhq/live-common@33.6.0-nightly.2
-
-## 3.38.1-nightly.2
+## 3.39.0-next.3
 
 ### Patch Changes
 
-- [#6011](https://github.com/LedgerHQ/ledger-live/pull/6011) [`1de3cf0`](https://github.com/LedgerHQ/ledger-live/commit/1de3cf00b0569851a282c0371204323252520f5f) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Add Hero Content Card to LLM
+- [#5994](https://github.com/LedgerHQ/ledger-live/pull/5994) [`8366eac`](https://github.com/LedgerHQ/ledger-live/commit/8366eac6bcbd3aa0f8a673fd4410fcd9c5f9231f) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix : type error in StorylyProvider
 
-## 3.38.1-nightly.1
-
-### Patch Changes
-
-- [#5731](https://github.com/LedgerHQ/ledger-live/pull/5731) [`18f170a`](https://github.com/LedgerHQ/ledger-live/commit/18f170afae57ce1a8f4553f865179b9b0d3a9180) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - update live config lib
-
-- [#5731](https://github.com/LedgerHQ/ledger-live/pull/5731) [`18f170a`](https://github.com/LedgerHQ/ledger-live/commit/18f170afae57ce1a8f4553f865179b9b0d3a9180) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fetch config from firebase every 12 hours
-
-- Updated dependencies [[`18f170a`](https://github.com/LedgerHQ/ledger-live/commit/18f170afae57ce1a8f4553f865179b9b0d3a9180), [`0a152fd`](https://github.com/LedgerHQ/ledger-live/commit/0a152fd4f51d189cf3b8d6b82975c252c246f9b8)]:
-  - @ledgerhq/live-config@2.0.0-nightly.1
-  - @ledgerhq/live-common@33.5.1-nightly.1
-  - @ledgerhq/native-ui@0.22.6-nightly.1
-
-## 3.38.1-nightly.0
+## 3.39.0-next.2
 
 ### Patch Changes
 
-- [#5943](https://github.com/LedgerHQ/ledger-live/pull/5943) [`5e70c4a`](https://github.com/LedgerHQ/ledger-live/commit/5e70c4a88edcad5aacc73a3d3f5a8936369db831) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Open app device action: fix reducer for "deviceChange" and "error" events types, causing issues when the app changes on the device
+- Updated dependencies [[`35d4196`](https://github.com/LedgerHQ/ledger-live/commit/35d41969e00e15b4817f2be558a7c81200b71cc7)]:
+  - @ledgerhq/live-common@33.5.1-next.1
 
-- [#5988](https://github.com/LedgerHQ/ledger-live/pull/5988) [`2963eaf`](https://github.com/LedgerHQ/ledger-live/commit/2963eaf4b2ab7193bdd53c7cd508a2a7b3f5b326) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add CTA to CC in myLedger
+## 3.39.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`c8a9d49`](https://github.com/LedgerHQ/ledger-live/commit/c8a9d49bd5b82ba9dde23c8b397256f9d344ceef)]:
+  - @ledgerhq/native-ui@0.22.6-next.1
+
+## 3.39.0-next.0
+
+### Minor Changes
+
+- [#5905](https://github.com/LedgerHQ/ledger-live/pull/5905) [`d1271cb`](https://github.com/LedgerHQ/ledger-live/commit/d1271cb52ffc7fa47d9f7f00ae863b7f668cb409) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Added the my_ledger location to the new content cards system
+
+### Patch Changes
+
+- [#5889](https://github.com/LedgerHQ/ledger-live/pull/5889) [`0a03cf1`](https://github.com/LedgerHQ/ledger-live/commit/0a03cf10343e7b79295c1467c8964cc943f16840) Thanks [@RamyEB](https://github.com/RamyEB)! - Make the searchable Dapp only visible through the search bar for both LLD and LLM
 
 - [#5919](https://github.com/LedgerHQ/ledger-live/pull/5919) [`040e591`](https://github.com/LedgerHQ/ledger-live/commit/040e5918eb7ad5a861b2f6eda09f71d3ce565991) Thanks [@gre](https://github.com/gre)! - Update to Countervalues V3 API with better price coverage and better performance.
 
 - [#5945](https://github.com/LedgerHQ/ledger-live/pull/5945) [`f551cd4`](https://github.com/LedgerHQ/ledger-live/commit/f551cd4d9798fddb4286f46bfa4632510af6d637) Thanks [@mle-gall](https://github.com/mle-gall)! - Created analytics prompt screens for variant A and B (main and secondary screens)
 
+- [#5863](https://github.com/LedgerHQ/ledger-live/pull/5863) [`06e05e0`](https://github.com/LedgerHQ/ledger-live/commit/06e05e0aa91ba242bc99ffa3a7d3ce9db4bf3518) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - "Hide empty token accounts" setting or "Hide token" hides accounts from your account page and from the main Portfolio page
+
 - [#5959](https://github.com/LedgerHQ/ledger-live/pull/5959) [`801b16f`](https://github.com/LedgerHQ/ledger-live/commit/801b16fa7a440d914b1e76cd8785a3c7c85b474b) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - List apps v2: fix polyfill of application type
+
+- [#5908](https://github.com/LedgerHQ/ledger-live/pull/5908) [`46298ae`](https://github.com/LedgerHQ/ledger-live/commit/46298aec703e6a0dcb47ab8f2a612dcb3bc4065a) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Fix the free storage available for all devices
 
 - [#5958](https://github.com/LedgerHQ/ledger-live/pull/5958) [`a740084`](https://github.com/LedgerHQ/ledger-live/commit/a740084d4c994d898b566da741bdbe99eee59093) Thanks [@lvndry](https://github.com/lvndry)! - tronResource not mandatory in accountActions
 
-- Updated dependencies [[`901c4df`](https://github.com/LedgerHQ/ledger-live/commit/901c4dfd012376a42f8ab9ab186aa2114a7af863), [`5e70c4a`](https://github.com/LedgerHQ/ledger-live/commit/5e70c4a88edcad5aacc73a3d3f5a8936369db831), [`040e591`](https://github.com/LedgerHQ/ledger-live/commit/040e5918eb7ad5a861b2f6eda09f71d3ce565991), [`42322e0`](https://github.com/LedgerHQ/ledger-live/commit/42322e03f830e1af842c1bc46d10df541aceaf7a), [`f551cd4`](https://github.com/LedgerHQ/ledger-live/commit/f551cd4d9798fddb4286f46bfa4632510af6d637), [`6aac2b9`](https://github.com/LedgerHQ/ledger-live/commit/6aac2b977454daa67a02f5695d58746fde4d83f3), [`801b16f`](https://github.com/LedgerHQ/ledger-live/commit/801b16fa7a440d914b1e76cd8785a3c7c85b474b), [`b34f5cd`](https://github.com/LedgerHQ/ledger-live/commit/b34f5cdda0b7bf34750d258cc8b1c91304516360)]:
-  - @ledgerhq/live-common@33.5.1-nightly.0
-  - @ledgerhq/native-ui@0.22.6-nightly.0
-  - @ledgerhq/types-live@6.44.1-nightly.0
-  - @ledgerhq/live-config@1.0.2-nightly.0
-  - @ledgerhq/coin-evm@0.12.1-nightly.0
-  - @ledgerhq/coin-framework@0.11.1-nightly.0
-  - @ledgerhq/domain-service@1.1.18-nightly.0
-  - @ledgerhq/live-countervalues@0.1.1-nightly.0
-  - @ledgerhq/live-countervalues-react@0.1.1-nightly.0
+- [#5950](https://github.com/LedgerHQ/ledger-live/pull/5950) [`0b18d6a`](https://github.com/LedgerHQ/ledger-live/commit/0b18d6ad8792e749042853f9bf3f75c7927c9434) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Fix ci lint issues
+
+- Updated dependencies [[`0a03cf1`](https://github.com/LedgerHQ/ledger-live/commit/0a03cf10343e7b79295c1467c8964cc943f16840), [`eadebff`](https://github.com/LedgerHQ/ledger-live/commit/eadebff3fe58aef6a5befb033d5147afc49663d3), [`040e591`](https://github.com/LedgerHQ/ledger-live/commit/040e5918eb7ad5a861b2f6eda09f71d3ce565991), [`52abfc5`](https://github.com/LedgerHQ/ledger-live/commit/52abfc5af4ec5af9c47e72c7a661993e0432d84b), [`35e7a3b`](https://github.com/LedgerHQ/ledger-live/commit/35e7a3b976a300df3abfb1427a35275ee6fa6da1), [`56f43b1`](https://github.com/LedgerHQ/ledger-live/commit/56f43b10d9a996932ec210ff67f5d327d630fa41), [`f551cd4`](https://github.com/LedgerHQ/ledger-live/commit/f551cd4d9798fddb4286f46bfa4632510af6d637), [`6aac2b9`](https://github.com/LedgerHQ/ledger-live/commit/6aac2b977454daa67a02f5695d58746fde4d83f3), [`801b16f`](https://github.com/LedgerHQ/ledger-live/commit/801b16fa7a440d914b1e76cd8785a3c7c85b474b), [`46298ae`](https://github.com/LedgerHQ/ledger-live/commit/46298aec703e6a0dcb47ab8f2a612dcb3bc4065a)]:
+  - @ledgerhq/live-common@33.5.1-next.0
+  - @ledgerhq/hw-transport@6.30.3-next.0
+  - @ledgerhq/native-ui@0.22.6-next.0
+  - @ledgerhq/hw-transport-http@6.29.3-next.0
+  - @ledgerhq/react-native-hid@6.31.3-next.0
+  - @ledgerhq/react-native-hw-transport-ble@6.32.2-next.0
+  - @ledgerhq/coin-evm@0.12.1-next.0
+  - @ledgerhq/coin-framework@0.11.0
 
 ## 3.38.0
 

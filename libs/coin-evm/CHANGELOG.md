@@ -1,22 +1,20 @@
 # @ledgerhq/coin-evm
 
-## 0.12.1-nightly.1
+## 0.12.1
 
 ### Patch Changes
 
-- Updated dependencies [[`2fd465e`](https://github.com/LedgerHQ/ledger-live/commit/2fd465ee730b11594d231503cfb940b984fa2f5a)]:
-  - @ledgerhq/coin-framework@0.11.1-nightly.1
+- Updated dependencies []:
+  - @ledgerhq/hw-app-eth@6.35.4
+  - @ledgerhq/coin-framework@0.11.0
 
-## 0.12.1-nightly.0
+## 0.12.1-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`b34f5cd`](https://github.com/LedgerHQ/ledger-live/commit/b34f5cdda0b7bf34750d258cc8b1c91304516360)]:
-  - @ledgerhq/types-live@6.44.1-nightly.0
-  - @ledgerhq/coin-framework@0.11.1-nightly.0
-  - @ledgerhq/domain-service@1.1.18-nightly.0
-  - @ledgerhq/evm-tools@1.0.14
-  - @ledgerhq/hw-app-eth@6.35.4-nightly.0
+- Updated dependencies []:
+  - @ledgerhq/hw-app-eth@6.35.4-next.0
+  - @ledgerhq/coin-framework@0.11.0
 
 ## 0.12.0
 
