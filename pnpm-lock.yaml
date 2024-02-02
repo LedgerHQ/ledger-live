@@ -5128,8 +5128,8 @@ importers:
         specifier: ^3.0.11
         version: 3.0.11
       embla-carousel:
-        specifier: 8.0.0-rc17
-        version: 8.0.0-rc17
+        specifier: 8.0.0-rc22
+        version: 8.0.0-rc22
       esbuild:
         specifier: ^0.19.0
         version: 0.19.3
@@ -33009,6 +33009,11 @@ packages:
 
   /embla-carousel@8.0.0-rc17:
     resolution: {integrity: sha512-evF49b88VOitvqFtlvhvKVSu96Y8A+QSFdhok87Bfm8R7OYuk95FT+o8+M1GQLi/EhGDUlT193HTVAR0Wt2neQ==}
+    dev: false
+
+  /embla-carousel@8.0.0-rc22:
+    resolution: {integrity: sha512-MeXnPT1LShfgAu8qXj3CskayV0R6OkHx7w3cPTx+Q5ZWKyShKpIuu7qVQJ5BoFegalE4n6yxqoQaRuGFbK9pYw==}
+    dev: true
 
   /eme-encryption-scheme-polyfill@2.0.4:
     resolution: {integrity: sha512-MHYJX1v145Pjj2YJTrVVuJOYyXrxGVy8LWf6kV5M4jrV/GyoeuJKyTuD+GaD+VAiE8Ip+MptiH4dXk6ZVmMNow==}
@@ -34741,7 +34746,6 @@ packages:
       is-hex-prefixed: 1.0.0
       strip-hex-prefix: 1.0.0
     dev: false
-    bundledDependencies: false
 
   /ev-emitter@1.1.1:
     resolution: {integrity: sha512-ipiDYhdQSCZ4hSbX4rMW+XzNKMD1prg/sTvoVmSLkuQ1MVlwjJQQA+sW8tMYR3BLUr9KjodFV4pvzunvRhd33Q==}
