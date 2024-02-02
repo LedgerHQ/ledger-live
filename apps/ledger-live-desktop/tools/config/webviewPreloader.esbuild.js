@@ -7,6 +7,6 @@ module.exports = {
   entryNames: "webviewPreloader.bundle",
   platform: "node",
   format: "cjs",
-  target: ["chrome114"],
+  target: ["chrome120"],
   external: [...electronPreloaderExternals],
 };

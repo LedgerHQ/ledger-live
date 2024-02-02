@@ -146,7 +146,7 @@
 | lisk | LSK | NO | lisk |
 | æternity | AE | NO | aeternity |
 
-## Tokens (16642)
+## Tokens (16701)
 | parent currency | ticker | contract | name | status | ledger id |
 |--|--|--|--|--|--|
 | Algorand | GEMS | 5XU7ASL2PLB2C43N6JNFPMSXGATO2VIVNF7X6NTJ4BRCCKRGETEYS3LOAQ | AlgoGems |  | algorand/asa/230946361 |
@@ -237,6 +237,7 @@
 | Binance Smart Chain | AIFLOKI | 0x0cD5C0e24A29225b2e0EAe25C3aB8f62EF70Df9D | AI Floki |  | bsc/bep20/ai_floki |
 | Binance Smart Chain | AIS | 0x8974769bcFc2715FcaBcfe4341BA4fcc804ABcd8 | AI Swap |  | bsc/bep20/ai_swap |
 | Binance Smart Chain | AI | 0xC8354507f0361712143efa635cCE060788888888 | AICoin |  | bsc/bep20/aicoin |
+| Binance Smart Chain | AINS | 0x4CC7Ae08440044952bd645918BBbD721ecC26993 | AINS domains |  | bsc/bep20/ains_domains |
 | Binance Smart Chain | AINU | 0x2Db0d5Cb907014C67Dc201886624716fb5c71123 | AINU TOKEN |  | bsc/bep20/ainu_token |
 | Binance Smart Chain | AIOZ | 0x33d08D8C7a168333a85285a68C0042b39fC3741D | AIOZ Network |  | bsc/bep20/aioz_network |
 | Binance Smart Chain | AIPAD | 0xE55d97A97ae6A17706ee281486E98A84095d8AAf | AIPAD.tech |  | bsc/bep20/aipad_tech |
@@ -258,6 +259,7 @@
 | Binance Smart Chain | AMT | 0x4ce5f6Bf8e996Ae54709C75865709ACA5127Dd54 | AMT Token |  | bsc/bep20/amt_token |
 | Binance Smart Chain | ANOM | 0x5224F552f110eC78E6E0468138950AE5F3040942 | ANOMUS |  | bsc/bep20/anomus |
 | Binance Smart Chain | ANT | 0xD283cE7Acd177f7cf6caBB7ce5B11fDA3605659e | ANONTOKEN |  | bsc/bep20/anontoken |
+| Binance Smart Chain | $AGW | 0x83CB621a6816Ec64A779CfE15Fb3770f6435506F | ANTI GLOBAL WARMING TOKEN |  | bsc/bep20/anti_global_warming_token |
 | Binance Smart Chain | APYS | 0x37dfACfaeDA801437Ff648A1559d73f4C40aAcb7 | APYSwap |  | bsc/bep20/apyswap |
 | Binance Smart Chain | AQDC | 0x33aa7797ac6CB8B4652B68E33e5ADd8Ad1218A8D | AQDC |  | bsc/bep20/aqdc |
 | Binance Smart Chain | ARCONA | 0x8fC4532bE3003fb5A3A2f9afc7e95b3bfbD5fAAb | ARCONA |  | bsc/bep20/arcona |
@@ -344,6 +346,7 @@
 | Binance Smart Chain | ANCHOR | 0x4aac18De824eC1b553dbf342829834E4FF3F7a9F | AnchorSwap Token |  | bsc/bep20/anchorswap_token |
 | Binance Smart Chain | ACHF | 0x653aaB62056B92641116D63927DE6141D780e596 | Anchored Coins CHF |  | bsc/bep20/anchored_coins_chf |
 | Binance Smart Chain | AEUR | 0xA40640458FBc27b6EefEdeA1E9C9E17d4ceE7a21 | Anchored Coins EUR |  | bsc/bep20/anchored_coins_eur |
+| Binance Smart Chain | ANIMAL | 0x5074264545cC9c1289E11f312FeDbCC97c6bdc72 | Animal army |  | bsc/bep20/animal_army |
 | Binance Smart Chain | ANI | 0xaC472D0EED2B8a2f57a6E304eA7eBD8E88D1d36f | Anime |  | bsc/bep20/anime |
 | Binance Smart Chain | ANJI | 0xfc619FfCc0e0F30427BF938f9A1B2BfAE15bDf84 | Anji |  | bsc/bep20/anji |
 | Binance Smart Chain | ANKR | 0xf307910A4c7bbc79691fD374889b36d8531B08e3 | Ankr |  | bsc/bep20/ankr |
@@ -422,9 +425,11 @@
 | Binance Smart Chain | BSL | 0xB60501346240FCdE1615de56eA9FFf1AC1da5673 | B-LAUNCH |  | bsc/bep20/b_launch |
 | Binance Smart Chain | B2B | 0xA85128073e25a0190b86b72E3976F8B02dAD757D | B2B Token |  | bsc/bep20/b2b_token |
 | Binance Smart Chain | BABYCAKE | 0xdB8D30b74bf098aF214e862C90E647bbB1fcC58c | BABY CAKE |  | bsc/bep20/baby_cake |
+| Binance Smart Chain | BABYBTC | 0x6D58C0202fb1053F63523EBE2B5521acDc465D32 | BABYBTC |  | bsc/bep20/babybtc |
 | Binance Smart Chain | BABYLONG | 0xeCEB785A646f2C5AC759aa30d0fC85841BA004f3 | BABYLONG |  | bsc/bep20/babylong |
 | Binance Smart Chain | BBYXRP | 0x8beAbaa4f025D00B4699d56a683758d692d17F20 | BABYXRP |  | bsc/bep20/babyxrp |
 | Binance Smart Chain | BLI | 0x42BE29132756ddd6e8B3B94584cA0bAb20545EEc | BALI TOKEN |  | bsc/bep20/bali_token |
+| Binance Smart Chain | CBU | 0x912EF48F4da0C68D6c7C6D0b35d4e62E71771F33 | BANQUE UNIVERSAL |  | bsc/bep20/banque_universal |
 | Binance Smart Chain | BANUS | 0x98999Aa1B0D17fB832FD509e13b67FE506513a6D | BANUS |  | bsc/bep20/banus |
 | Binance Smart Chain | $BART | 0x16E79E09b3B56BCBBA83667aFf88dc6ca727Af2e | BART SIMPSON COIN |  | bsc/bep20/bart_simpson_coin |
 | Binance Smart Chain | BBL | 0x8800E9902879AC7fB9823086d1749030C9a5EB91 | BASKETBALL LEGENDS |  | bsc/bep20/basketball_legends |
@@ -523,16 +528,22 @@
 | Binance Smart Chain | BFLOKI | 0x02a9D7162BD73c2b35c5Cf6cDD585e91928c850A | Baby Floki Inu |  | bsc/bep20/baby_floki_inu |
 | Binance Smart Chain | BABYGEMINI | 0x33525Ce0884cF6a5C554888106a8381659F3B904 | Baby Gemini |  | bsc/bep20/baby_gemini |
 | Binance Smart Chain | BABYGROK | 0x88DA9901B3A02fE24E498e1eD683D2310383E295 | Baby Grok |  | bsc/bep20/baby_grok |
+| Binance Smart Chain | BABYGROKCEO | 0x5896c58Eb385604C33F4c5F93d547D1D0Cc746e8 | Baby Grok CEO |  | bsc/bep20/baby_grok_ceo |
 | Binance Smart Chain | BLINU | 0x41F831c60c7051CffA756ab5F9fEE81a670ECde0 | Baby Lambo Inu |  | bsc/bep20/baby_lambo_inu |
 | Binance Smart Chain | BLOVELY | 0x04Df8C91FCcFd703cD15047bF6C1cE76D335C6cE | Baby Lovely Inu |  | bsc/bep20/baby_lovely_inu |
 | Binance Smart Chain | BLF | 0xE3B4F0fa9F7AC0B29B29bf94503C3016Eb56876d | Baby Luffy |  | bsc/bep20/baby_luffy |
 | Binance Smart Chain | BABYMEME | 0x63f79D1de735C922cfCE240b6c1cc30A00214f8C | Baby Meme Coin |  | bsc/bep20/baby_meme_coin |
+| Binance Smart Chain | BABYMUSK | 0x1Dbd1FbFB0eb339c14f63f908a4aba27B58B6fab | Baby Musk |  | bsc/bep20/baby_musk |
+| Binance Smart Chain | BABYMYRO | 0x9B152a4Ce62D8157DC1d539021e9BCa999124B0A | Baby Myro |  | bsc/bep20/baby_myro |
 | Binance Smart Chain | BABY PEPE | 0x546DdED7C535e192C4132F5C998Db017AF824D96 | Baby Pepe |  | bsc/bep20/baby_pepe |
 | Binance Smart Chain | BASHTANK | 0x484312A0AAeaE3aE36a74FF3e294246F35dDDf4F | Baby Shark |  | bsc/bep20/baby_shark |
+| Binance Smart Chain | BABYSHARK | 0x1225075C06b8E288953531e96f22490DD85B7F60 | Baby Shark |  | bsc/bep20/baby_shark_7f60 |
 | Binance Smart Chain | BABYSHIB | 0xAECf6d1afF214feF70042740054f0f6D0Caa98Ab | Baby Shiba Inu | delisted | bsc/bep20/baby_shiba_inu |
 | Binance Smart Chain | BSG | 0xe8993eA85B9AA3E864fEf4F7685966c485546161 | Baby Squid Game |  | bsc/bep20/baby_squid_game |
+| Binance Smart Chain | BABYTOMCAT | 0xbfC89d2134053D15d277a01c2A1A1980E0A5dbCd | Baby Tomcat |  | bsc/bep20/baby_tomcat |
 | Binance Smart Chain | BYOOSHIAPE | 0x39b548bb66D6E2400B4288b25f4837F55FBeD3E5 | Baby YooshiApe |  | bsc/bep20/baby_yooshiape |
 | Binance Smart Chain | BAMA | 0x8B025f2dAd998C2983Cc1Bf23d5ebe65124F0fe1 | BabyAMA |  | bsc/bep20/babyama |
+| Binance Smart Chain | BABYAKITA | 0x4858038A70b27f71b0E603Fc3305c46C9bD8FB1F | BabyAkita |  | bsc/bep20/babyakita |
 | Binance Smart Chain | BABYBNBTIGER | 0x5a04565ee1c90c84061aD357AE9E2f1c32D57dc6 | BabyBNBTiger |  | bsc/bep20/babybnbtiger |
 | Binance Smart Chain | BCT | 0xf6d2657EBb5602bF823901412c5e41e030f3ece2 | BabyChita Token |  | bsc/bep20/babychita_token |
 | Binance Smart Chain | BCEO | 0x8D875ABca035858C901Fb3B61a98179aA2cA7ed9 | BabyDoge CEO |  | bsc/bep20/babydoge_ceo |
@@ -736,7 +747,9 @@
 | Binance Smart Chain | BONFIRE | 0x5e90253fbae4Dab78aa351f4E6fed08A64AB5590 | Bonfire |  | bsc/bep20/bonfire |
 | Binance Smart Chain | BWC | 0x66696AB8c6aAeb22dc14a2Dc4A833682388Ea901 | BongWeedCoin |  | bsc/bep20/bongweedcoin |
 | Binance Smart Chain | BONK | 0xA697e272a73744b343528C3Bc4702F2565b2F422 | Bonk |  | bsc/bep20/bonk |
+| Binance Smart Chain | BONKGROK | 0x3039d49843B8820fc9D457BB40e29fF0E0450A79 | Bonk Grok |  | bsc/bep20/bonk_grok |
 | Binance Smart Chain | BONKINU | 0xBc37a097DC156E3bef4f8d5e0f66292f7d015782 | Bonkinu |  | bsc/bep20/bonkinu |
+| Binance Smart Chain | BOOL | 0x1d841b9742b65117eA62b9A722bDcc9f825faf00 | Bool Ran |  | bsc/bep20/bool_ran |
 | Binance Smart Chain | BORING | 0xffEecbf8D7267757c2dc3d13D730E97E15BfdF7F | BoringDAO |  | bsc/bep20/boringdao |
 | Binance Smart Chain | BOR | 0x92D7756c60dcfD4c689290E8A9F4d263b3b32241 | BoringDAO Token |  | bsc/bep20/boringdao_token |
 | Binance Smart Chain | BOSS | 0x49324d59327fB799813B902dB55b2a118d601547 | Boss Token |  | bsc/bep20/boss_token |
@@ -992,6 +1005,7 @@
 | Binance Smart Chain | CRHT | 0x98d4c60dEEa495c94D50D162d331278658A6B681 | CryptHub Token |  | bsc/bep20/crypthub_token |
 | Binance Smart Chain | ESCROW | 0x7764Bdfc4Ab0203A7d4e3eDF33b181f395458870 | Cryptegrity DAO |  | bsc/bep20/cryptegrity_dao |
 | Binance Smart Chain | CAI | 0x3CEf8d4CC106a169902eA985ceC2dc6Ab055ad4c | Crypto AI |  | bsc/bep20/crypto_ai |
+| Binance Smart Chain | CCR | 0x19098aaA0433B465e47e07f48a1E1c4bD622ce86 | Crypto Cars Reborn |  | bsc/bep20/crypto_cars_reborn |
 | Binance Smart Chain | CRC | 0xf7BCac494fd9530c183dae30Db48d45144FF2C77 | Crypto Classic |  | bsc/bep20/crypto_classic |
 | Binance Smart Chain | CC | 0xD4e9E6E5A91BF44E23d53985e65F8D7dF43CdD20 | Crypto Clubs App |  | bsc/bep20/crypto_clubs_app |
 | Binance Smart Chain | CDS | 0x23f07a1C03e7C6D0C88e0E05E79B6E3511073fD5 | Crypto Development Services |  | bsc/bep20/crypto_development_services |
@@ -1068,6 +1082,7 @@
 | Binance Smart Chain | DFSM | 0x350494Bcc94EfB5c6080f6A6F0043da27be2AD2C | DFS MAFIA |  | bsc/bep20/dfs_mafia |
 | Binance Smart Chain | DFT | 0x42712dF5009c20fee340B245b510c0395896cF6e | DFuture Token |  | bsc/bep20/dfuture_token |
 | Binance Smart Chain | DIA | 0x99956D38059cf7bEDA96Ec91Aa7BB2477E0901DD | DIAToken |  | bsc/bep20/diatoken |
+| Binance Smart Chain | DIGI | 0x7eC0dA57eBA5398470c6bCb5518406D885240c85 | DIGIVERSE |  | bsc/bep20/digiverse |
 | Binance Smart Chain | DUCK | 0x5D186E28934c6B0fF5Fc2feCE15D1F34f78cBd87 | DLP Duck Token |  | bsc/bep20/dlp_duck_token |
 | Binance Smart Chain | DXCT | 0x5b1BaeC64aF6dC54E6e04349315919129A6d3c23 | DNAxCAT |  | bsc/bep20/dnaxcat |
 | Binance Smart Chain | DODO | 0x67ee3Cb086F8a16f34beE3ca72FAD36F7Db929e2 | DODO bird |  | bsc/bep20/dodo_bird |
@@ -1176,6 +1191,7 @@
 | Binance Smart Chain | DINGER | 0x0d3843F92D622468BA67DF5A6a4149B484a75af3 | Dinger Token |  | bsc/bep20/dinger_token |
 | Binance Smart Chain | DNXC | 0x3c1748D647E6A56B37B66fcD2B5626D0461D3aA0 | DinoX Coin |  | bsc/bep20/dinox_coin |
 | Binance Smart Chain | DNL | 0x6B9481FB5465ef9Ab9347b332058D894aB09B2f6 | Dinoland Metaverse |  | bsc/bep20/dinoland_metaverse |
+| Binance Smart Chain | DINO | 0x5FB60A9e69B53EDbC95a5a2D9DD4ABD8C16c4233 | Dinosaur Inu |  | bsc/bep20/dinosaur_inu |
 | Binance Smart Chain | DDOS | 0x7FBEC0bb6A7152e77C30D005B5D49cbC08A602C3 | Disbalancer |  | bsc/bep20/disbalancer |
 | Binance Smart Chain | DIS | 0xe2EcC66E14eFa96E9c55945f79564f468882D24C | Disney |  | bsc/bep20/disney |
 | Binance Smart Chain | DITTO | 0x233d91A0713155003fc4DcE0AFa871b508B3B715 | Ditto |  | bsc/bep20/ditto |
@@ -1245,6 +1261,7 @@
 | Binance Smart Chain | EGOLD | 0x8005D97E993668a528008d16338B42f9e976ED0F | EGOLD - Algorithmic NFT Mining |  | bsc/bep20/egold_algorithmic_nft_mining |
 | Binance Smart Chain | EKTA V2 | 0x45808Ce43eb2D7685fF0242631f0FeB6f3D8701a | EKTA v2 |  | bsc/bep20/ekta_v2 |
 | Binance Smart Chain | ELFI | 0x6C619006043EaB742355395690c7b42d3411E8c0 | ELFI Token (Wormhole) |  | bsc/bep20/elfi_token_wormhole |
+| Binance Smart Chain | ELON2024 | 0x02BAfCEC586aD22Ce409dAdB2d2a1AF11f8FC112 | ELON 2024 |  | bsc/bep20/elon_2024 |
 | Binance Smart Chain | EBT | 0x9953c06De9be121D987c374Ea34deB37943ca326 | ELON BUYS TWITTER | delisted | bsc/bep20/elon_buys_twitter |
 | Binance Smart Chain | ELONMARS | 0xA526b7aBB8010CD3B79c56E074AD34DFF3d4B0e7 | ELON MARS |  | bsc/bep20/elon_mars |
 | Binance Smart Chain | ELONX | 0x1137717955398869e41402c6aBbD63a50a9abC9C | ELON XMAS |  | bsc/bep20/elon_xmas |
@@ -1308,6 +1325,7 @@
 | Binance Smart Chain | EQB | 0x374Ca32fd7934c5d43240E1e73fa9B2283468609 | Equilibria Token |  | bsc/bep20/equilibria_token |
 | Binance Smart Chain | EDX | 0xdA2e636A6b6d3eaACb3A5FB00F86Ead84e0D908f | Equilibrium |  | bsc/bep20/equilibrium |
 | Binance Smart Chain | ERA | 0x6f9F0c4ad9Af7EbD61Ac5A1D4e0F2227F7B0E5f9 | Era Token |  | bsc/bep20/era_token |
+| Binance Smart Chain | ELG | 0x755341c49f4427e43d99d8254a8dD87056f1Ee00 | EscoinToken |  | bsc/bep20/escointoken |
 | Binance Smart Chain | BESPRO | 0x5304adfD82E5A24b70fE7ac1F45FE50B1ab4cb1d | EsportsPro |  | bsc/bep20/esportspro |
 | Binance Smart Chain | ESNC | 0xBBf1889f22d37640Bc70c58B2F643106db0542DE | Essence Token |  | bsc/bep20/essence_token |
 | Binance Smart Chain | ETM | 0x75bDEd6BF44bb01527138673dCc064DBe3E7d96d | Etermon |  | bsc/bep20/etermon |
@@ -1435,6 +1453,7 @@
 | Binance Smart Chain | FOHO | 0xBb9f216baC27046C6B8bDAAE660B761B851aB068 | FohoCoin |  | bsc/bep20/fohocoin |
 | Binance Smart Chain | FOMO | 0x296d1836658344E4257ec4c9D3c0fcB8312DE87c | FomoFi |  | bsc/bep20/fomofi |
 | Binance Smart Chain | FOOD | 0x6359F0d2004433D2A38b03DCe8f966Cc243F1da9 | Food Bank |  | bsc/bep20/food_bank |
+| Binance Smart Chain | FOOLBULL | 0x6Ea4c4698697B1827bB14BE72cD986487C73FE8F | FoolBULL |  | bsc/bep20/foolbull |
 | Binance Smart Chain | FWC | 0x6D3a160B86eDcD46D8F9bBa25c2F88ccCADe19fc | Football World Community |  | bsc/bep20/football_world_community |
 | Binance Smart Chain | FAV | 0x1A076E4633FA139D7B908b88326de603Fbe8c199 | Football at AlphaVerse |  | bsc/bep20/football_at_alphaverse |
 | Binance Smart Chain | FBURN | 0x3b2CB8B2A9BaF200142456C550A328E6C45c176B | Forever Burn |  | bsc/bep20/forever_burn |
@@ -1444,6 +1463,7 @@
 | Binance Smart Chain | FTS | 0x4437743ac02957068995c48E08465E0EE1769fBE | Fortress |  | bsc/bep20/fortress |
 | Binance Smart Chain | FOXT | 0x50ea9C9F88AEAB9f554b8ffB4d7a1017957e866A | Fox Trading |  | bsc/bep20/fox_trading |
 | Binance Smart Chain | FOXV2 | 0x16a7460B9246AE508f18e87bDa4e5B4C1AE8F112 | FoxFinanceV2 |  | bsc/bep20/foxfinancev2 |
+| Binance Smart Chain | FXN | 0x62DcA6A44d226359Cc6D24D23f26EBf1da9794C1 | FoxFunnies |  | bsc/bep20/foxfunnies |
 | Binance Smart Chain | FOXGIRL | 0x599beec263FA6eA35055011967597B259FC012A4 | FoxGirl |  | bsc/bep20/foxgirl |
 | Binance Smart Chain | FOA | 0xAe7300B51A8cd43D5B74be0DD5047715B7017E3e | Fragments of Arker |  | bsc/bep20/fragments_of_arker |
 | Binance Smart Chain | FRF | 0x5A29c96fA93FFA8845fb7F8616a03Aa85fCc11d6 | France REV Finance |  | bsc/bep20/france_rev_finance |
@@ -1505,6 +1525,7 @@
 | Binance Smart Chain | GPTG | 0x7DC6dc21ce07e6499Fdcc30dcDB943a8eE4db802 | GPT Guru Token. |  | bsc/bep20/gpt_guru_token |
 | Binance Smart Chain | GROK | 0xC53ca0d56C420E8f913316e84d2c492eDe99c61e | GROK |  | bsc/bep20/grok |
 | Binance Smart Chain | GROK2 | 0x86180D96EFf08d56697350d5BcBe2266577DCf39 | GROK 2.0 |  | bsc/bep20/grok_2_0 |
+| Binance Smart Chain | GROKCEO | 0x6294DEB10817e47a4EE6869DB59c85F3eF4BEE29 | GROK CEO |  | bsc/bep20/grok_ceo |
 | Binance Smart Chain | GROKHEROES | 0xbd566C45E13023b94aD0F07F2a93D1ED74801f90 | GROK heroes |  | bsc/bep20/grok_heroes |
 | Binance Smart Chain | GROK2.0 | 0xC5EC27250b3CD0c187296556CCB5aF2Fe07a3e18 | GROK2.0 |  | bsc/bep20/grok2_0 |
 | Binance Smart Chain | GVS | 0x9f68f166301ACA720aa5B5588329230d3316e358 | GVS Token |  | bsc/bep20/gvs_token |
@@ -1535,6 +1556,7 @@
 | Binance Smart Chain | GWP | 0x794a23B6b8A543b58f995ba590979e0785b60EB2 | Gateway Protocol |  | bsc/bep20/gateway_protocol |
 | Binance Smart Chain | GTH | 0xeb986DA994E4a118d5956b02d8b7c3C7CE373674 | Gather |  | bsc/bep20/gather |
 | Binance Smart Chain | GEEK | 0xD467d078FA363985805b1c3624F26045Ba5709DF | Geek Protocol |  | bsc/bep20/geek_protocol |
+| Binance Smart Chain | GEEKO | 0x23D2950414c8D9964d69893bd89f9AC0ec1432df | Geeko Dex |  | bsc/bep20/geeko_dex |
 | Binance Smart Chain | GXT | 0x3107C0A1126268CA303f8d99c712392fA596e6D7 | Gem Exchange and Trading (Wormhole) |  | bsc/bep20/gem_exchange_and_trading_wormhole |
 | Binance Smart Chain | GEMS | 0x78Aae7e000Bf6FC98a6b717d5eC8Ef2bcd04F428 | GemPad |  | bsc/bep20/gempad |
 | Binance Smart Chain | GLINK | 0x0eE7292BD28F4A490F849Fb30C28CAbAB9440f9E | Gemlink |  | bsc/bep20/gemlink |
@@ -1548,6 +1570,7 @@
 | Binance Smart Chain | GLT | 0x5bACf846595cd00379592f07831f734653e6fEB2 | GeoLeaf |  | bsc/bep20/geoleaf |
 | Binance Smart Chain | KICKS | 0xfEB4e9B932eF708c498Cc997ABe51D0EE39300cf | GetKicks |  | bsc/bep20/getkicks |
 | Binance Smart Chain | GHACOIN | 0x1196F907C8FF87C068D07FBbD440Fc5f68e96c1F | GhaCoin |  | bsc/bep20/ghacoin |
+| Binance Smart Chain | GHOST | 0xeb18E9C21f3D0F3D92656DfB934b18a8BBe1c10F | Ghost |  | bsc/bep20/ghost |
 | Binance Smart Chain | GDE | 0x742F1fbEC70b81Ed0a32093D0c9054264fd850B2 | GianniDoge Esport |  | bsc/bep20/giannidoge_esport |
 | Binance Smart Chain | GHD | 0xfDFD27aE39cebefDBaAc8615F18aa68DDD0F15f5 | Giftedhands on BSC |  | bsc/bep20/giftedhands_on_bsc |
 | Binance Smart Chain | GFT | 0x72fF5742319eF07061836F5C924aC6D72c919080 | Gifto |  | bsc/bep20/gifto |
@@ -1652,6 +1675,7 @@
 | Binance Smart Chain | HWL | 0x549CC5dF432cdbAEbc8B9158A6bDFe1cbD0Ba16d | HOWL |  | bsc/bep20/howl |
 | Binance Smart Chain | HRCC | 0xE1D9Adb6521C3C423aCc0973Fd5a481387c9C9Ce | HRC Crypto |  | bsc/bep20/hrc_crypto |
 | Binance Smart Chain | HBN | 0xe33012187aF219072DfF81f54060fEBEd2A91337 | HUBIN NETWORK |  | bsc/bep20/hubin_network |
+| Binance Smart Chain | HBT | 0x7ACD6B490757BDF5EaC6cD30C7161B4dC94E2320 | HUBOT |  | bsc/bep20/hubot |
 | Binance Smart Chain | HUDI | 0x83d8Ea5A4650B68Cd2b57846783d86DF940F7458 | HUDI |  | bsc/bep20/hudi |
 | Binance Smart Chain | HGHG | 0xb626213cb1D52Caa1eD71e2a0e62c0113eD8d642 | HUGHUG |  | bsc/bep20/hughug |
 | Binance Smart Chain | HUNDRED | 0xB66279cE85Ff79dF18901946e65216777b093967 | HUNDRED |  | bsc/bep20/hundred |
@@ -1760,6 +1784,7 @@
 | Binance Smart Chain | INR | 0xaB725d0A10C3f24725c89F5765Ae5794a26C1336 | INERY |  | bsc/bep20/inery |
 | Binance Smart Chain | MONIE | 0x7E60C74b9096f8FA6fb5a9FD88405dED8B7D44f3 | INFIBLUE WORLD |  | bsc/bep20/infiblue_world |
 | Binance Smart Chain | INK | 0xc08Aa06C1D707BF910ADA0BdEEF1353F379E64e1 | INK |  | bsc/bep20/ink |
+| Binance Smart Chain | INSP | 0x8D279274789CceC8af94a430A5996eAaCE9609A9 | INSPECT |  | bsc/bep20/inspect |
 | Binance Smart Chain | INTD | 0x8Bb93979901cd159bF6763B223FBb315C31CCF7b | INTDESTCOIN |  | bsc/bep20/intdestcoin |
 | Binance Smart Chain | IDO | 0x617bA3d39E96C084E60C6db3f7B365A96eE4e555 | INTERSTELLAR DOMAIN ORDER |  | bsc/bep20/interstellar_domain_order |
 | Binance Smart Chain | TOX | 0x837656c3f5858692cCdce13BA66e09d2685073df | INTOVERSE TOKEN |  | bsc/bep20/intoverse_token |
@@ -1895,10 +1920,12 @@
 | Binance Smart Chain | KIBA | 0xC3afDe95B6Eb9ba8553cDAea6645D45fB3a7FAF5 | Kiba Inu |  | bsc/bep20/kiba_inu |
 | Binance Smart Chain | KPAD | 0xCFEfA64B0dDD611b125157C41cD3827f2e8e8615 | KickPad |  | bsc/bep20/kickpad |
 | Binance Smart Chain | KICK | 0x824a50dF33AC1B41Afc52f4194E2e8356C17C3aC | KickToken |  | bsc/bep20/kicktoken |
+| Binance Smart Chain | KIIRO | 0x347862372f7C8f83D69025234367Ac11c5241Db3 | Kiirocoin |  | bsc/bep20/kiirocoin |
 | Binance Smart Chain | LOP | 0x20B4620a767D6dCcBB9314104D5Cf0d08d1F7045 | Kilopi |  | bsc/bep20/kilopi |
 | Binance Smart Chain | KIND | 0xE3Ba88c38D2789FE58465020CC0FB60b70c10d32 | Kindcow Finance |  | bsc/bep20/kindcow_finance |
 | Binance Smart Chain | KNT | 0x078EfA21a70337834788c3E6f0A99275f71393f0 | Kinect |  | bsc/bep20/kinect |
 | Binance Smart Chain | KING | 0x74f08aF7528Ffb751e3A435ddD779b5C4565e684 | King |  | bsc/bep20/king |
+| Binance Smart Chain | KINGBONK | 0x9059101E9c3B1ed5F778D6e88bA7d368f7dC9b57 | King Bonk |  | bsc/bep20/king_bonk |
 | Binance Smart Chain | KINGDOG | 0x3BB55Ba11f1A220c7C1e15b56E6cF9c69519c50F | King Dog Inu |  | bsc/bep20/king_dog_inu |
 | Binance Smart Chain | KINGGROK | 0x2Df3774f46049Da1efeB2B0c393eFD7234B6aD56 | King Grok |  | bsc/bep20/king_grok |
 | Binance Smart Chain | KOL | 0xd9eadE302456AfF8BF8d87fF0EF77dAb1fB9230f | KingOfLegends |  | bsc/bep20/kingoflegends |
@@ -2031,6 +2058,7 @@
 | Binance Smart Chain | LIVE | 0x784fb5FBD1dBC1A0827E7e3d85c635eE16F133cB | Livex Network |  | bsc/bep20/livex_network |
 | Binance Smart Chain | LTT | 0x1DC84Fc11E48aE640D48044F22A603BBE914A612 | LocalTrade |  | bsc/bep20/localtrade |
 | Binance Smart Chain | LKN | 0x31ACFCE536B824ad0739E8D7b27CEFAa4b8E4673 | Lockness |  | bsc/bep20/lockness |
+| Binance Smart Chain | LOGG | 0x598487dC1F4E129b3499B6231dd18642E5315608 | Logarithm Games Token |  | bsc/bep20/logarithm_games_token |
 | Binance Smart Chain | LOOK | 0x73cBA57Ad8bC775A5345D9a0de2e90C74621D802 | LooksCoin |  | bsc/bep20/lookscoin |
 | Binance Smart Chain | LOOP | 0xcE186ad6430E2Fe494a22C9eDbD4c68794a28B35 | LoopNetwork |  | bsc/bep20/loopnetwork |
 | Binance Smart Chain | LSWAP | 0x3F8a14f5a3Ee2F4A3Ed61cCF5EEA3c9535C090C8 | LoopSwap |  | bsc/bep20/loopswap |
@@ -2063,6 +2091,7 @@
 | Binance Smart Chain | MAIN | 0xA5F249F401bA8931899a364d8E2699b5FA1D87a9 | MAIN |  | bsc/bep20/main |
 | Binance Smart Chain | MGXG | 0xD21a1f1FcEC9479d38B570A2ecA3277B1b2A959A | MALGO |  | bsc/bep20/malgo |
 | Binance Smart Chain | MNFT | 0x36953B5Ec00A13eDcEceB3aF258D034913D2A79D | MANUFACTORY |  | bsc/bep20/manufactory |
+| Binance Smart Chain | MAR3 | 0x9D44C04ef10Cbd4ba321E51A54F1354d0799fEEF | MAR3 TOKEN |  | bsc/bep20/mar3_token |
 | Binance Smart Chain | MBX | 0xF95a5532D67C944dfa7EDDD2f8c358Fe0dc7FAc2 | MARBLEX on BNB |  | bsc/bep20/marblex_on_bnb |
 | Binance Smart Chain | MARS4 | 0x9CD9C5a44CB8fab39b2Ee3556F5c439e65E4fDdD | MARS4 [via ChainPort.io] |  | bsc/bep20/mars4_via_chainport_io |
 | Binance Smart Chain | MARU | 0x08A84af1368Cd333073Ac5DfB2254208e06b3a70 | MARU |  | bsc/bep20/maru |
@@ -2097,6 +2126,7 @@
 | Binance Smart Chain | MMSC | 0x67Db74b6D1Ea807CB47248489c99D144323D348d | MMS COIN |  | bsc/bep20/mms_coin |
 | Binance Smart Chain | MNB | 0xa922a70569a7555518bF4DED5094661a965E23cA | MN Bridge |  | bsc/bep20/mn_bridge |
 | Binance Smart Chain | MNU | 0x256Be284FEa694f1bb11f76d556a28eCb496Eee9 | MNU-Chain-Token |  | bsc/bep20/mnu_chain_token |
+| Binance Smart Chain | EMOJI | 0xCb3Ae3099Dc997616b907CEFc9Af5c850a067a4B | MOMOJI |  | bsc/bep20/momoji |
 | Binance Smart Chain | MONA | 0xeF843FB4C112E618B262f6897F479474e4586F05 | MONA |  | bsc/bep20/mona |
 | Binance Smart Chain | MOOCHII | 0xef032F652FCE3a0eFfce3796A68eb978b465a336 | MOOCHII |  | bsc/bep20/moochii |
 | Binance Smart Chain | MOONION | 0x9073B858a7CDF121E6bf8d1367e200e5d0cC0188 | MOONIONS |  | bsc/bep20/moonions |
@@ -2241,6 +2271,7 @@
 | Binance Smart Chain | MNTO | 0x854A63B35B70A7becbED508ff0b6Ff5038D0C917 | Minato |  | bsc/bep20/minato |
 | Binance Smart Chain | MIND | 0x8276B85b1504C495D7EB7F8E37537644c6d64313 | MindConnect |  | bsc/bep20/mindconnect |
 | Binance Smart Chain | AIMX | 0x75d6Bd84De4cBcb92495204DE959F7feA6A3F89A | MindMatrix |  | bsc/bep20/mindmatrix |
+| Binance Smart Chain | MBASE2.0 | 0x291aa47C58558aDfc2bCD6f060578FDAE1F6570C | Minebase 2.0 |  | bsc/bep20/minebase_2_0 |
 | Binance Smart Chain | MELB | 0x92d28e49A4FFd443c1e2a907dcC07D2a41E67F4d | Minelab |  | bsc/bep20/minelab |
 | Binance Smart Chain | MGT | 0xa0bCC6A1a39304327e3563Ccdaa4A1c9F33DC73a | MinerGateToken |  | bsc/bep20/minergatetoken |
 | Binance Smart Chain | MINI GROK | 0xF78C5F11ed20d93C0e204251B1464d76aA365ebb | Mini GROK |  | bsc/bep20/mini_grok |
@@ -2350,6 +2381,7 @@
 | Binance Smart Chain | NFTD | 0xAC83271abB4ec95386f08aD2b904a46C61777cef | NFTrade Token [via ChainPort.io] |  | bsc/bep20/nftrade_token_via_chainport_io |
 | Binance Smart Chain | NGA | 0xAa3ED6E6Ea3Ed78D4d57E373aABD6f54DF5bb508 | NGA TIGER |  | bsc/bep20/nga_tiger |
 | Binance Smart Chain | NGT | 0x02030D968558fd429EafA6E5B0C7A95A4903233b | NGT |  | bsc/bep20/ngt |
+| Binance Smart Chain | NKS | 0x094c6B46779e4C686e4b706e1fA4587fec28b113 | NIKSSA |  | bsc/bep20/nikssa |
 | Binance Smart Chain | NMBTC | 0x5DdB331C3Ba48A1D68CbF50dD3bC7Aac407Dc115 | NMBTC Token |  | bsc/bep20/nmbtc_token |
 | Binance Smart Chain | NOE | 0x1a38F34dF3E4E480BFc57b789F605ce87B807848 | NOE CRYPTO BANK |  | bsc/bep20/noe_crypto_bank |
 | Binance Smart Chain | NKYC | 0x59769630b236398c2471EB26e6a529448030D94F | NONKYC |  | bsc/bep20/nonkyc |
@@ -2392,8 +2424,10 @@
 | Binance Smart Chain | GNIMB | 0x99C486b908434Ae4adF567e9990A929854d0c955 | Nimbus Governance Token |  | bsc/bep20/nimbus_governance_token |
 | Binance Smart Chain | NIMB | 0xCb492C701F7fe71bC9C4B703b84B0Da933fF26bB | Nimbus Utility |  | bsc/bep20/nimbus_utility |
 | Binance Smart Chain | NJF | 0xF1968d4113e87e88CF50E6f0e1820dcbd29C4A90 | NinjaFloki | delisted | bsc/bep20/ninjafloki |
+| Binance Smart Chain | $NINJAPEPE | 0x596A1017af27593e0AB371F74e36dC923f3B2C11 | NinjaPepe |  | bsc/bep20/ninjapepe |
 | Binance Smart Chain | NIOB | 0x5ac5e6Af46Ef285B3536833E65D245c49b608d9b | Niob Token |  | bsc/bep20/niob_token |
 | Binance Smart Chain | NITRO | 0x8a1cB5289eE4C5A0F0D9Dc83225619B11d24E031 | Nitro |  | bsc/bep20/nitro |
+| Binance Smart Chain | NITO | 0x472935591f64a09C5622eed08C51707a6640c86a | Nitroken |  | bsc/bep20/nitroken |
 | Binance Smart Chain | NOAH | 0xec1270D291c6C0448660bde2F74A674a5c303e3b | Noahswap Token |  | bsc/bep20/noahswap_token |
 | Binance Smart Chain | NBL | 0xA67a13c9283Da5AABB199Da54a9Cb4cD8B9b16bA | Nobility |  | bsc/bep20/nobility |
 | Binance Smart Chain | N0LE | 0x6EC7Ad5A76dD866f07DDf293D4f5Bc89c8Bd2E09 | Nole Inu |  | bsc/bep20/nole_inu |
@@ -2434,6 +2468,7 @@
 | Binance Smart Chain | OSL | 0x55a9eE0BD79FB0Fc0AC71a35d6F481fB4bdC9A5C | OSL AI |  | bsc/bep20/osl_ai |
 | Binance Smart Chain | OVR | 0x7E35D0e9180bF3A1fc47b0d110bE7a21A10B41Fe | OVR |  | bsc/bep20/ovr |
 | Binance Smart Chain | OXB | 0x7536c00711E41df6aEBCCa650791107645b6bc52 | OXBULL.TECH |  | bsc/bep20/oxbull_tech |
+| Binance Smart Chain | KRPZA | 0x53940D46a35162255511ff7cade811891d49533c | OXYO2 |  | bsc/bep20/oxyo2 |
 | Binance Smart Chain | OZONE | 0xBf8bAb33600D5BCA18e4464e34C2a8d532031f5C | OZONE |  | bsc/bep20/ozone |
 | Binance Smart Chain | OATH | 0x73f4C95AF5C2892253c068850B8C9a753636f58d | Oath Token |  | bsc/bep20/oath_token |
 | Binance Smart Chain | OBS | 0xc6F509274FcC1F485644167CB911fd0C61545E6c | Obsidium |  | bsc/bep20/obsidium |
@@ -2489,6 +2524,7 @@
 | Binance Smart Chain | ORN | 0xe4CA1F75ECA6214393fCE1C1b316C237664EaA8e | Orion Protocol |  | bsc/bep20/orion_protocol |
 | Binance Smart Chain | OMC | 0x5D2F9a9DF1ba3C8C00303D0b4C431897eBc6626A | OrmeCash |  | bsc/bep20/ormecash |
 | Binance Smart Chain | ORME | 0x7e2AFE446A30fA67600a5174Df7f4002B8E15B03 | Ormeus Coin |  | bsc/bep20/ormeus_coin |
+| Binance Smart Chain | OSAK | 0x11cd72f7A4B699c67f225ca8aBb20bC9F8DB90c7 | Osaka Protocol |  | bsc/bep20/osaka_protocol |
 | Binance Smart Chain | OSCAR | 0xD6bf5A972e0C18d38F3a5e132880E39E6871f8A2 | Oscarswap.com |  | bsc/bep20/oscarswap_com |
 | Binance Smart Chain | OSEAN | 0x722cB8e411D40942C0f581B919ecCE3E4D759602 | Osean |  | bsc/bep20/osean |
 | Binance Smart Chain | OTF | 0xd9C2c209337Bd5E5CfCE19A87B81ED525cf0BF34 | OtterFlow |  | bsc/bep20/otterflow |
@@ -2631,6 +2667,7 @@
 | Binance Smart Chain | POCO | 0x394bBA8F309f3462b31238B3fd04b83F71A98848 | Poco Token |  | bsc/bep20/poco_token |
 | Binance Smart Chain | POI$ON | 0x31C91D8Fb96BfF40955DD2dbc909B36E8b104Dde | Poison.Finance Poison |  | bsc/bep20/poison_finance_poison |
 | Binance Smart Chain | PDX | 0x43a0C5EB1763A211Aa3c05849A617f2eE0452767 | PokeDX |  | bsc/bep20/pokedx |
+| Binance Smart Chain | POKEGROK | 0xEfD8BB69AB5c0B022b1d33120DdD1daC3a83877e | PokeGROK |  | bsc/bep20/pokegrok |
 | Binance Smart Chain | PPC | 0x8C22881c7A92db25d1666F276299dde1795BAd00 | PokemonPlay |  | bsc/bep20/pokemonplay |
 | Binance Smart Chain | PKN | 0x4B5DeCb9327B4D511A58137A1aDE61434AacdD43 | Poken |  | bsc/bep20/poken |
 | Binance Smart Chain | POKERFI | 0xfE073C3B891325AE8686d9Cf2C8b3586674f7BE2 | PokerFI.Finance |  | bsc/bep20/pokerfi.finance |
@@ -2802,6 +2839,7 @@
 | Binance Smart Chain | RELAY | 0xE338D4250A4d959F88Ff8789EaaE8c32700BD175 | Relay Token |  | bsc/bep20/relay_token |
 | Binance Smart Chain | RNT | 0x974e9f2075B8Cc77A54F8b439042f242DF353990 | Rencom Network |  | bsc/bep20/rencom_network |
 | Binance Smart Chain | RET | 0x10b9dd394467f2CFbc769e07E88dC7e2c41B0965 | Renewable Energy Token |  | bsc/bep20/renewable_energy_token |
+| Binance Smart Chain | RSPN | 0x315Fb3A9b45E89d17c3F16cefA93b7D571d10306 | Respan |  | bsc/bep20/respan |
 | Binance Smart Chain | RETRO | 0xD6eF2222Cc850fDc7Ee30F2B2D5384e0167700A3 | RetroCraft |  | bsc/bep20/retrocraft |
 | Binance Smart Chain | REUNI | 0x9ed7E4B1BFF939ad473dA5E7a218C771D1569456 | Reunit Token |  | bsc/bep20/reunit_token |
 | Binance Smart Chain | RVC | 0xbcbdecf8e76A5C32Dba69De16985882ace1678c6 | Revenue Coin |  | bsc/bep20/revenue_coin |
@@ -2976,6 +3014,7 @@
 | Binance Smart Chain | SNFTS | 0x6f51A1674BEFDD77f7ab1246b83AdB9f13613762 | Seedify NFT Space |  | bsc/bep20/seedify_nft_space |
 | Binance Smart Chain | SFUND | 0x477bC8d23c634C154061869478bce96BE6045D12 | SeedifyFund |  | bsc/bep20/seedifyfund |
 | Binance Smart Chain | STI | 0x4f5f7a7Dca8BA0A7983381D23dFc5eaF4be9C79a | Seek Tiger |  | bsc/bep20/seek_tiger |
+| Binance Smart Chain | SEF | 0x5dE40C1152c990492eaeaEECc4ECAab788BbC4fD | Segment |  | bsc/bep20/segment |
 | Binance Smart Chain | SEILOR | 0xE29142E14E52bdFBb8108076f66f49661F10EC10 | SeilorToken |  | bsc/bep20/seilortoken |
 | Binance Smart Chain | SKUY | 0x71d03A620646f8b572282Ef39228D36Add67ee20 | Sekuya |  | bsc/bep20/sekuya |
 | Binance Smart Chain | SENSI | 0x63e77cF206801782239D4F126cfa22b517FB4eDb | Sensi |  | bsc/bep20/sensi |
@@ -3023,6 +3062,7 @@
 | Binance Smart Chain | SK | 0x5755E18D86c8a6d7a6E25296782cb84661E6c106 | SideKick Token |  | bsc/bep20/sidekick_token |
 | Binance Smart Chain | SIDUS | 0xe62B7C22484F8b031930275d31F42B9a517fE038 | Sidus |  | bsc/bep20/sidus |
 | Binance Smart Chain | SATA | 0x6b1C8765C7EFf0b60706b0ae489EB9bb9667465A | Signata |  | bsc/bep20/signata |
+| Binance Smart Chain | SILLYBONK | 0x316bEB3f482F40b804a5fDa0EE0E321ae84cAa0A | Silly Bonk |  | bsc/bep20/silly_bonk |
 | Binance Smart Chain | SILVA | 0x68b5edb385b59E30a7A7Db1E681a449E94DF0213 | Silva Token |  | bsc/bep20/silva_token |
 | Binance Smart Chain | SSTX | 0x5396734569e26101677Eb39C89413F7fa7d8006f | Silver Stonks |  | bsc/bep20/silver_stonks |
 | Binance Smart Chain | SIMBA | 0x8F4E64d92ADc4681093aeacb3D60d862a0536b0f | Simba Coin |  | bsc/bep20/simba_coin |
@@ -3051,11 +3091,13 @@
 | Binance Smart Chain | SOCIALAI | 0x6f0Ad7C4044A3474CCB29caeFA182549DC70E802 | Social AI |  | bsc/bep20/social_ai |
 | Binance Smart Chain | SDF | 0x9a7e6791D7b23de3597463ae1D1bCC05f76E93A5 | SocialDefi |  | bsc/bep20/socialdefi |
 | Binance Smart Chain | SOKU | 0x0e4B5Ea0259eB3D66E6FCB7Cc8785817F8490a53 | Soku |  | bsc/bep20/soku |
+| Binance Smart Chain | SOLBROE | 0xEd738F0E3f75BB1b21C07715A3D4dF24e67eBf66 | SolBroe |  | bsc/bep20/solbroe |
 | Binance Smart Chain | CHICKS | 0xA91c7bc1e07996a188C1A5b1CfDFF450389D8ACf | SolChicks cxxShYRVcepDudXhe7U62QHvw8uBJoKFifmzggGKVC2 |  | bsc/bep20/solchicks_cxxshyrvcepdudxhe7u62qhvw8ubjokfifmzgggkvc2 |
 | Binance Smart Chain | SLGO | 0x940580Db429da7FA8662D66f7A4d312443f09F52 | Solalgo |  | bsc/bep20/solalgo |
 | Binance Smart Chain | SOLF | 0xFEa6aB80cd850c3e63374Bc737479aeEC0E8b9a1 | Solana Farm |  | bsc/bep20/solana_farm |
 | Binance Smart Chain | SEG | 0xEC126e20e7cb114dd3BA356100eaca2Cc2921322 | Solar Energy |  | bsc/bep20/solar_energy |
 | Binance Smart Chain | SFC | 0x0556551F81623aE32c5c7CF853c67fafBE61648a | SolarFullCycle |  | bsc/bep20/solarfullcycle |
+| Binance Smart Chain | $SMOON | 0xa97B32d699E3908fF34502Af489604CCdc1feB10 | Solmoon |  | bsc/bep20/solmoon |
 | Binance Smart Chain | SOLO | 0xc2c28b58db223DA89b567A0A98197Fc17C115148 | Sologenic |  | bsc/bep20/sologenic |
 | Binance Smart Chain | SONIC | 0x066cdA0CCA84E9C6eD0a4ECB92AA036a9582544B | Sonic Inu |  | bsc/bep20/sonic_inu |
 | Binance Smart Chain | SNC | 0xC07BeEe9FE5ab11b81cc1fC8Af257c9ACcf98cA7 | SonicPad |  | bsc/bep20/sonicpad |
@@ -3384,6 +3426,7 @@
 | Binance Smart Chain | UPDOG | 0x400613f184D1207f5C07a67D67040A4e23E92feB | UpDog |  | bsc/bep20/updog |
 | Binance Smart Chain | UPR | 0xf720E38F678B29B243F7D53B56Acbf5dE98F2385 | Upfire |  | bsc/bep20/upfire |
 | Binance Smart Chain | UP | 0xf84Fd783E7C38A3C99030535919fB89350387502 | Upfront Protocol |  | bsc/bep20/upfront_protocol |
+| Binance Smart Chain | LIFT | 0x513C3200F227ebB62e3B3d00B7a83779643a71CF | Uplift |  | bsc/bep20/uplift |
 | Binance Smart Chain | URUB | 0xf8759DE7F2C8d3F32Fd8f8e4c0C02D436a05DdEb | Urubit |  | bsc/bep20/urubit |
 | Binance Smart Chain | UNC | 0x35Da89A339DE2c78F8FB1c5e1A9a9C6539e2FA8A | Utility Net Coin |  | bsc/bep20/utility_net_coin |
 | Binance Smart Chain | UW3S | 0x961E149Db8bFBDb318c182152725ac806D7BE3f4 | Utility Web3Shot |  | bsc/bep20/utility_web3shot |
@@ -3400,6 +3443,7 @@
 | Binance Smart Chain | VEVE | 0x73cb8eA6d2331eb9892583e6F7A6AC733B932550 | VEVE |  | bsc/bep20/veve |
 | Binance Smart Chain | VFOX | 0x4D61577d8Fd2208A0afb814ea089fDeAe19ed202 | VFOX |  | bsc/bep20/vfox |
 | Binance Smart Chain | VIP | 0x6759565574De509b7725ABb4680020704B3F404e | VIP TOKEN |  | bsc/bep20/vip_token |
+| Binance Smart Chain | VISION | 0x332e78C687C3Fcd91494c6B13F0Fc685b2A57434 | VISION |  | bsc/bep20/vision_7434 |
 | Binance Smart Chain | VIZ | 0xCE237Db5A3458f1250a553cf395C9C3cf658B3D1 | VIZ Token |  | bsc/bep20/viz_token |
 | Binance Smart Chain | VNDC | 0xDDE5B33a56f3F1C22e5a6bd8429E6ad508BFF24E | VNDC |  | bsc/bep20/vndc |
 | Binance Smart Chain | VSC | 0xcDf937995A55a9AB551D81b463AC0f7F02795368 | VSC |  | bsc/bep20/vsc |
@@ -3500,6 +3544,7 @@
 | Binance Smart Chain | WDF | 0xFC12242996ED64382286d765572F19e9B843F196 | Wallet Defi |  | bsc/bep20/wallet_defi |
 | Binance Smart Chain | WSAFU | 0x5c0d3C165Dc46cFD5Ec80bbb1Bf7cb8631f9d6c7 | Wallet SAFU |  | bsc/bep20/wallet_safu |
 | Binance Smart Chain | WNOW | 0x56AA0237244C67B9A854B4Efe8479cCa0B105289 | WalletNow |  | bsc/bep20/walletnow |
+| Binance Smart Chain | WLTK | 0x9eE10d2E9571AecfE5a604aF7fE71B96eBa84b7b | Walletika |  | bsc/bep20/walletika |
 | Binance Smart Chain | WANA | 0x339C72829AB7DD45C3C52f965E7ABe358dd8761E | Wanaka Farm |  | bsc/bep20/wanaka_farm |
 | Binance Smart Chain | RENA | 0xa9D75Cc3405F0450955050C520843f99Aff8749D | Warena Token |  | bsc/bep20/warena_token |
 | Binance Smart Chain | CHAOS | 0x1c5A65eDeda96E7dAf0715d978cC643184FBbd6C | WarriorEmpires.io |  | bsc/bep20/warriorempires_io |
@@ -3580,6 +3625,7 @@
 | Binance Smart Chain | MGOOGL | 0x62D71B23bF15218C7d2D7E48DBbD9e9c650B173f | Wrapped Mirror GOOGL Token |  | bsc/bep20/wrapped_mirror_googl_token |
 | Binance Smart Chain | MNFLX | 0xa04F060077D90Fe2647B61e4dA4aD1F97d6649dc | Wrapped Mirror NFLX Token |  | bsc/bep20/wrapped_mirror_nflx_token |
 | Binance Smart Chain | MTSLA | 0xF215A127A196e3988C09d052e16BcFD365Cd7AA3 | Wrapped Mirror TSLA Token |  | bsc/bep20/wrapped_mirror_tsla_token |
+| Binance Smart Chain | WNYBC | 0xc1de02F649De83093A7fC8Bd5CF5739F39636419 | Wrapped NYBC from NYBC |  | bsc/bep20/wrapped_nybc_from_nybc |
 | Binance Smart Chain | WNAV | 0xBFEf6cCFC830D3BaCA4F6766a0d4AaA242Ca9F3D | Wrapped Navcoin |  | bsc/bep20/wrapped_navcoin |
 | Binance Smart Chain | WNYC | 0x6c015277B0f9b8c24B20BD8BbbD29FDb25738A69 | Wrapped NewYorkCoin |  | bsc/bep20/wrapped_newyorkcoin |
 | Binance Smart Chain | OK | 0x523821d20a283d955f6205B4C9252779Cd0f964B | Wrapped Okcash BSC |  | bsc/bep20/wrapped_okcash_bsc |
@@ -3626,6 +3672,7 @@
 | Binance Smart Chain | XV | 0x34DCE75a3D1910CC9D188aA5a75fb9ADDCAe0fcC | XV |  | bsc/bep20/xv |
 | Binance Smart Chain | XWG | 0x6b23C89196DeB721e6Fd9726E6C76E4810a464bc | XWG |  | bsc/bep20/xwg |
 | Binance Smart Chain | XY | 0x666666661f9B6D8c581602AAa2f76cbead06C401 | XY Token |  | bsc/bep20/xy_token |
+| Binance Smart Chain | XYM | 0x1E7be347D718b768c4736C13eA217c53885bE151 | XYM Token |  | bsc/bep20/xym_token |
 | Binance Smart Chain | XVC | 0xffE2A166A3Ea6dd7BB11B2C48f08F1E4202D4E78 | XaveCoin |  | bsc/bep20/xavecoin |
 | Binance Smart Chain | XLD | 0xC79d1fD14F514cD713b5cA43D288a782Ae53eAb2 | XcelDefi |  | bsc/bep20/xceldefi |
 | Binance Smart Chain | XERT | 0x529A1468a91fa4eE0D65EE2B4b66fE4F6A55154F | Xertinet Token |  | bsc/bep20/xertinet_token |
@@ -3724,6 +3771,7 @@
 | Binance Smart Chain | BDO | 0x190b589cf9Fb8DDEabBFeae36a813FFb2A702454 | bDollar |  | bsc/bep20/bdollar |
 | Binance Smart Chain | SBDO | 0x0d9319565be7f53CeFE84Ad201Be3f40feAE2740 | bDollar Share |  | bsc/bep20/bdollar_share |
 | Binance Smart Chain | BNB SMART CHAIN HIVE | 0x9faF07D1FBC130D698e227E50D1Fb72657c0A342 | bHIVE |  | bsc/bep20/bhive |
+| Binance Smart Chain | BXNF | 0xC84FaE1141B92Fa5Bf847276828f69cAF651Cb7F | bXNF |  | bsc/bep20/bxnf |
 | Binance Smart Chain | BYSL | 0xc34326533E8606E742c7e3775F59994A3ed9Fb2f | bYSL |  | bsc/bep20/bysl |
 | Binance Smart Chain | BABYRABBIT | 0xF20F2aD6A36e9A4f585755aCEB0DA750De80ED4E | babyrabbit |  | bsc/bep20/babyrabbit |
 | Binance Smart Chain | BECOIN | 0x8F081Eb884Fd47b79536D28E2DD9d4886773F783 | beCoin |  | bsc/bep20/becoin |
@@ -3756,6 +3804,7 @@
 | Binance Smart Chain | FRIES | 0x393B312C01048b3ed2720bF1B090084C09e408A1 | fry.world |  | bsc/bep20/fry.world |
 | Binance Smart Chain | $MEMEMEME$ | 0x2563A4f7c37F2AcA9f3222DeF6849C4156D6f9D2 | get rich with meme |  | bsc/bep20/get_rich_with_meme |
 | Binance Smart Chain | GOTEM | 0xA5fbc3520dD4Bb85FCd175e1E3b994546A2C1eE8 | gotEM |  | bsc/bep20/gotem |
+| Binance Smart Chain | BO | 0xE4Bc104dE254a50216D4F211c31D647A2b62Ee41 | gumBOvile |  | bsc/bep20/gumbovile |
 | Binance Smart Chain | HI | 0x77087aB5Df23cFB52449A188e80e9096201c2097 | hi Dollar |  | bsc/bep20/hi_dollar |
 | Binance Smart Chain | IFC | 0x4927B4d730aE6f5A9A9115CF81848A3b9Cfad891 | i Fortune Coin |  | bsc/bep20/i_fortune_coin |
 | Binance Smart Chain | ASSET | 0x6b471d5Ab9f3d92A600e7d49A0b135BF6D4c6A5b | iAssets |  | bsc/bep20/iassets |
@@ -3781,6 +3830,7 @@
 | Binance Smart Chain | MAT | 0xf3147987a00D35EeCC10C731269003CA093740CA | mymasterwar.com |  | bsc/bep20/mymasterwar_com |
 | Binance Smart Chain | NSI | 0x7eFb55D9AC57B23Cc6811c9068db3CF83CBDfe39 | nSights |  | bsc/bep20/nsights |
 | Binance Smart Chain | OIN | 0x658E64FFcF40D240A43D52CA9342140316Ae44fA | oinfinance |  | bsc/bep20/oinfinance |
+| Binance Smart Chain | OST | 0xa20010be0ca362A859E9bE35fBDabC28F09cDE44 | onestop |  | bsc/bep20/onestop |
 | Binance Smart Chain | PNT | 0xdaacB0Ab6Fb34d24E8a67BfA14BF4D95D4C7aF92 | pNetwork Token |  | bsc/bep20/pnetwork_token |
 | Binance Smart Chain | PSTAKE | 0x4C882ec256823eE773B25b414d36F92ef58a7c0C | pStake Finance |  | bsc/bep20/pstake_finance |
 | Binance Smart Chain | $ANRX | 0xE2e7329499E8DDb1f2b04EE4B35a8d7f6881e4ea | pTokens $ANRX |  | bsc/bep20/ptokens_anrx |
@@ -10241,7 +10291,6 @@
 | Ethereum | RSV | 0x196f4727526eA7FB1e17b2071B3d8eAA38486988 | Reserve |  | ethereum/erc20/reserve |
 | Ethereum | RSV | 0x1C5857e110CD8411054660F60B5De6a6958CfAE2 | Reserve (old) | delisted | ethereum/erc20/reserve_ |
 | Ethereum | RSR | 0x320623b8E4fF03373931769A31Fc52A4E78B5d70 | Reserve Rights |  | ethereum/erc20/reserve_rights |
-| Ethereum | RSR_ | 0x8762db106B2c2A0bccB3A80d1Ed41273552616E8 | Reserve Rights (legacy) |  | ethereum/erc20/reserve_rights_old |
 | Ethereum | RES | 0x0a9f693FcE6F00A51A8e0db4351B5a8078B4242e | Resfinex |  | ethereum/erc20/resfinex |
 | Ethereum | GCOIN | 0x6104e7f7B45BcF9763b8215728Dc462354670f61 | Responsible Gold Coin | delisted | ethereum/erc20/responsible_gold_coin |
 | Ethereum | REST | 0x6753795d67eD0b2b65B57FC45C7Ac0F53b55f4FE | Restore |  | ethereum/erc20/restore |
@@ -11205,7 +11254,6 @@
 | Ethereum | TOLL | 0x609c711783295209d9f33F535A7cA55B8FF87Af2 | Toll Free Swap |  | ethereum/erc20/toll_free_swap |
 | Ethereum | TINU | 0x2d0E64B6bF13660a4c0De42a0B88144a7C10991F | Tom Inu |  | ethereum/erc20/tom_inu |
 | Ethereum | TOMATO | 0x82bd290afa5cC1b75F46822fEC415E2be51D7D46 | TomatoToken |  | ethereum/erc20/tomatotoken |
-| Ethereum | TOMOE | 0x05D3606d5c81EB9b7B18530995eC9B29da05FaBa | TomoChain |  | ethereum/erc20/tomochain |
 | Ethereum | TOMO | 0x8b353021189375591723E7384262F45709A3C3dC | Tomocoin | delisted | ethereum/erc20/tomocoin |
 | Ethereum | TOOR | 0x8eb965ee9cCFBCE76c0a06264492c0afEfc2826d | ToorCoin |  | ethereum/erc20/toorcoin |
 | Ethereum | TOPDOG | 0xc57bAa24F72037C21f9c0d345BB6F19f47407447 | Top Dog Beach Club |  | ethereum/erc20/top_dog_beach_club |
@@ -11631,6 +11679,7 @@
 | Ethereum | VZT | 0x9720b467a710382A232a32F540bDCed7d662a10B | Vezt |  | ethereum/erc20/vezt |
 | Ethereum | VIT | 0x23b75Bc7AaF28e2d6628C3f424B3882F8f072a3c | Vice Industry Token |  | ethereum/erc20/vice_industry_token |
 | Ethereum | VICEX | 0xDfD5bb6cE8716822B2c9B255560194Ca3509BebC | ViceToken |  | ethereum/erc20/vicetoken |
+| Ethereum | VIC | 0x05D3606d5c81EB9b7B18530995eC9B29da05FaBa | Viction |  | ethereum/erc20/tomochain |
 | Ethereum | VR | 0x7d5121505149065b562C789A0145eD750e6E8cdD | Victoria VR |  | ethereum/erc20/victoria_vr |
 | Ethereum | VID | 0x2C9023bBc572ff8dc1228c7858A280046Ea8C9E5 | VideoCoin |  | ethereum/erc20/videocoin |
 | Ethereum | VIDY | 0xC77b230F31b517F1ef362e59c173C2BE6540B5E8 | VidyCoin |  | ethereum/erc20/vidycoin |
@@ -12532,6 +12581,7 @@
 | MultiversX | USDT | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | WrappedUSDT |  | elrond/esdt/555344542d663863303863 |
 | MultiversX | ZPAY | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | ZoidPay |  | elrond/esdt/5a5041592d323437383735 |
 | MultiversX | RIDE | erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u | holoride |  | elrond/esdt/524944452d376431386539 |
+| Polygon | $CULO | 0x74dD45dd579caD749f9381D6227e7e02277C944B | $CULO |  | polygon/erc20/culo |
 | Polygon | DEL | 0xec6432B90e7fD4d9f872cc5C781f05B617DB861E | (DEL) |  | polygon/erc20/(del) |
 | Polygon | COMP | 0x8505b9d2254A7Ae468c0E9dd10Ccea3A837aef5c | (PoS) Compound |  | polygon/erc20/(pos)_compound |
 | Polygon | DAI | 0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063 | (PoS) Dai Stablecoin |  | polygon/erc20/(pos)_dai_stablecoin |
@@ -12628,6 +12678,7 @@
 | Polygon | FORTH | 0x5eCbA59DAcc1ADc5bDEA35f38A732823fc3dE977 | Ampleforth Governance |  | polygon/erc20/ampleforth_governance |
 | Polygon | $ANRX | 0x554f074d9cCda8F483d1812d4874cBebD682644E | AnRKey X (PoS) |  | polygon/erc20/anrkey_x_pos |
 | Polygon | ANGEL | 0x0B6afe834dab840335F87d99b45C2a4bd81A93c7 | Angel (PoS) |  | polygon/erc20/angel_pos |
+| Polygon | AGUSD | 0x0000206329b97DB379d5E1Bf586BbDB969C63274 | Angle USD |  | polygon/erc20/angle_usd |
 | Polygon | AGLA | 0xD6A33F67b733d422c821C36F0f79ca145B930d01 | Angola Coin (PoS) |  | polygon/erc20/angola_coin_pos |
 | Polygon | ANML | 0xEcc4176B90613Ed78185f01bd1E42C5640C4F09d | Animal Concerts Token (PoS) |  | polygon/erc20/animal_concerts_token_(pos) |
 | Polygon | ANIV | 0x04Cc80c7665E4D57f57E16A1212A57c0C11927Ce | Aniverse |  | polygon/erc20/aniverse |
@@ -12821,6 +12872,7 @@
 | Polygon | CRST | 0x91F0484f9B65dc5187e414dae5ED37Ea7a4b8aF4 | Coorest |  | polygon/erc20/coorest |
 | Polygon | CU | 0xf6351c1163314e95d025575c5CeA314b055b7ED3 | Copper |  | polygon/erc20/copper |
 | Polygon | COR | 0x4fdCE518fE527439Fe76883e6b51A1c522B61b7C | Coreto (PoS) |  | polygon/erc20/coreto_pos |
+| Polygon | CMT | 0xc65b1b55a287B4E8bF5C04faAD21D43a21a1Ce46 | CornerMarket Token |  | polygon/erc20/cornermarket_token |
 | Polygon | COSMIC | 0xa5Eb60CA85898f8b26e18fF7c7E43623ccbA772C | CosmicSwap |  | polygon/erc20/cosmicswap |
 | Polygon | COT | 0x8d520c8E66091cfD6743fe37Fbe3A09505616C4b | CosplayToken (PoS) |  | polygon/erc20/cosplaytoken_pos |
 | Polygon | XCRE | 0xFA3c05C2023918A4324fDE7163591Fe6BEBd1692 | Cresio |  | polygon/erc20/cresio |
@@ -12947,6 +12999,7 @@
 | Polygon | EVE | 0xaE29AC47A9E3b0a52840E547aDf74B912999F7fc | EVE Exchange (PoS) |  | polygon/erc20/eve_exchange_(pos) |
 | Polygon | ETV | 0xC77AEa972F862df1F6A520BE673Df63A01255ff9 | EarnTV |  | polygon/erc20/earntv |
 | Polygon | EWT | 0xd9E838dd60c8ea1e7dD4E670913323bB87DB112c | Ecowatt Token |  | polygon/erc20/ecowatt_token |
+| Polygon | ELE | 0xc4a206a306F0dB88F98A3591419bc14832536862 | Elefant |  | polygon/erc20/elefant |
 | Polygon | ELK | 0xeEeEEb57642040bE42185f49C52F7E9B38f8eeeE | Elk |  | polygon/erc20/elk |
 | Polygon | EMPIRE | 0xf124eD9Ec309907808b1FBc6BEdB2a76927B3665 | Empire Network |  | polygon/erc20/empire_network |
 | Polygon | END | 0x0C087f8D6A1F14F71bB7Cc7E1B061CA297AF7555 | Endblock |  | polygon/erc20/endblock |
@@ -13027,6 +13080,7 @@
 | Polygon | GOVI | 0x43Df9c0a1156c96cEa98737b511ac89D0e2A1F46 | GOVI (PoS) |  | polygon/erc20/govi_pos |
 | Polygon | GRAMZ | 0xF40D9de56b1fBAfF388f4d1B97Dc8Dfc184d34cE | GRAMZ |  | polygon/erc20/gramz |
 | Polygon | GREENGOLD | 0x21a00838E6b2D4aa3ac4BbC11111Be011E1ca111 | GREENGOLD |  | polygon/erc20/greengold |
+| Polygon | G | 0x1b8Cf8045262663d3E1D7E5CC59cC861fD034BB4 | GRN |  | polygon/erc20/grn |
 | Polygon | GNS | 0xE5417Af564e4bFDA1c483642db72007871397896 | Gains Network |  | polygon/erc20/gains_network |
 | Polygon | GAMER | 0x3f6b3595ecF70735D3f48D69b09C4E4506DB3F47 | GameStation |  | polygon/erc20/gamestation |
 | Polygon | GSWIFT | 0x580E933D90091b9cE380740E3a4A39c67eB85B4c | GameSwift |  | polygon/erc20/gameswift |
@@ -13089,6 +13143,7 @@
 | Polygon | HMT | 0xc748B2A084F8eFc47E086ccdDD9b7e67aEb571BF | Human Token (PoS) |  | polygon/erc20/human_token_(pos) |
 | Polygon | HCFW | 0xd4Cce747e623CE2D72322892e5DB238e2A5eb4F3 | Humans Care Foundation: Water |  | polygon/erc20/humans_care_foundation_water |
 | Polygon | HT | 0xFAD65Eb62a97fF5Ed91B23aFD039956aaCa6e93b | HuobiToken |  | polygon/erc20/huobitoken |
+| Polygon | LYA | 0xC7D73cb22ADd1F2019d68eC4Fa033F3E3d622C0e | Huralya |  | polygon/erc20/huralya |
 | Polygon | HBD | 0x7B6838c155f2800a0Fb99b0382002dBFEEE8Ce22 | Hybrid Token |  | polygon/erc20/hybrid_token |
 | Polygon | HYPEX | 0x3b6Bc2B494FA008f71f7371dE93847F456e630Ca | HypeX |  | polygon/erc20/hypex |
 | Polygon | HID | 0x87847703D4bb4FCD42DB887FfdcB94496e77e3ab | Hypersign Identity Token (PoS) |  | polygon/erc20/hypersign_identity_token_pos |
@@ -13244,6 +13299,7 @@
 | Polygon | MIMO | 0xADAC33f543267c4D59a8c299cF804c303BC3e4aC | MIMO Parallel Governance Token (PoS) |  | polygon/erc20/mimo_parallel_governance_token_pos |
 | Polygon | MINNA | 0xfBe59eBf7a188045c87c4A65093Ed1E50520408b | MINNA |  | polygon/erc20/minna |
 | Polygon | MOD | 0x8346Ab8d5EA7A9Db0209aEd2d1806AFA0E2c4C21 | MODEFI (PoS) |  | polygon/erc20/modefi_(pos) |
+| Polygon | MOOVE | 0xdb6dAe4B87Be1289715c08385A6Fc1A3D970B09d | MOOVE Protocol |  | polygon/erc20/moove_protocol |
 | Polygon | MOMA | 0xE3AB61371ECc88534C522922a026f2296116C109 | MOchi MArket |  | polygon/erc20/mochi_market |
 | Polygon | MSQ | 0x6A8Ec2d9BfBDD20A7F5A4E89D640F7E7cebA4499 | MSQUARE |  | polygon/erc20/msquare |
 | Polygon | MT | 0x0Da6A7a0A2E7525950204Bb2C511E47a52235B17 | MT TOWER |  | polygon/erc20/mt_tower |
@@ -13445,6 +13501,7 @@
 | Polygon | PLOT | 0xe82808eaA78339b06a691fd92E1Be79671cAd8D3 | PlotX |  | polygon/erc20/plotx |
 | Polygon | PLU | 0x7dc0cb65EC6019330a6841e9c274f2EE57A6CA6C | Pluton |  | polygon/erc20/pluton |
 | Polygon | POI$ON | 0x31C91D8Fb96BfF40955DD2dbc909B36E8b104Dde | Poison.Finance Poison |  | polygon/erc20/poison_finance_poison |
+| Polygon | POLDO | 0x2A75A19a162Ef79Ed97012e31d8F9c06D3bB4F92 | Poldo |  | polygon/erc20/poldo |
 | Polygon | POLI | 0x6fb54Ffe60386aC33b722be13d2549dd87BF63AF | Polinate (PoS) |  | polygon/erc20/polinate_pos |
 | Polygon | PBR | 0x0D6ae2a429df13e44A07Cd2969E085e4833f64A0 | PolkaBridge |  | polygon/erc20/polkabridge |
 | Polygon | XP | 0x180cFBE9843d79BcAFcbcDF23590247793DFc95B | PolkaFantasy |  | polygon/erc20/polkafantasy |
@@ -13774,6 +13831,7 @@
 | Polygon | VLPEN | 0x55CA76E0341ccD35c2E3F34CbF767C6102aea70f | Vote Locked PEN |  | polygon/erc20/vote_locked_pen |
 | Polygon | VOY | 0x823BBb870b0eB86bd7Ec0BCC98c84b46a0f99ac7 | Voy Token |  | polygon/erc20/voy_token |
 | Polygon | VGX | 0x054c42b6414747F5263b4A86f21B1aFAD00326Bf | Voyager |  | polygon/erc20/voyager |
+| Polygon | WUT | 0x69166F825EcaC553d5cDD85E936191d6191Dfd57 | WALKUP TOKEN |  | polygon/erc20/walkup_token |
 | Polygon | FXWEN | 0x11A88F949C0592238959142653bB6847c6523D81 | WEN Token (FXERC20) |  | polygon/erc20/wen_token_fxerc20 |
 | Polygon | WERX | 0x9b2CFE1608250BEA375c6199b474B402BaD920da | WERX |  | polygon/erc20/werx |
 | Polygon | WFDP | 0xb541a306DD240EF04Fb5E7e0Db9a3C6CB7DdBb07 | WFDP Coin |  | polygon/erc20/wfdp_coin |
@@ -13788,6 +13846,7 @@
 | Polygon | WRX | 0x72d6066F486bd0052eefB9114B66ae40e0A6031a | Wazirx (PoS) |  | polygon/erc20/wazirx_pos |
 | Polygon | WEFI | 0xfFA188493C15DfAf2C206c97D8633377847b6a52 | WeFi |  | polygon/erc20/wefi |
 | Polygon | WPR | 0xCBAb27B2D5b468Eea509Bd430100922341BC3f1A | WePower |  | polygon/erc20/wepower |
+| Polygon | WGT | 0x8F15330737184643473348004ef70C1C57c2966D | Web3Games.com |  | polygon/erc20/web3games_com |
 | Polygon | WBS | 0x00147F54f9a32608D0E0548A99FC8c7E594BCbFC | WebSea |  | polygon/erc20/websea |
 | Polygon | WET | 0x632B8c4e95B2F8A9309417f8D990ab9C04c77369 | Weble Ecosystem Token |  | polygon/erc20/weble_ecosystem_token |
 | Polygon | WELT | 0xBc95d3BB681A4dfc0c60A9D08ca67301b5764225 | Welthee |  | polygon/erc20/welthee |
