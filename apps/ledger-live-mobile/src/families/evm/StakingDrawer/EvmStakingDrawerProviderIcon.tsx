@@ -3,6 +3,7 @@ import Kiln from "~/icons/Kiln";
 import { Lido } from "~/icons/Lido";
 import Figment from "~/icons/Figment";
 import Stader from "~/icons/Stader";
+import MissingIcon from "~/icons/MissingIcon";
 
 type Props = {
   icon?: string;
@@ -23,5 +24,5 @@ export function EvmStakingDrawerProviderIcon({ icon = "" }: Props) {
   if (name === "Figment") {
     return <Figment size={32} />;
   }
-  return null;
+  return <MissingIcon initialLetter={name.charAt(0)} size={32} />;
 }
