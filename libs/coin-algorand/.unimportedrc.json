@@ -5,6 +5,7 @@
     "src/cli-transaction.ts",
     "src/deviceTransactionConfig.ts",
     "src/errors.ts",
+    "src/formatters.ts",
     "src/hw-getAddress.ts",
     "src/initAccount.ts",
     "src/mock.ts",

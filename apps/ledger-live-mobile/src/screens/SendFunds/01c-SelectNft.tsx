@@ -33,7 +33,7 @@ const NftRow = memo(({ account, nft }: { account: Account; nft: ProtoNFT }) => {
     // Only evm family handles nft as of today. If later we have other family,
     // we will need to rework the NFT send flow by implementing family specific
     // logic under their "src/families" respective folder.
-    const bridge = getAccountBridge<EvmTransaction>(account);
+    const bridge = getAccountBridge(account);
 
     const defaultTransaction = bridge.createTransaction(account);
 
