@@ -1,8 +1,8 @@
 import { getEnv } from "@ledgerhq/live-env";
 import type { BitcoinAccount, BitcoinInput, BitcoinOutput } from "./types";
-import { formatCurrencyUnit } from "../../currencies";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 
-const sortUTXO = (a, b) => b.value.minus(a.value).toNumber();
+const sortUTXO = (a: BitcoinOutput, b: BitcoinOutput) => b.value.minus(a.value).toNumber();
 
 export function formatInput(account: BitcoinAccount, input: BitcoinInput): string {
   return `${(input.value

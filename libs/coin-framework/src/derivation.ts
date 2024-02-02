@@ -46,7 +46,7 @@ export type GetAddressOptions = {
   segwit?: boolean;
 };
 
-const modes = Object.freeze({
+const modes: Readonly<Partial<Record<DerivationMode, unknown>>> = Object.freeze({
   // this is "default" by convention
   "": {},
   // MEW legacy derivation
