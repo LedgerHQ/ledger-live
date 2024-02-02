@@ -17,13 +17,10 @@ import {
   ViewStyle,
   Animated,
 } from "react-native";
-import {
-  useNftMetadata,
-  decodeNftId,
-  getNftCapabilities,
-  useNftCollectionMetadata,
-  getFloorPrice,
-} from "@ledgerhq/live-common/nft/index";
+import { decodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
+import { getNftCapabilities } from "@ledgerhq/coin-framework/nft/support";
+import { useNftMetadata, useNftCollectionMetadata } from "@ledgerhq/live-nft-react";
+import { getFloorPrice } from "@ledgerhq/live-nft/api";
 import { BigNumber } from "bignumber.js";
 import { useDispatch, useSelector } from "react-redux";
 import { Box, Button, IconsLegacy, Text, Flex } from "@ledgerhq/native-ui";
@@ -68,7 +65,7 @@ import NftViewerBackground from "./NftViewerBackground";
 import NftViewerScreenHeader from "./NftViewerScreenHeader";
 import invariant from "invariant";
 import DiscreetModeContext, { withDiscreetMode } from "~/context/DiscreetModeContext";
-import { EvmNftTransaction, Transaction } from "@ledgerhq/coin-evm/types/index";
+import { EvmNftTransaction } from "@ledgerhq/coin-evm/types/index";
 
 type Props = CompositeScreenProps<
   | StackNavigatorProps<NftNavigatorParamList, ScreenName.NftViewer>
@@ -210,7 +207,7 @@ const NftViewer = ({ route }: Props) => {
   };
 
   const goToRecipientSelection = useCallback(() => {
-    const bridge = getAccountBridge<Transaction>(account);
+    const bridge = getAccountBridge(account);
 
     const defaultTransaction = bridge.createTransaction(account);
     const transaction = bridge.updateTransaction(defaultTransaction, {

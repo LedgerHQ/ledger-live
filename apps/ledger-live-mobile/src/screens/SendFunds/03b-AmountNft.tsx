@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, memo } from "react";
 
 import invariant from "invariant";
-import { getNFT } from "@ledgerhq/live-common/nft/index";
+import { getNFT } from "@ledgerhq/live-nft";
 import { View, StyleSheet, TextInput, TouchableWithoutFeedback, Keyboard } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { BigNumber } from "bignumber.js";

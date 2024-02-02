@@ -1,7 +1,7 @@
 import React, { Fragment, PureComponent, useMemo } from "react";
 import invariant from "invariant";
 import { ProtoNFT } from "@ledgerhq/types-live";
-import { getNFT } from "@ledgerhq/live-common/nft/index";
+import { getNFT } from "@ledgerhq/live-nft";
 import { Trans } from "react-i18next";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import TrackPage from "~/renderer/analytics/TrackPage";

@@ -12,7 +12,8 @@ import { log } from "@ledgerhq/logs";
 import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
 import { useCountervaluesExport } from "@ledgerhq/live-countervalues-react";
 import { pairId } from "@ledgerhq/live-countervalues/helpers";
-import { NftMetadataProvider } from "@ledgerhq/live-common/nft/index";
+import { NftMetadataProvider } from "@ledgerhq/live-nft-react";
+import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { ToastProvider } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import "./config/configInit";
 import { isEqual } from "lodash";
@@ -301,7 +302,9 @@ export default class Root extends Component {
                                               <ToastProvider>
                                                 <NotificationsProvider>
                                                   <SnackbarContainer />
-                                                  <NftMetadataProvider>
+                                                  <NftMetadataProvider
+                                                    getCurrencyBridge={getCurrencyBridge}
+                                                  >
                                                     <MarketDataProvider>
                                                       <App />
                                                     </MarketDataProvider>

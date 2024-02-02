@@ -1,33 +1,7 @@
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type {
-  Account,
-  AccountBridge,
-  AccountLike,
-  CurrencyBridge,
-  ScanAccountEvent,
-  ScanAccountEventRaw,
-  TransactionCommon,
-} from "@ledgerhq/types-live";
+import type { ScanAccountEvent, ScanAccountEventRaw } from "@ledgerhq/types-live";
 import { fromAccountRaw, toAccountRaw } from "../account";
-import * as impl from "./impl";
-export type Proxy = {
-  getAccountBridge: typeof getAccountBridge;
-  getCurrencyBridge: typeof getCurrencyBridge;
-};
-let proxy: Proxy | null | undefined;
-export const setBridgeProxy = (p: Proxy | null | undefined): void => {
-  if (p && p.getAccountBridge === getAccountBridge) {
-    throw new Error("setBridgeProxy can't be called with same bridge functions!");
-  }
+export { getCurrencyBridge, getAccountBridge } from "./impl";
 
-  proxy = p;
-};
-export const getCurrencyBridge = (currency: CryptoCurrency): CurrencyBridge =>
-  (proxy || impl).getCurrencyBridge(currency);
-export const getAccountBridge = <T extends TransactionCommon = any>(
-  account: AccountLike,
-  parentAccount?: Account | null | undefined,
-): AccountBridge<T> => (proxy || impl).getAccountBridge(account, parentAccount);
 export function fromScanAccountEventRaw(raw: ScanAccountEventRaw): ScanAccountEvent {
   switch (raw.type) {
     case "discovered":

@@ -1,11 +1,8 @@
 import React, { memo } from "react";
 import { TouchableWithoutFeedback, StyleSheet } from "react-native";
-import { useNftMetadata, useNftCollectionMetadata } from "@ledgerhq/live-common/nft/index";
+import { useNftMetadata, useNftCollectionMetadata } from "@ledgerhq/live-nft-react";
 import { useRoute, RouteProp } from "@react-navigation/native";
-import type {
-  NFTResourceLoaded,
-  NFTResourceLoading,
-} from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
+import type { NFTResourceLoaded, NFTResourceLoading } from "@ledgerhq/live-nft/types";
 import { ProtoNFT } from "@ledgerhq/types-live";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { scrollToTop } from "~/navigation/utils";

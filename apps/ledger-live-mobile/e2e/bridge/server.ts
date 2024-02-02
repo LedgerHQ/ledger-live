@@ -9,11 +9,16 @@ import { BleState } from "../../src/reducers/types";
 import { Account, AccountRaw } from "@ledgerhq/types-live";
 import { DeviceUSB, nanoSP_USB, nanoS_USB, nanoX_USB } from "../models/devices";
 
-type ServerData = {
-  type: "walletAPIResponse";
-  payload: string;
-};
-
+type ServerData =
+  | {
+      type: "walletAPIResponse";
+      payload: string;
+    }
+  | {
+      type: "appLogs";
+      fileName: string;
+      payload: string;
+    };
 export const e2eBridgeServer = new Subject<ServerData>();
 
 let wss: Server;
@@ -135,6 +140,10 @@ export function open() {
   postMessage({ type: "open" });
 }
 
+export function getLogs(fileName: string) {
+  postMessage({ type: "getLogs", fileName: fileName });
+}
+
 function onMessage(messageStr: string) {
   const msg: ServerData = JSON.parse(messageStr);
   log(`Message\n${JSON.stringify(msg, null, 2)}`);
@@ -142,6 +151,15 @@ function onMessage(messageStr: string) {
   switch (msg.type) {
     case "walletAPIResponse":
       e2eBridgeServer.next(msg);
+      break;
+    case "appLogs":
+      const [date, time] = new Date().toISOString().split(".")[0].replace(/:/g, "-").split("T");
+      const fileName = `${date}_${time}-${msg.fileName}.json`;
+      const directoryPath = `artifacts/${date}_ledger_live_mobile`;
+      if (!fs.existsSync(directoryPath)) {
+        fs.mkdirSync(directoryPath, { recursive: true });
+      }
+      fs.writeFileSync(`${directoryPath}/${fileName}`, msg.payload, "utf-8");
       break;
     default:
       break;

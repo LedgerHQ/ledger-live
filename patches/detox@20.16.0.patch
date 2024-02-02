@@ -1,0 +1,25 @@
+diff --git a/src/devices/common/drivers/android/exec/ADB.js b/src/devices/common/drivers/android/exec/ADB.js
+index 3600972facda80dd0b74d6aa6e425ecab1d205ba..0dd7a4b59cb0bc4d4189f32d819c244ea5f66ba1 100644
+--- a/src/devices/common/drivers/android/exec/ADB.js
++++ b/src/devices/common/drivers/android/exec/ADB.js
+@@ -8,7 +8,10 @@ const { escape } = require('../../../../../utils/pipeCommands');
+ const DeviceHandle = require('../tools/DeviceHandle');
+ const EmulatorHandle = require('../tools/EmulatorHandle');
+ 
+-const INSTALL_TIMEOUT = 45000;
++const INSTALL_TIMEOUT = 60000;
++const {
++  DETOX_INSTALL_TIMEOUT
++} = process.env;
+ 
+ class ADB {
+   constructor() {
+@@ -109,7 +112,7 @@ class ADB {
+     const command = (apiLvl >= 23)
+       ? `install -r -g -t ${apkPath}`
+       : `install -rg ${apkPath}`;
+-    const result = await this.adbCmdSpawned(deviceId, command, { timeout: INSTALL_TIMEOUT, retries: 3 });
++    const result = await this.adbCmdSpawned(deviceId, command, { timeout: DETOX_INSTALL_TIMEOUT || INSTALL_TIMEOUT, retries: 3 });
+ 
+     const [failure] = (result.stdout || '').match(/^Failure \[.*\]$/m) || [];
+     if (failure) {

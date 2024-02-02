@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: false
+  excludeLinksFromLockfile: false
+
 neverBuiltDependencies:
   - blake2
 
@@ -14,9 +18,9 @@ patchedDependencies:
   asyncstorage-down@4.2.0:
     hash: 2npkndps6fxdasqj3xzcrnnfbe
     path: patches/asyncstorage-down@4.2.0.patch
-  detox@20.13.5:
-    hash: s7677qnx4lewyjdetvacseh6fm
-    path: patches/detox@20.13.5.patch
+  detox@20.16.0:
+    hash: yanhspfjw3apvvf4gev5ovygia
+    path: patches/detox@20.16.0.patch
   react-native-fast-crypto@2.2.0:
     hash: jdmv3zyvsaug2f6l23zgrmwdli
     path: patches/react-native-fast-crypto@2.2.0.patch
@@ -86,7 +90,7 @@ importers:
         specifier: ^4.4.1
         version: 4.4.1
       turbo:
-        specifier: ^1.10.1
+        specifier: 1.10.1
         version: 1.10.1
       typescript:
         specifier: ^5.1.3
@@ -279,6 +283,12 @@ importers:
       '@ledgerhq/live-network':
         specifier: workspace:^
         version: link:../../libs/live-network
+      '@ledgerhq/live-nft':
+        specifier: workspace:^
+        version: link:../../libs/live-nft
+      '@ledgerhq/live-nft-react':
+        specifier: workspace:^
+        version: link:../../libs/live-nft-react
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/logs
@@ -633,7 +643,7 @@ importers:
         version: 4.4.1
       '@vitejs/plugin-react':
         specifier: ^3.1.0
-        version: 3.1.0(vite@4.5.1)
+        version: 3.1.0(vite@4.5.2)
       allure-playwright:
         specifier: 2.9.2
         version: 2.9.2
@@ -710,8 +720,8 @@ importers:
         specifier: ^5.2.2
         version: 5.2.2
       vite:
-        specifier: ^4.5.1
-        version: 4.5.1
+        specifier: ^4.5.2
+        version: 4.5.2
       vite-plugin-electron:
         specifier: 0.4.9
         version: 0.4.9
@@ -772,6 +782,12 @@ importers:
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../libs/env
+      '@ledgerhq/live-nft':
+        specifier: workspace:^
+        version: link:../../libs/live-nft
+      '@ledgerhq/live-nft-react':
+        specifier: workspace:^
+        version: link:../../libs/live-nft-react
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/logs
@@ -1253,6 +1269,9 @@ importers:
       '@types/ws':
         specifier: ^8.5.3
         version: 8.5.3
+      allure-commandline:
+        specifier: ^2.26.0
+        version: 2.26.0
       allure-js-commons:
         specifier: 1.3.2
         version: 1.3.2
@@ -1260,8 +1279,8 @@ importers:
         specifier: ^29.7.0
         version: 29.7.0(@babel/core@7.23.2)
       detox:
-        specifier: ^20.13.5
-        version: 20.13.5(patch_hash=s7677qnx4lewyjdetvacseh6fm)(jest@29.7.0)
+        specifier: ^20.16.0
+        version: 20.16.0(patch_hash=yanhspfjw3apvvf4gev5ovygia)(jest@29.7.0)
       eslint-import-resolver-typescript:
         specifier: ^3.6.1
         version: 3.6.1(@typescript-eslint/parser@6.2.0)(eslint-plugin-import@2.28.1)(eslint@8.51.0)
@@ -1774,9 +1793,6 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
-      '@ledgerhq/live-app-sdk':
-        specifier: ^0.8.1
-        version: 0.8.1
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../env
@@ -2121,6 +2137,9 @@ importers:
       '@ledgerhq/live-network':
         specifier: workspace:^
         version: link:../live-network
+      '@ledgerhq/live-nft':
+        specifier: workspace:^
+        version: link:../live-nft
       '@ledgerhq/live-promise':
         specifier: workspace:^
         version: link:../promise
@@ -4364,6 +4383,77 @@ importers:
         specifier: ^29.1.1
         version: 29.1.1(jest@29.7.0)(typescript@5.1.3)
 
+  libs/live-nft:
+    dependencies:
+      '@ledgerhq/coin-framework':
+        specifier: workspace:*
+        version: link:../coin-framework
+      '@ledgerhq/cryptoassets':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/cryptoassets
+      '@ledgerhq/live-env':
+        specifier: workspace:*
+        version: link:../env
+      '@ledgerhq/live-network':
+        specifier: workspace:*
+        version: link:../live-network
+      '@ledgerhq/types-cryptoassets':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/types-cryptoassets
+      '@ledgerhq/types-live':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/types-live
+      bignumber.js:
+        specifier: '9'
+        version: 9.1.2
+    devDependencies:
+      '@types/jest':
+        specifier: ^29.5.10
+        version: 29.5.10
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0
+      ts-jest:
+        specifier: ^29.1.1
+        version: 29.1.1(jest@29.7.0)(typescript@5.1.3)
+
+  libs/live-nft-react:
+    dependencies:
+      '@ledgerhq/cryptoassets':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/cryptoassets
+      '@ledgerhq/live-nft':
+        specifier: workspace:*
+        version: link:../live-nft
+      '@ledgerhq/types-cryptoassets':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/types-cryptoassets
+      '@ledgerhq/types-live':
+        specifier: workspace:*
+        version: link:../ledgerjs/packages/types-live
+    devDependencies:
+      '@testing-library/react':
+        specifier: '14'
+        version: 14.1.2(react-dom@18.2.0)(react@18.2.0)
+      '@types/jest':
+        specifier: ^29.5.10
+        version: 29.5.10
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0
+      jest-environment-jsdom:
+        specifier: ^29.7.0
+        version: 29.7.0
+      react:
+        specifier: ^18.2.0
+        version: 18.2.0
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.2.0(react@18.2.0)
+      ts-jest:
+        specifier: ^29.1.1
+        version: 29.1.1(jest@29.7.0)(typescript@5.1.3)
+
   libs/promise:
     dependencies:
       '@ledgerhq/logs':
@@ -4940,6 +5030,9 @@ importers:
       color:
         specifier: ^4.0.0
         version: 4.2.3
+      embla-carousel-react:
+        specifier: 8.0.0-rc17
+        version: 8.0.0-rc17(react@18.2.0)
       moment:
         specifier: ^2.29.1
         version: 2.29.3
@@ -4952,6 +5045,9 @@ importers:
       react-select:
         specifier: ^5.2.1
         version: 5.3.2(@babel/core@7.22.8)(@types/react@18.2.28)(react-dom@18.2.0)(react@18.2.0)
+      react-spring:
+        specifier: 8.0.27
+        version: 8.0.27(react-dom@18.2.0)(react@18.2.0)
       react-transition-group:
         specifier: ^4.4.2
         version: 4.4.2(react-dom@18.2.0)(react@18.2.0)
@@ -5028,6 +5124,9 @@ importers:
       csstype:
         specifier: ^3.0.11
         version: 3.0.11
+      embla-carousel:
+        specifier: 8.0.0-rc17
+        version: 8.0.0-rc17
       esbuild:
         specifier: ^0.19.0
         version: 0.19.3
@@ -5181,7 +5280,7 @@ importers:
         version: 6.14.0(eslint@8.55.0)(typescript@5.3.3)
       '@vitejs/plugin-react':
         specifier: ^4.2.1
-        version: 4.2.1(vite@5.0.8)
+        version: 4.2.1(vite@4.5.2)
       eslint:
         specifier: ^8.55.0
         version: 8.55.0
@@ -5195,8 +5294,8 @@ importers:
         specifier: ^5.3.3
         version: 5.3.3
       vite:
-        specifier: ^5.0.8
-        version: 5.0.8(@types/node@20.8.10)
+        specifier: ^4.5.2
+        version: 4.5.2(@types/node@20.8.10)
 
   tools/actions:
     devDependencies:
@@ -14828,6 +14927,10 @@ packages:
     resolution: {integrity: sha512-9FqhNjKQWpQ3fGnSOCovHOm+yhhiorKEqYLAfd525jWavunDJcx8rOW6i6ozAh+FbwcYMkL7b+3j4UR/30MpoQ==}
     dev: false
 
+  /@flatten-js/interval-tree@1.1.2:
+    resolution: {integrity: sha512-OwLoV9E/XM6b7bes2rSFnGNjyRy7vcoIHFTnmBR2WAaZTf0Fe4EX4GdA65vU1KgFAasti7iRSg2dZfYd1Zt00Q==}
+    dev: true
+
   /@floating-ui/core@0.3.1:
     resolution: {integrity: sha512-ensKY7Ub59u16qsVIFEo2hwTCqZ/r9oZZFh51ivcLGHfUwTn8l1Xzng8RJUe91H/UP8PeqeBronAGx0qmzwk2g==}
     dev: false
@@ -19401,7 +19504,7 @@ packages:
     dependencies:
       invariant: 2.2.4
       nullthrows: 1.1.1
-      react-native: 0.72.6(react@18.2.0)
+      react-native: 0.72.6(@babel/core@7.23.2)(react@18.2.0)
 
   /@react-navigation/bottom-tabs@6.4.0(@react-navigation/native@6.0.13)(react-native-safe-area-context@4.5.0)(react-native-screens@3.27.0)(react-native@0.72.6)(react@18.2.0):
     resolution: {integrity: sha512-90CapiXjiWudbCiki9e6fOr/CECQRguIxv5OD7IBfbAMGX5GGiJpX8aqiHAz2DxpAz31v4JZcUr945+lFhXBfA==}
@@ -19663,110 +19766,6 @@ packages:
       picomatch: 2.3.1
       rollup: 2.79.1
     dev: false
-
-  /@rollup/rollup-android-arm-eabi@4.8.0:
-    resolution: {integrity: sha512-zdTObFRoNENrdPpnTNnhOljYIcOX7aI7+7wyrSpPFFIOf/nRdedE6IYsjaBE7tjukphh1tMTojgJ7p3lKY8x6Q==}
-    cpu: [arm]
-    os: [android]
-    requiresBuild: true
-    dev: true
-    optional: true
-
-  /@rollup/rollup-android-arm64@4.8.0:
-    resolution: {integrity: sha512-aiItwP48BiGpMFS9Znjo/xCNQVwTQVcRKkFKsO81m8exrGjHkCBDvm9PHay2kpa8RPnZzzKcD1iQ9KaLY4fPQQ==}
-    cpu: [arm64]
-    os: [android]
-    requiresBuild: true
-    dev: true
-    optional: true
-
-  /@rollup/rollup-darwin-arm64@4.8.0:
-    resolution: {integrity: sha512-zhNIS+L4ZYkYQUjIQUR6Zl0RXhbbA0huvNIWjmPc2SL0cB1h5Djkcy+RZ3/Bwszfb6vgwUvcVJYD6e6Zkpsi8g==}
-    cpu: [arm64]
-    os: [darwin]
-    requiresBuild: true
-    dev: true
-    optional: true
-
-  /@rollup/rollup-darwin-x64@4.8.0:
-    resolution: {integrity: sha512-A/FAHFRNQYrELrb/JHncRWzTTXB2ticiRFztP4ggIUAfa9Up1qfW8aG2w/mN9jNiZ+HB0t0u0jpJgFXG6BfRTA==}
-    cpu: [x64]
-    os: [darwin]
-    requiresBuild: true
-    dev: true
-    optional: true
-
-  /@rollup/rollup-linux-arm-gnueabihf@4.8.0:
-    resolution: {integrity: sha512-JsidBnh3p2IJJA4/2xOF2puAYqbaczB3elZDT0qHxn362EIoIkq7hrR43Xa8RisgI6/WPfvb2umbGsuvf7E37A==}
-    cpu: [arm]
-    os: [linux]
-    requiresBuild: true
-    dev: true
-    optional: true
-
-  /@rollup/rollup-linux-arm64-gnu@4.8.0:
-    resolution: {integrity: sha512-hBNCnqw3EVCkaPB0Oqd24bv8SklETptQWcJz06kb9OtiShn9jK1VuTgi7o4zPSt6rNGWQOTDEAccbk0OqJmS+g==}
-    cpu: [arm64]
-    os: [linux]
-    requiresBuild: true
-    dev: true
-    optional: true
-
-  /@rollup/rollup-linux-arm64-musl@4.8.0:
-    resolution: {integrity: sha512-Fw9ChYfJPdltvi9ALJ9wzdCdxGw4wtq4t1qY028b2O7GwB5qLNSGtqMsAel1lfWTZvf4b6/+4HKp0GlSYg0ahA==}
-    cpu: [arm64]
-    os: [linux]
-    requiresBuild: true
-    dev: true
-    optional: true
-
-  /@rollup/rollup-linux-riscv64-gnu@4.8.0:
-    resolution: {integrity: sha512-BH5xIh7tOzS9yBi8dFrCTG8Z6iNIGWGltd3IpTSKp6+pNWWO6qy8eKoRxOtwFbMrid5NZaidLYN6rHh9aB8bEw==}
-    cpu: [riscv64]
-    os: [linux]
-    requiresBuild: true
-    dev: true
-    optional: true
-
-  /@rollup/rollup-linux-x64-gnu@4.8.0:
-    resolution: {integrity: sha512-PmvAj8k6EuWiyLbkNpd6BLv5XeYFpqWuRvRNRl80xVfpGXK/z6KYXmAgbI4ogz7uFiJxCnYcqyvZVD0dgFog7Q==}
-    cpu: [x64]
-    os: [linux]
-    requiresBuild: true
-    dev: true
-    optional: true
-
-  /@rollup/rollup-linux-x64-musl@4.8.0:
-    resolution: {integrity: sha512-mdxnlW2QUzXwY+95TuxZ+CurrhgrPAMveDWI97EQlA9bfhR8tw3Pt7SUlc/eSlCNxlWktpmT//EAA8UfCHOyXg==}
-    cpu: [x64]
-    os: [linux]
-    requiresBuild: true
-    dev: true
-    optional: true
-
-  /@rollup/rollup-win32-arm64-msvc@4.8.0:
-    resolution: {integrity: sha512-ge7saUz38aesM4MA7Cad8CHo0Fyd1+qTaqoIo+Jtk+ipBi4ATSrHWov9/S4u5pbEQmLjgUjB7BJt+MiKG2kzmA==}
-    cpu: [arm64]
-    os: [win32]
-    requiresBuild: true
-    dev: true
-    optional: true
-
-  /@rollup/rollup-win32-ia32-msvc@4.8.0:
-    resolution: {integrity: sha512-p9E3PZlzurhlsN5h9g7zIP1DnqKXJe8ZUkFwAazqSvHuWfihlIISPxG9hCHCoA+dOOspL/c7ty1eeEVFTE0UTw==}
-    cpu: [ia32]
-    os: [win32]
-    requiresBuild: true
-    dev: true
-    optional: true
-
-  /@rollup/rollup-win32-x64-msvc@4.8.0:
-    resolution: {integrity: sha512-kb4/auKXkYKqlUYTE8s40FcJIj5soOyRLHKd4ugR0dCq0G2EfcF54eYcfQiGkHzjidZ40daB4ulsFdtqNKZtBg==}
-    cpu: [x64]
-    os: [win32]
-    requiresBuild: true
-    dev: true
-    optional: true
 
   /@rushstack/eslint-patch@1.5.1:
     resolution: {integrity: sha512-6i/8UoL0P5y4leBIGzvkZdS85RDMG9y1ihZzmTZQ5LdHUYmZ7pKFoj8X0236s3lusPs1Fa5HTQUpwI+UfTcmeA==}
@@ -25492,7 +25491,7 @@ packages:
       xmlhttprequest: 1.8.0
     dev: false
 
-  /@vitejs/plugin-react@3.1.0(vite@4.5.1):
+  /@vitejs/plugin-react@3.1.0(vite@4.5.2):
     resolution: {integrity: sha512-AfgcRL8ZBhAlc3BFdigClmTUMISmmzHn7sB2h9U1odvc5U/MjWXsAaz18b/WoppUTDBzxOJwo2VdClfUcItu9g==}
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
@@ -25503,12 +25502,12 @@ packages:
       '@babel/plugin-transform-react-jsx-source': 7.19.6(@babel/core@7.22.8)
       magic-string: 0.27.0
       react-refresh: 0.14.0
-      vite: 4.5.1
+      vite: 4.5.2
     transitivePeerDependencies:
       - supports-color
     dev: true
 
-  /@vitejs/plugin-react@4.2.1(vite@5.0.8):
+  /@vitejs/plugin-react@4.2.1(vite@4.5.2):
     resolution: {integrity: sha512-oojO9IDc4nCUUi8qIR11KoQm0XFFLIwsRBwHRR4d/88IWghn1y6ckz/bJ8GHDCsYEJee8mDzqtJxh15/cisJNQ==}
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
@@ -25519,7 +25518,7 @@ packages:
       '@babel/plugin-transform-react-jsx-source': 7.23.3(@babel/core@7.23.6)
       '@types/babel__core': 7.20.5
       react-refresh: 0.14.0
-      vite: 5.0.8(@types/node@20.8.10)
+      vite: 4.5.2(@types/node@20.8.10)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -26636,6 +26635,11 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: false
+
+  /allure-commandline@2.26.0:
+    resolution: {integrity: sha512-udKAxlKUfhD6iH3YuR8nPF72nxHYGJItqgqSvI1pJCLlO1hJHhctfwkQbtKgXugRB6d0Uf8AYUSIXobojRVPOg==}
+    hasBin: true
+    dev: true
 
   /allure-js-commons@1.3.2:
     resolution: {integrity: sha512-FTmoqP36ZjHFT4iLdYamyCFhyj1jqD6BIdiZ5pBlyafDJrFRV76XIXNxwRqbHpSw40o1vHzYi4vGpmREnhnHVw==}
@@ -28947,6 +28951,25 @@ packages:
       load-tsconfig: 0.2.3
     dev: true
 
+  /bunyamin@1.5.1(bunyan@2.0.5):
+    resolution: {integrity: sha512-VgWWb3G3HwajZF8fFM8TJjkWOqeDBZgzWBeQb7EhKQTQd33Zri0nghLeg4r86kQqqNlo/p9Jjgwh/O7Q6XpZIg==}
+    engines: {node: '>=14.18.2'}
+    peerDependencies:
+      '@types/bunyan': ^1.8.8
+      bunyan: ^1.8.15 || ^2.0.0
+    peerDependenciesMeta:
+      '@types/bunyan':
+        optional: true
+      bunyan:
+        optional: true
+    dependencies:
+      '@flatten-js/interval-tree': 1.1.2
+      bunyan: 2.0.5
+      multi-sort-stream: 1.0.4
+      stream-json: 1.8.0
+      trace-event-lib: 1.3.1
+    dev: true
+
   /bunyan-debug-stream@3.1.0(bunyan@1.8.15):
     resolution: {integrity: sha512-VaFYbDVdiSn3ZpdozrjZ8mFpxHXl26t11C1DKRQtbo0EgffqeFNrRLOGIESKVeGEvVu4qMxMSSxzNlSw7oTj7w==}
     engines: {node: '>=0.12.0'}
@@ -28957,10 +28980,33 @@ packages:
       chalk: 4.1.2
     dev: true
 
+  /bunyan-debug-stream@3.1.0(bunyan@2.0.5):
+    resolution: {integrity: sha512-VaFYbDVdiSn3ZpdozrjZ8mFpxHXl26t11C1DKRQtbo0EgffqeFNrRLOGIESKVeGEvVu4qMxMSSxzNlSw7oTj7w==}
+    engines: {node: '>=0.12.0'}
+    peerDependencies:
+      bunyan: '*'
+    dependencies:
+      bunyan: 2.0.5
+      chalk: 4.1.2
+    dev: true
+
   /bunyan@1.8.15:
     resolution: {integrity: sha512-0tECWShh6wUysgucJcBAoYegf3JJoZWibxdqhTm7OHPeT42qdjkZ29QCMcKwbgU1kiH+auSIasNRXMLWXafXig==}
     engines: {'0': node >=0.10.0}
     hasBin: true
+    optionalDependencies:
+      dtrace-provider: 0.8.8
+      moment: 2.29.4
+      mv: 2.1.1
+      safe-json-stringify: 1.2.0
+    dev: true
+
+  /bunyan@2.0.5:
+    resolution: {integrity: sha512-Jvl74TdxCN6rSP9W1I6+UOUtwslTDqsSFkDqZlFb/ilaSvQ+bZAnXT/GT97IZ5L+Vph0joPZPhxUyn6FLNmFAA==}
+    engines: {'0': node >=0.10.0}
+    hasBin: true
+    dependencies:
+      exeunt: 1.1.0
     optionalDependencies:
       dtrace-provider: 0.8.8
       moment: 2.29.4
@@ -32310,9 +32356,9 @@ packages:
       minimist: 1.2.8
     dev: true
 
-  /detox@20.13.5(patch_hash=s7677qnx4lewyjdetvacseh6fm)(jest@29.7.0):
-    resolution: {integrity: sha512-V0t1QuRI5rsiXEPBakjjjGGo8Y5kLi4KXhLrcvnpO8id6m7UtObj91wj+4cCnMRX2eSohXu9wR+HbD6IKcO9sA==}
-    engines: {node: '>=14.5.0'}
+  /detox@20.16.0(patch_hash=yanhspfjw3apvvf4gev5ovygia)(jest@29.7.0):
+    resolution: {integrity: sha512-3gxIHdXW7uBGvZgN6/A2WakJO0Ocbw1nmTDMP4AUNDs7LWntZi8oEJI5/drOqianGog8lftOTGpFN94PpRlY6g==}
+    engines: {node: '>=14.14.0'}
     hasBin: true
     requiresBuild: true
     peerDependencies:
@@ -32336,6 +32382,7 @@ packages:
       ini: 1.3.8
       jest: 29.7.0(ts-node@10.9.1)
       jest-circus: 29.7.0
+      jest-environment-emit: 1.0.5(jest-environment-node@29.7.0)(jest@29.7.0)
       jest-environment-node: 29.7.0
       json-cycle: 1.3.0
       lodash: 4.17.21
@@ -32360,8 +32407,12 @@ packages:
       yargs-parser: 21.1.1
       yargs-unparser: 2.0.0
     transitivePeerDependencies:
+      - '@jest/environment'
+      - '@jest/types'
+      - '@types/bunyan'
       - babel-plugin-macros
       - bufferutil
+      - jest-environment-jsdom
       - metro
       - node-notifier
       - supports-color
@@ -32917,6 +32968,27 @@ packages:
       inherits: 2.0.4
       minimalistic-assert: 1.0.1
       minimalistic-crypto-utils: 1.0.1
+
+  /embla-carousel-react@8.0.0-rc17(react@18.2.0):
+    resolution: {integrity: sha512-x4aFprwFB+PQO9EsHHZsrDxARb0uYNBYn9mr5oDFdBdPez4M8G1r5yidWbUcT9pNUc8AQXC9sGzlfauBfBxVOw==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.1 || ^18.0.0
+    dependencies:
+      embla-carousel: 8.0.0-rc17
+      embla-carousel-reactive-utils: 8.0.0-rc17(embla-carousel@8.0.0-rc17)
+      react: 18.2.0
+    dev: false
+
+  /embla-carousel-reactive-utils@8.0.0-rc17(embla-carousel@8.0.0-rc17):
+    resolution: {integrity: sha512-eluEOK/u5HdjYaTLC4bUG3iTCnyX7RsYix3il0aH4ZECOKa5fS+pVK2vrM17Mgw6C5Hyjcr3r3lfJtGerVzVsQ==}
+    peerDependencies:
+      embla-carousel: 8.0.0-rc17
+    dependencies:
+      embla-carousel: 8.0.0-rc17
+    dev: false
+
+  /embla-carousel@8.0.0-rc17:
+    resolution: {integrity: sha512-evF49b88VOitvqFtlvhvKVSu96Y8A+QSFdhok87Bfm8R7OYuk95FT+o8+M1GQLi/EhGDUlT193HTVAR0Wt2neQ==}
 
   /eme-encryption-scheme-polyfill@2.0.4:
     resolution: {integrity: sha512-MHYJX1v145Pjj2YJTrVVuJOYyXrxGVy8LWf6kV5M4jrV/GyoeuJKyTuD+GaD+VAiE8Ip+MptiH4dXk6ZVmMNow==}
@@ -34800,6 +34872,11 @@ packages:
     resolution: {integrity: sha1-KueOhdmJQVhnCwPUe+wfA72Ru50=}
     dev: false
 
+  /exeunt@1.1.0:
+    resolution: {integrity: sha512-dd++Yn/0Fp+gtJ04YHov7MeAii+LFivJc6KqnJNfplzLVUkUDrfKoQDTLlCgzcW15vY5hKlHasWeIsQJ8agHsw==}
+    engines: {node: '>=0.10'}
+    dev: true
+
   /exit@0.1.2:
     resolution: {integrity: sha512-Zk/eNKV2zbjpKzrsQ+n1G6poVbErQxJ0LBOJXaKZ1EViLzH+hrLu9cdXI4zw9dBQJslwBEpbQ2P1oS7nDxs6jQ==}
     engines: {node: '>= 0.8.0'}
@@ -34910,6 +34987,40 @@ packages:
       url-parse: 1.5.10
     transitivePeerDependencies:
       - expo
+    dev: true
+
+  /expo-asset@8.10.1(expo-file-system@15.4.4)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0):
+    resolution: {integrity: sha512-5VMTESxgY9GBsspO/esY25SKEa7RyascVkLe/OcL1WgblNFm7xCCEEUIW8VWS1nHJQGYxpMZPr3bEfjMpdWdyA==}
+    peerDependencies:
+      expo-file-system: '*'
+      expo-modules-core: '*'
+      react: '*'
+      react-native: '*'
+    peerDependenciesMeta:
+      expo-constants:
+        optional: true
+      expo-file-system:
+        optional: true
+      expo-modules-core:
+        optional: true
+      react:
+        optional: true
+      react-native:
+        optional: true
+    dependencies:
+      blueimp-md5: 2.19.0
+      expo-constants: 14.4.2(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
+      expo-file-system: 15.4.4(expo-constants@14.4.2)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
+      expo-modules-core: 1.5.11(react-native@0.72.6)(react@18.2.0)
+      invariant: 2.2.4
+      md5-file: 3.2.3
+      path-browserify: 1.0.1
+      react: 18.2.0
+      react-native: 0.72.6(@babel/core@7.23.2)(react@18.2.0)
+      url-parse: 1.5.10
+    transitivePeerDependencies:
+      - expo
+      - supports-color
 
   /expo-barcode-scanner@12.5.3(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0):
     resolution: {integrity: sha512-aIeTiOUzPdngTIhZHhM1mOMx9CPtmYEtEkK8pAgyua3NiAKgsUN8z8bpiQWuZTrxSaqkU8fG1zGOk9E4VnNwyA==}
@@ -35083,7 +35194,7 @@ packages:
         optional: true
     dependencies:
       expo: 49.0.13(@babel/core@7.23.2)(expo-modules-autolinking@1.5.1)(expo-modules-core@1.5.11)(react-native@0.72.6)(react@18.2.0)
-      expo-asset: 8.10.1(expo-constants@14.4.2)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
+      expo-asset: 8.10.1(expo-file-system@15.4.4)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
       expo-constants: 14.4.2(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
       expo-modules-core: 1.5.11(react-native@0.72.6)(react@18.2.0)
       fontfaceobserver: 2.1.0
@@ -35246,6 +35357,7 @@ packages:
       invariant: 2.2.4
       react: 18.2.0
       react-native: 0.72.6(@babel/core@7.23.2)(@babel/preset-env@7.17.10)(metro-resolver@0.80.0)(metro-transform-worker@0.80.0)(react@18.2.0)
+    dev: true
 
   /expo-modules-core@1.5.11(react-native@0.72.6)(react@18.2.0):
     resolution: {integrity: sha512-1Dj2t74nVjxq6xEQf2b9WFfAMhPzVnR0thY0PfRFgob4STyj3sq1U4PIHVWvKQBtDKIa227DrNRb+Hu+LqKWQg==}
@@ -35352,7 +35464,7 @@ packages:
       '@expo/vector-icons': 13.0.0
       babel-preset-expo: 9.5.2(@babel/core@7.23.2)
       expo-application: 5.3.1(expo-constants@14.4.2)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
-      expo-asset: 8.10.1(expo-constants@14.4.2)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
+      expo-asset: 8.10.1(expo-file-system@15.4.4)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
       expo-constants: 14.4.2(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
       expo-file-system: 15.4.4(expo-constants@14.4.2)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
       expo-font: 11.4.0(expo-asset@8.10.1)(expo-constants@14.4.2)(expo-modules-core@1.5.11)(expo@49.0.13)(react-native@0.72.6)(react@18.2.0)
@@ -39790,6 +39902,41 @@ packages:
       jest-get-type: 29.6.3
       jest-util: 29.7.0
       pretty-format: 29.7.0
+    dev: true
+
+  /jest-environment-emit@1.0.5(jest-environment-node@29.7.0)(jest@29.7.0):
+    resolution: {integrity: sha512-OsQ08AhYxkkyDBTIow+9ogNmJheQIGWQKp0Nku+1ToLWjAj2Pd6LmypN8HgUIqYHs4HFcqkQ25kaf1qExmoZpg==}
+    engines: {node: '>=16.14.0'}
+    peerDependencies:
+      '@jest/environment': '>=27.2.5'
+      '@jest/types': '>=27.2.5'
+      jest: '>=27.2.5'
+      jest-environment-jsdom: '>=27.2.5'
+      jest-environment-node: '>=27.2.5'
+    peerDependenciesMeta:
+      '@jest/environment':
+        optional: true
+      '@jest/types':
+        optional: true
+      jest:
+        optional: true
+      jest-environment-jsdom:
+        optional: true
+      jest-environment-node:
+        optional: true
+    dependencies:
+      bunyamin: 1.5.1(bunyan@2.0.5)
+      bunyan: 2.0.5
+      bunyan-debug-stream: 3.1.0(bunyan@2.0.5)
+      funpermaproxy: 1.1.0
+      jest: 29.7.0(ts-node@10.9.1)
+      jest-environment-node: 29.7.0
+      lodash.merge: 4.6.2
+      node-ipc: 9.2.1
+      strip-ansi: 6.0.1
+      tslib: 2.6.2
+    transitivePeerDependencies:
+      - '@types/bunyan'
     dev: true
 
   /jest-environment-jsdom@27.5.1:
@@ -44924,6 +45071,7 @@ packages:
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
     requiresBuild: true
+    dev: false
 
   /nanoid@3.3.7:
     resolution: {integrity: sha512-eSRppjcPIatRIMC1U6UngP8XFcz8MQWGQdt1MTBQ7NaAmvXDfvNxbvWV3x2y6CdEUciCSsDHDQZbhYaB8QEo2g==}
@@ -47929,7 +48077,7 @@ packages:
     resolution: {integrity: sha512-E398TUmfAYFPBSdzgeieK2Y1+1cpdxJx8yXbK/m57nRhKSmk1GB2tO4lbLBtlkfPQTDKfe4Xqv1ASWPpayPEig==}
     engines: {node: ^10 || ^12 || >=14}
     dependencies:
-      nanoid: 3.3.6
+      nanoid: 3.3.7
       picocolors: 1.0.0
       source-map-js: 1.0.2
     dev: false
@@ -47938,7 +48086,7 @@ packages:
     resolution: {integrity: sha512-h+pbPsyhlYj6N2ozBmHhHrs9DzGmbaarbLvWipMRO7RLS+v4onj26MPFXA5OBYFxyqYhUJK456SwDcY9H2/zsA==}
     engines: {node: ^10 || ^12 || >=14}
     dependencies:
-      nanoid: 3.3.6
+      nanoid: 3.3.7
       picocolors: 1.0.0
       source-map-js: 1.0.2
     dev: true
@@ -47948,7 +48096,7 @@ packages:
     engines: {node: ^10 || ^12 || >=14}
     requiresBuild: true
     dependencies:
-      nanoid: 3.3.6
+      nanoid: 3.3.7
       picocolors: 1.0.0
       source-map-js: 1.0.2
     dev: false
@@ -47958,7 +48106,7 @@ packages:
     engines: {node: ^10 || ^12 || >=14}
     requiresBuild: true
     dependencies:
-      nanoid: 3.3.6
+      nanoid: 3.3.7
       picocolors: 1.0.0
       source-map-js: 1.0.2
 
@@ -50012,7 +50160,7 @@ packages:
       react: '>= 16.8.0'
       react-dom: '>= 16.8.0'
     dependencies:
-      '@babel/runtime': 7.17.9
+      '@babel/runtime': 7.23.2
       prop-types: 15.8.1
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
@@ -51126,27 +51274,6 @@ packages:
     engines: {node: '>=14.18.0', npm: '>=8.0.0'}
     hasBin: true
     optionalDependencies:
-      fsevents: 2.3.3
-    dev: true
-
-  /rollup@4.8.0:
-    resolution: {integrity: sha512-NpsklK2fach5CdI+PScmlE5R4Ao/FSWtF7LkoIrHDxPACY/xshNasPsbpG0VVHxUTbf74tJbVT4PrP8JsJ6ZDA==}
-    engines: {node: '>=18.0.0', npm: '>=8.0.0'}
-    hasBin: true
-    optionalDependencies:
-      '@rollup/rollup-android-arm-eabi': 4.8.0
-      '@rollup/rollup-android-arm64': 4.8.0
-      '@rollup/rollup-darwin-arm64': 4.8.0
-      '@rollup/rollup-darwin-x64': 4.8.0
-      '@rollup/rollup-linux-arm-gnueabihf': 4.8.0
-      '@rollup/rollup-linux-arm64-gnu': 4.8.0
-      '@rollup/rollup-linux-arm64-musl': 4.8.0
-      '@rollup/rollup-linux-riscv64-gnu': 4.8.0
-      '@rollup/rollup-linux-x64-gnu': 4.8.0
-      '@rollup/rollup-linux-x64-musl': 4.8.0
-      '@rollup/rollup-win32-arm64-msvc': 4.8.0
-      '@rollup/rollup-win32-ia32-msvc': 4.8.0
-      '@rollup/rollup-win32-x64-msvc': 4.8.0
       fsevents: 2.3.3
     dev: true
 
@@ -56494,8 +56621,8 @@ packages:
     resolution: {integrity: sha512-hTY1pdtSmN/BNOnjvmcmK+2fW1Ac9wD0gFBy67i5IsKwhr1fS1/GGmssdCaik2SpnplHjoDrmCgVsgBv20HzrA==}
     dev: true
 
-  /vite@4.5.1:
-    resolution: {integrity: sha512-AXXFaAJ8yebyqzoNB9fu2pHoo/nWX+xZlaRwoeYUxEqBO+Zj4msE5G+BhGBll9lYEKv9Hfks52PAF2X7qDYXQA==}
+  /vite@4.5.2:
+    resolution: {integrity: sha512-tBCZBNSBbHQkaGyhGCDUGqeo2ph8Fstyp6FMSvTtsXeZSPpSMGlviAOav2hxVTqFcx8Hj/twtWKsMJXNY0xI8w==}
     engines: {node: ^14.18.0 || >=16.0.0}
     hasBin: true
     peerDependencies:
@@ -56523,18 +56650,18 @@ packages:
         optional: true
     dependencies:
       esbuild: 0.18.20
-      postcss: 8.4.31
+      postcss: 8.4.32
       rollup: 3.29.4
     optionalDependencies:
       fsevents: 2.3.3
     dev: true
 
-  /vite@5.0.8(@types/node@20.8.10):
-    resolution: {integrity: sha512-jYMALd8aeqR3yS9xlHd0OzQJndS9fH5ylVgWdB+pxTwxLKdO1pgC5Dlb398BUxpfaBxa4M9oT7j1g503Gaj5IQ==}
-    engines: {node: ^18.0.0 || >=20.0.0}
+  /vite@4.5.2(@types/node@20.8.10):
+    resolution: {integrity: sha512-tBCZBNSBbHQkaGyhGCDUGqeo2ph8Fstyp6FMSvTtsXeZSPpSMGlviAOav2hxVTqFcx8Hj/twtWKsMJXNY0xI8w==}
+    engines: {node: ^14.18.0 || >=16.0.0}
     hasBin: true
     peerDependencies:
-      '@types/node': ^18.0.0 || >=20.0.0
+      '@types/node': '>= 14'
       less: '*'
       lightningcss: ^1.21.0
       sass: '*'
@@ -56558,9 +56685,9 @@ packages:
         optional: true
     dependencies:
       '@types/node': 20.8.10
-      esbuild: 0.19.3
+      esbuild: 0.18.20
       postcss: 8.4.32
-      rollup: 4.8.0
+      rollup: 3.29.4
     optionalDependencies:
       fsevents: 2.3.3
     dev: true
@@ -59110,7 +59237,6 @@ packages:
     resolution: {directory: libs/ui/packages/crypto-icons, type: directory}
     id: file:libs/ui/packages/crypto-icons
     name: '@ledgerhq/crypto-icons-ui'
-    version: 1.0.1
     peerDependencies:
       '@types/react': '*'
       react: '*'
@@ -59130,7 +59256,6 @@ packages:
     resolution: {directory: libs/ui/packages/icons, type: directory}
     id: file:libs/ui/packages/icons
     name: '@ledgerhq/icons-ui'
-    version: 0.6.2
     peerDependencies:
       '@types/react': '*'
       react: '*'
