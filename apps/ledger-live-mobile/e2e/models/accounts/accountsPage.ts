@@ -4,7 +4,7 @@ const baseLink = "accounts";
 
 export default class accountsPage {
   accountTitle = (coin: string) => getElementById(`accounts-title-${coin}`);
-  addAccountCta = () => getElementById("add-account-cta");
+  addAccountButton = () => getElementById("add-account-button");
 
   async openViaDeeplink() {
     await openDeeplink(baseLink);
@@ -17,6 +17,6 @@ export default class accountsPage {
   }
 
   async addAccount() {
-    await tapByElement(this.addAccountCta());
+    await tapByElement(this.addAccountButton());
   }
 }
