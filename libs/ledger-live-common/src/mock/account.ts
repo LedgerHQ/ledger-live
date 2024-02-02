@@ -12,7 +12,7 @@ import { getAccountBridge } from "../bridge";
 import perFamilyMock from "../generated/mock";
 import { CosmosAccount } from "../families/cosmos/types";
 import { BitcoinAccount } from "../families/bitcoin/types";
-import { PolkadotAccount } from "@ledgerhq/coin-polkadot/types";
+import { PolkadotAccount } from "@ledgerhq/coin-polkadot/types/index";
 import { TezosAccount } from "../families/tezos/types";
 import { TronAccount } from "../families/tron/types";
 import { CardanoAccount, PaymentChain } from "../families/cardano/types";

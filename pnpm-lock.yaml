@@ -1793,9 +1793,6 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
-      '@ledgerhq/live-app-sdk':
-        specifier: ^0.8.1
-        version: 0.8.1
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../env

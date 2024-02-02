@@ -65,7 +65,7 @@ import NftViewerBackground from "./NftViewerBackground";
 import NftViewerScreenHeader from "./NftViewerScreenHeader";
 import invariant from "invariant";
 import DiscreetModeContext, { withDiscreetMode } from "~/context/DiscreetModeContext";
-import { EvmNftTransaction, Transaction } from "@ledgerhq/coin-evm/types/index";
+import { EvmNftTransaction } from "@ledgerhq/coin-evm/types/index";
 
 type Props = CompositeScreenProps<
   | StackNavigatorProps<NftNavigatorParamList, ScreenName.NftViewer>
@@ -207,7 +207,7 @@ const NftViewer = ({ route }: Props) => {
   };
 
   const goToRecipientSelection = useCallback(() => {
-    const bridge = getAccountBridge<Transaction>(account);
+    const bridge = getAccountBridge(account);
 
     const defaultTransaction = bridge.createTransaction(account);
     const transaction = bridge.updateTransaction(defaultTransaction, {

@@ -19,7 +19,12 @@ import { getTransactionStatus } from "../js-getTransactionStatus";
 import prepareTransaction from "../js-prepareTransaction";
 import { buildSignOperation } from "../js-signOperation";
 import { makeGetAccountShape } from "../js-synchronization";
-import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
+import {
+  assignFromAccountRaw,
+  assignToAccountRaw,
+  fromOperationExtraRaw,
+  toOperationExtraRaw,
+} from "../serialization";
 import type { Transaction } from "../types";
 import { AlgorandAddress, AlgorandSignature, AlgorandSigner } from "../signer";
 
@@ -68,6 +73,8 @@ export function buildAccountBridge(
     signOperation,
     broadcast: broadcast(algorandAPI),
     estimateMaxSpendable: estimateMaxSpendable(algorandAPI),
+    fromOperationExtraRaw,
+    toOperationExtraRaw,
   };
 }
 
