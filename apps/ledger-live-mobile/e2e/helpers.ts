@@ -73,6 +73,7 @@ export async function scrollToText(
     .toBeVisible()
     .whileElement(by.id(scrollViewId))
     .scroll(pixels, direction, NaN, startPositionY);
+  if (isAndroid()) await delay(30); // Issue on tap after scroll on Android : https://github.com/wix/Detox/issues/3637
 }
 
 export async function scrollToId(
@@ -86,6 +87,7 @@ export async function scrollToId(
     .toBeVisible()
     .whileElement(by.id(scrollViewId))
     .scroll(pixels, direction, NaN, startPositionY);
+  if (isAndroid()) await delay(30); // Issue on tap after scroll on Android : https://github.com/wix/Detox/issues/3637
 }
 
 export async function getTextOfElement(id: string | RegExp, index = 0) {

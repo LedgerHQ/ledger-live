@@ -12,7 +12,6 @@ import {
   flattenAccounts,
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
-import { log } from "@ledgerhq/logs";
 import logger from "~/renderer/logger";
 import { openModal } from "~/renderer/actions/modals";
 import IconAngleDown from "~/renderer/icons/AngleDown";
@@ -114,21 +113,6 @@ export class OperationsList extends PureComponent<Props, State> {
           filterOperation,
         })
       : undefined;
-
-    // -- THIS CAN BE REMOVED ONCE THE DATE ERROR HAS BEEN FIGURED OUT
-    if (groupedOperations?.sections) {
-      for (const group of groupedOperations.sections) {
-        const { day } = group;
-        if (day instanceof Date && isNaN(day as unknown as number)) {
-          log("Ethereum Date Error", "Date in operation is invalid", {
-            day,
-            accountId: account?.id,
-            groupOps: group.data,
-          });
-        }
-      }
-    }
-    // -- THIS CAN BE REMOVED ONCE THE DATE ERROR HAS BEEN FIGURED OUT
 
     const all = flattenAccounts(accounts || []).concat(
       [account as AccountLike, parentAccount as AccountLike].filter(Boolean),

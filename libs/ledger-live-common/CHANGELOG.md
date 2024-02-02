@@ -1,5 +1,107 @@
 # @ledgerhq/live-common
 
+## 33.5.1
+
+### Patch Changes
+
+- [#5889](https://github.com/LedgerHQ/ledger-live/pull/5889) [`0a03cf1`](https://github.com/LedgerHQ/ledger-live/commit/0a03cf10343e7b79295c1467c8964cc943f16840) Thanks [@RamyEB](https://github.com/RamyEB)! - Make the searchable Dapp only visible through the search bar for both LLD and LLM
+
+- [#5749](https://github.com/LedgerHQ/ledger-live/pull/5749) [`eadebff`](https://github.com/LedgerHQ/ledger-live/commit/eadebff3fe58aef6a5befb033d5147afc49663d3) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Fix: HID USB reconnection on LLD during the sync onboarding
+
+  - Refactoring of the disconnect after inactivity of the transport implementation
+    hw-transport-node-hid-singleton
+  - Better logs and documentation
+
+- [#5919](https://github.com/LedgerHQ/ledger-live/pull/5919) [`040e591`](https://github.com/LedgerHQ/ledger-live/commit/040e5918eb7ad5a861b2f6eda09f71d3ce565991) Thanks [@gre](https://github.com/gre)! - Update to Countervalues V3 API with better price coverage and better performance.
+
+- [#5913](https://github.com/LedgerHQ/ledger-live/pull/5913) [`52abfc5`](https://github.com/LedgerHQ/ledger-live/commit/52abfc5af4ec5af9c47e72c7a661993e0432d84b) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Mitigate Solana error when fetching fees for an address
+
+- [#5935](https://github.com/LedgerHQ/ledger-live/pull/5935) [`35e7a3b`](https://github.com/LedgerHQ/ledger-live/commit/35e7a3b976a300df3abfb1427a35275ee6fa6da1) Thanks [@Wozacosta](https://github.com/Wozacosta)! - Remove usage of description in discover search bar
+
+- [#5946](https://github.com/LedgerHQ/ledger-live/pull/5946) [`56f43b1`](https://github.com/LedgerHQ/ledger-live/commit/56f43b10d9a996932ec210ff67f5d327d630fa41) Thanks [@sponomarev](https://github.com/sponomarev)! - use fallback tx fee amount in case of failed retries
+
+- [#6023](https://github.com/LedgerHQ/ledger-live/pull/6023) [`35d4196`](https://github.com/LedgerHQ/ledger-live/commit/35d41969e00e15b4817f2be558a7c81200b71cc7) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Sanitize account data that may be missing when de/serializing Tron accounts
+
+- [#5951](https://github.com/LedgerHQ/ledger-live/pull/5951) [`6aac2b9`](https://github.com/LedgerHQ/ledger-live/commit/6aac2b977454daa67a02f5695d58746fde4d83f3) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Chore: add DisconnectedDeviceDuringOperation to allowed error during sync onboarding polling
+
+- [#5959](https://github.com/LedgerHQ/ledger-live/pull/5959) [`801b16f`](https://github.com/LedgerHQ/ledger-live/commit/801b16fa7a440d914b1e76cd8785a3c7c85b474b) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - List apps v2: fix polyfill of application type
+
+- [#5908](https://github.com/LedgerHQ/ledger-live/pull/5908) [`46298ae`](https://github.com/LedgerHQ/ledger-live/commit/46298aec703e6a0dcb47ab8f2a612dcb3bc4065a) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Fix the free storage available for all devices
+
+- Updated dependencies [[`eadebff`](https://github.com/LedgerHQ/ledger-live/commit/eadebff3fe58aef6a5befb033d5147afc49663d3)]:
+  - @ledgerhq/hw-transport@6.30.3
+  - @ledgerhq/hw-app-algorand@6.28.3
+  - @ledgerhq/hw-app-btc@10.2.1
+  - @ledgerhq/hw-app-cosmos@6.29.3
+  - @ledgerhq/hw-app-eth@6.35.4
+  - @ledgerhq/hw-app-exchange@0.4.4
+  - @ledgerhq/hw-app-near@6.28.3
+  - @ledgerhq/hw-app-polkadot@6.28.3
+  - @ledgerhq/hw-app-solana@7.1.3
+  - @ledgerhq/hw-app-str@6.28.3
+  - @ledgerhq/hw-app-tezos@6.28.3
+  - @ledgerhq/hw-app-trx@6.28.3
+  - @ledgerhq/hw-app-vet@0.1.3
+  - @ledgerhq/hw-app-xrp@6.28.3
+  - @ledgerhq/hw-transport-mocker@6.28.3
+  - @ledgerhq/hw-transport-node-speculos@6.28.3
+  - @ledgerhq/hw-transport-node-speculos-http@6.28.3
+  - @ledgerhq/coin-evm@0.12.1
+  - @ledgerhq/coin-framework@0.11.0
+
+## 33.5.1-next.1
+
+### Patch Changes
+
+- [#6023](https://github.com/LedgerHQ/ledger-live/pull/6023) [`35d4196`](https://github.com/LedgerHQ/ledger-live/commit/35d41969e00e15b4817f2be558a7c81200b71cc7) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Sanitize account data that may be missing when de/serializing Tron accounts
+
+## 33.5.1-next.0
+
+### Patch Changes
+
+- [#5889](https://github.com/LedgerHQ/ledger-live/pull/5889) [`0a03cf1`](https://github.com/LedgerHQ/ledger-live/commit/0a03cf10343e7b79295c1467c8964cc943f16840) Thanks [@RamyEB](https://github.com/RamyEB)! - Make the searchable Dapp only visible through the search bar for both LLD and LLM
+
+- [#5749](https://github.com/LedgerHQ/ledger-live/pull/5749) [`eadebff`](https://github.com/LedgerHQ/ledger-live/commit/eadebff3fe58aef6a5befb033d5147afc49663d3) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Fix: HID USB reconnection on LLD during the sync onboarding
+
+  - Refactoring of the disconnect after inactivity of the transport implementation
+    hw-transport-node-hid-singleton
+  - Better logs and documentation
+
+- [#5919](https://github.com/LedgerHQ/ledger-live/pull/5919) [`040e591`](https://github.com/LedgerHQ/ledger-live/commit/040e5918eb7ad5a861b2f6eda09f71d3ce565991) Thanks [@gre](https://github.com/gre)! - Update to Countervalues V3 API with better price coverage and better performance.
+
+- [#5913](https://github.com/LedgerHQ/ledger-live/pull/5913) [`52abfc5`](https://github.com/LedgerHQ/ledger-live/commit/52abfc5af4ec5af9c47e72c7a661993e0432d84b) Thanks [@haammar-ledger](https://github.com/haammar-ledger)! - Mitigate Solana error when fetching fees for an address
+
+- [#5935](https://github.com/LedgerHQ/ledger-live/pull/5935) [`35e7a3b`](https://github.com/LedgerHQ/ledger-live/commit/35e7a3b976a300df3abfb1427a35275ee6fa6da1) Thanks [@Wozacosta](https://github.com/Wozacosta)! - Remove usage of description in discover search bar
+
+- [#5946](https://github.com/LedgerHQ/ledger-live/pull/5946) [`56f43b1`](https://github.com/LedgerHQ/ledger-live/commit/56f43b10d9a996932ec210ff67f5d327d630fa41) Thanks [@sponomarev](https://github.com/sponomarev)! - use fallback tx fee amount in case of failed retries
+
+- [#5951](https://github.com/LedgerHQ/ledger-live/pull/5951) [`6aac2b9`](https://github.com/LedgerHQ/ledger-live/commit/6aac2b977454daa67a02f5695d58746fde4d83f3) Thanks [@alexandremgo](https://github.com/alexandremgo)! - Chore: add DisconnectedDeviceDuringOperation to allowed error during sync onboarding polling
+
+- [#5959](https://github.com/LedgerHQ/ledger-live/pull/5959) [`801b16f`](https://github.com/LedgerHQ/ledger-live/commit/801b16fa7a440d914b1e76cd8785a3c7c85b474b) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - List apps v2: fix polyfill of application type
+
+- [#5908](https://github.com/LedgerHQ/ledger-live/pull/5908) [`46298ae`](https://github.com/LedgerHQ/ledger-live/commit/46298aec703e6a0dcb47ab8f2a612dcb3bc4065a) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Fix the free storage available for all devices
+
+- Updated dependencies [[`eadebff`](https://github.com/LedgerHQ/ledger-live/commit/eadebff3fe58aef6a5befb033d5147afc49663d3)]:
+  - @ledgerhq/hw-transport@6.30.3-next.0
+  - @ledgerhq/hw-app-algorand@6.28.3-next.0
+  - @ledgerhq/hw-app-btc@10.2.1-next.0
+  - @ledgerhq/hw-app-cosmos@6.29.3-next.0
+  - @ledgerhq/hw-app-eth@6.35.4-next.0
+  - @ledgerhq/hw-app-exchange@0.4.4-next.0
+  - @ledgerhq/hw-app-near@6.28.3-next.0
+  - @ledgerhq/hw-app-polkadot@6.28.3-next.0
+  - @ledgerhq/hw-app-solana@7.1.3-next.0
+  - @ledgerhq/hw-app-str@6.28.3-next.0
+  - @ledgerhq/hw-app-tezos@6.28.3-next.0
+  - @ledgerhq/hw-app-trx@6.28.3-next.0
+  - @ledgerhq/hw-app-vet@0.1.3-next.0
+  - @ledgerhq/hw-app-xrp@6.28.3-next.0
+  - @ledgerhq/hw-transport-mocker@6.28.3-next.0
+  - @ledgerhq/hw-transport-node-speculos@6.28.3-next.0
+  - @ledgerhq/hw-transport-node-speculos-http@6.28.3-next.0
+  - @ledgerhq/coin-evm@0.12.1-next.0
+  - @ledgerhq/coin-framework@0.11.0
+
 ## 33.5.0
 
 ### Minor Changes

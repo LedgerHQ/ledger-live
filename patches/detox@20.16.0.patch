@@ -1,21 +1,20 @@
 diff --git a/src/devices/common/drivers/android/exec/ADB.js b/src/devices/common/drivers/android/exec/ADB.js
-index cd92a6c011d33c4fdb45ef3e519dc8b71c0c7951..46cee01fb1ce24a69f0201571e995db616130021 100644
+index 3600972facda80dd0b74d6aa6e425ecab1d205ba..0dd7a4b59cb0bc4d4189f32d819c244ea5f66ba1 100644
 --- a/src/devices/common/drivers/android/exec/ADB.js
 +++ b/src/devices/common/drivers/android/exec/ADB.js
-@@ -8,7 +8,11 @@ const { escape } = require('../../../../../utils/pipeCommands');
+@@ -8,7 +8,10 @@ const { escape } = require('../../../../../utils/pipeCommands');
  const DeviceHandle = require('../tools/DeviceHandle');
  const EmulatorHandle = require('../tools/EmulatorHandle');
  
--const INSTALL_TIMEOUT = 45000; // TODO Double check 45s makes sense
+-const INSTALL_TIMEOUT = 45000;
++const INSTALL_TIMEOUT = 60000;
 +const {
 +  DETOX_INSTALL_TIMEOUT
 +} = process.env;
-+
-+const INSTALL_TIMEOUT = 60000; // TODO Double check 45s makes sense
  
  class ADB {
    constructor() {
-@@ -108,7 +112,7 @@ class ADB {
+@@ -109,7 +112,7 @@ class ADB {
      const command = (apiLvl >= 23)
        ? `install -r -g -t ${apkPath}`
        : `install -rg ${apkPath}`;

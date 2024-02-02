@@ -492,7 +492,7 @@
       "description" : "Tente reinstalar o aplicativo através do My Ledger"
     },
     "NotEnoughGas" : {
-      "title" : "O saldo da conta principal é insuficiente para as taxas de rede",
+      "title" : "Você precisa de {{fees}} {{ticker}} para pagar as taxas de rede desta troca, já que está na rede {{cryptoName}}. <link0>Comprar {{ticker}}</link0>",
       "description" : "Envie algumas moedas à sua conta para pagar transações de tokens."
     },
     "NotEnoughGasSwap" : {
@@ -605,6 +605,16 @@
     },
     "TronNotEnoughEnergy" : {
       "title" : "A Energia está abaixo do necessário. Você pode pagar até 50 TRX em taxas."
+    },
+    "TronNoUnfrozenResource" : {
+      "title" : "Não há recursos descongelados para sacar"
+    },
+    "TronInvalidUnDelegateResourceAmount" : {
+      "title" : "Não há recursos delegados suficientes"
+    },
+    "TronUnfreezeNotExpired" : {
+      "title" : "Recursos ainda não descongelados",
+      "description" : "Você precisa esperar até {{time}} para sacar"
     },
     "UpdateYourApp" : {
       "title" : "Atualização de aplicativo necessária",
@@ -901,6 +911,9 @@
     "FirmwareNotRecognized" : {
       "title" : "Provedor Inválido",
       "description" : "Você deve mudar a configuração em “Provedor da Minha Ledger”. Para desativá-la, abra as “Configurações” do Ledger Live, selecione “Recursos experimentais” e, em seguida, selecione um provedor diferente."
+    },
+    "TezosUnrevealedAccount" : {
+      "title" : "Troca indisponível: Necessário enviar/delegar primeiro com uma conta Tezos ou um par de troca Tezos."
     }
   },
   "crash" : {
@@ -2313,6 +2326,9 @@
       "VOTE" : "Votado",
       "FREEZE" : "Congelado",
       "UNFREEZE" : "Descongelado",
+      "UNDELEGATE_RESOURCE" : "Desdelegado",
+      "WITHDRAW_EXPIRE_UNFREEZE" : "Saque",
+      "LEGACYUNFREEZE" : "Descongelado",
       "REWARD" : "Recompensa resgatada",
       "FEES" : "Taxas",
       "OPT_IN" : "Aderir",
@@ -2719,6 +2735,8 @@
       "developerModeDesc" : "Exiba os aplicativos de desenvolvedor em Minha Ledger e habilite os aplicativos de Testnet.",
       "analytics" : "Métricas",
       "analyticsDesc" : "Habilite as métricas para ajudar a Ledger a melhorar a experiência de uso.",
+      "personalizedRecommendations" : "Experiência personalizada",
+      "personalizedRecommendationsDesc" : "Receba recomendações personalizadas de acordo com suas preferências.",
       "analyticsModal" : {
         "title" : "Compartilhar métricas",
         "desc" : "Habilite as métricas para ajudar a Ledger a melhorar a experiência de uso",
@@ -3687,7 +3705,7 @@
       "description" : "Congele TRX para ganhar prêmios de forma segura, mantendo o controle de seus ativos.",
       "steps" : {
         "0" : "Os ativos delegados continuam sendo seus.",
-        "1" : "Você pode descongelar seus ativos após 3 dias.",
+        "1" : "Você pode descongelar seus ativos a qualquer momento. Eles estarão acessíveis após o período de descongelamento de 14 dias.",
         "2" : "Congele e vote com segurança com seu dispositivo Ledger."
       },
       "howVotingWorks" : "Como funciona a votação",
@@ -5344,7 +5362,7 @@
             "description" : "Delegar TRX a um candidato terceiro para receber recompensas. Clique em continuar para congelar ativos e votar.",
             "bullet" : {
               "delegate" : "Ativos delegados ainda são seus.",
-              "access" : "Você pode acessar seus ativos 3 dias após o congelamento.",
+              "access" : "Os ativos congelados podem ser descongelados imediatamente e se tornarão acessíveis após o período de descongelamento de 14 dias.",
               "ledger" : "Delegue com segurança usando seu dispositivo Ledger."
             },
             "button" : {
@@ -5362,7 +5380,7 @@
       },
       "unfreeze" : {
         "title" : "Descongelar",
-        "description" : "Descongele TRX para adicioná-los de volta ao seu saldo disponível. Você não ganhará mais recompensas."
+        "description" : "Descongele TRX para adicioná-los de volta ao seu saldo disponível. Você não receberá mais recompensas. Os ativos estarão disponíveis após o período de descongelamento de 14 dias"
       },
       "vote" : {
         "title" : "Votar",
@@ -5920,6 +5938,9 @@
       "freeze" : "Em seu dispositivo, confirme para finalizar a operação",
       "unfreeze" : "Em seu dispositivo, confirme para finalizar a operação",
       "claimReward" : "Em seu dispositivo, confirme para finalizar a operação",
+      "legacyUnfreeze" : "Em seu dispositivo, confirme para finalizar a operação",
+      "withdrawExpireUnfreeze" : "Em seu dispositivo, confirme para finalizar a operação",
+      "undelegateResource" : "Em seu dispositivo, confirme para finalizar a operação",
       "vote" : "Em seu dispositivo, confirme para finalizar a operação",
       "delegate" : "Em seu dispositivo, confirme para finalizar a operação",
       "redelegate" : "Em seu dispositivo, confirme para finalizar a operação",
@@ -5944,9 +5965,12 @@
     "votes" : "Votos",
     "validator" : "Validador",
     "infoWording" : {
-      "freeze" : "Tokens congelados são bloqueados por um período de 3 dias.",
+      "freeze" : "Congele tokens para adquirir largura de banda ou energia e receba uma quantia equivalente de TRON Power (TP).",
       "unfreeze" : "Seus pontos {{resource}} serão reduzidos, e todos os seus votos serão cancelados.",
+      "legacyUnfreeze" : "Seus {{resource}} pontos serão reduzidos e todos os seus votos serão cancelados.",
       "claimReward" : "As recompensas podem ser resgatadas a cada 24 horas.",
+      "withdrawExpireUnfreeze" : "Seus recursos não congelados que passaram do período de descongelamento serão sacados",
+      "unDelegateResource" : "Cancelar a delegação de {{resource}}",
       "cosmos" : {
         "claimReward" : "Se o validador selecionado tiver recompensas pendentes, elas serão automaticamente resgatadas.",
         "redelegate" : "Você terá que esperar {{numberOfDays}} dias para que os ativos desdelegados retornem ao saldo disponível.",
@@ -6554,6 +6578,92 @@
     "getFundsModal" : {
       "text" : "Obter {{coin}} para fazer staking",
       "description" : "Compre, troque ou receba criptomoedas diretamente em sua Ledger pelo Ledger Live."
+    }
+  },
+  "analyticsOptIn" : {
+    "variantA" : {
+      "main" : {
+        "title" : "Ajude-nos a melhorar e personalizar a sua experiência.",
+        "subtitle" : "Compartilhar seus dados de uso do Ledger Live nos ajuda a entender suas preferências. Isso nos permite personalizar sua experiência e otimizar o desempenho do conteúdo, incluindo cliques, visualizações e aberturas, para obter o máximo de relevância.",
+        "content" : {
+          "able" : {
+            "title" : "O Ledger Live poderá monitorar:",
+            "diagAndUsage" : "Dados de uso"
+          },
+          "unable" : {
+            "title" : "O Ledger Live nunca coletará:",
+            "adresses" : "Seu endereço",
+            "balance" : "Seus saldos",
+            "nfts" : "Seus NFTs",
+            "personnalInfos" : "Informações sobre a sua identidade pessoal"
+          },
+          "moreOptions" : "Mais opções",
+          "ctas" : {
+            "refuse" : "Recusar todos",
+            "accept" : "Aceitar todos"
+          },
+          "infoText" : {
+            "info" : "Você pode revogar seu consentimento a qualquer momento nas configurações do aplicativo.",
+            "link" : "Clique aqui para saber mais."
+          }
+        }
+      },
+      "details" : {
+        "title" : "Gerenciar suas preferências",
+        "analytics" : {
+          "title" : "Métricas",
+          "description" : "Ajude a Ledger a melhorar o aplicativo compartilhando seus dados de utilização."
+        },
+        "personalizedExp" : {
+          "title" : "Experiência personalizada",
+          "description" : "Receba recomendações personalizadas que correspondam às suas preferências e compartilhe o desempenho do conteúdo para otimizar a relevância."
+        },
+        "ctas" : {
+          "notNow" : "Agora não",
+          "accept" : "Aceitar",
+          "acceptAll" : "Aceitar todos",
+          "confirm" : "Confirmar"
+        },
+        "infoText" : {
+          "info" : "Você pode revogar seu consentimento a qualquer momento nas configurações do aplicativo.",
+          "link" : "Clique aqui para saber mais."
+        }
+      }
+    },
+    "variantB" : {
+      "main" : {
+        "title" : "Vamos melhorar o Ledger Live juntos",
+        "description" : "Compartilhar seus dados de uso do Ledger Live nos ajuda a entender como você está usando o Ledger Live.",
+        "bulletPoints" : {
+          "1" : "Os dados de uso incluem visitas a páginas, cliques e conversões.",
+          "2" : "Não coletaremos nem veremos seus endereços, contas, saldo, NFTs ou qualquer outra informação relacionada ao seu portfólio.",
+          "3" : "Não podemos e não queremos lhe identificar. Não coletamos informações pessoais."
+        },
+        "ctas" : {
+          "refuse" : "Recusar",
+          "share" : "Compartilhar"
+        },
+        "infoText" : {
+          "info" : "Você pode revogar seu consentimento a qualquer momento nas configurações do aplicativo.",
+          "link" : "Saiba mais sobre como revogar seu consentimento"
+        }
+      },
+      "details" : {
+        "title" : "Tenha uma experiência personalizada",
+        "description" : "Ao analisar seus dados de uso, personalizamos sua experiência e avaliamos o desempenho do conteúdo, acompanhando métricas como cliques, visualizações e aberturas para garantir a máxima relevância.",
+        "bulletPoints" : {
+          "1" : "Recomendações e conteúdo personalizados",
+          "2" : "Notificações personalizadas"
+        },
+        "ctas" : {
+          "refuse" : "Recusar",
+          "allow" : "Permitir"
+        },
+        "infoText" : {
+          "info" : "Você pode revogar seu consentimento a qualquer momento nas configurações do aplicativo.",
+          "link" : "Saiba mais sobre como revogar seu consentimento"
+        }
+      }
     }
   }
 }
