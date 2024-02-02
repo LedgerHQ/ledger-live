@@ -1,5 +1,5 @@
 import { Provider } from "./providers";
-import _ from "lodash";
+import merge from "lodash/merge";
 
 type ValidConfigTypes = {
   string: string;
@@ -66,7 +66,7 @@ export class LiveConfig {
       // this is for backward compatiblity, a value could be renamed or deleted in a remote provider
       // but the default value will not change for a given version of Ledger Live
       // so we make sure that there's always a fallback in a case the value changed remotely
-      return _.merge(LiveConfig.instance.config[key].default as object, providerValue as object);
+      return merge(LiveConfig.instance.config[key].default as object, providerValue as object);
     }
 
     return providerValue;
