@@ -1,5 +1,11 @@
 # @ledgerhq/icons-ui
 
+## 1.0.2-nightly.1
+
+### Patch Changes
+
+- [#6068](https://github.com/LedgerHQ/ledger-live/pull/6068) [`8096795`](https://github.com/LedgerHQ/ledger-live/commit/80967954758a5e1d2960ac593fc6314391737558) Thanks [@mle-gall](https://github.com/mle-gall)! - Fixed source SVG causing storybook build error
+
 ## 1.0.2-nightly.0
 
 ### Patch Changes

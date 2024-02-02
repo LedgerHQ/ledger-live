@@ -1,5 +1,21 @@
 # live-mobile
 
+## 3.39.1-nightly.0
+
+### Patch Changes
+
+- [#6047](https://github.com/LedgerHQ/ledger-live/pull/6047) [`8609a53`](https://github.com/LedgerHQ/ledger-live/commit/8609a538fa581316fc707283584e9a3f6fab20b0) Thanks [@sshmaxime](https://github.com/sshmaxime)! - Fixing UI bug on Hero Content Card CTA
+
+- Updated dependencies [[`9c83695`](https://github.com/LedgerHQ/ledger-live/commit/9c8369580b91d82021d4ec28ad7a49dc4ba42e4f)]:
+  - @ledgerhq/coin-framework@0.11.1-nightly.2
+  - @ledgerhq/coin-evm@0.12.2-nightly.0
+  - @ledgerhq/live-common@33.5.2-nightly.0
+  - @ledgerhq/live-countervalues@0.1.1-nightly.2
+  - @ledgerhq/live-countervalues-react@0.1.1-nightly.2
+  - @ledgerhq/live-nft@0.1.1-nightly.1
+  - @ledgerhq/native-ui@0.22.7-nightly.0
+  - @ledgerhq/live-nft-react@0.1.1-nightly.1
+
 ## 3.39.0
 
 ### Minor Changes

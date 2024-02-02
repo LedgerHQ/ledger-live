@@ -1,5 +1,19 @@
 # @ledgerhq/live-common
 
+## 33.5.2-nightly.0
+
+### Patch Changes
+
+- Updated dependencies [[`9c83695`](https://github.com/LedgerHQ/ledger-live/commit/9c8369580b91d82021d4ec28ad7a49dc4ba42e4f), [`8096795`](https://github.com/LedgerHQ/ledger-live/commit/80967954758a5e1d2960ac593fc6314391737558)]:
+  - @ledgerhq/coin-framework@0.11.1-nightly.2
+  - @ledgerhq/coin-evm@0.12.2-nightly.0
+  - @ledgerhq/crypto-icons-ui@1.0.2-nightly.1
+  - @ledgerhq/coin-algorand@0.3.10-nightly.2
+  - @ledgerhq/coin-polkadot@0.5.3-nightly.2
+  - @ledgerhq/live-countervalues@0.1.1-nightly.2
+  - @ledgerhq/live-countervalues-react@0.1.1-nightly.2
+  - @ledgerhq/live-nft@0.1.1-nightly.1
+
 ## 33.5.1
 
 ### Patch Changes

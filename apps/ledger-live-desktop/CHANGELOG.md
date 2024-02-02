@@ -1,5 +1,25 @@
 # ledger-live-desktop
 
+## 2.76.1-nightly.0
+
+### Patch Changes
+
+- [#5966](https://github.com/LedgerHQ/ledger-live/pull/5966) [`d6d8f5c`](https://github.com/LedgerHQ/ledger-live/commit/d6d8f5cc2f14fb5b2d4a47608dc397a451fc330c) Thanks [@gre](https://github.com/gre)! - Fixes date formatting
+
+- [#6041](https://github.com/LedgerHQ/ledger-live/pull/6041) [`9c83695`](https://github.com/LedgerHQ/ledger-live/commit/9c8369580b91d82021d4ec28ad7a49dc4ba42e4f) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Remove unnecessary logs
+
+- [#6036](https://github.com/LedgerHQ/ledger-live/pull/6036) [`f335f35`](https://github.com/LedgerHQ/ledger-live/commit/f335f3558ecf4ac83e33ddd8edc0ee8cf61a688b) Thanks [@mikhd](https://github.com/mikhd)! - display spinner in solana staking workflows
+
+- Updated dependencies [[`9c83695`](https://github.com/LedgerHQ/ledger-live/commit/9c8369580b91d82021d4ec28ad7a49dc4ba42e4f)]:
+  - @ledgerhq/coin-framework@0.11.1-nightly.2
+  - @ledgerhq/coin-evm@0.12.2-nightly.0
+  - @ledgerhq/live-common@33.5.2-nightly.0
+  - @ledgerhq/live-countervalues@0.1.1-nightly.2
+  - @ledgerhq/live-countervalues-react@0.1.1-nightly.2
+  - @ledgerhq/live-nft@0.1.1-nightly.1
+  - @ledgerhq/react-ui@0.14.15-nightly.2
+  - @ledgerhq/live-nft-react@0.1.1-nightly.1
+
 ## 2.76.0
 
 ### Minor Changes
