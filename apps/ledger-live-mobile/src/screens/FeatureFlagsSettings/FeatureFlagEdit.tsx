@@ -112,9 +112,7 @@ const FeatureFlagEdit: React.FC<{
       />
       {error ? (
         <Flex mt={2}>
-          <Text type="warning" color="error.c60">
-            Error : {error.toString()}
-          </Text>
+          <Text color="error.c60">Error : {error.toString()}</Text>
         </Flex>
       ) : null}
       <Flex flexDirection="row" mt={3}>
