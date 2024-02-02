@@ -38,7 +38,6 @@ const FeatureFlagEdit: React.FC<{
   const [featureFlagValue, setFeatureFlagValue] = useState<Feature>(pureValue);
   const [inputValueStringified, setInputValueStringified] = useState(formatValue(pureValue));
 
-  console.log(formatValue({ pureValue, featureFlagValue }));
   useEffect(() => {
     if (formatValue(pureValue) !== formatValue(featureFlagValue)) {
       setFeatureFlagValue(pureValue);
@@ -50,7 +49,7 @@ const FeatureFlagEdit: React.FC<{
   const handleInputChange = (value: string) => {
     try {
       setInputValueStringified(value);
-      // Nb if value is invalid or missing, JSON parse will fail
+      // If value is invalid or missing, JSON parse will fail and error will be set
       JSON.parse(value);
       setError(undefined);
     } catch (err) {
@@ -61,8 +60,6 @@ const FeatureFlagEdit: React.FC<{
   const handleRestoreFeature = useCallback(() => {
     setError(undefined);
     featureFlagsProvider.resetFeature(flagName);
-    // setFeatureFlagValue(pureValue);
-    // setInputValueStringified(formatValue(pureValue));
   }, [featureFlagsProvider, flagName]);
 
   const handleOverrideFeature = useCallback(() => {
