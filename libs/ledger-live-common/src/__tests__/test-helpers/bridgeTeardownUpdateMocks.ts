@@ -1,6 +1,7 @@
+/* eslint-disable no-console */
 import axios from "axios";
 import { StdRequest } from "./types";
-const fsp = require("fs").promises;
+import { promises as fsp } from "fs";
 
 /* Creates a mock file from registered request */
 async function createMock(stdRequest: StdRequest, path: string) {

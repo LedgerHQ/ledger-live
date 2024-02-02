@@ -5,7 +5,7 @@ import {
   HttpPerformanceEntryResponse,
   StdRequest,
 } from "./types";
-const { createHash } = require("crypto");
+import { createHash } from "crypto";
 
 function sha256(str: string) {
   return createHash("sha256").update(str).digest("hex");
@@ -48,5 +48,6 @@ export default () => {
   // We start sniffing traffic, after all tests we will create a mock for each entry
   global.bridgeTestsObserver = new PerformanceObserver(onObserverEntry);
   global.bridgeTestsObserver.observe({ entryTypes: ["http", "http2"] });
+  // eslint-disable-next-line no-console
   console.log("Observer started, starting network sniffing");
 };
