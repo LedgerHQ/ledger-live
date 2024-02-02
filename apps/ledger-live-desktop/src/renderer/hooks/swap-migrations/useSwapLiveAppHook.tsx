@@ -1,5 +1,5 @@
 import { v4 } from "uuid";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import isEqual from "lodash/isEqual";
 import { useSelector } from "react-redux";
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
@@ -46,13 +46,14 @@ export const useSwapLiveAppHook = (props: UseSwapLiveAppHookProps) => {
   const provider = exchangeRate?.provider;
   const exchangeRatesState = swapTransaction.swap?.rates;
   const swapWebPropsRef = useRef<SwapWebProps["swapState"] | undefined>(undefined);
-  const mainFromAccount = getMainAccount(
-    swapTransaction.swap.from.account,
-    swapTransaction.swap.from.parentAccount,
-  );
-  const unit = getAccountUnit(mainFromAccount);
-  const estimatedFees = BigNumber(formatCurrencyUnit(unit, swapTransaction.status.estimatedFees));
+  const mainFromAccount =
+    swapTransaction.swap.from.account &&
+    getMainAccount(swapTransaction.swap.from.account, swapTransaction.swap.from.parentAccount);
   const estimatedFeesUnit = mainFromAccount && getFeesCurrency(mainFromAccount);
+  const estimatedFees = useMemo(() => {
+    const unit = mainFromAccount && getAccountUnit(mainFromAccount);
+    return unit && BigNumber(formatCurrencyUnit(unit, swapTransaction.status.estimatedFees));
+  }, [mainFromAccount, swapTransaction.status.estimatedFees]);
 
   useEffect(() => {
     if (isSwapLiveAppEnabled) {
