@@ -17,7 +17,7 @@ export class ExchangeModule extends CustomModule {
    *
    * @returns - A transaction ID used to complete the exchange process
    */
-  async start({ exchangeType }: ExchangeStartParams) {
+  async start(exchangeType: ExchangeStartParams["exchangeType"]) {
     const result = await this.request<ExchangeStartParams, ExchangeStartResult>(
       "custom.exchange.start",
       {
