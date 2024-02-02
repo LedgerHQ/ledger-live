@@ -1,6 +1,7 @@
 import { DeviceInfoEntity } from "../entities/DeviceInfoEntity";
 
 export const PROVIDERS: Record<string, number> = {
+  default: 1,
   das: 2,
   club: 3,
   shitcoins: 4,
@@ -14,8 +15,8 @@ export function getProviderIdUseCase({
   deviceInfo: DeviceInfoEntity | undefined | null;
   forceProvider?: number;
 }): number {
-  if (forceProvider && forceProvider !== 1) return forceProvider;
-  if (!deviceInfo) return 1;
+  if (forceProvider && forceProvider !== PROVIDERS.default) return forceProvider;
+  if (!deviceInfo) return PROVIDERS.default;
   const { providerName } = deviceInfo;
   const maybeProvider = providerName && PROVIDERS[providerName];
   if (maybeProvider) return maybeProvider;
