@@ -6,3 +6,29 @@ export type StdRequest = {
   body: any;
   response: any;
 };
+
+export type HttpPerformanceEntry = {
+  name: "HttpClient";
+  entryType: "http" | "http2";
+  startTime: number;
+  duration: number;
+  detail: {
+    req?: HttpPerformanceEntryRequest;
+    res?: HttpPerformanceEntryResponse;
+  };
+};
+
+type HeadersMap = { [headerName: string]: string };
+
+export type HttpPerformanceEntryRequest = {
+  method: string;
+  url: string;
+  headers: HeadersMap;
+  body?: any;
+};
+
+export type HttpPerformanceEntryResponse = {
+  statusCode: number;
+  statusMessage: string;
+  headers: HeadersMap;
+};
