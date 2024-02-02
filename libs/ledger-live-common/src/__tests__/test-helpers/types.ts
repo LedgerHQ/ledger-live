@@ -7,6 +7,17 @@ export type StdRequest = {
   response: any;
 };
 
+export type MockContent = {
+  request: {
+    url: string;
+    method: string;
+  };
+  response: {
+    statusCode: number;
+    body: any;
+  };
+};
+
 export type HttpPerformanceEntry = {
   name: "HttpClient";
   entryType: "http" | "http2";

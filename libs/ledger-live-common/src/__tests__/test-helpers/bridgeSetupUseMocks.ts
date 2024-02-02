@@ -1,6 +1,6 @@
 import nock from "nock";
 import { URL } from "url";
-import { StdRequest } from "./types";
+import { MockContent, StdRequest } from "./types";
 const fsp = require("fs").promises;
 
 /* Loop through each mock and apply them to nock */
@@ -13,7 +13,7 @@ export async function initBackendMocks() {
       appliedMocks++;
       const backendMock = await fsp.readFile(`${root}/${mock}`);
       try {
-        const jsonBackendMock = JSON.parse(backendMock);
+        const jsonBackendMock: MockContent = JSON.parse(backendMock);
         applyBackendMock(jsonBackendMock);
       } catch (err) {
         console.log(err, mock);
@@ -23,7 +23,7 @@ export async function initBackendMocks() {
   });
 }
 
-function applyBackendMock(mockContent: { request: StdRequest; response: any }) {
+function applyBackendMock(mockContent: MockContent) {
   const url = new URL(mockContent.request.url);
 
   const originWithoutPort =

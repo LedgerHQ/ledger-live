@@ -4,6 +4,7 @@ const fsp = require("fs").promises;
 
 /* Creates a mock file from registered request */
 async function createMock(stdRequest: StdRequest, path: string) {
+  // usual instance has errors managed by live-network lib
   const uninterceptedAxiosInstance = axios.create();
 
   const createMockOp = async resp => {
@@ -15,8 +16,8 @@ async function createMock(stdRequest: StdRequest, path: string) {
     return await fsp.writeFile(
       path,
       JSON.stringify({
-        request: stdRequest,
-        response: { ...responseInfo, body: resp?.data },
+        request: { url: stdRequest.url, method: stdRequest.method },
+        response: { statusCode: resp.statusCode, body: resp?.data },
       }),
       { flag: "wx" },
     );
@@ -39,7 +40,7 @@ export default (async function () {
   const dir = __dirname + "/bridgeMocks";
   const knownUrls: string[] = [];
   const filteredRequests: StdRequest[] = [];
-  // TODO: Use SET, this will change with POST parameters support
+  // TODO: This will change with POST parameters support, we will need to manage multiple requests types
   for (const req of global.bridgeTestsRequests) {
     if (!knownUrls.includes(req.url)) {
       knownUrls.push(req.url);
