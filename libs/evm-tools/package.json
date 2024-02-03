@@ -47,12 +47,13 @@
   "dependencies": {
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
-    "@ledgerhq/live-network": "workspace:^",
+    "axios": "^1.6.5",
     "crypto-js": "4.2.0",
     "ethers": "5.7.2"
   },
   "devDependencies": {
     "@ledgerhq/types-live": "workspace:^",
+    "@types/axios": "^0.14.0",
     "@types/crypto-js": "^4.1.1",
     "@types/jest": "^29.5.10",
     "@types/node": "^20.8.10",

@@ -13,7 +13,7 @@ import type {
   TransactionCommon,
   TransactionStatusCommon,
 } from "./transaction";
-import type { Operation } from "./operation";
+import type { Operation, OperationExtra, OperationExtraRaw } from "./operation";
 import type { DerivationMode } from "./derivation";
 import type { SyncConfig } from "./pagination";
 import {
@@ -196,6 +196,8 @@ export interface AccountBridge<T extends TransactionCommon> {
   // broadcasting a signed transaction to network
   // returns an optimistic Operation that this transaction is likely to create in the future
   broadcast: BroadcastFnSignature;
+  fromOperationExtraRaw?: (extraRaw: OperationExtraRaw) => OperationExtra;
+  toOperationExtraRaw?: (extra: OperationExtra) => OperationExtraRaw;
 }
 
 type ExpectFn = (...args: Array<any>) => any;

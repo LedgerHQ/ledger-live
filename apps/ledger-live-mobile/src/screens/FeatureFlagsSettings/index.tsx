@@ -143,7 +143,7 @@ export default function DebugFeatureFlags() {
 
   return (
     <SafeAreaView edges={["bottom"]} style={{ flex: 1 }}>
-      <NavigationScrollView>
+      <NavigationScrollView keyboardShouldPersistTaps="handled">
         <Flex px={16}>
           <Alert type="primary" noIcon>
             {t("settings.debug.featureFlagsTitle")}

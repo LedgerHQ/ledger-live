@@ -32,7 +32,7 @@ describe("Onboarding", () => {
     await portfolioPage.waitForPortfolioPageToLoad();
     await expect(portfolioPage.portfolioSettingsButton()).toBeVisible();
     //should see an empty portfolio page
-    await expect(portfolioPage.emptyPortfolioComponent()).toBeVisible();
+    await expect(portfolioPage.emptyPortfolioList()).toBeVisible();
   });
 
   it("does the Onboarding and choose to restore a Nano X", async () => {
@@ -45,7 +45,7 @@ describe("Onboarding", () => {
     await onboardingSteps.openLedgerLive();
     await portfolioPage.waitForPortfolioPageToLoad();
     await expect(portfolioPage.portfolioSettingsButton()).toBeVisible();
-    await expect(portfolioPage.emptyPortfolioComponent()).toBeVisible();
+    await expect(portfolioPage.emptyPortfolioList()).toBeVisible();
   });
 
   it("does the Onboarding and choose to restore a Nano SP", async () => {

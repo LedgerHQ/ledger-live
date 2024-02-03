@@ -16,7 +16,7 @@ module.exports = {
   entryNames: "renderer.bundle",
   jsx: "automatic",
   platform: "browser",
-  target: ["chrome114"],
+  target: ["chrome120"],
   format: "iife",
   mainFields: ["browser", "module", "main"],
   assetNames: "assets/[name]-[hash]",

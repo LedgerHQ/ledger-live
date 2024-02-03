@@ -153,7 +153,7 @@ export default function EvmFeesStrategy({
 
   const onFeesSelected = useCallback(
     ({ feesStrategy }: { feesStrategy: StrategyWithCustom }) => {
-      const bridge = getAccountBridge<Transaction>(account, parentAccount);
+      const bridge = getAccountBridge(account, parentAccount);
 
       const patch: Partial<Transaction> =
         feesStrategy === "custom" && customStrategyTransactionPatch
