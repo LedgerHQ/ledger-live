@@ -1,5 +1,14 @@
 # @ledgerhq/hw-app-eth
 
+## 6.35.5-nightly.0
+
+### Patch Changes
+
+- [#5979](https://github.com/LedgerHQ/ledger-live/pull/5979) [`74ef384`](https://github.com/LedgerHQ/ledger-live/commit/74ef3840c17181fa779035f190f829e9537e1539) Thanks [@lvndry](https://github.com/lvndry)! - dependency evm-tools don't rely on live-network anymore
+
+- Updated dependencies [[`74ef384`](https://github.com/LedgerHQ/ledger-live/commit/74ef3840c17181fa779035f190f829e9537e1539)]:
+  - @ledgerhq/evm-tools@1.0.15-nightly.0
+
 ## 6.35.4
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/evm-tools
 
+## 1.0.15-nightly.0
+
+### Patch Changes
+
+- [#5979](https://github.com/LedgerHQ/ledger-live/pull/5979) [`74ef384`](https://github.com/LedgerHQ/ledger-live/commit/74ef3840c17181fa779035f190f829e9537e1539) Thanks [@lvndry](https://github.com/lvndry)! - Remove live-network dependency
+
 ## 1.0.14
 
 ### Patch Changes
