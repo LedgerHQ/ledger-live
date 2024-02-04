@@ -1,10 +1,14 @@
-import type { Account, AccountRaw } from "@ledgerhq/types-live";
+import type { Account, AccountRaw, OperationExtra, OperationExtraRaw } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import type {
-  AlgorandAccount,
-  AlgorandAccountRaw,
-  AlgorandResources,
-  AlgorandResourcesRaw,
+import {
+  isAlgorandOperationExtra,
+  isAlgorandOperationExtraRaw,
+  type AlgorandAccount,
+  type AlgorandAccountRaw,
+  type AlgorandOperationExtra,
+  type AlgorandOperationExtraRaw,
+  type AlgorandResources,
+  type AlgorandResourcesRaw,
 } from "./types";
 
 function toResourcesRaw(r: AlgorandResources): AlgorandResourcesRaw {
@@ -36,4 +40,46 @@ export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account): 
   if (algorandResourcesRaw) {
     algorandAccount.algorandResources = fromResourcesRaw(algorandResourcesRaw);
   }
+}
+
+export function fromOperationExtraRaw(extraRaw: OperationExtraRaw) {
+  const extra: AlgorandOperationExtra = {};
+  if (!isAlgorandOperationExtraRaw(extraRaw)) {
+    return extra;
+  }
+
+  if (extraRaw.rewards) {
+    extra.rewards = new BigNumber(extraRaw.rewards);
+  }
+
+  if (extraRaw.memo) {
+    extra.memo = extraRaw.memo;
+  }
+
+  if (extraRaw.assetId) {
+    extra.assetId = extraRaw.assetId;
+  }
+
+  return extra;
+}
+
+export function toOperationExtraRaw(extra: OperationExtra) {
+  const extraRaw: AlgorandOperationExtraRaw = {};
+  if (!isAlgorandOperationExtra(extra)) {
+    return extraRaw;
+  }
+
+  if (extra.rewards) {
+    extraRaw.rewards = extra.rewards.toString();
+  }
+
+  if (extra.memo) {
+    extraRaw.memo = extra.memo;
+  }
+
+  if (extra.assetId) {
+    extraRaw.assetId = extra.assetId;
+  }
+
+  return extraRaw;
 }

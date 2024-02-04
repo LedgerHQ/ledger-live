@@ -2,6 +2,8 @@ import type {
   Account,
   AccountRaw,
   Operation,
+  OperationExtra,
+  OperationExtraRaw,
   OperationRaw,
   TransactionCommon,
   TransactionCommonRaw,
@@ -55,11 +57,24 @@ export type AlgorandOperationExtra = {
   memo?: string;
   assetId?: string;
 };
+export function isAlgorandOperationExtra(op: OperationExtra): op is AlgorandOperationExtra {
+  return (
+    op !== null && typeof op === "object" && ("rewards" in op || "memo" in op || "assetId" in op)
+  );
+}
+
 export type AlgorandOperationExtraRaw = {
   rewards?: string;
   memo?: string;
   assetId?: string;
 };
+export function isAlgorandOperationExtraRaw(
+  op: OperationExtraRaw,
+): op is AlgorandOperationExtraRaw {
+  return (
+    op !== null && typeof op === "object" && ("rewards" in op || "memo" in op || "assetId" in op)
+  );
+}
 
 export type AlgorandAccount = Account & {
   algorandResources: AlgorandResources;

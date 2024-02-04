@@ -2,7 +2,7 @@
 
 import { BigNumber } from "bignumber.js";
 import { NotEnoughBalance, RecipientRequired, InvalidAddress, FeeTooHigh } from "@ledgerhq/errors";
-import type { PolkadotAccount, Transaction } from "@ledgerhq/coin-polkadot/types";
+import type { PolkadotAccount, Transaction } from "@ledgerhq/coin-polkadot/types/index";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import {
   makeAccountBridgeReceive,

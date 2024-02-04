@@ -94,7 +94,12 @@ import {
 import { activationFees, oneTrx } from "../constants";
 import { makeAccountBridgeReceive } from "../../../bridge/jsHelpers";
 import type { AccountShapeInfo } from "../../../bridge/jsHelpers";
-import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
+import {
+  assignFromAccountRaw,
+  assignToAccountRaw,
+  fromOperationExtraRaw,
+  toOperationExtraRaw,
+} from "../serialization";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 
 const receive = makeAccountBridgeReceive();
@@ -867,6 +872,8 @@ const accountBridge: AccountBridge<Transaction> = {
   broadcast,
   assignFromAccountRaw,
   assignToAccountRaw,
+  fromOperationExtraRaw,
+  toOperationExtraRaw,
 };
 
 export default {
