@@ -2,7 +2,10 @@ import * as nearAPI from "near-api-js";
 import { Action } from "near-api-js/lib/transaction";
 import { Transaction as NearApiTransaction } from "near-api-js/lib/transaction";
 import type { Account } from "@ledgerhq/types-live";
-import { formatCurrencyUnit, getCryptoCurrencyById } from "../../currencies";
+import {
+  formatCurrencyUnit,
+  getCryptoCurrencyById,
+} from "@ledgerhq/coin-framework/currencies/index";
 import type { Transaction } from "./types";
 import { getAccessKey } from "./api";
 import { getStakingGas } from "./logic";
