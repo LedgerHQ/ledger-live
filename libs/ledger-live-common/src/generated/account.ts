@@ -5,9 +5,9 @@ import bitcoin from "@ledgerhq/coin-bitcoin/account";
 import near from "@ledgerhq/coin-near/account";
 
 export default {
-  bitcoin,
   cardano,
   crypto_org,
   vechain,
+  bitcoin,
   near,
 };
