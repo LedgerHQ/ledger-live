@@ -32,7 +32,12 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
     }
   }, [account, dispatch, parentAccount]);
 
-  if (account.type === "Account" && account.currency.id.includes("ethereum")) {
+  if (
+    account.type === "Account" &&
+    // Ethereum Classic is still on proof of work
+    account.currency.id !== "ethereum_classic" &&
+    account.currency.id.includes("ethereum")
+  ) {
     return [
       {
         key: "Stake",
