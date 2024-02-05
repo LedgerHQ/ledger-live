@@ -63,7 +63,7 @@ jobs:
         run: pnpm desktop typecheck
       - uses: actions/upload-artifact@v3
         name: upload eslint json output
-        if: always()
+        if: ${{ !cancelled() }}
         with:
           name: lint
           path: ${{ github.workspace }}/apps/ledger-live-desktop/lint.json
@@ -138,7 +138,7 @@ jobs:
           pnpm desktop test:playwright
         shell: bash
       - name: upload diffs to s3
-        if: always() && !cancelled()
+        if: ${{ !cancelled() }}
         uses: ./tools/actions/upload-images
         id: s3
         with:
@@ -147,7 +147,7 @@ jobs:
           os: windows
           group-name: ${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_number }}
       - name: upload ci suggested screenshots
-        if: always() && !cancelled()
+        if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v3
         with:
           name: images
@@ -165,7 +165,7 @@ jobs:
             apps/ledger-live-desktop/tests/artifacts/logs
             apps/ledger-live-desktop/tests/artifacts/*.log
       - name: Upload Allure Report
-        if: always()
+        if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v3
         with:
           name: allure-results-windows
@@ -208,7 +208,7 @@ jobs:
         run: |
           xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright
       - name: upload diffs to s3
-        if: always() && !cancelled()
+        if: ${{ !cancelled() }}
         uses: ./tools/actions/upload-images
         id: s3
         with:
@@ -217,7 +217,7 @@ jobs:
           os: linux
           group-name: ${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_number }}
       - name: upload ci suggested screenshots
-        if: always() && !cancelled()
+        if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v3
         with:
           name: images
@@ -235,7 +235,7 @@ jobs:
             apps/ledger-live-desktop/tests/artifacts/logs
             apps/ledger-live-desktop/tests/artifacts/*.log
       - name: Upload Allure Report
-        if: always()
+        if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v3
         with:
           name: allure-results-linux
@@ -278,7 +278,7 @@ jobs:
         run: |
           pnpm desktop test:playwright
       - name: upload diffs to s3
-        if: always() && !cancelled()
+        if: ${{ !cancelled() }}
         uses: ./tools/actions/upload-images
         id: s3
         with:
@@ -287,7 +287,7 @@ jobs:
           os: macos
           group-name: ${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_number }}
       - name: upload ci suggested screenshots
-        if: always() && !cancelled()
+        if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v3
         with:
           name: images
@@ -305,7 +305,7 @@ jobs:
             apps/ledger-live-desktop/tests/artifacts/logs
             apps/ledger-live-desktop/tests/artifacts/*.log
       - name: Upload Allure Report
-        if: always()
+        if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v3
         with:
           name: allure-results-macos
@@ -314,7 +314,7 @@ jobs:
   report:
     needs: [codechecks, unit-tests, e2e-tests-linux, e2e-tests-windows, e2e-tests-mac]
     runs-on: ubuntu-latest
-    if: always() && !cancelled()
+    if: ${{ !cancelled() }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -562,7 +562,7 @@ jobs:
       - name: post to a Slack channel
         id: slack
         uses: slackapi/slack-github-action@v1.23.0
-        if: always() && !cancelled() && github.event_name == 'push' && contains(join(needs.*.result, ','), 'failure')
+        if: ${{ !cancelled() && github.event_name == 'push' && contains(join(needs.*.result, ','), 'failure') }}
         with:
           channel-id: "C05FKJ7DFAP"
           payload-file-path: ${{ github.workspace }}/payload-slack-content.json
@@ -578,7 +578,7 @@ jobs:
     name: "Allure Reports Export on Server"
     needs: [e2e-tests-windows, e2e-tests-linux, e2e-tests-mac]
     runs-on: [ledger-live-medium-linux]
-    if: ${{ always() && !cancelled() && github.ref_name == 'develop' }}
+    if: ${{ !cancelled() && github.ref_name == 'develop' }}
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -601,7 +601,7 @@ jobs:
           path: allure-results-linux
       - name: Send Results and Generate Allure Report - Windows
         uses: ./tools/actions/composites/upload-allure-report
-        if: always()
+        if: ${{ !cancelled() }}
         with:
           platform: windows
           login: ${{ secrets.ALLURE_LOGIN }}
@@ -609,7 +609,7 @@ jobs:
           path: allure-results-windows
       - name: Send Results and Generate Allure Report - MacOS
         uses: ./tools/actions/composites/upload-allure-report
-        if: always()
+        if: ${{ !cancelled() }}
         with:
           platform: macos
           login: ${{ secrets.ALLURE_LOGIN }}
@@ -617,7 +617,7 @@ jobs:
           path: allure-results-macos
       - name: Send Results and Generate Allure Report - Linux
         uses: ./tools/actions/composites/upload-allure-report
-        if: always()
+        if: ${{ !cancelled() }}
         with:
           platform: linux
           login: ${{ secrets.ALLURE_LOGIN }}

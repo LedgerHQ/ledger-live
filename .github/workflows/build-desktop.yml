@@ -95,7 +95,7 @@ jobs:
 
       - name: Upload bundle metafiles
         uses: actions/upload-artifact@v3
-        if: always()
+        if: ${{ !cancelled() }}
         with:
           name: ${{ matrix.config.name }}-js-bundle-metafiles
           path: ${{ github.workspace }}/apps/ledger-live-desktop/metafile.*
@@ -103,13 +103,13 @@ jobs:
       - name: Push status
         id: status
         shell: bash
-        if: always() && !cancelled()
+        if: ${{ !cancelled() }}
         run: echo "${{ matrix.config.name }}=${{ steps.build-app.outcome }}" >> $GITHUB_OUTPUT
 
   report:
     needs: build-desktop-app
     runs-on: ubuntu-latest
-    if: always() && !cancelled() && github.event_name == 'workflow_dispatch'
+    if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -156,7 +156,7 @@ jobs:
           attempt: ${{ github.run_attempt }}
 
       - uses: ./tools/actions/build-checks
-        if: always() && inputs.prNumber != ''
+        if: ${{ !cancelled() && inputs.prNumber != '' }}
         with:
           token: ${{ steps.generate-token.outputs.token }}
           baseBranch: ${{ inputs.base_ref || 'develop' }}
