@@ -1,7 +1,13 @@
-import { BigNumber } from "bignumber.js";
-import type { Operation, OperationRaw, SubAccount } from "@ledgerhq/types-live";
-
-export type ExtractExtraFn = (extra: Record<string, any>) => Record<string, any>;
+import BigNumber from "bignumber.js";
+import {
+  AccountBridge,
+  Operation,
+  OperationRaw,
+  SubAccount,
+  SwapOperation,
+  SwapOperationRaw,
+  TransactionCommon,
+} from "@ledgerhq/types-live";
 
 export const toOperationRaw = (
   {
@@ -29,6 +35,7 @@ export const toOperationRaw = (
     transactionRaw,
   }: Operation,
   preserveSubOperation?: boolean,
+  toOperationExtraRaw?: AccountBridge<TransactionCommon>["toOperationExtraRaw"],
 ): OperationRaw => {
   const copy: OperationRaw = {
     id,
@@ -73,6 +80,10 @@ export const toOperationRaw = (
     copy.transactionRaw = transactionRaw;
   }
 
+  if (extra && toOperationExtraRaw) {
+    copy.extra = toOperationExtraRaw(extra);
+  }
+
   return copy;
 };
 export const inferSubOperations = (txHash: string, subAccounts: SubAccount[]): Operation[] => {
@@ -100,6 +111,7 @@ export const inferSubOperations = (txHash: string, subAccounts: SubAccount[]): O
 
   return all;
 };
+
 export const fromOperationRaw = (
   {
     date,
@@ -126,6 +138,7 @@ export const fromOperationRaw = (
   }: OperationRaw,
   accountId: string,
   subAccounts?: SubAccount[] | null | undefined,
+  fromOperationExtraRaw?: AccountBridge<TransactionCommon>["fromOperationExtraRaw"],
 ): Operation => {
   const res: Operation = {
     id,
@@ -186,5 +199,26 @@ export const fromOperationRaw = (
     res.nftOperations = nftOperations.map((o: OperationRaw) => fromOperationRaw(o, o.accountId));
   }
 
+  if (extra && fromOperationExtraRaw) {
+    res.extra = fromOperationExtraRaw(extra);
+  }
+
   return res;
 };
+
+export function fromSwapOperationRaw(raw: SwapOperationRaw): SwapOperation {
+  const { fromAmount, toAmount } = raw;
+  return {
+    ...raw,
+    fromAmount: new BigNumber(fromAmount),
+    toAmount: new BigNumber(toAmount),
+  };
+}
+export function toSwapOperationRaw(so: SwapOperation): SwapOperationRaw {
+  const { fromAmount, toAmount } = so;
+  return {
+    ...so,
+    fromAmount: fromAmount.toString(),
+    toAmount: toAmount.toString(),
+  };
+}

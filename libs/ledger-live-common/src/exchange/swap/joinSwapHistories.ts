@@ -1,4 +1,4 @@
-import type { SwapOperation } from "./types";
+import { SwapOperation } from "@ledgerhq/types-live";
 
 export default (
   existingSwapHistory: SwapOperation[] | null | undefined,

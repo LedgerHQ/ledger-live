@@ -15,7 +15,7 @@ import {
   pickSiblings,
 } from "@ledgerhq/coin-framework/bot/specs";
 import type { AppSpec } from "@ledgerhq/coin-framework/bot/types";
-import { toOperationRaw } from "@ledgerhq/coin-framework/account/index";
+import { toOperationRaw } from "@ledgerhq/coin-framework/serialization/index";
 import {
   canBond,
   canUnbond,
