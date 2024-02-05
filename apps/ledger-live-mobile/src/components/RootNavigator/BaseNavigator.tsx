@@ -54,7 +54,7 @@ import AccountsNavigator from "./AccountsNavigator";
 import MarketNavigator from "LLM/features/Market/Navigator";
 import MarketCurrencySelect from "~/screens/Market/MarketCurrencySelect";
 import MarketDetail from "~/screens/Market/MarketDetail";
-import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import {
   BleDevicePairingFlow,
   bleDevicePairingFlowHeaderOptions,
