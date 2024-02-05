@@ -15,7 +15,7 @@ let receivePage: ReceivePage;
 
 describe("NFT Gallery screen", () => {
   beforeAll(async () => {
-    loadConfig("1Account1NFTReadOnlyFalse");
+    loadConfig("1Account1NFTNotSpam");
 
     portfolioPage = new PortfolioPage();
     walletTabNavigatorPage = new WalletTabNavigatorPage();
