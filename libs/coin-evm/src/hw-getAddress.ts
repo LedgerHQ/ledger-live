@@ -2,7 +2,7 @@ import eip55 from "eip55";
 import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
-import { EvmAddress, EvmSignature, EvmSigner } from "./signer";
+import { EvmAddress, EvmSignature, EvmSigner } from "./types/signer";
 
 const resolver = (
   signerContext: SignerContext<EvmSigner, EvmAddress | EvmSignature>,

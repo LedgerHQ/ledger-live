@@ -1,5 +1,5 @@
 import eip55 from "eip55";
-import { EvmAddress, EvmSignature, EvmSigner } from "../../signer";
+import type { EvmAddress, EvmSignature, EvmSigner } from "../../types/signer";
 import resolver from "../../hw-getAddress";
 
 const address = "0xc3f95102D5c8F2c83e49Ce3Acfb905eDfb7f37dE";

@@ -11,7 +11,7 @@ import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
 import { LoadConfig, ResolutionConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
-import { EvmAddress, EvmSignature, EvmSigner } from "./signer";
+import { EvmAddress, EvmSignature, EvmSigner } from "./types/signer";
 import { prepareForSignOperation } from "./prepareTransaction";
 import { getSerializedTransaction } from "./transaction";
 import { Transaction } from "./types";
