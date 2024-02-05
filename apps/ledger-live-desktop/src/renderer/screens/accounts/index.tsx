@@ -1,15 +1,12 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import TrackPage, { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
-import { Redirect } from "react-router";
-import {
-  useFlattenSortAccounts,
-  useRefreshAccountsOrderingEffect,
-} from "~/renderer/actions/general";
+import { Redirect, useLocation } from "react-router";
+import { useFlattenSortAccounts, useRefreshAccountsOrdering } from "~/renderer/actions/general";
 import { accountsSelector, starredAccountsSelector } from "~/renderer/reducers/accounts";
 import { accountsViewModeSelector, selectedTimeRangeSelector } from "~/renderer/reducers/settings";
 import AccountList from "./AccountList";
@@ -25,9 +22,13 @@ export default function AccountsPage() {
   });
   const accounts = mode === "card" ? flattenedAccounts : rawAccounts;
   const history = useHistory();
-  useRefreshAccountsOrderingEffect({
-    onMount: true,
-  });
+  const location = useLocation();
+  const refreshAccountsOrdering = useRefreshAccountsOrdering();
+
+  useEffect(() => {
+    refreshAccountsOrdering();
+  }, [refreshAccountsOrdering, location]);
+
   const onAccountClick = useCallback(
     (account: AccountLike, parentAccount?: Account | null) => {
       setTrackingSource("accounts page");
