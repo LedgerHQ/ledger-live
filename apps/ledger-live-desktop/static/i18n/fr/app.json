@@ -4303,7 +4303,7 @@
     "screens" : {
       "welcome" : {
         "title" : "Le wallet ultra-sécurisé pour vos cryptos et NFT",
-        "description" : "Gérez, achetez et faites fructifier vos cryptos et NFT en toute sécurité sur Ledger Live.",
+        "description" : "Gérez, achetez et faites fructifier vos cryptos et NFT en toute sécurité via Ledger Live.",
         "nextButton" : "Commencer",
         "noDevice" : "Pas encore d’appareil ?",
         "buyLink" : "Pas encore d’appareil ? Achetez un Ledger Nano X.",
