@@ -69,7 +69,7 @@ export default memo(function AppRow({
     [app.bytes, deviceInfo.version, deviceModel, installedApp?.blocks],
   );
 
-  const { enabled: displayAppDeveloperName } = useFeature("myLedgerDisplayAppDeveloperName") || {};
+  const { enabled: displayAppDeveloperName } = useFeature("myLedgerDisplayAppDeveloperName") ?? {};
 
   return (
     <RowContainer disabled={!installedApp && !canBeInstalled}>
