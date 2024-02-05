@@ -1,6 +1,6 @@
 import { Observable } from "rxjs";
 import { LedgerSigner, DerivationType } from "@taquito/ledger-signer";
-import { TezosToolkit } from "@taquito/taquito";
+import { OpKind, TezosToolkit } from "@taquito/taquito";
 import type { TezosOperation, Transaction } from "./types";
 import type { OperationType, SignOperationFnSignature } from "@ledgerhq/types-live";
 import { withDevice } from "../../hw/deviceAccess";
@@ -32,53 +32,81 @@ export const signOperation: SignOperationFnSignature<Transaction> = ({
             false,
             DerivationType.ED25519,
           );
+
           tezos.setProvider({ signer: ledgerSigner });
 
-          // Disable the broadcast because we want to do it in a second phase (broadcast hook)
-          // Use a dummy transaction hash, we don't care about this check
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          tezos.contract.context.injector.inject = async () =>
-            "op4WsnE6gvDPFFzbXtsX1wLCsuAAbkA8JhXKApxvEYmaEd3fpNC";
+          const { rpc } = tezos;
+          const block = await rpc.getBlock();
+          const sourceData = await rpc.getContract(freshAddress);
 
           o.next({ type: "device-signature-requested" });
 
-          let type: OperationType = "OUT";
+          let type: OperationType = "NONE";
 
-          let res, opbytes;
-          const params = {
-            fee: transaction.fees?.toNumber() || 0,
-            storageLimit: transaction.storageLimit?.toNumber() || 0,
-            gasLimit: transaction.gasLimit?.toNumber() || 0,
-          };
+          let forgedBytes: string;
 
           switch (transaction.mode) {
-            case "send":
-              res = await tezos.contract.transfer({
-                mutez: true,
-                to: transaction.recipient,
-                amount: transaction.amount.toNumber(),
-                ...params,
+            case "send": {
+              type = "OUT";
+              forgedBytes = await rpc.forgeOperations({
+                branch: block.hash,
+                contents: [
+                  {
+                    kind: OpKind.TRANSACTION,
+                    fee: (transaction.fees || 0).toString(),
+                    gas_limit: (transaction.gasLimit || 0).toString(),
+                    storage_limit: (transaction.storageLimit || 0).toString(),
+                    amount: transaction.amount.toString(),
+                    destination: transaction.recipient,
+                    source: freshAddress,
+                    counter: (Number(sourceData.counter) + 1).toString(),
+                  },
+                ],
               });
-              opbytes = res.raw.opbytes;
+
               break;
-            case "delegate":
-              res = await tezos.contract.setDelegate({
-                ...params,
-                source: freshAddress,
-                delegate: transaction.recipient,
-              });
-              opbytes = res.raw.opbytes;
+            }
+            case "delegate": {
               type = "DELEGATE";
-              break;
-            case "undelegate":
-              res = await tezos.contract.setDelegate({
-                ...params,
-                source: freshAddress,
+
+              forgedBytes = await rpc.forgeOperations({
+                branch: block.hash,
+                contents: [
+                  {
+                    kind: OpKind.DELEGATION,
+                    fee: (transaction.fees || 0).toString(),
+                    gas_limit: (transaction.gasLimit || 0).toString(),
+                    storage_limit: (transaction.storageLimit || 0).toString(),
+                    source: freshAddress,
+                    counter: (Number(sourceData.counter) + 1).toString(),
+                    delegate: transaction.recipient,
+                  },
+                ],
               });
-              opbytes = res.raw.opbytes;
-              type = "UNDELEGATE";
+
               break;
+            }
+            case "undelegate": {
+              type = "UNDELEGATE";
+
+              // we undelegate as there's no "delegate" field
+              // OpKind is still "DELEGATION"
+              forgedBytes = await rpc.forgeOperations({
+                branch: block.hash,
+                contents: [
+                  {
+                    kind: OpKind.DELEGATION,
+                    fee: (transaction.fees || 0).toString(),
+                    gas_limit: (transaction.gasLimit || 0).toString(),
+                    storage_limit: (transaction.storageLimit || 0).toString(),
+                    source: freshAddress,
+                    counter: (Number(sourceData.counter) + 1).toString(),
+                  },
+                ],
+              });
+
+              break;
+            }
             default:
               throw new Error("not supported");
           }
@@ -86,6 +114,11 @@ export const signOperation: SignOperationFnSignature<Transaction> = ({
           if (cancelled) {
             return;
           }
+
+          const signature = await ledgerSigner.sign(
+            forgedBytes,
+            Uint8Array.from(Buffer.from("0x03", "hex")),
+          );
 
           o.next({ type: "device-signature-granted" });
 
@@ -115,7 +148,7 @@ export const signOperation: SignOperationFnSignature<Transaction> = ({
             type: "signed",
             signedOperation: {
               operation,
-              signature: opbytes,
+              signature: signature.sbytes.slice(4),
             },
           });
         }
