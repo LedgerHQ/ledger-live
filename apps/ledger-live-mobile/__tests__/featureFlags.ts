@@ -1,4 +1,5 @@
-import { DEFAULT_FEATURES } from "@ledgerhq/live-config/featureFlags/index";
+import { DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/index";
+
 import { FeatureId, Feature, Features } from "@ledgerhq/types-live";
 
 /* getFeature provides a basic behavior to mock how we retrieve feature flags values
