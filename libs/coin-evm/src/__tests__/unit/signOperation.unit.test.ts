@@ -50,7 +50,7 @@ const mockSignerContext: SignerContext<EvmSigner, EvmAddress | EvmSignature> = (
   return fn({
     setLoadConfig: jest.fn(),
     getAddress: jest.fn(),
-    signTransaction: () =>
+    clearSignTransaction: () =>
       Promise.resolve({
         r: "123",
         s: "abc",
@@ -59,27 +59,8 @@ const mockSignerContext: SignerContext<EvmSigner, EvmAddress | EvmSignature> = (
     signEIP712HashedMessage: jest.fn(),
     signEIP712Message: jest.fn(),
     signPersonalMessage: jest.fn(),
-  });
+  } as any);
 };
-
-// Mocking here in order to be ack by the signOperation.ts file
-jest.mock("@ledgerhq/hw-app-eth", () => ({
-  __esModule: true,
-  ledgerService: {
-    resolveTransaction: (): Promise<{
-      erc20Tokens: never[];
-      nfts: never[];
-      externalPlugin: never[];
-      plugin: never[];
-    }> =>
-      Promise.resolve({
-        erc20Tokens: [],
-        nfts: [],
-        externalPlugin: [],
-        plugin: [],
-      }),
-  },
-}));
 
 describe("EVM Family", () => {
   describe("signOperation.ts", () => {

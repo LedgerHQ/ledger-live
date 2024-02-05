@@ -6,10 +6,9 @@ import {
 } from "@ledgerhq/types-live";
 import { Observable } from "rxjs";
 import { getEnv } from "@ledgerhq/live-env";
-import { ledgerService } from "@ledgerhq/hw-app-eth";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
-import { LoadConfig, ResolutionConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
+import type { LoadConfig, ResolutionConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import { EvmAddress, EvmSignature, EvmSigner } from "./types/signer";
 import { prepareForSignOperation } from "./prepareTransaction";
@@ -77,12 +76,6 @@ export const buildSignOperation =
           cryptoassetsBaseURL: getEnv("DYNAMIC_CAL_BASE_URL"),
           nftExplorerBaseURL: getEnv("NFT_ETH_METADATA_SERVICE") + "/v1/ethereum",
         };
-        // Look for resolutions for external plugins and ERC20
-        const resolution = await ledgerService.resolveTransaction(
-          serializedTxHexString,
-          loadConfig,
-          resolutionConfig,
-        );
 
         o.next({
           type: "device-signature-requested",
@@ -91,10 +84,11 @@ export const buildSignOperation =
         const sig = (await signerContext(deviceId, signer => {
           signer.setLoadConfig(loadConfig);
           // Request signature on the nano
-          return signer.signTransaction(
+          return signer.clearSignTransaction(
             account.freshAddressPath,
             serializedTxHexString,
-            resolution,
+            resolutionConfig,
+            true,
           );
         })) as EvmSignature;
 
