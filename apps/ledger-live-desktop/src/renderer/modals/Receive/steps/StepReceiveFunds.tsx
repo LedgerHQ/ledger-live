@@ -135,6 +135,7 @@ const Receive2Device = ({ name, device }: { name: string; device: Device }) => {
     </>
   );
 };
+
 const StepReceiveFunds = (props: StepProps) => {
   const {
     isAddressVerified,
@@ -154,6 +155,14 @@ const StepReceiveFunds = (props: StepProps) => {
   } = props;
   const dispatch = useDispatch();
   const receiveStakingFlowConfig = useFeature("receiveStakingFlowConfigDesktop");
+  const receivedCurrencyId: string | undefined = account?.currency?.id;
+  const isStakingEnabledForAccount =
+    !!receivedCurrencyId &&
+    receiveStakingFlowConfig?.enabled &&
+    receiveStakingFlowConfig?.params?.[receivedCurrencyId]?.enabled;
+  const isDirectStakingEnabledForAccount =
+    !!receivedCurrencyId && receiveStakingFlowConfig?.params?.[receivedCurrencyId]?.direct;
+
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   invariant(account && mainAccount, "No account given");
   const name = token ? token.name : getAccountName(account);
@@ -188,6 +197,7 @@ const StepReceiveFunds = (props: StepProps) => {
       hideQRCodeModal();
     }
   }, [device, mainAccount, transitionTo, onChangeAddressVerified, hideQRCodeModal]);
+
   const onVerify = useCallback(() => {
     // if device has changed since the beginning, we need to re-entry device
     if (device !== initialDevice.current || !isAddressVerified) {
@@ -196,16 +206,11 @@ const StepReceiveFunds = (props: StepProps) => {
     onChangeAddressVerified(null);
     onResetSkip();
   }, [device, onChangeAddressVerified, onResetSkip, transitionTo, isAddressVerified]);
+
   const onFinishReceiveFlow = useCallback(() => {
-    const id = mainAccount?.currency?.id;
-    const dismissModal = global.localStorage.getItem(`${LOCAL_STORAGE_KEY_PREFIX}${id}`) === "true";
-    if (
-      !dismissModal &&
-      !receiveNFTMode &&
-      !receiveTokenMode &&
-      receiveStakingFlowConfig?.enabled &&
-      receiveStakingFlowConfig?.params?.[id]?.enabled
-    ) {
+    const dismissModal =
+      global.localStorage.getItem(`${LOCAL_STORAGE_KEY_PREFIX}${receivedCurrencyId}`) === "true";
+    if (!dismissModal && !receiveNFTMode && !receiveTokenMode && isStakingEnabledForAccount) {
       track("button_clicked2", {
         button: "continue",
         page: window.location.hash
@@ -216,7 +221,8 @@ const StepReceiveFunds = (props: StepProps) => {
         modal: "receive",
         account: name,
       });
-      if (receiveStakingFlowConfig?.params?.[id]?.direct) {
+      // Only open EVM staking modal if the user received ETH or an EVM currency supported by the providers
+      if (isDirectStakingEnabledForAccount) {
         dispatch(
           openModal("MODAL_EVM_STAKE", {
             account: mainAccount,
@@ -233,15 +239,16 @@ const StepReceiveFunds = (props: StepProps) => {
       onClose();
     }
   }, [
-    mainAccount,
-    currencyName,
-    dispatch,
-    name,
-    onClose,
-    receiveStakingFlowConfig?.enabled,
-    receiveStakingFlowConfig?.params,
+    receivedCurrencyId,
     receiveNFTMode,
     receiveTokenMode,
+    isStakingEnabledForAccount,
+    isDirectStakingEnabledForAccount,
+    currencyName,
+    name,
+    dispatch,
+    mainAccount,
+    onClose,
     transitionTo,
   ]);
 
