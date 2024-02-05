@@ -1,5 +1,18 @@
 # live-mobile
 
+## 3.40.0-nightly.2
+
+### Minor Changes
+
+- [#6009](https://github.com/LedgerHQ/ledger-live/pull/6009) [`67da88e`](https://github.com/LedgerHQ/ledger-live/commit/67da88e89dfdddf570d1256586447501632b3d03) Thanks [@CremaFR](https://github.com/CremaFR)! - update start exchange to support swap based on provider
+
+### Patch Changes
+
+- [#6046](https://github.com/LedgerHQ/ledger-live/pull/6046) [`e345bc2`](https://github.com/LedgerHQ/ledger-live/commit/e345bc29a1c07f4ad9b409c9cf91cf1fd2571f29) Thanks [@gre](https://github.com/gre)! - Hide Arabic language support
+
+- Updated dependencies [[`8d08c2b`](https://github.com/LedgerHQ/ledger-live/commit/8d08c2ba13a0d12ba11a66e90e936f2a54c50520), [`3092dc1`](https://github.com/LedgerHQ/ledger-live/commit/3092dc1be305e39304bee223dbbe19474a2ea869), [`67da88e`](https://github.com/LedgerHQ/ledger-live/commit/67da88e89dfdddf570d1256586447501632b3d03)]:
+  - @ledgerhq/live-common@33.6.0-nightly.2
+
 ## 3.39.1-nightly.1
 
 ### Patch Changes

@@ -1,5 +1,20 @@
 # ledger-live-desktop
 
+## 2.77.0-nightly.2
+
+### Minor Changes
+
+- [#6009](https://github.com/LedgerHQ/ledger-live/pull/6009) [`67da88e`](https://github.com/LedgerHQ/ledger-live/commit/67da88e89dfdddf570d1256586447501632b3d03) Thanks [@CremaFR](https://github.com/CremaFR)! - update start exchange to support swap based on provider
+
+### Patch Changes
+
+- [#5725](https://github.com/LedgerHQ/ledger-live/pull/5725) [`8e31a75`](https://github.com/LedgerHQ/ledger-live/commit/8e31a75a1049dba5a2ffff7d6819a8948d2dd9f4) Thanks [@mle-gall](https://github.com/mle-gall)! - Adding Deeplinks support for storyly LLD
+
+- [#6010](https://github.com/LedgerHQ/ledger-live/pull/6010) [`d8c5d29`](https://github.com/LedgerHQ/ledger-live/commit/d8c5d293709b1afef720b1b300b44c651c1d9111) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Reduce eth staking modal text and content to better fit more providers, sort providers by minimum required stake. Make scrollbar more visible on modal.
+
+- Updated dependencies [[`8d08c2b`](https://github.com/LedgerHQ/ledger-live/commit/8d08c2ba13a0d12ba11a66e90e936f2a54c50520), [`3092dc1`](https://github.com/LedgerHQ/ledger-live/commit/3092dc1be305e39304bee223dbbe19474a2ea869), [`67da88e`](https://github.com/LedgerHQ/ledger-live/commit/67da88e89dfdddf570d1256586447501632b3d03)]:
+  - @ledgerhq/live-common@33.6.0-nightly.2
+
 ## 2.76.1-nightly.1
 
 ### Patch Changes

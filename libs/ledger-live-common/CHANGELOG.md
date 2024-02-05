@@ -1,5 +1,20 @@
 # @ledgerhq/live-common
 
+## 33.6.0-nightly.2
+
+### Minor Changes
+
+- [#6000](https://github.com/LedgerHQ/ledger-live/pull/6000) [`8d08c2b`](https://github.com/LedgerHQ/ledger-live/commit/8d08c2ba13a0d12ba11a66e90e936f2a54c50520) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Extract Near in its own package
+
+- [#6009](https://github.com/LedgerHQ/ledger-live/pull/6009) [`67da88e`](https://github.com/LedgerHQ/ledger-live/commit/67da88e89dfdddf570d1256586447501632b3d03) Thanks [@CremaFR](https://github.com/CremaFR)! - update start exchange to support swap based on provider
+
+### Patch Changes
+
+- [#6067](https://github.com/LedgerHQ/ledger-live/pull/6067) [`3092dc1`](https://github.com/LedgerHQ/ledger-live/commit/3092dc1be305e39304bee223dbbe19474a2ea869) Thanks [@hzheng-ledger](https://github.com/hzheng-ledger)! - fix cosmos integration test
+
+- Updated dependencies [[`67da88e`](https://github.com/LedgerHQ/ledger-live/commit/67da88e89dfdddf570d1256586447501632b3d03)]:
+  - @ledgerhq/wallet-api-exchange-module@0.3.0-nightly.0
+
 ## 33.5.2-nightly.1
 
 ### Patch Changes

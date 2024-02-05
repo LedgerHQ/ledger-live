@@ -128,7 +128,8 @@
     "@ledgerhq/live-countervalues-react": "0.1.0",
     "@ledgerhq/live-hooks": "0.1.0",
     "@ledgerhq/live-nft": "0.1.0",
-    "@ledgerhq/live-nft-react": "0.1.0"
+    "@ledgerhq/live-nft-react": "0.1.0",
+    "@ledgerhq/coin-near": "0.3.8"
   },
   "changesets": [
     "blue-berries-flash",
@@ -144,11 +145,15 @@
     "great-maps-warn",
     "grumpy-pigs-vanish",
     "heavy-birds-carry",
+    "heavy-ties-smile",
     "honest-rats-tap",
+    "khaki-tomatoes-drum",
     "lemon-mugs-poke",
     "mighty-cats-film",
+    "new-shrimps-rescue",
     "olive-lies-buy",
     "polite-bears-tickle",
+    "proud-clocks-poke",
     "proud-dragons-tan",
     "real-parents-doubt",
     "rotten-cycles-approve",
@@ -156,10 +161,12 @@
     "silly-cobras-swim",
     "silly-ears-cry",
     "six-ways-hope",
+    "small-dogs-compare",
     "spicy-mangos-train",
     "swift-socks-complain",
     "tall-rats-cry",
     "thin-snails-drum",
+    "weak-bottles-push",
     "wicked-socks-relate"
   ]
 }
