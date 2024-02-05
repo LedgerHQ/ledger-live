@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setNotificationsCards, setPortfolioCards } from "../actions/dynamicContent";
 import getUser from "~/helpers/user";
 import { developerModeSelector } from "../reducers/settings";
+import { getEnv } from "@ledgerhq/live-env";
 
 const getDesktopCards = (elem: braze.ContentCards) =>
   elem.cards.filter(card => card.extras?.platform === Platform.Desktop);
@@ -66,6 +67,7 @@ export async function useBraze() {
   const initBraze = useCallback(async () => {
     const user = await getUser();
     const brazeConfig = getBrazeConfig();
+    const isPlaywright = !!getEnv("PLAYWRIGHT_RUN");
 
     braze.initialize(brazeConfig.apiKey, {
       baseUrl: brazeConfig.endpoint,
@@ -74,6 +76,11 @@ export async function useBraze() {
       enableLogging: __DEV__,
       sessionTimeoutInSeconds: devMode ? 1 : 1800,
     });
+
+    // If it's playwright, we don't want to fetch content cards
+    if (isPlaywright) {
+      return;
+    }
 
     if (user) {
       braze.changeUser(user.id);
