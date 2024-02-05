@@ -56,7 +56,7 @@ for (let i = 0; i < expected.length; i += pagedBy) {
 
 let callCount = 0;
 
-jest.mock("@ledgerhq/live-nft/api/index", () => ({
+jest.mock("@ledgerhq/live-nft/api/simplehash", () => ({
   fetchNftsFromSimpleHash: jest.fn().mockImplementation(opts => {
     const { cursor } = opts;
     const index = cursor ? Number(cursor) : 0;
