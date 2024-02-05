@@ -1,7 +1,6 @@
 import { Probot } from "probot";
 import { upToDate } from "./features/upToDate";
 import { orchestrator } from "./features/orchestrator";
-import { autoClose } from "./features/autoClose";
 import { lintCommits } from "./features/lintCommits";
 import { generateScreenshots } from "./commands/generate-screenshots";
 import { runDesktopTestSuite } from "./commands/full-suite";
@@ -20,11 +19,6 @@ export default (app: Probot) => {
   // /full-lld-tests
   runDesktopTestSuite(app);
 
-  /* PR stuff */
-
-  // trigger to autoclose PR when not respecting guidelines
-  autoClose(app);
-
   /* CI stuff */
 
   // Report if PRs are up to date
@@ -35,6 +29,7 @@ export default (app: Probot) => {
   orchestrator(app);
 
   /* Log errors */
+
   app.onError(error => {
     app.log.error("[ERROR] Unhandled error");
     app.log.error(error);
