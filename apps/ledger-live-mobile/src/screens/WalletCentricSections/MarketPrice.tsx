@@ -11,7 +11,7 @@ import OldDeltaVariation from "../Market/DeltaVariation";
 import NewDeltaVariation from "LLM/features/Market/components/DeltaVariation";
 import Touchable from "~/components/Touchable";
 import { useSettings } from "~/hooks";
-import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 type Props = {
   currency: CryptoOrTokenCurrency;

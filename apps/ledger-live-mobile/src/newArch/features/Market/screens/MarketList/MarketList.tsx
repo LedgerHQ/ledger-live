@@ -8,7 +8,7 @@ import { AnalyticsContext } from "~/analytics/AnalyticsContext";
 import CollapsibleHeaderFlatList from "~/components/WalletTab/CollapsibleHeaderFlatList";
 import { useTranslation } from "react-i18next";
 import WalletTabSafeAreaView from "~/components/WalletTab/WalletTabSafeAreaView";
-import useFeature from "@ledgerhq/live-config/featureFlags/useFeature";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useTheme } from "styled-components/native";
 import SearchHeader from "./components/SearchHeader";
 import ListFooter from "./components/ListFooter";
