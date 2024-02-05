@@ -229,7 +229,7 @@ jobs:
         "generate-screenshots-mac",
         "report-start",
       ]
-    if: always()
+    if: ${{ !cancelled() }}
     name: Report end
     runs-on: "ubuntu-latest"
     steps:
