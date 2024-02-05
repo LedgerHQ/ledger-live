@@ -1,5 +1,4 @@
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { getEnv } from "@ledgerhq/live-env";
 import { Carousel } from "@ledgerhq/react-ui";
 import { ABTestingVariants } from "@ledgerhq/types-live";
 import React, { PropsWithChildren } from "react";
@@ -42,14 +41,13 @@ const PortfolioContentCards = ({ variant }: { variant: ABTestingVariants }) => {
   const lldPortfolioCarousel = useFeature("lldPortfolioCarousel");
   const totalAccounts = useSelector(accountsSelector).length;
   const hasInstalledApps = useSelector(hasInstalledAppsSelector);
-  const isPlaywright = !!getEnv("PLAYWRIGHT_RUN");
 
   const showCarousel = lldPortfolioCarousel?.enabled && hasInstalledApps && totalAccounts >= 0;
   useRefreshAccountsOrderingEffect({
     onMount: true,
   });
 
-  if (isPlaywright || !showCarousel || slides.length === 0) return null;
+  if (!showCarousel || slides.length === 0) return null;
   if (
     lldPortfolioCarousel?.params?.variant === ABTestingVariants.variantA &&
     variant === ABTestingVariants.variantA
