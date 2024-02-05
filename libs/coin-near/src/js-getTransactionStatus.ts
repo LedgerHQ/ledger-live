@@ -7,7 +7,10 @@ import {
   AmountRequired,
   InvalidAddressBecauseDestinationIsAlsoSource,
 } from "@ledgerhq/errors";
-import { formatCurrencyUnit, getCryptoCurrencyById } from "../../currencies";
+import {
+  formatCurrencyUnit,
+  getCryptoCurrencyById,
+} from "@ledgerhq/coin-framework/currencies/index";
 import type { Transaction, StatusErrorMap, NearAccount, TransactionStatus } from "./types";
 import {
   isValidAddress,

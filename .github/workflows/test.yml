@@ -161,13 +161,13 @@ jobs:
           path: |
             libs/ledger-live-common/src
       - uses: actions/github-script@v6
-        if: always()
+        if: ${{ !cancelled() }}
         with:
           script: |
             const fs = require("fs");
             fs.writeFileSync("summary-tests.txt", "${{ steps.test-libs.outcome }}", "utf-8");
       - uses: actions/upload-artifact@v3
-        if: always()
+        if: ${{ !cancelled() }}
         with:
           name: outputs
           path: ${{ github.workspace }}/summary-tests.txt
@@ -221,13 +221,13 @@ jobs:
             libs/ui/tests/react.spec.js-snapshots/
             libs/ui/test-results/
       - uses: actions/github-script@v6
-        if: always()
+        if: ${{ !cancelled() }}
         with:
           script: |
             const fs = require("fs");
             fs.writeFileSync("summary-ui-${{ matrix.os }}.txt", "${{ steps.test-ui.outcome }}", "utf-8");
       - uses: actions/upload-artifact@v3
-        if: always()
+        if: ${{ !cancelled() }}
         with:
           name: outputs
           path: ${{ github.workspace }}/summary-ui-${{ matrix.os }}.txt
@@ -267,14 +267,14 @@ jobs:
         run: pnpm unimported --continue --filter="!./apps/**" --filter="!./tools/**" --filter="!ledger-live...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
         shell: bash
       - uses: actions/github-script@v6
-        if: always()
+        if: ${{ !cancelled() }}
         with:
           script: |
             const fs = require("fs");
             fs.writeFileSync("summary-typecheck.txt", "${{ steps.typecheck-libs.outcome }}", "utf-8");
             fs.writeFileSync("summary-lint.txt", "${{ steps.lint-libs.outcome }}", "utf-8");
       - uses: actions/upload-artifact@v3
-        if: always()
+        if: ${{ !cancelled() }}
         with:
           name: outputs
           path: |
@@ -283,7 +283,7 @@ jobs:
 
   report:
     needs: [test-cli, test-docs, test-libraries, test-ui, codecheck-libraries, test-web-tools]
-    if: always() && !cancelled() && github.event_name == 'workflow_dispatch'
+    if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v3

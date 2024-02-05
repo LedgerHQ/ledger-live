@@ -1,5 +1,6 @@
 import React, { useState, useLayoutEffect, useCallback } from "react";
 import styled from "styled-components";
+
 const ContentWrapper = styled.div`
   position: relative;
   flex: 1;
@@ -7,16 +8,29 @@ const ContentWrapper = styled.div`
   flex-direction: column;
   overflow: hidden;
 `;
+
 const ContentScrollableContainer = styled.div<{ noScroll?: boolean; pt?: number }>(
   ({ pt = 20, noScroll, theme }) => `
   padding: ${pt}px ${noScroll ? 20 : 20 - theme.overflow.trackSize}px 40px 20px;
-  ${noScroll ? "overflow:hidden" : theme.overflow.y};
   position: relative;
   flex: 0 auto;
+  ${noScroll ? "overflow: hidden" : theme.overflow.y};
+  
+  ::-webkit-scrollbar {
+    width: 18px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    box-shadow: inset 0 0 0 12px ${theme.colors.neutral.c40};
+    border: 6px solid rgba(0,0,0,0);
+    border-radius: 12px;
+}
 `,
 );
 
-const ContentScrollableContainerGradient = styled.div.attrs<{ opacity?: number }>(p => ({
+const ContentScrollableContainerGradient = styled.div.attrs<{
+  opacity?: number;
+}>(p => ({
   style: {
     opacity: p.opacity,
   },
@@ -33,6 +47,7 @@ const ContentScrollableContainerGradient = styled.div.attrs<{ opacity?: number }
   right: 0;
   pointer-events: none;
 `;
+
 type Props = React.PropsWithRef<{
   children: React.ReactNode;
   noScroll?: boolean;
@@ -46,11 +61,13 @@ function ModalContent(
   containerRef: React.ForwardedRef<HTMLDivElement>,
 ) {
   const [isScrollable, setScrollable] = useState(false);
+
   const onHeightUpdate = useCallback(() => {
     const current = containerRef && "current" in containerRef && containerRef.current;
     if (!current || !("current" in containerRef)) return;
     setScrollable(current.scrollHeight > current.clientHeight);
   }, [containerRef]);
+
   useLayoutEffect(() => {
     if (!containerRef || !("current" in containerRef)) return;
     if (!containerRef?.current) return;
@@ -60,6 +77,7 @@ function ModalContent(
       ro.disconnect();
     };
   }, [containerRef, onHeightUpdate]);
+
   return (
     <ContentWrapper>
       <ContentScrollableContainer

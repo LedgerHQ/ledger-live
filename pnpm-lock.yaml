@@ -1,9 +1,5 @@
 lockfileVersion: '6.0'
 
-settings:
-  autoInstallPeers: false
-  excludeLinksFromLockfile: false
-
 neverBuiltDependencies:
   - blake2
 
@@ -476,8 +472,8 @@ importers:
         specifier: ^7.1.3
         version: 7.3.7
       storyly-web:
-        specifier: ^1.4.1
-        version: 1.4.1
+        specifier: ^2.8.0
+        version: 2.8.0
       styled-components:
         specifier: ^5.3.3
         version: 5.3.5(react-dom@18.2.0)(react-is@17.0.2)(react@18.2.0)
@@ -1779,6 +1775,67 @@ importers:
         specifier: ^29.1.1
         version: 29.1.1(jest@29.7.0)(typescript@5.1.3)
 
+  libs/coin-near:
+    dependencies:
+      '@ledgerhq/coin-framework':
+        specifier: workspace:^
+        version: link:../coin-framework
+      '@ledgerhq/devices':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/devices
+      '@ledgerhq/errors':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/errors
+      '@ledgerhq/live-env':
+        specifier: workspace:^
+        version: link:../env
+      '@ledgerhq/live-network':
+        specifier: workspace:^
+        version: link:../live-network
+      '@ledgerhq/logs':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/logs
+      '@ledgerhq/types-cryptoassets':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/types-cryptoassets
+      '@ledgerhq/types-live':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/types-live
+      bignumber.js:
+        specifier: ^9.1.2
+        version: 9.1.2
+      expect:
+        specifier: ^27.4.6
+        version: 27.5.1
+      invariant:
+        specifier: ^2.2.2
+        version: 2.2.4
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+      near-api-js:
+        specifier: ^0.44.2
+        version: 0.44.2
+      rxjs:
+        specifier: ^7.8.1
+        version: 7.8.1
+    devDependencies:
+      '@types/invariant':
+        specifier: ^2.2.2
+        version: 2.2.36
+      '@types/jest':
+        specifier: ^29.5.10
+        version: 29.5.10
+      '@types/lodash':
+        specifier: ^4.14.191
+        version: 4.14.198
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0
+      ts-jest:
+        specifier: ^29.1.1
+        version: 29.1.1(jest@29.7.0)(typescript@5.1.3)
+
   libs/coin-polkadot:
     dependencies:
       '@ledgerhq/coin-framework':
@@ -2050,6 +2107,9 @@ importers:
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../coin-framework
+      '@ledgerhq/coin-near':
+        specifier: workspace:^
+        version: link:../coin-near
       '@ledgerhq/coin-polkadot':
         specifier: workspace:^
         version: link:../coin-polkadot
@@ -2317,9 +2377,6 @@ importers:
       minimatch:
         specifier: ^5.1.0
         version: 5.1.0
-      near-api-js:
-        specifier: ^0.44.2
-        version: 0.44.2
       object-hash:
         specifier: ^2.2.0
         version: 2.2.0
@@ -19851,16 +19908,6 @@ packages:
       shell-quote: 1.7.3
     dev: false
 
-  /@sentry-internal/tracing@7.45.0:
-    resolution: {integrity: sha512-0aIDY2OvUX7k2XHaimOlWkboXoQvJ9dEKvfpu0Wh0YxfUTGPa+wplUdg3WVdkk018sq1L11MKmj4MPZyYUvXhw==}
-    engines: {node: '>=8'}
-    dependencies:
-      '@sentry/core': 7.45.0
-      '@sentry/types': 7.45.0
-      '@sentry/utils': 7.45.0
-      tslib: 1.14.1
-    dev: false
-
   /@sentry-internal/tracing@7.76.0:
     resolution: {integrity: sha512-QQVIv+LS2sbGf/e5P2dRisHzXpy02dAcLqENLPG4sZ9otRaFNjdFYEqnlJ4qko+ORpJGQEQp/BX7Q/qzZQHlAg==}
     engines: {node: '>=8'}
@@ -19877,18 +19924,6 @@ packages:
       '@sentry/core': 7.84.0
       '@sentry/types': 7.84.0
       '@sentry/utils': 7.84.0
-    dev: false
-
-  /@sentry/browser@7.45.0:
-    resolution: {integrity: sha512-/dUrUwnI34voMj+jSJT7b5Jun+xy1utVyzzwTq3Oc22N+SB17ZOX9svZ4jl1Lu6tVJPVjPyvL6zlcbrbMwqFjg==}
-    engines: {node: '>=8'}
-    dependencies:
-      '@sentry-internal/tracing': 7.45.0
-      '@sentry/core': 7.45.0
-      '@sentry/replay': 7.45.0
-      '@sentry/types': 7.45.0
-      '@sentry/utils': 7.45.0
-      tslib: 1.14.1
     dev: false
 
   /@sentry/browser@7.76.0:
@@ -20043,15 +20078,6 @@ packages:
       tslib: 1.14.1
     dev: false
 
-  /@sentry/core@7.45.0:
-    resolution: {integrity: sha512-xJfdTS4lRmHvZI/A5MazdnKhBJFkisKu6G9EGNLlZLre+6W4PH5sb7QX4+xoBdqG7v10Jvdia112vi762ojO2w==}
-    engines: {node: '>=8'}
-    dependencies:
-      '@sentry/types': 7.45.0
-      '@sentry/utils': 7.45.0
-      tslib: 1.14.1
-    dev: false
-
   /@sentry/core@7.76.0:
     resolution: {integrity: sha512-M+ptkCTeCNf6fn7p2MmEb1Wd9/JXUWxIT/0QEc+t11DNR4FYy1ZP2O9Zb3Zp2XacO7ORrlL3Yc+VIfl5JTgjfw==}
     engines: {node: '>=8'}
@@ -20184,15 +20210,6 @@ packages:
       react: 18.2.0
     dev: false
 
-  /@sentry/replay@7.45.0:
-    resolution: {integrity: sha512-smM7FIcFIyKu30BqCl8BzLo1gH/z9WwXdGX6V0fNvHab9fJZ09+xjFn+LmIyo6N8H8jjwsup0+yQ12kiF/ZsEw==}
-    engines: {node: '>=12'}
-    dependencies:
-      '@sentry/core': 7.45.0
-      '@sentry/types': 7.45.0
-      '@sentry/utils': 7.45.0
-    dev: false
-
   /@sentry/replay@7.76.0:
     resolution: {integrity: sha512-OACT7MfMHC/YGKnKST8SF1d6znr3Yu8fpUpfVVh2t9TNeh3+cQJVTOliHDqLy+k9Ljd5FtitgSn4IHtseCHDLQ==}
     engines: {node: '>=12'}
@@ -20225,11 +20242,6 @@ packages:
     engines: {node: '>=6'}
     dev: false
 
-  /@sentry/types@7.45.0:
-    resolution: {integrity: sha512-iFt7msfUK8LCodFF3RKUyaxy9tJv/gpWhzxUFyNxtuVwlpmd+q6mtsFGn8Af3pbpm8A+MKyz1ebMwXj0PQqknw==}
-    engines: {node: '>=8'}
-    dev: false
-
   /@sentry/types@7.76.0:
     resolution: {integrity: sha512-vj6z+EAbVrKAXmJPxSv/clpwS9QjPqzkraMFk2hIdE/kii8s8kwnkBwTSpIrNc8GnzV3qYC4r3qD+BXDxAGPaw==}
     engines: {node: '>=8'}
@@ -20250,14 +20262,6 @@ packages:
     engines: {node: '>=6'}
     dependencies:
       '@sentry/types': 6.19.7
-      tslib: 1.14.1
-    dev: false
-
-  /@sentry/utils@7.45.0:
-    resolution: {integrity: sha512-aTY7qqtNUudd09SH5DVSKMm3iQ6ZeWufduc0I9bPZe6UMM09BDc4KmjmrzRkdQ+VaOmHo7+v+HZKQk5f+AbuTQ==}
-    engines: {node: '>=8'}
-    dependencies:
-      '@sentry/types': 7.45.0
       tslib: 1.14.1
     dev: false
 
@@ -40223,7 +40227,7 @@ packages:
     resolution: {integrity: sha512-rMyFe1+jnyAAf+NHwTclDz0eAaLkVDdKVHHBFWsBWHnnh5YeJMNWWsv7AbFYXfK3oTqvL7VTWkhNLu1jX24D+g==}
     engines: {node: ^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0}
     dependencies:
-      '@babel/code-frame': 7.22.13
+      '@babel/code-frame': 7.23.5
       '@jest/types': 27.5.1
       '@types/stack-utils': 2.0.2
       chalk: 4.1.2
@@ -45118,7 +45122,7 @@ packages:
       http-errors: 1.8.1
       js-sha256: 0.9.0
       mustache: 4.2.0
-      node-fetch: 2.6.9
+      node-fetch: 2.7.0
       text-encoding-utf-8: 1.0.2
       tweetnacl: 1.0.3
     transitivePeerDependencies:
@@ -52534,11 +52538,11 @@ packages:
       react-native: 0.72.6(@babel/core@7.23.2)(react@18.2.0)
     dev: false
 
-  /storyly-web@1.4.1:
-    resolution: {integrity: sha512-U99WLCAiBw5cjbV9y0Q6Yb1pgUcWDdpp8au5+gBm+zoyCTBO38aFFlY3mHasisJy8VPzPwG14lzzYaiJ8TLVdQ==}
+  /storyly-web@2.8.0:
+    resolution: {integrity: sha512-n1msd4xsoKXCQEItRx5IEuQnepmYxjU3/HaByPpfSinOzxQP6J5r8yauJ6HIvXoiP5EtYuznyLWarZrk1szSGA==}
     dependencies:
-      '@babel/runtime': 7.22.10
-      '@sentry/browser': 7.45.0
+      '@babel/runtime': 7.23.2
+      '@sentry/browser': 7.84.0
       canvas-confetti: 1.6.0
       copy-to-clipboard: 3.3.1
       isotope-horizontal: 2.0.1
@@ -59227,6 +59231,7 @@ packages:
     resolution: {directory: libs/ui/packages/crypto-icons, type: directory}
     id: file:libs/ui/packages/crypto-icons
     name: '@ledgerhq/crypto-icons-ui'
+    version: 1.0.0
     peerDependencies:
       '@types/react': '*'
       react: '*'
@@ -59246,6 +59251,7 @@ packages:
     resolution: {directory: libs/ui/packages/icons, type: directory}
     id: file:libs/ui/packages/icons
     name: '@ledgerhq/icons-ui'
+    version: 0.6.2
     peerDependencies:
       '@types/react': '*'
       react: '*'
@@ -59269,3 +59275,7 @@ packages:
     dependencies:
       commander: 2.20.3
     dev: false
+
+settings:
+  autoInstallPeers: false
+  excludeLinksFromLockfile: false

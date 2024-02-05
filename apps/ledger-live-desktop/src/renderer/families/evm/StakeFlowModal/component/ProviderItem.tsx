@@ -1,7 +1,6 @@
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import { Flex, Icon, Link, Tag as TagCore, Text } from "@ledgerhq/react-ui";
-import { ExternalLinkMedium } from "@ledgerhq/react-ui/assets/icons";
+import { Flex, Icon, Tag as TagCore, Text } from "@ledgerhq/react-ui";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import styled, { DefaultTheme, StyledComponent } from "styled-components";
@@ -34,12 +33,11 @@ export const Tag = styled(TagCore)`
 
 type Props = {
   provider: ListProvider;
-  infoOnClick(_: ListProvider): void;
   stakeOnClick(_: StakeOnClickProps): void;
   redirectIfOnlyProvider(_: StakeOnClickProps): void;
 };
 
-const ProviderItem = ({ provider, infoOnClick, stakeOnClick, redirectIfOnlyProvider }: Props) => {
+const ProviderItem = ({ provider, stakeOnClick, redirectIfOnlyProvider }: Props) => {
   const { t, i18n } = useTranslation();
 
   const localManifest = useLocalLiveAppManifest(provider.liveAppId);
@@ -56,14 +54,6 @@ const ProviderItem = ({ provider, infoOnClick, stakeOnClick, redirectIfOnlyProvi
   const stakeLink = useCallback(() => {
     if (manifest) stakeOnClick({ provider, manifest });
   }, [provider, stakeOnClick, manifest]);
-
-  const infoLink = useCallback(
-    (event: React.MouseEvent<HTMLAnchorElement>) => {
-      infoOnClick(provider);
-      event.stopPropagation();
-    },
-    [infoOnClick, provider],
-  );
 
   return (
     <Container
@@ -93,17 +83,6 @@ const ProviderItem = ({ provider, infoOnClick, stakeOnClick, redirectIfOnlyProvi
         <Text variant="paragraph" fontSize={13} color="neutral.c70">
           {t(`ethereum.stake.${provider.id}.description`)}
         </Text>
-        <Link
-          iconPosition="right"
-          Icon={ExternalLinkMedium}
-          onClick={infoLink}
-          type="color"
-          color="primary.c80"
-          mt={2}
-          style={{ fontSize: "14px" }}
-        >
-          {t(`ethereum.stake.${provider.id}.supportLink`)}
-        </Link>
       </Flex>
       <Flex width={40} justifyContent="center" alignItems="center">
         <Icon name="ChevronRight" size={25} />

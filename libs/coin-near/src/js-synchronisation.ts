@@ -1,10 +1,10 @@
 import type { Account } from "@ledgerhq/types-live";
-import { encodeAccountId } from "../../account";
-import type { GetAccountShape } from "../../bridge/jsHelpers";
-import { makeSync, makeScanAccounts, mergeOps } from "../../bridge/jsHelpers";
+import { encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
+import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { makeSync, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getAccount, getOperations } from "./api";
 
-const getAccountShape: GetAccountShape = async info => {
+export const getAccountShape: GetAccountShape = async info => {
   const { address, initialAccount, currency, derivationMode } = info;
   const oldOperations = initialAccount?.operations || [];
 
@@ -48,7 +48,5 @@ const postSync = (initial: Account, synced: Account): Account => {
 
   return synced;
 };
-
-export const scanAccounts = makeScanAccounts({ getAccountShape });
 
 export const sync = makeSync({ getAccountShape, postSync });

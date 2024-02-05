@@ -45,6 +45,9 @@ export type StartExchangeInput = {
   deviceId: string;
   exchangeType: number;
   appVersion?: string;
+  provider?: string;
+  fromAccountId?: string;
+  toAccountId?: string;
 };
 
 interface CompleteExchangeInputCommon {

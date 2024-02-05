@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
 import type { Transaction, NearAccount } from "./types";
-import { getMainAccount } from "../../account";
+import { getMainAccount } from "@ledgerhq/coin-framework/account/index";
 import { getMaxAmount } from "./logic";
 import { createTransaction } from "./js-transaction";
 import getEstimatedFees from "./js-getFeesForTransaction";
