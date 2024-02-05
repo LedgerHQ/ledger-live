@@ -105,6 +105,9 @@ importers:
 
   apps/cli:
     dependencies:
+      '@ledgerhq/coin-bitcoin':
+        specifier: workspace:^
+        version: link:../../libs/coin-bitcoin
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../../libs/coin-framework
