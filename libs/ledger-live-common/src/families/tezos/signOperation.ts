@@ -116,8 +116,9 @@ export const signOperation: SignOperationFnSignature<Transaction> = ({
           }
 
           const signature = await ledgerSigner.sign(
-            forgedBytes,
-            Uint8Array.from(Buffer.from("0x03", "hex")),
+            Buffer.concat([Buffer.from("03", "hex"), Buffer.from(forgedBytes, "hex")]).toString(
+              "hex",
+            ),
           );
 
           o.next({ type: "device-signature-granted" });
@@ -148,7 +149,7 @@ export const signOperation: SignOperationFnSignature<Transaction> = ({
             type: "signed",
             signedOperation: {
               operation,
-              signature: signature.sbytes.slice(4),
+              signature: signature.sbytes.slice(2),
             },
           });
         }
