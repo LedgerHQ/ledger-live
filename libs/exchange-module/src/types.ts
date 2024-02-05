@@ -13,6 +13,13 @@ export type ExchangeStartParams = {
   exchangeType: "FUND" | "SELL" | "SWAP" | "FUND_NG" | "SELL_NG" | "SWAP_NG";
 };
 
+export type ExchangeStartSwapParams = ExchangeStartParams & {
+  provider: string;
+  fromAccountId: string;
+  toAccountId: string;
+  tokenCurrency: string;
+};
+
 export type ExchangeStartResult = {
   transactionId: string;
 };

@@ -4,6 +4,7 @@ import {
   ExchangeCompleteResult,
   ExchangeStartParams,
   ExchangeStartResult,
+  ExchangeStartSwapParams,
 } from "./types";
 
 export * from "./types";
@@ -21,6 +22,33 @@ export class ExchangeModule extends CustomModule {
       "custom.exchange.start",
       {
         exchangeType,
+      },
+    );
+
+    return result.transactionId;
+  }
+
+  /**
+   * Start the swap process by generating a nonce on Ledger device
+   * @param exchangeType - used by the exchange transport to discern between swap/sell/fund
+   *
+   * @returns - A transaction ID used to complete the exchange process
+   */
+  async startSwap({
+    exchangeType,
+    provider,
+    fromAccountId,
+    toAccountId,
+    tokenCurrency,
+  }: ExchangeStartSwapParams) {
+    const result = await this.request<ExchangeStartSwapParams, ExchangeStartResult>(
+      "custom.exchange.start",
+      {
+        exchangeType,
+        provider,
+        fromAccountId,
+        toAccountId,
+        tokenCurrency,
       },
     );
 

@@ -42,12 +42,13 @@ export function usePTXCustomHandlers(manifest: WebviewProps["manifest"]) {
         tracking,
         manifest,
         uiHooks: {
-          "custom.exchange.start": ({ exchangeType, onSuccess, onCancel }) => {
+          "custom.exchange.start": ({ exchangeParams, onSuccess, onCancel }) => {
             navigation.navigate(NavigatorName.PlatformExchange, {
               screen: ScreenName.PlatformStartExchange,
               params: {
                 request: {
-                  exchangeType: ExchangeType[exchangeType],
+                  ...exchangeParams,
+                  exchangeType: ExchangeType[exchangeParams.exchangeType],
                 },
                 onResult: result => {
                   if (result.startExchangeError) {
