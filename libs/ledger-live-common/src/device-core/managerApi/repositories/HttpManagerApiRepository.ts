@@ -23,7 +23,10 @@ export class HttpManagerApiRepository implements ManagerApiRepository {
     this.liveCommonVersion = liveCommonVersion;
   }
 
-  readonly fetchLatestFirmware = makeLRUCache(
+  // NB: we are explicitly specifying the type because TypeScript cannot infer
+  // properly the return type of `makeLRUCache` without using `any` for the
+  // parameters.
+  readonly fetchLatestFirmware: ManagerApiRepository["fetchLatestFirmware"] = makeLRUCache(
     async ({ current_se_firmware_final_version, device_version, providerId, userId }) => {
       const salt = getUserHashes(userId).firmwareSalt;
       const {
@@ -58,7 +61,7 @@ export class HttpManagerApiRepository implements ManagerApiRepository {
     a => `${a.current_se_firmware_final_version}_${a.device_version}_${a.providerId}`,
   );
 
-  readonly fetchMcus = makeLRUCache(
+  readonly fetchMcus: ManagerApiRepository["fetchMcus"] = makeLRUCache(
     async () => {
       const { data } = await network({
         method: "GET",
@@ -74,7 +77,7 @@ export class HttpManagerApiRepository implements ManagerApiRepository {
     () => "",
   );
 
-  readonly getDeviceVersion = makeLRUCache(
+  readonly getDeviceVersion: ManagerApiRepository["getDeviceVersion"] = makeLRUCache(
     async ({ targetId, providerId }) => {
       const {
         data,
@@ -108,7 +111,7 @@ export class HttpManagerApiRepository implements ManagerApiRepository {
     ({ targetId, providerId }) => `${targetId}_${providerId}`,
   );
 
-  readonly getCurrentOSU = makeLRUCache(
+  readonly getCurrentOSU: ManagerApiRepository["getCurrentOSU"] = makeLRUCache(
     async input => {
       const { data } = await network({
         method: "POST",
@@ -129,7 +132,7 @@ export class HttpManagerApiRepository implements ManagerApiRepository {
     a => `${a.version}_${a.deviceId}_${a.providerId}`,
   );
 
-  readonly getCurrentFirmware = makeLRUCache(
+  readonly getCurrentFirmware: ManagerApiRepository["getCurrentFirmware"] = makeLRUCache(
     async input => {
       const {
         data,
@@ -154,7 +157,7 @@ export class HttpManagerApiRepository implements ManagerApiRepository {
     a => `${a.version}_${a.deviceId}_${a.providerId}`,
   );
 
-  readonly getFinalFirmwareById = makeLRUCache(
+  readonly getFinalFirmwareById: ManagerApiRepository["getFinalFirmwareById"] = makeLRUCache(
     async id => {
       const {
         data,
@@ -174,7 +177,7 @@ export class HttpManagerApiRepository implements ManagerApiRepository {
     id => String(id),
   );
 
-  readonly getAppsByHash = makeLRUCache(
+  readonly getAppsByHash: ManagerApiRepository["getAppsByHash"] = makeLRUCache(
     async hashes => {
       const {
         data,
@@ -200,7 +203,7 @@ export class HttpManagerApiRepository implements ManagerApiRepository {
     hashes => `${this.managerApiBase}_${hashes.join("-")}`,
   );
 
-  readonly catalogForDevice = makeLRUCache(
+  readonly catalogForDevice: ManagerApiRepository["catalogForDevice"] = makeLRUCache(
     async params => {
       const { provider, targetId, firmwareVersion } = params;
       const {
@@ -234,14 +237,14 @@ export class HttpManagerApiRepository implements ManagerApiRepository {
     forceProvider?: number,
   ) => {
     const deviceVersion = await this.getDeviceVersion({
-      deviceInfo: deviceInfo.targetId,
-      provider: getProviderIdUseCase({ deviceInfo, forceProvider }),
+      targetId: deviceInfo.targetId,
+      providerId: getProviderIdUseCase({ deviceInfo, forceProvider }),
     });
 
     const seFirmwareVersion = await this.getCurrentFirmware({
       version: deviceInfo.version,
       deviceId: deviceVersion.id,
-      provider: getProviderIdUseCase({ deviceInfo, forceProvider }),
+      providerId: getProviderIdUseCase({ deviceInfo, forceProvider }),
     });
 
     const { data }: { data: LanguagePackageResponseEntity[] } = await network({
