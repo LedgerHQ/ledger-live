@@ -19,7 +19,7 @@ if (process.env.ONLY_INTEGRATION_TESTS) {
 }
 
 if (process.env.USE_BACKEND_MOCKS) {
-  testRegex = ["algorand/bridge.integration.test.ts"];
+  testRegex = ["algorand/bridge.integration.test.ts", "osmosis.integration.test.ts$"];
 }
 
 const reporters = ["default"];
