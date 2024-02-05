@@ -21,7 +21,7 @@ const targets = [
 ];
 
 // Coins using coin-framework
-const familiesWPackage = ["algorand", "evm", "polkadot"];
+const familiesWPackage = ["algorand", "evm", "near", "polkadot"];
 
 cd(path.join(__dirname, "..", "src"));
 await rimraf("generated");

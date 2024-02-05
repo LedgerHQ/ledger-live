@@ -30,7 +30,9 @@ function inferTransactions(
   });
 }
 
-export default {
-  options,
-  inferTransactions,
-};
+export default function makeCliTools() {
+  return {
+    options,
+    inferTransactions,
+  };
+}

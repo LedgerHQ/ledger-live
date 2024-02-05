@@ -3,18 +3,25 @@ import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import type { Transaction } from "./types";
-import type { Operation, Account, SignOperationFnSignature } from "@ledgerhq/types-live";
-import { open, close } from "../../hw";
-import { encodeOperationId } from "../../operation";
-import Near from "@ledgerhq/hw-app-near";
+import type {
+  Operation,
+  Account,
+  SignOperationFnSignature,
+  DeviceId,
+  SignOperationEvent,
+  OperationType,
+} from "@ledgerhq/types-live";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { buildTransaction } from "./js-buildTransaction";
+import { NearAddress, NearSignature, NearSigner } from "./signer";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
 
 const buildOptimisticOperation = (
   account: Account,
   transaction: Transaction,
   fee: BigNumber,
 ): Operation => {
-  let type;
+  let type: OperationType;
   let value = new BigNumber(transaction.amount);
 
   switch (transaction.mode) {
@@ -50,22 +57,39 @@ const buildOptimisticOperation = (
   return operation;
 };
 
-const signOperation: SignOperationFnSignature<Transaction> = ({ account, deviceId, transaction }) =>
-  new Observable(o => {
-    async function main() {
-      const transport = await open(deviceId);
-      try {
+/**
+ * Sign Transaction with Ledger hardware
+ */
+export const buildSignOperation =
+  (
+    signerContext: SignerContext<NearSigner, NearAddress | NearSignature>,
+  ): SignOperationFnSignature<Transaction> =>
+  ({
+    account,
+    transaction,
+    deviceId,
+  }: {
+    account: Account;
+    transaction: Transaction;
+    deviceId: DeviceId;
+  }): Observable<SignOperationEvent> =>
+    new Observable(o => {
+      async function main() {
         o.next({ type: "device-signature-requested" });
 
         if (!transaction.fees) {
           throw new FeeNotLoaded();
         }
 
-        const near = new Near(transport);
-        const { publicKey } = await near.getAddress(account.freshAddressPath);
+        const { publicKey } = (await signerContext(deviceId, signer =>
+          signer.getAddress(account.freshAddressPath),
+        )) as NearAddress;
         const unsigned = await buildTransaction(account, transaction, publicKey);
 
-        const response = await near.signTransaction(unsigned.encode(), account.freshAddressPath);
+        const response = (await signerContext(deviceId, signer =>
+          signer.signTransaction(unsigned.encode(), account.freshAddressPath),
+        )) as NearSignature;
+
         const signedTransaction = new nearAPI.transactions.SignedTransaction({
           transaction: unsigned,
           signature: new nearAPI.transactions.Signature({
@@ -90,14 +114,12 @@ const signOperation: SignOperationFnSignature<Transaction> = ({ account, deviceI
             signature: Buffer.from(signedSerializedTx).toString("base64"),
           },
         });
-      } finally {
-        close(transport, deviceId);
       }
-    }
-    main().then(
-      () => o.complete(),
-      e => o.error(e),
-    );
-  });
 
-export default signOperation;
+      main().then(
+        () => o.complete(),
+        e => o.error(e),
+      );
+    });
+
+export default buildSignOperation;
