@@ -38,7 +38,7 @@ export function listAppsUseCase(
   managerApiRepository: ManagerApiRepository = HttpManagerApiRepositoryFactory.getInstance(),
 ): Observable<ListAppsEvent> {
   return listAppsV2Enabled
-    ? listAppsV1(transport, deviceInfo)
+    ? listAppsV1(transport, deviceInfo, managerApiRepository)
     : listAppsV2({
         transport,
         deviceInfo,
