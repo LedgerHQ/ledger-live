@@ -27,6 +27,7 @@ import MarketDataProvider from "~/renderer/screens/market/MarketDataProviderWrap
 import { ConnectEnvsToSentry } from "~/renderer/components/ConnectEnvsToSentry";
 import PostOnboardingProviderWrapped from "~/renderer/components/PostOnboardingHub/logic/PostOnboardingProviderWrapped";
 import { useBraze } from "./hooks/useBraze";
+import { StorylyProvider } from "~/storyly/StorylyProvider";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 const reloadApp = (event: KeyboardEvent) => {
   if ((event.ctrlKey || event.metaKey) && event.key === "r") {
@@ -78,7 +79,9 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
                           <DrawerProvider>
                             <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
                               <MarketDataProvider>
-                                <Default />
+                                <StorylyProvider>
+                                  <Default />
+                                </StorylyProvider>
                               </MarketDataProvider>
                             </NftMetadataProvider>
                           </DrawerProvider>

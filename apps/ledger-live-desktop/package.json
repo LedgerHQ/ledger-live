@@ -129,7 +129,7 @@
     "rxjs": "^7.8.1",
     "secp256k1": "^4.0.2",
     "semver": "^7.1.3",
-    "storyly-web": "^1.4.1",
+    "storyly-web": "^2.8.0",
     "styled-components": "^5.3.3",
     "styled-system": "^5.1.5",
     "timemachine": "^0.3.2",
