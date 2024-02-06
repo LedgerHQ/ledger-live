@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.40.0-nightly.3
+
+### Patch Changes
+
+- [#6035](https://github.com/LedgerHQ/ledger-live/pull/6035) [`eb7bfcb`](https://github.com/LedgerHQ/ledger-live/commit/eb7bfcbad87905929c29d1a6980c0dfa313ceb0f) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Add Stader and Figment to evm staking modal, ensure modal is scrollable.
+
 ## 3.40.0-nightly.2
 
 ### Minor Changes
