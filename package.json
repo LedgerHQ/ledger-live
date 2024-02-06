@@ -82,6 +82,7 @@
     "nft": "pnpm --filter live-nft",
     "nft-react": "pnpm --filter live-nft-react",
     "bot:github": "pnpm --filter live-github-bot",
+    "ljs:crypto-utils": "pnpm --filter crypto-utils",
     "ljs:cryptoassets": "pnpm --filter cryptoassets",
     "ljs:devices": "pnpm --filter devices",
     "ljs:errors": "pnpm --filter errors",

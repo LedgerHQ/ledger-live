@@ -2756,9 +2756,6 @@ importers:
       bip32-path:
         specifier: ^0.4.2
         version: 0.4.2
-      bs58:
-        specifier: ^4.0.1
-        version: 4.0.1
       bs58check:
         specifier: ^2.1.2
         version: 2.1.2
@@ -2970,9 +2967,6 @@ importers:
       bs58:
         specifier: ^4.0.1
         version: 4.0.1
-      bs58check:
-        specifier: ^2.1.2
-        version: 2.1.2
       invariant:
         specifier: ^2.2.4
         version: 2.2.4
