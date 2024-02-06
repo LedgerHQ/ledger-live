@@ -222,7 +222,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
         }}
         keyExtractor={(_: unknown, index: number) => String(index)}
         showsVerticalScrollIndicator={false}
-        testID={showAssets ? "PortfolioAccountsList" : "PortfolioEmptyAccount"}
+        testID={showAssets ? "PortfolioAccountsList" : "PortfolioEmptyList"}
       />
       <AddAccountsModal
         navigation={navigation as unknown as BaseNavigation}

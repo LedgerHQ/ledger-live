@@ -20,6 +20,8 @@ libs/ui/                                                 @ledgerhq/live-hub
 libs/live-hooks/										 @ledgerhq/live-hub
 libs/live-countervalues/								 @ledgerhq/live-hub
 libs/live-countervalues-react/ 						     @ledgerhq/live-hub
+libs/live-nft/                                           @ledgerhq/live-hub
+libs/live-nft-react/                                     @ledgerhq/live-hub
 
 # Blockchain team
 .github/**/bot-*.yml                                     @ledgerhq/live-blockchain-support
@@ -90,6 +92,9 @@ libs/**/types-devices/                                   @ledgerhq/live-devices
 libs/ledger-live-common/src/apps/                        @ledgerhq/live-devices
 libs/ledger-live-common/src/hw/                          @ledgerhq/live-devices
 libs/ledger-live-common/src/manager/                     @ledgerhq/live-devices
+libs/ledger-live-common/src/device/                      @ledgerhq/live-devices
+libs/ledger-live-common/src/device-react/                @ledgerhq/live-devices
+libs/ledger-live-common/src/device-core/                 @ledgerhq/live-devices
 
 # Recover team
 apps/ledger-live-desktop/src/renderer/components/RecoverBanner/         @ledgerhq/recover-software

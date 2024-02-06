@@ -3,7 +3,6 @@
 import semver from "semver";
 import chunk from "lodash/chunk";
 import type { DeviceModelId } from "@ledgerhq/devices";
-import { UnknownMCU } from "@ledgerhq/errors";
 import ManagerAPI from "./api";
 import { getProviderId } from "./provider";
 import type {
@@ -89,53 +88,7 @@ const CacheAPI = {
       : [hash];
   },
   canHandleInstall,
-  getLatestFirmwareForDevice: async (
-    deviceInfo: DeviceInfo,
-  ): Promise<FirmwareUpdateContext | null> => {
-    const mcusPromise = ManagerAPI.getMcus();
-    // Get device infos from targetId
-    const deviceVersion = await ManagerAPI.getDeviceVersion(
-      deviceInfo.targetId,
-      getProviderId(deviceInfo),
-    );
-    let osu;
 
-    if (deviceInfo.isOSU) {
-      osu = await ManagerAPI.getCurrentOSU({
-        deviceId: deviceVersion.id,
-        provider: getProviderId(deviceInfo),
-        version: deviceInfo.version,
-      });
-    } else {
-      // Get firmware infos with firmware name and device version
-      const seFirmwareVersion = await ManagerAPI.getCurrentFirmware({
-        version: deviceInfo.version,
-        deviceId: deviceVersion.id,
-        provider: getProviderId(deviceInfo),
-      });
-      // Fetch next possible firmware
-      osu = await ManagerAPI.getLatestFirmware({
-        current_se_firmware_final_version: seFirmwareVersion.id,
-        device_version: deviceVersion.id,
-        provider: getProviderId(deviceInfo),
-      });
-    }
-
-    if (!osu) {
-      return null;
-    }
-
-    const final = await ManagerAPI.getFinalFirmwareById(osu.next_se_firmware_final_version);
-    const mcus = await mcusPromise;
-    const currentMcuVersion = mcus.find(mcu => mcu.name === deviceInfo.mcuVersion);
-    if (!currentMcuVersion) throw new UnknownMCU();
-    const shouldFlashMCU = !final.mcu_versions.includes(currentMcuVersion.id);
-    return {
-      final,
-      osu,
-      shouldFlashMCU,
-    };
-  },
   // get list of available languages for a given deviceInfo
   getAvailableLanguagesDevice: async (deviceInfo: DeviceInfo): Promise<Language[]> => {
     const languagePackages = await ManagerAPI.getLanguagePackagesForDevice(deviceInfo);

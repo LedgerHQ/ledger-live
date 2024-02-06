@@ -45,8 +45,8 @@ import {
   resultMock,
   secureChannelMock,
 } from "../socket/socket.mock";
-import { getUserHashes } from "../user";
 import { getProviderId } from "./provider";
+import { fetchMcusUseCase } from "../device/use-cases/fetchMcusUseCase";
 
 declare global {
   namespace NodeJS {
@@ -207,22 +207,6 @@ const listCategories = async (): Promise<Array<Category>> => {
   return r.data;
 };
 
-const getMcus: () => Promise<any> = makeLRUCache(
-  async () => {
-    const { data } = await network({
-      method: "GET",
-      url: URL.format({
-        pathname: `${getEnv("MANAGER_API_BASE")}/mcu_versions`,
-        query: {
-          livecommonversion,
-        },
-      }),
-    });
-    return data;
-  },
-  () => getEnv("MANAGER_API_BASE"),
-);
-
 const compatibleMCUForDeviceInfo = (
   mcus: McuVersion[],
   deviceInfo: DeviceInfo,
@@ -285,48 +269,6 @@ const getLanguagePackagesForDevice = async (deviceInfo: DeviceInfo): Promise<Lan
 
   return packages;
 };
-
-const getLatestFirmware: (arg0: {
-  current_se_firmware_final_version: Id;
-  device_version: Id;
-  provider: number;
-}) => Promise<OsuFirmware | null | undefined> = makeLRUCache(
-  async ({ current_se_firmware_final_version, device_version, provider }) => {
-    const salt = getUserHashes().firmwareSalt;
-    const {
-      data,
-    }: {
-      data: {
-        result: string;
-        se_firmware_osu_version: OsuFirmware;
-      };
-    } = await network({
-      method: "POST",
-      url: URL.format({
-        pathname: `${getEnv("MANAGER_API_BASE")}/get_latest_firmware`,
-        query: {
-          livecommonversion,
-          salt,
-        },
-      }),
-      data: {
-        current_se_firmware_final_version,
-        device_version,
-        provider,
-      },
-    });
-
-    if (data.result === "null") {
-      return null;
-    }
-
-    return data.se_firmware_osu_version;
-  },
-  a =>
-    `${getEnv("MANAGER_API_BASE")}_${a.current_se_firmware_final_version}_${a.device_version}_${
-      a.provider
-    }`,
-);
 
 const getCurrentOSU: (input: {
   version: string;
@@ -636,7 +578,7 @@ const installMcu = (
 };
 
 function retrieveMcuVersion(finalFirmware: FinalFirmware): Promise<McuVersion | undefined> {
-  return getMcus()
+  return fetchMcusUseCase()
     .then(mcus =>
       mcus.filter(deviceInfo => {
         const provider = getProviderId(deviceInfo);
@@ -657,9 +599,7 @@ const API = {
   listApps,
   listInstalledApps,
   listCategories,
-  getMcus,
   getLanguagePackagesForDevice,
-  getLatestFirmware,
   getAppsByHash,
   getCurrentOSU,
   compatibleMCUForDeviceInfo,

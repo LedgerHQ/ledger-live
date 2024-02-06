@@ -22,7 +22,7 @@ import {
   GENESIS_PASS_COLLECTION_CONTRACT,
   hasNftInAccounts,
   INFINITY_PASS_COLLECTION_CONTRACT,
-} from "@ledgerhq/live-common/nft/helpers";
+} from "@ledgerhq/live-nft";
 import createStore from "../createStore";
 import { currentRouteNameRef, previousRouteNameRef } from "./screenRefs";
 import { useCallback, useContext } from "react";

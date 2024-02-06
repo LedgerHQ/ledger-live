@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Provider, useSelector } from "react-redux";
 import { Store } from "redux";
 import { HashRouter as Router } from "react-router-dom";
-import { NftMetadataProvider } from "@ledgerhq/live-common/nft/NftMetadataProvider/index";
+import { NftMetadataProvider } from "@ledgerhq/live-nft-react";
+import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import "./global.css";
 import "tippy.js/dist/tippy.css";
 import "tippy.js/animations/shift-away.css";
@@ -26,6 +27,7 @@ import MarketDataProvider from "~/renderer/screens/market/MarketDataProviderWrap
 import { ConnectEnvsToSentry } from "~/renderer/components/ConnectEnvsToSentry";
 import PostOnboardingProviderWrapped from "~/renderer/components/PostOnboardingHub/logic/PostOnboardingProviderWrapped";
 import { useBraze } from "./hooks/useBraze";
+import { StorylyProvider } from "~/storyly/StorylyProvider";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 const reloadApp = (event: KeyboardEvent) => {
   if ((event.ctrlKey || event.metaKey) && event.key === "r") {
@@ -75,9 +77,11 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
                       <PostOnboardingProviderWrapped>
                         <PlatformAppProviderWrapper>
                           <DrawerProvider>
-                            <NftMetadataProvider>
+                            <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
                               <MarketDataProvider>
-                                <Default />
+                                <StorylyProvider>
+                                  <Default />
+                                </StorylyProvider>
                               </MarketDataProvider>
                             </NftMetadataProvider>
                           </DrawerProvider>

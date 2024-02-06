@@ -1,4 +1,4 @@
-import network from "@ledgerhq/live-network/network";
+import axios from "axios";
 import {
   getEIP712FieldsDisplayedOnNano,
   getFiltersForMessage,
@@ -11,7 +11,7 @@ import messageInCAL from "../../fixtures/messages/2.json";
 
 const CAL = jest.requireActual("../../fixtures/CAL").default;
 
-jest.mock("@ledgerhq/live-network/network");
+jest.mock("axios");
 jest.mock("@ledgerhq/cryptoassets/data/eip712", () => require("../../fixtures/CAL"));
 
 describe("evm-tools", () => {
@@ -124,7 +124,7 @@ describe("evm-tools", () => {
 
       describe("getFiltersForMessage", () => {
         it("should find the filters for a message from dynamic CAL", async () => {
-          (network as jest.Mock).mockReturnValueOnce({
+          (axios.get as jest.Mock).mockReturnValueOnce({
             data: dynamicCAL,
           });
 
@@ -133,7 +133,7 @@ describe("evm-tools", () => {
         });
 
         it("should find the filters for a message in static CAL if the message is not in dynamic CAL return", async () => {
-          (network as jest.Mock).mockReturnValueOnce({
+          (axios.get as jest.Mock).mockReturnValueOnce({
             data: {},
           });
           const schemaHash = "d8e4f2bd77f7562e99ea5df4adb127291a2bfbc225ae55450038f27f";
@@ -150,7 +150,7 @@ describe("evm-tools", () => {
         });
 
         it("should find the filters for a message not in dynamic CAL if in static CAL", async () => {
-          (network as jest.Mock).mockRejectedValue(new Error());
+          (axios.get as jest.Mock).mockRejectedValue(new Error());
           const schemaHash = "d8e4f2bd77f7562e99ea5df4adb127291a2bfbc225ae55450038f27f";
 
           const result = await getFiltersForMessage(messageInCAL, "http://CAL-ADDRESS");
@@ -161,7 +161,7 @@ describe("evm-tools", () => {
       describe("getEIP712FieldsDisplayedOnNano", () => {
         beforeEach(() => {
           jest.resetAllMocks();
-          (network as jest.Mock).mockReturnValueOnce({
+          (axios.get as jest.Mock).mockReturnValueOnce({
             data: {},
           });
         });

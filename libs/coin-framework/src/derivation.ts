@@ -65,19 +65,6 @@ const modes = Object.freeze({
     // already included in the normal bip44,
     tag: "metamask",
   },
-  // Deprecated and should no longer be used.
-  bch_on_bitcoin_segwit: {
-    overridesCoinType: 0,
-    isInvalid: true,
-    isSegwit: true,
-    purpose: 49,
-    addressFormat: "p2sh",
-  },
-  // many users have wrongly sent BTC on BCH paths
-  legacy_on_bch: {
-    overridesCoinType: 145,
-    isInvalid: true,
-  },
   // chrome app and LL wrongly used to derivate vertcoin on 128
   vertcoin_128: {
     tag: "legacy",
@@ -136,20 +123,6 @@ const modes = Object.freeze({
     purpose: 49,
     tag: "segwit",
     addressFormat: "p2sh",
-  },
-  segwit_on_legacy: {
-    isSegwit: true,
-    purpose: 44,
-    addressFormat: "p2sh",
-    isInvalid: true,
-  },
-  legacy_on_segwit: {
-    purpose: 49,
-    isInvalid: true,
-  },
-  legacy_on_native_segwit: {
-    purpose: 84,
-    isInvalid: true,
   },
   segwit_unsplit: {
     isSegwit: true,
@@ -222,7 +195,6 @@ modes as Record<DerivationMode, ModeSpec>; // eslint-disable-line
 const legacyDerivations: Partial<Record<CryptoCurrency["id"], DerivationMode[]>> = {
   aeternity: ["aeternity"],
   bitcoin_cash: [],
-  bitcoin: ["legacy_on_bch"],
   vertcoin: ["vertcoin_128", "vertcoin_128_segwit"],
   tezos: ["galleonL", "tezboxL", "tezosbip44h", "tezbox"],
   stellar: ["sep5"],
@@ -422,10 +394,6 @@ export const getDerivationModesForCurrency = (currency: CryptoCurrency): Derivat
     if (currency.supportsSegwit) {
       all.push("segwit_unsplit");
     }
-  }
-
-  if (currency.supportsSegwit) {
-    all.push("segwit_on_legacy", "legacy_on_segwit", "legacy_on_native_segwit");
   }
 
   if (currency.supportsNativeSegwit) {

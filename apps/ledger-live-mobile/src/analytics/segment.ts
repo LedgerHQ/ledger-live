@@ -21,7 +21,7 @@ import {
   hasNftInAccounts,
   GENESIS_PASS_COLLECTION_CONTRACT,
   INFINITY_PASS_COLLECTION_CONTRACT,
-} from "@ledgerhq/live-common/nft/helpers";
+} from "@ledgerhq/live-nft";
 import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
 import { getAndroidArchitecture, getAndroidVersionCode } from "../logic/cleanBuildVersion";
 import getOrCreateUser from "../user";

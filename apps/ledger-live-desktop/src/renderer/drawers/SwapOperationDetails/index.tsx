@@ -21,7 +21,6 @@ import Box from "~/renderer/components/Box";
 import CopyWithFeedback from "~/renderer/components/CopyWithFeedback";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import Ellipsis from "~/renderer/components/Ellipsis";
-import FormattedDate from "~/renderer/components/FormattedDate";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import Link from "~/renderer/components/Link";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
@@ -35,6 +34,7 @@ import {
   OpDetailsSection,
   OpDetailsTitle,
 } from "~/renderer/drawers/OperationDetails/styledComponents";
+import { dayFormat, useDateFormatted } from "~/renderer/hooks/useDateFormatter";
 import useTheme from "~/renderer/hooks/useTheme";
 import IconArrowDown from "~/renderer/icons/ArrowDown";
 import IconClock from "~/renderer/icons/Clock";
@@ -112,6 +112,7 @@ const SwapOperationDetails = ({
 }) => {
   const { fromAccount, toAccount, operation, provider, swapId, status, fromAmount, toAmount } =
     mappedSwapOperation;
+  const dateFormatted = useDateFormatted(operation.date, dayFormat);
   const history = useHistory();
   const fromUnit = getAccountUnit(fromAccount);
   const fromCurrency = getAccountCurrency(fromAccount);
@@ -272,9 +273,7 @@ const SwapOperationDetails = ({
           <Trans i18nKey="swap.operationDetailsModal.date" />
         </OpDetailsTitle>
         <OpDetailsData>
-          <Box>
-            <FormattedDate date={operation.date} format="L" />
-          </Box>
+          <Box>{dateFormatted}</Box>
         </OpDetailsData>
       </OpDetailsSection>
       <B />

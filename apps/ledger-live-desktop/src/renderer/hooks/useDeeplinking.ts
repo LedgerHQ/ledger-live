@@ -15,6 +15,7 @@ import { track } from "~/renderer/analytics/segment";
 import { setTrackingSource } from "../analytics/TrackPage";
 import { CryptoOrTokenCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 import { Account, SubAccount } from "@ledgerhq/types-live";
+import { useStorylyContext } from "~/storyly/StorylyProvider";
 
 const getAccountsOrSubAccountsByCurrency = (
   currency: CryptoOrTokenCurrency,
@@ -41,6 +42,8 @@ export function useDeepLinkHandler() {
   const accounts = useSelector(accountsSelector);
   const location = useLocation();
   const history = useHistory();
+  const { setUrl } = useStorylyContext();
+
   const navigate = useCallback(
     (
       pathname: string,
@@ -317,13 +320,16 @@ export function useDeepLinkHandler() {
         case "recover-restore-flow":
           navigate("/recover-restore");
           break;
+        case "storyly":
+          setUrl(deeplink);
+          break;
         case "portfolio":
         default:
           navigate("/");
           break;
       }
     },
-    [accounts, dispatch, navigate],
+    [accounts, dispatch, navigate, setUrl],
   );
   return {
     handler,
