@@ -3,7 +3,7 @@ import { from } from "rxjs";
 import { DeviceModelId } from "@ledgerhq/devices";
 import Transport from "@ledgerhq/hw-transport";
 import { withDevice } from "../../hw/deviceAccess";
-import getVersion from "../../hw/getVersion";
+import { getVersion } from "../../device/use-cases/getVersionUseCase";
 import { useBleDevicePairing } from "./useBleDevicePairing";
 
 jest.mock("../../hw/deviceAccess");

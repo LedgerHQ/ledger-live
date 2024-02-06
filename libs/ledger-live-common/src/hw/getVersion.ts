@@ -45,7 +45,7 @@ export const isHardwareVersionSupported = (seVersion: string, modelId?: DeviceMo
  * @param options - Contains optional options:
  *  - abortTimeoutMs: aborts the APDU exchange after a given timeout
  */
-export default async function getVersion(
+export async function getVersion(
   transport: Transport,
   { abortTimeoutMs }: { abortTimeoutMs?: number } = {},
 ): Promise<FirmwareInfo> {
