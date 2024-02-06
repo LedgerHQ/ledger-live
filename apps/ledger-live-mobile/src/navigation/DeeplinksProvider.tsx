@@ -471,6 +471,7 @@ export const DeeplinksProvider = ({
               const uri = isWalletConnectUrl(url) ? url : new URL(url).searchParams.get("uri");
               // Only update for a connection not a request
               if (uri && !new URL(uri).searchParams.get("requestId")) {
+                // TODO use wallet-api to push event instead of reloading the webview
                 dispatch(setWallectConnectUri(uri));
               }
               return;
