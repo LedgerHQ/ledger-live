@@ -85,6 +85,7 @@ import useAccountsWithFundsListener from "@ledgerhq/live-common/hooks/useAccount
 import { updateIdentify } from "./analytics";
 import { StorylyProvider } from "./components/StorylyStories/StorylyProvider";
 import { useSettings } from "~/hooks";
+import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -102,6 +103,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
+
+const queryClient = new QueryClient();
 
 function App() {
   const accounts = useSelector(accountsSelector);
@@ -306,7 +309,9 @@ export default class Root extends Component {
                                                     getCurrencyBridge={getCurrencyBridge}
                                                   >
                                                     <MarketDataProvider>
-                                                      <App />
+                                                      <QueryClientProvider client={queryClient}>
+                                                        <App />
+                                                      </QueryClientProvider>
                                                     </MarketDataProvider>
                                                   </NftMetadataProvider>
                                                 </NotificationsProvider>
