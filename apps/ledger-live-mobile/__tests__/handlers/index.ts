@@ -1,6 +1,6 @@
 import marketHandlers from "./market";
 
-export const IGNORED_REQUESTS = [
+export const ALLOWED_UNHANDLED_REQUESTS = [
   "ledger.statuspage.io",
   "cdn.live.ledger.com/announcements",
   "swap.ledger.com/v5/currencies/all",

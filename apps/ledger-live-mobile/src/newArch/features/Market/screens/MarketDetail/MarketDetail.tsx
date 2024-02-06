@@ -60,12 +60,6 @@ function MarketDetail({
   const { colors } = useTheme();
   const { locale } = useLocale();
 
-  let loc = locale;
-  // TEMPORARY : quick win to transform arabic to english
-  if (locale === "ar") {
-    loc = "en";
-  }
-
   const dateRangeFormatter = useMemo(
     () => getDateFormatter(locale, range as string),
     [locale, range],
@@ -115,7 +109,7 @@ function MarketDetail({
                 {counterValueFormatter({
                   currency: counterCurrency,
                   value: hoveredItem?.value ? hoveredItem.value : price || 0,
-                  locale: loc,
+                  locale,
                   t,
                 })}
               </Text>
