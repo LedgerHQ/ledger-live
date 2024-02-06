@@ -8,11 +8,7 @@ async function createMock(stdRequest: StdRequest, path: string) {
   // usual instance has errors managed by live-network lib
   const uninterceptedAxiosInstance = axios.create();
 
-  const createMockOp = async resp => {
-    const responseInfo = { ...stdRequest.response };
-    // Stores headers etc but no data
-    delete stdRequest.response;
-    delete responseInfo.body;
+  const createMockFile = async resp => {
     // TODO: replace file fully, erase to 0 before
     return await fsp.writeFile(
       path,
@@ -31,8 +27,8 @@ async function createMock(stdRequest: StdRequest, path: string) {
     headers: stdRequest.headers,
     timeout: 1 * 60 * 1000,
   }).then(
-    response => createMockOp(response),
-    error => createMockOp(error.response),
+    response => createMockFile(response),
+    error => createMockFile(error.response),
   );
 }
 
