@@ -32,12 +32,6 @@ export default function MarketStats({
   const { t } = useTranslation();
   const { locale } = useLocale();
 
-  let loc = locale;
-  // TEMPORARY : quick win to transform arabic to english
-  if (locale === "ar") {
-    loc = "en";
-  }
-
   const {
     marketcap,
     marketcapRank,
@@ -76,7 +70,7 @@ export default function MarketStats({
           {counterValueFormatter({
             currency: counterCurrency,
             value: price,
-            locale: loc,
+            locale,
             t,
           })}
         </StyledTextLabel>
@@ -94,7 +88,7 @@ export default function MarketStats({
           {counterValueFormatter({
             currency: counterCurrency,
             value: totalVolume,
-            locale: loc,
+            locale,
             t,
           })}
         </StyledTextLabel>
@@ -104,14 +98,14 @@ export default function MarketStats({
           {counterValueFormatter({
             currency: counterCurrency,
             value: low24h,
-            locale: loc,
+            locale,
             t,
           })}{" "}
           /{" "}
           {counterValueFormatter({
             currency: counterCurrency,
             value: high24h,
-            locale: loc,
+            locale,
             t,
           })}
         </StyledTextLabel>
@@ -121,7 +115,7 @@ export default function MarketStats({
           {counterValueFormatter({
             currency: counterCurrency,
             value: ath,
-            locale: loc,
+            locale,
             t,
           })}{" "}
         </StyledTextLabel>
@@ -132,7 +126,7 @@ export default function MarketStats({
           {counterValueFormatter({
             currency: counterCurrency,
             value: atl,
-            locale: loc,
+            locale,
             t,
           })}{" "}
         </StyledTextLabel>
@@ -146,7 +140,7 @@ export default function MarketStats({
             {counterValueFormatter({
               currency: counterCurrency,
               value: marketcap,
-              locale: loc,
+              locale,
               t,
             })}
           </StyledTextLabel>
@@ -163,7 +157,7 @@ export default function MarketStats({
         <StyledTextLabel>
           {counterValueFormatter({
             value: circulatingSupply,
-            locale: loc,
+            locale,
             t,
           })}
         </StyledTextLabel>
@@ -172,7 +166,7 @@ export default function MarketStats({
         <StyledTextLabel>
           {counterValueFormatter({
             value: totalSupply,
-            locale: loc,
+            locale,
             t,
           })}
         </StyledTextLabel>
@@ -181,7 +175,7 @@ export default function MarketStats({
         <StyledTextLabel>
           {counterValueFormatter({
             value: maxSupply,
-            locale: loc,
+            locale,
             t,
           })}
         </StyledTextLabel>

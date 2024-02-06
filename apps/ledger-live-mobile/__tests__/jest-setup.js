@@ -2,7 +2,7 @@ import "@testing-library/jest-native/extend-expect";
 import "@testing-library/react-native/extend-expect";
 import "react-native-gesture-handler/jestSetup";
 import "@mocks/console";
-import handlers, { IGNORED_REQUESTS } from "./handlers";
+import handlers, { ALLOWED_UNHANDLED_REQUESTS } from "./handlers";
 import { NativeModules } from "react-native";
 import { setupServer } from "msw/node";
 
@@ -15,7 +15,7 @@ const server = setupServer(...handlers);
 beforeAll(() =>
   server.listen({
     onUnhandledRequest(request, print) {
-      if (IGNORED_REQUESTS.some(ignoredUrl => request.url.includes(ignoredUrl))) {
+      if (ALLOWED_UNHANDLED_REQUESTS.some(ignoredUrl => request.url.includes(ignoredUrl))) {
         return;
       }
       print.warning();
