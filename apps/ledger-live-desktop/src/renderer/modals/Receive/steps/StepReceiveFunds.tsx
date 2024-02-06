@@ -155,7 +155,8 @@ const StepReceiveFunds = (props: StepProps) => {
   } = props;
   const dispatch = useDispatch();
   const receiveStakingFlowConfig = useFeature("receiveStakingFlowConfigDesktop");
-  const receivedCurrencyId: string | undefined = account?.currency?.id;
+  const receivedCurrencyId: string | undefined =
+    account && account.type !== "TokenAccount" ? account?.currency?.id : undefined;
   const isStakingEnabledForAccount =
     !!receivedCurrencyId &&
     receiveStakingFlowConfig?.enabled &&
