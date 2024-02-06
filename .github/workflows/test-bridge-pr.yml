@@ -42,17 +42,9 @@ jobs:
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
-      CI_OS: ${{ matrix.os }}
+      CI_OS: ubuntu-latest
 
-    strategy:
-      fail-fast: false
-      matrix:
-        os:
-          - ubuntu-latest
-          - macos-latest
-          - windows-latest
-
-    runs-on: ${{ matrix.os }}
+    runs-on: [ubuntu-latest]
     steps:
       - uses: actions/checkout@v4
       - name: Setup the toolchain
@@ -60,15 +52,10 @@ jobs:
         id: toolchain
         with:
           skip_turbo_cache: "false"
-          upgrade_npm: ${{ matrix.os == 'windows-latest' }}
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
           region: ${{ secrets.AWS_CACHE_REGION }}
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-      - name: Install node-gyp globally
-        if: runner.os == 'Windows'
-        run: |
-          pnpm add -g node-gyp
       - name: Install dependencies
         run: pnpm i --filter="live-common..." --filter="ledger-live"
       - name: Build
@@ -84,7 +71,7 @@ jobs:
         uses: actions/upload-artifact@v3
         if: failure()
         with:
-          name: ${{ format('live-common-src-{0}', matrix.os) }}
+          name: ${{ format('live-common-src-{0}', ubuntu-latest) }}
           path: |
             libs/ledger-live-common/src
       - name: (On Failure) Upload logs
