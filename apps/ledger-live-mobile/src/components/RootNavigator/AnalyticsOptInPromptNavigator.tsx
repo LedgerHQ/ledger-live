@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useTheme } from "styled-components/native";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { LlmAnalyticsOptInPromptVariants } from "@ledgerhq/types-live";
+import { ABTestingVariants } from "@ledgerhq/types-live";
 import { ScreenName } from "~/const";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import AnalyticsOptInPromptMainA from "~/screens/AnalyticsOptInPrompt/variantA/Main";
@@ -12,11 +12,11 @@ import AnalyticsOptInPromptDetailsB from "~/screens/AnalyticsOptInPrompt/variant
 import { AnalyticsOptInPromptNavigatorParamList } from "./types/AnalyticsOptInPromptNavigator";
 
 const screensByVariant = {
-  [LlmAnalyticsOptInPromptVariants.variantA]: {
+  [ABTestingVariants.variantA]: {
     main: AnalyticsOptInPromptMainA,
     details: AnalyticsOptInPromptDetailsA,
   },
-  [LlmAnalyticsOptInPromptVariants.variantB]: {
+  [ABTestingVariants.variantB]: {
     main: AnalyticsOptInPromptMainB,
     details: AnalyticsOptInPromptDetailsB,
   },
@@ -28,9 +28,9 @@ export default function AnalyticsOptInPromptNavigator() {
   const llmAnalyticsOptInPromptFeature = useFeature("llmAnalyticsOptInPrompt");
 
   const activeVariant =
-    llmAnalyticsOptInPromptFeature?.params?.variant === LlmAnalyticsOptInPromptVariants.variantB
-      ? LlmAnalyticsOptInPromptVariants.variantB
-      : LlmAnalyticsOptInPromptVariants.variantA;
+    llmAnalyticsOptInPromptFeature?.params?.variant === ABTestingVariants.variantB
+      ? ABTestingVariants.variantB
+      : ABTestingVariants.variantA;
 
   return (
     <Stack.Navigator screenOptions={stackNavigationConfig}>
