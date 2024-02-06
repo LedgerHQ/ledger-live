@@ -97,8 +97,8 @@ class BitcoinLikeExplorer implements IExplorer {
   }
 
   /**
-   * When we get a raw tx from the explorer, 
-   * we need to remove some fields that are not needed and fill up some fields that are required 
+   * When we get a raw tx from the explorer,
+   * we need to remove some fields that are not needed and fill up some fields that are required
    * to be consistent with our transaction model
    */
   hydrateTx(address: Address, tx: TX): void {

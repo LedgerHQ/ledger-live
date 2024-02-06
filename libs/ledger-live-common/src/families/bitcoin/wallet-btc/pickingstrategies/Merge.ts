@@ -9,7 +9,7 @@ import { log } from "@ledgerhq/logs";
 import { OutputInfo } from "..";
 
 /**
- * prioritizes the smallest UTXOs
+ * prioritize using UTXOs with smaller denominations
  */
 export class Merge extends PickingStrategy {
   async selectUnspentUtxosToUse(
