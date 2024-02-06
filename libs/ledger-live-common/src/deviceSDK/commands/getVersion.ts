@@ -4,7 +4,7 @@ import { DeviceModelId, identifyTargetId } from "@ledgerhq/devices";
 import Transport from "@ledgerhq/hw-transport";
 import type { FirmwareInfo } from "@ledgerhq/types-live";
 import { satisfies as versionSatisfies, coerce as semverCoerce } from "semver";
-import { isDeviceLocalizationSupported } from "../../manager/localization";
+import { isDeviceLocalizationSupported } from "../../device-core/commands/use-cases/isDeviceLocalizationSupported";
 import { UnresponsiveCmdEvent } from "./core";
 
 export type GetVersionCmdEvent =

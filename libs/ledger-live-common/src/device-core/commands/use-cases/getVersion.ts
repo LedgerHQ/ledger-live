@@ -1,8 +1,8 @@
+import { satisfies as versionSatisfies, coerce as semverCoerce } from "semver";
 import { DeviceModelId, identifyTargetId } from "@ledgerhq/devices";
 import Transport from "@ledgerhq/hw-transport";
-import type { FirmwareInfo } from "@ledgerhq/types-live";
-import { satisfies as versionSatisfies, coerce as semverCoerce } from "semver";
-import { isDeviceLocalizationSupported } from "../manager/localization";
+import { FirmwareInfoEntity } from "../entities/FirmwareInfoEntity";
+import { isDeviceLocalizationSupported } from "./isDeviceLocalizationSupported";
 
 const deviceVersionRangesForBootloaderVersion: {
   [key in DeviceModelId]?: string;
@@ -48,7 +48,7 @@ export const isHardwareVersionSupported = (seVersion: string, modelId?: DeviceMo
 export async function getVersion(
   transport: Transport,
   { abortTimeoutMs }: { abortTimeoutMs?: number } = {},
-): Promise<FirmwareInfo> {
+): Promise<FirmwareInfoEntity> {
   const res = await transport.send(0xe0, 0x01, 0x00, 0x00, undefined, undefined, {
     abortTimeoutMs,
   });
