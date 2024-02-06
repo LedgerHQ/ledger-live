@@ -112,6 +112,7 @@ export const getAccountShape: GetAccountShape = async info => {
     operations: flatMap(txns.transactions.reverse(), mapTxToOps(accountId, address)),
     blockHeight: blockHeight.current_block_identifier.index,
     operationsCount: txns.transactions.length,
+    freshAddress: address,
     xpub: publicKey,
   };
 
