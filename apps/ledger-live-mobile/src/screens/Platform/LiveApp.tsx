@@ -28,6 +28,9 @@ export function LiveApp({ route }: Props) {
   const { state: remoteLiveAppState } = useRemoteLiveAppContext();
   const { locale } = useLocale();
   let manifest = localManifest || remoteManifest;
+  if (manifest && manifest.id === "ledger-wallet-connect") {
+    manifest.url = "https://wallet-connect-live-app-git-refactor-vite-ledgerhq.vercel.app/";
+  }
 
   useEffect(() => {
     setParams({

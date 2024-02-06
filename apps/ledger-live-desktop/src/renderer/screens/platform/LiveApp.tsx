@@ -67,7 +67,11 @@ export function LiveApp({ match, appId: propsAppId, location }: Props) {
 
   const localManifest = useLocalLiveAppManifest(appId);
   const remoteManifest = useRemoteLiveAppManifest(appId);
+
   let manifest = localManifest || remoteManifest;
+  if (manifest && manifest.id === "ledger-wallet-connect") {
+    manifest.url = "https://wallet-connect-live-app-git-refactor-vite-ledgerhq.vercel.app/";
+  }
   if (_customDappUrl && manifest && manifest.params && "dappUrl" in manifest.params) {
     manifest = {
       ...manifest,
