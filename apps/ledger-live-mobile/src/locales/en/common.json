@@ -6540,6 +6540,7 @@
     "ethereum": {
       "title": "Grow your ETH holdings",
       "subTitle": "Stake your ETH and grow your holdings by earning daily rewards directly into your Ledger Live.",
+      "tagMinimum": "Requires {{min}} ETH",
       "close": "Close",
       "providers": {
         "kiln_pooling": {
