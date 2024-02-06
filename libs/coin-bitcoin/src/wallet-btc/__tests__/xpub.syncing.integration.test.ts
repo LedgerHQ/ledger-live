@@ -7,7 +7,6 @@ import { DerivationModes } from "../types";
 import BitcoinLikeStorage from "../storage";
 import BitcoinLikeExplorer from "../explorer";
 import Xpub from "../xpub";
-import * as currency from "../crypto";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import cryptoFactory from "../crypto/factory";
 import { Currency } from "../crypto/types";

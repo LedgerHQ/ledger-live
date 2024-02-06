@@ -2,7 +2,7 @@
 import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
 import { TransportReplayer } from "@ledgerhq/hw-transport-mocker/lib/openTransportReplayer";
 import ecc from "tiny-secp256k1";
-import { getXpubComponents, pathArrayToString } from "../../src/bip32";
+import { getXpubComponents, pathArrayToString } from "@ledgerhq/crypto-utils/bip32";
 import BtcNew from "../../src/BtcNew";
 import {
   DefaultDescriptorTemplate,
