@@ -8,6 +8,9 @@ import * as utils from "../utils";
 import { log } from "@ledgerhq/logs";
 import { OutputInfo } from "..";
 
+/**
+ * prioritizes the oldest UTXOs in the current transaction
+ */
 export class DeepFirst extends PickingStrategy {
   async selectUnspentUtxosToUse(
     xpub: Xpub,

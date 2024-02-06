@@ -96,6 +96,11 @@ class BitcoinLikeExplorer implements IExplorer {
     return data;
   }
 
+  /**
+   * When we get a raw tx from the explorer,
+   * we need to remove some fields that are not needed and fill up some fields that are required
+   * to be consistent with our transaction model
+   */
   hydrateTx(address: Address, tx: TX): void {
     // no need to keep those as they change
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -139,6 +144,14 @@ class BitcoinLikeExplorer implements IExplorer {
     });
   }
 
+  /**
+   * Get transactions for an address since a block height
+   * @param batchSize number of transactions to fetch
+   * @param address address to fetch transactions for
+   * @param fromBlockheight block height to fetch transactions from
+   * @param toBlockheight block height to fetch transactions to
+   * @param isPending whether to fetch only pending transactions or only confirmed transactions
+   */
   async getTxsSinceBlockheight(
     batchSize: number,
     address: Address,
