@@ -4,6 +4,8 @@ import { BigNumber } from "bignumber.js";
 import Prando from "prando";
 import type { AlgorandAccount, AlgorandOperation } from "./types";
 
+// test
+
 function setAlgorandResources(account: Account): Account {
   /** format algorandResources given the new delegations */
   (account as AlgorandAccount).algorandResources = {
