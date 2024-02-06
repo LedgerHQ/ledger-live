@@ -37,6 +37,9 @@ export const speeds = {
 
 export const defaultBlockCount = 3;
 
+/**
+ * Returns the current network fee rate(fast, medium, slow) from our backend for a given currency
+ */
 export const getFeeItems = async (currency: CryptoCurrency): Promise<FeeItems> => {
   const all: Array<{
     key: string;
