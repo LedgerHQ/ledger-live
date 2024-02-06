@@ -54,7 +54,12 @@ class MockBtc implements BitcoinSigner {
     _hasExtraData: boolean | null | undefined,
     _additionals: Array<string> | null | undefined,
   ): SignerTransaction {
-    throw new Error("unimplemented");
+    // Stub
+    return {
+      version: Buffer.from(""),
+      inputs: [],
+      outputs: [],
+    };
   }
 }
 

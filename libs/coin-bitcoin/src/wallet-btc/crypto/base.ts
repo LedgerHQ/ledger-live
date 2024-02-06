@@ -114,8 +114,7 @@ class Base implements ICrypto {
     index: number,
   ): Promise<string> {
     if (
-      Base.addressCache[`${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`] ===
-      undefined
+      await Base.addressCache[`${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`]
     ) {
       return Base.addressCache[
         `${this.network.name}-${derivationMode}-${xpub}-${account}-${index}`

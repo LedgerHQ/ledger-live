@@ -2,9 +2,7 @@ import { BigNumber } from "bignumber.js";
 import type {
   Account,
   AccountBridge,
-  AccountLike,
   AccountRaw,
-  AccountRawLike,
   ChildAccount,
   ChildAccountRaw,
   Operation,

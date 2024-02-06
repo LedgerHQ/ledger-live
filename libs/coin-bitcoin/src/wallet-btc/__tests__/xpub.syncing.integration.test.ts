@@ -9,6 +9,8 @@ import BitcoinLikeExplorer from "../explorer";
 import Xpub from "../xpub";
 import * as currency from "../crypto";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import cryptoFactory from "../crypto/factory";
+import { Currency } from "../crypto/types";
 
 expect.extend({ toMatchFile });
 describe("xpub integration sync", () => {
@@ -170,65 +172,7 @@ describe("xpub integration sync", () => {
   walletDatasets.forEach(dataset =>
     describe(`xpub ${dataset.xpub} ${dataset.derivationMode}`, () => {
       const storage = new BitcoinLikeStorage();
-      let crypto;
-      switch (dataset.currencyId) {
-        case "bitcoin":
-          crypto = new currency.Bitcoin({ network: dataset.network });
-          break;
-        case "bitcoin_cash":
-          crypto = new currency.BitcoinCash({ network: dataset.network });
-          break;
-        case "litecoin":
-          crypto = new currency.Litecoin({ network: dataset.network });
-          break;
-        case "bitcoin_testnet":
-          crypto = new currency.Bitcoin({ network: dataset.network });
-          break;
-        case "bitcoin_gold":
-          crypto = new currency.BitcoinGold({ network: dataset.network });
-          break;
-        case "digibyte":
-          crypto = new currency.Digibyte({ network: dataset.network });
-          break;
-        case "dash":
-          crypto = new currency.Dash({ network: dataset.network });
-          break;
-        case "dogecoin":
-          crypto = new currency.Doge({ network: dataset.network });
-          break;
-        case "komodo":
-          crypto = new currency.Komodo({ network: dataset.network });
-          break;
-        case "pivx":
-          crypto = new currency.Pivx({ network: dataset.network });
-          break;
-        case "stealthcoin":
-          crypto = new currency.Stealth({ network: dataset.network });
-          break;
-        case "peercoin":
-          crypto = new currency.Peercoin({ network: dataset.network });
-          break;
-        case "qtum":
-          crypto = new currency.Qtum({ network: dataset.network });
-          break;
-        case "vertcoin":
-          crypto = new currency.Vertcoin({ network: dataset.network });
-          break;
-        case "viacoin":
-          crypto = new currency.ViaCoin({ network: dataset.network });
-          break;
-        case "zcash":
-          crypto = new currency.Zec({ network: dataset.network });
-          break;
-        case "zencash":
-          crypto = new currency.Zen({ network: dataset.network });
-          break;
-        case "decred":
-          crypto = new currency.Decred({ network: dataset.network });
-          break;
-        default:
-          throw new Error("Should not be reachable");
-      }
+      const crypto = cryptoFactory(dataset.currencyId as Currency);
       const explorer = new BitcoinLikeExplorer({
         cryptoCurrency: getCryptoCurrencyById(dataset.currencyId),
       });

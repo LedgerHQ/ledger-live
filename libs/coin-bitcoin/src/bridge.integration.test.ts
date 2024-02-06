@@ -1,7 +1,5 @@
 import { DatasetTest } from "@ledgerhq/types-live";
 
-import "../../__tests__/test-helpers/setup";
-
 import type { Transaction } from "./types";
 import bitcoin from "./datasets/bitcoin";
 import bitcoin_cash from "./datasets/bitcoin_cash";

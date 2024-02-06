@@ -1,4 +1,3 @@
-import "../../__tests__/test-helpers/setup";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
 import { listSupportedCurrencies } from "@ledgerhq/coin-framework/currencies/index";
 test("all bitcoin forks that have a manager app have a defined address in abandonSeedLegacyPerCurrency", () => {
