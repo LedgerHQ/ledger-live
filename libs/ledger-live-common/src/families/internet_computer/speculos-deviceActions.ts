@@ -3,6 +3,8 @@ import type { Transaction } from "./types";
 import { deviceActionFlow, formatDeviceAmount, SpeculosButton } from "../../bot/specs";
 import { methodToString } from "./utils";
 
+const ignoreSpaces = (s: string) => s.replace(/ /g, "");
+
 export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
   steps: [
     {
@@ -15,15 +17,17 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
     {
       title: "From account",
       button: SpeculosButton.RIGHT,
-      expectedValue: ({ account }) => account.freshAddress.match(/.{1,8}/g)?.join(" ") ?? "",
+      stepValueTransform: ignoreSpaces,
+      expectedValue: ({ account }) => account.freshAddress,
     },
     {
       title: "To account",
       button: SpeculosButton.RIGHT,
-      expectedValue: ({ transaction }) => transaction.recipient.match(/.{1,8}/g)?.join(" ") ?? "",
+      stepValueTransform: ignoreSpaces,
+      expectedValue: ({ transaction }) => transaction.recipient,
     },
     {
-      title: "Payment (ICP)",
+      title: "Amount (ICP)",
       button: SpeculosButton.RIGHT,
       expectedValue: ({ status, account }) =>
         formatDeviceAmount(account.currency, status.amount, {
