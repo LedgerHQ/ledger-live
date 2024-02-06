@@ -3,6 +3,7 @@ export type EthStakingProviders = {
     id: string;
     name: string;
     liveAppId: string;
+    min?: number;
     supportLink?: string;
     icon?: string;
     queryParams?: Record<string, string>;
