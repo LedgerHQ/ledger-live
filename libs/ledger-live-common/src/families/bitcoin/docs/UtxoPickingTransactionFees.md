@@ -16,8 +16,8 @@ This means, for example, to have a transaction included within 6 blocks, a user 
 
 ## UTXO Picking Strategies in Ledger Live
 When constructing a transaction, Ledger Live needs to select which UTXOs to use as inputs. This automatic selection process is known as UTXO picking. Ledger Live offers three strategies for UTXO picking:
-1. **Oldest UTXO First:** Prioritizes the oldest UTXOs (Implemented in `wallet-btc/DeepFirst.ts`).
-2. **Smallest UTXOs First:** Prioritizes the smallest UTXOs (Implemented in `wallet-btc/Merge.ts`).
+1. **Older UTXO First:** Prioritizes the older UTXOs (Implemented in `wallet-btc/DeepFirst.ts`).
+2. **Smaller UTXOs First:** Prioritize using UTXOs with smaller denominations (Implemented in `wallet-btc/Merge.ts`).
 3. **Automatic UTXO Selection:** Aims to minimize the transaction fee (Implemented in `wallet-btc/CoinSelect.ts`). The `CoinSelect.ts` implementation is complex, using a non-recursive implementation based on depth-first search. It traverses all UTXO combinations and selects the one with the minimum transaction fee. This process is NP-hard, and the time complexity is exponential. Therefore, the search is stopped after a certain number of steps, and the best solution found so far is selected.
 
 The utxo picking process is implemented through the following abstract function:
