@@ -1,12 +1,12 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import TrackPage, { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
-import { Redirect, useLocation } from "react-router";
-import { useFlattenSortAccounts, useRefreshAccountsOrdering } from "~/renderer/actions/general";
+import { Redirect } from "react-router";
+import { useFlattenSortAccounts } from "~/renderer/actions/general";
 import { accountsSelector, starredAccountsSelector } from "~/renderer/reducers/accounts";
 import { accountsViewModeSelector, selectedTimeRangeSelector } from "~/renderer/reducers/settings";
 import AccountList from "./AccountList";
@@ -20,14 +20,11 @@ export default function AccountsPage() {
   const flattenedAccounts = useFlattenSortAccounts({
     enforceHideEmptySubAccounts: true,
   });
-  const accounts = mode === "card" ? flattenedAccounts : rawAccounts;
+  const accounts = useMemo(
+    () => (mode === "card" ? flattenedAccounts : rawAccounts),
+    [mode, flattenedAccounts, rawAccounts],
+  );
   const history = useHistory();
-  const location = useLocation();
-  const refreshAccountsOrdering = useRefreshAccountsOrdering();
-
-  useEffect(() => {
-    refreshAccountsOrdering();
-  }, [refreshAccountsOrdering, location]);
 
   const onAccountClick = useCallback(
     (account: AccountLike, parentAccount?: Account | null) => {
