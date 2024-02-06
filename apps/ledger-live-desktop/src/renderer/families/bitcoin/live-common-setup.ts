@@ -1,4 +1,4 @@
-import { setSecp256k1Instance } from "@ledgerhq/live-common/families/bitcoin/wallet-btc/crypto/secp256k1";
+import { setSecp256k1Instance } from "@ledgerhq/live-common/families/bitcoin/logic";
 import { Subject, firstValueFrom } from "rxjs";
 import { first } from "rxjs/operators";
 import { initWorker } from "../../webworkers";

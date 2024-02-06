@@ -49,4 +49,4 @@ const resolver: Resolver = (
 
 const cliTools = makeCliTools();
 
-export { bridge, cliTools, resolver, messageSigner };
+export { bridge, cliTools, resolver, messageSigner, signerContext };
