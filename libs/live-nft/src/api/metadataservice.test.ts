@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { getFloorPrice } from "./api";
+import { getFloorPrice } from "./metadataservice";
 
 jest.mock("@ledgerhq/live-network/network", () =>
   jest.fn().mockResolvedValue({ data: { ticker: "FOO", value: 42 } }),

@@ -20,6 +20,8 @@ import { State } from "~/renderer/reducers";
 import { ProtoNFT } from "@ledgerhq/types-live";
 import theme from "@ledgerhq/react-ui/styles/theme";
 import { useOnScreen } from "../useOnScreen";
+import { useNftGalleryFilter } from "@ledgerhq/live-nft-react";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const SpinnerContainer = styled.div`
   display: flex;
@@ -50,6 +52,8 @@ const Footer = styled.footer`
 `;
 
 const Gallery = () => {
+  const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
+
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { id } = useParams<{ id: string }>();
@@ -60,12 +64,19 @@ const Gallery = () => {
   );
   const history = useHistory();
   const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
+
+  const { nfts, fetchNextPage, hasNextPage } = useNftGalleryFilter({
+    nftsOwned: account?.nfts || [],
+    addresses: account?.freshAddress || "",
+    chains: [account?.currency.id ?? "ethereum"],
+  });
+
   const collections = useMemo(
     () =>
-      Object.entries(nftsByCollections(account?.nfts)).filter(
-        ([contract]) => !hiddenNftCollections.includes(`${account?.id}|${contract}`),
-      ),
-    [account?.id, account?.nfts, hiddenNftCollections],
+      Object.entries(
+        nftsByCollections(nftsFromSimplehashFeature?.enabled ? nfts : account?.nfts),
+      ).filter(([contract]) => !hiddenNftCollections.includes(`${account?.id}|${contract}`)),
+    [account?.id, account?.nfts, hiddenNftCollections, nfts, nftsFromSimplehashFeature?.enabled],
   );
 
   // Should redirect to the account page if there is not NFT anymore in the page.
@@ -92,7 +103,12 @@ const Gallery = () => {
   );
   const listFooterRef = useRef<HTMLDivElement>(null);
   const [maxVisibleNFTs, setMaxVisibleNFTs] = useState(1);
-  const updateMaxVisibleNtfs = () => setMaxVisibleNFTs(maxVisibleNFTs => maxVisibleNFTs + 5);
+  const updateMaxVisibleNtfs = () => {
+    setMaxVisibleNFTs(maxVisibleNFTs => maxVisibleNFTs + 5);
+    if (hasNextPage) {
+      fetchNextPage();
+    }
+  };
 
   useOnScreen({
     enabled: maxVisibleNFTs < (account?.nfts?.length ?? 0),
