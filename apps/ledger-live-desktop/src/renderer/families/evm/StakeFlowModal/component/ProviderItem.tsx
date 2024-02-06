@@ -45,7 +45,7 @@ const ProviderItem = ({ provider, stakeOnClick, redirectIfOnlyProvider }: Props)
 
   const manifest = useMemo(() => remoteManifest || localManifest, [localManifest, remoteManifest]);
 
-  const hasTag = i18n.exists(`ethereum.stake.${provider.id}.tag`);
+  const hasTag = !!provider?.min && i18n.exists(`ethereum.stake.${provider.id}.tag`);
 
   useEffect(() => {
     if (manifest) redirectIfOnlyProvider({ provider, manifest });
