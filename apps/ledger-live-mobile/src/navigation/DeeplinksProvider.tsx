@@ -415,7 +415,7 @@ const emptyObject: LiveAppManifest[] = [];
 function isScreenInState(
   screenName: string,
   state?: NavigationState | PartialState<NavigationState>,
-): boolean {
+) {
   if (!state) {
     return false;
   }
@@ -423,10 +423,8 @@ function isScreenInState(
     if (state.routes[i].name === screenName) {
       return true;
     }
-    if (state.routes[i].state) {
-      if (isScreenInState(screenName, state.routes[i].state)) {
-        return true;
-      }
+    if (state.routes[i].state && isScreenInState(screenName, state.routes[i].state)) {
+      return true;
     }
   }
   return false;
