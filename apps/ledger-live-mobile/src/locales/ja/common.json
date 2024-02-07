@@ -492,7 +492,7 @@
       "description" : "My Ledgerからアプリの再インストールを試す"
     },
     "NotEnoughGas" : {
-      "title" : "{{cryptoName}}ネットワークを使用しているため、スワップするにはネットワーク手数料{{fees}}{{ticker}}が必要です。<link0>{{ticker}}を購入する</link0>",
+      "title" : "{{cryptoName}}ネットワークを使用しているため、手数料{{fees}}{{ticker}}が必要です。<link0>{{ticker}}を購入する</link0>",
       "description" : "トークンのトランザクションの支払いに必要なコインをアカウントに送ってください。"
     },
     "NotEnoughGasSwap" : {
