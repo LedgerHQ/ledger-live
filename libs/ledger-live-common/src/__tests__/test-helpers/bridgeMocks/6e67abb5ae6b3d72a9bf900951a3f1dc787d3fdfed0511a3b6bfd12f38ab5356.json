@@ -1,0 +1,1 @@
+{"request":{"url":"https://osmosis-api.polkachu.com/cosmos/distribution/v1beta1/delegators/osmo17gmcxyc5ccd5kwqqatpgfdgh380w2hc77zm0zw/rewards","method":"GET"},"response":{"body":{"rewards":[],"total":[]}}}

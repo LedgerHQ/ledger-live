@@ -25,10 +25,7 @@ const defaultConfig = {
   reporters,
   collectCoverage: true,
   coveragePathIgnorePatterns: ["src/__tests__"],
-  modulePathIgnorePatterns: [
-    "<rootDir>/benchmark/.*",
-    "<rootDir>/cli/.yalc/.*",
-  ],
+  modulePathIgnorePatterns: ["<rootDir>/benchmark/.*", "<rootDir>/cli/.yalc/.*"],
   testPathIgnorePatterns,
   testRegex,
   transformIgnorePatterns: ["/node_modules/(?!|@babel/runtime/helpers/esm/)"],

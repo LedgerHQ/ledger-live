@@ -1,0 +1,1 @@
+{"request":{"url":"https://stargaze-api.polkachu.com/cosmos/distribution/v1beta1/delegators/stars1v2mp0m7k96dm9qv60fkspcqlzpkzrwnekeys8l/withdraw_address","method":"GET"},"response":{"body":{"withdraw_address":"stars1v2mp0m7k96dm9qv60fkspcqlzpkzrwnekeys8l"}}}

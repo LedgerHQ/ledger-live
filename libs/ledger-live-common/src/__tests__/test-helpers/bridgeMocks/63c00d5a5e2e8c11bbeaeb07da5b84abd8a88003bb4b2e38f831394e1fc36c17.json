@@ -1,0 +1,1 @@
+{"request":{"url":"https://osmosis-api.polkachu.com/cosmos/auth/v1beta1/accounts/osmo19h8cennrkf09sjxqt36lmk93fzyrcwrfxw784y","method":"GET"},"response":{"body":{"code":5,"message":"account osmo19h8cennrkf09sjxqt36lmk93fzyrcwrfxw784y not found","details":[]}}}
