@@ -5339,7 +5339,7 @@
       "title" : "接收地址未激活。发送至少 {{minimalAmount}} 来将其激活"
     },
     "NotEnoughGas" : {
-      "title" : "您需要 {{fees}} {{ticker}} 的网络费用才能在 {{cryptoName}} 网络上进行互换。<link0>买入 {{ticker}}</link0>"
+      "title" : "您需要 {{fees}} {{ticker}} 的费用才能在 {{cryptoName}} 网络上进行操作。<link0>买入 {{ticker}}</link0>"
     },
     "NotEnoughGasSwap" : {
       "title" : "您需要 {{fees}} {{ticker}} 的网络费用才能在 {{cryptoName}} 网络上进行互换。<link0>买入 {{ticker}}</link0>"
