@@ -1,4 +1,275 @@
 export default {
+  "42161:0x0927fd43a7a87e3e8b81df2c44b03c4756849f6d:16c6594547c8c6af18ca0d8b500976bfb7f38764060cec3792c2aad3": {
+    "contractName": {
+      "label": "AugustusRFQ ERC20 order",
+      "signature": "304502210085c3d02e3f1d2d9dc6bb9975e46e8b90e514d578d9e6974b10b3cc1bf4a2fe7f02205d2257c30412b9067a707f8cfa8da92b0336faa39a2bd7099d2b55e0a085b8cc"
+    },
+    "fields": [
+      {
+        "label": "Nonce and metadata",
+        "path": "nonceAndMeta",
+        "signature": "3045022100ff187b0adc9b9e2b9aea716d4047d2ac92c44cd0d0f2b6ac09ec4b52d89e9dcb02200b18d913b72125c7a2d6083e2097f786979c04056b881e44957242982a81931f"
+      },
+      {
+        "label": "Expiration time",
+        "path": "expiry",
+        "signature": "3044022038ca4d34df27f672a40cea96f4397c70148e07a29662601ad765e01c71a5aaf502203c88823e913193f5eff4b8f5eee72463b660b6d146f589151af2164de4d6bb28"
+      },
+      {
+        "label": "Maker asset address",
+        "path": "makerAsset",
+        "signature": "3044022058de4c432c785035fe20e160f7a98a9ebfb1152df0c61d679b0bf8cf838a3412022006447e72822301ca0fdd56cfeedd0ca04cdf018bb600df3f9b28d633e90b65a4"
+      },
+      {
+        "label": "Taker asset address",
+        "path": "takerAsset",
+        "signature": "3045022100dd48da4bd40c2ae4e389462e9792c67bf699749fcabf954e0121c7759a499ba4022011b3c12c7d356a8ec62a57643eea50fed6d831b9fe95f94a7b31c4d1ba8fd887"
+      },
+      {
+        "label": "Maker address",
+        "path": "maker",
+        "signature": "3044022074fb2c7f1569c685e740015a91deb0cfaf771d71ba0fffcd14c24d59023878fd02202488ff10efbf225f1750ba334dd885f7966b3be7d57b87bce966aa3aec7fc3b4"
+      },
+      {
+        "label": "Taker address",
+        "path": "taker",
+        "signature": "3045022100ec75b1e6c770ab39c3dec4c827af340b13750d55436002504e8d27872284749d022048dde24cfa5b564e04c3880febbe40650687ea0e85fc634d27f18b95c14f8e59"
+      },
+      {
+        "label": "Maker amount",
+        "path": "makerAmount",
+        "signature": "304402205ee3c0ebf4735b3e7209237a2c4a745ecaa8e0310a7e0b33651aaff4baadd10102205aab92e8cc4444f900e368502e8424d5d05d1216a71e8b4dfa1a30d7ecf29e01"
+      },
+      {
+        "label": "Taker amount",
+        "path": "takerAmount",
+        "signature": "304402202da05529a3b7efb5120658b02f7de224887517b67c26f6cae85c3b4a52d9dcdd022071ecb8acf9bb2ec27d3ef5564394a48192692c1214e3c98f87e651c7c6353994"
+      }
+    ]
+  },
+  "42161:0x0927fd43a7a87e3e8b81df2c44b03c4756849f6d:affaa50b47c793acb6b9f912325d898538d409f735b8f312a1914623": {
+    "contractName": {
+      "label": "AugustusRFQ NFT order",
+      "signature": "304402205aa1d43c376b38e68d4cf0d9fa51da49572de9a7d5c8e2fa6f0bb1430b522abf02201e8c73865ecd95e36d106a2fd58e3eaa7a73d6181879aab9254d66e45dfbf16c"
+    },
+    "fields": [
+      {
+        "label": "Nonce and metadata",
+        "path": "nonceAndMeta",
+        "signature": "304402205cc7b36d3b1cf49f956486ba56c571474b1c2dc74776f3d73d1720f402578c9a0220781edc10e5ee70a56a65881b9a4510f2dc0227899664d6ff3c5ca0465ca4b6ef"
+      },
+      {
+        "label": "Expiration time",
+        "path": "expiry",
+        "signature": "3045022100d3d524282bcacd494cd6b72b148033f17fe05789032f5da58944863d24259ecc0220228df613f5d2d2f3662c3c35ad3316ba5a231d95b9fe95cfc39d433b9e0201d7"
+      },
+      {
+        "label": "Maker asset encoded",
+        "path": "makerAsset",
+        "signature": "3045022100c8e4bc97eabdd4b267c6733652b735c011cb353bcb14b61ca8b2c732a701db9302204f35ce83dc85008afd0a93608b531f0ea5d680472c077d8dc2a32cc5ccf581c4"
+      },
+      {
+        "label": "Maker asset NFT ID",
+        "path": "makerAssetId",
+        "signature": "3045022100aeadd32775d3d63a1dde73c23fab6d7fef0375d5210728fd8f2ed56adbee5b220220462f3c126c78dd0fc9499005b5ce3b81c995f11c55e9cdaf55d19fb1686f853e"
+      },
+      {
+        "label": "Taker asset encoded",
+        "path": "takerAsset",
+        "signature": "3045022100f6ee6ab28521c9f282fcc897f165e780ec9b0fe9268f2a18beeb3c67922ca679022055a2d60bbc05145e3b55483b502c576066469c6d6fbb9ee3336a16b7b5df4900"
+      },
+      {
+        "label": "Taker asset NFT ID",
+        "path": "takerAssetId",
+        "signature": "304402203c84ee7655fd53fbe7eefb9e7522eeceb29bb7f03559d5e0a92b1ee55e711dcb02200c99dd941f9e58b6b0f28e592c089dbcb245f73ebeddbab9e2e88defacd186df"
+      },
+      {
+        "label": "Maker address",
+        "path": "maker",
+        "signature": "30440220109b530322d864a1e29d431a00f0dcde1cd165a2ad11b021eef605074d4c9758022052f04b7e2a2cd70cae54a881c7f783fcc2058d5b2791b24bc557e4e231cc2dff"
+      },
+      {
+        "label": "Taker address",
+        "path": "taker",
+        "signature": "3045022100f85a6ad793151886d7b4fe8902f55b81e4db1ee73589e1ed180a3f9b2285288b022023d061e2f9694a086229fff173f351c630e907806e8e7f80e9fc154a510962ee"
+      },
+      {
+        "label": "Maker amount",
+        "path": "makerAmount",
+        "signature": "3045022100d97b6d8cadff2e066b43c0bf3cc363741dd3227c9989ead29a51466f2f1d9cf302205b76c51c2e2d2e75855acf5416be5e3a066b2e671884ae81343cedf9eb42b7c7"
+      },
+      {
+        "label": "Taker amount",
+        "path": "takerAmount",
+        "signature": "30440220249407bacec2053557a7360ec596daf931fd002c31f77acd94b151a035728bb7022050769d692217e817efb3f6845dfa293cfbeaa39f93b97dac2d063a4be7c44cf6"
+      }
+    ]
+  },
+  "42161:0x789fc99093b09ad01c34dc7251d0c89ce743e5a4:f06d2a85ec59f0c4e7ea7a0f824e6a59658947d01f0d728baa0ab10e": {
+    "contractName": {
+      "label": "Arbitrum Foundation: Treasury Governor",
+      "signature": "304402200fa08b5ce686eaf6bb708211bd4bbfe2d4e278f6966ad2e481be73a472bb4b46022067481a8a0d0357e42592498b0e099f8b1313003c423595972bfbf19add008e58"
+    },
+    "fields": [
+      {
+        "label": "Proposal id",
+        "path": "proposalId",
+        "signature": "3045022100a464daba1b2a7a35336e03fe0c68977597df0917dd14d40b5b794dc12dd1696a0220594ce98bf0fffd98a6717c26465b1c67f14955cd0013f0b9817d85d771ec0acc"
+      },
+      {
+        "label": "Support",
+        "path": "support",
+        "signature": "3044022051f41d12c90d0e82d9724f7fe43d5b9d035ba46c160fed7a9d6026b8317f80f7022057f325aaae71c60bdaa9bc371a5af9a1d4a5354a7f7dd6865c36faaa4ecf929d"
+      }
+    ]
+  },
+  "42161:0x912ce59144191c1204e64559fe8253a0e49e6548:2c3e6b3e91e39ef9bb3c1b1cd2b4d8da76bf433179c8042962671278": {
+    "contractName": {
+      "label": "ARB token",
+      "signature": "3045022100d083aa12bc96ed7568942bad291c90fa0710b984b6d8693021be961d99df15b702200d29db9c738e3fbd7dc3d21612833e32b5e2f197f8273662ce16e20058276a47"
+    },
+    "fields": [
+      {
+        "label": "Delegatee",
+        "path": "delegatee",
+        "signature": "304402205274148210b7cc92e2714d33d5c7c280ace94b9d09b41539af5056ddcb588b9b02204b104de75d5fb03f4ec1b455b9785a3c6f41a897142c40f88bd0e27a51ac940d"
+      },
+      {
+        "label": "Nonce",
+        "path": "nonce",
+        "signature": "3045022100fdab6f7a16e999d0b0bd2fd4be92682a0c65cd5ae928ed3cd071b11ebe5fbc7702207cf139627f6e2aeee8b0b22fde9c1025cb847b2ba3b4d27a4726e596c284d62e"
+      },
+      {
+        "label": "Expiry",
+        "path": "expiry",
+        "signature": "30450221009d00f19bd6bc9f14502c0ab2ff54f372f00c6a153083898505f1b9fea585b70002205c1b4afbc7efc4fd027528917d107a95b5f24caba816806fd393d4e419dbdcde"
+      }
+    ]
+  },
+  "42161:0xf07ded9dc292157749b6fd268e37df6ea38395b9:f06d2a85ec59f0c4e7ea7a0f824e6a59658947d01f0d728baa0ab10e": {
+    "contractName": {
+      "label": "Arbitrum Foundation: Core Governor",
+      "signature": "3045022100e328451e523340c7f0c6229d69a9196703d33a9aa4920cc775ef4c254eba08b402204d3c4a0be0a1aa383c6895db61ff07623fb000773713a62e56bf107fa8a852d4"
+    },
+    "fields": [
+      {
+        "label": "Proposal id",
+        "path": "proposalId",
+        "signature": "304502210087d449414d2e9d6466e5b9fc5a2a4c0f93e13b6674fb6f3b5673ad3fcc8780f802204b9e8b83c62042f4f4326d975b0f7e9ac8490d19a2d04f2e26568c3433444783"
+      },
+      {
+        "label": "Support",
+        "path": "support",
+        "signature": "3044022023b69aa0f439df05ae5be7d03df5fd69ce8a01fce764bc1c8455d2c92106bc85022027866dbb7c5e09eb70f90329dcb59c90a87da90f2b77d17c1f74a9c2e0f663db"
+      }
+    ]
+  },
+  "56:0x8dcdfe88ef0351f27437284d0710cd65b20288bb:16c6594547c8c6af18ca0d8b500976bfb7f38764060cec3792c2aad3": {
+    "contractName": {
+      "label": "AugustusRFQ ERC20 order",
+      "signature": "3045022100cdd6ed9272614ffdedb2b2aa22418386928f1174a6214451d67b82c06b637d4102205ee814ca52cfbdab011e337727cfe91fa272b98246ecbfb1683bfc0de3086efc"
+    },
+    "fields": [
+      {
+        "label": "Nonce and metadata",
+        "path": "nonceAndMeta",
+        "signature": "3044022056e3fdb59c9ece3d411d03963edfcb9a186ccb753b4e984366e7ca6baa99b38902206a7267e31543659ba3bf8b796edec2d1c6f174a810b89862e43541f94b191eca"
+      },
+      {
+        "label": "Expiration time",
+        "path": "expiry",
+        "signature": "3045022100a4cc77374944e947748dd36408f48f43a94e67436231fad62191554d1ea5ff0e022001baa4fc0587af310bebe1c0044d7b4280bb5537192736fa3805584c735a6710"
+      },
+      {
+        "label": "Maker asset address",
+        "path": "makerAsset",
+        "signature": "30440220770b731ffb6091493ce2fcdb4163ad872add409a9c66e88e29b0d7a82b0ee79c02201e0130c1841c484e816b9f9ff3694eea3601e1569c1ddb87319b08d86e9823d5"
+      },
+      {
+        "label": "Taker asset address",
+        "path": "takerAsset",
+        "signature": "304502210094b700c3383bf0d8740e09d23dac120addc1c21029746f672d8f8c8b3a2a2995022008b5d3af862f7fb0510321cd9ae4f7172ab3b347f6556b3da79e2a95950ff34b"
+      },
+      {
+        "label": "Maker address",
+        "path": "maker",
+        "signature": "304402202dafdefb2181e5bbdf5816fc710400bae0846bc08dfc389ef8008048228e2fd0022002b89786ea578488cf6c6b751dac0c13dd6c2c57c8d6bb0fcb47a28d2b07b1b6"
+      },
+      {
+        "label": "Taker address",
+        "path": "taker",
+        "signature": "304402204c27aac1c07e8bde8a998bf06acd5eaf40e874a9b128a4f19ee8c39ce45c9cbe0220380d9438d10ce81f7545f3de8530a19c1eda78e4683fc2145b9715eb260f1d66"
+      },
+      {
+        "label": "Maker amount",
+        "path": "makerAmount",
+        "signature": "3045022100e7f19c15b49e6f40eddd2c8a24d8c55e9224262aa0b856a413f842fc5c0fc7d00220341e5eaf45d8335bb6143768b1c961b6c7e97897bda5ef485457020661ac3ae3"
+      },
+      {
+        "label": "Taker amount",
+        "path": "takerAmount",
+        "signature": "3045022100e36cd43f82fc0f99ec2770a26b245f6af13623cee69670d68dd696ff76d4630e02202057a0dd1faee909037429ba7489ccf3891a38d29a4da04648441105c1e89048"
+      }
+    ]
+  },
+  "56:0x8dcdfe88ef0351f27437284d0710cd65b20288bb:affaa50b47c793acb6b9f912325d898538d409f735b8f312a1914623": {
+    "contractName": {
+      "label": "AugustusRFQ NFT order",
+      "signature": "3044022045bb3ce0d61f428537754555a0d69cfc5554de2dd58c1c5cc7ae81abe073b1df022039ba8d7e1230c3851fc08db58cda6222c420dce4b8cf96725891906fc5f7539b"
+    },
+    "fields": [
+      {
+        "label": "Nonce and metadata",
+        "path": "nonceAndMeta",
+        "signature": "3044022020d30ebe13aa1235ea25dcc247a1c494a6aa2ac4f121aadc3beb874b9de4b75e022078efc82c2343d6165960fc252d10313550b6d9d1faeb6f2ff611c288fb53f364"
+      },
+      {
+        "label": "Expiration time",
+        "path": "expiry",
+        "signature": "3045022100ee126c98d8ad5b000090d6c16131709618d803878a72ceb1f58f2b11b2e52324022076403ce3d181511afc9b59b3f4a0ce4de9ee76dd60c78eb61660d623294d4070"
+      },
+      {
+        "label": "Maker asset encoded",
+        "path": "makerAsset",
+        "signature": "3045022100ed1f432fe0c33307e397f846970f7de0fc18098f3d5b4cc1a25844f75dbbfb9902204075ef8e6d6dae438dac2a7e3aace3e27bc7c67fe22728395f92888e68361f20"
+      },
+      {
+        "label": "Maker asset NFT ID",
+        "path": "makerAssetId",
+        "signature": "3044022022be34e598b158445f7ff6a5565b04627b61789339aa956b03f5c8dcb81e0ca102201b970d57742618204906414d7d23dc42e9e566776e7bda9060bcde335817a8ce"
+      },
+      {
+        "label": "Taker asset encoded",
+        "path": "takerAsset",
+        "signature": "304402203ec8a77927b84388d5a0ba1bb0bfa38fcb862b8c43d988bbbbccbd547a4ae38e022002f2f736d3cfbf42829b750af704323f29b1eedcbde789c49052521ec47bafee"
+      },
+      {
+        "label": "Taker asset NFT ID",
+        "path": "takerAssetId",
+        "signature": "304402205defad5bc1514f254cece6e8dfbfe3b68c3818bef6d4268b40c59858a6a2187502206767bb96c040e523dfd88724a0ce4b4f6bde73c02a286772f2a73c973dab0bab"
+      },
+      {
+        "label": "Maker address",
+        "path": "maker",
+        "signature": "3045022100a273a21625a130728e0448f53a047d50867a9ba5e4a285d7e06d98fb3bd655c2022061e93ce13cedef0ebe9bc9340b988d0fc7353e99e2ec28b77102a14b3a129479"
+      },
+      {
+        "label": "Taker address",
+        "path": "taker",
+        "signature": "3045022100b74529d5cab0055f80732bcf7864f03db98bb9f779fa56171f3faafdfee2719e0220757505e2ba5df6184002e921f678f9f5bb073197652a45d86c6edf003067ce2c"
+      },
+      {
+        "label": "Maker amount",
+        "path": "makerAmount",
+        "signature": "3045022100c14e1f90619be9cc92da927b1c908a18133b043e138d908bf81117e1fc73fe000220503047ae5e75ee53c0ed60601644ec09f430c613edc6ec72cdae4021d29438ce"
+      },
+      {
+        "label": "Taker amount",
+        "path": "takerAmount",
+        "signature": "304402201096ca9ff9b886a77fcbc7fdc8ddfc0f42a9c8e7fccb783581ca3abc75ba61dd0220191d21eed8b4eed56975b580832a8b1891a5b674fe1a0e5d7314b7b6486d7104"
+      }
+    ]
+  },
   "1:0xe63602a9b3dfe983187525ac985fec4f57b24ed5:08c2ba593f6e0e80b8fd2bb1da6923135c173094f9cb6ecdea6ea144": {
     "contractName": {
       "label": "DeGate Withdrawal",
@@ -651,109 +922,109 @@ export default {
       }
     ]
   },
-  "56:0x8dcdfe88ef0351f27437284d0710cd65b20288bb:16c6594547c8c6af18ca0d8b500976bfb7f38764060cec3792c2aad3": {
+  "10:0x0927fd43a7a87e3e8b81df2c44b03c4756849f6d:16c6594547c8c6af18ca0d8b500976bfb7f38764060cec3792c2aad3": {
     "contractName": {
       "label": "AugustusRFQ ERC20 order",
-      "signature": "3045022100cdd6ed9272614ffdedb2b2aa22418386928f1174a6214451d67b82c06b637d4102205ee814ca52cfbdab011e337727cfe91fa272b98246ecbfb1683bfc0de3086efc"
+      "signature": "3045022100d4bcbf1df97f94d85402caee1799badf5fd6dfd9926981c389436d306dbda5c2022019ad7fe4ca5b2c8e63fd51bf70437b786e0b1cc2c0f3070e3cfdf70e75d6bbdf"
     },
     "fields": [
       {
         "label": "Nonce and metadata",
         "path": "nonceAndMeta",
-        "signature": "3044022056e3fdb59c9ece3d411d03963edfcb9a186ccb753b4e984366e7ca6baa99b38902206a7267e31543659ba3bf8b796edec2d1c6f174a810b89862e43541f94b191eca"
+        "signature": "3044022009e356dfa8f01c37d5fbcb2ba06e72a2a0ffeb3251055f3c686a0244401aa7e702207e65bafdb36f491931261c08fd583f329c2ea903de28327bfb069e1fe7ab5471"
       },
       {
         "label": "Expiration time",
         "path": "expiry",
-        "signature": "3045022100a4cc77374944e947748dd36408f48f43a94e67436231fad62191554d1ea5ff0e022001baa4fc0587af310bebe1c0044d7b4280bb5537192736fa3805584c735a6710"
+        "signature": "3044022025dfd47b46b43125781d1e4b63161eea0eeeaef93af87e95162b2601516cdbe5022060156847137356e6ff66ef5a5d72ce232ffac323be43e71cd2ccc410b55ec047"
       },
       {
         "label": "Maker asset address",
         "path": "makerAsset",
-        "signature": "30440220770b731ffb6091493ce2fcdb4163ad872add409a9c66e88e29b0d7a82b0ee79c02201e0130c1841c484e816b9f9ff3694eea3601e1569c1ddb87319b08d86e9823d5"
+        "signature": "3045022100e2ffc41ce9f722d7381689bd9ca2d0bd4598fdd543e7529d7f0bf2ae28abb3da02206a43996780b13ff0fbf346d7cd5520c759abf58461c42b7bea51d5b6032eb946"
       },
       {
         "label": "Taker asset address",
         "path": "takerAsset",
-        "signature": "304502210094b700c3383bf0d8740e09d23dac120addc1c21029746f672d8f8c8b3a2a2995022008b5d3af862f7fb0510321cd9ae4f7172ab3b347f6556b3da79e2a95950ff34b"
+        "signature": "304502210080af3a8d3c3e683a503975519535ee054af035a7ba136f2e981b01d7c6dc518b022012ca47f1301c7c439180c29e13bae36cacc03bb1c1b9ba8a505b9d035660aa79"
       },
       {
         "label": "Maker address",
         "path": "maker",
-        "signature": "304402202dafdefb2181e5bbdf5816fc710400bae0846bc08dfc389ef8008048228e2fd0022002b89786ea578488cf6c6b751dac0c13dd6c2c57c8d6bb0fcb47a28d2b07b1b6"
+        "signature": "304402203600b6973b833d904521bde12b73f52a1f1eb71b45a0174e1e579b33db55d55e02201daac27bb0e1d278dd34fac1be2205f38888c829fba922f7e3f48347e0a98b1a"
       },
       {
         "label": "Taker address",
         "path": "taker",
-        "signature": "304402204c27aac1c07e8bde8a998bf06acd5eaf40e874a9b128a4f19ee8c39ce45c9cbe0220380d9438d10ce81f7545f3de8530a19c1eda78e4683fc2145b9715eb260f1d66"
+        "signature": "3045022100e6937b6f434efccde4c4ddb2fa2c577fb9f4fba61bf2fdda3bb27b0b49e7274102205fb3e281767d845b230633092cd17e6b5ab928e341a588d79055602cf3aa29fb"
       },
       {
         "label": "Maker amount",
         "path": "makerAmount",
-        "signature": "3045022100e7f19c15b49e6f40eddd2c8a24d8c55e9224262aa0b856a413f842fc5c0fc7d00220341e5eaf45d8335bb6143768b1c961b6c7e97897bda5ef485457020661ac3ae3"
+        "signature": "304402201c1cb8f2cc362d6f10998948ee009df1912550cb4cf059d00447adf321a97f9e022051f2d887cd8a6a6ac26ab2afe8016eaa5a130661da74f7e482940278423b98fb"
       },
       {
         "label": "Taker amount",
         "path": "takerAmount",
-        "signature": "3045022100e36cd43f82fc0f99ec2770a26b245f6af13623cee69670d68dd696ff76d4630e02202057a0dd1faee909037429ba7489ccf3891a38d29a4da04648441105c1e89048"
+        "signature": "304402206b842fc4910a1bdc77ebc9b2523d7b1ead75f9d187c42a80ac87e980112020d702202b4c2b9cb8ce85712afe63a71cb542c5e5d3fdcbe33b9ae746fcfac13fca18aa"
       }
     ]
   },
-  "56:0x8dcdfe88ef0351f27437284d0710cd65b20288bb:affaa50b47c793acb6b9f912325d898538d409f735b8f312a1914623": {
+  "10:0x0927fd43a7a87e3e8b81df2c44b03c4756849f6d:affaa50b47c793acb6b9f912325d898538d409f735b8f312a1914623": {
     "contractName": {
       "label": "AugustusRFQ NFT order",
-      "signature": "3044022045bb3ce0d61f428537754555a0d69cfc5554de2dd58c1c5cc7ae81abe073b1df022039ba8d7e1230c3851fc08db58cda6222c420dce4b8cf96725891906fc5f7539b"
+      "signature": "3045022100c66935874c1f07e7ebf05ea2774b4ef970aa431001c655f0d6341e0c4d142af602207083981aa538efdedaf13bae8e04ecf0bf2bf1fb03843bebd8ddd44c4048aa81"
     },
     "fields": [
       {
         "label": "Nonce and metadata",
         "path": "nonceAndMeta",
-        "signature": "3044022020d30ebe13aa1235ea25dcc247a1c494a6aa2ac4f121aadc3beb874b9de4b75e022078efc82c2343d6165960fc252d10313550b6d9d1faeb6f2ff611c288fb53f364"
+        "signature": "30450221009a560c4f10e3b3d91d78d08b69cd2c8bcc48abb9d5a6da1bca1aa5a843d5e82302203cb5df5d1676286617dd169942b42530a422328a358e8b143f62c4c024547e16"
       },
       {
         "label": "Expiration time",
         "path": "expiry",
-        "signature": "3045022100ee126c98d8ad5b000090d6c16131709618d803878a72ceb1f58f2b11b2e52324022076403ce3d181511afc9b59b3f4a0ce4de9ee76dd60c78eb61660d623294d4070"
+        "signature": "3045022100ad531d0297f9561bb4077cda4896e1506104fdbefc05d1cfe360cd0e4810a98b022013ecd430ad3773ceca05ccd82794272768be0ceb3f1d30e12d331a73d1e9080a"
       },
       {
         "label": "Maker asset encoded",
         "path": "makerAsset",
-        "signature": "3045022100ed1f432fe0c33307e397f846970f7de0fc18098f3d5b4cc1a25844f75dbbfb9902204075ef8e6d6dae438dac2a7e3aace3e27bc7c67fe22728395f92888e68361f20"
+        "signature": "3045022100cb9280d868175b9645dd9417790419343e5cfbb481bad8e2d3c826d9b301b261022058010b98a71b91a75804672dd67361ee4f96dd7f5cb938f00e355a3aabcd8f9d"
       },
       {
         "label": "Maker asset NFT ID",
         "path": "makerAssetId",
-        "signature": "3044022022be34e598b158445f7ff6a5565b04627b61789339aa956b03f5c8dcb81e0ca102201b970d57742618204906414d7d23dc42e9e566776e7bda9060bcde335817a8ce"
+        "signature": "304402200a7e0a5503d87ca2489dc26cfabbd0fea9b2e2aefec9c6bf4e18fe837c7a6ba00220273c59c30647aa17d4cddfd85c3d360e8659818d05382b3e288b696cf518ae29"
       },
       {
         "label": "Taker asset encoded",
         "path": "takerAsset",
-        "signature": "304402203ec8a77927b84388d5a0ba1bb0bfa38fcb862b8c43d988bbbbccbd547a4ae38e022002f2f736d3cfbf42829b750af704323f29b1eedcbde789c49052521ec47bafee"
+        "signature": "3045022100ce510ba8811ddada61a9695cb85ed202ff9af125f07f2f7995ebf1d1bb33798002204bbb2bee209860fd01a72df16c07e4903164cc2a3c535561437d63970b1ef8d4"
       },
       {
         "label": "Taker asset NFT ID",
         "path": "takerAssetId",
-        "signature": "304402205defad5bc1514f254cece6e8dfbfe3b68c3818bef6d4268b40c59858a6a2187502206767bb96c040e523dfd88724a0ce4b4f6bde73c02a286772f2a73c973dab0bab"
+        "signature": "3045022100eb69ad54131f20195cfb2c304804405974123c2eed471c3fb6b3476ee33a904d02206c17f1c4ef4eed0df5c733331579004e3828287c5d22f19b43fd26d09600132d"
       },
       {
         "label": "Maker address",
         "path": "maker",
-        "signature": "3045022100a273a21625a130728e0448f53a047d50867a9ba5e4a285d7e06d98fb3bd655c2022061e93ce13cedef0ebe9bc9340b988d0fc7353e99e2ec28b77102a14b3a129479"
+        "signature": "304402207e358ef75ba3cbe3998df005e03ad4a8c2bdbdfaf9777d737242d1c63f5247f502201c2e916ef67cb4452d1b226faf1a4e38230a052865aeef6437e0a287441d0ad9"
       },
       {
         "label": "Taker address",
         "path": "taker",
-        "signature": "3045022100b74529d5cab0055f80732bcf7864f03db98bb9f779fa56171f3faafdfee2719e0220757505e2ba5df6184002e921f678f9f5bb073197652a45d86c6edf003067ce2c"
+        "signature": "304502210081d61e89adc9bdf731e843903c80d4a42236c4fefa4782b912068d3ff12dfd7d02206c2c7569eb61cbdc7b842cd9a8c173cc7d90ad3be3537dab8373da4422adc2fa"
       },
       {
         "label": "Maker amount",
         "path": "makerAmount",
-        "signature": "3045022100c14e1f90619be9cc92da927b1c908a18133b043e138d908bf81117e1fc73fe000220503047ae5e75ee53c0ed60601644ec09f430c613edc6ec72cdae4021d29438ce"
+        "signature": "304402205117307916d734323402185a37f2880822dc7cf386903688e57a4904a17891f502200e1061ce50bd198ef722159530c48217b93e2093afd48c1a0fa30aaeaf488ba0"
       },
       {
         "label": "Taker amount",
         "path": "takerAmount",
-        "signature": "304402201096ca9ff9b886a77fcbc7fdc8ddfc0f42a9c8e7fccb783581ca3abc75ba61dd0220191d21eed8b4eed56975b580832a8b1891a5b674fe1a0e5d7314b7b6486d7104"
+        "signature": "30440220740a659e7855befa06833ccbd0aa48acfcacdef7c6a1035fbf30263a19576b5802200c46e51e89f469a121a31de0bd32e1ca9f3910413950415548e13d4c7c2a65d3"
       }
     ]
   },
