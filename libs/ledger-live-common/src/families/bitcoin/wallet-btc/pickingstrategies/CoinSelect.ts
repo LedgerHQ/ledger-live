@@ -9,6 +9,10 @@ import { DeepFirst } from "./DeepFirst";
 import { log } from "@ledgerhq/logs";
 import { OutputInfo } from "..";
 
+/**
+ * Coinselect algorithm
+ * Aims to pick the best UTXOs to minimize the transaction fees in the current transaction
+ */
 export class CoinSelect extends PickingStrategy {
   async selectUnspentUtxosToUse(
     xpub: Xpub,

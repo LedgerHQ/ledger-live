@@ -29,6 +29,8 @@ import PostOnboardingProviderWrapped from "~/renderer/components/PostOnboardingH
 import { useBraze } from "./hooks/useBraze";
 import { StorylyProvider } from "~/storyly/StorylyProvider";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
+import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+
 const reloadApp = (event: KeyboardEvent) => {
   if ((event.ctrlKey || event.metaKey) && event.key === "r") {
     window.api?.reloadRenderer();
@@ -39,6 +41,8 @@ type Props = {
   store: Store<State>;
   initialCountervalues: CounterValuesStateRaw;
 };
+
+const queryClient = new QueryClient();
 
 const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValuesStateRaw }) => {
   const [reloadEnabled, setReloadEnabled] = useState(true);
@@ -80,7 +84,9 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
                             <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
                               <MarketDataProvider>
                                 <StorylyProvider>
-                                  <Default />
+                                  <QueryClientProvider client={queryClient}>
+                                    <Default />
+                                  </QueryClientProvider>
                                 </StorylyProvider>
                               </MarketDataProvider>
                             </NftMetadataProvider>
