@@ -413,26 +413,3 @@ jobs:
           name: summary.json
           path: ${{ github.workspace }}/summary.json
 
-  allure-report:
-    name: "Allure Reports Export on Server"
-    needs: e2e-tests-linux
-    runs-on: [ledger-live-medium-linux]
-    if: ${{ !cancelled() && github.ref_name == 'develop' }}
-    steps:
-      - name: checkout
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
-      - name: Download Allure Report - Linux
-        uses: actions/download-artifact@v3
-        with:
-          name: allure-results-linux
-          path: allure-results-linux
-      - name: Send Results and Generate Allure Report - Linux
-        uses: ./tools/actions/composites/upload-allure-report
-        if: ${{ !cancelled() }}
-        with:
-          platform: linux
-          login: ${{ secrets.ALLURE_LOGIN }}
-          password: ${{ secrets.ALLURE_PASSWORD }}
-          path: allure-results-linux
