@@ -1,5 +1,5 @@
 import editDeviceName from "@ledgerhq/live-common/hw/editDeviceName";
-import getDeviceName from "@ledgerhq/live-common/hw/getDeviceName";
+import { getDeviceName } from "@ledgerhq/live-common/device/use-cases/getDeviceNameUseCase";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import getBatteryStatus from "@ledgerhq/live-common/hw/getBatteryStatus";
 import getAddress from "@ledgerhq/live-common/hw/getAddress/index";

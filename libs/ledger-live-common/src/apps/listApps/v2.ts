@@ -14,7 +14,7 @@ import {
 } from "../../currencies";
 import ManagerAPI from "../../manager/api";
 
-import getDeviceName from "../../hw/getDeviceName";
+import { getDeviceName } from "../../device/use-cases/getDeviceNameUseCase";
 import { getLatestFirmwareForDeviceUseCase } from "../../device/use-cases/getLatestFirmwareForDeviceUseCase";
 import { getProviderIdUseCase } from "../../device-core/managerApi/use-cases/getProviderIdUseCase";
 import { ManagerApiRepository } from "../../device-core/managerApi/repositories/ManagerApiRepository";
