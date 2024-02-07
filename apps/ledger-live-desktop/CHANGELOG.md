@@ -1,5 +1,19 @@
 # ledger-live-desktop
 
+## 2.77.0-nightly.3
+
+### Patch Changes
+
+- [#6024](https://github.com/LedgerHQ/ledger-live/pull/6024) [`7b65c60`](https://github.com/LedgerHQ/ledger-live/commit/7b65c60a57f51b8c008d2be3457c1c8121c9dc40) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Add feature flag "myLedgerDisplayAppDeveloperName"
+  My Ledger's apps catalog: if app's metadata field "authorName" is not empty and the feature flag is enabled, display that name next to the app's version and size.
+
+- [#6029](https://github.com/LedgerHQ/ledger-live/pull/6029) [`81d3bfb`](https://github.com/LedgerHQ/ledger-live/commit/81d3bfb0a06668d6541e65afa32f35d13c4e2bfa) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Use SimpleHash APi to filter Spam in NFT Gallery
+
+- Updated dependencies [[`231b6fd`](https://github.com/LedgerHQ/ledger-live/commit/231b6fde688b8101671aaf60b5d4340de332305f), [`7b65c60`](https://github.com/LedgerHQ/ledger-live/commit/7b65c60a57f51b8c008d2be3457c1c8121c9dc40), [`81d3bfb`](https://github.com/LedgerHQ/ledger-live/commit/81d3bfb0a06668d6541e65afa32f35d13c4e2bfa)]:
+  - @ledgerhq/live-common@33.6.0-nightly.3
+  - @ledgerhq/live-nft-react@0.2.0-nightly.2
+  - @ledgerhq/live-nft@0.2.0-nightly.2
+
 ## 2.77.0-nightly.2
 
 ### Minor Changes
