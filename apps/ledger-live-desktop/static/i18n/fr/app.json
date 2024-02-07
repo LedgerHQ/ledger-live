@@ -4303,7 +4303,7 @@
     "screens" : {
       "welcome" : {
         "title" : "Le wallet ultra-sécurisé pour vos cryptos et NFT",
-        "description" : "Gérez, achetez et faites fructifier vos cryptos et NFT en toute sécurité sur Ledger Live.",
+        "description" : "Gérez, achetez et faites fructifier vos cryptos et NFT en toute sécurité via Ledger Live.",
         "nextButton" : "Commencer",
         "noDevice" : "Pas encore d’appareil ?",
         "buyLink" : "Pas encore d’appareil ? Achetez un Ledger Nano X.",
@@ -5339,7 +5339,7 @@
       "title" : "L’adresse du bénéficiaire est inactive. Envoyez au minimum {{minimalAmount}} pour l’activer."
     },
     "NotEnoughGas" : {
-      "title" : "Vous avez besoin de {{fees}} {{ticker}} comme frais de réseau pour échanger sur la blockchain {{cryptoName}}. <link0>Acheter des {{ticker}}</link0>"
+      "title" : "Vous avez besoin de {{fees}} {{ticker}} pour les frais, car vous êtes sur le réseau {{cryptoName}}. <link0>Acheter des {{ticker}}.</link0>"
     },
     "NotEnoughGasSwap" : {
       "title" : "Vous avez besoin de {{fees}} {{ticker}} comme frais de réseau pour échanger sur la blockchain {{cryptoName}}. <link0>Acheter des {{ticker}}</link0>"
