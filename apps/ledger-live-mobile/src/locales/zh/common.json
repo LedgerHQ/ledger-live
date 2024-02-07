@@ -492,7 +492,7 @@
       "description" : "尝试在 My Ledger（我的 Ledger）中重新安装应用程序"
     },
     "NotEnoughGas" : {
-      "title" : "您需要 {{fees}} {{ticker}} 的网络费用才能在 {{cryptoName}} 网络上进行互换。<link0>买入 {{ticker}}</link0>",
+      "title" : "您需要 {{fees}} {{ticker}} 的费用才能在 {{cryptoName}} 网络上进行操作。<link0>买入 {{ticker}}</link0>",
       "description" : "请向您的账户发送一些币以支付代币交易费用。"
     },
     "NotEnoughGasSwap" : {
