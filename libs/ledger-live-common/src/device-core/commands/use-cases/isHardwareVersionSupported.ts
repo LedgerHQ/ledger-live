@@ -11,7 +11,8 @@ const deviceVersionRangesForHardwareVersion: {
  * getVersion APDU
  * */
 
-export const isHardwareVersionSupported = (seVersion: string, modelId?: DeviceModelId): boolean => !!modelId &&
+export const isHardwareVersionSupported = (seVersion: string, modelId?: DeviceModelId): boolean =>
+  !!modelId &&
   !!deviceVersionRangesForHardwareVersion[modelId] &&
   !!versionSatisfies(
     semverCoerce(seVersion) || seVersion,

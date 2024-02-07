@@ -14,7 +14,8 @@ const deviceVersionRangesForBootloaderVersion: {
  * getVersion APDU
  **/
 
-export const isBootloaderVersionSupported = (seVersion: string, modelId?: DeviceModelId): boolean => !!modelId &&
+export const isBootloaderVersionSupported = (seVersion: string, modelId?: DeviceModelId): boolean =>
+  !!modelId &&
   !!deviceVersionRangesForBootloaderVersion[modelId] &&
   !!versionSatisfies(
     semverCoerce(seVersion) || seVersion,
