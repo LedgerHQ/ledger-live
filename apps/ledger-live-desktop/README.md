@@ -87,7 +87,7 @@ If you are using [Visual Studio Code](https://code.visualstudio.com/) IDE, we pr
     }
   ```
 
-  To get the PATH, run in your terminal
+  To get the PATH, run in your terminal:
 
   ```bash
   echo $PATH
