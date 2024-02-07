@@ -27,6 +27,7 @@ For a smooth and quick integration:
 
 #### Table of Contents
 
+*   [bippath](#bippath)
 *   [Btc](#btc)
     *   [Parameters](#parameters)
     *   [Examples](#examples)
@@ -117,6 +118,15 @@ For a smooth and quick integration:
 *   [TransactionInput](#transactioninput)
 *   [TransactionOutput](#transactionoutput)
 *   [Transaction](#transaction)
+
+### bippath
+
+BIP32 Path Handling for Bitcoin Wallets
+
+This module provides utility functions to handle BIP32 paths,
+which are commonly used in hierarchical deterministic (HD) wallets.
+It includes functions to convert BIP32 paths to and from different formats,
+extract components from extended public keys (xpubs), and manipulate path elements.
 
 ### Btc
 
@@ -542,7 +552,7 @@ Type: {inputs: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Referen
 
 ### AddressFormat
 
-address format is one of legacy | p2sh | bech32 | cashaddr
+address format is one of legacy | p2sh | bech32 | bech32m | cashaddr
 
 Type: (`"legacy"` | `"p2sh"` | `"bech32"` | `"bech32m"` | `"cashaddr"`)
 
