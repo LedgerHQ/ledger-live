@@ -492,7 +492,7 @@
       "description" : "내 Ledger에서 앱을 다시 설치해 보세요"
     },
     "NotEnoughGas" : {
-      "title" : "{{cryptoName}} 네트워크에서 스왑하려면 네트워크 수수료 명목으로 {{fees}} {{ticker}}가 필요합니다. <link0>{{ticker}} 구매</link0>",
+      "title" : "{{cryptoName}} 네트워크에서는 수수료로 {{ticker}} {{fees}}(이)가 필요합니다. <link0>{{ticker}} 구매</link0>",
       "description" : "토큰 트랜잭션 수수료로 계정에 코인을 전송하세요."
     },
     "NotEnoughGasSwap" : {
