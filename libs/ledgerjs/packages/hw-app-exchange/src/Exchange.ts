@@ -242,11 +242,23 @@ export default class Exchange {
   async checkTransactionSignature(transactionSignature: Buffer): Promise<void> {
     const DOT_PREFIX = 0x01;
     const RS_FORMAT = 0x01;
+    console.log('%cExchange.ts line:245 "in"', "color: #007acc;", "in");
+
     if (this.isExchangeTypeNg()) {
+      console.log(
+        '%cExchange.ts line:247 "is exchange type ng"',
+        "color: #007acc;",
+        "is exchange type ng",
+      );
       transactionSignature = Buffer.concat([
         Buffer.from([DOT_PREFIX, RS_FORMAT]),
         transactionSignature,
       ]);
+      console.log(
+        "%cExchange.ts line:257 transactionSignature",
+        "color: #007acc;",
+        transactionSignature.toString(),
+      );
     }
 
     const result: Buffer = await this.transport.send(
