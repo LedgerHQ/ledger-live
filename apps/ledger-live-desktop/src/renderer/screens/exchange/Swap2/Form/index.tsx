@@ -449,11 +449,6 @@ const SwapForm = () => {
       />
       {pageState === "empty" && <EmptyState />}
       {pageState === "loading" && <LoadingState />}
-      {pageState === "initial" && (
-        <Hide>
-          <LoadingState />
-        </Hide>
-      )}
 
       {pageState === "loaded" && (
         <>
