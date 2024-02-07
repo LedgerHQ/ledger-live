@@ -1,5 +1,6 @@
 /**
- * BIP32 Path Handling for Bitcoin Wallets
+ * @file bip32.ts
+ * @description BIP32 Path Handling for Bitcoin Wallets
  *
  * This module provides utility functions to handle BIP32 paths,
  * which are commonly used in hierarchical deterministic (HD) wallets.
