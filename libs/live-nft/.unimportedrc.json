@@ -1,4 +1,4 @@
 {
-  "entry": ["src/api.ts", "src/index.ts", "src/index.test.ts", "src/types.ts"],
+  "entry": ["src/api/*", "src/index.ts", "src/index.test.ts", "src/types.ts"],
   "ignoreUnused": []
 }

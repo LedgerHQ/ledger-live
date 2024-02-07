@@ -53,28 +53,38 @@ export type SwapLiveError = {
 
 export default function WebviewErrorDrawer(error?: SwapLiveError) {
   const swapDefaultTrack = useGetSwapTrackingProperties();
+  let titleKey = "swap2.webviewErrorDrawer.title";
+  let descriptionKey = "swap2.webviewErrorDrawer.description";
+  let errorCodeSection = error?.cause?.swapCode ? (
+    <Trans
+      mr={2}
+      i18nKey="swap2.webviewErrorDrawer.code"
+      values={{
+        errorCode: error.cause.swapCode,
+      }}
+    />
+  ) : null;
+  switch (error?.cause.message) {
+    case "User refused":
+      titleKey = "errors.TransactionRefusedOnDevice.title";
+      descriptionKey = "errors.TransactionRefusedOnDevice.description";
+      errorCodeSection = null;
+      break;
+  }
+
   return (
     <ContentBox>
       <TrackPage category="Swap" name="Webview error drawer" {...swapDefaultTrack} {...error} />
-
       <Box mt={3} flow={4} mx={5}>
         <Logo>
           <ErrorNoBorder size={44} />
         </Logo>
         <ErrorTitle>
-          <Trans i18nKey="swap2.webviewErrorDrawer.title" />
+          <Trans i18nKey={titleKey} />
         </ErrorTitle>
         <ErrorDescription>
-          <Trans i18nKey={`swap2.webviewErrorDrawer.description`} />
-          {error?.cause?.swapCode && (
-            <Trans
-              mr={2}
-              i18nKey={`swap2.webviewErrorDrawer.code`}
-              values={{
-                errorCode: error.cause.swapCode,
-              }}
-            />
-          )}
+          <Trans i18nKey={descriptionKey} />
+          {errorCodeSection}
         </ErrorDescription>
       </Box>
     </ContentBox>

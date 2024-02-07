@@ -1,13 +1,18 @@
-import { Flex, ProgressLoader, Text } from "@ledgerhq/react-ui";
+import { Flex, Link, ProgressLoader, Text } from "@ledgerhq/react-ui";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { getStoreValue, setStoreValue } from "~/renderer/store";
 import { useCustomPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { useTranslation } from "react-i18next";
-import Button from "~/renderer/components/ButtonV3";
-import { useTheme } from "styled-components";
+import styled from "styled-components";
 import { RecoverBannerType } from "./types";
+import { Card } from "~/renderer/components/Box";
+import ButtonV3 from "~/renderer/components/ButtonV3";
+
+const BannerContainer = styled(Card)`
+  background-color: ${p => p.theme.colors.opacityPurple.c10};
+`;
 
 export default function RecoverBanner() {
   const [storageData, setStorageData] = useState<string>();
@@ -16,7 +21,6 @@ export default function RecoverBanner() {
 
   const { t } = useTranslation();
   const history = useHistory();
-  const { colors } = useTheme();
 
   const recoverServices = useFeature("protectServicesDesktop");
   const recoverBannerIsEnabled = recoverServices?.params?.bannerSubscriptionNotification;
@@ -83,11 +87,10 @@ export default function RecoverBanner() {
   if (!recoverBannerIsEnabled || !recoverBannerSelected || !displayBannerData) return null;
 
   return (
-    <Flex justifyContent="center" mb={20}>
+    <BannerContainer>
       <Flex
         position="relative"
         columnGap={12}
-        bg={colors.opacityPurple.c10}
         justifyContent="space-between"
         alignItems="center"
         borderRadius="8px"
@@ -115,7 +118,7 @@ export default function RecoverBanner() {
         <Flex flex={1} flexDirection="column" py={3} overflow="hidden">
           <Text
             fontWeight="semiBold"
-            fontSize="13px"
+            fontSize="14px"
             lineHeight="16px"
             whiteSpace="nowrap"
             textOverflow="ellipsis"
@@ -126,7 +129,7 @@ export default function RecoverBanner() {
           </Text>
           <Text
             mt={1}
-            fontSize="12px"
+            fontSize="13px"
             lineHeight="15px"
             fontWeight="medium"
             whiteSpace="nowrap"
@@ -139,14 +142,14 @@ export default function RecoverBanner() {
           </Text>
         </Flex>
         <Flex alignItems="center" p={3} pl={0} columnGap={3}>
-          <Button outline={false} onClick={onCloseBanner}>
+          <Link size="small" onClick={onCloseBanner}>
             {recoverBannerSelected.secondaryCta}
-          </Button>
-          <Button variant="main" outline={false} onClick={onRedirectRecover}>
+          </Link>
+          <ButtonV3 big variant="main" onClick={onRedirectRecover}>
             {recoverBannerSelected.primaryCta}
-          </Button>
+          </ButtonV3>
         </Flex>
       </Flex>
-    </Flex>
+    </BannerContainer>
   );
 }
