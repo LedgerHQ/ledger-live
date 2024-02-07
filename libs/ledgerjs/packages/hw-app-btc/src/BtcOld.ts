@@ -11,11 +11,7 @@ import { signMessage } from "./signMessage";
 export type { AddressFormat };
 
 /**
- * Bitcoin API.
- *
- * @example
- * import Btc from "@ledgerhq/hw-app-btc";
- * const btc = new Btc({ transport, currency: "zcash" });
+ * This Bitcoin old API is compatible with versions of the Bitcoin nano app that are earlier than 2.1.0.
  */
 
 export default class BtcOld {
