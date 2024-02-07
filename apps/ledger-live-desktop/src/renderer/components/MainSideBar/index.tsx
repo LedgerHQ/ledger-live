@@ -385,7 +385,7 @@ const MainSideBar = () => {
                   iconSize={20}
                   iconActiveColor="wallet"
                   onClick={handleClickDashboard}
-                  isActive={location.pathname === "/"}
+                  isActive={location.pathname === "/" || location.pathname.startsWith("/asset/")}
                   NotifComponent={<UpdateDot collapsed={collapsed} />}
                   collapsed={secondAnim}
                 />
@@ -396,7 +396,7 @@ const MainSideBar = () => {
                   iconSize={20}
                   iconActiveColor="wallet"
                   onClick={handleClickMarket}
-                  isActive={location.pathname === "/market"}
+                  isActive={location.pathname.startsWith("/market")}
                   collapsed={secondAnim}
                 />
                 <FeatureToggle featureId="learn">
