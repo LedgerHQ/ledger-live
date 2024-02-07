@@ -1,8 +1,8 @@
-import { parseGetVersionResult } from "./getVersion";
+import { parseGetVersionResponse } from "./parseGetVersionResponse";
 
 describe("parseGetVersionResult", () => {
   it("correctly parses an arbitrary regular result buffer", () => {
-    const resBuffer = Buffer.from(
+    const responseBuffer = Buffer.from(
       [
         "33000004", //   targetId
         "05", //         device version length
@@ -39,13 +39,13 @@ describe("parseGetVersionResult", () => {
       languageId: 0,
     };
 
-    const parseResult = parseGetVersionResult(resBuffer);
+    const parseResult = parseGetVersionResponse(responseBuffer);
 
     expect(parseResult).toEqual(expectedParseResult);
   });
 
   it("should handle old firmware with zero rawVersionLength", () => {
-    const resBuffer = Buffer.from(
+    const responseBuffer = Buffer.from(
       [
         "33000004", //   targetId
         "00", //         device version length
@@ -79,13 +79,13 @@ describe("parseGetVersionResult", () => {
       languageId: undefined, // because seVersion is "0.0.0" so isDeviceLocalizationSupported will return false
     };
 
-    const parseResult = parseGetVersionResult(resBuffer);
+    const parseResult = parseGetVersionResponse(responseBuffer);
 
     expect(parseResult).toEqual(expectedParseResult);
   });
 
   it("correctly parses buffer for a bootloader version", () => {
-    const resBuffer = Buffer.from(
+    const responseBuffer = Buffer.from(
       [
         "05010003", //  targetId, also mcuTargetId
         "04", //        rawVersion length
@@ -116,46 +116,8 @@ describe("parseGetVersionResult", () => {
       languageId: undefined,
     };
 
-    const parseResult = parseGetVersionResult(resBuffer);
+    const parseResult = parseGetVersionResponse(responseBuffer);
 
     expect(parseResult).toEqual(expectedParseResult);
   });
-
-  // it("correctly parses buffer for SE version with new firmware", () => {
-  //   // Mock input for a SE version with new firmware
-  //   const mockBuffer = Buffer.from([
-  //     0x03,
-  //     0x00,
-  //     0x00,
-  //     0x00, // targetId (mocked as 0x03000000 for SE)
-  //     0x05, // rawVersionLength
-  //     ...Buffer.from("2.1.0"), // rawVersion "2.1.0"
-  //     0x01, // flagsLength
-  //     0x01, // flags (mocked as 0x01)
-  //     0x03, // mcuVersionLength
-  //     ...Buffer.from("2.0"), // mcuVersion "2.0"
-  //     0x00, // Indicates end of mcuVersion
-  //   ]);
-
-  //   const expectedResult = {
-  //     isBootloader: false,
-  //     rawVersion: "2.1.0",
-  //     targetId: 0x03000000,
-  //     seVersion: "2.1.0",
-  //     mcuVersion: "2.0",
-  //     mcuBlVersion: undefined,
-  //     mcuTargetId: undefined,
-  //     seTargetId: 0x03000000,
-  //     flags: Buffer.from([0x01]),
-  //     bootloaderVersion: undefined,
-  //     hardwareVersion: undefined,
-  //     languageId: undefined,
-  //   };
-
-  //   const result = parseGetVersionResult(mockBuffer);
-  //   expect(result).toMatchObject(expectedResult);
-  // });
-
-  // Additional tests for handling optional components, edge cases, and error handling
-  // would follow a similar pattern, adjusting the mockBuffer and expectedResult accordingly.
 });

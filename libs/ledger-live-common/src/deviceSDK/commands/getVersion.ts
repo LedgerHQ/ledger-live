@@ -3,7 +3,10 @@ import { switchMap, finalize } from "rxjs/operators";
 import Transport from "@ledgerhq/hw-transport";
 import type { FirmwareInfo } from "@ledgerhq/types-live";
 import { UnresponsiveCmdEvent } from "./core";
-import { parseGetVersionResult } from "../../device-core/commands/use-cases/getVersion";
+import {
+  GET_VERSION_APDU,
+} from "../../device-core/commands/use-cases/getVersion";
+import { parseGetVersionResponse } from "../../device-core/commands/use-cases/parseGetVersionResponse";
 
 export type GetVersionCmdEvent =
   | { type: "data"; firmwareInfo: FirmwareInfo }
@@ -23,12 +26,12 @@ export function getVersion({ transport }: GetVersionCmdArgs): Observable<GetVers
     };
     transport.on("unresponsive", unresponsiveCallback);
 
-    return from(transport.send(0xe0, 0x01, 0x00, 0x00))
+    return from(transport.send(...GET_VERSION_APDU))
       .pipe(
         switchMap((value: Buffer) => {
           transport.off("unresponsive", unresponsiveCallback);
 
-          const firmwareInfo = parseGetVersionResult(value);
+          const firmwareInfo = parseGetVersionResponse(value);
 
           return of({
             type: "data" as const,
