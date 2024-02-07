@@ -1,4 +1,4 @@
-// the maximum number of bytes allowed in a single chunk when processing bitcoin script data. 
+// the maximum number of bytes allowed in a single chunk when processing bitcoin script data.
 // if the Bitcoin script is too large, we will process it in several chunks.
 export const MAX_SCRIPT_BLOCK = 50;
 export const DEFAULT_VERSION = 1;

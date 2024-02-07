@@ -34,7 +34,7 @@ export default class Btc {
    * @param transport The transport layer used for communication.
    * @param scrambleKey This parameter is deprecated and no longer needed.
    * @param currency The currency to use, defaults to "bitcoin".
-   */  
+   */
   constructor({
     transport,
     scrambleKey = "BTC",
@@ -78,7 +78,7 @@ export default class Btc {
    * @param arg derivation parameter
    * - path: a BIP 32 path of the account level. (e.g. The derivation path `84'/0'/0'`
    * follows the `purpose' / coin_type' / account'` standard, with purpose=84, coin_type=0, account=0)
-   * - xpubVersion: the XPUBVersion of the coin used. (refer to ledgerjs/packages/cryptoassets/src/currencies.ts 
+   * - xpubVersion: the XPUBVersion of the coin used. (refer to ledgerjs/packages/cryptoassets/src/currencies.ts
    * for the XPUBVersion value if needed)
    * @returns XPUB of the account
    */
@@ -103,7 +103,7 @@ export default class Btc {
    * - p2sh format with 49' paths
    *
    * - bech32 format with 84' paths
-   * 
+   *
    * - bech32m format with 86' paths
    *
    * - cashaddr in case of Bitcoin Cash
@@ -274,7 +274,7 @@ export default class Btc {
 
   /**
    * Trusted input is the hash of a UTXO that needs to be signed
-   * For Legacy transactions, the app has some APDUs flows that do the amount check for an UTXO, 
+   * For Legacy transactions, the app has some APDUs flows that do the amount check for an UTXO,
    * by parsing the transaction that created this UTXO
    */
   getTrustedInput(
