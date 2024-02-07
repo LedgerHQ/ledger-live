@@ -1,0 +1,92 @@
+name: "[Test] Bridge"
+
+on: pull_request
+
+concurrency:
+  group: ci-bridge-${{ github.ref }}
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  is-affected:
+    outputs:
+      is-affected: ${{ steps.affected.outputs.is-affected }}
+      paths: ${{ steps.affected.outputs.paths }}
+    runs-on: [ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: develop
+          fetch-depth: 0
+      - name: checkout branch (PR)
+        if: ${{ github.event_name == 'pull_request' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr checkout ${{ github.event.pull_request.number }}
+      - name: checkout branch (not PR)
+        if: ${{ github.event_name != 'pull_request' }}
+        run: |
+          git checkout $GITHUB_SHA
+      - uses: ./tools/actions/live-common-affected
+        id: affected
+        with:
+          ref: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.event.pull_request.base.ref) || 'HEAD^' }}
+
+  bridge-tests:
+    name: "Bridge Tests"
+    needs: is-affected
+    if: ${{ needs.is-affected.outputs.is-affected == 'true' }}
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      FORCE_COLOR: 3
+      CI_OS: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
+        id: toolchain
+        with:
+          skip_turbo_cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+      - name: Install node-gyp globally
+        if: runner.os == 'Windows'
+        run: |
+          pnpm add -g node-gyp
+      - name: Install dependencies
+        run: pnpm i --filter="live-common..." --filter="ledger-live"
+      - name: Build
+        run: pnpm build:llc --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+      - name: Test
+        shell: bash
+        env:
+          VERBOSE_FILE: logs.txt
+        run: |
+          pnpm common test-bridge
+          git diff --exit-code libs/ledger-live-common/src
+      - name: (On Failure) Upload live-common snapshots and source
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: ${{ format('live-common-src-{0}', matrix.os) }}
+          path: |
+            libs/ledger-live-common/src
+      - name: (On Failure) Upload logs
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: logs.txt
+          path: logs.txt
