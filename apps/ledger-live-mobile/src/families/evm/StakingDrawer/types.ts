@@ -1,3 +1,13 @@
-import { EthStakingProviders } from "~/types/featureFlags";
+export type EthStakingProviders = {
+  listProvider: Array<{
+    id: string;
+    name: string;
+    liveAppId: string;
+    min?: number; // min required amount to stake in ETH
+    supportLink?: string;
+    icon?: string;
+    queryParams?: Record<string, string>;
+  }>;
+};
 
 export type ListProvider = EthStakingProviders["listProvider"][number];
