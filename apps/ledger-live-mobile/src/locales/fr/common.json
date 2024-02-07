@@ -492,7 +492,7 @@
       "description" : "Veuillez essayer de réinstaller l’app depuis My Ledger."
     },
     "NotEnoughGas" : {
-      "title" : "Vous avez besoin de {{fees}} {{ticker}} comme frais de réseau pour échanger sur la blockchain {{cryptoName}}. <link0>Acheter des {{ticker}}</link0>",
+      "title" : "Vous avez besoin de {{fees}} {{ticker}} pour les frais, car vous êtes sur le réseau {{cryptoName}}. <link0>Acheter des {{ticker}}.</link0>",
       "description" : "Envoyez des coins sur votre compte pour régler vos transactions de tokens."
     },
     "NotEnoughGasSwap" : {
