@@ -492,7 +492,7 @@
       "description" : "Prueba a reinstalar la aplicación desde Mi Ledger"
     },
     "NotEnoughGas" : {
-      "title" : "En la red {{cryptoName}} debes pagar una tarifa de red de {{fees}} {{ticker}} para realizar permutas. <link0>Comprar {{ticker}}</link0>",
+      "title" : "Necesitas {{fees}} {{ticker}} para tarifas porque estás en la red de {{cryptoName}}. <link0>Comprar {{ticker}}</link0>",
       "description" : "Envía monedas a tu cuenta para pagar por transacciones de tokens."
     },
     "NotEnoughGasSwap" : {
