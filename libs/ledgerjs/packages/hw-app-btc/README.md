@@ -27,7 +27,6 @@ For a smooth and quick integration:
 
 #### Table of Contents
 
-*   [bippath](#bippath)
 *   [Btc](#btc)
     *   [Parameters](#parameters)
     *   [Examples](#examples)
@@ -56,62 +55,60 @@ For a smooth and quick integration:
     *   [getTrustedInputBIP143](#gettrustedinputbip143)
         *   [Parameters](#parameters-9)
 *   [BtcNew](#btcnew)
-    *   [Parameters](#parameters-10)
     *   [getWalletXpub](#getwalletxpub-1)
-        *   [Parameters](#parameters-11)
+        *   [Parameters](#parameters-10)
     *   [getWalletPublicKey](#getwalletpublickey-1)
-        *   [Parameters](#parameters-12)
+        *   [Parameters](#parameters-11)
     *   [createPaymentTransaction](#createpaymenttransaction-1)
-        *   [Parameters](#parameters-13)
+        *   [Parameters](#parameters-12)
     *   [signMessage](#signmessage-1)
-        *   [Parameters](#parameters-14)
+        *   [Parameters](#parameters-13)
 *   [descrTemplFrom](#descrtemplfrom)
-    *   [Parameters](#parameters-15)
+    *   [Parameters](#parameters-14)
 *   [BtcOld](#btcold)
-    *   [Parameters](#parameters-16)
     *   [getWalletPublicKey](#getwalletpublickey-2)
-        *   [Parameters](#parameters-17)
+        *   [Parameters](#parameters-15)
         *   [Examples](#examples-7)
     *   [createPaymentTransaction](#createpaymenttransaction-2)
-        *   [Parameters](#parameters-18)
+        *   [Parameters](#parameters-16)
         *   [Examples](#examples-8)
 *   [CreateTransactionArg](#createtransactionarg)
     *   [Properties](#properties)
 *   [AddressFormat](#addressformat)
 *   [AccountType](#accounttype)
     *   [spendingCondition](#spendingcondition)
-        *   [Parameters](#parameters-19)
+        *   [Parameters](#parameters-17)
     *   [setInput](#setinput)
-        *   [Parameters](#parameters-20)
+        *   [Parameters](#parameters-18)
     *   [setOwnOutput](#setownoutput)
-        *   [Parameters](#parameters-21)
+        *   [Parameters](#parameters-19)
     *   [getDescriptorTemplate](#getdescriptortemplate)
 *   [SingleKeyAccount](#singlekeyaccount)
 *   [getTaprootOutputKey](#gettaprootoutputkey)
-    *   [Parameters](#parameters-22)
+    *   [Parameters](#parameters-20)
 *   [AppClient](#appclient)
-    *   [Parameters](#parameters-23)
+    *   [Parameters](#parameters-21)
 *   [ClientCommandInterpreter](#clientcommandinterpreter)
-    *   [Parameters](#parameters-24)
+    *   [Parameters](#parameters-22)
 *   [MerkelizedPsbt](#merkelizedpsbt)
-    *   [Parameters](#parameters-25)
+    *   [Parameters](#parameters-23)
 *   [Merkle](#merkle)
-    *   [Parameters](#parameters-26)
+    *   [Parameters](#parameters-24)
 *   [MerkleMap](#merklemap)
-    *   [Parameters](#parameters-27)
+    *   [Parameters](#parameters-25)
 *   [WalletPolicy](#walletpolicy)
-    *   [Parameters](#parameters-28)
+    *   [Parameters](#parameters-26)
 *   [extract](#extract)
-    *   [Parameters](#parameters-29)
+    *   [Parameters](#parameters-27)
 *   [finalize](#finalize)
-    *   [Parameters](#parameters-30)
+    *   [Parameters](#parameters-28)
 *   [clearFinalizedInput](#clearfinalizedinput)
-    *   [Parameters](#parameters-31)
+    *   [Parameters](#parameters-29)
 *   [writePush](#writepush)
-    *   [Parameters](#parameters-32)
+    *   [Parameters](#parameters-30)
 *   [PsbtV2](#psbtv2)
 *   [serializeTransactionOutputs](#serializetransactionoutputs-1)
-    *   [Parameters](#parameters-33)
+    *   [Parameters](#parameters-31)
     *   [Examples](#examples-9)
 *   [SignP2SHTransactionArg](#signp2shtransactionarg)
     *   [Properties](#properties-1)
@@ -119,26 +116,12 @@ For a smooth and quick integration:
 *   [TransactionOutput](#transactionoutput)
 *   [Transaction](#transaction)
 
-### bippath
-
-BIP32 Path Handling for Bitcoin Wallets
-
-This module provides utility functions to handle BIP32 paths,
-which are commonly used in hierarchical deterministic (HD) wallets.
-It includes functions to convert BIP32 paths to and from different formats,
-extract components from extended public keys (xpubs), and manipulate path elements.
-
 ### Btc
 
 Bitcoin API.
 
 #### Parameters
 
-*   `$0` **{transport: Transport, scrambleKey: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?, currency: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?}**&#x20;
-
-    *   `$0.transport` &#x20;
-    *   `$0.scrambleKey`   (optional, default `"BTC"`)
-    *   `$0.currency`   (optional, default `"bitcoin"`)
 *   `transport`  The transport layer used for communication.
 *   `scrambleKey`  This parameter is deprecated and no longer needed.
 *   `currency`  The currency to use, defaults to "bitcoin".
@@ -357,10 +340,6 @@ input data into the PSBT process. In the future, a new interface should
 be developed that exposes PSBT to the outer world, which would render
 a much cleaner implementation.
 
-#### Parameters
-
-*   `` &#x20;
-
 #### getWalletXpub
 
 This is a new method that allow users to get an xpub at a standard path.
@@ -460,11 +439,7 @@ Returns **DefaultDescriptorTemplate**&#x20;
 
 ### BtcOld
 
-This Bitcoin old API is compatible with versions of the Bitcoin nano app that are earlier than 2.1.0.
-
-#### Parameters
-
-*   `` &#x20;
+This Bitcoin old API is compatible with versions of the Bitcoin nano app that are earlier than 2.1.0
 
 #### getWalletPublicKey
 
@@ -474,11 +449,13 @@ This Bitcoin old API is compatible with versions of the Bitcoin nano app that ar
 *   `opts` **{verify: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, format: [AddressFormat](#addressformat)?}?**&#x20;
 *   `options`  an object with optional these fields:*   verify (boolean) will ask user to confirm the address on the device
 
-    *   format ("legacy" | "p2sh" | "bech32" | "cashaddr") to use different bitcoin address formatter.NB The normal usage is to use:*   legacy format with 44' paths
+    *   format ("legacy" | "p2sh" | "bech32" | "bech32m" | "cashaddr") to use different bitcoin address formatter.NB The normal usage is to use:*   legacy format with 44' paths
 
     *   p2sh format with 49' paths
 
-    *   bech32 format with 173' paths
+    *   bech32 format with 84' paths
+
+    *   bech32m format with 86' paths
 
     *   cashaddr in case of Bitcoin Cash
 

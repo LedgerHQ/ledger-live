@@ -27,7 +27,8 @@ import { serializeTransaction } from "./serializeTransaction";
 import type { Transaction } from "./types";
 
 /**
- * This class implements the same interface as BtcOld (formerly
+ * @class BtcNew
+ * @description This class implements the same interface as BtcOld (formerly
  * named Btc), but interacts with Bitcoin hardware app version 2.1.0+
  * which uses a totally new APDU protocol. This new
  * protocol is documented at
@@ -38,6 +39,7 @@ import type { Transaction } from "./types";
  * input data into the PSBT process. In the future, a new interface should
  * be developed that exposes PSBT to the outer world, which would render
  * a much cleaner implementation.
+ *
  */
 export default class BtcNew {
   constructor(private client: Client) {}

@@ -11,7 +11,9 @@ import { signMessage } from "./signMessage";
 export type { AddressFormat };
 
 /**
- * This Bitcoin old API is compatible with versions of the Bitcoin nano app that are earlier than 2.1.0.
+ * @class BtcOld
+ * @description This Bitcoin old API is compatible with versions of the Bitcoin nano app that are earlier than 2.1.0
+ * 
  */
 
 export default class BtcOld {
@@ -58,7 +60,7 @@ export default class BtcOld {
    *
    * - verify (boolean) will ask user to confirm the address on the device
    *
-   * - format ("legacy" | "p2sh" | "bech32" | "cashaddr") to use different bitcoin address formatter.
+   * - format ("legacy" | "p2sh" | "bech32" | "bech32m" | "cashaddr") to use different bitcoin address formatter.
    *
    * NB The normal usage is to use:
    *
@@ -66,7 +68,9 @@ export default class BtcOld {
    *
    * - p2sh format with 49' paths
    *
-   * - bech32 format with 173' paths
+   * - bech32 format with 84' paths
+   * 
+   * - bech32m format with 86' paths
    *
    * - cashaddr in case of Bitcoin Cash
    *

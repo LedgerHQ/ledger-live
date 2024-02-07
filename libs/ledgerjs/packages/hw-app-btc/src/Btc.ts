@@ -16,8 +16,11 @@ import { signP2SHTransaction } from "./signP2SHTransaction";
 import { checkIsBtcLegacy, getAppAndVersion } from "./getAppAndVersion";
 
 /**
- * Bitcoin API.
- *
+ * @class Btc
+ * @description Bitcoin API.
+ * @param transport The transport layer used for communication.
+ * @param scrambleKey This parameter is deprecated and no longer needed.
+ * @param currency The currency to use, defaults to "bitcoin".
  * @example
  * import Btc from "@ledgerhq/hw-app-btc";
  * const btc = new Btc({ transport, currency: "bitcoin" });
@@ -29,12 +32,6 @@ export default class Btc {
   // The specific implementation used, determined by the nano app and its version.
   // It chooses between BtcNew (new interface) and BtcOld (old interface).
   private _impl: BtcOld | BtcNew;
-  /**
-   * Constructs a Bitcoin API instance.
-   * @param transport The transport layer used for communication.
-   * @param scrambleKey This parameter is deprecated and no longer needed.
-   * @param currency The currency to use, defaults to "bitcoin".
-   */
   constructor({
     transport,
     scrambleKey = "BTC",
