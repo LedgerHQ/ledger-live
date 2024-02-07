@@ -3001,6 +3001,9 @@ importers:
       axios:
         specifier: ^0.25.0
         version: 0.25.0
+      bs58check:
+        specifier: ^2.1.2
+        version: 2.1.2
       documentation:
         specifier: 14.0.2
         version: 14.0.2
