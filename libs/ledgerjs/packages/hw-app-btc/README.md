@@ -121,7 +121,7 @@ For a smooth and quick integration:
 
 BIP32 Path Handling for Bitcoin Wallets
 
-This module provides utility functions to handle BIP32 paths,
+This file provides utility functions to handle BIP32 paths,
 which are commonly used in hierarchical deterministic (HD) wallets.
 It includes functions to convert BIP32 paths to and from different formats,
 extract components from extended public keys (xpubs), and manipulate path elements.
@@ -499,6 +499,8 @@ To sign a transaction involving standard (P2PKH) inputs, call createTransaction 
 *   `additionals`  list of additionnal options*   "bech32" for spending native segwit outputs
     *   "abc" for bch
     *   "gold" for btg
+    *   "decred" for decred
+    *   "zcash" for zcash
     *   "bipxxx" for using BIPxxx
     *   "sapling" to indicate a zec transaction is supporting sapling (to be set over block 419200)
 *   `expiryHeight`  is an optional Buffer for zec overwinter / sapling Txs

@@ -115,6 +115,8 @@ export default class BtcOld {
    * - "bech32" for spending native segwit outputs
    * - "abc" for bch
    * - "gold" for btg
+   * - "decred" for decred
+   * - "zcash" for zcash
    * - "bipxxx" for using BIPxxx
    * - "sapling" to indicate a zec transaction is supporting sapling (to be set over block 419200)
    * @param expiryHeight is an optional Buffer for zec overwinter / sapling Txs
