@@ -425,7 +425,7 @@ export default class BtcNew {
 
 /**
  * This function returns a descriptor template based on the address format.
- * See https://github.com/LedgerHQ/app-bitcoin-new/blob/develop/doc/wallet.md for details of 
+ * See https://github.com/LedgerHQ/app-bitcoin-new/blob/develop/doc/wallet.md for details of
  * the bitcoin descriptor template.
  */
 function descrTemplFrom(addressFormat: AddressFormat): DefaultDescriptorTemplate {
