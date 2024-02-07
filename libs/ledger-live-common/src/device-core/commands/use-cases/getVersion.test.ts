@@ -1,4 +1,3 @@
-import { FirmwareInfoEntity } from "../entities/FirmwareInfoEntity";
 import { parseGetVersionResult } from "./getVersion";
 
 describe("parseGetVersionResult", () => {
