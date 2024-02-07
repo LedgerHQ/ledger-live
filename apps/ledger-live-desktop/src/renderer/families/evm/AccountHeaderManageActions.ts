@@ -15,7 +15,9 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const onClick = useCallback(() => {
+  const isEthereumAccount = account.type === "Account" && account.currency.id === "ethereum";
+
+  const onClickStake = useCallback(() => {
     if (isAccountEmpty(account)) {
       dispatch(
         openModal("MODAL_NO_FUNDS_STAKE", {
@@ -32,16 +34,11 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
     }
   }, [account, dispatch, parentAccount]);
 
-  if (
-    account.type === "Account" &&
-    // Ethereum Classic is still on proof of work
-    account.currency.id !== "ethereum_classic" &&
-    account.currency.id.includes("ethereum")
-  ) {
+  if (isEthereumAccount) {
     return [
       {
         key: "Stake",
-        onClick,
+        onClick: onClickStake,
         event: "button_clicked2",
         eventProperties: {
           button: "stake",
