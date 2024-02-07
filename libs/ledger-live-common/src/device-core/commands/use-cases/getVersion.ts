@@ -1,57 +1,11 @@
-import { satisfies as versionSatisfies, coerce as semverCoerce } from "semver";
-import { DeviceModelId, identifyTargetId } from "@ledgerhq/devices";
+import { identifyTargetId } from "@ledgerhq/devices";
 import Transport from "@ledgerhq/hw-transport";
 import { FirmwareInfoEntity } from "../entities/FirmwareInfoEntity";
 import { isDeviceLocalizationSupported } from "./isDeviceLocalizationSupported";
+import { isHardwareVersionSupported } from "./isHardwareVersionSupported";
+import { isBootloaderVersionSupported } from "./isBootloaderVersionSupported";
 
-const deviceVersionRangesForBootloaderVersion: {
-  [key in DeviceModelId]?: string;
-} = {
-  nanoS: ">=2.0.0",
-  nanoX: ">=2.0.0",
-  nanoSP: ">=1.0.0",
-  stax: ">=1.0.0",
-};
-export const isBootloaderVersionSupported = (seVersion: string, modelId?: DeviceModelId): boolean =>
-  !!modelId &&
-  !!deviceVersionRangesForBootloaderVersion[modelId] &&
-  !!versionSatisfies(
-    semverCoerce(seVersion) || seVersion,
-    deviceVersionRangesForBootloaderVersion[modelId] as string,
-  );
-
-const deviceVersionRangesForHardwareVersion: {
-  [key in DeviceModelId]?: string;
-} = {
-  nanoX: ">=2.0.0",
-};
-
-/**
- * @returns whether the Hardware Version bytes are included in the result of the
- * getVersion APDU
- * */
-export const isHardwareVersionSupported = (seVersion: string, modelId?: DeviceModelId): boolean =>
-  !!modelId &&
-  !!deviceVersionRangesForHardwareVersion[modelId] &&
-  !!versionSatisfies(
-    semverCoerce(seVersion) || seVersion,
-    deviceVersionRangesForHardwareVersion[modelId] as string,
-  );
-
-/**
- * Get the FirmwareInfo of a given device
- *
- * @param transport
- * @param options - Contains optional options:
- *  - abortTimeoutMs: aborts the APDU exchange after a given timeout
- */
-export async function getVersion(
-  transport: Transport,
-  { abortTimeoutMs }: { abortTimeoutMs?: number } = {},
-): Promise<FirmwareInfoEntity> {
-  const res = await transport.send(0xe0, 0x01, 0x00, 0x00, undefined, undefined, {
-    abortTimeoutMs,
-  });
+export function parseGetVersionResult(res: Buffer): FirmwareInfoEntity {
   const data = res.slice(0, res.length - 2);
   let i = 0;
 
@@ -165,4 +119,21 @@ export async function getVersion(
     hardwareVersion,
     languageId,
   };
+}
+
+/**
+ * Get the FirmwareInfo of a given device
+ *
+ * @param transport
+ * @param options - Contains optional options:
+ *  - abortTimeoutMs: aborts the APDU exchange after a given timeout
+ */
+export async function getVersion(
+  transport: Transport,
+  { abortTimeoutMs }: { abortTimeoutMs?: number } = {},
+): Promise<FirmwareInfoEntity> {
+  const res = await transport.send(0xe0, 0x01, 0x00, 0x00, undefined, undefined, {
+    abortTimeoutMs,
+  });
+  return parseGetVersionResult(res);
 }
