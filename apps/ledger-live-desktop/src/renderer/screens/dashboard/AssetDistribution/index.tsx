@@ -1,4 +1,4 @@
-import React, { useState, useRef, useLayoutEffect } from "react";
+import React, { useState, useRef, useLayoutEffect, useEffect } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import Text from "~/renderer/components/Text";
@@ -13,6 +13,7 @@ import {
   hideEmptyTokenAccountsSelector,
 } from "~/renderer/reducers/settings";
 import { useSelector } from "react-redux";
+import { useCryptoIcons } from "@ledgerhq/react-ui/components/asorted/Icon";
 
 export default function AssetDistribution() {
   const hideEmptyTokenAccount = useSelector(hideEmptyTokenAccountsSelector);
@@ -54,6 +55,12 @@ export default function AssetDistribution() {
   const filteredList = list.filter(elem => !blacklistedTokenIds.includes(elem.currency.id));
 
   const subList = showAll || almostAll ? filteredList : filteredList.slice(0, initialRowCount);
+
+  const { getCryptoIcon } = useCryptoIcons();
+  useEffect(() => {
+    const byId = filteredList.map(item => item?.currency?.id);
+    getCryptoIcon(byId);
+  }, [filteredList, getCryptoIcon]);
 
   return filteredList.length ? (
     <TableContainer>

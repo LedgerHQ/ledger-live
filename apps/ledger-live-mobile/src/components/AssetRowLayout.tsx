@@ -1,7 +1,7 @@
 import React from "react";
 import { useTheme } from "styled-components/native";
 import { BigNumber } from "bignumber.js";
-import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency, Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { Flex, Text, Tag } from "@ledgerhq/native-ui";
 import { ValueChange } from "@ledgerhq/types-live";
 import isEqual from "lodash/isEqual";
@@ -10,10 +10,11 @@ import CurrencyUnitValue from "./CurrencyUnitValue";
 import CounterValue from "./CounterValue";
 import Delta from "./Delta";
 import ParentCurrencyIcon from "./ParentCurrencyIcon";
+import CryptoIconPOC, { useCryptoIcons } from "@ledgerhq/native-ui/components/Icon/CryptoIconPOC";
 
 type Props = {
   balance: BigNumber;
-  currency: Currency;
+  currency: CryptoOrTokenCurrency;
   currencyUnit?: Unit;
   countervalueChange?: ValueChange;
   name: string;
@@ -23,6 +24,7 @@ type Props = {
   hideDelta?: boolean;
   topLink?: boolean;
   bottomLink?: boolean;
+  id?: string;
 };
 
 const AssetRowLayout = ({
@@ -38,6 +40,9 @@ const AssetRowLayout = ({
   tag,
 }: Props) => {
   const { colors, space } = useTheme();
+  const { cryptoIcons } = useCryptoIcons();
+
+  const currencyId = currency?.id;
 
   return (
     <TouchableOpacity onPress={onPress}>
@@ -51,7 +56,11 @@ const AssetRowLayout = ({
         />
       )}
       <Flex flexDirection="row" pt={topLink ? 0 : 6} pb={bottomLink ? 0 : 6} alignItems="center">
-        <ParentCurrencyIcon currency={currency} size={40} />
+        {currencyId && cryptoIcons?.[currencyId] ? (
+          <CryptoIconPOC size={40} iconURL={cryptoIcons?.[currencyId] || undefined} circleIcon />
+        ) : (
+          <ParentCurrencyIcon currency={currency} size={40} />
+        )}
         <Flex flex={1} justifyContent="center" ml={4}>
           <Flex mb={1} flexDirection="row" justifyContent="space-between">
             <Flex flexGrow={1} flexShrink={1} flexDirection="row" alignItems="center">

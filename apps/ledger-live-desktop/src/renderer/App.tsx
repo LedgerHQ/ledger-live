@@ -32,6 +32,7 @@ import { useBraze } from "./hooks/useBraze";
 import { StorylyProvider } from "~/storyly/StorylyProvider";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+import { CryptoIconsProvider } from "@ledgerhq/react-ui/components/asorted/Icon";
 
 const reloadApp = (event: KeyboardEvent) => {
   if ((event.ctrlKey || event.metaKey) && event.key === "r") {
@@ -76,31 +77,31 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
           <FirebaseFeatureFlagsProvider getFeature={getFeature}>
             <ConnectEnvsToSentry />
             <UpdaterProvider>
-              <CountervaluesMarketcap>
-                <CountervaluesProvider initialState={initialCountervalues}>
-                  <ToastProvider>
-                    <AnnouncementProviderWrapper>
-                      <Router>
-                        <PostOnboardingProviderWrapped>
-                          <PlatformAppProviderWrapper>
-                            <DrawerProvider>
-                              <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
-                                <MarketDataProvider>
-                                  <StorylyProvider>
-                                    <QueryClientProvider client={queryClient}>
+              <CountervaluesProvider initialState={initialCountervalues}>
+                <ToastProvider>
+                  <AnnouncementProviderWrapper>
+                    <Router>
+                      <PostOnboardingProviderWrapped>
+                        <PlatformAppProviderWrapper>
+                          <DrawerProvider>
+                            <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
+                              <MarketDataProvider>
+                                <StorylyProvider>
+                                  <QueryClientProvider client={queryClient}>
+                                    <CryptoIconsProvider>
                                       <Default />
-                                    </QueryClientProvider>
-                                  </StorylyProvider>
-                                </MarketDataProvider>
-                              </NftMetadataProvider>
-                            </DrawerProvider>
-                          </PlatformAppProviderWrapper>
-                        </PostOnboardingProviderWrapped>
-                      </Router>
-                    </AnnouncementProviderWrapper>
-                  </ToastProvider>
-                </CountervaluesProvider>
-              </CountervaluesMarketcap>
+                                    </CryptoIconsProvider>
+                                  </QueryClientProvider>
+                                </StorylyProvider>
+                              </MarketDataProvider>
+                            </NftMetadataProvider>
+                          </DrawerProvider>
+                        </PlatformAppProviderWrapper>
+                      </PostOnboardingProviderWrapped>
+                    </Router>
+                  </AnnouncementProviderWrapper>
+                </ToastProvider>
+              </CountervaluesProvider>
             </UpdaterProvider>
           </FirebaseFeatureFlagsProvider>
         </FirebaseRemoteConfigProvider>

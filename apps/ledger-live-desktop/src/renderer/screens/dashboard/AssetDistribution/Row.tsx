@@ -16,6 +16,10 @@ import Bar from "./Bar";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { localeSelector } from "~/renderer/reducers/settings";
 import { DistributionItem } from "@ledgerhq/types-live";
+import CryptoIconPOC, {
+  useCryptoIcons,
+} from "@ledgerhq/react-ui/components/asorted/Icon/CryptoIconPOC";
+import { Flex } from "@ledgerhq/react-ui";
 
 type Props = {
   item: DistributionItem;
@@ -95,6 +99,15 @@ const Row = ({ item: { currency, amount, distribution }, isVisible }: Props) => 
     maximumFractionDigits: 2,
   });
   const icon = <CryptoCurrencyIcon currency={currency} size={16} />;
+
+  const { cryptoIcons } = useCryptoIcons();
+  let iconAlternate = null;
+  const currencyId = currency?.id;
+  if (currencyId && cryptoIcons?.[currencyId])
+    iconAlternate = (
+      <CryptoIconPOC size={16} iconURL={cryptoIcons[currencyId] || undefined} circleIcon />
+    );
+
   const onClick = useCallback(() => {
     setTrackingSource("asset allocation");
     history.push({
@@ -104,7 +117,7 @@ const Row = ({ item: { currency, amount, distribution }, isVisible }: Props) => 
   return (
     <Wrapper onClick={onClick} data-test-id={`asset-row-${currency.name.toLowerCase()}`}>
       <Asset>
-        {icon}
+        {iconAlternate || <Flex opacity=".2">{icon}</Flex>}
         <Tooltip delay={1200} content={currency.name}>
           <Ellipsis ff="Inter|SemiBold" color="palette.text.shade100" fontSize={3}>
             {currency.name}
