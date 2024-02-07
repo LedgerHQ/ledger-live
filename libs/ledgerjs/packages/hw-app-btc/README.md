@@ -50,63 +50,68 @@ For a smooth and quick integration:
     *   [serializeTransactionOutputs](#serializetransactionoutputs)
         *   [Parameters](#parameters-7)
         *   [Examples](#examples-6)
-*   [BtcNew](#btcnew)
-    *   [Parameters](#parameters-8)
-    *   [getWalletXpub](#getwalletxpub-1)
+    *   [getTrustedInput](#gettrustedinput)
+        *   [Parameters](#parameters-8)
+    *   [getTrustedInputBIP143](#gettrustedinputbip143)
         *   [Parameters](#parameters-9)
-    *   [getWalletPublicKey](#getwalletpublickey-1)
-        *   [Parameters](#parameters-10)
-    *   [createPaymentTransaction](#createpaymenttransaction-1)
+*   [BtcNew](#btcnew)
+    *   [Parameters](#parameters-10)
+    *   [getWalletXpub](#getwalletxpub-1)
         *   [Parameters](#parameters-11)
-    *   [signMessage](#signmessage-1)
+    *   [getWalletPublicKey](#getwalletpublickey-1)
         *   [Parameters](#parameters-12)
-*   [BtcOld](#btcold)
-    *   [Parameters](#parameters-13)
-    *   [Examples](#examples-7)
-    *   [getWalletPublicKey](#getwalletpublickey-2)
+    *   [createPaymentTransaction](#createpaymenttransaction-1)
+        *   [Parameters](#parameters-13)
+    *   [signMessage](#signmessage-1)
         *   [Parameters](#parameters-14)
-        *   [Examples](#examples-8)
+*   [descrTemplFrom](#descrtemplfrom)
+    *   [Parameters](#parameters-15)
+*   [BtcOld](#btcold)
+    *   [Parameters](#parameters-16)
+    *   [getWalletPublicKey](#getwalletpublickey-2)
+        *   [Parameters](#parameters-17)
+        *   [Examples](#examples-7)
     *   [createPaymentTransaction](#createpaymenttransaction-2)
-        *   [Parameters](#parameters-15)
-        *   [Examples](#examples-9)
+        *   [Parameters](#parameters-18)
+        *   [Examples](#examples-8)
 *   [CreateTransactionArg](#createtransactionarg)
     *   [Properties](#properties)
 *   [AddressFormat](#addressformat)
 *   [AccountType](#accounttype)
     *   [spendingCondition](#spendingcondition)
-        *   [Parameters](#parameters-16)
+        *   [Parameters](#parameters-19)
     *   [setInput](#setinput)
-        *   [Parameters](#parameters-17)
+        *   [Parameters](#parameters-20)
     *   [setOwnOutput](#setownoutput)
-        *   [Parameters](#parameters-18)
+        *   [Parameters](#parameters-21)
     *   [getDescriptorTemplate](#getdescriptortemplate)
 *   [SingleKeyAccount](#singlekeyaccount)
 *   [getTaprootOutputKey](#gettaprootoutputkey)
-    *   [Parameters](#parameters-19)
-*   [AppClient](#appclient)
-    *   [Parameters](#parameters-20)
-*   [ClientCommandInterpreter](#clientcommandinterpreter)
-    *   [Parameters](#parameters-21)
-*   [MerkelizedPsbt](#merkelizedpsbt)
     *   [Parameters](#parameters-22)
-*   [Merkle](#merkle)
+*   [AppClient](#appclient)
     *   [Parameters](#parameters-23)
-*   [MerkleMap](#merklemap)
+*   [ClientCommandInterpreter](#clientcommandinterpreter)
     *   [Parameters](#parameters-24)
-*   [WalletPolicy](#walletpolicy)
+*   [MerkelizedPsbt](#merkelizedpsbt)
     *   [Parameters](#parameters-25)
-*   [extract](#extract)
+*   [Merkle](#merkle)
     *   [Parameters](#parameters-26)
-*   [finalize](#finalize)
+*   [MerkleMap](#merklemap)
     *   [Parameters](#parameters-27)
-*   [clearFinalizedInput](#clearfinalizedinput)
+*   [WalletPolicy](#walletpolicy)
     *   [Parameters](#parameters-28)
-*   [writePush](#writepush)
+*   [extract](#extract)
     *   [Parameters](#parameters-29)
+*   [finalize](#finalize)
+    *   [Parameters](#parameters-30)
+*   [clearFinalizedInput](#clearfinalizedinput)
+    *   [Parameters](#parameters-31)
+*   [writePush](#writepush)
+    *   [Parameters](#parameters-32)
 *   [PsbtV2](#psbtv2)
 *   [serializeTransactionOutputs](#serializetransactionoutputs-1)
-    *   [Parameters](#parameters-30)
-    *   [Examples](#examples-10)
+    *   [Parameters](#parameters-33)
+    *   [Examples](#examples-9)
 *   [SignP2SHTransactionArg](#signp2shtransactionarg)
     *   [Properties](#properties-1)
 *   [TransactionInput](#transactioninput)
@@ -124,6 +129,9 @@ Bitcoin API.
     *   `$0.transport` &#x20;
     *   `$0.scrambleKey`   (optional, default `"BTC"`)
     *   `$0.currency`   (optional, default `"bitcoin"`)
+*   `transport`  The transport layer used for communication.
+*   `scrambleKey`  This parameter is deprecated and no longer needed.
+*   `currency`  The currency to use, defaults to "bitcoin".
 
 #### Examples
 
@@ -138,8 +146,10 @@ Get an XPUB with a ledger device
 
 ##### Parameters
 
-*   `arg` **{path: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), xpubVersion: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)}** derivation parameter*   path: a BIP 32 path of the account level. e.g. `84'/0'/0'`
-    *   xpubVersion: the XPUBVersion of the coin used. (use @ledgerhq/currencies if needed)
+*   `arg` **{path: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), xpubVersion: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)}** derivation parameter*   path: a BIP 32 path of the account level. (e.g. The derivation path `84'/0'/0'`
+        follows the `purpose' / coin_type' / account'` standard, with purpose=84, coin\_type=0, account=0)
+    *   xpubVersion: the XPUBVersion of the coin used. (refer to ledgerjs/packages/cryptoassets/src/currencies.ts
+        for the XPUBVersion value if needed)
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** XPUB of the account
 
@@ -147,15 +157,17 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 
 ##### Parameters
 
-*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a BIP 32 path
+*   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a BIP 32 path (i.e. the `purpose’ / coin_type’ / account’ / change / address_index` standard)
 *   `opts` **{verify: [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)?, format: [AddressFormat](#addressformat)?}?**&#x20;
-*   `options`  an object with optional these fields:*   verify (boolean) will ask user to confirm the address on the device
+*   `options`  an object with optional these fields:*   verify (boolean) whether ask user to confirm the address on the device
 
     *   format ("legacy" | "p2sh" | "bech32" | "bech32m" | "cashaddr") to use different bitcoin address formatter.NB The normal usage is to use:*   legacy format with 44' paths
 
     *   p2sh format with 49' paths
 
     *   bech32 format with 84' paths
+
+    *   bech32m format with 86' paths
 
     *   cashaddr in case of Bitcoin Cash
 
@@ -211,6 +223,8 @@ To sign a transaction involving standard (P2PKH) inputs, call createTransaction 
     *   "bech32m" for spending segwit v1+ outputs
     *   "abc" for bch
     *   "gold" for btg
+    *   "decred" for decred
+    *   "zcash" for zcash
     *   "bipxxx" for using BIPxxx
     *   "sapling" to indicate a zec transaction is supporting sapling (to be set over block 419200)
 *   `expiryHeight`  is an optional Buffer for zec overwinter / sapling Txs
@@ -262,11 +276,11 @@ For each UTXO included in your transaction, create a transaction object from the
 
 ##### Parameters
 
-*   `transactionHex` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
-*   `isSegwitSupported` **([boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**  (optional, default `false`)
-*   `hasTimestamp`   (optional, default `false`)
-*   `hasExtraData`   (optional, default `false`)
-*   `additionals` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**  (optional, default `[]`)
+*   `transactionHex` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a raw hexadecimal serialized transaction
+*   `isSegwitSupported` **([boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** is a boolean indicating if the segwit is supported (optional, default `false`)
+*   `hasTimestamp`  is a boolean (peercoin includes timestamp in their transactions, others don't) (optional, default `false`)
+*   `hasExtraData`  is a boolean (komodo, zencash and zcash include extraData in their transactions, others don't) (optional, default `false`)
+*   `additionals` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** list of additionnal options (optional, default `[]`)
 
 ##### Examples
 
@@ -274,9 +288,11 @@ For each UTXO included in your transaction, create a transaction object from the
 const tx1 = btc.splitTransaction("01000000014ea60aeac5252c14291d428915bd7ccd1bfc4af009f4d4dc57ae597ed0420b71010000008a47304402201f36a12c240dbf9e566bc04321050b1984cd6eaf6caee8f02bb0bfec08e3354b022012ee2aeadcbbfd1e92959f57c15c1c6debb757b798451b104665aa3010569b49014104090b15bde569386734abf2a2b99f9ca6a50656627e77de663ca7325702769986cf26cc9dd7fdea0af432c8e2becc867c932e1b9dd742f2a108997c2252e2bdebffffffff0281b72e00000000001976a91472a5d75c8d2d0565b656a5232703b167d50d5a2b88aca0860100000000001976a9144533f5fb9b4817f713c48f0bfe96b9f50c476c9b88ac00000000");
 ```
 
-Returns **[Transaction](#transaction)**&#x20;
+Returns **[Transaction](#transaction)** the transaction object deserialized from the raw hexadecimal transaction
 
 #### serializeTransactionOutputs
+
+Serialize a transaction's outputs to hexadecimal
 
 ##### Parameters
 
@@ -291,10 +307,36 @@ const outputScript = btc.serializeTransactionOutputs(tx1).toString('hex');
 
 Returns **[Buffer](https://nodejs.org/api/buffer.html)**&#x20;
 
+#### getTrustedInput
+
+Trusted input is the hash of a UTXO that needs to be signed
+For Legacy transactions, the app has some APDUs flows that do the amount check for an UTXO,
+by parsing the transaction that created this UTXO
+
+##### Parameters
+
+*   `indexLookup` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
+*   `transaction` **[Transaction](#transaction)**&#x20;
+*   `additionals` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**  (optional, default `[]`)
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**&#x20;
+
+#### getTrustedInputBIP143
+
+Trusted input is the hash of a UTXO that needs to be signed. BIP143 is used for Segwit inputs.
+
+##### Parameters
+
+*   `indexLookup` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
+*   `transaction` **[Transaction](#transaction)**&#x20;
+*   `additionals` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**  (optional, default `[]`)
+
+Returns **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
+
 ### BtcNew
 
 This class implements the same interface as BtcOld (formerly
-named Btc), but interacts with Bitcoin hardware app version 2+
+named Btc), but interacts with Bitcoin hardware app version 2.1.0+
 which uses a totally new APDU protocol. This new
 protocol is documented at
 <https://github.com/LedgerHQ/app-bitcoin-new/blob/master/doc/bitcoin.md>
@@ -394,20 +436,25 @@ and returns v, r, s.
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<{v: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), r: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), s: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)}>**&#x20;
 
+### descrTemplFrom
+
+This function returns a descriptor template based on the address format.
+See <https://github.com/LedgerHQ/app-bitcoin-new/blob/develop/doc/wallet.md> for details of
+the bitcoin descriptor template.
+
+#### Parameters
+
+*   `addressFormat` **[AddressFormat](#addressformat)**&#x20;
+
+Returns **DefaultDescriptorTemplate**&#x20;
+
 ### BtcOld
 
-Bitcoin API.
+This Bitcoin old API is compatible with versions of the Bitcoin nano app that are earlier than 2.1.0.
 
 #### Parameters
 
 *   `` &#x20;
-
-#### Examples
-
-```javascript
-import Btc from "@ledgerhq/hw-app-btc";
-const btc = new Btc({ transport, currency: "zcash" });
-```
 
 #### getWalletPublicKey
 
