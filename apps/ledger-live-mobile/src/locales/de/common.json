@@ -492,7 +492,7 @@
       "description" : "Versuchen Sie, die App über My Ledger neu zu installieren."
     },
     "NotEnoughGas" : {
-      "title" : "Für den Umtausch benötigen Sie {{fees}} {{ticker}} für Netzwerkgebühren, da Sie sich im {{cryptoName}}-Netzwerk befinden. <link0>{{ticker}} kaufen</link0>",
+      "title" : "Sie benötigen {{fees}} {{ticker}} für Gebühren, da Sie sich im {{cryptoName}}-Netzwerk befinden. <link0>{{ticker}} kaufen</link0>",
       "description" : "Bitte senden Sie einige Coins an Ihr Konto, um Token-Transaktionen bezahlen zu können."
     },
     "NotEnoughGasSwap" : {
@@ -2842,10 +2842,6 @@
       "announcements" : {
         "title" : "Ankündigung",
         "desc" : "Wichtige Updates zu Ledger Live erhalten"
-      },
-      "recommendations" : {
-        "title" : "Empfehlungen",
-        "desc" : "Bereichern Sie Ihr Erlebnis mit personalisierten Empfehlungen und speziellen Angeboten"
       },
       "largeMover" : {
         "title" : "Große Mover",
@@ -6534,24 +6530,35 @@
     "ethereum" : {
       "title" : "Vermehren Sie Ihr ETH-Guthaben",
       "subTitle" : "Staken Sie Ihre ETH und vermehren Sie Ihr Vermögen – durch tägliche Prämien direkt in Ledger Live.",
+      "tagMinimum" : "Requires {{min}} ETH",
       "close" : "Schließen",
       "providers" : {
-        "lido" : {
-          "title" : "Verdienen mit Lido",
-          "description" : "Staken Sie Ihr Ethereum mit Lido und verdienen Sie täglich Belohnungen. Kein ETH-Minimum erforderlich. Keine Sperrfrist.",
-          "supportLink" : "Mehr über Lido lernen"
-        },
-        "kiln" : {
-          "title" : "Staking mit Kiln",
-          "tag" : "Benötigt 32 ETH",
-          "description" : "Staken Sie mit speziellen Validatoren. Hierfür wird ein Vielfaches von 32 ETH benötigt. Prämien werden manuell beansprucht. Kann jederzeit beendet werden.",
-          "supportLink" : "Mehr über Kiln-Validator erfahren"
-        },
         "kiln_pooling" : {
           "title" : "Kiln Staking Pool",
-          "description" : "Treten Sie einem Staking-Pool bei. Kein ETH-Minimum erforderlich. Prämien werden automatisch zusammengeführt. Kann jederzeit beendet werden.",
-          "supportLink" : "Mehr über Kiln Pooling erfahren.",
-          "tag" : "Kein Minimum"
+          "description" : "Staken Sie ohne Mindestbetrag. Verdienen Sie automatisch aufgelaufene Belohnungen ohne Sperrfrist.",
+          "supportLink" : "Mehr über Kiln Pooling erfahren."
+        },
+        "stader-eth" : {
+          "title" : "Stader Labs",
+          "description" : "Staken Sie ohne Mindestbetrag. Verdienen Sie automatisch aufgelaufene Belohnungen und erhalten Sie direkte Liquidität.",
+          "supportLink" : "Erfahren Sie mehr über Stader"
+        },
+        "lido" : {
+          "title" : "Lido",
+          "description" : "Staken Sie einen beliebigen ETH-Betrag für Sofortliquidität und tägliche Belohnungen.",
+          "supportLink" : "Mehr über Lido lernen"
+        },
+        "figment" : {
+          "title" : "Figment",
+          "tag" : "Benötigt 32 ETH",
+          "description" : "Staken Sie mehr als 32 ETH bei speziellen Validatoren und lassen Sie Belohnungen automatisch Ihrem Konto gutschreiben.",
+          "supportLink" : "Erfahren Sie mehr über Figment"
+        },
+        "kiln" : {
+          "title" : "Solo-Staking mit Kiln",
+          "tag" : "Benötigt 32 ETH",
+          "description" : "Staken Sie mehr als 32 ETH bei speziellen Validatoren und fordern Sie Ihre Belohnungen ganz leicht ein.",
+          "supportLink" : "Erfahren Sie mehr über Kiln"
         }
       }
     },
