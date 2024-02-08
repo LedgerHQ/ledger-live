@@ -492,7 +492,7 @@
       "description" : "Tente reinstalar o aplicativo através do My Ledger"
     },
     "NotEnoughGas" : {
-      "title" : "Você precisa de {{fees}} {{ticker}} para pagar as taxas de rede desta troca, já que está na rede {{cryptoName}}. <link0>Comprar {{ticker}}</link0>",
+      "title" : "Você precisa de {{fees}} {{ticker}} para pagar as taxas, já que você está na rede {{cryptoName}}. <link0>Comprar {{ticker}}</link0>",
       "description" : "Envie algumas moedas à sua conta para pagar transações de tokens."
     },
     "NotEnoughGasSwap" : {
@@ -1026,7 +1026,7 @@
   },
   "reset" : {
     "title" : "Desinstale e depois reinstale o Ledger Live",
-    "description" : "Desinstale e reinstale o aplicativo em seu celular para excluir os dados do Ledger Live, incluindo contas e configurações.",
+    "description" : "Desinstale e reinstale o aplicativo em seu smartphone para excluir os dados do Ledger Live, incluindo contas e configurações.",
     "button" : "Redefinir",
     "warning" : "Redefinir o Ledger Live vai apagar o histórico de transações de troca de todas as suas contas."
   },
@@ -1300,11 +1300,11 @@
       },
       "setupLedger" : {
         "title" : "Configurar sua Ledger",
-        "subtitle" : "Selecione se sua Ledger é nova ou foi redefinida."
+        "subtitle" : "Selecione esta opção se a sua Ledger é nova ou foi redefinida."
       },
       "accessWallet" : {
         "title" : "Acessar sua carteira",
-        "subtitle" : "Selecione se sua Ledger já está configurada."
+        "subtitle" : "Selecione esta opção se a sua Ledger já está configurada."
       },
       "buyNano" : {
         "title" : "Comprar uma Ledger Nano X",
@@ -2843,10 +2843,6 @@
         "title" : "Anúncios",
         "desc" : "Receba atualizações importantes do Ledger Live"
       },
-      "recommendations" : {
-        "title" : "Recomendações",
-        "desc" : "Enriqueça a sua experiência com recomendações personalizadas e ofertas especiais"
-      },
       "largeMover" : {
         "title" : "Alerta de Volatilidade",
         "desc" : "Receba notificações quando os preços de BTC e ETH sofrerem grandes movimentações."
@@ -3957,8 +3953,8 @@
   "SelectDevice" : {
     "title" : "Emparelhar novo dispositivo",
     "bluetooth" : {
-      "title" : "Conecte-se via Bluetooth...",
-      "label" : "Detecte automaticamente sua Nano"
+      "title" : "Conectar via Bluetooth...",
+      "label" : "Detecta automaticamente a sua Nano"
     },
     "deviceNotFoundPairNewDevice" : "Emparelhar via Bluetooth",
     "headerDescription" : "Certifique-se de que sua {{productName}} está desbloqueada e com Bluetooth habilitado",
@@ -6534,24 +6530,35 @@
     "ethereum" : {
       "title" : "Multiplique suas posições de ETH",
       "subTitle" : "Aplique seu ETH e multiplique suas posições ganhando recompensas diárias de staking diretamente no Ledger Live.",
+      "tagMinimum" : "Requires {{min}} ETH",
       "close" : "Fechar",
       "providers" : {
-        "lido" : {
-          "title" : "Ganhar com a Lido",
-          "description" : "Aplique seu Ethereum com o staking da Lido e ganhe recompensas diariamente. Sem mínimo de ETH. Sem período de bloqueio.",
-          "supportLink" : "Saiba mais sobre a Lido"
-        },
-        "kiln" : {
-          "title" : "Staking Dedicado Kiln",
-          "tag" : "Requer 32 ETH",
-          "description" : "Aplique em staking com validadores dedicados. Requer múltiplos de 32 ETH. Recompensas são resgatadas manualmente. Saia a qualquer momento.",
-          "supportLink" : "Saiba mais sobre o validador Kiln"
-        },
         "kiln_pooling" : {
           "title" : "Reserva de staking Kiln",
-          "description" : "Junte-se a uma reserva de staking. Não requer mínimo de ETH. Recompensas são compostas automaticamente Saia a qualquer momento.",
-          "supportLink" : "Saiba mais sobre a reserva da Kiln",
-          "tag" : "Sem mínimo"
+          "description" : "Sem mínimo de staking Ganhe rendimentos compostos automaticamente, sem tempo de bloqueio.",
+          "supportLink" : "Saiba mais sobre a reserva da Kiln"
+        },
+        "stader-eth" : {
+          "title" : "Stader Labs",
+          "description" : "Sem mínimo de staking Ganhe rendimentos compostos automaticamente com acesso instantâneo a liquidez.",
+          "supportLink" : "Saiba mais sobre a Stader"
+        },
+        "lido" : {
+          "title" : "Lido",
+          "description" : "Faça staking de qualquer quantia de ETH para obter liquidez instantânea e recompensas diárias.",
+          "supportLink" : "Saiba mais sobre a Lido"
+        },
+        "figment" : {
+          "title" : "Figment",
+          "tag" : "Requer 32 ETH",
+          "description" : "Faça staking de mais de 32 ETH em validadores dedicados e receba recompensas enviadas automaticamente para sua conta.",
+          "supportLink" : "Saiba mais sobre a Figment"
+        },
+        "kiln" : {
+          "title" : "Staking Solo Kiln",
+          "tag" : "Requer 32 ETH",
+          "description" : "Faça staking de mais de 32 ETH em validadores dedicados e resgate recompensas facilmente.",
+          "supportLink" : "Saiba mais sobre a Kiln"
         }
       }
     },
