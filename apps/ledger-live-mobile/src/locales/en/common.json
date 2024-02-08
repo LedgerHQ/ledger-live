@@ -492,7 +492,7 @@
       "description": "Try reinstalling the app from My Ledger"
     },
     "NotEnoughGas": {
-      "title": "You need {{fees}} {{ticker}} for network fees to swap as you are on {{cryptoName}} network. <link0>Buy {{ticker}}</link0>",
+      "title": "You need {{fees}} {{ticker}} for fees as you are on {{cryptoName}} network. <link0>Buy {{ticker}}</link0>",
       "description": "Please send some coins to your account to pay for token transactions."
     },
     "NotEnoughGasSwap": {
@@ -6540,6 +6540,7 @@
     "ethereum": {
       "title": "Grow your ETH holdings",
       "subTitle": "Stake your ETH and grow your holdings by earning daily rewards directly into your Ledger Live.",
+      "tagMinimum": "Requires {{min}} ETH",
       "close": "Close",
       "providers": {
         "kiln_pooling": {
@@ -6553,7 +6554,7 @@
           "supportLink": "Learn more about Stader"
         },
         "lido": {
-          "title": "Earn with Lido",
+          "title": "Lido",
           "description": "Stake any amount of ETH for instant liquidity and daily rewards.",
           "supportLink": "Learn more about Lido"
         },
