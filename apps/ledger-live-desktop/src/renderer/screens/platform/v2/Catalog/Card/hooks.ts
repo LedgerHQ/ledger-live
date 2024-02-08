@@ -11,7 +11,7 @@ const hasDappUrl = (params: LiveAppManifestParams): params is LiveAppManifestPar
 export function useCard({
   manifest,
   onClick: onClickProp,
-}: PropsCard<RecentlyUsedManifest | LiveAppManifest>) {
+}: PropsCard<RecentlyUsedManifest> | PropsCard<LiveAppManifest>) {
   let url = manifest.url;
   if (manifest.params && hasDappUrl(manifest.params)) {
     url = manifest.params.dappUrl;
