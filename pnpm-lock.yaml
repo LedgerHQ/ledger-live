@@ -2086,10 +2086,10 @@ importers:
         version: 1.1.2
       '@dfinity/agent':
         specifier: ^0.21.0
-        version: 0.21.4(@dfinity/candid@0.15.6)(@dfinity/principal@0.15.6)
+        version: 0.21.4(@dfinity/candid@0.21.4)(@dfinity/principal@0.15.6)
       '@dfinity/candid':
-        specifier: ^0.15.6
-        version: 0.15.6(@types/node@20.8.10)(typescript@5.1.3)
+        specifier: ^0.21.0
+        version: 0.21.4(@dfinity/principal@0.15.6)
       '@dfinity/principal':
         specifier: ^0.15.6
         version: 0.15.6(@types/node@20.8.10)(typescript@5.1.3)
@@ -12428,13 +12428,13 @@ packages:
       ajv-keywords: 3.5.2(ajv@6.12.6)
     dev: true
 
-  /@dfinity/agent@0.21.4(@dfinity/candid@0.15.6)(@dfinity/principal@0.15.6):
+  /@dfinity/agent@0.21.4(@dfinity/candid@0.21.4)(@dfinity/principal@0.15.6):
     resolution: {integrity: sha512-k5k8v1BmDE8RStC22FtuqbFzMLaQAQL3cE/wF45ZMKP4WmBBmCPss75RDgIVGiFwLGEKKKXE1muHQDy9g+m5yQ==}
     peerDependencies:
       '@dfinity/candid': ^0.21.4
       '@dfinity/principal': ^0.21.4
     dependencies:
-      '@dfinity/candid': 0.15.6(@types/node@20.8.10)(typescript@5.1.3)
+      '@dfinity/candid': 0.21.4(@dfinity/principal@0.15.6)
       '@dfinity/principal': 0.15.6(@types/node@20.8.10)(typescript@5.1.3)
       '@noble/curves': 1.2.0
       '@noble/hashes': 1.3.2
@@ -12444,17 +12444,12 @@ packages:
       simple-cbor: 0.4.1
     dev: false
 
-  /@dfinity/candid@0.15.6(@types/node@20.8.10)(typescript@5.1.3):
-    resolution: {integrity: sha512-Q9PGvhTE/1dTLfSo0pu0+ifzA7NA4X1rgSy9TE6O1Glk6Kl8Nf+Pg2sCHS2hWt0RAiKfR2glEVlbUAm6S8vRxA==}
+  /@dfinity/candid@0.21.4(@dfinity/principal@0.15.6):
+    resolution: {integrity: sha512-BRdgLQjPbqEZDRIR985jpy92uwhdBn4mN2D8StMKyOXQLmR6hKSD0p/P2b632Sh7zPUY8HuiA8njpMZ67JEyAg==}
+    peerDependencies:
+      '@dfinity/principal': ^0.21.4
     dependencies:
       '@dfinity/principal': 0.15.6(@types/node@20.8.10)(typescript@5.1.3)
-      ts-node: 10.9.1(@types/node@20.8.10)(typescript@5.1.3)
-    transitivePeerDependencies:
-      - '@swc/core'
-      - '@swc/wasm'
-      - '@types/node'
-      - source-map-support
-      - typescript
     dev: false
 
   /@dfinity/principal@0.15.6(@types/node@20.8.10)(typescript@5.1.3):
