@@ -47,6 +47,12 @@ export const signOperation: SignOperationFnSignature<Transaction> = ({
 
           let forgedBytes: string;
 
+          const transactionFees = {
+            fee: (transaction.fees || 0).toString(),
+            gas_limit: (transaction.gasLimit || 0).toString(),
+            storage_limit: (transaction.storageLimit || 0).toString(),
+          };
+
           const contents: OperationContents[] = !(account as TezosAccount).tezosResources.revealed
             ? [
                 {
@@ -67,13 +73,11 @@ export const signOperation: SignOperationFnSignature<Transaction> = ({
 
               contents.push({
                 kind: OpKind.TRANSACTION,
-                fee: (transaction.fees || 0).toString(),
-                gas_limit: (transaction.gasLimit || 0).toString(),
-                storage_limit: (transaction.storageLimit || 0).toString(),
                 amount: transaction.amount.toString(),
                 destination: transaction.recipient,
                 source: freshAddress,
                 counter: (Number(sourceData.counter) + 1).toString(),
+                ...transactionFees,
               });
 
               forgedBytes = await rpc.forgeOperations({
@@ -86,16 +90,12 @@ export const signOperation: SignOperationFnSignature<Transaction> = ({
             case "delegate": {
               type = "DELEGATE";
 
-              // we undelegate as there's no "delegate" field
-              // OpKind is still "DELEGATION"
               contents.push({
                 kind: OpKind.DELEGATION,
-                fee: (transaction.fees || 0).toString(),
-                gas_limit: (transaction.gasLimit || 0).toString(),
-                storage_limit: (transaction.storageLimit || 0).toString(),
                 source: freshAddress,
                 counter: (Number(sourceData.counter) + 1).toString(),
                 delegate: transaction.recipient,
+                ...transactionFees,
               });
 
               forgedBytes = await rpc.forgeOperations({
@@ -108,13 +108,13 @@ export const signOperation: SignOperationFnSignature<Transaction> = ({
             case "undelegate": {
               type = "UNDELEGATE";
 
+              // we undelegate as there's no "delegate" field
+              // OpKind is still "DELEGATION"
               contents.push({
                 kind: OpKind.DELEGATION,
-                fee: (transaction.fees || 0).toString(),
-                gas_limit: (transaction.gasLimit || 0).toString(),
-                storage_limit: (transaction.storageLimit || 0).toString(),
                 source: freshAddress,
                 counter: (Number(sourceData.counter) + 1).toString(),
+                ...transactionFees,
               });
 
               forgedBytes = await rpc.forgeOperations({
@@ -132,6 +132,7 @@ export const signOperation: SignOperationFnSignature<Transaction> = ({
             return;
           }
 
+          // 0x03 is a conventional prefix (aka a watermark) for tezos transactions
           const signature = await ledgerSigner.sign(
             Buffer.concat([Buffer.from("03", "hex"), Buffer.from(forgedBytes, "hex")]).toString(
               "hex",
