@@ -410,12 +410,8 @@ const SwapForm = () => {
   };
 
   const swapLiveAppManifestID = useSwapLiveAppManifestID();
-  const localManifest = swapLiveAppManifestID
-    ? useLocalLiveAppManifest(swapLiveAppManifestID)
-    : null;
-  const remoteManifest = swapLiveAppManifestID
-    ? useRemoteLiveAppManifest(swapLiveAppManifestID)
-    : null;
+  const localManifest = useLocalLiveAppManifest(swapLiveAppManifestID || undefined);
+  const remoteManifest = useRemoteLiveAppManifest(swapLiveAppManifestID || undefined);
 
   const manifest = localManifest || remoteManifest;
   useSwapLiveAppHook({
