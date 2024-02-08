@@ -86,6 +86,8 @@ export const signOperation: SignOperationFnSignature<Transaction> = ({
             case "delegate": {
               type = "DELEGATE";
 
+              // we undelegate as there's no "delegate" field
+              // OpKind is still "DELEGATION"
               contents.push({
                 kind: OpKind.DELEGATION,
                 fee: (transaction.fees || 0).toString(),
@@ -115,8 +117,6 @@ export const signOperation: SignOperationFnSignature<Transaction> = ({
                 counter: (Number(sourceData.counter) + 1).toString(),
               });
 
-              // we undelegate as there's no "delegate" field
-              // OpKind is still "DELEGATION"
               forgedBytes = await rpc.forgeOperations({
                 branch: block.hash,
                 contents,
