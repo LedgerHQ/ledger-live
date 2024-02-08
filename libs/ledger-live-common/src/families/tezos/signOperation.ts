@@ -76,7 +76,7 @@ export const signOperation: SignOperationFnSignature<Transaction> = ({
                 amount: transaction.amount.toString(),
                 destination: transaction.recipient,
                 source: freshAddress,
-                counter: (Number(sourceData.counter) + 1).toString(),
+                counter: (Number(sourceData.counter) + 1 + contents.length).toString(),
                 ...transactionFees,
               });
 
@@ -93,7 +93,7 @@ export const signOperation: SignOperationFnSignature<Transaction> = ({
               contents.push({
                 kind: OpKind.DELEGATION,
                 source: freshAddress,
-                counter: (Number(sourceData.counter) + 1).toString(),
+                counter: (Number(sourceData.counter) + 1 + contents.length).toString(),
                 delegate: transaction.recipient,
                 ...transactionFees,
               });
@@ -113,7 +113,7 @@ export const signOperation: SignOperationFnSignature<Transaction> = ({
               contents.push({
                 kind: OpKind.DELEGATION,
                 source: freshAddress,
-                counter: (Number(sourceData.counter) + 1).toString(),
+                counter: (Number(sourceData.counter) + 1 + contents.length).toString(),
                 ...transactionFees,
               });
 
