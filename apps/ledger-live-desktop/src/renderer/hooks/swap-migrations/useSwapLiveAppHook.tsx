@@ -70,8 +70,11 @@ export const useSwapLiveAppHook = (props: UseSwapLiveAppHookProps) => {
       };
 
       if (!isEqual(newSwapWebProps, swapWebProps)) {
+        // Add log of swap props to verify why it's rerendering
+        console.log(newSwapWebProps);
+        console.log(swapWebProps);
         setSwapWebProps(newSwapWebProps);
-        updateSwapWebProps({ ...swapWebProps, cacheKey: v4() });
+        updateSwapWebProps({ ...newSwapWebProps, cacheKey: v4() });
       }
     }
   }, [
