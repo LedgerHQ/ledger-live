@@ -53,13 +53,15 @@ export const signOperation: SignOperationFnSignature<Transaction> = ({
             storage_limit: (transaction.storageLimit || 0).toString(),
           };
 
+          const revealFees = await tezos.estimate.reveal();
+
           const contents: OperationContents[] = !(account as TezosAccount).tezosResources.revealed
             ? [
                 {
                   kind: OpKind.REVEAL,
                   fee: DEFAULT_FEE.REVEAL.toString(),
-                  gas_limit: (transaction.gasLimit || 0).toString(),
-                  storage_limit: (transaction.storageLimit || 0).toString(),
+                  gas_limit: (revealFees?.gasLimit || 0).toString(),
+                  storage_limit: (revealFees?.storageLimit || 0).toString(),
                   source: publicKeyHash,
                   counter: (Number(sourceData.counter) + 1).toString(),
                   public_key: publicKey,
