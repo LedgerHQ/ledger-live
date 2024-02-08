@@ -3609,13 +3609,14 @@
     "stake": {
       "title": "Grow your ETH holdings",
       "subTitle": "Stake your ETH and grow your holdings by receiving daily rewards directly into your Ledger Live.",
+      "tagMinimum": "Requires {{min}} ETH",
       "kiln_pooling": {
         "title": "Kiln staking pool",
         "description": "Stake with no minimum. Earn auto-compounded rewards with no lock-up period.",
         "supportLink": "Learn more about Kiln pooling"
       },
       "lido": {
-        "title": "Earn with Lido",
+        "title": "Lido",
         "description": "Stake any amount of ETH for instant liquidity and daily rewards.",
         "supportLink": "Learn more about Lido"
       },

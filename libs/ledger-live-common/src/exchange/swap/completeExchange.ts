@@ -43,7 +43,7 @@ function convertTransportError(
   err: unknown,
 ): SwapCompleteExchangeError | unknown {
   if (err instanceof TransportStatusError) {
-    const errorMessage = getExchangeErrorMessage(err.statusCode);
+    const errorMessage = getExchangeErrorMessage(err.statusCode, step);
     return new SwapCompleteExchangeError(step, errorMessage);
   }
   return err;

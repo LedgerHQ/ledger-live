@@ -72,7 +72,7 @@ You need to have metro running with `pnpm dev:llm` then `pnpm mobile android` in
 
 ### `pnpm mobile android:clean`
 
-Delete the application data for Ledger Live Mobile, equivalent to doing it manually through settings
+Delete the application data for Ledger Live Mobile, equivalent to doing it manually through settings.
 
 ### `pnpm build:llm:ios`
 
