@@ -9,7 +9,10 @@ import { encodeOperationId } from "../../operation";
 import Icon from "@ledgerhq/hw-app-icon";
 
 import { buildTransaction } from "./js-buildTransaction";
-import { getNonce } from "./logic";
+import { calculateAmount, getNonce } from "./logic";
+import { FeeNotLoaded } from "@ledgerhq/errors";
+import IconService from "icon-sdk-js";
+const { IconUtil, IconConverter } = IconService;
 
 const buildOptimisticOperation = (
   account: Account,
@@ -17,9 +20,7 @@ const buildOptimisticOperation = (
   fee: BigNumber,
 ): Operation => {
   const type = "OUT";
-
   const value = new BigNumber(transaction.amount).plus(fee);
-
   const operation: Operation = {
     id: encodeOperationId(account.id, "", type),
     hash: "",
@@ -70,24 +71,37 @@ const signOperation = ({
             type: "device-signature-requested",
           });
 
-          const { unsigned, rawTransaction } = await buildTransaction(
+          if (!transaction.fees) {
+            throw new FeeNotLoaded();
+          }
+          // Ensure amount is filled when useAllAmount
+          const transactionToSign = {
+            ...transaction,
+            amount: calculateAmount({
+              a: account as IconAccount,
+              t: transaction,
+            }),
+          };
+
+          const { unsigned } = await buildTransaction(
             account as IconAccount,
-            transaction,
-            transaction.stepLimit,
+            transactionToSign,
+            transactionToSign.stepLimit,
           );
 
           // Sign by device
           const icon = new Icon(transport);
-          const r = await icon.signTransaction(account.freshAddressPath, unsigned);
-
-          const signed = addSignature(rawTransaction, r.signedRawTxBase64);
-
+          const res = await icon.signTransaction(
+            account.freshAddressPath,
+            IconUtil.generateHashKey(IconConverter.toRawTransaction(unsigned)),
+          );
+          const signed = addSignature(unsigned, res.signedRawTxBase64);
           o.next({ type: "device-signature-granted" });
 
           const operation = buildOptimisticOperation(
             account,
-            transaction,
-            transaction.fees ?? new BigNumber(0),
+            transactionToSign,
+            transactionToSign.fees ?? new BigNumber(0),
           );
 
           o.next({

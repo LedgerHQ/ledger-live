@@ -2,11 +2,17 @@ import AccountSubHeader from "./AccountSubHeader";
 import transactionConfirmFields from "./TransactionConfirmFields";
 import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
 import StepSummaryNetworkFeesRow from "./StepSummaryNetworkFeesRow";
-import { IconFamily } from "./types";
+import {
+  IconAccount,
+  Transaction,
+  TransactionStatus,
+  IconOperation,
+} from "@ledgerhq/live-common/families/icon/types";
+import { LLDCoinFamily } from "../types";
 
-const family: IconFamily = {
-  transactionConfirmFields,
+const family: LLDCoinFamily<IconAccount, Transaction, TransactionStatus, IconOperation> = {
   AccountSubHeader,
+  transactionConfirmFields,
   StepSummaryNetworkFeesRow,
   AccountBalanceSummaryFooter,
 };

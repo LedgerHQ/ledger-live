@@ -30,7 +30,7 @@ const StepSummaryNetworkFeesRow = ({
             fontSize={4}
             inline
             showCode
-            subMagnitude={5}
+subMagnitude={5}
           />
           <Box textAlign="right">
             <CounterValue
@@ -40,7 +40,7 @@ const StepSummaryNetworkFeesRow = ({
               value={estimatedFees}
               alwaysShowSign={false}
               alwaysShowValue
-              subMagnitude={5}
+subMagnitude={5}
             />
           </Box>
         </Box>

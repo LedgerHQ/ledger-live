@@ -2034,6 +2034,9 @@ importers:
       '@ledgerhq/hw-app-exchange':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-exchange
+      '@ledgerhq/hw-app-icon':
+        specifier: workspace:^
+        version: link:../ledgerjs/packages/hw-app-icon
       '@ledgerhq/hw-app-near':
         specifier: workspace:^
         version: link:../ledgerjs/packages/hw-app-near
@@ -2241,6 +2244,9 @@ importers:
       fuse.js:
         specifier: ^6.6.2
         version: 6.6.2
+      icon-sdk-js:
+        specifier: 1.5.2
+        version: 1.5.2
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
@@ -2941,6 +2947,46 @@ importers:
       ts-node:
         specifier: ^10.4.0
         version: 10.7.0(@types/node@20.8.10)(source-map-support@0.5.21)(typescript@5.1.3)
+
+  libs/ledgerjs/packages/hw-app-icon:
+    dependencies:
+      '@ledgerhq/errors':
+        specifier: workspace:^
+        version: link:../errors
+      '@ledgerhq/hw-transport':
+        specifier: workspace:^
+        version: link:../hw-transport
+      bip32-path:
+        specifier: ^0.4.2
+        version: 0.4.2
+    devDependencies:
+      '@ledgerhq/hw-transport-mocker':
+        specifier: workspace:^
+        version: link:../hw-transport-mocker
+      '@ledgerhq/hw-transport-node-speculos':
+        specifier: workspace:^
+        version: link:../hw-transport-node-speculos
+      '@types/jest':
+        specifier: ^29.5.10
+        version: 29.5.10
+      '@types/node':
+        specifier: ^20.8.10
+        version: 20.8.10
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@20.8.10)(ts-node@10.9.1)
+      rimraf:
+        specifier: ^4.4.1
+        version: 4.4.1
+      source-map-support:
+        specifier: ^0.5.21
+        version: 0.5.21
+      ts-jest:
+        specifier: ^29.1.1
+        version: 29.1.1(jest@29.7.0)(typescript@5.1.3)
+      ts-node:
+        specifier: ^10.4.0
+        version: 10.9.1(@types/node@20.8.10)(source-map-support@0.5.21)(typescript@5.1.3)
 
   libs/ledgerjs/packages/hw-app-near:
     dependencies:
@@ -5361,7 +5407,7 @@ importers:
         specifier: ^4.1.1
         version: 4.1.1
       probot:
-        specifier: ^12.3.3
+        specifier: ^12.2.2
         version: 12.3.3
     devDependencies:
       '@types/jest':
@@ -10485,6 +10531,14 @@ packages:
 
   /@babel/regjsgen@0.8.0:
     resolution: {integrity: sha512-x/rqGMdzj+fWZvCOYForTghzbtqPDZ5gPwaoNGHdgDfF2QA/XZbCBp4Moo5scrkAMPhB7z26XM/AaHuIJdgauA==}
+
+  /@babel/runtime-corejs3@7.23.9:
+    resolution: {integrity: sha512-oeOFTrYWdWXCvXGB5orvMTJ6gCZ9I6FBjR+M38iKNXCsPxr4xT0RTdg5uz1H7QP8pp74IzPtwritEr+JscqHXQ==}
+    engines: {node: '>=6.9.0'}
+    dependencies:
+      core-js-pure: 3.33.1
+      regenerator-runtime: 0.14.0
+    dev: false
 
   /@babel/runtime@7.17.9:
     resolution: {integrity: sha512-lSiBBvodq29uShpWGNbgFdKYNiFDo5/HIYsaCEY9ff4sb10x9jizo2+pRrSyF4jKZCXqgzuqBOQKbUm90gQwJg==}
@@ -36578,7 +36632,7 @@ packages:
       fs.realpath: 1.0.0
       minimatch: 8.0.4
       minipass: 4.2.8
-      path-scurry: 1.7.0
+      path-scurry: 1.10.1
 
   /global-agent@3.0.0:
     resolution: {integrity: sha512-PT6XReJ+D07JvGoxQMkT6qji/jVNfX/h364XHZOWeRzy64sSFr+xJ5OX7LI3b4MPQzdL4H8Y8M0xzPpsVMwA8Q==}
@@ -37575,6 +37629,26 @@ packages:
     resolution: {integrity: sha512-+c9B0txp/x1m5zn+QlwHaCS9vyFtmIAEXbVSFzwCX7vupm5V7va8F9cJGNJZ46X9ZtoGzhIiRC7eTIIh93TxPA==}
     dependencies:
       '@babel/runtime': 7.22.10
+    dev: false
+
+  /icon-sdk-js@1.5.2:
+    resolution: {integrity: sha512-fUYsFGFWuftxy3Ogsjy4kGUsxgH4DSdvN446BvwzaogXwYkOpzpLgZFWnQyrfuZxBSRVRzGtErlfDoMj4TOGGQ==}
+    engines: {node: '>=18.0.0', yarn: ^1.22.10}
+    dependencies:
+      '@babel/runtime-corejs3': 7.23.9
+      bignumber.js: 9.1.2
+      bip66: 1.1.5
+      buffer: 6.0.3
+      bufferutil: 4.0.8
+      core-js: 3.33.1
+      crypto-browserify: 3.12.0
+      js-sha3: 0.8.0
+      readable-stream: 4.5.2
+      secp256k1: 5.0.0
+      utf-8-validate: 6.0.3
+      utf8: 3.0.0
+      uuid: 9.0.1
+      ws: 8.14.1(bufferutil@4.0.8)(utf-8-validate@6.0.3)
     dev: false
 
   /iconv-corefoundation@1.1.7:
@@ -42362,10 +42436,6 @@ packages:
     engines: {node: '>=12'}
     dev: false
 
-  /lru-cache@9.1.0:
-    resolution: {integrity: sha512-qFXQEwchrZcMVen2uIDceR8Tii6kCJak5rzDStfEM0qA3YLMswaxIEZO0DhIbJ3aqaJiDjt+3crlplOb0tDtKQ==}
-    engines: {node: 14 || >=16.14}
-
   /lru_map@0.3.3:
     resolution: {integrity: sha512-Pn9cox5CsMYngeDbmChANltQl+5pi6XmTrraMSzhPmMBbmgcxmqWry0U3PGapCU1yB4/LqCcom7qhHZiF/jGfQ==}
     dev: false
@@ -46055,13 +46125,6 @@ packages:
       lru-cache: 10.0.1
       minipass: 7.0.4
 
-  /path-scurry@1.7.0:
-    resolution: {integrity: sha512-UkZUeDjczjYRE495+9thsgcVgsaCPkaw80slmfVFgllxY+IO8ubTsOpFVjDPROBqJdHfVPUFRHPBV/WciOVfWg==}
-    engines: {node: '>=16 || 14 >=14.17'}
-    dependencies:
-      lru-cache: 9.1.0
-      minipass: 5.0.0
-
   /path-to-regexp@0.1.7:
     resolution: {integrity: sha512-5DFkuoqlv1uYQKxy8omFBeJPQcdoE07Kv2sferDCrAq1ohOU+MSDswDIbnx3YAM60qIOnYa53wBhXW0EbMonrQ==}
 
@@ -49618,6 +49681,17 @@ packages:
       inherits: 2.0.4
       string_decoder: 1.3.0
       util-deprecate: 1.0.2
+
+  /readable-stream@4.5.2:
+    resolution: {integrity: sha512-yjavECdqeZ3GLXNgRXgeQEdz9fvDDkNKyHnbHRFtOr7/LcfgBcmct7t/ET+HaCTqfh06OzoAxrkN/IfjJBVe+g==}
+    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+    dependencies:
+      abort-controller: 3.0.0
+      buffer: 6.0.3
+      events: 3.3.0
+      process: 0.11.10
+      string_decoder: 1.3.0
+    dev: false
 
   /readdirp@3.6.0:
     resolution: {integrity: sha512-hOS089on8RduqdbhvQ5Z37A0ESjsqz6qnRcffsMU3495FuTdqSm+7bhJ29JvIOsBDEEnan5DPu9t3To9VRlMzA==}
@@ -58108,6 +58182,22 @@ packages:
     dependencies:
       bufferutil: 4.0.8
       utf-8-validate: 5.0.10
+    dev: false
+
+  /ws@8.14.1(bufferutil@4.0.8)(utf-8-validate@6.0.3):
+    resolution: {integrity: sha512-4OOseMUq8AzRBI/7SLMUwO+FEDnguetSk7KMb1sHwvF2w2Wv5Hoj0nlifx8vtGsftE/jWHojPy8sMMzYLJ2G/A==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: '>=5.0.2'
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
+    dependencies:
+      bufferutil: 4.0.8
+      utf-8-validate: 6.0.3
     dev: false
 
   /ws@8.6.0:

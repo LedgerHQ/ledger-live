@@ -1,18 +1,19 @@
 import { BigNumber } from "bignumber.js";
 import IconService from "icon-sdk-js";
+import type { IcxTransaction } from "icon-sdk-js";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "@ledgerhq/live-env";
-import { isTestnet } from "../logic";
-import { GOVERNANCE_SCORE_ADDRESS, IISS_SCORE_ADDRESS, STEP_LIMIT } from "../constants";
+import { isTestnet, roundedLoopAmount } from "../logic";
+import { GOVERNANCE_SCORE_ADDRESS, IISS_SCORE_ADDRESS } from "../constants";
+import { IconAccount } from "../types";
+import { SignedOperation } from "@ledgerhq/types-live";
 
 const { HttpProvider } = IconService;
-const { IconBuilder, IconAmount } = IconService;
-const iconUnit = IconAmount.Unit.ICX.toString();
+const { IconBuilder } = IconService;
 
 /**
  * Returns Testnet RPC URL if the current currency is testnet
- *
- * @param {currency} CryptoCurrency
+ * @param {currency} currency
  */
 export function getRpcUrl(currency: CryptoCurrency): string {
   let rpcUrl = getEnv("ICON_NODE_ENDPOINT");
@@ -25,21 +26,24 @@ export function getRpcUrl(currency: CryptoCurrency): string {
 /**
  * Broadcast blob to blockchain
  */
-export const broadcastTransaction = async (transaction, currency) => {
-  const { hash } = await submit(transaction, currency);
+export const broadcastTransaction = async (
+  signedOperation: SignedOperation,
+  currency: CryptoCurrency,
+) => {
+  const { hash } = await submit(signedOperation, currency);
   // Transaction hash is likely to be returned
   return { hash };
 };
 
-export const submit = async (txObj, currency) => {
+export const submit = async (signedOperation: SignedOperation, currency: CryptoCurrency) => {
   const rpcURL = getRpcUrl(currency);
 
   const httpProvider = new HttpProvider(rpcURL);
   const iconService = new IconService(httpProvider);
 
   const signedTransaction: any = {
-    getProperties: () => txObj.rawData,
-    getSignature: () => txObj.signature,
+    getProperties: () => signedOperation.rawData,
+    getSignature: () => signedOperation.signature,
   };
 
   const response = await iconService.sendTransaction(signedTransaction).execute();
@@ -51,40 +55,38 @@ export const submit = async (txObj, currency) => {
 /**
  * Obtain fees from blockchain
  */
-export const getFees = async (unsigned, account): Promise<BigNumber> => {
+export const getFees = async (
+  unsigned: IcxTransaction,
+  account: IconAccount,
+): Promise<BigNumber> => {
   const rpcURL = getRpcUrl(account.currency);
-  // d mean debug, only get estimate step with debug enpoint
-  const debugRpcUrl = rpcURL + "d";
+  const debugRpcUrl = rpcURL + "d"; // d mean debug, only get estimate step with debug enpoint
   const httpProvider = new HttpProvider(debugRpcUrl);
   const iconService = new IconService(httpProvider);
-  let res;
-  try {
-    res = await iconService.estimateStep(unsigned).execute();
-  } catch (error) {
-    // TODO: handle show log
-  }
-  return new BigNumber(res || STEP_LIMIT);
+
+  const formatConfig = {
+    disableRounding: true,
+    alwaysShowSign: false,
+  };
+  unsigned.value = roundedLoopAmount(account, unsigned.value);
+  const res = await iconService.estimateStep(unsigned).execute();
+  return new BigNumber(res);
 };
 
 /**
  * Get step price from governance contract
  */
-export const getStepPrice = async (account): Promise<BigNumber> => {
+export const getStepPrice = async (account: IconAccount): Promise<BigNumber> => {
   const rpcURL = getRpcUrl(account.currency);
   const httpProvider = new HttpProvider(rpcURL);
   const iconService = new IconService(httpProvider);
   const txBuilder: any = new IconBuilder.CallBuilder();
   const stepPriceTx = txBuilder.to(GOVERNANCE_SCORE_ADDRESS).method("getStepPrice").build();
-  let res;
-  try {
-    res = await iconService.call(stepPriceTx).execute();
-  } catch (error) {
-    // TODO: handle show log
-  }
-  return new BigNumber(IconAmount.fromLoop(res || 10000000000, iconUnit));
+  const res = await iconService.call(stepPriceTx).execute();
+  return new BigNumber(res);
 };
 
-export const getDelegation = async (address, currency) => {
+export const getDelegation = async (address: string, currency: CryptoCurrency): Promise<any> => {
   const rpcURL = getRpcUrl(currency);
   const httpProvider = new HttpProvider(rpcURL);
   const iconService = new IconService(httpProvider);
@@ -96,20 +98,10 @@ export const getDelegation = async (address, currency) => {
     })
     .build();
 
-  let res;
-
-  try {
-    res = await iconService.call(delegationTx).execute();
-  } catch (error) {
-    // TODO: handle show log
-    console.log(error);
-  }
+  const res = await iconService.call(delegationTx).execute();
   return {
-    delegations:
-      res?.delegations.map(item => {
-        return { ...item, value: new BigNumber(IconAmount.fromLoop(item.value || 0, iconUnit)) };
-      }) || [],
-    totalDelegated: new BigNumber(IconAmount.fromLoop(res?.totalDelegated || 0, iconUnit)),
-    votingPower: new BigNumber(IconAmount.fromLoop(res?.votingPower || 0, iconUnit)),
+    delegations: res.delegations,
+    totalDelegated: new BigNumber(res.totalDelegated),
+    votingPower: new BigNumber(res.votingPower),
   };
 };

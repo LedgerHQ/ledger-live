@@ -6,6 +6,7 @@ import {
   TransactionCommonRaw,
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
+  Operation
 } from "@ledgerhq/types-live";
 
 /**
@@ -46,6 +47,8 @@ export type TransactionRaw = TransactionCommonRaw & {
   stepLimit?: string;
   // also the transaction fields as raw JSON data
 };
+
+export type IconOperation = Operation;
 
 export type IconAccount = Account & { iconResources: IconResources };
 

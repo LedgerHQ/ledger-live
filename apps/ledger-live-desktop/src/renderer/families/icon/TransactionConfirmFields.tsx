@@ -2,15 +2,18 @@ import invariant from "invariant";
 import React from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-
-import type { Transaction } from "@ledgerhq/live-common/generated/types";
-import { getMainAccount, getAccountUnit } from "@ledgerhq/live-common/account/index";
-
 import TransactionConfirmField from "~/renderer/components/TransactionConfirm/TransactionConfirmField";
-import type { FieldComponentProps } from "~/renderer/components/TransactionConfirm";
 import WarnBox from "~/renderer/components/WarnBox";
 import Box from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
+import Alert from "~/renderer/components/Alert";
+import { FieldComponentProps } from "../types";
+import { getMainAccount, getAccountUnit } from "@ledgerhq/live-common/account/index";
+import type {
+  IconAccount,
+  Transaction,
+  TransactionStatus,
+} from "@ledgerhq/live-common/families/icon/types";
 
 const Info = styled(Box).attrs(() => ({
   ff: "Inter|SemiBold",
@@ -22,19 +25,23 @@ const Info = styled(Box).attrs(() => ({
   text-align: center;
 `;
 
-const IconFreesField = ({ account, parentAccount, transaction, field }: FieldComponentProps) => {
+const IconFreesField = ({
+  account,
+  parentAccount,
+  transaction,
+  field,
+}: FieldComponentProps<IconAccount, Transaction, TransactionStatus>) => {
   const mainAccount = getMainAccount(account, parentAccount);
   invariant(transaction.family === "icon", "icon transaction");
   const feesUnit = getAccountUnit(mainAccount);
   const { fees } = transaction;
-
   return (
     <Box horizontal justifyContent="space-between" mb={2}>
       <TransactionConfirmField label={field.label} />
       <FormattedVal
         color={"palette.text.shade80"}
         unit={feesUnit}
-        val={fees}
+        val={fees || 0}
         fontSize={3}
         inline
         showCode
@@ -70,6 +77,15 @@ const Title = ({ transaction }: { transaction: Transaction }) => {
   );
 };
 
+const Footer = ({ transaction }: { transaction: Transaction }) => {
+  invariant(transaction.family === "icon", "icon transaction");
+  return (
+    <Alert type="secondary">
+      <Trans i18nKey={`icon.networkFees`} />
+    </Alert>
+  );
+};
+
 const fieldComponents = {
   "icon.fees": IconFreesField,
 };
@@ -78,5 +94,6 @@ export default {
   fieldComponents,
   warning: Warning,
   title: Title,
+  footer: Footer,
   disableFees: () => true,
 };

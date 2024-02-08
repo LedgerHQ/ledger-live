@@ -3,8 +3,7 @@ import styled from "styled-components";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { getAccountUnit } from "@ledgerhq/live-common/account/index";
-import { useDiscreetMode } from "~/renderer/components/Discreet";
+import Discreet, { useDiscreetMode } from "~/renderer/components/Discreet";
 import { IconAccount } from "@ledgerhq/live-common/families/icon/types";
 
 import Box from "~/renderer/components/Box/Box";
@@ -12,6 +11,7 @@ import Text from "~/renderer/components/Text";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
 import { localeSelector } from "~/renderer/reducers/settings";
+import { SubAccount } from "@ledgerhq/types-live";
 
 const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
@@ -50,24 +50,23 @@ const AmountValue = styled(Text).attrs(() => ({
 }))``;
 
 type Props = {
-  account: IconAccount;
-  countervalue: number;
+  account: IconAccount | SubAccount;
 };
 
 const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
-  if (!account.iconResources) return null;
-  const unit = getAccountUnit(account);
+  if (account.type !== "Account") return null;
+
   const formatConfig = {
+    disableRounding: false,
     alwaysShowSign: false,
     showCode: true,
     discreet,
     locale,
-    subMagnitude: 2,
   };
 
-  const spendableBalance = formatCurrencyUnit(unit, account.spendableBalance, formatConfig);
+  const spendableBalance = formatCurrencyUnit(account.unit, account.spendableBalance, formatConfig);
 
   return (
     <Wrapper>
@@ -80,7 +79,9 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
             <InfoCircle size={13} />
           </TitleWrapper>
         </ToolTip>
-        <AmountValue>{spendableBalance}</AmountValue>
+        <AmountValue>
+          <Discreet>{spendableBalance} </Discreet>
+        </AmountValue>
       </BalanceDetail>
     </Wrapper>
   );

@@ -13,7 +13,6 @@ export default async function broadcast({
   account: Account;
   signedOperation: SignedOperation;
 }): Promise<Operation> {
-  const { signature, rawData, operation } = signedOperation;
-  const { hash } = await broadcastTransaction({ signature, rawData }, account.currency);
-  return patchOperationWithHash(operation, hash);
+  const { hash } = await broadcastTransaction(signedOperation, account.currency);
+  return patchOperationWithHash(signedOperation.operation, hash);
 }
