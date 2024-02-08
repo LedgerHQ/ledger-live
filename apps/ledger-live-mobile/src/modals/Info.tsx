@@ -29,13 +29,13 @@ export default function InfoModal({ data, isOpened, onClose }: Props) {
                 </View>
               )}
               {title ? (
-                <LText style={styles.title} semiBold secondary {...titleProps}>
+                <LText style={styles.title} semiBold secondary {...titleProps} textAlign="center">
                   {title}
                 </LText>
               ) : null}
             </View>
             {description ? (
-              <LText color="grey" {...descriptionProps}>
+              <LText color="grey" {...descriptionProps} textAlign="center">
                 {description}
               </LText>
             ) : null}
