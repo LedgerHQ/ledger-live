@@ -39,6 +39,8 @@ import { SwapMigrationUI } from "./Migrations/SwapMigrationUI";
 import { useSwapLiveAppHook } from "~/renderer/hooks/swap-migrations/useSwapLiveAppHook";
 import { maybeTezosAccountUnrevealedAccount } from "@ledgerhq/live-common/exchange/swap/index";
 import SwapFormSummary from "./FormSummary";
+import { useLocalLiveAppManifest } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
+import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 
 const DAPP_PROVIDERS = ["paraswap", "oneinch", "moonpay"];
 
@@ -408,7 +410,14 @@ const SwapForm = () => {
   };
 
   const swapLiveAppManifestID = useSwapLiveAppManifestID();
+  const localManifest = swapLiveAppManifestID
+    ? useLocalLiveAppManifest(swapLiveAppManifestID)
+    : null;
+  const remoteManifest = swapLiveAppManifestID
+    ? useRemoteLiveAppManifest(swapLiveAppManifestID)
+    : null;
 
+  const manifest = localManifest || remoteManifest;
   useSwapLiveAppHook({
     isSwapLiveAppEnabled: isSwapLiveAppEnabled.enabled,
     manifestID: swapLiveAppManifestID,
@@ -459,9 +468,9 @@ const SwapForm = () => {
         manifestID={swapLiveAppManifestID}
         liveAppEnabled={isSwapLiveAppEnabled.enabled}
         liveApp={
-          swapLiveAppManifestID ? (
+          swapLiveAppManifestID && manifest ? (
             <SwapWebView
-              manifestID={swapLiveAppManifestID}
+              manifest={manifest}
               swapState={swapWebProps}
               // When live app crash, it should disable live app and fall back to native UI
               liveAppUnavailable={isSwapLiveAppEnabled.onLiveAppCrashed}
