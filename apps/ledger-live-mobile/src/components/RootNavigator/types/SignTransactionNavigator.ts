@@ -32,7 +32,7 @@ import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/fa
 import type { Transaction as StacksTransaction } from "@ledgerhq/live-common/families/stacks/types";
 import type { Transaction as CasperTransaction } from "@ledgerhq/live-common/families/casper/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { Account, Operation, SignedOperation } from "@ledgerhq/types-live";
+import { Account, AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { ScreenName } from "~/const";
 
@@ -43,7 +43,7 @@ type ListenersParams = {
 
 export type SignTransactionNavigatorParamList = {
   [ScreenName.SignTransactionSummary]: {
-    account?: Account;
+    account?: AccountLike;
     accountId: string;
     parentId?: string;
     deviceId?: string;
