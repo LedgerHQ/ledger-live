@@ -249,6 +249,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
               navigation.navigate(NavigatorName.SignTransaction, {
                 screen: ScreenName.SignTransactionSummary,
                 params: {
+                  account,
                   currentNavigation: ScreenName.SignTransactionSummary,
                   nextNavigation: ScreenName.SignTransactionSelectDevice,
                   transaction: tx as Transaction,

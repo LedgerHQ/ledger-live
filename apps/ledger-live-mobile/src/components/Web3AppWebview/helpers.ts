@@ -369,6 +369,7 @@ function useUiHook(): Partial<UiHook> {
             currentNavigation: ScreenName.SignTransactionSummary,
             nextNavigation: ScreenName.SignTransactionSelectDevice,
             transaction: tx as Transaction,
+            account,
             accountId: account.id,
             parentId: parentAccount ? parentAccount.id : undefined,
             appName: options?.hwAppId,

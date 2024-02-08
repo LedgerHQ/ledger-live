@@ -43,6 +43,7 @@ type ListenersParams = {
 
 export type SignTransactionNavigatorParamList = {
   [ScreenName.SignTransactionSummary]: {
+    account?: Account;
     accountId: string;
     parentId?: string;
     deviceId?: string;
