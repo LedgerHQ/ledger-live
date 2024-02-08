@@ -1,7 +1,8 @@
 import { Observable } from "rxjs";
 import { LedgerSigner, DerivationType } from "@taquito/ledger-signer";
-import { OpKind, TezosToolkit } from "@taquito/taquito";
-import type { TezosOperation, Transaction } from "./types";
+import { DEFAULT_FEE, OpKind, TezosToolkit } from "@taquito/taquito";
+import { type OperationContents } from "@taquito/rpc";
+import type { TezosAccount, TezosOperation, Transaction } from "./types";
 import type { OperationType, SignOperationFnSignature } from "@ledgerhq/types-live";
 import { withDevice } from "../../hw/deviceAccess";
 import { getEnv } from "@ledgerhq/live-env";
@@ -35,6 +36,9 @@ export const signOperation: SignOperationFnSignature<Transaction> = ({
 
           tezos.setProvider({ signer: ledgerSigner });
 
+          const publicKeyHash = await ledgerSigner.publicKeyHash();
+          const publicKey = await ledgerSigner.publicKey();
+
           const { rpc } = tezos;
           const block = await rpc.getBlock();
           const sourceData = await rpc.getContract(freshAddress);
@@ -45,23 +49,38 @@ export const signOperation: SignOperationFnSignature<Transaction> = ({
 
           let forgedBytes: string;
 
+          const contents: OperationContents[] = !(account as TezosAccount).tezosResources.revealed
+            ? [
+                {
+                  kind: OpKind.REVEAL,
+                  fee: DEFAULT_FEE.REVEAL.toString(),
+                  gas_limit: (transaction.gasLimit || 0).toString(),
+                  storage_limit: (transaction.storageLimit || 0).toString(),
+                  source: publicKeyHash,
+                  counter: (Number(sourceData.counter) + 1).toString(),
+                  public_key: publicKey,
+                },
+              ]
+            : [];
+
           switch (transaction.mode) {
             case "send": {
               type = "OUT";
+
+              contents.push({
+                kind: OpKind.TRANSACTION,
+                fee: (transaction.fees || 0).toString(),
+                gas_limit: (transaction.gasLimit || 0).toString(),
+                storage_limit: (transaction.storageLimit || 0).toString(),
+                amount: transaction.amount.toString(),
+                destination: transaction.recipient,
+                source: freshAddress,
+                counter: (Number(sourceData.counter) + 1).toString(),
+              });
+
               forgedBytes = await rpc.forgeOperations({
                 branch: block.hash,
-                contents: [
-                  {
-                    kind: OpKind.TRANSACTION,
-                    fee: (transaction.fees || 0).toString(),
-                    gas_limit: (transaction.gasLimit || 0).toString(),
-                    storage_limit: (transaction.storageLimit || 0).toString(),
-                    amount: transaction.amount.toString(),
-                    destination: transaction.recipient,
-                    source: freshAddress,
-                    counter: (Number(sourceData.counter) + 1).toString(),
-                  },
-                ],
+                contents,
               });
 
               break;
@@ -69,19 +88,19 @@ export const signOperation: SignOperationFnSignature<Transaction> = ({
             case "delegate": {
               type = "DELEGATE";
 
+              contents.push({
+                kind: OpKind.DELEGATION,
+                fee: (transaction.fees || 0).toString(),
+                gas_limit: (transaction.gasLimit || 0).toString(),
+                storage_limit: (transaction.storageLimit || 0).toString(),
+                source: freshAddress,
+                counter: (Number(sourceData.counter) + 1).toString(),
+                delegate: transaction.recipient,
+              });
+
               forgedBytes = await rpc.forgeOperations({
                 branch: block.hash,
-                contents: [
-                  {
-                    kind: OpKind.DELEGATION,
-                    fee: (transaction.fees || 0).toString(),
-                    gas_limit: (transaction.gasLimit || 0).toString(),
-                    storage_limit: (transaction.storageLimit || 0).toString(),
-                    source: freshAddress,
-                    counter: (Number(sourceData.counter) + 1).toString(),
-                    delegate: transaction.recipient,
-                  },
-                ],
+                contents,
               });
 
               break;
@@ -89,20 +108,20 @@ export const signOperation: SignOperationFnSignature<Transaction> = ({
             case "undelegate": {
               type = "UNDELEGATE";
 
+              contents.push({
+                kind: OpKind.DELEGATION,
+                fee: (transaction.fees || 0).toString(),
+                gas_limit: (transaction.gasLimit || 0).toString(),
+                storage_limit: (transaction.storageLimit || 0).toString(),
+                source: freshAddress,
+                counter: (Number(sourceData.counter) + 1).toString(),
+              });
+
               // we undelegate as there's no "delegate" field
               // OpKind is still "DELEGATION"
               forgedBytes = await rpc.forgeOperations({
                 branch: block.hash,
-                contents: [
-                  {
-                    kind: OpKind.DELEGATION,
-                    fee: (transaction.fees || 0).toString(),
-                    gas_limit: (transaction.gasLimit || 0).toString(),
-                    storage_limit: (transaction.storageLimit || 0).toString(),
-                    source: freshAddress,
-                    counter: (Number(sourceData.counter) + 1).toString(),
-                  },
-                ],
+                contents,
               });
 
               break;

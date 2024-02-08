@@ -2246,6 +2246,9 @@ importers:
       '@taquito/ledger-signer':
         specifier: ^13.0.1
         version: 13.0.1
+      '@taquito/rpc':
+        specifier: ^13.0.1
+        version: 13.0.1
       '@taquito/taquito':
         specifier: ^13.0.1
         version: 13.0.1
