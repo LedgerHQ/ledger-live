@@ -7,7 +7,7 @@ import { getVersion } from "../../device/use-cases/getVersionUseCase";
 import { useBleDevicePairing } from "./useBleDevicePairing";
 
 jest.mock("../../hw/deviceAccess");
-jest.mock("../../hw/getVersion");
+jest.mock("../../device/use-cases/getVersionUseCase");
 jest.mock("@ledgerhq/hw-transport");
 jest.useFakeTimers();
 
