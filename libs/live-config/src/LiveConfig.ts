@@ -61,7 +61,7 @@ export class LiveConfig {
       LiveConfig.instance.config[key],
     );
 
-    if (LiveConfig.instance.config[key].type === "object") {
+    if (LiveConfig.instance.config[key]?.type === "object") {
       // we spread the default values first and then the values from the provider
       // this is for backward compatiblity, a value could be renamed or deleted in a remote provider
       // but the default value will not change for a given version of Ledger Live
