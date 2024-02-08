@@ -3,9 +3,7 @@ import { switchMap, finalize } from "rxjs/operators";
 import Transport from "@ledgerhq/hw-transport";
 import type { FirmwareInfo } from "@ledgerhq/types-live";
 import { UnresponsiveCmdEvent } from "./core";
-import {
-  GET_VERSION_APDU,
-} from "../../device-core/commands/use-cases/getVersion";
+import { GET_VERSION_APDU } from "../../device-core/commands/use-cases/getVersion";
 import { parseGetVersionResponse } from "../../device-core/commands/use-cases/parseGetVersionResponse";
 
 export type GetVersionCmdEvent =
