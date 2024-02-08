@@ -1,7 +1,8 @@
 import { useMemo, useCallback } from "react";
-import { PropsRawMinimumCard, PropsRawFullCard } from "./types";
-import { LiveAppManifestParams } from "@ledgerhq/live-common/platform/types";
+import { LiveAppManifest, LiveAppManifestParams } from "@ledgerhq/live-common/platform/types";
 import { LiveAppManifestParamsDapp } from "@ledgerhq/live-common/platform/types";
+import { RecentlyUsedManifest } from "@ledgerhq/live-common/wallet-api/react";
+import { PropsCard } from "./types";
 
 const hasDappUrl = (params: LiveAppManifestParams): params is LiveAppManifestParamsDapp => {
   return "dappUrl" in params;
@@ -10,7 +11,7 @@ const hasDappUrl = (params: LiveAppManifestParams): params is LiveAppManifestPar
 export function useCard({
   manifest,
   onClick: onClickProp,
-}: PropsRawMinimumCard | PropsRawFullCard) {
+}: PropsCard<RecentlyUsedManifest | LiveAppManifest>) {
   let url = manifest.url;
   if (manifest.params && hasDappUrl(manifest.params)) {
     url = manifest.params.dappUrl;
@@ -26,6 +27,6 @@ export function useCard({
     hostname,
     disabled: manifest.branch === "soon",
     onClick,
-    usedAt: manifest.usedAt,
+    ...("usedAt" in manifest ? { usedAt: manifest.usedAt } : {}),
   };
 }
