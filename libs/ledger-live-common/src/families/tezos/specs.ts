@@ -30,6 +30,8 @@ const tezos: AppSpec<Transaction> = {
   appQuery: {
     model: DeviceModelId.nanoS,
     appName: "TezosWallet",
+    // TODO: delete before merge
+    appVersion: "2.4.5",
   },
   genericDeviceAction: acceptTransaction,
   testTimeout: 2 * 60 * 1000,
