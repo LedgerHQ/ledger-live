@@ -85,110 +85,6 @@ jobs:
         with:
           os: ubuntu-latest
 
-  generate-screenshots-windows:
-    env:
-      NODE_OPTIONS: "--max-old-space-size=7168"
-      FORCE_COLOR: 3
-      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-    runs-on: [ledger-live-4xlarge-windows-2022]
-    steps:
-      - name: generate token
-        id: generate-token
-        uses: tibdex/github-app-token@v1
-        with:
-          app_id: ${{ secrets.GH_BOT_APP_ID }}
-          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-      - uses: actions/checkout@v4
-        if: ${{ inputs.ref != null }}
-        with:
-          ref: ${{ inputs.ref }}
-          fetch-depth: 0
-          token: ${{ steps.generate-token.outputs.token }}
-      - uses: actions/checkout@v4
-        if: ${{ !inputs.ref }}
-        with:
-          fetch-depth: 0
-          token: ${{ steps.generate-token.outputs.token }}
-      - name: Checkout PR
-        if: ${{ inputs.number != null && inputs.ref == null }}
-        run: gh pr checkout ${{ inputs.number }}
-        env:
-          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
-      - name: Setup the toolchain
-        uses: ./tools/actions/composites/setup-toolchain
-        id: toolchain
-        with:
-          upgrade_npm: true
-          skip_turbo_cache: "false"
-          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-      - uses: ./tools/actions/composites/setup-test-desktop
-        id: setup-test-desktop
-        with:
-          skip_ruby: true
-          install_playwright: true
-          turborepo-server-port: ${{ steps.toolchain.outputs.port }}
-      - name: Setup git user
-        uses: ./tools/actions/composites/setup-git-user
-      - uses: ./tools/actions/composites/update-snapshots-desktop
-        id: update-snapshots
-        with:
-          os: windows-latest
-
-  generate-screenshots-mac:
-    env:
-      NODE_OPTIONS: "--max-old-space-size=7168"
-      FORCE_COLOR: 3
-      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-    runs-on: [m1, ARM64]
-    steps:
-      - name: generate token
-        id: generate-token
-        uses: tibdex/github-app-token@v1
-        with:
-          app_id: ${{ secrets.GH_BOT_APP_ID }}
-          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-      - uses: actions/checkout@v4
-        if: ${{ inputs.ref != null }}
-        with:
-          ref: ${{ inputs.ref }}
-          fetch-depth: 0
-          token: ${{ steps.generate-token.outputs.token }}
-      - uses: actions/checkout@v4
-        if: ${{ !inputs.ref }}
-        with:
-          fetch-depth: 0
-          token: ${{ steps.generate-token.outputs.token }}
-      - name: Checkout PR
-        if: ${{ inputs.number != null && inputs.ref == null }}
-        run: gh pr checkout ${{ inputs.number }}
-        env:
-          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
-      - name: Setup the toolchain
-        uses: ./tools/actions/composites/setup-toolchain
-        id: toolchain
-        with:
-          # skip_pnpm_cache: "true"
-          skip_turbo_cache: "false"
-          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
-          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
-          region: ${{ secrets.AWS_CACHE_REGION }}
-          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
-      - uses: ./tools/actions/composites/setup-test-desktop
-        id: setup-test-desktop
-        with:
-          skip_ruby: true
-          install_playwright: true
-          turborepo-server-port: ${{ steps.toolchain.outputs.port }}
-      - name: Setup git user
-        uses: ./tools/actions/composites/setup-git-user
-      - uses: ./tools/actions/composites/update-snapshots-desktop
-        id: update-snapshots
-        with:
-          os: macos-latest
-
   report-start:
     name: Report start
     runs-on: ubuntu-latest
@@ -225,8 +121,6 @@ jobs:
     needs:
       [
         "generate-screenshots-linux",
-        "generate-screenshots-windows",
-        "generate-screenshots-mac",
         "report-start",
       ]
     if: ${{ !cancelled() }}
