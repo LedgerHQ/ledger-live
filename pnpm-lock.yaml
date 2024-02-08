@@ -2055,8 +2055,8 @@ importers:
   libs/ledger-live-common:
     dependencies:
       '@cardano-foundation/ledgerjs-hw-app-cardano':
-        specifier: ^6.0.0
-        version: 6.0.0
+        specifier: ^6.0.1
+        version: 6.0.1
       '@celo/connect':
         specifier: ^3.0.1
         version: 3.0.1
@@ -10998,10 +10998,10 @@ packages:
     resolution: {integrity: sha512-i9TxOEnZdK4npHY9rR3VSNG51VErpZ2GTAg5RIwMFmcOb+9/Q2oWyUGg50ZSiflUi0nfnakuodhSpugS96k7pQ==}
     dev: false
 
-  /@cardano-foundation/ledgerjs-hw-app-cardano@6.0.0:
-    resolution: {integrity: sha512-aiWlERF5sXMzygE62YH9AXrVePu5ZG+QKGv/ZhvYec35vUhDFJK8qPiLzXmTy6MdoDKSqbYVRPd6jY3KKs5pOg==}
+  /@cardano-foundation/ledgerjs-hw-app-cardano@6.0.1:
+    resolution: {integrity: sha512-35LU2482b6mGA8NVhCut5sEid0zqy82lXmgoenkQfDxDJtx7zV6U7/Dx9OjuDLpcedEUm/7s2WPjjHv/lsinIQ==}
     dependencies:
-      '@ledgerhq/hw-transport': 6.28.8
+      '@ledgerhq/hw-transport': 6.30.0
       base-x: 3.0.9
       bech32: 1.1.4
       int64-buffer: 1.0.1
