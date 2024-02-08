@@ -1,0 +1,24 @@
+version: '2.4'
+
+services:
+  speculos:
+    image: ghcr.io/ledgerhq/speculos:latest
+    platform: linux/amd64
+    volumes:
+      - ./tmp:/speculos/apps
+    env_file:
+      - .env
+    ports:
+      - "${API_PORT}:${API_PORT}"
+    build:
+      context: /speculos
+    command: --model nanos ./apps/app.elf --seed="${SEED}" --display headless --api-port ${API_PORT}
+
+  anvil:
+    image: ghcr.io/foundry-rs/foundry:latest
+    platform: linux/amd64
+    env_file:
+      - .env
+    ports:
+      - "8545:8545"
+    command: -c "anvil --host 0.0.0.0 --fork-url ${RPC} --no-storage-caching --steps-tracing --mnemonic='${SEED}'"
