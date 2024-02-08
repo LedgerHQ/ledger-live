@@ -29,8 +29,7 @@ type Props = {
   toCurrency: SwapSelectorStateType["currency"];
   rates: RatesReducerState["value"];
   provider: string | undefined | null;
-  refreshTime: number;
-  countdown: boolean;
+  countdownSecondsToRefresh: number | undefined;
 };
 
 const TableHeader = styled(Box).attrs({
@@ -54,8 +53,7 @@ export default function ProviderRate({
   toCurrency,
   rates,
   provider,
-  refreshTime,
-  countdown,
+  countdownSecondsToRefresh,
 }: Props) {
   const swapDefaultTrack = useGetSwapTrackingProperties();
   const dispatch = useDispatch();
@@ -147,9 +145,9 @@ export default function ProviderRate({
         >
           <Trans i18nKey="swap2.form.rates.title" />
         </Text>
-        {countdown && (
+        {countdownSecondsToRefresh && (
           <Box horizontal fontSize={3}>
-            <Countdown refreshTime={refreshTime} rates={rates} />
+            <Countdown countdown={countdownSecondsToRefresh} />
           </Box>
         )}
       </Box>
