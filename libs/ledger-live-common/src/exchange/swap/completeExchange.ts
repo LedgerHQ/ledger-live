@@ -12,6 +12,7 @@ import { delay } from "../../promise";
 import { ExchangeTypes, createExchange, getExchangeErrorMessage } from "@ledgerhq/hw-app-exchange";
 import type { CompleteExchangeInputSwap, CompleteExchangeRequestEvent } from "../platform/types";
 import { getProviderConfig } from "./";
+import { PayloadSignatureComputedFormat } from "@ledgerhq/hw-app-exchange/lib/Exchange";
 
 const withDevicePromise = (deviceId, fn) =>
   firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));
@@ -53,7 +54,6 @@ const completeExchange = (
   input: CompleteExchangeInputSwap,
 ): Observable<CompleteExchangeRequestEvent> => {
   let { transaction } = input; // TODO build a tx from the data
-  console.log("%ccompleteExchange.ts line:56 input", "color: #007acc;", input);
 
   const { deviceId, exchange, provider, binaryPayload, signature, rateType, exchangeType } = input;
 
@@ -73,7 +73,6 @@ const completeExchange = (
         }
 
         const exchange = createExchange(transport, exchangeType, rateType, providerConfig.version);
-        console.log("%ccompleteExchange.ts line:76 exchange", "color: #007acc;", exchange);
         const refundAccount = getMainAccount(fromAccount, fromParentAccount);
         const payoutAccount = getMainAccount(toAccount, toParentAccount);
         const accountBridge = getAccountBridge(refundAccount);
@@ -87,7 +86,6 @@ const completeExchange = (
           throw new Error("This should be a cryptocurrency");
 
         transaction = await accountBridge.prepareTransaction(refundAccount, transaction);
-        console.log("%ccompleteExchange.ts line:89 transaction", "color: #007acc;", transaction);
 
         if (unsubscribed) return;
 
@@ -104,47 +102,25 @@ const completeExchange = (
         currentStep = "SET_PARTNER_KEY";
         await exchange.setPartnerKey(convertToAppExchangePartnerKey(providerConfig));
         if (unsubscribed) return;
-        console.log(
-          "%ccompleteExchange.ts line:104 currentStep set partner key",
-          "color: #007acc;",
-          currentStep,
-        );
 
         currentStep = "CHECK_PARTNER";
         await exchange.checkPartner(providerConfig.signature);
         if (unsubscribed) return;
-        console.log(
-          "%ccompleteExchange.ts line:109 currentStep, check partner",
-          "color: #007acc;",
-          currentStep,
-        );
 
         currentStep = "PROCESS_TRANSACTION";
-        console.log("%ccompleteExchange.ts line:122 exchangeType", "color: #007acc;", exchangeType);
-        const goodBinaryPayload = convertSignature(binaryPayload, exchange.transactionType);
-        console.log(
-          "%ccompleteExchange.ts line:123 goodBinaryPayload",
-          "color: #007acc;",
-          goodBinaryPayload,
-        );
-        await exchange.processTransaction(goodBinaryPayload, estimatedFees);
+
+        const { payload, format }: { payload: Buffer; format: PayloadSignatureComputedFormat } =
+          exchange.transactionType === 3
+            ? { payload: Buffer.from("." + binaryPayload), format: "jws" }
+            : { payload: Buffer.from(binaryPayload, "hex"), format: "raw" };
+        await exchange.processTransaction(payload, estimatedFees, format);
         if (unsubscribed) return;
-        console.log(
-          '%ccompleteExchange.ts line:116 "process transaction"',
-          "color: #007acc;",
-          "process transaction",
-        );
 
         const goodSign = convertSignature(signature, exchange.transactionType);
         currentStep = "CHECK_TRANSACTION_SIGNATURE";
 
         await exchange.checkTransactionSignature(goodSign);
         if (unsubscribed) return;
-        console.log(
-          '%ccompleteExchange.ts line:135 "check transaction signature"',
-          "color: #007acc;",
-          "check transaction signature",
-        );
 
         const payoutAddressParameters = await perFamily[
           mainPayoutCurrency.family
@@ -154,11 +130,6 @@ const completeExchange = (
           mainPayoutCurrency.id,
         );
         if (unsubscribed) return;
-        console.log(
-          '%ccompleteExchange.ts line:149 "payout address params"',
-          "color: #007acc;",
-          "payout address params",
-        );
 
         const { config: payoutAddressConfig, signature: payoutAddressConfigSignature } =
           getCurrencyExchangeConfig(payoutCurrency);
@@ -171,7 +142,6 @@ const completeExchange = (
             payoutAddressParameters.addressParameters,
           );
         } catch (e) {
-          console.log("%ccompleteExchange.ts line:175 e", "color: #007acc;", e);
           if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
             throw new WrongDeviceForAccount(undefined, {
               accountName: payoutAccount.name,
@@ -210,7 +180,6 @@ const completeExchange = (
           );
           log(COMPLETE_EXCHANGE_LOG, "checkrefund address");
         } catch (e) {
-          console.log("%ccompleteExchange.ts line:213 e", "color: #007acc;", e);
           if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
             log(COMPLETE_EXCHANGE_LOG, "transport error");
             throw new WrongDeviceForAccount(undefined, {
@@ -226,7 +195,6 @@ const completeExchange = (
         currentStep = "SIGN_COIN_TRANSACTION";
         await exchange.signCoinTransaction();
       }).catch(e => {
-        console.log("%ccompleteExchange.ts line:229 e", "color: #007acc;", e);
         if (ignoreTransportError) return;
 
         if (e instanceof TransportStatusError && e.statusCode === 0x6a84) {
@@ -264,7 +232,6 @@ const completeExchange = (
 };
 
 function convertSignature(signature: string, exchangeType: ExchangeTypes): Buffer {
-  console.log("%ccompleteExchange.ts line:267 exchangeType", "color: #007acc;", exchangeType);
   return exchangeType === ExchangeTypes.SwapNg
     ? Buffer.from(signature, "base64url")
     : <Buffer>secp256k1.signatureExport(Buffer.from(signature, "hex"));
