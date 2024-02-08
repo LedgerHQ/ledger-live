@@ -4882,8 +4882,8 @@ importers:
         specifier: 6.5.7
         version: 6.5.7(@types/react@18.2.28)(react-dom@18.2.0)(react-native@0.72.6)(react@18.2.0)
       '@storybook/addon-react-native-web':
-        specifier: ^0.0.21
-        version: 0.0.21(babel-plugin-react-native-web@0.19.0)(metro-react-native-babel-preset@0.77.0)(react-dom@18.2.0)(react@18.2.0)(webpack@5.76.1)
+        specifier: ^0.0.23
+        version: 0.0.23(babel-plugin-react-native-web@0.19.0)(metro-react-native-babel-preset@0.77.0)(react-dom@18.2.0)(react@18.2.0)(webpack@5.76.1)
       '@storybook/docs-tools':
         specifier: ^7.5.3
         version: 7.5.3
@@ -21480,16 +21480,21 @@ packages:
       - '@types/react-dom'
     dev: true
 
-  /@storybook/addon-react-native-web@0.0.21(babel-plugin-react-native-web@0.19.0)(metro-react-native-babel-preset@0.77.0)(react-dom@18.2.0)(react@18.2.0)(webpack@5.76.1):
-    resolution: {integrity: sha512-qEDUe1gbY2o0x8QCN7TbTBQGMhJP7FMbYVsJ357ApvsySQwog3tJqU6zHt5YJ0X41dteBfdrDL9ziwirHdl7GA==}
+  /@storybook/addon-react-native-web@0.0.23(babel-plugin-react-native-web@0.19.0)(metro-react-native-babel-preset@0.77.0)(react-dom@18.2.0)(react@18.2.0)(webpack@5.76.1):
+    resolution: {integrity: sha512-8cdtU1WmV2Nl8tyqh2POsyYowtyyUEOuO08/DOsgMKd1Wr5k8MlglnJ7inczBg6QGancosQWImotqap8dpBCYQ==}
     peerDependencies:
       '@babel/preset-react': '*'
+      '@react-native/babel-preset': '*'
       babel-plugin-react-native-web: '*'
       metro-react-native-babel-preset: '*'
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-      webpack: '*'
+      webpack: ^5.89.0
     peerDependenciesMeta:
+      '@react-native/babel-preset':
+        optional: true
+      metro-react-native-babel-preset:
+        optional: true
       react:
         optional: true
       react-dom:
@@ -34744,7 +34749,6 @@ packages:
       is-hex-prefixed: 1.0.0
       strip-hex-prefix: 1.0.0
     dev: false
-    bundledDependencies: false
 
   /ev-emitter@1.1.1:
     resolution: {integrity: sha512-ipiDYhdQSCZ4hSbX4rMW+XzNKMD1prg/sTvoVmSLkuQ1MVlwjJQQA+sW8tMYR3BLUr9KjodFV4pvzunvRhd33Q==}
