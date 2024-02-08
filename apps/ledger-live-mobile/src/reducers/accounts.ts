@@ -260,6 +260,10 @@ export const accountScreenSelector =
       : null;
     let account = route?.params?.account;
 
+    if (accountId === parentId && parentAccount) {
+      account = parentAccount;
+    }
+
     if (!account) {
       if (parentAccount) {
         const { subAccounts } = parentAccount;
