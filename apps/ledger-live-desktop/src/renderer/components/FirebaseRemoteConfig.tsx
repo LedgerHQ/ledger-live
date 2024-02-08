@@ -10,7 +10,6 @@ import {
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { FirebaseRemoteConfigProvider as FirebaseProvider } from "@ledgerhq/live-config/providers/index";
 import { DEFAULT_FEATURES, formatDefaultFeatures } from "@ledgerhq/live-common/featureFlags/index";
-import type { FirebaseFeatureFlagsProviderProps as Props } from "@ledgerhq/live-common/featureFlags/index";
 import { getFirebaseConfig } from "~/firebase-setup";
 import isMatch from "lodash/isMatch";
 import * as fs from "fs";
@@ -32,7 +31,11 @@ const parseEnvFile = (fileContent: string) => {
   return envVariables;
 };
 
-export const FirebaseRemoteConfigProvider = ({ children }: Props): JSX.Element | null => {
+export const FirebaseRemoteConfigProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}): JSX.Element | null => {
   const [config, setConfig] = useState<RemoteConfig | null>(null);
   const [loaded, setLoaded] = useState<boolean>(false);
 
