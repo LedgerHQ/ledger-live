@@ -9,10 +9,14 @@ import { TransactionRefusedOnDevice } from "../../errors";
 import perFamily from "../../generated/exchange";
 import { withDevice } from "../../hw/deviceAccess";
 import { delay } from "../../promise";
-import { ExchangeTypes, createExchange, getExchangeErrorMessage } from "@ledgerhq/hw-app-exchange";
+import {
+  ExchangeTypes,
+  createExchange,
+  getExchangeErrorMessage,
+  PayloadSignatureComputedFormat,
+} from "@ledgerhq/hw-app-exchange";
 import type { CompleteExchangeInputSwap, CompleteExchangeRequestEvent } from "../platform/types";
 import { getProviderConfig } from "./";
-import { PayloadSignatureComputedFormat } from "@ledgerhq/hw-app-exchange/lib/Exchange";
 
 const withDevicePromise = (deviceId, fn) =>
   firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));
@@ -110,7 +114,7 @@ const completeExchange = (
         currentStep = "PROCESS_TRANSACTION";
 
         const { payload, format }: { payload: Buffer; format: PayloadSignatureComputedFormat } =
-          exchange.transactionType === 3
+          exchange.transactionType === ExchangeTypes.SwapNg
             ? { payload: Buffer.from("." + binaryPayload), format: "jws" }
             : { payload: Buffer.from(binaryPayload, "hex"), format: "raw" };
         await exchange.processTransaction(payload, estimatedFees, format);
