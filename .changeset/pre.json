@@ -132,6 +132,7 @@
     "@ledgerhq/coin-near": "0.3.8"
   },
   "changesets": [
+    "afraid-taxis-tease",
     "blue-berries-flash",
     "bright-books-join",
     "bright-papayas-relate",
@@ -156,10 +157,12 @@
     "new-shrimps-rescue",
     "olive-lies-buy",
     "polite-bears-tickle",
+    "polite-masks-return",
     "poor-kings-sort",
     "proud-clocks-poke",
     "proud-dragons-tan",
     "real-parents-doubt",
+    "red-bananas-judge",
     "rotten-cycles-approve",
     "shaggy-gifts-marry",
     "silly-cobras-swim",
@@ -167,12 +170,18 @@
     "six-ways-hope",
     "small-dogs-compare",
     "smooth-feet-build",
+    "sour-ligers-search",
+    "spicy-crews-clean",
     "spicy-mangos-train",
     "swift-socks-complain",
     "tall-rats-cry",
+    "tame-ants-build",
+    "tasty-forks-kneel",
     "thin-snails-drum",
     "weak-bottles-push",
     "wicked-socks-relate",
-    "wild-mails-complain"
+    "wild-mails-complain",
+    "young-countries-brush",
+    "young-timers-tickle"
   ]
 }

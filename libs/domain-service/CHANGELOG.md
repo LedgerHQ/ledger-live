@@ -1,5 +1,11 @@
 # @ledgerhq/domain-service
 
+## 1.1.18-nightly.1
+
+### Patch Changes
+
+- [#5803](https://github.com/LedgerHQ/ledger-live/pull/5803) [`bd4ee6c`](https://github.com/LedgerHQ/ledger-live/commit/bd4ee6c938c27102c2d0529c2aab07ac000f7424) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add bridge tests
+
 ## 1.1.18-nightly.0
 
 ### Patch Changes

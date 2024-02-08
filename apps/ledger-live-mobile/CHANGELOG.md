@@ -1,5 +1,18 @@
 # live-mobile
 
+## 3.40.0-nightly.5
+
+### Patch Changes
+
+- [#6051](https://github.com/LedgerHQ/ledger-live/pull/6051) [`4a12be9`](https://github.com/LedgerHQ/ledger-live/commit/4a12be91152f133199191b5fd7e0dfbf20a5368b) Thanks [@mle-gall](https://github.com/mle-gall)! - Copy correction on ParentAccountError
+
+- [#6108](https://github.com/LedgerHQ/ledger-live/pull/6108) [`84635e3`](https://github.com/LedgerHQ/ledger-live/commit/84635e3184100f2f2d9b78d2b166ab5954a782bd) Thanks [@Justkant](https://github.com/Justkant)! - fix(LLM): wallet connect deep link handling
+
+- Updated dependencies [[`bd4ee6c`](https://github.com/LedgerHQ/ledger-live/commit/bd4ee6c938c27102c2d0529c2aab07ac000f7424), [`f9f751c`](https://github.com/LedgerHQ/ledger-live/commit/f9f751c2e16977dd62eeb4cbc8c529a1d7ea2fbd)]:
+  - @ledgerhq/live-common@33.6.0-nightly.4
+  - @ledgerhq/domain-service@1.1.18-nightly.1
+  - @ledgerhq/coin-evm@0.12.2-nightly.2
+
 ## 3.40.0-nightly.4
 
 ### Patch Changes

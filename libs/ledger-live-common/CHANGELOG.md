@@ -1,5 +1,17 @@
 # @ledgerhq/live-common
 
+## 33.6.0-nightly.4
+
+### Patch Changes
+
+- [#5803](https://github.com/LedgerHQ/ledger-live/pull/5803) [`bd4ee6c`](https://github.com/LedgerHQ/ledger-live/commit/bd4ee6c938c27102c2d0529c2aab07ac000f7424) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add bridge tests
+
+- [#6087](https://github.com/LedgerHQ/ledger-live/pull/6087) [`f9f751c`](https://github.com/LedgerHQ/ledger-live/commit/f9f751c2e16977dd62eeb4cbc8c529a1d7ea2fbd) Thanks [@Justkant](https://github.com/Justkant)! - support: fix RemoteLiveAppProvider not updating if env changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-evm@0.12.2-nightly.2
+  - @ledgerhq/hw-app-eth@6.35.5-nightly.1
+
 ## 33.6.0-nightly.3
 
 ### Patch Changes

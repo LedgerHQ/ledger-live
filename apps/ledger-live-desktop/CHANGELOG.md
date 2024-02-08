@@ -1,5 +1,26 @@
 # ledger-live-desktop
 
+## 2.77.0-nightly.4
+
+### Patch Changes
+
+- [#6090](https://github.com/LedgerHQ/ledger-live/pull/6090) [`3c288c2`](https://github.com/LedgerHQ/ledger-live/commit/3c288c2bd42686be4adf3945808ab2e2d41ca8d5) Thanks [@beths-ledger](https://github.com/beths-ledger)! - fix: only open EVM staking modal at the end of the Receive Currency flow if the user receives ethereum
+
+- [#6051](https://github.com/LedgerHQ/ledger-live/pull/6051) [`4a12be9`](https://github.com/LedgerHQ/ledger-live/commit/4a12be91152f133199191b5fd7e0dfbf20a5368b) Thanks [@mle-gall](https://github.com/mle-gall)! - Copy correction on ParentAccountError
+
+- [#6057](https://github.com/LedgerHQ/ledger-live/pull/6057) [`1975deb`](https://github.com/LedgerHQ/ledger-live/commit/1975deba08aee0407bb3b80e5f356dd5fd97eca0) Thanks [@lvndry](https://github.com/lvndry)! - Support Linea tokens
+
+- [#6097](https://github.com/LedgerHQ/ledger-live/pull/6097) [`cefecf0`](https://github.com/LedgerHQ/ledger-live/commit/cefecf0e4f98cff452f02d80a10c19b8abdb9439) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Fixed sidebare active items for market currency and assets pages
+
+- [#6086](https://github.com/LedgerHQ/ledger-live/pull/6086) [`eb53310`](https://github.com/LedgerHQ/ledger-live/commit/eb53310844253f28e074e330d7cb5738cb5bd67c) Thanks [@beths-ledger](https://github.com/beths-ledger)! - Exclude Ethereum Classic from list of EVM accounts that can be staked.
+
+- [#6089](https://github.com/LedgerHQ/ledger-live/pull/6089) [`344f5b8`](https://github.com/LedgerHQ/ledger-live/commit/344f5b87620f47ebdee08f71de1e35dbfcba2443) Thanks [@CremaFR](https://github.com/CremaFR)! - better error message if user reject swap
+
+- Updated dependencies [[`bd4ee6c`](https://github.com/LedgerHQ/ledger-live/commit/bd4ee6c938c27102c2d0529c2aab07ac000f7424), [`f9f751c`](https://github.com/LedgerHQ/ledger-live/commit/f9f751c2e16977dd62eeb4cbc8c529a1d7ea2fbd)]:
+  - @ledgerhq/live-common@33.6.0-nightly.4
+  - @ledgerhq/domain-service@1.1.18-nightly.1
+  - @ledgerhq/coin-evm@0.12.2-nightly.2
+
 ## 2.77.0-nightly.3
 
 ### Patch Changes
