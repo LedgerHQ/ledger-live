@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import styled, { useTheme } from "styled-components/native";
 
 import Text from "../Text/index";
@@ -28,6 +28,21 @@ interface CryptoIconsProviderProps {
 
 export const CryptoIconsProvider: React.FC<CryptoIconsProviderProps> = ({ children }) => {
   const [cryptoIcons, setCryptoIcons] = useState<CryptoIcons>({});
+  const [mapping, setMapping] = useState(null);
+
+  useEffect(() => {
+    const url = `https://mapping-service.api.ledger.com/v1/coingecko/mapped-assets`;
+    try {
+      fetch(url)
+        .then((response: Response) => response.json())
+        .then((data) => {
+          console.log(data);
+          setMapping(data);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
 
   return (
     <CryptoIconsContext.Provider value={{ cryptoIcons, setCryptoIcons }}>
