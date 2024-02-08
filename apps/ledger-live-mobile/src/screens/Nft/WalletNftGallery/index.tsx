@@ -7,7 +7,7 @@ import NftGalleryEmptyState from "../NftGallery/NftGalleryEmptyState";
 import CollapsibleHeaderScrollView from "~/components/WalletTab/CollapsibleHeaderScrollView";
 import { accountsSelector, filteredNftsSelector, hasNftsSelector } from "~/reducers/accounts";
 
-import { isEqual } from "lodash";
+import isEqual from "lodash/isEqual";
 import { galleryChainFiltersSelector } from "~/reducers/nft";
 import { useNftGalleryFilter } from "@ledgerhq/live-nft-react";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";

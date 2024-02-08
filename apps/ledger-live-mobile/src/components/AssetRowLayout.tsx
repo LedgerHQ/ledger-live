@@ -4,7 +4,7 @@ import { BigNumber } from "bignumber.js";
 import { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { Flex, Text, Tag } from "@ledgerhq/native-ui";
 import { ValueChange } from "@ledgerhq/types-live";
-import { isEqual } from "lodash";
+import isEqual from "lodash/isEqual";
 import { TouchableOpacity, TouchableOpacityProps } from "react-native";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import CounterValue from "./CounterValue";
