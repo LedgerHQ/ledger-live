@@ -7,11 +7,11 @@ import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 export interface FirebaseFeatureFlagsProviderProps {
   getFeature: <T extends FeatureId>(param: {
     key: T;
-    appLanguage: string;
+    appLanguage?: string;
     allowOverride?: boolean;
     localOverrides?: { [key in FeatureId]?: Feature | undefined };
   }) => Features[T];
-  children: React.ReactElement;
+  children: React.ReactNode;
 }
 
 export const formatToFirebaseFeatureId = (id: string) => `feature_${snakeCase(id)}`;

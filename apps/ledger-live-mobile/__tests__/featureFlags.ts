@@ -10,7 +10,7 @@ export const getFeature = <T extends FeatureId>({
   localOverrides,
 }: {
   key: T;
-  appLanguage: string;
+  appLanguage?: string;
   allowOverride?: boolean;
   localOverrides?: { [key in FeatureId]?: Feature | undefined };
 }): Features[T] => {
