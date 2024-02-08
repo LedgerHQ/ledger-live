@@ -3,7 +3,7 @@ import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
 export interface PropsRawFullCard {
   manifest: LiveAppManifest;
-  onClick: (manifest: RecentlyUsedManifest) => void;
+  onClick: (manifest: LiveAppManifest) => void;
 }
 export interface PropsRawMinimumCard {
   manifest: RecentlyUsedManifest;
