@@ -235,7 +235,8 @@ export const handlers = ({
          * 'subAccountId' is used for ETH and it's ERC-20 tokens.
          * This field is ignored for BTC
          */
-        const subAccountId = fromParentAccount ? fromAccount.id : undefined;
+        const subAccountId =
+          fromParentAccount && fromParentAccount.id !== fromAccount.id ? fromAccount.id : undefined;
 
         const bridgeTx = accountBridge.createTransaction(mainFromAccount);
         /**
