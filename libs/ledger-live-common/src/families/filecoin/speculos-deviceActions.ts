@@ -1,9 +1,9 @@
-import { Address } from "@zondax/izari-filecoin/address";
-import { Methods, NetworkPrefix } from "@zondax/izari-filecoin/artifacts";
 import type { DeviceAction } from "../../bot/types";
 import type { Transaction } from "./types";
 import { deviceActionFlow, formatDeviceAmount, SpeculosButton } from "../../bot/specs";
-import { BotScenario } from "./utils";
+import { BotScenario, Methods } from "./utils";
+import { isFilEthAddress } from "./bridge/utils/addresses";
+import { fromEthAddress, fromString, toEthAddress } from "iso-filecoin/address";
 
 export const generateDeviceActionFlow = (scenario: BotScenario): DeviceAction<Transaction, any> => {
   const data: Parameters<typeof deviceActionFlow<Transaction>>[0] = { steps: [] };
@@ -18,9 +18,9 @@ export const generateDeviceActionFlow = (scenario: BotScenario): DeviceAction<Tr
       title: "To",
       button: SpeculosButton.RIGHT,
       expectedValue: ({ transaction }) => {
-        const addr = Address.fromString(transaction.recipient);
-        if (Address.isFilEthAddress(addr)) {
-          return addr.toEthAddressHex(true) + transaction.recipient;
+        const addr = fromString(transaction.recipient);
+        if (isFilEthAddress(addr)) {
+          return toEthAddress(addr) + transaction.recipient;
         }
         return "unexpected flow... address should be eth type";
       },
@@ -30,7 +30,7 @@ export const generateDeviceActionFlow = (scenario: BotScenario): DeviceAction<Tr
       title: "To",
       button: SpeculosButton.RIGHT,
       expectedValue: ({ transaction }) => {
-        const addr = Address.fromEthAddress(NetworkPrefix.Mainnet, transaction.recipient);
+        const addr = fromEthAddress(transaction.recipient, "mainnet");
         return transaction.recipient + addr.toString();
       },
     });
