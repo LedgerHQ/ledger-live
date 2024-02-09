@@ -13,8 +13,8 @@ export default function MarketWalletTabNavigator() {
   const { colors } = useTheme();
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
 
-  const ptxEarnFeature = useFeature("ptxEarn");
-  const headerConfig = ptxEarnFeature?.enabled
+  const ptxEarnFF = useFeature("ptxEarn");
+  const headerConfig = ptxEarnFF?.enabled
     ? {
         headerShown: true,
         title: "",
