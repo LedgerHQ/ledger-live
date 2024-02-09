@@ -1,11 +1,19 @@
-import { PropsWithChildren } from "react";
 import snakeCase from "lodash/snakeCase";
 import semver from "semver";
-import { Feature, FeatureId } from "@ledgerhq/types-live";
+import { Feature, FeatureId, Features } from "@ledgerhq/types-live";
 import { getEnv } from "@ledgerhq/live-env";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 
-export type FirebaseFeatureFlagsProviderProps = PropsWithChildren<unknown>;
+export interface FirebaseFeatureFlagsProviderProps {
+  getFeature: <T extends FeatureId>(param: {
+    key: T;
+    appLanguage?: string;
+    allowOverride?: boolean;
+    localOverrides?: { [key in FeatureId]?: Feature | undefined };
+  }) => Features[T];
+  children: React.ReactNode;
+}
+
 export const formatToFirebaseFeatureId = (id: string) => `feature_${snakeCase(id)}`;
 
 export const checkFeatureFlagVersion = (feature: Feature) => {

@@ -122,7 +122,6 @@ function MarketDetail({ navigation, route }: NavigationProps) {
   const renderAccountItem = useCallback(
     ({ item, index }: { item: AccountLike; index: number }) => (
       <AccountRow
-        navigation={navigation}
         navigationParams={[
           ScreenName.Account,
           {
@@ -137,7 +136,7 @@ function MarketDetail({ navigation, route }: NavigationProps) {
         sourceScreenName={ScreenName.MarketDetail}
       />
     ),
-    [navigation, allAccounts.length],
+    [allAccounts.length],
   );
 
   useEffect(() => {
