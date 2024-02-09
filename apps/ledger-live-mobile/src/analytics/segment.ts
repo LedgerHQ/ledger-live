@@ -155,6 +155,11 @@ const extraProperties = async (store: AppStore) => {
   const personalizedRecommendationsEnabled: boolean =
     personalizedRecommendationsEnabledSelector(state);
 
+  const stakingProviders =
+    analyticsFeatureFlagMethod && analyticsFeatureFlagMethod("ethStakingProviders");
+  const stakingProvidersCount =
+    stakingProviders?.enabled && stakingProviders?.params?.listProvider.length;
+
   return {
     appVersion,
     androidVersionCode: getAndroidVersionCode(VersionNumber.buildVersion),
@@ -191,6 +196,7 @@ const extraProperties = async (store: AppStore) => {
     nps,
     optInAnalytics: analyticsEnabled,
     optInPersonalRecommendations: personalizedRecommendationsEnabled,
+    stakingProvidersEnabled: stakingProvidersCount || "flag not loaded",
   };
 };
 

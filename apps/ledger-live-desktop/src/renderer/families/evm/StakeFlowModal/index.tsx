@@ -1,11 +1,10 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Account } from "@ledgerhq/types-live";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import Modal, { ModalBody } from "~/renderer/components/Modal";
 import { Flex } from "@ledgerhq/react-ui";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { EthStakingModalBody } from "./EthStakingModalBody";
-import { updateIdentify } from "~/renderer/analytics/segment";
 
 type Props = {
   account: Account;
@@ -18,13 +17,6 @@ type Props = {
 const StakingModal = ({ account, hasCheckbox, singleProviderRedirectMode, source }: Props) => {
   const ethStakingProviders = useFeature("ethStakingProviders");
   const providers = ethStakingProviders?.params?.listProvider;
-  const stakingProvidersEnabled = providers && providers.length;
-
-  useEffect(() => {
-    if (stakingProvidersEnabled) {
-      updateIdentify({ stakingProvidersEnabled });
-    }
-  }, [stakingProvidersEnabled]);
 
   if (!ethStakingProviders?.enabled) {
     return null;
