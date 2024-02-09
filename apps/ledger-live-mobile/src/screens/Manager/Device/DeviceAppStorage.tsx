@@ -61,7 +61,13 @@ const DeviceAppStorage = ({
         mb={3}
       >
         <Flex flexDirection={"row"} alignItems={"center"}>
-          <Text variant={"small"} fontWeight={"medium"} color={"palette.neutral.c100"} mr={3}>
+          <Text
+            variant={"small"}
+            fontWeight={"medium"}
+            color={"palette.neutral.c100"}
+            mr={3}
+            testID="manager-storage-used"
+          >
             <Text variant={"small"} fontWeight={"medium"} color={"palette.neutral.c80"}>
               <Trans i18nKey="manager.storage.used" />
             </Text>{" "}
@@ -71,7 +77,12 @@ const DeviceAppStorage = ({
               firmwareVersion={deviceInfo.version}
             />
           </Text>
-          <Text variant={"small"} fontWeight={"medium"} color={"palette.neutral.c80"}>
+          <Text
+            variant={"small"}
+            fontWeight={"medium"}
+            color={"palette.neutral.c80"}
+            testID="manager-installedApp-number"
+          >
             <Trans
               count={apps.length}
               values={{ number: apps.length }}
@@ -98,7 +109,12 @@ const DeviceAppStorage = ({
               <Trans i18nKey="manager.storage.noFreeSpace" />
             </Text>
           ) : (
-            <Text variant={"small"} fontWeight={"medium"} color={"palette.neutral.c80"}>
+            <Text
+              variant={"small"}
+              fontWeight={"medium"}
+              color={"palette.neutral.c80"}
+              testID="manager-storage-available"
+            >
               <ByteSize
                 value={freeSpaceBytes}
                 deviceModel={deviceModel}
