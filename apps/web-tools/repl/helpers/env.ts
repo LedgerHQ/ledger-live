@@ -1,5 +1,7 @@
 import { getAllEnvs, setEnvUnsafe, getEnvDefault, EnvName } from "@ledgerhq/live-env";
-import { each, reduce, pick } from "lodash";
+import each from "lodash/each";
+import reduce from "lodash/reduce";
+import pick from "lodash/pick";
 
 const whitelist: EnvName[] = [
   "FORCE_PROVIDER",

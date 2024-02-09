@@ -1,7 +1,9 @@
 /* eslint-disable no-console */
 import React, { useCallback, useState } from "react";
 import styled from "styled-components/native";
-import { get, set, cloneDeep } from "lodash";
+import get from "lodash/get";
+import set from "lodash/set";
+import cloneDeep from "lodash/cloneDeep";
 import { BigNumber } from "bignumber.js";
 import { StyleSheet, SafeAreaView, ScrollView } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
@@ -32,7 +34,7 @@ export default function Store() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [targetPath, setTargetPath] = useState("");
   const [targetType, setTargetType] = useState("string");
-  const [modifiedState, setModifiedState] = useState<State>(cloneDeep(state));
+  const [modifiedState, setModifiedState] = useState<State>(() => cloneDeep(state));
   const currentValue = get(modifiedState, targetPath);
 
   const dispatch = useDispatch();

@@ -21,7 +21,7 @@ import {
 import BigNumber from "bignumber.js";
 import { MIN_DELEGATION_AMOUNT } from "./constants";
 import { SubAccount } from "@ledgerhq/types-live";
-import { sample } from "lodash";
+import sample from "lodash/sample";
 
 const currency = getCryptoCurrencyById("elrond");
 const minimalAmount = parseCurrencyUnit(currency.units[0], "0.001");

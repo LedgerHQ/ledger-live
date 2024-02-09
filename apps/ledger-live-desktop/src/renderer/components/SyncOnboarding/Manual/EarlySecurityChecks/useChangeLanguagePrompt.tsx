@@ -4,7 +4,7 @@ import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
 import { DeviceInfo, DeviceModelInfo, idsToLanguage } from "@ledgerhq/types-live";
-import { isEqual } from "lodash";
+import isEqual from "lodash/isEqual";
 import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { firstValueFrom, from } from "rxjs";
