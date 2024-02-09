@@ -224,7 +224,6 @@ export const start = async (store: AppStore): Promise<SegmentClient | undefined>
   return segmentClient;
 };
 
-// TODO: use this to update the user traits
 export const updateIdentify = async (additionalProperties?: UserTraits) => {
   Sentry.addBreadcrumb({
     category: "identify",
