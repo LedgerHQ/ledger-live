@@ -8,6 +8,7 @@ export type HookProps = {
   addresses: string;
   nftsOwned: ProtoNFT[];
   chains: string[];
+  threshold: number;
 };
 
 export type PartialProtoNFT = Partial<ProtoNFT>;
@@ -30,11 +31,12 @@ export function useNftGalleryFilter({
   addresses,
   nftsOwned,
   chains,
+  threshold,
 }: HookProps): NftGalleryFilterResult {
   const queryResult = useInfiniteQuery({
     queryKey: [addresses, chains],
     queryFn: ({ pageParam }: { pageParam: string | undefined }) =>
-      fetchNftsFromSimpleHash({ addresses, chains, cursor: pageParam }),
+      fetchNftsFromSimpleHash({ addresses, chains, cursor: pageParam, threshold }),
     initialPageParam: undefined,
     getNextPageParam: lastPage => lastPage.next_cursor,
     enabled: addresses.length > 0,
@@ -68,4 +70,8 @@ export function useNftGalleryFilter({
 
 function hashProtoNFT(contract: string, tokenId: string, currencyId: string): string {
   return `${contract}|${tokenId}|${currencyId}`;
+}
+
+export function isThresholdValid(threshold: string | number): boolean {
+  return Number(threshold) >= 0 && Number(threshold) <= 100;
 }

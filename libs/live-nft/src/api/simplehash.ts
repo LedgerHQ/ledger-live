@@ -18,7 +18,6 @@ import { getEnv } from "@ledgerhq/live-env";
  * - spam_score__gt=80 : filter all NFTs with a spam score above 80.
  */
 
-const SPAM_FILTER_THRESHOLD = 40;
 const PAGE_SIZE = 50;
 
 type NftFetchOpts = {
@@ -42,10 +41,14 @@ type NftFetchOpts = {
    * spam filtering mode, defaults to a constant %
    */
   filters?: string;
+  /**
+   * spam filtering threshold, defaults to a constant %
+   */
+  threshold?: number;
 };
 const defaultOpts = {
   limit: PAGE_SIZE,
-  filters: `spam_score__lte%3D${SPAM_FILTER_THRESHOLD}`,
+  filters: `spam_score__lte%3D`,
 };
 
 /**
@@ -53,13 +56,13 @@ const defaultOpts = {
  * using SimpleHash API.
  */
 export async function fetchNftsFromSimpleHash(opts: NftFetchOpts): Promise<SimpleHashResponse> {
-  const { chains, addresses, limit, filters, cursor } = { ...defaultOpts, ...opts };
-
+  const { chains, addresses, limit, filters, cursor, threshold } = { ...defaultOpts, ...opts };
+  const enrichedFilters = `${filters}${threshold}`;
   const { data } = await network<SimpleHashResponse>({
     method: "GET",
     url: `${getEnv("SIMPLE_HASH_API_BASE")}/nfts/owners_v2?chains=${chains.join(
       ",",
-    )}&wallet_addresses=${addresses}&limit=${limit}${filters ? `&filters=${filters}` : ""}${
+    )}&wallet_addresses=${addresses}&limit=${limit}${filters ? `&filters=${enrichedFilters}` : ""}${
       cursor ? `&cursor=${cursor}` : ""
     }`,
   });

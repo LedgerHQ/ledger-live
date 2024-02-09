@@ -456,7 +456,12 @@ export const DEFAULT_FEATURES: Features = {
   },
 
   myLedgerDisplayAppDeveloperName: DEFAULT_FEATURE,
-  nftsFromSimplehash: DEFAULT_FEATURE,
+  nftsFromSimplehash: {
+    ...DEFAULT_FEATURE,
+    params: {
+      threshold: 75,
+    },
+  },
 };
 
 // Firebase SDK treat JSON values as strings
