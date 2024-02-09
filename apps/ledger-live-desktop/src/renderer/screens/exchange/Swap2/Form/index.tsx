@@ -52,10 +52,6 @@ const Wrapper = styled(Box).attrs({
   max-width: 37rem;
 `;
 
-const Hide = styled.div`
-  opacity: 0;
-`;
-
 const idleTime = 60 * 60000; // 1 hour
 
 const SwapForm = () => {
