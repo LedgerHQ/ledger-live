@@ -14,5 +14,16 @@
     "src/editTransaction/index.ts",
     "src/operation.ts"
   ],
-  "ignoreUnimported": ["src/__tests__/*", "**/*.test.*", "**/*.spec.*", "src/datasets/ethereum1.ts"]
+  "ignoreUnimported": ["src/__tests__/*", "**/*.test.*", "**/*.spec.*", "src/datasets/ethereum1.ts"],
+  "ignoreUnresolved": [
+    "@ethersproject/bytes",
+    "@ethersproject/logger",
+    "@ethersproject/bignumber",
+    "@ethersproject/properties",
+    "@ethersproject/address",
+    "@ethersproject/constants",
+    "@ethersproject/strings",
+    "@ethersproject/hash",
+    "@ethersproject/keccak256"
+  ]
 }
