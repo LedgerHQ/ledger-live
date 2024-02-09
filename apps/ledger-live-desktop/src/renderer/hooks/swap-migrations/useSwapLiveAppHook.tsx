@@ -1,6 +1,6 @@
 import { v4 } from "uuid";
 import { useEffect, useState } from "react";
-import { isEqual } from "lodash";
+import isEqual from "lodash/isEqual";
 import { useSelector } from "react-redux";
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
