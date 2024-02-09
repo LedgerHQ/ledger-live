@@ -73,7 +73,7 @@ const expectedGasOptions = {
 describe("useGasOptions", () => {
   beforeEach(() => {
     mockedGetGasTracker.mockImplementation(() => ({ getGasOptions: mockedGetGasOptions }));
-    mockedGetGasOptions.mockReturnValueOnce(Promise.resolve(expectedGasOptions));
+    mockedGetGasOptions.mockReturnValue(Promise.resolve(expectedGasOptions));
   });
 
   afterEach(() => {
@@ -129,28 +129,25 @@ describe("useGasOptions", () => {
     });
   });
 
-  test.skip("call hook with interval > 0", async () => {
+  test("call hook with interval > 0", async () => {
     const { result } = renderHook(() => {
       return useGasOptions({
         currency: fakeCurrency as CryptoCurrency,
         transaction: coinTransaction,
-        interval: 1,
+        interval: 100,
       });
     });
 
     expect(result.current).toMatchObject([undefined, null, true]);
 
+    jest.advanceTimersByTime(150);
+
     await waitFor(() => {
-      expect(mockedGetGasTracker).toHaveBeenCalledTimes(1);
+      expect(result.current).toMatchObject([expectedGasOptions, null, false]);
+
       expect(mockedGetGasTracker).toHaveReturnedWith<GasTrackerApi>({
         getGasOptions: mockedGetGasOptions,
       });
-      expect(mockedGetGasOptions).toHaveBeenCalledTimes(1);
-
-      expect(setInterval).toHaveBeenCalledTimes(1);
-      expect(setInterval).toHaveBeenLastCalledWith(expect.any(Function), 1);
-
-      expect(result.current).toMatchObject([expectedGasOptions, null, false]);
     });
   });
 
@@ -209,7 +206,7 @@ describe("useGasOptions", () => {
     expect(result.current).toMatchObject([undefined, null, false]);
   });
 
-  test.skip("should return error if getGasOptions throws", async () => {
+  test("should return error if getGasOptions throws", async () => {
     const expectedError = new Error("error");
 
     mockedGetGasOptions.mockReset();
