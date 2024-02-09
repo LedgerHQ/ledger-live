@@ -134,7 +134,12 @@ const DeviceCard = ({
             disabled={disableFlows}
           />
           <Flex backgroundColor={"neutral.c30"} py={1} px={3} borderRadius={4} my={2}>
-            <Text variant={"subtitle"} fontWeight={"semiBold"} color={"neutral.c80"}>
+            <Text
+              variant={"subtitle"}
+              fontWeight={"semiBold"}
+              color={"neutral.c80"}
+              testID="manager-device-version"
+            >
               <Trans
                 i18nKey="FirmwareVersionRow.subtitle"
                 values={{ version: deviceInfo.version }}

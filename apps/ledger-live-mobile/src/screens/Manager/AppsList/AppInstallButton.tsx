@@ -79,7 +79,7 @@ export default function AppInstallButton({
   ]);
 
   return (
-    <TouchableOpacity onPress={installApp}>
+    <TouchableOpacity onPress={installApp} testID={`app-${name}-notInstalled`}>
       <ButtonContainer borderColor="neutral.c30">
         {canBeInstalled ? <IconsLegacy.PlusMedium size={18} color="neutral.c100" /> : null}
       </ButtonContainer>
