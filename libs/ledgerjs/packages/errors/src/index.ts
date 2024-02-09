@@ -318,6 +318,8 @@ export class TransportStatusError extends Error {
     this.statusCode = statusCode;
     this.statusText = statusText;
 
+    Object.setPrototypeOf(this, TransportStatusError.prototype);
+
     // Maps to a LockedDeviceError
     if (canBeMappedToChildError && statusCode === StatusCodes.LOCKED_DEVICE) {
       return new LockedDeviceError(message);
@@ -332,6 +334,7 @@ export class LockedDeviceError extends TransportStatusError {
       this.message = message;
     }
     this.name = "LockedDeviceError";
+    Object.setPrototypeOf(this, LockedDeviceError.prototype);
   }
 }
 

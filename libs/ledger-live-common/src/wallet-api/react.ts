@@ -1,6 +1,7 @@
 import { useMemo, useState, useEffect, useRef, useCallback, RefObject } from "react";
 import semver from "semver";
-import { formatDistanceToNow } from "date-fns";
+import { intervalToDuration } from "date-fns";
+
 import { Account, AccountLike, AnyMessage, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { WalletHandlers, ServerConfig, WalletAPIServer } from "@ledgerhq/wallet-api-server";
@@ -837,29 +838,56 @@ export interface RecentlyUsed {
   clear: () => void;
 }
 
-export type RecentlyUsedManifest = AppManifest & { usedAt?: Date };
+export type RecentlyUsedManifest = AppManifest & { usedAt: UsedAt };
+export type UsedAt = {
+  unit: Intl.RelativeTimeFormatUnit;
+  diff: number;
+};
+
+function calculateTimeDiff(usedAt: string) {
+  const start = new Date();
+  const end = new Date(usedAt);
+  const interval = intervalToDuration({ start, end });
+  const units: Intl.RelativeTimeFormatUnit[] = [
+    "years",
+    "months",
+    "weeks",
+    "days",
+    "hours",
+    "minutes",
+    "seconds",
+  ];
+  let timeDiff = { unit: units[-1], diff: 0 };
+
+  for (const unit of units) {
+    if (interval[unit] > 0) {
+      timeDiff = { unit, diff: interval[unit] };
+      break;
+    }
+  }
+
+  return timeDiff;
+}
 
 export function useRecentlyUsed(
   manifests: AppManifest[],
-  [recentlyUsed, setState]: RecentlyUsedDB,
+  [recentlyUsedManifestsDb, setState]: RecentlyUsedDB,
 ): RecentlyUsed {
   const data = useMemo(
     () =>
-      recentlyUsed
-        .map(r => {
-          const res = manifests.find(m => m.id === r.id);
-          const distance = formatDistanceToNow(new Date(r.usedAt));
+      recentlyUsedManifestsDb
+        .map(recentlyUsed => {
+          const res = manifests.find(manifest => manifest.id === recentlyUsed.id);
           return res
             ? {
                 ...res,
-                usedAt: distance[0].toUpperCase() + distance.slice(1) + " ago",
+                usedAt: calculateTimeDiff(recentlyUsed.usedAt),
               }
             : res;
         })
-        .filter(m => m !== undefined) as AppManifest[],
-    [recentlyUsed, manifests],
+        .filter(manifest => manifest !== undefined) as RecentlyUsedManifest[],
+    [recentlyUsedManifestsDb, manifests],
   );
-
   const append = useCallback(
     (manifest: AppManifest) => {
       setState(state => {

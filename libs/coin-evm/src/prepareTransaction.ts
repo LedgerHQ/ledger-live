@@ -1,7 +1,7 @@
 import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { isEqual } from "lodash";
+import isEqual from "lodash/isEqual";
 import { getNftCollectionMetadata } from "./api/nft";
 import { getNodeApi } from "./api/node/index";
 import { DEFAULT_NONCE } from "./createTransaction";

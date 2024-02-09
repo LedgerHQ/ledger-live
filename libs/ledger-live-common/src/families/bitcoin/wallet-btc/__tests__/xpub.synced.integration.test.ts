@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import coininfo from "coininfo";
-import { zipObject } from "lodash";
+import zipObject from "lodash/zipObject";
 import { DerivationModes } from "../types";
 import BitcoinLikeStorage from "../storage";
 import BitcoinLikeExplorer from "../explorer";

@@ -72,7 +72,10 @@ export default memo(function AppRow({
   const { enabled: displayAppDeveloperName } = useFeature("myLedgerDisplayAppDeveloperName") ?? {};
 
   return (
-    <RowContainer disabled={!installedApp && !canBeInstalled}>
+    <RowContainer
+      disabled={!installedApp && !canBeInstalled}
+      testID={`manager-app-row-${app.name}`}
+    >
       <AppIcon app={app} size={48} />
       <LabelContainer>
         <Text numberOfLines={1} variant="body" fontWeight="semiBold" color="neutral.c100" mb={2}>
