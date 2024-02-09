@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { MarketNavigatorStackParamList } from "LLM/features/Market/Navigator";
@@ -9,13 +9,12 @@ import {
   starredMarketCoinsSelector,
 } from "~/reducers/settings";
 import { useMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
-import MarketList from "./MarketList";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<MarketNavigatorStackParamList, ScreenName.MarketList>
 >;
 
-function MarketListCont() {
+function useMarketListViewModel() {
   const { params } = useRoute<NavigationProps["route"]>();
   const [isLoading, setIsLoading] = useState(true);
   const initialTop100 = params?.top100;
@@ -76,21 +75,19 @@ function MarketListCont() {
       .finally(() => setIsLoading(false));
   }, [limit, marketData, page, loading, top100, loadNextPage]);
 
-  return (
-    <MarketList
-      marketData={marketDataFiltered}
-      filterByStarredAccount={filterByStarredAccount}
-      starredMarketCoins={starredMarketCoins}
-      search={search}
-      loading={loading}
-      refresh={refresh}
-      counterCurrency={counterCurrency}
-      range={range}
-      selectCurrency={selectCurrency}
-      isLoading={isLoading}
-      onEndReached={onEndReached}
-    />
-  );
+  return {
+    marketData: marketDataFiltered,
+    filterByStarredAccount,
+    starredMarketCoins,
+    search,
+    loading,
+    refresh,
+    counterCurrency,
+    range,
+    selectCurrency,
+    isLoading,
+    onEndReached,
+  };
 }
 
-export default MarketListCont;
+export default useMarketListViewModel;
