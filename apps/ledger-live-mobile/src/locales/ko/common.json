@@ -492,7 +492,7 @@
       "description" : "내 Ledger에서 앱을 다시 설치해 보세요"
     },
     "NotEnoughGas" : {
-      "title" : "{{cryptoName}} 네트워크에서 스왑하려면 네트워크 수수료 명목으로 {{fees}} {{ticker}}가 필요합니다. <link0>{{ticker}} 구매</link0>",
+      "title" : "{{cryptoName}} 네트워크에서는 수수료로 {{ticker}} {{fees}}(이)가 필요합니다. <link0>{{ticker}} 구매</link0>",
       "description" : "토큰 트랜잭션 수수료로 계정에 코인을 전송하세요."
     },
     "NotEnoughGasSwap" : {
@@ -6534,24 +6534,35 @@
     "ethereum" : {
       "title" : "ETH 보유량 늘리기",
       "subTitle" : "Ledger Live에서 일일 보상을 바로 수령하여 ETH를 스테이킹하고 보유량을 늘려보세요.",
+      "tagMinimum" : "Requires {{min}} ETH",
       "close" : "종료",
       "providers" : {
-        "lido" : {
-          "title" : "Lido로 수익 창출",
-          "description" : "Lido를 통해 이더리움을 스테이킹하고 매일 보상을 받으세요. 최소 ETH가 필요하지 않습니다. 락업 기간 없음.",
-          "supportLink" : "Lido에 대해 더 알아보기"
-        },
-        "kiln" : {
-          "title" : "Kiln 전용 스테이킹",
-          "tag" : "32 ETH 필요",
-          "description" : "전용 검증인을 통해 스테이킹하세요. 32 ETH의 배수가 필요합니다. 보상은 수동으로 청구됩니다. 언제든지 중단할 수도 있습니다.",
-          "supportLink" : "Kiln 검증인에 대해 자세히 알아보기"
-        },
         "kiln_pooling" : {
           "title" : "Kiln 스테이킹 풀",
-          "description" : "스테이킹 풀에 가입하세요. 최소 ETH가 필요하지 않습니다. 보상은 자동 합산됩니다. 언제든지 중단할 수도 있습니다.",
-          "supportLink" : "Kiln 풀링에 대해 자세히 알아보기",
-          "tag" : "최소 한도 없음"
+          "description" : "최소 금액 없이 스테이킹하세요. 락업 기간 없이 복리 이자가 자동으로 적립되는 보상을 받으세요.",
+          "supportLink" : "Kiln 풀링에 대해 자세히 알아보기"
+        },
+        "stader-eth" : {
+          "title" : "Stade Labs",
+          "description" : "최소 금액 없이 스테이킹하세요. 복리 이자가 자동으로 적립되는 보상을 통해 유동성을 즉각적으로 확보하세요.",
+          "supportLink" : "Stader 자세히 알아보기"
+        },
+        "lido" : {
+          "title" : "Lido",
+          "description" : "원하는 수량의 ETH를 스테이킹하여 매일 보상을 받고 유동성을 즉각적으로 확보하세요.",
+          "supportLink" : "Lido에 대해 더 알아보기"
+        },
+        "figment" : {
+          "title" : "Figment",
+          "tag" : "32 ETH 필요",
+          "description" : "전용 검증인에게 32 ETH 이상을 스테이킹하면 본인 계정으로 보상이 자동 지급됩니다.",
+          "supportLink" : "Figment 자세히 알아보기"
+        },
+        "kiln" : {
+          "title" : "Kiln 솔로 스테이킹",
+          "tag" : "32 ETH 필요",
+          "description" : "전용 검증인에게 32 ETH 이상을 스테이킹하고 간단히 보상을 받으세요.",
+          "supportLink" : "Kiln 자세히 알아보기"
         }
       }
     },
