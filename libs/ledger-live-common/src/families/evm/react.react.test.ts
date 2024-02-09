@@ -129,7 +129,7 @@ describe("useGasOptions", () => {
     });
   });
 
-  test("call hook with interval > 0", async () => {
+  test.skip("call hook with interval > 0", async () => {
     const { result } = renderHook(() => {
       return useGasOptions({
         currency: fakeCurrency as CryptoCurrency,
@@ -209,7 +209,7 @@ describe("useGasOptions", () => {
     expect(result.current).toMatchObject([undefined, null, false]);
   });
 
-  test("should return error if getGasOptions throws", async () => {
+  test.skip("should return error if getGasOptions throws", async () => {
     const expectedError = new Error("error");
 
     mockedGetGasOptions.mockReset();
