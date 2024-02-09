@@ -55,7 +55,7 @@ function MarketList({
 }: MarketListProps) {
   const { colors } = useTheme();
   const { t } = useTranslation();
-  const ptxEarnFeature = useFeature("ptxEarn");
+  const ptxEarnFF = useFeature("ptxEarn");
   const { handlePullToRefresh, refreshControlVisible } = usePullToRefresh({ loading, refresh });
 
   const resetSearch = useCallback(
@@ -120,10 +120,10 @@ function MarketList({
       />
     ),
   };
-  if (!ptxEarnFeature?.enabled) {
+  if (!ptxEarnFF?.enabled) {
     return (
       <TabBarSafeAreaView>
-        <Flex px={6} pt={ptxEarnFeature?.enabled ? 6 : 0}>
+        <Flex px={6} pt={ptxEarnFF?.enabled ? 6 : 0}>
           <Text my={3} variant="h4" fontWeight="semiBold">
             {t("market.title")}
           </Text>
