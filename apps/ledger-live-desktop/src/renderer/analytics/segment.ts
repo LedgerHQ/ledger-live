@@ -141,7 +141,7 @@ const extraProperties = (store: ReduxStore) => {
     hasGenesisPass,
     hasInfinityPass,
     modelIdList: devices,
-    stakingProvidersEnabled: stakingProvidersEnabled || "flag not loaded",
+    stakingProvidersEnabled,
     isBatch1Enabled,
     isBatch2Enabled,
     isBatch3Enabled,
