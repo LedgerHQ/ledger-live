@@ -71,6 +71,7 @@ const getFeatureFlagProperties = () => {
   (async () => {
     const ptxEarnFeatureFlag = analyticsFeatureFlagMethod("ptxEarn");
     const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
+    const stakingProviders = analyticsFeatureFlagMethod("ethStakingProviders");
 
     const isBatch1Enabled =
       !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
@@ -78,12 +79,15 @@ const getFeatureFlagProperties = () => {
       !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 2;
     const isBatch3Enabled =
       !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 3;
+    const stakingProvidersEnabled =
+      stakingProviders?.enabled && stakingProviders?.params?.listProvider.length;
 
     updateIdentify({
       ptxEarnEnabled: !!ptxEarnFeatureFlag?.enabled,
       isBatch1Enabled,
       isBatch2Enabled,
       isBatch3Enabled,
+      stakingProvidersEnabled,
     });
   })();
 };
@@ -219,6 +223,7 @@ export const start = async (store: AppStore): Promise<SegmentClient | undefined>
   return segmentClient;
 };
 
+// TODO: use this to update the user traits
 export const updateIdentify = async (additionalProperties?: UserTraits) => {
   Sentry.addBreadcrumb({
     category: "identify",
