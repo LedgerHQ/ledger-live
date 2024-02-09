@@ -492,7 +492,7 @@
       "description" : "Uygulamayı My Ledger'dan yeniden yüklemeyi deneyin"
     },
     "NotEnoughGas" : {
-      "title" : "{{cryptoName}} ağında takas işlemi için {{fees}} {{ticker}} ağ ücreti ödemeniz gerekiyor. <link0>{{ticker}} Satın Al</link0>",
+      "title" : "{{cryptoName}} ağında olduğunuzdan, {{fees}} {{ticker}} ücret ödemeniz gerekiyor. <link0>{{ticker}} Satın Alın</link0>",
       "description" : "Token işlem ücretlerini ödemek için lütfen hesabınıza biraz coin gönderin."
     },
     "NotEnoughGasSwap" : {
@@ -2842,10 +2842,6 @@
       "announcements" : {
         "title" : "Duyurular",
         "desc" : "Önemli Ledger Live haberlerini alın"
-      },
-      "recommendations" : {
-        "title" : "Öneriler",
-        "desc" : "Kişiselleştirilmiş öneriler ve özel teklifler ile daha zengin bir deneyim yaşayın"
       },
       "largeMover" : {
         "title" : "Büyük Hareketler",
@@ -6534,24 +6530,35 @@
     "ethereum" : {
       "title" : "ETH bakiyenizi artırın",
       "subTitle" : "ETH varlıklarınızı stake ederek ve doğrudan Ledger Live hesabınıza günlük ödüller kazanarak bakiyenizi artırın.",
+      "tagMinimum" : "{{min}} ETH gerektirir",
       "close" : "Kapat",
       "providers" : {
-        "lido" : {
-          "title" : "Lido ile kazanın",
-          "description" : "Ethereum varlıklarınızı Lido ile stake edin ve her gün ödül kazanın. ETH alt limiti bulunmaz. Kilitleme süresi yok.",
-          "supportLink" : "Lido hakkında daha fazla bilgi alın"
-        },
-        "kiln" : {
-          "title" : "Kiln ile özel staking",
-          "tag" : "32 ETH gerektirir",
-          "description" : "Özel doğrulayıcılarla stake edin. 32 ETH ve katlarını gerektirir. Ödüller manuel olarak alınır. İstediğiniz zaman çıkın.",
-          "supportLink" : "Kiln doğrulayıcısı hakkında daha fazla bilgi edinin"
-        },
         "kiln_pooling" : {
           "title" : "Kiln staking havuzu",
-          "description" : "Bir staking havuzuna katılın. ETH alt limiti bulunmaz. Ödüller otomatik olarak birleştirilir. İstediğiniz zaman çıkın.",
-          "supportLink" : "Kiln havuzu hakkında daha fazla bilgi edinin",
-          "tag" : "Alt limit yok"
+          "description" : "Alt limit olmadan stake edin. Kilitleme süresi olmadan, otomatik olarak bileştirilen ödüller kazanın.",
+          "supportLink" : "Kiln havuzu hakkında daha fazla bilgi edinin"
+        },
+        "stader-eth" : {
+          "title" : "Stader Labs",
+          "description" : "Alt limit olmadan stake edin. Anında likiditeye erişerek otomatik olarak bileştirilen ödüller kazanın.",
+          "supportLink" : "Stader hakkında daha fazla bilgi edinin"
+        },
+        "lido" : {
+          "title" : "Lido",
+          "description" : "Anında likidite ve günlük ödüller için herhangi bir miktarda ETH stake edin.",
+          "supportLink" : "Lido hakkında daha fazla bilgi alın"
+        },
+        "figment" : {
+          "title" : "Figment",
+          "tag" : "32 ETH gerektirir",
+          "description" : "Özel doğrulayıcılarda en az 32 ETH stake edin ve ödüller otomatik olarak hesabınıza gönderilsin.",
+          "supportLink" : "Figment hakkında daha fazla bilgi edinin"
+        },
+        "kiln" : {
+          "title" : "Kiln ile solo staking",
+          "tag" : "32 ETH gerektirir",
+          "description" : "Özel doğrulayıcılarda en az 32 ETH stake edin ve ödülleri kolayca alın.",
+          "supportLink" : "Kiln hakkında daha fazla bilgi edinin"
         }
       }
     },
