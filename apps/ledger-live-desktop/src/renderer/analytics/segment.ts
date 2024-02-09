@@ -62,6 +62,7 @@ const getFeatureFlagProperties = () => {
     const analytics = getAnalytics();
     const ptxEarnFeatureFlag = analyticsFeatureFlagMethod("ptxEarn");
     const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
+    const stakingProviders = analyticsFeatureFlagMethod("ethStakingProviders");
 
     const isBatch1Enabled =
       !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
@@ -69,6 +70,8 @@ const getFeatureFlagProperties = () => {
       !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 2;
     const isBatch3Enabled =
       !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 3;
+    const stakingProvidersEnabled =
+      stakingProviders?.enabled && stakingProviders?.params?.listProvider.length;
 
     analytics.identify(
       id,
@@ -77,6 +80,7 @@ const getFeatureFlagProperties = () => {
         isBatch1Enabled,
         isBatch2Enabled,
         isBatch3Enabled,
+        stakingProvidersEnabled,
       },
       {
         context: getContext(),
@@ -214,7 +218,7 @@ const confidentialityFilter = (properties?: Record<string, unknown> | null) => {
   };
 };
 
-export const updateIdentify = async () => {
+export const updateIdentify = async (customTraits?: Record<string, boolean | string | number>) => {
   if (!storeInstance || !shareAnalyticsSelector(storeInstance.getState())) return;
 
   const analytics = getAnalytics();
@@ -222,6 +226,7 @@ export const updateIdentify = async () => {
 
   const allProperties = {
     ...extraProperties(storeInstance),
+    ...customTraits, // Needed for A/B tests to study historical data to make sure test groups are unbiased. See: https://segment.com/docs/unify/traits/custom-traits/
     braze_external_id: id, // Needed for braze with this exact name
   };
   analytics.identify(id, allProperties, {

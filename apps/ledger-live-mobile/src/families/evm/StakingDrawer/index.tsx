@@ -3,7 +3,7 @@ import { useTheme } from "styled-components/native";
 
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Flex, ScrollListContainer } from "@ledgerhq/native-ui";
-import { Track } from "~/analytics";
+import { Track, updateIdentify } from "~/analytics";
 import { useRootDrawerContext } from "~/context/RootDrawerContext";
 import { EvmStakingDrawerBody } from "./EvmStakingDrawerBody";
 import QueuedDrawer from "~/components/QueuedDrawer";
@@ -17,16 +17,17 @@ const descending = (a: ListProvider, b: ListProvider) => (b?.min || 0) - (a?.min
 export function EvmStakingDrawer() {
   const { isOpen, onModalHide, openDrawer, onClose, drawer } = useRootDrawerContext();
   const ethStakingProviders = useFeature("ethStakingProviders");
+  const providers = ethStakingProviders?.params?.listProvider;
+  const stakingProvidersEnabled = providers && providers.length;
+
   const { theme: themeName } = useTheme();
 
   useEffect(() => {
-    if (
-      ethStakingProviders?.enabled ||
-      (ethStakingProviders?.params?.listProvider ?? []).length > 0
-    ) {
+    if (ethStakingProviders?.enabled || (providers ?? []).length > 0) {
+      updateIdentify({ stakingProvidersEnabled });
       openDrawer();
     }
-  }, [ethStakingProviders, openDrawer]);
+  }, [ethStakingProviders, openDrawer, providers, stakingProvidersEnabled]);
 
   if (!ethStakingProviders || drawer.id !== "EvmStakingDrawer") return null;
 
