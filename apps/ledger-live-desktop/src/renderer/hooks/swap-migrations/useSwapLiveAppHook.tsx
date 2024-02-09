@@ -1,5 +1,5 @@
 import { v4 } from "uuid";
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import isEqual from "lodash/isEqual";
 import { useSelector } from "react-redux";
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
@@ -38,9 +38,7 @@ export const useSwapLiveAppHook = (props: UseSwapLiveAppHookProps) => {
   const exchangeRate = useSelector(rateSelector);
   const provider = exchangeRate?.provider;
   const exchangeRatesState = swapTransaction.swap?.rates;
-  const [swapWebProps, setSwapWebProps] = useState<SwapWebProps["swapState"] | undefined>(
-    undefined,
-  );
+  const swapWebPropsRef = useRef<SwapWebProps["swapState"] | undefined>(undefined);
 
   useEffect(() => {
     if (isSwapLiveAppEnabled) {
@@ -69,8 +67,8 @@ export const useSwapLiveAppHook = (props: UseSwapLiveAppHookProps) => {
         swapApiBase: SWAP_API_BASE,
       };
 
-      if (!isEqual(newSwapWebProps, swapWebProps)) {
-        setSwapWebProps(newSwapWebProps);
+      if (!isEqual(newSwapWebProps, swapWebPropsRef.current)) {
+        swapWebPropsRef.current = newSwapWebProps;
         updateSwapWebProps({ ...newSwapWebProps, cacheKey: v4() });
       }
     }
@@ -85,6 +83,5 @@ export const useSwapLiveAppHook = (props: UseSwapLiveAppHookProps) => {
     swapTransaction.bridgePending,
     exchangeRatesState.status,
     updateSwapWebProps,
-    swapWebProps,
   ]);
 };
