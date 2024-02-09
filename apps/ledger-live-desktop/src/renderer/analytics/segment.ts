@@ -99,6 +99,9 @@ const extraProperties = (store: ReduxStore) => {
   const device = lastSeenDeviceSelector(state);
   const devices = devicesModelListSelector(state);
   const accounts = accountsSelector(state);
+  const stakingProviders =
+    analyticsFeatureFlagMethod &&
+    analyticsFeatureFlagMethod("ethStakingProviders")?.params?.listProvider;
 
   const deviceInfo = device
     ? {
@@ -149,6 +152,7 @@ const extraProperties = (store: ReduxStore) => {
     hasGenesisPass,
     hasInfinityPass,
     modelIdList: devices,
+    stakingProvidersEnabled: stakingProviders?.length || "flag not loaded",
     ...deviceInfo,
   };
 };
@@ -218,7 +222,7 @@ const confidentialityFilter = (properties?: Record<string, unknown> | null) => {
   };
 };
 
-export const updateIdentify = async (customTraits?: Record<string, boolean | string | number>) => {
+export const updateIdentify = async () => {
   if (!storeInstance || !shareAnalyticsSelector(storeInstance.getState())) return;
 
   const analytics = getAnalytics();
@@ -226,7 +230,6 @@ export const updateIdentify = async (customTraits?: Record<string, boolean | str
 
   const allProperties = {
     ...extraProperties(storeInstance),
-    ...customTraits, // Needed for A/B tests to study historical data to make sure test groups are unbiased. See: https://segment.com/docs/unify/traits/custom-traits/
     braze_external_id: id, // Needed for braze with this exact name
   };
   analytics.identify(id, allProperties, {
