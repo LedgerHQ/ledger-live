@@ -55,38 +55,30 @@ export function setAnalyticsFeatureFlagMethod(method: typeof analyticsFeatureFla
   analyticsFeatureFlagMethod = method;
 }
 
+let isBatch1Enabled: boolean,
+  isBatch2Enabled: boolean,
+  isBatch3Enabled: boolean,
+  ptxEarnEnabled: boolean,
+  stakingProvidersEnabled: number | string;
+
 const getFeatureFlagProperties = () => {
   if (!analyticsFeatureFlagMethod) return {};
-  (async () => {
-    const { id } = await user();
-    const analytics = getAnalytics();
-    const ptxEarnFeatureFlag = analyticsFeatureFlagMethod("ptxEarn");
-    const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
-    const stakingProviders = analyticsFeatureFlagMethod("ethStakingProviders");
+  const ptxEarnFeatureFlag = analyticsFeatureFlagMethod("ptxEarn");
+  const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
+  const stakingProviders = analyticsFeatureFlagMethod("ethStakingProviders");
 
-    const isBatch1Enabled =
-      !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
-    const isBatch2Enabled =
-      !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 2;
-    const isBatch3Enabled =
-      !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 3;
-    const stakingProvidersEnabled =
-      stakingProviders?.enabled && stakingProviders?.params?.listProvider.length;
+  isBatch1Enabled = !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
+  isBatch2Enabled = !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 2;
+  isBatch3Enabled = !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 3;
+  ptxEarnEnabled = !!ptxEarnFeatureFlag?.enabled;
+  stakingProvidersEnabled =
+    !!stakingProviders?.enabled &&
+    stakingProviders?.params &&
+    stakingProviders?.params?.listProvider?.length > 0
+      ? stakingProviders?.params?.listProvider.length
+      : "flag not loaded";
 
-    analytics.identify(
-      id,
-      {
-        ptxEarnEnabled: !!ptxEarnFeatureFlag?.enabled,
-        isBatch1Enabled,
-        isBatch2Enabled,
-        isBatch3Enabled,
-        stakingProvidersEnabled,
-      },
-      {
-        context: getContext(),
-      },
-    );
-  })();
+  updateIdentify();
 };
 
 runOnceWhen(() => !!analyticsFeatureFlagMethod && !!getAnalytics(), getFeatureFlagProperties);
@@ -99,9 +91,6 @@ const extraProperties = (store: ReduxStore) => {
   const device = lastSeenDeviceSelector(state);
   const devices = devicesModelListSelector(state);
   const accounts = accountsSelector(state);
-  const stakingProviders =
-    analyticsFeatureFlagMethod &&
-    analyticsFeatureFlagMethod("ethStakingProviders")?.params?.listProvider;
 
   const deviceInfo = device
     ? {
@@ -152,7 +141,11 @@ const extraProperties = (store: ReduxStore) => {
     hasGenesisPass,
     hasInfinityPass,
     modelIdList: devices,
-    stakingProvidersEnabled: stakingProviders?.length || "flag not loaded",
+    stakingProvidersEnabled: stakingProvidersEnabled || "flag not loaded",
+    isBatch1Enabled,
+    isBatch2Enabled,
+    isBatch3Enabled,
+    ptxEarnEnabled,
     ...deviceInfo,
   };
 };
