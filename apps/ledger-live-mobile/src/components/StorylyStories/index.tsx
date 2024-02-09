@@ -1,6 +1,6 @@
 import { Box, Flex } from "@ledgerhq/native-ui";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex/index";
-import { isEqual } from "lodash";
+import isEqual from "lodash/isEqual";
 import { Linking } from "react-native";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { ScrollView, StyleProp, ViewStyle } from "react-native";

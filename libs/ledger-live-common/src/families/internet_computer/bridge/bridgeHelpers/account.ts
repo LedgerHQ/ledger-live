@@ -2,7 +2,7 @@ import { GetAccountShape } from "../../../../bridge/jsHelpers";
 import { decodeAccountId, encodeAccountId } from "../../../../account";
 import { log } from "@ledgerhq/logs";
 import { fetchBalances, fetchBlockHeight, fetchTxns } from "./api";
-import { flatMap } from "lodash";
+import flatMap from "lodash/flatMap";
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { ICPRosettaGetTxnsHistoryResponse } from "./icpRosetta/types";

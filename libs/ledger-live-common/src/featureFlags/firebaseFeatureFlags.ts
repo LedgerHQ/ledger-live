@@ -1,5 +1,5 @@
 import { PropsWithChildren } from "react";
-import { snakeCase } from "lodash";
+import snakeCase from "lodash/snakeCase";
 import semver from "semver";
 import { Feature, FeatureId } from "@ledgerhq/types-live";
 import { getEnv } from "@ledgerhq/live-env";

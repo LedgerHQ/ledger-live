@@ -461,7 +461,7 @@ export const orderedNftsSelector = createSelector(
  *
  * Example:
  * ```
- * import { isEqual } from "lodash";
+ * import isEqual from "lodash/isEqual";
  * // ...
  * const orderedVisibleNfts = useSelector(orderedVisibleNftsSelector, isEqual)
  * ```

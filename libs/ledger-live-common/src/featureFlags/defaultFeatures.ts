@@ -5,7 +5,7 @@ import {
   FeatureMap,
   ABTestingVariants,
 } from "@ledgerhq/types-live";
-import { reduce } from "lodash";
+import reduce from "lodash/reduce";
 import { formatToFirebaseFeatureId } from "./firebaseFeatureFlags";
 
 /**

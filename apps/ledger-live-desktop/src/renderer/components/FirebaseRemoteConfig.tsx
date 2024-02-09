@@ -12,7 +12,7 @@ import { FirebaseRemoteConfigProvider as FirebaseProvider } from "@ledgerhq/live
 import { DEFAULT_FEATURES, formatDefaultFeatures } from "@ledgerhq/live-common/featureFlags/index";
 import type { FirebaseFeatureFlagsProviderProps as Props } from "@ledgerhq/live-common/featureFlags/index";
 import { getFirebaseConfig } from "~/firebase-setup";
-import { isMatch } from "lodash";
+import isMatch from "lodash/isMatch";
 import * as fs from "fs";
 
 export const FirebaseRemoteConfigContext = React.createContext<RemoteConfig | null>(null);

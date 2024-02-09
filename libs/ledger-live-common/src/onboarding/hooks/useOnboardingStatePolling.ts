@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { Subscription } from "rxjs";
-import { isEqual } from "lodash";
+import isEqual from "lodash/isEqual";
 import type { Device } from "../../hw/actions/types";
 import { DeviceOnboardingStatePollingError } from "@ledgerhq/errors";
 
