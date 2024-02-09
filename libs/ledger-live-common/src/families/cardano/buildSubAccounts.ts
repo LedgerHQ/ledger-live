@@ -6,7 +6,8 @@ import { CardanoOperation, CardanoOperationExtra, PaymentCredential, Token } fro
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
 import { findTokenById } from "@ledgerhq/cryptoassets";
 import { decodeTokenAccountId, emptyHistoryCache, encodeTokenAccountId } from "../../account";
-import { groupBy, keyBy } from "lodash";
+import groupBy from "lodash/groupBy";
+import keyBy from "lodash/keyBy";
 import { mergeOps } from "../../bridge/jsHelpers";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";

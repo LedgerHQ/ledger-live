@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { DefaultTheme, useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
-import { chunk } from "lodash";
+import chunk from "lodash/chunk";
 import { ensureContrast } from "../../colors";
 import { ScreenName } from "~/const";
 import { useDistribution } from "~/actions/general";

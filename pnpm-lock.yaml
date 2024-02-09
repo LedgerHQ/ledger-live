@@ -179,9 +179,6 @@ importers:
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
-      lodash.product:
-        specifier: ^18.9.19
-        version: 18.9.19(lodash@4.17.21)
       pako:
         specifier: ^2.0.4
         version: 2.0.4
@@ -42608,14 +42605,6 @@ packages:
 
   /lodash.once@4.1.1:
     resolution: {integrity: sha512-Sb487aTOCr9drQVL8pIxOzVhafOjZN9UU54hiN8PU3uAiSV7lx1yYNpbNmex2PK6dSJoNTSJUUswT651yww3Mg==}
-    dev: false
-
-  /lodash.product@18.9.19(lodash@4.17.21):
-    resolution: {integrity: sha512-yPX6KO0jveBR/DjSngqvUEynWTb4oJwB8g5WseShPzX0CO8pjX1gxlR5Fo7V3E81uPDc9mEuNVw3Ah6df9uy0g==}
-    peerDependencies:
-      lodash: ^4.17.11
-    dependencies:
-      lodash: 4.17.21
     dev: false
 
   /lodash.pullall@4.2.0:

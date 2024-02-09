@@ -16,7 +16,7 @@ import { NftMetadataProvider } from "@ledgerhq/live-nft-react";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { ToastProvider } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import "./config/configInit";
-import { isEqual } from "lodash";
+import isEqual from "lodash/isEqual";
 import { postOnboardingSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import Config from "react-native-config";
 import { LogLevel, PerformanceProfiler, RenderPassReport } from "@shopify/react-native-performance";

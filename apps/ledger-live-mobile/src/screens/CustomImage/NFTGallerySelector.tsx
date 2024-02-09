@@ -4,7 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import { ProtoNFT } from "@ledgerhq/types-live";
 import { FlatList } from "react-native";
-import { isEqual } from "lodash";
+import isEqual from "lodash/isEqual";
 
 import { orderedVisibleNftsSelector } from "~/reducers/accounts";
 import NftListItem from "~/components/Nft/NftGallery/NftListItem";
