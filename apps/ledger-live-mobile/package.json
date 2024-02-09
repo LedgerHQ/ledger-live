@@ -102,7 +102,7 @@
     "@react-native-firebase/messaging": "^14.11.1",
     "@react-native-firebase/remote-config": "^14.11.1",
     "@react-native-masked-view/masked-view": "^0.2.6",
-    "@react-native/gradle-plugin": "0.72.11",
+    "@react-native/gradle-plugin": "0.73.4",
     "@react-native/metro-config": "0.72.11",
     "@react-navigation/bottom-tabs": "^6.4.0",
     "@react-navigation/core": "^6.4.6",
