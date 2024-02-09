@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-exchange
 
+## 0.4.5-nightly.0
+
+### Patch Changes
+
+- [#5833](https://github.com/LedgerHQ/ledger-live/pull/5833) [`d39ca26`](https://github.com/LedgerHQ/ledger-live/commit/d39ca26cf5ffc6e058af22946a4adc6778a7e748) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - clarify error message for invalid address selected
+
 ## 0.4.4
 
 ### Patch Changes

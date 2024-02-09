@@ -1,5 +1,16 @@
 # ledger-live-desktop
 
+## 2.77.0-nightly.5
+
+### Patch Changes
+
+- [#6096](https://github.com/LedgerHQ/ledger-live/pull/6096) [`1969e17`](https://github.com/LedgerHQ/ledger-live/commit/1969e173b88af52b78cef466a57351e9fff58e33) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Fixed accounts order after changing countervalue in the settings
+
+- [#5986](https://github.com/LedgerHQ/ledger-live/pull/5986) [`11909ed`](https://github.com/LedgerHQ/ledger-live/commit/11909ed94d5fb4e9605d9f65f42a130ceb24ece2) Thanks [@RamyEB](https://github.com/RamyEB)! - Add translation on discover timestamps
+
+- Updated dependencies [[`d39ca26`](https://github.com/LedgerHQ/ledger-live/commit/d39ca26cf5ffc6e058af22946a4adc6778a7e748), [`11909ed`](https://github.com/LedgerHQ/ledger-live/commit/11909ed94d5fb4e9605d9f65f42a130ceb24ece2), [`50efe96`](https://github.com/LedgerHQ/ledger-live/commit/50efe9655eefc2c832b56e03c3fa23242e009bf6)]:
+  - @ledgerhq/live-common@33.6.0-nightly.5
+
 ## 2.77.0-nightly.4
 
 ### Patch Changes

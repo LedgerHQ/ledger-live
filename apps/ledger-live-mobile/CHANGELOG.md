@@ -1,5 +1,16 @@
 # live-mobile
 
+## 3.40.0-nightly.6
+
+### Patch Changes
+
+- [#6117](https://github.com/LedgerHQ/ledger-live/pull/6117) [`adc357a`](https://github.com/LedgerHQ/ledger-live/commit/adc357a7dc22a759d686ccef356e780a88956b83) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - center text on solana and atom modals
+
+- [#6121](https://github.com/LedgerHQ/ledger-live/pull/6121) [`26d19ca`](https://github.com/LedgerHQ/ledger-live/commit/26d19cace148ca0d1de60e3985d16449ef674a7f) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix displayed text in confirm recovery phrase during onboarding Nano
+
+- Updated dependencies [[`d39ca26`](https://github.com/LedgerHQ/ledger-live/commit/d39ca26cf5ffc6e058af22946a4adc6778a7e748), [`11909ed`](https://github.com/LedgerHQ/ledger-live/commit/11909ed94d5fb4e9605d9f65f42a130ceb24ece2), [`50efe96`](https://github.com/LedgerHQ/ledger-live/commit/50efe9655eefc2c832b56e03c3fa23242e009bf6)]:
+  - @ledgerhq/live-common@33.6.0-nightly.5
+
 ## 3.40.0-nightly.5
 
 ### Patch Changes
