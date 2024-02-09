@@ -120,7 +120,6 @@ const extraProperties = async (store: AppStore) => {
   const notificationsOptedIn = {
     notificationsAllowed: notifications.areNotificationsAllowed,
     optInAnnouncements: notifications.announcementsCategory,
-    optInRecommendations: notifications.recommendationsCategory,
     optInLargeMovers: notifications.largeMoverCategory,
     optInTxAlerts: notifications.transactionsAlertsCategory,
   };

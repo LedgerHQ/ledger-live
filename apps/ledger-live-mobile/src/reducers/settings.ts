@@ -162,7 +162,6 @@ export const INITIAL_STATE: SettingsState = {
   notifications: {
     areNotificationsAllowed: true,
     announcementsCategory: true,
-    recommendationsCategory: true,
     largeMoverCategory: true,
     transactionsAlertsCategory: false,
   },
