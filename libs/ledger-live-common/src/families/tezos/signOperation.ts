@@ -34,6 +34,8 @@ export const signOperation: SignOperationFnSignature<Transaction> = ({
             DerivationType.ED25519,
           );
 
+          tezos.setProvider({ signer: ledgerSigner });
+
           const publicKeyHash = await ledgerSigner.publicKeyHash();
           const publicKey = await ledgerSigner.publicKey();
 
