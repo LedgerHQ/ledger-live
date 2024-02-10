@@ -1,5 +1,18 @@
 # @ledgerhq/hw-app-eth
 
+## 6.35.5-nightly.2
+
+### Patch Changes
+
+- [#5682](https://github.com/LedgerHQ/ledger-live/pull/5682) [`4744c31`](https://github.com/LedgerHQ/ledger-live/commit/4744c3136021f1f47ad1617f2c84f47ac0647370) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Move clear signed selectors to evm-tools lib
+
+- Updated dependencies [[`f456d69`](https://github.com/LedgerHQ/ledger-live/commit/f456d69a2f64b6a217d3c1d9c6a531f31c2817a8), [`4744c31`](https://github.com/LedgerHQ/ledger-live/commit/4744c3136021f1f47ad1617f2c84f47ac0647370)]:
+  - @ledgerhq/errors@6.16.2-nightly.0
+  - @ledgerhq/evm-tools@1.0.15-nightly.1
+  - @ledgerhq/domain-service@1.1.18-nightly.2
+  - @ledgerhq/hw-transport@6.30.4-nightly.0
+  - @ledgerhq/hw-transport-mocker@6.28.4-nightly.0
+
 ## 6.35.5-nightly.1
 
 ### Patch Changes

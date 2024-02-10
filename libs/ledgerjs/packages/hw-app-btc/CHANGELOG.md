@@ -1,5 +1,12 @@
 # @ledgerhq/hw-app-btc
 
+## 10.2.2-nightly.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.30.4-nightly.0
+
 ## 10.2.1
 
 ### Patch Changes

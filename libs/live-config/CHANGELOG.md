@@ -1,5 +1,11 @@
 # @ledgerhq/live-config
 
+## 2.0.0-nightly.2
+
+### Patch Changes
+
+- [#6053](https://github.com/LedgerHQ/ledger-live/pull/6053) [`f95785f`](https://github.com/LedgerHQ/ledger-live/commit/f95785fc6d6be852ce8fcda34c6d498e45010e0f) Thanks [@lvndry](https://github.com/lvndry)! - Make live-config backward-compatible
+
 ## 2.0.0-nightly.1
 
 ### Major Changes

@@ -1,5 +1,47 @@
 # @ledgerhq/live-common
 
+## 33.6.0-nightly.6
+
+### Patch Changes
+
+- [#6107](https://github.com/LedgerHQ/ledger-live/pull/6107) [`f456d69`](https://github.com/LedgerHQ/ledger-live/commit/f456d69a2f64b6a217d3c1d9c6a531f31c2817a8) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Improve withDevice hook to throw LockedDeviceError
+
+- [#6127](https://github.com/LedgerHQ/ledger-live/pull/6127) [`43e5a09`](https://github.com/LedgerHQ/ledger-live/commit/43e5a096b00a271a640bb877f7d061a76f83c74f) Thanks [@CremaFR](https://github.com/CremaFR)! - fixed XLM crash
+
+- [#6141](https://github.com/LedgerHQ/ledger-live/pull/6141) [`f333ac9`](https://github.com/LedgerHQ/ledger-live/commit/f333ac96171dce3a94bcd125a3dcf475e487455c) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - fix min max error with moonpay
+
+- Updated dependencies [[`4744c31`](https://github.com/LedgerHQ/ledger-live/commit/4744c3136021f1f47ad1617f2c84f47ac0647370), [`f456d69`](https://github.com/LedgerHQ/ledger-live/commit/f456d69a2f64b6a217d3c1d9c6a531f31c2817a8), [`4744c31`](https://github.com/LedgerHQ/ledger-live/commit/4744c3136021f1f47ad1617f2c84f47ac0647370), [`4744c31`](https://github.com/LedgerHQ/ledger-live/commit/4744c3136021f1f47ad1617f2c84f47ac0647370), [`4744c31`](https://github.com/LedgerHQ/ledger-live/commit/4744c3136021f1f47ad1617f2c84f47ac0647370), [`4744c31`](https://github.com/LedgerHQ/ledger-live/commit/4744c3136021f1f47ad1617f2c84f47ac0647370), [`f95785f`](https://github.com/LedgerHQ/ledger-live/commit/f95785fc6d6be852ce8fcda34c6d498e45010e0f)]:
+  - @ledgerhq/live-env@1.0.0-nightly.0
+  - @ledgerhq/errors@6.16.2-nightly.0
+  - @ledgerhq/coin-evm@0.12.2-nightly.3
+  - @ledgerhq/hw-app-eth@6.35.5-nightly.2
+  - @ledgerhq/live-config@2.0.0-nightly.2
+  - @ledgerhq/coin-algorand@0.3.10-nightly.3
+  - @ledgerhq/coin-framework@0.11.1-nightly.3
+  - @ledgerhq/coin-near@0.3.9-nightly.0
+  - @ledgerhq/coin-polkadot@0.5.3-nightly.3
+  - @ledgerhq/live-countervalues@0.1.1-nightly.3
+  - @ledgerhq/live-network@1.1.12-nightly.0
+  - @ledgerhq/live-nft@0.2.0-nightly.3
+  - @ledgerhq/devices@8.2.1-nightly.0
+  - @ledgerhq/hw-app-algorand@6.28.4-nightly.0
+  - @ledgerhq/hw-app-cosmos@6.29.4-nightly.0
+  - @ledgerhq/hw-app-exchange@0.4.5-nightly.1
+  - @ledgerhq/hw-app-polkadot@6.28.4-nightly.0
+  - @ledgerhq/hw-app-solana@7.1.4-nightly.0
+  - @ledgerhq/hw-app-vet@0.1.4-nightly.0
+  - @ledgerhq/hw-transport@6.30.4-nightly.0
+  - @ledgerhq/hw-transport-node-speculos@6.28.4-nightly.0
+  - @ledgerhq/hw-transport-node-speculos-http@6.28.4-nightly.0
+  - @ledgerhq/live-countervalues-react@0.1.1-nightly.3
+  - @ledgerhq/hw-app-btc@10.2.2-nightly.0
+  - @ledgerhq/hw-app-near@6.28.4-nightly.0
+  - @ledgerhq/hw-app-str@6.28.4-nightly.0
+  - @ledgerhq/hw-app-tezos@6.28.4-nightly.0
+  - @ledgerhq/hw-app-trx@6.28.4-nightly.0
+  - @ledgerhq/hw-app-xrp@6.28.4-nightly.0
+  - @ledgerhq/hw-transport-mocker@6.28.4-nightly.0
+
 ## 33.6.0-nightly.5
 
 ### Patch Changes

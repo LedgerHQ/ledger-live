@@ -1,5 +1,29 @@
 # live-mobile
 
+## 3.40.0-nightly.7
+
+### Patch Changes
+
+- [#6129](https://github.com/LedgerHQ/ledger-live/pull/6129) [`9c0eb17`](https://github.com/LedgerHQ/ledger-live/commit/9c0eb17e3769b07ca7890c3cd4b60084af7fb620) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Removed Recommendations toggle from the notifications settings
+
+- Updated dependencies [[`4744c31`](https://github.com/LedgerHQ/ledger-live/commit/4744c3136021f1f47ad1617f2c84f47ac0647370), [`f456d69`](https://github.com/LedgerHQ/ledger-live/commit/f456d69a2f64b6a217d3c1d9c6a531f31c2817a8), [`f456d69`](https://github.com/LedgerHQ/ledger-live/commit/f456d69a2f64b6a217d3c1d9c6a531f31c2817a8), [`4744c31`](https://github.com/LedgerHQ/ledger-live/commit/4744c3136021f1f47ad1617f2c84f47ac0647370), [`4744c31`](https://github.com/LedgerHQ/ledger-live/commit/4744c3136021f1f47ad1617f2c84f47ac0647370), [`4744c31`](https://github.com/LedgerHQ/ledger-live/commit/4744c3136021f1f47ad1617f2c84f47ac0647370), [`43e5a09`](https://github.com/LedgerHQ/ledger-live/commit/43e5a096b00a271a640bb877f7d061a76f83c74f), [`4744c31`](https://github.com/LedgerHQ/ledger-live/commit/4744c3136021f1f47ad1617f2c84f47ac0647370), [`f333ac9`](https://github.com/LedgerHQ/ledger-live/commit/f333ac96171dce3a94bcd125a3dcf475e487455c), [`f95785f`](https://github.com/LedgerHQ/ledger-live/commit/f95785fc6d6be852ce8fcda34c6d498e45010e0f)]:
+  - @ledgerhq/live-env@1.0.0-nightly.0
+  - @ledgerhq/errors@6.16.2-nightly.0
+  - @ledgerhq/live-common@33.6.0-nightly.6
+  - @ledgerhq/coin-evm@0.12.2-nightly.3
+  - @ledgerhq/live-config@2.0.0-nightly.2
+  - @ledgerhq/coin-framework@0.11.1-nightly.3
+  - @ledgerhq/live-countervalues@0.1.1-nightly.3
+  - @ledgerhq/live-nft@0.2.0-nightly.3
+  - @ledgerhq/domain-service@1.1.18-nightly.2
+  - @ledgerhq/devices@8.2.1-nightly.0
+  - @ledgerhq/hw-transport@6.30.4-nightly.0
+  - @ledgerhq/hw-transport-http@6.29.4-nightly.0
+  - @ledgerhq/react-native-hid@6.31.4-nightly.0
+  - @ledgerhq/react-native-hw-transport-ble@6.32.3-nightly.0
+  - @ledgerhq/live-countervalues-react@0.1.1-nightly.3
+  - @ledgerhq/live-nft-react@0.2.0-nightly.3
+
 ## 3.40.0-nightly.6
 
 ### Patch Changes

@@ -1,5 +1,14 @@
 # @ledgerhq/evm-tools
 
+## 1.0.15-nightly.1
+
+### Patch Changes
+
+- [#5682](https://github.com/LedgerHQ/ledger-live/pull/5682) [`4744c31`](https://github.com/LedgerHQ/ledger-live/commit/4744c3136021f1f47ad1617f2c84f47ac0647370) Thanks [@lambertkevin](https://github.com/lambertkevin)! - Move clear signed selectors to evm-tools lib
+
+- Updated dependencies [[`4744c31`](https://github.com/LedgerHQ/ledger-live/commit/4744c3136021f1f47ad1617f2c84f47ac0647370)]:
+  - @ledgerhq/live-env@1.0.0-nightly.0
+
 ## 1.0.15-nightly.0
 
 ### Patch Changes

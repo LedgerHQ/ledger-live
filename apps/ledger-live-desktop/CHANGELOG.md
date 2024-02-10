@@ -1,5 +1,34 @@
 # ledger-live-desktop
 
+## 2.77.0-nightly.6
+
+### Patch Changes
+
+- [#6071](https://github.com/LedgerHQ/ledger-live/pull/6071) [`7311d8e`](https://github.com/LedgerHQ/ledger-live/commit/7311d8e074cd6c56c69d14a3e60ba10e588f2b6b) Thanks [@kallen-ledger](https://github.com/kallen-ledger)! - Send swapApiBase to swap-live-app
+
+- [#6107](https://github.com/LedgerHQ/ledger-live/pull/6107) [`f456d69`](https://github.com/LedgerHQ/ledger-live/commit/f456d69a2f64b6a217d3c1d9c6a531f31c2817a8) Thanks [@jdabbech-ledger](https://github.com/jdabbech-ledger)! - Update stax display correct error on locking it
+
+- [#6139](https://github.com/LedgerHQ/ledger-live/pull/6139) [`0380abe`](https://github.com/LedgerHQ/ledger-live/commit/0380abe9b5eeb36b2cf68db6f7875deb0f64fb1a) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix Continue button greyed out in step 1 of Send flow if the "Account to debit" is changed
+
+- Updated dependencies [[`4744c31`](https://github.com/LedgerHQ/ledger-live/commit/4744c3136021f1f47ad1617f2c84f47ac0647370), [`f456d69`](https://github.com/LedgerHQ/ledger-live/commit/f456d69a2f64b6a217d3c1d9c6a531f31c2817a8), [`f456d69`](https://github.com/LedgerHQ/ledger-live/commit/f456d69a2f64b6a217d3c1d9c6a531f31c2817a8), [`4744c31`](https://github.com/LedgerHQ/ledger-live/commit/4744c3136021f1f47ad1617f2c84f47ac0647370), [`4744c31`](https://github.com/LedgerHQ/ledger-live/commit/4744c3136021f1f47ad1617f2c84f47ac0647370), [`4744c31`](https://github.com/LedgerHQ/ledger-live/commit/4744c3136021f1f47ad1617f2c84f47ac0647370), [`43e5a09`](https://github.com/LedgerHQ/ledger-live/commit/43e5a096b00a271a640bb877f7d061a76f83c74f), [`4744c31`](https://github.com/LedgerHQ/ledger-live/commit/4744c3136021f1f47ad1617f2c84f47ac0647370), [`f333ac9`](https://github.com/LedgerHQ/ledger-live/commit/f333ac96171dce3a94bcd125a3dcf475e487455c), [`f95785f`](https://github.com/LedgerHQ/ledger-live/commit/f95785fc6d6be852ce8fcda34c6d498e45010e0f)]:
+  - @ledgerhq/live-env@1.0.0-nightly.0
+  - @ledgerhq/errors@6.16.2-nightly.0
+  - @ledgerhq/live-common@33.6.0-nightly.6
+  - @ledgerhq/coin-evm@0.12.2-nightly.3
+  - @ledgerhq/live-config@2.0.0-nightly.2
+  - @ledgerhq/coin-framework@0.11.1-nightly.3
+  - @ledgerhq/live-countervalues@0.1.1-nightly.3
+  - @ledgerhq/live-network@1.1.12-nightly.0
+  - @ledgerhq/live-nft@0.2.0-nightly.3
+  - @ledgerhq/domain-service@1.1.18-nightly.2
+  - @ledgerhq/devices@8.2.1-nightly.0
+  - @ledgerhq/hw-transport@6.30.4-nightly.0
+  - @ledgerhq/hw-transport-http@6.29.4-nightly.0
+  - @ledgerhq/hw-transport-node-hid-singleton@6.30.4-nightly.0
+  - @ledgerhq/hw-transport-vault@1.2.4-nightly.0
+  - @ledgerhq/live-countervalues-react@0.1.1-nightly.3
+  - @ledgerhq/live-nft-react@0.2.0-nightly.3
+
 ## 2.77.0-nightly.5
 
 ### Patch Changes
