@@ -14,7 +14,7 @@ import {
   RouteProp,
   useRoute,
 } from "@react-navigation/native";
-import { snakeCase } from "lodash";
+import snakeCase from "lodash/snakeCase";
 import React, { MutableRefObject, useCallback } from "react";
 import { FeatureId, Features, idsToLanguage } from "@ledgerhq/types-live";
 import {
@@ -120,7 +120,6 @@ const extraProperties = async (store: AppStore) => {
   const notificationsOptedIn = {
     notificationsAllowed: notifications.areNotificationsAllowed,
     optInAnnouncements: notifications.announcementsCategory,
-    optInRecommendations: notifications.recommendationsCategory,
     optInLargeMovers: notifications.largeMoverCategory,
     optInTxAlerts: notifications.transactionsAlertsCategory,
   };

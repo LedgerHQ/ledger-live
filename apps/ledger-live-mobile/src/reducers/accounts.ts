@@ -172,15 +172,9 @@ export const cryptoCurrenciesSelector = createSelector(accountsSelector, account
 );
 export const accountsTuplesByCurrencySelector = createSelector(
   accountsSelector,
-  (
-    _: State,
-    {
-      currency,
-    }: {
-      currency: CryptoCurrency | TokenCurrency;
-    },
-  ) => currency,
-  (_: State, { accountIds }: { accountIds?: Map<string, boolean> }) => accountIds,
+  (_: State, currency: CryptoCurrency | TokenCurrency) => currency,
+  (_: State, currency: CryptoCurrency | TokenCurrency, accountIds?: Map<string, boolean>) =>
+    accountIds,
   (accounts, currency, accountIds): { account: AccountLike; subAccount: SubAccount | null }[] => {
     if (currency.type === "TokenCurrency") {
       return accounts
@@ -216,38 +210,25 @@ export const accountsTuplesByCurrencySelector = createSelector(
 );
 export const flattenAccountsByCryptoCurrencySelector = createSelector(
   flattenAccountsSelector,
-  (_: State, { currencies }: { currencies: Array<string> }) => currencies,
-  (accounts, currencies): AccountLike[] =>
-    currencies && currencies.length
-      ? accounts.filter(a =>
-          currencies.includes(a.type === "TokenAccount" ? a.token.id : a.currency.id),
-        )
-      : accounts,
+  (_: State, currency: string) => currency,
+  (accounts, currency): AccountLike[] => {
+    return currency
+      ? accounts.filter(a => currency === (a.type === "TokenAccount" ? a.token.id : a.currency.id))
+      : accounts;
+  },
 );
 const emptyArray: AccountLike[] = [];
 export const accountsByCryptoCurrencyScreenSelector =
   (currency: CryptoOrTokenCurrency, accountIds?: Map<string, boolean>) => (state: State) => {
     if (!currency) return emptyArray;
-    return accountsTuplesByCurrencySelector(state, { currency, accountIds });
+    return accountsTuplesByCurrencySelector(state, currency, accountIds);
   };
 
 export const flattenAccountsByCryptoCurrencyScreenSelector =
   (currency?: CryptoCurrency | TokenCurrency) => (state: State) => {
     if (!currency) return emptyArray;
-    return flattenAccountsByCryptoCurrencySelector(state, {
-      currencies: [currency.id],
-    });
+    return flattenAccountsByCryptoCurrencySelector(state, currency.id);
   };
-
-// FIXME: NEVER USED ANYWHERE ELSE - DROP ?
-export const accountCryptoCurrenciesSelector = createSelector(
-  cryptoCurrenciesSelector,
-  (_: State, { currencies }: { currencies: Array<string> }) => currencies,
-  (cryptoCurrencies, currencies) =>
-    currencies && currencies.length
-      ? cryptoCurrencies.filter(c => currencies.includes(c.id))
-      : cryptoCurrencies,
-);
 
 export const accountSelector = createSelector(
   accountsSelector,
@@ -303,14 +284,7 @@ export const isUpToDateSelector = createSelector(accountsSelector, accounts =>
 );
 export const subAccountByCurrencyOrderedSelector = createSelector(
   accountsSelector,
-  (
-    _: State,
-    {
-      currency,
-    }: {
-      currency: CryptoCurrency | TokenCurrency;
-    },
-  ) => currency,
+  (_: State, currency: CryptoCurrency | TokenCurrency) => currency,
   (accounts, currency) => {
     const flatAccounts = flattenAccounts(accounts);
     return flatAccounts
@@ -339,9 +313,7 @@ export const subAccountByCurrencyOrderedScreenSelector =
   (route: { params?: { currency?: CryptoOrTokenCurrency } }) => (state: State) => {
     const currency = route?.params?.currency;
     if (!currency) return [];
-    return subAccountByCurrencyOrderedSelector(state, {
-      currency,
-    });
+    return subAccountByCurrencyOrderedSelector(state, currency);
   };
 
 function accountHasPositiveBalance(account: AccountLike) {
@@ -461,7 +433,7 @@ export const orderedNftsSelector = createSelector(
  *
  * Example:
  * ```
- * import { isEqual } from "lodash";
+ * import isEqual from "lodash/isEqual";
  * // ...
  * const orderedVisibleNfts = useSelector(orderedVisibleNftsSelector, isEqual)
  * ```

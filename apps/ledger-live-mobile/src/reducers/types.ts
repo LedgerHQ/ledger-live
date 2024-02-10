@@ -261,7 +261,6 @@ export type SettingsState = {
 export type NotificationsSettings = {
   areNotificationsAllowed: boolean;
   announcementsCategory: boolean;
-  recommendationsCategory: boolean;
   largeMoverCategory: boolean;
   transactionsAlertsCategory: boolean;
 };

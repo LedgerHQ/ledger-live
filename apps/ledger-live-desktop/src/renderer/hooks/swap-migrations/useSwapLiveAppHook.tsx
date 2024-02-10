@@ -6,6 +6,7 @@ import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index
 import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
 import { SwapProps, SwapWebManifestIDs } from "~/renderer/screens/exchange/Swap2/Form/SwapWebView";
 import { rateSelector } from "~/renderer/actions/swap";
+import { getEnv } from "@ledgerhq/live-env";
 
 export type UseSwapLiveAppHookProps = {
   manifestID: string | null;
@@ -16,6 +17,8 @@ export type UseSwapLiveAppHookProps = {
   getExchangeSDKParams: () => Partial<SwapProps>;
   getProviderRedirectURLSearch: () => URLSearchParams;
 };
+
+const SWAP_API_BASE = getEnv("SWAP_API_BASE");
 
 export const useSwapLiveAppHook = (props: UseSwapLiveAppHookProps) => {
   const {
@@ -56,6 +59,7 @@ export const useSwapLiveAppHook = (props: UseSwapLiveAppHookProps) => {
         error: !!swapError,
         loading,
         providerRedirectURL,
+        swapApiBase: SWAP_API_BASE,
       });
     }
   }, [

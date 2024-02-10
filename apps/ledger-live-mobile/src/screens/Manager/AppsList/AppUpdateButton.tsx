@@ -35,7 +35,7 @@ export default function AppUpdateButton({ app, state, dispatch: dispatchProps }:
   }, [canUpdate, dispatchProps, name]);
 
   return (
-    <TouchableOpacity onPress={updateApp}>
+    <TouchableOpacity onPress={updateApp} testID={`app-${name}-canUpdate`}>
       <ButtonContainer backgroundColor="primary.c80">
         <IconsLegacy.RefreshMedium size={18} color="neutral.c00" />
       </ButtonContainer>

@@ -7,8 +7,8 @@ import {
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { AccountBridge, Bridge, CurrencyBridge } from "@ledgerhq/types-live";
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
+import type { EvmAddress, EvmSignature, EvmSigner } from "../types/signer";
 import type { Transaction as EvmTransaction } from "../types/index";
-import { EvmAddress, EvmSignature, EvmSigner } from "../signer";
 import { estimateMaxSpendable } from "../estimateMaxSpendable";
 import { getTransactionStatus } from "../getTransactionStatus";
 import { getAccountShape, sync } from "../synchronization";

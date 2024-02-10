@@ -1,5 +1,5 @@
 import React, { useMemo, memo, useCallback } from "react";
-import { camelCase } from "lodash";
+import camelCase from "lodash/camelCase";
 import { useNotEnoughMemoryToInstall } from "@ledgerhq/live-common/apps/react";
 import { getCryptoCurrencyById, isCurrencySupported } from "@ledgerhq/live-common/currencies/index";
 import { App, FeatureId } from "@ledgerhq/types-live";
