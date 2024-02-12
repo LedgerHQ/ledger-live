@@ -203,7 +203,7 @@ export const flattenAccountsSelector = createSelector(accountsSelector, flattenA
  *
  * Example:
  * ```
- * import { isEqual } from "lodash";
+ * import isEqual from "lodash/isEqual";
  * // ...
  * const orderedVisibleNfts = useSelector(orderedVisibleNftsSelector, isEqual)
  * ```

@@ -20,7 +20,7 @@ import { State } from "~/renderer/reducers";
 import { ProtoNFT } from "@ledgerhq/types-live";
 import theme from "@ledgerhq/react-ui/styles/theme";
 import { useOnScreen } from "../useOnScreen";
-import { useNftGalleryFilter } from "@ledgerhq/live-nft-react";
+import { isThresholdValid, useNftGalleryFilter } from "@ledgerhq/live-nft-react";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const SpinnerContainer = styled.div`
@@ -53,6 +53,7 @@ const Footer = styled.footer`
 
 const Gallery = () => {
   const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
+  const thresold = nftsFromSimplehashFeature?.params?.threshold;
 
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -69,6 +70,7 @@ const Gallery = () => {
     nftsOwned: account?.nfts || [],
     addresses: account?.freshAddress || "",
     chains: [account?.currency.id ?? "ethereum"],
+    threshold: isThresholdValid(thresold) ? Number(thresold) : 75,
   });
 
   const collections = useMemo(

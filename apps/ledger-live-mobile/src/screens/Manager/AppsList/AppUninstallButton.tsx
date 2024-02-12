@@ -38,7 +38,7 @@ const AppUninstallButton = ({ app, state, dispatch, size = 48 }: Props) => {
   }, [needsDependencies, setAppUninstallWithDependencies, dispatch, name]);
 
   return (
-    <TouchableOpacity onPress={uninstallApp}>
+    <TouchableOpacity onPress={uninstallApp} testID={`app-${name}-installed`}>
       <ButtonContainer width={size} height={size} borderRadius={size} borderColor="error.c50">
         <IconsLegacy.TrashMedium size={size * 0.375} color="error.c50" />
       </ButtonContainer>

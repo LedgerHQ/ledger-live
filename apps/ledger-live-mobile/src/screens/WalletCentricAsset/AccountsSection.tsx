@@ -33,14 +33,13 @@ const AccountsSection = ({ accounts, currencyId, currencyTicker }: ListProps) =>
   const renderItem: ListRenderItem<Account | TokenAccount> = useCallback(
     ({ item, index }) => (
       <AccountRow
-        navigation={navigation}
         account={item}
         accountId={item.id}
         isLast={index === accountsToDisplay.length - 1}
         sourceScreenName={ScreenName.Asset}
       />
     ),
-    [accountsToDisplay.length, navigation],
+    [accountsToDisplay.length],
   );
 
   const goToAccountsScreen = useCallback(() => {

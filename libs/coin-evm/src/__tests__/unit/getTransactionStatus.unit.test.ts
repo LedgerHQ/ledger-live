@@ -93,6 +93,11 @@ const erc1155Nft: ProtoNFT = {
   standard: "ERC1155" as const,
 };
 
+const erc20Transaction: EvmTransactionEIP1559 = {
+  ...eip1559Tx,
+  subAccountId: tokenAccount.id,
+};
+
 const gasOptions: GasOptions = {
   slow: {
     maxFeePerGas: new BigNumber(1),
@@ -231,6 +236,22 @@ describe("EVM Family", () => {
           expect(res.errors).toEqual(
             expect.objectContaining({
               amount: new NotEnoughBalance(),
+            }),
+          );
+        });
+
+        it("should detected parent account not having enough fund for a token transaction and have an error", async () => {
+          const res = await getTransactionStatus(
+            {
+              ...account,
+              balance: new BigNumber(0),
+            },
+            erc20Transaction,
+          );
+
+          expect(res.errors).toEqual(
+            expect.objectContaining({
+              amount: new NotEnoughBalanceInParentAccount(),
             }),
           );
         });
@@ -470,7 +491,7 @@ describe("EVM Family", () => {
 
             expect(res.errors).toEqual(
               expect.objectContaining({
-                amount: new NotEnoughBalanceInParentAccount(),
+                amount: new NotEnoughBalance(),
                 gasPrice: new NotEnoughGas(),
               }),
             );
@@ -571,7 +592,7 @@ describe("EVM Family", () => {
 
             expect(res.errors).toEqual(
               expect.objectContaining({
-                amount: new NotEnoughBalanceInParentAccount(),
+                amount: new NotEnoughBalance(),
                 gasPrice: new NotEnoughGas(),
               }),
             );

@@ -14,7 +14,7 @@ import {
   RouteProp,
   useRoute,
 } from "@react-navigation/native";
-import { snakeCase } from "lodash";
+import snakeCase from "lodash/snakeCase";
 import React, { MutableRefObject, useCallback } from "react";
 import { FeatureId, Features, idsToLanguage } from "@ledgerhq/types-live";
 import {
@@ -71,6 +71,7 @@ const getFeatureFlagProperties = () => {
   (async () => {
     const ptxEarnFeatureFlag = analyticsFeatureFlagMethod("ptxEarn");
     const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
+    const stakingProviders = analyticsFeatureFlagMethod("ethStakingProviders");
 
     const isBatch1Enabled =
       !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
@@ -78,12 +79,15 @@ const getFeatureFlagProperties = () => {
       !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 2;
     const isBatch3Enabled =
       !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 3;
+    const stakingProvidersEnabled =
+      stakingProviders?.enabled && stakingProviders?.params?.listProvider.length;
 
     updateIdentify({
       ptxEarnEnabled: !!ptxEarnFeatureFlag?.enabled,
       isBatch1Enabled,
       isBatch2Enabled,
       isBatch3Enabled,
+      stakingProvidersEnabled,
     });
   })();
 };
@@ -120,7 +124,6 @@ const extraProperties = async (store: AppStore) => {
   const notificationsOptedIn = {
     notificationsAllowed: notifications.areNotificationsAllowed,
     optInAnnouncements: notifications.announcementsCategory,
-    optInRecommendations: notifications.recommendationsCategory,
     optInLargeMovers: notifications.largeMoverCategory,
     optInTxAlerts: notifications.transactionsAlertsCategory,
   };
@@ -150,6 +153,11 @@ const extraProperties = async (store: AppStore) => {
   const analyticsEnabled: boolean = analyticsEnabledSelector(state);
   const personalizedRecommendationsEnabled: boolean =
     personalizedRecommendationsEnabledSelector(state);
+
+  const stakingProviders =
+    analyticsFeatureFlagMethod && analyticsFeatureFlagMethod("ethStakingProviders");
+  const stakingProvidersCount =
+    stakingProviders?.enabled && stakingProviders?.params?.listProvider.length;
 
   return {
     appVersion,
@@ -187,6 +195,7 @@ const extraProperties = async (store: AppStore) => {
     nps,
     optInAnalytics: analyticsEnabled,
     optInPersonalRecommendations: personalizedRecommendationsEnabled,
+    stakingProvidersEnabled: stakingProvidersCount || "flag not loaded",
   };
 };
 

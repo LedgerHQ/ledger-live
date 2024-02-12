@@ -7,15 +7,17 @@ import NftGalleryEmptyState from "../NftGallery/NftGalleryEmptyState";
 import CollapsibleHeaderScrollView from "~/components/WalletTab/CollapsibleHeaderScrollView";
 import { accountsSelector, filteredNftsSelector, hasNftsSelector } from "~/reducers/accounts";
 
-import { isEqual } from "lodash";
+import isEqual from "lodash/isEqual";
 import { galleryChainFiltersSelector } from "~/reducers/nft";
-import { useNftGalleryFilter } from "@ledgerhq/live-nft-react";
+import { isThresholdValid, useNftGalleryFilter } from "@ledgerhq/live-nft-react";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+
 const WalletNftGallery = () => {
   const { space } = useTheme();
   const hasNFTs = useSelector(hasNftsSelector);
   const accounts = useSelector(accountsSelector);
   const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
+  const thresold = nftsFromSimplehashFeature?.params?.threshold;
 
   const chainFilters = useSelector(galleryChainFiltersSelector);
   const nftsOwned = useSelector(filteredNftsSelector, isEqual);
@@ -42,6 +44,7 @@ const WalletNftGallery = () => {
     addresses,
     chains,
     nftsOwned,
+    threshold: isThresholdValid(thresold) ? Number(thresold) : 75,
   });
 
   const useSimpleHash = Boolean(nftsFromSimplehashFeature?.enabled);

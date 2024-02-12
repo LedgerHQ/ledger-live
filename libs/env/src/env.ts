@@ -309,11 +309,6 @@ const envDefinitions = {
     parser: boolParser,
     desc: "disable the version check for firmware update eligibility",
   },
-  EIP1559_ENABLED_CURRENCIES: {
-    def: "ethereum,ethereum_goerli,ethereum_sepolia,ethereum_holesky,polygon",
-    parser: stringArrayParser,
-    desc: "set the currency ids where EIP1559 is enabled",
-  },
   EIP1559_MINIMUM_FEES_GATE: {
     def: true,
     parser: boolParser,
@@ -328,11 +323,6 @@ const envDefinitions = {
     def: 1.5,
     parser: floatParser,
     desc: "mutiplier for the base fee that is composing the maxFeePerGas property",
-  },
-  ETHEREUM_GAS_LIMIT_AMPLIFIER: {
-    def: 1.2,
-    parser: floatParser,
-    desc: "Ethereum gasLimit multiplier for contracts to prevent out of gas issue",
   },
   EXPERIMENTAL_BLE: {
     def: false,

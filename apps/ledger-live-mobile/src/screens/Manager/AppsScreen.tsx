@@ -240,6 +240,7 @@ const AppsScreen = ({
   const renderList = useCallback(
     (items?: App[]) => (
       <FlatList
+        testID="manager-deviceInfo-scrollView"
         data={items}
         ListHeaderComponent={
           <Flex mt={4}>

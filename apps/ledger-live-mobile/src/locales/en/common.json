@@ -2843,10 +2843,6 @@
         "title": "Announcements",
         "desc": "Receive important Ledger Live updates"
       },
-      "recommendations": {
-        "title": "Recommendations",
-        "desc": "Enrich your experience with personalized recommendations and special offers"
-      },
       "largeMover": {
         "title": "Large Mover",
         "desc": "You'll be notified of important price movements for BTC and ETH"

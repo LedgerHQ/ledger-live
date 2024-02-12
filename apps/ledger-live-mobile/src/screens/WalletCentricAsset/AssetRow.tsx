@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { BigNumber } from "bignumber.js";
-import { isEqual } from "lodash";
+import isEqual from "lodash/isEqual";
 import { GestureResponderEvent } from "react-native";
 import { useStartProfiler } from "@shopify/react-native-performance";
 import { NavigatorName, ScreenName } from "~/const";
