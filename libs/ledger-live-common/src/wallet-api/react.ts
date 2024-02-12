@@ -355,7 +355,14 @@ export function useWalletAPIServer({
           currencies: currencyList,
           onSuccess: (account: AccountLike, parentAccount: Account | undefined) => {
             tracking.requestAccountSuccess(manifest);
-            resolve(accountToWalletAPIAccount(account, parentAccount));
+            const walletApiAccount: WalletAPIAccount = accountToWalletAPIAccount(
+              account,
+              parentAccount,
+            );
+            if (parentAccount) {
+              walletApiAccount.parentAccount = accountToWalletAPIAccount(parentAccount);
+            }
+            resolve(walletApiAccount);
           },
           onCancel: () => {
             tracking.requestAccountFail(manifest);
