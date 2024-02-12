@@ -26,7 +26,6 @@ import ExchangeDrawer from "./ExchangeDrawer/index";
 import SwapFormSelectors from "./FormSelectors";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
-import useRefreshRates from "./hooks/useRefreshRates";
 import LoadingState from "./Rates/LoadingState";
 import EmptyState from "./Rates/EmptyState";
 import { AccountLike } from "@ledgerhq/types-live";
@@ -127,11 +126,6 @@ const SwapForm = () => {
     undefined,
   );
   const { setDrawer } = React.useContext(context);
-
-  const pauseRefreshing = !!swapError || idleState;
-  const refreshTime = useRefreshRates(swapTransaction.swap, {
-    pause: pauseRefreshing,
-  });
 
   const getExchangeSDKParams = useCallback(() => {
     const { swap, transaction } = swapTransaction;
@@ -477,8 +471,6 @@ const SwapForm = () => {
         pageState={pageState}
         swapTransaction={swapTransaction}
         provider={provider}
-        refreshTime={refreshTime}
-        countdown={!pauseRefreshing}
         // Demo 0 props
         disabled={!isSwapReady}
         onClick={onSubmit}
