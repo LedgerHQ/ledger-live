@@ -18,8 +18,9 @@ const Terms = styled(Text).attrs({
 `;
 
 export function DrawerFooter({ provider }: { provider: string }) {
-  const swapProvider = urls.swap.providers[provider as keyof typeof urls.swap.providers];
-  const url = ("tos" in swapProvider && swapProvider?.tos) || undefined;
+  const swapProvider =
+    urls.swap.providers?.[provider as keyof typeof urls.swap.providers] ?? undefined;
+  const url = (swapProvider && "tos" in swapProvider && swapProvider?.tos) || undefined;
   const onLinkClick = useCallback(() => openURL(url!), [url]);
   if (!url) {
     return null;
