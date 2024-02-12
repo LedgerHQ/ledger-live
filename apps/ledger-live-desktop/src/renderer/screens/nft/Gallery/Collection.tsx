@@ -2,12 +2,11 @@ import React, { useMemo, useCallback, useRef, useState, useEffect, memo } from "
 import { useParams, useHistory } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { nftsByCollections } from "@ledgerhq/live-common/nft/index";
-import { useNftMetadata } from "@ledgerhq/live-common/nft/NftMetadataProvider/index";
+import { nftsByCollections } from "@ledgerhq/live-nft";
+import { useNftMetadata } from "@ledgerhq/live-nft-react";
 import { accountSelector } from "~/renderer/reducers/accounts";
 import { openModal } from "~/renderer/actions/modals";
 import styled from "styled-components";
-import useOnScreen from "../useOnScreen";
 import Media from "~/renderer/components/Nft/Media";
 import IconSend from "~/renderer/icons/Send";
 import TokensList from "./TokensList";
@@ -21,6 +20,13 @@ import GridListToggle from "./GridListToggle";
 import Skeleton from "~/renderer/components/Nft/Skeleton";
 import { State } from "~/renderer/reducers";
 import { NFT, NFTMetadata, Operation, ProtoNFT } from "@ledgerhq/types-live";
+import { useOnScreen } from "../useOnScreen";
+import theme from "@ledgerhq/react-ui/styles/theme";
+
+const Footer = styled.footer`
+  height: calc(${theme.space[10]} * 2);
+`;
+
 const SpinnerContainer = styled.div`
   display: flex;
   flex: 1;
@@ -73,17 +79,19 @@ const Collection = () => {
   const filterOperation = (op: Operation) =>
     !!op.nftOperations?.length &&
     !!op.nftOperations.find(nftOp => nftOp?.contract === collectionAddress);
-  const ref = useRef(null);
-  const isAtBottom = useOnScreen(ref);
-  const [maxVisibleNTFs, setMaxVisibleNFTs] = useState(1);
-  useEffect(() => {
-    if (isAtBottom && maxVisibleNTFs < nfts.length) {
-      setMaxVisibleNFTs(maxVisibleNTFs => maxVisibleNTFs + 5);
-    }
-    // Exception to the rule, other deps must not be provided in this case
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAtBottom]);
-  const slicedNfts = useMemo(() => nfts.slice(0, maxVisibleNTFs), [nfts, maxVisibleNTFs]);
+
+  const listFooterRef = useRef<HTMLDivElement>(null);
+  const [maxVisibleNFTs, setMaxVisibleNFTs] = useState(1);
+  const updateMaxVisibleNtfs = () => setMaxVisibleNFTs(maxVisibleNFTs => maxVisibleNFTs + 5);
+
+  useOnScreen({
+    enabled: maxVisibleNFTs < nfts?.length,
+    onIntersect: updateMaxVisibleNtfs,
+    target: listFooterRef,
+    threshold: 0.5,
+  });
+
+  const slicedNfts = useMemo(() => nfts.slice(0, maxVisibleNFTs), [nfts, maxVisibleNFTs]);
 
   // Should redirect to the account page if there is not NFT anymore in the page.
   useEffect(() => {
@@ -127,14 +135,17 @@ const Collection = () => {
       {account && (
         <TokensList account={account} nfts={slicedNfts} onHideCollection={onCollectionHide} />
       )}
-      {nfts.length > maxVisibleNTFs && (
-        <SpinnerContainer>
-          <SpinnerBackground>
-            <Spinner size={14} />
-          </SpinnerBackground>
-        </SpinnerContainer>
-      )}
-      <div ref={ref} />
+
+      <Footer ref={listFooterRef}>
+        {nfts.length > maxVisibleNFTs && (
+          <SpinnerContainer>
+            <SpinnerBackground>
+              <Spinner size={14} />
+            </SpinnerBackground>
+          </SpinnerContainer>
+        )}
+      </Footer>
+
       <OperationsList
         account={account}
         title={t("NFT.gallery.collection.operationList.header")}

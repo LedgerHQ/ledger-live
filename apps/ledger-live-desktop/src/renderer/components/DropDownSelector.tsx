@@ -87,7 +87,7 @@ const DropDownSelector = <ContentType, Item extends DropDownItemType<ContentType
   const [stateValue, setStateValue] = useState(defaultValue);
   const selectedOption = controlled ? value : stateValue;
   const setSelectedOption = useCallback(
-    item => {
+    (item: Item) => {
       if (controlled) {
         setStateValue(item);
       }
@@ -99,7 +99,7 @@ const DropDownSelector = <ContentType, Item extends DropDownItemType<ContentType
     [controlled, onChange],
   );
   const renderOption = useCallback(
-    item => {
+    (item: Item) => {
       return (
         <OptionContainer
           id={`${buttonId || ""}-${item.key}`}

@@ -34,9 +34,9 @@ const StepAdjustImage: React.FC<Props> = props => {
       footer={
         <StepFooter
           previousStep={Step.chooseImage}
-          previousLabel={t("common.previous")}
+          previousLabel={t("common.back")}
           nextStep={Step.chooseContrast}
-          nextLabel={t("common.continue")}
+          nextLabel={t("customImage.steps.adjust.confirmCrop")}
           nextLoading={loading}
           nextDisabled={loading}
           previousTestId="custom-image-crop-previous-button"

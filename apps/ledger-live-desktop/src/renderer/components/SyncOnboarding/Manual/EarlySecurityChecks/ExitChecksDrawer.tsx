@@ -5,7 +5,7 @@ import DrawerFooter from "./DrawerFooter";
 import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
-import { ErrorBody } from "~/renderer/components/DeviceAction/rendering";
+import { ErrorBody } from "~/renderer/components/ErrorBody";
 
 export type Props = {
   onClose: () => void;
@@ -23,18 +23,22 @@ const ExitChecksDrawer: React.FC<Props> = ({ onClose, onClickExit }) => {
   return (
     <Flex flexDirection="column" alignItems="center" justifyContent="space-between" height="100%">
       <TrackPage category={analyticsDrawerName} type="drawer" refreshSource={false} />
-      <ErrorBody
-        Icon={ErrorIcon}
-        title={t("syncOnboarding.manual.softwareCheckContent.exitWarningDrawer.title")}
-        description={t("syncOnboarding.manual.softwareCheckContent.exitWarningDrawer.description")}
-      />
+      <Flex flex={1} flexDirection={"column"} justifyContent={"center"} alignItems={"center"}>
+        <ErrorBody
+          Icon={ErrorIcon}
+          title={t("syncOnboarding.manual.softwareCheckContent.exitWarningDrawer.title")}
+          description={t(
+            "syncOnboarding.manual.softwareCheckContent.exitWarningDrawer.description",
+          )}
+        />
+      </Flex>
       <DrawerFooter>
         <Link
           mr={8}
           size="large"
           type="shade"
           onClick={() => {
-            track("button_clicked", { button: "Cancel check", drawer: analyticsDrawerName });
+            track("button_clicked2", { button: "Cancel check", drawer: analyticsDrawerName });
             onClickExit();
           }}
         >
@@ -44,7 +48,7 @@ const ExitChecksDrawer: React.FC<Props> = ({ onClose, onClickExit }) => {
           size="large"
           variant="main"
           onClick={() => {
-            track("button_clicked", { button: "Resume check", drawer: analyticsDrawerName });
+            track("button_clicked2", { button: "Resume check", drawer: analyticsDrawerName });
             onClose();
           }}
         >

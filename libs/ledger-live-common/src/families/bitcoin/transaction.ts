@@ -9,7 +9,7 @@ import type {
   BitcoinAccount,
 } from "./types";
 import { bitcoinPickingStrategy } from "./types";
-import { getEnv } from "../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import {
   formatTransactionStatusCommon,
   fromTransactionCommonRaw,
@@ -26,7 +26,7 @@ import {
   toBitcoinInputRaw,
   toBitcoinOutputRaw,
 } from "./serialization";
-import { formatInput, formatOutput } from "./account";
+import { formatInput, formatOutput } from "./formatters";
 
 const fromFeeItemsRaw = (fir: FeeItemsRaw): FeeItems => ({
   items: fir.items.map(fi => ({

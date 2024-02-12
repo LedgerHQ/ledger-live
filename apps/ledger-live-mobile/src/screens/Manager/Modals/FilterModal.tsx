@@ -1,12 +1,12 @@
 import { Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import React, { memo, useCallback, useEffect, useReducer } from "react";
 import { Trans } from "react-i18next";
-import { SectionList, SectionListData } from "react-native";
+import { ListRenderItem, SectionList, SectionListData } from "react-native";
 import styled from "styled-components/native";
-import Touchable from "../../../components/Touchable";
-import { Unpacked } from "../../../types/helpers";
+import Touchable from "~/components/Touchable";
+import { Unpacked } from "~/types/helpers";
 
-import { BaseButtonProps } from "../../../components/Button";
+import { BaseButtonProps } from "~/components/Button";
 import ActionModal from "./ActionModal";
 
 const filterSections = [
@@ -60,7 +60,7 @@ const filterSections = [
   },
 ];
 type FilterSection = Unpacked<typeof filterSections>;
-type FilterSectionData = FilterSection["data"][0];
+type FilterSectionData = FilterSection["data"][number];
 
 const FilterLine = styled(Touchable)`
   flex-direction: row;
@@ -174,8 +174,10 @@ const FilterModalComponent = ({
     onClose();
   }, [state, setFilter, setSort, setOrder, onClose]);
 
-  const FilterItem = useCallback(
-    ({ item: { label, value, isFilter } }) => {
+  const FilterItem: ListRenderItem<FilterSectionData> = useCallback(
+    ({ item }) => {
+      const { label, value } = item;
+      const isFilter = "isFilter" in item ? item.isFilter : undefined;
       const isSelected = isFilter ? state.filter === value : state.sort === value;
 
       let orderValue: string;
@@ -186,7 +188,7 @@ const FilterModalComponent = ({
       }
 
       const onPress = () => {
-        if (isFilter) dispatch({ type: "setFilter", payload: value });
+        if ("isFilter" in item && item.isFilter) dispatch({ type: "setFilter", payload: value });
         else
           dispatch({
             type: "setState",

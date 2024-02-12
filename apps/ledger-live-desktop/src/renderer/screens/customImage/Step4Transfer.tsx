@@ -56,13 +56,13 @@ const StepTransfer: React.FC<Props> = props => {
       footer={
         <StepFooter
           previousStep={Step.chooseContrast}
-          previousLabel={t("common.previous")}
+          previousLabel={t("common.back")}
           previousDisabled={navigationBlocked}
           setStep={setStep}
           nextLabel={
             error
               ? isRefusedOnStaxError
-                ? t("customImage.steps.transfer.uploadAnotherImage")
+                ? t("customImage.steps.transfer.useAnotherPicture")
                 : t("common.retry")
               : ""
           }

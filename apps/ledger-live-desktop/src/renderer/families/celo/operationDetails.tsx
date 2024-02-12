@@ -1,7 +1,7 @@
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 import { fallbackValidatorGroup } from "@ledgerhq/live-common/families/celo/logic";
 import { useCeloPreloadData } from "@ledgerhq/live-common/families/celo/react";
-import { CeloAccount } from "@ledgerhq/live-common/families/celo/types";
+import { CeloAccount, CeloOperation } from "@ledgerhq/live-common/families/celo/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import React from "react";
 import { Trans } from "react-i18next";
@@ -28,7 +28,7 @@ const OperationDetailsExtra = ({
   operation,
   type,
   account,
-}: OperationDetailsExtraProps<CeloAccount>) => {
+}: OperationDetailsExtraProps<CeloAccount, CeloOperation>) => {
   const { currency } = account;
   const { validatorGroups } = useCeloPreloadData();
   switch (type) {
@@ -43,7 +43,7 @@ const OperationDetailsExtra = ({
         : null;
       return (
         <>
-          {type !== "ACTIVATE" && operation.extra && operation.extra.celoOperationValue && (
+          {type !== "ACTIVATE" && operation.extra.celoOperationValue && (
             <OpDetailsSection>
               <OpDetailsTitle>
                 <Trans i18nKey={`operation.type.${type}`} />
@@ -51,7 +51,7 @@ const OperationDetailsExtra = ({
               <OpDetailsData>
                 <Box>
                   <FormattedVal
-                    val={operation.extra.celoOperationValue.toFixed()}
+                    val={operation.extra.celoOperationValue}
                     unit={account.unit}
                     showCode
                     fontSize={4}
@@ -87,7 +87,7 @@ const OperationDetailsExtra = ({
     case "UNLOCK":
       return (
         <>
-          {operation.extra && operation.extra.celoOperationValue && (
+          {operation.extra.celoOperationValue && (
             <OpDetailsSection>
               <OpDetailsTitle>
                 <Trans i18nKey={`operation.type.${type}`} />
@@ -95,7 +95,7 @@ const OperationDetailsExtra = ({
               <OpDetailsData>
                 <Box>
                   <FormattedVal
-                    val={operation.extra.celoOperationValue.toFixed()}
+                    val={operation.extra.celoOperationValue}
                     unit={account.unit}
                     showCode
                     fontSize={4}

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { StepProps } from "../..";
+import { StepProps } from "../../types";
 import CustomImageDeviceAction from "~/renderer/components/CustomImage/CustomImageDeviceAction";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { useSelector } from "react-redux";
@@ -35,7 +35,7 @@ const CLS = ({ onDone, setError, CLSBackup }: Props) => {
         onTryAnotherImage={onVoid}
         blockNavigation={onVoid}
       />
-      <TrackPage category="Allow lock screen picture restoration on Ledger Stax" />
+      <TrackPage category="Allow lock screen picture restoration on the device" />
     </>
   ) : null;
 };

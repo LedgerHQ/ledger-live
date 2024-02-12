@@ -1,4 +1,4 @@
-import React, { ComponentType } from "react";
+import React, { ComponentType, ReactNode } from "react";
 import { GestureResponderEvent, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import Flex from "../Layout/Flex";
@@ -29,7 +29,7 @@ const ElementContainer = styled(Flex).attrs({
   accessibilityRole: "radio",
 })``;
 
-function Element<V>(props: ElementProps<V>) {
+function Element<V extends ReactNode>(props: ElementProps<V>) {
   const {
     first,
     value,

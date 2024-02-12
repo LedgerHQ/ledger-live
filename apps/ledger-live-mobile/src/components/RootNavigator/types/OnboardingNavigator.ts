@@ -1,15 +1,8 @@
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { NavigatorScreenParams } from "@react-navigation/native";
 
-import { NavigatorName, ScreenName } from "../../../const";
-
-export type OnboardingCarefulWarningParamList = {
-  [ScreenName.OnboardingModalWarning]: { onNext?: () => void };
-  [ScreenName.OnboardingModalSyncDesktopInformation]: { onNext?: () => void };
-  [ScreenName.OnboardingModalRecoveryPhraseWarning]: {
-    onNext?: () => void;
-  };
-};
+import { NavigatorName, ScreenName } from "~/const";
+import { AnalyticsOptInPromptNavigatorParamList } from "./AnalyticsOptInPromptNavigator";
 
 export type OnboardingPreQuizModalNavigatorParamList = {
   [ScreenName.OnboardingPreQuizModal]: { onNext?: () => void };
@@ -24,7 +17,6 @@ export type OnboardingNavigatorParamList = {
   [ScreenName.OnboardingTermsOfUse]: undefined;
   [ScreenName.OnboardingDeviceSelection]: undefined;
   [ScreenName.OnboardingUseCase]: { deviceModelId: DeviceModelId };
-  [NavigatorName.OnboardingCarefulWarning]: NavigatorScreenParams<OnboardingCarefulWarningParamList>;
   [NavigatorName.OnboardingPreQuiz]: NavigatorScreenParams<OnboardingPreQuizModalNavigatorParamList>;
   [ScreenName.OnboardingModalDiscoverLive]: undefined;
   [ScreenName.OnboardingModalSetupNewDevice]: { deviceModelId: DeviceModelId };
@@ -63,4 +55,6 @@ export type OnboardingNavigatorParamList = {
     success: boolean;
     deviceModelId: DeviceModelId;
   };
+  [ScreenName.OnboardingBleDevicePairingFlow]: undefined;
+  [NavigatorName.AnalyticsOptInPrompt]: NavigatorScreenParams<AnalyticsOptInPromptNavigatorParamList>;
 };

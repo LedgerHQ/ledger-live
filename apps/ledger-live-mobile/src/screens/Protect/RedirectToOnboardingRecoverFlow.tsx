@@ -18,16 +18,16 @@ import {
 } from "@ledgerhq/live-common/hw/extractOnboardingState";
 import { first } from "rxjs/operators";
 import { from } from "rxjs";
-import { TrackScreen } from "../../analytics";
-import { SetHeaderOptionsRequest } from "../../components/SelectDevice2";
-import { RootComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
-import BleDevicePairingFlow from "../../components/BleDevicePairingFlow";
-import { NavigatorName, ScreenName } from "../../const";
+import { TrackScreen } from "~/analytics";
+import { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
+import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import BleDevicePairingFlow from "~/components/BleDevicePairingFlow";
+import { NavigatorName, ScreenName } from "~/const";
 import { useNavigationInterceptor } from "../Onboarding/onboardingContext";
-import GenericErrorView from "../../components/GenericErrorView";
-import { NavigationHeaderBackButton } from "../../components/NavigationHeaderBackButton";
-import { urls } from "../../config/urls";
+import GenericErrorView from "~/components/GenericErrorView";
+import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
+import { urls } from "~/utils/urls";
 
 type NavigationProps = RootComposite<
   StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.RedirectToOnboardingRecoverFlow>
@@ -165,7 +165,6 @@ export function RedirectToOnboardingRecoverFlowScreen({ navigation }: Navigation
               error={error}
               withDescription
               hasExportLogButton={false}
-              withIcon
               withHelp={false}
             />
           </Flex>
@@ -198,7 +197,6 @@ export function RedirectToOnboardingRecoverFlowScreen({ navigation }: Navigation
             <GenericErrorView
               error={new DeviceAlreadySetup("", { device: device?.modelId ?? "device" })}
               hasExportLogButton={false}
-              withIcon
               withHelp={false}
             />
           </Flex>

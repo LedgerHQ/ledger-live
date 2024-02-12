@@ -17,21 +17,21 @@ import {
 import { formatTransaction } from "@ledgerhq/live-common/transaction/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { execAndWaitAtLeast } from "@ledgerhq/live-common/promise";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { useDispatch } from "react-redux";
 import { TransactionRefusedOnDevice } from "@ledgerhq/live-common/errors";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { updateAccountWithUpdater } from "../actions/accounts";
 import logger from "../logger";
-import { ScreenName } from "../const";
+import { ScreenName } from "~/const";
 import type {
   StackNavigatorNavigation,
   StackNavigatorRoute,
 } from "../components/RootNavigator/types/helpers";
 import type { SendFundsNavigatorStackParamList } from "../components/RootNavigator/types/SendFundsNavigator";
 import type { SignTransactionNavigatorParamList } from "../components/RootNavigator/types/SignTransactionNavigator";
-import type { AlgorandClaimRewardsFlowParamList } from "../families/algorand/Rewards/ClaimRewardsFlow/type";
-import type { StellarAddAssetFlowParamList } from "../families/stellar/AddAssetFlow/types";
+import type { AlgorandClaimRewardsFlowParamList } from "~/families/algorand/Rewards/ClaimRewardsFlow/type";
+import type { StellarAddAssetFlowParamList } from "~/families/stellar/AddAssetFlow/types";
 
 type Navigation =
   | StackNavigatorNavigation<SendFundsNavigatorStackParamList, ScreenName.SendSummary>
@@ -248,7 +248,13 @@ export function useSignedTxHandler({
   return useCallback(
     // TODO: fix type error
 
-    async ({ signedOperation, transactionSignError }) => {
+    async ({
+      signedOperation,
+      transactionSignError,
+    }: {
+      signedOperation: SignedOperation;
+      transactionSignError?: Error;
+    }) => {
       try {
         if (transactionSignError) {
           throw transactionSignError;
@@ -293,7 +299,13 @@ export function useSignedTxHandlerWithoutBroadcast({
   const navigation = useNavigation();
   const route = useRoute();
   return useCallback(
-    async ({ signedOperation, transactionSignError }) => {
+    async ({
+      signedOperation,
+      transactionSignError,
+    }: {
+      signedOperation: SignedOperation;
+      transactionSignError?: Error;
+    }) => {
       try {
         if (transactionSignError) {
           throw transactionSignError;

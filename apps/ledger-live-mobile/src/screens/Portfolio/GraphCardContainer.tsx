@@ -3,10 +3,10 @@ import { useSelector } from "react-redux";
 import { Currency, TokenCurrency, CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import Animated from "react-native-reanimated";
 import { Portfolio } from "@ledgerhq/types-live";
-import { currenciesSelector } from "../../reducers/accounts";
-import CurrencyDownStatusAlert from "../../components/CurrencyDownStatusAlert";
-import GraphCard from "../../components/GraphCard";
-import { withDiscreetMode } from "../../context/DiscreetModeContext";
+import { currenciesSelector } from "~/reducers/accounts";
+import CurrencyDownStatusAlert from "~/components/CurrencyDownStatusAlert";
+import GraphCard from "~/components/GraphCard";
+import { withDiscreetMode } from "~/context/DiscreetModeContext";
 
 const GraphCardContainer = ({
   portfolio,

@@ -1,5 +1,5 @@
 const common = require("./common.esbuild");
-const { electronPreloaderExternals } = require("esbuild-utils");
+const { electronPreloaderExternals } = require("@ledgerhq/esbuild-utils");
 
 module.exports = {
   ...common,
@@ -7,6 +7,6 @@ module.exports = {
   entryNames: "webviewPreloader.bundle",
   platform: "node",
   format: "cjs",
-  target: ["chrome91"],
+  target: ["chrome120"],
   external: [...electronPreloaderExternals],
 };

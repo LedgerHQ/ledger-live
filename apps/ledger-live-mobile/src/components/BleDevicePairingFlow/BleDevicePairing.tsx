@@ -1,4 +1,4 @@
-import React, { ReactNode, useCallback, useEffect } from "react";
+import React, { ReactNode, useCallback, useEffect, useState } from "react";
 import { Linking } from "react-native";
 import { useTheme } from "styled-components/native";
 import { useBleDevicePairing } from "@ledgerhq/live-common/ble/hooks/useBleDevicePairing";
@@ -11,16 +11,19 @@ import {
   Text,
   Button,
   IconsLegacy,
-  Icons,
   BoxedIcon,
+  Icons,
 } from "@ledgerhq/native-ui";
 
 import { LockedDeviceError, PeerRemovedPairing } from "@ledgerhq/errors";
-import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
+import { getDeviceAnimation } from "~/helpers/getDeviceAnimation";
 import Animation from "../Animation";
-import { TrackScreen } from "../../analytics";
+import { TrackScreen } from "~/analytics";
 import GenericErrorView from "../GenericErrorView";
-import { urls } from "../../config/urls";
+import { GenericInformationBody } from "../GenericInformationBody";
+import ExternalLink from "../ExternalLink";
+import UnlockDeviceDrawer from "../UnlockDeviceDrawer";
+import { urls } from "~/utils/urls";
 
 export type BleDevicePairingProps = {
   onPaired: (device: Device) => void;
@@ -42,6 +45,7 @@ const BleDevicePairing = ({ deviceToPair, onPaired, onRetry }: BleDevicePairingP
   const { t } = useTranslation();
   const { colors } = useTheme();
   const theme = colors.type as "dark" | "light";
+  const [deviceLocked, setDeviceLocked] = useState<Device | null>(null);
 
   const productName = getDeviceModel(deviceToPair.modelId).productName || deviceToPair.modelId;
   const deviceName = deviceToPair.deviceName || productName;
@@ -49,6 +53,15 @@ const BleDevicePairing = ({ deviceToPair, onPaired, onRetry }: BleDevicePairingP
   const { isPaired, pairingError } = useBleDevicePairing({
     deviceId: deviceToPair.deviceId,
   });
+
+  useEffect(() => {
+    if (pairingError instanceof LockedDeviceError) {
+      setDeviceLocked(deviceToPair);
+      return;
+    }
+
+    setDeviceLocked(null);
+  }, [deviceToPair, pairingError]);
 
   const onOpenHelp = useCallback(() => {
     Linking.openURL(urls.errors.PairingFailed);
@@ -66,15 +79,15 @@ const BleDevicePairing = ({ deviceToPair, onPaired, onRetry }: BleDevicePairingP
     content = (
       <Flex flex={1} alignItems="center">
         <TrackScreen category="BT pairing successful" />
-        <Flex width="100%" py={16} alignItems="center">
+        <Flex width="100%" py={6} alignItems="center">
           <Flex height={100} justifyContent="center" mb={7}>
             <BoxedIcon
-              Icon={IconsLegacy.CheckTickMedium}
+              Icon={Icons.CheckmarkCircleFill}
               backgroundColor={colors.opacityDefault.c05}
               size={64}
               variant="circle"
-              borderColor={colors.opacityDefault.c05}
-              iconSize={32}
+              borderColor="transparent"
+              iconSize={"L"}
               iconColor={colors.success.c50}
             />
           </Flex>
@@ -106,7 +119,6 @@ const BleDevicePairing = ({ deviceToPair, onPaired, onRetry }: BleDevicePairingP
             error={pairingError}
             withDescription
             hasExportLogButton={false}
-            withIcon
             withHelp={false}
           />
         </Flex>
@@ -126,48 +138,27 @@ const BleDevicePairing = ({ deviceToPair, onPaired, onRetry }: BleDevicePairingP
         </Flex>
       </Flex>
     );
-  } else if (pairingError) {
+  } else if (pairingError && !((pairingError as unknown) instanceof LockedDeviceError)) {
     // TODO refactor this into the generic error rendering when possible.
-    let title;
-    let subtitle;
-
-    if ((pairingError as unknown) instanceof LockedDeviceError) {
-      title = t("blePairingFlow.pairing.error.lockedDevice.title");
-      subtitle = t("blePairingFlow.pairing.error.lockedDevice.subtitle", {
-        productName,
-      });
-    } else {
-      title = t("blePairingFlow.pairing.error.generic.title");
-      subtitle = t("blePairingFlow.pairing.error.generic.subtitle", {
-        productName,
-      });
-    }
-
     content = (
-      <Flex flex={1}>
+      <Flex flex={1} mb={6}>
         <TrackScreen category="BT failed to pair" />
         <Flex flex={1} alignItems="center" justifyContent="center">
-          <Flex height={100} justifyContent="center">
-            <BoxedIcon
-              Icon={Icons.InformationFill}
-              backgroundColor={"opacityDefault.c05"}
-              size={64}
-              variant="circle"
-              borderColor="transparent"
-              iconSize={"L"}
-              iconColor="primary.c80"
-            />
-          </Flex>
-          <Text mt={4} mb={2} textAlign="center" variant="h4" fontWeight="semiBold">
-            {title}
-          </Text>
-          <Text variant="body" mb={8} color="neutral.c80" textAlign="center">
-            {subtitle}
-          </Text>
+          <GenericInformationBody
+            title={t("blePairingFlow.pairing.error.generic.title")}
+            description={t("blePairingFlow.pairing.error.generic.subtitle", {
+              productName,
+            })}
+          />
         </Flex>
-        <Button type="main" onPress={onRetry} mb={8}>
+        <Button type="main" size="large" onPress={onRetry} mb={7}>
           {t("blePairingFlow.pairing.error.retryCta")}
         </Button>
+        <ExternalLink
+          type="main"
+          text={t("blePairingFlow.pairing.error.howToFixPairingIssue")}
+          onPress={onOpenHelp}
+        />
       </Flex>
     );
   } else {
@@ -181,7 +172,7 @@ const BleDevicePairing = ({ deviceToPair, onPaired, onRetry }: BleDevicePairingP
               backgroundColor={colors.opacityDefault.c05}
               size={64}
               variant="circle"
-              borderColor={colors.opacityDefault.c05}
+              borderColor={"transparent"}
               iconSize={32}
               iconColor={colors.success.c50}
             />
@@ -208,6 +199,10 @@ const BleDevicePairing = ({ deviceToPair, onPaired, onRetry }: BleDevicePairingP
   return (
     <Flex flex={1} width="100%">
       {content}
+
+      {deviceLocked ? (
+        <UnlockDeviceDrawer isOpen={true} device={deviceLocked} onClose={onRetry} />
+      ) : null}
     </Flex>
   );
 };

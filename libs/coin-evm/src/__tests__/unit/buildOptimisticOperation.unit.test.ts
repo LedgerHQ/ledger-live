@@ -1,15 +1,20 @@
-import BigNumber from "bignumber.js";
+import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 import {
   encodeERC1155OperationId,
   encodeERC721OperationId,
 } from "@ledgerhq/coin-framework/nft/nftOperationId";
-import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
-import { makeAccount, makeTokenAccount } from "../fixtures/common.fixtures";
+import BigNumber from "bignumber.js";
 import buildOptimisticOperation from "../../buildOptimisticOperation";
-import { Transaction as EvmTransaction } from "../../types";
 import { getEstimatedFees } from "../../logic";
+import { Transaction as EvmTransaction } from "../../types";
+import { makeAccount, makeTokenAccount } from "../fixtures/common.fixtures";
+import {
+  erc1155TokenTransactionRaw,
+  erc20TokenTransactionRaw,
+  erc721TokenTransactionRaw,
+} from "../fixtures/transaction.fixtures";
 
 const currency = getCryptoCurrencyById("ethereum");
 const tokenCurrency = getTokenById("ethereum/erc20/usd__coin");
@@ -66,6 +71,21 @@ describe("EVM Family", () => {
           transactionSequenceNumber: 0,
           date: expect.any(Date),
           extra: {},
+          transactionRaw: {
+            amount: "100",
+            chainId: 1,
+            family: "evm",
+            feesStrategy: "custom",
+            gasLimit: "21000",
+            maxFeePerGas: "100",
+            maxPriorityFeePerGas: "100",
+            mode: "send",
+            nonce: 0,
+            recipient: "0xe2ca7390e76c5A992749bB622087310d2e63ca29",
+            subAccountId: "id",
+            type: 2,
+            useAllAmount: false,
+          },
         });
       });
 
@@ -105,6 +125,7 @@ describe("EVM Family", () => {
           accountId: account.id,
           transactionSequenceNumber: 0,
           date: expect.any(Date),
+          transactionRaw: erc20TokenTransactionRaw,
           nftOperations: [],
           subOperations: [
             {
@@ -122,6 +143,11 @@ describe("EVM Family", () => {
               date: expect.any(Date),
               contract: tokenAccount.token.contractAddress,
               extra: {},
+              transactionRaw: {
+                ...erc20TokenTransactionRaw,
+                amount: "100",
+                recipient: "0x51DF0aF74a0DBae16cB845B46dAF2a35cB1D4168",
+              },
             },
           ],
           extra: {},
@@ -165,6 +191,10 @@ describe("EVM Family", () => {
           transactionSequenceNumber: 0,
           date: expect.any(Date),
           nftOperations: [],
+          transactionRaw: {
+            ...erc20TokenTransactionRaw,
+            useAllAmount: true,
+          },
           subOperations: [
             {
               id: encodeOperationId(tokenAccount.id, "", "OUT"),
@@ -181,6 +211,12 @@ describe("EVM Family", () => {
               date: expect.any(Date),
               contract: tokenAccount.token.contractAddress,
               extra: {},
+              transactionRaw: {
+                ...erc20TokenTransactionRaw,
+                amount: "0",
+                recipient: "0x51DF0aF74a0DBae16cB845B46dAF2a35cB1D4168",
+                useAllAmount: true,
+              },
             },
           ],
           extra: {},
@@ -231,6 +267,7 @@ describe("EVM Family", () => {
           transactionSequenceNumber: 0,
           date: expect.any(Date),
           subOperations: [],
+          transactionRaw: erc721TokenTransactionRaw,
           nftOperations: [
             {
               id: encodeERC721OperationId(nftId, "", "NFT_OUT", 0),
@@ -249,6 +286,11 @@ describe("EVM Family", () => {
               standard: "ERC721",
               tokenId: nft.tokenId,
               extra: {},
+              transactionRaw: {
+                ...erc721TokenTransactionRaw,
+                amount: "0",
+                recipient: "0x51DF0aF74a0DBae16cB845B46dAF2a35cB1D4168",
+              },
             },
           ],
           extra: {},
@@ -269,7 +311,7 @@ describe("EVM Family", () => {
           useAllAmount: false,
           recipient: "0x51DF0aF74a0DBae16cB845B46dAF2a35cB1D4168", // michel.eth
           data: Buffer.from(
-            "b88d4fde0000000000000000000000006cbcd73cd8e8a42844662f0a0e76d7f79afd933d00000000000000000000000051df0af74a0dbae16cb845b46daf2a35cb1d4168000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000000",
+            "f242432a0000000000000000000000006cbcd73cd8e8a42844662f0a0e76d7f79afd933d00000000000000000000000051df0af74a0dbae16cb845b46daf2a35cb1d41680000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000a00000000000000000000000000000000000000000000000000000000000000a00000000000000000000000000000000000000000000000000000000000000000",
             "hex",
           ),
           feesStrategy: "custom",
@@ -299,6 +341,7 @@ describe("EVM Family", () => {
           accountId: account.id,
           transactionSequenceNumber: 0,
           date: expect.any(Date),
+          transactionRaw: erc1155TokenTransactionRaw,
           nftOperations: [
             {
               id: encodeERC1155OperationId(nftId, "", "NFT_OUT", 0),
@@ -317,6 +360,11 @@ describe("EVM Family", () => {
               standard: "ERC1155",
               tokenId: nft.tokenId,
               extra: {},
+              transactionRaw: {
+                ...erc1155TokenTransactionRaw,
+                amount: "0",
+                recipient: "0x51DF0aF74a0DBae16cB845B46dAF2a35cB1D4168",
+              },
             },
           ],
           extra: {},

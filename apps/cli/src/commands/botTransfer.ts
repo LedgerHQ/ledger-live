@@ -1,12 +1,12 @@
 /* eslint-disable no-console */
-import { from, of, throwError } from "rxjs";
-import { catchError, filter, first, map, timeoutWith, tap } from "rxjs/operators";
+import { firstValueFrom, from, of, throwError } from "rxjs";
+import { catchError, filter, first, map, timeout, tap } from "rxjs/operators";
 import {
   listSupportedCurrencies,
   getFiatCurrencyByTicker,
 } from "@ledgerhq/live-common/currencies/index";
 import { getAccountBridge, getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
-import { getEnv, setEnv } from "@ledgerhq/live-common/env";
+import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { promiseAllBatched } from "@ledgerhq/live-common/promise";
 import { makeBridgeCacheSystem } from "@ledgerhq/live-common/bridge/cache";
 import { autoSignTransaction } from "@ledgerhq/live-common/bot/engine";
@@ -18,9 +18,9 @@ import {
   inferTrackingPairForAccounts,
   initialState,
   loadCountervalues,
-} from "@ledgerhq/live-common/countervalues/logic";
+} from "@ledgerhq/live-countervalues/logic";
 import { Account, TransactionCommon } from "@ledgerhq/types-live";
-import { AppSpec } from "@ledgerhq/live-common/lib/bot/types";
+import { AppSpec } from "@ledgerhq/live-common/bot/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 const CONCURRENT = parseInt(process.env.CONCURRENCY || "2", 10);
@@ -67,7 +67,9 @@ export default {
     async function getAllRecipients(currencies: CryptoCurrency[]) {
       const prevSeed = getEnv("SEED");
       const { SEED_RECIPIENT } = process.env;
-      setEnv("SEED", SEED_RECIPIENT);
+      if (SEED_RECIPIENT) {
+        setEnv("SEED", SEED_RECIPIENT);
+      }
       const recipientsPerCurrencyId: Map<string, string> = new Map();
       await promiseAllBatched(CONCURRENT, currencies, async currency => {
         let device;
@@ -76,28 +78,29 @@ export default {
           if (!r) return;
           device = r.device;
           await cache.prepareCurrency(currency);
-          const maybeAddress = await getCurrencyBridge(currency)
-            .scanAccounts({
-              currency,
-              deviceId: device.id,
-              syncConfig: {
-                paginationConfig: {},
-              },
-            })
-            .pipe(
-              filter(e => e.type === "discovered"),
-              first(),
-              timeoutWith(
-                getEnv("BOT_TIMEOUT_SCAN_ACCOUNTS"),
-                throwError(new Error("scan account timeout")),
+          const maybeAddress = await firstValueFrom(
+            getCurrencyBridge(currency)
+              .scanAccounts({
+                currency,
+                deviceId: device.id,
+                syncConfig: {
+                  paginationConfig: {},
+                },
+              })
+              .pipe(
+                filter(e => e.type === "discovered"),
+                first(),
+                timeout({
+                  each: getEnv("BOT_TIMEOUT_SCAN_ACCOUNTS"),
+                  with: () => throwError(() => new Error("scan account timeout")),
+                }),
+                map(e => e.account.freshAddress),
+                catchError(err => {
+                  console.error("couldn't infer address for a " + currency.id + " account", err);
+                  return of(null);
+                }),
               ),
-              map(e => e.account.freshAddress),
-              catchError(err => {
-                console.error("couldn't infer address for a " + currency.id + " account", err);
-                return of(null);
-              }),
-            )
-            .toPromise();
+          );
           if (maybeAddress) {
             recipientsPerCurrencyId.set(currency.id, maybeAddress);
           }
@@ -119,30 +122,31 @@ export default {
           const r = await createImplicitSpeculos(`speculos:nanos:${currency.id}`);
           if (!r) return;
           device = r.device;
-          await getCurrencyBridge(currency)
-            .scanAccounts({
-              currency,
-              deviceId: r.device.id,
-              syncConfig: {
-                paginationConfig: {},
-              },
-            })
-            .pipe(
-              timeoutWith(
-                getEnv("BOT_TIMEOUT_SCAN_ACCOUNTS"),
-                throwError(new Error("scan account timeout")),
+          await firstValueFrom(
+            getCurrencyBridge(currency)
+              .scanAccounts({
+                currency,
+                deviceId: r.device.id,
+                syncConfig: {
+                  paginationConfig: {},
+                },
+              })
+              .pipe(
+                timeout({
+                  each: getEnv("BOT_TIMEOUT_SCAN_ACCOUNTS"),
+                  with: () => throwError(() => new Error("scan account timeout")),
+                }),
+                catchError(e => {
+                  console.error("scan accounts failed for " + currency.id, e);
+                  return from([]);
+                }),
+                tap(e => {
+                  if (e.type === "discovered") {
+                    accounts.push(e.account);
+                  }
+                }),
               ),
-              catchError(e => {
-                console.error("scan accounts failed for " + currency.id, e);
-                return from([]);
-              }),
-              tap(e => {
-                if (e.type === "discovered") {
-                  accounts.push(e.account);
-                }
-              }),
-            )
-            .toPromise();
+          );
         } catch (e) {
           console.error("Something went wrong on portfolio of " + currency.id, e);
         } finally {
@@ -238,26 +242,27 @@ export default {
 
               const status = { ...statusCommon, family: transaction.family };
 
-              const signedOperation = await accountBridge
-                .signOperation({
-                  account,
-                  transaction,
-                  deviceId: device.id,
-                })
-                .pipe(
-                  autoSignTransaction({
-                    transport: device.transport,
-                    deviceAction,
-                    appCandidate: r.appCandidate,
+              const signedOperation = await firstValueFrom(
+                accountBridge
+                  .signOperation({
                     account,
                     transaction,
-                    status,
-                    disableStrictStepValueValidation: true, // we transfer the funds without validating the field values
-                  }),
-                  first((e: any) => e.type === "signed"),
-                  map(e => e.signedOperation),
-                )
-                .toPromise();
+                    deviceId: device.id,
+                  })
+                  .pipe(
+                    autoSignTransaction({
+                      transport: device.transport,
+                      deviceAction,
+                      appCandidate: r.appCandidate,
+                      account,
+                      transaction,
+                      status,
+                      disableStrictStepValueValidation: true, // we transfer the funds without validating the field values
+                    }),
+                    first((e: any) => e.type === "signed"),
+                    map(e => e.signedOperation),
+                  ),
+              );
 
               const optimisticOperation = getEnv("DISABLE_TRANSACTION_BROADCAST")
                 ? signedOperation.operation

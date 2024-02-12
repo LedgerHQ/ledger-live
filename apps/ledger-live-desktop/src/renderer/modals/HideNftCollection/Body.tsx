@@ -36,11 +36,8 @@ const Body = ({
               }}
             >
               {"This action will hide all NFTs from the "}
-              {/* $FlowFixMe */}
               <Text ff="Inter|SemiBold" color="palette.text.shade100">
-                {{
-                  collectionName,
-                }}
+                {collectionName}
               </Text>
               {" collection, you can show them again using "}
               <Text ff="Inter|SemiBold" color="palette.text.shade100">

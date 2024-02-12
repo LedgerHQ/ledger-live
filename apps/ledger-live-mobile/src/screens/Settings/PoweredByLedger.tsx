@@ -2,8 +2,8 @@ import { useTheme } from "@react-navigation/native";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { View, StyleSheet } from "react-native";
-import LText from "../../components/LText";
-import LedgerLogoRec from "../../icons/LedgerLogoRec";
+import LText from "~/components/LText";
+import LedgerLogoRec from "~/icons/LedgerLogoRec";
 
 export default function PoweredByLedger() {
   const { t } = useTranslation();

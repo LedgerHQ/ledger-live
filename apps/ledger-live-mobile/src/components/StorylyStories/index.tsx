@@ -1,6 +1,6 @@
 import { Box, Flex } from "@ledgerhq/native-ui";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex/index";
-import { isEqual } from "lodash";
+import isEqual from "lodash/isEqual";
 import { Linking } from "react-native";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { ScrollView, StyleProp, ViewStyle } from "react-native";
@@ -56,7 +56,10 @@ type StoryGroupItemWrapperProps = {
 };
 
 const AnimatedStoryGroupWrapper = Animated.createAnimatedComponent<
-  FlexBoxProps & StoryGroupItemWrapperProps
+  FlexBoxProps &
+    StoryGroupItemWrapperProps & {
+      children?: React.ReactNode;
+    }
 >(
   styled(Flex).attrs<StoryGroupItemWrapperProps>(p => ({
     mr: p.isLast || p.vertical ? 0 : 5,

@@ -7,7 +7,7 @@ import { App } from "@ledgerhq/types-live";
 import UpdateAllModal from "../Modals/UpdateAllModal";
 import AppUpdateStepper from "./AppUpdateStepper";
 
-import Button from "../../../components/Button";
+import Button from "~/components/Button";
 
 type Props = {
   state: State;
@@ -33,7 +33,13 @@ const AppUpdateAll = ({ state, appsToUpdate, dispatch, isModalOpened }: Props) =
       <AppUpdateStepper state={state} />
       {appsToUpdate.length > 0 && updateAllQueue.length <= 0 && (
         <Flex flexDirection="row" alignItems="center" bg="neutral.c30" borderRadius={4} p={6}>
-          <Text flex={1} variant="large" fontWeight="semiBold" numberOfLines={2}>
+          <Text
+            flex={1}
+            variant="large"
+            fontWeight="semiBold"
+            numberOfLines={2}
+            testID="manager-update-number"
+          >
             <Trans
               i18nKey="AppAction.update.title"
               count={appsToUpdate.length}

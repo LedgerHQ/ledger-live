@@ -1,5 +1,6 @@
 import type { Device } from "@ledgerhq/types-devices";
-import { ScreenName } from "../../../const";
+import { ScreenName } from "~/const";
+import { FilterByDeviceModelId } from "../../BleDevicePairingFlow/BleDevicesScanning";
 
 export type SettingsNavigatorStackParamList = {
   [ScreenName.SettingsScreen]: undefined;
@@ -19,17 +20,17 @@ export type SettingsNavigatorStackParamList = {
   [ScreenName.ExperimentalSettings]: undefined;
   [ScreenName.DeveloperSettings]: undefined;
   [ScreenName.DeveloperCustomManifest]: undefined;
-  [ScreenName.DebugSettings]:
-    | {
-        pairedDevice?: Device | null;
-      }
-    | undefined;
+  [ScreenName.DebugSettings]: undefined;
   [ScreenName.DebugFeatureFlags]: undefined;
   [ScreenName.DebugInformation]: undefined;
   [ScreenName.DebugPerformance]: undefined;
   [ScreenName.DebugDebugging]: undefined;
   [ScreenName.DebugConfiguration]: undefined;
-  [ScreenName.DebugFeatures]: undefined;
+  [ScreenName.DebugFeatures]:
+    | {
+        pairedDevice?: Device | null;
+      }
+    | undefined;
   [ScreenName.DebugConnectivity]: undefined;
   [ScreenName.DebugGenerators]: undefined;
   [ScreenName.DebugMockGenerateAccounts]: undefined;
@@ -44,6 +45,11 @@ export type SettingsNavigatorStackParamList = {
   };
   [ScreenName.DebugBLEBenchmark]: {
     deviceId: string;
+  };
+  [ScreenName.DebugBLEDevicePairing]: {
+    areKnownDevicesDisplayed: boolean;
+    onSuccessAddToKnownDevices: boolean;
+    filterByDeviceModelId?: FilterByDeviceModelId;
   };
   [ScreenName.DebugCrash]: undefined;
   [ScreenName.DebugStore]: undefined;

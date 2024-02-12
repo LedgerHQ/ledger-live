@@ -18,19 +18,19 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
-import { accountScreenSelector } from "../../../reducers/accounts";
-import { localeSelector } from "../../../reducers/settings";
-import Button from "../../../components/Button";
-import CurrencyInput from "../../../components/CurrencyInput";
-import LText from "../../../components/LText";
-import Warning from "../../../icons/Warning";
-import Check from "../../../icons/Check";
-import KeyboardView from "../../../components/KeyboardView";
-import { ScreenName } from "../../../const";
-import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { accountScreenSelector } from "~/reducers/accounts";
+import Button from "~/components/Button";
+import CurrencyInput from "~/components/CurrencyInput";
+import LText from "~/components/LText";
+import Warning from "~/icons/Warning";
+import Check from "~/icons/Check";
+import KeyboardView from "~/components/KeyboardView";
+import { ScreenName } from "~/const";
+import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { CosmosDelegationFlowParamList } from "../DelegationFlow/types";
 import type { CosmosRedelegationFlowParamList } from "../RedelegationFlow/types";
 import { CosmosUndelegationFlowParamList } from "../UndelegationFlow/types";
+import { useSettings } from "~/hooks";
 
 type Props =
   | StackNavigatorProps<CosmosDelegationFlowParamList, ScreenName.CosmosDelegationAmount>
@@ -43,7 +43,7 @@ type Props =
 function DelegationAmount({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { account } = useSelector(accountScreenSelector(route));
-  const locale = useSelector(localeSelector);
+  const { locale } = useSettings();
   invariant(
     account && (account as CosmosAccount).cosmosResources && route.params.transaction,
     "account and cosmos transaction required",
@@ -168,6 +168,7 @@ function DelegationAmount({ navigation, route }: Props) {
                     <LText
                       style={[styles.ratioLabel]}
                       color={value.eq(v) ? colors.neutral.c100 : colors.neutral.c60}
+                      testID={"delegate-ratio-" + label}
                     >
                       {label}
                     </LText>
@@ -200,12 +201,12 @@ function DelegationAmount({ navigation, route }: Props) {
                         min: formatCurrencyUnit(unit, min, {
                           showCode: true,
                           showAllDigits: true,
-                          locale,
+                          locale: locale,
                         }),
                         max: formatCurrencyUnit(unit, initialMax, {
                           showCode: true,
                           showAllDigits: true,
-                          locale,
+                          locale: locale,
                         }),
                       }}
                     >
@@ -217,20 +218,24 @@ function DelegationAmount({ navigation, route }: Props) {
               {max.isZero() && (
                 <View style={styles.labelContainer}>
                   <Check size={16} color={colors.success.c50} />
-                  <LText style={[styles.assetsRemaining]} color={colors.success.c50}>
+                  <LText
+                    style={[styles.assetsRemaining]}
+                    color={colors.success.c50}
+                    testID="cosmos-all-assets-used-text"
+                  >
                     <Trans i18nKey={`cosmos.${mode}.flow.steps.amount.allAssetsUsed`} />
                   </LText>
                 </View>
               )}
               {max.gt(0) && !isAmountOutOfRange && !isNotEnoughBalance && (
                 <View style={styles.labelContainer}>
-                  <LText style={styles.assetsRemaining}>
+                  <LText style={styles.assetsRemaining} testID="cosmos-assets-remaining">
                     <Trans
                       i18nKey="cosmos.delegation.flow.steps.amount.assetsRemaining"
                       values={{
                         amount: formatCurrencyUnit(unit, max, {
                           showCode: true,
-                          locale,
+                          locale: locale,
                         }),
                       }}
                     >
@@ -247,7 +252,7 @@ function DelegationAmount({ navigation, route }: Props) {
                       values={{
                         amount: formatCurrencyUnit(unit, redelegatedBalance.plus(value), {
                           showCode: true,
-                          locale,
+                          locale: locale,
                         }),
                         name: route.params.validator?.name ?? "",
                       }}
@@ -263,6 +268,7 @@ function DelegationAmount({ navigation, route }: Props) {
                 onPress={onNext}
                 title={<Trans i18nKey="cosmos.delegation.flow.steps.amount.cta" />}
                 type="primary"
+                testID="cosmos-delegation-amount-continue"
               />
             </View>
           </View>

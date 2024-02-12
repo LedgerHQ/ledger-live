@@ -1,12 +1,7 @@
 import { AnchorMode } from "@stacks/transactions";
 import BigNumber from "bignumber.js";
 
-import {
-  BroadcastArg0,
-  Operation,
-  TransactionCommon,
-  TransactionCommonRaw,
-} from "@ledgerhq/types-live";
+import { Operation, TransactionCommon, TransactionCommonRaw } from "@ledgerhq/types-live";
 import { TransactionStatusCommon, TransactionStatusCommonRaw } from "@ledgerhq/types-live";
 
 import { StacksNetwork } from "./bridge/utils/api.types";
@@ -42,5 +37,8 @@ export type TransactionStatus = TransactionStatusCommon;
 
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
 
-export type BroadcastFnSignature = (arg0: BroadcastArg0) => Promise<Operation>;
-export const reflect = (_declare: any) => {};
+export type StacksOperation = Operation<StacksOperationExtra>;
+
+export type StacksOperationExtra = {
+  memo?: string;
+};

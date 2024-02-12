@@ -1,7 +1,7 @@
 import "../test-helpers/staticTime";
 import { genAccount } from "../../mock/account";
 import { getBalanceHistory } from "../../portfolio/v2";
-import { getEnv, setEnv } from "../../env";
+import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { setSupportedCurrencies } from "../../currencies";
 setSupportedCurrencies(["ethereum", "ethereum_classic", "ripple"]);
 

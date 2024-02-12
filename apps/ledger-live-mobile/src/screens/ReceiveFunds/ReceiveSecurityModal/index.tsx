@@ -1,9 +1,11 @@
 import React, { useCallback, useEffect, useState, useMemo } from "react";
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import QueuedDrawer from "../../../components/QueuedDrawer";
+import QueuedDrawer from "~/components/QueuedDrawer";
 import InitMessage from "./InitMessage";
 import ConfirmUnverified from "./ConfirmUnverified";
+import Config from "react-native-config";
+import { LayoutChangeEvent } from "react-native";
 
 const shouldNotRemindUserAgainToVerifyAddressOnReceive =
   "shouldNotRemindUserAgainToVerifyAddressOnReceive";
@@ -37,15 +39,14 @@ const ReceiveSecurityModal = ({
         setTimeout(() => {
           setIsModalOpen(true);
         }, 800);
-      } else {
-        triggerSuccessEvent();
       }
     });
+    triggerSuccessEvent();
   }, [triggerSuccessEvent]);
 
   const [step, setStep] = useState("initMessage");
   const sharedHeight = useSharedValue(0);
-  const onLayout = useCallback(({ nativeEvent: { layout } }) => {
+  const onLayout = useCallback(({ nativeEvent: { layout } }: LayoutChangeEvent) => {
     sharedHeight.value = withTiming(layout.height, { duration: 200 });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -90,7 +91,7 @@ const ReceiveSecurityModal = ({
       noCloseButton
       preventBackdropClick
     >
-      <Animated.ScrollView style={animatedStyle}>
+      <Animated.ScrollView style={Config.MOCK ? undefined : animatedStyle}>
         <Animated.View onLayout={onLayout}>{component}</Animated.View>
       </Animated.ScrollView>
     </QueuedDrawer>

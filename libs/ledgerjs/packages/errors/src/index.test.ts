@@ -73,8 +73,27 @@ describe("custom errors", () => {
     expect(error instanceof Error).toBeTruthy();
   });
 
-  test("transport status error contains message", () => {
-    const error: Error = new TransportStatusError(StatusCodes.UNKNOWN_APDU);
-    expect(error.stack).toContain("Ledger device: UNKNOWN_APDU (0x6d02)");
+  describe("TransportStatusError", () => {
+    test("TransportStatusError contains the expected name, message, stack, status code and status message (non-regression)", () => {
+      const error = new TransportStatusError(StatusCodes.UNKNOWN_APDU);
+
+      console.log(`${JSON.stringify(error)}`);
+
+      expect(error.name).toEqual("TransportStatusError");
+      expect(error.message).toEqual("Ledger device: UNKNOWN_APDU (0x6d02)");
+      expect(error.stack).toContain("Ledger device: UNKNOWN_APDU (0x6d02)");
+      expect(error.statusText).toEqual("UNKNOWN_APDU");
+      expect(error.statusCode).toEqual(0x6d02);
+    });
+
+    test.only("TransportStatusError should be mapped to a LockedDeviceError on status code 0x5515", () => {
+      const error = new TransportStatusError(StatusCodes.LOCKED_DEVICE);
+
+      expect(error.name).toEqual("LockedDeviceError");
+      expect(error.message).toEqual("Ledger device: Locked device (0x5515)");
+      expect(error.stack).toContain("Ledger device: Locked device (0x5515)");
+      expect(error.statusText).toEqual("LOCKED_DEVICE");
+      expect(error.statusCode).toEqual(0x5515);
+    });
   });
 });

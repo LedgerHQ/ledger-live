@@ -5,22 +5,25 @@ on:
   workflow_dispatch:
     inputs:
       ref:
-        description: the branch which triggered this workflow
+        description: |
+          If you run this manually, and want to run on a PR, the correct ref should be refs/pull/{PR_NUMBER}/merge to
+          have the "normal" scenario involving checking out a merge commit between your branch and the base branch.
+          If you want to run only on a branch or specific commit, you can use either the sha or the branch name instead (prefer the first verion for PRs).
         required: false
       login:
         description: The GitHub username that triggered the workflow
-        required: true
+        required: false
       base_ref:
         description: The base branch to merge the head into when checking out the code
         required: false
-      draft:
-        description: true if the PR is in draft
-        required: false
-        default: "false"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
   cancel-in-progress: true
+
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
   codechecks:
@@ -35,22 +38,23 @@ jobs:
         with:
           ref: ${{ github.ref_name }}
           base: ${{ inputs.base_ref }}
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
+        with:
+          install_dotnet: true
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
           skip_builds: true
-          install_dotnet: true
       - name: lint
-        run: |
-          pnpm lint --filter="ledger-live-desktop" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo" -- --format="json" -o="lint.json"
-          node -p "require('./node_modules/eslint/lib/cli-engine/formatters/stylish.js')(require('./apps/ledger-live-desktop/lint.json'))"
+        run: pnpm desktop lint:ci
       - name: prettier
         run: pnpm desktop prettier:check
       - name: typecheck
         run: pnpm desktop typecheck
       - uses: actions/upload-artifact@v3
         name: upload eslint json output
-        if: always()
+        if: ${{ !cancelled() }}
         with:
           name: lint
           path: ${{ github.workspace }}/apps/ledger-live-desktop/lint.json
@@ -67,12 +71,14 @@ jobs:
         with:
           ref: ${{ github.ref_name }}
           base: ${{ inputs.base_ref }}
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
           skip_builds: true
       - name: check for dead code
-        run: cd apps/ledger-live-desktop && npx unimported
+        run: pnpm desktop unimported
         shell: bash
 
   unit-tests:
@@ -87,6 +93,8 @@ jobs:
         with:
           ref: ${{ github.ref_name }}
           base: ${{ inputs.base_ref }}
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
@@ -111,26 +119,33 @@ jobs:
         with:
           ref: ${{ github.ref_name }}
           base: ${{ inputs.base_ref }}
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
+        with:
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
-          skip_python: true
           skip_ruby: true
           install_playwright: true
       - name: Run playwright tests [Linux => xvfb-run]
         id: tests
         run: |
           xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright:smoke
-      - name: upload diffs to imgur
-        if: always() && !cancelled()
+      - name: upload diffs to s3
+        if: ${{ !cancelled() }}
         uses: ./tools/actions/upload-images
-        id: imgur
+        id: s3
         with:
           path: apps/ledger-live-desktop/tests/artifacts/test-results
           workspace: ${{ github.workspace }}
           os: linux
+          group-name: ${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_number }}
       - name: upload ci suggested screenshots
-        if: always() && !cancelled()
+        if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v3
         with:
           name: images
@@ -147,7 +162,7 @@ jobs:
             apps/ledger-live-desktop/tests/artifacts/videos
             apps/ledger-live-desktop/tests/artifacts/logs
       - name: Upload Allure Report
-        if: always()
+        if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v3
         with:
           name: allure-results-linux
@@ -156,7 +171,7 @@ jobs:
   report:
     needs: [codechecks, deadcodecheck, unit-tests, e2e-tests-linux]
     runs-on: ubuntu-latest
-    if: always() && !cancelled() && github.event_name == 'workflow_dispatch'
+    if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' }}
     steps:
       - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
         with:
@@ -248,7 +263,7 @@ jobs:
               - ${typecheck.pass ? "✅" : "❌"} **Type checks** ended with status \`${typecheck.status}\`
 
             ### Dead Code Check
-            ${deadcodecheck.pass ? "Dead code checks are fine" : "Unfortunately, dead code checks did not pass. Try \`npx unimported\` in apps/ledger-live-desktop"}
+            ${deadcodecheck.pass ? "Dead code checks are fine" : "Unfortunately, dead code checks did not pass. Try \`pnpm desktop unimported\` in apps/ledger-live-desktop"}
               - ${deadcodecheck.pass ? "✅" : "❌"}
 
             ### Unit Tests (Jest)
@@ -335,26 +350,3 @@ jobs:
           name: summary.json
           path: ${{ github.workspace }}/summary.json
 
-  allure-report:
-    name: "Allure Reports Export on Server"
-    needs: [e2e-tests-linux]
-    runs-on: [ledger-live-medium-linux]
-    if: ${{ always() && !cancelled() && github.ref_name == 'develop' }}
-    steps:
-      - name: checkout
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ github.ref_name }}
-      - name: Download Allure Report - Linux
-        uses: actions/download-artifact@v3
-        with:
-          name: allure-results-linux
-          path: allure-results-linux
-      - name: Send Results and Generate Allure Report - Linux
-        uses: ./tools/actions/composites/upload-allure-report
-        if: always()
-        with:
-          platform: linux
-          login: ${{ secrets.ALLURE_LOGIN }}
-          password: ${{ secrets.ALLURE_PASSWORD }}
-          path: allure-results-linux

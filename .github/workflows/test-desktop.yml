@@ -1,5 +1,5 @@
 name: "@Desktop • Test App"
-run-name: "@Desktop • Test App triggered by ${{ github.event_name == 'workflow_dispatch' && inputs.login || github.actor }} ${{ format('on ref {0}', github.ref_name) }}"
+run-name: "@Desktop • Test App triggered by ${{ inputs.login || github.actor }} ${{ format('on ref {0}', github.ref_name) }}"
 
 on:
   push:
@@ -15,27 +15,18 @@ on:
         required: false
       login:
         description: The GitHub username that triggered the workflow
-        required: true
+        required: false
       base_ref:
         description: The base branch to merge the head into when checking out the code
         required: false
-      draft:
-        description: true if the PR is in draft
-        required: false
-        default: "false"
-      full-tests:
-        description: Set to true to run the full e2e tests
-        required: false
-        type: boolean
-        default: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
   cancel-in-progress: true
 
-env:
-  RUN_FULL_SUITE: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.full-tests) }}
-  REFNAME: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
   codechecks:
@@ -46,52 +37,38 @@ jobs:
       CI_OS: ubuntu-latest
     runs-on: ubuntu-latest
     steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+      - uses: actions/checkout@v4
         with:
-          ref: ${{ env.REFNAME }}
-          base: ${{ inputs.base_ref }}
+          ref: ${{ inputs.ref || github.sha }}
+      - name: Setup the toolchain
+        uses: ./tools/actions/composites/setup-toolchain
+        id: toolchain
+        with:
+          install_dotnet: true
+          skip_turbo_cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
           skip_builds: true
-          install_dotnet: true
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          turborepo-server-port: ${{ steps.toolchain.outputs.port }}
       - name: lint
-        run: |
-          pnpm lint --filter="ledger-live-desktop" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo" -- --format="json" -o="lint.json"
-          node -p "require('./node_modules/eslint/lib/cli-engine/formatters/stylish.js')(require('./apps/ledger-live-desktop/lint.json'))"
+        run: pnpm desktop lint:ci -p ${{ steps.toolchain.outputs.port }} -t "${{ secrets.TURBOREPO_SERVER_TOKEN }}"
       - name: prettier
         run: pnpm desktop prettier:check
       - name: typecheck
         run: pnpm desktop typecheck
       - uses: actions/upload-artifact@v3
         name: upload eslint json output
-        if: always()
+        if: ${{ !cancelled() }}
         with:
           name: lint
           path: ${{ github.workspace }}/apps/ledger-live-desktop/lint.json
-
-  deadcodecheck:
-    name: "Desktop deadcode check"
-    env:
-      NODE_OPTIONS: "--max-old-space-size=7168"
-      FORCE_COLOR: 3
-      CI_OS: ubuntu-latest
-    runs-on: ubuntu-latest
-    steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
-        with:
-          ref: ${{ env.REFNAME }}
-          base: ${{ inputs.base_ref }}
-      - uses: ./tools/actions/composites/setup-test-desktop
-        id: setup-test-desktop
-        with:
-          skip_builds: true
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
       - name: check for dead code
-        run: cd apps/ledger-live-desktop && npx unimported
+        run: pnpm desktop unimported
         shell: bash
 
   unit-tests:
@@ -102,91 +79,25 @@ jobs:
       CI_OS: ubuntu-latest
     runs-on: ubuntu-latest
     steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+      - uses: actions/checkout@v4
         with:
-          ref: ${{ env.REFNAME }}
-          base: ${{ inputs.base_ref }}
+          ref: ${{ inputs.ref || github.sha }}
+      - name: Setup the toolchain
+        id: toolchain
+        uses: ./tools/actions/composites/setup-toolchain
+        with:
+          skip_turbo_cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
           skip_builds: true
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          turborepo-server-port: ${{ steps.toolchain.outputs.port }}
       - name: Run unit tests
-        run: pnpm desktop test:jest
-
-  e2e-tests-windows:
-    name: "Desktop E2E (Windows)"
-    outputs:
-      status: ${{ steps.tests.outcome }}
-    env:
-      NODE_OPTIONS: "--max-old-space-size=7168"
-      FORCE_COLOR: 3
-      CI_OS: "windows-latest"
-      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-      # DEBUG: "pw:browser*"
-      # DEBUG_LOGS: 1
-    runs-on: [ledger-live-4xlarge-windows-2022]
-    if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.full-tests) }}
-    steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
-        with:
-          ref: ${{ env.REFNAME }}
-          base: ${{ inputs.base_ref }}
-      - uses: actions/setup-dotnet@v2
-        with:
-          dotnet-version: 2.1.816
-      - uses: ./tools/actions/composites/setup-test-desktop
-        id: setup-test-desktop
-        with:
-          install_node_gyp: true
-          install_playwright: true
-          upgrade_npm: true
-          install_dotnet: true
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
-      - name: Run playwright tests
-        id: tests
-        run: |
-          pnpm desktop test:playwright
-        shell: bash
-      - name: upload diffs to imgur
-        if: always() && !cancelled()
-        uses: ./tools/actions/upload-images
-        id: imgur
-        with:
-          path: apps/ledger-live-desktop/tests/artifacts/test-results
-          workspace: ${{ github.workspace }}
-          os: windows
-      - name: upload ci suggested screenshots
-        if: always() && !cancelled()
-        uses: actions/upload-artifact@v3
-        with:
-          name: images
-          path: images-windows.json
-      - name: upload network responses
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: windows-network-responses
-          path: apps/ledger-live-desktop/tests/artifacts/networkResponses.log
-      - name: Upload playwright test results [On Failure]
-        uses: actions/upload-artifact@v3
-        if: failure() && !cancelled()
-        with:
-          name: playwright-results-windows
-          path: |
-            apps/ledger-live-desktop/tests/artifacts/test-results
-            apps/ledger-live-desktop/tests/artifacts/html-report
-            apps/ledger-live-desktop/tests/artifacts/coverage
-            apps/ledger-live-desktop/tests/artifacts/videos
-            apps/ledger-live-desktop/tests/artifacts/logs
-      - name: Upload Allure Report
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: allure-results-windows
-          path: apps/ledger-live-desktop/allure-results
+        run: pnpm desktop test:jest:coverage
 
   e2e-tests-linux:
     name: "Desktop E2E (Linux)"
@@ -202,46 +113,43 @@ jobs:
       # DEBUG_LOGS: 1
     runs-on: [ledger-live-4xlarge-linux]
     steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+      - uses: actions/checkout@v4
         with:
-          ref: ${{ env.REFNAME }}
-          base: ${{ inputs.base_ref }}
+          ref: ${{ inputs.ref || github.sha }}
+      - name: Setup the toolchain
+        id: toolchain
+        uses: ./tools/actions/composites/setup-toolchain
+        with:
+          skip_turbo_cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
-          skip_python: true
           skip_ruby: true
           install_playwright: true
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          turborepo-server-port: ${{ steps.toolchain.outputs.port }}
       - name: Run playwright tests [Linux => xvfb-run]
         id: tests
         run: |
-          if [[ $RUN_FULL_SUITE == true ]]; then
-            xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright
-          else
-            xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright:smoke
-          fi
-      - name: upload diffs to imgur
-        if: always() && !cancelled()
+          xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright
+      - name: upload diffs to s3
+        if: ${{ !cancelled() }}
         uses: ./tools/actions/upload-images
-        id: imgur
+        id: s3
         with:
           path: apps/ledger-live-desktop/tests/artifacts/test-results
           workspace: ${{ github.workspace }}
           os: linux
+          group-name: ${{ github.ref_name }}-${{ github.run_id }}-${{ github.run_number }}
       - name: upload ci suggested screenshots
-        if: always() && !cancelled()
+        if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v3
         with:
           name: images
           path: images-linux.json
-      - name: upload network responses
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: linux-network-responses
-          path: apps/ledger-live-desktop/tests/artifacts/networkResponses.log
       - name: Upload playwright test results [On Failure]
         uses: actions/upload-artifact@v3
         if: failure() && !cancelled()
@@ -253,92 +161,21 @@ jobs:
             apps/ledger-live-desktop/tests/artifacts/coverage
             apps/ledger-live-desktop/tests/artifacts/videos
             apps/ledger-live-desktop/tests/artifacts/logs
+            apps/ledger-live-desktop/tests/artifacts/*.log
       - name: Upload Allure Report
-        if: always()
+        if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v3
         with:
           name: allure-results-linux
           path: apps/ledger-live-desktop/allure-results
-
-  e2e-tests-mac:
-    name: "Desktop E2E (macOS X)"
-    runs-on: [m1, ARM64]
-    outputs:
-      status: ${{ steps.tests.outcome }}
-    env:
-      NODE_OPTIONS: "--max-old-space-size=7168"
-      FORCE_COLOR: 3
-      CI_OS: "macos-latest"
-      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-      # DEBUG: "pw:browser*"
-      # DEBUG_LOGS: 1
-    if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.full-tests) }}
-    steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
-        with:
-          ref: ${{ env.REFNAME }}
-          base: ${{ inputs.base_ref }}
-      - uses: ./tools/actions/composites/setup-test-desktop
-        id: setup-test-desktop
-        with:
-          skip_python: true
-          skip_ruby: true
-          install_playwright: true
-          pnpm_dest: ${{ runner.temp }}/setup-pnpm
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
-      - name: Run playwright tests
-        id: tests
-        run: |
-          pnpm desktop test:playwright
-      - name: upload diffs to imgur
-        if: always() && !cancelled()
-        uses: ./tools/actions/upload-images
-        id: imgur
-        with:
-          path: apps/ledger-live-desktop/tests/artifacts/test-results
-          workspace: ${{ github.workspace }}
-          os: macos
-      - name: upload ci suggested screenshots
-        if: always() && !cancelled()
-        uses: actions/upload-artifact@v3
-        with:
-          name: images
-          path: images-macos.json
-      - name: upload network responses
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: macos-network-responses
-          path: apps/ledger-live-desktop/tests/artifacts/networkResponses.log
-      - name: Upload playwright test results [On Failure]
-        uses: actions/upload-artifact@v3
-        if: failure() && !cancelled()
-        with:
-          name: playwright-results-macos
-          path: |
-            apps/ledger-live-desktop/tests/artifacts/test-results
-            apps/ledger-live-desktop/tests/artifacts/html-report
-            apps/ledger-live-desktop/tests/artifacts/coverage
-            apps/ledger-live-desktop/tests/artifacts/videos
-            apps/ledger-live-desktop/tests/artifacts/logs
-      - name: Upload Allure Report
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: allure-results-macos
-          path: apps/ledger-live-desktop/allure-results
-
   report:
-    needs:
-      [codechecks, deadcodecheck, unit-tests, e2e-tests-linux, e2e-tests-windows, e2e-tests-mac]
+    needs: [codechecks, unit-tests, e2e-tests-linux]
     runs-on: ubuntu-latest
-    if: always() && !cancelled()
+    if: ${{ !cancelled() }}
     steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+      - uses: actions/checkout@v4
         with:
-          ref: ${{ env.REFNAME }}
-          base: ${{ inputs.base_ref }}
+          ref: ${{ inputs.ref || github.sha }}
       - name: "download linter results"
         uses: actions/download-artifact@v3
         with:
@@ -352,7 +189,7 @@ jobs:
         with:
           script: |
             const fs = require("fs");
-            const files = ${{ env.RUN_FULL_SUITE }} ? ["images-linux", "images-windows", "images-macos"] : ["images-linux"]
+            const files = ["images-linux"];
             let result = {};
             for (const file of files) {
               try {
@@ -391,16 +228,6 @@ jobs:
               jobs.find(job => job.name == `Live Desktop Tests (${os})`)?.html_url;
 
             const keys = {
-              mac: {
-                symbol: "🍏",
-                name: "macOS",
-                jobUrl: findJobUrl("macOS X")
-              },
-              windows: {
-                symbol: "🪟",
-                name: "Windows",
-                jobUrl: findJobUrl("Windows")
-              },
               linux: {
                 symbol: "🐧",
                 name: "Linux",
@@ -418,38 +245,17 @@ jobs:
               status: "${{ needs.unit-tests.result }}",
             };
 
-            const deadcodecheck = {
-              pass: ${{ needs.deadcodecheck.result == 'success' }},
-            };
-
-            const report = ${{ env.RUN_FULL_SUITE }} ? {
-              mac: {
-                pass: ${{ needs.e2e-tests-mac.outputs.status == 'success' }},
-                status: "${{ needs.e2e-tests-mac.outputs.status }}",
-              },
+            const report = {
               linux: {
                 pass: ${{ needs.e2e-tests-linux.outputs.status == 'success' }},
                 status: "${{ needs.e2e-tests-linux.outputs.status }}",
-              },
-              windows: {
-                pass: ${{ needs.e2e-tests-windows.outputs.status == 'success' }},
-                status: "${{ needs.e2e-tests-windows.outputs.status }}",
-              },
-            } : {
-              linux: {
-                pass: ${{ needs.e2e-tests-linux.outputs.status == 'success' }},
-                status: "${{ needs.e2e-tests-linux.outputs.status }}",
-              },
+              }
             };
 
             let summary = `### TypeCheck
 
             ${typecheck.pass ? "Typechecks are fine" : "Unfortunately typechecks did not pass"}
               - ${typecheck.pass ? "✅" : "❌"} **Type checks** ended with status \`${typecheck.status}\`
-
-            ### Dead Code Check
-            ${deadcodecheck.pass ? "Dead code checks are fine" : "Unfortunately, dead code checks did not pass. Try \`npx unimported\` in apps/ledger-live-desktop"}
-              - ${deadcodecheck.pass ? "✅" : "❌"}
 
             ### Unit Tests (Jest)
             ${unitTests.pass ? "Unit tests are fine" : "Unit tests did not pass"}
@@ -562,13 +368,6 @@ jobs:
                   }
                 },
                 {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": `- typechecks: ${typecheck.pass ? "✅" : "❌"}\n - deadcode checks: ${deadcodecheck.pass ? "✅" : "❌"}\n - unit tests: ${unitTests.pass ? "✅" : "❌"}\n`
-                  }
-                },
-                {
                   "type": "divider"
                 },
                 {
@@ -579,20 +378,11 @@ jobs:
                   }
                 },
                 {
-                  ...(${{ env.RUN_FULL_SUITE }} ? {
-                    "type": "section",
-                    "text": {
-                      "type": "mrkdwn",
-                      "text": `- 🐧 linux: ${report.linux.pass ? "✅" : "❌"}\n - 🪟 windows: ${report.windows.pass ? "✅" : "❌"}\n - 🍏 macos: ${report.mac.pass ? "✅" : "❌"}\n`
-                    }
-                  } :
-                  {
-                    "type": "section",
-                    "text": {
-                      "type": "mrkdwn",
-                      "text": `- 🐧 linux: ${report.linux.pass ? "✅" : "❌"}\n`
-                    }
-                  })
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": `- 🐧 linux: ${report.linux.pass ? "✅" : "❌"}\n`
+                  }
                 },
                 {
                   "type": "divider"
@@ -611,7 +401,7 @@ jobs:
       - name: post to a Slack channel
         id: slack
         uses: slackapi/slack-github-action@v1.23.0
-        if: always() && !cancelled() && github.event_name == 'push' && contains(join(needs.*.result, ','), 'failure')
+        if: ${{ !cancelled() && github.event_name == 'push' && contains(join(needs.*.result, ','), 'failure') }}
         with:
           channel-id: "C05FKJ7DFAP"
           payload-file-path: ${{ github.workspace }}/payload-slack-content.json
@@ -623,52 +413,3 @@ jobs:
           name: summary.json
           path: ${{ github.workspace }}/summary.json
 
-  allure-report:
-    name: "Allure Reports Export on Server"
-    needs: [e2e-tests-windows, e2e-tests-linux, e2e-tests-mac]
-    runs-on: [ledger-live-medium-linux]
-    if: ${{ always() && !cancelled() && github.ref_name == 'develop' }}
-    steps:
-      - name: checkout
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
-      - name: Download Allure Report - Windows
-        uses: actions/download-artifact@v3
-        with:
-          name: allure-results-windows
-          path: allure-results-windows
-      - name: Download Allure Report - MacOS
-        uses: actions/download-artifact@v3
-        with:
-          name: allure-results-macos
-          path: allure-results-macos
-      - name: Download Allure Report - Linux
-        uses: actions/download-artifact@v3
-        with:
-          name: allure-results-linux
-          path: allure-results-linux
-      - name: Send Results and Generate Allure Report - Windows
-        uses: ./tools/actions/composites/upload-allure-report
-        if: always()
-        with:
-          platform: windows
-          login: ${{ secrets.ALLURE_LOGIN }}
-          password: ${{ secrets.ALLURE_PASSWORD }}
-          path: allure-results-windows
-      - name: Send Results and Generate Allure Report - MacOS
-        uses: ./tools/actions/composites/upload-allure-report
-        if: always()
-        with:
-          platform: macos
-          login: ${{ secrets.ALLURE_LOGIN }}
-          password: ${{ secrets.ALLURE_PASSWORD }}
-          path: allure-results-macos
-      - name: Send Results and Generate Allure Report - Linux
-        uses: ./tools/actions/composites/upload-allure-report
-        if: always()
-        with:
-          platform: linux
-          login: ${{ secrets.ALLURE_LOGIN }}
-          password: ${{ secrets.ALLURE_PASSWORD }}
-          path: allure-results-linux

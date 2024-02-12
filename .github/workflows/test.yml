@@ -1,5 +1,5 @@
 name: "@Libraries • Tests"
-run-name: "@Libraries • Tests triggered by ${{ github.event_name == 'workflow_dispatch' && inputs.login || github.actor }} ${{ format('on ref {0}', github.ref_name) }}"
+run-name: "@Libraries • Tests triggered by ${{ inputs.login || github.actor }} ${{ format('on ref {0}', github.ref_name) }}"
 
 on:
   push:
@@ -14,15 +14,22 @@ on:
         description: The branch that turborepo will check when diffing.
         default: "develop"
       ref:
-        description: the branch which triggered this workflow
+        description: |
+          If you run this manually, and want to run on a PR, the correct ref should be refs/pull/{PR_NUMBER}/merge to
+          have the "normal" scenario involving checking out a merge commit between your branch and the base branch.
+          If you want to run only on a branch or specific commit, you can use either the sha or the branch name instead (prefer the first verion for PRs).
         required: false
       login:
         description: The GitHub username that triggered the workflow
-        required: true
+        required: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
   cancel-in-progress: true
+
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
   test-docs:
@@ -31,16 +38,22 @@ jobs:
     outputs:
       fail: ${{ steps.diff.outputs.diff }}
     steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+      - uses: actions/checkout@v4
         with:
-          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
-          base: ${{ inputs.since_branch }}
+          ref: ${{ inputs.ref || github.sha }}
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
+        id: toolchain
+        with:
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          skip_turbo_cache: "false"
       - name: Install dependencies
         run: pnpm i --filter="!./apps/**"
       - name: run doc
-        run: pnpm doc:ljs
+        run: pnpm doc:ljs --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
       - name: get diff
         id: diff
         run: |
@@ -48,31 +61,29 @@ jobs:
           echo "diff=$diff" >> $GITHUB_OUTPUT
           exit $diff
 
-  test-common-tools:
-    name: "Test common-tools"
+  test-web-tools:
+    name: "Test web-tools"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
     runs-on: ubuntu-latest
     steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+      - uses: actions/checkout@v4
         with:
-          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
-          base: ${{ inputs.since_branch }}
+          ref: ${{ inputs.ref || github.sha }}
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
-      - name: TurboRepo local caching server
-        id: turborepo-cache-server
-        uses: ./tools/actions/turborepo-s3-cache
+        id: toolchain
         with:
-          server-token: "yolo"
-          cleanup-cache-folder: "true"
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          skip_turbo_cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - name: Install dependencies
-        run: pnpm i -F "live-common-tools..." -F "ledger-live"
-      - name: build common-tools
-        run: pnpm turbo run build --filter="live-common-tools"
+        run: pnpm i -F "web-tools..." -F "ledger-live"
+      - name: build web-tools
+        run: pnpm turbo run build --filter="web-tools" --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
 
   test-cli:
     name: "Test CLI"
@@ -84,31 +95,29 @@ jobs:
       test-fail: ${{ steps.test.outcome }}
     runs-on: ubuntu-latest
     steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+      - uses: actions/checkout@v4
         with:
-          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
-          base: ${{ inputs.since_branch }}
+          ref: ${{ inputs.ref || github.sha }}
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
-      - name: TurboRepo local caching server
-        id: turborepo-cache-server
-        uses: ./tools/actions/turborepo-s3-cache
+        id: toolchain
         with:
-          server-token: "yolo"
-          cleanup-cache-folder: "true"
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          skip_turbo_cache: "false"
       - name: Install dependencies
         run: pnpm i -F "live-cli..." -F "ledger-live"
       - name: build cli
-        run: pnpm build:cli
+        run: pnpm build:cli --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
       - name: lint cli
-        run: pnpm lint --filter="live-cli" -- --quiet
+        run: pnpm lint --filter="live-cli" --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo" -- --quiet
       - name: typecheck cli
-        run: pnpm typecheck --filter="live-cli"
+        run: pnpm typecheck --filter="live-cli" --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
       - name: test cli
         id: test
-        run: pnpm run test --filter="live-cli"
+        run: pnpm run test --filter="live-cli" --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
       - name: get diff
         id: diff
         run: |
@@ -125,32 +134,24 @@ jobs:
 
     runs-on: [ledger-live-4xlarge-linux]
     steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+      - uses: actions/checkout@v4
         with:
-          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
-          base: ${{ inputs.since_branch }}
+          ref: ${{ inputs.ref || github.sha }}
           fetch-depth: 0
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
-      # - uses: actions/setup-python@v4
-      #   with:
-      #     python-version: "3.10"
-      # - uses: ruby/setup-ruby@v1
-      #   with:
-      #     ruby-version: 2.6
-      - name: TurboRepo local caching server
-        id: turborepo-cache-server
-        uses: ./tools/actions/turborepo-s3-cache
+        id: toolchain
         with:
-          server-token: "yolo"
-          cleanup-cache-folder: "true"
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          skip_turbo_cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - name: Install dependencies
         run: pnpm i --filter="!./apps/**"
       - name: Build and Test affected libraries
         id: test-libs
-        run: pnpm run test --continue --filter="!./apps/**" --filter="!./libs/ui/**" --filter="!./tools/**" --filter="!live-common-tools" --filter="!ledger-live...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+        run: pnpm run test --continue --filter="!./apps/**" --filter="!./libs/ui/**" --filter="!./tools/**" --filter="!ledger-live...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
         shell: bash
       - name: (On Failure) Upload live-common snapshots and source
         uses: actions/upload-artifact@v3
@@ -160,13 +161,13 @@ jobs:
           path: |
             libs/ledger-live-common/src
       - uses: actions/github-script@v6
-        if: always()
+        if: ${{ !cancelled() }}
         with:
           script: |
             const fs = require("fs");
             fs.writeFileSync("summary-tests.txt", "${{ steps.test-libs.outcome }}", "utf-8");
       - uses: actions/upload-artifact@v3
-        if: always()
+        if: ${{ !cancelled() }}
         with:
           name: outputs
           path: ${{ github.workspace }}/summary-tests.txt
@@ -188,33 +189,28 @@ jobs:
 
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+      - uses: actions/checkout@v4
         with:
-          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
-          base: ${{ inputs.since_branch }}
+          ref: ${{ inputs.ref || github.sha }}
           fetch-depth: 0
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
-      # - uses: actions/setup-python@v4
-      #   with:
-      #     python-version: "3.10"
+        id: toolchain
+        with:
+          skip_turbo_cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - uses: ruby/setup-ruby@v1
         if: ${{ matrix.os == 'macos-latest' }}
         with:
-          ruby-version: 2.6
-      - name: TurboRepo local caching server
-        id: turborepo-cache-server
-        uses: ./tools/actions/turborepo-s3-cache
-        with:
-          server-token: "yolo"
-          cleanup-cache-folder: "true"
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          ruby-version: 3.2.2
       - name: Install dependencies
         run: pnpm i --filter="./libs/ui/**"
       - name: Build and Test affected libraries
         id: test-ui
-        run: pnpm run test --continue --filter="./libs/ui/**" --filter="!ledger-live...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+        run: pnpm run test --continue --filter="./libs/ui/**" --filter="!ledger-live...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
         shell: bash
       - name: (On Failure) Upload react-ui test results
         uses: actions/upload-artifact@v3
@@ -225,13 +221,13 @@ jobs:
             libs/ui/tests/react.spec.js-snapshots/
             libs/ui/test-results/
       - uses: actions/github-script@v6
-        if: always()
+        if: ${{ !cancelled() }}
         with:
           script: |
             const fs = require("fs");
             fs.writeFileSync("summary-ui-${{ matrix.os }}.txt", "${{ steps.test-ui.outcome }}", "utf-8");
       - uses: actions/upload-artifact@v3
-        if: always()
+        if: ${{ !cancelled() }}
         with:
           name: outputs
           path: ${{ github.workspace }}/summary-ui-${{ matrix.os }}.txt
@@ -245,44 +241,40 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/checkout-merge@develop
+      - uses: actions/checkout@v4
         with:
-          ref: ${{ (github.event_name == 'workflow_dispatch' && (inputs.ref || github.ref_name)) || github.sha }}
-          base: ${{ inputs.since_branch }}
+          ref: ${{ inputs.ref || github.sha }}
           fetch-depth: 0
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
-      # - uses: actions/setup-python@v4
-      #   with:
-      #     python-version: "3.10"
-      # - uses: ruby/setup-ruby@v1
-      #   with:
-      #     ruby-version: 2.6
-      - name: TurboRepo local caching server
-        id: turborepo-cache-server
-        uses: ./tools/actions/turborepo-s3-cache
+        id: toolchain
         with:
-          server-token: "yolo"
-          cleanup-cache-folder: "true"
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          skip_turbo_cache: "false"
       - name: Install dependencies
         run: pnpm i --filter="!./apps/**"
       - name: Lint affected libraries
         id: lint-libs
-        run: pnpm lint --continue --filter="!./apps/**" --filter="!./tools/**" --filter="!live-common-tools" --filter="!ledger-live...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo" -- --quiet
+        run: pnpm lint --continue --filter="!./apps/**" --filter="!./tools/**" --filter="!ledger-live...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo" -- --quiet
       - name: Typecheck affected libraries
         id: typecheck-libs
-        run: pnpm typecheck --continue --filter="!./apps/**" --filter="!./tools/**" --filter="!live-common-tools" --filter="!ledger-live...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.turborepo-cache-server.outputs.port }}" --token="yolo" --team="foo"
+        run: pnpm typecheck --continue --filter="!./apps/**" --filter="!./tools/**" --filter="!ledger-live...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+      - name: Test unimported files
+        id: unimported
+        run: pnpm unimported --continue --filter="!./apps/**" --filter="!./tools/**" --filter="!ledger-live...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.toolchain.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+        shell: bash
       - uses: actions/github-script@v6
-        if: always()
+        if: ${{ !cancelled() }}
         with:
           script: |
             const fs = require("fs");
             fs.writeFileSync("summary-typecheck.txt", "${{ steps.typecheck-libs.outcome }}", "utf-8");
             fs.writeFileSync("summary-lint.txt", "${{ steps.lint-libs.outcome }}", "utf-8");
       - uses: actions/upload-artifact@v3
-        if: always()
+        if: ${{ !cancelled() }}
         with:
           name: outputs
           path: |
@@ -290,8 +282,8 @@ jobs:
             ${{ github.workspace }}/summary-lint.txt
 
   report:
-    needs: [test-cli, test-docs, test-libraries, test-ui, codecheck-libraries, test-common-tools]
-    if: always() && !cancelled() && github.event_name == 'workflow_dispatch'
+    needs: [test-cli, test-docs, test-libraries, test-ui, codecheck-libraries, test-web-tools]
+    if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v3
@@ -315,8 +307,8 @@ jobs:
                 status: "${{ needs.test-docs.result }}",
               },
               tool: {
-                pass: ${{ needs.test-common-tools.result == 'success' }},
-                status: "${{ needs.test-common-tools.result }}",
+                pass: ${{ needs.test-web-tools.result == 'success' }},
+                status: "${{ needs.test-web-tools.result }}",
               },
               cli: {
                 pass: ${{ needs.test-cli.outputs.test-fail == 'success' && needs.test-cli.outputs.fail != '1' }},

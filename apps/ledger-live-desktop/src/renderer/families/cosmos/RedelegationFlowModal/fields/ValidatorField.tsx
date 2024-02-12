@@ -26,13 +26,16 @@ export default function ValidatorField({
 }: {
   account: CosmosAccount;
   transaction: Transaction;
-  onChange: (a?: { address: string } | null) => void;
+  onChange: (a: { address: string }) => void;
 }) {
   const currencyId = account.currency.id.toLowerCase();
   const [search, setSearch] = useState("");
   const validators = useLedgerFirstShuffledValidatorsCosmosFamily(currencyId, search);
   const { cosmosResources } = account;
-  const onSearch = useCallback(evt => setSearch(evt.target.value), [setSearch]);
+  const onSearch = useCallback(
+    (evt: React.ChangeEvent<HTMLInputElement>) => setSearch(evt.target.value),
+    [setSearch],
+  );
   invariant(cosmosResources, "cosmosResources required");
   const unit = getAccountUnit(account);
   const fromValidatorAddress = transaction.sourceValidator;

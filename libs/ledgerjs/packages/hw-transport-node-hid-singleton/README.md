@@ -30,22 +30,33 @@ For a smooth and quick integration:
 #### Table of Contents
 
 *   [TransportNodeHidSingleton](#transportnodehidsingleton)
+    *   [Parameters](#parameters)
     *   [Examples](#examples)
     *   [exchange](#exchange)
-        *   [Parameters](#parameters)
+        *   [Parameters](#parameters-1)
+    *   [close](#close)
     *   [isSupported](#issupported)
     *   [list](#list)
     *   [listen](#listen)
-        *   [Parameters](#parameters-1)
-    *   [autoDisconnect](#autodisconnect)
+        *   [Parameters](#parameters-2)
+    *   [setDisconnectAfterInactivityTimeout](#setdisconnectafterinactivitytimeout)
     *   [disconnect](#disconnect)
     *   [open](#open)
+        *   [Parameters](#parameters-3)
+*   [onDisconnect](#ondisconnect)
 
 ### TransportNodeHidSingleton
 
 **Extends TransportNodeHidNoEvents**
 
 node-hid Transport implementation
+
+#### Parameters
+
+*   `device` **HID.HID**&#x20;
+*   `$1` **{context: TraceContext?}**  (optional, default `{}`)
+
+    *   `$1.context` &#x20;
 
 #### Examples
 
@@ -57,13 +68,22 @@ TransportNodeHid.create().then(transport => ...)
 
 #### exchange
 
-Exchange with the device using APDU protocol.
+Exchanges with the device using APDU protocol
 
 ##### Parameters
 
-*   `apdu` **[Buffer](https://nodejs.org/api/buffer.html)** 
+*   `apdu` **[Buffer](https://nodejs.org/api/buffer.html)**&#x20;
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[Buffer](https://nodejs.org/api/buffer.html)>** a promise of apdu response
+
+#### close
+
+Closes the transport instance by triggering a disconnection after some inactivity (no new `open`).
+
+Intentionally not disconnecting the device/closing the hid connection directly:
+The HID connection will only be closed after some inactivity.
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<void>**&#x20;
 
 #### isSupported
 
@@ -73,22 +93,44 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 
 ##### Parameters
 
-*   `observer` **Observer\<ListenDescriptorEvent>** 
+*   `observer` **Observer\<ListenDescriptorEvent>**&#x20;
 
-Returns **Subscription** 
+Returns **Subscription**&#x20;
 
-#### autoDisconnect
+#### setDisconnectAfterInactivityTimeout
 
-convenience wrapper for auto-disconnect logic
+Disconnects device from singleton instance after some inactivity (no new `open`).
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<void>** 
+Currently, there is only one transport instance (for only one device connected via USB).
 
 #### disconnect
 
-globally disconnect the transport singleton
+Disconnects from the HID device associated to the transport singleton.
+
+If you want to try to re-use the same transport instance at the next action (when calling `open` again), you can use
+the transport instance `close` method: it will only enable a disconnect after some inactivity.
 
 #### open
 
-if path="" is not provided, the library will take the first device
+Connects to the first Ledger device connected via USB
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[TransportNodeHidSingleton](#transportnodehidsingleton)>** 
+Reusing the same TransportNodeHidSingleton instance until a disconnection happens.
+Pitfall: this implementation only handles 1 device connected via USB
+
+Legacy: `_descriptor` is needed to follow the Transport definition
+
+##### Parameters
+
+*   `_descriptor` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
+*   `_timeoutMs` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?**&#x20;
+*   `context` **TraceContext?**&#x20;
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[TransportNodeHidSingleton](#transportnodehidsingleton)>**&#x20;
+
+### onDisconnect
+
+Disconnect event received from the transport instance.
+
+It could be after a disconnection coming from the HID library (e.g. device unplugged) or from the transport instance itself (e.g. close).
+Clearing the singleton instance.
+Currently, only 1 device at a time is supported.

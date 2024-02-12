@@ -8,14 +8,16 @@ import { useTheme } from "styled-components/native";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import { OnboardingStep } from "@ledgerhq/live-common/hw/extractOnboardingState";
-import TrackScreen from "../../analytics/TrackScreen";
-import GenericErrorView from "../../components/GenericErrorView";
-import { useLocale } from "../../context/Locale";
-import WebRecoverPlayer from "../../components/WebRecoverPlayer";
-import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
-import { RootComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { NavigatorName, ScreenName } from "../../const";
+import TrackScreen from "~/analytics/TrackScreen";
+import GenericErrorView from "~/components/GenericErrorView";
+import { useLocale } from "~/context/Locale";
+import WebRecoverPlayer from "~/components/WebRecoverPlayer";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { NavigatorName, ScreenName } from "~/const";
 import { DeviceModelId } from "@ledgerhq/devices";
+import { counterValueCurrencySelector } from "~/reducers/settings";
+import { useSelector } from "react-redux";
 
 export type Props = RootComposite<
   StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.Recover>
@@ -32,6 +34,8 @@ export function RecoverPlayer({ navigation, route }: Props) {
   const remoteManifest = useRemoteLiveAppManifest(appId);
   const { state: remoteLiveAppState } = useRemoteLiveAppContext();
   const { locale } = useLocale();
+  const currencySettings = useSelector(counterValueCurrencySelector);
+  const currency = currencySettings.ticker;
   const manifest = localManifest || remoteManifest;
 
   const { onboardingState } = useOnboardingStatePolling({
@@ -80,7 +84,8 @@ export function RecoverPlayer({ navigation, route }: Props) {
         inputs={{
           theme,
           lang: locale,
-          deviceId: device?.deviceId || "",
+          currency,
+          deviceId: device?.deviceId,
           ...params,
         }}
       />

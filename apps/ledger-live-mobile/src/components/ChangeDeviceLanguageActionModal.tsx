@@ -4,7 +4,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Language } from "@ledgerhq/types-live";
 import DeviceActionModal from "./DeviceActionModal";
 import DeviceLanguageInstalled from "./DeviceLanguageInstalled";
-import { useInstallLanguageDeviceAction } from "../hooks/deviceActions";
+import { useInstallLanguageDeviceAction } from "~/hooks/deviceActions";
 
 type Props = {
   device: Device | null;

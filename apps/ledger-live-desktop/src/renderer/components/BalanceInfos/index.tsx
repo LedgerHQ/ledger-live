@@ -114,21 +114,17 @@ export default function BalanceInfos({ totalBalance, valueChange, isAvailable, u
   const { t } = useTranslation();
   const history = useHistory();
 
-  // PTX smart routing feature flag - buy sell live app flag
-  const ptxSmartRouting = useFeature("ptxSmartRouting");
   // Remove "SWAP" and "BUY" redundant buttons when portafolio exchange banner is available
   const portfolioExchangeBanner = useFeature("portfolioExchangeBanner");
   const onBuy = useCallback(() => {
     setTrackingSource("Page Portfolio");
     history.push({
       pathname: "/exchange",
-      state: ptxSmartRouting?.enabled
-        ? {
-            mode: "buy", // buy or sell
-          }
-        : undefined,
+      state: {
+        mode: "buy", // buy or sell
+      },
     });
-  }, [history, ptxSmartRouting]);
+  }, [history]);
   const onSwap = useCallback(() => {
     setTrackingSource("Page Portfolio");
     history.push({
@@ -154,7 +150,7 @@ export default function BalanceInfos({ totalBalance, valueChange, isAvailable, u
             <Button
               data-test-id="portfolio-swap-button"
               variant="color"
-              event="button_clicked"
+              event="button_clicked2"
               eventProperties={{
                 button: "swap",
                 page: "Page Portfolio",

@@ -12,11 +12,15 @@ on:
         required: true
       login:
         description: The GitHub username that triggered the workflow
-        required: true
+        required: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
   lint-commits:
@@ -29,6 +33,11 @@ jobs:
           fetch-depth: 0
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
+        with:
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - name: Install dependencies
         run: pnpm i --filter="ledger-live"
       - name: Lint commits
@@ -37,14 +46,14 @@ jobs:
           pnpm commitlint --from ${{ inputs.from && format('origin/{0}', inputs.from) || 'HEAD^1' }} 2>&1 | tee commitlint.out
       - uses: actions/upload-artifact@v3
         name: upload commitlint output
-        if: always()
+        if: ${{ !cancelled() }}
         with:
           name: commitlint
           path: ${{ github.workspace }}/commitlint.out
   report:
     runs-on: ubuntu-latest
     needs: [lint-commits]
-    if: always() && !cancelled()
+    if: ${{ !cancelled() }}
     steps:
       - name: download commitlint output
         uses: actions/download-artifact@v3

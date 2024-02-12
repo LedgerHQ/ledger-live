@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-transport-vault",
-  "version": "1.1.2",
+  "version": "1.2.3",
   "description": "Ledger Vault transport",
   "keywords": [
     "Ledger",
@@ -28,11 +28,8 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/errors": "workspace:^",
-    "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/hw-transport-http": "workspace:^",
-    "@ledgerhq/logs": "workspace:^",
-    "axios": "^0.26.1",
-    "ws": "^7.5.2"
+    "@ledgerhq/logs": "workspace:^"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
@@ -41,16 +38,17 @@
     "watch": "tsc --watch",
     "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx",
     "lint:fix": "pnpm lint --fix",
-    "test": "jest"
+    "test": "jest",
+    "unimported": "unimported"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.0",
-    "@types/node": "^18.15.3",
-    "documentation": "13.2.5",
-    "jest": "^28.1.1",
+    "@types/jest": "^29.5.10",
+    "@types/node": "^20.8.10",
+    "documentation": "14.0.2",
+    "jest": "^29.7.0",
     "rimraf": "^4.4.1",
     "source-map-support": "^0.5.21",
-    "ts-jest": "^28.0.5",
+    "ts-jest": "^29.1.1",
     "ts-node": "^10.4.0"
   }
 }

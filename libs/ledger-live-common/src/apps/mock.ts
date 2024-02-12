@@ -3,7 +3,7 @@ import { ManagerAppDepInstallRequired, ManagerAppDepUninstallRequired } from "@l
 import { getDependencies, getDependents, whitelistDependencies } from "./polyfill";
 import { findCryptoCurrency } from "../currencies";
 import type { ListAppsResult, AppOp, Exec, InstalledItem } from "./types";
-import { getBTCValues } from "../countervalues/mock";
+import { getBTCValues } from "@ledgerhq/live-countervalues/mock";
 import { DeviceModelId, identifyTargetId } from "@ledgerhq/devices";
 import { App, DeviceInfo, FinalFirmware } from "@ledgerhq/types-live";
 
@@ -162,7 +162,6 @@ export function mockListAppsResult(
         delete: "",
         delete_key: "",
         dateModified: "",
-        compatibleWallets: [],
         currencyId: currency ? currency.id : null,
         indexOfMarketCap,
         isDevTools: false,
@@ -187,6 +186,7 @@ export function mockListAppsResult(
     installed,
     installedAvailable: true,
     customImageBlocks: 0,
+    installedLanguagePack: undefined,
   };
 }
 
@@ -198,7 +198,7 @@ export const mockExecWithInstalledContext = (installedInitial: InstalledItem[]):
     }
 
     if (getDependents(app.name).some(dep => installed.some(i => i.name === dep))) {
-      return throwError(new ManagerAppDepUninstallRequired(""));
+      return throwError(() => new ManagerAppDepUninstallRequired(""));
     }
 
     if (appOp.type === "install") {
@@ -207,7 +207,7 @@ export const mockExecWithInstalledContext = (installedInitial: InstalledItem[]):
         const depInstalled = installed.find(i => i.name === dep);
 
         if (!depInstalled || !depInstalled.updated) {
-          return throwError(new ManagerAppDepInstallRequired(""));
+          return throwError(() => new ManagerAppDepInstallRequired(""));
         }
       });
     }

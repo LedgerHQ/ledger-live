@@ -1,3 +1,4 @@
+import { isConfirmedOperation } from "@ledgerhq/coin-framework/operation";
 import { RecipientRequired } from "@ledgerhq/errors";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -7,10 +8,10 @@ import {
 } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { isNftTransaction } from "@ledgerhq/live-common/nft/index";
-import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import { isNftTransaction } from "@ledgerhq/live-nft";
+import { getStuckAccountAndOperation } from "@ledgerhq/live-common/operation";
+import { Operation } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
-import { getStuckAccountAndOperation } from "@ledgerhq/coin-framework/operation";
 import invariant from "invariant";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
@@ -18,22 +19,24 @@ import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useSelector } from "react-redux";
-import { track, TrackScreen } from "../../analytics";
-import Alert from "../../components/Alert";
-import Button from "../../components/Button";
-import CancelButton from "../../components/CancelButton";
-import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
-import KeyboardView from "../../components/KeyboardView";
-import LText from "../../components/LText";
-import NavigationScrollView from "../../components/NavigationScrollView";
-import RetryButton from "../../components/RetryButton";
-import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
-import { ScreenName } from "../../const";
-import { accountScreenSelector } from "../../reducers/accounts";
+import { TrackScreen, track } from "~/analytics";
+import Alert from "~/components/Alert";
+import Button from "~/components/Button";
+import CancelButton from "~/components/CancelButton";
+import { EditOperationCard } from "~/components/EditOperationCard";
+import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
+import KeyboardView from "~/components/KeyboardView";
+import LText from "~/components/LText";
+import NavigationScrollView from "~/components/NavigationScrollView";
+import RetryButton from "~/components/RetryButton";
+import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { ScreenName } from "~/const";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { currencySettingsForAccountSelector } from "~/reducers/settings";
+import type { State } from "~/reducers/types";
 import DomainServiceRecipientRow from "./DomainServiceRecipientRow";
 import RecipientRow from "./RecipientRow";
-import { EditOperationCard } from "../../components/EditOperationCard";
 
 const withoutHiddenError = (error: Error): Error | null =>
   error instanceof RecipientRequired ? null : error;
@@ -50,12 +53,14 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
   invariant(account, "account is missing");
 
   const mainAccount = getMainAccount(account, parentAccount);
-  const { enabled: isDomainResolutionEnabled, params } =
-    useFeature<{
-      supportedCurrencyIds: CryptoCurrencyId[];
-    }>("domainInputResolution") || {};
+  const currencySettings = useSelector((s: State) =>
+    currencySettingsForAccountSelector(s, {
+      account: mainAccount,
+    }),
+  );
+  const { enabled: isDomainResolutionEnabled, params } = useFeature("domainInputResolution") ?? {};
   const isCurrencySupported =
-    params?.supportedCurrencyIds?.includes(mainAccount.currency.id as CryptoCurrencyId) || false;
+    params?.supportedCurrencyIds?.includes(mainAccount.currency.id) || false;
 
   const { transaction, setTransaction, status, bridgePending, bridgeError } = useBridgeTransaction(
     () => ({
@@ -63,32 +68,44 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
       parentAccount,
     }),
   );
+
+  invariant(transaction, `couldn't get transaction from ${mainAccount.currency.name} bridge`);
+
   const [value, setValue] = useState<string>("");
 
   const shouldSkipAmount = useMemo(() => {
     if (transaction?.family === "evm") {
       return transaction.mode === "erc721";
-    } else if (transaction?.family === "ethereum") {
-      return transaction.mode === "erc721.transfer";
     }
 
     return false;
   }, [transaction]);
+
   const isNftSend = isNftTransaction(transaction);
 
   // handle changes from camera qr code
   const initialTransaction = useRef(transaction);
   const navigationTransaction = route.params?.transaction;
+
   useEffect(() => {
     if (initialTransaction.current !== navigationTransaction && navigationTransaction) {
       setTransaction(navigationTransaction);
+      setValue(navigationTransaction.recipient);
     }
   }, [setTransaction, navigationTransaction]);
+
+  useEffect(() => {
+    if (!value && transaction.recipient) {
+      setValue(transaction.recipient);
+    }
+  }, [transaction.recipient, value]);
+
   const onRecipientFieldFocus = useCallback(() => {
     track("SendRecipientFieldFocused");
   }, []);
+
   const onPressScan = useCallback(() => {
-    if (!transaction) return null;
+    setValue("");
     return navigation.navigate(ScreenName.ScanRecipient, {
       ...route.params,
       accountId: route.params?.accountId,
@@ -96,8 +113,9 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
       transaction,
     });
   }, [navigation, transaction, route.params]);
+
   const onChangeText = useCallback(
-    recipient => {
+    (recipient: string) => {
       if (!account) return;
       const bridge = getAccountBridge(account, parentAccount);
       setTransaction(
@@ -110,25 +128,24 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
     [account, parentAccount, setTransaction, transaction, setValue],
   );
 
-  // FIXME: PROP IS NOT USED. REMOVE ?
-  // const clear = useCallback(() => onChangeText(""), [onChangeText]);
   const [bridgeErr, setBridgeErr] = useState(bridgeError);
   useEffect(() => setBridgeErr(bridgeError), [bridgeError]);
-  invariant(account, "account is needed ");
+
   const currency = getAccountCurrency(account);
+
   const onBridgeErrorCancel = useCallback(() => {
     setBridgeErr(null);
     const parent = navigation.getParent();
     if (parent) parent.goBack();
   }, [navigation]);
+
   const onBridgeErrorRetry = useCallback(() => {
     setBridgeErr(null);
-    if (!transaction) return;
     const bridge = getAccountBridge(account, parentAccount);
     setTransaction(bridge.updateTransaction(transaction, {}));
   }, [setTransaction, account, parentAccount, transaction]);
+
   const onPressContinue = useCallback(async () => {
-    if (!account || !transaction) return null;
     // ERC721 transactions are always sending 1 NFT, so amount step is unecessary
     if (shouldSkipAmount) {
       return navigation.navigate(ScreenName.SendSummary, {
@@ -168,6 +185,11 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
 
   const error = withoutHiddenError(status.errors.recipient);
   const warning = status.warnings.recipient;
+  const isSomeIncomingTxPending = account.operations?.some(
+    (op: Operation) =>
+      (op.type === "IN" || op.type === "NFT_IN") &&
+      !isConfirmedOperation(op, mainAccount, currencySettings.confirmationsNb),
+  );
 
   const stuckAccountAndOperation = getStuckAccountAndOperation(account, mainAccount);
 
@@ -257,6 +279,11 @@ export default function SendSelectRecipient({ navigation, route }: Props) {
                 error={error}
               />
             )}
+            {isSomeIncomingTxPending ? (
+              <View style={styles.pendingIncomingTxWarning}>
+                <Alert type="warning">{t("send.pendingTxWarning")}</Alert>
+              </View>
+            ) : null}
           </NavigationScrollView>
           <View style={styles.container}>
             {(!isDomainResolutionEnabled || !isCurrencySupported) &&
@@ -312,6 +339,10 @@ const styles = StyleSheet.create({
   },
   infoBox: {
     marginBottom: 24,
+  },
+  pendingIncomingTxWarning: {
+    marginBottom: 8,
+    marginTop: 8,
   },
   separatorContainer: {
     marginTop: 32,

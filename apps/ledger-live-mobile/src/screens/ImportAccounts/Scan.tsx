@@ -2,15 +2,15 @@ import React, { PureComponent } from "react";
 import { StyleSheet, View } from "react-native";
 import { parseFramesReducer, framesToData, areFramesComplete, progressOfFrames } from "qrloop";
 import { Result as ImportAccountsResult, decode } from "@ledgerhq/live-common/cross";
-import { TrackScreen } from "../../analytics";
-import { ScreenName } from "../../const";
-import Scanner from "../../components/Scanner";
-import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
-import getWindowDimensions from "../../logic/getWindowDimensions";
+import { TrackScreen } from "~/analytics";
+import { ScreenName } from "~/const";
+import Scanner from "~/components/Scanner";
+import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
+import getWindowDimensions from "~/logic/getWindowDimensions";
 import { withTheme } from "../../colors";
 import type { Theme } from "../../colors";
-import type { ImportAccountsNavigatorParamList } from "../../components/RootNavigator/types/ImportAccountsNavigator";
-import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import type { ImportAccountsNavigatorParamList } from "~/components/RootNavigator/types/ImportAccountsNavigator";
+import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 
 type NavigationProps = StackNavigatorProps<
   ImportAccountsNavigatorParamList,
@@ -96,7 +96,7 @@ class Scan extends PureComponent<
     const { progress, error } = this.state;
     return (
       <View style={styles.root}>
-        <TrackScreen category="ImportAccounts" name="Scan" />
+        <TrackScreen category="Account Import Sync" />
         <Scanner onResult={this.onBarCodeRead} progress={progress} liveQrCode />
         <GenericErrorBottomModal error={error} onClose={this.onCloseError} />
       </View>

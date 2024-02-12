@@ -3,13 +3,13 @@ import { TouchableOpacity, StyleSheet, View } from "react-native";
 import { BigNumber } from "bignumber.js";
 import { useSelector } from "react-redux";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
-import { useCalculate } from "@ledgerhq/live-common/countervalues/react";
+import { useCalculate } from "@ledgerhq/live-countervalues-react";
 import { useTheme } from "@react-navigation/native";
 import { Trans } from "react-i18next";
-import { counterValueCurrencySelector } from "../reducers/settings";
+import { counterValueCurrencySelector } from "~/reducers/settings";
 import CurrencyUnitValue, { CurrencyUnitValueProps } from "./CurrencyUnitValue";
 import LText from "./LText";
-import InfoIcon from "../icons/Info";
+import InfoIcon from "~/icons/Info";
 import QueuedDrawer from "./QueuedDrawer";
 import Circle from "./Circle";
 import FormatDate from "./DateFormat/FormatDate";
@@ -25,7 +25,7 @@ type Props = {
   placeholderProps?: unknown;
   // as we can't render View inside Text, provide ability to pass
   // wrapper component from outside
-  Wrapper?: React.ComponentType;
+  Wrapper?: React.ComponentType<{ children?: React.ReactNode }>;
   subMagnitude?: number;
   tooltipDateLabel?: React.ReactNode;
   tooltipCompareDateLabel?: React.ReactNode;

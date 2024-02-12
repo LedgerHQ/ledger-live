@@ -28,6 +28,9 @@ export abstract class PickingStrategy {
     this.excludedUTXOs = excludedUTXOs;
   }
 
+  /**
+   * returns the unspent UTXOs to use as input for the transaction
+   */
   abstract selectUnspentUtxosToUse(
     xpub: Xpub,
     outputs: OutputInfo[],

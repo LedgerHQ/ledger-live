@@ -4,7 +4,7 @@ export type SPLToken = [
   string, // symbol
   string, // address
   number, // decimals
-  boolean? // enableCountervalues
+  boolean?, // enableCountervalues
 ];
 
 import tokens from "./spl.json";

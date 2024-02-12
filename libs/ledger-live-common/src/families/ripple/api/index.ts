@@ -1,7 +1,7 @@
 import network from "@ledgerhq/live-network/network";
 import { BigNumber } from "bignumber.js";
 import { getCryptoCurrencyById, parseCurrencyUnit } from "../../../currencies";
-import { getEnv } from "../../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import { retry } from "../../../promise";
 import { NEW_ACCOUNT_ERROR_MESSAGE } from "../bridge/js";
 

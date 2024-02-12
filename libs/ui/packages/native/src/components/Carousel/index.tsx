@@ -1,5 +1,12 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { Platform, ScrollView, ViewProps, NativeScrollEvent } from "react-native";
+import {
+  Platform,
+  ScrollView,
+  ViewProps,
+  NativeScrollEvent,
+  NativeTouchEvent,
+  NativeSyntheticEvent,
+} from "react-native";
 import styled from "styled-components/native";
 import { Flex, SlideIndicator } from "../index";
 import type { Props as FlexboxProps } from "../Layout/Flex";
@@ -117,7 +124,7 @@ function Carousel({
   const itemWidth = !dimensions.current ? 0 : dimensions.current.contentWidth / slidesLength;
 
   const scrollToIndex = useCallback(
-    (index, animated = true) => {
+    (index: number, animated = true) => {
       if (scrollRef.current && dimensions.current) {
         scrollRef.current.scrollTo({
           x: itemWidth * index,
@@ -147,7 +154,7 @@ function Carousel({
   };
 
   const onTap = useCallback(
-    (event) => {
+    (event: NativeSyntheticEvent<NativeTouchEvent>) => {
       const tapPositionXPercent = event.nativeEvent.locationX / itemWidth;
       if (tapPositionXPercent > 0.25) {
         if (slidesLength > activeIndexState + 1) {
@@ -214,7 +221,7 @@ function Carousel({
     setTapTime(new Date().getTime());
   }, []);
   const onEndTap = useCallback(
-    (event) => {
+    (event: NativeSyntheticEvent<NativeTouchEvent>) => {
       const currentTime: number = new Date().getTime();
       if (!maxDurationOfTap || currentTime - tapTime <= maxDurationOfTap) {
         onTap(event);

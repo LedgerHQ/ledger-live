@@ -207,8 +207,9 @@ const ImageGrayscalePreview: React.FC<Props> = props => {
     contrastIndex,
   ]);
 
-  const handleSourceLoaded = useCallback(
+  const handleSourceLoaded: React.ReactEventHandler<HTMLImageElement> = useCallback(
     e => {
+      // @ts-expect-error why is src not on target even though we give it HTMLImageElement
       setSourceUriLoaded(e.target.src);
     },
     [setSourceUriLoaded],

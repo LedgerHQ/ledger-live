@@ -1,7 +1,7 @@
 import { getCurrentSolanaPreloadData } from "./js-preload-data";
 import { stakeActions } from "./logic";
 import { isAccountEmpty } from "../../account";
-import { LEDGER_VALIDATOR_ADDRESS } from "./utils";
+import { LEDGER_VALIDATOR } from "./utils";
 import type { SolanaAccount } from "./types";
 import { ValidatorsAppValidator } from "./validator-app";
 
@@ -24,7 +24,7 @@ export function getAccountBannerState(account: SolanaAccount): AccountBannerStat
     validators: [],
   };
   const ledgerValidator = validators.find(
-    validator => validator.voteAccount === LEDGER_VALIDATOR_ADDRESS,
+    validator => validator.voteAccount === LEDGER_VALIDATOR.voteAccount,
   );
 
   // If Ledger doesn't provide validator, we don't display banner

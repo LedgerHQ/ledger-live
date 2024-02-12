@@ -11,9 +11,9 @@ module.exports = {
       config: "e2e/jest.config.js",
     },
     jest: {
-      setupTimeout: 1000000,
+      setupTimeout: 500000,
     },
-    retries: 1,
+    retries: 0,
   },
   logger: {
     level: process.env.DEBUG_DETOX ? "trace" : "info",
@@ -25,6 +25,9 @@ module.exports = {
       exposeGlobals: false,
     },
     launchApp: "auto",
+    cleanup: {
+      shutdownDevice: process.env.CI ? true : false,
+    },
   },
   apps: {
     "ios.debug": {
@@ -68,7 +71,7 @@ module.exports = {
     emulator: {
       type: "android.emulator",
       device: {
-        avdName: "Pixel_5_API_31",
+        avdName: "Pixel_6_Pro_API_32",
       },
       gpuMode: "swiftshader_indirect",
       headless: process.env.CI ? true : false,

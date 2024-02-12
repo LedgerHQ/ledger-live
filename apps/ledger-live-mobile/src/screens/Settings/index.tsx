@@ -3,21 +3,21 @@ import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { View, TouchableWithoutFeedback } from "react-native";
 import { IconsLegacy } from "@ledgerhq/native-ui";
-import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
+import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import Config from "react-native-config";
-import { ScreenName } from "../../const";
-import { hasNoAccountsSelector } from "../../reducers/accounts";
-import SettingsCard from "../../components/SettingsCard";
+import { ScreenName } from "~/const";
+import { hasNoAccountsSelector } from "~/reducers/accounts";
+import SettingsCard from "~/components/SettingsCard";
 import PoweredByLedger from "./PoweredByLedger";
-import { TrackScreen } from "../../analytics";
+import { TrackScreen } from "~/analytics";
 import timer from "../../timer";
 import SettingsNavigationScrollView from "./SettingsNavigationScrollView";
-import useRatings from "../../logic/ratings";
-import useNpsRatings from "../../logic/npsRatings";
-import { SettingsNavigatorStackParamList } from "../../components/RootNavigator/types/SettingsNavigator";
-import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { openDebugMenu } from "../../actions/appstate";
-import { isDebugMenuVisible } from "../../reducers/appstate";
+import useRatings from "~/logic/ratings";
+import useNpsRatings from "~/logic/npsRatings";
+import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { openDebugMenu } from "~/actions/appstate";
+import { isDebugMenuVisible } from "~/reducers/appstate";
 
 export default function Settings({
   navigation,
@@ -25,6 +25,7 @@ export default function Settings({
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const hasNoAccounts = useSelector(hasNoAccountsSelector);
+  const npsRatingsPrompt = useFeature("npsRatingsPrompt");
   const { handleSettingsRateApp: handleLegacyRatingsRateApp } = useRatings();
   const { handleSettingsRateApp: handleNpsRatingsRateApp } = useNpsRatings();
 
@@ -76,7 +77,7 @@ export default function Settings({
         onClick={() => navigation.navigate(ScreenName.AboutSettings)}
         arrowRight
       />
-      <FeatureToggle feature="brazePushNotifications">
+      <FeatureToggle featureId="brazePushNotifications">
         <SettingsCard
           title={t("settings.notifications.title")}
           desc={t("settings.notifications.desc")}
@@ -99,22 +100,23 @@ export default function Settings({
         onClick={() => navigation.navigate(ScreenName.ExperimentalSettings)}
         arrowRight
       />
-      <FeatureToggle feature="ratingsPrompt">
-        <SettingsCard
-          title={t("settings.about.liveReview.title")}
-          desc={t("settings.about.liveReview.desc")}
-          Icon={IconsLegacy.StarMedium}
-          onClick={handleLegacyRatingsRateApp}
-        />
-      </FeatureToggle>
-      <FeatureToggle feature="npsRatingsPrompt">
+      {npsRatingsPrompt?.enabled ? (
         <SettingsCard
           title={t("settings.about.liveReview.title")}
           desc={t("settings.about.liveReview.desc")}
           Icon={IconsLegacy.StarMedium}
           onClick={handleNpsRatingsRateApp}
         />
-      </FeatureToggle>
+      ) : (
+        <FeatureToggle featureId="ratingsPrompt">
+          <SettingsCard
+            title={t("settings.about.liveReview.title")}
+            desc={t("settings.about.liveReview.desc")}
+            Icon={IconsLegacy.StarMedium}
+            onClick={handleLegacyRatingsRateApp}
+          />
+        </FeatureToggle>
+      )}
       <SettingsCard
         title={t("settings.developer.title")}
         desc={t("settings.developer.desc")}
@@ -123,8 +125,8 @@ export default function Settings({
       />
       {debugVisible || __DEV__ ? (
         <SettingsCard
-          title="Debug"
-          desc="Use at your own risk – Developer tools"
+          title={t("settings.debug.title")}
+          desc={t("settings.debug.desc")}
           Icon={IconsLegacy.ToolsMedium}
           onClick={() => navigation.navigate(ScreenName.DebugSettings)}
           arrowRight

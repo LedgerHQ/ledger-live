@@ -1,20 +1,13 @@
 import React, { useCallback } from "react";
-import { StyleSheet } from "react-native";
+import { ScrollView, StyleProp, StyleSheet, ViewStyle } from "react-native";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { RenderTransitionProps } from "@ledgerhq/native-ui/components/Navigation/FlowStepper/index";
-import {
-  Flex,
-  FlowStepper,
-  IconsLegacy,
-  Transitions,
-  SlideIndicator,
-  ScrollListContainer,
-} from "@ledgerhq/native-ui";
+import { Flex, FlowStepper, IconsLegacy, Transitions, SlideIndicator } from "@ledgerhq/native-ui";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
 import { DeviceModelId } from "@ledgerhq/devices";
-import Button from "../../../../../components/PreventDoubleClickButton";
+import Button from "~/components/PreventDoubleClickButton";
 
 const transitionDuration = 500;
 
@@ -107,6 +100,7 @@ export type Step = {
   (props: StepProp): JSX.Element;
   id: string;
   Next: (props: StepProp) => JSX.Element;
+  contentContainerStyle?: StyleProp<ViewStyle>;
 };
 
 export function BaseStepperView({
@@ -150,12 +144,16 @@ export function BaseStepperView({
       >
         {steps.map((Children, i) => (
           <Scene key={Children.id + i}>
-            <ScrollListContainer contentContainerStyle={{ padding: 16 }}>
+            <ScrollView
+              contentContainerStyle={
+                Children?.contentContainerStyle ? Children.contentContainerStyle : { padding: 16 }
+              }
+            >
               <Flex mb={30} mx={8} justifyContent="center" alignItems="flex-start">
                 {metadata[i]?.illustration}
               </Flex>
               <Children onNext={nextPage} deviceModelId={deviceModelId} {...params} />
-            </ScrollListContainer>
+            </ScrollView>
             {Children.Next ? (
               <Flex p={6}>
                 <Children.Next onNext={nextPage} deviceModelId={deviceModelId} />

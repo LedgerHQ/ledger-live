@@ -1,5 +1,5 @@
 import React, { PureComponent } from "react";
-import { withTranslation, Trans } from "react-i18next";
+import { withTranslation, useTranslation } from "react-i18next";
 import {
   TouchableWithoutFeedback,
   View,
@@ -14,21 +14,21 @@ import { compose } from "redux";
 import { Flex, Logos } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import type { TFunction } from "react-i18next";
-import type { Privacy } from "../../reducers/types";
+import type { Privacy } from "~/reducers/types";
 import { withReboot } from "../Reboot";
 import type { RebootFunc } from "../Reboot";
-import LText from "../../components/LText";
-import TranslatedError from "../../components/TranslatedError";
-import { BaseButton } from "../../components/Button";
-import PoweredByLedger from "../../screens/Settings/PoweredByLedger";
-import QueuedDrawer from "../../components/QueuedDrawer";
-import HardResetModal from "../../components/HardResetModal";
-import Touchable from "../../components/Touchable";
-import PasswordInput from "../../components/PasswordInput";
-import KeyboardView from "../../components/KeyboardView";
+import LText from "~/components/LText";
+import TranslatedError from "~/components/TranslatedError";
+import { BaseButton } from "~/components/Button";
+import PoweredByLedger from "~/screens/Settings/PoweredByLedger";
+import QueuedDrawer from "~/components/QueuedDrawer";
+import HardResetModal from "~/components/HardResetModal";
+import Touchable from "~/components/Touchable";
+import PasswordInput from "~/components/PasswordInput";
+import KeyboardView from "~/components/KeyboardView";
 import FailBiometrics from "./FailBiometrics";
-import KeyboardBackgroundDismiss from "../../components/KeyboardBackgroundDismiss";
-import { VIBRATION_PATTERN_ERROR } from "../../constants";
+import KeyboardBackgroundDismiss from "~/components/KeyboardBackgroundDismiss";
+import { VIBRATION_PATTERN_ERROR } from "~/utils/constants";
 import { withTheme } from "../../colors";
 import type { Theme } from "../../colors";
 
@@ -53,14 +53,17 @@ type Props = OwnProps & {
 
 function NormalHeader() {
   const { colors } = useTheme();
+
+  const { t } = useTranslation();
+
   return (
     <Flex alignItems="center" justifyContent="center">
       <Logos.LedgerLiveAltRegular color={colors.neutral.c100} width={50} height={50} />
       <LText semiBold secondary style={styles.title}>
-        <Trans i18nKey="auth.unlock.title" />
+        {t("auth.unlock.title")}
       </LText>
       <LText style={styles.description} color="grey">
-        <Trans i18nKey="auth.unlock.desc" />
+        {t("auth.unlock.desc")}
       </LText>
     </Flex>
   );
@@ -75,31 +78,35 @@ type FormFooterProps = {
   colors: Theme["colors"];
 };
 
-class FormFooter extends PureComponent<FormFooterProps> {
-  render() {
-    const { inputFocused, passwordEmpty, onSubmit, passwordError, onPress } = this.props;
-    return inputFocused ? (
-      <TouchableWithoutFeedback>
-        <BaseButton
-          event="SubmitUnlock"
-          title={<Trans i18nKey="auth.unlock.login" />}
-          type="primary"
-          onPress={onSubmit}
-          containerStyle={styles.buttonContainer}
-          disabled={!!passwordError || passwordEmpty}
-          isFocused
-          useTouchable
-        />
-      </TouchableWithoutFeedback>
-    ) : (
-      <Touchable event="ForgetPassword" onPress={onPress}>
-        <LText semiBold style={styles.link} color="live">
-          <Trans i18nKey="auth.unlock.forgotPassword" />
-        </LText>
-      </Touchable>
-    );
-  }
-}
+const FormFooter = ({
+  inputFocused,
+  passwordEmpty,
+  onSubmit,
+  passwordError,
+  onPress,
+}: FormFooterProps) => {
+  const { t } = useTranslation();
+  return inputFocused ? (
+    <TouchableWithoutFeedback>
+      <BaseButton
+        event="SubmitUnlock"
+        title={t("auth.unlock.login")}
+        type="primary"
+        onPress={onSubmit}
+        containerStyle={styles.buttonContainer}
+        disabled={!!passwordError || passwordEmpty}
+        isFocused
+        useTouchable
+      />
+    </TouchableWithoutFeedback>
+  ) : (
+    <Touchable event="ForgetPassword" onPress={onPress}>
+      <LText semiBold style={styles.link} color="live">
+        {t("auth.unlock.forgotPassword")}
+      </LText>
+    </Touchable>
+  );
+};
 
 class AuthScreen extends PureComponent<Props, State> {
   state = {

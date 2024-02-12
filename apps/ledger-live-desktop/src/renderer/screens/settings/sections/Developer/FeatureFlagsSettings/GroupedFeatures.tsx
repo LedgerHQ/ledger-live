@@ -1,5 +1,5 @@
 import { groupedFeatures } from "@ledgerhq/live-common/featureFlags/groupedFeatures";
-import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/provider";
+import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/FeatureFlagsContext";
 import { Flex, Link, Tag, Box, Switch, Text } from "@ledgerhq/react-ui";
 import { FeatureId } from "@ledgerhq/types-live";
 import React, { useCallback, useMemo, useState } from "react";
@@ -68,7 +68,7 @@ const GroupedFeatures = ({ groupName, focused, setFocusedGroupName }: Props) => 
             <Text mr={1}>{groupName}</Text>
             {someOverridden ? (
               <Tag active mx={1} type="opacity" size="small">
-                overridden locally
+                {t("settings.developer.overridden.overriddenLocally")}
               </Tag>
             ) : null}
             <Flex flexDirection="row" alignItems={"center"}>

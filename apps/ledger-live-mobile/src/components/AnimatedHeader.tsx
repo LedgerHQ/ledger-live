@@ -7,6 +7,7 @@ import {
   StyleProp,
   ViewStyle,
   TextStyle,
+  LayoutChangeEvent,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useIsFocused } from "@react-navigation/native";
@@ -20,9 +21,9 @@ import Animated, {
 } from "react-native-reanimated";
 import * as Animatable from "react-native-animatable";
 import { space } from "@ledgerhq/native-ui/styles/theme";
-import Styles from "../navigation/styles";
+import Styles from "~/navigation/styles";
 import LText from "./LText";
-import { width } from "../helpers/normalizeSize";
+import { width } from "~/helpers/normalizeSize";
 import { NavigationHeaderBackButton } from "./NavigationHeaderBackButton";
 import { NavigationHeaderCloseButton } from "./NavigationHeaderCloseButton";
 
@@ -56,7 +57,7 @@ export default function AnimatedHeaderView({
   const { colors, space } = useTheme();
   const [textHeight, setTextHeight] = useState(250);
   const [isReady, setReady] = useState(false);
-  const onLayoutText = useCallback(event => {
+  const onLayoutText = useCallback((event: LayoutChangeEvent) => {
     setTextHeight(event.nativeEvent.layout.height);
     setReady(true);
   }, []);
@@ -126,7 +127,7 @@ export default function AnimatedHeaderView({
             contentContainerStyle={[styles.scrollArea]}
             testID={isFocused ? "ScrollView" : undefined}
             data={[children]}
-            renderItem={({ item, index }) => <View key={index}>{item}</View>}
+            renderItem={({ item, index }) => <View key={index}>{item as React.ReactNode}</View>}
           />
         </AnimatedView>
       )}

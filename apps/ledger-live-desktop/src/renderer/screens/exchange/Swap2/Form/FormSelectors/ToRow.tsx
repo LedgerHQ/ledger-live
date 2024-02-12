@@ -5,13 +5,11 @@ import InputCurrency from "~/renderer/components/InputCurrency";
 import SelectCurrency from "~/renderer/components/SelectCurrency";
 import { amountInputContainerProps, renderCurrencyValue, selectRowStylesMap } from "./utils";
 import { FormLabel } from "./FormLabel";
-import { toSelector } from "~/renderer/actions/swap";
-import { useSelector } from "react-redux";
 import {
+  useFetchCurrencyTo,
   usePickDefaultCurrency,
   useSelectableCurrencies,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import {
   SwapSelectorStateType,
   SwapTransactionType,
@@ -60,23 +58,24 @@ function ToRow({
   loadingRates,
   updateSelectedRate,
 }: Props) {
-  const fromCurrencyId = fromAccount ? getAccountCurrency(fromAccount).id : undefined;
+  const { data: currenciesTo, isLoading: currenciesToIsLoading } = useFetchCurrencyTo({
+    fromCurrencyAccount: fromAccount,
+  });
   const swapDefaultTrack = useGetSwapTrackingProperties();
-  const allCurrencies = useSelector(toSelector)(fromCurrencyId);
   const currencies = useSelectableCurrencies({
-    allCurrencies,
+    allCurrencies: currenciesTo ?? [],
   });
   const unit = toCurrency?.units[0];
   usePickDefaultCurrency(currencies, toCurrency, setToCurrency);
   const trackEditCurrency = () =>
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "Edit target currency",
       page: "Page Swap Form",
       ...swapDefaultTrack,
     });
   const setCurrencyAndTrack = (currency: CryptoOrTokenCurrency | null | undefined) => {
     updateSelectedRate();
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "New target currency",
       page: "Page Swap Form",
       ...swapDefaultTrack,
@@ -99,7 +98,7 @@ function ToRow({
             onChange={setCurrencyAndTrack}
             value={toCurrency}
             stylesMap={selectRowStylesMap}
-            isDisabled={!fromAccount}
+            isDisabled={!fromAccount || currenciesToIsLoading}
             renderValueOverride={renderCurrencyValue}
             onMenuOpen={trackEditCurrency}
           />

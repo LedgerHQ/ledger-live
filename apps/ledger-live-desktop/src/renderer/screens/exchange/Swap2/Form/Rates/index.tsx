@@ -7,11 +7,12 @@ import Text from "~/renderer/components/Text";
 import NoQuoteSwapRate from "./NoQuoteSwapRate";
 import SwapRate from "./SwapRate";
 import Countdown from "./Countdown";
-import EmptyState from "./EmptyState";
+import LoadingState from "./LoadingState";
 import Filter from "./Filter";
 import {
   SwapSelectorStateType,
   RatesReducerState,
+  ExchangeRate,
 } from "@ledgerhq/live-common/exchange/swap/types";
 import { rateSelector, updateRateAction } from "~/renderer/actions/swap";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -68,8 +69,8 @@ export default function ProviderRate({
       ? rates.map(({ toAmount }) => formatCurrencyUnit(getFeesUnit(toCurrency), toAmount))
       : [];
   const updateRate = useCallback(
-    rate => {
-      const value = rate ?? rate.provider;
+    (rate: ExchangeRate) => {
+      const value = rate.rate ?? rate.provider;
       track("partner_clicked", {
         page: "Page Swap Form",
         ...swapDefaultTrack,
@@ -113,7 +114,7 @@ export default function ProviderRate({
 
   const updateFilter = useCallback(
     (newFilter: string[]) => {
-      track("button_clicked", {
+      track("button_clicked2", {
         button: "Filter selected",
         page: "Page Swap Form",
         ...swapDefaultTrack,
@@ -246,7 +247,7 @@ export default function ProviderRate({
           );
         })}
       </Box>
-      {!filteredRates.length && <EmptyState />}
+      {!filteredRates.length && <LoadingState />}
     </Box>
   );
 }

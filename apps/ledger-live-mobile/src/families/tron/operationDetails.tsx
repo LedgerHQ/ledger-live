@@ -8,16 +8,17 @@ import {
   formatVotes,
   useTronSuperRepresentatives,
 } from "@ledgerhq/live-common/families/tron/react";
-import type { Vote } from "@ledgerhq/live-common/families/tron/types";
+import type { TronOperation, Vote } from "@ledgerhq/live-common/families/tron/types";
 import type { Account, Operation } from "@ledgerhq/types-live";
 import type { Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { useSelector } from "react-redux";
-import LText from "../../components/LText";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import CounterValue from "../../components/CounterValue";
-import DelegationInfo from "../../components/DelegationInfo";
-import Section from "../../screens/OperationDetails/Section";
-import { discreetModeSelector, localeSelector } from "../../reducers/settings";
+import LText from "~/components/LText";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import CounterValue from "~/components/CounterValue";
+import DelegationInfo from "~/components/DelegationInfo";
+import Section from "~/screens/OperationDetails/Section";
+import { discreetModeSelector } from "~/reducers/settings";
+import { useSettings } from "~/hooks";
 
 const helpURL = "https://support.ledger.com/hc/en-us/articles/360013062139";
 
@@ -34,38 +35,59 @@ function getURLWhatIsThis(
 }
 
 type OperationDetailsExtraProps = {
-  extra: {
-    votes: Array<Vote>;
-    frozenAmount: BigNumber;
-    unfreezeAmount: BigNumber;
-  };
+  operation: TronOperation;
   type: string;
   account: Account;
 };
 
-function OperationDetailsExtra({ extra, type, account }: OperationDetailsExtraProps) {
+function OperationDetailsExtra({ operation, type, account }: OperationDetailsExtraProps) {
   const { t } = useTranslation();
   const discreet = useSelector(discreetModeSelector);
-  const locale = useSelector(localeSelector);
+  const { locale } = useSettings();
+  const {
+    extra: { votes, frozenAmount, unfreezeAmount, unDelegatedAmount, receiverAddress },
+  } = operation;
 
   switch (type) {
     case "VOTE": {
-      const { votes } = extra;
       if (!votes || !votes.length) return null;
       return <OperationDetailsVotes votes={votes} account={account} />;
     }
 
     case "FREEZE": {
-      const value = formatCurrencyUnit(account.unit, new BigNumber(extra.frozenAmount), {
+      const value = formatCurrencyUnit(account.unit, frozenAmount || new BigNumber(0), {
         showCode: true,
         discreet,
-        locale,
+        locale: locale,
       });
       return <Section title={t("operationDetails.extra.frozenAmount")} value={value} />;
     }
 
     case "UNFREEZE": {
-      const value = formatCurrencyUnit(account.unit, new BigNumber(extra.unfreezeAmount), {
+      const value = formatCurrencyUnit(account.unit, unfreezeAmount || new BigNumber(0), {
+        showCode: true,
+        discreet,
+        locale: locale,
+      });
+      return <Section title={t("operationDetails.extra.unfreezeAmount")} value={value} />;
+    }
+
+    case "UNDELEGATE_RESOURCE": {
+      const value = formatCurrencyUnit(account.unit, unDelegatedAmount || new BigNumber(0), {
+        showCode: true,
+        discreet,
+        locale,
+      });
+      return (
+        <>
+          <Section title={t("operationDetails.extra.undelegatedAmount")} value={value} />
+          <Section title={t("operationDetails.extra.undelegatedFrom")} value={receiverAddress} />
+        </>
+      );
+    }
+
+    case "LEGACY_UNFREEZE": {
+      const value = formatCurrencyUnit(account.unit, unfreezeAmount || new BigNumber(0), {
         showCode: true,
         discreet,
         locale,
@@ -86,10 +108,10 @@ type OperationsDetailsVotesProps = {
 function OperationDetailsVotes({ votes, account }: OperationsDetailsVotesProps) {
   const { t } = useTranslation();
   const sp = useTronSuperRepresentatives();
-  const locale = useSelector(localeSelector);
+  const { locale } = useSettings();
   const formattedVotes = formatVotes(votes, sp);
   const redirectAddressCreator = useCallback(
-    address => () => {
+    (address: string) => () => {
       const url = getAddressExplorer(getDefaultExplorerView(account.currency), address);
       if (url) Linking.openURL(url);
     },
@@ -149,21 +171,20 @@ const AmountCell = ({
   ) : null;
 
 const FreezeAmountCell = ({ operation, currency, unit }: Props) => {
-  const amount = new BigNumber(operation.extra ? operation.extra.frozenAmount : 0);
+  const amount = (operation as TronOperation).extra.frozenAmount || new BigNumber(0);
   return <AmountCell amount={amount} operation={operation} currency={currency} unit={unit} />;
 };
 
 const UnfreezeAmountCell = ({ operation, currency, unit }: Props) => {
-  const amount = new BigNumber(operation.extra ? operation.extra.unfreezeAmount : 0);
+  const amount = (operation as TronOperation).extra.unfreezeAmount || new BigNumber(0);
   return <AmountCell amount={amount} operation={operation} currency={currency} unit={unit} />;
 };
 
 const VoteAmountCell = ({ operation }: Props) => {
-  const amount =
-    operation.extra && operation.extra.votes
-      ? (operation.extra.votes as Vote[]).reduce((sum, { voteCount }) => sum + voteCount, 0)
-      : 0;
-  return amount > 0 ? (
+  const amount = (operation as TronOperation).extra.votes
+    ? (operation as TronOperation).extra.votes?.reduce((sum, { voteCount }) => sum + voteCount, 0)
+    : 0;
+  return amount && amount > 0 ? (
     <LText numberOfLines={1} semiBold style={[styles.topText, styles.voteText]}>
       <Trans
         i18nKey={"operationDetails.extra.votes"}

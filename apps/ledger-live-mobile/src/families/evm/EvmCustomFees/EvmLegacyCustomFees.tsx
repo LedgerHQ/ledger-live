@@ -1,6 +1,5 @@
 import { getGasLimit } from "@ledgerhq/coin-evm/logic";
 import { Transaction } from "@ledgerhq/coin-evm/types/index";
-import { inferDynamicRange } from "@ledgerhq/live-common/range";
 import { Account } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import { BigNumber } from "bignumber.js";
@@ -8,18 +7,17 @@ import invariant from "invariant";
 import React, { memo, useMemo, useState } from "react";
 import { Trans } from "react-i18next";
 import { StyleSheet, View } from "react-native";
-import Button from "../../../components/Button";
-import SectionSeparator from "../../../components/SectionSeparator";
+import Button from "~/components/Button";
+import SectionSeparator from "~/components/SectionSeparator";
 import EditFeeUnitEvm from "../EditFeeUnitEvm";
 import EvmGasLimit from "../SendRowGasLimit";
+import { inferGasPriceRange } from "./utils";
 
 type Props = {
   account: Account;
   transaction: Transaction;
   onValidateFees: (transaction: Partial<Transaction>) => () => void;
 };
-
-const fallbackGasPrice = inferDynamicRange(new BigNumber(10e9));
 
 const EvmLegacyCustomFees = ({ account, onValidateFees, transaction }: Props) => {
   const { colors } = useTheme();
@@ -29,16 +27,15 @@ const EvmLegacyCustomFees = ({ account, onValidateFees, transaction }: Props) =>
 
   const { gasOptions } = transaction;
 
+  // TODO: Make GasOptions optional in the future.
+  // Use fallback mechanisms to infer min & max values based on the FeeData returned by a node
+  // This will make this "advanced" mode compatible with EVM chains without gasTracker
   invariant(gasOptions, "GasPriceField: 'transaction.gasOptions' should be defined");
 
-  const networkGasPrice = useMemo(() => {
-    return inferDynamicRange(gasOptions.medium.gasPrice!, {
-      minValue: gasOptions.slow.gasPrice!,
-      maxValue: gasOptions.fast.gasPrice!,
-    });
+  const range = useMemo(() => {
+    return inferGasPriceRange(gasOptions);
   }, [gasOptions]);
 
-  const range = networkGasPrice || fallbackGasPrice;
   const [gasPrice, setGasPrice] = useState(transaction.gasPrice || range.initial);
   const [gasLimit, setGasLimit] = useState(getGasLimit(transaction));
 

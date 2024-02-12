@@ -1,16 +1,19 @@
 import {
   bitcoinFamillyAccountGetXPubLogic,
   broadcastTransactionLogic,
+  completeExchangeLogic,
   receiveOnAccountLogic,
   signMessageLogic,
   WalletAPIContext,
 } from "./logic";
 
-import { AppManifest } from "./types";
+import { AppManifest, WalletAPITransaction } from "./types";
 import {
   createFixtureAccount,
   createFixtureCryptoCurrency,
+  createFixtureTokenAccount,
 } from "../mock/fixtures/cryptoCurrencies";
+import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
 import { OperationType, SignedOperation, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 
@@ -19,6 +22,7 @@ import * as signMessage from "../hw/signMessage/index";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { TrackingAPI } from "./tracking";
 import { cryptocurrenciesById } from "@ledgerhq/cryptoassets/currencies";
+import { setSupportedCurrencies } from "../currencies";
 
 describe("receiveOnAccountLogic", () => {
   // Given
@@ -48,7 +52,7 @@ describe("receiveOnAccountLogic", () => {
 
   describe("when nominal case", () => {
     // Given
-    const accountId = "ethereumjs:2:ethereum:0x012:";
+    const accountId = "js:2:ethereum:0x012:";
     const walletAccountId = "806ea21d-f5f0-425a-add3-39d4b78209f1";
     const expectedResult = "Function called";
 
@@ -115,6 +119,300 @@ describe("receiveOnAccountLogic", () => {
   });
 });
 
+function createWalletAPIEtherumTransaction(): WalletAPITransaction {
+  return {
+    family: "ethereum",
+    amount: BigNumber(1000000000),
+    recipient: "0x0123456",
+    nonce: 8,
+    data: Buffer.from("Some data..."),
+    gasPrice: BigNumber(700000),
+    gasLimit: BigNumber(1200000),
+  };
+}
+
+function createWalletAPIBitcoinTransaction(): WalletAPITransaction {
+  return {
+    family: "bitcoin",
+    amount: BigNumber(1000000000),
+    recipient: "0x0123456",
+    feePerByte: BigNumber(900000),
+  };
+}
+
+describe("completeExchangeLogic", () => {
+  // Given
+  const mockWalletAPICompleteExchangeRequested = jest.fn();
+  const context = createContextContainingAccountId({
+    tracking: {
+      completeExchangeRequested: mockWalletAPICompleteExchangeRequested,
+    },
+    accountsParams: [{ id: "11" }, { id: "12" }],
+  });
+
+  const uiNavigation = jest.fn();
+  const getAccountIdFromWalletAccountIdSpy = jest.spyOn(
+    converters,
+    "getAccountIdFromWalletAccountId",
+  );
+
+  beforeAll(() => {
+    setSupportedCurrencies(["bitcoin", "ethereum"]);
+  });
+  afterAll(() => {
+    setSupportedCurrencies([]);
+  });
+
+  beforeEach(() => {
+    mockWalletAPICompleteExchangeRequested.mockClear();
+    uiNavigation.mockClear();
+    getAccountIdFromWalletAccountIdSpy.mockClear();
+  });
+
+  describe("when nominal case", () => {
+    // Given
+    const expectedResult = "Function called";
+
+    beforeEach(() => uiNavigation.mockResolvedValueOnce(expectedResult));
+
+    it("calls uiNavigation callback (token)", async () => {
+      // Given
+      const fromAccountId = "js:2:ethereum:0x16:+ethereum%2Ferc20%2Fusd_tether__erc20_";
+      const toAccountId = "js:2:ethereum:0x042:";
+      const fromAccount = createFixtureTokenAccount("16");
+      const fromParentAccount = createFixtureAccount("16");
+      context.accounts = [...context.accounts, fromAccount, fromParentAccount];
+      const transaction = createWalletAPIEtherumTransaction();
+      const completeExchangeRequest = {
+        provider: "provider",
+        fromAccountId: "806ea21d-f5f0-425a-add3-39d4b78209f1",
+        toAccountId: "806ea21d-f5f0-425a-add3-39d4b78209f2",
+        transaction,
+        binaryPayload: "binaryPayload",
+        signature: "signature",
+        feesStrategy: "medium",
+        exchangeType: 8,
+      };
+
+      const expectedTransaction: EvmTransaction = {
+        family: "evm",
+        amount: new BigNumber("1000000000"),
+        subAccountId: fromAccountId,
+        recipient: "0x0123456",
+        nonce: 8,
+        data: Buffer.from("Some data..."),
+        type: 0,
+        gasPrice: new BigNumber("700000"),
+        maxFeePerGas: undefined,
+        maxPriorityFeePerGas: undefined,
+        gasLimit: new BigNumber("1200000"),
+        customGasLimit: new BigNumber("1200000"),
+        feesStrategy: "medium",
+        mode: "send",
+        useAllAmount: false,
+        chainId: 1,
+      };
+
+      getAccountIdFromWalletAccountIdSpy
+        .mockReturnValueOnce(fromAccountId)
+        .mockReturnValueOnce(toAccountId);
+
+      // When
+      const result = await completeExchangeLogic(context, completeExchangeRequest, uiNavigation);
+
+      // Then
+      expect(uiNavigation).toBeCalledTimes(1);
+      expect(uiNavigation.mock.calls[0][0]).toEqual({
+        provider: "provider",
+        exchange: {
+          fromAccount,
+          fromParentAccount,
+          toAccount: undefined,
+          toParentAccount: undefined,
+        },
+        transaction: expectedTransaction,
+        binaryPayload: "binaryPayload",
+        signature: "signature",
+        feesStrategy: "medium",
+        exchangeType: 8,
+        swapId: undefined,
+        rate: undefined,
+      });
+      expect(result).toEqual(expectedResult);
+    });
+
+    it("calls uiNavigation callback (coin)", async () => {
+      // Given
+      const fromAccountId = "js:2:ethereum:0x017:";
+      const toAccountId = "js:2:ethereum:0x042:";
+      const fromAccount = createFixtureAccount("17");
+      context.accounts = [...context.accounts, fromAccount];
+      const transaction = createWalletAPIEtherumTransaction();
+      const completeExchangeRequest = {
+        provider: "provider",
+        fromAccountId: "806ea21d-f5f0-425a-add3-39d4b78209f1",
+        toAccountId: "806ea21d-f5f0-425a-add3-39d4b78209f2",
+        transaction,
+        binaryPayload: "binaryPayload",
+        signature: "signature",
+        feesStrategy: "medium",
+        exchangeType: 8,
+      };
+
+      const expectedTransaction: EvmTransaction = {
+        family: "evm",
+        amount: new BigNumber("1000000000"),
+        recipient: "0x0123456",
+        nonce: 8,
+        data: Buffer.from("Some data..."),
+        gasPrice: new BigNumber("700000"),
+        gasLimit: new BigNumber("1200000"),
+        customGasLimit: new BigNumber("1200000"),
+        feesStrategy: "medium",
+        mode: "send",
+        useAllAmount: false,
+        chainId: 1,
+        subAccountId: undefined,
+        type: 0,
+        maxFeePerGas: undefined,
+        maxPriorityFeePerGas: undefined,
+      };
+
+      getAccountIdFromWalletAccountIdSpy
+        .mockReturnValueOnce(fromAccountId)
+        .mockReturnValueOnce(toAccountId);
+
+      // When
+      const result = await completeExchangeLogic(context, completeExchangeRequest, uiNavigation);
+
+      // Then
+      expect(uiNavigation).toBeCalledTimes(1);
+      expect(uiNavigation.mock.calls[0][0]).toEqual({
+        provider: "provider",
+        exchange: {
+          fromAccount,
+          fromParentAccount: undefined,
+          toAccount: undefined,
+          toParentAccount: undefined,
+        },
+        transaction: expectedTransaction,
+        binaryPayload: "binaryPayload",
+        signature: "signature",
+        feesStrategy: "medium",
+        exchangeType: 8,
+        swapId: undefined,
+        rate: undefined,
+      });
+      expect(result).toEqual(expectedResult);
+    });
+
+    it.each(["slow", "medium", "fast", "custom"])(
+      "calls uiNavigation with a transaction that has the %s feeStrategy",
+      async expectedFeeStrategy => {
+        // Given
+        const fromAccountId = "js:2:ethereum:0x017:";
+        const toAccountId = "js:2:ethereum:0x042:";
+        const fromAccount = createFixtureAccount("17");
+        context.accounts = [...context.accounts, fromAccount];
+        const transaction = createWalletAPIEtherumTransaction();
+        const completeExchangeRequest = {
+          provider: "provider",
+          fromAccountId: "806ea21d-f5f0-425a-add3-39d4b78209f1",
+          toAccountId: "806ea21d-f5f0-425a-add3-39d4b78209f2",
+          transaction,
+          binaryPayload: "binaryPayload",
+          signature: "signature",
+          feesStrategy: expectedFeeStrategy,
+          exchangeType: 8,
+          swapId: "1234",
+          rate: 1,
+        };
+
+        getAccountIdFromWalletAccountIdSpy
+          .mockReturnValueOnce(fromAccountId)
+          .mockReturnValueOnce(toAccountId);
+
+        // When
+        await completeExchangeLogic(context, completeExchangeRequest, uiNavigation);
+
+        // Then
+        expect(uiNavigation).toBeCalledTimes(1);
+        expect(uiNavigation.mock.calls[0][0]["transaction"].feesStrategy).toEqual(
+          expectedFeeStrategy,
+        );
+      },
+    );
+
+    it("calls the tracking for success", async () => {
+      // Given
+      const fromAccountId = "js:2:ethereum:0x012:";
+      const toAccountId = "js:2:ethereum:0x042:";
+      const completeExchangeRequest = {
+        provider: "provider",
+        fromAccountId: "806ea21d-f5f0-425a-add3-39d4b78209f1",
+        toAccountId: "806ea21d-f5f0-425a-add3-39d4b78209f2",
+        transaction: createWalletAPIEtherumTransaction(),
+        binaryPayload: "binaryPayload",
+        signature: "signature",
+        feesStrategy: "medium",
+        exchangeType: 8,
+        swapId: "1234",
+        rate: 1,
+      };
+
+      getAccountIdFromWalletAccountIdSpy
+        .mockReturnValueOnce(fromAccountId)
+        .mockReturnValueOnce(toAccountId);
+
+      // When
+      await completeExchangeLogic(context, completeExchangeRequest, uiNavigation);
+
+      // Then
+      expect(mockWalletAPICompleteExchangeRequested).toBeCalledTimes(1);
+    });
+  });
+
+  describe("when Account is from a different family than the transaction", () => {
+    // Given
+    const expectedResult = "Function called";
+
+    beforeEach(() => uiNavigation.mockResolvedValueOnce(expectedResult));
+
+    it("returns an error", async () => {
+      // Given
+      const fromAccountId = "js:2:ethereum:0x012:";
+      const toAccountId = "js:2:ethereum:0x042:";
+      const fromAccount = createFixtureAccount("17");
+      context.accounts = [...context.accounts, fromAccount];
+      const transaction = createWalletAPIBitcoinTransaction();
+      const completeExchangeRequest = {
+        provider: "provider",
+        fromAccountId: "806ea21d-f5f0-425a-add3-39d4b78209f1",
+        toAccountId: "806ea21d-f5f0-425a-add3-39d4b78209f2",
+        transaction,
+        binaryPayload: "binaryPayload",
+        signature: "signature",
+        feesStrategy: "medium",
+        exchangeType: 8,
+        swapId: "1234",
+        rate: 1,
+      };
+
+      getAccountIdFromWalletAccountIdSpy
+        .mockReturnValueOnce(fromAccountId)
+        .mockReturnValueOnce(toAccountId);
+
+      // When
+      await expect(async () => {
+        await completeExchangeLogic(context, completeExchangeRequest, uiNavigation);
+      }).rejects.toThrowError("Account and transaction must be from the same family");
+
+      // Then
+      expect(uiNavigation).toBeCalledTimes(0);
+    });
+  });
+});
+
 describe("broadcastTransactionLogic", () => {
   // Given
   const mockWalletAPIBroadcastFail = jest.fn();
@@ -141,7 +439,7 @@ describe("broadcastTransactionLogic", () => {
 
   describe("when nominal case", () => {
     // Given
-    const accountId = "ethereumjs:2:ethereum:0x012:";
+    const accountId = "js:2:ethereum:0x012:";
     const walletAccountId = "806ea21d-f5f0-425a-add3-39d4b78209f1";
     const signedTransaction = createSignedOperation();
 
@@ -183,7 +481,7 @@ describe("broadcastTransactionLogic", () => {
 
   describe("when account cannot be found", () => {
     // Given
-    const nonFoundAccountId = "ethereumjs:2:ethereum:0x010:";
+    const nonFoundAccountId = "js:2:ethereum:0x010:";
     const walletAccountId = "806ea21d-f5f0-425a-add3-39d4b78209f1";
     const signedTransaction = createSignedOperation();
 
@@ -250,7 +548,7 @@ describe("signMessageLogic", () => {
 
   describe("when nominal case", () => {
     // Given
-    const accountId = "ethereumjs:2:ethereum:0x012:";
+    const accountId = "js:2:ethereum:0x012:";
     const messageToSign = "Message to sign";
     const spyPrepareMessageToSign = jest.spyOn(signMessage, "prepareMessageToSign");
 
@@ -289,7 +587,7 @@ describe("signMessageLogic", () => {
 
   describe("when account cannot be found", () => {
     // Given
-    const nonFoundAccountId = "ethereumjs:2:ethereum:0x010:";
+    const nonFoundAccountId = "js:2:ethereum:0x010:";
     const messageToSign = "Message to sign";
 
     const walletAccountId = "806ea21d-f5f0-425a-add3-39d4b78209f1";
@@ -356,7 +654,7 @@ describe("signMessageLogic", () => {
 
   describe("when inner call prepareMessageToSign raise an error", () => {
     // Given
-    const accountId = "ethereumjs:2:ethereum:0x012:";
+    const accountId = "js:2:ethereum:0x012:";
     const messageToSign = "Message to sign";
     const spyPrepareMessageToSign = jest.spyOn(signMessage, "prepareMessageToSign");
 
@@ -439,12 +737,12 @@ describe("bitcoinFamillyAccountGetXPubLogic", () => {
     },
     {
       desc: "account not found",
-      accountId: "ethereumjs:2:ethereum:0x010:",
+      accountId: "js:2:ethereum:0x010:",
       errorMessage: "account not found",
     },
     {
       desc: "account is not a bitcoin family account",
-      accountId: "ethereumjs:2:ethereum:0x012:",
+      accountId: "js:2:ethereum:0x012:",
       errorMessage: "not a bitcoin family account",
     },
   ])("returns an error when $desc", async ({ accountId, errorMessage }) => {
@@ -465,7 +763,7 @@ describe("bitcoinFamillyAccountGetXPubLogic", () => {
 
   it("should return the xpub", async () => {
     // Given
-    const accountId = "bitcoinjs:2:bitcoin:0x013:";
+    const accountId = "js:2:bitcoin:0x013:";
     getAccountIdFromWalletAccountIdSpy.mockReturnValueOnce(accountId);
 
     // When
@@ -543,7 +841,6 @@ function createSignedOperation(): SignedOperation {
   return {
     operation,
     signature: "Signature",
-    expirationDate: null,
   };
 }
 

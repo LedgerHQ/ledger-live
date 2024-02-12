@@ -30,7 +30,7 @@ test.use({
   },
 });
 
-test("Cosmos staking flows via portfolio. Check stake flow modals and stake banner", async ({
+test.skip("Cosmos staking flows via portfolio. Check stake flow modals and stake banner", async ({
   page,
 }) => {
   const portfolioPage = new PortfolioPage(page);

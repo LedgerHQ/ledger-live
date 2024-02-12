@@ -1,22 +1,20 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { ExchangeRate, SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
 import { useNavigation } from "@react-navigation/native";
 import {
+  useFetchCurrencyTo,
   usePickDefaultCurrency,
   useSelectableCurrencies,
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
-import { useSelector } from "react-redux";
 import { Selector } from "./Selector";
 import { CurrencyValue } from "./CurrencyValue";
-import { toSelector } from "../../../../actions/swap";
-import { ScreenName } from "../../../../const";
-import { useAnalytics } from "../../../../analytics";
+import { ScreenName } from "~/const";
+import { useAnalytics } from "~/analytics";
 import { sharedSwapTracking } from "../../utils";
-import { SwapNavigatorParamList } from "../../../../components/RootNavigator/types/SwapNavigator";
-import { StackNavigatorNavigation } from "../../../../components/RootNavigator/types/helpers";
+import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
+import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 
 interface Props {
   swapTx: SwapTransactionType;
@@ -29,12 +27,8 @@ export function To({ swapTx, provider, exchangeRate }: Props) {
   const { t } = useTranslation();
   const navigation = useNavigation<StackNavigatorNavigation<SwapNavigatorParamList>>();
 
-  const fromCurrencyId = swapTx.swap.from.account
-    ? getAccountCurrency(swapTx.swap.from.account).id
-    : undefined;
-
-  const allCurrencies = useSelector(toSelector)(fromCurrencyId);
-  const currencies = useSelectableCurrencies({ allCurrencies });
+  const allCurrencies = useFetchCurrencyTo({ fromCurrencyAccount: swapTx.swap.from.account });
+  const currencies = useSelectableCurrencies({ allCurrencies: allCurrencies.data ?? [] });
 
   usePickDefaultCurrency(currencies, swapTx.swap.to.currency, swapTx.setToCurrency);
 

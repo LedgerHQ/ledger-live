@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { StyleSheet, TouchableOpacity, Platform } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 import Animated, {
   Extrapolate,
   interpolate,
@@ -10,24 +10,25 @@ import Animated, {
 } from "react-native-reanimated";
 import { Trans } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Config from "react-native-config";
 import { useHasLocallyOverriddenFeatureFlags } from "@ledgerhq/live-common/featureFlags/useHasOverriddenFeatureFlags";
 import { Flex } from "@ledgerhq/native-ui";
 import { useSelector } from "react-redux";
 import { useExperimental } from "../../../experimental";
-import LText from "../../../components/LText";
-import ExperimentalIcon from "../../../icons/Experimental";
-import { rejections } from "../../../logic/debugReject";
-import { NavigatorName, ScreenName } from "../../../const";
-import { BaseNavigation } from "../../../components/RootNavigator/types/helpers";
-import { featureFlagsBannerVisibleSelector } from "../../../reducers/settings";
+import LText from "~/components/LText";
+import ExperimentalIcon from "~/icons/Experimental";
+import { rejections } from "~/logic/debugReject";
+import { NavigatorName, ScreenName } from "~/const";
+import { BaseNavigation } from "~/components/RootNavigator/types/helpers";
+import { featureFlagsBannerVisibleSelector } from "~/reducers/settings";
 
-export const HEIGHT = Platform.OS === "ios" ? 70 : 30;
+export const HEIGHT = 30;
 
 function ExperimentalHeader() {
   const navigation = useNavigation<BaseNavigation>();
   const { colors } = useTheme();
-
+  const { top } = useSafeAreaInsets();
   const isExperimental = useExperimental();
   const hasLocallyOverriddenFlags = useHasLocallyOverriddenFeatureFlags();
   const areFeatureFlagsOverridden =
@@ -65,7 +66,7 @@ function ExperimentalHeader() {
 
   // Animated style updating the height depending on the opening animation state
   const heightStyle = useAnimatedStyle(() => ({
-    height: interpolate(openState.value, [0, 1], [0, HEIGHT], Extrapolate.CLAMP),
+    height: interpolate(openState.value, [0, 1], [0, HEIGHT + top], Extrapolate.CLAMP),
   }));
 
   const onPressMock = useCallback(() => {
@@ -90,13 +91,13 @@ function ExperimentalHeader() {
     });
   }, [navigation]);
 
-  if (openState.value === 0) null;
-
   return (
     <Animated.View
       style={[
         styles.root,
         {
+          zIndex: !isExperimental && !areFeatureFlagsOverridden && !Config.MOCK ? 0 : 1,
+          marginBottom: isExperimental || Config.MOCK ? -top + 20 : 0,
           backgroundColor: colors.lightLiveBg,
         },
         heightStyle,
@@ -106,6 +107,7 @@ function ExperimentalHeader() {
         style={[
           styles.container,
           {
+            top,
             backgroundColor: colors.lightLiveBg,
           },
           opacityStyle,
@@ -147,11 +149,9 @@ const styles = StyleSheet.create({
     width: "100%",
     position: "relative",
     overflow: "visible",
-    zIndex: 1,
   },
   container: {
     position: "absolute",
-    bottom: Platform.OS === "ios" ? 0 : -30,
     left: 0,
     width: "100%",
     height: 38,

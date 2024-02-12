@@ -3,13 +3,13 @@ import { Linking } from "react-native";
 import { Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import Button from "../../../components/wrappedUi/Button";
-import { urls } from "../../../config/urls";
-import Link from "../../../components/wrappedUi/Link";
+import Button from "~/components/wrappedUi/Button";
+import { urls } from "~/utils/urls";
+import Link from "~/components/wrappedUi/Link";
 import ReceiveNFTsModal from "./ReceiveNFTsModal";
 import { useReceiveNFTsModal } from "./ReceiveNFTsModal.hook";
-import { track, TrackScreen } from "../../../analytics";
-import { readOnlyModeEnabledSelector } from "../../../reducers/settings";
+import { track, TrackScreen } from "~/analytics";
+import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 
 const NftGalleryEmptyState = () => {
   const { t } = useTranslation();
@@ -52,7 +52,9 @@ const NftGalleryEmptyState = () => {
         Icon={IconsLegacy.ExternalLinkMedium}
         iconPosition="right"
       >
-        {t("wallet.nftGallery.empty.supportLink")}
+        <Text fontWeight="semiBold" variant="paragraph">
+          {t("wallet.nftGallery.empty.supportLink")}
+        </Text>
       </Link>
 
       <ReceiveNFTsModal isOpened={isModalOpened} onClose={closeModal} />

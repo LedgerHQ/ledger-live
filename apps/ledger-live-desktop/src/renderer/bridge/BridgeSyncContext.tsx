@@ -9,15 +9,17 @@ import { recentlyKilledInternalProcess } from "~/renderer/reset";
 import { track } from "~/renderer/analytics/segment";
 import { prepareCurrency, hydrateCurrency } from "./cache";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
+import { Account } from "@ledgerhq/types-live";
 export const BridgeSyncProvider = ({ children }: { children: React.ReactNode }) => {
   const accounts = useSelector(accountsSelector);
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const dispatch = useDispatch();
   const updateAccount = useCallback(
-    (accountId, updater) => dispatch(updateAccountWithUpdater(accountId, updater)),
+    (accountId: string, updater: (a: Account) => Account) =>
+      dispatch(updateAccountWithUpdater(accountId, updater)),
     [dispatch],
   );
-  const recoverError = useCallback(error => {
+  const recoverError = useCallback((error: Error) => {
     const isInternalProcessError = error && error.message.includes("Internal process error");
     if (
       isInternalProcessError &&

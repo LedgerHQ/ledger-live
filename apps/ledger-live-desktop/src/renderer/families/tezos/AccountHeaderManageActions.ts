@@ -16,6 +16,7 @@ const AccountHeaderManageActions: TezosFamily["accountHeaderManageActions"] = ({
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const delegation = useDelegation(account);
+
   const onClick = useCallback(() => {
     if (isAccountEmpty(account)) {
       dispatch(
@@ -41,14 +42,16 @@ const AccountHeaderManageActions: TezosFamily["accountHeaderManageActions"] = ({
         };
     dispatch(openModal("MODAL_DELEGATE", options));
   }, [account, delegation, parentAccount, dispatch, source]);
+
   if (parentAccount) return null;
+
   return [
     {
       key: "Stake",
       onClick: onClick,
       icon: IconCoins,
       label: t("account.stake"),
-      event: "button_clicked",
+      event: "button_clicked2",
       eventProperties: {
         button: "stake",
       },

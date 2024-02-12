@@ -4,6 +4,7 @@ import BigNumber from "bignumber.js";
 import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { encodeSubOperationId } from "@ledgerhq/coin-framework/operation";
 import * as logic from "../../logic";
 import {
   makeAccount,
@@ -70,7 +71,7 @@ export const coinOperations = [
 export const tokenOperations = [
   makeOperation({
     hash: coinOperations[0].hash, // on purpose to make this token op a subOp of coinOp 1
-    accountId: "js:2:ethereum:0xkvn:+ethereum%2Ferc20%2Fusd__coin",
+    accountId: "js:2:ethereum:0xkvn:+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin",
     blockHash: "0x95dc138a02c1b0e3fd49305f785e8e27e88a885004af13a9b4c62ad94eed07dd",
     recipients: ["0xB0B"],
     senders: ["0x9b744C0451D73C0958d8aA566dAd33022E4Ee797"], // sbf.eth
@@ -83,14 +84,14 @@ export const tokenOperations = [
   }),
   makeOperation({
     hash: "0xTokenHashAga1n",
-    accountId: "js:2:ethereum:0xkvn:+ethereum%2Ferc20%2Fusd__coin",
+    accountId: "js:2:ethereum:0xkvn:+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin",
     contract: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
     date: new Date(Date.now() + 1),
     blockHeight: 1000,
   }),
   makeOperation({
     hash: "0xTokenHashAga1n",
-    accountId: "js:2:ethereum:0xkvn:+ethereum%2Ferc20%2Fusd__coin",
+    accountId: "js:2:ethereum:0xkvn:+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin",
     contract: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
     date: new Date(Date.now() + 2),
     blockHeight: 10000,
@@ -198,6 +199,48 @@ export const erc1155Operations = [
     },
     0,
   ),
+];
+
+export const internalOperations = [
+  makeOperation({
+    hash: coinOperations[0].hash, // on purpose to make this internal op a subOp of coinOp 1
+    accountId: coinOperations[0].accountId,
+    blockHash: coinOperations[0].blockHash,
+    recipients: ["0xB0B"],
+    senders: ["0x9b744C0451D73C0958d8aA566dAd33022E4Ee797"], // sbf.eth
+    value: new BigNumber(12),
+    fee: new BigNumber(0),
+    type: "NONE",
+    date: new Date(),
+    blockHeight: 10,
+    id: encodeSubOperationId(coinOperations[0].accountId, coinOperations[0].hash, "NONE", 0),
+  }),
+  makeOperation({
+    hash: coinOperations[1].hash, // on purpose to make this internal op a subOp of coinOp 1
+    accountId: coinOperations[1].accountId,
+    blockHash: coinOperations[1].blockHash,
+    recipients: ["0xB0B"],
+    senders: [coinOperations[1].recipients[0]],
+    value: new BigNumber(34),
+    fee: new BigNumber(0),
+    type: "OUT",
+    date: new Date(),
+    blockHeight: 11,
+    id: encodeSubOperationId(coinOperations[1].accountId, coinOperations[1].hash, "OUT", 0),
+  }),
+  makeOperation({
+    hash: coinOperations[2].hash, // on purpose to make this internal op a subOp of coinOp 1
+    accountId: coinOperations[2].accountId,
+    blockHash: coinOperations[2].blockHash,
+    recipients: [coinOperations[2].senders[0]],
+    senders: ["0x9b744C0451D73C0958d8aA566dAd33022E4Ee797"], // sbf.eth
+    value: new BigNumber(45),
+    fee: new BigNumber(0),
+    type: "IN",
+    date: new Date(),
+    blockHeight: 12,
+    id: encodeSubOperationId(coinOperations[2].accountId, coinOperations[2].hash, "IN", 0),
+  }),
 ];
 
 export const ignoredTokenOperation = makeOperation({

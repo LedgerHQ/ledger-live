@@ -14,7 +14,7 @@ import {
   getAddressExplorer,
 } from "@ledgerhq/live-common/explorers";
 import { SubAccount } from "@ledgerhq/types-live";
-import { Delegation } from "@ledgerhq/live-common/families/tezos/bakers";
+import { Delegation } from "@ledgerhq/live-common/families/tezos/types";
 import { openURL } from "~/renderer/linking";
 import CounterValue from "~/renderer/components/CounterValue";
 import FormattedVal from "~/renderer/components/FormattedVal";

@@ -8,18 +8,20 @@ import {
   HwTransportError,
   HwTransportErrorType,
   PeerRemovedPairing,
+  FirmwareNotRecognized,
 } from "@ledgerhq/errors";
 import { Flex, Button, IconsLegacy } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
-import { TrackScreen } from "../../analytics";
-import Touchable from "../../components/Touchable";
-import LText from "../../components/LText";
-import GenericErrorView from "../../components/GenericErrorView";
-import HelpLink from "../../components/HelpLink";
-import IconArrowRight from "../../icons/ArrowRight";
-import { urls } from "../../config/urls";
-import LocationDisabled from "../../components/RequiresLocation/LocationDisabled";
-import LocationPermissionDenied from "../../components/RequiresLocation/LocationPermissionDenied";
+import { TrackScreen } from "~/analytics";
+import Touchable from "~/components/Touchable";
+import LText from "~/components/LText";
+import GenericErrorView from "~/components/GenericErrorView";
+import HelpLink from "~/components/HelpLink";
+import IconArrowRight from "~/icons/ArrowRight";
+import { urls } from "~/utils/urls";
+import LocationDisabled from "~/components/RequiresLocation/LocationDisabled";
+import LocationPermissionDenied from "~/components/RequiresLocation/LocationPermissionDenied";
+import { trace } from "@ledgerhq/logs";
 
 type Props = {
   error: HwTransportError | DeprecatedError | Error;
@@ -38,7 +40,9 @@ const hitSlop = {
 function RenderError({ error, status, onBypassGenuine, onRetry }: Props) {
   const { colors } = useTheme();
   const isPairingStatus = status === "pairing";
+  const isFirmwareNotRecognized = error instanceof FirmwareNotRecognized;
   const isGenuineCheckStatus = status === "genuinecheck";
+  const isGenuineCheckSkippableError = isGenuineCheckStatus && !isFirmwareNotRecognized;
   const isBrokenPairing = error instanceof PeerRemovedPairing;
 
   const url = isBrokenPairing
@@ -74,9 +78,24 @@ function RenderError({ error, status, onBypassGenuine, onRetry }: Props) {
   const outerError =
     isPairingStatus && !isBrokenPairing
       ? new PairingFailed()
-      : isGenuineCheckStatus
+      : isGenuineCheckSkippableError
       ? new GenuineCheckFailed()
       : null;
+
+  trace({
+    type: "hw",
+    message: `Rendering error: ${error}`,
+    data: {
+      error,
+      outerError,
+      isPairingStatus,
+      isBrokenPairing,
+      isGenuineCheckSkippableError,
+      isGenuineCheckStatus,
+      isFirmwareNotRecognized,
+    },
+    context: { component: "PairDevices/RenderError" },
+  });
 
   return (
     <Flex flex={1}>
@@ -87,7 +106,6 @@ function RenderError({ error, status, onBypassGenuine, onRetry }: Props) {
           outerError={outerError}
           withDescription
           withHelp={!isBrokenPairing}
-          withIcon
           hasExportLogButton={!isBrokenPairing}
         />
         {isBrokenPairing ? (
@@ -108,18 +126,12 @@ function RenderError({ error, status, onBypassGenuine, onRetry }: Props) {
         ) : (
           <>
             <Flex mt={30} flexDirection={"row"}>
-              <Button
-                flex={1}
-                iconPosition="left"
-                Icon={IconsLegacy.ExternalLinkMedium}
-                type="main"
-                onPress={onRetry}
-              >
+              <Button flex={1} iconPosition="left" type="main" onPress={onRetry}>
                 <Trans i18nKey="common.retry" />
               </Button>
             </Flex>
 
-            {isGenuineCheckStatus ? (
+            {isGenuineCheckSkippableError ? (
               <Touchable
                 event="PairDevicesBypassGenuine"
                 onPress={onBypassGenuine}
@@ -137,7 +149,7 @@ function RenderError({ error, status, onBypassGenuine, onRetry }: Props) {
           </>
         )}
       </Flex>
-      {isGenuineCheckStatus ? (
+      {isGenuineCheckSkippableError ? (
         <Flex height={48}>
           <HelpLink style={styles.linkContainerGenuine} />
         </Flex>

@@ -2,7 +2,7 @@ import React, { useCallback, useState } from "react";
 import { TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
 import { Flex, Text, Button, Checkbox } from "@ledgerhq/native-ui";
-import { track, TrackScreen } from "../../../analytics";
+import { track, TrackScreen } from "~/analytics";
 
 type Props = {
   closeModal: () => void;
@@ -68,7 +68,12 @@ const ConfirmUnverified = ({ closeModal, setStep, setShouldNotRemindUserAgain }:
           </Button>
         </Flex>
         <Flex flex={1} ml={3}>
-          <Button onPress={onCloseModal} type="main" size="large">
+          <Button
+            onPress={onCloseModal}
+            type="main"
+            size="large"
+            testID="button-confirm-dont-verify"
+          >
             <Trans i18nKey="transfer.receive.securityDontVerify.yes" />
           </Button>
         </Flex>

@@ -6,12 +6,12 @@ import { Linking } from "react-native";
 import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-common/explorers";
 
 import type { ElrondAccount } from "@ledgerhq/live-common/families/elrond/types";
-import type { FieldType } from "../../../../../../../components/DelegationDrawer";
+import type { FieldType } from "~/components/DelegationDrawer";
 import type { DrawerPropsType, DrawerStatusType } from "../types";
 
-import DateFromNow from "../../../../../../../components/DateFromNow";
-import LText from "../../../../../../../components/LText";
-import Touchable from "../../../../../../../components/Touchable";
+import DateFromNow from "~/components/DateFromNow";
+import LText from "~/components/LText";
+import Touchable from "~/components/Touchable";
 
 import styles from "../styles";
 

@@ -41,7 +41,7 @@ export default {
             };
 
         if (typeof appjsondata.data.accounts === "string") {
-          return throwError(new Error("encrypted ledger live data is not supported"));
+          return throwError(() => new Error("encrypted ledger live data is not supported"));
         }
 
         const existingIds = appjsondata.data.accounts.map(a => a.data.id);

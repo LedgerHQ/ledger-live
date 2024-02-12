@@ -18,7 +18,6 @@ export type UpdaterContextType = {
   downloadProgress: number;
   version: string | undefined | null;
   quitAndInstall: () => void;
-  downloadUpdate: () => void;
   setStatus: (a: UpdateStatus) => void;
   error: Error | undefined | null;
 };
@@ -95,10 +94,6 @@ class Provider extends Component<UpdaterProviderProps, UpdaterProviderState> {
     });
 
   quitAndInstall = () => ipcRenderer.send("updater", "quit-and-install");
-  downloadUpdate = () => {
-    this.setStatus("downloading-update");
-    return ipcRenderer.send("updater", "download-update");
-  };
 
   render() {
     const { status, downloadProgress, error, version } = this.state;
@@ -109,17 +104,9 @@ class Provider extends Component<UpdaterProviderProps, UpdaterProviderState> {
       error,
       setStatus: this.setStatus,
       quitAndInstall: this.quitAndInstall,
-      downloadUpdate: this.downloadUpdate,
     };
     return <UpdaterContext.Provider value={value}>{this.props.children}</UpdaterContext.Provider>;
   }
 }
-export const withUpdaterContext = <Props,>(ComponentToDecorate: React.ComponentType<Props>) => {
-  const WrappedUpdater = (props: Props) => (
-    <UpdaterContext.Consumer>
-      {context => <ComponentToDecorate {...props} context={context} />}
-    </UpdaterContext.Consumer>
-  );
-  return WrappedUpdater;
-};
+
 export const UpdaterProvider = Provider;

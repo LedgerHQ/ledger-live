@@ -12,7 +12,7 @@ import { Account } from "@ledgerhq/types-live";
 import { InvalidAddress } from "@ledgerhq/errors";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";
-import { Transaction, TransactionStatus } from "@ledgerhq/live-common/lib/generated/types";
+import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import RecipientField from "./RecipientField";
 import { TFunction } from "i18next";
 
@@ -125,16 +125,15 @@ const baseMockTransaction: Transaction = {
   recipient: "",
   useAllAmount: false,
   mode: "send",
-  family: "ethereum",
-  gasPrice: null,
+  family: "evm",
+  gasPrice: undefined,
   maxFeePerGas: new BigNumber("28026227316"),
   maxPriorityFeePerGas: new BigNumber("1000000000"),
-  userGasLimit: null,
-  estimatedGasLimit: null,
-  feeCustomUnit: null,
-  networkInfo: {
-    family: "ethereum",
-  },
+  customGasLimit: undefined,
+  nonce: 0,
+  gasLimit: new BigNumber("21000"),
+  chainId: 1,
+  type: 2,
 };
 
 const baseMockStatus: TransactionStatus = {

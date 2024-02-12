@@ -1,51 +1,33 @@
-import React, { PureComponent } from "react";
-import { TFunction, withTranslation } from "react-i18next";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
-import { PasswordAddFlowParamList } from "../../../components/RootNavigator/types/PasswordAddFlowNavigator";
-import { ScreenName } from "../../../const";
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { PasswordAddFlowParamList } from "~/components/RootNavigator/types/PasswordAddFlowNavigator";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { ScreenName } from "~/const";
 import PasswordForm from "./PasswordForm";
 
-type NavigationProps = StackNavigatorProps<PasswordAddFlowParamList, ScreenName.PasswordAdd>;
+type Props = StackNavigatorProps<PasswordAddFlowParamList, ScreenName.PasswordAdd>;
 
-type Props = {
-  t: TFunction;
-} & NavigationProps;
-type State = {
-  password: string;
-};
+const PasswordAdd = ({ navigation }: Props) => {
+  const { t } = useTranslation();
+  const [password, setPassword] = useState("");
 
-class PasswordAdd extends PureComponent<Props, State> {
-  state = {
-    password: "",
-  };
-  onChange = (password: string) => {
-    this.setState({
-      password,
-    });
-  };
-  onSubmit = () => {
-    const { navigation } = this.props;
-    const { password } = this.state;
+  const onChange = (password: string) => setPassword(password);
+
+  const onSubmit = () => {
     if (!password) return;
     navigation.navigate(ScreenName.ConfirmPassword, {
       password,
     });
   };
 
-  render() {
-    const { t } = this.props;
-    const { password } = this.state;
-    return (
-      <PasswordForm
-        placeholder={t("auth.addPassword.placeholder")}
-        onChange={this.onChange}
-        onSubmit={this.onSubmit}
-        value={password}
-      />
-    );
-  }
-}
+  return (
+    <PasswordForm
+      placeholder={t("auth.addPassword.placeholder")}
+      onChange={onChange}
+      onSubmit={onSubmit}
+      value={password}
+    />
+  );
+};
 
-const m: React.ComponentType<NavigationProps> = withTranslation()(PasswordAdd);
-
-export default m;
+export default PasswordAdd;

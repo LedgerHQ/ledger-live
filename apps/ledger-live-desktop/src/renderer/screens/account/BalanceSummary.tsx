@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useSelector } from "react-redux";
-import { useBalanceHistoryWithCountervalue } from "~/renderer/actions/portfolio";
+import { useBalanceHistoryWithCountervalue, usePortfolio } from "~/renderer/actions/portfolio";
 import { BigNumber } from "bignumber.js";
 import { formatShort } from "@ledgerhq/live-common/currencies/index";
 import { Account, AccountLike } from "@ledgerhq/types-live";
@@ -11,9 +11,14 @@ import Chart from "~/renderer/components/Chart";
 import Box, { Card } from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import AccountBalanceSummaryHeader from "./AccountBalanceSummaryHeader";
-import FormattedDate from "~/renderer/components/FormattedDate";
 import { Data, Item } from "~/renderer/components/Chart/types";
 import { getLLDCoinFamily } from "~/renderer/families";
+
+import PlaceholderChart from "~/renderer/components/PlaceholderChart";
+import Alert from "~/renderer/components/Alert";
+import { useTranslation } from "react-i18next";
+import { tokensWithUnsupportedGraph } from "~/helpers/tokensWithUnsupportedGraph";
+import { hourFormat, dayFormat, useDateFormatter } from "~/renderer/hooks/useDateFormatter";
 
 type Props = {
   chartColor: string;
@@ -31,6 +36,8 @@ export default function AccountBalanceSummary({
   setCountervalueFirst,
   mainAccount,
 }: Props) {
+  const { t } = useTranslation();
+  const portfolio = usePortfolio();
   const [range] = useTimeRange();
   const counterValue = useSelector(counterValueCurrencySelector);
   const { history, countervalueAvailable, countervalueChange, cryptoChange } =
@@ -39,6 +46,8 @@ export default function AccountBalanceSummary({
       range,
     });
   const discreetMode = useSelector(discreetModeSelector);
+  const dayFormatter = useDateFormatter(dayFormat);
+  const hourFormatter = useDateFormatter(hourFormat);
   const renderTooltip = useCallback(
     (d: Item) => {
       const displayCountervalue = countervalueFirst && countervalueAvailable;
@@ -61,15 +70,22 @@ export default function AccountBalanceSummary({
             <FormattedVal fontSize={4} color="warmGrey" showCode {...data[1]} />
           ) : null}
           <Box ff="Inter|Regular" color="palette.text.shade60" fontSize={3} mt={2}>
-            <FormattedDate date={d.date} format="L" />
+            {dayFormatter(d.date)}
           </Box>
           <Box ff="Inter|Regular" color="palette.text.shade60" fontSize={3}>
-            <FormattedDate date={d.date} format="LT" />
+            {hourFormatter(d.date)}
           </Box>
         </>
       );
     },
-    [account, counterValue.units, countervalueAvailable, countervalueFirst],
+    [
+      account,
+      counterValue.units,
+      countervalueAvailable,
+      countervalueFirst,
+      dayFormatter,
+      hourFormatter,
+    ],
   );
   const renderTickYCryptoValue = useCallback(
     (val: number | string) => {
@@ -105,23 +121,37 @@ export default function AccountBalanceSummary({
       </Box>
 
       <Box px={5} ff="Inter" fontSize={4} color="palette.text.shade80" pt={5}>
-        <Chart
-          magnitude={chartMagnitude}
-          color={chartColor}
-          // TODO we need to make Date non optional in live-common
-          data={history as Data}
-          height={200}
-          tickXScale={range}
-          valueKey={displayCountervalue ? "countervalue" : "value"}
-          renderTickY={
-            discreetMode
-              ? () => ""
-              : displayCountervalue
-              ? renderTickYCounterValue
-              : renderTickYCryptoValue
-          }
-          renderTooltip={renderTooltip}
-        />
+        {account.type === "TokenAccount" &&
+        tokensWithUnsupportedGraph.includes(account.token.id) ? (
+          <>
+            <Alert type="secondary" noIcon={false}>
+              <span>{t("graph.noGraphWarning")}</span>
+            </Alert>
+            <PlaceholderChart
+              magnitude={counterValue.units[0].magnitude}
+              data={portfolio.balanceHistory}
+              tickXScale={range}
+            />
+          </>
+        ) : (
+          <Chart
+            magnitude={chartMagnitude}
+            color={chartColor}
+            // TODO we need to make Date non optional in live-common
+            data={history as Data}
+            height={200}
+            tickXScale={range}
+            valueKey={displayCountervalue ? "countervalue" : "value"}
+            renderTickY={
+              discreetMode
+                ? () => ""
+                : displayCountervalue
+                ? renderTickYCounterValue
+                : renderTickYCryptoValue
+            }
+            renderTooltip={renderTooltip}
+          />
+        )}
       </Box>
       {AccountBalanceSummaryFooter && (
         <AccountBalanceSummaryFooter

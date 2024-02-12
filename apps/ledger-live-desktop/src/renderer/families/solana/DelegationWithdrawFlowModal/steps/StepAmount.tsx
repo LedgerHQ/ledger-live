@@ -50,7 +50,12 @@ export function StepAmountFooter({
         <Button mr={1} secondary onClick={onClose}>
           {t("common.cancel")}
         </Button>
-        <Button disabled={!canNext} primary onClick={() => transitionTo("connectDevice")}>
+        <Button
+          disabled={!canNext}
+          isLoading={bridgePending}
+          primary
+          onClick={() => transitionTo("connectDevice")}
+        >
           {t("common.continue")}
         </Button>
       </Box>

@@ -5,8 +5,8 @@ import styled from "styled-components/native";
 import { ChevronRightMedium, GiftMedium } from "@ledgerhq/native-ui/assets/icons";
 import { Linking, TouchableOpacity } from "react-native";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { track } from "../../analytics";
-import { ScreenName } from "../../const";
+import { track } from "~/analytics";
+import { ScreenName } from "~/const";
 
 const ReferralContainer = styled(Flex)`
   background-color: ${p => p.theme.colors.opacityDefault.c05};
@@ -17,7 +17,7 @@ export function ReferralProgram() {
   const { t } = useTranslation();
   const referralProgramMobile = useFeature("referralProgramMobile");
   const accessReferralProgram = useCallback(() => {
-    const path = referralProgramMobile?.params.path;
+    const path = referralProgramMobile?.params?.path;
     if (referralProgramMobile?.enabled && path) {
       Linking.canOpenURL(path).then(() => Linking.openURL(path));
       track("banner_clicked", {

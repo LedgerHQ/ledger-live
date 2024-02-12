@@ -2,10 +2,15 @@ import React, { useCallback, useMemo, memo } from "react";
 import { useTheme } from "@react-navigation/native";
 import { StyleSheet, View, TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
+import { Stop } from "react-native-svg";
 import type { AppBranch, LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import LText from "../../../../components/LText";
+import LText from "~/components/LText";
 import { AppIcon } from "../AppIcon";
 import { Theme } from "../../../../colors";
+import { BackgroundGradientHorizontal } from "~/components/TabBar/BackgroundGradient";
+import { Cta } from "./Cta";
+import { useLocale } from "~/context/Locale";
+import { translateContent } from "@ledgerhq/live-common/wallet-api/logic";
 
 function getBranchStyle(branch: AppBranch, colors: Theme["colors"]) {
   switch (branch) {
@@ -48,68 +53,123 @@ type Props = {
   onPress: (_: LiveAppManifest) => void;
 };
 
+const gradients = {
+  dark: {
+    opacity: 1,
+    stops: [
+      <Stop key="0%" offset="0%" stopOpacity={1} stopColor={"#57536E"} />,
+      <Stop key="100%" offset="100%" stopOpacity={1} stopColor={"#37304B"} />,
+    ],
+  },
+  light: {
+    opacity: 1,
+    stops: [
+      <Stop key="0%" offset="0%" stopOpacity={1} stopColor={"#765EBB"} />,
+      <Stop key="100%" offset="100%" stopOpacity={1} stopColor={"#B5ABF0"} />,
+    ],
+  },
+};
+
 export const AppCard = memo(({ manifest, onPress }: Props) => {
-  const { colors } = useTheme();
+  const { colors, dark } = useTheme();
   const { t } = useTranslation();
   const isDisabled = manifest.branch === "soon";
+  const highlighted = !!manifest.highlight;
+
   const handlePress = useCallback(
     () => (!isDisabled && onPress ? onPress(manifest) : null),
     [onPress, manifest, isDisabled],
   );
+
   const { color, badgeColor, borderColor, backgroundColor } = useMemo(
     () => getBranchStyle(manifest.branch, colors),
     [colors, manifest.branch],
   );
 
   const url = useMemo(() => manifest.homepageUrl, [manifest.homepageUrl]);
+  const { locale } = useLocale();
+
+  const subtitle = useMemo(
+    () =>
+      manifest.content.subtitle ? translateContent(manifest.content.subtitle, locale) : undefined,
+    [locale, manifest.content.subtitle],
+  );
+  const cta = useMemo(
+    () => (manifest.content.cta ? translateContent(manifest.content.cta, locale) : undefined),
+    [locale, manifest.content.cta],
+  );
+
   return (
-    <TouchableOpacity disabled={isDisabled} onPress={handlePress}>
-      <View style={[styles.wrapper]}>
-        <AppIcon isDisabled={isDisabled} size={52} name={manifest.name} icon={manifest.icon} />
-        <View style={styles.content}>
-          <View style={styles.header}>
+    <TouchableOpacity disabled={isDisabled} onPress={handlePress} style={{ padding: 0 }}>
+      <View
+        style={[
+          styles.wrapper,
+          {
+            borderRadius: 10,
+            overflow: "hidden",
+            height: 72,
+            justifyContent: "center",
+          },
+        ]}
+      >
+        {highlighted && <BackgroundGradientHorizontal {...gradients[dark ? "dark" : "light"]} />}
+        <View
+          style={[
+            styles.wrapper,
+            {
+              paddingStart: 10,
+              paddingTop: 7,
+            },
+          ]}
+        >
+          <AppIcon isDisabled={isDisabled} size={52} name={manifest.name} icon={manifest.icon} />
+          <View style={styles.content}>
+            <View style={styles.header}>
+              <LText
+                variant="h3"
+                style={[
+                  styles.title,
+                  {
+                    color: highlighted ? "white" : color,
+                  },
+                ]}
+                numberOfLines={1}
+                semiBold
+              >
+                {manifest.name}
+              </LText>
+              {manifest.branch !== "stable" && (
+                <LText
+                  style={[
+                    styles.branch,
+                    {
+                      color: badgeColor,
+                      borderColor,
+                      backgroundColor,
+                    },
+                  ]}
+                  semiBold
+                >
+                  {t(`platform.catalog.branch.${manifest.branch}`, {
+                    defaultValue: manifest.branch,
+                  })}
+                </LText>
+              )}
+            </View>
             <LText
-              variant="h3"
               style={[
-                styles.title,
+                styles.description,
                 {
-                  color,
+                  color: highlighted ? "white" : colors.smoke,
                 },
               ]}
               numberOfLines={1}
-              semiBold
             >
-              {manifest.name}
+              {subtitle || url}
             </LText>
-            {manifest.branch !== "stable" && (
-              <LText
-                style={[
-                  styles.branch,
-                  {
-                    color: badgeColor,
-                    borderColor,
-                    backgroundColor,
-                  },
-                ]}
-                semiBold
-              >
-                {t(`platform.catalog.branch.${manifest.branch}`, {
-                  defaultValue: manifest.branch,
-                })}
-              </LText>
-            )}
           </View>
-          <LText
-            style={[
-              styles.description,
-              {
-                color: colors.smoke,
-              },
-            ]}
-            numberOfLines={1}
-          >
-            {url}
-          </LText>
+
+          {cta && <Cta text={cta} />}
         </View>
       </View>
     </TouchableOpacity>
@@ -121,7 +181,7 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 28,
+    marginBottom: 8,
   },
   content: {
     marginHorizontal: 16,

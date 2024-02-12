@@ -14,6 +14,8 @@ import Stride from "./Stride";
 import Umee from "./Umee";
 import BinanceBeaconChain from "./BinanceBeaconChain";
 import Coreum from "./Coreum";
+import Injective from "./Injective";
+import Dydx from "./Dydx";
 
 const cosmosChainParams: { [key: string]: CosmosBase } = {};
 export default function cryptoFactory(currencyId: string): CosmosBase {
@@ -35,6 +37,9 @@ export default function cryptoFactory(currencyId: string): CosmosBase {
         break;
       case "desmos":
         cosmosChainParams[currencyId] = new Desmos();
+        break;
+      case "dydx":
+        cosmosChainParams[currencyId] = new Dydx();
         break;
       case "nyx":
         cosmosChainParams[currencyId] = new Nyx();
@@ -65,6 +70,9 @@ export default function cryptoFactory(currencyId: string): CosmosBase {
         break;
       case "coreum":
         cosmosChainParams[currencyId] = new Coreum();
+        break;
+      case "injective":
+        cosmosChainParams[currencyId] = new Injective();
         break;
       default:
         throw new Error(`${currencyId} is not supported`);

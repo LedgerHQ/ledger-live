@@ -1,20 +1,20 @@
 import { TransportStatusError, WrongDeviceForAccount } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
-import { from, Observable } from "rxjs";
+import { firstValueFrom, from, Observable } from "rxjs";
 import secp256k1 from "secp256k1";
-import { getCurrencyExchangeConfig } from "../";
+import { convertToAppExchangePartnerKey, getCurrencyExchangeConfig } from "../";
 import { getAccountCurrency, getMainAccount } from "../../account";
 import { getAccountBridge } from "../../bridge";
 import { TransactionRefusedOnDevice } from "../../errors";
 import perFamily from "../../generated/exchange";
 import { withDevice } from "../../hw/deviceAccess";
 import { delay } from "../../promise";
-import ExchangeTransport, { getExchageErrorMessage } from "@ledgerhq/hw-app-exchange";
+import { ExchangeTypes, createExchange, getExchangeErrorMessage } from "@ledgerhq/hw-app-exchange";
 import type { CompleteExchangeInputSwap, CompleteExchangeRequestEvent } from "../platform/types";
 import { getProviderConfig } from "./";
 
 const withDevicePromise = (deviceId, fn) =>
-  withDevice(deviceId)(transport => from(fn(transport))).toPromise();
+  firstValueFrom(withDevice(deviceId)(transport => from(fn(transport))));
 
 const COMPLETE_EXCHANGE_LOG = "SWAP-CompleteExchange";
 
@@ -43,8 +43,7 @@ function convertTransportError(
   err: unknown,
 ): SwapCompleteExchangeError | unknown {
   if (err instanceof TransportStatusError) {
-    // @ts-expect-error TransportStatusError to be typed on ledgerjs
-    const errorMessage = getExchageErrorMessage(err.statusCode);
+    const errorMessage = getExchangeErrorMessage(err.statusCode, step);
     return new SwapCompleteExchangeError(step, errorMessage);
   }
   return err;
@@ -68,11 +67,16 @@ const completeExchange = (
     const confirmExchange = async () => {
       await withDevicePromise(deviceId, async transport => {
         const providerConfig = getProviderConfig(provider);
-        const exchange = new ExchangeTransport(transport, exchangeType, rateType);
+        if (providerConfig.type !== "CEX") {
+          throw new Error(`Unsupported provider type ${providerConfig.type}`);
+        }
+
+        const exchange = createExchange(transport, exchangeType, rateType, providerConfig.version);
         const refundAccount = getMainAccount(fromAccount, fromParentAccount);
         const payoutAccount = getMainAccount(toAccount, toParentAccount);
         const accountBridge = getAccountBridge(refundAccount);
         const mainPayoutCurrency = getAccountCurrency(payoutAccount);
+        const payoutCurrency = getAccountCurrency(toAccount);
         const refundCurrency = getAccountCurrency(fromAccount);
         const mainRefundCurrency = getAccountCurrency(refundAccount);
         if (mainPayoutCurrency.type !== "CryptoCurrency")
@@ -94,12 +98,8 @@ const completeExchange = (
         const errorsKeys = Object.keys(errors);
         if (errorsKeys.length > 0) throw errors[errorsKeys[0]]; // throw the first error
 
-        if (providerConfig.type !== "CEX") {
-          throw new Error(`Unsupported provider type ${providerConfig.type}`);
-        }
-
         currentStep = "SET_PARTNER_KEY";
-        await exchange.setPartnerKey(providerConfig.nameAndPubkey);
+        await exchange.setPartnerKey(convertToAppExchangePartnerKey(providerConfig));
         if (unsubscribed) return;
 
         currentStep = "CHECK_PARTNER";
@@ -110,7 +110,7 @@ const completeExchange = (
         await exchange.processTransaction(Buffer.from(binaryPayload, "hex"), estimatedFees);
         if (unsubscribed) return;
 
-        const goodSign = <Buffer>secp256k1.signatureExport(Buffer.from(signature, "hex"));
+        const goodSign = convertSignature(signature, exchangeType);
         currentStep = "CHECK_TRANSACTION_SIGNATURE";
 
         await exchange.checkTransactionSignature(goodSign);
@@ -126,7 +126,7 @@ const completeExchange = (
         if (unsubscribed) return;
 
         const { config: payoutAddressConfig, signature: payoutAddressConfigSignature } =
-          getCurrencyExchangeConfig(mainPayoutCurrency);
+          getCurrencyExchangeConfig(payoutCurrency);
 
         try {
           currentStep = "CHECK_PAYOUT_ADDRESS";
@@ -136,7 +136,6 @@ const completeExchange = (
             payoutAddressParameters.addressParameters,
           );
         } catch (e) {
-          // @ts-expect-error TransportStatusError to be typed on ledgerjs
           if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
             throw new WrongDeviceForAccount(undefined, {
               accountName: payoutAccount.name,
@@ -145,6 +144,11 @@ const completeExchange = (
 
           throw convertTransportError(currentStep, e);
         }
+
+        o.next({
+          type: "complete-exchange-requested",
+          estimatedFees: estimatedFees.toString(),
+        });
 
         // Swap specific checks to confirm the refund address is correct.
         if (unsubscribed) return;
@@ -170,7 +174,6 @@ const completeExchange = (
           );
           log(COMPLETE_EXCHANGE_LOG, "checkrefund address");
         } catch (e) {
-          // @ts-expect-error TransportStatusError to be typed on ledgerjs
           if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
             log(COMPLETE_EXCHANGE_LOG, "transport error");
             throw new WrongDeviceForAccount(undefined, {
@@ -181,11 +184,6 @@ const completeExchange = (
           throw convertTransportError(currentStep, e);
         }
 
-        o.next({
-          type: "complete-exchange-requested",
-          estimatedFees,
-        });
-
         if (unsubscribed) return;
         ignoreTransportError = true;
         currentStep = "SIGN_COIN_TRANSACTION";
@@ -193,7 +191,6 @@ const completeExchange = (
       }).catch(e => {
         if (ignoreTransportError) return;
 
-        // @ts-expect-error TransportStatusError to be typed on ledgerjs
         if (e instanceof TransportStatusError && e.statusCode === 0x6a84) {
           throw new TransactionRefusedOnDevice();
         }
@@ -227,5 +224,11 @@ const completeExchange = (
     };
   });
 };
+
+function convertSignature(signature: string, exchangeType: ExchangeTypes): Buffer {
+  return exchangeType === ExchangeTypes.SwapNg
+    ? Buffer.from(signature, "base64url")
+    : <Buffer>secp256k1.signatureExport(Buffer.from(signature, "hex"));
+}
 
 export default completeExchange;

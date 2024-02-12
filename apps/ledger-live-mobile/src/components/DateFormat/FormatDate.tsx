@@ -1,8 +1,8 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { createSelector } from "reselect";
-import compareDate from "../../logic/compareDate";
-import { dateFormatSelector, languageSelector } from "../../reducers/settings";
+import compareDate from "~/logic/compareDate";
+import { dateFormatSelector, languageSelector } from "~/reducers/settings";
 import { ddmmyyyyFormatter, Format, genericFormatter, mmddyyyyFormatter } from "./formatter.util";
 
 type Props = {
@@ -25,6 +25,7 @@ const hoursAndMinutesOptionsSelector = createSelector(
 
 function FormatDate({ date, withHoursMinutes = false }: Props): JSX.Element | null {
   const defaultOptions = useSelector(defaultOptionsSelector);
+
   const hoursAndMinutesOptions = useSelector(hoursAndMinutesOptionsSelector);
   const dateFormat = useSelector(dateFormatSelector);
   const dateFormatOptions =
@@ -36,9 +37,9 @@ function FormatDate({ date, withHoursMinutes = false }: Props): JSX.Element | nu
 
   const jsx =
     date && date.getTime()
-      ? withHoursMinutes
-        ? dateFormatOptions.format(date)
-        : hoursAndMinutesOptions.format(date)
+      ? dateFormatOptions
+          .format(date)
+          .concat(withHoursMinutes ? ` - ${hoursAndMinutesOptions.format(date)}` : "")
       : null;
   return <>{jsx}</>;
 }

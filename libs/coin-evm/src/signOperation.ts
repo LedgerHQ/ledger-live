@@ -6,12 +6,11 @@ import {
 } from "@ledgerhq/types-live";
 import { Observable } from "rxjs";
 import { getEnv } from "@ledgerhq/live-env";
-import { ledgerService } from "@ledgerhq/hw-app-eth";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
-import { LoadConfig, ResolutionConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
+import type { LoadConfig, ResolutionConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
-import { EvmAddress, EvmSignature, EvmSigner } from "./signer";
+import { EvmAddress, EvmSignature, EvmSigner } from "./types/signer";
 import { prepareForSignOperation } from "./prepareTransaction";
 import { getSerializedTransaction } from "./transaction";
 import { Transaction } from "./types";
@@ -59,8 +58,11 @@ export const buildSignOperation =
     transaction: Transaction;
   }): Observable<SignOperationEvent> =>
     new Observable(o => {
-      async function main() {
-        const preparedTransaction = await prepareForSignOperation(account, transaction);
+      async function main(): Promise<void> {
+        const preparedTransaction = await prepareForSignOperation({
+          account,
+          transaction,
+        });
         const serializedTxHexString = getSerializedTransaction(preparedTransaction).slice(2); // Remove 0x prefix
 
         // Configure type of resolutions necessary for the clear signing
@@ -74,12 +76,6 @@ export const buildSignOperation =
           cryptoassetsBaseURL: getEnv("DYNAMIC_CAL_BASE_URL"),
           nftExplorerBaseURL: getEnv("NFT_ETH_METADATA_SERVICE") + "/v1/ethereum",
         };
-        // Look for resolutions for external plugins and ERC20
-        const resolution = await ledgerService.resolveTransaction(
-          serializedTxHexString,
-          loadConfig,
-          resolutionConfig,
-        );
 
         o.next({
           type: "device-signature-requested",
@@ -88,10 +84,11 @@ export const buildSignOperation =
         const sig = (await signerContext(deviceId, signer => {
           signer.setLoadConfig(loadConfig);
           // Request signature on the nano
-          return signer.signTransaction(
+          return signer.clearSignTransaction(
             account.freshAddressPath,
             serializedTxHexString,
-            resolution,
+            resolutionConfig,
+            true,
           );
         })) as EvmSignature;
 
@@ -115,7 +112,6 @@ export const buildSignOperation =
           signedOperation: {
             operation,
             signature,
-            expirationDate: null,
           },
         });
       }

@@ -27,7 +27,7 @@ const Default = () => {
     user().then(u => {
       setSegmentID(u.id);
     });
-  });
+  }, []);
 
   return (
     <Body>

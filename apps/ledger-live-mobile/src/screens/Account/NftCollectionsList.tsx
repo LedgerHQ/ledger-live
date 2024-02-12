@@ -5,16 +5,16 @@ import { Box, Text } from "@ledgerhq/native-ui";
 import { Trans, useTranslation } from "react-i18next";
 import { StyleSheet, View, FlatList } from "react-native";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
-import { nftsByCollections } from "@ledgerhq/live-common/nft/index";
+import { nftsByCollections } from "@ledgerhq/live-nft";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { Account, ProtoNFT } from "@ledgerhq/types-live";
 import { ChevronRightMedium, PlusMedium } from "@ledgerhq/native-ui/assets/icons";
-import NftCollectionOptionsMenu from "../../components/Nft/NftCollectionOptionsMenu";
-import { hiddenNftCollectionsSelector } from "../../reducers/settings";
-import NftCollectionRow from "../../components/Nft/NftCollectionRow";
-import { NavigatorName, ScreenName } from "../../const";
-import Button from "../../components/wrappedUi/Button";
-import Touchable from "../../components/Touchable";
+import NftCollectionOptionsMenu from "~/components/Nft/NftCollectionOptionsMenu";
+import { hiddenNftCollectionsSelector } from "~/reducers/settings";
+import NftCollectionRow from "~/components/Nft/NftCollectionRow";
+import { NavigatorName, ScreenName } from "~/const";
+import Button from "~/components/wrappedUi/Button";
+import Touchable from "~/components/Touchable";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 
 const MAX_COLLECTIONS_TO_SHOW = 3;
@@ -41,10 +41,10 @@ export default function NftCollectionsList({ account }: Props) {
   ) as [string, ProtoNFT[]][];
 
   const [isCollectionMenuOpen, setIsCollectionMenuOpen] = useState(false);
-  const [selectedCollection, setSelectedCollection] = useState();
+  const [selectedCollection, setSelectedCollection] = useState<ProtoNFT[]>();
 
   const onSelectCollection = useCallback(
-    collection => {
+    (collection: ProtoNFT[]) => {
       setSelectedCollection(collection);
       setIsCollectionMenuOpen(true);
     },
@@ -68,7 +68,7 @@ export default function NftCollectionsList({ account }: Props) {
   );
 
   const navigateToCollection = useCallback(
-    collection =>
+    (collection: ProtoNFT[]) =>
       navigation.navigate(NavigatorName.Accounts, {
         screen: ScreenName.NftCollection,
         params: {

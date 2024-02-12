@@ -9,7 +9,7 @@ import {
   getAddressExplorer,
 } from "@ledgerhq/live-common/explorers";
 import type { AccountLike, Account } from "@ledgerhq/types-live";
-import type { Delegation } from "@ledgerhq/live-common/families/tezos/bakers";
+import type { Delegation } from "@ledgerhq/live-common/families/tezos/types";
 import {
   getMainAccount,
   getAccountCurrency,
@@ -18,18 +18,18 @@ import {
 } from "@ledgerhq/live-common/account/index";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import Icon from "react-native-vector-icons/Feather";
-import getWindowDimensions from "../../logic/getWindowDimensions";
-import IconReceive from "../../icons/Receive";
-import LText from "../../components/LText";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import CounterValue from "../../components/CounterValue";
-import CurrencyIcon from "../../components/CurrencyIcon";
-import Touchable from "../../components/Touchable";
-import QueuedDrawer from "../../components/QueuedDrawer";
-import Circle from "../../components/Circle";
-import NavigationScrollView from "../../components/NavigationScrollView";
+import getWindowDimensions from "~/logic/getWindowDimensions";
+import IconReceive from "~/icons/Receive";
+import LText from "~/components/LText";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import CounterValue from "~/components/CounterValue";
+import CurrencyIcon from "~/components/CurrencyIcon";
+import Touchable from "~/components/Touchable";
+import QueuedDrawer from "~/components/QueuedDrawer";
+import Circle from "~/components/Circle";
+import NavigationScrollView from "~/components/NavigationScrollView";
 import { rgba } from "../../colors";
-import { NavigatorName, ScreenName } from "../../const";
+import { NavigatorName, ScreenName } from "~/const";
 import BakerImage from "./BakerImage";
 import DelegatingContainer from "./DelegatingContainer";
 

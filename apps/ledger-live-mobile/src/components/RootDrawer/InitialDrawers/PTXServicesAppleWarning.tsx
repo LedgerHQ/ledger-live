@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import QueuedDrawer from "../../QueuedDrawer";
-import { useRootDrawerContext } from "../../../context/RootDrawerContext";
+import { useRootDrawerContext } from "~/context/RootDrawerContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { InitialDrawerID } from "../types";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -8,7 +8,7 @@ import { Button, Checkbox, Flex, IconsLegacy, Link, Text } from "@ledgerhq/nativ
 import { Linking, View } from "react-native";
 import styled from "styled-components/native";
 import { Trans, useTranslation } from "react-i18next";
-import { LEDGER_APPLE_WARNING_EXPLAINER_LINK } from "../../../constants";
+import { LEDGER_APPLE_WARNING_EXPLAINER_LINK } from "~/utils/constants";
 
 const CheckboxContainer = styled(View)(
   ({ theme }) => `
@@ -21,8 +21,8 @@ const CheckboxContainer = styled(View)(
 export function PTXServicesAppleWarning() {
   const { t } = useTranslation();
   const [persistentHide, setPersistentHide] = useState(false);
-  const exchangeDrawer = useFeature<{ enabled: boolean }>("ptxServiceCtaExchangeDrawer");
-  const ctaScreens = useFeature<{ enabled: boolean }>("ptxServiceCtaScreens");
+  const exchangeDrawer = useFeature("ptxServiceCtaExchangeDrawer");
+  const ctaScreens = useFeature("ptxServiceCtaScreens");
 
   const exchangeDrawerEnabled = useMemo(
     () => exchangeDrawer?.enabled ?? true,

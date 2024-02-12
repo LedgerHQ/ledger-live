@@ -3,16 +3,16 @@ import { Dimensions, Linking, Platform, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
-import { CameraType } from "expo-camera/build/Camera.types";
+import { BarCodeScanningResult, CameraType } from "expo-camera/build/Camera.types";
 import { Camera } from "expo-camera";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { Svg, Defs, Rect, Mask } from "react-native-svg";
 import { useIsFocused } from "@react-navigation/native";
-import { TrackScreen } from "../../analytics";
-import { useNavigateToPostOnboardingHubCallback } from "../../logic/postOnboarding/useNavigateToPostOnboardingHubCallback";
-import { urls } from "../../config/urls";
-import RequiresCameraPermissions from "../../components/RequiresCameraPermissions";
-import CameraPermissionContext from "../../components/RequiresCameraPermissions/CameraPermissionContext";
+import { TrackScreen } from "~/analytics";
+import { useNavigateToPostOnboardingHubCallback } from "~/logic/postOnboarding/useNavigateToPostOnboardingHubCallback";
+import { urls } from "~/utils/urls";
+import RequiresCameraPermissions from "~/components/RequiresCameraPermissions";
+import CameraPermissionContext from "~/components/RequiresCameraPermissions/CameraPermissionContext";
 
 const cameraBoxDimensions = {
   width: Dimensions.get("screen").width,
@@ -96,7 +96,7 @@ const ClaimNftQrScan = () => {
     };
   }, [navigateToHub, isInFocus]);
 
-  const handleBarCodeScanned = useCallback(({ data }) => {
+  const handleBarCodeScanned = useCallback(({ data }: BarCodeScanningResult) => {
     try {
       const url = new URL(data);
       const { hostname } = url;

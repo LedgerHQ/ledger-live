@@ -1,23 +1,18 @@
 import React, { useCallback, useMemo, memo } from "react";
-import { useRoute } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
-import { useDispatch } from "react-redux";
-import { Linking } from "react-native";
-import { usePostOnboardingURI } from "@ledgerhq/live-common/hooks/recoverFeatueFlag";
+import { useDispatch, useSelector } from "react-redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { ScreenName } from "../../../const";
+import { NavigatorName, ScreenName } from "~/const";
 import BaseStepperView, { RestoreWithProtect, PinCodeInstructions } from "./setupDevice/scenes";
-import { TrackScreen } from "../../../analytics";
+import { TrackScreen } from "~/analytics";
 
 import StepLottieAnimation from "./setupDevice/scenes/StepLottieAnimation";
-import { completeOnboarding } from "../../../actions/settings";
+import { completeOnboarding } from "~/actions/settings";
 import { useNavigationInterceptor } from "../onboardingContext";
-import {
-  RootComposite,
-  StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
-import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import { Step } from "./setupDevice/scenes/BaseStepperView";
+import { hasCompletedOnboardingSelector, lastConnectedDeviceSelector } from "~/reducers/settings";
 
 type Metadata = {
   id: string;
@@ -25,18 +20,18 @@ type Metadata = {
   drawer: null | { route: string; screen: string };
 };
 
-type NavigationProps = RootComposite<
+type NavigationProps = BaseComposite<
   StackNavigatorProps<OnboardingNavigatorParamList, ScreenName.OnboardingProtectFlow>
 >;
 
 const scenes = [RestoreWithProtect, PinCodeInstructions] as Step[];
 
-function OnboardingStepProtectFlow() {
+function OnboardingStepProtectFlow({ navigation, route }: NavigationProps) {
   const { theme } = useTheme();
-  const route = useRoute<NavigationProps["route"]>();
 
+  const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
+  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const protectFeature = useFeature("protectServicesMobile");
-  const postOnboardingURI = usePostOnboardingURI(protectFeature);
 
   const dispatch = useDispatch();
   const { resetCurrentStep } = useNavigationInterceptor();
@@ -70,9 +65,26 @@ function OnboardingStepProtectFlow() {
     dispatch(completeOnboarding());
     resetCurrentStep();
 
-    if (postOnboardingURI)
-      Linking.canOpenURL(postOnboardingURI).then(() => Linking.openURL(postOnboardingURI));
-  }, [dispatch, postOnboardingURI, resetCurrentStep]);
+    if (protectFeature?.enabled && (lastConnectedDevice || !hasCompletedOnboarding)) {
+      navigation.navigate(NavigatorName.Base, {
+        screen: ScreenName.Recover,
+        params: {
+          device: lastConnectedDevice || undefined,
+          platform: protectFeature.params?.protectId,
+          redirectTo: "restore",
+          date: new Date().toISOString(), // adding a date to reload the page in case of same device restored again
+        },
+      });
+    }
+  }, [
+    dispatch,
+    hasCompletedOnboarding,
+    lastConnectedDevice,
+    navigation,
+    protectFeature?.enabled,
+    protectFeature?.params?.protectId,
+    resetCurrentStep,
+  ]);
 
   const nextPage = useCallback(() => {
     onFinish();

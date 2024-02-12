@@ -3,7 +3,12 @@ import { TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
 import styled, { useTheme } from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
-import { getOperationAmountNumber } from "@ledgerhq/live-common/operation";
+import {
+  getOperationAmountNumber,
+  isConfirmedOperation,
+  isEditableOperation,
+  isStuckOperation,
+} from "@ledgerhq/live-common/operation";
 import {
   getMainAccount,
   getAccountCurrency,
@@ -14,20 +19,20 @@ import { Account, Operation, AccountLike } from "@ledgerhq/types-live";
 import { Box, Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { WarningMedium } from "@ledgerhq/native-ui/assets/icons";
 import debounce from "lodash/debounce";
-import { isEqual } from "lodash";
-import { getEnv } from "@ledgerhq/live-common/env";
-import { isEditableOperation } from "@ledgerhq/coin-framework/operation";
-
+import isEqual from "lodash/isEqual";
+import { useSelector } from "react-redux";
 import CurrencyUnitValue from "../CurrencyUnitValue";
 import CounterValue from "../CounterValue";
 import OperationIcon from "../OperationIcon";
-import { ScreenName } from "../../const";
+import { ScreenName } from "~/const";
 import OperationRowDate from "../OperationRowDate";
 import OperationRowNftName from "../OperationRowNftName";
 import perFamilyOperationDetails from "../../generated/operationDetails";
-import { track } from "../../analytics";
-import { UnionToIntersection } from "../../types/helpers";
+import { track } from "~/analytics";
+import { UnionToIntersection } from "~/types/helpers";
 import { BaseNavigation } from "../RootNavigator/types/helpers";
+import { currencySettingsForAccountSelector } from "~/reducers/settings";
+import type { State } from "~/reducers/types";
 
 type FamilyOperationDetailsIntersection = UnionToIntersection<
   (typeof perFamilyOperationDetails)[keyof typeof perFamilyOperationDetails]
@@ -141,14 +146,30 @@ function OperationRow({
 
   const { colors } = useTheme();
   const amount = getOperationAmountNumber(operation);
-  const valueColor = amount.isNegative() ? colors.neutral.c100 : colors.success.c50;
   const currency = getAccountCurrency(account);
+  const mainAccount = getMainAccount(account, parentAccount);
+  const currencySettings = useSelector((s: State) =>
+    currencySettingsForAccountSelector(s, {
+      account: mainAccount,
+    }),
+  );
+  const isConfirmed = isConfirmedOperation(
+    operation,
+    mainAccount,
+    currencySettings.confirmationsNb,
+  );
+  const valueColor = amount.isNegative()
+    ? colors.neutral.c100
+    : isConfirmed
+    ? colors.success.c50
+    : colors.warning.c50;
+
   const unit = getAccountUnit(account);
   const text = <Trans i18nKey={`operations.types.${operation.type}`} />;
   const isOptimistic = operation.blockHeight === null;
   const isOperationStuck =
-    isEditableOperation(account, operation) &&
-    operation.date.getTime() <= new Date().getTime() - getEnv("ETHEREUM_STUCK_TRANSACTION_TIMEOUT");
+    isEditableOperation({ account: mainAccount, operation }) &&
+    isStuckOperation({ family: mainAccount.currency.family, operation });
 
   const spinner = isOperationStuck ? (
     <WarningMedium />
@@ -215,7 +236,13 @@ function OperationRow({
           </BodyRightContainer>
         ) : amount.isZero() ? null : (
           <BodyRightContainer>
-            <Text numberOfLines={1} color={valueColor} variant="body" fontWeight="semiBold">
+            <Text
+              numberOfLines={1}
+              color={valueColor}
+              variant="body"
+              fontWeight="semiBold"
+              testID="portfolio-operation-amount"
+            >
               <CurrencyUnitValue showCode unit={unit} value={amount} alwaysShowSign />
             </Text>
             <Text variant="paragraph" fontWeight="medium" color={colors.neutral.c70}>

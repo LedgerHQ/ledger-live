@@ -6,6 +6,7 @@ import Box from "~/renderer/components/Box";
 import FeatureFlagEdit from "./FeatureFlagEdit";
 import styled, { DefaultTheme, StyledComponent } from "styled-components";
 import { FlexBoxProps } from "@ledgerhq/react-ui/components/layout/Flex";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   flagName: FeatureId;
@@ -29,12 +30,13 @@ const FeatureFlagDetails: React.FC<Props> = props => {
   const { flagName, focused, setFocusedName } = props;
   const { getFeature } = useFeatureFlags();
   const flagValue = getFeature(flagName as FeatureId);
+  const { t } = useTranslation();
 
   const {
     overriddenByEnv,
     overridesRemote,
     enabledOverriddenForCurrentLanguage,
-    enabledOverriddenForCurrentDesktopVersion,
+    enabledOverriddenForCurrentVersion,
   } = flagValue || {};
 
   const handleClick = useCallback(() => {
@@ -57,21 +59,21 @@ const FeatureFlagDetails: React.FC<Props> = props => {
           <Text mr={1}>{flagName}</Text>
           {overriddenByEnv ? (
             <Tag active mx={1} type="opacity" size="small">
-              overridden by env
+              {t("settings.developer.overridden.byEnv")}
             </Tag>
           ) : overridesRemote ? (
             <Tag active mx={1} type="opacity" size="small">
-              overridden locally
+              {t("settings.developer.overridden.overriddenLocally")}
             </Tag>
           ) : null}
           {enabledOverriddenForCurrentLanguage ? (
             <Tag active mx={1} type="outlinedOpacity" size="small">
-              disabled for current language
+              {t("settings.developer.overridden.disableForLanguage")}
             </Tag>
           ) : null}
-          {enabledOverriddenForCurrentDesktopVersion ? (
+          {enabledOverriddenForCurrentVersion ? (
             <Tag active mx={1} type="outlinedOpacity" size="small">
-              disabled for current version
+              {t("settings.developer.overridden.disableForVersion")}
             </Tag>
           ) : null}
         </Flex>

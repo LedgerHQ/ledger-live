@@ -16,19 +16,19 @@ import { Linking, TouchableOpacity } from "react-native";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useSelector } from "react-redux";
 
-import Button from "../components/wrappedUi/Button";
-import { urls } from "../config/urls";
+import Button from "~/components/wrappedUi/Button";
+import { urls } from "~/utils/urls";
 import { useNavigationInterceptor } from "./Onboarding/onboardingContext";
-import { NavigatorName, ScreenName } from "../const";
-import useIsAppInBackground from "../components/useIsAppInBackground";
-import { hasCompletedOnboardingSelector, readOnlyModeEnabledSelector } from "../reducers/settings";
-import { track, TrackScreen } from "../analytics";
+import { NavigatorName, ScreenName } from "~/const";
+import useIsAppInBackground from "~/components/useIsAppInBackground";
+import { hasCompletedOnboardingSelector, readOnlyModeEnabledSelector } from "~/reducers/settings";
+import { track, TrackScreen } from "~/analytics";
 import {
   BaseNavigationComposite,
   StackNavigatorNavigation,
-} from "../components/RootNavigator/types/helpers";
-import { BuyDeviceNavigatorParamList } from "../components/RootNavigator/types/BuyDeviceNavigator";
-import { OnboardingNavigatorParamList } from "../components/RootNavigator/types/OnboardingNavigator";
+} from "~/components/RootNavigator/types/helpers";
+import { BuyDeviceNavigatorParamList } from "~/components/RootNavigator/types/BuyDeviceNavigator";
+import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import videoSources from "../../assets/videos";
 
 const sourceDark = videoSources.nanoXDark;
@@ -152,7 +152,7 @@ export default function GetDeviceScreen() {
             <IconsLegacy.ArrowLeftMedium size="24px" />
           </TouchableOpacity>
         )}
-        <Text variant="h3" lineHeight="20" uppercase>
+        <Text variant="h3" lineHeight="20px" uppercase>
           {t("buyDevice.title")}
         </Text>
         {hasCompletedOnboarding ? (
@@ -210,7 +210,7 @@ export default function GetDeviceScreen() {
           type="main"
           outline={false}
           event="button_clicked"
-          testID="market-place-btn"
+          testID="getDevice-buy-button"
           eventProperties={{
             button: "Buy your Ledger now",
             page: ScreenName.GetDevice,

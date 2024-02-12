@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import config from "react-native-config";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { Alert as Confirmation } from "react-native";
 import { Alert, Flex, IconsLegacy } from "@ledgerhq/native-ui";
 import { useDispatch } from "react-redux";
@@ -11,13 +11,13 @@ import GenerateMockAccount from "./GenerateMockAccountsSelect";
 import GenerateAnnouncement from "./GenerateAnnouncementMockData";
 import SettingsNavigationScrollView from "../../SettingsNavigationScrollView";
 import ToggleServiceStatusIncident from "./ToggleServiceStatus";
-import SettingsRow from "../../../../components/SettingsRow";
-import { dangerouslyOverrideState } from "../../../../actions/settings";
-import { useReboot } from "../../../../context/Reboot";
+import SettingsRow from "~/components/SettingsRow";
+import { dangerouslyOverrideState } from "~/actions/settings";
+import { useReboot } from "~/context/Reboot";
 
-import { INITIAL_STATE as INITIAL_SETTINGS_STATE } from "../../../../reducers/settings";
-import { INITIAL_STATE as INITIAL_ACCOUNTS_STATE } from "../../../../reducers/accounts";
-import { INITIAL_STATE as INITIAL_BLE_STATE } from "../../../../reducers/ble";
+import { INITIAL_STATE as INITIAL_SETTINGS_STATE } from "~/reducers/settings";
+import { INITIAL_STATE as INITIAL_ACCOUNTS_STATE } from "~/reducers/accounts";
+import { INITIAL_STATE as INITIAL_BLE_STATE } from "~/reducers/ble";
 
 export default function Generators() {
   const dispatch = useDispatch();

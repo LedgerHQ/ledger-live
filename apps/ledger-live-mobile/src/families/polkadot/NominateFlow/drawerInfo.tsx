@@ -5,13 +5,13 @@ import { useTheme } from "@react-navigation/native";
 import type { TFunction } from "i18next";
 import type { AccountLike } from "@ledgerhq/types-live";
 import type { PolkadotValidator } from "@ledgerhq/live-common/families/polkadot/types";
-import Touchable from "../../../components/Touchable";
-import LText from "../../../components/LText";
-import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
-import CounterValue from "../../../components/CounterValue";
-import ExternalLink from "../../../icons/ExternalLink";
+import Touchable from "~/components/Touchable";
+import LText from "~/components/LText";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import CounterValue from "~/components/CounterValue";
+import ExternalLink from "~/icons/ExternalLink";
 import NominationDrawer from "../components/NominationDrawer";
-import { Unpacked } from "../../../types/helpers";
+import { Unpacked } from "~/types/helpers";
 
 type NominationDrawerData = React.ComponentProps<typeof NominationDrawer>["data"];
 type NominationDrawerDatum = Unpacked<NominationDrawerData>;
@@ -41,8 +41,8 @@ export function getDrawerInfo({
 
   const drawerData: NominationDrawerData = [
     {
-      label: t("delegation.validatorAddress"),
-      Component: () => {
+      label: t("delegation.validatorAddress") as string,
+      Component: (() => {
         const { colors } = useTheme();
         return (
           <Touchable
@@ -63,11 +63,11 @@ export function getDrawerInfo({
             </LText>
           </Touchable>
         );
-      },
+      })(),
     },
     {
-      label: t("polkadot.nomination.status"),
-      info: t(`polkadot.nomination.${validatorStatus}Info`),
+      label: t("polkadot.nomination.status") as string,
+      info: t(`polkadot.nomination.${validatorStatus}Info`) as string,
       Component: (
         <LText
           numberOfLines={1}
@@ -76,14 +76,14 @@ export function getDrawerInfo({
           style={[styles.valueText]}
           color={validator.isElected ? "live" : "darkBlue"}
         >
-          {t(`polkadot.nomination.${validatorStatus}`)}
+          {t(`polkadot.nomination.${validatorStatus}`) as string}
         </LText>
       ),
     },
   ];
 
   const delegationValidator: NominationDrawerDatum = {
-    label: t("delegation.validator"),
+    label: t("delegation.validator") as string,
     Component: (
       <LText numberOfLines={1} semiBold ellipsizeMode="middle" style={styles.valueText}>
         {validator.identity}
@@ -92,7 +92,7 @@ export function getDrawerInfo({
   };
 
   const nominationComission: NominationDrawerDatum = {
-    label: t("polkadot.nomination.commission"),
+    label: t("polkadot.nomination.commission") as string,
     Component: (
       <LText numberOfLines={1} semiBold ellipsizeMode="middle" style={styles.valueText}>
         {formattedCommission}
@@ -101,14 +101,14 @@ export function getDrawerInfo({
   };
 
   const nominationNominators: NominationDrawerDatum = {
-    label: t("polkadot.nomination.nominators"),
+    label: t("polkadot.nomination.nominators") as string,
     info: validator.isOversubscribed
-      ? t("polkadot.nomination.oversubscribedInfo", {
+      ? (t("polkadot.nomination.oversubscribedInfo", {
           maxNominatorRewardedPerValidator,
-        })
-      : t("polkadot.nomination.nominatorsInfo", {
+        }) as string)
+      : (t("polkadot.nomination.nominatorsInfo", {
           count: validator.nominatorsCount,
-        }),
+        }) as string),
     infoType: validator.isOversubscribed ? "warning" : "info",
     Component: (
       <LText
@@ -119,18 +119,18 @@ export function getDrawerInfo({
         color={validator.isOversubscribed ? "orange" : "darkBlue"}
       >
         {validator.isOversubscribed
-          ? t("polkadot.nomination.oversubscribed", {
+          ? (t("polkadot.nomination.oversubscribed", {
               nominatorsCount: validator.nominatorsCount,
-            })
-          : t("polkadot.nomination.nominatorsCount", {
+            }) as string)
+          : (t("polkadot.nomination.nominatorsCount", {
               nominatorsCount: validator.nominatorsCount,
-            })}
+            }) as string)}
       </LText>
     ),
   };
 
   const nominationTotalStake: NominationDrawerDatum = {
-    label: t("polkadot.nomination.totalStake"),
+    label: t("polkadot.nomination.totalStake") as string,
     Component: (
       <LText numberOfLines={1} semiBold ellipsizeMode="middle" style={styles.valueText}>
         <View style={styles.column}>

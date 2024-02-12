@@ -8,15 +8,14 @@ import {
 import { useTranslation } from "react-i18next";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { useSelector } from "react-redux";
 
-import { ScreenName, NavigatorName } from "../../const";
-import * as families from "../../families";
-import OperationDetails from "../../screens/OperationDetails";
-import PairDevices from "../../screens/PairDevices";
-import EditDeviceName from "../../screens/EditDeviceName";
-import ScanRecipient from "../../screens/SendFunds/ScanRecipient";
+import { ScreenName, NavigatorName } from "~/const";
+import * as families from "~/families";
+import OperationDetails from "~/screens/OperationDetails";
+import PairDevices from "~/screens/PairDevices";
+import EditDeviceName from "~/screens/EditDeviceName";
+import ScanRecipient from "~/screens/SendFunds/ScanRecipient";
 import Main from "./MainNavigator";
 import { ErrorHeaderInfo } from "./BaseOnboardingNavigator";
 import SettingsNavigator from "./SettingsNavigator";
@@ -29,7 +28,6 @@ import FreezeNavigator from "./FreezeNavigator";
 import UnfreezeNavigator from "./UnfreezeNavigator";
 import ClaimRewardsNavigator from "./ClaimRewardsNavigator";
 import AddAccountsNavigator from "./AddAccountsNavigator";
-import ExchangeNavigator from "./ExchangeNavigator";
 import ExchangeLiveAppNavigator from "./ExchangeLiveAppNavigator";
 import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
 import PlatformExchangeNavigator from "./PlatformExchangeNavigator";
@@ -39,59 +37,56 @@ import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
 import PasswordModifyFlowNavigator from "./PasswordModifyFlowNavigator";
 import SwapNavigator from "./SwapNavigator";
 import NotificationCenterNavigator from "./NotificationCenterNavigator";
-import AnalyticsAllocation from "../../screens/Analytics/Allocation";
-import AnalyticsOperations from "../../screens/Analytics/Operations";
+import AnalyticsAllocation from "~/screens/Analytics/Allocation";
+import AnalyticsOperations from "~/screens/Analytics/Operations";
 import NftNavigator from "./NftNavigator";
-import { getStackNavigatorConfig } from "../../navigation/navigatorConfig";
-import Account from "../../screens/Account";
-import ReadOnlyAccount from "../../screens/Account/ReadOnly/ReadOnlyAccount";
-import TransparentHeaderNavigationOptions from "../../navigation/TransparentHeaderNavigationOptions";
-import styles from "../../navigation/styles";
+import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import Account from "~/screens/Account";
+import ReadOnlyAccount from "~/screens/Account/ReadOnly/ReadOnlyAccount";
+import TransparentHeaderNavigationOptions from "~/navigation/TransparentHeaderNavigationOptions";
+import styles from "~/navigation/styles";
 import StepHeader from "../StepHeader";
-import PortfolioHistory from "../../screens/Portfolio/PortfolioHistory";
+import PortfolioHistory from "~/screens/Portfolio/PortfolioHistory";
 import RequestAccountNavigator from "./RequestAccountNavigator";
-import VerifyAccount from "../../screens/VerifyAccount";
-import { LiveApp } from "../../screens/Platform";
+import VerifyAccount from "~/screens/VerifyAccount";
+import { LiveApp } from "~/screens/Platform";
 import AccountsNavigator from "./AccountsNavigator";
-import MarketCurrencySelect from "../../screens/Market/MarketCurrencySelect";
+import MarketNavigator from "LLM/features/Market/Navigator";
+import MarketCurrencySelect from "~/screens/Market/MarketCurrencySelect";
+import MarketDetail from "~/screens/Market/MarketDetail";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import {
   BleDevicePairingFlow,
   bleDevicePairingFlowHeaderOptions,
-} from "../../screens/BleDevicePairingFlow/index";
-import ProviderList from "../../screens/Exchange/ProviderList";
-import ProviderView from "../../screens/Exchange/ProviderView";
-import ScreenHeader from "../../screens/Exchange/ScreenHeader";
-import ExchangeStackNavigator from "./ExchangeStackNavigator";
+} from "~/screens/BleDevicePairingFlow";
 
-import PostBuyDeviceScreen from "../../screens/PostBuyDeviceScreen";
-import LearnWebView from "../../screens/Learn/index";
-import { useNoNanoBuyNanoWallScreenOptions } from "../../context/NoNanoBuyNanoWall";
-import PostBuyDeviceSetupNanoWallScreen from "../../screens/PostBuyDeviceSetupNanoWallScreen";
-import MarketDetail from "../../screens/Market/MarketDetail";
-import CurrencySettings from "../../screens/Settings/CryptoAssets/Currencies/CurrencySettings";
-import WalletConnectNavigator from "./WalletConnectNavigator";
+import PostBuyDeviceScreen from "~/screens/PostBuyDeviceScreen";
+import LearnWebView from "~/screens/Learn/index";
+import { useNoNanoBuyNanoWallScreenOptions } from "~/context/NoNanoBuyNanoWall";
+import PostBuyDeviceSetupNanoWallScreen from "~/screens/PostBuyDeviceSetupNanoWallScreen";
+import CurrencySettings from "~/screens/Settings/CryptoAssets/Currencies/CurrencySettings";
 import WalletConnectLiveAppNavigator from "./WalletConnectLiveAppNavigator";
 import CustomImageNavigator from "./CustomImageNavigator";
 import ClaimNftNavigator from "./ClaimNftNavigator";
 import PostOnboardingNavigator from "./PostOnboardingNavigator";
-import { readOnlyModeEnabledSelector } from "../../reducers/settings";
-import { hasNoAccountsSelector } from "../../reducers/accounts";
+import { readOnlyModeEnabledSelector } from "~/reducers/settings";
+import { hasNoAccountsSelector } from "~/reducers/accounts";
 import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
-import DeviceConnect, { deviceConnectHeaderOptions } from "../../screens/DeviceConnect";
+import DeviceConnect, { deviceConnectHeaderOptions } from "~/screens/DeviceConnect";
 import ExploreTabNavigator from "./ExploreTabNavigator";
 import NoFundsFlowNavigator from "./NoFundsFlowNavigator";
 import StakeFlowNavigator from "./StakeFlowNavigator";
-import { RecoverPlayer } from "../../screens/Protect/Player";
-import { RedirectToOnboardingRecoverFlowScreen } from "../../screens/Protect/RedirectToOnboardingRecoverFlow";
+import { RecoverPlayer } from "~/screens/Protect/Player";
+import { RedirectToOnboardingRecoverFlowScreen } from "~/screens/Protect/RedirectToOnboardingRecoverFlow";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import {
   NavigationHeaderCloseButton,
   NavigationHeaderCloseButtonAdvanced,
 } from "../NavigationHeaderCloseButton";
-import { RedirectToRecoverStaxFlowScreen } from "../../screens/Protect/RedirectToRecoverStaxFlow";
 import { RootDrawer } from "../RootDrawer/RootDrawer";
-import EditTransactionNavigator from "../../families/ethereum/EditTransactionFlow/EditTransactionNavigator";
+import EditTransactionNavigator from "~/families/evm/EditTransactionFlow/EditTransactionNavigator";
 import { DrawerProps } from "../RootDrawer/types";
+import AnalyticsOptInPromptNavigator from "./AnalyticsOptInPromptNavigator";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
@@ -105,10 +100,8 @@ export default function BaseNavigator() {
     }>
   >();
   const { colors } = useTheme();
+  const marketNewArch = useFeature("llmMarketNewArch");
   const stackNavigationConfig = useMemo(() => getStackNavigatorConfig(colors, true), [colors]);
-  // PTX smart routing feature flag - buy sell live app flag
-  const ptxSmartRoutingMobile = useFeature("ptxSmartRoutingMobile");
-  const walletConnectLiveApp = useFeature("walletConnectLiveApp");
   const noNanoBuyNanoWallScreenOptions = useNoNanoBuyNanoWallScreenOptions();
   const isAccountsEmpty = useSelector(hasNoAccountsSelector);
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector) && isAccountsEmpty;
@@ -222,6 +215,14 @@ export default function BaseNavigator() {
           name={NavigatorName.SignMessage}
           component={SignMessageNavigator}
           options={{ headerShown: false }}
+          listeners={({ route }) => ({
+            beforeRemove: () => {
+              const onClose = route.params?.onClose;
+              if (onClose && typeof onClose === "function") {
+                onClose();
+              }
+            },
+          })}
         />
         <Stack.Screen
           name={NavigatorName.SignTransaction}
@@ -261,17 +262,10 @@ export default function BaseNavigator() {
           }}
           listeners={({ route }) => ({
             beforeRemove: () => {
-              /**
-              react-navigation workaround try to fetch params from current route params
-              or fallback to child navigator route params
-              since this listener is on top of another navigator
-            */
-              const onError =
-                route.params?.onError || (route.params as unknown as typeof route)?.params?.onError;
-              // @TODO This route.params.error mechanism is deprecated, no part of the code is currently using it
-              // WalletAPI are suggesting they will rework that at some point
-              if (onError && typeof onError === "function" && route.params.error)
-                onError(route.params.error);
+              const onClose = route.params?.onClose;
+              if (onClose && typeof onClose === "function") {
+                onClose();
+              }
             },
           })}
         />
@@ -294,42 +288,7 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={NavigatorName.Exchange}
-          component={ptxSmartRoutingMobile?.enabled ? ExchangeLiveAppNavigator : ExchangeNavigator}
-          options={
-            ptxSmartRoutingMobile?.enabled
-              ? { headerShown: false }
-              : { headerStyle: styles.headerNoShadow, headerLeft: () => null }
-          }
-          {...noNanoBuyNanoWallScreenOptions}
-        />
-        <Stack.Screen
-          name={NavigatorName.Earn}
-          component={EarnLiveAppNavigator}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name={ScreenName.ProviderList}
-          component={ProviderList}
-          options={({ route }) => ({
-            headerStyle: styles.headerNoShadow,
-            title:
-              route.params.type === "onRamp"
-                ? t("exchange.buy.screenTitle")
-                : t("exchange.sell.screenTitle"),
-          })}
-        />
-        <Stack.Screen
-          name={ScreenName.ProviderView}
-          component={ProviderView}
-          options={({ route }) => ({
-            headerTitle: () => <ScreenHeader icon={route.params.icon} name={route.params.name} />,
-            headerStyle: styles.headerNoShadow,
-          })}
-        />
-        <Stack.Screen
-          name={NavigatorName.ExchangeStack}
-          component={ExchangeStackNavigator}
-          initialParams={{ mode: "buy" }}
+          component={ExchangeLiveAppNavigator}
           options={{ headerShown: false }}
           {...noNanoBuyNanoWallScreenOptions}
         />
@@ -353,6 +312,7 @@ export default function BaseNavigator() {
                         ? t(`operations.types.${route.params.operation.type}`)
                         : ""
                     }
+                    testID="operationDetails-title"
                   />
                 ),
                 headerLeft: () => <NavigationHeaderBackButton />,
@@ -369,6 +329,7 @@ export default function BaseNavigator() {
                       ? t(`operations.types.${route.params.operation.type}`)
                       : ""
                   }
+                  testID="operationDetails-title"
                 />
               ),
               headerLeft: () => <NavigationHeaderBackButton />,
@@ -433,16 +394,20 @@ export default function BaseNavigator() {
             cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
           }}
         />
-        <Stack.Screen
-          name={ScreenName.MarketCurrencySelect}
-          component={MarketCurrencySelect}
-          options={{
-            title: t("market.filters.currency"),
-            headerLeft: () => null,
-            // FIXME: ONLY ON BOTTOM TABS AND DRAWER NAVIGATION
-            // unmountOnBlur: true,
-          }}
-        />
+        {marketNewArch?.enabled ? (
+          MarketNavigator({ Stack })
+        ) : (
+          <Stack.Screen
+            name={ScreenName.MarketCurrencySelect}
+            component={MarketCurrencySelect}
+            options={{
+              title: t("market.filters.currency"),
+              headerLeft: () => null,
+              // FIXME: ONLY ON BOTTOM TABS AND DRAWER NAVIGATION
+              // unmountOnBlur: true,
+            }}
+          />
+        )}
         <Stack.Screen
           name={ScreenName.PortfolioOperationHistory}
           component={PortfolioHistory}
@@ -466,21 +431,22 @@ export default function BaseNavigator() {
               <NavigationHeaderCloseButtonAdvanced
                 color={colors.constant.white}
                 preferDismiss={false}
+                rounded
               />
             ),
             headerLeft: () => null,
           }}
         />
+
         <Stack.Screen
           name={NavigatorName.WalletConnect}
-          component={
-            walletConnectLiveApp?.enabled ? WalletConnectLiveAppNavigator : WalletConnectNavigator
-          }
+          component={WalletConnectLiveAppNavigator}
           options={{
             headerShown: false,
           }}
           {...noNanoBuyNanoWallScreenOptions}
         />
+
         <Stack.Screen
           name={NavigatorName.NotificationCenter}
           component={NotificationCenterNavigator}
@@ -496,13 +462,15 @@ export default function BaseNavigator() {
           component={AccountsNavigator}
           options={{ headerShown: false }}
         />
-        <Stack.Screen
-          name={ScreenName.MarketDetail}
-          component={MarketDetail}
-          options={{
-            headerShown: false,
-          }}
-        />
+        {!marketNewArch?.enabled ? (
+          <Stack.Screen
+            name={ScreenName.MarketDetail}
+            component={MarketDetail}
+            options={{
+              headerShown: false,
+            }}
+          />
+        ) : null}
         <Stack.Screen
           name={NavigatorName.CustomImage}
           component={CustomImageNavigator}
@@ -555,9 +523,9 @@ export default function BaseNavigator() {
           component={RedirectToOnboardingRecoverFlowScreen}
         />
         <Stack.Screen
-          name={ScreenName.RedirectToRecoverStaxFlow}
+          name={NavigatorName.Earn}
+          component={EarnLiveAppNavigator}
           options={{ headerShown: false }}
-          component={RedirectToRecoverStaxFlowScreen}
         />
         <Stack.Screen
           name={NavigatorName.NoFundsFlow}
@@ -578,9 +546,14 @@ export default function BaseNavigator() {
           }}
         />
         <Stack.Screen
-          name={NavigatorName.EditTransaction}
+          name={NavigatorName.EvmEditTransaction}
           options={{ headerShown: false }}
           component={EditTransactionNavigator}
+        />
+        <Stack.Screen
+          name={NavigatorName.AnalyticsOptInPrompt}
+          options={{ headerShown: false }}
+          component={AnalyticsOptInPromptNavigator}
         />
       </Stack.Navigator>
     </>

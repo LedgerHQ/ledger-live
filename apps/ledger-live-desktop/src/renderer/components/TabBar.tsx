@@ -113,7 +113,7 @@ const TabBar = ({
     setMounted(true);
   }, []);
   const updateIndex = useCallback(
-    j => {
+    (j: number) => {
       setIndex(j);
       onIndexChange(j);
     },

@@ -8,7 +8,7 @@ import TrackPage from "~/renderer/analytics/TrackPage";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { ModalBody } from "~/renderer/components/Modal";
 import Breadcrumb from "~/renderer/components/Stepper/Breadcrumb";
-import useEnv from "~/renderer/hooks/useEnv";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { loadLSS, saveLSS } from "~/renderer/storage";
 import { ConnectionStatus, FullNodeSteps, connectionStatus } from ".";
 import { ScannedDescriptor } from "../types";

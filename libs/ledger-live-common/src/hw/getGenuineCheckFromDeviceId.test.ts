@@ -1,4 +1,4 @@
-import { from, Observable, of, timer } from "rxjs";
+import { firstValueFrom, from, Observable, of, timer } from "rxjs";
 import { delay } from "rxjs/operators";
 import Transport from "@ledgerhq/hw-transport";
 import getDeviceInfo from "./getDeviceInfo";
@@ -56,6 +56,7 @@ const aDeviceInfo = {
 describe("getGenuineCheckFromDeviceId", () => {
   beforeEach(() => {
     // Mocked timer: directly pushes and complete
+    // @ts-expect-error the mocked function reflect an incorrect signature
     mockedTimer.mockReturnValue(of(1));
   });
 
@@ -71,15 +72,12 @@ describe("getGenuineCheckFromDeviceId", () => {
       it("should notify the function consumer of the need to unlock the device, and once done, continue the genuine check flow", done => {
         // Delays the device info response
         mockedGetDeviceInfo.mockReturnValue(
-          of(aDeviceInfo as DeviceInfo)
-            .pipe(delay(1001))
-            .toPromise(),
+          firstValueFrom(of(aDeviceInfo as DeviceInfo).pipe(delay(1001))),
         );
 
         mockedGenuineCheck.mockReturnValue(
           of({
             type: "device-permission-requested",
-            wording: "",
           }),
         );
 
@@ -102,7 +100,6 @@ describe("getGenuineCheckFromDeviceId", () => {
                 case 3:
                   expect(socketEvent).toEqual({
                     type: "device-permission-requested",
-                    wording: "",
                   });
                   expect(lockedDevice).toBe(false);
                   done();
@@ -143,7 +140,6 @@ describe("getGenuineCheckFromDeviceId", () => {
         mockedGenuineCheck.mockReturnValue(
           of({
             type: "device-permission-requested",
-            wording: "",
           }),
         );
 
@@ -168,7 +164,6 @@ describe("getGenuineCheckFromDeviceId", () => {
                 case 3:
                   expect(socketEvent).toEqual({
                     type: "device-permission-requested",
-                    wording: "",
                   });
                   expect(lockedDevice).toBe(false);
                   done();
@@ -188,6 +183,10 @@ describe("getGenuineCheckFromDeviceId", () => {
       beforeEach(() => {
         // Mocked timer: pushes and complete after a timeout
         // Needed so the retry is not triggered before unsubscribing during our test
+
+        // @ts-expect-error the mocked function expects an Observable<0>
+        // while we give it an Observable<1>, timer has multiple signatures and I can't figure
+        // out why it doesn't understand the correct one
         mockedTimer.mockImplementation((dueTime?: number | Date) => {
           if (typeof dueTime === "number") {
             return new Observable<number>(subscriber => {
@@ -221,7 +220,6 @@ describe("getGenuineCheckFromDeviceId", () => {
         mockedGenuineCheck.mockReturnValue(
           of({
             type: "device-permission-requested",
-            wording: "",
           }),
         );
 
@@ -279,7 +277,6 @@ describe("getGenuineCheckFromDeviceId", () => {
             } else {
               o.next({
                 type: "device-permission-requested",
-                wording: "",
               });
             }
           });
@@ -312,7 +309,6 @@ describe("getGenuineCheckFromDeviceId", () => {
                 case 4:
                   expect(socketEvent).toEqual({
                     type: "device-permission-requested",
-                    wording: "",
                   });
                   expect(lockedDevice).toBe(false);
                   done();

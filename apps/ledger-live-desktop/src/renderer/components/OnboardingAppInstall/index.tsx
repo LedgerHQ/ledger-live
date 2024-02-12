@@ -22,6 +22,7 @@ type Props = {
    * Optional prop that will override the apps to install if present
    */
   deviceToRestore?: DeviceModelInfo | null | undefined;
+  setHeaderLoader: (hasLoader: boolean) => void;
   onComplete: () => void;
   onError: (error: Error) => void;
 };
@@ -31,7 +32,13 @@ type Props = {
  * dependencies, the display of modals and the mounting of InstallSetOfApps which
  * will then start the installation directly
  */
-const OnboardingAppInstallStep = ({ device, deviceToRestore, onComplete, onError }: Props) => {
+const OnboardingAppInstallStep = ({
+  device,
+  deviceToRestore,
+  setHeaderLoader,
+  onComplete,
+  onError,
+}: Props) => {
   const { t } = useTranslation();
   const deviceInitialApps = useFeature("deviceInitialApps");
   const [dependencies, setDependencies] = useState<string[]>([]);
@@ -80,12 +87,12 @@ const OnboardingAppInstallStep = ({ device, deviceToRestore, onComplete, onError
   );
 
   const handlePressSkip = useCallback(() => {
-    track("button_clicked", { button: "maybe later", flow: analyticsFlowName });
+    track("button_clicked2", { button: "maybe later", flow: analyticsFlowName });
     onComplete();
   }, [onComplete]);
 
   const handlePressInstall = useCallback(() => {
-    track("button_clicked", {
+    track("button_clicked2", {
       button: deviceToRestore ? "Restore applications" : "Install applications",
       flow: analyticsFlowName,
     });
@@ -93,7 +100,7 @@ const OnboardingAppInstallStep = ({ device, deviceToRestore, onComplete, onError
   }, [deviceToRestore]);
 
   const handleCancelModalRetryPressed = useCallback(() => {
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "Install now",
       flow: analyticsFlowName,
     });
@@ -101,7 +108,7 @@ const OnboardingAppInstallStep = ({ device, deviceToRestore, onComplete, onError
   }, [handleRetry]);
 
   const handleCancelModalSkipPressed = useCallback(() => {
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "I'll do this later",
       flow: analyticsFlowName,
     });
@@ -148,6 +155,7 @@ const OnboardingAppInstallStep = ({ device, deviceToRestore, onComplete, onError
         <InstallSetOfApps
           device={device}
           dependencies={dependencies}
+          setHeaderLoader={setHeaderLoader}
           onComplete={handleInstallComplete}
           onCancel={handleCancel}
           onLocked={handleLocked}
@@ -166,10 +174,18 @@ const OnboardingAppInstallStep = ({ device, deviceToRestore, onComplete, onError
               : t("onboardingAppInstall.default.title", { productName })}
           </Text>
           <Text variant="paragraphLineHeight" color="neutral.c70" textAlign="center" mt={2}>
-            {t(`onboardingAppInstall.${deviceToRestore ? "restore" : "default"}.subtitle`)}
+            {t(`onboardingAppInstall.${deviceToRestore ? "restore" : "default"}.subtitle`, {
+              productName,
+            })}
           </Text>
           <Flex pt={8} pb={2} justifyContent="space-between">
-            <Button flex={1} onClick={handlePressSkip} data-test-id="skip-cta-button">
+            <Button
+              variant="shade"
+              outline
+              flex={1}
+              onClick={handlePressSkip}
+              data-test-id="skip-cta-button"
+            >
               {t(`onboardingAppInstall.${deviceToRestore ? "restore" : "default"}.skipCTA`)}
             </Button>
             <Flex px={2} />

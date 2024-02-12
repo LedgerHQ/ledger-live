@@ -1,6 +1,6 @@
 const path = require("path");
 const common = require("./common.esbuild");
-const { electronMainExternals, CopyPlugin } = require("esbuild-utils");
+const { electronMainExternals, CopyPlugin } = require("@ledgerhq/esbuild-utils");
 
 const rootFolder = path.resolve(__dirname, "..", "..");
 
@@ -8,7 +8,7 @@ module.exports = {
   ...common,
   entryPoints: ["./src/index.ts"],
   entryNames: "main.bundle",
-  target: ["node12"],
+  target: ["node20"],
   platform: "node",
   format: "cjs",
   // Some modules have different exports signatures depending on the main field. (for instance bignumber.js)

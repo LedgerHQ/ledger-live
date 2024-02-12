@@ -1,30 +1,30 @@
-
 # Table of Contents
+
 - [Introduction](#introduction)
 - [Pre-requisites](#pre-requisites)
-    - [Visual Studio Code extensions](#visual-studio-code-extensions)
+  - [Visual Studio Code extensions](#visual-studio-code-extensions)
 - [Installation](#installation)
 - [Setup](#setup)
 - [Execution](#execution)
-    - [Build](#build)
-    - [Run tests](#run-tests)
+  - [Build](#build)
+  - [Run tests](#run-tests)
 - [Recorder](#recorder)
 - [Development](#development)
-    - [Workflow](#workflow)
-        - [Step 1 - Identify elements](#step-1---identify-elements)
-        - [Step 2 - Create a page object](#step-2---create-a-page-object)
-        - [Step 3 - Create a test file](#step-3---create-a-test-file)
-        - [Step 4 - Update datasets](#step-4---update-dataset)
-        - [Step 5 - Run test](#step-5---run-test)
-    - [Playwright API](#playwright-api)
+  - [Workflow](#workflow)
+    - [Step 1 - Identify elements](#step-1---identify-elements)
+    - [Step 2 - Create a page object](#step-2---create-a-page-object)
+    - [Step 3 - Create a test file](#step-3---create-a-test-file)
+    - [Step 4 - Update datasets](#step-4---update-dataset)
+    - [Step 5 - Run test](#step-5---run-test)
+  - [Playwright API](#playwright-api)
 - [Continuous Integration](#continuous-integration)
-    - [Workflow](#workflow-1)
-    - [Commands](#commands)
+  - [Workflow](#workflow-1)
+  - [Commands](#commands)
 - [Debugging](#debugging)
 - [Resources](#resources)
-    - [Releases](#releases)
-    - [Documentation](#documentation)
-        - [Code coverage](#code-coverage)
+  - [Releases](#releases)
+  - [Documentation](#documentation)
+    - [Code coverage](#code-coverage)
 
 # Introduction
 
@@ -32,18 +32,21 @@ An open source framework for easily writing UI tests for our Electron app. Playw
 
 # Pre-requisites
 
-> We assume your setup is running [*ledger-live*](https://github.com/LedgerHQ/ledger-live) monorepo or at least *ledger-live-desktop* app.
+> We assume your setup is running [_ledger-live_](https://github.com/LedgerHQ/ledger-live) monorepo or at least _ledger-live-desktop_ app.
 > If not, please check the [installation guide](https://github.com/LedgerHQ/ledger-live#installation) and the [wiki](https://github.com/LedgerHQ/ledger-live#installation).
 
 ## Visual Studio Code extensions
+
 It's recommended to install those extensions.
+
 - [Typescript](https://marketplace.visualstudio.com/items?itemName=ms-vscode.vscode-typescript-next)
 - [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
 - [Playwright Test](https://marketplace.visualstudio.com/items?itemName=ms-playwright.playwright)
 
 # Installation
 
-Clone *ledger-live* repository, install and build dependencies.
+Clone _ledger-live_ repository, install and build dependencies.
+
 ```
 git clone https://github.com/LedgerHQ/ledger-live.git`
 pnpm i --filter="ledger-live-desktop..."`
@@ -63,6 +66,7 @@ Playwright launches Ledger Live application using Electron `executablePath` and 
 ## Build
 
 Before executing any test, don’t forget to build the app, do it whenever the source code changed.
+
 ```
 pnpm desktop build:testing
 ```
@@ -71,19 +75,32 @@ pnpm desktop build:testing
 
 ## Run tests
 
+Please do the setup command if not done yet
+
+```
+pnpm desktop test:playwright:setup
+```
+
 Run a single test
+
 ```
 pnpm desktop test:playwright playwright/specs/<testname>.spec.ts
 ```
+
 Run all tests in a directory
+
 ```
 pnpm desktop test:playwright playwright/specs/onboarding/
 ```
+
 Run all the tests
+
 ```
 pnpm desktop test:playwright
 ```
+
 Run all tests matching a tag
+
 ```
 pnpm desktop test:playwright --grep @onboarding
 ```
@@ -91,6 +108,7 @@ pnpm desktop test:playwright --grep @onboarding
 # Recorder
 
 To speed up test development, you can generate tests by recording your actions.
+
 ```
 pnpm desktop test:playwright:recorder
 ```
@@ -104,22 +122,21 @@ pnpm desktop test:playwright:recorder
 ![Workflow](docs/development-workflow.png)
 
 ---
+
 ### Step 1 - Identify elements
 
 <u>Path:</u> `src/...`
 
-To interact with web elements (buttons, input fields, images, …), they should be identified using a [*data-test-id*](https://playwright.dev/docs/selectors#id-data-testid-data-test-id-data-test-selectors) for unique elements or a [*class*](https://developer.mozilla.org/en-US/docs/Web/CSS/Class_selectors) for multiple elements.
+To interact with web elements (buttons, input fields, images, …), they should be identified using a [_data-test-id_](https://playwright.dev/docs/selectors#id-data-testid-data-test-id-data-test-selectors) for unique elements or a [_class_](https://developer.mozilla.org/en-US/docs/Web/CSS/Class_selectors) for multiple elements.
 
 > :information_source: As a convention, this is the pattern we must use: `<context>-<text or purpose>-<element type>`.
 
-*I want to identify the Get started CTA button in onboarding flow.*
+_I want to identify the Get started CTA button in onboarding flow._
 
 Look for your element in `src/renderer/...` and give it a `data-test-id` attribute.
 
 ```html
-<Button data-test-id=”onboarding-getstarted-button”>
-    Get started
-</Button>
+<button data-test-id="”onboarding-getstarted-button”">Get started</button>
 ```
 
 > :x: Don’t use a className in this case because the element is unique.
@@ -134,13 +151,14 @@ Look for your element in `src/renderer/...` and give it a `data-test-id` attribu
 
 A page object regroups all elements you can interact with and all actions you can do in a specific app screen.
 
-*I want to declare get started button element in a page object related to Onboarding.*
+_I want to declare get started button element in a page object related to Onboarding._
 
 Create `tests/models/onboardingPage.js`
 
 **Locators**
 
 Declare your element
+
 ```javascript
 constructor(page: Page) {
   this.page = page;
@@ -194,7 +212,7 @@ export class OnboardingPage {
 
 A test file regroups a series of actions and assertions to build a test scenario.
 
-*I want to create a file to test onboarding flow.*
+_I want to create a file to test onboarding flow._
 
 Create `tests/specs/onboarding/new-device.spec.ts`
 
@@ -226,29 +244,34 @@ Playwright uses [expect](https://playwright.dev/docs/test-assertions) library fo
 
 Playwright permits to compare screenshots. This assertion should be used **carefully** to avoid **heavy maintenance**, as example:
 
-*I want to check a button is redirecting me to another page.*
+_I want to check a button is redirecting me to another page._
 
 > Don’t use a visual comparison to check that, `await expect(page).toHaveURL(regexp)` is enough. Choose wisely your assertions, sometimes it's too overkill to take a screenshot.
 >
 > Also, be sure to not create duplicates and compare same screen twice.
 
-*I want to compare exactly the page I’m seeing.*
+_I want to compare exactly the page I’m seeing._
+
 ```javascript
 await expect(page).toHaveScreenshot(name);
 ```
 
 > :information_source: You can take a screenshot of the whole page, including overflowing elements.
+>
 > ```javascript
-> expect(page.screenshot({ fullPage: true })).toMatchSnapshot(name);
+> await expect(page).toHaveSceeenshot(name, { fullPage: true });
 > ```
+>
 > :x: This is currently not working with our application, please see [this](https://github.com/microsoft/playwright/issues/11041) issue.
 
-*I want to organize my screenshot set.*
+_I want to organize my screenshot set._
+
 ```javascript
 await expect(page).toHaveScreenshot([directory, name]);
 ```
 
-*I want to compare a single element on the page.*
+_I want to compare a single element on the page._
+
 ```javascript
 await expect(onboardingPage.getStartedButton).toHaveScreenshot();
 ```
@@ -267,7 +290,7 @@ test("Onboarding new device", async ({ page }) => {
 
   await test.step("Get started", async () => {
     await onboardingPage.getStarted();
-    await expect(page).toHaveScreenshot('next-page.png');
+    await expect(page).toHaveScreenshot("next-page.png");
   });
 });
 ```
@@ -277,6 +300,7 @@ test("Onboarding new device", async ({ page }) => {
 ### Step 4 - Update dataset
 
 Once tests are written, if you made screenshot comparisons, you will need to generate a new dataset of screenshots.
+
 ```
 pnpm desktop test:playwright:update-snapshots  app/ledger-live-desktop/tests/specs/onboarding/new-device.spec.ts
 ```
@@ -297,29 +321,29 @@ pnpm desktop test:playwright app/ledger-live-desktop/tests/specs/onboarding/new-
 
 :note: Here are some resources that might help during a test development.
 
-*I want to interact with the browser.*
+_I want to interact with the browser._
 
-https://playwright.dev/docs/api/class-page 
+https://playwright.dev/docs/api/class-page
 
-*I want to interact with an element.*
+_I want to interact with an element._
 
-https://playwright.dev/docs/api/class-locator 
+https://playwright.dev/docs/api/class-locator
 
-*I want to create or update a page object.*
+_I want to create or update a page object._
 
-https://playwright.dev/docs/test-pom 
+https://playwright.dev/docs/test-pom
 
-*I want to organize my tests.*
+_I want to organize my tests._
 
-https://playwright.dev/docs/api/class-test 
+https://playwright.dev/docs/api/class-test
 
-*I want to perform assertions.*
+_I want to perform assertions._
 
-https://playwright.dev/docs/assertions 
+https://playwright.dev/docs/assertions
 
-*I want to perform visual comparison.*
+_I want to perform visual comparison._
 
-https://playwright.dev/docs/test-snapshots 
+https://playwright.dev/docs/test-snapshots
 
 # Continuous Integration
 
@@ -328,48 +352,53 @@ https://playwright.dev/docs/test-snapshots
 ![Workflow](docs/ci-workflow.png)
 
 ### Commands
+
 - Generate new screenshots for all test suites
 
-    `/generate-screenshots`
+  `/generate-screenshots`
 
-    > This command is meant to be posted as a comment in your pull request.
-    >
-    > :warning: You might not have the permission to do it.
+  > This command is meant to be posted as a comment in your pull request.
+  >
+  > :warning: You might not have the permission to do it.
 
 - Push an empty commit to trigger CI checks
-    ```
-    git commit -m 'Run CI checks' --allow-empty`
-    git push
-    ```
+  ```
+  git commit -m 'Run CI checks' --allow-empty`
+  git push
+  ```
 
 # Debugging
 
-*I want to pause my script execution and check manually what’s going on.*
+_I want to pause my script execution and check manually what’s going on._
 
 Place `page.pause();` in your test file before the line you want to debug.
 
-*I want to enable the debugger.*
+_I want to enable the debugger._
 
     PWDEBUG=1 pnpm desktop test:playwright
 
-*I want Chrome DevTools.*
+_I want Chrome DevTools._
 
     DEV_TOOLS=1 pnpm desktop test:playwright
 
-*I want verbose logging.*
+_I want verbose logging._
 
     DEBUG=pw:api pnpm desktop test:playwright
 
 # Resources
+
 ## Releases
+
 - [Playwright changelogs](https://github.com/microsoft/playwright/releases)
 - [Electron changelogs](https://releases.electronjs.org/)
 
 ## Documentation
+
 - [Playwright Documentation](https://playwright.dev/docs/intro)
 - [Playwright ⨯ Electron](https://playwright.dev/docs/api/class-electron)
 - [Electron Documentation](https://www.electronjs.org/fr/docs/latest)
 
 ### Code coverage
+
 - [Documentation](https://playwright.dev/docs/api/class-coverage)
 - [Playwright ⨯ Istanbul](https://github.com/mxschmitt/playwright-test-coverage)

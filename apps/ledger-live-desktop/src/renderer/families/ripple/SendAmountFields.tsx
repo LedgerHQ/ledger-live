@@ -9,6 +9,7 @@ import InputCurrency from "~/renderer/components/InputCurrency";
 import Box from "~/renderer/components/Box";
 import GenericContainer from "~/renderer/components/FeesContainer";
 import { track } from "~/renderer/analytics/segment";
+import BigNumber from "bignumber.js";
 
 type Props = {
   account: Account;
@@ -28,8 +29,8 @@ function FeesField({ account, transaction, onChange, status, trackProperties = {
   invariant(transaction.family === "ripple", "FeeField: ripple family expected");
   const bridge = getAccountBridge(account);
   const onChangeFee = useCallback(
-    fee => {
-      track("button_clicked", {
+    (fee: BigNumber) => {
+      track("button_clicked2", {
         ...trackProperties,
         fee,
         button: "input",

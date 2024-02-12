@@ -31,7 +31,14 @@ const PostOnboardingScreen = () => {
           flow={"post-onboarding"}
         />
 
-        <Text variant="paragraph" fontSize={48} mb={8} whiteSpace="pre-wrap">
+        <Text
+          variant="paragraph"
+          fontSize={40}
+          mb={8}
+          fontWeight="semiBold"
+          lineHeight="120%"
+          whiteSpace="pre-wrap"
+        >
           {allDone
             ? t("postOnboarding.postOnboardingScreen.titleCompleted")
             : t("postOnboarding.postOnboardingScreen.title")}

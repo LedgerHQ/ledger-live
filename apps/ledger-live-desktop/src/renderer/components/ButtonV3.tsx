@@ -7,7 +7,7 @@ import styled from "styled-components";
 export const Base = styled(BaseButton)<{ big?: boolean }>`
   border-radius: 44px;
 
-  font-size: 12px;
+  font-size: ${p => (p.big ? "14px" : "12px")};
   height: 40px;
   line-height: 40px;
   padding: 0 24px;
@@ -25,6 +25,7 @@ export type Props = BaseButtonProps & {
   event?: string;
   eventProperties?: Record<string, unknown>;
   buttonTestId?: string;
+  big?: boolean;
 };
 
 function Button({

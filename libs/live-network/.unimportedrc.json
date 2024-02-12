@@ -1,0 +1,5 @@
+{
+  "entry": ["src/network.ts", "src/cache.ts"],
+  "ignoreUnimported": [],
+  "ignoreUnresolved": []
+}

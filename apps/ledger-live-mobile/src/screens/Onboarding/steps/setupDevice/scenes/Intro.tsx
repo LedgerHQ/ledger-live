@@ -1,11 +1,8 @@
-import React, { useCallback } from "react";
+import { IconBoxList, IconsLegacy, Text } from "@ledgerhq/native-ui";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Text, IconBoxList, IconsLegacy } from "@ledgerhq/native-ui";
-import { useNavigation } from "@react-navigation/native";
-import { NavigatorName, ScreenName } from "../../../../../const";
-import Button from "../../../../../components/PreventDoubleClickButton";
-import { StackNavigatorNavigation } from "../../../../../components/RootNavigator/types/helpers";
-import { OnboardingNavigatorParamList } from "../../../../../components/RootNavigator/types/OnboardingNavigator";
+import Button from "~/components/PreventDoubleClickButton";
+import OnboardingSetupDeviceInformation from "../drawers/Warning";
 
 const items = [
   {
@@ -39,21 +36,31 @@ IntroScene.id = "IntroScene";
 
 const Next = ({ onNext }: { onNext: () => void }) => {
   const { t } = useTranslation();
-  const navigation = useNavigation<StackNavigatorNavigation<OnboardingNavigatorParamList>>();
 
-  const next = useCallback(() => {
-    navigation.navigate(NavigatorName.OnboardingCarefulWarning, {
-      screen: ScreenName.OnboardingModalWarning,
-      params: {
-        onNext,
-      },
-    });
-  }, [onNext, navigation]);
+  const [isOpened, setOpen] = useState(false);
+
+  const next = () => {
+    setOpen(false);
+    setTimeout(() => onNext(), 200);
+  };
 
   return (
-    <Button type="main" size="large" onPress={next}>
-      {t("onboarding.stepSetupDevice.start.cta")}
-    </Button>
+    <>
+      <Button
+        type="main"
+        size="large"
+        onPress={() => setOpen(true)}
+        testID="onboarding-stepSetupDevice-start"
+      >
+        {t("onboarding.stepSetupDevice.start.cta")}
+      </Button>
+
+      <OnboardingSetupDeviceInformation
+        open={isOpened}
+        onClose={() => setOpen(false)}
+        onPress={next}
+      />
+    </>
   );
 };
 

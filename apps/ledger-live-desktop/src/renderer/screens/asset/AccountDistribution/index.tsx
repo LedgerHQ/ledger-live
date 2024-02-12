@@ -1,7 +1,7 @@
 import React, { useLayoutEffect, useRef, useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import Text from "~/renderer/components/Text";
 import Card from "~/renderer/components/Box/Card";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
@@ -9,17 +9,24 @@ import { AccountLike } from "@ledgerhq/types-live";
 import Box from "~/renderer/components/Box";
 import Header from "./Header";
 import Row from "./Row";
+import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
+import { useSelector } from "react-redux";
+import { useHistory } from "react-router";
 type Props = {
   accounts: AccountLike[];
 };
 export default function AccountDistribution({ accounts }: Props) {
   const { t } = useTranslation();
+  const history = useHistory();
+  const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const total = accounts.reduce((total, a) => total.plus(a.balance), BigNumber(0));
   const accountDistribution = useMemo(
     () =>
       accounts
+        .filter(a => !blacklistedTokenIds.includes(getAccountCurrency(a).id))
         .map(a => {
           const from = getAccountCurrency(a);
+
           return {
             account: a,
             currency: from,
@@ -28,8 +35,13 @@ export default function AccountDistribution({ accounts }: Props) {
           };
         })
         .sort((a, b) => b.distribution - a.distribution),
-    [accounts, total],
+    [accounts, blacklistedTokenIds, total],
   );
+
+  if (accountDistribution.length === 0) {
+    history.push("/");
+  }
+
   const cardRef = useRef(null);
   const [isVisible, setVisible] = useState(getEnv("PLAYWRIGHT_RUN")); // default to false
 

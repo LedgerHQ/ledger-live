@@ -23,7 +23,7 @@ const attemptToQuitApp = (
             type: "unresponsiveDevice",
           }),
         ),
-        catchError(e => throwError(e)),
+        catchError(e => throwError(() => e)),
       )
     : of({
         type: "appDetected",

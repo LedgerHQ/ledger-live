@@ -6,23 +6,23 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useIsFocused, useTheme } from "@react-navigation/native";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/index";
 import { Flex } from "@ledgerhq/native-ui";
-import { prepareCurrency } from "../../bridge/cache";
-import { ScreenName } from "../../const";
-import { TrackScreen } from "../../analytics";
-import SelectDevice from "../../components/SelectDevice";
-import SelectDevice2, { SetHeaderOptionsRequest } from "../../components/SelectDevice2";
-import NavigationScrollView from "../../components/NavigationScrollView";
-import DeviceActionModal from "../../components/DeviceActionModal";
+import { prepareCurrency } from "~/bridge/cache";
+import { ScreenName } from "~/const";
+import { TrackScreen } from "~/analytics";
+import SelectDevice from "~/components/SelectDevice";
+import SelectDevice2, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
+import NavigationScrollView from "~/components/NavigationScrollView";
+import DeviceActionModal from "~/components/DeviceActionModal";
 import type {
   ReactNavigationHeaderOptions,
   StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
-import type { AddAccountsNavigatorParamList } from "../../components/RootNavigator/types/AddAccountsNavigator";
+} from "~/components/RootNavigator/types/helpers";
+import type { AddAccountsNavigatorParamList } from "~/components/RootNavigator/types/AddAccountsNavigator";
 import SkipSelectDevice from "../SkipSelectDevice";
-import { setLastConnectedDevice, setReadOnlyMode } from "../../actions/settings";
+import { setLastConnectedDevice, setReadOnlyMode } from "~/actions/settings";
 import AddAccountsHeaderRightClose from "./AddAccountsHeaderRightClose";
-import { NavigationHeaderBackButton } from "../../components/NavigationHeaderBackButton";
-import { useAppDeviceAction } from "../../hooks/deviceActions";
+import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
+import { useAppDeviceAction } from "~/hooks/deviceActions";
 
 type Props = StackNavigatorProps<AddAccountsNavigatorParamList, ScreenName.AddAccountsSelectDevice>;
 
@@ -45,7 +45,7 @@ export default function AddAccountsSelectDevice({ navigation, route }: Props) {
   const newDeviceSelectionFeatureFlag = useFeature("llmNewDeviceSelection");
 
   const onSetDevice = useCallback(
-    device => {
+    (device: Device) => {
       dispatch(setLastConnectedDevice(device));
       setDevice(device);
       dispatch(setReadOnlyMode(false));
@@ -57,6 +57,7 @@ export default function AddAccountsSelectDevice({ navigation, route }: Props) {
   }, []);
 
   const onResult = useCallback(
+    // @ts-expect-error should be AppResult but navigation.navigate does not agree
     meta => {
       setDevice(null);
       const { inline } = route.params;

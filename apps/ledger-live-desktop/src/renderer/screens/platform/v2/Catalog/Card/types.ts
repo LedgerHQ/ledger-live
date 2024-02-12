@@ -1,6 +1,10 @@
-import { RecentlyUsedManifest } from "@ledgerhq/live-common/wallet-api/react";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
-export interface PropsRaw {
-  manifest: RecentlyUsedManifest;
-  onClick: (manifest: RecentlyUsedManifest) => void;
+export interface PropsCard<T extends LiveAppManifest> {
+  manifest: T;
+  onClick: (manifest: LiveAppManifest) => void;
+}
+
+export interface PropsCta {
+  text: string;
 }

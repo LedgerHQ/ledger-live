@@ -7,7 +7,7 @@ import counterValueFormatter from "@ledgerhq/live-common/market/utils/counterval
 import FormattedVal from "~/renderer/components/FormattedVal";
 import styled from "styled-components";
 import Chart from "~/renderer/components/Chart";
-import FormattedDate from "~/renderer/components/FormattedDate";
+import { dayFormat, hourFormat, useDateFormatter } from "~/renderer/hooks/useDateFormatter";
 import ChartPlaceholder from "../assets/ChartPlaceholder";
 import CountervalueSelect from "../CountervalueSelect";
 
@@ -48,10 +48,14 @@ function Tooltip({
   data,
   counterCurrency,
   locale,
+  formatDay,
+  formatHour,
 }: {
   data: { date: Date; value: number };
   counterCurrency: string;
   locale: string;
+  formatDay: (date: Date) => string;
+  formatHour: (date: Date) => string;
 }) {
   return (
     <Flex flexDirection="column" p={1}>
@@ -63,12 +67,8 @@ function Tooltip({
           locale,
         })}
       </TooltipText>
-      <SubTooltipText>
-        <FormattedDate date={data.date} format="LL" />
-      </SubTooltipText>
-      <SubTooltipText>
-        <FormattedDate date={data.date} format="LT" />
-      </SubTooltipText>
+      <SubTooltipText>{formatDay(data.date)}</SubTooltipText>
+      <SubTooltipText>{formatHour(data.date)}</SubTooltipText>
     </Flex>
   );
 }
@@ -113,7 +113,7 @@ function MarkeCoinChartComponent({
   }, [chartData, range]);
 
   const setRange = useCallback(
-    index => {
+    (index: number) => {
       const newRange = ranges[index];
       if (range !== newRange) refreshChart({ range: newRange });
     },
@@ -125,13 +125,22 @@ function MarkeCoinChartComponent({
   const suggestedMin = Math.min(...valueArray);
   const suggestedMax = Math.max(...valueArray);
 
+  const formatDay = useDateFormatter(dayFormat);
+  const formatHour = useDateFormatter(hourFormat);
+
   const renderTooltip = useCallback(
     (data: { value: number; date: Date }) =>
       !loading &&
       counterCurrency && (
-        <Tooltip data={data} counterCurrency={counterCurrency.toUpperCase()} locale={locale} />
+        <Tooltip
+          data={data}
+          counterCurrency={counterCurrency.toUpperCase()}
+          locale={locale}
+          formatDay={formatDay}
+          formatHour={formatHour}
+        />
       ),
-    [counterCurrency, loading, locale],
+    [counterCurrency, loading, locale, formatDay, formatHour],
   );
 
   return (

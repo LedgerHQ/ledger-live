@@ -1,11 +1,11 @@
 import React, { useCallback } from "react";
 import { FlatList } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { isEqual } from "lodash";
+import isEqual from "lodash/isEqual";
 import AssetRow, { NavigationProp } from "../WalletCentricAsset/AssetRow";
-import { withDiscreetMode } from "../../context/DiscreetModeContext";
-import { Asset } from "../../types/asset";
-import { ScreenName } from "../../const";
+import { withDiscreetMode } from "~/context/DiscreetModeContext";
+import { Asset } from "~/types/asset";
+import { ScreenName } from "~/const";
 
 type ListProps = { assets: Asset[] };
 

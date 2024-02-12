@@ -11,7 +11,6 @@ import { MarketCoinPage } from "../../models/MarketCoinPage";
 import { AssetPage } from "../../models/AssetPage";
 import { AccountsPage } from "../../models/AccountsPage";
 import { AccountPage } from "../../models/AccountPage";
-import { getProvidersMock } from "./services-api-mocks/getProviders.mock";
 
 test.use({
   env: {
@@ -80,11 +79,6 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
   const marketCoinPage = new MarketCoinPage(page);
   const analytics = new Analytics(page);
 
-  await page.route("https://swap.ledger.com/v4/providers**", async route => {
-    const mockProvidersResponse = getProvidersMock();
-    route.fulfill({ body: mockProvidersResponse });
-  });
-
   await test.step("Entry buttons load with feature flag enabled", async () => {
     await expect.soft(page).toHaveScreenshot("portfolio-entry-buttons.png");
   });
@@ -107,7 +101,7 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
 
   await test.step("choose Kiln", async () => {
     const analyticsPromise = analytics.waitForTracking({
-      event: "button_clicked",
+      event: "button_clicked2",
       properties: {
         button: "kiln",
         path: "account/mock:1:ethereum:true_ethereum_1:",
@@ -175,7 +169,7 @@ test("Ethereum staking flows via portfolio, asset page and market page @smoke", 
     await expect.soft(page).toHaveScreenshot("stake-drawer-opened-from-market-coin-page.png");
     await drawer.selectAccount("Ethereum", 1);
     const analyticsPromise = analytics.waitForTracking({
-      event: "button_clicked",
+      event: "button_clicked2",
       properties: {
         button: "kiln_pooling",
         path: "account/mock:1:ethereum:true_ethereum_0:",

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback } from "react";
 import { FlatList, LayoutChangeEvent, ListRenderItemInfo } from "react-native";
 import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
 import { useDispatch, useSelector } from "react-redux";
@@ -7,38 +7,36 @@ import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { Flex } from "@ledgerhq/native-ui";
 import debounce from "lodash/debounce";
+import SafeAreaView from "~/components/SafeAreaView";
 import { useTranslation } from "react-i18next";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { ReactNavigationPerformanceView } from "@shopify/react-native-performance-navigation";
-import { switchCountervalueFirst } from "../../actions/settings";
-import { useBalanceHistoryWithCountervalue } from "../../hooks/portfolio";
+import { switchCountervalueFirst } from "~/actions/settings";
+import { useBalanceHistoryWithCountervalue } from "~/hooks/portfolio";
 import {
   selectedTimeRangeSelector,
   counterValueCurrencySelector,
   countervalueFirstSelector,
-} from "../../reducers/settings";
-import { accountScreenSelector } from "../../reducers/accounts";
-import { track, TrackScreen } from "../../analytics";
-import accountSyncRefreshControl from "../../components/accountSyncRefreshControl";
-import { ScreenName } from "../../const";
-import CurrencyBackgroundGradient from "../../components/CurrencyBackgroundGradient";
+} from "~/reducers/settings";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { track, TrackScreen } from "~/analytics";
+import accountSyncRefreshControl from "~/components/accountSyncRefreshControl";
+import { ScreenName } from "~/const";
+import CurrencyBackgroundGradient from "~/components/CurrencyBackgroundGradient";
 import AccountHeader from "./AccountHeader";
 import { getListHeaderComponents } from "./ListHeaderComponent";
-import { withDiscreetMode } from "../../context/DiscreetModeContext";
-import TabBarSafeAreaView, {
-  TAB_BAR_SAFE_HEIGHT,
-} from "../../components/TabBar/TabBarSafeAreaView";
+import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import SectionContainer from "../WalletCentricSections/SectionContainer";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 import OperationsHistorySection from "../WalletCentricSections/OperationsHistory";
 import EmptyAccountCard from "./EmptyAccountCard";
 import useAccountActions from "./hooks/useAccountActions";
-import type { AccountsNavigatorParamList } from "../../components/RootNavigator/types/AccountsNavigator";
-import type { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
-import type { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
+import type { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
+import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 
 type Props =
   | StackNavigatorProps<AccountsNavigatorParamList, ScreenName.Account>
@@ -48,9 +46,12 @@ const AnimatedFlatListWithRefreshControl = Animated.createAnimatedComponent(
   accountSyncRefreshControl(FlatList),
 );
 
+/** If deep linking params are present, this Account Screen is redirected to from Accounts Screen. */
 function AccountScreen({ route }: Props) {
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
+
   if (!account) return null;
+
   return <AccountScreenInner account={account} parentAccount={parentAccount || undefined} />;
 }
 
@@ -111,43 +112,23 @@ const AccountScreenInner = ({
 
   const { secondaryActions } = useAccountActions({ account, parentAccount });
 
-  const { listHeaderComponents } = useMemo(
-    () =>
-      getListHeaderComponents({
-        account,
-        parentAccount,
-        countervalueAvailable: countervalueAvailable || account.balance.eq(0),
-        useCounterValue,
-        range,
-        history,
-        countervalueChange,
-        cryptoChange,
-        onAccountPress,
-        counterValueCurrency,
-        onSwitchAccountCurrency,
-        onAccountCardLayout,
-        colors,
-        secondaryActions,
-        t,
-      }),
-    [
-      account,
-      parentAccount,
-      countervalueAvailable,
-      useCounterValue,
-      range,
-      history,
-      countervalueChange,
-      cryptoChange,
-      onAccountPress,
-      counterValueCurrency,
-      onSwitchAccountCurrency,
-      onAccountCardLayout,
-      colors,
-      secondaryActions,
-      t,
-    ],
-  );
+  const { listHeaderComponents } = getListHeaderComponents({
+    account,
+    parentAccount,
+    countervalueAvailable: countervalueAvailable || account.balance.eq(0),
+    useCounterValue,
+    range,
+    history,
+    countervalueChange,
+    cryptoChange,
+    onAccountPress,
+    counterValueCurrency,
+    onSwitchAccountCurrency,
+    onAccountCardLayout,
+    colors,
+    secondaryActions,
+    t,
+  });
 
   const data = [
     ...listHeaderComponents,
@@ -167,7 +148,7 @@ const AccountScreenInner = ({
 
   return (
     <ReactNavigationPerformanceView screenName={ScreenName.Account} interactive>
-      <TabBarSafeAreaView edges={["bottom", "left", "right"]}>
+      <SafeAreaView isFlex>
         {analytics}
         <CurrencyBackgroundGradient
           currentPositionY={currentPositionY}
@@ -177,8 +158,7 @@ const AccountScreenInner = ({
         <AnimatedFlatListWithRefreshControl
           style={{ flex: 1 }}
           contentContainerStyle={{
-            paddingBottom: TAB_BAR_SAFE_HEIGHT + 48,
-            marginTop: 92,
+            paddingTop: 48, //CurrencyHeader height
           }}
           data={data}
           renderItem={({ item }: ListRenderItemInfo<unknown>) => item as JSX.Element}
@@ -196,7 +176,7 @@ const AccountScreenInner = ({
           countervalueAvailable={countervalueAvailable}
           parentAccount={parentAccount}
         />
-      </TabBarSafeAreaView>
+      </SafeAreaView>
     </ReactNavigationPerformanceView>
   );
 };

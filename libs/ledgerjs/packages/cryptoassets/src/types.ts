@@ -5,6 +5,6 @@ export type { ERC20Token } from "./data/erc20";
 export type { ElrondESDTToken } from "./data/esdt";
 export type { PolygonERC20Token } from "./data/polygon-erc20";
 export type { StellarToken } from "./data/stellar";
+export type { CasperToken } from "./data/casper";
 export type { TRC10Token } from "./data/trc10";
 export type { TRC20Token } from "./data/trc20";
-export type { ICPToken } from "./data/internet_computer";

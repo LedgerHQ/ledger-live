@@ -1,5 +1,6 @@
 import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
 import { getDerivationModesForCurrency } from "@ledgerhq/coin-framework/derivation";
+import { DeviceModelId } from "@ledgerhq/devices";
 import { listCryptoCurrencies, setSupportedCurrencies } from "./currencies";
 import { accountDataToAccount, accountToAccountData, encode, decode } from "./cross";
 import { Account } from "@ledgerhq/types-live";
@@ -38,11 +39,15 @@ test("encode/decode", () => {
     },
     exporterName: "test你好👋",
     exporterVersion: "0.0.0",
+    modelId: DeviceModelId.nanoX,
+    modelIdList: [DeviceModelId.nanoX],
   };
   const exp = decode(encode(data));
   expect(exp.meta.exporterName).toEqual(data.exporterName);
   expect(exp.accounts.length).toEqual(data.accounts.length);
   expect(exp.accounts).toMatchObject(data.accounts.map(accountToAccountData));
+  expect(exp.meta.modelId).toEqual("nanoX");
+  expect(exp.meta.modelIdList).toEqual(["nanoX"]);
 });
 test("encode/decode", () => {
   const accounts = Array(3)
@@ -101,5 +106,7 @@ test("encode/decode", () => {
     },
     blacklistedTokenIds: ["tokenid3"],
   });
+  expect(res.meta.modelId).toBeUndefined();
+  expect(res.meta.modelIdList).toBeUndefined();
   expect(res).toMatchSnapshot();
 });

@@ -112,7 +112,7 @@ const scenarios: Array<Scenario> = [
       ["onclose"],
     ],
   },
-  // Errors in bulk always throw
+  // Errors (locked device) in bulk always throw
   {
     describe: "Regardless of the error, if we are in bulk, it can't recover",
     device: `
@@ -136,6 +136,35 @@ const scenarios: Array<Scenario> = [
       ["onmessage", '{ "query": "exchange", "nonce": 2, "data": "0000000002" }'],
       ["onmessage", '{ "query": "exchange", "nonce": 3, "data": "0000000003" }'],
       ["onmessage", '{ "query": "bulk", "nonce": 4, "data": ["0001", "0002", "0003", "0004"] }'],
+    ],
+  },
+  // Once a bulk exchange has started, no more message (success message for ex) coming from the HSM should be handled
+  {
+    describe: "Once in a bulk exchange, no more message coming from the HSM should be handeled",
+    // All the exchange are normal
+    device: `
+  => 0000000001
+  <= 9000
+  => 0000000002
+  <= 9000
+  => 0000000003
+  <= 9000
+  => 0001
+  <= 9000
+  => 0002
+  <= 9000
+  => 0003
+  <= 9000
+  => 0004
+  <= 9000
+`,
+    events: [
+      ["onmessage", '{ "query": "exchange", "nonce": 1, "data": "0000000001" }'],
+      ["onmessage", '{ "query": "exchange", "nonce": 2, "data": "0000000002" }'],
+      ["onmessage", '{ "query": "exchange", "nonce": 3, "data": "0000000003" }'],
+      ["onmessage", '{ "query": "bulk", "nonce": 4, "data": ["0001", "0002", "0003", "0004"] }'],
+      // But we receive a last message from HSM to notify us of the success. This message should be ignored.
+      ["onmessage", '{ "query": "success", "nonce": 4, "data": "yolo" }', true],
     ],
   },
   // Network errors should throw

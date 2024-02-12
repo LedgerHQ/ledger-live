@@ -36,10 +36,8 @@ test("Segment", async ({ page }) => {
   await test.step("has analytics settled", async () => {
     const hasAnalytics = await page.evaluate(() => !!window.analytics);
     expect(hasAnalytics).toBe(true);
-    await page.waitForTimeout(1000); // give 1s more for analytics.min.js in case it doesn't load
     await layout.goToSettings();
-    const hasIntegrations = await page.evaluate(() => "Integrations" in window.analytics);
-    expect(hasIntegrations).toBe(true);
+    await page.waitForFunction(() => "Integrations" in window.analytics);
   });
 
   await test.step("has sent event with userId settled", async () => {

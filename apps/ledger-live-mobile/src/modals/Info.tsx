@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import QueuedDrawer from "../components/QueuedDrawer";
-import LText, { Opts } from "../components/LText";
+import QueuedDrawer from "~/components/QueuedDrawer";
+import LText, { Opts } from "~/components/LText";
 
 type Props = {
   data: ModalInfo[];
@@ -29,13 +29,13 @@ export default function InfoModal({ data, isOpened, onClose }: Props) {
                 </View>
               )}
               {title ? (
-                <LText style={styles.title} semiBold secondary {...titleProps}>
+                <LText style={styles.title} semiBold secondary {...titleProps} textAlign="center">
                   {title}
                 </LText>
               ) : null}
             </View>
             {description ? (
-              <LText color="grey" {...descriptionProps}>
+              <LText color="grey" {...descriptionProps} textAlign="center">
                 {description}
               </LText>
             ) : null}

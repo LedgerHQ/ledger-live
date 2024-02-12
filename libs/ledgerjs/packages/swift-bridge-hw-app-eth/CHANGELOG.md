@@ -1,5 +1,186 @@
 # @ledgerhq/swift-bridge-hw-app-eth
 
+## 1.1.4
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-app-eth@6.35.4
+  - @ledgerhq/swift-bridge-hw-transport-ble@1.1.3
+
+## 1.1.4-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-app-eth@6.35.4-next.0
+  - @ledgerhq/swift-bridge-hw-transport-ble@1.1.3-next.0
+
+## 1.1.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-app-eth@6.35.3
+  - @ledgerhq/swift-bridge-hw-transport-ble@1.1.2
+
+## 1.1.3-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-app-eth@6.35.3-next.0
+  - @ledgerhq/swift-bridge-hw-transport-ble@1.1.2-next.0
+
+## 1.1.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-app-eth@6.35.2
+
+## 1.1.2-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-app-eth@6.35.2-next.0
+
+## 1.1.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-app-eth@6.35.1
+  - @ledgerhq/swift-bridge-hw-transport-ble@1.1.1
+
+## 1.1.1-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-app-eth@6.35.1-next.0
+  - @ledgerhq/swift-bridge-hw-transport-ble@1.1.1-next.0
+
+## 1.1.0
+
+### Minor Changes
+
+- [#5430](https://github.com/LedgerHQ/ledger-live/pull/5430) [`5964e30bed`](https://github.com/LedgerHQ/ledger-live/commit/5964e30bed11d64a3b7401c6ab51ffc1ad4c427c) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update documentation v14 ledgerjs
+
+### Patch Changes
+
+- Updated dependencies [[`5964e30bed`](https://github.com/LedgerHQ/ledger-live/commit/5964e30bed11d64a3b7401c6ab51ffc1ad4c427c)]:
+  - @ledgerhq/swift-bridge-hw-transport-ble@1.1.0
+  - @ledgerhq/hw-app-eth@6.35.0
+
+## 1.1.0-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-app-eth@6.35.0-next.1
+
+## 1.1.0-next.0
+
+### Minor Changes
+
+- [#5430](https://github.com/LedgerHQ/ledger-live/pull/5430) [`5964e30bed`](https://github.com/LedgerHQ/ledger-live/commit/5964e30bed11d64a3b7401c6ab51ffc1ad4c427c) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update documentation v14 ledgerjs
+
+### Patch Changes
+
+- Updated dependencies [[`5964e30bed`](https://github.com/LedgerHQ/ledger-live/commit/5964e30bed11d64a3b7401c6ab51ffc1ad4c427c)]:
+  - @ledgerhq/swift-bridge-hw-transport-ble@1.1.0-next.0
+  - @ledgerhq/hw-app-eth@6.35.0-next.0
+
+## 1.0.20
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-app-eth@6.34.9
+  - @ledgerhq/swift-bridge-hw-transport-ble@1.0.9
+
+## 1.0.20-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-app-eth@6.34.9-next.0
+  - @ledgerhq/swift-bridge-hw-transport-ble@1.0.9-next.0
+
+## 1.0.19
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-app-eth@6.34.8
+
+## 1.0.19-hotfix.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-app-eth@6.34.8-hotfix.1
+
+## 1.0.19-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-app-eth@6.34.8-hotfix.0
+
+## 1.0.18
+
+### Patch Changes
+
+- Updated dependencies [[`c86637f6e5`](https://github.com/LedgerHQ/ledger-live/commit/c86637f6e57845716a791854dd8f686807152e73)]:
+  - @ledgerhq/hw-app-eth@6.34.7
+
+## 1.0.17
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-app-eth@6.34.6
+
+## 1.0.16
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-app-eth@6.34.5
+
+## 1.0.15
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-app-eth@6.34.4
+
+## 1.0.15-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-app-eth@6.34.4-next.0
+
+## 1.0.14
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-app-eth@6.34.3
+  - @ledgerhq/swift-bridge-hw-transport-ble@1.0.8
+
+## 1.0.14-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-app-eth@6.34.3-next.0
+  - @ledgerhq/swift-bridge-hw-transport-ble@1.0.8-next.0
+
 ## 1.0.13
 
 ### Patch Changes

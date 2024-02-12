@@ -14,23 +14,20 @@ import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { rgba, Text } from "@ledgerhq/native-ui";
 import { CeloAccount } from "@ledgerhq/live-common/families/celo/types";
 import Icon from "react-native-vector-icons/Feather";
-import { accountScreenSelector } from "../../../reducers/accounts";
-import { ScreenName } from "../../../const";
-import { TrackScreen } from "../../../analytics";
-import Button from "../../../components/Button";
-import Touchable from "../../../components/Touchable";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { ScreenName } from "~/const";
+import { TrackScreen } from "~/analytics";
+import Button from "~/components/Button";
+import Touchable from "~/components/Touchable";
 import SendRowsFee from "../SendRowsFee";
-import Clock from "../../../icons/Clock";
-import LText from "../../../components/LText";
-import QueuedDrawer from "../../../components/QueuedDrawer";
-import InfoIcon from "../../../components/InfoIcon";
+import Clock from "~/icons/Clock";
+import LText from "~/components/LText";
+import QueuedDrawer from "~/components/QueuedDrawer";
+import InfoIcon from "~/components/InfoIcon";
 import Line from "../components/Line";
 import Words from "../components/Words";
 import ErrorAndWarning from "../components/ErrorAndWarning";
-import type {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
+import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { CeloWithdrawFlowParamList } from "./types";
 
 type Props = BaseComposite<
@@ -39,7 +36,7 @@ type Props = BaseComposite<
 
 export default function WithdrawAmount({ navigation, route }: Props) {
   const [infoModalOpen, setInfoModalOpen] = useState(false);
-  const openModal = useCallback(time => setInfoModalOpen(time), [setInfoModalOpen]);
+  const openModal = useCallback((time: boolean) => setInfoModalOpen(time), [setInfoModalOpen]);
   const closeModal = useCallback(() => setInfoModalOpen(false), [setInfoModalOpen]);
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
@@ -69,7 +66,7 @@ export default function WithdrawAmount({ navigation, route }: Props) {
   }, [account, parentAccount, transaction, bridge, debouncedTransaction]);
 
   const onChange = useCallback(
-    index => {
+    (index: number) => {
       if (index != null) {
         setTransaction(bridge.updateTransaction(transaction, { index }));
       }
@@ -136,6 +133,7 @@ export default function WithdrawAmount({ navigation, route }: Props) {
               return transaction.index === index ? (
                 <CustomSelectable selected={true} name={formatAmount(value)} hasClock={disabled} />
               ) : (
+                // @ts-expect-error we are giving a bignumber to be used as a boolean, whut ?
                 <Touchable onPress={disabled ? () => openModal(time) : () => onChange(index)}>
                   <CustomSelectable
                     selected={false}

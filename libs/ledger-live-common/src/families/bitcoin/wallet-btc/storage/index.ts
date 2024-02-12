@@ -1,4 +1,7 @@
-import { findLast, filter, uniqBy, findIndex } from "lodash";
+import findLast from "lodash/findLast";
+import filter from "lodash/filter";
+import uniqBy from "lodash/uniqBy";
+import findIndex from "lodash/findIndex";
 import Base from "../crypto/base";
 import { Input, IStorage, Output, TX, Address, Block } from "./types";
 
@@ -85,6 +88,10 @@ class BitcoinLikeStorage implements IStorage {
     return this.unspentUtxos[indexAddress];
   }
 
+  /**
+   * add a list of txs to the current account
+   * update related indexes and UTXOs of the account
+   */
   appendTxs(txs: TX[]): number {
     const lastLength = this.txs.length;
 
@@ -233,6 +240,9 @@ class BitcoinLikeStorage implements IStorage {
     Base.addressCache = { ...Base.addressCache, ...this.addressCache };
   }
 
+  /**
+   * export the storage data(txs, UTXOs, index...) to app.json
+   */
   async export(): Promise<{
     txs: TX[];
     addressCache: { [key: string]: string };
@@ -240,6 +250,9 @@ class BitcoinLikeStorage implements IStorage {
     return this.exportSync();
   }
 
+  /**
+   * load account data(txs, UTXOs, index...) from app.json
+   */
   async load(data: { txs: TX[]; addressCache: { [key: string]: string } }): Promise<void> {
     return this.loadSync(data);
   }

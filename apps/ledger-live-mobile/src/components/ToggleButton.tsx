@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { View, TouchableOpacity, StyleSheet } from "react-native";
+import { View, TouchableOpacity, StyleSheet, LayoutChangeEvent } from "react-native";
 import Animated, {
   interpolate,
   useAnimatedStyle,
@@ -29,7 +29,7 @@ const ToggleButton = ({ value, options, onChange }: Props) => {
   // Animated value that will be updated to be equal to `activeIndex`
   const animatedIndex = useSharedValue(0);
 
-  const onLayout = useCallback(evt => {
+  const onLayout = useCallback((evt: LayoutChangeEvent) => {
     setWidth(evt.nativeEvent.layout.width);
   }, []);
 

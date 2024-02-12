@@ -1,9 +1,10 @@
+import { isStrategyDisabled } from "@ledgerhq/coin-evm/editTransaction/index";
 import { getEstimatedFees } from "@ledgerhq/coin-evm/logic";
 import { getTypedTransaction } from "@ledgerhq/coin-evm/transaction";
-import type { GasOptions, Strategy, Transaction } from "@ledgerhq/coin-evm/types/index";
+import type { FeeData, GasOptions, Strategy, Transaction } from "@ledgerhq/coin-evm/types/index";
 import { getFeesCurrency, getFeesUnit, getMainAccount } from "@ledgerhq/live-common/account/index";
-import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { useTheme } from "@react-navigation/native";
+import type { Account, AccountLike, TransactionStatusCommon } from "@ledgerhq/types-live";
+import { useTheme } from "styled-components/native";
 import BigNumber from "bignumber.js";
 import invariant from "invariant";
 import React, { useCallback, useState } from "react";
@@ -17,21 +18,24 @@ import {
   TouchableOpacityProps,
   View,
 } from "react-native";
-import { useAnalytics } from "../../analytics";
-import CounterValue from "../../components/CounterValue";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import LText from "../../components/LText";
-import NetworkFeeInfo from "../../components/NetworkFeeInfo";
-import QueuedDrawer from "../../components/QueuedDrawer";
-import SectionSeparator from "../../components/SectionSeparator";
-import Info from "../../icons/Info";
-import TachometerFast from "../../icons/TachometerFast";
-import TachometerMedium from "../../icons/TachometerMedium";
-import TachometerSlow from "../../icons/TachometerSlow";
-import SummaryRow from "../../screens/SendFunds/SummaryRow";
-import { sharedSwapTracking } from "../../screens/Swap/utils";
-
-type StrategyWithCustom = Strategy | "custom";
+import { useAnalytics } from "~/analytics";
+import CounterValue from "~/components/CounterValue";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import LText from "~/components/LText";
+import NetworkFeeInfo from "~/components/NetworkFeeInfo";
+import QueuedDrawer from "~/components/QueuedDrawer";
+import SectionSeparator from "~/components/SectionSeparator";
+import Info from "~/icons/Info";
+import TachometerFast from "~/icons/TachometerFast";
+import TachometerMedium from "~/icons/TachometerMedium";
+import TachometerSlow from "~/icons/TachometerSlow";
+import SummaryRow from "~/screens/SendFunds/SummaryRow";
+import { sharedSwapTracking } from "~/screens/Swap/utils";
+import { StrategyWithCustom } from "./types";
+import { Alert, Flex, Text } from "@ledgerhq/native-ui";
+import TranslatedError from "~/components/TranslatedError";
+import { useNavigation } from "@react-navigation/core";
+import { NavigatorName, ScreenName } from "~/const";
 
 type Props = {
   gasOptions: GasOptions;
@@ -44,6 +48,8 @@ type Props = {
   forceUnitLabel?: boolean | React.ReactNode;
   disabledStrategies?: Array<string>;
   NetworkFeesInfoComponent?: React.FC;
+  transactionToUpdate?: Transaction;
+  status?: TransactionStatusCommon;
 };
 
 const CVWrapper = ({ children }: { children?: React.ReactNode }) => (
@@ -66,6 +72,8 @@ export default function SelectFeesStrategy({
   forceUnitLabel,
   disabledStrategies,
   NetworkFeesInfoComponent,
+  transactionToUpdate,
+  status,
 }: Props) {
   const { track } = useAnalytics();
   const { t } = useTranslation();
@@ -79,6 +87,10 @@ export default function SelectFeesStrategy({
     () => setNetworkFeeHelpOpened(!isNetworkFeeHelpOpened),
     [isNetworkFeeHelpOpened],
   );
+  const navigation = useNavigation();
+
+  const errors = status?.errors;
+  const insufficuentError = Object.values(errors || {})[0] || null;
 
   const closeNetworkFeeHelpModal = () => setNetworkFeeHelpOpened(false);
 
@@ -94,6 +106,19 @@ export default function SelectFeesStrategy({
     [onStrategySelect, track],
   );
 
+  const onBuy = useCallback(
+    (account: Account) => {
+      navigation.navigate(NavigatorName.Exchange, {
+        screen: ScreenName.ExchangeBuy,
+        params: {
+          defaultAccountId: account.id,
+          defaultCurrencyId: account.currency.id,
+        },
+      });
+    },
+    [navigation],
+  );
+
   const renderItem = ({ item: strategy }: ListRenderItemInfo<StrategyWithCustom>) => {
     const estimatedFees = (() => {
       if (strategy === "custom") {
@@ -105,15 +130,39 @@ export default function SelectFeesStrategy({
       return getEstimatedFees(getTypedTransaction(transaction, gasOptions[strategy]));
     })();
 
+    const feeData: FeeData =
+      strategy === "custom"
+        ? {
+            maxFeePerGas: transaction.maxFeePerGas ?? null,
+            maxPriorityFeePerGas: transaction.maxPriorityFeePerGas ?? null,
+            gasPrice: transaction.gasPrice ?? null,
+            nextBaseFee: null,
+          }
+        : gasOptions[strategy];
+
+    const isDisabled =
+      disabledStrategies?.includes(strategy) ||
+      (!!transactionToUpdate &&
+        isStrategyDisabled({
+          transaction: transactionToUpdate,
+          feeData,
+        }));
+
+    const isSelected = feesStrategy === strategy && !isDisabled;
+
     return (
       <TouchableOpacity
         onPress={() => onPressStrategySelect(strategy)}
-        disabled={disabledStrategies ? disabledStrategies.includes(strategy) : false}
+        disabled={isDisabled}
         style={[
           styles.feeButton,
           {
-            borderColor: feesStrategy === strategy ? colors.live : colors.background,
-            backgroundColor: feesStrategy === strategy ? colors.lightLive : colors.lightFog,
+            borderColor: isSelected
+              ? insufficuentError
+                ? colors.warning.c70
+                : colors.primary.c80
+              : "transparent",
+            backgroundColor: isSelected ? colors.opacityPurple.c10 : colors.opacityDefault.c05,
           },
         ]}
       >
@@ -121,17 +170,17 @@ export default function SelectFeesStrategy({
           style={[
             styles.feeStrategyContainer,
             {
-              opacity: disabledStrategies?.includes(strategy) ? 0.2 : 1,
+              opacity: isDisabled ? 0.2 : 1,
             },
           ]}
         >
           <View style={styles.leftBox}>
             {strategy === "slow" ? (
-              <TachometerSlow size={16} color={colors.grey} />
+              <TachometerSlow size={16} color={colors.opacityDefault.c60} />
             ) : strategy === "medium" ? (
-              <TachometerMedium size={16} color={colors.grey} />
+              <TachometerMedium size={16} color={colors.opacityDefault.c60} />
             ) : (
-              <TachometerFast size={16} color={colors.grey} />
+              <TachometerFast size={16} color={colors.opacityDefault.c60} />
             )}
             <LText semiBold style={styles.feeLabel}>
               {t(`fees.speed.${strategy}`)}
@@ -169,19 +218,29 @@ export default function SelectFeesStrategy({
       </QueuedDrawer>
 
       <View>
-        <SectionSeparator lineColor={colors.lightFog} />
+        <SectionSeparator lineColor={colors.opacityDefault.c10} />
         <SummaryRow
           onPress={toggleNetworkFeeHelpModal}
           title={t("send.summary.maxEstimatedFee")}
           additionalInfo={
             <View>
-              <Info size={12} color={colors.grey} />
+              <Info size={12} color={colors.neutral.c70} />
             </View>
           }
         >
           {null}
         </SummaryRow>
-
+        {insufficuentError && (
+          <TouchableOpacity onPress={() => onBuy(mainAccount)}>
+            <Alert type="warning">
+              <Flex width={"90%"}>
+                <Text>
+                  <TranslatedError error={insufficuentError} />
+                </Text>
+              </Flex>
+            </Alert>
+          </TouchableOpacity>
+        )}
         <SafeAreaView style={styles.strategiesContainer}>
           <FlatList
             data={customFees ? strategiesWithCustom : strategies}
@@ -194,7 +253,7 @@ export default function SelectFeesStrategy({
           style={[
             styles.customizeFeesButton,
             {
-              backgroundColor: colors.lightLive,
+              backgroundColor: colors.opacityPurple.c10,
             },
           ]}
           onPress={onCustomFeesPress}
@@ -227,7 +286,7 @@ const styles = StyleSheet.create({
   },
   feeButton: {
     width: "100%",
-    borderRadius: 4,
+    borderRadius: 12,
     borderWidth: 1,
     marginVertical: 4,
     padding: 16,
@@ -245,7 +304,7 @@ const styles = StyleSheet.create({
   customizeFeesButton: {
     flex: 1,
     padding: 8,
-    borderRadius: 4,
+    borderRadius: 12,
     justifyContent: "center",
     alignItems: "center",
     marginTop: 4,

@@ -19,8 +19,10 @@ import {
   selectedTimeRangeSelector,
   SettingsState,
   VaultSigner,
+  SupportedCountervaluesData,
 } from "~/renderer/reducers/settings";
 import { useRefreshAccountsOrdering } from "~/renderer/actions/general";
+import { Language, Locale } from "~/config/languages";
 export type SaveSettings = (a: Partial<Settings>) => {
   type: string;
   payload: Partial<Settings>;
@@ -52,10 +54,6 @@ export const setDeveloperMode = (developerMode: boolean) =>
 export const setDiscreetMode = (discreetMode: boolean) =>
   saveSettings({
     discreetMode,
-  });
-export const setCarouselVisibility = (carouselVisibility: number) =>
-  saveSettings({
-    carouselVisibility,
   });
 export const setSentryLogs = (sentryLogs: boolean) =>
   saveSettings({
@@ -104,7 +102,7 @@ export const setCounterValue = (counterValue: string) =>
     counterValue,
     pairExchanges: {},
   });
-export const setLanguage = (language?: string | null) =>
+export const setLanguage = (language?: Language | null) =>
   saveSettings({
     language,
   });
@@ -112,7 +110,7 @@ export const setTheme = (theme?: string | null) =>
   saveSettings({
     theme,
   });
-export const setLocale = (locale: string) =>
+export const setLocale = (locale: Locale) =>
   saveSettings({
     locale,
   });
@@ -315,11 +313,14 @@ export const toggleStarredMarketCoins = (payload: string) => ({
   type: "TOGGLE_STARRED_MARKET_COINS",
   payload,
 });
-export const setOverriddenFeatureFlag = (key: FeatureId, value: Feature | undefined) => ({
+export const setOverriddenFeatureFlag = (featureFlag: {
+  key: FeatureId;
+  value: Feature | undefined;
+}) => ({
   type: "SET_OVERRIDDEN_FEATURE_FLAG",
   payload: {
-    key,
-    value,
+    key: featureFlag.key,
+    value: featureFlag.value,
   },
 });
 export const setOverriddenFeatureFlags = (
@@ -341,5 +342,10 @@ export const setFeatureFlagsButtonVisible = (featureFlagsButtonVisible: boolean)
 
 export const setVaultSigner = (payload: VaultSigner) => ({
   type: "SET_VAULT_SIGNER",
+  payload,
+});
+
+export const setSupportedCounterValues = (payload: SupportedCountervaluesData[]) => ({
+  type: "SET_SUPPORTED_COUNTER_VALUES",
   payload,
 });

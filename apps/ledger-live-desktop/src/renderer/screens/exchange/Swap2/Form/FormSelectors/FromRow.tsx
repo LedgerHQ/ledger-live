@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import {
@@ -8,13 +7,11 @@ import {
   getAccountName,
 } from "@ledgerhq/live-common/account/index";
 import Box from "~/renderer/components/Box";
-import { fromSelector } from "~/renderer/actions/swap";
 import InputCurrency from "~/renderer/components/InputCurrency";
 import { ErrorContainer } from "~/renderer/components/Input";
 import { SelectAccount } from "~/renderer/components/SelectAccount";
 import Switch from "~/renderer/components/Switch";
 import Text from "~/renderer/components/Text";
-import { shallowAccountsSelector } from "~/renderer/reducers/accounts";
 import { amountInputContainerProps, renderAccountValue, selectRowStylesMap } from "./utils";
 import { FormLabel } from "./FormLabel";
 import {
@@ -24,12 +21,15 @@ import {
 } from "@ledgerhq/live-common/exchange/swap/types";
 import { track } from "~/renderer/analytics/segment";
 import { useGetSwapTrackingProperties } from "../../utils/index";
-import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/sortByMarketcap";
+import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";
 import { listCryptoCurrencies, listTokens } from "@ledgerhq/live-common/currencies/index";
 import { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { TranslatedError } from "~/renderer/components/TranslatedError/TranslatedError";
 import { WarningSolidMedium } from "@ledgerhq/react-ui/assets/icons";
+import { useSwapableAccounts } from "@ledgerhq/live-common/exchange/swap/hooks/index";
+import { useSelector } from "react-redux";
+import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
 
 const SwapStatusContainer = styled.div<{ isError: boolean }>(
   ({ theme: { space, colors }, isError }) => `
@@ -50,6 +50,20 @@ const SwapStatusText = styled(Text)(
   }
 `,
 );
+
+/* @dev: Yeah, Im sorry if you read this, design asked us to
+ override the input component when it is called from the swap form. */
+const InputSection = styled(Box)`
+  & ${ErrorContainer} {
+    font-weight: 500;
+    font-size: 11px;
+    text-align: right;
+    margin-left: calc(calc(100% + 30px) * -1);
+    margin-top: 6px;
+    align-self: flex-end;
+    margin-right: -15px;
+  }
+`;
 
 // Pick a default source account if none are selected.
 // TODO use live-common once its ready
@@ -96,20 +110,6 @@ type Props = {
   updateSelectedRate: SwapDataType["updateSelectedRate"];
 };
 
-/* @dev: Yeah, Im sorry if you read this, design asked us to
- override the input component when it is called from the swap form. */
-const InputSection = styled(Box)`
-  & ${ErrorContainer} {
-    font-weight: 500;
-    font-size: 11px;
-    text-align: right;
-    margin-left: calc(calc(100% + 30px) * -1);
-    margin-top: 6px;
-    align-self: flex-end;
-    margin-right: -15px;
-  }
-`;
-
 function FromRow({
   fromAmount,
   setFromAmount,
@@ -123,20 +123,24 @@ function FromRow({
   updateSelectedRate,
 }: Props) {
   const swapDefaultTrack = useGetSwapTrackingProperties();
-  const accounts = useSelector(fromSelector)(useSelector(shallowAccountsSelector));
+  const flattenedAccounts = useSelector(flattenAccountsSelector);
+  const accounts = useSwapableAccounts({ accounts: flattenedAccounts });
   const unit = fromAccount && getAccountUnit(fromAccount);
   const { t } = useTranslation();
   usePickDefaultAccount(accounts, fromAccount, setFromAccount);
-  const trackEditAccount = () =>
-    track("button_clicked", {
+
+  const trackEditAccount = () => {
+    track("button_clicked2", {
       button: "Edit source account",
       page: "Page Swap Form",
       ...swapDefaultTrack,
     });
+  };
+
   const setAccountAndTrack = (account: AccountLike) => {
     updateSelectedRate();
     const name = account ? getAccountName(account) : undefined;
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "New source account",
       page: "Page Swap Form",
       ...swapDefaultTrack,
@@ -144,8 +148,9 @@ function FromRow({
     });
     setFromAccount(account);
   };
+
   const setValue = (fromAmount: BigNumber) => {
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "Amount input",
       page: "Page Swap Form",
       ...swapDefaultTrack,
@@ -154,8 +159,9 @@ function FromRow({
     updateSelectedRate();
     setFromAmount(fromAmount);
   };
+
   const toggleMaxAndTrack = (state: unknown) => {
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "max",
       page: "Page Swap Form",
       ...swapDefaultTrack,
@@ -231,4 +237,5 @@ function FromRow({
     </>
   );
 }
+
 export default React.memo<Props>(FromRow);

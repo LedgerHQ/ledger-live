@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, useMemo, memo } from "react";
-import { nftsByCollections } from "@ledgerhq/live-common/nft/index";
+import { nftsByCollections } from "@ledgerhq/live-nft";
 import { Account, NFT, ProtoNFT } from "@ledgerhq/types-live";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -19,6 +19,9 @@ import Text from "~/renderer/components/Text";
 import { openURL } from "~/renderer/linking";
 import Box from "~/renderer/components/Box";
 import Row from "./Row";
+import { useNftGalleryFilter } from "@ledgerhq/live-nft-react";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+
 const INCREMENT = 5;
 const EmptyState = styled.div`
   padding: 15px 20px;
@@ -42,6 +45,8 @@ type Props = {
   account: Account;
 };
 const Collections = ({ account }: Props) => {
+  const nftsFromSimplehashFeature = useFeature("nftsFromSimplehash");
+
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const history = useHistory();
@@ -54,21 +59,35 @@ const Collections = ({ account }: Props) => {
       dispatch(
         openModal("MODAL_RECEIVE", {
           account,
+          receiveNFTMode: true,
         }),
       ),
     [account, dispatch],
   );
   const onOpenCollection = useCallback(
-    collectionAddress => history.push(`/account/${account.id}/nft-collection/${collectionAddress}`),
+    (collectionAddress: string) =>
+      history.push(`/account/${account.id}/nft-collection/${collectionAddress}`),
     [account.id, history],
   );
-  const collections = useMemo(() => nftsByCollections(account.nfts), [account.nfts]);
+
+  const { nfts, fetchNextPage, hasNextPage } = useNftGalleryFilter({
+    nftsOwned: account.nfts || [],
+    addresses: account.freshAddress,
+    chains: [account.currency.id],
+  });
+  const collections = useMemo(
+    () => nftsByCollections(nftsFromSimplehashFeature?.enabled ? nfts : account.nfts),
+    [account.nfts, nfts, nftsFromSimplehashFeature],
+  );
   const collectionsLength = Object.keys(collections).length;
   const onShowMore = useCallback(() => {
     setNumberOfVisibleCollections(numberOfVisibleCollections =>
       Math.min(numberOfVisibleCollections + INCREMENT, collectionsLength),
     );
-  }, [collectionsLength]);
+    if (hasNextPage) {
+      fetchNextPage();
+    }
+  }, [collectionsLength, fetchNextPage, hasNextPage]);
   const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
   const filteredCollections = useMemo(
     () =>
@@ -92,6 +111,7 @@ const Collections = ({ account }: Props) => {
         )),
     [account, filteredCollections, numberOfVisibleCollections, onOpenCollection],
   );
+
   useEffect(() => {
     track("View NFT Collections (Account Page)");
   }, []);

@@ -3,6 +3,7 @@ module.exports = {
     browser: true,
     es6: true,
   },
+  plugins: ["import"],
   overrides: [
     {
       files: ["src/**/*.test.{ts,tsx}"],
@@ -11,10 +12,18 @@ module.exports = {
       },
       plugins: ["jest"],
     },
+    {
+      // allow, as warning, only any in tests
+      files: ["*/__tests__/**/*.{ts,tsx}"],
+      rules: {
+        "@typescript-eslint/no-explicit-any": "warn",
+      },
+    },
   ],
   rules: {
     "no-console": ["error", { allow: ["warn", "error"] }],
     "@typescript-eslint/no-empty-function": "off",
-    "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/explicit-function-return-type": "error",
+    "import/order": ["error"],
   },
 };

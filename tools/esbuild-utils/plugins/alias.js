@@ -1,6 +1,6 @@
 const path = require("path");
 
-module.exports = (mappings) => ({
+module.exports = mappings => ({
   name: "Alias",
   setup(build) {
     Object.entries(mappings).forEach(([filter, mappings]) => {
@@ -8,7 +8,7 @@ module.exports = (mappings) => ({
         mappings = [mappings];
       }
 
-      const resolveCallback = async function(args) {
+      const resolveCallback = async function (args) {
         if (args.resolveDir === "") {
           return; // Ignore unresolvable paths
         }

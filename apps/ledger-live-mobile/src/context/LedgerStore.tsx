@@ -1,10 +1,8 @@
 import React, { Component } from "react";
 import { Provider } from "react-redux";
-import Config from "react-native-config";
-import thunk from "redux-thunk";
-import { createStore, applyMiddleware, compose, type Middleware } from "redux";
+import { type StoreType } from "./store";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
-import { CounterValuesStateRaw } from "@ledgerhq/live-common/countervalues/types";
+import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import {
   getAccounts,
@@ -14,34 +12,19 @@ import {
   getPostOnboardingState,
   getProtect,
 } from "../db";
-import reducers from "../reducers";
-import { importSettings } from "../actions/settings";
-import { importStore as importAccounts } from "../actions/accounts";
-import { importBle } from "../actions/ble";
-import { updateProtectData, updateProtectStatus } from "../actions/protect";
-import { INITIAL_STATE as settingsState, supportedCountervalues } from "../reducers/settings";
-import { listCachedCurrencyIds, hydrateCurrency } from "../bridge/cache";
-
-const middlewares: [Middleware] = [thunk];
-
-if (Config.DEBUG_RNDEBUGGER) {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const createDebugger = require("redux-flipper").default;
-  middlewares.push(createDebugger());
-}
-
-export const store = createStore(reducers, compose(applyMiddleware(...middlewares)));
-
-export type StoreType = typeof store;
+import { importSettings, setSupportedCounterValues } from "~/actions/settings";
+import { importStore as importAccounts } from "~/actions/accounts";
+import { importBle } from "~/actions/ble";
+import { updateProtectData, updateProtectStatus } from "~/actions/protect";
+import { INITIAL_STATE as settingsState } from "~/reducers/settings";
+import { listCachedCurrencyIds, hydrateCurrency } from "~/bridge/cache";
+import { getCryptoCurrencyById, listSupportedFiats } from "@ledgerhq/live-common/currencies/index";
 
 export default class LedgerStoreProvider extends Component<
   {
     onInitFinished: () => void;
-    children: (
-      ready: boolean,
-      store: StoreType,
-      initialCountervalues?: CounterValuesStateRaw,
-    ) => JSX.Element;
+    children: (ready: boolean, initialCountervalues?: CounterValuesStateRaw) => JSX.Element;
+    store: StoreType;
   },
   {
     ready: boolean;
@@ -64,7 +47,7 @@ export default class LedgerStoreProvider extends Component<
 
   async init() {
     const bleData = await getBle();
-    store.dispatch(importBle(bleData));
+    this.props.store.dispatch(importBle(bleData));
     const settingsData = await getSettings();
 
     const cachedCurrencyIds = await listCachedCurrencyIds();
@@ -82,28 +65,46 @@ export default class LedgerStoreProvider extends Component<
             .catch((reason: unknown) => ({ status: "rejected", reason })),
         ),
     );
+    const bitcoin = getCryptoCurrencyById("bitcoin");
+    const ethereum = getCryptoCurrencyById("ethereum");
+    const possibleIntermediaries = [bitcoin, ethereum];
+
+    const getsupportedCountervalues = async () => {
+      const supportedFiats = await listSupportedFiats();
+      const supportedCounterValues = [...supportedFiats, ...possibleIntermediaries]
+        .map(currency => ({
+          value: currency.ticker,
+          ticker: currency.ticker,
+          label: `${currency.name} - ${currency.ticker}`,
+          currency,
+        }))
+        .sort((a, b) => (a.currency.name < b.currency.name ? -1 : 1));
+      return supportedCounterValues;
+    };
+    const supportedCounterValues = await getsupportedCountervalues();
+    this.props.store.dispatch(setSupportedCounterValues(supportedCounterValues));
 
     if (
       settingsData &&
       settingsData.counterValue &&
-      !supportedCountervalues.find(({ ticker }) => ticker === settingsData.counterValue)
+      !supportedCounterValues.find(({ ticker }) => ticker === settingsData.counterValue)
     ) {
       settingsData.counterValue = settingsState.counterValue;
     }
 
-    store.dispatch(importSettings(settingsData));
+    this.props.store.dispatch(importSettings(settingsData));
     const accountsData = await getAccounts();
-    store.dispatch(importAccounts(accountsData));
+    this.props.store.dispatch(importAccounts(accountsData));
 
     const postOnboardingState = await getPostOnboardingState();
     if (postOnboardingState) {
-      store.dispatch(importPostOnboardingState({ newState: postOnboardingState }));
+      this.props.store.dispatch(importPostOnboardingState({ newState: postOnboardingState }));
     }
 
     const protect = await getProtect();
     if (protect) {
-      store.dispatch(updateProtectData(protect.data));
-      store.dispatch(updateProtectStatus(protect.protectStatus));
+      this.props.store.dispatch(updateProtectData(protect.data));
+      this.props.store.dispatch(updateProtectStatus(protect.protectStatus));
     }
 
     const initialCountervalues = await getCountervalues();
@@ -119,8 +120,8 @@ export default class LedgerStoreProvider extends Component<
   }
 
   render() {
-    const { children } = this.props;
+    const { children, store } = this.props;
     const { ready, initialCountervalues } = this.state;
-    return <Provider store={store}>{children(ready, store, initialCountervalues)}</Provider>;
+    return <Provider store={store}>{children(ready, initialCountervalues)}</Provider>;
   }
 }

@@ -92,14 +92,16 @@ type Props = {
   onExternalLink: (stakeWithMeta: SolanaStakeWithMeta) => void;
 };
 export function Row({ account, stakeWithMeta, onManageAction, onExternalLink }: Props) {
+  const { stake, meta } = stakeWithMeta;
+  const stakeActions = solanaStakeActions(stake).map(toStakeDropDownItem);
+
   const onSelect = useCallback(
-    action => {
+    (action: (typeof stakeActions)[number]) => {
       onManageAction(stakeWithMeta, action.key);
     },
     [onManageAction, stakeWithMeta],
   );
-  const { stake, meta } = stakeWithMeta;
-  const stakeActions = solanaStakeActions(stake).map(toStakeDropDownItem);
+
   const validatorName = meta.validator?.name ?? stake.delegation?.voteAccAddr ?? "-";
   const onExternalLinkClick = () => onExternalLink(stakeWithMeta);
   const formatAmount = (amount: number) => {

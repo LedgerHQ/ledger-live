@@ -2,7 +2,10 @@ import { renderHook, act } from "@testing-library/react-hooks";
 import { of, throwError } from "rxjs";
 import { UserRefusedAllowManager, DisconnectedDeviceDuringOperation } from "@ledgerhq/errors";
 import { useGenuineCheck } from "./useGenuineCheck";
-import { getGenuineCheckFromDeviceId } from "../getGenuineCheckFromDeviceId";
+import {
+  getGenuineCheckFromDeviceId,
+  GetGenuineCheckFromDeviceIdResult,
+} from "../getGenuineCheckFromDeviceId";
 
 jest.mock("../getGenuineCheckFromDeviceId");
 jest.useFakeTimers();
@@ -19,7 +22,7 @@ describe("useGenuineCheck", () => {
     it("should notify the hook consumer of the request", async () => {
       mockedGetGenuineCheckFromDeviceId.mockReturnValue(
         of({
-          socketEvent: { type: "device-permission-requested", wording: "" },
+          socketEvent: { type: "device-permission-requested" },
           lockedDevice: false,
         }),
       );
@@ -63,7 +66,9 @@ describe("useGenuineCheck", () => {
     });
 
     it("should notify the hook consumer if the device permission is refused", async () => {
-      mockedGetGenuineCheckFromDeviceId.mockReturnValue(throwError(new UserRefusedAllowManager()));
+      mockedGetGenuineCheckFromDeviceId.mockReturnValue(
+        throwError(() => new UserRefusedAllowManager()),
+      );
       const { result } = renderHook(() =>
         useGenuineCheck({
           getGenuineCheckFromDeviceId: mockedGetGenuineCheckFromDeviceId,
@@ -84,7 +89,7 @@ describe("useGenuineCheck", () => {
   describe("When an error occurred during the genuine check", () => {
     it("should notify the hook consumer that an error occurred", async () => {
       mockedGetGenuineCheckFromDeviceId.mockReturnValue(
-        throwError(new DisconnectedDeviceDuringOperation()),
+        throwError(() => new DisconnectedDeviceDuringOperation()),
       );
       const { result } = renderHook(() =>
         useGenuineCheck({
@@ -160,11 +165,11 @@ describe("useGenuineCheck", () => {
           {
             socketEvent: { type: "device-permission-granted" },
             lockedDevice: false,
-          },
+          } as GetGenuineCheckFromDeviceIdResult,
           {
             socketEvent: { type: "result", payload: "1111" },
             lockedDevice: false,
-          },
+          } as GetGenuineCheckFromDeviceIdResult,
         ),
       );
 

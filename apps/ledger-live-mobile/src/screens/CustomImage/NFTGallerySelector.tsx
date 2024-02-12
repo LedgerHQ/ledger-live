@@ -4,15 +4,15 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import { ProtoNFT } from "@ledgerhq/types-live";
 import { FlatList } from "react-native";
-import { isEqual } from "lodash";
+import isEqual from "lodash/isEqual";
 
-import { orderedVisibleNftsSelector } from "../../reducers/accounts";
-import NftListItem from "../../components/Nft/NftGallery/NftListItem";
+import { orderedVisibleNftsSelector } from "~/reducers/accounts";
+import NftListItem from "~/components/Nft/NftGallery/NftListItem";
 import NftGalleryEmptyState from "../Nft/NftGallery/NftGalleryEmptyState";
-import { NavigatorName, ScreenName } from "../../const";
-import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { CustomImageNavigatorParamList } from "../../components/RootNavigator/types/CustomImageNavigator";
-import { TrackScreen } from "../../analytics";
+import { NavigatorName, ScreenName } from "~/const";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { CustomImageNavigatorParamList } from "~/components/RootNavigator/types/CustomImageNavigator";
+import { TrackScreen } from "~/analytics";
 
 const NB_COLUMNS = 2;
 

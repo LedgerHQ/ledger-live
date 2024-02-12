@@ -1,8 +1,8 @@
+import { AssertionError, fail } from "assert";
 import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
-import { AssertionError, fail } from "assert";
 import { delay } from "@ledgerhq/live-promise";
-import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, CryptoCurrencyId, EthereumLikeInfo } from "@ledgerhq/types-cryptoassets";
 import { EvmTransactionLegacy, Transaction as EvmTransaction } from "../../../../types";
 import { GasEstimationError, InsufficientFunds } from "../../../../errors";
 import { makeAccount } from "../../../fixtures/common.fixtures";
@@ -25,7 +25,7 @@ const fakeCurrencyWithoutRPC: Partial<CryptoCurrency> = {
   id: "my_new_chain" as CryptoCurrencyId,
   ethereumLikeInfo: {
     chainId: 1,
-  },
+  } as EthereumLikeInfo,
   units: [{ code: "ETH", name: "ETH", magnitude: 18 }],
 };
 const account = makeAccount(
@@ -401,7 +401,10 @@ describe("EVM Family", () => {
     it("should return the expected payload", async () => {
       expect(await RPC_API.getBlockByHeight(fakeCurrency as CryptoCurrency, 0)).toEqual({
         hash: "0x474dee0136108e9412e9d84197b468bb057a8dad0f2024fc55adebc4a28fa8c5",
-        timestamp: Math.floor(Date.now() / 1000),
+        // for this specific assertion we can't use Date.now() directly because
+        // the timestamp returned by ethers (and mocked at the beginning of
+        // thetestsuite) is rounded to the second
+        timestamp: Math.floor(Date.now() / 1000) * 1000,
         height: 1,
       });
     });

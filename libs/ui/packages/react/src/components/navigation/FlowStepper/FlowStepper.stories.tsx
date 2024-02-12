@@ -119,7 +119,7 @@ export default {
   title: "Navigation/FlowStepper",
   component: FlowStepper,
   argTypes: {
-    activeIndex: { control: "number", defaultValue: 0 },
+    activeIndex: { control: "number" },
     extraProps: { control: "disabled" },
     extraContainerProps: { control: "disabled" },
     extraStepperProps: { control: "disabled" },
@@ -132,6 +132,9 @@ export default {
     footer: { control: "disabled" },
     stepFooters: { control: "disabled" },
     renderStepFooter: { control: "disabled" },
+  },
+  args: {
+    activeIndex: 0,
   },
   parameters: {
     docs: {

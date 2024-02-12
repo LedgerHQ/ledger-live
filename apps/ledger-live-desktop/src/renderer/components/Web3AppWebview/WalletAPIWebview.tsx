@@ -1,7 +1,14 @@
 /* eslint-disable react/prop-types */
 
-import * as remote from "@electron/remote";
-import React, { forwardRef, RefObject, useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  forwardRef,
+  RefObject,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { Account, AccountLike, Operation } from "@ledgerhq/types-live";
@@ -13,8 +20,8 @@ import {
   UiHook,
   ExchangeType,
 } from "@ledgerhq/live-common/wallet-api/react";
-import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
-import trackingWrapper from "@ledgerhq/live-common/wallet-api/tracking";
+import { AppManifest, WalletAPIServer } from "@ledgerhq/live-common/wallet-api/types";
+import trackingWrapper, { TrackingAPI } from "@ledgerhq/live-common/wallet-api/tracking";
 import { openModal } from "../../actions/modals";
 import { updateAccountWithUpdater } from "../../actions/accounts";
 import { flattenAccountsSelector } from "../../reducers/accounts";
@@ -30,18 +37,23 @@ import { useWebviewState } from "./helpers";
 import { getStoreValue, setStoreValue } from "~/renderer/store";
 import { NetworkErrorScreen } from "./NetworkError";
 import getUser from "~/helpers/user";
+import { openExchangeDrawer } from "~/renderer/actions/UI";
+import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
+import { TrackFunction } from "@ledgerhq/live-common/platform/tracking";
 
 const wallet = { name: "ledger-live-desktop", version: __APP_VERSION__ };
-const tracking = trackingWrapper(track);
 
-function useUiHook(manifest: AppManifest): Partial<UiHook> {
+function useUiHook(
+  manifest: AppManifest,
+  tracking: Record<string, TrackFunction>,
+): Partial<UiHook> {
   const { pushToast } = useToasts();
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
   return useMemo(
     () => ({
-      "account.request": ({ accounts$, currencies, onSuccess, onError }) => {
+      "account.request": ({ accounts$, currencies, onSuccess, onCancel }) => {
         setDrawer(
           SelectAccountAndCurrencyDrawer,
           {
@@ -55,7 +67,7 @@ function useUiHook(manifest: AppManifest): Partial<UiHook> {
           {
             onRequestClose: () => {
               setDrawer();
-              onError();
+              onCancel();
             },
           },
         );
@@ -154,7 +166,8 @@ function useUiHook(manifest: AppManifest): Partial<UiHook> {
       },
       "exchange.start": ({ exchangeType, onSuccess, onCancel }) => {
         dispatch(
-          openModal("MODAL_PLATFORM_EXCHANGE_START", {
+          openExchangeDrawer({
+            type: "EXCHANGE_START",
             exchangeType: ExchangeType[exchangeType],
             onResult: (nonce: string) => {
               onSuccess(nonce);
@@ -167,20 +180,20 @@ function useUiHook(manifest: AppManifest): Partial<UiHook> {
       },
       "exchange.complete": ({ exchangeParams, onSuccess, onCancel }) => {
         dispatch(
-          openModal("MODAL_PLATFORM_EXCHANGE_COMPLETE", {
+          openExchangeDrawer({
+            type: "EXCHANGE_COMPLETE",
             ...exchangeParams,
             onResult: (operation: Operation) => {
               onSuccess(operation.hash);
             },
             onCancel: (error: Error) => {
-              console.error(error);
               onCancel(error);
             },
           }),
         );
       },
     }),
-    [dispatch, manifest, pushToast, t],
+    [dispatch, manifest, pushToast, t, tracking],
   );
 }
 
@@ -200,10 +213,15 @@ const useGetUserId = () => {
   return userId;
 };
 
-function useWebView({ manifest }: Pick<Props, "manifest">, webviewRef: RefObject<WebviewTag>) {
+function useWebView(
+  { manifest, customHandlers }: Pick<WebviewProps, "manifest" | "customHandlers">,
+  webviewRef: RefObject<WebviewTag>,
+  tracking: TrackingAPI,
+  serverRef: React.MutableRefObject<WalletAPIServer | undefined>,
+) {
   const accounts = useSelector(flattenAccountsSelector);
 
-  const uiHook = useUiHook(manifest);
+  const uiHook = useUiHook(manifest, tracking);
   const shareAnalytics = useSelector(shareAnalyticsSelector);
   const userId = useGetUserId();
   const config = useConfig({
@@ -227,17 +245,24 @@ function useWebView({ manifest }: Pick<Props, "manifest">, webviewRef: RefObject
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const { widgetLoaded, onLoad, onReload, onMessage } = useWalletAPIServer({
+  const { widgetLoaded, onLoad, onReload, onMessage, server } = useWalletAPIServer({
     manifest,
     accounts,
     tracking,
     config,
     webviewHook,
     uiHook,
+    customHandlers,
   });
 
+  useEffect(() => {
+    serverRef.current = server;
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [server]);
+
   const handleMessage = useCallback(
-    event => {
+    (event: Electron.IpcMessageEvent) => {
       if (event.channel === "webviewToParent") {
         onMessage(event.args[0]);
       }
@@ -285,6 +310,7 @@ function useWebView({ manifest }: Pick<Props, "manifest">, webviewRef: RefObject
       opacity: widgetLoaded ? 1 : 0,
       border: "none",
       width: "100%",
+      height: "100%",
       flex: 1,
       transition: "opacity 200ms ease-out",
     };
@@ -293,16 +319,37 @@ function useWebView({ manifest }: Pick<Props, "manifest">, webviewRef: RefObject
   return { webviewRef, widgetLoaded, onReload, webviewStyle };
 }
 
-interface Props {
-  manifest: AppManifest;
-  inputs?: Record<string, string>;
-}
-
 export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
-  ({ manifest, inputs = {}, onStateChange }, ref) => {
+  ({ manifest, inputs = {}, customHandlers, onStateChange }, ref) => {
+    const tracking = useMemo(
+      () =>
+        trackingWrapper(
+          (
+            eventName: string,
+            properties?: Record<string, unknown> | null,
+            mandatory?: boolean | null,
+          ) =>
+            track(
+              eventName,
+              {
+                ...properties,
+                flowInitiatedFrom:
+                  currentRouteNameRef.current === "Platform Catalog"
+                    ? "Discover"
+                    : currentRouteNameRef.current,
+              },
+              mandatory,
+            ),
+        ),
+      [],
+    );
+
+    const serverRef = useRef<WalletAPIServer>();
+
     const { webviewState, webviewRef, webviewProps, handleRefresh } = useWebviewState(
       { manifest, inputs },
       ref,
+      serverRef,
     );
     useEffect(() => {
       if (onStateChange) {
@@ -313,8 +360,11 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
     const { webviewStyle, widgetLoaded } = useWebView(
       {
         manifest,
+        customHandlers,
       },
       webviewRef,
+      tracking,
+      serverRef,
     );
 
     return (
@@ -332,7 +382,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
            */
           style={webviewStyle}
           // eslint-disable-next-line react/no-unknown-property
-          preload={`file://${remote.app.dirname}/webviewPreloader.bundle.js`}
+          preload={`file://${window.api.appDirname}/webviewPreloader.bundle.js`}
           /**
            * There seems to be an issue between Electron webview and react
            * Hence, the normal `allowpopups` prop does not work and we need to

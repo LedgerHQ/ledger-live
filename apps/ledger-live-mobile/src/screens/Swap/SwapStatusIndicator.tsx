@@ -7,7 +7,7 @@ import { useTheme } from "@react-navigation/native";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { rgba, Theme } from "../../colors";
-import { SwapIcon } from "../../icons/swap/index";
+import { SwapIcon } from "~/icons/swap/index";
 
 export const getStatusColor = (status: string, colors: Theme["colors"], colorKey = false) => {
   let key: keyof Theme["colors"] = "grey";

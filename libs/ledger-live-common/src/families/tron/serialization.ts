@@ -1,10 +1,21 @@
 import { BigNumber } from "bignumber.js";
-import type { TronAccount, TronAccountRaw, TronResources, TronResourcesRaw } from "./types";
-import { Account, AccountRaw } from "@ledgerhq/types-live";
+import {
+  isTrongridExtraTxInfo,
+  isTrongridExtraTxInfoRaw,
+  type TronAccount,
+  type TronAccountRaw,
+  type TronResources,
+  type TronResourcesRaw,
+  type TrongridExtraTxInfo,
+  type TrongridExtraTxInfoRaw,
+} from "./types";
+import { Account, AccountRaw, OperationExtra, OperationExtraRaw } from "@ledgerhq/types-live";
 
 export const toTronResourcesRaw = ({
   frozen,
+  unFrozen,
   delegatedFrozen,
+  legacyFrozen,
   votes,
   tronPower,
   energy,
@@ -19,6 +30,10 @@ export const toTronResourcesRaw = ({
   const delegatedFrozenBandwidth = delegatedFrozen.bandwidth;
   const delegatedFrozenEnergy = delegatedFrozen.energy;
   const cacheTransactionInfoById = {};
+  const unFrozenBandwidth = unFrozen?.bandwidth;
+  const unFrozenEnergy = unFrozen?.energy;
+  const legacyFrozenBandwidth = legacyFrozen?.bandwidth;
+  const legacyFrozenEnergy = legacyFrozen?.energy;
 
   for (const k in cacheTx) {
     const { fee, blockNumber, withdraw_amount, unfreeze_amount } = cacheTx[k];
@@ -30,13 +45,11 @@ export const toTronResourcesRaw = ({
       bandwidth: frozenBandwidth
         ? {
             amount: frozenBandwidth.amount.toString(),
-            expiredAt: frozenBandwidth.expiredAt.toISOString(),
           }
         : undefined,
       energy: frozenEnergy
         ? {
             amount: frozenEnergy.amount.toString(),
-            expiredAt: frozenEnergy.expiredAt.toISOString(),
           }
         : undefined,
     },
@@ -49,6 +62,32 @@ export const toTronResourcesRaw = ({
       energy: delegatedFrozenEnergy
         ? {
             amount: delegatedFrozenEnergy.amount.toString(),
+          }
+        : undefined,
+    },
+    unFrozen: {
+      bandwidth: unFrozenBandwidth
+        ? unFrozenBandwidth.map(entry => {
+            return { amount: entry.amount.toString(), expireTime: entry.expireTime.toISOString() };
+          })
+        : undefined,
+      energy: unFrozenEnergy
+        ? unFrozenEnergy.map(entry => {
+            return { amount: entry.amount.toString(), expireTime: entry.expireTime.toISOString() };
+          })
+        : undefined,
+    },
+    legacyFrozen: {
+      bandwidth: legacyFrozenBandwidth
+        ? {
+            amount: legacyFrozenBandwidth.amount.toString(),
+            expiredAt: legacyFrozenBandwidth.expiredAt.toISOString(),
+          }
+        : undefined,
+      energy: legacyFrozenEnergy
+        ? {
+            amount: legacyFrozenEnergy.amount.toString(),
+            expiredAt: legacyFrozenEnergy.expiredAt.toISOString(),
           }
         : undefined,
     },
@@ -71,7 +110,9 @@ export const toTronResourcesRaw = ({
 };
 export const fromTronResourcesRaw = ({
   frozen,
+  unFrozen,
   delegatedFrozen,
+  legacyFrozen,
   votes,
   tronPower,
   energy,
@@ -85,6 +126,11 @@ export const fromTronResourcesRaw = ({
   const frozenEnergy = frozen.energy;
   const delegatedFrozenBandwidth = delegatedFrozen.bandwidth;
   const delegatedFrozenEnergy = delegatedFrozen.energy;
+  const unFrozenBandwidth = unFrozen?.bandwidth;
+  const unFrozenEnergy = unFrozen?.energy;
+  const legacyFrozenBandwidth = legacyFrozen?.bandwidth;
+  const legacyFrozenEnergy = legacyFrozen?.energy;
+
   const cacheTransactionInfoById = {};
 
   if (cacheTransactionInfoByIdRaw) {
@@ -104,13 +150,11 @@ export const fromTronResourcesRaw = ({
       bandwidth: frozenBandwidth
         ? {
             amount: new BigNumber(frozenBandwidth.amount),
-            expiredAt: new Date(frozenBandwidth.expiredAt),
           }
         : undefined,
       energy: frozenEnergy
         ? {
             amount: new BigNumber(frozenEnergy.amount),
-            expiredAt: new Date(frozenEnergy.expiredAt),
           }
         : undefined,
     },
@@ -123,6 +167,32 @@ export const fromTronResourcesRaw = ({
       energy: delegatedFrozenEnergy
         ? {
             amount: new BigNumber(delegatedFrozenEnergy.amount),
+          }
+        : undefined,
+    },
+    unFrozen: {
+      bandwidth: unFrozenBandwidth
+        ? unFrozenBandwidth.map(entry => {
+            return { amount: new BigNumber(entry.amount), expireTime: new Date(entry.expireTime) };
+          })
+        : undefined,
+      energy: unFrozenEnergy
+        ? unFrozenEnergy.map(entry => {
+            return { amount: new BigNumber(entry.amount), expireTime: new Date(entry.expireTime) };
+          })
+        : undefined,
+    },
+    legacyFrozen: {
+      bandwidth: legacyFrozenBandwidth
+        ? {
+            amount: new BigNumber(legacyFrozenBandwidth.amount),
+            expiredAt: new Date(legacyFrozenBandwidth.expiredAt),
+          }
+        : undefined,
+      energy: legacyFrozenEnergy
+        ? {
+            amount: new BigNumber(legacyFrozenEnergy.amount),
+            expiredAt: new Date(legacyFrozenEnergy.expiredAt),
           }
         : undefined,
     },
@@ -155,4 +225,62 @@ export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account) {
   const tronResourcesRaw = (accountRaw as TronAccountRaw).tronResources;
   if (tronResourcesRaw)
     (account as TronAccount).tronResources = fromTronResourcesRaw(tronResourcesRaw);
+}
+
+export function fromOperationExtraRaw(extraRaw: OperationExtraRaw): TrongridExtraTxInfo {
+  const extra: TrongridExtraTxInfo = {};
+  if (!isTrongridExtraTxInfoRaw(extraRaw)) {
+    return extra;
+  }
+
+  if (extraRaw.frozenAmount) {
+    extra.frozenAmount = new BigNumber(extraRaw.frozenAmount);
+  }
+
+  if (extraRaw.unfreezeAmount) {
+    extra.unfreezeAmount = new BigNumber(extraRaw.unfreezeAmount);
+  }
+
+  if (extraRaw.votes) {
+    extra.votes = extraRaw.votes;
+  }
+
+  if (extraRaw.unDelegatedAmount) {
+    extra.unDelegatedAmount = new BigNumber(extraRaw.unDelegatedAmount);
+  }
+
+  if (extraRaw.receiverAddress) {
+    extra.receiverAddress = extraRaw.receiverAddress;
+  }
+
+  return extra;
+}
+
+export function toOperationExtraRaw(extra: OperationExtra): TrongridExtraTxInfoRaw {
+  const extraRaw: TrongridExtraTxInfoRaw = {};
+  if (!isTrongridExtraTxInfo(extra)) {
+    return extraRaw;
+  }
+
+  if (extra.frozenAmount) {
+    extraRaw.frozenAmount = extra.frozenAmount.toString();
+  }
+
+  if (extra.unfreezeAmount) {
+    extraRaw.unfreezeAmount = extra.unfreezeAmount.toString();
+  }
+
+  if (extra.votes) {
+    extraRaw.votes = extra.votes;
+  }
+
+  if (extra.unDelegatedAmount) {
+    extraRaw.unDelegatedAmount = extra.unDelegatedAmount.toString();
+  }
+
+  if (extra.receiverAddress) {
+    extraRaw.receiverAddress = extra.receiverAddress;
+  }
+
+  return extraRaw;
 }

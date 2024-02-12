@@ -103,7 +103,6 @@ export type FeeItem = {
 export type FeeItems = {
   items: FeeItem[];
   defaultFeePerByte: BigNumber;
-  relayFee?: number;
 };
 export type FeeItemRaw = {
   key: string;

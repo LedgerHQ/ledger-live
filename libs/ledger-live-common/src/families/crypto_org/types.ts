@@ -1,6 +1,7 @@
 import {
   Account,
   AccountRaw,
+  Operation,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
@@ -48,3 +49,9 @@ export type CryptoOrgAccountRaw = AccountRaw & {
 export type TransactionStatus = TransactionStatusCommon;
 
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
+
+export type CryptoOrgOperation = Operation<CryptoOrgOperationExtra>;
+
+export type CryptoOrgOperationExtra = {
+  memo?: string | null;
+};

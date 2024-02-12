@@ -10,6 +10,7 @@ import { TFunction } from "i18next";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { DelegationType } from "~/renderer/families/elrond/types";
 import { Transaction, ElrondProvider } from "@ledgerhq/live-common/families/elrond/types";
+import { Option } from "react-select/src/filters";
 
 type NoOptionsMessageCallbackType = {
   inputValue: string;
@@ -22,7 +23,7 @@ interface DelegationSelectorFieldType {
   delegations: Array<DelegationType>;
   contract: string;
   transaction: Transaction;
-  onChange: (validator: ElrondProvider | undefined | null) => void;
+  onChange: (validator?: ElrondProvider | null) => void;
   onUpdateTransaction: (transaction: (_: Transaction) => Transaction) => void;
   t: TFunction;
   bridge: AccountBridge<Transaction>;
@@ -89,7 +90,7 @@ const DelegationSelectorField = (props: DelegationSelectorFieldType) => {
     [t],
   );
   const filterOptions = useCallback(
-    (option, needle: string): boolean =>
+    (option: Option, needle: string): boolean =>
       BigNumber(option.data.delegation.claimableRewards).gt(0) && option.data.identity.name
         ? option.data.identity.name.toLowerCase().includes(needle.toLowerCase())
         : false,

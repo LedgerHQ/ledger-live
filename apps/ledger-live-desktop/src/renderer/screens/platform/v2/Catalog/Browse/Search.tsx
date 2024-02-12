@@ -18,7 +18,7 @@ export function Search({ categories, search }: Props) {
   );
 
   const onChange = useCallback(
-    ({ value }) => {
+    ({ value }: (typeof options)[number]) => {
       categories.setSelected(value);
     },
     [categories],
@@ -37,8 +37,10 @@ export function Search({ categories, search }: Props) {
         </Text>
 
         <SelectInput
+          isDisabled={!!search.input.length}
           options={options}
           defaultValue={options[0]}
+          // @ts-expect-error another SelectInput hell
           onChange={onChange}
           styles={{ container: baseStyles => ({ ...baseStyles, width: 240 }) }}
         />

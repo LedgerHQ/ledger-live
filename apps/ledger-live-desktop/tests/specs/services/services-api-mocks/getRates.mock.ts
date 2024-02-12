@@ -42,7 +42,7 @@ export const getEthereumToTetherRatesMock = () => {
       provider: "oneinch",
       providerType: "DEX",
       providerURL:
-        "/platform/1inch/#/1/unified/swap/eth/usdt?sourceTokenAmount=10.135255432293584185",
+        "https://app.1inch.io/#/1/unified/swap/eth/usdt?https://app.1inch.isourceTokenAmount=10.135255432293584185",
       from: "ethereum",
       to: "ethereum/erc20/usd_tether__erc20_",
       amountFrom: "10.135255432293584185",
@@ -56,7 +56,7 @@ export const getEthereumToTetherRatesMock = () => {
       provider: "paraswap",
       providerType: "DEX",
       providerURL:
-        "/platform/paraswap/#/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee-0xdac17f958d2ee523a2206206994597c13d831ec7/10.135255432293584185?network=1",
+        "https://embedded.paraswap.io?referrer=ledger2&embed=true&enableStaking=false&displayMenu=false&enableNetworkSwitch=false&network=1#/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee-0xdac17f958d2ee523a2206206994597c13d831ec7/10.135255432293584185",
       from: "ethereum",
       to: "ethereum/erc20/usd_tether__erc20_",
       amountFrom: "10.135255432293584185",

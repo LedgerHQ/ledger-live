@@ -27,7 +27,6 @@ export const createLockMutation = (): MutationSpec<Transaction> => ({
       transaction: bridge.createTransaction(account),
       updates: [
         {
-          memo: "LedgerLiveBot",
           mode: "lock",
         },
         transaction,

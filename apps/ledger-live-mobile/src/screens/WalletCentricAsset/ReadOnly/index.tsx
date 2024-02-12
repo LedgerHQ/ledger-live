@@ -9,27 +9,22 @@ import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
 import BigNumber from "bignumber.js";
 import { AccountLike } from "@ledgerhq/types-live";
-import accountSyncRefreshControl from "../../../components/accountSyncRefreshControl";
-import { withDiscreetMode } from "../../../context/DiscreetModeContext";
-import TabBarSafeAreaView, {
-  TAB_BAR_SAFE_HEIGHT,
-} from "../../../components/TabBar/TabBarSafeAreaView";
+import accountSyncRefreshControl from "~/components/accountSyncRefreshControl";
+import { withDiscreetMode } from "~/context/DiscreetModeContext";
+import TabBarSafeAreaView, { TAB_BAR_SAFE_HEIGHT } from "~/components/TabBar/TabBarSafeAreaView";
 import SectionContainer from "../../WalletCentricSections/SectionContainer";
 import SectionTitle from "../../WalletCentricSections/SectionTitle";
 import EmptyAccountCard from "../../Account/EmptyAccountCard";
-import CurrencyBackgroundGradient from "../../../components/CurrencyBackgroundGradient";
+import CurrencyBackgroundGradient from "~/components/CurrencyBackgroundGradient";
 import Header from "../Header";
-import { hasOrderedNanoSelector } from "../../../reducers/settings";
-import BuyDeviceBanner, { IMAGE_PROPS_BIG_NANO } from "../../../components/BuyDeviceBanner";
-import SetupDeviceBanner from "../../../components/SetupDeviceBanner";
-import { FabAssetActions } from "../../../components/FabActions/actionsList/asset";
-import { TrackScreen } from "../../../analytics";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
-import { AccountsNavigatorParamList } from "../../../components/RootNavigator/types/AccountsNavigator";
-import { ScreenName } from "../../../const";
+import { hasOrderedNanoSelector } from "~/reducers/settings";
+import BuyDeviceBanner, { IMAGE_PROPS_BIG_NANO } from "~/components/BuyDeviceBanner";
+import SetupDeviceBanner from "~/components/SetupDeviceBanner";
+import { FabAssetActions } from "~/components/FabActions/actionsList/asset";
+import { TrackScreen } from "~/analytics";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
+import { ScreenName } from "~/const";
 import AssetMarketSection from "../AssetMarketSection";
 import AssetGraph from "../AssetGraph";
 import { ReferralProgram } from "../referralProgram";

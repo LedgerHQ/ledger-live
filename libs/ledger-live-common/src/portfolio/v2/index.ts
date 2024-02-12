@@ -1,7 +1,7 @@
-import type { CounterValuesState } from "../../countervalues/types";
-import { calculate, calculateMany } from "../../countervalues/logic";
+import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
+import { calculate, calculateMany } from "@ledgerhq/live-countervalues/logic";
 import { flattenAccounts, getAccountCurrency, getAccountHistoryBalances } from "../../account";
-import { getEnv } from "../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import type {
   Account,
   AccountLike,
@@ -166,7 +166,9 @@ export function getBalanceHistoryWithCountervalue(
   for (let i = 0; i < balanceHistory.length; i++) {
     const { date, value } = balanceHistory[i];
     const countervalue = counterValues[i];
-    if (countervalue) countervalueAvailable = true;
+    if (countervalue !== undefined && countervalue !== null) {
+      countervalueAvailable = true;
+    }
     history.push({
       date,
       value,

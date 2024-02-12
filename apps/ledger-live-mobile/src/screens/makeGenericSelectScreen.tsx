@@ -2,8 +2,8 @@ import React, { Component, useCallback } from "react";
 import { FlatList, StyleSheet } from "react-native";
 import { Box } from "@ledgerhq/native-ui";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { track } from "../analytics";
-import SettingsRow from "../components/SettingsRow";
+import { track } from "~/analytics";
+import SettingsRow from "~/components/SettingsRow";
 
 type EntryProps<Item> = {
   item: Item;

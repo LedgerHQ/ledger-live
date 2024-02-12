@@ -3,11 +3,9 @@ import type { Action } from "redux-actions";
 import merge from "lodash/merge";
 import {
   findCurrencyByTicker,
-  getCryptoCurrencyById,
   getFiatCurrencyByTicker,
-  listSupportedFiats,
 } from "@ledgerhq/live-common/currencies/index";
-import { getEnv, setEnvUnsafe } from "@ledgerhq/live-common/env";
+import { getEnv, setEnvUnsafe } from "@ledgerhq/live-env";
 import { createSelector } from "reselect";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import type { AccountLike } from "@ledgerhq/types-live";
@@ -26,11 +24,12 @@ import type {
   SettingsHideNftCollectionPayload,
   SettingsImportDesktopPayload,
   SettingsImportPayload,
-  SettingsInstallAppFirstTimePayload,
+  SettingsSetHasInstalledAnyAppPayload,
   SettingsLastSeenDeviceInfoPayload,
   SettingsPayload,
   SettingsRemoveStarredMarketcoinsPayload,
   SettingsSetAnalyticsPayload,
+  SettingsSetPersonalizedRecommendationsPayload,
   SettingsSetAvailableUpdatePayload,
   SettingsSetCountervaluePayload,
   SettingsSetDiscreetModePayload,
@@ -44,6 +43,7 @@ import type {
   SettingsSetMarketFilterByStarredAccountsPayload,
   SettingsSetMarketRequestParamsPayload,
   SettingsSetNotificationsPayload,
+  SettingsSetNeverClickedOnAllowNotificationsButton,
   SettingsSetOrderAccountsPayload,
   SettingsSetOsThemePayload,
   SettingsSetPairsPayload,
@@ -77,21 +77,14 @@ import type {
   SettingsSetClosedNetworkBannerPayload,
   SettingsSetClosedWithdrawBannerPayload,
   SettingsSetUserNps,
+  SettingsSetSupportedCounterValues,
 } from "../actions/types";
 import {
   SettingsActionTypes,
   SettingsSetWalletTabNavigatorLastVisitedTabPayload,
 } from "../actions/types";
-import { ScreenName } from "../const";
+import { ScreenName } from "~/const";
 
-const bitcoin = getCryptoCurrencyById("bitcoin");
-const ethereum = getCryptoCurrencyById("ethereum");
-export const possibleIntermediaries = [bitcoin, ethereum];
-export const supportedCountervalues = [...listSupportedFiats(), ...possibleIntermediaries];
-export const intermediaryCurrency = (from: Currency, _to: Currency) => {
-  if (from === ethereum || from.type === "TokenCurrency") return ethereum;
-  return bitcoin;
-};
 export const timeRangeDaysByKey = {
   day: 1,
   week: 7,
@@ -105,7 +98,8 @@ export const INITIAL_STATE: SettingsState = {
   counterValueExchange: null,
   privacy: null,
   reportErrorsEnabled: true,
-  analyticsEnabled: true,
+  analyticsEnabled: false,
+  personalizedRecommendationsEnabled: false,
   currenciesSettings: {},
   pairExchanges: {},
   selectedTimeRange: "month",
@@ -168,10 +162,10 @@ export const INITIAL_STATE: SettingsState = {
   notifications: {
     areNotificationsAllowed: true,
     announcementsCategory: true,
-    recommendationsCategory: true,
     largeMoverCategory: true,
     transactionsAlertsCategory: false,
   },
+  neverClickedOnAllowNotificationsButton: true,
   walletTabNavigatorLastVisitedTab: ScreenName.Portfolio,
   overriddenFeatureFlags: {},
   featureFlagsBannerVisible: false,
@@ -184,6 +178,7 @@ export const INITIAL_STATE: SettingsState = {
     hasClosedWithdrawBanner: false,
   },
   userNps: null,
+  supportedCounterValues: [],
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
@@ -235,13 +230,18 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     privacy: {
       ...state.privacy,
+      hasPassword: state.privacy?.hasPassword || false,
       biometricsEnabled: (action as Action<SettingsSetPrivacyBiometricsPayload>).payload,
     },
   }),
 
   [SettingsActionTypes.SETTINGS_DISABLE_PRIVACY]: (state: SettingsState) => ({
     ...state,
-    privacy: null,
+    privacy: {
+      ...state.privacy,
+      hasPassword: false,
+      biometricsEnabled: false,
+    },
   }),
 
   [SettingsActionTypes.SETTINGS_SET_REPORT_ERRORS]: (state, action) => ({
@@ -252,6 +252,13 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
   [SettingsActionTypes.SETTINGS_SET_ANALYTICS]: (state, action) => ({
     ...state,
     analyticsEnabled: (action as Action<SettingsSetAnalyticsPayload>).payload,
+  }),
+
+  [SettingsActionTypes.SETTINGS_SET_PERSONALIZED_RECOMMENDATIONS]: (state, action) => ({
+    ...state,
+    personalizedRecommendationsEnabled: (
+      action as Action<SettingsSetPersonalizedRecommendationsPayload>
+    ).payload,
   }),
 
   [SettingsActionTypes.SETTINGS_SET_COUNTERVALUE]: (state, action) => ({
@@ -304,9 +311,9 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     };
   },
 
-  [SettingsActionTypes.SETTINGS_INSTALL_APP_FIRST_TIME]: (state, action) => ({
+  [SettingsActionTypes.SETTINGS_SET_HAS_INSTALLED_ANY_APP]: (state, action) => ({
     ...state,
-    hasInstalledAnyApp: (action as Action<SettingsInstallAppFirstTimePayload>).payload,
+    hasInstalledAnyApp: (action as Action<SettingsSetHasInstalledAnyAppPayload>).payload,
   }),
 
   [SettingsActionTypes.SETTINGS_SET_READONLY_MODE]: (state, action) => ({
@@ -558,6 +565,7 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
       hasClosedNetworkBanner: (action as Action<SettingsSetClosedNetworkBannerPayload>).payload,
     },
   }),
+
   [SettingsActionTypes.SET_CLOSED_WITHDRAW_BANNER]: (state, action) => ({
     ...state,
     depositFlow: {
@@ -565,12 +573,20 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
       hasClosedWithdrawBanner: (action as Action<SettingsSetClosedWithdrawBannerPayload>).payload,
     },
   }),
+
   [SettingsActionTypes.SET_NOTIFICATIONS]: (state, action) => ({
     ...state,
     notifications: {
       ...state.notifications,
       ...(action as Action<SettingsSetNotificationsPayload>).payload,
     },
+  }),
+
+  [SettingsActionTypes.SET_NEVER_CLICKED_ON_ALLOW_NOTIFICATIONS_BUTTON]: (state, action) => ({
+    ...state,
+    neverClickedOnAllowNotificationsButton: (
+      action as Action<SettingsSetNeverClickedOnAllowNotificationsButton>
+    ).payload,
   }),
 
   [SettingsActionTypes.WALLET_TAB_NAVIGATOR_LAST_VISITED_TAB]: (state, action) => ({
@@ -625,6 +641,10 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     userNps: (action as Action<SettingsSetUserNps>).payload,
   }),
+  [SettingsActionTypes.SET_SUPPORTED_COUNTER_VALUES]: (state, action) => ({
+    ...state,
+    supportedCounterValues: (action as Action<SettingsSetSupportedCounterValues>).payload,
+  }),
 };
 
 export default handleActions<SettingsState, SettingsPayload>(handlers, INITIAL_STATE);
@@ -672,6 +692,14 @@ export const reportErrorsEnabledSelector = createSelector(
   s => s.reportErrorsEnabled,
 );
 export const analyticsEnabledSelector = createSelector(storeSelector, s => s.analyticsEnabled);
+export const personalizedRecommendationsEnabledSelector = createSelector(
+  storeSelector,
+  s => s.personalizedRecommendationsEnabled,
+);
+export const trackingEnabledSelector = createSelector(
+  storeSelector,
+  s => s.analyticsEnabled || s.personalizedRecommendationsEnabled,
+);
 export const lastSeenCustomImageSelector = createSelector(
   storeSelector,
   s => s.lastSeenCustomImage,
@@ -800,6 +828,8 @@ export const hasClosedNetworkBannerSelector = (state: State) =>
 export const hasClosedWithdrawBannerSelector = (state: State) =>
   state.settings.depositFlow.hasClosedWithdrawBanner;
 export const notificationsSelector = (state: State) => state.settings.notifications;
+export const neverClickedOnAllowNotificationsButtonSelector = (s: State) =>
+  s.settings.neverClickedOnAllowNotificationsButton;
 export const walletTabNavigatorLastVisitedTabSelector = (state: State) =>
   state.settings.walletTabNavigatorLastVisitedTab;
 export const dateFormatSelector = (state: State) => state.settings.dateFormat;
@@ -813,3 +843,4 @@ export const hasBeenUpsoldProtectSelector = (state: State) => state.settings.has
 export const generalTermsVersionAcceptedSelector = (state: State) =>
   state.settings.generalTermsVersionAccepted;
 export const userNpsSelector = (state: State) => state.settings.userNps;
+export const getSupportedCounterValues = (state: State) => state.settings.supportedCounterValues;

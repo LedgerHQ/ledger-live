@@ -1,375 +1,452 @@
 {
-  "onRamp": [
-    {
-      "type": "LIVE_APP",
-      "appId": "coinify",
-      "name": "Coinify",
-      "paramsMapping": {
-        "accountId": "accountId",
-        "cryptoCurrencyId": "cryptoCurrencyId",
-        "fiatCurrencyId": "fiatCurrencyId",
-        "fiatAmount": "fiatAmount",
-        "cryptoAmount": "cryptoAmount"
-      },
-      "paymentProviders": ["visa", "mastercard", "sepa"],
-      "cryptoCurrencies": [
-        {
-          "id": "bitcoin",
-          "providerId": "btc",
-          "ticker": "BTC"
-        },
-        {
-          "id": "ethereum",
-          "providerId": "eth",
-          "ticker": "ETH"
-        },
-        { "id": "cosmos", "providerId": "atom", "ticker": "ATOM" },
-        {
-          "id": "ethereum/erc20/usd__coin",
-          "providerId": "usdc",
-          "ticker": "USDC"
-        },
-        {
-          "id": "bsv",
-          "providerId": "bsv",
-          "ticker": "BSV"
-        },
-        {
-          "id": "bitcoin_cash",
-          "providerId": "bch",
-          "ticker": "BCH"
-        },
-        {
-          "id": "stellar",
-          "providerId": "xlm",
-          "ticker": "XLM"
-        },
-        {
-          "id": "nano",
-          "providerId": "nano",
-          "ticker": "NANO"
-        },
-        {
-          "id": "ethereum/erc20/okb",
-          "providerId": "okb",
-          "ticker": "OKB"
-        },
-        {
-          "id": "qtum",
-          "providerId": "qtum",
-          "ticker": "QTUM"
-        },
-        {
-          "id": "ethereum/erc20/usd_tether__erc20_",
-          "providerId": "usdt",
-          "ticker": "USDT"
-        },
-        {
-          "id": "tron/trc20/usdt",
-          "providerId": "usdttrc20",
-          "ticker": "USDT"
-        },
-        {
-          "id": "litecoin",
-          "providerId": "ltc",
-          "ticker": "LTC"
-        },
-        {
-          "id": "polkadot",
-          "providerId": "dot",
-          "ticker": "DOT"
-        },
-        {
-          "id": "ethereum/erc20/link_chainlink",
-          "providerId": "link",
-          "ticker": "LINK"
-        },
-        {
-          "id": "dogecoin",
-          "providerId": "doge",
-          "ticker": "DOGE"
-        },
-        {
-          "id": "ethereum/erc20/uniswap",
-          "providerId": "uni",
-          "ticker": "UNI"
-        },
-        {
-          "id": "ethereum/erc20/makerdao",
-          "providerId": "mkr",
-          "ticker": "MKR"
-        },
-        {
-          "id": "ethereum/erc20/compound",
-          "providerId": "comp",
-          "ticker": "COMP"
-        },
-        {
-          "id": "bsc",
-          "providerId": "bnbbsc",
-          "ticker": "BNB"
-        },
-        {
-          "id": "polygon",
-          "providerId": "matic",
-          "ticker": "MATIC"
-        },
-        {
-          "id": "ethereum/erc20/shiba_inu",
-          "providerId": "shib",
-          "ticker": "SHIB"
-        },
-        {
-          "id": "ethereum/erc20/aave",
-          "providerId": "aave",
-          "ticker": "AAVE"
-        }
-      ],
-      "fiatCurrencies": [
-        "eur",
-        "gbp",
-        "chf",
-        "dkk",
-        "usd",
-        "cad",
-        "nok",
-        "sek",
-        "aud",
-        "nzd",
-        "ars",
-        "bgn",
-        "brl",
-        "clp",
-        "cop",
-        "czk",
-        "hkd",
-        "hrk",
-        "huf",
-        "idr",
-        "inr",
-        "isk",
-        "jpy",
-        "kes",
-        "myr",
-        "pen",
-        "php",
-        "pln",
-        "ron",
-        "rub",
-        "try",
-        "twd",
-        "vnd",
-        "zar"
-      ]
-    },
-    {
-      "type": "LIVE_APP",
-      "appId": "btcdirect",
-      "name": "BTC Direct",
-      "paramsMapping": {
-        "accountId": "accountId",
-        "cryptoCurrencyId": "cryptoCurrencyId",
-        "fiatCurrencyId": "fiatCurrencyId",
-        "fiatAmount": "fiatAmount",
-        "cryptoAmount": "cryptoAmount"
-      },
-      "paymentProviders": ["visa", "mastercard", "maestro", "paypal", "sepa"],
-      "cryptoCurrencies": [
-        {
-          "id": "bitcoin_cash",
-          "providerId": "bch",
-          "ticker": "BCH"
-        },
-        {
-          "id": "bitcoin",
-          "providerId": "btc",
-          "ticker": "BTC"
-        },
-        {
-          "id": "ethereum",
-          "providerId": "eth",
-          "ticker": "ETH"
-        },
-        {
-          "id": "litecoin",
-          "providerId": "ltc",
-          "ticker": "LTC"
-        },
-        {
-          "id": "ripple",
-          "providerId": "xrp",
-          "ticker": "XRP"
-        },
-        {
-          "id": "ethereum/erc20/usd_tether__erc20_",
-          "providerId": "usdt",
-          "ticker": "USDT"
-        },
-        {
-          "id": "ethereum/erc20/usd__coin",
-          "providerId": "usdc",
-          "ticker": "USDC"
-        }
-      ],
-      "fiatCurrencies": ["eur"]
-    },
-    {
-      "type": "LIVE_APP",
-      "appId": "moonpay",
-      "name": "MoonPay",
-      "paramsMapping": {
-        "accountAddress": "walletAddress",
-        "language": "language",
-        "fiatCurrencyId": "baseCurrencyCode",
-        "cryptoCurrencyId": "defaultCurrencyCode",
-        "primaryColor": "colorCode",
-        "type": "type",
-        "fiatAmount": "baseCurrencyAmount",
-        "cryptoAmount": "quoteCurrencyAmount",
-        "address": "address"
-      },
-      "paymentProviders": ["visa", "mastercard", "sepa"],
-      "cryptoCurrencies": [
-        {
-          "id": "algorand",
-          "providerId": "algo",
-          "ticker": "ALGO"
-        },
-        {
-          "id": "ethereum/erc20/bat",
-          "providerId": "bat",
-          "ticker": "BAT"
-        },
-        {
-          "id": "bitcoin_cash",
-          "providerId": "bch",
-          "ticker": "BCH"
-        },
-        {
-          "id": "bsc",
-          "providerId": "bnb_bsc",
-          "ticker": "BNB"
-        },
-        {
-          "id": "bitcoin",
-          "providerId": "btc",
-          "ticker": "BTC"
-        },
-        {
-          "id": "ethereum/erc20/binance_usd",
-          "providerId": "busd",
-          "ticker": "BUSD"
-        },
-        {
-          "id": "bsc/bep20/binance-peg_busd_token",
-          "providerId": "busd_bsc",
-          "ticker": "BUSD"
-        },
-        {
-          "id": "ethereum/erc20/dai_stablecoin_v2_0",
-          "providerId": "dai",
-          "ticker": "DAI"
-        },
-        {
-          "id": "dogecoin",
-          "providerId": "doge",
-          "ticker": "DOGE"
-        },
-        {
-          "id": "polkadot",
-          "providerId": "dot",
-          "ticker": "DOT"
-        },
-        {
-          "id": "elrond",
-          "providerId": "egld",
-          "ticker": "EGLD"
-        },
-        {
-          "id": "ethereum",
-          "providerId": "eth",
-          "ticker": "ETH"
-        },
-        {
-          "id": "polygon/erc20/wrapped_ether",
-          "providerId": "eth_polygon",
-          "ticker": "WETH"
-        },
-        {
-          "id": "ethereum/erc20/link_chainlink",
-          "providerId": "link",
-          "ticker": "LINK"
-        },
-        {
-          "id": "litecoin",
-          "providerId": "ltc",
-          "ticker": "LTC"
-        },
-        {
-          "id": "polygon",
-          "providerId": "matic_polygon",
-          "ticker": "MATIC"
-        },
-        {
-          "id": "ethereum/erc20/shiba_inu",
-          "providerId": "shib",
-          "ticker": "SHIB"
-        },
-        {
-          "id": "ethereum/erc20/usd__coin",
-          "providerId": "usdc",
-          "ticker": "USDC"
-        },
-        {
-          "id": "usdc_polygon",
-          "providerId": "usdc_polygon",
-          "ticker": "USDC"
-        },
-        {
-          "id": "ethereum/erc20/usd_tether__erc20_",
-          "providerId": "usdt",
-          "ticker": "USDT"
-        },
-        {
-          "id": "stellar",
-          "providerId": "xlm",
-          "ticker": "XLM"
-        },
-        {
-          "id": "tezos",
-          "providerId": "xtz",
-          "ticker": "XTZ"
-        },
-        {
-          "id": "ethereum/erc20/0x_project",
-          "providerId": "zrx",
-          "ticker": "ZRX"
-        }
-      ],
-      "fiatCurrencies": ["eur", "usd"]
-    }
-  ],
-  "offRamp": [
-    {
-      "type": "LIVE_APP",
-      "appId": "coinify",
-      "name": "Coinify",
-      "paramsMapping": {
-        "accountId": "accountId",
-        "cryptoCurrencyId": "cryptoCurrencyId",
-        "fiatCurrencyId": "fiatCurrencyId",
-        "fiatAmount": "fiatAmount",
-        "cryptoAmount": "cryptoAmount"
-      },
-      "paymentProviders": ["sepa"],
-      "cryptoCurrencies": [
-        {
-          "id": "bitcoin",
-          "providerId": "bitcoin",
-          "ticker": "BTC"
-        }
-      ],
-      "fiatCurrencies": ["euro", "usd"]
-    }
-  ]
+  "onRamp": {
+    "transak": [
+      "near",
+      "algorand",
+      "avalanche",
+      "bitcoin",
+      "bitcoin_cash",
+      "cardano",
+      "celo",
+      "cosmos",
+      "dash",
+      "dogecoin",
+      "ethereum",
+      "litecoin",
+      "moonbeam",
+      "polkadot",
+      "polygon",
+      "ripple",
+      "solana",
+      "stacks",
+      "stellar",
+      "tezos",
+      "tron"
+    ],
+    "coinify": [
+      "ethereum",
+      "bitcoin",
+      "ethereum/erc20/usd__coin",
+      "bitcoin_cash",
+      "stellar",
+      "nano",
+      "ethereum/erc20/okb",
+      "qtum",
+      "ethereum/erc20/usd_tether__erc20_",
+      "tron/trc20/usdt",
+      "polkadot",
+      "ethereum/erc20/link_chainlink",
+      "dogecoin",
+      "ethereum/erc20/uniswap",
+      "ethereum/erc20/makerdao",
+      "ethereum/erc20/compound",
+      "bsc",
+      "ethereum/erc20/matic",
+      "cardano",
+      "solana",
+      "ethereum/erc20/aave",
+      "ethereum/erc20/shiba_inu",
+      "polygon",
+      "polygon/erc20/usd_coin_(pos)",
+      "ethereum/erc20/ankr_network",
+      "ethereum/erc20/decentraland_mana"
+    ],
+    "moonpay": [
+      "ethereum/erc20/aave",
+      "cardano",
+      "algorand",
+      "ethereum/erc20/apecoin",
+      "cosmos",
+      "ethereum/erc20/axie_infinity_shard",
+      "ethereum/erc20/bat",
+      "bitcoin_cash",
+      "bsc",
+      "bitcoin",
+      "bsc/bep20/binance-peg_busd_token",
+      "celo",
+      "ethereum/erc20/chiliz",
+      "ethereum/erc20/compound",
+      "ethereum/erc20/dai_stablecoin_v2_0",
+      "dogecoin",
+      "polkadot",
+      "elrond",
+      "ethereum/erc20/enjin",
+      "ethereum_classic",
+      "ethereum",
+      "polygon/erc20/wrapped_ether",
+      "ethereum/erc20/lugh",
+      "ethereum/erc20/gods_unchained",
+      "hedera",
+      "ethereum/erc20/immutable_x",
+      "ethereum/erc20/selfkey",
+      "ethereum/erc20/link_chainlink",
+      "litecoin",
+      "ethereum/erc20/decentraland_mana",
+      "ethereum/erc20/matic",
+      "polygon",
+      "ethereum/erc20/makerdao",
+      "ethereum/erc20/okb",
+      "ethereum/erc20/mantra_dao",
+      "ethereum/erc20/omg",
+      "ethereum/erc20/orion_protocol",
+      "ethereum/erc20/rio_fuel_token",
+      "ethereum/erc20/sand",
+      "ethereum/erc20/shiba_inu",
+      "ethereum/erc20/synthetix_network_token",
+      "solana",
+      "ethereum/erc20/serum",
+      "ethereum/erc20/stormx",
+      "tron",
+      "ethereum/erc20/trueusd",
+      "ethereum/erc20/uniswap",
+      "ethereum/erc20/usd__coin",
+      "polygon/erc20/usd_coin_(pos)",
+      "ethereum/erc20/usd_tether__erc20_",
+      "ethereum/erc20/utrust_token",
+      "ethereum/erc20/wrapped_bitcoin",
+      "ethereum/erc20/weth",
+      "stellar",
+      "ripple",
+      "tezos",
+      "ethereum/erc20/0x_project",
+      "near"
+    ],
+    "binance": [
+      "bitcoin",
+      "ethereum",
+      "ethereum/erc20/usd_tether__erc20_",
+      "bsc",
+      "bsc/bep20/binance-peg_busd_token",
+      "ripple",
+      "dogecoin",
+      "cardano",
+      "polygon",
+      "polkadot",
+      "litecoin",
+      "ethereum/erc20/shiba_inu",
+      "solana",
+      "tron",
+      "ethereum/erc20/uniswap",
+      "ethereum/erc20/link_chainlink",
+      "cosmos",
+      "stellar",
+      "bitcoin_cash",
+      "algorand",
+      "ethereum/erc20/quant",
+      "ethereum/erc20/chiliz",
+      "ethereum/erc20/sand",
+      "ethereum/erc20/axie_infinity_shard",
+      "zcash",
+      "bsc/bep20/pancakeswap_token",
+      "fantom",
+      "ethereum/erc20/1inch_token",
+      "ethereum/erc20/holotoken",
+      "ethereum/erc20/gala",
+      "ethereum/erc20/jasmycoin",
+      "ethereum/erc20/reserve_rights",
+      "ethereum/erc20/amp",
+      "ethereum/erc20/illuvium",
+      "bsc/bep20/biswap",
+      "bsc/bep20/binance-peg_avalanche_token",
+      "bsc/bep20/binance-peg_axie_infinity_shard_token",
+      "bsc/bep20/binance-peg_bsc-usd",
+      "bsc/bep20/binance-peg_btcb_token",
+      "bsc/bep20/binance-peg_chainlink_token",
+      "bsc/bep20/binance-peg_elrond_token",
+      "bsc/bep20/binance-peg_ethereum_token",
+      "bsc/bep20/binance-peg_near_protocol",
+      "bsc/bep20/fantom",
+      "bsc/bep20/mask_network",
+      "bsc/bep20/matic_token",
+      "bsc/bep20/miotac",
+      "bsc/bep20/shiba_inu",
+      "bsc/bep20/the_sandbox",
+      "elrond",
+      "ethereum/erc20/binance_usd",
+      "ethereum/erc20/binance_wrapped_btc",
+      "ethereum/erc20/fantom_token",
+      "ethereum/erc20/flux_(zel)",
+      "ethereum/erc20/matic",
+      "ethereum/erc20/reef_finance",
+      "ethereum/erc20/wrapped_xrp",
+      "polygon/erc20/(pos)_tether_usd",
+      "polygon/erc20/sand"
+    ],
+    "mercuryo": [
+      "ethereum",
+      "bitcoin",
+      "ethereum/erc20/compound_usdt",
+      "ripple",
+      "bsc/bep20/1inch_token",
+      "cosmos",
+      "bitcoin_cash",
+      "ethereum/erc20/bat",
+      "ethereum/erc20/okb",
+      "litecoin",
+      "dogecoin",
+      "ethereum/erc20/decentraland_mana",
+      "ethereum/erc20/sand",
+      "tezos",
+      "ethereum/erc20/wrapped_ton_coin",
+      "ethereum/erc20/fantom_token",
+      "ethereum/erc20/dydx",
+      "algorand",
+      "avalanche",
+      "bsc",
+      "cardano",
+      "kusama",
+      "near",
+      "polkadot",
+      "polygon",
+      "solana",
+      "stellar",
+      "tron"
+    ],
+    "btcdirect": [
+      "ethereum",
+      "bitcoin",
+      "cardano",
+      "solana",
+      "stellar",
+      "bitcoin_cash",
+      "ethereum/erc20/usd__coin",
+      "ethereum/erc20/usd_tether__erc20_",
+      "litecoin",
+      "ripple"
+    ],
+    "paypal": ["bitcoin", "ethereum", "litecoin", "bitcoin_cash"],
+    "banxa": [
+      "bitcoin",
+      "ethereum",
+      "ethereum/erc20/usd_tether__erc20_",
+      "litecoin",
+      "ripple",
+      "ethereum/erc20/usd__coin",
+      "ethereum/erc20/bat",
+      "polkadot",
+      "celo",
+      "dogecoin",
+      "ethereum/erc20/cvc",
+      "ethereum_classic",
+      "ethereum/erc20/omg",
+      "ethereum/erc20/sushi",
+      "ethereum/erc20/uniswap"
+    ],
+    "sardine": [
+      "ethereum/erc20/usd__coin",
+      "polygon",
+      "polygon/erc20/usd_coin_(pos)",
+      "bsc",
+      "litecoin",
+      "bitcoin_cash",
+      "ethereum/erc20/shiba_inu",
+      "cosmos",
+      "ethereum/erc20/aave",
+      "ethereum/erc20/graph_token",
+      "tezos",
+      "ethereum/erc20/enjin",
+      "ethereum/erc20/bat",
+      "ethereum/erc20/yearn_finance",
+      "ethereum/erc20/sushi",
+      "ethereum/erc20/decentraland_mana",
+      "ethereum/erc20/curve_dao_token",
+      "ethereum/erc20/apecoin",
+      "avalanche",
+      "ethereum/erc20/axie_infinity_shard",
+      "bitcoin",
+      "ethereum",
+      "ethereum/erc20/usd_tether__erc20_",
+      "ripple",
+      "dogecoin",
+      "polkadot",
+      "ethereum/erc20/dai_stablecoin_v2_0",
+      "ethereum/erc20/uniswap",
+      "ethereum/erc20/link_chainlink",
+      "stellar",
+      "algorand",
+      "ethereum/erc20/makerdao",
+      "ethereum/erc20/compound",
+      "solana"
+    ],
+    "juno": ["bitcoin", "ethereum", "ethereum/erc20/usd__coin"],
+    "simplex": [
+      "ethereum/erc20/1inch_token",
+      "bsc/bep20/binance-peg_aave_token",
+      "ethereum/erc20/axie_infinity_shard",
+      "bsc/bep20/baby_doge_coin",
+      "bsc/bep20/bakerytoken",
+      "ethereum/erc20/bat",
+      "bsc",
+      "bsc/bep20/binance-peg_busd_token",
+      "bsc/bep20/busd-bd1",
+      "bitcoin",
+      "bitcoin_cash",
+      "ethereum/erc20/celsius",
+      "ethereum/erc20/link_chainlink",
+      "ethereum/erc20/chiliz",
+      "ethereum_ropsten/erc20/compound",
+      "ethereum/erc20/dai_stablecoin_v2_0",
+      "ethereum/erc20/deapcoin",
+      "ethereum/erc20/defiat",
+      "dogecoin",
+      "ethereum/erc20/dogelon",
+      "ethereum/erc20/enjin",
+      "ethereum",
+      "bsc/bep20/floki",
+      "ethereum/erc20/gala",
+      "ethereum/erc20/gamercoin",
+      "ethereum/erc20/gomining_token",
+      "ethereum/erc20/govi",
+      "ethereum/erc20/hedgetrade_token",
+      "ethereum/erc20/hgold",
+      "ethereum/erc20/husd_stablecoin",
+      "ethereum/erc20/hzmcoin",
+      "bsc/bep20/kmoncoin",
+      "ethereum/erc20/kucoin_token",
+      "litecoin",
+      "ethereum/erc20/makerdao",
+      "bsc/bep20/pancakeswap_token",
+      "ethereum/erc20/paxos_standard__pax_",
+      "polkadot",
+      "polygon",
+      "ethereum/erc20/portion_token",
+      "ethereum/erc20/rfox",
+      "ethereum/erc20/revv",
+      "ethereum/erc20/rio_fuel_token",
+      "bsc/bep20/smart_advertising_transaction_token",
+      "ethereum/erc20/smart_advertising_transaction_token",
+      "ethereum/erc20/shiba_inu",
+      "stellar",
+      "bsc/bep20/gomining_token",
+      "ethereum/erc20/sushi",
+      "bsc/bep20/binance-peg_token_club",
+      "ethereum/erc20/tether_gold",
+      "ethereum/erc20/usd_tether__erc20_",
+      "ethereum/erc20/sand",
+      "ethereum/erc20/trueusd",
+      "ethereum/erc20/ultratoken",
+      "ethereum/erc20/uniswap",
+      "bsc/bep20/binance-peg_usd_coin",
+      "ethereum/erc20/usd__coin",
+      "ethereum/erc20/usdk",
+      "bsc/bep20/venus",
+      "ethereum/erc20/vndc",
+      "ethereum/erc20/wrapped_bitcoin",
+      "ethereum/erc20/xy_oracle"
+    ],
+    "loopipay": [
+      "bitcoin",
+      "avalanche",
+      "bsc",
+      "bsc/bep20/1inch_token",
+      "bsc/bep20/altura",
+      "bsc/bep20/ankr",
+      "bsc/bep20/bakerytoken",
+      "bsc/bep20/binance-peg_bitcoin_cash_token",
+      "bsc/bep20/binance-peg_bsc-usd",
+      "bsc/bep20/binance-peg_busd_token",
+      "bsc/bep20/binaryx",
+      "bsc/bep20/biswap",
+      "bsc/bep20/boringdao",
+      "bsc/bep20/coin98",
+      "bsc/bep20/dexe",
+      "bsc/bep20/exeedme",
+      "bsc/bep20/fantom",
+      "bsc/bep20/magiccraft",
+      "bsc/bep20/mobox",
+      "bsc/bep20/orbs",
+      "bsc/bep20/ovr",
+      "bsc/bep20/prosper",
+      "bsc/bep20/renbtc",
+      "bsc/bep20/revv",
+      "bsc/bep20/rfox",
+      "bsc/bep20/splintershards",
+      "bsc/bep20/stackos",
+      "bsc/bep20/strikex",
+      "bsc/bep20/trvl",
+      "bsc/bep20/venus",
+      "ethereum",
+      "ethereum/erc20/0chain",
+      "ethereum/erc20/aergo",
+      "ethereum/erc20/airswap",
+      "ethereum/erc20/akropolis",
+      "ethereum/erc20/alchemix",
+      "ethereum/erc20/ampleforth",
+      "ethereum/erc20/arianee",
+      "ethereum/erc20/bancor",
+      "ethereum/erc20/bifrost",
+      "ethereum/erc20/bosagora",
+      "ethereum/erc20/chimpion",
+      "ethereum/erc20/civilization",
+      "ethereum/erc20/coinloan",
+      "ethereum/erc20/deapcoin",
+      "ethereum/erc20/derivadao",
+      "ethereum/erc20/dextools",
+      "ethereum/erc20/dforce",
+      "ethereum/erc20/digitalbits",
+      "ethereum/erc20/exeedme",
+      "ethereum/erc20/gamee",
+      "ethereum/erc20/gamercoin",
+      "ethereum/erc20/gifto",
+      "ethereum/erc20/glitch",
+      "ethereum/erc20/govi",
+      "ethereum/erc20/hegic",
+      "ethereum/erc20/insurace",
+      "ethereum/erc20/jupiter",
+      "ethereum/erc20/kryll",
+      "ethereum/erc20/monavale",
+      "ethereum/erc20/mysterium",
+      "ethereum/erc20/oax",
+      "ethereum/erc20/polkabridge",
+      "ethereum/erc20/polkamarkets",
+      "ethereum/erc20/qash",
+      "ethereum/erc20/quadrantprotocol",
+      "ethereum/erc20/rainicorn",
+      "ethereum/erc20/revv",
+      "ethereum/erc20/rook",
+      "ethereum/erc20/rubic",
+      "ethereum/erc20/shiba_inu",
+      "ethereum/erc20/stackos",
+      "ethereum/erc20/usd__coin",
+      "ethereum/erc20/usd_tether__erc20_",
+      "ethereum/erc20/wrapped_bitcoin",
+      "polygon",
+      "polygon/erc20/(pos)_compound",
+      "polygon/erc20/(pos)_dai_stablecoin"
+    ],
+    "ramp": [
+      "near",
+      "bitcoin",
+      "bitcoin_cash",
+      "bsc",
+      "bsc/bep20/fevrtoken",
+      "cardano",
+      "celo",
+      "cosmos",
+      "dogecoin",
+      "elrond",
+      "ethereum",
+      "ethereum/erc20/dai_stablecoin_v2_0",
+      "ethereum/erc20/ethereum_name_service",
+      "ethereum/erc20/link_chainlink",
+      "ethereum/erc20/mana",
+      "ethereum/erc20/paxos_gold",
+      "ethereum/erc20/paxos_standard__pax_",
+      "ethereum/erc20/rally",
+      "ethereum/erc20/usd__coin",
+      "ethereum/erc20/usd_tether__erc20_",
+      "litecoin",
+      "polkadot",
+      "polygon",
+      "polygon/erc20/bat",
+      "polygon/erc20/ovr",
+      "polygon/erc20/sand",
+      "polygon/erc20/usd_coin_(pos)",
+      "ripple",
+      "solana",
+      "stellar",
+      "tezos"
+    ]
+  },
+  "offRamp": { "coinify": ["bitcoin"] }
 }

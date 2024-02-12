@@ -19,6 +19,10 @@ export class SendModal extends Modal {
     await this.page.getByText(name).click();
   }
 
+  async clickOnCameraButton() {
+    await this.page.locator('[data-test-id="open-camera-qrcode-scanner"]').first().click();
+  }
+
   async fillRecipient(recipient: string) {
     await this.recipientInput.clear();
     await this.recipientInput.fill(recipient);

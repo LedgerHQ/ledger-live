@@ -22,20 +22,23 @@ test("Settings", async ({ page }) => {
   });
 
   await test.step("go to settings -> change language with device in English", async () => {
-    await page.route("**/language-package?**", route =>
+    await page.route("**/language-package?**", route => {
       route.fulfill({
         headers: { teststatus: "mocked" },
         status: 200,
         body: JSON.stringify(languagePacksData),
-      }),
-    );
+      });
+    });
     await layout.goToManager();
     await deviceAction.accessManagerWithL10n();
     await layout.goToSettings();
-    // the device language prompt only opens once the app has charged the available languages for the device
-    // I've tried to wait for a network idle state here, but it seemed flaky, timeout seems more reliable
-    await page.waitForTimeout(3000);
+
+    await settingsPage.waitForDeviceLanguagesLoaded();
+
     await settingsPage.changeLanguage("Français", "Español");
+
+    await settingsPage.waitForDeviceLauguagesDrawer();
+
     await expect(page).toHaveScreenshot("settings-français-with-device-l10n.png");
   });
 

@@ -1,13 +1,14 @@
 import React, { useCallback, useEffect, useState, useMemo } from "react";
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
-import useNpsRatings from "../../logic/npsRatings";
-import QueuedDrawer from "../../components/QueuedDrawer";
-import { track } from "../../analytics";
+import useNpsRatings from "~/logic/npsRatings";
+import QueuedDrawer from "~/components/QueuedDrawer";
+import { track } from "~/analytics";
 
 import Form from "./Form";
 
 import Enjoy from "./Enjoy";
 import DisappointedDone from "./DisappointedDone";
+import { LayoutChangeEvent } from "react-native";
 
 const eventNameByPage: Record<string, string> = {
   form: "NPS Step 1 Rating",
@@ -40,7 +41,7 @@ const RatingsModal = () => {
    */
   const sharedHeight = useSharedValue<number | null>(null);
   const onLayout = useCallback(
-    ({ nativeEvent: { layout } }) => {
+    ({ nativeEvent: { layout } }: LayoutChangeEvent) => {
       sharedHeight.value = withTiming(layout.height, { duration: 200 });
     },
     [sharedHeight],

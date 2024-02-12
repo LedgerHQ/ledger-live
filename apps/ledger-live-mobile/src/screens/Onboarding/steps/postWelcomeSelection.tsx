@@ -4,11 +4,11 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { useTheme } from "styled-components/native";
-import { setOnboardingHasDevice, setReadOnlyMode } from "../../../actions/settings";
-import { track, updateIdentify } from "../../../analytics";
-import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
-import { ScreenName } from "../../../const";
+import { setOnboardingHasDevice, setReadOnlyMode } from "~/actions/settings";
+import { track, updateIdentify } from "~/analytics";
+import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { ScreenName } from "~/const";
 import { SelectionCards } from "./Cards/SelectionCard";
 import { NoLedgerYetModal } from "./NoLedgerYetModal";
 import OnboardingView from "./OnboardingView";
@@ -76,7 +76,7 @@ function PostWelcomeSelection() {
             eventProperties: {
               button: "Setup your Ledger",
             },
-            testID: `Onboarding PostWelcome - Selection|Setup your Ledger`,
+            testID: `onboarding-setupLedger`,
             onPress: setupLedger,
             icon: <Icons.PlusCircle color={colors.primary.c80} size="M" />,
           },
@@ -87,7 +87,7 @@ function PostWelcomeSelection() {
             eventProperties: {
               button: "Access an existing wallet",
             },
-            testID: `Onboarding PostWelcome - Selection|Access an existing wallet`,
+            testID: `onboarding-accessWallet`,
             onPress: accessExistingWallet,
             icon: <Icons.WalletInput color={colors.primary.c80} />,
           },

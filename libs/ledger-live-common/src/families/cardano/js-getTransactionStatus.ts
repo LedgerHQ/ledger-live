@@ -15,7 +15,12 @@ import type {
 } from "./types";
 import { isHexString, isValidAddress } from "./logic";
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
-import { CardanoInvalidPoolId, CardanoMinAmountError, CardanoNotEnoughFunds } from "./errors";
+import {
+  CardanoInvalidPoolId,
+  CardanoStakeKeyDepositError,
+  CardanoMinAmountError,
+  CardanoNotEnoughFunds,
+} from "./errors";
 import { AccountAwaitingSendPendingOperations } from "../../errors";
 import { getNetworkParameters } from "./networks";
 import { decodeTokenAssetId, decodeTokenCurrencyId } from "./buildSubAccounts";
@@ -30,7 +35,7 @@ async function getSendTransactionStatus(
   const warnings: Record<string, Error> = {};
   const useAllAmount = !!t.useAllAmount;
 
-  const cardanoResources = a.cardanoResources as CardanoResources;
+  const cardanoResources = a.cardanoResources;
   const networkParams = getNetworkParameters(a.currency.id);
 
   const estimatedFees = t.fees || new BigNumber(0);
@@ -80,7 +85,9 @@ async function getSendTransactionStatus(
   if (!t.recipient) {
     errors.recipient = new RecipientRequired();
   } else if (!isValidAddress(t.recipient, networkParams.networkId)) {
-    errors.recipient = new InvalidAddress();
+    errors.recipient = new InvalidAddress("", {
+      currencyName: a.currency.name,
+    });
   }
 
   if (!amount.gt(0)) {
@@ -143,6 +150,16 @@ async function getDelegateTransactionStatus(
         throw e;
       }
     }
+  }
+
+  const stakeKeyRegisterDeposit = new BigNumber(a.cardanoResources.protocolParams.stakeKeyDeposit);
+  if (
+    !a.cardanoResources.delegation?.status &&
+    a.spendableBalance.isLessThan(stakeKeyRegisterDeposit)
+  ) {
+    errors.amount = new CardanoStakeKeyDepositError("", {
+      depositAmount: stakeKeyRegisterDeposit.div(1e6).toString(),
+    });
   }
 
   return Promise.resolve({

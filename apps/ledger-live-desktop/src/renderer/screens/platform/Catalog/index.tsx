@@ -11,6 +11,7 @@ import { AppCard } from "~/renderer/components/Platform/AppCard";
 import { Banner } from "./Banner";
 import { TwitterBanner } from "./TwitterBanner";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
 const DAPP_DISCLAIMER_ID = "PlatformAppDisclaimer";
 
@@ -51,7 +52,7 @@ export function Catalog() {
   const { t } = useTranslation();
 
   const handleClick = useCallback(
-    manifest => {
+    (manifest: LiveAppManifest) => {
       const openApp = () => history.push(`/platform/${manifest.id}`);
       if (!isDismissed && manifest.author !== "ledger") {
         dispatch(

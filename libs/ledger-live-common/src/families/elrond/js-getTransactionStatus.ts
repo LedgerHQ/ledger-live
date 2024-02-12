@@ -94,9 +94,8 @@ const getTransactionStatus = async (
     }
 
     // When undelegating, unless undelegating all, the delegation must remain >= 1 EGLD
-    const delegationBalance = a.elrondResources.delegations.find(
-      d => d.contract === t.recipient,
-    )?.userActiveStake;
+    const delegationBalance = a.elrondResources.delegations.find(d => d.contract === t.recipient)
+      ?.userActiveStake;
 
     const delegationRemainingBalance = new BigNumber(delegationBalance || 0).minus(t.amount);
 

@@ -1,12 +1,13 @@
 import React, { useCallback, useEffect, useState, useMemo } from "react";
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
-import useRatings from "../../logic/ratings";
-import QueuedDrawer from "../../components/QueuedDrawer";
+import useRatings from "~/logic/ratings";
+import QueuedDrawer from "~/components/QueuedDrawer";
 import Init from "./Init";
 import Enjoy from "./Enjoy";
 import Disappointed from "./Disappointed";
 import DisappointedForm from "./DisappointedForm";
 import DisappointedDone from "./DisappointedDone";
+import { LayoutChangeEvent } from "react-native";
 
 const RatingsModal = () => {
   const {
@@ -33,7 +34,7 @@ const RatingsModal = () => {
    */
   const sharedHeight = useSharedValue<number | null>(null);
   const onLayout = useCallback(
-    ({ nativeEvent: { layout } }) => {
+    ({ nativeEvent: { layout } }: LayoutChangeEvent) => {
       sharedHeight.value = withTiming(layout.height, { duration: 200 });
     },
     [sharedHeight],

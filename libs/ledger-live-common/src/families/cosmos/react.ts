@@ -9,11 +9,10 @@ import type {
   CosmosOperationMode,
   CosmosSearchFilter,
   Transaction,
-  CosmosExtraTxInfo,
   CosmosPreloadData,
   CosmosAccount,
 } from "./types";
-import { mapDelegations, mapDelegationInfo, searchFilter as defaultSearchFilter } from "./logic";
+import { mapDelegations, searchFilter as defaultSearchFilter } from "./logic";
 import { getAccountUnit } from "../../account";
 import useMemoOnce from "../../hooks/useMemoOnce";
 import cryptoFactory from "./chain/chain";
@@ -126,29 +125,6 @@ export function useSortedValidators(
     [search, mappedValidators, sortedVotes, validatorSearchFilter],
   );
   return sr;
-}
-
-// Nothing using this function?
-export function useMappedExtraOperationDetails({
-  account,
-  extra,
-}: {
-  account: CosmosAccount;
-  extra: CosmosExtraTxInfo;
-}): CosmosExtraTxInfo {
-  const { validators } = useCosmosFamilyPreloadData(account.currency.id);
-  const unit = getAccountUnit(account);
-  return {
-    validators: extra.validators
-      ? mapDelegationInfo(extra.validators, validators, unit)
-      : undefined,
-    validator: extra.validator
-      ? mapDelegationInfo([extra.validator], validators, unit)[0]
-      : undefined,
-    sourceValidator: extra.sourceValidator ? extra.sourceValidator : undefined,
-    autoClaimedRewards:
-      extra.autoClaimedRewards != null ? extra.autoClaimedRewards : "empty string",
-  };
 }
 
 export function useLedgerFirstShuffledValidatorsCosmosFamily(

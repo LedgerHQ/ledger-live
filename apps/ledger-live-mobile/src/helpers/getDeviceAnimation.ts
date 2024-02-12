@@ -1,9 +1,9 @@
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import type { AnimatedLottieViewProps } from "lottie-react-native/lib/typescript/LottieView.types";
+import type { LottieViewProps } from "lottie-react-native/lib/typescript/LottieView.types";
 import Config from "react-native-config";
 
-type AnimationSource = AnimatedLottieViewProps["source"];
+type AnimationSource = LottieViewProps["source"];
 type AnimationRecord = Record<"light" | "dark", AnimationSource>;
 
 type S_SP_BLUE = DeviceModelId.nanoS | DeviceModelId.nanoSP | DeviceModelId.blue;
@@ -28,8 +28,8 @@ const animations: Animations = {
       dark: require("../animations/nanoS/4QuitApp/dark.json"),
     },
     allowManager: {
-      light: require("../animations/nanoS/5AllowManager/light.json"),
-      dark: require("../animations/nanoS/5AllowManager/dark.json"),
+      light: require("../animations/nanoS/7Validate/light.json"),
+      dark: require("../animations/nanoS/7Validate/dark.json"),
     },
     openApp: {
       light: require("../animations/nanoS/6OpenApp/light.json"),
@@ -62,8 +62,8 @@ const animations: Animations = {
       dark: require("../animations/nanoSP/4QuitApp/dark.json"),
     },
     allowManager: {
-      light: require("../animations/nanoSP/5AllowManager/light.json"),
-      dark: require("../animations/nanoSP/5AllowManager/dark.json"),
+      light: require("../animations/nanoSP/7Validate/light.json"),
+      dark: require("../animations/nanoSP/7Validate/dark.json"),
     },
     openApp: {
       light: require("../animations/nanoSP/6OpenApp/light.json"),
@@ -131,8 +131,8 @@ const animations: Animations = {
         dark: require("../animations/nanoX/wired/4QuitApp/dark.json"),
       },
       allowManager: {
-        light: require("../animations/nanoX/wired/5AllowManager/light.json"),
-        dark: require("../animations/nanoX/wired/5AllowManager/dark.json"),
+        light: require("../animations/nanoX/wired/7Validate/light.json"),
+        dark: require("../animations/nanoX/wired/7Validate/dark.json"),
       },
       openApp: {
         light: require("../animations/nanoX/wired/6OpenApp/light.json"),
@@ -165,8 +165,8 @@ const animations: Animations = {
         dark: require("../animations/nanoX/bluetooth/4QuitApp/dark.json"),
       },
       allowManager: {
-        light: require("../animations/nanoX/bluetooth/5AllowManager/light.json"),
-        dark: require("../animations/nanoX/bluetooth/5AllowManager/dark.json"),
+        light: require("../animations/nanoX/bluetooth/7Validate/light.json"),
+        dark: require("../animations/nanoX/bluetooth/7Validate/dark.json"),
       },
       openApp: {
         light: require("../animations/nanoX/bluetooth/6OpenApp/light.json"),

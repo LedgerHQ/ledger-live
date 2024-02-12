@@ -2,10 +2,8 @@ import { FeeNotLoaded } from "@ledgerhq/errors";
 import type {
   Account,
   DeviceId,
-  Operation,
   SignOperationEvent,
   SignOperationFnSignature,
-  SignedOperation,
 } from "@ledgerhq/types-live";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { BigNumber } from "bignumber.js";
@@ -13,7 +11,8 @@ import { Observable } from "rxjs";
 import { AlgorandAPI } from "./api";
 import { buildTransactionPayload, encodeToBroadcast, encodeToSign } from "./buildTransaction";
 import type { AlgorandAddress, AlgorandSignature, AlgorandSigner } from "./signer";
-import type { Transaction } from "./types";
+import type { Transaction, AlgorandOperation } from "./types";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 
 /**
  * Sign Transaction with Ledger hardware
@@ -69,8 +68,7 @@ export const buildSignOperation =
           signedOperation: {
             operation,
             signature: toBroadcast.toString("hex"),
-            expirationDate: null,
-          } as SignedOperation,
+          },
         });
       }
 
@@ -84,7 +82,10 @@ export const buildSignOperation =
       };
     });
 
-const buildOptimisticOperation = (account: Account, transaction: Transaction): Operation => {
+const buildOptimisticOperation = (
+  account: Account,
+  transaction: Transaction,
+): AlgorandOperation => {
   const { spendableBalance, id, freshAddress, subAccounts } = account;
 
   const senders = [freshAddress];
@@ -103,8 +104,8 @@ const buildOptimisticOperation = (account: Account, transaction: Transaction): O
 
   const type = subAccountId ? "FEES" : transaction.mode === "optIn" ? "OPT_IN" : "OUT";
 
-  const op: Operation = {
-    id: `${id}--${type}`,
+  const op: AlgorandOperation = {
+    id: encodeOperationId(id, "", type),
     hash: "",
     type,
     value,

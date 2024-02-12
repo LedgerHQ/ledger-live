@@ -8,6 +8,7 @@ import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import { track } from "~/renderer/analytics/segment";
 import LabelWithExternalIcon from "~/renderer/components/LabelWithExternalIcon";
+import { useLocalizedUrl } from "../hooks/useLocalizedUrls";
 
 type Props = {
   isAdvanceMode: boolean;
@@ -35,11 +36,12 @@ const SendFeeMode = ({ isAdvanceMode, setAdvanceMode }: Props) => {
   const { t } = useTranslation();
   const setAdvanced = useCallback(() => setAdvanceMode(true), [setAdvanceMode]);
   const setStandard = useCallback(() => setAdvanceMode(false), [setAdvanceMode]);
+  const feesMoreInfoUrl = useLocalizedUrl(urls.feesMoreInfo);
   return (
-    <Box horizontal alignItems="center" justifyContent="space-between">
+    <Box data-test-id="send-fee-mode" horizontal alignItems="center" justifyContent="space-between">
       <LabelWithExternalIcon
         onClick={() => {
-          openURL(urls.feesMoreInfo);
+          openURL(feesMoreInfoUrl);
           track("Send Flow Fees Help Requested");
         }}
         label={t("send.steps.amount.fees")}
@@ -67,4 +69,5 @@ const SendFeeMode = ({ isAdvanceMode, setAdvanceMode }: Props) => {
     </Box>
   );
 };
+
 export default SendFeeMode;

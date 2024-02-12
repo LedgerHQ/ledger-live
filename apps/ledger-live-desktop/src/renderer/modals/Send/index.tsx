@@ -11,7 +11,7 @@ type Props = {
 const MODAL_LOCKED: {
   [key in StepId]: boolean;
 } = {
-  recipient: true,
+  recipient: false,
   amount: true,
   summary: true,
   device: true,
@@ -21,7 +21,7 @@ const MODAL_LOCKED: {
 const SendModal = ({ stepId: initialStepId, onClose }: Props) => {
   const [stepId, setStep] = useState(() => initialStepId || "recipient");
   const handleReset = useCallback(() => setStep("recipient"), []);
-  const handleStepChange = useCallback(stepId => setStep(stepId), []);
+  const handleStepChange = useCallback((stepId: StepId) => setStep(stepId), []);
   const isModalLocked = MODAL_LOCKED[stepId as StepId];
   return (
     <DomainServiceProvider>

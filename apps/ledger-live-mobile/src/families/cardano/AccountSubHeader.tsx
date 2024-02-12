@@ -1,5 +1,5 @@
 import React from "react";
-import AccountSubHeader from "../../components/AccountSubHeader";
+import AccountSubHeader from "~/components/AccountSubHeader";
 
 function CardanoAccountSubHeader() {
   return <AccountSubHeader family="Cardano" team="Strica" />;

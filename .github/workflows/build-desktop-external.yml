@@ -5,18 +5,17 @@ on:
   workflow_dispatch:
     inputs:
       ref:
-        description: the branch which triggered this workflow
+        description: |
+          If you run this manually, and want to run on a PR, the correct ref should be refs/pull/{PR_NUMBER}/merge to
+          have the "normal" scenario involving checking out a merge commit between your branch and the base branch.
+          If you want to run only on a branch or specific commit, you can use either the sha or the branch name instead (prefer the first verion for PRs).
         required: false
       login:
         description: The GitHub username that triggered the workflow
-        required: true
+        required: false
       base_ref:
         description: The base branch to merge the head into when checking out the code
         required: false
-      draft:
-        description: true if the PR is in draft
-        required: false
-        default: "false"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
@@ -53,32 +52,31 @@ jobs:
         with:
           ref: ${{ github.ref_name }}
           base: ${{ inputs.base_ref }}
-      - name: Set git user
-        run: |
-          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
-          git config user.name "live-github-bot[bot]"
+      - name: Setup git user
+        uses: ./tools/actions/composites/setup-git-user
       - uses: actions/setup-python@v4
         with:
           python-version: "3.x"
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.1.2
+          ruby-version: 3.2.2
           bundler-cache: true
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
         with:
           upgrade_npm: ${{ matrix.os == 'windows-latest' }}
-      - uses: ./tools/actions/composites/setup-build-desktop
+      - name: Build desktop
+        uses: ./tools/actions/composites/setup-build-desktop
         id: build-desktop
         with:
           os: ${{ steps.os.outputs.result }}
       - name: Build the app
         id: build-app
-        run: pnpm build:lld --api="http://127.0.0.1:${{ steps.build-desktop.outputs.port }}" --token="yolo" --team="foo"
+        run: pnpm build:lld
       - name: Save result
         id: save-result
         shell: bash
-        if: always()
+        if: ${{ !cancelled() }}
         run: |
           echo "${{matrix.os}}=${{steps.build-app.outcome}}" >> $GITHUB_OUTPUT
       - name: Upload linux app
@@ -103,7 +101,7 @@ jobs:
   report:
     needs: build-desktop-app
     runs-on: ubuntu-latest
-    if: always() && !cancelled() && github.event_name == 'workflow_dispatch'
+    if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' }}
     steps:
       - uses: actions/github-script@v6
         name: Get statuses of runs

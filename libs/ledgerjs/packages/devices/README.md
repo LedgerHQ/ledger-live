@@ -10,46 +10,133 @@ Logic for all Ledger devices.
 
 #### Table of Contents
 
-*   [createHIDframing](#createhidframing)
+*   [receiveAPDU](#receiveapdu)
     *   [Parameters](#parameters)
+*   [createChunkedBuffers](#createchunkedbuffers)
+    *   [Parameters](#parameters-1)
+*   [sendAPDU](#sendapdu)
+    *   [Parameters](#parameters-2)
+*   [createHIDframing](#createhidframing)
+    *   [Parameters](#parameters-3)
+*   [makeBlocks](#makeblocks)
+    *   [Parameters](#parameters-4)
+*   [reduceResponse](#reduceresponse)
+    *   [Parameters](#parameters-5)
+*   [getReducedResult](#getreducedresult)
+    *   [Parameters](#parameters-6)
 *   [IIGenericHID](#iigenerichid)
 *   [ledgerUSBVendorId](#ledgerusbvendorid)
 *   [getDeviceModel](#getdevicemodel)
-    *   [Parameters](#parameters-1)
+    *   [Parameters](#parameters-7)
 *   [identifyTargetId](#identifytargetid)
-    *   [Parameters](#parameters-2)
+    *   [Parameters](#parameters-8)
 *   [identifyUSBProductId](#identifyusbproductid)
-    *   [Parameters](#parameters-3)
+    *   [Parameters](#parameters-9)
 *   [getBluetoothServiceUuids](#getbluetoothserviceuuids)
 *   [getInfosForServiceUuid](#getinfosforserviceuuid)
-    *   [Parameters](#parameters-4)
+    *   [Parameters](#parameters-10)
 *   [DeviceModel](#devicemodel)
 *   [BluetoothInfos](#bluetoothinfos)
 
-### createHIDframing
+### receiveAPDU
+
+Parses a raw stream coming from a BLE communication into an APDU response
 
 #### Parameters
 
-*   `channel` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
-*   `packetSize` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
+*   `rawStream` **Observable<([Buffer](https://nodejs.org/api/buffer.html) | [Error](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Error))>** An observable containing the raw stream as emitted buffers
+*   `options` **{context: TraceContext?}** Optional options containing:*   context An optional context object for log/tracing strategy (optional, default `{}`)
+
+    *   `options.context` &#x20;
+
+Returns **Observable<[Buffer](https://nodejs.org/api/buffer.html)>** An observable containing the APDU response as one emitted buffer
+
+### createChunkedBuffers
+
+Creates a list of chunked buffer from one buffer
+
+If this is using a Node buffer: the chunked buffers reference to the same memory as the original buffer.
+If this is using a Uint8Array: each part of the original buffer is copied into the chunked buffers
+
+#### Parameters
+
+*   `buffer` **[Buffer](https://nodejs.org/api/buffer.html)** a Node Buffer, or a Uint8Array
+*   `sizeForIndex` **function (arg0: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)): [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** A function that takes an index (on the buffer) and returns the size of the chunk at that index
+
+Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Buffer](https://nodejs.org/api/buffer.html)>** a list of chunked buffers
+
+### sendAPDU
+
+Sends an APDU by encoding it into chunks and sending the chunks using the given `write` function
+
+#### Parameters
+
+*   `write` **function (arg0: [Buffer](https://nodejs.org/api/buffer.html)): [Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<void>** The function to send each chunk to the device
+*   `apdu` **[Buffer](https://nodejs.org/api/buffer.html)**&#x20;
+*   `mtuSize` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** The negotiated maximum size of the data to be sent in one chunk
+*   `options` **{context: TraceContext?}** Optional options containing:*   context An optional context object for log/tracing strategy (optional, default `{}`)
+
+    *   `options.context` &#x20;
+
+Returns **Observable<[Buffer](https://nodejs.org/api/buffer.html)>** An observable that will only emit if an error occurred, otherwise it will complete
+
+### createHIDframing
+
+Object to handle HID frames (encoding and decoding)
+
+#### Parameters
+
+*   `channel` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
+*   `packetSize` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** The HID protocol packet size in bytes (usually 64)
+
+### makeBlocks
+
+Frames/encodes an APDU message into HID USB packets/frames
+
+#### Parameters
+
+*   `apdu` **[Buffer](https://nodejs.org/api/buffer.html)** The APDU message to send, in a Buffer containing \[cla, ins, p1, p2, data length, data(if not empty)]
+
+Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Buffer](https://nodejs.org/api/buffer.html)>** an array of HID USB frames ready to be sent
+
+### reduceResponse
+
+Reduces HID USB packets/frames to one response.
+
+#### Parameters
+
+*   `acc` **ResponseAcc** The value resulting from (accumulating) the previous call of reduceResponse.
+    On first call initialized to `initialAcc`. The accumulator enables handling multi-frames messages.
+*   `chunk` **[Buffer](https://nodejs.org/api/buffer.html)** Current chunk to reduce into accumulator
+
+Returns **ResponseAcc** An accumulator value updated with the current chunk
+
+### getReducedResult
+
+Returns the response message that has been reduced from the HID USB frames
+
+#### Parameters
+
+*   `acc` **ResponseAcc** The accumulator
+
+Returns **([Buffer](https://nodejs.org/api/buffer.html) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** A Buffer containing the cleaned response message, or null if no response message, or undefined if the
+accumulator is incorrect (message length is not valid)
 
 ### IIGenericHID
 
 The USB product IDs will be defined as MMII, encoding a model (MM) and an interface bitfield (II)
 
 *   Model
-
-Ledger Nano S : 0x10
-Ledger Blue : 0x00
-Ledger Nano X : 0x40
+    Ledger Nano S : 0x10
+    Ledger Blue : 0x00
+    Ledger Nano X : 0x40
 
 *   Interface support bitfield
-
-Generic HID : 0x01
-Keyboard HID : 0x02
-U2F : 0x04
-CCID : 0x08
-WebUSB : 0x10
+    Generic HID : 0x01
+    Keyboard HID : 0x02
+    U2F : 0x04
+    CCID : 0x08
+    WebUSB : 0x10
 
 Type: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)
 
@@ -61,9 +148,9 @@ Type: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 
 #### Parameters
 
-*   `id` **DeviceModelId** 
+*   `id` **DeviceModelId**&#x20;
 
-Returns **[DeviceModel](#devicemodel)** 
+Returns **[DeviceModel](#devicemodel)**&#x20;
 
 ### identifyTargetId
 
@@ -72,29 +159,34 @@ based on the first two bytes.
 
 #### Parameters
 
-*   `targetId` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
+*   `targetId` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
 
-Returns **([DeviceModel](#devicemodel) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
+Returns **([DeviceModel](#devicemodel) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**&#x20;
 
 ### identifyUSBProductId
 
+From a given USB product id, return the deviceModel associated to it.
+
+The mapping from the product id is only based on the 2 most significant bytes.
+For example, Stax is defined with a product id of 0x60ii, a product id 0x6011 would be mapped to it.
+
 #### Parameters
 
-*   `usbProductId` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 
+*   `usbProductId` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
 
-Returns **([DeviceModel](#devicemodel) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
+Returns **([DeviceModel](#devicemodel) | null | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**&#x20;
 
 ### getBluetoothServiceUuids
 
-Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** 
+Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>**&#x20;
 
 ### getInfosForServiceUuid
 
 #### Parameters
 
-*   `uuid` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+*   `uuid` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
 
-Returns **([BluetoothInfos](#bluetoothinfos) | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** 
+Returns **([BluetoothInfos](#bluetoothinfos) | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**&#x20;
 
 ### DeviceModel
 

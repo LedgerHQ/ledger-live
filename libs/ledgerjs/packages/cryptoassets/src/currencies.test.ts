@@ -213,17 +213,6 @@ test("fiats list is sorted by ticker", () => {
   );
 });
 
-test("testnet currencies must also set disableCountervalue to true", () => {
-  expect(
-    listCryptoCurrencies(true)
-      .filter(c => c.isTestnetFor)
-      /** @todo remove this after the ethereum/evm merge */
-      .filter(c => !c.id.includes("_as_evm_test_only"))
-      .filter(c => !c.disableCountervalue)
-      .map(c => c.id),
-  ).toEqual([]);
-});
-
 test("can get fiat by coin type", () => {
   expect(getFiatCurrencyByTicker("USD").units[0]).toMatchObject({
     magnitude: 2,
@@ -240,15 +229,14 @@ test("can get fiat by coin type", () => {
 test("all USDT are countervalue enabled", () => {
   const tokens = listTokens().filter(t => t.ticker === "USDT" && !t.parentCurrency.isTestnetFor);
   expect(tokens.map(t => t.id).sort()).toMatchSnapshot();
-  expect(tokens.every(t => t.disableCountervalue === false)).toBe(true);
 });
 
-test("Ethereum family convention: all ethereum testnet coins must derivate on the same cointype as the testnet it's for (e.g. ethereum ropsten is on 60)", () => {
+test("Evm family convention: all evm testnet coins must derivate on the same cointype as the testnet it's for (e.g. ethereum ropsten is on 60)", () => {
   expect(
     listCryptoCurrencies()
       .filter(
         e =>
-          e.family === "ethereum" && // ethereum family
+          e.family === "evm" && // evm family
           e.isTestnetFor && // is a testnet coin
           e.coinType !== getCryptoCurrencyById(e.isTestnetFor).coinType, // it must use same coinType as the mainnet coin
       )

@@ -1,13 +1,14 @@
+import { EnvName } from "@ledgerhq/live-env";
 import React, { useCallback } from "react";
 import Track from "~/renderer/analytics/Track";
 import Switch from "~/renderer/components/Switch";
 type Props = {
-  name: string;
+  name: EnvName;
   valueOn?: string | boolean;
   valueOff?: string | boolean;
   isDefault: boolean;
   readOnly: boolean;
-  onChange: (name: string, val: unknown) => void;
+  onChange: (name: EnvName, val: unknown) => void;
 };
 const ExperimentalSwitch = ({
   onChange,

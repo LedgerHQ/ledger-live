@@ -1,0 +1,2185 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast < minFees should return the expected patch for coin transaction 1`] = `
+{
+  "amount": "0",
+  "customGasLimit": "21000",
+  "data": undefined,
+  "feesStrategy": "custom",
+  "gasLimit": "21000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": "11",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "medium": {
+      "gasPrice": "10",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "slow": {
+      "gasPrice": "9",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+  },
+  "gasPrice": "1000",
+  "maxFeePerGas": undefined,
+  "maxPriorityFeePerGas": undefined,
+  "mode": "send",
+  "nonce": 0,
+  "recipient": "0x055C1e159E345cB4197e3844a86A61E0a801d856",
+  "subAccountId": undefined,
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast < minFees should return the expected patch for erc20 transaction 1`] = `
+{
+  "amount": "0",
+  "customGasLimit": "21000",
+  "data": undefined,
+  "feesStrategy": "custom",
+  "gasLimit": "21000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": "11",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "medium": {
+      "gasPrice": "10",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "slow": {
+      "gasPrice": "9",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+  },
+  "gasPrice": "1000",
+  "maxFeePerGas": undefined,
+  "maxPriorityFeePerGas": undefined,
+  "mode": "send",
+  "nonce": 0,
+  "recipient": "0x055C1e159E345cB4197e3844a86A61E0a801d856",
+  "subAccountId": undefined,
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast < minFees should return the expected patch for erc721 transaction 1`] = `
+{
+  "amount": "0",
+  "customGasLimit": "21000",
+  "data": undefined,
+  "feesStrategy": "custom",
+  "gasLimit": "21000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": "11",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "medium": {
+      "gasPrice": "10",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "slow": {
+      "gasPrice": "9",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+  },
+  "gasPrice": "1000",
+  "maxFeePerGas": undefined,
+  "maxPriorityFeePerGas": undefined,
+  "mode": "send",
+  "nonce": 0,
+  "recipient": "0x055C1e159E345cB4197e3844a86A61E0a801d856",
+  "subAccountId": undefined,
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast < minFees should return the expected patch for erc1155 transaction 1`] = `
+{
+  "amount": "0",
+  "customGasLimit": "21000",
+  "data": undefined,
+  "feesStrategy": "custom",
+  "gasLimit": "21000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": "11",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "medium": {
+      "gasPrice": "10",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "slow": {
+      "gasPrice": "9",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+  },
+  "gasPrice": "1000",
+  "maxFeePerGas": undefined,
+  "maxPriorityFeePerGas": undefined,
+  "mode": "send",
+  "nonce": 0,
+  "recipient": "0x055C1e159E345cB4197e3844a86A61E0a801d856",
+  "subAccountId": undefined,
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast == minFees should return the expected patch for coin transaction 1`] = `
+{
+  "amount": "0",
+  "customGasLimit": "21000",
+  "data": undefined,
+  "feesStrategy": "fast",
+  "gasLimit": "21000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": "1000",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "medium": {
+      "gasPrice": "10",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "slow": {
+      "gasPrice": "9",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+  },
+  "gasPrice": "1000",
+  "maxFeePerGas": undefined,
+  "maxPriorityFeePerGas": undefined,
+  "mode": "send",
+  "nonce": 0,
+  "recipient": "0x055C1e159E345cB4197e3844a86A61E0a801d856",
+  "subAccountId": undefined,
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast == minFees should return the expected patch for erc20 transaction 1`] = `
+{
+  "amount": "0",
+  "customGasLimit": "21000",
+  "data": undefined,
+  "feesStrategy": "fast",
+  "gasLimit": "21000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": "1000",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "medium": {
+      "gasPrice": "10",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "slow": {
+      "gasPrice": "9",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+  },
+  "gasPrice": "1000",
+  "maxFeePerGas": undefined,
+  "maxPriorityFeePerGas": undefined,
+  "mode": "send",
+  "nonce": 0,
+  "recipient": "0x055C1e159E345cB4197e3844a86A61E0a801d856",
+  "subAccountId": undefined,
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast == minFees should return the expected patch for erc721 transaction 1`] = `
+{
+  "amount": "0",
+  "customGasLimit": "21000",
+  "data": undefined,
+  "feesStrategy": "fast",
+  "gasLimit": "21000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": "1000",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "medium": {
+      "gasPrice": "10",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "slow": {
+      "gasPrice": "9",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+  },
+  "gasPrice": "1000",
+  "maxFeePerGas": undefined,
+  "maxPriorityFeePerGas": undefined,
+  "mode": "send",
+  "nonce": 0,
+  "recipient": "0x055C1e159E345cB4197e3844a86A61E0a801d856",
+  "subAccountId": undefined,
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast == minFees should return the expected patch for erc1155 transaction 1`] = `
+{
+  "amount": "0",
+  "customGasLimit": "21000",
+  "data": undefined,
+  "feesStrategy": "fast",
+  "gasLimit": "21000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": "1000",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "medium": {
+      "gasPrice": "10",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "slow": {
+      "gasPrice": "9",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+  },
+  "gasPrice": "1000",
+  "maxFeePerGas": undefined,
+  "maxPriorityFeePerGas": undefined,
+  "mode": "send",
+  "nonce": 0,
+  "recipient": "0x055C1e159E345cB4197e3844a86A61E0a801d856",
+  "subAccountId": undefined,
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast > minFees should return the expected patch for coin transaction 1`] = `
+{
+  "amount": "0",
+  "customGasLimit": "21000",
+  "data": undefined,
+  "feesStrategy": "fast",
+  "gasLimit": "21000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": "1100",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "medium": {
+      "gasPrice": "10",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "slow": {
+      "gasPrice": "9",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+  },
+  "gasPrice": "1100",
+  "maxFeePerGas": undefined,
+  "maxPriorityFeePerGas": undefined,
+  "mode": "send",
+  "nonce": 0,
+  "recipient": "0x055C1e159E345cB4197e3844a86A61E0a801d856",
+  "subAccountId": undefined,
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast > minFees should return the expected patch for erc20 transaction 1`] = `
+{
+  "amount": "0",
+  "customGasLimit": "21000",
+  "data": undefined,
+  "feesStrategy": "fast",
+  "gasLimit": "21000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": "1100",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "medium": {
+      "gasPrice": "10",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "slow": {
+      "gasPrice": "9",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+  },
+  "gasPrice": "1100",
+  "maxFeePerGas": undefined,
+  "maxPriorityFeePerGas": undefined,
+  "mode": "send",
+  "nonce": 0,
+  "recipient": "0x055C1e159E345cB4197e3844a86A61E0a801d856",
+  "subAccountId": undefined,
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast > minFees should return the expected patch for erc721 transaction 1`] = `
+{
+  "amount": "0",
+  "customGasLimit": "21000",
+  "data": undefined,
+  "feesStrategy": "fast",
+  "gasLimit": "21000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": "1100",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "medium": {
+      "gasPrice": "10",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "slow": {
+      "gasPrice": "9",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+  },
+  "gasPrice": "1100",
+  "maxFeePerGas": undefined,
+  "maxPriorityFeePerGas": undefined,
+  "mode": "send",
+  "nonce": 0,
+  "recipient": "0x055C1e159E345cB4197e3844a86A61E0a801d856",
+  "subAccountId": undefined,
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType cancel with gasTracker with transaction type 0 with gasOptionFast > minFees should return the expected patch for erc1155 transaction 1`] = `
+{
+  "amount": "0",
+  "customGasLimit": "21000",
+  "data": undefined,
+  "feesStrategy": "fast",
+  "gasLimit": "21000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": "1100",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "medium": {
+      "gasPrice": "10",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "slow": {
+      "gasPrice": "9",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+  },
+  "gasPrice": "1100",
+  "maxFeePerGas": undefined,
+  "maxPriorityFeePerGas": undefined,
+  "mode": "send",
+  "nonce": 0,
+  "recipient": "0x055C1e159E345cB4197e3844a86A61E0a801d856",
+  "subAccountId": undefined,
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast < minFees should return the expected patch for coin transaction 1`] = `
+{
+  "amount": "0",
+  "customGasLimit": "21000",
+  "data": undefined,
+  "feesStrategy": "custom",
+  "gasLimit": "21000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": null,
+      "maxFeePerGas": "11",
+      "maxPriorityFeePerGas": "3",
+      "nextBaseFee": "4",
+    },
+    "medium": {
+      "gasPrice": null,
+      "maxFeePerGas": "10",
+      "maxPriorityFeePerGas": "2",
+      "nextBaseFee": "4",
+    },
+    "slow": {
+      "gasPrice": null,
+      "maxFeePerGas": "9",
+      "maxPriorityFeePerGas": "1",
+      "nextBaseFee": "4",
+    },
+  },
+  "gasPrice": undefined,
+  "maxFeePerGas": "110",
+  "maxPriorityFeePerGas": "30",
+  "mode": "send",
+  "nonce": 0,
+  "recipient": "0x055C1e159E345cB4197e3844a86A61E0a801d856",
+  "subAccountId": undefined,
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast < minFees should return the expected patch for erc20 transaction 1`] = `
+{
+  "amount": "0",
+  "customGasLimit": "60000",
+  "data": undefined,
+  "feesStrategy": "custom",
+  "gasLimit": "60000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": null,
+      "maxFeePerGas": "11",
+      "maxPriorityFeePerGas": "3",
+      "nextBaseFee": "4",
+    },
+    "medium": {
+      "gasPrice": null,
+      "maxFeePerGas": "10",
+      "maxPriorityFeePerGas": "2",
+      "nextBaseFee": "4",
+    },
+    "slow": {
+      "gasPrice": null,
+      "maxFeePerGas": "9",
+      "maxPriorityFeePerGas": "1",
+      "nextBaseFee": "4",
+    },
+  },
+  "gasPrice": undefined,
+  "maxFeePerGas": "110",
+  "maxPriorityFeePerGas": "30",
+  "mode": "send",
+  "nonce": 0,
+  "recipient": "0x055C1e159E345cB4197e3844a86A61E0a801d856",
+  "subAccountId": undefined,
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast < minFees should return the expected patch for erc721 transaction 1`] = `
+{
+  "amount": "0",
+  "customGasLimit": "21000",
+  "data": undefined,
+  "feesStrategy": "custom",
+  "gasLimit": "21000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": null,
+      "maxFeePerGas": "11",
+      "maxPriorityFeePerGas": "3",
+      "nextBaseFee": "4",
+    },
+    "medium": {
+      "gasPrice": null,
+      "maxFeePerGas": "10",
+      "maxPriorityFeePerGas": "2",
+      "nextBaseFee": "4",
+    },
+    "slow": {
+      "gasPrice": null,
+      "maxFeePerGas": "9",
+      "maxPriorityFeePerGas": "1",
+      "nextBaseFee": "4",
+    },
+  },
+  "gasPrice": undefined,
+  "maxFeePerGas": "110",
+  "maxPriorityFeePerGas": "30",
+  "mode": "send",
+  "nonce": 0,
+  "recipient": "0x055C1e159E345cB4197e3844a86A61E0a801d856",
+  "subAccountId": undefined,
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast < minFees should return the expected patch for erc1155 transaction 1`] = `
+{
+  "amount": "0",
+  "customGasLimit": "60000",
+  "data": undefined,
+  "feesStrategy": "custom",
+  "gasLimit": "60000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": null,
+      "maxFeePerGas": "11",
+      "maxPriorityFeePerGas": "3",
+      "nextBaseFee": "4",
+    },
+    "medium": {
+      "gasPrice": null,
+      "maxFeePerGas": "10",
+      "maxPriorityFeePerGas": "2",
+      "nextBaseFee": "4",
+    },
+    "slow": {
+      "gasPrice": null,
+      "maxFeePerGas": "9",
+      "maxPriorityFeePerGas": "1",
+      "nextBaseFee": "4",
+    },
+  },
+  "gasPrice": undefined,
+  "maxFeePerGas": "110",
+  "maxPriorityFeePerGas": "30",
+  "mode": "send",
+  "nonce": 0,
+  "recipient": "0x055C1e159E345cB4197e3844a86A61E0a801d856",
+  "subAccountId": undefined,
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast == minFees should return the expected patch for coin transaction 1`] = `
+{
+  "amount": "0",
+  "customGasLimit": "21000",
+  "data": undefined,
+  "feesStrategy": "fast",
+  "gasLimit": "21000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": null,
+      "maxFeePerGas": "110",
+      "maxPriorityFeePerGas": "30",
+      "nextBaseFee": "4",
+    },
+    "medium": {
+      "gasPrice": null,
+      "maxFeePerGas": "10",
+      "maxPriorityFeePerGas": "2",
+      "nextBaseFee": "4",
+    },
+    "slow": {
+      "gasPrice": null,
+      "maxFeePerGas": "9",
+      "maxPriorityFeePerGas": "1",
+      "nextBaseFee": "4",
+    },
+  },
+  "gasPrice": undefined,
+  "maxFeePerGas": "110",
+  "maxPriorityFeePerGas": "30",
+  "mode": "send",
+  "nonce": 0,
+  "recipient": "0x055C1e159E345cB4197e3844a86A61E0a801d856",
+  "subAccountId": undefined,
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast == minFees should return the expected patch for erc20 transaction 1`] = `
+{
+  "amount": "0",
+  "customGasLimit": "60000",
+  "data": undefined,
+  "feesStrategy": "fast",
+  "gasLimit": "60000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": null,
+      "maxFeePerGas": "110",
+      "maxPriorityFeePerGas": "30",
+      "nextBaseFee": "4",
+    },
+    "medium": {
+      "gasPrice": null,
+      "maxFeePerGas": "10",
+      "maxPriorityFeePerGas": "2",
+      "nextBaseFee": "4",
+    },
+    "slow": {
+      "gasPrice": null,
+      "maxFeePerGas": "9",
+      "maxPriorityFeePerGas": "1",
+      "nextBaseFee": "4",
+    },
+  },
+  "gasPrice": undefined,
+  "maxFeePerGas": "110",
+  "maxPriorityFeePerGas": "30",
+  "mode": "send",
+  "nonce": 0,
+  "recipient": "0x055C1e159E345cB4197e3844a86A61E0a801d856",
+  "subAccountId": undefined,
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast == minFees should return the expected patch for erc721 transaction 1`] = `
+{
+  "amount": "0",
+  "customGasLimit": "21000",
+  "data": undefined,
+  "feesStrategy": "fast",
+  "gasLimit": "21000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": null,
+      "maxFeePerGas": "110",
+      "maxPriorityFeePerGas": "30",
+      "nextBaseFee": "4",
+    },
+    "medium": {
+      "gasPrice": null,
+      "maxFeePerGas": "10",
+      "maxPriorityFeePerGas": "2",
+      "nextBaseFee": "4",
+    },
+    "slow": {
+      "gasPrice": null,
+      "maxFeePerGas": "9",
+      "maxPriorityFeePerGas": "1",
+      "nextBaseFee": "4",
+    },
+  },
+  "gasPrice": undefined,
+  "maxFeePerGas": "110",
+  "maxPriorityFeePerGas": "30",
+  "mode": "send",
+  "nonce": 0,
+  "recipient": "0x055C1e159E345cB4197e3844a86A61E0a801d856",
+  "subAccountId": undefined,
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast == minFees should return the expected patch for erc1155 transaction 1`] = `
+{
+  "amount": "0",
+  "customGasLimit": "60000",
+  "data": undefined,
+  "feesStrategy": "fast",
+  "gasLimit": "60000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": null,
+      "maxFeePerGas": "110",
+      "maxPriorityFeePerGas": "30",
+      "nextBaseFee": "4",
+    },
+    "medium": {
+      "gasPrice": null,
+      "maxFeePerGas": "10",
+      "maxPriorityFeePerGas": "2",
+      "nextBaseFee": "4",
+    },
+    "slow": {
+      "gasPrice": null,
+      "maxFeePerGas": "9",
+      "maxPriorityFeePerGas": "1",
+      "nextBaseFee": "4",
+    },
+  },
+  "gasPrice": undefined,
+  "maxFeePerGas": "110",
+  "maxPriorityFeePerGas": "30",
+  "mode": "send",
+  "nonce": 0,
+  "recipient": "0x055C1e159E345cB4197e3844a86A61E0a801d856",
+  "subAccountId": undefined,
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast > minFees should return the expected patch for coin transaction 1`] = `
+{
+  "amount": "0",
+  "customGasLimit": "21000",
+  "data": undefined,
+  "feesStrategy": "fast",
+  "gasLimit": "21000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": null,
+      "maxFeePerGas": "1100",
+      "maxPriorityFeePerGas": "300",
+      "nextBaseFee": "4",
+    },
+    "medium": {
+      "gasPrice": null,
+      "maxFeePerGas": "10",
+      "maxPriorityFeePerGas": "2",
+      "nextBaseFee": "4",
+    },
+    "slow": {
+      "gasPrice": null,
+      "maxFeePerGas": "9",
+      "maxPriorityFeePerGas": "1",
+      "nextBaseFee": "4",
+    },
+  },
+  "gasPrice": undefined,
+  "maxFeePerGas": "1100",
+  "maxPriorityFeePerGas": "300",
+  "mode": "send",
+  "nonce": 0,
+  "recipient": "0x055C1e159E345cB4197e3844a86A61E0a801d856",
+  "subAccountId": undefined,
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast > minFees should return the expected patch for erc20 transaction 1`] = `
+{
+  "amount": "0",
+  "customGasLimit": "60000",
+  "data": undefined,
+  "feesStrategy": "fast",
+  "gasLimit": "60000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": null,
+      "maxFeePerGas": "1100",
+      "maxPriorityFeePerGas": "300",
+      "nextBaseFee": "4",
+    },
+    "medium": {
+      "gasPrice": null,
+      "maxFeePerGas": "10",
+      "maxPriorityFeePerGas": "2",
+      "nextBaseFee": "4",
+    },
+    "slow": {
+      "gasPrice": null,
+      "maxFeePerGas": "9",
+      "maxPriorityFeePerGas": "1",
+      "nextBaseFee": "4",
+    },
+  },
+  "gasPrice": undefined,
+  "maxFeePerGas": "1100",
+  "maxPriorityFeePerGas": "300",
+  "mode": "send",
+  "nonce": 0,
+  "recipient": "0x055C1e159E345cB4197e3844a86A61E0a801d856",
+  "subAccountId": undefined,
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast > minFees should return the expected patch for erc721 transaction 1`] = `
+{
+  "amount": "0",
+  "customGasLimit": "21000",
+  "data": undefined,
+  "feesStrategy": "fast",
+  "gasLimit": "21000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": null,
+      "maxFeePerGas": "1100",
+      "maxPriorityFeePerGas": "300",
+      "nextBaseFee": "4",
+    },
+    "medium": {
+      "gasPrice": null,
+      "maxFeePerGas": "10",
+      "maxPriorityFeePerGas": "2",
+      "nextBaseFee": "4",
+    },
+    "slow": {
+      "gasPrice": null,
+      "maxFeePerGas": "9",
+      "maxPriorityFeePerGas": "1",
+      "nextBaseFee": "4",
+    },
+  },
+  "gasPrice": undefined,
+  "maxFeePerGas": "1100",
+  "maxPriorityFeePerGas": "300",
+  "mode": "send",
+  "nonce": 0,
+  "recipient": "0x055C1e159E345cB4197e3844a86A61E0a801d856",
+  "subAccountId": undefined,
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType cancel with gasTracker with transaction type 2 with gasOptionFast > minFees should return the expected patch for erc1155 transaction 1`] = `
+{
+  "amount": "0",
+  "customGasLimit": "60000",
+  "data": undefined,
+  "feesStrategy": "fast",
+  "gasLimit": "60000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": null,
+      "maxFeePerGas": "1100",
+      "maxPriorityFeePerGas": "300",
+      "nextBaseFee": "4",
+    },
+    "medium": {
+      "gasPrice": null,
+      "maxFeePerGas": "10",
+      "maxPriorityFeePerGas": "2",
+      "nextBaseFee": "4",
+    },
+    "slow": {
+      "gasPrice": null,
+      "maxFeePerGas": "9",
+      "maxPriorityFeePerGas": "1",
+      "nextBaseFee": "4",
+    },
+  },
+  "gasPrice": undefined,
+  "maxFeePerGas": "1100",
+  "maxPriorityFeePerGas": "300",
+  "mode": "send",
+  "nonce": 0,
+  "recipient": "0x055C1e159E345cB4197e3844a86A61E0a801d856",
+  "subAccountId": undefined,
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast < minFees should return the expected patch for coin transaction 1`] = `
+{
+  "amount": "100",
+  "customGasLimit": "21000",
+  "data": {
+    "data": [
+      116,
+      101,
+      115,
+      116,
+      66,
+      117,
+      102,
+      102,
+      101,
+      114,
+      83,
+      116,
+      114,
+      105,
+      110,
+      103,
+    ],
+    "type": "Buffer",
+  },
+  "feesStrategy": "custom",
+  "gasLimit": "21000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": "11",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "medium": {
+      "gasPrice": "10",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "slow": {
+      "gasPrice": "9",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+  },
+  "gasPrice": "1000",
+  "maxFeePerGas": undefined,
+  "maxPriorityFeePerGas": undefined,
+  "mode": "send",
+  "nonce": 0,
+  "recipient": "0xkvn",
+  "subAccountId": "id",
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast < minFees should return the expected patch for erc20 transaction 1`] = `
+{
+  "amount": "100",
+  "customGasLimit": "21000",
+  "data": {
+    "data": [
+      116,
+      101,
+      115,
+      116,
+      66,
+      117,
+      102,
+      102,
+      101,
+      114,
+      83,
+      116,
+      114,
+      105,
+      110,
+      103,
+    ],
+    "type": "Buffer",
+  },
+  "feesStrategy": "custom",
+  "gasLimit": "21000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": "11",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "medium": {
+      "gasPrice": "10",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "slow": {
+      "gasPrice": "9",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+  },
+  "gasPrice": "1000",
+  "maxFeePerGas": undefined,
+  "maxPriorityFeePerGas": undefined,
+  "mode": "send",
+  "nonce": 0,
+  "recipient": "0xkvn",
+  "subAccountId": "id",
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast < minFees should return the expected patch for erc721 transaction 1`] = `
+{
+  "amount": "100",
+  "customGasLimit": "21000",
+  "data": {
+    "data": [
+      116,
+      101,
+      115,
+      116,
+      66,
+      117,
+      102,
+      102,
+      101,
+      114,
+      83,
+      116,
+      114,
+      105,
+      110,
+      103,
+    ],
+    "type": "Buffer",
+  },
+  "feesStrategy": "custom",
+  "gasLimit": "21000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": "11",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "medium": {
+      "gasPrice": "10",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "slow": {
+      "gasPrice": "9",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+  },
+  "gasPrice": "1000",
+  "maxFeePerGas": undefined,
+  "maxPriorityFeePerGas": undefined,
+  "mode": "erc721",
+  "nonce": 0,
+  "recipient": "0xkvn",
+  "subAccountId": "id",
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast < minFees should return the expected patch for erc1155 transaction 1`] = `
+{
+  "amount": "100",
+  "customGasLimit": "21000",
+  "data": {
+    "data": [
+      116,
+      101,
+      115,
+      116,
+      66,
+      117,
+      102,
+      102,
+      101,
+      114,
+      83,
+      116,
+      114,
+      105,
+      110,
+      103,
+    ],
+    "type": "Buffer",
+  },
+  "feesStrategy": "custom",
+  "gasLimit": "21000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": "11",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "medium": {
+      "gasPrice": "10",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "slow": {
+      "gasPrice": "9",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+  },
+  "gasPrice": "1000",
+  "maxFeePerGas": undefined,
+  "maxPriorityFeePerGas": undefined,
+  "mode": "erc1155",
+  "nonce": 0,
+  "recipient": "0xkvn",
+  "subAccountId": "id",
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast == minFees should return the expected patch for coin transaction 1`] = `
+{
+  "amount": "100",
+  "customGasLimit": "21000",
+  "data": {
+    "data": [
+      116,
+      101,
+      115,
+      116,
+      66,
+      117,
+      102,
+      102,
+      101,
+      114,
+      83,
+      116,
+      114,
+      105,
+      110,
+      103,
+    ],
+    "type": "Buffer",
+  },
+  "feesStrategy": "fast",
+  "gasLimit": "21000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": "1000",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "medium": {
+      "gasPrice": "10",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "slow": {
+      "gasPrice": "9",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+  },
+  "gasPrice": "1000",
+  "maxFeePerGas": undefined,
+  "maxPriorityFeePerGas": undefined,
+  "mode": "send",
+  "nonce": 0,
+  "recipient": "0xkvn",
+  "subAccountId": "id",
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast == minFees should return the expected patch for erc20 transaction 1`] = `
+{
+  "amount": "100",
+  "customGasLimit": "21000",
+  "data": {
+    "data": [
+      116,
+      101,
+      115,
+      116,
+      66,
+      117,
+      102,
+      102,
+      101,
+      114,
+      83,
+      116,
+      114,
+      105,
+      110,
+      103,
+    ],
+    "type": "Buffer",
+  },
+  "feesStrategy": "fast",
+  "gasLimit": "21000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": "1000",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "medium": {
+      "gasPrice": "10",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "slow": {
+      "gasPrice": "9",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+  },
+  "gasPrice": "1000",
+  "maxFeePerGas": undefined,
+  "maxPriorityFeePerGas": undefined,
+  "mode": "send",
+  "nonce": 0,
+  "recipient": "0xkvn",
+  "subAccountId": "id",
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast == minFees should return the expected patch for erc721 transaction 1`] = `
+{
+  "amount": "100",
+  "customGasLimit": "21000",
+  "data": {
+    "data": [
+      116,
+      101,
+      115,
+      116,
+      66,
+      117,
+      102,
+      102,
+      101,
+      114,
+      83,
+      116,
+      114,
+      105,
+      110,
+      103,
+    ],
+    "type": "Buffer",
+  },
+  "feesStrategy": "fast",
+  "gasLimit": "21000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": "1000",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "medium": {
+      "gasPrice": "10",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "slow": {
+      "gasPrice": "9",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+  },
+  "gasPrice": "1000",
+  "maxFeePerGas": undefined,
+  "maxPriorityFeePerGas": undefined,
+  "mode": "erc721",
+  "nonce": 0,
+  "recipient": "0xkvn",
+  "subAccountId": "id",
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast == minFees should return the expected patch for erc1155 transaction 1`] = `
+{
+  "amount": "100",
+  "customGasLimit": "21000",
+  "data": {
+    "data": [
+      116,
+      101,
+      115,
+      116,
+      66,
+      117,
+      102,
+      102,
+      101,
+      114,
+      83,
+      116,
+      114,
+      105,
+      110,
+      103,
+    ],
+    "type": "Buffer",
+  },
+  "feesStrategy": "fast",
+  "gasLimit": "21000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": "1000",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "medium": {
+      "gasPrice": "10",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "slow": {
+      "gasPrice": "9",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+  },
+  "gasPrice": "1000",
+  "maxFeePerGas": undefined,
+  "maxPriorityFeePerGas": undefined,
+  "mode": "erc1155",
+  "nonce": 0,
+  "recipient": "0xkvn",
+  "subAccountId": "id",
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast > minFees should return the expected patch for coin transaction 1`] = `
+{
+  "amount": "100",
+  "customGasLimit": "21000",
+  "data": {
+    "data": [
+      116,
+      101,
+      115,
+      116,
+      66,
+      117,
+      102,
+      102,
+      101,
+      114,
+      83,
+      116,
+      114,
+      105,
+      110,
+      103,
+    ],
+    "type": "Buffer",
+  },
+  "feesStrategy": "fast",
+  "gasLimit": "21000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": "1100",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "medium": {
+      "gasPrice": "10",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "slow": {
+      "gasPrice": "9",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+  },
+  "gasPrice": "1100",
+  "maxFeePerGas": undefined,
+  "maxPriorityFeePerGas": undefined,
+  "mode": "send",
+  "nonce": 0,
+  "recipient": "0xkvn",
+  "subAccountId": "id",
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast > minFees should return the expected patch for erc20 transaction 1`] = `
+{
+  "amount": "100",
+  "customGasLimit": "21000",
+  "data": {
+    "data": [
+      116,
+      101,
+      115,
+      116,
+      66,
+      117,
+      102,
+      102,
+      101,
+      114,
+      83,
+      116,
+      114,
+      105,
+      110,
+      103,
+    ],
+    "type": "Buffer",
+  },
+  "feesStrategy": "fast",
+  "gasLimit": "21000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": "1100",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "medium": {
+      "gasPrice": "10",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "slow": {
+      "gasPrice": "9",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+  },
+  "gasPrice": "1100",
+  "maxFeePerGas": undefined,
+  "maxPriorityFeePerGas": undefined,
+  "mode": "send",
+  "nonce": 0,
+  "recipient": "0xkvn",
+  "subAccountId": "id",
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast > minFees should return the expected patch for erc721 transaction 1`] = `
+{
+  "amount": "100",
+  "customGasLimit": "21000",
+  "data": {
+    "data": [
+      116,
+      101,
+      115,
+      116,
+      66,
+      117,
+      102,
+      102,
+      101,
+      114,
+      83,
+      116,
+      114,
+      105,
+      110,
+      103,
+    ],
+    "type": "Buffer",
+  },
+  "feesStrategy": "fast",
+  "gasLimit": "21000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": "1100",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "medium": {
+      "gasPrice": "10",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "slow": {
+      "gasPrice": "9",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+  },
+  "gasPrice": "1100",
+  "maxFeePerGas": undefined,
+  "maxPriorityFeePerGas": undefined,
+  "mode": "erc721",
+  "nonce": 0,
+  "recipient": "0xkvn",
+  "subAccountId": "id",
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType speedup with gasTracker with transaction type 0 with gasOptionFast > minFees should return the expected patch for erc1155 transaction 1`] = `
+{
+  "amount": "100",
+  "customGasLimit": "21000",
+  "data": {
+    "data": [
+      116,
+      101,
+      115,
+      116,
+      66,
+      117,
+      102,
+      102,
+      101,
+      114,
+      83,
+      116,
+      114,
+      105,
+      110,
+      103,
+    ],
+    "type": "Buffer",
+  },
+  "feesStrategy": "fast",
+  "gasLimit": "21000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": "1100",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "medium": {
+      "gasPrice": "10",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+    "slow": {
+      "gasPrice": "9",
+      "maxFeePerGas": null,
+      "maxPriorityFeePerGas": null,
+      "nextBaseFee": null,
+    },
+  },
+  "gasPrice": "1100",
+  "maxFeePerGas": undefined,
+  "maxPriorityFeePerGas": undefined,
+  "mode": "erc1155",
+  "nonce": 0,
+  "recipient": "0xkvn",
+  "subAccountId": "id",
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast < minFees should return the expected patch for coin transaction 1`] = `
+{
+  "amount": "100",
+  "customGasLimit": "21000",
+  "data": {
+    "data": [
+      116,
+      101,
+      115,
+      116,
+      66,
+      117,
+      102,
+      102,
+      101,
+      114,
+      83,
+      116,
+      114,
+      105,
+      110,
+      103,
+    ],
+    "type": "Buffer",
+  },
+  "feesStrategy": "custom",
+  "gasLimit": "21000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": null,
+      "maxFeePerGas": "11",
+      "maxPriorityFeePerGas": "3",
+      "nextBaseFee": "4",
+    },
+    "medium": {
+      "gasPrice": null,
+      "maxFeePerGas": "10",
+      "maxPriorityFeePerGas": "2",
+      "nextBaseFee": "4",
+    },
+    "slow": {
+      "gasPrice": null,
+      "maxFeePerGas": "9",
+      "maxPriorityFeePerGas": "1",
+      "nextBaseFee": "4",
+    },
+  },
+  "gasPrice": undefined,
+  "maxFeePerGas": "110",
+  "maxPriorityFeePerGas": "30",
+  "mode": "send",
+  "nonce": 0,
+  "recipient": "0xkvn",
+  "subAccountId": "id",
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast < minFees should return the expected patch for erc20 transaction 1`] = `
+{
+  "amount": "100",
+  "customGasLimit": "60000",
+  "data": undefined,
+  "feesStrategy": "custom",
+  "gasLimit": "60000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": null,
+      "maxFeePerGas": "11",
+      "maxPriorityFeePerGas": "3",
+      "nextBaseFee": "4",
+    },
+    "medium": {
+      "gasPrice": null,
+      "maxFeePerGas": "10",
+      "maxPriorityFeePerGas": "2",
+      "nextBaseFee": "4",
+    },
+    "slow": {
+      "gasPrice": null,
+      "maxFeePerGas": "9",
+      "maxPriorityFeePerGas": "1",
+      "nextBaseFee": "4",
+    },
+  },
+  "gasPrice": undefined,
+  "maxFeePerGas": "110",
+  "maxPriorityFeePerGas": "30",
+  "mode": "send",
+  "nonce": 0,
+  "recipient": "0x51DF0aF74a0DBae16cB845B46dAF2a35cB1D4168",
+  "subAccountId": "js:2:ethereum:0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d:+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin",
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast < minFees should return the expected patch for erc721 transaction 1`] = `
+{
+  "amount": "100",
+  "customGasLimit": "21000",
+  "data": {
+    "data": [
+      116,
+      101,
+      115,
+      116,
+      66,
+      117,
+      102,
+      102,
+      101,
+      114,
+      83,
+      116,
+      114,
+      105,
+      110,
+      103,
+    ],
+    "type": "Buffer",
+  },
+  "feesStrategy": "custom",
+  "gasLimit": "21000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": null,
+      "maxFeePerGas": "11",
+      "maxPriorityFeePerGas": "3",
+      "nextBaseFee": "4",
+    },
+    "medium": {
+      "gasPrice": null,
+      "maxFeePerGas": "10",
+      "maxPriorityFeePerGas": "2",
+      "nextBaseFee": "4",
+    },
+    "slow": {
+      "gasPrice": null,
+      "maxFeePerGas": "9",
+      "maxPriorityFeePerGas": "1",
+      "nextBaseFee": "4",
+    },
+  },
+  "gasPrice": undefined,
+  "maxFeePerGas": "110",
+  "maxPriorityFeePerGas": "30",
+  "mode": "erc721",
+  "nonce": 0,
+  "recipient": "0xkvn",
+  "subAccountId": "id",
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast < minFees should return the expected patch for erc1155 transaction 1`] = `
+{
+  "amount": "0",
+  "customGasLimit": "60000",
+  "data": undefined,
+  "feesStrategy": "custom",
+  "gasLimit": "60000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": null,
+      "maxFeePerGas": "11",
+      "maxPriorityFeePerGas": "3",
+      "nextBaseFee": "4",
+    },
+    "medium": {
+      "gasPrice": null,
+      "maxFeePerGas": "10",
+      "maxPriorityFeePerGas": "2",
+      "nextBaseFee": "4",
+    },
+    "slow": {
+      "gasPrice": null,
+      "maxFeePerGas": "9",
+      "maxPriorityFeePerGas": "1",
+      "nextBaseFee": "4",
+    },
+  },
+  "gasPrice": undefined,
+  "maxFeePerGas": "110",
+  "maxPriorityFeePerGas": "30",
+  "mode": "erc1155",
+  "nonce": 0,
+  "recipient": "0x51DF0aF74a0DBae16cB845B46dAF2a35cB1D4168",
+  "subAccountId": undefined,
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast == minFees should return the expected patch for coin transaction 1`] = `
+{
+  "amount": "100",
+  "customGasLimit": "21000",
+  "data": {
+    "data": [
+      116,
+      101,
+      115,
+      116,
+      66,
+      117,
+      102,
+      102,
+      101,
+      114,
+      83,
+      116,
+      114,
+      105,
+      110,
+      103,
+    ],
+    "type": "Buffer",
+  },
+  "feesStrategy": "fast",
+  "gasLimit": "21000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": null,
+      "maxFeePerGas": "110",
+      "maxPriorityFeePerGas": "30",
+      "nextBaseFee": "4",
+    },
+    "medium": {
+      "gasPrice": null,
+      "maxFeePerGas": "10",
+      "maxPriorityFeePerGas": "2",
+      "nextBaseFee": "4",
+    },
+    "slow": {
+      "gasPrice": null,
+      "maxFeePerGas": "9",
+      "maxPriorityFeePerGas": "1",
+      "nextBaseFee": "4",
+    },
+  },
+  "gasPrice": undefined,
+  "maxFeePerGas": "110",
+  "maxPriorityFeePerGas": "30",
+  "mode": "send",
+  "nonce": 0,
+  "recipient": "0xkvn",
+  "subAccountId": "id",
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast == minFees should return the expected patch for erc20 transaction 1`] = `
+{
+  "amount": "100",
+  "customGasLimit": "60000",
+  "data": undefined,
+  "feesStrategy": "fast",
+  "gasLimit": "60000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": null,
+      "maxFeePerGas": "110",
+      "maxPriorityFeePerGas": "30",
+      "nextBaseFee": "4",
+    },
+    "medium": {
+      "gasPrice": null,
+      "maxFeePerGas": "10",
+      "maxPriorityFeePerGas": "2",
+      "nextBaseFee": "4",
+    },
+    "slow": {
+      "gasPrice": null,
+      "maxFeePerGas": "9",
+      "maxPriorityFeePerGas": "1",
+      "nextBaseFee": "4",
+    },
+  },
+  "gasPrice": undefined,
+  "maxFeePerGas": "110",
+  "maxPriorityFeePerGas": "30",
+  "mode": "send",
+  "nonce": 0,
+  "recipient": "0x51DF0aF74a0DBae16cB845B46dAF2a35cB1D4168",
+  "subAccountId": "js:2:ethereum:0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d:+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin",
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast == minFees should return the expected patch for erc721 transaction 1`] = `
+{
+  "amount": "100",
+  "customGasLimit": "21000",
+  "data": {
+    "data": [
+      116,
+      101,
+      115,
+      116,
+      66,
+      117,
+      102,
+      102,
+      101,
+      114,
+      83,
+      116,
+      114,
+      105,
+      110,
+      103,
+    ],
+    "type": "Buffer",
+  },
+  "feesStrategy": "fast",
+  "gasLimit": "21000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": null,
+      "maxFeePerGas": "110",
+      "maxPriorityFeePerGas": "30",
+      "nextBaseFee": "4",
+    },
+    "medium": {
+      "gasPrice": null,
+      "maxFeePerGas": "10",
+      "maxPriorityFeePerGas": "2",
+      "nextBaseFee": "4",
+    },
+    "slow": {
+      "gasPrice": null,
+      "maxFeePerGas": "9",
+      "maxPriorityFeePerGas": "1",
+      "nextBaseFee": "4",
+    },
+  },
+  "gasPrice": undefined,
+  "maxFeePerGas": "110",
+  "maxPriorityFeePerGas": "30",
+  "mode": "erc721",
+  "nonce": 0,
+  "recipient": "0xkvn",
+  "subAccountId": "id",
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast == minFees should return the expected patch for erc1155 transaction 1`] = `
+{
+  "amount": "0",
+  "customGasLimit": "60000",
+  "data": undefined,
+  "feesStrategy": "fast",
+  "gasLimit": "60000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": null,
+      "maxFeePerGas": "110",
+      "maxPriorityFeePerGas": "30",
+      "nextBaseFee": "4",
+    },
+    "medium": {
+      "gasPrice": null,
+      "maxFeePerGas": "10",
+      "maxPriorityFeePerGas": "2",
+      "nextBaseFee": "4",
+    },
+    "slow": {
+      "gasPrice": null,
+      "maxFeePerGas": "9",
+      "maxPriorityFeePerGas": "1",
+      "nextBaseFee": "4",
+    },
+  },
+  "gasPrice": undefined,
+  "maxFeePerGas": "110",
+  "maxPriorityFeePerGas": "30",
+  "mode": "erc1155",
+  "nonce": 0,
+  "recipient": "0x51DF0aF74a0DBae16cB845B46dAF2a35cB1D4168",
+  "subAccountId": undefined,
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast > minFees should return the expected patch for coin transaction 1`] = `
+{
+  "amount": "100",
+  "customGasLimit": "21000",
+  "data": {
+    "data": [
+      116,
+      101,
+      115,
+      116,
+      66,
+      117,
+      102,
+      102,
+      101,
+      114,
+      83,
+      116,
+      114,
+      105,
+      110,
+      103,
+    ],
+    "type": "Buffer",
+  },
+  "feesStrategy": "fast",
+  "gasLimit": "21000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": null,
+      "maxFeePerGas": "1100",
+      "maxPriorityFeePerGas": "300",
+      "nextBaseFee": "4",
+    },
+    "medium": {
+      "gasPrice": null,
+      "maxFeePerGas": "10",
+      "maxPriorityFeePerGas": "2",
+      "nextBaseFee": "4",
+    },
+    "slow": {
+      "gasPrice": null,
+      "maxFeePerGas": "9",
+      "maxPriorityFeePerGas": "1",
+      "nextBaseFee": "4",
+    },
+  },
+  "gasPrice": undefined,
+  "maxFeePerGas": "1100",
+  "maxPriorityFeePerGas": "300",
+  "mode": "send",
+  "nonce": 0,
+  "recipient": "0xkvn",
+  "subAccountId": "id",
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast > minFees should return the expected patch for erc20 transaction 1`] = `
+{
+  "amount": "100",
+  "customGasLimit": "60000",
+  "data": undefined,
+  "feesStrategy": "fast",
+  "gasLimit": "60000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": null,
+      "maxFeePerGas": "1100",
+      "maxPriorityFeePerGas": "300",
+      "nextBaseFee": "4",
+    },
+    "medium": {
+      "gasPrice": null,
+      "maxFeePerGas": "10",
+      "maxPriorityFeePerGas": "2",
+      "nextBaseFee": "4",
+    },
+    "slow": {
+      "gasPrice": null,
+      "maxFeePerGas": "9",
+      "maxPriorityFeePerGas": "1",
+      "nextBaseFee": "4",
+    },
+  },
+  "gasPrice": undefined,
+  "maxFeePerGas": "1100",
+  "maxPriorityFeePerGas": "300",
+  "mode": "send",
+  "nonce": 0,
+  "recipient": "0x51DF0aF74a0DBae16cB845B46dAF2a35cB1D4168",
+  "subAccountId": "js:2:ethereum:0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d:+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin",
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast > minFees should return the expected patch for erc721 transaction 1`] = `
+{
+  "amount": "100",
+  "customGasLimit": "21000",
+  "data": {
+    "data": [
+      116,
+      101,
+      115,
+      116,
+      66,
+      117,
+      102,
+      102,
+      101,
+      114,
+      83,
+      116,
+      114,
+      105,
+      110,
+      103,
+    ],
+    "type": "Buffer",
+  },
+  "feesStrategy": "fast",
+  "gasLimit": "21000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": null,
+      "maxFeePerGas": "1100",
+      "maxPriorityFeePerGas": "300",
+      "nextBaseFee": "4",
+    },
+    "medium": {
+      "gasPrice": null,
+      "maxFeePerGas": "10",
+      "maxPriorityFeePerGas": "2",
+      "nextBaseFee": "4",
+    },
+    "slow": {
+      "gasPrice": null,
+      "maxFeePerGas": "9",
+      "maxPriorityFeePerGas": "1",
+      "nextBaseFee": "4",
+    },
+  },
+  "gasPrice": undefined,
+  "maxFeePerGas": "1100",
+  "maxPriorityFeePerGas": "300",
+  "mode": "erc721",
+  "nonce": 0,
+  "recipient": "0xkvn",
+  "subAccountId": "id",
+  "useAllAmount": false,
+}
+`;
+
+exports[`with editType speedup with gasTracker with transaction type 2 with gasOptionFast > minFees should return the expected patch for erc1155 transaction 1`] = `
+{
+  "amount": "0",
+  "customGasLimit": "60000",
+  "data": undefined,
+  "feesStrategy": "fast",
+  "gasLimit": "60000",
+  "gasOptions": {
+    "fast": {
+      "gasPrice": null,
+      "maxFeePerGas": "1100",
+      "maxPriorityFeePerGas": "300",
+      "nextBaseFee": "4",
+    },
+    "medium": {
+      "gasPrice": null,
+      "maxFeePerGas": "10",
+      "maxPriorityFeePerGas": "2",
+      "nextBaseFee": "4",
+    },
+    "slow": {
+      "gasPrice": null,
+      "maxFeePerGas": "9",
+      "maxPriorityFeePerGas": "1",
+      "nextBaseFee": "4",
+    },
+  },
+  "gasPrice": undefined,
+  "maxFeePerGas": "1100",
+  "maxPriorityFeePerGas": "300",
+  "mode": "erc1155",
+  "nonce": 0,
+  "recipient": "0x51DF0aF74a0DBae16cB845B46dAF2a35cB1D4168",
+  "subAccountId": undefined,
+  "useAllAmount": false,
+}
+`;

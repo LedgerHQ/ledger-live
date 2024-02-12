@@ -6,18 +6,19 @@ import { BottomTabBarProps, createBottomTabNavigator } from "@react-navigation/b
 import { useSelector } from "react-redux";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useManagerNavLockCallback } from "./CustomBlockRouterNavigator";
-import { ScreenName, NavigatorName } from "../../const";
-import { PortfolioTabIcon } from "../../screens/Portfolio";
+import { ScreenName, NavigatorName } from "~/const";
+import { PortfolioTabIcon } from "~/screens/Portfolio";
 import Transfer, { TransferTabIcon } from "../TabBar/Transfer";
 import TabIcon from "../TabIcon";
 import MarketNavigator from "./MarketNavigator";
+import MarketWalletTabNavigator from "LLM/features/Market/WalletTabNavigator";
 import PortfolioNavigator from "./PortfolioNavigator";
-import { hasOrderedNanoSelector, readOnlyModeEnabledSelector } from "../../reducers/settings";
+import { hasOrderedNanoSelector, readOnlyModeEnabledSelector } from "~/reducers/settings";
 import ManagerNavigator, { ManagerTabIcon } from "./ManagerNavigator";
 import DiscoverNavigator from "./DiscoverNavigator";
 import customTabBar from "../TabBar/CustomTabBar";
 import { MainNavigatorParamList } from "./types/MainNavigator";
-import { isMainNavigatorVisibleSelector } from "../../reducers/appstate";
+import { isMainNavigatorVisibleSelector } from "~/reducers/appstate";
 import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
@@ -49,7 +50,7 @@ export default function MainNavigator() {
   );
 
   const managerLockAwareCallback = useCallback(
-    callback => {
+    (callback: () => void) => {
       // NB This is conditionally going to show the confirmation modal from the manager
       // in the event of having ongoing installs/uninstalls.
       managerNavLockCallback ? managerNavLockCallback(() => callback) : callback();
@@ -58,6 +59,7 @@ export default function MainNavigator() {
   );
 
   const ptxEarnFeature = useFeature("ptxEarn");
+  const marketNewArch = useFeature("llmMarketNewArch");
 
   return (
     <Tab.Navigator
@@ -130,7 +132,7 @@ export default function MainNavigator() {
       ) : (
         <Tab.Screen
           name={NavigatorName.Market}
-          component={MarketNavigator}
+          component={marketNewArch?.enabled ? MarketWalletTabNavigator : MarketNavigator}
           options={{
             headerShown: false,
             unmountOnBlur: true,

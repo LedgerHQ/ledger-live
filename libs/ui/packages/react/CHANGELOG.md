@@ -1,5 +1,152 @@
 # @ledgerhq/react-ui
 
+## 0.14.14
+
+### Patch Changes
+
+- Updated dependencies [[`fc2cf04`](https://github.com/LedgerHQ/ledger-live/commit/fc2cf04c8d3cd55503ea19aeb21fd12ee55046f6)]:
+  - @ledgerhq/crypto-icons-ui@1.0.1
+
+## 0.14.14-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`fc2cf04`](https://github.com/LedgerHQ/ledger-live/commit/fc2cf04c8d3cd55503ea19aeb21fd12ee55046f6)]:
+  - @ledgerhq/crypto-icons-ui@1.0.1-next.0
+
+## 0.14.13
+
+### Patch Changes
+
+- Updated dependencies [[`0e2287b`](https://github.com/LedgerHQ/ledger-live/commit/0e2287b1ce4200004ed2c06f3e74cd3b03100784)]:
+  - @ledgerhq/crypto-icons-ui@1.0.0
+
+## 0.14.13-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`0e2287b`](https://github.com/LedgerHQ/ledger-live/commit/0e2287b1ce4200004ed2c06f3e74cd3b03100784)]:
+  - @ledgerhq/crypto-icons-ui@1.0.0-next.0
+
+## 0.14.12
+
+### Patch Changes
+
+- [#5501](https://github.com/LedgerHQ/ledger-live/pull/5501) [`f6dd7d3`](https://github.com/LedgerHQ/ledger-live/commit/f6dd7d391a54442d4a7c428bc7be9261b104fb21) Thanks [@ak-ledger](https://github.com/ak-ledger)! - Update Stax onboarding (firmware update)
+
+- [#5595](https://github.com/LedgerHQ/ledger-live/pull/5595) [`c094e4e`](https://github.com/LedgerHQ/ledger-live/commit/c094e4ed0c3220877d13703e20c77a0b013cd3ea) Thanks [@ak-ledger](https://github.com/ak-ledger)! - update react/native libs Storybook to 7.5.3
+
+- [#5464](https://github.com/LedgerHQ/ledger-live/pull/5464) [`c4bc268`](https://github.com/LedgerHQ/ledger-live/commit/c4bc2688de43ad1f5ecec5e83d8e5c88edb6d372) Thanks [@mle-gall](https://github.com/mle-gall)! - Adding icons instructions
+
+- [#5365](https://github.com/LedgerHQ/ledger-live/pull/5365) [`0e46b38`](https://github.com/LedgerHQ/ledger-live/commit/0e46b38631b9bfc84aaf42fe67b5cd4936438ba1) Thanks [@ak-ledger](https://github.com/ak-ledger)! - Update Stax onboarding UI
+
+- Updated dependencies [[`2edfa53`](https://github.com/LedgerHQ/ledger-live/commit/2edfa533bccafbfd8a61aea0f5422c0db79825ea), [`335ce83`](https://github.com/LedgerHQ/ledger-live/commit/335ce8366c8c997cdd77f191262a9dedee9888f6)]:
+  - @ledgerhq/crypto-icons-ui@0.7.0
+
+## 0.14.12-next.0
+
+### Patch Changes
+
+- [#5501](https://github.com/LedgerHQ/ledger-live/pull/5501) [`f6dd7d3`](https://github.com/LedgerHQ/ledger-live/commit/f6dd7d391a54442d4a7c428bc7be9261b104fb21) Thanks [@ak-ledger](https://github.com/ak-ledger)! - Update Stax onboarding (firmware update)
+
+- [#5595](https://github.com/LedgerHQ/ledger-live/pull/5595) [`c094e4e`](https://github.com/LedgerHQ/ledger-live/commit/c094e4ed0c3220877d13703e20c77a0b013cd3ea) Thanks [@ak-ledger](https://github.com/ak-ledger)! - update react/native libs Storybook to 7.5.3
+
+- [#5464](https://github.com/LedgerHQ/ledger-live/pull/5464) [`c4bc268`](https://github.com/LedgerHQ/ledger-live/commit/c4bc2688de43ad1f5ecec5e83d8e5c88edb6d372) Thanks [@mle-gall](https://github.com/mle-gall)! - Adding icons instructions
+
+- [#5365](https://github.com/LedgerHQ/ledger-live/pull/5365) [`0e46b38`](https://github.com/LedgerHQ/ledger-live/commit/0e46b38631b9bfc84aaf42fe67b5cd4936438ba1) Thanks [@ak-ledger](https://github.com/ak-ledger)! - Update Stax onboarding UI
+
+- Updated dependencies [[`2edfa53`](https://github.com/LedgerHQ/ledger-live/commit/2edfa533bccafbfd8a61aea0f5422c0db79825ea), [`335ce83`](https://github.com/LedgerHQ/ledger-live/commit/335ce8366c8c997cdd77f191262a9dedee9888f6)]:
+  - @ledgerhq/crypto-icons-ui@0.7.0-next.0
+
+## 0.14.11
+
+### Patch Changes
+
+- Updated dependencies [[`08dde174fd`](https://github.com/LedgerHQ/ledger-live/commit/08dde174fdeaadbce85dcd914383839f788f21dd)]:
+  - @ledgerhq/crypto-icons-ui@0.6.1
+
+## 0.14.11-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`08dde174fd`](https://github.com/LedgerHQ/ledger-live/commit/08dde174fdeaadbce85dcd914383839f788f21dd)]:
+  - @ledgerhq/crypto-icons-ui@0.6.1-next.0
+
+## 0.14.10
+
+### Patch Changes
+
+- [#4827](https://github.com/LedgerHQ/ledger-live/pull/4827) [`fc121ce96d`](https://github.com/LedgerHQ/ledger-live/commit/fc121ce96dbcc4f30cfd9836644f778b85f997b7) Thanks [@valpinkman](https://github.com/valpinkman)! - Update react to react 18
+
+- Updated dependencies [[`fc121ce96d`](https://github.com/LedgerHQ/ledger-live/commit/fc121ce96dbcc4f30cfd9836644f778b85f997b7), [`f5a5c315ea`](https://github.com/LedgerHQ/ledger-live/commit/f5a5c315ea2200cd5b52ef3a0b377d1327b1144e), [`22df6b230c`](https://github.com/LedgerHQ/ledger-live/commit/22df6b230c72d82d18375fb7ae7e8da599f41070)]:
+  - @ledgerhq/crypto-icons-ui@0.6.0
+  - @ledgerhq/icons-ui@0.6.2
+
+## 0.14.10-next.0
+
+### Patch Changes
+
+- [#4827](https://github.com/LedgerHQ/ledger-live/pull/4827) [`fc121ce96d`](https://github.com/LedgerHQ/ledger-live/commit/fc121ce96dbcc4f30cfd9836644f778b85f997b7) Thanks [@valpinkman](https://github.com/valpinkman)! - Update react to react 18
+
+- Updated dependencies [[`fc121ce96d`](https://github.com/LedgerHQ/ledger-live/commit/fc121ce96dbcc4f30cfd9836644f778b85f997b7), [`f5a5c315ea`](https://github.com/LedgerHQ/ledger-live/commit/f5a5c315ea2200cd5b52ef3a0b377d1327b1144e), [`22df6b230c`](https://github.com/LedgerHQ/ledger-live/commit/22df6b230c72d82d18375fb7ae7e8da599f41070)]:
+  - @ledgerhq/crypto-icons-ui@0.6.0-next.0
+  - @ledgerhq/icons-ui@0.6.2-next.0
+
+## 0.14.9
+
+### Patch Changes
+
+- [#4543](https://github.com/LedgerHQ/ledger-live/pull/4543) [`916d6975e5`](https://github.com/LedgerHQ/ledger-live/commit/916d6975e52f4f83291a9ce1a3e7e60dbccb5b20) Thanks [@stephane-lieumont-ledger](https://github.com/stephane-lieumont-ledger)! - fix issue on checkbox missing props readOnly input checkbox
+
+- [#4543](https://github.com/LedgerHQ/ledger-live/pull/4543) [`916d6975e5`](https://github.com/LedgerHQ/ledger-live/commit/916d6975e52f4f83291a9ce1a3e7e60dbccb5b20) Thanks [@stephane-lieumont-ledger](https://github.com/stephane-lieumont-ledger)! - fix error console on checkbox components with readOnly props
+
+- [#4518](https://github.com/LedgerHQ/ledger-live/pull/4518) [`41a38e953b`](https://github.com/LedgerHQ/ledger-live/commit/41a38e953b17075b5ab7bec307c147d8f74b7501) Thanks [@mle-gall](https://github.com/mle-gall)! - Removal of ProviderIcons from UILib
+
+- Updated dependencies [[`41a38e953b`](https://github.com/LedgerHQ/ledger-live/commit/41a38e953b17075b5ab7bec307c147d8f74b7501)]:
+  - @ledgerhq/icons-ui@0.6.1
+
+## 0.14.8
+
+### Patch Changes
+
+- Updated dependencies [[`5fb60bc6bb`](https://github.com/LedgerHQ/ledger-live/commit/5fb60bc6bb0bc6a9452d580cdace16ca87e478ff)]:
+  - @ledgerhq/icons-ui@0.6.0
+
+## 0.14.8-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`5fb60bc6bb`](https://github.com/LedgerHQ/ledger-live/commit/5fb60bc6bb0bc6a9452d580cdace16ca87e478ff)]:
+  - @ledgerhq/icons-ui@0.6.0-next.0
+
+## 0.14.7
+
+### Patch Changes
+
+- Updated dependencies [[`27e4a76f6c`](https://github.com/LedgerHQ/ledger-live/commit/27e4a76f6cc66aa6a7480f48329db04d33200c65)]:
+  - @ledgerhq/icons-ui@0.5.0
+
+## 0.14.7-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`27e4a76f6c`](https://github.com/LedgerHQ/ledger-live/commit/27e4a76f6cc66aa6a7480f48329db04d33200c65)]:
+  - @ledgerhq/icons-ui@0.5.0-hotfix.0
+
+## 0.14.6
+
+### Patch Changes
+
+- Updated dependencies [[`5bbcea12f9`](https://github.com/LedgerHQ/ledger-live/commit/5bbcea12f93e3cda41705a4d61d50845628a6de6)]:
+  - @ledgerhq/icons-ui@0.4.4
+
+## 0.14.6-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`5bbcea12f9`](https://github.com/LedgerHQ/ledger-live/commit/5bbcea12f93e3cda41705a4d61d50845628a6de6)]:
+  - @ledgerhq/icons-ui@0.4.4-next.0
+
 ## 0.14.5
 
 ### Patch Changes

@@ -11,6 +11,7 @@ const AccountHeaderActions: SolanaFamily["accountHeaderManageActions"] = ({ acco
   const dispatch = useDispatch();
   const mainAccount = getMainAccount(account);
   const { solanaResources } = mainAccount;
+
   const onClick = useCallback(() => {
     if (isAccountEmpty(account)) {
       dispatch(
@@ -32,17 +33,19 @@ const AccountHeaderActions: SolanaFamily["accountHeaderManageActions"] = ({ acco
       );
     }
   }, [account, dispatch, source, solanaResources, mainAccount]);
+
   return [
     {
       key: "Stake",
       onClick: onClick,
       icon: IconCoins,
       label: t("account.stake"),
-      event: "button_clicked",
+      event: "button_clicked2",
       eventProperties: {
         button: "stake",
       },
     },
   ];
 };
+
 export default AccountHeaderActions;

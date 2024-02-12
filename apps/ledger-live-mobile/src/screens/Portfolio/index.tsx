@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { ListRenderItemInfo, Linking } from "react-native";
+import { ListRenderItemInfo, Linking, Platform } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "@react-navigation/native";
 import { Box, Flex } from "@ledgerhq/native-ui";
@@ -8,47 +8,55 @@ import { useTheme } from "styled-components/native";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { ReactNavigationPerformanceView } from "@shopify/react-native-performance-navigation";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { useLearnMoreURI } from "@ledgerhq/live-common/hooks/recoverFeatueFlag";
-import { useRefreshAccountsOrdering } from "../../actions/general";
+import WalletTabSafeAreaView from "~/components/WalletTab/WalletTabSafeAreaView";
+import {
+  useAlreadyOnboardedURI,
+  usePostOnboardingURI,
+  useHomeURI,
+} from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
+import { useRefreshAccountsOrdering } from "~/actions/general";
 import {
   // TODO: discreetMode is never used 😱 is it safe to remove
   // discreetModeSelector,
   hasBeenUpsoldProtectSelector,
   lastConnectedDeviceSelector,
-} from "../../reducers/settings";
-import { setHasBeenUpsoldProtect } from "../../actions/settings";
-
-import Carousel from "../../components/Carousel";
-import { ScreenName } from "../../const";
-import FirmwareUpdateBanner from "../../components/FirmwareUpdateBanner";
-import CheckLanguageAvailability from "../../components/CheckLanguageAvailability";
-import CheckTermOfUseUpdate from "../../components/CheckTermOfUseUpdate";
-import { useProviders } from "../Swap/Form/index";
+  onboardingTypeSelector,
+} from "~/reducers/settings";
+import { setHasBeenUpsoldProtect } from "~/actions/settings";
+import Carousel from "~/components/Carousel";
+import { ScreenName } from "~/const";
+import FirmwareUpdateBanner from "~/components/FirmwareUpdateBanner";
+import CheckLanguageAvailability from "~/components/CheckLanguageAvailability";
+import CheckTermOfUseUpdate from "~/components/CheckTermOfUseUpdate";
+import RecoverBanner from "~/components/RecoverBanner";
 import PortfolioEmptyState from "./PortfolioEmptyState";
 import SectionTitle from "../WalletCentricSections/SectionTitle";
 import SectionContainer from "../WalletCentricSections/SectionContainer";
 import AllocationsSection from "../WalletCentricSections/Allocations";
-import { track } from "../../analytics";
+import { track } from "~/analytics";
 import {
   BaseComposite,
   BaseNavigation,
   StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
-import { WalletTabNavigatorStackParamList } from "../../components/RootNavigator/types/WalletTabNavigator";
+} from "~/components/RootNavigator/types/helpers";
+import { WalletTabNavigatorStackParamList } from "~/components/RootNavigator/types/WalletTabNavigator";
 import AddAccountsModal from "../AddAccounts/AddAccountsModal";
-import CollapsibleHeaderFlatList from "../../components/WalletTab/CollapsibleHeaderFlatList";
-import globalSyncRefreshControl from "../../components/globalSyncRefreshControl";
-import useDynamicContent from "../../dynamicContent/dynamicContent";
+import CollapsibleHeaderFlatList from "~/components/WalletTab/CollapsibleHeaderFlatList";
+import globalSyncRefreshControl from "~/components/globalSyncRefreshControl";
+import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import PortfolioOperationsHistorySection from "./PortfolioOperationsHistorySection";
 import PortfolioGraphCard from "./PortfolioGraphCard";
 import {
   hasNonTokenAccountsSelector,
   hasTokenAccountsNotBlacklistedSelector,
   hasTokenAccountsNotBlackListedWithPositiveBalanceSelector,
-} from "../../reducers/accounts";
+} from "~/reducers/accounts";
 import PortfolioAssets from "./PortfolioAssets";
-import { internetReachable } from "../../logic/internetReachable";
+import { internetReachable } from "~/logic/internetReachable";
 import { UpdateStep } from "../FirmwareUpdate";
+import { OnboardingType } from "~/reducers/types";
+import ContentCardsLocation from "~/dynamicContent/ContentCardsLocation";
+import { ContentCardLocation } from "~/dynamicContent/types";
 
 export { default as PortfolioTabIcon } from "./TabIcon";
 
@@ -57,7 +65,7 @@ type NavigationProps = BaseComposite<
 >;
 
 const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl(CollapsibleHeaderFlatList, {
-  progressViewOffset: 64,
+  progressViewOffset: Platform.OS === "android" ? 64 : 0,
 });
 
 function PortfolioScreen({ navigation }: NavigationProps) {
@@ -70,8 +78,11 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   const [isAddModalOpened, setAddModalOpened] = useState(false);
   const { colors } = useTheme();
   const { isAWalletCardDisplayed } = useDynamicContent();
+  const onboardingType = useSelector(onboardingTypeSelector);
   const protectFeature = useFeature("protectServicesMobile");
-  const recoverUpsellURL = useLearnMoreURI(protectFeature);
+  const recoverAlreadyOnboardedURI = useAlreadyOnboardedURI(protectFeature);
+  const recoverPostOnboardingURI = usePostOnboardingURI(protectFeature);
+  const recoverHomeURI = useHomeURI(protectFeature);
   const dispatch = useDispatch();
 
   const onBackFromUpdate = useCallback(
@@ -84,8 +95,14 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   useEffect(() => {
     const openProtectUpsell = async () => {
       const internetConnected = await internetReachable();
-      if (internetConnected && recoverUpsellURL && protectFeature?.enabled) {
-        Linking.openURL(recoverUpsellURL);
+      if (internetConnected && protectFeature?.enabled) {
+        if (recoverPostOnboardingURI && onboardingType === OnboardingType.restore) {
+          Linking.openURL(recoverPostOnboardingURI);
+        } else if (recoverHomeURI && onboardingType === OnboardingType.setupNew) {
+          Linking.openURL(recoverHomeURI);
+        } else if (recoverAlreadyOnboardedURI) {
+          Linking.openURL(recoverAlreadyOnboardedURI);
+        }
       }
     };
     if (!hasBeenUpsoldProtect && lastConnectedDevice?.modelId === "nanoX") {
@@ -93,9 +110,12 @@ function PortfolioScreen({ navigation }: NavigationProps) {
       dispatch(setHasBeenUpsoldProtect(true));
     }
   }, [
+    onboardingType,
     hasBeenUpsoldProtect,
     lastConnectedDevice,
-    recoverUpsellURL,
+    recoverPostOnboardingURI,
+    recoverAlreadyOnboardedURI,
+    recoverHomeURI,
     dispatch,
     protectFeature?.enabled,
   ]);
@@ -106,7 +126,6 @@ function PortfolioScreen({ navigation }: NavigationProps) {
     });
     setAddModalOpened(true);
   }, [setAddModalOpened]);
-  useProviders();
 
   const closeAddModal = useCallback(() => setAddModalOpened(false), [setAddModalOpened]);
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
@@ -125,12 +144,22 @@ function PortfolioScreen({ navigation }: NavigationProps) {
 
   const data = useMemo(
     () => [
-      <Flex px={6} py={4} key="FirmwareUpdateBanner">
-        <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
-      </Flex>,
-      <PortfolioGraphCard showAssets={showAssets} key="PortfolioGraphCard" />,
+      <WalletTabSafeAreaView key="portfolioHeaderElements" edges={["left", "right"]}>
+        <Flex px={6} key="FirmwareUpdateBanner">
+          <FirmwareUpdateBanner onBackFromUpdate={onBackFromUpdate} />
+        </Flex>
+        <PortfolioGraphCard showAssets={showAssets} key="PortfolioGraphCard" />
+        {showAssets ? (
+          <ContentCardsLocation
+            key="contentCardsLocationPortfolio"
+            locationId={ContentCardLocation.TopWallet}
+            mt={7}
+          />
+        ) : null}
+      </WalletTabSafeAreaView>,
       showAssets ? (
         <Box background={colors.background.main} px={6} mt={6} key="PortfolioAssets">
+          <RecoverBanner />
           <PortfolioAssets
             hideEmptyTokenAccount={hideEmptyTokenAccount}
             openAddModal={openAddModal}
@@ -158,16 +187,17 @@ function PortfolioScreen({ navigation }: NavigationProps) {
                 <AllocationsSection />
               </Flex>
             </SectionContainer>,
-            <SectionContainer px={6} mb={8} key="PortfolioOperationsHistorySection">
+            <SectionContainer px={6} key="PortfolioOperationsHistorySection">
               <SectionTitle title={t("analytics.operations.title")} />
               <PortfolioOperationsHistorySection />
             </SectionContainer>,
           ]
         : [
             // If the user has no accounts we display an empty state
-            <Box mx={6} mt={12} key="PortfolioEmptyState">
+            <Flex flexDirection="column" mt={30} mx={6} key="PortfolioEmptyState">
+              <RecoverBanner />
               <PortfolioEmptyState openAddAccountModal={openAddModal} />
-            </Box>,
+            </Flex>,
           ]),
     ],
     [
@@ -192,7 +222,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
         }}
         keyExtractor={(_: unknown, index: number) => String(index)}
         showsVerticalScrollIndicator={false}
-        testID={showAssets ? "PortfolioAccountsList" : "PortfolioEmptyAccount"}
+        testID={showAssets ? "PortfolioAccountsList" : "PortfolioEmptyList"}
       />
       <AddAccountsModal
         navigation={navigation as unknown as BaseNavigation}

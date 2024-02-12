@@ -34,6 +34,7 @@ import getBatteryStatus from "./commands/getBatteryStatus";
 import getDeviceRunningMode from "./commands/getDeviceRunningMode";
 import getTransactionStatus from "./commands/getTransactionStatus";
 import i18n from "./commands/i18n";
+import listApps from "./commands/listApps";
 import liveData from "./commands/liveData";
 import managerListApps from "./commands/managerListApps";
 import portfolio from "./commands/portfolio";
@@ -58,7 +59,6 @@ import testDetectOpCollision from "./commands/testDetectOpCollision";
 import testGetTrustedInputFromTxHash from "./commands/testGetTrustedInputFromTxHash";
 import user from "./commands/user";
 import version from "./commands/version";
-import walletconnect from "./commands/walletconnect";
 
 export default {
   app,
@@ -97,6 +97,7 @@ export default {
   getDeviceRunningMode,
   getTransactionStatus,
   i18n,
+  listApps,
   liveData,
   managerListApps,
   portfolio,
@@ -121,5 +122,4 @@ export default {
   testGetTrustedInputFromTxHash,
   user,
   version,
-  walletconnect,
 };

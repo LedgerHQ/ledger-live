@@ -2,21 +2,30 @@ import React, { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { getAccountName, getAccountUnit } from "@ledgerhq/live-common/account/index";
+import {
+  getAccountName,
+  getAccountSpendableBalance,
+  getAccountUnit,
+} from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
-import { usePickDefaultAccount } from "@ledgerhq/live-common/exchange/swap/hooks/index";
+import {
+  useFetchCurrencyFrom,
+  usePickDefaultAccount,
+  useSwapableAccounts,
+} from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { SwapTransactionType } from "@ledgerhq/live-common/exchange/swap/types";
 import { WarningSolidMedium } from "@ledgerhq/native-ui/assets/icons";
-import { useSelector } from "react-redux";
+import { Currency } from "@ledgerhq/types-cryptoassets";
 import { Selector } from "./Selector";
 import { AmountInput } from "./AmountInput";
-import { shallowAccountsSelector } from "../../../../reducers/accounts";
 import { SwapFormParamList } from "../../types";
-import { fromSelector, pairsSelector } from "../../../../actions/swap";
-import TranslatedError from "../../../../components/TranslatedError";
-import { ScreenName } from "../../../../const";
-import { useAnalytics } from "../../../../analytics";
+import TranslatedError from "~/components/TranslatedError";
+import { ScreenName } from "~/const";
+import { useAnalytics } from "~/analytics";
 import { sharedSwapTracking } from "../../utils";
+import { flattenAccountsSelector } from "~/reducers/accounts";
+import { useSelector } from "react-redux";
+import { AccountLike } from "@ledgerhq/types-live";
 
 interface Props {
   provider?: string;
@@ -30,28 +39,32 @@ export function From({ swapTx, provider, swapError, swapWarning, isSendMaxLoadin
   const { track } = useAnalytics();
   const { t } = useTranslation();
   const navigation = useNavigation<SwapFormParamList>();
+  const { data: currenciesFrom } = useFetchCurrencyFrom();
+  const flattenedAccounts = useSelector(flattenAccountsSelector);
+  const accounts = useSwapableAccounts({ accounts: flattenedAccounts });
 
-  const accounts = useSelector(fromSelector)(useSelector(shallowAccountsSelector));
+  const getAccountBalance = useCallback(
+    (inputs: { account?: AccountLike; currency?: Currency }) => {
+      if (!inputs.account || !inputs.currency) return "";
+      const balance = getAccountSpendableBalance(inputs.account);
+      return formatCurrencyUnit(inputs.currency.units[0], balance, {
+        showCode: true,
+      });
+    },
+    [],
+  );
+
   const { name, balance, unit } = useMemo(() => {
     const { currency, account } = swapTx.swap.from;
-
     return {
       account,
       name: account && getAccountName(account),
-      balance:
-        (account &&
-          currency &&
-          formatCurrencyUnit(currency.units[0], account.balance, {
-            showCode: true,
-          })) ??
-        "",
+      balance: getAccountBalance({ account, currency }),
       unit: account && getAccountUnit(account),
     };
-  }, [swapTx.swap.from]);
+  }, [swapTx.swap.from, getAccountBalance]);
 
   usePickDefaultAccount(accounts, swapTx.swap.from.account, swapTx.setFromAccount);
-
-  const pairs = useSelector(pairsSelector);
 
   const onPress = useCallback(() => {
     track("button_clicked", {
@@ -62,10 +75,10 @@ export function From({ swapTx, provider, swapError, swapWarning, isSendMaxLoadin
     navigation.navigate(ScreenName.SwapSelectAccount, {
       target: "from",
       provider,
-      selectableCurrencyIds: [...new Set(pairs.map(p => p.from))],
+      selectableCurrencyIds: currenciesFrom,
       swap: swapTx.swap,
     });
-  }, [navigation, provider, pairs, swapTx.swap, track]);
+  }, [navigation, provider, currenciesFrom, swapTx.swap, track]);
 
   const onFocus = useCallback(
     (event: boolean) => {

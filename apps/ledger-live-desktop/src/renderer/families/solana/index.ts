@@ -1,17 +1,12 @@
-import {
-  SolanaAccount,
-  Transaction,
-  TransactionStatus,
-} from "@ledgerhq/live-common/families/solana/types";
-import { LLDCoinFamily } from "../types";
 import accountHeaderManageActions from "./AccountHeaderManageActions";
 import AccountBodyHeader from "./AccountBodyHeader";
 import AccountSubHeader from "./AccountSubHeader";
 import sendRecipientFields from "./SendRecipientFields";
 import AccountBalanceSummaryFooter from "./AccountBalanceSummaryFooter";
 import StakeBanner from "./StakeBanner";
+import { SolanaFamily } from "./types";
 
-const family: LLDCoinFamily<SolanaAccount, Transaction, TransactionStatus> = {
+const family: SolanaFamily = {
   accountHeaderManageActions,
   AccountBodyHeader,
   AccountSubHeader,

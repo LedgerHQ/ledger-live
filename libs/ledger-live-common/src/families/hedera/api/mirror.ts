@@ -2,10 +2,10 @@ import { AccountId } from "@hashgraph/sdk";
 import network from "@ledgerhq/live-network/network";
 import { Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { getEnv } from "../../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import { encodeOperationId } from "../../../operation";
-import { base64ToUrlSafeBase64 } from "../utils";
 import { getAccountBalance } from "./network";
+import { base64ToUrlSafeBase64 } from "../utils";
 
 const getMirrorApiUrl = (): string => getEnv("API_HEDERA_MIRROR");
 
@@ -131,7 +131,7 @@ export async function getOperationsForAccount(
       // Set a value just so that it's considered confirmed according to isConfirmedOperation
       blockHeight: 5,
       blockHash: null,
-      extra: {},
+      extra: { consensusTimestamp: consensus_timestamp },
       fee,
       hash,
       recipients,

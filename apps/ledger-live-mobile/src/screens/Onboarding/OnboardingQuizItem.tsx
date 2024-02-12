@@ -2,16 +2,17 @@ import React, { useState } from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { Base as BaseButton } from "@ledgerhq/native-ui/components/cta/Button/index";
 import { Image, ImageSourcePropType } from "react-native";
-import Button from "../../components/PreventDoubleClickButton";
+import Button from "~/components/PreventDoubleClickButton";
 
-import successImage from "../../images/illustration/Light/_053.png";
-import failImage from "../../images/illustration/Light/_054.png";
+import successImage from "~/images/illustration/Light/_053.png";
+import failImage from "~/images/illustration/Light/_054.png";
 
 type Answer = {
   answer: string;
   correct: boolean;
   title?: string;
   desc: string;
+  testID?: string;
 };
 
 type Props = {
@@ -39,7 +40,7 @@ export default function OnboardingQuizItem({
         <Flex flex={1} alignItems="center" justifyContent="center">
           <Image
             source={selectedAnswer ? (selectedAnswer.correct ? successImage : failImage) : image}
-            style={{ width: "100%", height: 200 }}
+            style={{ width: "100%", height: 280 }}
             resizeMode="contain"
           />
           {selectedAnswer ? (
@@ -66,7 +67,12 @@ export default function OnboardingQuizItem({
         </Flex>
 
         {selectedAnswer ? (
-          <Button type="main" size="large" onPress={() => onNext(selectedAnswer.correct)}>
+          <Button
+            type="main"
+            size="large"
+            onPress={() => onNext(selectedAnswer.correct)}
+            testID="onboarding-quizz-cta"
+          >
             {cta}
           </Button>
         ) : (
@@ -81,7 +87,13 @@ export default function OnboardingQuizItem({
               }}
               mt={6}
             >
-              <Text variant="body" flex={1} textAlign="center" color="constant.black">
+              <Text
+                variant="body"
+                flex={1}
+                textAlign="center"
+                color="constant.black"
+                testID={answer.testID}
+              >
                 {answer.answer}
               </Text>
             </BaseButton>

@@ -1,10 +1,15 @@
 import invariant from "invariant";
 import { useMemo } from "react";
 import { BigNumber } from "bignumber.js";
-import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "./constants";
-import { mapStakingPositions } from "./logic";
-import { NearValidatorItem, Transaction, NearMappedStakingPosition, NearAccount } from "./types";
-import { getCurrentNearPreloadData } from "./preload";
+import { FIGMENT_NEAR_VALIDATOR_ADDRESS } from "@ledgerhq/coin-near/constants";
+import { mapStakingPositions } from "@ledgerhq/coin-near/logic";
+import {
+  NearValidatorItem,
+  Transaction,
+  NearMappedStakingPosition,
+  NearAccount,
+} from "@ledgerhq/coin-near/types";
+import { getCurrentNearPreloadData } from "@ledgerhq/coin-near/preload";
 import { getAccountUnit } from "../../account";
 
 export function useNearMappedStakingPositions(account: NearAccount): NearMappedStakingPosition[] {
@@ -61,8 +66,8 @@ export function useLedgerFirstShuffledValidatorsNear(search: string) {
 
     const lowercaseSearch = search.toLowerCase();
 
-    const filtered = validators.filter(validator =>
-      validator.validatorAddress?.toLowerCase().includes(lowercaseSearch),
+    const filtered = validators.filter(
+      validator => validator.validatorAddress?.toLowerCase().includes(lowercaseSearch),
     );
 
     return filtered;

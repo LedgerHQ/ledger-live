@@ -4,8 +4,8 @@ import { StyleSheet } from "react-native";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { ExtraDeviceTransactionField } from "@ledgerhq/live-common/families/stacks/deviceTransactionConfig";
 import { DeviceTransactionField } from "@ledgerhq/live-common/transaction/index";
-import LText from "../../components/LText";
-import { DataRow } from "../../components/ValidateOnDeviceDataRow";
+import LText from "~/components/LText";
+import { DataRow } from "~/components/ValidateOnDeviceDataRow";
 
 const styles = StyleSheet.create({
   text: {
@@ -26,7 +26,7 @@ const StacksField = ({
   return (
     <DataRow label={field.label}>
       <LText semiBold style={styles.text}>
-        {(field as ExtraDeviceTransactionField).value}
+        {(field as ExtraDeviceTransactionField).value as React.ReactNode}
       </LText>
     </DataRow>
   );

@@ -120,8 +120,7 @@ src/renderer/families/generated.ts
 tests/coverage/
 tests/artifacts/*
 !tests/artifacts/.gitkeep
-tests/utils/dummy-live-app/build
-tests/utils/dummy-wallet-app/build
+
 
 # Yalc
 .yalc
@@ -137,3 +136,6 @@ ui-lib/storybook-static/*
 
 # release-notes generated file
 release-notes.json
+
+metafile.*.json
+lint.json

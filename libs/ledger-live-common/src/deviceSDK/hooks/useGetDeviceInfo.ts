@@ -6,7 +6,7 @@ import {
 } from "../actions/getDeviceInfo";
 
 export type UseGetDeviceInfoArgs = {
-  getDeviceInfoAction: typeof defaultGetDeviceInfoAction;
+  getDeviceInfoAction?: typeof defaultGetDeviceInfoAction;
   deviceId: string;
 };
 

@@ -1,6 +1,8 @@
+import BigNumber from "bignumber.js";
 import {
   Account,
   AccountRaw,
+  Operation,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
@@ -211,10 +213,12 @@ export type SolanaStakeWithMeta = {
 
 export type SolanaResources = {
   stakes: SolanaStake[];
+  unstakeReserve: BigNumber;
 };
 
 export type SolanaResourcesRaw = {
   stakes: string;
+  unstakeReserve: string;
 };
 
 export type SolanaValidator = {
@@ -255,3 +259,9 @@ export type SolanaAccountRaw = AccountRaw & {
 export type TransactionStatus = TransactionStatusCommon;
 
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
+
+export type SolanaOperation = Operation<SolanaOperationExtra>;
+
+export type SolanaOperationExtra = {
+  memo?: string;
+};

@@ -1,4 +1,3 @@
-import { Account } from "@ledgerhq/types-live";
 import { ChainAPI } from "./api";
 import { buildTransactionWithAPI } from "./js-buildTransaction";
 import createTransaction from "./js-createTransaction";
@@ -7,36 +6,48 @@ import { assertUnreachable } from "./utils";
 import { VersionedTransaction as OnChainTransaction } from "@solana/web3.js";
 import { log } from "@ledgerhq/logs";
 
+const DEFAULT_TX_FEE = 5000;
+
 export async function estimateTxFee(
   api: ChainAPI,
-  account: Account,
+  address: string,
   kind: TransactionModel["kind"],
 ) {
-  const tx = createDummyTx(account, kind);
-  const [onChainTx] = await buildTransactionWithAPI(account, tx, api);
+  const tx = createDummyTx(address, kind);
+  const [onChainTx] = await buildTransactionWithAPI(address, tx, api);
 
-  const fee = await api.getFeeForMessage(onChainTx.message);
+  let fee = await api.getFeeForMessage(onChainTx.message);
 
   if (typeof fee !== "number") {
-    log("error", `api.getFeeForMessage returned invalid fee: <${fee}>`);
-    // TEMP HACK: sometimes fee is not a number, retrying with a next blockhash
-    return retryWithNewBlockhash(api, onChainTx);
+    // Sometimes getFeeForMessage doesn't return valid fees, because onChainTx.message.recentBlockhash
+    // is outdated --> retrying with a next blockhash
+    log("debug", `Solana api.getFeeForMessage returned invalid fee: <${fee}>`);
+    fee = await retryWithNewBlockhash(api, onChainTx);
+  }
+
+  if (typeof fee !== "number") {
+    log(
+      "error",
+      `Solana unexpected fee: <${fee}>, after retry with a new blockhash. Fallback to the default.`,
+    );
+    // If still failing, fallback to a default fees value
+    fee = DEFAULT_TX_FEE;
   }
   return fee;
 }
 
-const createDummyTx = (account: Account, kind: TransactionModel["kind"]) => {
+const createDummyTx = (address: string, kind: TransactionModel["kind"]) => {
   switch (kind) {
     case "transfer":
-      return createDummyTransferTx(account);
+      return createDummyTransferTx(address);
     case "stake.createAccount":
-      return createDummyStakeCreateAccountTx(account);
+      return createDummyStakeCreateAccountTx(address);
     case "stake.delegate":
-      return createDummyStakeDelegateTx(account);
+      return createDummyStakeDelegateTx(address);
     case "stake.undelegate":
-      return createDummyStakeUndelegateTx(account);
+      return createDummyStakeUndelegateTx(address);
     case "stake.withdraw":
-      return createDummyStakeWithdrawTx(account);
+      return createDummyStakeWithdrawTx(address);
     case "stake.split":
     case "token.createATA":
     case "token.transfer":
@@ -46,7 +57,7 @@ const createDummyTx = (account: Account, kind: TransactionModel["kind"]) => {
   }
 };
 
-const createDummyTransferTx = (account: Account): Transaction => {
+const createDummyTransferTx = (address: string): Transaction => {
   return {
     ...createTransaction({} as any),
     model: {
@@ -56,8 +67,8 @@ const createDummyTransferTx = (account: Account): Transaction => {
         command: {
           kind: "transfer",
           amount: 0,
-          recipient: account.freshAddress,
-          sender: account.freshAddress,
+          recipient: address,
+          sender: address,
         },
         ...commandDescriptorCommons,
       },
@@ -65,7 +76,7 @@ const createDummyTransferTx = (account: Account): Transaction => {
   };
 };
 
-const createDummyStakeCreateAccountTx = (account: Account): Transaction => {
+const createDummyStakeCreateAccountTx = (address: string): Transaction => {
   return {
     ...createTransaction({} as any),
     model: {
@@ -78,7 +89,7 @@ const createDummyStakeCreateAccountTx = (account: Account): Transaction => {
           delegate: {
             voteAccAddress: randomAddresses[0],
           },
-          fromAccAddress: account.freshAddress,
+          fromAccAddress: address,
           seed: "",
           stakeAccAddress: randomAddresses[1],
           stakeAccRentExemptAmount: 0,
@@ -89,7 +100,7 @@ const createDummyStakeCreateAccountTx = (account: Account): Transaction => {
   };
 };
 
-const createDummyStakeDelegateTx = (account: Account): Transaction => {
+const createDummyStakeDelegateTx = (address: string): Transaction => {
   return {
     ...createTransaction({} as any),
     model: {
@@ -98,7 +109,7 @@ const createDummyStakeDelegateTx = (account: Account): Transaction => {
       commandDescriptor: {
         command: {
           kind: "stake.delegate",
-          authorizedAccAddr: account.freshAddress,
+          authorizedAccAddr: address,
           stakeAccAddr: randomAddresses[0],
           voteAccAddr: randomAddresses[1],
         },
@@ -108,7 +119,7 @@ const createDummyStakeDelegateTx = (account: Account): Transaction => {
   };
 };
 
-const createDummyStakeUndelegateTx = (account: Account): Transaction => {
+const createDummyStakeUndelegateTx = (address: string): Transaction => {
   return {
     ...createTransaction({} as any),
     model: {
@@ -117,7 +128,7 @@ const createDummyStakeUndelegateTx = (account: Account): Transaction => {
       commandDescriptor: {
         command: {
           kind: "stake.undelegate",
-          authorizedAccAddr: account.freshAddress,
+          authorizedAccAddr: address,
           stakeAccAddr: randomAddresses[0],
         },
         ...commandDescriptorCommons,
@@ -126,7 +137,7 @@ const createDummyStakeUndelegateTx = (account: Account): Transaction => {
   };
 };
 
-const createDummyStakeWithdrawTx = (account: Account): Transaction => {
+const createDummyStakeWithdrawTx = (address: string): Transaction => {
   return {
     ...createTransaction({} as any),
     model: {
@@ -136,7 +147,7 @@ const createDummyStakeWithdrawTx = (account: Account): Transaction => {
         command: {
           kind: "stake.withdraw",
           amount: 0,
-          authorizedAccAddr: account.freshAddress,
+          authorizedAccAddr: address,
           stakeAccAddr: randomAddresses[0],
           toAccAddr: randomAddresses[1],
         },
@@ -171,13 +182,7 @@ async function retryWithNewBlockhash(api: ChainAPI, onChainTx: OnChainTransactio
     onChainTx.message.recentBlockhash,
   );
 
-  const fee = await api.getFeeForMessage(onChainTx.message);
-
-  if (typeof fee !== "number") {
-    throw new Error(`unexpected fee: <${fee}>, after retry with a new blockhash`);
-  }
-
-  return fee;
+  return api.getFeeForMessage(onChainTx.message);
 }
 
 function sleep(durationMS: number): Promise<void> {

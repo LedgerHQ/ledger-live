@@ -1,6 +1,6 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import invariant from "invariant";
-import { getEnv } from "./env";
+import { getEnv } from "@ledgerhq/live-env";
 
 type LedgerExplorer = {
   version: string;

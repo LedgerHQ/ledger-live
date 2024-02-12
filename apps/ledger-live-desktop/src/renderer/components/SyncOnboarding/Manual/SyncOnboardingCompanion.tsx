@@ -10,7 +10,7 @@ import React, {
 import { useHistory } from "react-router-dom";
 import { Box, Flex, Text, VerticalTimeline } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceModelInfo, SeedPhraseType } from "@ledgerhq/types-live";
@@ -19,7 +19,7 @@ import {
   fromSeedPhraseTypeToNbOfSeedWords,
 } from "@ledgerhq/live-common/hw/extractOnboardingState";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { usePostOnboardingPath } from "@ledgerhq/live-common/hooks/recoverFeatueFlag";
+import { useCustomPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
 import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
 import { DesyncOverlay } from "./DesyncOverlay";
 import SeedStep, { SeedPathStatus } from "./SeedStep";
@@ -34,13 +34,16 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import LockedDeviceDrawer, { Props as LockedDeviceDrawerProps } from "./LockedDeviceDrawer";
 import { LockedDeviceError } from "@ledgerhq/errors";
+import { saveSettings } from "~/renderer/actions/settings";
 
-const READY_REDIRECT_DELAY_MS = 2500;
+const READY_REDIRECT_DELAY_MS = 2000;
 const POLLING_PERIOD_MS = 1000;
+
 const DESYNC_TIMEOUT_MS = 60000;
-const LONG_DESYNC_TIMEOUT_MS = 100000;
+const LONG_DESYNC_TIMEOUT_MS = 120000;
+
 const DESYNC_OVERLAY_DELAY_MS = 1000;
-const LONG_DESYNC_OVERLAY_DELAY_MS = 30000;
+const LONG_DESYNC_OVERLAY_DELAY_MS = 60000;
 
 enum StepKey {
   Paired = 0,
@@ -63,6 +66,8 @@ type Step = {
   key: StepKey;
   status: StepStatus;
   title: string;
+  titleCompleted?: string;
+  hasLoader?: boolean;
   estimatedTime?: number;
   renderBody?: () => ReactNode;
 };
@@ -101,14 +106,16 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
 }) => {
   const { t } = useTranslation();
   const history = useHistory<RecoverState>();
+  const dispatch = useDispatch();
   const [stepKey, setStepKey] = useState<StepKey>(StepKey.Paired);
+  const [hasAppLoader, setHasAppLoader] = useState<boolean>(false);
   const [shouldRestoreApps, setShouldRestoreApps] = useState<boolean>(false);
   const deviceToRestore = useSelector(lastSeenDeviceSelector) as DeviceModelInfo | null | undefined;
   const lastCompanionStepKey = useRef<StepKey>();
   const [seedPathStatus, setSeedPathStatus] = useState<SeedPathStatus>("choice_new_or_restore");
 
   const servicesConfig = useFeature("protectServicesDesktop");
-  const postOnboardingPath = usePostOnboardingPath(servicesConfig);
+  const recoverRestoreStaxPath = useCustomPath(servicesConfig, "restore", "lld-stax-onboarding");
 
   const productName = device
     ? getDeviceModel(device.modelId).productName || device.modelId
@@ -116,7 +123,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
   const deviceName = device?.deviceName || productName;
 
   const handleInstallRecommendedApplicationComplete = useCallback(() => {
-    setStepKey(nextStepKey(StepKey.Applications));
+    setTimeout(() => setStepKey(nextStepKey(StepKey.Applications)), READY_REDIRECT_DELAY_MS);
   }, []);
 
   const defaultSteps: Step[] = useMemo(
@@ -133,15 +140,13 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
               category={`Set up ${productName}: Step 1 device paired`}
               flow={analyticsFlowName}
             />
-            <StepText mb={6}>
-              {t("syncOnboarding.manual.pairedContent.description", {
-                deviceName: productName,
-              })}
-            </StepText>
+            {/* @ts-expect-error weird props issue with React 18 */}
             <StepText>
-              {t("syncOnboarding.manual.pairedContent.text", {
-                deviceName: productName,
-              })}
+              {
+                t("syncOnboarding.manual.pairedContent.description", {
+                  deviceName: productName,
+                }) as string
+              }
             </StepText>
             <ContinueOnDeviceWithAnim
               deviceModelId={device.modelId}
@@ -154,14 +159,13 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
         key: StepKey.Pin,
         status: "inactive",
         title: t("syncOnboarding.manual.pinContent.title"),
+        titleCompleted: t("syncOnboarding.manual.pinContent.titleCompleted"),
         renderBody: () => (
           <Flex flexDirection="column">
             <TrackPage category={`Set up ${productName}: Step 2 PIN`} flow={analyticsFlowName} />
-            <StepText mb={6}>{t("syncOnboarding.manual.pinContent.description")}</StepText>
+            {/* @ts-expect-error weird props issue with React 18 */}
             <StepText>
-              {t("syncOnboarding.manual.pinContent.text", {
-                deviceName: productName,
-              })}
+              {t("syncOnboarding.manual.pinContent.description", { productName })}
             </StepText>
             <ContinueOnDeviceWithAnim
               deviceModelId={device.modelId}
@@ -174,6 +178,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
         key: StepKey.Seed,
         status: "inactive",
         title: t("syncOnboarding.manual.seedContent.title"),
+        titleCompleted: t("syncOnboarding.manual.seedContent.titleCompleted"),
         renderBody: () => (
           <>
             <TrackPage
@@ -187,11 +192,16 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
       {
         key: StepKey.Applications,
         status: "inactive",
-        title: t("syncOnboarding.manual.installApplications.title"),
+        hasLoader: hasAppLoader,
+        title: t("syncOnboarding.manual.installApplications.title", { productName }),
+        titleCompleted: t("syncOnboarding.manual.installApplications.titleCompleted", {
+          productName,
+        }),
         renderBody: () => (
           <OnboardingAppInstallStep
             device={device}
             deviceToRestore={shouldRestoreApps && deviceToRestore ? deviceToRestore : undefined}
+            setHeaderLoader={(hasLoader: boolean) => setHasAppLoader(hasLoader)}
             onComplete={handleInstallRecommendedApplicationComplete}
             onError={handleInstallRecommendedApplicationComplete}
           />
@@ -201,6 +211,9 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
         key: StepKey.Ready,
         status: "inactive",
         title: t("syncOnboarding.manual.endOfSetup.title"),
+        titleCompleted: t("syncOnboarding.manual.endOfSetup.titleCompleted", {
+          deviceName: productName,
+        }),
       },
     ],
     [
@@ -211,6 +224,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
       device,
       shouldRestoreApps,
       deviceToRestore,
+      hasAppLoader,
       handleInstallRecommendedApplicationComplete,
     ],
   );
@@ -258,6 +272,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
    * onboarding flags can only be trusted for a non-onboarded device.
    */
   const analyticsSeedPhraseType = useRef<SeedPhraseType>();
+
   useEffect(() => {
     if (!deviceOnboardingState) return;
     if (deviceInitiallyOnboarded.current === undefined)
@@ -407,7 +422,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
     }
 
     if (stepKey === StepKey.Ready) {
-      setTimeout(() => setStepKey(StepKey.Exit), READY_REDIRECT_DELAY_MS / 2);
+      setStepKey(StepKey.Exit);
     }
 
     if (stepKey === StepKey.Exit) {
@@ -418,16 +433,18 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
         true,
         true,
       );
-      setTimeout(handleDeviceReady, READY_REDIRECT_DELAY_MS / 2);
+      setTimeout(handleDeviceReady, READY_REDIRECT_DELAY_MS);
     }
 
     setSteps(
       defaultSteps.map(step => {
         const stepStatus =
           step.key > stepKey ? "inactive" : step.key < stepKey ? "completed" : "active";
+        const title = (stepStatus === "completed" && step.titleCompleted) || step.title;
 
         return {
           ...step,
+          title,
           status: stepStatus,
         };
       }),
@@ -462,15 +479,20 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
   }, [device, allowedError, handleDesyncTimerRunsOut, desyncTimeout]);
 
   useEffect(() => {
-    if (seedPathStatus === "recover_seed" && postOnboardingPath) {
-      const [pathname, search] = postOnboardingPath.split("?");
+    if (seedPathStatus === "recover_seed" && recoverRestoreStaxPath) {
+      const [pathname, search] = recoverRestoreStaxPath.split("?");
+      dispatch(
+        saveSettings({
+          hasCompletedOnboarding: true,
+        }),
+      );
       history.push({
         pathname,
         search: search ? `?${search}` : undefined,
         state: { fromOnboarding: true },
       });
     }
-  }, [history, postOnboardingPath, seedPathStatus]);
+  }, [dispatch, history, recoverRestoreStaxPath, seedPathStatus]);
 
   return (
     <Flex width="100%" height="100%" flexDirection="column" justifyContent="flex-start">
@@ -481,15 +503,12 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
       />
       <Flex
         height="100%"
-        overflow="hidden"
-        width="432px"
+        width="480px"
         flexDirection="column"
         justifyContent="flex-start"
         alignSelf="center"
-        overflowY="scroll"
         flexGrow={0}
         flexShrink={1}
-        pt={84}
       >
         <Text variant="h3Inter" fontSize="8" fontWeight="semiBold" mb="8">
           {t("syncOnboarding.manual.title", { deviceName })}

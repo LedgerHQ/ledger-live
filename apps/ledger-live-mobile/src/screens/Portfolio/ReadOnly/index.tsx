@@ -12,31 +12,27 @@ import {
   isCurrencySupported,
   listTokens,
   listSupportedCurrencies,
-  useCurrenciesByMarketcap,
 } from "@ledgerhq/live-common/currencies/index";
+import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";
 import { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { useRefreshAccountsOrdering } from "../../../actions/general";
-import { counterValueCurrencySelector, hasOrderedNanoSelector } from "../../../reducers/settings";
-import { usePortfolioAllAccounts } from "../../../hooks/portfolio";
+import { useRefreshAccountsOrdering } from "~/actions/general";
+import { counterValueCurrencySelector, hasOrderedNanoSelector } from "~/reducers/settings";
+import { usePortfolioAllAccounts } from "~/hooks/portfolio";
 
 import GraphCardContainer from "../GraphCardContainer";
-import TrackScreen from "../../../analytics/TrackScreen";
-import { NavigatorName, ScreenName } from "../../../const";
-import { useProviders } from "../../Swap/Form/index";
-import CheckLanguageAvailability from "../../../components/CheckLanguageAvailability";
-import CheckTermOfUseUpdate from "../../../components/CheckTermOfUseUpdate";
-import { TAB_BAR_SAFE_HEIGHT } from "../../../components/TabBar/TabBarSafeAreaView";
-import SetupDeviceBanner from "../../../components/SetupDeviceBanner";
-import BuyDeviceBanner, { IMAGE_PROPS_BIG_NANO } from "../../../components/BuyDeviceBanner";
+import TrackScreen from "~/analytics/TrackScreen";
+import { NavigatorName, ScreenName } from "~/const";
+import CheckLanguageAvailability from "~/components/CheckLanguageAvailability";
+import CheckTermOfUseUpdate from "~/components/CheckTermOfUseUpdate";
+import { TAB_BAR_SAFE_HEIGHT } from "~/components/TabBar/TabBarSafeAreaView";
+import SetupDeviceBanner from "~/components/SetupDeviceBanner";
+import BuyDeviceBanner, { IMAGE_PROPS_BIG_NANO } from "~/components/BuyDeviceBanner";
 import Assets from "../Assets";
-import { AnalyticsContext } from "../../../analytics/AnalyticsContext";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
-import FirmwareUpdateBanner from "../../../components/FirmwareUpdateBanner";
-import CollapsibleHeaderFlatList from "../../../components/WalletTab/CollapsibleHeaderFlatList";
-import { WalletTabNavigatorStackParamList } from "../../../components/RootNavigator/types/WalletTabNavigator";
+import { AnalyticsContext } from "~/analytics/AnalyticsContext";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import FirmwareUpdateBanner from "~/components/FirmwareUpdateBanner";
+import CollapsibleHeaderFlatList from "~/components/WalletTab/CollapsibleHeaderFlatList";
+import { WalletTabNavigatorStackParamList } from "~/components/RootNavigator/types/WalletTabNavigator";
 import { UpdateStep } from "../../FirmwareUpdate";
 
 const maxAssetsToDisplay = 5;
@@ -51,7 +47,6 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
   const portfolio = usePortfolioAllAccounts();
   const { colors } = useTheme();
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
-  useProviders();
 
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
   useFocusEffect(refreshAccountsOrdering);
@@ -190,7 +185,7 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
         renderItem={({ item }: ListRenderItemInfo<unknown>) => item as JSX.Element}
         keyExtractor={(_: unknown, index: number) => String(index)}
         showsVerticalScrollIndicator={false}
-        testID="PortfolioReadOnlyList"
+        testID="PortfolioReadOnlyItems"
       />
     </>
   );

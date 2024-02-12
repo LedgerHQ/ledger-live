@@ -54,6 +54,7 @@ const FeesField = ({ account, parentAccount, status, field }: FieldComponentProp
     <TransactionConfirmField label={field.label}>
       <FormattedVal
         color={"palette.text.shade80"}
+        disableRounding
         unit={feesUnit}
         val={estimatedFees}
         fontSize={3}

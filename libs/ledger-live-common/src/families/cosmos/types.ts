@@ -3,6 +3,8 @@ import {
   Account,
   AccountRaw,
   Operation,
+  OperationExtra,
+  OperationExtraRaw,
   OperationRaw,
   TransactionCommon,
   TransactionCommonRaw,
@@ -62,6 +64,7 @@ export type CosmosResources = {
   pendingRewardsBalance: BigNumber;
   unbondingBalance: BigNumber;
   withdrawAddress: string;
+  sequence: number;
 };
 export type CosmosDelegationRaw = {
   validatorAddress: string;
@@ -88,6 +91,7 @@ export type CosmosResourcesRaw = {
   pendingRewardsBalance: string;
   unbondingBalance: string;
   withdrawAddress: string;
+  sequence: number;
 };
 // NB this must be serializable (no Date, no BigNumber)
 export type CosmosValidatorItem = {
@@ -130,18 +134,46 @@ export type NetworkInfoRaw = CosmosLikeNetworkInfoRaw & {
   family: "cosmos";
 };
 
-export type CosmosOperation = Operation & {
-  extra: CosmosExtraTxInfo;
-};
-export type CosmosOperationRaw = OperationRaw & {
-  extra: CosmosExtraTxInfo;
-};
-export type CosmosExtraTxInfo = {
+export type CosmosOperation = Operation<CosmosOperationExtra>;
+export type CosmosOperationRaw = OperationRaw<CosmosOperationExtraRaw>;
+
+export type CosmosOperationExtra = OperationExtra & {
   validators?: CosmosDelegationInfo[];
-  sourceValidator?: string | null | undefined;
   validator?: CosmosDelegationInfo;
-  autoClaimedRewards?: string | null | undefined; // this is experimental to better represent auto claimed rewards
+  sourceValidator?: string;
+  autoClaimedRewards?: string; // this is experimental to better represent auto claimed rewards
+  memo?: string;
 };
+export function isCosmosOperationExtra(op: OperationExtra): op is CosmosOperationExtra {
+  return (
+    op !== null &&
+    typeof op === "object" &&
+    ("validators" in op ||
+      "validator" in op ||
+      "sourceValidator" in op ||
+      "autoClaimedRewards" in op ||
+      "memo" in op)
+  );
+}
+
+export type CosmosOperationExtraRaw = OperationExtraRaw & {
+  validators?: CosmosDelegationInfoRaw[];
+  validator?: CosmosDelegationInfoRaw;
+  sourceValidator?: string;
+  autoClaimedRewards?: string; // this is experimental to better represent auto claimed rewards
+  memo?: string;
+};
+export function isCosmosOperationExtraRaw(op: OperationExtraRaw): op is CosmosOperationExtraRaw {
+  return (
+    op !== null &&
+    typeof op === "object" &&
+    ("validators" in op ||
+      "validator" in op ||
+      "sourceValidator" in op ||
+      "autoClaimedRewards" in op ||
+      "memo" in op)
+  );
+}
 
 export type CosmosDelegationInfo = {
   address: string;
@@ -151,10 +183,6 @@ export type CosmosDelegationInfo = {
 export type CosmosDelegationInfoRaw = {
   address: string;
   amount: string;
-};
-
-export type CosmosClaimedRewardInfo = {
-  amount: BigNumber;
 };
 
 export type CosmosLikeTransaction = TransactionCommon & {
@@ -256,4 +284,9 @@ export type CosmosCurrencyConfig = {
   lcd: string;
   minGasPrice: number;
   ledgerValidator?: string;
+};
+
+export const RETURN_CODES = {
+  EXPERT_MODE_REQUIRED: 27012,
+  REFUSED_OPERATION: 27014,
 };

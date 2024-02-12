@@ -1,5 +1,5 @@
 import { log } from "@ledgerhq/logs";
-import { getEnv } from "../../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import { ChainAPI } from "./chain";
 
 export function traced(api: ChainAPI): ChainAPI {

@@ -1,36 +1,43 @@
 <!--
 Thank you for your contribution! 👍
-Please make sure to read CONTRIBUTING.md if you have not already.
-Disclaimer: Pull Requests that do not comply with the rules will be arbitrarily closed.
+Please make sure to read CONTRIBUTING.md if you have not already. Pull Requests that do not comply with the rules will be arbitrarily closed.
 -->
 
 ### 📝 Description
 
-_Replace this text by a clear and concise description of what this pull request is about and why it is needed._
+_Replace this text by a clear and concise description of what this pull request is about and why it is needed. Be sure to explain the problem you're addressing and the solution you're proposing._
+_For libraries, you can add a code sample of how to use it._
+_For bugfixes, you can explain the previous behavior and how it was fixed._
+_In case of visual features, please attach screenshots or video recordings to demonstrate the changes._
+
+<!--
+| Before        | After         |
+| ------------- | ------------- |
+|               |               |
+-->
 
 ### ❓ Context
 
-- **Impacted projects**: `` <!-- The list of end user projects impacted by the change. -->
-- **Linked resource(s)**: `` <!-- Attach any ticket number if relevant. (JIRA / Github issue number) -->
+- **JIRA or GitHub link**: <!-- Attach the relevant ticket number if applicable. (e.g., [JIRA-123] for Jira or #123 for a Github issue) -->
 
 ### ✅ Checklist
 
-- [ ] **Test coverage** <!-- Are your changes covered by tests? Features must be tested, bugfixes must include a test that would have detected the issue. -->
-- [ ] **Atomic delivery** <!-- Is this pull request standalone? In order words, does it depend on nothing else? Please explain if not checked. -->
-- [ ] **No breaking changes** <!-- If there are breaking changes, please explain why. -->
+Pull Requests must pass the CI and be code reviewed. Set as Draft if the PR is not ready.
 
-### 📸 Demo
+- [ ] `npx changeset` was attached.
+- [ ] **Covered by automatic tests.** <!-- if not, please explain. (Feature must be tested / Bugfix must bring non-regression) -->
+- [ ] **Impact of the changes:** <!-- Please take some time to list the impact & what specific areas Quality Assurance (QA) should focus on -->
+  - ...
 
-<!--
-For visual features, please attach screenshots or video recordings to demonstrate the changes.
-For libraries, you can add a code sample.
-For bugfixes, you can drop this section.
--->
+---
 
-### 🚀 Expectations to reach
+### 🧐 Checklist for the PR Reviewers
 
-_Please make sure you follow these [**Important Steps**](https://github.com/LedgerHQ/ledger-live/blob/develop/CONTRIBUTING.md#important-steps)._
+<!-- Please do not edit this if you are the PR author -->
 
-_Pull Requests must pass the CI and be internally validated in order to be merged._
-
-<!-- If any of the expectations are not met please explain the reason in detail. -->
+- [ ] **The code aligns with the requirements** described in the linked JIRA or GitHub issue.
+- [ ] **The PR description clearly documents the changes** made and explains any technical trade-offs or design decisions.
+- [ ] **There are no undocumented trade-offs**, technical debt, or maintainability issues.
+- [ ] **The PR has been tested** thoroughly, and any potential edge cases have been considered and handled.
+- [ ] **Any new dependencies** have been justified and documented.
+- [ ] **Performance** considerations have been taken into account. (changes have been profiled or benchmarked if necessary)

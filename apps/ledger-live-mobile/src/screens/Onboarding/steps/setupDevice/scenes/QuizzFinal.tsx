@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Text } from "@ledgerhq/native-ui";
-import Button from "../../../../../components/PreventDoubleClickButton";
+import Button from "~/components/PreventDoubleClickButton";
 
 const QuizzFinalScene = ({ success }: { success: boolean }) => {
   const { t } = useTranslation();
@@ -23,7 +23,7 @@ QuizzFinalScene.id = "QuizzFinalScene";
 const Next = ({ onNext }: { onNext: () => void }) => {
   const { t } = useTranslation();
   return (
-    <Button type="main" size="large" onPress={onNext}>
+    <Button type="main" size="large" onPress={onNext} testID="onboarding-quizz-final-cta">
       {t("onboarding.quizz.final.cta")}
     </Button>
   );

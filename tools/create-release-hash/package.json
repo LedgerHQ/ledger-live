@@ -1,5 +1,5 @@
 {
-  "name": "create-release-hash",
+  "name": "@ledgerhq/create-release-hash",
   "private": true,
   "version": "1.0.0",
   "description": "Get release hash from desktop release binaries",

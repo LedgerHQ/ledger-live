@@ -5,7 +5,7 @@ import { UpdaterContext, UpdateStatus, MaybeUpdateContextType } from "../Updater
 import { Item, MockContainer, MockedGlobalStyle } from "./shared";
 import Box from "~/renderer/components/Box";
 import Text from "~/renderer/components/Text";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 const statusToDebug: UpdateStatus[] = [
   "idle",
   "checking",

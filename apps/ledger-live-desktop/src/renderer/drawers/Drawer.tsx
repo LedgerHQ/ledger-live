@@ -18,11 +18,11 @@ const transitionStyles = {
   },
 };
 const DURATION = 200;
-const Bar = styled.div.attrs<{ state: TransitionStatus }>(props => ({
+const Bar = styled.div.attrs<{ state: TransitionStatus; withPaddingTop: boolean }>(props => ({
   style: {
     ...transitionStyles[props.state as keyof typeof transitionStyles],
   },
-}))<{ state: TransitionStatus; index: number }>`
+}))<{ state: TransitionStatus; index: number; withPaddingTop: boolean }>`
   position: absolute;
   top: 0;
   left: 0;
@@ -30,11 +30,13 @@ const Bar = styled.div.attrs<{ state: TransitionStatus }>(props => ({
   height: 100%;
   z-index: ${p => p.index};
   transform: translateX(${p => (p.index === 0 ? 0 : 100)}%);
-  transition: all ${DURATION}ms ease-in-out;
+  transition:
+    all ${DURATION}ms ease-in-out,
+    padding none;
   will-change: transform;
   background-color: ${p => p.theme.colors.palette.background.paper};
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.03);
-  padding: 62px 0px 15px 0px;
+  padding: ${p => (p.withPaddingTop ? "62px 0px 15px 0px" : "10px 0px 15px 0px")};
   overflow-x: hidden;
   overflow-y: auto;
 `;
@@ -60,9 +62,12 @@ export const Drawer = () => {
   }, [queue]);
   const track = useTrack();
   const onRequestClose = useCallback(() => {
-    track("button_clicked", { button: "Close" });
+    track("button_clicked2", { button: "Close" });
+    if (state?.props?.onRequestClose) {
+      onRequestClose();
+    }
     setDrawer();
-  }, [setDrawer, track]);
+  }, [setDrawer, state?.props?.onRequestClose, track]);
   return (
     <SideDrawer
       isOpen={!!state.open}
@@ -83,7 +88,13 @@ export const Drawer = () => {
               key={index}
             >
               {s => (
-                <Bar state={s} index={index}>
+                <Bar
+                  state={s}
+                  index={index}
+                  withPaddingTop={
+                    state.options.withPaddingTop === undefined ? true : state.options.withPaddingTop
+                  }
+                >
                   {Component && (
                     <Component
                       onClose={state.options.onRequestClose || onRequestClose}

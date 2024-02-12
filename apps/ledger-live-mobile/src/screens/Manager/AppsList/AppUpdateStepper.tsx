@@ -21,6 +21,7 @@ const AppUpdateStepper = ({ state }: Props) => {
   const count = updateAllQueue.length;
 
   return (
+    // @ts-expect-error don't understand what is going on
     <AnimatedFlex
       animation="fadeIn"
       useNativeDriver

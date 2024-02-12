@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { useDelegation } from "@ledgerhq/live-common/families/tezos/bakers";
 import { SubAccount } from "@ledgerhq/types-live";
-import { urls } from "~/config/urls";
 import { openURL } from "~/renderer/linking";
 import { openModal } from "~/renderer/actions/modals";
 import Text from "~/renderer/components/Text";
@@ -16,6 +15,8 @@ import Header from "./Header";
 import Row from "./Row";
 import TableContainer, { TableHeader } from "~/renderer/components/TableContainer";
 import { TezosAccount } from "@ledgerhq/live-common/families/tezos/types";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { urls } from "~/config/urls";
 
 type Props = {
   account: TezosAccount | SubAccount;
@@ -32,6 +33,9 @@ const Delegation = ({ account, parentAccount }: Props) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const delegation = useDelegation(account);
+
+  const stakingUrl = useLocalizedUrl(urls.stakingTezos);
+
   return account.type === "ChildAccount" && !delegation ? null : (
     <TableContainer mb={6}>
       <TableHeader
@@ -53,12 +57,14 @@ const Delegation = ({ account, parentAccount }: Props) => {
             }}
           >
             <Text ff="Inter|Medium|SemiBold" color="palette.text.shade60" fontSize={4}>
-              {t("delegation.delegationEarn")}
+              {t("delegation.delegationEarn", {
+                name: (account as TezosAccount).currency.name,
+              })}
             </Text>
             <Box mt={2}>
               <LinkWithExternalIcon
                 label={t("delegation.howItWorks")}
-                onClick={() => openURL(urls.stakingTezos)}
+                onClick={() => openURL(stakingUrl)}
               />
             </Box>
           </Box>

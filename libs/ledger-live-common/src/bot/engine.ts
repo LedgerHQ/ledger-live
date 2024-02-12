@@ -2,7 +2,7 @@ import expect from "expect";
 import invariant from "invariant";
 import now from "performance-now";
 import sample from "lodash/sample";
-import { throwError, of, Observable, OperatorFunction } from "rxjs";
+import { throwError, of, Observable, OperatorFunction, firstValueFrom } from "rxjs";
 import {
   first,
   filter,
@@ -10,15 +10,16 @@ import {
   reduce,
   tap,
   mergeMap,
-  timeoutWith,
+  timeout,
   distinctUntilChanged,
+  retry,
 } from "rxjs/operators";
 import { log } from "@ledgerhq/logs";
 import { getCurrencyBridge, getAccountBridge } from "../bridge";
 import { promiseAllBatched } from "../promise";
 import { isAccountEmpty, formatAccount } from "../account";
 import { getOperationConfirmationNumber } from "../operation";
-import { getEnv } from "../env";
+import { getEnv } from "@ledgerhq/live-env";
 import { delay } from "../promise";
 import {
   listAppCandidates,
@@ -52,7 +53,6 @@ import type {
 } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "../generated/types";
 import { botTest } from "@ledgerhq/coin-framework/bot/bot-test-context";
-import { retryWithDelay } from "../rxjs/operators/retryWithDelay";
 
 let appCandidates;
 const localCache = {};
@@ -93,7 +93,7 @@ export async function runWithAppSpec<T extends Transaction>(
   }
 
   const mutationReports: MutationReport<T>[] = [];
-  const { appQuery, currency, dependency } = spec;
+  const { appQuery, currency, dependency, onSpeculosDeviceCreated } = spec;
   const appCandidate = findAppCandidate(appCandidates, appQuery);
   if (!appCandidate) {
     console.warn("no app found for " + spec.name);
@@ -113,8 +113,10 @@ export async function runWithAppSpec<T extends Transaction>(
     seed,
     dependency,
     coinapps,
+    onSpeculosDeviceCreated,
   };
   let device;
+
   const hintWarnings: string[] = [];
   const appReport: SpecReport<T> = {
     spec,
@@ -148,34 +150,36 @@ export async function runWithAppSpec<T extends Transaction>(
     // Scan all existing accounts
     const beforeScanTime = now();
     t = now();
-    let accounts = await bridge
-      .scanAccounts({
-        currency,
-        deviceId: device.id,
-        syncConfig,
-      })
-      .pipe(
-        retryWithDelay(
-          delayBetweenScanAccountRetries,
-          spec.scanAccountsRetries || defaultScanAccountsRetries,
+    let accounts = await firstValueFrom(
+      bridge
+        .scanAccounts({
+          currency,
+          deviceId: device.id,
+          syncConfig,
+        })
+        .pipe(
+          retry({
+            count: spec.scanAccountsRetries || defaultScanAccountsRetries,
+            delay: delayBetweenScanAccountRetries,
+          }),
+          filter(e => e.type === "discovered"),
+          map(e => deepFreezeAccount(e.account)),
+          reduce<Account, Account[]>((all, a) => all.concat(a), []),
+          timeout({
+            each: getEnv("BOT_TIMEOUT_SCAN_ACCOUNTS"),
+            with: () =>
+              throwError(() => new Error("scan accounts timeout for currency " + currency.name)),
+          }),
         ),
-        filter(e => e.type === "discovered"),
-        map(e => deepFreezeAccount(e.account)),
-        reduce<Account, Account[]>((all, a) => all.concat(a), []),
-        timeoutWith(
-          getEnv("BOT_TIMEOUT_SCAN_ACCOUNTS"),
-          throwError(new Error("scan accounts timeout for currency " + currency.name)),
-        ),
-      )
-      .toPromise();
+    );
     appReport.scanDuration = now() - beforeScanTime;
 
     // check if there are more accounts than mutation declared as a hint for the dev
     if (accounts.length <= spec.mutations.length) {
       hintWarnings.push(
-        "There are not enough accounts to cover all mutations. Please increase the account target to at least " +
-          (spec.mutations.length + 1) +
-          " accounts",
+        `There are not enough accounts (${accounts.length}) to cover all mutations (${
+          spec.mutations.length
+        }).\nPlease increase the account target to at least ${spec.mutations.length + 1} accounts`,
       );
     }
 
@@ -300,6 +304,9 @@ export async function runWithAppSpec<T extends Transaction>(
           );
           await releaseSpeculosDevice(device.id);
           device = await createSpeculosDevice(deviceParams);
+          if (spec.onSpeculosDeviceCreated) {
+            await spec.onSpeculosDeviceCreated(device);
+          }
         }
       }
       mutationsCount = {};
@@ -542,29 +549,30 @@ export async function runOnAccount<T extends Transaction>({
     mutationsCount[mutation.name] = (mutationsCount[mutation.name] || 0) + 1;
     // sign the transaction with speculos
     log("engine", `spec ${spec.name}/${account.name} signing`);
-    const signedOperation = await accountBridge
-      .signOperation({
-        account,
-        transaction,
-        deviceId: device.id,
-      })
-      .pipe(
-        tap(e => {
-          latestSignOperationEvent = e;
-          log("engine", `spec ${spec.name}/${account.name}: ${e.type}`);
-        }),
-        autoSignTransaction({
-          transport: device.transport,
-          deviceAction: mutation.deviceAction || spec.genericDeviceAction,
-          appCandidate,
+    const signedOperation = await firstValueFrom(
+      accountBridge
+        .signOperation({
           account,
           transaction,
-          status,
-        }),
-        first((e: any) => e.type === "signed"),
-        map(e => (invariant(e.type === "signed", "signed operation"), e.signedOperation)),
-      )
-      .toPromise();
+          deviceId: device.id,
+        })
+        .pipe(
+          tap(e => {
+            latestSignOperationEvent = e;
+            log("engine", `spec ${spec.name}/${account.name}: ${e.type}`);
+          }),
+          autoSignTransaction({
+            transport: device.transport,
+            deviceAction: mutation.deviceAction || spec.genericDeviceAction,
+            appCandidate,
+            account,
+            transaction,
+            status,
+          }),
+          first((e: any) => e.type === "signed"),
+          map(e => (invariant(e.type === "signed", "signed operation"), e.signedOperation)),
+        ),
+    );
     deepFreezeSignedOperation(signedOperation);
 
     report.signedOperation = signedOperation;
@@ -603,6 +611,9 @@ export async function runOnAccount<T extends Transaction>({
     const testBefore = now();
     const timeOut = mutation.testTimeout || spec.testTimeout || 5 * 60 * 1000;
     const step = account => {
+      if (spec.skipOperationHistory) {
+        return optimisticOperation;
+      }
       const timedOut = now() - testBefore > timeOut;
       const operation = account.operations.find(o => o.id === optimisticOperation.id);
 
@@ -663,6 +674,9 @@ export async function runOnAccount<T extends Transaction>({
       log("bot", "remaining time to test destination: " + (newTimeOut / 1000).toFixed(0) + "s");
       const sendingOperation = operation;
       const step = account => {
+        if (spec.skipOperationHistory) {
+          return sendingOperation;
+        }
         const timedOut = now() - ntestBefore > newTimeOut;
         let operation;
         try {
@@ -719,18 +733,20 @@ export async function runOnAccount<T extends Transaction>({
 }
 
 async function syncAccount(initialAccount: Account): Promise<Account> {
-  const acc = await getAccountBridge(initialAccount)
-    .sync(initialAccount, {
-      paginationConfig: {},
-    })
-    .pipe(
-      reduce((a, f: (arg0: Account) => Account) => f(a), initialAccount),
-      timeoutWith(
-        10 * 60 * 1000,
-        throwError(new Error("account sync timeout for " + initialAccount.name)),
+  const acc = await firstValueFrom(
+    getAccountBridge(initialAccount)
+      .sync(initialAccount, {
+        paginationConfig: {},
+      })
+      .pipe(
+        reduce((a, f: (arg0: Account) => Account) => f(a), initialAccount),
+        timeout({
+          each: 10 * 60 * 1000,
+          with: () =>
+            throwError(() => new Error("account sync timeout for " + initialAccount.name)),
+        }),
       ),
-    )
-    .toPromise();
+  );
   return deepFreezeAccount(acc);
 }
 

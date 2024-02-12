@@ -1,8 +1,5 @@
 import { v4 as uuid } from "uuid";
-import Prando from "prando";
-import get from "lodash/get";
 import { setKey, getKey } from "~/renderer/storage";
-import { RemoteConfig } from "~/renderer/components/RemoteConfig";
 
 // a user is an anonymous way to identify a same instance of the app
 
@@ -29,14 +26,4 @@ export const getUserId = () => {
     return localStorage.getItem("userId");
   }
   throw new Error("user is only to be called from renderer");
-};
-export const shouldUpdateYet = (version: string, remoteConfig: RemoteConfig) => {
-  const userId = getUserId();
-  const rng = new Prando(`${userId}-${version}`);
-  const progressiveUpdateIndex = rng.next();
-  const threshold = get(remoteConfig.data, ["progressive-update", version, process.platform]);
-  if (threshold && progressiveUpdateIndex > threshold) {
-    return false;
-  }
-  return true;
 };

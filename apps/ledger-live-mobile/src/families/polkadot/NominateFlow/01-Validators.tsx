@@ -1,7 +1,14 @@
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { useCallback, useState, useMemo } from "react";
-import { View, StyleSheet, TouchableOpacity, SectionList, Linking } from "react-native";
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  SectionList,
+  Linking,
+  SectionListRenderItem,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Trans, useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
@@ -25,15 +32,14 @@ import {
   usePolkadotPreloadData,
   useSortedValidators,
 } from "@ledgerhq/live-common/families/polkadot/react";
-import { accountScreenSelector } from "../../../reducers/accounts";
-import { localeSelector } from "../../../reducers/settings";
-import { NavigatorName, ScreenName } from "../../../const";
-import Button from "../../../components/Button";
-import SelectValidatorSearchBox from "../../tron/VoteFlow/01-SelectValidator/SearchBox";
-import LText from "../../../components/LText";
-import Alert from "../../../components/Alert";
-import TranslatedError from "../../../components/TranslatedError";
-import Check from "../../../icons/Check";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { NavigatorName, ScreenName } from "~/const";
+import Button from "~/components/Button";
+import SelectValidatorSearchBox from "~/families/tron/VoteFlow/01-SelectValidator/SearchBox";
+import LText from "~/components/LText";
+import Alert from "~/components/Alert";
+import TranslatedError from "~/components/TranslatedError";
+import Check from "~/icons/Check";
 import { getFirstStatusError } from "../../helpers";
 import FlowErrorBottomModal from "../components/FlowErrorBottomModal";
 import NominationDrawer from "../components/NominationDrawer";
@@ -44,19 +50,21 @@ import type {
   BaseComposite,
   StackNavigatorNavigation,
   StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
+} from "~/components/RootNavigator/types/helpers";
 import type { PolkadotNominateFlowParamList } from "./types";
-import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
-import Identicon from "@polkadot/reactnative-identicon";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import FirstLetterIcon from "~/components/FirstLetterIcon";
+import { useSettings } from "~/hooks";
 
 type Props = BaseComposite<
   StackNavigatorProps<PolkadotNominateFlowParamList, ScreenName.PolkadotNominateSelectValidators>
 >;
+
 function NominateSelectValidator({ navigation, route }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
-  const locale = useSelector(localeSelector);
+  const { locale } = useSettings();
   invariant(account, "account required");
   const mainAccount = getMainAccount(account, parentAccount) as PolkadotAccount;
   const bridge = getAccountBridge(account, parentAccount);
@@ -113,7 +121,7 @@ function NominateSelectValidator({ navigation, route }: Props) {
     alwaysShowSign: false,
     showCode: true,
     discreet: false,
-    locale,
+    locale: locale,
   });
   const maxNominatorRewardedPerValidator = staking?.maxNominatorRewardedPerValidator || 300;
   const sorted = useSortedValidators(searchQuery, polkadotValidators, nominations);
@@ -161,7 +169,7 @@ function NominateSelectValidator({ navigation, route }: Props) {
     });
   }, [navigation, route.params, transaction, status]);
   const onSelect = useCallback(
-    (validator, selected) => {
+    (validator: PolkadotValidator, selected: boolean) => {
       setDrawerValidator(undefined);
       const newValidators = selected
         ? validators.filter(v => v !== validator.address)
@@ -181,7 +189,7 @@ function NominateSelectValidator({ navigation, route }: Props) {
     [mainAccount.currency],
   );
   const onOpenDrawer = useCallback(
-    address => {
+    (address: string) => {
       const validator = polkadotValidators.find(v => v.address === address);
       setDrawerValidator(validator);
     },
@@ -214,7 +222,7 @@ function NominateSelectValidator({ navigation, route }: Props) {
         : [],
     [drawerValidator, t, account, maxNominatorRewardedPerValidator, onOpenExplorer],
   );
-  const renderItem = useCallback(
+  const renderItem: SectionListRenderItem<PolkadotValidator> = useCallback(
     ({ item }) => {
       const selected = validators.indexOf(item.address) > -1;
       const disabled = validators.length >= MAX_NOMINATIONS;
@@ -249,11 +257,7 @@ function NominateSelectValidator({ navigation, route }: Props) {
         isOpen={drawerInfo && drawerInfo.length > 0}
         onClose={onCloseDrawer}
         account={account}
-        ValidatorImage={({ size }) =>
-          drawerValidator ? (
-            <Identicon value={drawerValidator.address} size={size} theme="polkadot" />
-          ) : null
-        }
+        ValidatorImage={() => <FirstLetterIcon label={drawerValidator?.identity || "-"} />}
         data={drawerInfo}
       />
       <View>

@@ -15,6 +15,7 @@ import {
   followDeviceUpdate,
 } from "../deviceWordings";
 import { getDeviceRunningMode } from "./getDeviceRunningMode";
+import { fetchMcusUseCase } from "../device/use-cases/fetchMcusUseCase";
 
 const wait2s = of({
   type: "wait",
@@ -55,7 +56,7 @@ const repair = (
   progress: number;
 }> => {
   log("hw", "firmwareUpdate-repair");
-  const mcusPromise = ManagerAPI.getMcus();
+  const mcusPromise = fetchMcusUseCase();
   const withDeviceInfo = withDevicePolling(deviceId)(
     transport => from(getDeviceInfo(transport)),
     () => true, // accept all errors. we're waiting forever condition that make getDeviceInfo work
@@ -91,7 +92,7 @@ const repair = (
             (deviceInfo.majMin === "0.6" || deviceInfo.majMin === "0.7")
           ) {
             // finish earlier
-            return throwError(new MCUNotGenuineToDashboard());
+            return throwError(() => new MCUNotGenuineToDashboard());
           }
 
           if (forceMCU) {
@@ -159,9 +160,8 @@ const repair = (
                         log("hw", "firmwareUpdate-repair got mcu", { mcu });
 
                         if (!mcu) return EMPTY;
-                        const expectedBootloaderVersion = semver.coerce(
-                          mcu.from_bootloader_version,
-                        )?.version;
+                        const expectedBootloaderVersion = semver.coerce(mcu.from_bootloader_version)
+                          ?.version;
                         const currentBootloaderVersion = semver.coerce(mcuBlVersion)?.version;
 
                         log("hw", "firmwareUpdate-repair bootloader versions", {

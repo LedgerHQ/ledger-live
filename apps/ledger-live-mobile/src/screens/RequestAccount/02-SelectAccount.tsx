@@ -6,22 +6,23 @@ import { useSelector } from "react-redux";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useGetAccountIds } from "@ledgerhq/live-common/wallet-api/react";
-import { accountsByCryptoCurrencyScreenSelector } from "../../reducers/accounts";
-import { TrackScreen } from "../../analytics";
-import LText from "../../components/LText";
-import FilteredSearchBar from "../../components/FilteredSearchBar";
-import AccountCard from "../../components/AccountCard";
-import KeyboardView from "../../components/KeyboardView";
-import { formatSearchResultsTuples } from "../../helpers/formatAccountSearchResults";
-import type { SearchResult } from "../../helpers/formatAccountSearchResults";
-import { NavigatorName, ScreenName } from "../../const";
-import Button from "../../components/Button";
+import { accountsByCryptoCurrencyScreenSelector } from "~/reducers/accounts";
+import { TrackScreen } from "~/analytics";
+import LText from "~/components/LText";
+import FilteredSearchBar from "~/components/FilteredSearchBar";
+import AccountCard from "~/components/AccountCard";
+import KeyboardView from "~/components/KeyboardView";
+import { formatSearchResultsTuples } from "~/helpers/formatAccountSearchResults";
+import type { SearchResult } from "~/helpers/formatAccountSearchResults";
+import { NavigatorName, ScreenName } from "~/const";
+import Button from "~/components/Button";
 import type {
   StackNavigatorNavigation,
   StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
-import { RequestAccountNavigatorParamList } from "../../components/RootNavigator/types/RequestAccountNavigator";
-import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
+} from "~/components/RootNavigator/types/helpers";
+import { RequestAccountNavigatorParamList } from "~/components/RootNavigator/types/RequestAccountNavigator";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { Flex } from "@ledgerhq/native-ui";
 
 const SEARCH_KEYS = [
   "account.name",
@@ -55,6 +56,7 @@ const Item = ({
     () => onSelect(account, parentAccount),
     [account, onSelect, parentAccount],
   );
+
   return (
     <View>
       <AccountCard
@@ -73,13 +75,13 @@ const List = ({
   renderItem,
   renderFooter,
 }: {
-  items: { account: AccountLike; subAccount: SubAccount }[];
+  items: { account: AccountLike; subAccount?: SubAccount | null }[];
   renderItem: ListRenderItem<SearchResult>;
   renderFooter: React.ComponentType | React.ReactElement | null | undefined;
 }) => {
   const formatedList = useMemo(() => formatSearchResultsTuples(items), [items]);
   return (
-    <>
+    <Flex>
       <FlatList
         data={formatedList}
         renderItem={renderItem}
@@ -88,13 +90,13 @@ const List = ({
         keyboardDismissMode="on-drag"
         ListFooterComponent={renderFooter}
       />
-    </>
+    </Flex>
   );
 };
 
 function SelectAccount({ navigation, route }: Props) {
   const { colors } = useTheme();
-  const { accounts$, currency, allowAddAccount, onSuccess, onError } = route.params;
+  const { accounts$, currency, allowAddAccount, onSuccess } = route.params;
   const accountIds = useGetAccountIds(accounts$);
   const accounts = useSelector(accountsByCryptoCurrencyScreenSelector(currency, accountIds)) as {
     account: AccountLike;
@@ -109,24 +111,22 @@ function SelectAccount({ navigation, route }: Props) {
     },
     [navigation, onSuccess],
   );
-  const renderItem = useCallback(
+
+  const renderItem: ListRenderItem<SearchResult> = useCallback(
     ({ item }) => <Item item={item} onSelect={onSelect} />,
     [onSelect],
   );
+
   const onAddAccount = useCallback(() => {
     navigation.navigate(NavigatorName.RequestAccountsAddAccounts, {
       screen: ScreenName.AddAccountsSelectDevice,
       params: {
         currency: currency as CryptoOrTokenCurrency,
-        onSuccess: () =>
-          navigation.navigate(NavigatorName.RequestAccount, {
-            screen: ScreenName.RequestAccountsSelectAccount,
-            params: route.params,
-          }),
-        onError,
+        onSuccess: () => navigation.navigate(ScreenName.RequestAccountsSelectAccount, route.params),
       },
     });
-  }, [currency, navigation, onError, route.params]);
+  }, [currency, navigation, route.params]);
+
   const renderFooter = useCallback(
     () =>
       allowAddAccount ? (
@@ -149,10 +149,14 @@ function SelectAccount({ navigation, route }: Props) {
       ) : null,
     [allowAddAccount, currency.name, onAddAccount],
   );
+
   const renderList = useCallback(
-    items => <List items={items} renderItem={renderItem} renderFooter={renderFooter} />,
+    (items: { account: AccountLike; subAccount?: SubAccount | null }[]) => (
+      <List items={items} renderItem={renderItem} renderFooter={renderFooter} />
+    ),
     [renderFooter, renderItem],
   );
+
   const renderEmptySearch = useCallback(
     () => (
       <View style={styles.emptyResults}>
@@ -163,6 +167,7 @@ function SelectAccount({ navigation, route }: Props) {
     ),
     [],
   );
+
   return (
     <SafeAreaView
       style={[
@@ -173,7 +178,7 @@ function SelectAccount({ navigation, route }: Props) {
       ]}
     >
       <TrackScreen category="RequestAccount" name="SelectAccount" />
-      <KeyboardView>
+      <KeyboardView style={styles.root}>
         <View style={styles.searchContainer}>
           {accounts.length > 0 ? (
             <FilteredSearchBar
@@ -193,12 +198,6 @@ function SelectAccount({ navigation, route }: Props) {
 }
 
 const styles = StyleSheet.create({
-  addAccountButton: {
-    flex: 1,
-    flexDirection: "row",
-    paddingVertical: 16,
-    alignItems: "center",
-  },
   root: {
     flex: 1,
   },

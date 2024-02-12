@@ -45,12 +45,15 @@ export type Theme = {
 const enrichPalette = (rawPalette: RawPalette): Theme => {
   return {
     ...rawPalette,
-    text: shades.reduce((acc, value) => {
-      acc[`shade${value}` as keyof Theme["text"]] = Color(rawPalette.secondary.main)
-        .alpha(value / 100)
-        .toString();
-      return acc;
-    }, {} as Theme["text"]),
+    text: shades.reduce(
+      (acc, value) => {
+        acc[`shade${value}` as keyof Theme["text"]] = Color(rawPalette.secondary.main)
+          .alpha(value / 100)
+          .toString();
+        return acc;
+      },
+      {} as Theme["text"],
+    ),
   };
 };
 const palettes: {

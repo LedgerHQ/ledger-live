@@ -12,7 +12,7 @@ import uninstallApp from "@ledgerhq/live-common/hw/uninstallApp";
 import { initState, reducer, runAll } from "@ledgerhq/live-common/apps/index";
 import { listApps, execWithTransport } from "@ledgerhq/live-common/apps/hw";
 import { delay } from "@ledgerhq/live-common/promise";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { getDependencies } from "@ledgerhq/live-common/apps/polyfill";
 import { deviceOpt } from "../scan";
 import type { Application, ApplicationVersion, DeviceInfo } from "@ledgerhq/types-live";

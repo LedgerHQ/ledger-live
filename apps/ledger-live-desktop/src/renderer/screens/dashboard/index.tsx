@@ -15,20 +15,20 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import OperationsList from "~/renderer/components/OperationsList";
-import Carousel from "~/renderer/components/Carousel";
 import AssetDistribution from "./AssetDistribution";
 import ClearCacheBanner from "~/renderer/components/ClearCacheBanner";
+import RecoverBanner from "~/renderer/components/RecoverBanner/RecoverBanner";
 import { usePostOnboardingEntryPointVisibleOnWallet } from "@ledgerhq/live-common/postOnboarding/hooks/index";
 import { useFilterTokenOperationsZeroAmount } from "~/renderer/actions/settings";
 import { useSelector } from "react-redux";
 import uniq from "lodash/uniq";
 import EmptyStateInstalledApps from "~/renderer/screens/dashboard/EmptyStateInstalledApps";
 import EmptyStateAccounts from "~/renderer/screens/dashboard/EmptyStateAccounts";
-import { useRefreshAccountsOrderingEffect } from "~/renderer/actions/general";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
 import PostOnboardingHubBanner from "~/renderer/components/PostOnboardingHub/PostOnboardingHubBanner";
 import FeaturedButtons from "~/renderer/screens/dashboard/FeaturedButtons";
-import { AccountLike, Operation } from "@ledgerhq/types-live";
+import { ABTestingVariants, AccountLike, Operation } from "@ledgerhq/types-live";
+import PortfolioContentCards from "~/renderer/screens/dashboard/PortfolioContentCards";
 
 // This forces only one visible top banner at a time
 export const TopBannerContainer = styled.div`
@@ -55,10 +55,6 @@ export default function DashboardPage() {
   );
   const isPostOnboardingBannerVisible = usePostOnboardingEntryPointVisibleOnWallet();
 
-  const showCarousel = hasInstalledApps && totalAccounts > 0;
-  useRefreshAccountsOrderingEffect({
-    onMount: true,
-  });
   const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
   const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
   const filterOperations = useCallback(
@@ -74,13 +70,17 @@ export default function DashboardPage() {
     },
     [hiddenNftCollections, shouldFilterTokenOpsZeroAmount],
   );
+
   return (
     <>
       <TopBannerContainer>
         <ClearCacheBanner />
         <CurrencyDownStatusAlert currencies={currencies} hideStatusIncidents />
       </TopBannerContainer>
-      {showCarousel ? <Carousel /> : null}
+      <Box gap={"5px"}>
+        <RecoverBanner />
+        <PortfolioContentCards variant={ABTestingVariants.variantA} />
+      </Box>
       {isPostOnboardingBannerVisible && <PostOnboardingHubBanner />}
       <FeaturedButtons />
       <TrackPage

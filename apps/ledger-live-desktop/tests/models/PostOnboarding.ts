@@ -14,6 +14,7 @@ export class PostOnboarding {
   readonly postOnboardingBannerEntryPointCloseButton: Locator;
   readonly postOnboardingHubSkipButton: Locator;
   readonly postOnboardingHubDrawerSkipButton: Locator;
+  readonly postOnboardingHubExploreButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -41,6 +42,9 @@ export class PostOnboarding {
     this.postOnboardingHubDrawerSkipButton = page
       .locator("data-test-id=postonboarding-hub-drawer-skip-button")
       .nth(0);
+    this.postOnboardingHubExploreButton = page.locator(
+      "data-test-id=postonboarding-hub-explore-button",
+    );
   }
 
   async startNewMockPostOnboarding() {
@@ -81,5 +85,10 @@ export class PostOnboarding {
 
   async closePostOnboardingHubDashboardBanner() {
     await this.postOnboardingBannerEntryPointCloseButton.click();
+  }
+
+  async goToDashboard() {
+    await this.postOnboardingHubExploreButton.waitFor({ state: "visible" });
+    await this.postOnboardingHubExploreButton.click();
   }
 }

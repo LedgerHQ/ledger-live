@@ -7,14 +7,13 @@ const acceptedWarnings = [
   "Patching Protobuf Long.js instance...", // https://ledgerhq.atlassian.net/browse/LIVE-5478
 ];
 
-const errors = p.stderr
-  .split("\n")
-  .filter((l) => l && !acceptedWarnings.includes(l));
+const errors = p.stderr.split("\n").filter(l => l && !acceptedWarnings.includes(l));
 
 if (errors.length > 0) {
   console.error(
     "/!\\ NOGO. Some warnings are logged by the CLI. Please fix them, this is a blocker to not ship more warnings than we already have. It costs time for all devs when we do.",
-    errors
+    errors,
   );
+
   process.exit(1);
 }

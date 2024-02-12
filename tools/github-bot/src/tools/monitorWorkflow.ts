@@ -18,7 +18,7 @@ type WorkflowDescriptor = {
   checkRunName: string;
   description?: string;
   summaryFile?: string;
-  getInputs: (payload: GetInputsPayload) => Record<string, any>;
+  getInputs: (payload: GetInputsPayload) => Record<string, string>;
   getConclusion?: (conclusion: string) => string;
 };
 export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
@@ -26,6 +26,7 @@ export function monitorWorkflow(app: Probot, workflow: WorkflowDescriptor) {
    * When a workflow is requested for the first time:
    *  - Create the related check run
    */
+  // @ts-expect-error ts pls
   app.on("workflow_run.requested", async context => {
     const { payload, octokit } = context;
 

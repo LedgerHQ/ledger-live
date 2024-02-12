@@ -3,9 +3,10 @@ const {
   AliasPlugin,
   HtmlPlugin,
   DotEnvPlugin,
+  JsonPlugin,
   electronRendererExternals,
   nodeExternals,
-} = require("esbuild-utils");
+} = require("@ledgerhq/esbuild-utils");
 const { DOTENV_FILE } = require("../utils");
 const common = require("./common.esbuild");
 
@@ -13,10 +14,12 @@ module.exports = {
   ...common,
   entryPoints: ["src/renderer/index.ts"],
   entryNames: "renderer.bundle",
+  jsx: "automatic",
   platform: "browser",
-  target: ["chrome91"],
+  target: ["chrome120"],
   format: "iife",
   mainFields: ["browser", "module", "main"],
+  assetNames: "assets/[name]-[hash]",
   external: [...nodeExternals, ...electronRendererExternals],
   resolveExtensions: process.env.V3
     ? [".v3.tsx", ".v3.ts", ".tsx", ".ts", ".js", ".jsx", ".json"]
@@ -43,18 +46,11 @@ module.exports = {
       ],
     }),
     DotEnvPlugin(DOTENV_FILE),
-    // {
-    //   name: "Side Effects",
-    //   setup(build) {
-    //     build.onResolve({ filter: /\.woff2$/ }, async args => {
-    //       if (args.importer.endsWith("libs/ui/packages/react/lib/assets/fonts.js")) {
-    //         console.log(args.path);
-    //         return {
-    //           sideEffects: true,
-    //         };
-    //       }
-    //     });
-    //   },
-    // },
+    JsonPlugin({
+      regexp: /\.(json)$/,
+      folderFilter: path.join("ledger-live-desktop", "src"),
+      targetPathPrefix: path.join(".webpack", "assets"),
+      pathPrefix: "./assets",
+    }),
   ],
 };

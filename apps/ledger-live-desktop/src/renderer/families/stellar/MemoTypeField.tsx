@@ -23,6 +23,7 @@ const MemoTypeField = ({
   const selectedMemoType =
     options.find(option => option.value === transaction.memoType) || options[0];
   const onMemoTypeChange = useCallback(
+    // @ts-expect-error weird type here i cannot find the correct option
     memoType => {
       onChange(
         bridge.updateTransaction(transaction, {

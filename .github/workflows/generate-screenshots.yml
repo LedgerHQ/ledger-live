@@ -12,7 +12,7 @@ on:
         required: false
       login:
         description: The GitHub username that triggered the workflow
-        required: true
+        required: false
       commentId:
         description: comment id to update
         required: false
@@ -21,6 +21,10 @@ concurrency:
   # See: https://github.com/orgs/community/discussions/35341
   group: ${{ github.workflow }}-${{ github.event.inputs.ref || github.event.inputs.number }}
   cancel-in-progress: true
+
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
   generate-screenshots-linux:
@@ -36,13 +40,13 @@ jobs:
         with:
           app_id: ${{ secrets.GH_BOT_APP_ID }}
           private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         if: ${{ inputs.ref != null }}
         with:
           ref: ${{ inputs.ref }}
           fetch-depth: 0
           token: ${{ steps.generate-token.outputs.token }}
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         if: ${{ !inputs.ref }}
         with:
           fetch-depth: 0
@@ -60,115 +64,26 @@ jobs:
         run: gh pr checkout ${{ inputs.number }}
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
-      - name: set git user
-        run: |
-          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
-          git config user.name "live-github-bot[bot]"
+      - name: Setup git user
+        uses: ./tools/actions/composites/setup-git-user
+      - name: Setup the toolchain
+        id: toolchain
+        uses: ./tools/actions/composites/setup-toolchain
+        with:
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - uses: ./tools/actions/composites/setup-test-desktop
         id: setup-test-desktop
         with:
           skip_ruby: true
           install_playwright: true
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
+          turborepo-server-port: ${{ steps.toolchain.outputs.port }}
       - uses: ./tools/actions/composites/update-snapshots-desktop
         id: update-snapshots
         with:
           os: ubuntu-latest
-
-  # REWORK WINDOWS FOR OWN RUNNERS ? WAITING FOR KUBERNETES SOLUTION FROM INFRA ?
-  generate-screenshots-windows:
-    env:
-      NODE_OPTIONS: "--max-old-space-size=7168"
-      FORCE_COLOR: 3
-      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-    runs-on: [ledger-live-4xlarge-windows-2022]
-    steps:
-      - name: generate token
-        id: generate-token
-        uses: tibdex/github-app-token@v1
-        with:
-          app_id: ${{ secrets.GH_BOT_APP_ID }}
-          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-      - uses: actions/checkout@v3
-        if: ${{ inputs.ref != null }}
-        with:
-          ref: ${{ inputs.ref }}
-          fetch-depth: 0
-          token: ${{ steps.generate-token.outputs.token }}
-      - uses: actions/checkout@v3
-        if: ${{ !inputs.ref }}
-        with:
-          fetch-depth: 0
-          token: ${{ steps.generate-token.outputs.token }}
-      - name: Checkout PR
-        if: ${{ inputs.number != null && inputs.ref == null }}
-        run: gh pr checkout ${{ inputs.number }}
-        env:
-          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
-      - uses: ./tools/actions/composites/setup-test-desktop
-        id: setup-test-desktop
-        with:
-          skip_python: true
-          skip_ruby: true
-          install_playwright: true
-          upgrade_npm: true
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
-      - name: set git user
-        run: |
-          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
-          git config user.name "live-github-bot[bot]"
-      - uses: ./tools/actions/composites/update-snapshots-desktop
-        id: update-snapshots
-        with:
-          os: windows-latest
-
-  generate-screenshots-mac:
-    env:
-      NODE_OPTIONS: "--max-old-space-size=7168"
-      FORCE_COLOR: 3
-      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-    runs-on: [m1, ARM64]
-    steps:
-      - name: generate token
-        id: generate-token
-        uses: tibdex/github-app-token@v1
-        with:
-          app_id: ${{ secrets.GH_BOT_APP_ID }}
-          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-      - uses: actions/checkout@v3
-        if: ${{ inputs.ref != null }}
-        with:
-          fetch-depth: 0
-          token: ${{ steps.generate-token.outputs.token }}
-      - uses: actions/checkout@v3
-        if: ${{ !inputs.ref }}
-        with:
-          fetch-depth: 0
-          token: ${{ steps.generate-token.outputs.token }}
-      - name: Checkout PR
-        if: ${{ inputs.number != null && inputs.ref == null }}
-        run: gh pr checkout ${{ inputs.number }}
-        env:
-          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
-      - uses: ./tools/actions/composites/setup-test-desktop
-        id: setup-test-desktop
-        with:
-          skip_python: true
-          skip_ruby: true
-          install_playwright: true
-          pnpm_dest: ${{ runner.temp }}/setup-pnpm
-          aws-access-key: ${{ secrets.AWS_S3_CACHE_ACCESS_KEY }}
-          aws-secret-key: ${{ secrets.AWS_S3_CACHE_SECRET_KEY }}
-      - name: set git user
-        run: |
-          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
-          git config user.name "live-github-bot[bot]"
-      - uses: ./tools/actions/composites/update-snapshots-desktop
-        id: update-snapshots
-        with:
-          os: macos-latest
 
   report-start:
     name: Report start
@@ -206,11 +121,9 @@ jobs:
     needs:
       [
         "generate-screenshots-linux",
-        "generate-screenshots-windows",
-        "generate-screenshots-mac",
         "report-start",
       ]
-    if: always()
+    if: ${{ !cancelled() }}
     name: Report end
     runs-on: "ubuntu-latest"
     steps:

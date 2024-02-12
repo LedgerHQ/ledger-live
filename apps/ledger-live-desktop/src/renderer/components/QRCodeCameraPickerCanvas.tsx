@@ -21,7 +21,7 @@ const CameraWrapper = styled.div<{
   display: flex;
   align-items: center;
   justify-content: space-evenly;
-  background: #f9f9f9;
+  background: ${p => p.theme.colors.palette.background.paper};
   color: ${p => p.theme.colors.palette.text.shade60};
   overflow: hidden;
   border: 1px solid ${p => p.theme.colors.palette.divider};
@@ -68,9 +68,9 @@ const Overlay = styled.canvas<{
 `;
 // NB symbolic button since everything dismisses this
 const Close = styled.div`
-  align-self: flex-end;
-  margin-right: 12px;
-  margin-top: 12px;
+  position: absolute;
+  top: 12px;
+  right: 12px;
   color: ${p => p.theme.colors.palette.divider};
 `;
 export default class QRCodeCameraPickerCanvas extends PureComponent<
@@ -124,11 +124,19 @@ export default class QRCodeCameraPickerCanvas extends PureComponent<
         error: new NoAccessToCamera(),
       }); // eslint-disable-line
     } else {
-      getUserMedia({
-        video: {
-          facingMode: "environment",
-        },
-      })
+      Promise.race([
+        getUserMedia({
+          video: {
+            facingMode: "environment",
+          },
+        }),
+        new Promise<MediaStream>((_, reject) => {
+          // in case getUserMedia never end, we time it out
+          setTimeout(() => {
+            reject(new NoAccessToCamera());
+          }, 20000);
+        }),
+      ])
         .then(stream => {
           if (this.unmounted) return;
           this.setState({

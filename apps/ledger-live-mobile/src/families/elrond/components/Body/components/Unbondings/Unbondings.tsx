@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 
-import AccountSectionLabel from "../../../../../../components/AccountSectionLabel";
+import AccountSectionLabel from "~/components/AccountSectionLabel";
 import Unbonding from "./components/Unbonding";
 
 import type { UnbondingsPropsType } from "./types";

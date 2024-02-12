@@ -1,16 +1,16 @@
-import React, { memo, useEffect, useState } from "react";
-import styled from "styled-components";
-import { Trans, useTranslation } from "react-i18next";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
-import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
-import Button from "~/renderer/components/Button";
-import { rgba } from "~/renderer/styles/helpers";
-import IconWallet from "~/renderer/icons/Wallet";
-import Text from "~/renderer/components/Text";
+import type { MessageProperties } from "@ledgerhq/types-live";
+import React, { memo, useEffect, useState } from "react";
+import { Trans, useTranslation } from "react-i18next";
+import styled from "styled-components";
 import Box from "~/renderer/components/Box";
-import type { MessageProperties } from "~/renderer/families/types";
-import { StepProps } from "../types";
+import Button from "~/renderer/components/Button";
+import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
+import Text from "~/renderer/components/Text";
 import { getLLDCoinFamily } from "~/renderer/families";
+import IconWallet from "~/renderer/icons/Wallet";
+import { rgba } from "~/renderer/styles/helpers";
+import { StepProps } from "../types";
 
 const Circle = styled.div`
   height: 32px;
@@ -34,16 +34,19 @@ const Separator = styled.div`
 const MessageContainer = styled(Box)`
   white-space: pre;
 `;
+
 const PropertiesList = styled.ul`
   list-style: none;
   margin-bottom: 10px;
 `;
+
 const ValueWrapper = styled.span`
   margin-bottom: 6px;
   overflow-wrap: break-word;
   word-wrap: break-word;
   white-space: normal;
 `;
+
 const AdvancedMessageArea = styled.pre`
   border: 1px solid ${p => rgba(p.theme.colors.palette.primary.main, 0.1)};
   background-color: ${p => p.theme.colors.palette.background.default};
@@ -80,6 +83,7 @@ const MessageProperty = memo(({ label, value }: MessageProperties[0]) => {
     </Box>
   );
 });
+
 MessageProperty.displayName = "MessageProperty";
 
 const MessagePropertiesComp = memo((props: { properties: MessageProperties | null }) => {
@@ -103,7 +107,7 @@ export default function StepSummary({ account, message: messageData }: StepProps
   useEffect(() => {
     if (messageData.standard === "EIP712") {
       const specific = getLLDCoinFamily(mainAccount.currency.family);
-      specific?.message?.getMessageProperties(mainAccount, messageData).then(setMessageFields);
+      specific?.message?.getMessageProperties(messageData).then(setMessageFields);
     }
   }, [account.currency.family, mainAccount, messageData, setMessageFields]);
 

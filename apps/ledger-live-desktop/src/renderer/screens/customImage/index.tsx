@@ -163,7 +163,7 @@ const CustomImage: React.FC<Props> = props => {
   const error = stepError[step];
 
   const handleErrorRetryClicked = useCallback(() => {
-    error?.name && track("button_clicked", { button: "Retry" });
+    error?.name && track("button_clicked2", { button: "Retry" });
     setStepWrapper(Step.chooseImage);
   }, [error?.name, setStepWrapper, track]);
 
@@ -310,7 +310,7 @@ const CustomImage: React.FC<Props> = props => {
               size={64}
               iconSize={24}
             />
-            <Text variant="large" alignSelf="stretch" mt={9} textAlign="center">
+            <Text variant="h5Inter" alignSelf="stretch" mt={9} textAlign="center">
               {t("customImage.customImageSet")}
             </Text>
           </Flex>

@@ -1,16 +1,20 @@
 import { handleActions } from "redux-actions";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { Handlers } from "./types";
 import { SettingsState } from "./settings";
 
 export type DevicesState = {
-  currentDevice: Device | undefined;
+  /**
+   * only two possibilities: either there is a device or there isn't
+   * (no third possibility undefined)
+   * */
+  currentDevice: Device | null;
   devices: Device[];
 };
 const initialState: DevicesState = {
-  currentDevice: undefined,
+  currentDevice: null,
   devices: [],
 };
 
@@ -35,7 +39,7 @@ const handlers: DevicesHandlers = {
     ...state,
     currentDevice:
       state.currentDevice && state.currentDevice.deviceId === device.deviceId
-        ? undefined
+        ? null
         : state.currentDevice,
     devices: state.devices.filter(d => d.deviceId !== device.deviceId),
   }),
@@ -46,7 +50,7 @@ const handlers: DevicesHandlers = {
 };
 
 function setCurrentDevice(state: DevicesState) {
-  const currentDevice = state.devices.length ? state.devices[state.devices.length - 1] : undefined;
+  const currentDevice = state.devices.length ? state.devices[state.devices.length - 1] : null;
   return {
     ...state,
     currentDevice,

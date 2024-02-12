@@ -1,7 +1,15 @@
-import { ResponseData } from "../fetchCurrencyAll";
+import { ResponseDataAll } from "../fetchCurrencyAll";
 
-export const fetchCurrencyAllMock: ResponseData = {
+export const fetchCurrencyAllMock: ResponseDataAll = {
   from: [
+    {
+      network: "bitcoin",
+      supportedCurrencies: ["bitcoin"],
+    },
+    {
+      network: "dogecoin",
+      supportedCurrencies: ["dogecoin"],
+    },
     {
       network: "ethereum",
       supportedCurrencies: [

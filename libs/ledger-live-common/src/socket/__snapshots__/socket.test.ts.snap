@@ -4,18 +4,14 @@ exports[`Scriptrunner logic Network errors should break connection 1`] = `[Webso
 
 exports[`Scriptrunner logic Non 9000 status that cause a ws close, should be mapped 1`] = `[TransportStatusError: Ledger device: USER_REFUSED_ON_DEVICE (0x5501)]`;
 
-exports[`Scriptrunner logic Regardless of the error, if we are in bulk, it can't recover 1`] = `[TransportStatusError: Ledger device: USER_REFUSED_ON_DEVICE (0x5501)]`;
-
-exports[`Scriptrunner logic Should break runner connection if device is locked 1`] = `[LockedDeviceError: Ledger device: Locked device (0x5515)]`;
-
-exports[`Scriptrunner logic Should continue exchange if HSM handles the error 1`] = `
-Array [
-  Object {
+exports[`Scriptrunner logic Once in a bulk exchange, no more message coming from the HSM should be handeled 1`] = `
+[
+  {
     "type": "opened",
   },
-  Object {
-    "apdu": Object {
-      "data": Array [
+  {
+    "apdu": {
+      "data": [
         0,
         0,
         0,
@@ -27,9 +23,9 @@ Array [
     "nonce": 1,
     "type": "exchange-before",
   },
-  Object {
-    "apdu": Object {
-      "data": Array [
+  {
+    "apdu": {
+      "data": [
         0,
         0,
         0,
@@ -38,17 +34,17 @@ Array [
       ],
       "type": "Buffer",
     },
-    "data": Object {
-      "data": Array [],
+    "data": {
+      "data": [],
       "type": "Buffer",
     },
     "nonce": 1,
-    "status": 26159,
+    "status": 36864,
     "type": "exchange",
   },
-  Object {
-    "apdu": Object {
-      "data": Array [
+  {
+    "apdu": {
+      "data": [
         0,
         0,
         0,
@@ -60,9 +56,9 @@ Array [
     "nonce": 2,
     "type": "exchange-before",
   },
-  Object {
-    "apdu": Object {
-      "data": Array [
+  {
+    "apdu": {
+      "data": [
         0,
         0,
         0,
@@ -71,8 +67,149 @@ Array [
       ],
       "type": "Buffer",
     },
-    "data": Object {
-      "data": Array [],
+    "data": {
+      "data": [],
+      "type": "Buffer",
+    },
+    "nonce": 2,
+    "status": 36864,
+    "type": "exchange",
+  },
+  {
+    "apdu": {
+      "data": [
+        0,
+        0,
+        0,
+        0,
+        3,
+      ],
+      "type": "Buffer",
+    },
+    "nonce": 3,
+    "type": "exchange-before",
+  },
+  {
+    "apdu": {
+      "data": [
+        0,
+        0,
+        0,
+        0,
+        3,
+      ],
+      "type": "Buffer",
+    },
+    "data": {
+      "data": [],
+      "type": "Buffer",
+    },
+    "nonce": 3,
+    "status": 36864,
+    "type": "exchange",
+  },
+  {
+    "index": 0,
+    "progress": 0,
+    "total": 4,
+    "type": "bulk-progress",
+  },
+  {
+    "index": 1,
+    "progress": 0.25,
+    "total": 4,
+    "type": "bulk-progress",
+  },
+  {
+    "index": 2,
+    "progress": 0.5,
+    "total": 4,
+    "type": "bulk-progress",
+  },
+  {
+    "index": 3,
+    "progress": 0.75,
+    "total": 4,
+    "type": "bulk-progress",
+  },
+  {
+    "index": 4,
+    "progress": 1,
+    "total": 4,
+    "type": "bulk-progress",
+  },
+]
+`;
+
+exports[`Scriptrunner logic Regardless of the error, if we are in bulk, it can't recover 1`] = `[TransportStatusError: Ledger device: USER_REFUSED_ON_DEVICE (0x5501)]`;
+
+exports[`Scriptrunner logic Should break runner connection if device is locked 1`] = `[LockedDeviceError: Ledger device: Locked device (0x5515)]`;
+
+exports[`Scriptrunner logic Should continue exchange if HSM handles the error 1`] = `
+[
+  {
+    "type": "opened",
+  },
+  {
+    "apdu": {
+      "data": [
+        0,
+        0,
+        0,
+        0,
+        1,
+      ],
+      "type": "Buffer",
+    },
+    "nonce": 1,
+    "type": "exchange-before",
+  },
+  {
+    "apdu": {
+      "data": [
+        0,
+        0,
+        0,
+        0,
+        1,
+      ],
+      "type": "Buffer",
+    },
+    "data": {
+      "data": [],
+      "type": "Buffer",
+    },
+    "nonce": 1,
+    "status": 26159,
+    "type": "exchange",
+  },
+  {
+    "apdu": {
+      "data": [
+        0,
+        0,
+        0,
+        0,
+        2,
+      ],
+      "type": "Buffer",
+    },
+    "nonce": 2,
+    "type": "exchange-before",
+  },
+  {
+    "apdu": {
+      "data": [
+        0,
+        0,
+        0,
+        0,
+        2,
+      ],
+      "type": "Buffer",
+    },
+    "data": {
+      "data": [],
       "type": "Buffer",
     },
     "nonce": 2,
@@ -83,13 +220,13 @@ Array [
 `;
 
 exports[`Scriptrunner logic Should emit events for secure channel successfully 1`] = `
-Array [
-  Object {
+[
+  {
     "type": "opened",
   },
-  Object {
-    "apdu": Object {
-      "data": Array [
+  {
+    "apdu": {
+      "data": [
         0,
         0,
         0,
@@ -101,9 +238,9 @@ Array [
     "nonce": 1,
     "type": "exchange-before",
   },
-  Object {
-    "apdu": Object {
-      "data": Array [
+  {
+    "apdu": {
+      "data": [
         0,
         0,
         0,
@@ -112,17 +249,17 @@ Array [
       ],
       "type": "Buffer",
     },
-    "data": Object {
-      "data": Array [],
+    "data": {
+      "data": [],
       "type": "Buffer",
     },
     "nonce": 1,
     "status": 36864,
     "type": "exchange",
   },
-  Object {
-    "apdu": Object {
-      "data": Array [
+  {
+    "apdu": {
+      "data": [
         224,
         81,
         0,
@@ -134,16 +271,15 @@ Array [
     "nonce": 2,
     "type": "exchange-before",
   },
-  Object {
+  {
     "type": "device-permission-requested",
-    "wording": "Ledger Manager",
   },
-  Object {
+  {
     "type": "device-permission-granted",
   },
-  Object {
-    "apdu": Object {
-      "data": Array [
+  {
+    "apdu": {
+      "data": [
         224,
         81,
         0,
@@ -152,17 +288,17 @@ Array [
       ],
       "type": "Buffer",
     },
-    "data": Object {
-      "data": Array [],
+    "data": {
+      "data": [],
       "type": "Buffer",
     },
     "nonce": 2,
     "status": 36864,
     "type": "exchange",
   },
-  Object {
-    "apdu": Object {
-      "data": Array [
+  {
+    "apdu": {
+      "data": [
         0,
         0,
         0,
@@ -174,9 +310,9 @@ Array [
     "nonce": 3,
     "type": "exchange-before",
   },
-  Object {
-    "apdu": Object {
-      "data": Array [
+  {
+    "apdu": {
+      "data": [
         0,
         0,
         0,
@@ -185,8 +321,8 @@ Array [
       ],
       "type": "Buffer",
     },
-    "data": Object {
-      "data": Array [],
+    "data": {
+      "data": [],
       "type": "Buffer",
     },
     "nonce": 3,
@@ -199,13 +335,13 @@ Array [
 exports[`Scriptrunner logic Should map rejected allow my ledger 1`] = `[UserRefusedAllowManager: UserRefusedAllowManager]`;
 
 exports[`Scriptrunner logic Should pass without errors 1`] = `
-Array [
-  Object {
+[
+  {
     "type": "opened",
   },
-  Object {
-    "apdu": Object {
-      "data": Array [
+  {
+    "apdu": {
+      "data": [
         0,
         0,
         0,
@@ -217,9 +353,9 @@ Array [
     "nonce": 1,
     "type": "exchange-before",
   },
-  Object {
-    "apdu": Object {
-      "data": Array [
+  {
+    "apdu": {
+      "data": [
         0,
         0,
         0,
@@ -228,17 +364,17 @@ Array [
       ],
       "type": "Buffer",
     },
-    "data": Object {
-      "data": Array [],
+    "data": {
+      "data": [],
       "type": "Buffer",
     },
     "nonce": 1,
     "status": 36864,
     "type": "exchange",
   },
-  Object {
-    "apdu": Object {
-      "data": Array [
+  {
+    "apdu": {
+      "data": [
         0,
         0,
         0,
@@ -250,9 +386,9 @@ Array [
     "nonce": 2,
     "type": "exchange-before",
   },
-  Object {
-    "apdu": Object {
-      "data": Array [
+  {
+    "apdu": {
+      "data": [
         0,
         0,
         0,
@@ -261,17 +397,17 @@ Array [
       ],
       "type": "Buffer",
     },
-    "data": Object {
-      "data": Array [],
+    "data": {
+      "data": [],
       "type": "Buffer",
     },
     "nonce": 2,
     "status": 36864,
     "type": "exchange",
   },
-  Object {
-    "apdu": Object {
-      "data": Array [
+  {
+    "apdu": {
+      "data": [
         0,
         0,
         0,
@@ -283,9 +419,9 @@ Array [
     "nonce": 3,
     "type": "exchange-before",
   },
-  Object {
-    "apdu": Object {
-      "data": Array [
+  {
+    "apdu": {
+      "data": [
         0,
         0,
         0,
@@ -294,39 +430,39 @@ Array [
       ],
       "type": "Buffer",
     },
-    "data": Object {
-      "data": Array [],
+    "data": {
+      "data": [],
       "type": "Buffer",
     },
     "nonce": 3,
     "status": 36864,
     "type": "exchange",
   },
-  Object {
+  {
     "index": 0,
     "progress": 0,
     "total": 4,
     "type": "bulk-progress",
   },
-  Object {
+  {
     "index": 1,
     "progress": 0.25,
     "total": 4,
     "type": "bulk-progress",
   },
-  Object {
+  {
     "index": 2,
     "progress": 0.5,
     "total": 4,
     "type": "bulk-progress",
   },
-  Object {
+  {
     "index": 3,
     "progress": 0.75,
     "total": 4,
     "type": "bulk-progress",
   },
-  Object {
+  {
     "index": 4,
     "progress": 1,
     "total": 4,

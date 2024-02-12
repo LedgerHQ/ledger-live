@@ -3,7 +3,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import styled from "styled-components";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import { getAccountName, getMainAccount } from "@ledgerhq/live-common/account/index";
 import { AppResult, createAction } from "@ledgerhq/live-common/hw/actions/app";
 import { urls } from "~/config/urls";
@@ -25,6 +25,7 @@ import Button from "~/renderer/components/Button";
 import Alert from "~/renderer/components/Alert";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Receive2NoDevice from "~/renderer/components/Receive2NoDevice";
+import { firstValueFrom } from "rxjs";
 
 export const Separator = styled.div`
   &::after {
@@ -81,16 +82,18 @@ const VerifyOnDevice = ({
     if (!device || skipDevice) return null;
     try {
       if (getEnv("MOCK")) {
-        setTimeout(() => {
-          onAddressVerified(true);
-        }, 3000);
+        window.mock.events.subject.subscribe({
+          complete() {
+            onAddressVerified(true);
+          },
+        });
       } else {
-        await getAccountBridge(mainAccount)
-          .receive(mainAccount, {
+        await firstValueFrom(
+          getAccountBridge(mainAccount).receive(mainAccount, {
             deviceId: device.deviceId,
             verify: true,
-          })
-          .toPromise();
+          }),
+        );
         onAddressVerified(true);
       }
     } catch (err) {
@@ -181,7 +184,7 @@ const Root = ({ data, onClose, skipDevice, flow }: Props) => {
     [verifyAddress, onResult, account, parentAccount, onClose],
   );
   const onAddressVerified = useCallback(
-    status => {
+    (status: boolean) => {
       if (status) {
         onResult(account, parentAccount, status);
       }
@@ -296,7 +299,9 @@ const BuyCryptoModal = ({
 };
 const BuyCrypto = ({ flow }: { flow?: string }) => {
   const render = useCallback(
-    ({ data, onClose }) => <BuyCryptoModal data={data} onClose={onClose} flow={flow} />,
+    ({ data, onClose }: { data: DataProp; onClose: () => void }) => (
+      <BuyCryptoModal data={data} onClose={onClose} flow={flow} />
+    ),
     [flow],
   );
   return <Modal name="MODAL_EXCHANGE_CRYPTO_DEVICE" centered render={render} />;

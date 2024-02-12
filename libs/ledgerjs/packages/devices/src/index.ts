@@ -57,7 +57,7 @@ const devices: { [key in DeviceModelId]: DeviceModel } = {
     productIdMM: 0x50,
     legacyUsbProductId: 0x0005,
     usbOnly: true,
-    memorySize: 1536 * 1024,
+    memorySize: 1533 * 1024,
     masks: [0x33100000],
     getBlockSize: (_firmwareVersion: string): number => 32,
   },
@@ -85,7 +85,7 @@ const devices: { [key in DeviceModelId]: DeviceModel } = {
     productIdMM: 0x60,
     legacyUsbProductId: 0x0006,
     usbOnly: false,
-    memorySize: 1536 * 1024,
+    memorySize: 1533 * 1024,
     masks: [0x33200000],
     getBlockSize: (_firmwareVersion: string): number => 32,
     bluetoothSpec: [
@@ -136,7 +136,10 @@ export const identifyTargetId = (targetId: number): DeviceModel | null | undefin
 };
 
 /**
+ * From a given USB product id, return the deviceModel associated to it.
  *
+ * The mapping from the product id is only based on the 2 most significant bytes.
+ * For example, Stax is defined with a product id of 0x60ii, a product id 0x6011 would be mapped to it.
  */
 export const identifyUSBProductId = (usbProductId: number): DeviceModel | null | undefined => {
   const legacy = devicesList.find(d => d.legacyUsbProductId === usbProductId);

@@ -1,6 +1,7 @@
 import React, { memo, useCallback, useState, useMemo } from "react";
 import { Flex, IconsLegacy } from "@ledgerhq/native-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import SafeAreaView from "~/components/SafeAreaView";
 import { useNavigation } from "@react-navigation/native";
 import { WebViewMessageEvent } from "react-native-webview";
 import { useTranslation } from "react-i18next";
@@ -8,14 +9,14 @@ import { useDispatch } from "react-redux";
 
 import { Adjust, AdjustEvent } from "react-native-adjust";
 import Config from "react-native-config";
-import Button from "../../components/wrappedUi/Button";
+import Button from "~/components/wrappedUi/Button";
 import logger from "../../logger";
 import DebugURLDrawer from "./DebugURLDrawer";
 import { PurchaseMessage } from "./types";
 import DebugMessageDrawer from "./DebugMessageDrawer";
-import WebViewScreen from "../../components/WebViewScreen";
-import { completeOnboarding, setReadOnlyMode } from "../../actions/settings";
-import { urls } from "../../config/urls";
+import WebViewScreen from "~/components/WebViewScreen";
+import { completeOnboarding, setReadOnlyMode } from "~/actions/settings";
+import { urls } from "~/utils/urls";
 
 const defaultURL = urls.buyNanoX;
 
@@ -103,7 +104,7 @@ const PurchaseDevice = () => {
   );
 
   return (
-    <>
+    <SafeAreaView isFlex>
       <WebViewScreen
         screenName={t("purchaseDevice.pageTitle")}
         uri={urlWithParam}
@@ -139,7 +140,7 @@ const PurchaseDevice = () => {
           onChange={setUrl}
         />
       )}
-    </>
+    </SafeAreaView>
   );
 };
 

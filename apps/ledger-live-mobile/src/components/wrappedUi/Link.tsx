@@ -1,7 +1,8 @@
 import React, { useCallback } from "react";
 import { Link as UiLink } from "@ledgerhq/native-ui";
 import { LinkProps } from "@ledgerhq/native-ui/components/cta/Link/index";
-import { track } from "../../analytics";
+import { track } from "~/analytics";
+import { GestureResponderEvent } from "react-native-modal";
 
 export type WrappedLinkProps = LinkProps & {
   event?: string;
@@ -15,7 +16,7 @@ export default function Link({
   ...othersProps
 }: WrappedLinkProps) {
   const onPressHandler = useCallback(
-    async pressEvent => {
+    async (pressEvent: GestureResponderEvent) => {
       if (!onPress) return;
       if (event) {
         track(event, eventProperties);

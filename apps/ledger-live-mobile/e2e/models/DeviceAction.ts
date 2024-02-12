@@ -28,12 +28,14 @@ const mockListAppsResult = (
 
 // this implement mock for the "legacy" device action (the one working with live-common/lib/hw/actions/*)
 export default class DeviceAction {
-  deviceLike: DeviceLike;
   device: Device;
 
-  constructor(deviceLike: DeviceLike) {
-    this.deviceLike = deviceLike;
-    this.device = this.deviceLikeToDevice(deviceLike);
+  constructor(input: DeviceLike | Device) {
+    if ("id" in input) {
+      this.device = this.deviceLikeToDevice(input as DeviceLike);
+    } else {
+      this.device = input as Device;
+    }
   }
 
   deviceLikeToDevice(d: DeviceLike): Device {
@@ -46,7 +48,7 @@ export default class DeviceAction {
   }
 
   async selectMockDevice() {
-    const elId = "device-item-" + this.deviceLike.id;
+    const elId = "device-item-" + this.device.deviceId;
     await waitForElementById(elId);
     await tapById(elId);
   }
@@ -83,7 +85,7 @@ export default class DeviceAction {
   }
 
   async accessManager(
-    appDesc = "Bitcoin,Tron,Litecoin,Ethereum,Ripple,Stellar",
+    appDesc = "Bitcoin,Tron,Litecoin,Ethereum,XRP,Stellar",
     installedDesc = "Bitcoin,Litecoin,Ethereum (outdated)",
   ) {
     await this.waitForSpinner();

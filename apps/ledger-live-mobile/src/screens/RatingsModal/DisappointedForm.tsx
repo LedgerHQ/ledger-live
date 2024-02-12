@@ -1,19 +1,16 @@
 import React, { useCallback } from "react";
 import { Flex } from "@ledgerhq/native-ui";
-import { WebView } from "react-native-webview";
+import { WebView, WebViewMessageEvent } from "react-native-webview";
 import VersionNumber from "react-native-version-number";
 import { Platform } from "react-native";
 import styled from "styled-components/native";
 import { useSelector } from "react-redux";
-import { track, TrackScreen } from "../../analytics";
-import useRatings from "../../logic/ratings";
-import getWindowDimensions from "../../logic/getWindowDimensions";
-import {
-  languageSelector,
-  lastSeenDeviceSelector,
-  notificationsSelector,
-} from "../../reducers/settings";
-import { knownDevicesSelector } from "../../reducers/ble";
+import { track, TrackScreen } from "~/analytics";
+import useRatings from "~/logic/ratings";
+import getWindowDimensions from "~/logic/getWindowDimensions";
+import { lastSeenDeviceSelector, notificationsSelector } from "~/reducers/settings";
+import { knownDevicesSelector } from "~/reducers/ble";
+import { useSettings } from "~/hooks";
 
 const { height } = getWindowDimensions();
 
@@ -60,7 +57,7 @@ type Props = {
 
 const DisappointedForm = ({ setStep }: Props) => {
   const { ratingsHappyMoment, ratingsFeatureParams } = useRatings();
-  const language = useSelector(languageSelector);
+  const { language } = useSettings();
   const devices = useSelector(knownDevicesSelector);
   const lastDevice = useSelector(lastSeenDeviceSelector) || devices[devices.length - 1];
 
@@ -81,7 +78,7 @@ const DisappointedForm = ({ setStep }: Props) => {
     });
   }, [ratingsFeatureParams, ratingsHappyMoment?.route_name]);
   const onMessage = useCallback(
-    event => {
+    (event: WebViewMessageEvent) => {
       const { data } = event.nativeEvent;
 
       if (data === "form-submit") {
@@ -99,7 +96,7 @@ const DisappointedForm = ({ setStep }: Props) => {
   );
   const formUrlSplitted = ratingsFeatureParams?.typeform_url.split("?");
   const formUrl =
-    formUrlSplitted[0] +
+    formUrlSplitted?.[0] +
     `#app_version=${appVersion}` +
     `&app_language=${language}` +
     `&platform_os=${Platform.OS}` +
@@ -108,7 +105,7 @@ const DisappointedForm = ({ setStep }: Props) => {
     `&firmware_version=${lastDevice?.deviceInfo?.version}` +
     `&notifications_allowed=${notificationsAllowed}` +
     `&notifications_blacklisted=${notificationsBlacklisted}` +
-    `&done?${formUrlSplitted[1] || ""}`;
+    `&done?${formUrlSplitted?.[1] || ""}`;
 
   return (
     <Flex flex={1} height={height * (4 / 5)}>

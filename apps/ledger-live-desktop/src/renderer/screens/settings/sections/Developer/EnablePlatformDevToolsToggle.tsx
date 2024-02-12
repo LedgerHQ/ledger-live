@@ -8,7 +8,7 @@ const EnablePlatformDevToolsToggle = () => {
   const dispatch = useDispatch();
   const enablePlatformDevTools = useSelector(enablePlatformDevToolsSelector);
   const onSetEnablePlatformDevTools = useCallback(
-    checked => dispatch(setEnablePlatformDevTools(checked)),
+    (checked: boolean) => dispatch(setEnablePlatformDevTools(checked)),
     [dispatch],
   );
   return (

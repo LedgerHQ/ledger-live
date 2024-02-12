@@ -6,35 +6,28 @@ import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useSingleCoinMarketData } from "@ledgerhq/live-common/market/MarketDataProvider";
 import { AccountLike, SubAccount } from "@ledgerhq/types-live";
-import {
-  readOnlyModeEnabledSelector,
-  starredMarketCoinsSelector,
-} from "../../../reducers/settings";
-import { useLocale } from "../../../context/Locale";
-import CircleCurrencyIcon from "../../../components/CircleCurrencyIcon";
+
+import { readOnlyModeEnabledSelector, starredMarketCoinsSelector } from "~/reducers/settings";
+import SafeAreaView from "~/components/SafeAreaView";
+import { useLocale } from "~/context/Locale";
+import CircleCurrencyIcon from "~/components/CircleCurrencyIcon";
 import { IconContainer } from "../MarketRowItem";
 import { counterValueFormatter, getDateFormatter } from "../utils";
 import DeltaVariation from "../DeltaVariation";
-import { addStarredMarketCoins, removeStarredMarketCoins } from "../../../actions/settings";
+import { addStarredMarketCoins, removeStarredMarketCoins } from "~/actions/settings";
 import MarketStats from "./MarketStats";
-import { flattenAccountsByCryptoCurrencyScreenSelector } from "../../../reducers/accounts";
+import { flattenAccountsByCryptoCurrencyScreenSelector } from "~/reducers/accounts";
 import AccountRow from "../../Accounts/AccountRow";
-import { screen, track } from "../../../analytics";
-import Button from "../../../components/wrappedUi/Button";
+import { screen, track } from "~/analytics";
+import Button from "~/components/wrappedUi/Button";
 import MarketGraph from "./MarketGraph";
-import { ScreenName } from "../../../const";
-import { withDiscreetMode } from "../../../context/DiscreetModeContext";
-import TabBarSafeAreaView, {
-  TAB_BAR_SAFE_HEIGHT,
-} from "../../../components/TabBar/TabBarSafeAreaView";
-import useNotifications from "../../../logic/notifications";
-import { FabMarketActions } from "../../../components/FabActions/actionsList/market";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
-import { MarketNavigatorStackParamList } from "../../../components/RootNavigator/types/MarketNavigator";
-import { Item } from "../../../components/Graph/types";
+import { ScreenName } from "~/const";
+import { withDiscreetMode } from "~/context/DiscreetModeContext";
+import useNotifications from "~/logic/notifications";
+import { FabMarketActions } from "~/components/FabActions/actionsList/market";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { MarketNavigatorStackParamList } from "~/components/RootNavigator/types/MarketNavigator";
+import { Item } from "~/components/Graph/types";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<MarketNavigatorStackParamList, ScreenName.MarketDetail>
@@ -59,6 +52,7 @@ function MarketDetail({ navigation, route }: NavigationProps) {
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
   const isStarred = starredMarketCoins.includes(currencyId);
   const { triggerMarketPushNotificationModal } = useNotifications();
+  const [hasRetried, setHasRetried] = useState<boolean>(false);
 
   let loc = locale;
   // TEMPORARY : quick win to transform arabic to english
@@ -77,6 +71,17 @@ function MarketDetail({ navigation, route }: NavigationProps) {
   } = useSingleCoinMarketData();
 
   const { name, image, price, priceChangePercentage, internalCurrency, chartData } = currency || {};
+
+  useEffect(() => {
+    if (!loading) {
+      if (currency === undefined && !hasRetried) {
+        selectCurrency(currencyId);
+        setHasRetried(true);
+      } else if (currency && hasRetried) {
+        setHasRetried(false);
+      }
+    }
+  }, [currency, selectCurrency, currencyId, hasRetried, loading]);
 
   useEffect(() => {
     const resetState = () => {
@@ -117,7 +122,6 @@ function MarketDetail({ navigation, route }: NavigationProps) {
   const renderAccountItem = useCallback(
     ({ item, index }: { item: AccountLike; index: number }) => (
       <AccountRow
-        navigation={navigation}
         navigationParams={[
           ScreenName.Account,
           {
@@ -132,7 +136,7 @@ function MarketDetail({ navigation, route }: NavigationProps) {
         sourceScreenName={ScreenName.MarketDetail}
       />
     ),
-    [navigation, allAccounts.length],
+    [allAccounts.length],
   );
 
   useEffect(() => {
@@ -167,9 +171,8 @@ function MarketDetail({ navigation, route }: NavigationProps) {
   const [hoveredItem, setHoverItem] = useState<Item | null | undefined>(null);
 
   return (
-    <TabBarSafeAreaView style={{ backgroundColor: colors.background.main }}>
+    <SafeAreaView edges={["top", "left", "right"]} isFlex>
       <ScrollContainerHeader
-        contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
         TopLeftSection={<BackButton navigation={navigation} />}
         MiddleSection={
           <Flex height={48} flexDirection="row" justifyContent="flex-start" alignItems="center">
@@ -275,7 +278,7 @@ function MarketDetail({ navigation, route }: NavigationProps) {
           <MarketStats currency={currency} counterCurrency={counterCurrency} />
         )}
       </ScrollContainerHeader>
-    </TabBarSafeAreaView>
+    </SafeAreaView>
   );
 }
 

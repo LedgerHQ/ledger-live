@@ -15,7 +15,6 @@ export function runDesktopTestSuite(app: Probot) {
   async function triggerWorkflow({
     context,
     login,
-    full,
   }: {
     context: Context<"issue_comment.created" | "check_run.requested_action">;
     login: string;
@@ -39,8 +38,6 @@ export function runDesktopTestSuite(app: Probot) {
       ref,
       inputs: {
         login,
-        // @ts-expect-error weird behavior with boolean values
-        "full-tests": full,
       },
     });
   }
@@ -53,7 +50,6 @@ export function runDesktopTestSuite(app: Probot) {
     await triggerWorkflow({
       context,
       login: `${payload.comment.user.login}`,
-      full: true,
     });
   });
 
@@ -68,7 +64,6 @@ export function runDesktopTestSuite(app: Probot) {
     await triggerWorkflow({
       context,
       login,
-      full: true,
     });
   });
 

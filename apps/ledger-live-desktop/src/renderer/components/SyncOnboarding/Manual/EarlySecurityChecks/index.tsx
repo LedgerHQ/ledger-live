@@ -4,16 +4,15 @@ import manager from "@ledgerhq/live-common/manager/index";
 import { useGenuineCheck } from "@ledgerhq/live-common/hw/hooks/useGenuineCheck";
 import { useGetLatestAvailableFirmware } from "@ledgerhq/live-common/deviceSDK/hooks/useGetLatestAvailableFirmware";
 import Body from "./Body";
-import LockedDeviceDrawer, { Props as LockedDeviceDrawerProps } from "../LockedDeviceDrawer";
+import TroubleshootingDrawer, {
+  Props as TroubleshootingDrawerProps,
+} from "../TroubleshootingDrawer";
 import SoftwareCheckAllowSecureChannelDrawer, {
   Props as SoftwareCheckAllowSecureChannelDrawerProps,
 } from "./SoftwareCheckAllowSecureChannelDrawer";
 import { Status as SoftwareCheckStatus } from "../types";
-import { getDeviceModel } from "@ledgerhq/devices";
-import { useSelector } from "react-redux";
-import { urls } from "~/config/urls";
+import { getDeviceModel, DeviceModelId } from "@ledgerhq/devices";
 import { openURL } from "~/renderer/linking";
-import { localeSelector } from "~/renderer/reducers/settings";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import UpdateFirmwareModal, {
   Props as UpdateFirmwareModalProps,
@@ -28,6 +27,12 @@ import { useTranslation } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { track } from "~/renderer/analytics/segment";
 import { log } from "@ledgerhq/logs";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
+import { FinalFirmware } from "@ledgerhq/types-live";
+import { useHistory } from "react-router-dom";
+import { NetworkDown } from "@ledgerhq/errors";
+import { NetworkStatus, useNetworkStatus } from "~/renderer/hooks/useNetworkStatus";
+import { urls } from "~/config/urls";
 
 export type Props = {
   onComplete: () => void;
@@ -42,7 +47,11 @@ export type Props = {
    * */
   isInitialRunOfSecurityChecks: boolean;
   restartChecksAfterUpdate: () => void;
-  isBootloader: boolean | null;
+  // Pulling this state out of the early security check component because it gets
+  // unmounted when we restart the polling after the user interrupts an update."
+  fwUpdateInterrupted: FinalFirmware | null;
+  setFwUpdateInterrupted: (finalFirmware: FinalFirmware) => void;
+  isDeviceConnected: boolean;
 };
 
 const commonDrawerProps = {
@@ -63,14 +72,12 @@ const EarlySecurityChecks = ({
   device,
   restartChecksAfterUpdate,
   isInitialRunOfSecurityChecks,
-  isBootloader,
+  setFwUpdateInterrupted,
+  fwUpdateInterrupted,
+  isDeviceConnected,
 }: Props) => {
   const { t } = useTranslation();
-  const locale = useSelector(localeSelector);
-  const whySecurityChecksUrl =
-    locale in urls.genuineCheck
-      ? urls.genuineCheck[locale as keyof typeof urls.genuineCheck]
-      : urls.genuineCheck.en;
+  const whySecurityChecksUrl = useLocalizedUrl(urls.genuineCheck);
 
   const optimisticGenuineCheck = !isInitialRunOfSecurityChecks;
   const [genuineCheckStatus, setGenuineCheckStatus] = useState<SoftwareCheckStatus>(
@@ -80,7 +87,7 @@ const EarlySecurityChecks = ({
     SoftwareCheckStatus.inactive,
   );
   const [availableFirmwareVersion, setAvailableFirmwareVersion] = useState<string>("");
-  const [updateInterrupted, setUpdateInterrupted] = useState(false);
+  const history = useHistory();
 
   const deviceId = device.deviceId ?? "";
   const deviceModelId = device.modelId;
@@ -99,6 +106,8 @@ const EarlySecurityChecks = ({
     isHookEnabled: genuineCheckActive,
     deviceId,
   });
+
+  const { networkStatus } = useNetworkStatus();
 
   const {
     state: {
@@ -135,7 +144,13 @@ const EarlySecurityChecks = ({
       ),
       onDrawerClose: () => {
         closeFwUpdateDrawer();
-        setUpdateInterrupted(true);
+        setFwUpdateInterrupted(latestFirmware?.final);
+        restartChecksAfterUpdate();
+      },
+      onRequestClose: () => {
+        closeFwUpdateDrawer();
+        setFwUpdateInterrupted(latestFirmware?.final);
+        restartChecksAfterUpdate();
       },
       status: modal,
       stepId,
@@ -143,7 +158,6 @@ const EarlySecurityChecks = ({
       deviceInfo,
       device,
       deviceModelId: deviceModelId,
-      setFirmwareUpdateOpened: () => null, // we don't need to keep the state
       setFirmwareUpdateCompleted: () => null,
 
       finalStepSuccessDescription: t(
@@ -156,16 +170,14 @@ const EarlySecurityChecks = ({
         closeFwUpdateDrawer();
         restartChecksAfterUpdate();
       },
-      deviceHasPin: false, // early security checks are triggered only if the device is in one of the steps prior to setting a PIN code
+      deviceHasPin: deviceModelId !== DeviceModelId.stax, // early security checks are triggered only if the device is in one of the steps prior to setting a PIN code
     };
 
     setDrawer(UpdateFirmwareModal, updateFirmwareModalProps, {
       preventBackdropClick: true,
       forceDisableFocusTrap: true,
-      onRequestClose: () => {
-        closeFwUpdateDrawer();
-        setUpdateInterrupted(true);
-      },
+      withPaddingTop: false,
+      onRequestClose: undefined,
     });
   }, [
     closeFwUpdateDrawer,
@@ -174,14 +186,9 @@ const EarlySecurityChecks = ({
     deviceModelId,
     latestFirmware,
     restartChecksAfterUpdate,
+    setFwUpdateInterrupted,
     t,
   ]);
-
-  useEffect(() => {
-    if (updateInterrupted && isBootloader) {
-      restartChecksAfterUpdate();
-    }
-  }, [isBootloader, restartChecksAfterUpdate, updateInterrupted]);
 
   useEffect(() => {
     if (devicePermissionState === "refused") {
@@ -232,23 +239,29 @@ const EarlySecurityChecks = ({
     getLatestAvailableFirmwareError,
   ]);
 
-  const lockedDeviceModalIsOpen =
+  // at this step we can't have an unlocked device; it's inevitably disconnected
+  const disconnectedDeviceModalIsOpen =
     (devicePermissionState === "unlock-needed" && genuineCheckActive) ||
     (lockedDevice && firmwareUpdateStatus === SoftwareCheckStatus.active);
 
   const allowSecureChannelIsOpen =
     devicePermissionState === "requested" &&
-    (genuineCheckActive || firmwareUpdateStatus === SoftwareCheckStatus.active);
+    (genuineCheckActive || firmwareUpdateStatus === SoftwareCheckStatus.active) &&
+    isDeviceConnected;
 
   const notGenuineIsOpen = genuineCheckStatus === SoftwareCheckStatus.notGenuine;
 
   /** Opening and closing of drawers */
   useEffect(() => {
-    if (lockedDeviceModalIsOpen) {
-      const props: LockedDeviceDrawerProps = {
-        deviceModelId,
+    if (disconnectedDeviceModalIsOpen) {
+      const props: TroubleshootingDrawerProps = {
+        lastKnownDeviceId: deviceModelId,
+        onClose: () => {
+          resetGenuineCheckState();
+          history.push("/onboarding/select-device");
+        },
       };
-      setDrawer(LockedDeviceDrawer, props, commonDrawerProps);
+      setDrawer(TroubleshootingDrawer, props, commonDrawerProps);
     } else if (allowSecureChannelIsOpen) {
       const props: SoftwareCheckAllowSecureChannelDrawerProps = {
         deviceModelId,
@@ -268,6 +281,18 @@ const EarlySecurityChecks = ({
           setGenuineCheckStatus(SoftwareCheckStatus.active);
         },
         error: genuineCheckError,
+      };
+      setDrawer(ErrorDrawer, props, commonDrawerProps);
+    } else if (
+      networkStatus === NetworkStatus.OFFLINE &&
+      genuineCheckStatus !== SoftwareCheckStatus.inactive
+    ) {
+      const props: ErrorDrawerProps = {
+        onClickRetry: () => {
+          resetGenuineCheckState();
+          setGenuineCheckStatus(SoftwareCheckStatus.active);
+        },
+        error: new NetworkDown(),
       };
       setDrawer(ErrorDrawer, props, commonDrawerProps);
     } else if (
@@ -299,14 +324,17 @@ const EarlySecurityChecks = ({
     deviceModelId,
     genuineCheckError,
     getLatestAvailableFirmwareError,
-    lockedDeviceModalIsOpen,
+    disconnectedDeviceModalIsOpen,
     notGenuineIsOpen,
     productName,
     resetGenuineCheckState,
+    history,
+    networkStatus,
+    genuineCheckStatus,
   ]);
 
   return (
-    <Flex flex={1} flexDirection="column" justifyContent="center" alignItems="center">
+    <Flex flex={1} flexDirection="column" alignItems="center" marginTop="64px">
       {isInitialRunOfSecurityChecks && (
         <TrackPage category="Genuine check and OS update check start" />
       )}
@@ -318,7 +346,7 @@ const EarlySecurityChecks = ({
       )}
       {genuineCheckStatus === SoftwareCheckStatus.completed &&
         firmwareUpdateStatus === SoftwareCheckStatus.completed && (
-          <TrackPage category="The Stax is genuine and up to date" />
+          <TrackPage category="The device is genuine and up to date" />
         )}
       {firmwareUpdateStatus === SoftwareCheckStatus.updateAvailable && (
         <TrackPage category="Download OS update" />
@@ -336,31 +364,31 @@ const EarlySecurityChecks = ({
         }
         availableFirmwareVersion={availableFirmwareVersion}
         modelName={productName}
-        updateSkippable={updateInterrupted}
+        updateSkippable={latestFirmware?.final.id === fwUpdateInterrupted?.id}
         onClickStartChecks={() => {
-          track("button_clicked", { button: "Start checks" });
+          track("button_clicked2", { button: "Start checks" });
           setGenuineCheckStatus(SoftwareCheckStatus.active);
           resetGenuineCheckState();
         }}
         onClickWhyPerformSecurityChecks={() => {
-          track("button_clicked", { button: "Why perform these security checks" });
+          track("button_clicked2", { button: "Why perform these security checks" });
           openURL(whySecurityChecksUrl);
         }}
         onClickResumeGenuineCheck={() => {
-          track("button_clicked", { button: "Resume genuine check" });
+          track("button_clicked2", { button: "Resume genuine check" });
           setGenuineCheckStatus(SoftwareCheckStatus.active);
           resetGenuineCheckState();
         }}
         onClickViewUpdate={() => {
-          track("button_clicked", { button: "View update" });
+          track("button_clicked2", { button: "View update" });
           startFirmwareUpdate();
         }}
         onClickSkipUpdate={() => {
-          track("button_clicked", { button: "Skip update" });
+          track("button_clicked2", { button: "Skip update" });
           handleCompletion();
         }}
         onClickContinueToSetup={() => {
-          track("button_clicked", { button: "Continue to setup" });
+          track("button_clicked2", { button: "Continue to setup" });
           handleCompletion();
         }}
         onClickRetryUpdate={() => {

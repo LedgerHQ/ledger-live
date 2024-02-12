@@ -8,8 +8,8 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { TouchableOpacity } from "react-native";
 import { DeviceInfo } from "@ledgerhq/types-live";
-import { deviceNameByDeviceIdSelectorCreator } from "../../../reducers/ble";
-import { ScreenName } from "../../../const";
+import { deviceNameByDeviceIdSelectorCreator } from "~/reducers/ble";
+import { ScreenName } from "~/const";
 
 type Props = {
   device: Device;
@@ -55,6 +55,7 @@ export default function DeviceName({ device, initialDeviceName, disabled, device
         numberOfLines={2}
         ellipsizeMode="tail"
         flexShrink={1}
+        testID="manager-device-name"
       >
         {displayedName}
       </Text>

@@ -21,7 +21,7 @@ const MemoValueField = ({ onChange, account, transaction, status }: Props) => {
   invariant(transaction.family === "solana", "Memo: solana family expected");
   const bridge = getAccountBridge(account);
   const onMemoValueChange = useCallback(
-    memo => {
+    (memo: string) => {
       onChange(
         bridge.updateTransaction(transaction, {
           model: {

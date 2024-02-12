@@ -1,85 +1,40 @@
-import { listCryptoCurrencies } from "@ledgerhq/coin-framework/currencies/index";
-import { listTokens } from "@ledgerhq/cryptoassets";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
-import { useEffect, useState } from "react";
-import api from "../countervalues/api";
+import api from "@ledgerhq/live-countervalues/api/index";
 
-// FIXME in future we would put it back in ledgerjs to be more "dynamic"
-let currenciesAndTokenWithCountervaluesByTicker: Map<string, Currency> | null | undefined;
-
-function lazyLoadTickerMap() {
-  if (currenciesAndTokenWithCountervaluesByTicker)
-    return currenciesAndTokenWithCountervaluesByTicker;
-  const m: Map<string, Currency> = new Map();
-  listTokens().forEach(t => {
-    if (!t.disableCountervalue && !m.has(t.ticker)) {
-      m.set(t.ticker, t);
+// sort currencies by ids provided
+export const sortCurrenciesByIds = <C extends Currency>(currencies: C[], ids: string[]): C[] => {
+  const currenciesById = new Map();
+  for (const c of currencies) {
+    if (c.type !== "FiatCurrency") {
+      currenciesById.set(c.id, c);
     }
-  });
-  listCryptoCurrencies().forEach(c => {
-    if (
-      !c.disableCountervalue &&
-      // FIXME Avoid duplicates & override if the already set currency is a token
-      // E.g. 'Binance-Peg Ethereum Token' has an 'ETH' ticker
-      (!m.has(c.ticker) || m.get(c.ticker)?.type !== "CryptoCurrency")
-    ) {
-      m.set(c.ticker, c);
+  }
+  const all = new Set<C>();
+  for (const id of ids) {
+    const currency = currenciesById.get(id);
+    if (currency) {
+      all.add(currency);
     }
-  });
-  currenciesAndTokenWithCountervaluesByTicker = m;
-  return m;
-}
-
-export const sortByMarketcap = <C extends Currency>(currencies: C[], tickers: string[]): C[] => {
-  const m = lazyLoadTickerMap();
-  const list = currencies.slice(0);
-  const prependList: C[] = [];
-  tickers.forEach(ticker => {
-    const item: C | undefined = m.get(ticker) as C | undefined;
-
-    if (item) {
-      const i = list.indexOf(item);
-
-      if (i !== -1) {
-        list.splice(i, 1);
-        prependList.push(item);
-      }
-    }
-  });
-  return prependList.concat(list);
+  }
+  for (const cur of currencies) {
+    all.add(cur);
+  }
+  return [...all];
 };
 
-let marketcapTickersCache;
-export const getMarketcapTickers: () => Promise<string[]> = makeLRUCache(() =>
-  api.fetchMarketcapTickers().then(tickers => {
-    marketcapTickersCache = tickers;
-    return tickers;
+let marketcapIdsCache;
+export const getMarketcapIdsSync = () => marketcapIdsCache;
+
+export const fetchMarketcapIds: () => Promise<string[]> = makeLRUCache(() =>
+  api.fetchIdsSortedByMarketcap().then(ids => {
+    marketcapIdsCache = ids;
+    return ids;
   }),
 );
-// React style version of getMarketcapTickers
-export const useMarketcapTickers = (): string[] | null | undefined => {
-  const [tickers, setMarketcapTickers] = useState(marketcapTickersCache);
-  useEffect(() => {
-    let isMounted = true;
 
-    getMarketcapTickers().then(data => {
-      if (isMounted) setMarketcapTickers(data);
-    });
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-  return tickers;
-};
 export const currenciesByMarketcap = <C extends Currency>(currencies: C[]): Promise<C[]> =>
-  getMarketcapTickers().then(
-    tickers => sortByMarketcap(currencies, tickers),
+  fetchMarketcapIds().then(
+    ids => sortCurrenciesByIds(currencies, ids),
     () => currencies,
   );
-// React style version of currenciesByMarketcap
-export const useCurrenciesByMarketcap = <C extends Currency>(currencies: C[]): C[] => {
-  const tickers = useMarketcapTickers();
-  return tickers ? sortByMarketcap(currencies, tickers) : currencies;
-};

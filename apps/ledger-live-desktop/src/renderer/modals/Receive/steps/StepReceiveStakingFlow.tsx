@@ -35,41 +35,13 @@ export const CheckBoxContainer: typeof Flex = styled(Flex)`
 const StepReceiveStakingFlow = (props: StepProps) => {
   const { t } = useTranslation();
   const receiveStakingFlowConfig = useFeature("receiveStakingFlowConfigDesktop");
+  const { account } = props;
   const [doNotShowAgain, setDoNotShowAgain] = useState<boolean>(false);
-  // FIXME action is not used?
-  const [action, setAction] = useState<ManageAction | undefined>();
-  const [title, setTitle] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
-  const { account, parentAccount } = props;
 
   const id = account && "currency" in account ? account.currency?.id : undefined;
-  const supportLink = id ? receiveStakingFlowConfig?.params[id]?.supportLink : undefined;
-
-  const manage =
-    account && account.type === "Account"
-      ? getLLDCoinFamily(account.currency.family).accountHeaderManageActions
-      : null;
-
-  const familyManageActions =
-    account && manage ? manage({ account: account as Account, parentAccount }) : undefined;
-
-  useEffect(() => {
-    const manageList =
-      familyManageActions && familyManageActions.length > 0 ? familyManageActions : [];
-    const newAction = manageList && manageList.find(item => item.key === "Stake");
-    const newTitle = t(`receive.steps.staking.${id}.title`);
-    const newDescription = t(`receive.steps.staking.${id}.description`);
-    // FIXME fix this code. https://ledgerhq.atlassian.net/browse/LIVE-7343
-    if (JSON.stringify(title) !== JSON.stringify(newTitle)) {
-      setTitle(newTitle);
-    }
-    if (JSON.stringify(description) !== JSON.stringify(newDescription)) {
-      setDescription(newDescription);
-    }
-    if (JSON.stringify(action) !== JSON.stringify(newAction)) {
-      setAction(newAction);
-    }
-  }, [action, description, familyManageActions, id, t, title]);
+  const supportLink = id ? receiveStakingFlowConfig?.params?.[id]?.supportLink : undefined;
+  const title = t(`receive.steps.staking.${id}.title`);
+  const description = t(`receive.steps.staking.${id}.description`);
 
   const getTrackProperties = useCallback(() => {
     return {
@@ -83,19 +55,22 @@ const StepReceiveStakingFlow = (props: StepProps) => {
   }, []);
 
   const openLink = useCallback(() => {
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "learn_more",
       ...getTrackProperties(),
       link: supportLink,
     });
-    openURL(supportLink, "OpenURL", getTrackProperties());
+
+    if (supportLink) {
+      openURL(supportLink, "OpenURL", getTrackProperties());
+    }
   }, [getTrackProperties, supportLink]);
 
   const onChange = useCallback(() => {
     const value = !doNotShowAgain;
     global.localStorage.setItem(`${LOCAL_STORAGE_KEY_PREFIX}${id}`, "" + value);
     setDoNotShowAgain(value);
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "not_show",
       ...getTrackProperties(),
       value,
@@ -139,7 +114,8 @@ export const StepReceiveStakingFooter = (props: StepProps) => {
     const manageList =
       familyManageActions && familyManageActions.length > 0 ? familyManageActions : [];
     const newAction = manageList && manageList.find(item => item.key === "Stake");
-    if (JSON.stringify(newAction) !== JSON.stringify(action)) {
+
+    if (newAction?.key !== action?.key || newAction?.label !== action?.label) {
       setAction(newAction);
     }
   }, [action, familyManageActions]);
@@ -160,7 +136,7 @@ export const StepReceiveStakingFooter = (props: StepProps) => {
 
   const onStake = useCallback(() => {
     if (action && "onClick" in action && action?.onClick) {
-      track("button_clicked", {
+      track("button_clicked2", {
         button: "stake",
         ...getTrackProperties(),
       });
@@ -173,7 +149,7 @@ export const StepReceiveStakingFooter = (props: StepProps) => {
   }, [action, closeModal, getTrackProperties]);
 
   const onCloseModal = useCallback(() => {
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "skip",
       ...getTrackProperties(),
     });

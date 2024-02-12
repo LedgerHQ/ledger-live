@@ -10,6 +10,9 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import { useExperimental } from "../../experimental";
+import Config from "react-native-config";
+import { HEIGHT as ExperimentalHeaderHeight } from "~/screens/Settings/Experimental/ExperimentalHeader";
 import proxyStyled, { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import styled, { useTheme } from "styled-components/native";
@@ -18,12 +21,12 @@ import Touchable from "../Touchable";
 import TransferDrawer from "./TransferDrawer";
 import { lockSubject } from "../RootNavigator/CustomBlockRouterNavigator";
 import { MAIN_BUTTON_BOTTOM, MAIN_BUTTON_SIZE } from "./shared";
-import { useTrack } from "../../analytics";
-import { readOnlyModeEnabledSelector } from "../../reducers/settings";
+import { useTrack } from "~/analytics";
+import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 
-import lightAnimSource from "../../animations/mainButton/light.json";
-import darkAnimSource from "../../animations/mainButton/dark.json";
-import { AnalyticsContext } from "../../analytics/AnalyticsContext";
+import lightAnimSource from "~/animations/mainButton/light.json";
+import darkAnimSource from "~/animations/mainButton/dark.json";
+import { AnalyticsContext } from "~/analytics/AnalyticsContext";
 
 const MainButton = proxyStyled(Touchable).attrs({
   backgroundColor: "primary.c80",
@@ -74,7 +77,7 @@ const BackdropPressable = Animated.createAnimatedComponent(styled(Pressable)`
   background-color: rgba(0, 0, 0, 0.7);
 `);
 
-const DURATION_MS = 400;
+const DURATION_MS = Config.MOCK ? 50 : 400;
 const Y_AMPLITUDE = 90;
 
 const animParams = { duration: DURATION_MS };
@@ -86,7 +89,7 @@ export function TransferTabIcon() {
   const {
     colors: { type: themeType },
   } = useTheme();
-
+  const isExperimental = useExperimental();
   const track = useTrack();
 
   // Value used to derive which step of animation is being displayed.
@@ -192,6 +195,12 @@ export function TransferTabIcon() {
   const { width: screenWidth, height: screenHeight } = Dimensions.get("screen");
   const { bottom: bottomInset, top: topInset } = useSafeAreaInsets();
 
+  const drawerHeight =
+    screenHeight -
+    bottomInset -
+    topInset -
+    (isExperimental || Config.MOCK ? ExperimentalHeaderHeight : 0);
+
   return (
     <>
       <BackdropPressable animatedProps={backdropProps} onPress={closeModal} style={opacityStyle} />
@@ -201,11 +210,11 @@ export function TransferTabIcon() {
           style={[
             {
               width: screenWidth,
-              maxHeight: screenHeight * 0.9 - bottomInset - topInset,
+              maxHeight: drawerHeight,
               paddingBottom: bottomInset + 16 + MAIN_BUTTON_SIZE + MAIN_BUTTON_BOTTOM,
             },
-            opacityStyle,
-            translateYStyle,
+            Config.MOCK ? {} : opacityStyle,
+            Config.MOCK ? {} : translateYStyle,
           ]}
         >
           <TransferDrawer onClose={closeModal} />
@@ -221,7 +230,7 @@ export function TransferTabIcon() {
       >
         <ButtonAnimation
           source={themeType === "light" ? lightAnimSource : darkAnimSource}
-          animatedProps={lottieProps}
+          animatedProps={Config.MOCK ? {} : { lottieProps }}
           loop={false}
         />
       </MainButton>

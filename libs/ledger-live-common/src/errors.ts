@@ -13,7 +13,6 @@ export const LatestFirmwareVersionRequired = createCustomErrorClass(
 );
 
 export const FeeEstimationFailed = createCustomErrorClass("FeeEstimationFailed");
-export const LowerThanMinimumRelayFee = createCustomErrorClass("LowerThanMinimumRelayFee");
 export const TransactionRefusedOnDevice = createCustomErrorClass("TransactionRefusedOnDevice");
 
 export const LanguageInstallRefusedOnDevice = createCustomErrorClass(
@@ -34,21 +33,7 @@ export const DeviceAlreadySetup = createCustomErrorClass("DeviceAlreadySetup");
 export const InvalidAddressBecauseAlreadyDelegated = createCustomErrorClass(
   "InvalidAddressBecauseAlreadyDelegated",
 );
-export const TronNoFrozenForBandwidth = createCustomErrorClass("TronNoFrozenForBandwidth");
-export const TronNoFrozenForEnergy = createCustomErrorClass("TronNoFrozenForEnergy");
-export const TronUnfreezeNotExpired = createCustomErrorClass("TronUnfreezeNotExpired");
-export const TronVoteRequired = createCustomErrorClass("TronVoteRequired");
-export const TronInvalidVoteCount = createCustomErrorClass("TronInvalidVoteCount");
-export const TronRewardNotAvailable = createCustomErrorClass("TronRewardNotAvailable");
-export const TronNoReward = createCustomErrorClass("TronNoReward");
-export const TronInvalidFreezeAmount = createCustomErrorClass("TronInvalidFreezeAmount");
-export const TronSendTrc20ToNewAccountForbidden = createCustomErrorClass(
-  "TronSendTrc20ToNewAccountForbidden",
-);
-export const TronUnexpectedFees = createCustomErrorClass("TronUnexpectedFees");
-export const TronNotEnoughTronPower = createCustomErrorClass("TronNotEnoughTronPower");
-export const TronTransactionExpired = createCustomErrorClass("TronTransactionExpired");
-export const TronNotEnoughEnergy = createCustomErrorClass("TronNotEnoughEnergy");
+
 export const AccountAwaitingSendPendingOperations = createCustomErrorClass(
   "AccountAwaitingSendPendingOperations",
 );
@@ -152,5 +137,5 @@ export * from "@ledgerhq/coin-algorand/errors";
 export * from "./families/stellar/errors";
 export * from "./families/solana/errors";
 export * from "./families/cardano/errors";
-export * from "./families/near/errors";
+export * from "@ledgerhq/coin-near/errors";
 export * from "@ledgerhq/coin-evm/errors";

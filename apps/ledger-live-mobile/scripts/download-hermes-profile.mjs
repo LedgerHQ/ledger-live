@@ -1,4 +1,5 @@
 #!/usr/bin/env zx
+/* eslint no-console: 0 */
 
 import fs from "fs";
 import path from "path";
@@ -6,13 +7,7 @@ import path from "path";
 // replace the package name com.ledger.live by com.ledger.live.debug in
 // AndroidManifest.xml as `react-native profile-hermes` is a bit too dumb to
 // get the right package name derived from the appIdSuffix
-const manifestPath = path.resolve(
-  "android",
-  "app",
-  "src",
-  "main",
-  "AndroidManifest.xml",
-);
+const manifestPath = path.resolve("android", "app", "src", "main", "AndroidManifest.xml");
 const originalManifestContent = fs.readFileSync(manifestPath, "utf8");
 const newManifestContent = originalManifestContent.replace(
   'package="com.ledger.live"',

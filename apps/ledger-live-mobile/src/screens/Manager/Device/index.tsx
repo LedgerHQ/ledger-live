@@ -1,4 +1,12 @@
-import React, { useRef, useEffect, memo, useCallback, useMemo, useState } from "react";
+import React, {
+  useRef,
+  useEffect,
+  memo,
+  useCallback,
+  useMemo,
+  useState,
+  PropsWithChildren,
+} from "react";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 
@@ -12,12 +20,12 @@ import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/manager/loc
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { lastSeenCustomImageSelector } from "../../../reducers/settings";
+import { lastSeenCustomImageSelector } from "~/reducers/settings";
 import DeviceAppStorage from "./DeviceAppStorage";
 
-import NanoS from "../../../images/devices/NanoS";
-import Stax from "../../../images/devices/Stax";
-import NanoX from "../../../images/devices/NanoX";
+import NanoS from "~/images/devices/NanoS";
+import Stax from "~/images/devices/Stax";
+import NanoX from "~/images/devices/NanoX";
 
 import DeviceName from "./DeviceName";
 import InstalledAppsModal from "../Modals/InstalledAppsModal";
@@ -33,7 +41,7 @@ const illustrations = {
   stax: Stax,
 };
 
-type Props = {
+type Props = PropsWithChildren<{
   distribution: AppsDistribution;
   state: State;
   result: ListAppsResult;
@@ -42,16 +50,15 @@ type Props = {
   pendingInstalls: boolean;
   deviceInfo: DeviceInfo;
   device: Device;
-  setAppUninstallWithDependencies: (params: { dependents: App[]; app: App }) => void;
   dispatch: (action: Action) => void;
   appList: App[];
   onLanguageChange: () => void;
-};
+}>;
 
 const BorderCard = styled.View`
   flex-direction: column;
   border: 1px solid ${p => p.theme.colors.neutral.c40};
-  border-radius: 4px;
+  border-radius: 8px;
 `;
 
 const DeviceCard = ({
@@ -61,10 +68,10 @@ const DeviceCard = ({
   initialDeviceName,
   pendingInstalls,
   deviceInfo,
-  setAppUninstallWithDependencies,
   dispatch,
   appList,
   onLanguageChange,
+  children,
 }: Props) => {
   const { colors, theme } = useTheme();
   const lastSeenCustomImage = useSelector(lastSeenCustomImageSelector);
@@ -110,6 +117,7 @@ const DeviceCard = ({
 
   return (
     <BorderCard>
+      {children}
       <Flex flexDirection={"row"} mt={20} mx={4} mb={8} alignItems="center">
         {illustration}
         <Flex
@@ -126,7 +134,12 @@ const DeviceCard = ({
             disabled={disableFlows}
           />
           <Flex backgroundColor={"neutral.c30"} py={1} px={3} borderRadius={4} my={2}>
-            <Text variant={"subtitle"} fontWeight={"semiBold"} color={"neutral.c80"}>
+            <Text
+              variant={"subtitle"}
+              fontWeight={"semiBold"}
+              color={"neutral.c80"}
+              testID="manager-device-version"
+            >
               <Trans
                 i18nKey="FirmwareVersionRow.subtitle"
                 values={{ version: deviceInfo.version }}
@@ -192,7 +205,6 @@ const DeviceCard = ({
         state={state}
         dispatch={dispatch}
         appList={appList}
-        setAppUninstallWithDependencies={setAppUninstallWithDependencies}
         illustration={illustration}
         deviceInfo={deviceInfo}
       />

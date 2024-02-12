@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { changes, getEnv } from "./env";
-import type { EnvName, EnvValue } from "./env";
+import { changes, getEnv } from "@ledgerhq/live-env";
+import type { EnvName, EnvValue } from "@ledgerhq/live-env";
 
 export const useEnv = <Name extends EnvName>(type: Name): EnvValue<Name> => {
   const [env, setEnv] = useState(() => getEnv(type));

@@ -2,6 +2,7 @@ import { handleActions } from "redux-actions";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { State } from "~/renderer/reducers";
 import { Handlers } from "./types";
+import { Data as CompleteExchangeData } from "~/renderer/modals/Platform/Exchange/CompleteExchange/Body";
 
 export type PlatformAppDrawerInfo = {
   type: "DAPP_INFO";
@@ -15,6 +16,24 @@ export type PlatformAppDrawerDisclaimer = {
   title: string;
   next: () => void;
 };
+
+export type StartExchangeAppDrawer = {
+  type: "EXCHANGE_START";
+  title: string;
+  data: {
+    exchangeType: number;
+    onResult: () => void;
+    onCancel: () => void;
+  };
+};
+
+export type CompleteExchangeAppDrawer = {
+  type: "EXCHANGE_COMPLETED";
+  title: string;
+  data: CompleteExchangeData;
+};
+
+export type ExchangeAppDrawer = CompleteExchangeAppDrawer & StartExchangeAppDrawer;
 
 export type PlatformAppDrawers = PlatformAppDrawerInfo & PlatformAppDrawerDisclaimer;
 
@@ -50,6 +69,7 @@ type HandlersPayloads = {
   INFORMATION_CENTER_CLOSE: never;
   PLATFORM_APP_DRAWER_OPEN: PlatformAppDrawers;
   PLATFORM_APP_DRAWER_CLOSE: never;
+  EXCHANGE_APP_DRAWER_OPEN: ExchangeAppDrawer;
 };
 type UIHandlers<PreciseKey = true> = Handlers<UIState, HandlersPayloads, PreciseKey>;
 
@@ -99,6 +119,15 @@ const handlers: UIHandlers = {
       platformAppDrawer: {
         ...state.platformAppDrawer,
         isOpen: false,
+      },
+    };
+  },
+  EXCHANGE_APP_DRAWER_OPEN: (state, { payload }) => {
+    return {
+      ...state,
+      platformAppDrawer: {
+        isOpen: true,
+        payload,
       },
     };
   },

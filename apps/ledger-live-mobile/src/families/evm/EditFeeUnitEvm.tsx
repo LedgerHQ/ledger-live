@@ -7,8 +7,8 @@ import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
 import Slider from "react-native-slider";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import LText from "../../components/LText";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import LText from "~/components/LText";
 
 const FeeSlider = React.memo(
   ({
@@ -17,13 +17,13 @@ const FeeSlider = React.memo(
     range,
   }: {
     value: BigNumber;
-    onChange: (arg: unknown) => void;
+    onChange: (arg: BigNumber) => void;
     range: Range;
   }) => {
     const { colors } = useTheme();
     const index = reverseRangeIndex(range, value);
     const setValueIndex = useCallback(
-      i => onChange(projectRangeIndex(range, i)),
+      (i: number | string) => onChange(projectRangeIndex(range, i as number)),
       [range, onChange],
     );
     return (
@@ -53,7 +53,7 @@ export default function EditFeeUnitEvm({ account, feeAmount, onChange, range, ti
   const unit = getDefaultFeeUnit(account.currency);
 
   const onChangeF = useCallback(
-    value => {
+    (value: BigNumber) => {
       onChange(value);
     },
     [onChange],

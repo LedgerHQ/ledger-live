@@ -3,7 +3,7 @@ import { Trans } from "react-i18next";
 import styled from "styled-components/native";
 import { Text, Flex, IconsLegacy, Button } from "@ledgerhq/native-ui";
 
-import QueuedDrawer from "../../../components/QueuedDrawer";
+import QueuedDrawer from "~/components/QueuedDrawer";
 
 type Props = {
   warning: string | null;

@@ -2,7 +2,7 @@ import { WebsocketConnectionError } from "@ledgerhq/errors";
 import axios from "axios";
 import WS from "isomorphic-ws";
 import { Observable } from "rxjs";
-import { getEnv } from "../env";
+import { getEnv } from "@ledgerhq/live-env";
 import announcementsApi from "../notifications/AnnouncementProvider/api/api";
 import serviceStatusApi from "../notifications/ServiceStatusProvider/api/api";
 
@@ -41,7 +41,7 @@ export function troubleshoot(): Troubleshoot[] {
     },
     {
       title: "Countervalues API",
-      ...httpGet(`${getEnv("LEDGER_COUNTERVALUES_API")}/latest/direct?pairs=btc:usd`),
+      ...httpGet(`${getEnv("LEDGER_COUNTERVALUES_API")}/v3/spot/simple?froms=bitcoin&to=eur`),
     },
     {
       title: "Announcements",

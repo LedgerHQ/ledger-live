@@ -23,13 +23,14 @@ saveState("cleanupCacheFolder", cleanupCacheFolder);
       ...process.env,
       AWS_ACCESS_KEY_ID: getInput("aws-access-key"),
       AWS_SECRET_ACCESS_KEY: getInput("aws-secret-key"),
+      AWS_SESSION_TOKEN: getInput("aws-session-token"),
     },
   });
 
   subprocess.unref();
 
-  let interval = null;
-  let timeout = null;
+  let interval: ReturnType<typeof setInterval> | null = null;
+  let timeout: ReturnType<typeof setTimeout> | null = null;
 
   try {
     await Promise.race<string | void>([
@@ -52,8 +53,8 @@ saveState("cleanupCacheFolder", cleanupCacheFolder);
   } catch (error) {
     console.error("Timeout while waiting for the server to boot.");
   } finally {
-    clearInterval(interval);
-    clearTimeout(timeout);
+    if (interval) clearInterval(interval);
+    if (timeout) clearTimeout(timeout);
   }
 
   info(`Server PID: ${subprocess.pid}`);

@@ -42,7 +42,7 @@ describe("@deviceSDK/tasks/toggleOnboardingEarlyCheckTask", () => {
   describe("When the device is neither in the WELCOME and WELCOME_STEP2 onboarding state, and it returns 0x6982", () => {
     it("should emit a task error event with the correct error type", done => {
       mockedToggleOnboardingEarlyCheckCmd.mockReturnValue(
-        throwError(new TransportStatusError(StatusCodes.SECURITY_STATUS_NOT_SATISFIED)),
+        throwError(() => new TransportStatusError(StatusCodes.SECURITY_STATUS_NOT_SATISFIED)),
       );
 
       toggleOnboardingEarlyCheckTask({
@@ -73,7 +73,7 @@ describe("@deviceSDK/tasks/toggleOnboardingEarlyCheckTask", () => {
   describe("When the command is not respected the expected APDU format", () => {
     it("should emit a task error event with the correct error type", done => {
       mockedToggleOnboardingEarlyCheckCmd.mockReturnValue(
-        throwError(new TransportStatusError(StatusCodes.INCORRECT_LENGTH)),
+        throwError(() => new TransportStatusError(StatusCodes.INCORRECT_LENGTH)),
       );
 
       toggleOnboardingEarlyCheckTask({

@@ -1,8 +1,7 @@
 import { device, expect } from "detox";
 import { loadConfig } from "../bridge/server";
 import { getElementByText, isAndroid } from "../helpers";
-import AccountPage from "../models/accounts/accountPage";
-import AccountsPage from "../models/accounts/accountsPage";
+
 import CustomLockscreenPage from "../models/stax/customLockscreenPage";
 import DiscoverPage from "../models/discover/discoverPage";
 import ManagerPage from "../models/manager/managerPage";
@@ -11,10 +10,11 @@ import SendPage from "../models/trade/sendPage";
 import SwapFormPage from "../models/trade/swapFormPage";
 import ReceivePage from "../models/trade/receivePage";
 import OnboardingSteps from "../models/onboarding/onboardingSteps";
+import AccountPage from "../models/accounts/accountPage";
+import Common from "../models/common";
 
 let accountPage: AccountPage;
 let onboardingSteps: OnboardingSteps;
-let accountsPage: AccountsPage;
 let customLockscreenPage: CustomLockscreenPage;
 let discoverPage: DiscoverPage;
 let managerPage: ManagerPage;
@@ -22,6 +22,7 @@ let portfolioPage: PortfolioPage;
 let sendPage: SendPage;
 let swapFormPage: SwapFormPage;
 let receivePage: ReceivePage;
+let common: Common;
 
 const ethereumLong = "Ethereum";
 const bitcoinLong = "Bitcoin";
@@ -59,7 +60,6 @@ describe("DeepLinks Tests", () => {
 
     accountPage = new AccountPage();
     onboardingSteps = new OnboardingSteps();
-    accountsPage = new AccountsPage();
     customLockscreenPage = new CustomLockscreenPage();
     discoverPage = new DiscoverPage();
     managerPage = new ManagerPage();
@@ -67,6 +67,7 @@ describe("DeepLinks Tests", () => {
     sendPage = new SendPage();
     swapFormPage = new SwapFormPage();
     receivePage = new ReceivePage();
+    common = new Common();
   });
 
   it("should open on Portofolio page", async () => {
@@ -79,22 +80,25 @@ describe("DeepLinks Tests", () => {
     await onboardingSteps.addDeviceViaBluetooth("David");
   });
 
+  it("should open Account page", async () => {
+    await accountPage.openViaDeeplink();
+    await accountPage.waitForAccountsPageToLoad();
+  });
+
+  it("should open ETH Account Asset page when given currency param", async () => {
+    await accountPage.openViaDeeplink(ethereumLong);
+    await accountPage.waitForAccountAssetsToLoad(ethereumLong);
+  });
+
+  it("should open BTC Account Asset page when given currency param", async () => {
+    await accountPage.openViaDeeplink(bitcoinLong);
+    await accountPage.waitForAccountAssetsToLoad(bitcoinLong);
+  });
+
   it("should open Custom Lock Screen page", async () => {
     await customLockscreenPage.openViaDeeplink();
     await customLockscreenPage.expectCustomLockscreenPage();
     await expect(customLockscreenPage.welcomeChoosePictureButton()).toBeVisible();
-  });
-
-  it("should open Accounts page", async () => {
-    await accountsPage.openViaDeeplink();
-    await accountsPage.waitForAccountsPageToLoad();
-  });
-
-  it("should open ETH & BTC Account pages", async () => {
-    await accountPage.openViaDeeplink(ethereumLong);
-    await accountPage.waitForAccountPageToLoad(ethereumLong);
-    await accountPage.openViaDeeplink(bitcoinLong);
-    await accountPage.waitForAccountPageToLoad(bitcoinLong);
   });
 
   it("should open the Discover page", async () => {
@@ -102,7 +106,8 @@ describe("DeepLinks Tests", () => {
     await expect(getElementByText("Discover")).toBeVisible();
   });
 
-  it("should open a live app and be able to navigate to and from crypto select screen", async () => {
+  // FIXME site unavailable on Android CI
+  it.skip("should open a live app and be able to navigate to and from crypto select screen", async () => {
     if (!isAndroid()) return;
     await discoverPage.openViaDeeplink(mercuryoDL.name);
     await discoverPage.waitForSelectCrypto();
@@ -125,16 +130,16 @@ describe("DeepLinks Tests", () => {
     await portfolioPage.openViaDeeplink();
     await sendPage.sendViaDeeplink(ethereumLong);
     await expect(sendPage.getStep1HeaderTitle()).toBeVisible();
-    await expect(sendPage.getSearchField()).toHaveText(ethereumLong);
+    await expect(common.searchBar()).toHaveText(ethereumLong);
   });
 
   it("should open Receive pages", async () => {
     await receivePage.openViaDeeplink();
-    await expect(receivePage.getStep1HeaderTitle()).toBeVisible();
+    await expect(receivePage.step1HeaderTitle()).toBeVisible();
     await portfolioPage.openViaDeeplink();
     await receivePage.receiveViaDeeplink(ethereumLong);
-    await expect(receivePage.getStep2HeaderTitle()).toBeVisible();
-    await expect(receivePage.getStep2Networks()).toBeVisible();
+    await expect(receivePage.step2HeaderTitle()).toBeVisible();
+    await expect(receivePage.step2Networks()).toBeVisible();
     await expect(getElementByText(ethereumLong)).toBeVisible();
     await expect(getElementByText(arbitrumLong)).toBeVisible();
     await expect(getElementByText(bobaLong)).toBeVisible();

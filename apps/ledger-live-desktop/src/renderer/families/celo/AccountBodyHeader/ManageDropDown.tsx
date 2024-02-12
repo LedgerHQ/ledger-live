@@ -38,6 +38,7 @@ const ManageDropDown = ({
   onSelect: (action: DropDownItemType) => void;
 }) => {
   return (
+    // @ts-expect-error cannot fix renderItem correctly...
     <DropDown items={actions} renderItem={ManageDropDownItem} onChange={onSelect}>
       {() => {
         return (

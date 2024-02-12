@@ -47,11 +47,13 @@ export default function StepValidator({
   return (
     <Box flow={1}>
       <TrackPage
-        category="Solana Delegation"
-        name="Step Validator"
+        category="Delegation Flow"
+        name="Step Starter"
         flow="stake"
         action="delegation"
         currency="sol"
+        type="modal"
+        page="Step Validator"
       />
       {error && <ErrorBanner error={error} />}
       {status ? (
@@ -84,6 +86,7 @@ export function StepValidatorFooter({
         <Button
           id="delegate-continue-button"
           disabled={!canNext}
+          isLoading={bridgePending}
           primary
           onClick={() => transitionTo("amount")}
         >

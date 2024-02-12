@@ -17,24 +17,24 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import { GraphTabs, Text, IconsLegacy } from "@ledgerhq/native-ui";
 import { Transaction } from "@ledgerhq/live-common/families/tron/types";
-import { accountScreenSelector } from "../../reducers/accounts";
-import { ScreenName } from "../../const";
-import { TrackScreen } from "../../analytics";
-import LText from "../../components/LText";
-import CurrencyUnitValue from "../../components/CurrencyUnitValue";
-import KeyboardView from "../../components/KeyboardView";
-import RetryButton from "../../components/RetryButton";
-import CancelButton from "../../components/CancelButton";
-import GenericErrorBottomModal from "../../components/GenericErrorBottomModal";
-import CurrencyInput from "../../components/CurrencyInput";
-import TranslatedError from "../../components/TranslatedError";
-import InfoModal from "../../modals/Info";
-import BandwidthIcon from "../../icons/Bandwidth";
-import EnergyIcon from "../../icons/Energy";
-import Button from "../../components/wrappedUi/Button";
-import { FreezeNavigatorParamList } from "../../components/RootNavigator/types/FreezeNavigator";
-import { StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { BaseNavigatorStackParamList } from "../../components/RootNavigator/types/BaseNavigator";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { ScreenName } from "~/const";
+import { TrackScreen } from "~/analytics";
+import LText from "~/components/LText";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import KeyboardView from "~/components/KeyboardView";
+import RetryButton from "~/components/RetryButton";
+import CancelButton from "~/components/CancelButton";
+import GenericErrorBottomModal from "~/components/GenericErrorBottomModal";
+import CurrencyInput from "~/components/CurrencyInput";
+import TranslatedError from "~/components/TranslatedError";
+import InfoModal from "~/modals/Info";
+import BandwidthIcon from "~/icons/Bandwidth";
+import EnergyIcon from "~/icons/Energy";
+import Button from "~/components/wrappedUi/Button";
+import { FreezeNavigatorParamList } from "~/components/RootNavigator/types/FreezeNavigator";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 
 const infoModalData = [
   {
@@ -69,7 +69,7 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
   const defaultUnit = getAccountUnit(account);
   const { spendableBalance } = account;
 
-  const [selectedRatio, selectRatio] = useState();
+  const [selectedRatio, selectRatio] = useState<BigNumber>();
 
   const [infoModalOpen, setInfoModalOpen] = useState<boolean>();
 
@@ -157,7 +157,7 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
   }, [setInfoModalOpen]);
 
   const onRatioPress = useCallback(
-    value => {
+    (value: BigNumber) => {
       blur();
       selectRatio(value);
       onChange(value, true);
@@ -166,7 +166,7 @@ export default function FreezeAmount({ navigation, route }: NavigatorProps) {
   );
 
   const onChangeResource = useCallback(
-    optionIndex => {
+    (optionIndex: number) => {
       setTransaction(
         bridge.updateTransaction(transaction, {
           resource: options[optionIndex].value,

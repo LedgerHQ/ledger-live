@@ -1,15 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`stacks currency bridge scanAccounts stacks seed 1 1`] = `
-Array [
-  Object {
+[
+  {
     "balance": "2100000",
     "currencyId": "stacks",
     "derivationMode": "",
     "freshAddress": "SP3KS7VMY2ZNE6SB88PHR4SKRK2EEPHS8N8MCCBR9",
     "freshAddressPath": "44'/5757'/0'/0/0",
-    "freshAddresses": Array [
-      Object {
+    "freshAddresses": [
+      {
         "address": "SP3KS7VMY2ZNE6SB88PHR4SKRK2EEPHS8N8MCCBR9",
         "derivationPath": "44'/5757'/0'/0/0",
       },
@@ -19,24 +19,24 @@ Array [
     "name": "Stacks 1",
     "nfts": undefined,
     "operationsCount": 2,
-    "pendingOperations": Array [],
+    "pendingOperations": [],
     "seedIdentifier": "022a460decc9dba8c452927fecb33d7ae25a8d79dc5442b84feaf8f3aa0e2b575d",
     "spendableBalance": "2100000",
     "starred": false,
-    "swapHistory": Array [],
+    "swapHistory": [],
     "syncHash": undefined,
     "unitMagnitude": 6,
     "used": true,
     "xpub": "022a460decc9dba8c452927fecb33d7ae25a8d79dc5442b84feaf8f3aa0e2b575d",
   },
-  Object {
+  {
     "balance": "0",
     "currencyId": "stacks",
     "derivationMode": "",
     "freshAddress": "SP2DV2RVZP1A69Q6VAG5PHEQ6ZHQHZPCV84TMYNGN",
     "freshAddressPath": "44'/5757'/1'/0/0",
-    "freshAddresses": Array [
-      Object {
+    "freshAddresses": [
+      {
         "address": "SP2DV2RVZP1A69Q6VAG5PHEQ6ZHQHZPCV84TMYNGN",
         "derivationPath": "44'/5757'/1'/0/0",
       },
@@ -46,11 +46,11 @@ Array [
     "name": "Stacks 2",
     "nfts": undefined,
     "operationsCount": 0,
-    "pendingOperations": Array [],
+    "pendingOperations": [],
     "seedIdentifier": "022a460decc9dba8c452927fecb33d7ae25a8d79dc5442b84feaf8f3aa0e2b575d",
     "spendableBalance": "0",
     "starred": false,
-    "swapHistory": Array [],
+    "swapHistory": [],
     "syncHash": undefined,
     "unitMagnitude": 6,
     "used": false,
@@ -60,24 +60,24 @@ Array [
 `;
 
 exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
-Array [
-  Array [
-    Object {
+[
+  [
+    {
       "accountId": "js:2:stacks:022a460decc9dba8c452927fecb33d7ae25a8d79dc5442b84feaf8f3aa0e2b575d:",
       "blockHash": null,
       "blockHeight": 76538,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "memo": "zondax-test",
       },
       "fee": "72000",
       "hash": "0x445e42f706602f2f10a956894a61d7f558cd6e5bc88cb4b708ea72e00419d7b0",
       "id": "js:2:stacks:022a460decc9dba8c452927fecb33d7ae25a8d79dc5442b84feaf8f3aa0e2b575d:-0x445e42f706602f2f10a956894a61d7f558cd6e5bc88cb4b708ea72e00419d7b0-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "SP3KS7VMY2ZNE6SB88PHR4SKRK2EEPHS8N8MCCBR9",
       ],
-      "senders": Array [
+      "senders": [
         "SP17YZQB1228EK9MPHQXA8GC4G3HVWZ66X7VRPMAX",
       ],
       "standard": undefined,
@@ -86,22 +86,22 @@ Array [
       "type": "IN",
       "value": "2000000",
     },
-    Object {
+    {
       "accountId": "js:2:stacks:022a460decc9dba8c452927fecb33d7ae25a8d79dc5442b84feaf8f3aa0e2b575d:",
       "blockHash": null,
       "blockHeight": 76373,
       "contract": undefined,
-      "extra": Object {
+      "extra": {
         "memo": "",
       },
       "fee": "180",
       "hash": "0x6f1075f275482ca923b2fe9f8386c50fde0d3bdf5fee880459c6009d19777ffb",
       "id": "js:2:stacks:022a460decc9dba8c452927fecb33d7ae25a8d79dc5442b84feaf8f3aa0e2b575d:-0x6f1075f275482ca923b2fe9f8386c50fde0d3bdf5fee880459c6009d19777ffb-IN",
       "operator": undefined,
-      "recipients": Array [
+      "recipients": [
         "SP3KS7VMY2ZNE6SB88PHR4SKRK2EEPHS8N8MCCBR9",
       ],
-      "senders": Array [
+      "senders": [
         "SP1QM16S93TEMM1Q9QHB8WV1EEEC3Z2Y3P0AE287S",
       ],
       "standard": undefined,
@@ -111,6 +111,6 @@ Array [
       "value": "100000",
     },
   ],
-  Array [],
+  [],
 ]
 `;

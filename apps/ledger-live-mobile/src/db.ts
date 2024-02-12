@@ -5,7 +5,7 @@ import type {
   CounterValuesStateRaw,
   RateMapRaw,
   CounterValuesStatus,
-} from "@ledgerhq/live-common/countervalues/types";
+} from "@ledgerhq/live-countervalues/types";
 import { Announcement } from "@ledgerhq/live-common/notifications/AnnouncementProvider/types";
 import { useDBRaw } from "@ledgerhq/live-common/hooks/useDBRaw";
 import { Dispatch, SetStateAction } from "react";
@@ -76,7 +76,7 @@ export async function unsafeGetCountervalues(): Promise<CounterValuesStateRaw> {
       ({
         ...prev,
         [keys[i].split(COUNTERVALUES_DB_PREFIX)[1]]: val,
-      } as CounterValuesStateRaw),
+      }) as CounterValuesStateRaw,
     {} as CounterValuesStateRaw,
   );
 }

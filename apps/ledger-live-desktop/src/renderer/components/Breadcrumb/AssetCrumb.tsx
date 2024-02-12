@@ -12,13 +12,24 @@ import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { Separator, Item, TextLink, AngleDown, Check } from "./common";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import { DistributionItem } from "@ledgerhq/types-live";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { hideEmptyTokenAccountsSelector } from "~/renderer/reducers/settings";
+import { useSelector } from "react-redux";
+
+type ItemShape = {
+  key: string;
+  label: string;
+  currency: CryptoCurrency | TokenCurrency;
+};
+
 export default function AssetCrumb() {
   const { t } = useTranslation();
-  const distribution = useDistribution();
+  const hideEmptyTokenAccount = useSelector(hideEmptyTokenAccountsSelector);
+  const distribution = useDistribution({ hideEmptyTokenAccount });
   const history = useHistory();
   const { assetId } = useParams<{ assetId?: string }>();
   const renderItem = useCallback(
-    ({ item, isActive }) => (
+    ({ item, isActive }: { item: ItemShape; isActive: boolean }) => (
       <Item key={item.currency.id} isActive={isActive}>
         <CryptoCurrencyIcon size={16} currency={item.currency} />
         <Text ff={`Inter|${isActive ? "SemiBold" : "Regular"}`} fontSize={4}>
@@ -34,7 +45,7 @@ export default function AssetCrumb() {
     [],
   );
   const onAccountSelected = useCallback(
-    item => {
+    (item: ItemShape) => {
       if (!item) {
         return;
       }

@@ -1,8 +1,8 @@
 {
-  "name": "actions-root",
-  "version": "0.0.1",
+  "name": "@ledgerhq/actions-root",
+  "version": "0.0.2",
   "private": true,
   "devDependencies": {
-    "@types/node": "^18.15.11"
+    "@types/node": "^20.8.10"
   }
 }

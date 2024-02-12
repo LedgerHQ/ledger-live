@@ -8,20 +8,24 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
   cancel-in-progress: true
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version:
-            3.1.2 # Not needed with a .ruby-version file
-            # runs 'bundle install' and caches installed gems automatically
+          ruby-version: 3.2.2
+          # Not needed with a .ruby-version file
+          # runs 'bundle install' and caches installed gems automatically
       - name: Install Dependencies
         run: pnpm i -F "ledger-live" -F "{libs/**}..." -F "@ledgerhq/live-cli"
       - name: Create Release Pull Request or Publish to npm/Github

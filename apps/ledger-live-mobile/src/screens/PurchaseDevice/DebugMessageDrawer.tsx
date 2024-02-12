@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { Flex, Text } from "@ledgerhq/native-ui";
 
-import QueuedDrawer from "../../components/QueuedDrawer";
+import QueuedDrawer from "~/components/QueuedDrawer";
 import { PurchaseMessage } from "./types";
 
 export type Props = {

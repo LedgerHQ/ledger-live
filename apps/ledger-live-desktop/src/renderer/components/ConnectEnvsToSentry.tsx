@@ -1,12 +1,13 @@
 import { useEffect } from "react";
 import { ipcRenderer } from "electron";
-import { EnvName, getEnv } from "@ledgerhq/live-common/env";
-import { defaultFeatures, useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
+import { EnvName, getEnv } from "@ledgerhq/live-env";
+import { DEFAULT_FEATURES, useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
 import { FeatureId } from "@ledgerhq/types-live";
 import { enabledExperimentalFeatures } from "../experimental";
 import { setTags } from "../../sentry/renderer";
+import { Primitive } from "@sentry/types";
 
-type Tags = { [_: string]: boolean | number | string | undefined };
+type Tags = { [key: string]: Primitive };
 
 function setSentryTagsEverywhere(tags: Tags) {
   ipcRenderer.invoke("set-sentry-tags", tags);
@@ -31,15 +32,15 @@ export const ConnectEnvsToSentry = () => {
     const syncTheTags = () => {
       const tags: Tags = {};
       // if there are experimental on, we will add them in tags
-      enabledExperimentalFeatures().forEach((key: EnvName) => {
-        tags[safekey(key)] = getEnv(key);
+      enabledExperimentalFeatures().forEach(key => {
+        tags[safekey(key)] = getEnv(key as EnvName) as Primitive;
       });
       // if there are features on, we will add them in tags
       const features: { [key in FeatureId]?: boolean } = {};
-      Object.keys(defaultFeatures).forEach(k => {
-        const key = k as keyof typeof defaultFeatures;
+      Object.keys(DEFAULT_FEATURES).forEach(k => {
+        const key = k as keyof typeof DEFAULT_FEATURES;
         const value = featureFlags.getFeature(key);
-        if (key && value && value.enabled !== defaultFeatures[key]!.enabled) {
+        if (key && value && value.enabled !== DEFAULT_FEATURES[key]!.enabled) {
           features[key] = value.enabled;
         }
       });
@@ -54,7 +55,7 @@ export const ConnectEnvsToSentry = () => {
     // We need to wait firebase to load the data and then we set once for all the tags
     const timeout = setTimeout(syncTheTags, 5000);
     // We also try to regularly update them so we are sure to get the correct tags (as these are dynamic)
-    const interval = setInterval(syncTheTags, 60000);
+    const interval = window.setInterval(syncTheTags, 60000);
     return () => {
       clearTimeout(timeout);
       clearInterval(interval);

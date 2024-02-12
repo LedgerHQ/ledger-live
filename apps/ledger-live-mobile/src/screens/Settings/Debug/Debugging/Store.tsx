@@ -1,7 +1,9 @@
 /* eslint-disable no-console */
 import React, { useCallback, useState } from "react";
 import styled from "styled-components/native";
-import { get, set, cloneDeep } from "lodash";
+import get from "lodash/get";
+import set from "lodash/set";
+import cloneDeep from "lodash/cloneDeep";
 import { BigNumber } from "bignumber.js";
 import { StyleSheet, SafeAreaView, ScrollView } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
@@ -10,12 +12,12 @@ import { useTheme } from "@react-navigation/native";
 import Share from "react-native-share";
 import Node from "./Node";
 import logger from "../../../../logger";
-import { dangerouslyOverrideState } from "../../../../actions/settings";
-import Button from "../../../../components/Button";
-import { SettingsActionTypes } from "../../../../actions/types";
-import { State } from "../../../../reducers/types";
-import QueuedDrawer from "../../../../components/QueuedDrawer";
-import TextInput from "../../../../components/FocusedTextInput";
+import { dangerouslyOverrideState } from "~/actions/settings";
+import Button from "~/components/Button";
+import { SettingsActionTypes } from "~/actions/types";
+import { State } from "~/reducers/types";
+import QueuedDrawer from "~/components/QueuedDrawer";
+import TextInput from "~/components/FocusedTextInput";
 
 const Separator = styled(Flex).attrs({
   width: "100%",
@@ -32,13 +34,13 @@ export default function Store() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [targetPath, setTargetPath] = useState("");
   const [targetType, setTargetType] = useState("string");
-  const [modifiedState, setModifiedState] = useState<State>(cloneDeep(state));
+  const [modifiedState, setModifiedState] = useState<State>(() => cloneDeep(state));
   const currentValue = get(modifiedState, targetPath);
 
   const dispatch = useDispatch();
 
   const onEdit = useCallback(
-    (path, type) => {
+    (path: string, type: string) => {
       const currentValue = get(modifiedState, path);
       setTargetType(type);
 
@@ -54,6 +56,7 @@ export default function Store() {
   );
 
   const onChangeText = useCallback(
+    // @ts-expect-error string | number but it means casting in the function
     value => {
       const currentValue = get(state, targetPath);
 
@@ -168,6 +171,7 @@ export default function Store() {
       </Flex>
       <Separator />
       <ScrollView contentContainerStyle={{ flex: 0, paddingBottom: 170 }}>
+        {/* @ts-expect-error onEdit gives (a: string, type?: string) => but our function needs type (and it seems always defined anyway) */}
         <Node data={modifiedState} onEdit={onEdit} />
       </ScrollView>
       <QueuedDrawer isRequestingToBeOpened={isModalOpen} onClose={onRestore}>

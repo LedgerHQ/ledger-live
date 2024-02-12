@@ -64,7 +64,7 @@
     "disclaimer" : {
       "title" : "Application externe",
       "description" : "Vous allez être redirigé(e) vers une application non exploitée par Ledger.",
-      "legalAdvice" : "Cette application n’est pas exploitée par Ledger. Ledger ne saurait être tenue responsable de toute perte de fonds ou qualité de service due à cette application.\n\nVérifiez toujours les informations affichées sur votre appareil.",
+      "legalAdvice" : "Cette application n’est pas exploitée par Ledger. Ledger ne saurait être tenu responsable de toute perte de fonds ou qualité de service due à cette application.\n\nVérifiez toujours les informations affichées sur votre appareil.",
       "checkbox" : "Ne plus me le rappeler",
       "CTA" : "Continuer"
     }
@@ -122,9 +122,9 @@
     "search" : "Rechercher...",
     "searchWithoutEllipsis" : "Rechercher",
     "manage" : "Gérer",
+    "tryAgain" : "Réessayer",
     "lockScreen" : {
       "title" : "Bienvenue",
-      "subTitle" : null,
       "description" : "Entrez votre mot de passe pour continuer",
       "inputPlaceholder" : "Saisissez votre mot de passe",
       "lostPassword" : "Mot de passe oublié"
@@ -142,7 +142,8 @@
     "connectDevice" : "Connectez votre appareil",
     "add" : "Ajouter",
     "or" : "OU",
-    "clearAll" : "Tout effacer"
+    "clearAll" : "Tout effacer",
+    "buyLedger" : "Acheter un appareil Ledger"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -166,6 +167,9 @@
       "VOTE" : "Voté",
       "FREEZE" : "Gelé",
       "UNFREEZE" : "Dégelé",
+      "UNDELEGATE_RESOURCE" : "Délégation arrêtée",
+      "WITHDRAW_EXPIRE_UNFREEZE" : "Retiré",
+      "LEGACYUNFREEZE" : "Dégelé",
       "REWARD" : "Récompense demandée",
       "FEES" : "Frais",
       "OPT_IN" : "Activé",
@@ -195,11 +199,11 @@
       "description" : "Votre transaction est en cours. Vous pouvez l’accélérer en augmentant les frais de réseau, ou l’annuler.",
       "stuckDescription" : "Votre transaction est bloquée. Accélérez-la en augmentant les frais de réseau, ou annulez-la.",
       "previousFeesInfo" : {
-        "pendingTransactionFeesInfo" : "Info sur les frais des transactions en attente : ",
-        "networkfee" : "Frais de réseau = ",
-        "maxFee" : "Frais maximaux = ",
-        "maxPriorityFee" : "Frais de priorité maximaux = ",
-        "gasPrice" : "Prix du gaz = "
+        "pendingTransactionFeesInfo" : "Info sur les frais des transactions en attente :",
+        "networkfee" : "Frais de réseau = {{amount}}",
+        "maxFee" : "Frais max. = {{amount}}",
+        "maxPriorityFee" : "Frais de priorité maximaux = {{amount}}",
+        "gasPrice" : "Prix du gaz = {{amount}}"
       },
       "learnMore" : "En savoir plus",
       "panel" : {
@@ -212,7 +216,7 @@
       },
       "cancel" : {
         "title" : "Annuler",
-        "description" : "Envoyez 0 {{ticker}} à votre propre adresse. Les frais de réseau doivent être 30 % plus élevés que les frais de la transaction à annuler."
+        "description" : "Envoyez 0 {{ticker}} à votre propre adresse."
       },
       "steps" : {
         "method" : {
@@ -283,7 +287,7 @@
     "lend" : "Prêter",
     "catalog" : "Discover",
     "market" : "Marché",
-    "recover" : "Ledger Recover"
+    "recover" : "[L] Recover"
   },
   "stars" : {
     "placeholder" : "Mettez une étoile sur un compte pour l’afficher ici.",
@@ -299,8 +303,7 @@
     "title" : "Swap",
     "tabs" : {
       "exchange" : "Swap",
-      "history" : "Historique",
-      "kyc" : "Vérification"
+      "history" : "Historique"
     },
     "form" : {
       "changeCTA" : "Modifier",
@@ -355,33 +358,6 @@
         "title" : "Le swap n’est pas encore disponible pour votre territoire.",
         "content" : "Merci pour votre patience.<br/>Nous lancerons cette fonctionnalité très rapidement."
       },
-      "providers" : {
-        "kyc" : {
-          "required" : "Vous devez passer la vérification d’identité.",
-          "complete" : "Vérifier",
-          "update" : "Actualiser",
-          "rejected" : "Vérification d’identité rejetée, merci de recommencer.",
-          "rejectedContactProviderSupport" : "Vérification rejetée, contactez l’assistance de {{providerName}}",
-          "updateRequired" : "Complétez ou mettez à jour votre vérification d’identité",
-          "status" : {
-            "pending" : "En attente",
-            "approved" : "Approuvé",
-            "closed" : "Rejeté",
-            "upgradeRequired" : "Incomplet"
-          }
-        },
-        "login" : {
-          "required" : "Connectez-vous pour utiliser ce prestataire.",
-          "complete" : "Me connecter"
-        },
-        "mfa" : {
-          "required" : "Configurez une authentification multifactorielle pour utiliser ce prestataire.",
-          "complete" : "Configurer une MFA"
-        },
-        "withdrawalsBlockedError" : {
-          "message" : "Votre retrait a été bloqué par {{providerName}}.\n\n Pour en savoir plus, contactez leur service d’assistance."
-        }
-      },
       "timeout" : {
         "message" : "En raison de problèmes techniques, les résultats sont indisponibles. Veuillez réessayer dans quelques instants."
       }
@@ -395,54 +371,6 @@
       "export" : "Exporter les opérations",
       "exporting" : "Exportation..."
     },
-    "kyc" : {
-      "updateRequired" : "La vérification d’identité est impossible si l’application n’est pas à jour.",
-      "wyre" : {
-        "disclaimer" : "LEDGER recueille vos données pour le compte de WYRE et les lui transfère pour réaliser votre vérification d’identité. Consultez notre",
-        "policy" : "Politique de confidentialité",
-        "title" : "Vérifier votre identité",
-        "subtitle" : "Saisissez vos données pour échanger avec Wyre.",
-        "cta" : "Continuer",
-        "pending" : {
-          "cta" : "Continuer",
-          "title" : "Vos données ont été envoyées pour validation.",
-          "subtitle" : "L’examen de ces informations ne prend souvent que quelques minutes.",
-          "link" : "En savoir plus sur la vérification d’identité",
-          "info" : "Vérification d’identité : envoyée"
-        },
-        "closed" : {
-          "cta" : "Réinitialiser",
-          "title" : "Demande de vérification rejetée",
-          "subtitle" : "Wyre a refusé les données que vous avez fournies.",
-          "link" : "En savoir plus"
-        },
-        "form" : {
-          "firstName" : "Prénom",
-          "lastName" : "Nom de famille",
-          "street1" : "Adresse postale ligne 1",
-          "street2" : "Adresse postale ligne 2",
-          "city" : "Ville",
-          "state" : "État–région",
-          "country" : "Pays",
-          "postalCode" : "Code postal",
-          "dateOfBirth" : "Date de naissance",
-          "firstNamePlaceholder" : "Saisissez votre prénom",
-          "lastNamePlaceholder" : "Saisissez votre nom",
-          "street1Placeholder" : "Ex : 13 rue Rosa Parks",
-          "street2Placeholder" : "Ex : 13 rue Rosa Parks",
-          "cityPlaceholder" : "Ex : Abbeville",
-          "postalCodePlaceholder" : "Saisissez votre code postal",
-          "dateOfBirthPlaceholder" : "MM/JJ/AAAA",
-          "firstNameError" : "Entrez votre prénom pour continuer.",
-          "lastNameError" : "Entrez votre nom pour continuer.",
-          "street1Error" : "Entrez votre adresse.",
-          "cityError" : "Entrez la ville où vous habitez aux États-Unis.",
-          "postalCodeError" : "Saisissez un code postal américain valide.",
-          "dateOfBirthError" : "Entrez votre date de naissance.",
-          "dateOfBirthValidationError" : "Entrez une date de naissance valide."
-        }
-      }
-    },
     "exchangeDrawer" : {
       "title" : "Confirmer l’échange",
       "completed" : {
@@ -451,6 +379,11 @@
         "disclaimer" : "Notez bien l’identifiant de votre échange au cas où vous auriez besoin de contacter <0>l’assistance de <0>{{provider}}</0></0>.",
         "seeDetails" : "Voir les détails"
       }
+    },
+    "webviewErrorDrawer" : {
+      "title" : "Veuillez réessayer.",
+      "description" : "Le serveur n’a pas pu traiter votre demande. Veuillez réessayer ultérieurement ou contacter l’Assistance Ledger.",
+      "code" : "Code : {{errorCode}}"
     }
   },
   "swap" : {
@@ -479,29 +412,19 @@
       "sorry" : "Service temporairement indisponible ou non disponible dans votre région"
     },
     "missingApp" : {
-      "title" : "Merci d’installer l’application {{appName}} sur votre appareil.",
-      "subtitle" : "Accédez à My Ledger et installez l’application {{appName}} pour échanger vos actifs.",
+      "title" : "Merci d’installer l’app {{appName}} sur votre appareil.",
+      "subtitle" : "Accédez à My Ledger et installez l’app {{appName}} pour échanger vos actifs.",
       "cta" : "Accéder à My Ledger"
     },
     "outdatedApp" : {
-      "title" : "Merci de mettre à jour l’application {{appName}} sur votre appareil",
-      "subtitle" : "Accédez à My Ledger et mettez à jour l’application {{appName}} pour échanger vos actifs.",
+      "title" : "Veuillez mettre à jour l’app {{appName}} sur votre appareil",
+      "subtitle" : "Accédez à My Ledger et mettez à jour l’app {{appName}} pour échanger vos actifs.",
       "cta" : "Accéder à My Ledger"
     },
     "providers" : {
       "title" : "Choisir un prestataire pour le swap",
       "learnMore" : "Qu’est-ce que le Swap ?",
-      "kycRequired" : "Vérification d’identité nécessaire",
       "cta" : "Continuer",
-      "kyc" : {
-        "notAvailable" : "{{provider}} non disponible dans votre région",
-        "status" : {
-          "required" : "Vérification d’identité nécessaire",
-          "pending" : "En attente",
-          "approved" : "Vérification d’identité approuvée",
-          "closed" : "Rejeté"
-        }
-      },
       "filter" : {
         "centralised" : "Centralisé",
         "decentralised" : "Décentralisé",
@@ -516,55 +439,7 @@
       "subtitle" : "Échangez des crypto-actifs depuis votre appareil Ledger.",
       "disclaimer" : "En continuant, vous acceptez que vos données de localisation soient partagées avec des prestataires tiers dans le cadre de leurs procédures LCB/KYC."
     },
-    "kyc" : {
-      "updateRequired" : "La vérification d’identité est impossible si l’application n’est pas à jour.",
-      "wyre" : {
-        "disclaimer" : "LEDGER recueille vos données pour le compte de WYRE et les lui transfère pour réaliser votre vérification d’identité. Consultez notre",
-        "policy" : "Politique de confidentialité",
-        "title" : "Vérifier votre identité",
-        "subtitle" : "Saisissez vos données pour échanger avec Wyre.",
-        "pending" : {
-          "cta" : "Continuer",
-          "title" : "En attente de validation",
-          "subtitle" : "Vos données ont été envoyées à Wyre pour validation.",
-          "link" : "En savoir plus sur la vérification d’identité"
-        },
-        "closed" : {
-          "cta" : "Réinitialiser",
-          "title" : "Demande de vérification rejetée",
-          "subtitle" : "Wyre a refusé les données que vous avez fournies.",
-          "link" : "En savoir plus"
-        },
-        "form" : {
-          "firstName" : "Prénom",
-          "lastName" : "Nom de famille",
-          "street1" : "Adresse postale ligne 1",
-          "street2" : "Adresse postale ligne 2",
-          "city" : "Ville",
-          "state" : "État–région",
-          "country" : "Pays",
-          "postalCode" : "Code postal",
-          "dateOfBirth" : "Date de naissance",
-          "firstNamePlaceholder" : "Saisissez votre prénom",
-          "lastNamePlaceholder" : "Saisissez votre nom",
-          "street1Placeholder" : "Ex : 13 rue Rosa Parks",
-          "street2Placeholder" : "Ex : 13 rue Rosa Parks",
-          "cityPlaceholder" : "Ex : Abbeville",
-          "postalCodePlaceholder" : "Saisissez votre code postal",
-          "dateOfBirthPlaceholder" : "MM/JJ/AAAA",
-          "firstNameError" : "Entrez votre prénom pour continuer.",
-          "lastNameError" : "Entrez votre nom pour continuer.",
-          "street1Error" : "Entrez votre adresse.",
-          "cityError" : "Entrez la ville où vous habitez aux États-Unis.",
-          "postalCodeError" : "Saisissez un code postal américain valide.",
-          "dateOfBirthError" : "Entrez votre date de naissance.",
-          "dateOfBirthValidationError" : "Entrez une date de naissance valide."
-        }
-      }
-    },
     "form" : {
-      "resetKYC" : "Réinitialisez le processus et mettez à jour Ledger Live.",
-      "resetKYCCTA" : "Réinitialiser",
       "amount" : "Montant",
       "from" : {
         "title" : "De",
@@ -593,19 +468,9 @@
       "helpCTA" : "Qu’est-ce que le Swap ?",
       "bubble" : "Nous utilisons un taux fixe. C’est le montant exact que vous allez recevoir.",
       "noAccounts" : "Vous n’avez pas de compte {{currencyName}} avec un solde.",
-      "noApp" : "Application {{currencyName}} non installée",
-      "outdatedApp" : "Mise à jour de l’application {{currencyName}} disponible",
+      "noApp" : "App {{currencyName}} non installée",
+      "outdatedApp" : "Mise à jour de l’app {{currencyName}} disponible",
       "loadingRates" : "Chargement des taux..."
-    },
-    "unauthorizedRatesModal" : {
-      "title" : "Mise à jour de Ledger Live nécessaire",
-      "subtitle" : "Veuillez mettre à jour Ledger Live et vérifier à nouveau votre identité pour échanger avec Wyre",
-      "cta" : "Réinitialiser la vérification"
-    },
-    "resetThirdPartyDataModal" : {
-      "title" : "Supprimer vos données locales partagées avec des tiers",
-      "subtitle" : "Vous vous apprêtez à supprimer vos données stockées localement qui sont partagées avec des tiers. Vous devrez peut-être soumettre à nouveau votre vérification d’identité et/ou vous reconnecter pour accéder aux services fournis par nos prestataires tiers.",
-      "cta" : "Confirmer"
     },
     "modal" : {
       "title" : "Swap",
@@ -635,7 +500,7 @@
           "title" : "Appareil"
         },
         "dependencies" : {
-          "title" : "Vérifications des applications"
+          "title" : "Vérifications des apps"
         },
         "finished" : {
           "title" : "En attente",
@@ -653,10 +518,10 @@
       "txid" : "Identifiant du swap",
       "status" : "Statut",
       "statusTooltips" : {
-        "expired" : "Pour plus d’informations, contactez le prestataire du service Swap avec l’identifiant de votre échange.",
-        "refunded" : "Pour plus d’informations, contactez le prestataire du service Swap avec l’identifiant de votre échange.",
+        "expired" : "Pour plus d’informations, contactez le prestataire du service Swap avec l’identifiant de votre swap.",
+        "refunded" : "Pour plus d’informations, contactez le prestataire du service Swap avec l’identifiant de votre swap.",
         "pending" : "Merci de patienter pendant que le prestataire du service Swap traite votre transaction.",
-        "onhold" : "Pour résoudre votre problème, contactez le prestataire du service Swap avec l’identifiant de votre échange.",
+        "onhold" : "Pour résoudre votre problème, contactez le prestataire du service Swap avec l’identifiant de votre swap.",
         "finished" : "Votre échange a bien été réalisé."
       },
       "date" : "Date",
@@ -671,7 +536,7 @@
   },
   "stake" : {
     "noFundsModal" : {
-      "title" : "Acheter, échanger ou recevoir",
+      "title" : "{{actions, list(type: disjunction)}}",
       "text" : "Votre solde de {{coin}} est insuffisant pour staker",
       "description" : "Ne vous inquiétez pas. Vous pouvez acheter, échanger ou recevoir des cryptos en toute sécurité via Ledger Live.",
       "options" : {
@@ -689,6 +554,10 @@
           "body" : "Recevez des cryptos dans votre wallet."
         }
       }
+    },
+    "getFundsModal" : {
+      "text" : "Recevez des {{coin}} pour staker",
+      "description" : "Achetez, échangez ou recevez des cryptos directement sur votre appareil Ledger via Ledger Live."
     }
   },
   "lottieDebugger" : {
@@ -862,11 +731,11 @@
     },
     "lastOperations" : "Dernières opérations",
     "contractAddress" : "Contrat :",
-    "openInExplorer" : "Ouvrir dans l’explorateur",
+    "openInExplorer" : "Voir dans l’explorateur",
     "emptyState" : {
       "title" : "Vous n’avez pas encore de crypto-actifs ?",
-      "desc" : "Assurez-vous que l’application <1><0>{{managerAppName}}</0></1> est installée et commencez à recevoir.",
-      "descToken" : "Assurez-vous que l’application <1><0>{{managerAppName}}</0></1> est installée pour recevoir des <3><0>{{ticker}}</0></3> et des tokens <5><0>{{tokenList}}</0></5>.",
+      "desc" : "Assurez-vous que l’app <1><0>{{managerAppName}}</0></1> est installée et commencez à recevoir.",
+      "descToken" : "Assurez-vous que l’app <1><0>{{managerAppName}}</0></1> est installée pour recevoir des <3><0>{{ticker}}</0></3> et des tokens <5><0>{{tokenList}}</0></5>.",
       "buttons" : {
         "receiveFunds" : "Recevoir",
         "buy" : "Acheter"
@@ -898,6 +767,8 @@
     "energyTooltip" : "Gelez des actifs pour gagner de l’Énergie.",
     "delegatedTooltip" : "Les actifs délégués sont utilisés pour voter. Cela représente votre nombre total de votes.",
     "undelegatingTooltip" : "Les actifs retirés de la délégation sont disponibles après {{timelockInDays}} jours.",
+    "claimableRewards" : "Récompenses à demander",
+    "claimableRewardsTooltip" : "L’option permettant de demander des récompenses en USDC est actuellement indisponible. Veuillez utiliser un wallet tiers.",
     "banner" : {
       "redelegation" : {
         "title" : "Bon à savoir",
@@ -991,21 +862,21 @@
       "currencyAPY" : "APY",
       "currencyAPYTooltip" : "Rendement annuel d’un dépôt sans cesse capitalisé",
       "accruedInterests" : "Intérêts courus",
-      "accruedInterestsTooltip" : "Intérêts produits par vos actifs prêtés",
+      "accruedInterestsTooltip" : "Récompenses gagnées avec vos actifs prêtés",
       "interestEarned" : "Intérêts gagnés",
       "interestEarnedTooltip" : "Intérêts gagnés suite au retrait",
       "openLoans" : "Prêts en cours",
       "closedLoans" : "Prêts clôturés",
       "amountRedeemed" : "Montant retiré",
       "date" : "Date",
-      "info" : "Vous pouvez prêter des actifs directement depuis votre compte {{currency}} et gagner des intérêts.",
+      "info" : "Vous pouvez prêter des actifs directement depuis votre compte {{currency}} et gagner des récompenses.",
       "howCompoundWorks" : "Fonctionnement du prêt sur Compound",
       "lend" : "Dépôt des {{currency}}"
     },
     "emptyState" : {
       "active" : {
         "title" : "Prêter",
-        "description" : "Vous pouvez prêter des actifs directement depuis vos comptes Ethereum et gagner des intérêts.",
+        "description" : "Vous pouvez prêter des actifs directement depuis vos comptes Ethereum et gagner des récompenses.",
         "cta" : "Fonctionnement du prêt sur Compound"
       },
       "closed" : {
@@ -1029,8 +900,8 @@
         "accounts" : "Compte",
         "amountSupplied" : "Prêts en cours",
         "amountSuppliedTooltip" : "Montant déposé sur le réseau",
-        "accruedInterests" : "Solde des intérêts",
-        "accruedInterestsTooltip" : "Intérêts gagnés sur les prêts",
+        "accruedInterests" : "Solde des récompenses",
+        "accruedInterestsTooltip" : "Récompenses gagnées sur les prêts",
         "status" : "Statut du compte",
         "actions" : "Actions"
       },
@@ -1155,7 +1026,7 @@
       "terms" : {
         "title" : "Prêter des cryptos",
         "subtitle" : "Prêter des actifs sur le protocole Compound",
-        "description" : "Le protocole Compound vous permet de prêter et d’emprunter des actifs sur le réseau Ethereum. Vous pouvez prêter vos actifs et gagner des intérêts directement depuis votre compte Ledger.",
+        "description" : "Le protocole Compound vous permet de prêter et d’emprunter des actifs sur le réseau Ethereum. Vous pouvez prêter vos actifs et gagner des récompenses directement depuis votre compte Ledger.",
         "switchLabel" : "<1>J’ai lu et accepte les </1><0>Conditions d’utilisation</0><1>.</1>"
       },
       "steps" : {
@@ -1166,12 +1037,12 @@
           "description" : "Vous devez autoriser le contrat intelligent de Compound à transférer un certain montant d’actifs au protocole. L’activation d’un compte permet au protocole de traiter les futurs prêts."
         },
         "2" : {
-          "subtitle" : "Prêter des actifs pour gagner des intérêts",
-          "description" : "Une fois qu’un compte est approuvé, vous pouvez sélectionner un montant d’actifs à prêter, puis émettre une transaction vers le protocole. Les intérêts courent dès la confirmation de la transaction."
+          "subtitle" : "Prêter des actifs pour gagner des récompenses",
+          "description" : "Une fois qu’un compte est approuvé, vous pouvez sélectionner un montant d’actifs à prêter, puis émettre une transaction vers le protocole. Les récompenses courent dès la confirmation de la transaction."
         },
         "3" : {
           "subtitle" : "Retirer des actifs à tout moment",
-          "description" : "Vous pouvez retirer vos actifs et les intérêts perçus en partie ou totalité à tout moment depuis votre compte Ledger."
+          "description" : "Vous pouvez retirer vos actifs et les récompenses perçues en partie ou totalité à tout moment depuis votre compte Ledger."
         }
       }
     },
@@ -1190,7 +1061,7 @@
           "title" : "Confirmation",
           "success" : {
             "title" : "Transaction bien envoyée",
-            "text" : "Vous commencerez à percevoir des intérêts une fois que le réseau aura confirmé le dépôt.",
+            "text" : "Vous commencerez à percevoir des récompenses une fois que le réseau aura confirmé le dépôt.",
             "done" : "Fermer",
             "cta" : "Voir les détails",
             "info" : "Il peut y avoir un délai avant que les transactions apparaissent dans un explorateur et soient confirmées."
@@ -1200,7 +1071,7 @@
     },
     "noEthAccount" : {
       "title" : "Merci de créer un compte ETH",
-      "description" : "<0>{{ asset }} ({{ ticker }})</0> est un token Ethereum ERC-20. Pour prêter des {{ ticker }}, installez l’application Ethereum et créez un compte Ethereum.",
+      "description" : "<0>{{ asset }} ({{ ticker }})</0> est un token Ethereum ERC-20. Pour prêter des {{ ticker }}, installez l’app Ethereum et créez un compte Ethereum.",
       "cta" : "Ajouter un compte"
     },
     "emptyAccountDeposit" : {
@@ -1280,10 +1151,11 @@
     "hideCTA" : "Masquer le token"
   },
   "syncOnboarding" : {
+    "exitCTA" : "Quitter",
     "connection" : {
       "searching" : {
-        "title" : "Connectez votre {{deviceModelName}} à votre ordinateur",
-        "connectionTrouble" : "Des difficultés à connecter votre Ledger ?"
+        "title" : "Connectez votre {{deviceModelName}} à votre ordinateur à l’aide d’un câble USB",
+        "connectionTrouble" : "Des difficultés à connecter votre appareil Ledger ?"
       },
       "success" : {
         "title" : "Connecté à {{ deviceName }}"
@@ -1293,82 +1165,113 @@
       "title" : "Configurez votre {{deviceName}}",
       "continueOnDevice" : "Effectuez cette action sur votre {{productName}}.",
       "pairedContent" : {
-        "title" : "Votre {{deviceName}} est connecté",
-        "description" : "Poursuivez la configuration sur votre {{deviceName}}.",
-        "text" : "Cette page va se mettre à jour pour vous guider à chaque étape de la configuration de votre {{deviceName}}.",
-        "continueOnDevice" : "Appuyez sur votre {{productName}} pour avancer."
+        "title" : "Ce {{deviceName}} est authentique",
+        "description" : "Vous pouvez utiliser ce Ledger Stax en toute sécurité. Poursuivez pour le configurer.",
+        "continueOnDevice" : "Touchez votre {{productName}} pour commencer la configuration"
       },
       "pinContent" : {
         "title" : "Code PIN",
-        "description" : "Choisissez un code PIN de 4 à 8 chiffres.",
-        "text" : "Toute personne ayant accès à votre {{deviceName}} et à votre code PIN peut avoir accès à vos crypto-actifs.",
-        "continueOnDevice" : "Définissez votre code PIN sur votre {{productName}}."
+        "titleCompleted" : "Code PIN configuré",
+        "description" : "Comme tout mot de passe ou code d’accès, le code PIN vous permet de déverrouiller votre {{productName}} et de le protéger contre tout accès indésirable.",
+        "continueOnDevice" : "Définissez votre code PIN sur votre {{productName}}"
       },
       "seedContent" : {
         "title" : "Phrase de récupération secrète",
+        "titleCompleted" : "Phrase de récupération secrète confirmée",
         "recoverSeed" : "Placeholder : Ledger Recover",
-        "restoreSeed" : "Pour la récupération et pour plus de sécurité, utilisez une phrase de récupération secrète générée par un appareil Ledger.\n\nVous n’en avez pas déjà une ? Générez une nouvelle phrase avec votre {{productName}}.",
-        "selection" : "Sur votre {{productName}}, choisissez votre option de configuration préférée.",
-        "selectionContinueOnDevice" : "Choisissez une option sur votre {{productName}}",
-        "newSeedDescription" : "Regardez les vidéos ci-dessous pour en savoir plus sur vos mots secrets.",
-        "newSeedContinueOnDevice" : "Faites-le sur votre {{productName}}",
-        "recovery" : "Pour la récupération et pour plus de sécurité, utilisez une phrase de récupération secrète générée par un appareil Ledger.\n\nVous n’en avez pas déjà une ? Générez une nouvelle phrase avec votre {{productName}}.",
-        "restoreChoiceContinueOnDevice" : "Choisissez une option sur votre {{productName}}",
+        "restoreSeed" : "Pour une sécurité optimale, utilisez une phrase de récupération secrète générée par un appareil Ledger.\n\nVous n’en n’avez pas ? Générez une nouvelle phrase avec votre {{productName}}.",
+        "selection" : "Choisissez votre option de configuration :",
+        "selectionNewLedger" : "<0>Configurer comme un nouvel appareil :</0> vous créez un nouveau wallet. Cela va générer une nouvelle phrase de récupération secrète.",
+        "selectionRestore" : "<0>Restaurer :</0> vous restaurez l’accès à vos actifs existants, à l’aide de votre phrase de récupération secrète ou via Ledger Recover.",
+        "selectionContinueOnDevice" : "Choisissez l’option qui vous convient sur votre {{productName}}",
+        "newSeedDescription1" : "Votre {{productName}} va générer une phrase de récupération secrète : une liste unique de 24 mots. Elle constitue le seul moyen de récupérer vos actifs si votre Ledger est volé, perdu ou si vous oubliez votre code PIN.",
+        "newSeedDescription2" : "<0>Conservez-la en lieu sûr et gardez-la confidentielle :</0>\nVotre phrase de récupération secrète contrôle tous vos actifs et est irremplaçable. Toute personne en ayant connaissance contrôle vos actifs et pourrait les voler. Si vous la perdez, Ledger ne peut pas vous aider.",
+        "newSeedDescription3" : "Méfiez-vous de toute personne ou tout logiciel qui vous demande votre phrase de récupération secrète. C’est une arnaque. ",
+        "newSeedDescription4" : "Ne saisissez votre phrase de récupération secrète que sur votre appareil Ledger, et nulle part ailleurs.",
+        "newSeedDescription5" : "Ne la partagez pas. Et ne la perdez surtout pas.",
+        "newSeedContinueOnDevice" : "Affichez la phrase de récupération secrète générée sur votre {{productName}} et notez-la par écrit",
+        "restoreChoiceContinueOnDevice" : "Choisissez l’option qui vous convient sur votre {{productName}}",
         "restoreChoiceSRPTitle" : "Restaurer avec une phrase de récupération secrète",
-        "restoreChoiceSRPDescription" : "Pour plus de sécurité, utilisez une phrase de récupération secrète générée par un appareil Ledger.",
+        "restoreChoiceSRPDescription" : "Pour une sécurité optimale, utilisez une phrase de récupération secrète générée par un appareil Ledger.",
         "restoreChoiceRecoverTitle" : "Restaurer avec Ledger Recover",
-        "restoreChoiceRecoverDescription" : "Restaurez la sauvegarde pour votre phrase de récupération en vous connectant à votre compte Ledger et en confirmant votre identité."
+        "restoreChoiceRecoverDescription" : "Si vous êtes abonné(e) à Ledger Recover, connectez-vous pour restaurer la sauvegarde pour votre phrase de récupération secrète.",
+        "followInstructions" : "Suivez les instructions affichées sur votre {{productName}}."
       },
       "softwareCheckContent" : {
-        "title" : "Vérification du logiciel",
+        "title" : {
+          "active" : "Vérification de l’authenticité et\ndu système d’exploitation",
+          "completed" : "Votre {{modelName}} est authentique et à jour"
+        },
+        "exitWarningDrawer" : {
+          "title" : "Annuler la vérification de l’authenticité et du système d’exploitation ?",
+          "description" : "La vérification de l’authenticité est obligatoire pour continuer à configurer votre Ledger Stax via Ledger Live.",
+          "cancelCheckCTA" : "Annuler les vérifications",
+          "resumeCheckCTA" : "Reprendre les vérifications"
+        },
+        "genuineCheckErrorDrawer" : {
+          "quitSetupCTA" : "Annuler la configuration",
+          "goToSettingsCTA" : "Accéder aux Paramètres",
+          "retryCTA" : "Réessayer",
+          "contactSupportCTA" : "Contacter l’Assistance Ledger",
+          "notFoundEntityError" : {
+            "title" : "Relancer la vérification de l’authenticité",
+            "description" : "Vous devez d’abord désactiver le paramètre \"Fournisseur de My Ledger ({{providerNumber}})\". Pour le désactiver, ouvrez les Paramètres de Ledger Live, sélectionnez \"Fonctionnalités expérimentales\", puis désactivez \"Fournisseur de My Ledger\"."
+          },
+          "deviceNotGenuineError" : {
+            "title" : "Ce {{productName}} n’est pas authentique",
+            "description" : "Il est dangereux d’utiliser ce {{productName}}.\nVeuillez contacter l’Assistance Ledger."
+          }
+        },
+        "whyPerformChecksLink" : "En savoir plus sur la vérification de l’authenticité",
+        "startChecksCTA" : "Vérifier mon {{modelName}}",
+        "continueCTA" : "Poursuivre la configuration",
         "genuineCheck" : {
-          "active" : "Vérification du {{deviceName}}",
-          "completed" : "Votre {{deviceName}} authentique"
+          "title" : {
+            "active" : "Vérification de l’authenticité",
+            "completed" : "Votre {{modelName}} est authentique",
+            "cancelled" : "Vérification de l’authenticité refusée"
+          },
+          "subtitle" : {
+            "active" : "Ceci permet de confirmer que votre {{modelName}} est officiel.",
+            "cancelled" : "Cette vérification est obligatoire pour continuer à configurer votre {{modelName}} via Ledger Live."
+          },
+          "resumeCTA" : "Reprendre la vérification"
         },
         "firmwareUpdate" : {
-          "inactive" : "Vérification du logiciel",
-          "active" : "Recherche de mises à jour",
-          "updateAvailable" : "Mise à jour du logiciel disponible : {{firmwareVersion}}",
-          "recommendation" : "Nous vous recommandons d’installer la mise à jour maintenant.",
-          "downloadUpdate" : "Télécharger la mise à jour",
-          "skipUpdate" : "Ignorer pour le moment",
-          "completed" : "Le logiciel est à jour."
+          "title" : {
+            "active" : "Vérification du système d’exploitation",
+            "completed" : "Le système d’exploitation de votre {{modelName}} est à jour.",
+            "updateAvailable" : "Mise à jour {{firmwareVersion}} disponible"
+          },
+          "subtitle" : {
+            "active" : "Ceci permet de vérifier que le système d’exploitation de votre {{modelName}} est à jour.",
+            "completed" : "Pour lancer la restauration des apps sur votre {{modelName}}, cliquez sur Restaurer les apps.",
+            "updateAvailable" : "Mettez à jour le système d’exploitation pour une sécurité optimale et pour accéder aux fonctionnalités les plus récentes."
+          },
+          "viewUpdateCTA" : "Mettre à jour votre {{modelName}}",
+          "resumeUpdateCTA" : "Reprendre la mise à jour",
+          "skipUpdateCTA" : "Ignorer la mise à jour",
+          "retryUpdateCTA" : "Réessayer",
+          "finalStepSuccessDescription" : "Retournez à la vérification du système d’exploitation.",
+          "finalStepSuccessButtonLabel" : "Terminer"
         }
       },
       "installApplications" : {
-        "title" : "Apps blockchain",
+        "title" : "Installez des apps sur votre {{productName}}",
+        "titleCompleted" : "Apps installées sur votre {{productName}}",
         "install" : "Installer",
         "skip" : "Plus tard",
         "info" : "Les apps sur votre {{deviceName}} vous permettent de valider vos opérations. Vous pouvez les ajouter ou supprimer à tout moment."
       },
       "endOfSetup" : {
-        "title" : "Configuration terminée"
+        "title" : "Configuration terminée",
+        "titleCompleted" : "Votre {{deviceName}} est prêt"
       },
-      "genuineCheckModal" : {
-        "title" : "Vérification de l’authenticité",
-        "paragraph1" : "Vérifions que votre {{deviceName}} est authentique et peut être utilisé en toute sécurité.",
-        "paragraph2" : "Nous procéderons à une vérification pour nous assurer que votre appareil n’a pas été compromis. Vous devrez accepter la vérification sur votre {{deviceName}}.",
-        "checkDeviceButton" : "Vérifier mon appareil"
+      "softwareCheckAllowSecureChannelDrawer" : {
+        "title" : "Touchez Autoriser pour lancer la vérification de l’authenticité"
       },
-      "genuineCheckCancelModal" : {
-        "title" : "Vérification de l’authenticité",
-        "paragraph1" : "La vérification de l’authenticité a été annulée.",
-        "paragraph2" : "Cette vérification cruciale vous permet de vous assurer que votre {{deviceName}} peut être utilisé en toute sécurité.",
-        "checkDeviceButton" : "Exécuter à nouveau la vérification",
-        "cancelButton" : "Pas maintenant"
-      },
-      "genuineCheckNotGenuineModal" : {
-        "title" : "Vérification de l’authenticité",
-        "paragraph1" : "Votre Ledger n’est pas authentique.",
-        "paragraph2" : "Échec de la vérification de l’authenticité.",
-        "checkDeviceButton" : "Exécuter à nouveau la vérification",
-        "cancelButton" : "Pas maintenant"
-      },
-      "softwareCheckAllowSecureChannelModal" : {
-        "title" : "Autorisez le Manager sur {{deviceName}}"
-      },
-      "softwareCheckLockedDeviceModal" : {
-        "title" : "Déverrouillez votre appareil."
+      "softwareCheckLockedDeviceDrawer" : {
+        "title" : "Déverrouillez votre appareil"
       },
       "helpDrawer" : {
         "title" : "Besoin d’aide ?",
@@ -1377,13 +1280,13 @@
         "supportButton" : "Accéder à un expert"
       },
       "troubleshootingDrawer" : {
-        "title" : "Réparer la connexion USB",
-        "description" : "Votre appareil semble avoir du mal à se connecter. Vous pouvez essayer les solutions suivantes jusqu’à ce que votre appareil se connecte.",
-        "fixButton" : "Réparer",
+        "title" : "Connexion USB",
+        "description" : "Échec de la connexion à votre appareil Ledger. Choisissez Dépanner pour obtenir de l’aide.",
+        "fixButton" : "Dépanner",
         "closeButton" : "Fermer"
       },
       "desyncOverlay" : {
-        "errorMessage" : "La connexion à votre {{deviceName}} semble avoir été perdue. Reconnexion en cours..."
+        "errorMessage" : "Connexion à votre {{deviceName}} perdue. Reconnexion en cours."
       },
       "header" : {
         "helpButton" : "Besoin d’aide ?"
@@ -1393,15 +1296,28 @@
   "postOnboarding" : {
     "postOnboardingScreen" : {
       "title" : "Utilisez ensuite votre\nLedger Stax pour... ",
-      "titleCompleted" : "Félicitations !"
+      "titleCompleted" : "Parfait !\nVous pouvez maintenant explorer votre wallet.",
+      "exploreCTA" : "Explorer le wallet"
     },
     "postOnboardingContent" : {
       "skipLink" : "Plus tard"
     },
     "postOnboardingBanner" : {
       "title" : "Que faire ensuite avec votre Ledger Stax ?",
-      "description" : "Demandez votre NFT Infinity Pass, personnalisez\n l’écran de verrouillage ou transférez vos actifs.",
+      "description" : "Demandez votre NFT Infinity Pass, personnalisez\n le fond d’écran ou transférez vos actifs.",
       "link" : "Découvrir la suite"
+    },
+    "actions" : {
+      "buyCrypto" : {
+        "title" : "Acheter des cryptos",
+        "description" : "Choisissez parmi plus de 500 cryptos et bénéficiez des meilleures offres des prestataires d’achat, en fonction de vos préférences.",
+        "actionCompletedPopupLabel" : "Crypto achetée"
+      },
+      "assetsTransfer" : {
+        "title" : "Transférer vos actifs vers votre wallet Ledger",
+        "description" : "Transférez facilement des actifs depuis Coinbase ou la plateforme d’échange/wallet de votre choix.",
+        "actionCompletedPopupLabel" : "Actifs transférés"
+      }
     }
   },
   "hideNftCollection" : {
@@ -1442,7 +1358,7 @@
     },
     "polkaStake" : {
       "title" : "Staking de Polkadot",
-      "description" : "Vous pouvez maintenant staker, sécuriser et gérer vos DOT directement dans Ledger Live."
+      "description" : "Vous pouvez maintenant staker, sécuriser et gérer vos DOT directement via Ledger Live."
     },
     "sell" : {
       "title" : "Vendre des cryptos",
@@ -1458,7 +1374,7 @@
     },
     "lending" : {
       "title" : "Prêter",
-      "description" : "Prêtez vos stablecoins sur le protocole Compound et gagnez des intérêts dès aujourd’hui."
+      "description" : "Prêtez vos stablecoins sur le protocole Compound et gagnez des récompenses dès aujourd’hui."
     },
     "blackfriday" : {
       "title" : "BLACK FRIDAY ",
@@ -1489,31 +1405,7 @@
     }
   },
   "walletconnect" : {
-    "titleAccount" : "WalletConnect",
-    "disconnect" : "Déconnecter",
-    "disconnected" : "Déconnecté",
-    "connected" : "Connecté",
-    "connecting" : "Connexion en cours...",
-    "invalidAccount" : "Identifiant de compte invalide",
-    "steps" : {
-      "paste" : {
-        "title" : "Coller le lien",
-        "label" : "Adresse WalletConnect",
-        "placeholder" : "Coller le lien WalletConnect"
-      },
-      "confirm" : {
-        "title" : "Connecter",
-        "details" : "Souhaite se connecter au compte suivant via votre wallet :",
-        "deeplinkDetails" : "Souhaite se connecter à Ledger Live. Choisissez votre compte :",
-        "noAccount" : "Vous n’avez aucun compte compatible. Veuillez ajouter un compte compatible pour utiliser WalletConnect.",
-        "alreadyConnected" : "Ledger Live est déjà connecté à une dApp. Veuillez vous déconnecter de la dApp actuellement connectée, puis connectez Ledger Live à la nouvelle dApp."
-      }
-    },
-    "connectedscreen" : {
-      "info" : "Vous pouvez accéder à la dApp {{name}} sur votre navigateur.",
-      "warning" : "Partager des adresses de bénéficiaire par dApp n’est pas sécurisé. Utilisez toujours Ledger Live lorsque vous partagez votre adresse pour recevoir des fonds.",
-      "disconnected" : "Il y a un problème de connexion entre la dApp, WalletConnect et Ledger Live. Merci de patienter quelques instants ou de réessayer de vous connecter."
-    }
+    "titleAccount" : "WalletConnect"
   },
   "dashboard" : {
     "title" : "Portefeuille",
@@ -1538,6 +1430,26 @@
         "title" : "Staker",
         "description" : "Faites fructifier vos crypto-actifs via Ledger."
       }
+    },
+    "recoverBanner" : {
+      "subscribeDone" : {
+        "title" : "Ajoutez votre carte de paiement",
+        "description" : "Restaurez en toute confiance avec Ledger Recover.",
+        "primaryCta" : "Ajouter une carte",
+        "secondaryCta" : "Pas maintenant"
+      },
+      "verifyIdentity" : {
+        "title" : "Terminez la vérification d’identité",
+        "description" : "Restaurez en toute confiance avec Ledger Recover.",
+        "primaryCta" : "Vérifier",
+        "secondaryCta" : "Pas maintenant"
+      },
+      "connectDevice" : {
+        "title" : "Connectez votre appareil Ledger",
+        "description" : "Dernière étape pour profiter de Ledger Recover.",
+        "primaryCta" : "Connecter",
+        "secondaryCta" : "Pas maintenant"
+      }
     }
   },
   "currentAddress" : {
@@ -1551,8 +1463,8 @@
   },
   "emptyState" : {
     "dashboard" : {
-      "title" : "Installer des applications sur votre appareil",
-      "desc" : "Accédez à My Ledger pour installer des applications sur votre Ledger. Vous pouvez ajouter des comptes une fois que vous avez des applications sur votre Ledger.",
+      "title" : "Installer des apps sur votre appareil",
+      "desc" : "Accédez à My Ledger pour installer des apps sur votre appareil Ledger. Vous pouvez ajouter des comptes une fois que vous avez des apps sur votre appareil.",
       "buttons" : {
         "installApp" : "Accéder à My Ledger",
         "help" : "Aide"
@@ -1560,10 +1472,10 @@
     },
     "accounts" : {
       "title" : "Ajoutez un compte pour commencer",
-      "desc" : "Ajoutez un compte pour commencer à gérer vos crypto-actifs. Vous devez avoir installé l’application correspondant au crypto-actif de votre choix sur votre appareil.",
+      "desc" : "Ajoutez un compte pour commencer à gérer vos crypto-actifs. Vous devez avoir installé l’app correspondant au crypto-actif de votre choix sur votre appareil.",
       "buttons" : {
         "addAccount" : "Ajouter un compte",
-        "installApp" : "Accédez à My Ledger pour installer des applications",
+        "installApp" : "Accédez à My Ledger pour installer des apps",
         "help" : "Aide"
       }
     }
@@ -1793,7 +1705,7 @@
     "from" : "De",
     "to" : "À",
     "identifier" : "Identifiant de la transaction",
-    "viewOperation" : "Dans l’explorateur",
+    "viewOperation" : "Voir dans l’explorateur",
     "showMore" : "Afficher {{recipients}} autres",
     "showLess" : "Afficher moins",
     "tokenOperations" : "Opérations de tokens",
@@ -1844,22 +1756,23 @@
   "DeviceAction" : {
     "allowAppPermission" : "Ouvrez l’app {{wording}} sur votre appareil",
     "allowAppPermissionSubtitleToken" : "pour gérer vos tokens {{token}}",
-    "allowManagerPermission" : "Autorisez {{wording}} sur votre appareil.",
+    "allowManagerPermission" : "Autorisez la connexion sécurisée sur votre {{productName}}",
+    "allowRenaming" : "Autorisez le changement de nom sur votre appareil",
     "loading" : "Chargement...",
     "connectAndUnlockDevice" : "Connectez et déverrouillez votre appareil.",
     "unlockDevice" : "Déverrouillez votre appareil.",
-    "unlockDeviceAfterFirmwareUpdateStep1" : "Attendez la fin de l’installation sur votre {{productName}}",
-    "unlockDeviceAfterFirmwareUpdateStep2" : "Déverrouillez votre {{productName}} pour terminer l’installation",
+    "unlockDeviceAfterFirmwareUpdateStep1" : "Attendez la fin de l’installation sur votre {{productName}}.",
+    "unlockDeviceAfterFirmwareUpdateStep2" : "Déverrouillez votre {{productName}} avec votre code PIN pour terminer la mise à jour.",
     "quitApp" : "Sortez de l’app sur votre appareil.",
-    "appNotInstalledTitle" : "Application nécessaire manquante",
-    "appNotInstalledTitle_plural" : "Applications nécessaires manquantes",
-    "appNotInstalled" : "L’application {{appName}} est nécessaire pour terminer cette action. Accédez à My Ledger pour l’installer sur votre Ledger.",
-    "appNotInstalled_plural" : "Les applications {{appName}} sont nécessaires pour terminer cette action. Accédez à My Ledger pour les installer sur votre Ledger.",
+    "appNotInstalledTitle" : "App nécessaire manquante",
+    "appNotInstalledTitle_plural" : "Apps nécessaires manquantes",
+    "appNotInstalled" : "L’app {{appName}} est nécessaire pour terminer cette action. Accédez à My Ledger pour l’installer sur votre Ledger.",
+    "appNotInstalled_plural" : "Les apps {{appName}} sont nécessaires pour terminer cette action. Accédez à My Ledger pour les installer sur votre Ledger.",
     "openManager" : "Ouvrir My Ledger",
     "openOnboarding" : "Configurer un appareil",
     "outdated" : "Version de l’app obsolète",
-    "outdatedDesc" : "Une mise à jour importante est disponible pour l’application {{appName}} sur votre Ledger. Veuillez accéder à My Ledger pour la mettre à jour.",
-    "installApp" : "Installation de l’application {{appName}}",
+    "outdatedDesc" : "Une mise à jour importante est disponible pour l’app {{appName}} sur votre Ledger. Veuillez accéder à My Ledger pour la mettre à jour.",
+    "installApp" : "Installation de l’app {{appName}}",
     "installAppDescription" : "Merci d’attendre la fin de l’installation.",
     "listApps" : "Vérification en cours des apps nécessaires",
     "listAppsDescription" : "Patientez pendant que nous vérifions que vous avez toutes les apps requises.",
@@ -1897,31 +1810,31 @@
   },
   "manager" : {
     "tabs" : {
-      "appCatalog" : "Catalogue d’applications",
-      "appCatalogSearch" : "Rechercher une application dans le catalogue",
-      "appsOnDevice" : "Applications installées",
-      "appOnDeviceSearch" : "Rechercher des applications installées..."
+      "appCatalog" : "Catalogue d’apps",
+      "appCatalogSearch" : "Rechercher une app dans le catalogue",
+      "appsOnDevice" : "Apps installées",
+      "appOnDeviceSearch" : "Rechercher des apps installées..."
     },
     "disconnected" : {
-      "title" : "Une application est ouverte sur votre appareil ?",
-      "subtitle" : "Rouvrir My Ledger fermera l’application sur votre appareil.",
+      "title" : "Une app est ouverte sur votre appareil ?",
+      "subtitle" : "Rouvrir My Ledger fermera l’app sur votre appareil.",
       "ctaReopen" : "Rouvrir My Ledger",
       "ctaPortfolio" : "Retour au Portefeuille"
     },
     "deviceStorage" : {
       "freeSpace" : "<0>{{space}}</0> disponibles",
       "noFreeSpace" : "Plus d’espace disponible",
-      "installed" : "Applications",
+      "installed" : "Apps",
       "capacity" : "Capacité",
       "used" : "Utilisé",
       "OSVersion" : "Système d’exploitation",
-      "genuine" : "Votre Ledger est authentique.",
-      "incomplete" : "Certaines applications n’ont pas été reconnues. Merci de les désinstaller puis les réinstaller."
+      "genuine" : "Vérification de l’authenticité",
+      "incomplete" : "Certaines apps n’ont pas été reconnues. Veuillez les désinstaller puis les réinstaller."
     },
     "applist" : {
       "placeholder" : "Pas de résultat pour cette recherche avec les filtres choisis",
-      "placeholderNoAppsInstalled" : "Aucune application installée sur votre appareil",
-      "placeholderGoToCatalog" : "Allez dans le Catalogue pour installer des applications.",
+      "placeholderNoAppsInstalled" : "Aucune app installée sur votre appareil",
+      "placeholderGoToCatalog" : "Accédez au Catalogue pour installer des apps.",
       "noResultsFound" : "Aucun résultat",
       "noResultsDesc" : "Veuillez vérifier l’orthographe et réessayer.",
       "filter" : {
@@ -1938,15 +1851,15 @@
         "marketcap_desc" : "Capitalisation"
       },
       "installSuccess" : {
-        "title" : "Application installée. Vous pouvez maintenant ajouter vos comptes {{app}}.",
-        "title_plural" : "Applications installées. Vous pouvez ajouter vos comptes",
+        "title" : "App installée. Vous pouvez maintenant ajouter vos comptes {{app}}.",
+        "title_plural" : "Apps installées. Vous pouvez ajouter vos comptes.",
         "manageAccount" : "Gérer mes comptes"
       },
       "updatable" : {
         "title" : "Mise à jour disponible",
         "title_plural" : "Mises à jour disponibles",
-        "progressTitle" : "{{number}} mise à jour d’application",
-        "progressTitle_plural" : "{{number}} mises à jour d’applications",
+        "progressTitle" : "{{number}} mise à jour d’app",
+        "progressTitle_plural" : "{{number}} mises à jour d’apps",
         "progressWarning" : "Ne sortez pas de My Ledger pendant la mise à jour.",
         "progress" : "Mises à jour..."
       },
@@ -1958,7 +1871,7 @@
         "scheduled" : "En attente",
         "update" : "Mise à jour disponible",
         "updateAll" : "Tout mettre à jour",
-        "updateAllOutOfMemory" : "Espace de stockage insuffisant. Veuillez désinstaller des applications.",
+        "updateAllOutOfMemory" : "Espace de stockage insuffisant. Veuillez désinstaller des apps.",
         "install" : "Installer",
         "installed" : "Installée",
         "updated" : "Mise à jour",
@@ -1973,32 +1886,32 @@
         "learnMoreTooltip" : "En savoir plus sur {{appName}}",
         "removeTooltip" : "Désinstaller {{appName}}",
         "useAppForToken" : "Gestion des tokens {{tokenType}}",
-        "tokenAppDisclaimer" : "Pour gérer des tokens {{tokenName}} {{tokenType}}, <1>installez l’application {{appName}}</1> et vérifiez que vous avez bien la <1>version {{tokenType}}</1> avant d’en envoyer <3>sur votre compte {{appName}}</3>.",
+        "tokenAppDisclaimer" : "Pour gérer des tokens {{tokenName}} {{tokenType}}, <1>installez l’app {{appName}}</1> et vérifiez que vous avez bien la <1>version {{tokenType}}</1> avant d’en envoyer <3>sur votre compte {{appName}}</3>.",
         "tokenAppDisclaimerInstalled" : "Pour gérer <1>des tokens {{tokenName}} {{tokenType}}</1>, vérifiez que vous avez bien la <1>version {{tokenType}}</1> avant d’en envoyer <3>sur votre compte {{appName}}</3>.",
         "goToAccounts" : "Accéder aux Comptes",
-        "intallParentApp" : "Installer l’application {{appName}}",
-        "plugin" : "Accéder à l’application",
+        "intallParentApp" : "Installer l’app {{appName}}",
+        "plugin" : "Accéder à l’app",
         "swap" : "Swap",
         "tool" : "En savoir plus",
         "currency" : "En savoir plus"
       },
       "uninstall" : {
         "title" : "Tout désinstaller",
-        "subtitle" : "Désinstaller toutes les applications ?",
-        "description" : "Rassurez-vous. Désinstaller des applications n’a pas d’effet sur vos crypto-actifs. Vous pouvez réinstaller vos applications depuis le Catalogue d’applications."
+        "subtitle" : "Désinstaller toutes les apps ?",
+        "description" : "Rassurez-vous. Désinstaller des apps n’a pas d’effet sur vos crypto-actifs. Vous pouvez réinstaller vos apps depuis le Catalogue d’apps."
       }
     },
     "apps" : {
       "dependencyInstall" : {
-        "title" : "Application {{dependency}} requise",
-        "description" : "L’application {{dependency}} sera également installée car elle est requise pour l’application {{app}}.",
-        "confirm" : "Installer des applications"
+        "title" : "App {{dependency}} requise",
+        "description" : "L’app {{dependency}} sera également installée car elle est requise pour l’app {{app}}.",
+        "confirm" : "Installer des apps"
       },
       "dependencyUninstall" : {
-        "title" : " Désinstaller {{app}} et les applications associées ?",
-        "showAll" : "Afficher les applications à désinstaller",
-        "description" : "Certaines des applications installées sont associées à l’application {{app}}. Elles seront également désinstallées.",
-        "confirm" : "Désinstaller {{app}} et les autres applications"
+        "title" : " Désinstaller {{app}} et les apps associées ?",
+        "showAll" : "Afficher les apps à désinstaller",
+        "description" : "Certaines des apps installées sont associées à l’app {{app}}. Elles seront également désinstallées.",
+        "confirm" : "Désinstaller {{app}} et les autres apps"
       }
     },
     "firmware" : {
@@ -2006,9 +1919,10 @@
       "seedReady" : "J’ai ma phrase de récupération.",
       "dontHaveSeed" : "Vous n’avez pas votre phrase de récupération ? ",
       "followTheGuide" : "Laissez-vous guider",
-      "removeApps" : "Désinstaller toutes les applications avant de mettre à jour",
-      "update" : "Mettez à jour votre {{productName}}",
+      "removeApps" : "Désinstaller toutes les apps avant de mettre à jour",
+      "update" : "Mise à jour de votre {{productName}}",
       "updateBtn" : "Mettre à jour le micrologiciel",
+      "installUpdate" : "Installation",
       "banner" : {
         "warning" : "Mise à jour {{latestFirmware}} du micrologiciel disponible",
         "cta" : "Accéder à My Ledger",
@@ -2022,16 +1936,25 @@
       "contactSupport" : "Contacter l’Assistance",
       "deprecated" : "La version du micrologiciel de l’appareil est trop ancienne pour être mise à jour. Contactez l’Assistance Ledger pour le remplacer.",
       "prepareSeed" : "Assurez-vous par précaution que votre phrase de récupération de 24 mots est accessible et bien écrite sur votre feuille de récupération.",
-      "disclaimerTitle" : "Vous êtes sur le point d’installer la <1>version {{version}} du micrologiciel</1>."
+      "disclaimerTitle" : "Vous êtes sur le point d’installer la <1>version {{version}} du micrologiciel</1>.",
+      "cancelUpdate" : "Annuler la mise à jour",
+      "continueUpdate" : "Continuer la mise à jour",
+      "restartUpdate" : "Relancer la mise à jour",
+      "skipRestore" : "Ignorer la restauration",
+      "cancelUpdateWarning" : "Vos réglages et apps risquent de ne pas être restaurés correctement si vous annulez la mise à jour maintenant.",
+      "updateInProgress" : "Mise à jour en cours"
     },
     "modal" : {
-      "title" : "Mettez à jour votre {{productName}}",
+      "title" : "Mise à jour de votre {{productName}}",
       "steps" : {
-        "preparingUpdate" : "Préparation de la mise à jour",
-        "transferringUpdate" : "Transfert de la mise à jour vers {{productName}}",
+        "preparingUpdate" : "Sauvegarde de vos réglages et apps",
+        "transferringUpdate" : "Transfert de la mise à jour vers votre {{productName}}",
         "prepare" : "Préparation",
+        "prepareDone" : "Mise à jour prête\nà être installée",
         "install" : "Installation",
+        "installDone" : "Mise à jour\ninstallée",
         "restore" : "Restauration réglages",
+        "restoreDone" : "Paramètres restaurés",
         "apps" : "Restauration apps",
         "updateMCU" : "Mise à jour du micrologiciel",
         "updating" : "Mise à jour du micrologiciel",
@@ -2039,28 +1962,29 @@
         "osu" : "Installation de l’OSU...",
         "flash-mcu" : "Mise à jour du MCU...",
         "flash-bootloader" : "Mise à jour du Bootloader...",
-        "progress" : "Installation de la mise à jour {{current}}/{{total}}",
+        "progress" : "Installation de la mise à jour",
+        "progressStep" : "Installation de la mise à jour {{current}}/{{total}}",
         "firmware" : "Mise à jour du micrologiciel...",
         "flash" : "Préparation de votre appareil..."
       },
       "confirmIdentifier" : "Vérifier l’identifiant",
-      "confirmIdentifierText" : "Confirmez l’installation sur votre {{productName}}.",
+      "confirmIdentifierText" : "Appuyez sur Installer\npour lancer la mise à jour",
       "identifier" : "Identifiant",
       "newFirmware" : "Nouveau micrologiciel {{version}}",
       "confirmUpdate" : "Confirmez la mise à jour sur votre appareil.",
       "mcuTitle" : "Terminer la mise à jour",
       "mcuFirst" : "Déconnectez le câble USB de votre appareil.",
       "mcuSecond" : "Maintenez le bouton gauche enfoncé tout en reconnectant le câble USB jusqu’à ce que l’écran <1><0>{{repairProcessing}}</0></1> apparaisse.",
-      "mcuPin" : "Merci d’attendre que la mise à jour soit terminée.",
+      "mcuPin" : "Veuillez attendre que la mise à jour soit terminée.",
+      "mcuRestart" : "Votre {{device}} pourrait redémarrer plusieurs fois.",
       "mcuSecondNanoX" : "Maintenez le bouton gauche enfoncé jusqu’à ce que <1><0>{{bootloaderOption}}</0></1> apparaisse. Appuyez sur les deux boutons pour confirmer et reconnecter votre appareil.",
       "mcuBlueFirst" : "Appuyez sur le bouton latéral pendant 10 secondes pour éteindre l’appareil. Relâchez le bouton.",
       "mcuBlueSecond" : "Faites un appui long sur le bouton pendant au moins 5 secondes jusqu’à ce que les options de Boot apparaissent. Sélectionnez le mode Bootloader.",
-      "successTitle" : "Le système d’exploitation a été mis à jour.",
-      "successTextApps" : "Vous pouvez réinstaller vos applications sur votre appareil.",
-      "successTextNoApps" : "Vous pouvez maintenant installer des applications sur votre appareil.",
-      "sucessCTAApps" : "Réinstaller les apps",
-      "SuccessCTANoApps" : "Installer des applications",
-      "cancelReinstallCTA" : "Installer la mise à jour",
+      "successTitle" : "Votre {{deviceName}}\nest à jour.",
+      "successTitleApps" : "Le système d’exploitation de votre {{deviceName}} est à jour. Dernière étape...",
+      "successSubtitleApps" : "Pour lancer la restauration des apps sur votre Ledger Stax, cliquez sur Restaurer les apps.",
+      "sucessCTAApps" : "Restaurer les apps",
+      "SuccessCTANoApps" : "Terminer",
       "resetSteps" : {
         "first" : "1. Réinitialiser votre appareil",
         "connect" : "Connectez votre {{deviceName}} à votre ordinateur à l’aide d’un câble USB.",
@@ -2071,9 +1995,9 @@
         "second" : "2. Démarrer en mode {{mode}}",
         "boot" : "Faites un appui long sur le bouton latéral jusqu’à ce que {{option}} apparaisse.",
         "recoveryMode" : "Appuyez sur le Mode {{mode}}. Patientez jusqu’à ce que le tableau de bord apparaisse.",
-        "third" : "3. Désinstaller toutes les applications",
+        "third" : "3. Désinstaller toutes les apps",
         "openLive" : "Ouvrez My Ledger dans Ledger Live.",
-        "uninstall" : "Appuyez sur l’icône grise de la corbeille pour supprimer toutes les applications actuellement installées sur votre {{deviceName}}. Cela permet de faire de la place pour le programme d’installation du micrologiciel.",
+        "uninstall" : "Appuyez sur l’icône grise de la corbeille pour supprimer toutes les apps actuellement installées sur votre {{deviceName}}. Cela permet de faire de la place pour le programme d’installation du micrologiciel.",
         "disclaimer" : "Remarque : vos fonds ne sont pas affectés par cette opération. Vos clés privées vous permettant d’accéder à vos crypto-actifs sont notées en toute sécurité sur votre feuille de récupération."
       }
     }
@@ -2111,7 +2035,7 @@
         "energyDescription" : "Les points d’Énergie sont requis pour exécuter des contrats intelligents. Si vous n’exécutez aucun contrat intelligent, il n’est pas nécessaire de gagner vos récompenses en Énergie.",
         "amountLabel" : "Montant à geler",
         "available" : "Disponible : {{amountAvailable}}",
-        "info" : "Les actifs gelés ne peuvent pas être envoyés pendant 3 jours."
+        "info" : "Les actifs gelés peuvent être immédiatement dégelés. Ils seront disponibles après la période de dégel de 14 jours."
       },
       "connectDevice" : {
         "title" : "Appareil"
@@ -2208,7 +2132,8 @@
         "parentAccount" : "1. Sélectionnez le compte {{currencyName}}.",
         "token" : "2. Sélectionnez un token.",
         "verifyTokenType" : "Vérifiez que <0>{{token}}</0> est bien un token <0>{{tokenType}}</0>. Tout autre crypto-actif envoyé sur un compte {{currency}} risque d’être perdu.",
-        "warningTokenType" : "Envoyez uniquement des <0>{{ticker}}</0> ou tokens <0>{{tokenType}}</0> sur des comptes {{currency}}. Tout autre crypto-actif risque d’être définitivement perdu."
+        "warningTokenType" : "Envoyez uniquement des <0>{{ticker}}</0> ou tokens <0>{{tokenType}}</0> sur des comptes {{currency}}. Tout autre crypto-actif risque d’être définitivement perdu.",
+        "depositFromCexBannerTitle" : "Recevoir des cryptos de votre compte Coinbase"
       },
       "connectDevice" : {
         "title" : "Appareil",
@@ -2296,7 +2221,7 @@
         "fees" : "Frais de réseau",
         "maxFees" : "Frais de réseau maximaux",
         "maxFeesInfo" : "Il s’agit du montant maximal que vous êtes prêt(e) à payer pour cette transaction. Toute différence entre les frais de réseau maximaux et les frais réels sera remboursée.",
-        "useMax" : "Choisir le maximum",
+        "useMax" : "Maximum",
         "sendMax" : "Envoyer le maximum",
         "rippleTag" : "Tag",
         "rippleTagPlaceholder" : "Facultatif",
@@ -2371,21 +2296,28 @@
     "confirmation" : "Confirmez la suppression du fond d’écran sur votre Ledger Stax",
     "success" : "Fond d’écran supprimé"
   },
+  "changeCustomLockscreen" : {
+    "cta" : "Modifier"
+  },
+  "removeCurrentPicture" : {
+    "cta" : "Supprimer le fond d’écran"
+  },
+  "appsInstallingDisabledTooltip" : "Désactivé jusqu’à la fin de l’installation des apps",
   "deviceLocalization" : {
     "language" : "Langue",
     "deviceLanguage" : "Changer la langue de votre appareil",
-    "changeLanguage" : "Modifier",
+    "changeLanguage" : "Changer la langue",
     "dontChangeLanguage" : "Ne pas modifier",
     "changeDeviceLanguage" : "Voulez-vous changer la langue de votre Ledger ?",
     "changeDeviceLanguagePrompt" : {
-      "title" : "Vous pouvez utiliser votre {{deviceName}} en : {{language}}.",
-      "description" : "Souhaitez-vous l’utiliser en {{language}} ?"
+      "title" : "Choisir le {{language}} comme langue sur votre {{deviceName}} ?",
+      "description" : "Vous pouvez utiliser votre {{deviceName}} et Ledger Live dans la même langue."
     },
     "firmwareUpdatePrompt" : {
       "title" : "Utiliser votre {{deviceName}} en {{language}} ?",
       "description" : "Une nouvelle langue est disponible pour votre {{deviceName}} : {{language}}. Vous pouvez changer la langue de votre Ledger maintenant ou à tout moment à partir de My Ledger."
     },
-    "allowLanguageInstallation" : "Confirmez l’ajout de la langue",
+    "allowLanguageInstallation" : "Appuyez sur Autoriser\npour installer la langue",
     "languageInstalled" : "Votre Ledger est maintenant en {{language}}.",
     "installingLanguage" : "Installation de la langue",
     "languages" : {
@@ -2412,6 +2344,7 @@
     "header" : "Répartition des comptes ({{count}})"
   },
   "elrond" : {
+    "guardedAccountWarning" : "Si votre compte est protégé par un Guardian, vous ne pourrez pas envoyer de transactions via Ledger Live.",
     "summary" : {
       "availableBalanceTooltip" : "Ce montant peut être transféré.",
       "availableBalance" : "Solde disponible",
@@ -2597,6 +2530,68 @@
       "stakingRewardsBanner" : {
         "cardTitle" : "Le solde total ne comprend pas les récompenses de staking"
       }
+    },
+    "delegation" : {
+      "totalStake" : "Stake total",
+      "cost" : "Coût",
+      "pool" : "Pool",
+      "changeDelegation" : "Changer la délégation",
+      "assetsAlreadyStaked" : "Vos actifs sont déjà stakés",
+      "addFundsToStake" : "Ajouter des fonds à staker",
+      "commission" : "Commission",
+      "stakeKeyRegistrationDeposit" : "Dépôt d’enregistrement de la clé de staking",
+      "delegatingTo" : "Délégué à",
+      "flow" : {
+        "title" : "Déléguer",
+        "steps" : {
+          "starter" : {
+            "description" : "Gagnez des récompenses en déléguant vos ADA à un pool.",
+            "bullet" : ["Vous gardez la propriété de vos actifs délégués.", "Déléguez avec votre appareil Ledger.", "Redéléguez vos actifs à un autre pool ou interrompez la délégation à tout moment."]
+          },
+          "validator" : {
+            "title" : "Pools"
+          },
+          "summary" : {
+            "title" : "Récapitulatif"
+          },
+          "connectDevice" : {
+            "title" : "Appareil"
+          },
+          "confirmation" : {
+            "title" : "Confirmation",
+            "success" : {
+              "title" : "Actifs délégués",
+              "text" : "Le solde de votre compte sera mis à jour une fois que la blockchain aura confirmé la transaction.",
+              "cta" : "Voir les détails"
+            },
+            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer."
+          }
+        }
+      }
+    },
+    "unDelegation" : {
+      "message" : "Si vous interrompez la délégation, vous ne recevrez pas de récompenses pour les epochs en cours et à venir.",
+      "refund" : "Remboursement du dépôt d’enregistrement au staking",
+      "flow" : {
+        "title" : "Arrêter la délégation",
+        "steps" : {
+          "summary" : {
+            "title" : "Récapitulatif"
+          },
+          "connectDevice" : {
+            "title" : "Appareil"
+          },
+          "confirmation" : {
+            "title" : "Confirmation",
+            "success" : {
+              "title" : "Vous avez arrêté la délégation",
+              "text" : "Le solde de votre compte sera mis à jour une fois que la blockchain aura confirmé la transaction.",
+              "cta" : "Voir les détails"
+            },
+            "broadcastError" : "Échec probable de votre transaction. Patientez un instant, puis vérifiez l’historique des transactions avant de réessayer."
+          }
+        }
+      }
     }
   },
   "tron" : {
@@ -2632,7 +2627,7 @@
             "description" : "Gelez vos TRX pour gagner des récompenses en toute sécurité en gardant le contrôle de vos actifs.",
             "bullet" : {
               "delegate" : "Vous conservez la propriété de vos actifs délégués.",
-              "access" : "Vous pouvez dégeler vos actifs après 3 jours.",
+              "access" : "Les actifs gelés peuvent être immédiatement dégelés. Ils deviendront disponibles après la période de dégel de 14 jours.",
               "ledger" : "Gelez et votez en toute sécurité avec votre appareil Ledger."
             },
             "help" : "Fonctionnement du vote",
@@ -3077,7 +3072,7 @@
         "steps" : {
           "starter" : {
             "title" : "Redélégation",
-            "description" : "Redéléguez pour passer facilement d’un validateur à un autre. Notez que si vous changez à nouveau d’avis, vous devrez patienter. Lorsque vous redéléguez, vos actifs sont immobilisés pendant 21 jours.",
+            "description" : "Redéléguez pour passer facilement d’un validateur à un autre. Notez que si vous changez à nouveau d’avis, vous devrez patienter. Lorsque vous redéléguez, vos actifs sont immobilisés pendant {{ numberOfDays }} jours.",
             "warning" : "Choisissez votre validateur judicieusement. Une partie de vos actifs délégués peut être perdue si le validateur ne se comporte pas correctement. Vous pouvez avoir un maximum de <0>7 redélégations en attente</0>.",
             "howDelegationWorks" : "Fonctionnement de la délégation"
           },
@@ -3106,7 +3101,7 @@
     },
     "undelegation" : {
       "header" : "Délégation(s) arrêtée(s)",
-      "headerTooltip" : "Disponibles après le gel de 21 jours",
+      "headerTooltip" : "Disponibles après le verrouillage de {{numberOfDays}} jours",
       "inactiveTooltip" : "Les montants retirés de la délégation ne génèrent pas de récompenses.",
       "flow" : {
         "title" : "Arrêter la délégation des actifs",
@@ -3214,7 +3209,7 @@
     "unlockedBalance" : "Délié",
     "unlockedTooltip" : "Les actifs déliés peuvent maintenant être déplacés en utilisant l’opération de retrait.",
     "networkFees" : "Les frais de réseau sont automatiquement définis par le consensus de Polkadot. Vous ne pourrez pas les voir sur votre appareil.",
-    "bondedBalanceBelowMinimum" : "Votre solde lié est inférieur au minimum requis ({{minimumBondBalance}}). Vos nominations risquent d’être effacées.",
+    "bondedBalanceBelowMinimum" : "Un minimum de {{minimumBondBalance}} est requis pour pouvoir nommer des validateurs.",
     "nomination" : {
       "emptyState" : {
         "description" : "Vous pouvez obtenir des récompenses en liant des actifs, puis en nommant un ou des validateur(s).",
@@ -3530,7 +3525,8 @@
             "title" : "Validateur"
           },
           "amount" : {
-            "title" : "Montant"
+            "title" : "Montant",
+            "reserveWarning" : "Conservez au minimum {{amount}} SOL dans votre wallet pour couvrir les frais de réseau futurs afin de désactiver et retirer vos cryptos stakées"
           },
           "confirmation" : {
             "success" : {
@@ -3596,7 +3592,7 @@
   "ethereum" : {
     "stake" : {
       "title" : "Faites fructifier vos ETH",
-      "subTitle" : "Stakez vos ETH et et recevez des récompenses quotidiennes directement dans Ledger Live.",
+      "subTitle" : "Stakez vos ETH et et recevez des récompenses quotidiennes directement via Ledger Live.",
       "lido" : {
         "title" : "Staker avec Lido",
         "description" : "Stakez vos ETH avec Lido et gagnez des récompenses quotidiennes. Pas de période de blocage. Pas de montant minimum.",
@@ -3606,15 +3602,18 @@
         "title" : "Staker avec un validateur Kiln",
         "tag" : "32 ETH minimum",
         "description" : "Stakez avec un validateur personnalisé. Minimum de 32 ETH (ou un multiple) requis. Récompenses à demander manuellement. Quittez à tout moment.",
-        "supportLink" : "En savoir plus sur le validateur Kiln"
+        "supportLink" : "En savoir plus sur les validateurs Kiln"
       },
       "kiln_pooling" : {
         "title" : "Staker avec un pool sur Kiln",
         "tag" : "Pas de minimum",
-        "description" : "Rejoignez un pool de staking. Pas de montant minimum d’ETH requis. Récompenses capitalisées automatiquement. Quittez à tout moment.",
+        "description" : "Rejoignez un pool de staking. Aucun montant minimum d’ETH requis. Récompenses capitalisées automatiquement. Quittez à tout moment.",
         "supportLink" : "En savoir plus sur les pools sur Kiln"
       }
     }
+  },
+  "graph" : {
+    "noGraphWarning" : "Graphique non disponible pour ce token"
   },
   "near" : {
     "account" : {
@@ -3871,7 +3870,7 @@
         "button" : "Terminé",
         "title" : "Scannez pour exporter vers Ledger Live mobile",
         "listTitle" : "Sur l’application Ledger Live pour le mobile :",
-        "step1" : "Appuyez sur <highlight><icon>+</icon></highlight> dans <highlight>Comptes</highlight>.",
+        "step1" : "Sur l’onglet Wallet, appuyez sur <highlight>Ajouter un compte</highlight>, ou sur <highlight>Afficher tous les actifs</highlight> puis sur le bouton <highlight><icon>+</icon></highlight>.",
         "step2" : "Appuyez sur <highlight>Importer les comptes de l’ordinateur</highlight>.",
         "step3" : "Scannez <highlight>le code QR</highlight> jusqu’à ce que la barre soit à 100 %."
       }
@@ -3886,11 +3885,15 @@
       "region" : "Région",
       "regionDesc" : "Choisissez votre région pour personnaliser les formats de date, d’heure et de nombre.",
       "stock" : "Indicateur de marché régional",
-      "stockDesc" : "Choisissez Ouest pour afficher les hausses du marché en bleu ou Est pour les afficher en rouge.",
-      "carouselVisibility" : "Visibilité du carrousel",
-      "carouselVisibilityDesc" : "Afficher le carrousel sur le Portefeuille."
+      "stockDesc" : "Choisissez Ouest pour afficher les hausses du marché en bleu ou Est pour les afficher en rouge."
     },
     "developer" : {
+      "search" : "Rechercher",
+      "all" : "Tous",
+      "groups" : "Groupes",
+      "open" : "Ouvrir",
+      "hide" : "Masquer",
+      "show" : "Afficher",
       "toast" : {
         "title" : "Vous avez atteint le niveau Développeur !",
         "text" : "Bienvenue au pays des merveilles"
@@ -3900,10 +3903,8 @@
       "debugAppsDesc" : "Affichez et autorisez l’ouverture des Platform Apps \"Debug\".",
       "experimentalApps" : "Autoriser les Apps Expérimentales",
       "experimentalAppsDesc" : "Affichez et autorisez l’ouverture des Platform Apps \"Expérimentales\".",
-      "catalogUrl" : "Définir le fournisseur du Catalogue d’applications",
+      "catalogUrl" : "Définir le fournisseur du Catalogue d’apps",
       "catalogUrlDesc" : "Saisissez l’URL de votre fournisseur du Catalogue personnalisé.",
-      "catalogRampServer" : "Définir les prestataires d’achat / vente",
-      "catalogRampServerDesc" : "Choisissez entre plusieurs prestataires de trading.",
       "enablePlatformDevTools" : "Activer les Outils de développement Platform",
       "enablePlatformDevToolsDesc" : "Autorisez la fenêtre Outils de développement Platform.",
       "customLockScreen" : "Composants de l’écran de verrouillage personnalisé",
@@ -3915,8 +3916,15 @@
       "featureFlagsRestore" : "Restaurer",
       "featureFlagsOverride" : "Remplacer",
       "featureFlagsRestoreAll" : "Restaurer les valeurs de tous les indicateurs",
+      "flagHint" : "Si un indicateur de fonctionnalités est défini dans l’environnement Firebase ciblé \nmais qu’il est absent de la liste ci-dessous, vous pouvez taper son nom **exact** dans \nle champ de recherche pour le trouver. Tapez le \nnom de l’indicateur en camelCase sans le préfixe \"feature\".",
       "showButtonDesc" : "Toujours afficher le bouton Feature Flags dans la barre latérale.",
       "buttonTitle" : "Indicateurs remplacés localement",
+      "overridden" : {
+        "byEnv" : "remplacé par env",
+        "overriddenLocally" : "remplacé localement",
+        "disableForLanguage" : "désactivé pour la langue utilisé",
+        "disableForVersion" : "désactivé pour la version utilisée"
+      },
       "firebaseProject" : "Projet Firebase ciblé par ce build :",
       "addLocalApp" : "Ajouter une app locale",
       "addLocalAppDesc" : "Parcourez vos fichiers et ajoutez une app locale avec un manifeste local.",
@@ -3952,7 +3960,7 @@
       "hardResetDesc" : "Effacez toutes les données de Ledger Live stockées sur votre ordinateur, y compris vos comptes, l’historique de vos transactions et vos paramètres.",
       "hardReset" : "Réinitialiser",
       "analytics" : "Statistiques",
-      "analyticsDesc" : "Autoriser les statistiques pour aider Ledger à améliorer l’expérience utilisateur. Ces statistiques comprennent les clics, les visites de pages, les redirections, les actions (envoyer, recevoir, verrouiller, etc.), les défilements en bas de page, les installations, désinstallations et mises à jour des applications, les versions des applications, le nombre de comptes, de crypto-actifs et d’opérations, la durée des sessions, le type d’appareil Ledger et de micrologiciel.",
+      "analyticsDesc" : "Autoriser les statistiques pour aider Ledger à améliorer l’expérience utilisateur. Ces statistiques comprennent les clics, les visites de pages, les redirections, les actions (envoyer, recevoir, verrouiller, etc.), les défilements en bas de page, les installations, désinstallations et mises à jour des apps, les versions des apps, le nombre de comptes, de crypto-actifs et d’opérations, la durée des sessions, le type d’appareil Ledger et de micrologiciel.",
       "reportErrors" : "Rapports de bugs",
       "reportErrorsDesc" : "Envoyer automatiquement des rapports pour aider Ledger à améliorer ses produits.",
       "launchOnboarding" : "Configurer un appareil Ledger",
@@ -3971,9 +3979,9 @@
     },
     "experimental" : {
       "disclaimer" : "Il s’agit de fonctionnalités expérimentales fournies \"telles quelles\" pour notre communauté de passionné(e)s de la tech. Elles peuvent changer, casser ou être retirées à tout moment. En les activant, vous acceptez de les utiliser en toute connaissance de cause.",
-      "provider" : "Le paramètre expérimental « Fournisseur de My Ledger ({{forcedProvider}}) » peut afficher des systèmes d’exploitation et des applications qui n’ont pas encore été publiés, entraînant des problèmes de compatibilité. Vous pouvez le désactiver dans les Paramètres.",
-      "providerDevMode" : "Les paramètres expérimentaux « Fournisseur de My Ledger ({{forcedProvider}}) » et « Mode développeur » peuvent afficher des systèmes d’exploitation et des applications qui n’ont pas encore été publiés, entraînant des problèmes de compatibilité. Vous pouvez les désactiver dans les Paramètres.",
-      "devMode" : "Le paramètre expérimental « Mode développeur » peut afficher des systèmes d’exploitation et des applications qui n’ont pas encore été publiés, entraînant des problèmes de compatibilité. Vous pouvez le désactiver dans les Paramètres.",
+      "provider" : "Le paramètre expérimental \"Fournisseur de My Ledger ({{forcedProvider}})\" peut afficher des systèmes d’exploitation et des apps qui n’ont pas encore été publiés, entraînant des problèmes de compatibilité. Vous pouvez le désactiver dans les Paramètres.",
+      "providerDevMode" : "Les paramètres expérimentaux \"Fournisseur de My Ledger ({{forcedProvider}})\" et \"Mode développeur\" peuvent afficher des systèmes d’exploitation et des apps qui n’ont pas encore été publiés, entraînant des problèmes de compatibilité. Vous pouvez les désactiver dans les Paramètres.",
+      "devMode" : "Le paramètre expérimental \"Mode développeur\" peut afficher des systèmes d’exploitation et des apps qui n’ont pas encore été publiés, entraînant des problèmes de compatibilité. Vous pouvez le désactiver dans les Paramètres.",
       "providerCTA" : "Accéder aux Paramètres",
       "features" : {
         "experimentalCurrencies" : {
@@ -3986,7 +3994,7 @@
         },
         "managerDevMode" : {
           "title" : "Mode développeur",
-          "description" : "Affichez les applications développeurs et testnet dans My Ledger."
+          "description" : "Affichez les apps développeurs et testnet dans My Ledger."
         },
         "listAppsV2" : {
           "title" : "Listage expérimental des apps pour My Ledger",
@@ -4006,15 +4014,17 @@
         },
         "forceProvider" : {
           "title" : "Fournisseur de My Ledger",
-          "description" : "Changer le fournisseur d’applications dans My Ledger peut rendre impossible l’installation ou désinstallation d’applications sur votre appareil Ledger."
+          "description" : "Changer le fournisseur d’apps dans My Ledger peut bloquer l’installation ou désinstallation d’apps sur votre appareil Ledger."
         },
         "testAnimations" : {
           "title" : "Tester les animations Lottie",
-          "description" : "Testez toutes les animations utilisées dans Ledger Live."
+          "description" : "Testez toutes les animations utilisées dans Ledger Live.",
+          "longDesc" : "Il s’agit d’un outil fourni tel quel pour permettre à l’équipe de valider les animations Lottie utilisées dans l’application."
         },
         "testStories" : {
-          "title" : "Testez les animations Storyly",
-          "description" : "Testez toutes les animations utilisées dans Ledger Live."
+          "title" : "Tester les animations Storyly",
+          "description" : "Testez toutes les animations utilisées dans Ledger Live.",
+          "longDesc" : "Il s’agit d’un outil fourni tel quel pour permettre à l’équipe de valider les stories Storyly utilisées dans l’application."
         },
         "testPostonboarding" : {
           "title" : "Tester le Post-Onboarding",
@@ -4030,7 +4040,7 @@
         },
         "1559CustomPriorityLowerGate" : {
           "title" : "Définir un seuil minimal pour les frais de priorité",
-          "description" : "Personnalisez le percentage de notre estimation des frais de priorité minimum autorisés pour une transaction avancée (EIP-1559)."
+          "description" : "Personnalisez le pourcentage de notre estimation des frais de priorité minimum autorisés pour une transaction avancée (EIP-1559)."
         },
         "1559CustomBaseFeeMultiplier" : {
           "title" : "Coefficient personnalisé pour les frais de base",
@@ -4089,7 +4099,7 @@
     "accounts" : {
       "hideEmptyTokens" : {
         "title" : "Masquer les comptes de tokens vides",
-        "desc" : "Cachez les tokens ayant un solde nul sur la page Comptes."
+        "desc" : "Cachez les comptes de tokens ayant un solde nul."
       },
       "tokenBlacklist" : {
         "title" : "Tokens masqués",
@@ -4144,12 +4154,11 @@
     "downloadProgress" : "{{progress}} % terminés",
     "checking" : "Vérification de la mise à jour...",
     "checkSuccess" : "Nouvelle mise à jour de Ledger Live disponible. Elle s’installera automatiquement à la fermeture de l’application.",
-    "quitAndInstall" : "Installer maintenant",
+    "quitAndInstall" : "Installer maintenant et relancer",
     "updateAvailable" : "Mise à jour disponible vers la version Ledger Live {{version}}",
     "error" : "Erreur lors de la mise à jour. Merci de recommencer le téléchargement.",
     "reDownload" : "Recommencer le téléchargement",
-    "nightlyWarning" : "Cette version ne peut pas être mise à jour automatiquement. Merci d’installer la dernière version manuellement.",
-    "downloadNow" : "Télécharger la mise à jour"
+    "nightlyWarning" : "Cette version ne peut pas être mise à jour automatiquement. Merci d’installer la dernière version manuellement."
   },
   "crash" : {
     "title" : "Une erreur est survenue.",
@@ -4274,8 +4283,8 @@
       "recoverySeedWarning" : {
         "contactSupportCTA" : "Contacter l’Assistance",
         "continueCTA" : "Continuer",
-        "title" : "Vérifiez le contenu de votre coffret.",
-        "description" : "Si votre {{device}} est livré avec un code PIN ou une phrase de récupération, l’utiliser présente un risque. Contactez l’Assistance Ledger.",
+        "title" : "Vérifiez le contenu de votre coffret",
+        "description" : "Si votre {{device}} est livré avec un code PIN ou une phrase de récupération, il est dangereux de l’utiliser. Contactez l’Assistance Ledger.",
         "alert" : "Utilisez uniquement la phrase de récupération affichée sur votre appareil Ledger lors de sa configuration."
       }
     },
@@ -4286,8 +4295,8 @@
         "gotIt" : "Compris"
       },
       "useLedgerSeeds" : {
-        "title" : "N’utilisez que les phrases de récupération générées par un appareil Ledger.",
-        "descr" : "Ledger ne peut pas garantir la sécurité des phrases de récupération fournies par des tiers. Si votre phrase de récupération n’a pas été générée par un appareil Ledger, nous recommandons de configurer votre Nano comme un nouvel appareil.",
+        "title" : "N’utilisez que les phrases de récupération générées par un appareil Ledger",
+        "descr" : "Ledger ne peut pas garantir la sécurité des phrases de récupération fournies par des tiers. Si votre phrase de récupération n’a pas été générée par un appareil Ledger, nous recommandons de configurer votre Ledger Nano comme un nouvel appareil.",
         "gotIt" : "Compris"
       }
     },
@@ -4298,7 +4307,6 @@
         "nextButton" : "Commencer",
         "noDevice" : "Pas encore d’appareil ?",
         "buyLink" : "Pas encore d’appareil ? Achetez un Ledger Nano X.",
-        "recoverSignIn" : "Connectez-vous à Ledger Recover",
         "byTapping" : "En appuyant sur Commencer, vous acceptez nos",
         "termsAndConditions" : "Conditions d’utilisation",
         "and" : "et",
@@ -4321,13 +4329,13 @@
             "desc" : "Ledger Live vous permet d’acheter, vendre, échanger, gérer et gagner des cryptos en toute sécurité.\nVous devrez valider chaque transaction avec votre wallet Ledger."
           },
           "4" : {
-            "title" : "Configurez votre Nano",
-            "desc" : "Commencez par configurer votre nouveau Nano."
+            "title" : "Configurez votre wallet",
+            "desc" : "Commencez par configurer votre nouveau Ledger Nano."
           }
         }
       },
       "selectDevice" : {
-        "title" : "Sélectionnez votre Ledger",
+        "title" : "Choisissez votre appareil Ledger",
         "selectLabel" : "Sélectionner"
       },
       "selectUseCase" : {
@@ -4340,15 +4348,15 @@
           },
           "2" : {
             "title" : "Connecter un {{deviceName}}",
-            "description" : "Si votre Ledger est déjà configuré, connectez-le à Ledger Live."
+            "description" : "Si votre appareil Ledger est déjà configuré, connectez-le à Ledger Live."
           },
           "3" : {
             "title" : "Restaurer une phrase de récupération sur un nouvel appareil",
-            "description" : "Utilisez une phrase de récupération existante pour restaurer vos clés privées sur votre nouveau Nano."
+            "description" : "Utilisez une phrase de récupération existante pour restaurer vos clés privées sur votre nouveau Ledger Nano."
           },
           "4" : {
             "title" : "Restaurer avec Ledger Recover",
-            "description" : "Vous devez avoir un abonnement Ledger Recover."
+            "description" : "Vous devez avoir un abonnement Ledger Recover."
           }
         }
       },
@@ -4444,7 +4452,7 @@
           },
           "pinCode" : {
             "title" : "Code PIN",
-            "paragraph" : "Votre code PIN est votre première couche de sécurité. Il protège l’accès physique à votre Nano et à votre clé privée. Votre code PIN doit comporter 4 à 8 chiffres.",
+            "paragraph" : "Votre code PIN est votre première couche de sécurité. Il protège l’accès physique à votre Ledger Nano et à votre clé privée. Votre code PIN doit comporter 4 à 8 chiffres.",
             "disclaimer" : "Je comprends que je dois choisir mon code PIN moi-même et le garder secret.",
             "buttons" : {
               "next" : "Configurer le code PIN",
@@ -4519,9 +4527,9 @@
             "title" : "Saisissez votre phrase de récupération",
             "paragraph1" : "Votre phrase de récupération (\"recovery phrase\") est la liste secrète de mots que vous avez mise en lieu sûr après avoir configuré votre nouveau wallet.",
             "paragraph2" : "Ledger ne conserve pas de copie de votre phrase de récupération.",
-            "disclaimer" : "Je comprends que si je perds ma phrase de récupération, je ne pourrais plus accéder à mes cryptos au cas où je n’ai plus accès à mon Nano.",
+            "disclaimer" : "Je comprends que si je perds ma phrase de récupération, je ne pourrais plus accéder à mes cryptos au cas où je n’ai plus accès à mon Ledger Nano.",
             "buttons" : {
-              "next" : "Saisir votre phrase de récupération",
+              "next" : "Saisissez votre phrase de récupération",
               "prev" : "Étape précédente",
               "help" : "Besoin d’aide"
             },
@@ -4534,11 +4542,11 @@
           "useRecoverySheet" : {
             "takeYourRecoverySheet" : {
               "title" : "Utilisez votre feuille de récupération",
-              "descr" : "Prenez la feuille de récupération vierge incluse avec votre Nano. Contactez l’Assistance Ledger si la feuille de récupération fournie n’était pas vierge."
+              "descr" : "Prenez une des feuilles de récupération vierge de votre coffret Ledger. Contactez l’Assistance Ledger si la feuille de récupération fournie n’était pas vierge."
             },
             "writeDownWords" : {
               "title" : "Notez vos 24 mots",
-              "descr" : "Écrivez en position 1 sur la feuille de récupération le mot n°1 (\"Word #1\") affiché en gras sur votre Nano. Puis appuyez sur le bouton droit de votre Nano pour voir le mot n°2 (\"Word #2\") et écrivez-le en position 2.\n\nFaites cela pour tous les mots affichés en gras en respectant scrupuleusement l’ordre et l’orthographe. Appuyez sur le bouton gauche de votre Nano pour vérifier et ne pas faire d’erreur."
+              "descr" : "Écrivez en position 1 sur la feuille de récupération le mot n°1 (\"Word #1\") affiché en gras sur votre Ledger Nano. Puis appuyez sur le bouton droit de votre Ledger Nano pour voir le mot n°2 (\"Word #2\") et écrivez-le en position 2.\n\nFaites cela pour tous les mots affichés en gras en respectant scrupuleusement l’ordre et l’orthographe. Appuyez sur le bouton gauche de votre Ledger Nano pour vérifier et ne pas faire d’erreur."
             },
             "buttons" : {
               "next" : "Étape suivante",
@@ -4625,7 +4633,7 @@
           },
           "hideRecoveryPhrase" : {
             "title" : "Cachez votre phrase de récupération",
-            "paragraph" : "Votre phrase de récupération est votre seule façon d’accéder à vos cryptos si vous ne pouvez plus utiliser votre Nano. La garder en lieu sûr est crucial.",
+            "paragraph" : "Votre phrase de récupération est votre seule façon d’accéder à vos cryptos si vous ne pouvez plus utiliser votre Ledger Nano. La garder en lieu sûr est crucial.",
             "keepItOffline" : "Saisissez ces mots uniquement sur un wallet physique, pas sur un ordinateur ni sur un téléphone.",
             "neverShowToAnyone" : "Ne partagez jamais vos 24 mots avec qui que ce soit. Pas même Ledger.",
             "buttons" : {
@@ -4675,8 +4683,8 @@
           "description" : "Ledger Live vous permet d’acheter, vendre, échanger, gérer et gagner des cryptos en toute sécurité. Vous devrez valider chaque transaction avec votre wallet Ledger."
         },
         "setUpNanoWallet" : {
-          "title" : "Configurez votre Nano",
-          "description" : "Commencez par configurer votre nouveau Nano.",
+          "title" : "Configurez votre wallet",
+          "description" : "Commencez par configurer votre nouveau Ledger Nano.",
           "CTA" : "Configurer"
         }
       }
@@ -4694,7 +4702,7 @@
         "1" : {
           "text" : "Les cryptos sécurisées par mon appareil Ledger sont stockées :",
           "answers" : {
-            "1" : "Sur mon Ledger Nano",
+            "1" : "Sur mon appareil Ledger",
             "2" : "Sur la blockchain"
           },
           "results" : {
@@ -4734,11 +4742,11 @@
           "results" : {
             "success" : {
               "title" : "Félicitations !",
-              "text" : "Votre clé privée reste hors ligne au sein de votre wallet physique. Même connectée à votre Nano, l’application Ledger Live ne peut pas accéder à votre clé privée. Vous devez autoriser personnellement chaque transaction sur votre appareil."
+              "text" : "Votre clé privée reste hors ligne au sein de votre wallet physique. Même connectée à votre Ledger Nano, l’application Ledger Live ne peut pas accéder à votre clé privée. Vous devez autoriser personnellement chaque transaction sur votre appareil."
             },
             "fail" : {
               "title" : "Incorrect",
-              "text" : "Votre clé privée reste hors ligne au sein de votre wallet physique. Même connectée à votre Nano, l’application Ledger Live ne peut pas accéder à votre clé privée. Vous devez autoriser personnellement chaque transaction sur votre appareil."
+              "text" : "Votre clé privée reste hors ligne au sein de votre wallet physique. Même connectée à votre Ledger Nano, l’application Ledger Live ne peut pas accéder à votre clé privée. Vous devez autoriser personnellement chaque transaction sur votre appareil."
             }
           }
         }
@@ -4897,6 +4905,9 @@
       "claimReward" : "Confirmez l’opération sur votre appareil pour la finaliser.",
       "freeze" : "Confirmez l’opération sur votre appareil pour la finaliser.",
       "unfreeze" : "Confirmez l’opération sur votre appareil pour la finaliser.",
+      "withdrawExpireUnfreeze" : "Confirmez l’opération sur votre appareil pour la finaliser.",
+      "unDelegateResource" : "Confirmez l’opération sur votre appareil pour la finaliser.",
+      "legacyUnfreeze" : "Confirmez l’opération sur votre appareil pour la finaliser.",
       "vote" : "Confirmez l’opération sur votre appareil pour la finaliser.",
       "delegate" : "Confirmez l’opération sur votre appareil pour la finaliser.",
       "undelegate" : "Confirmez l’opération sur votre appareil pour la finaliser.",
@@ -4956,6 +4967,11 @@
     "cta" : "Continuer"
   },
   "families" : {
+    "casper" : {
+      "transferIdPlaceholder" : "Facultatif",
+      "transferId" : "Identifiant de transfert (mémo)",
+      "transferIdWarningText" : "Lorsque vous utilisez un mémo, vérifiez soigneusement les informations auprès du bénéficiaire."
+    },
     "cardano" : {
       "memoPlaceholder" : "Facultatif",
       "memo" : "Mémo"
@@ -5005,9 +5021,13 @@
     }
   },
   "errors" : {
+    "ReplacementTransactionUnderpriced" : {
+      "title" : "Frais de réseau trop bas",
+      "description" : "Les frais de réseau peuvent être trop bas. Veuillez les augmenter."
+    },
     "NoSuchAppOnProvider" : {
-      "title" : "Échec de la localisation de l’application {{appName}} pour votre appareil.",
-      "description" : "Veuillez essayer de réinstaller l’application depuis My Ledger."
+      "title" : "Échec de la localisation de l’app {{appName}} pour votre appareil.",
+      "description" : "Veuillez essayer de réinstaller l’app depuis My Ledger."
     },
     "PendingOperation" : {
       "description" : "Vous avez des transactions entrantes en attente. Attention, les transactions en attente peuvent être annulées."
@@ -5127,6 +5147,10 @@
       "title" : "{{currencyName}} non pris en charge",
       "description" : "Ce crypto-actif n’est pas encore pris en charge. Merci de contacter l’Assistance Ledger."
     },
+    "DeviceAlreadySetup" : {
+      "title" : "Votre {{device}} est déjà configuré avec une phrase de récupération secrète",
+      "description" : "Veuillez connecter un wallet Ledger qui n’est pas configuré."
+    },
     "DeviceNotGenuine" : {
       "title" : "L’appareil peut ne pas être authentique.",
       "description" : "Demandez de l’aide à l’Assistance Ledger."
@@ -5156,12 +5180,12 @@
       "description" : "Veuillez réessayer."
     },
     "DisconnectedDevice" : {
-      "title" : "Votre appareil semble avoir été déconnecté.",
-      "description" : "Reconnectez votre appareil et réessayez."
+      "title" : "Appareil déconnecté",
+      "description" : "Ledger Live n’a pas pu se connecter à votre appareil. Veuillez réessayer."
     },
     "DisconnectedDeviceDuringOperation" : {
-      "title" : "Votre appareil semble avoir été déconnecté.",
-      "description" : "Reconnectez votre appareil et réessayez."
+      "title" : "Appareil déconnecté",
+      "description" : "Ledger Live n’a pas pu se connecter à votre appareil. Veuillez réessayer."
     },
     "EConnReset" : {
       "title" : "Impossible d’accéder au Catalogue d’apps de Ledger",
@@ -5177,23 +5201,24 @@
     },
     "FirmwareOrAppUpdateRequired" : {
       "title" : "Mise à jour du micrologiciel ou de l’application nécessaire",
-      "description" : "Utilisez My Ledger pour désinstaller toutes les applications. Vérifiez ensuite si une mise à jour du micrologiciel est disponible avant de les réinstaller."
+      "description" : "Utilisez My Ledger pour désinstaller toutes les apps. Vérifiez ensuite si une mise à jour du micrologiciel est disponible avant de les réinstaller."
     },
     "LatestFirmwareVersionRequired" : {
       "title" : "Mettre à jour le micrologiciel du Nano",
       "description" : "Mettez à jour le micrologiciel de votre appareil pour accéder à cette fonctionnalité."
     },
     "FirmwareNotRecognized" : {
-      "title" : "Micrologiciel de l’appareil non reconnu",
-      "description" : "Merci de contacter l’Assistance Ledger"
+      "title" : "Fournisseur non valide",
+      "description" : "Vous devez modifier le paramètre \"Fournisseur de My Ledger\". Dans Ledger Live, accédez aux Paramètres, sélectionnez \"Fonctionnalités expérimentales\", puis choisissez un autre fournisseur.",
+      "goToSettingsCTA" : "Accéder aux Paramètres"
     },
     "HardResetFail" : {
       "title" : "Échec de la réinitialisation",
       "description" : "Si le problème persiste, veuillez réessayer ou contacter l’Assistance Ledger."
     },
     "LanguageInstallRefusedOnDevice" : {
-      "title" : "Installation de la langue refusée sur l’appareil",
-      "description" : "Veuillez réessayer. Si le problème persiste, enregistrez vos logs en utilisant le bouton ci-dessous et transmettez-les à l’Assistance Ledger."
+      "title" : "Restauration de la langue\nannulée sur l’appareil",
+      "description" : "S’il s’agit d’une erreur, réessayez maintenant."
     },
     "RestoreLanguageInstallRefusedOnDevice" : {
       "title" : "Restauration de la langue annulée sur le Ledger Stax",
@@ -5224,50 +5249,54 @@
       "description" : "Merci de vérifier les apps déjà installées sur votre appareil."
     },
     "ManagerAppDepInstallRequired" : {
-      "title" : "Application {{dependency}} requise",
-      "description" : "Si l’application {{dependency}} est déjà installée, merci de la réinstaller avec la dernière version."
+      "title" : "App {{dependency}} requise",
+      "description" : "Si l’app {{dependency}} est déjà installée, veuillez la réinstaller avec la dernière version."
     },
     "ManagerAppDepUninstallRequired" : {
-      "title" : "Application nécessaire",
-      "description" : "Désinstallez d’abord toutes les applications qui nécessitent l’application {{appName}}."
+      "title" : "App nécessaire",
+      "description" : "Désinstallez d’abord toutes les apps qui nécessitent l’app {{appName}}."
     },
     "ManagerDeviceLocked" : {
       "title" : "Appareil verrouillé",
       "description" : "Merci de déverrouiller votre appareil."
     },
     "ManagerFirmwareNotEnoughSpace" : {
-      "title" : "Désinstaller toutes les applications de votre appareil",
+      "title" : "Désinstaller toutes les apps de votre appareil",
       "description" : "Les clés privées vous permettant d’accéder à vos crypto-actifs resteront en sécurité sur votre appareil. Assurez-vous également qu’elles sont bien sauvegardées sur votre feuille de récupération."
     },
     "ManagerNotEnoughSpace" : {
       "title" : "Espace de stockage insuffisant",
-      "description" : "Désinstallez certaines applications pour libérer de l’espace. Les clés privées vous permettant d’accéder à vos crypto-actifs resteront en sécurité sur votre appareil."
+      "description" : "Désinstallez certaines apps pour libérer de l’espace. Les clés privées vous permettant d’accéder à vos crypto-actifs resteront en sécurité sur votre appareil."
     },
     "ManagerQuitPage" : {
       "install" : {
-        "title" : "Finir l’installation de l’application en cours ?",
-        "description" : "Sortir de My Ledger interrompra l’installation de l’application. Merci de finir l’installation pour installer les applications dans la file d’attente.",
+        "title" : "Finir l’installation de l’app en cours ?",
+        "description" : "Sortir de My Ledger interrompra l’installation de l’app. Pour installer les apps dans la file d’attente, veuillez rester dans My Ledger et finir l’installation.",
         "stay" : "Finir l’installation"
       },
       "uninstall" : {
-        "title" : "Finir la désinstallation de l’application en cours ?",
-        "description" : "Sortir de My Ledger interrompra les désinstallations des applications en cours.",
+        "title" : "Finir la désinstallation de l’app en cours ?",
+        "description" : "Sortir de My Ledger interrompra les désinstallations des apps en cours.",
         "stay" : "Finir la désinstallation"
       },
       "update" : {
-        "title" : "Finir les mises à jour d’applications en cours ?",
-        "description" : "Sortir de My Ledger interrompra les mises à jour des applications en cours.",
+        "title" : "Finir les mises à jour d’apps en cours ?",
+        "description" : "Sortir de My Ledger interrompra les mises à jour des apps en cours.",
         "stay" : "Finir les mises à jour"
       },
       "quit" : "Sortir de My Ledger"
     },
     "ManagerUninstallBTCDep" : {
-      "title" : "Application nécessaire",
-      "description" : "Désinstallez les applications Bitcoin ou Ethereum en dernier."
+      "title" : "App nécessaire",
+      "description" : "Désinstallez les apps Bitcoin ou Ethereum en dernier."
     },
     "NetworkDown" : {
       "title" : "Pas de connexion Internet",
       "description" : "Vérifiez votre connexion Internet."
+    },
+    "NetworkError" : {
+      "title" : "Une erreur réseau s’est produite",
+      "description" : "Veuillez réessayer plus tard."
     },
     "NoAddressesFound" : {
       "title" : "Aucun compte trouvé",
@@ -5290,6 +5319,18 @@
       "title" : "Solde d’EGLD insuffisant pour payer les frais de transaction",
       "description" : "Envoyez des EGLD sur votre compte pour régler vos transactions."
     },
+    "NotEnoughVTHO" : {
+      "title" : "Solde en VTHO insuffisant",
+      "description" : "Votre compte doit avoir un solde en VTHO suffisant."
+    },
+    "MustBeVechain" : {
+      "title" : "Ce n’est pas un compte VeChain",
+      "description" : "La crypto doit être le VTHO ou le VET."
+    },
+    "ImpossibleToCalculateAmountAndFees" : {
+      "title" : "Impossible de calculer le montant et les frais",
+      "description" : "Impossible de calculer le montant et les frais"
+    },
     "NotEnoughBalance" : {
       "title" : "Solde insuffisant",
       "description" : "Vérifiez que ce compte a des fonds suffisants."
@@ -5298,7 +5339,10 @@
       "title" : "L’adresse du bénéficiaire est inactive. Envoyez au minimum {{minimalAmount}} pour l’activer."
     },
     "NotEnoughGas" : {
-      "title" : "Solde du compte parent insuffisant pour les frais de réseau"
+      "title" : "Vous avez besoin de {{fees}} {{ticker}} comme frais de réseau pour échanger sur la blockchain {{cryptoName}}. <link0>Acheter des {{ticker}}</link0>"
+    },
+    "NotEnoughGasSwap" : {
+      "title" : "Vous avez besoin de {{fees}} {{ticker}} comme frais de réseau pour échanger sur la blockchain {{cryptoName}}. <link0>Acheter des {{ticker}}</link0>"
     },
     "OperatingSystemOutdated" : {
       "title" : "Version de votre système d’exploitation obsolète",
@@ -5361,15 +5405,15 @@
     },
     "TransportRaceCondition" : {
       "title" : "Une erreur est survenue. Veuillez reconnecter votre appareil.",
-      "description" : "{{message}}"
+      "description" : "Une action était déjà en attente sur votre appareil Ledger. Veuillez refuser ou reconnecter."
     },
     "TransportStatusError" : {
       "title" : "Une erreur est survenue. Veuillez reconnecter votre appareil.",
       "description" : "{{message}}"
     },
     "DeviceShouldStayInApp" : {
-      "title" : "Merci d’ouvrir l’application {{appName}}",
-      "description" : "Gardez l’application {{appName}} ouverte pendant la recherche de vos comptes."
+      "title" : "Merci d’ouvrir l’app {{appName}}",
+      "description" : "Gardez l’app {{appName}} ouverte pendant la recherche de vos comptes."
     },
     "UnexpectedBootloader" : {
       "title" : "Votre appareil ne doit pas être en mode Bootloader.",
@@ -5379,12 +5423,16 @@
       "title" : "My Ledger refusé sur l’appareil"
     },
     "UserRefusedFirmwareUpdate" : {
-      "title" : "Mise à jour annulée sur l’appareil",
-      "description" : "L’installation de la mise à jour du système d’exploitation a été refusée sur votre appareil. S’il s’agit d’une erreur, veuillez relancer la mise à jour."
+      "title" : "Installation de la mise à jour\nannulée sur l’appareil",
+      "description" : "S’il s’agit d’une erreur, veuillez relancer la mise à jour."
     },
     "UserRefusedOnDevice" : {
       "title" : "Action rejetée",
       "description" : "Vous avez refusé l’opération sur votre appareil."
+    },
+    "ExpertModeRequired" : {
+      "title" : "Mode Expert requis",
+      "description" : "Veuillez activer le mode Expert."
     },
     "TransactionRefusedOnDevice" : {
       "title" : "Opération refusée sur l’appareil",
@@ -5395,28 +5443,28 @@
       "description" : "Veuillez réessayer ou contacter l’Assistance Ledger."
     },
     "UpdateYourApp" : {
-      "title" : "Mise à jour de l’application nécessaire",
-      "description" : "Désinstallez et réinstallez l’application {{managerAppName}} dans My Ledger."
+      "title" : "Mise à jour de l’app nécessaire",
+      "description" : "Désinstallez et réinstallez l’app {{managerAppName}} dans My Ledger."
     },
     "DeviceOnDashboardExpected" : {
       "title" : "Retourner au tableau de bord",
       "description" : "Veuillez ouvrir le tableau de bord sur votre appareil Ledger."
     },
     "WebsocketConnectionError" : {
-      "title" : "Veuillez réessayer (erreur de connexion).",
-      "description" : null
+      "title" : "Erreur réseau",
+      "description" : "Veuillez vérifier votre connexion Internet et réessayer."
     },
     "WebsocketConnectionFailed" : {
-      "title" : "Veuillez réessayer (connexion interrompue).",
-      "description" : null
+      "title" : "Erreur réseau",
+      "description" : "Veuillez vérifier votre connexion Internet et réessayer."
     },
     "WrongDeviceForAccount" : {
       "title" : "Une erreur est survenue.",
-      "description" : "Vérifiez que votre wallet physique est bien configuré avec la phrase de récupération associée au compte sélectionné."
+      "description" : "Vérifiez que votre wallet physique est bien configuré avec la phrase de récupération ou la passphrase associée au compte sélectionné."
     },
     "DeviceAppVerifyNotSupported" : {
-      "title" : "Mise à jour de l’application nécessaire",
-      "description" : "Désinstallez et réinstallez l’application {{managerAppName}} dans My Ledger."
+      "title" : "Mise à jour de l’app nécessaire",
+      "description" : "Désinstallez et réinstallez l’app {{managerAppName}} dans My Ledger."
     },
     "InvalidAddress" : {
       "title" : "Adresse {{currencyName}} invalide"
@@ -5437,6 +5485,15 @@
       "title" : "Échec de la connexion",
       "description" : "L’appareil a été détecté mais la connexion a échoué. Veuillez réessayer ou contacter l’Assistance Ledger si le problème persiste."
     },
+    "CasperInvalidTransferId" : {
+      "title" : "L’identifiant de transfert doit être un nombre positif inférieur à {{maxTransferId}}"
+    },
+    "InvalidMinimumAmount" : {
+      "title" : "Le montant minimal doit être de {{minAmount}}"
+    },
+    "MayBlockAccount" : {
+      "title" : "Votre compte sera inférieur à {{minAmount}}, le montant minimal requis pour effectuer un transfert"
+    },
     "ETHAddressNonEIP" : {
       "title" : "Vérification automatique indisponible : vérifiez l’adresse attentivement.",
       "description" : null
@@ -5454,6 +5511,9 @@
     },
     "FeeNotLoaded" : {
       "title" : "Chargement des taux de frais impossible. Merci de définir manuellement les frais."
+    },
+    "FeeNotLoadedSwap" : {
+      "title" : "L’estimation des frais de réseau a échoué en raison de difficultés techniques. Veuillez réessayer ou changer d’actif."
     },
     "FeeRequired" : {
       "title" : "Des frais sont requis."
@@ -5505,7 +5565,7 @@
     },
     "BtcUnmatchedApp" : {
       "title" : "Mauvaise app",
-      "description" : "Ouvrez l’application {{managerAppName}} sur votre appareil."
+      "description" : "Ouvrez l’app {{managerAppName}} sur votre appareil."
     },
     "DeviceNameInvalid" : {
       "title" : "Choisissez un nom d’appareil sans \"{{invalidCharacters}}\"."
@@ -5515,12 +5575,11 @@
       "description" : "Veuillez réessayer ou contacter l’Assistance Ledger."
     },
     "ManagerAppRelyOnBTC" : {
-      "title" : "Applications Bitcoin et Ethereum nécessaires",
-      "description" : "Installez d’abord les dernières applications Bitcoin et Ethereum."
+      "title" : "Apps Bitcoin et Ethereum nécessaires",
+      "description" : "Installez d’abord les dernières apps Bitcoin et Ethereum."
     },
     "UserRefusedDeviceNameChange" : {
-      "title" : "Changement de nom annulé sur l’appareil",
-      "description" : "Veuillez réessayer et autorisez le changement de nom sur votre appareil."
+      "title" : "Changement de nom annulé sur l’appareil"
     },
     "SyncError" : {
       "title" : "Erreur de synchronisation",
@@ -5534,9 +5593,9 @@
       "title" : "Aucun actif à dégeler",
       "description" : "Vous n’avez pas d’actifs associés à l’Énergie à dégeler."
     },
-    "TronUnfreezeNotExpired" : {
+    "TronLegacyUnfreezeNotExpired" : {
       "title" : "Dégel indisponible pour le moment",
-      "description" : "Merci de patienter 3 jours après votre dernière opération de gel."
+      "description" : "Veuillez patienter 3 jours après votre dernière opération de gel."
     },
     "TronVoteRequired" : {
       "title" : "Au moins 1 vote est nécessaire."
@@ -5572,6 +5631,16 @@
     "TronNotEnoughEnergy" : {
       "title" : "Énergie inférieure à la quantité requise. Vous pourriez payer des frais allant jusqu’à 50 TRX."
     },
+    "TronNoUnfrozenResource" : {
+      "title" : "Aucun actif dégelé à retirer"
+    },
+    "TronInvalidUnDelegateResourceAmount" : {
+      "title" : "Actifs délégués insuffisants"
+    },
+    "TronUnfreezeNotExpired" : {
+      "title" : "Actifs en cours de dégel",
+      "description" : "Vos actifs seront disponibles au retrait le {{time}}."
+    },
     "PairingFailed" : {
       "title" : "Échec de l’appairage",
       "description" : "Veuillez réessayer ou contacter l’Assistance Ledger."
@@ -5581,7 +5650,7 @@
       "description" : "Une erreur est survenue. Veuillez réessayer ou contacter l’Assistance Ledger."
     },
     "EthAppPleaseEnableContractData" : {
-      "title" : "Merci d’activer (\"Enable\") la signature aveugle (\"Blind signing\") dans les réglages (\"Settings\") de l’application Ethereum."
+      "title" : "Activez la signature aveugle dans l’app Ethereum (\"Settings\" > \"Blind signing\"/\"Contract Data\" > \"Enabled\")."
     },
     "InvalidXRPTag" : {
       "title" : "Tag de destination XRP invalide"
@@ -5602,7 +5671,7 @@
       "title" : "Le solde ne peut pas être inférieur à {{minimumAmount}}."
     },
     "WrongAppForCurrency" : {
-      "title" : "Merci d’ouvrir l’application {{expected}}"
+      "title" : "Merci d’ouvrir l’app {{expected}}"
     },
     "FeeTooHigh" : {
       "title" : "Les frais de réseau représentent plus de 10% du montant"
@@ -5614,7 +5683,7 @@
       "title" : "Désactivez la multisignature pour envoyer des {{currencyName}}."
     },
     "SwapExchangeRateAmountTooLow" : {
-      "title" : "Le montant doit être d’au moins {{minAmountFromFormatted}}"
+      "title" : "Le montant doit être supérieur à {{minAmountFromFormatted}}"
     },
     "SwapExchangeRateAmountTooHigh" : {
       "title" : "Le montant doit être inférieur à {{maxAmountFromFormatted}}"
@@ -5686,6 +5755,9 @@
     "CardanoNotEnoughFunds" : {
       "title" : "Vérifiez que votre solde est suffisant pour couvrir les frais"
     },
+    "CardanoStakeKeyDepositError" : {
+      "title" : "Assurez-vous d’avoir {{depositAmount}} ADA disponibles pour ce dépôt"
+    },
     "StacksMemoTooLong" : {
       "title" : "Mémo trop long"
     },
@@ -5746,10 +5818,6 @@
       "title" : "Échec du téléchargement de l’image",
       "description" : "Veuillez réessayer avec une autre image."
     },
-    "ImageMetadataLoadingError" : {
-      "title" : "Échec du chargement des métadonnées de l’image",
-      "description" : "Veuillez réessayer avec une autre image."
-    },
     "ImageTooLargeError" : {
       "title" : "Image trop grande",
       "description" : "Veuillez essayer avec une image plus petite."
@@ -5771,16 +5839,16 @@
       "description" : "Veuillez réessayer avec une autre image."
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "Fond d’écran refusé sur votre Ledger Stax",
-      "description" : "Si ce fond d’écran ne vous plaît pas, choisissez une autre image."
+      "title" : "Installation du fond d’écran annulée\nsur votre Ledger Stax",
+      "description" : "S’il s’agit d’une erreur, réessayez maintenant."
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "Fond d’écran refusé sur votre Ledger Stax",
-      "description" : "Si ce fond d’écran ne vous plaît pas, choisissez une autre image."
+      "title" : "Installation du fond d’écran annulée\nsur votre Ledger Stax",
+      "description" : "S’il s’agit d’une erreur, réessayez maintenant."
     },
     "ImageDoesNotExistOnDevice" : {
-      "title" : "Aucun fond d’écran de verrouillage à supprimer sur votre Ledger Stax",
-      "description" : "Vous avez déjà supprimé votre fond d’écran de verrouillage."
+      "title" : "Aucun fond d’écran à supprimer sur votre Ledger Stax",
+      "description" : "Vous avez déjà supprimé votre fond d’écran."
     },
     "RestoreImageCommitRefusedOnDevice" : {
       "title" : "Restauration du fond d’écran annulée sur votre Ledger Stax",
@@ -5812,7 +5880,7 @@
       "title" : "Veuillez déstaker et retirer vos fonds avant de vider le compte."
     },
     "NearStakingThresholdNotMet" : {
-      "title" : "Le montant doit être d’au moins {{threshold}}"
+      "title" : "Le montant doit être supérieur à {{threshold}}"
     },
     "LockedDeviceError" : {
       "title" : "Appareil verrouillé",
@@ -5820,11 +5888,9 @@
       "descriptionWithProductName" : "Déverrouillez votre {{ productName }} et réessayez."
     },
     "DeviceNotOnboardedError" : {
-      "title" : "Votre appareil n’est pas encore prêt à être utilisé.",
-      "titleWithProductName" : "Votre {{ productName }} n’est pas encore prêt à être utilisé",
-      "description" : "Vous devez d’abord configurer votre appareil.\nNous vous guiderons à chaque étape.",
-      "descriptionWithProductName" : "Vous devez d’abord configurer votre {{ productName }}.\nNous vous guiderons à chaque étape.",
-      "goToOnboardingButton" : "Configurer mon appareil",
+      "title" : "Votre wallet Ledger n’est pas configuré",
+      "description" : "Configurez-le pour commencer à l’utiliser. Nous vous guiderons à chaque étape.",
+      "goToOnboardingButton" : "Configurer mon Ledger",
       "goToOnboardingButtonWithProductName" : "Configurer mon {{ productName }}"
     },
     "EtherscanAPIError" : {
@@ -5833,6 +5899,13 @@
     },
     "GasEstimationError" : {
       "title" : "Échec de l’estimation du prix du gaz"
+    },
+    "FailedToRetrieveFirmwareUpdateInfo" : {
+      "title" : "Échec de la vérification du système d’exploitation",
+      "description" : "Une erreur est survenue. Veuillez réessayer ou contacter l’Assistance Ledger."
+    },
+    "TezosUnrevealedAccount" : {
+      "title" : "Swap indisponible : effectuez d’abord un envoi/délégation avec ce compte Tezos, ou changez la paire."
     }
   },
   "cryptoOrg" : {
@@ -5865,72 +5938,74 @@
     }
   },
   "customImage" : {
-    "title" : "Écran de verrouillage personnalisé",
-    "cta" : "Écran de verrouillage personnalisé",
+    "title" : "Fond d’écran personnalisé",
+    "cta" : "Fond d’écran personnalisé",
     "managerCTA" : "Fond d’écran",
     "managerCTARemove" : "Retirer",
     "steps" : {
       "choose" : {
-        "stepLabel" : "Choisissez une image",
+        "stepLabel" : "Image",
         "description" : "Choisir une image à définir comme (...)",
         "pickFromNftGallery" : "Sélectionner depuis ma galerie de NFT",
         "myNfts" : "Mes NFT",
-        "upload" : "Télécharger à partir de mon ordinateur",
+        "upload" : "Télécharger à partir de l’ordinateur",
         "chooseNft" : "Choisir un NFT",
         "remove" : "Supprimer le fond d’écran",
         "selectNft" : "Choisir ce NFT",
-        "previousSelectNft" : "Retour",
         "nftEmptyStateTitle" : "Pas (encore) de NFT",
         "nftEmptyStateDescription" : "Commencez par ajouter des NFT à votre wallet."
       },
       "adjust" : {
-        "stepLabel" : "Ajuster l’image",
-        "rotate" : "Pivoter"
+        "stepLabel" : "Recadrage",
+        "rotate" : "Pivoter",
+        "confirmCrop" : "Confirmer le recadrage"
       },
       "contrast" : {
-        "stepLabel" : "Choisissez un contraste"
+        "stepLabel" : "Contraste",
+        "confirmContrast" : "Confirmer le contraste"
       },
       "transfer" : {
-        "stepLabel" : "Transfert",
-        "uploadAnotherImage" : "Télécharger une autre image",
-        "allowPreview" : "Autorisez le chargement du fond d’écran sur votre {{productName}}",
-        "allowConfirmPreview" : "Autorisez la restauration du fond d’écran sur {{productName}}.",
-        "loadingPicture" : "Chargement...",
+        "stepLabel" : "Chargement",
+        "useAnotherPicture" : "Télécharger un autre fond d’écran",
+        "allowPreview" : "Appuyez sur Charger pour\npersonnaliser le fond d’écran",
+        "allowConfirmPreview" : "Appuyez sur Charger pour\nrestaurer le fond d’écran",
+        "loadingPicture" : "Installation...",
+        "voila" : "Voilà !",
         "imageLoaded" : "Image chargée sur votre {{productName}}",
         "confirmPicture" : "C’est parfait ?\nValidez !",
-        "confirmRestorePicture" : "Confirmez la restauration du fond d’écran.",
+        "confirmRestorePicture" : "Appuyez sur Conserver pour\nconfirmer le fond d’écran",
         "doThisLater" : "Pas maintenant"
       }
     },
     "postOnboarding" : {
-      "title" : "Personnaliser mon appareil",
-      "description" : "Avec un fond d’écran unique",
+      "title" : "Personnaliser le fond d’écran",
+      "description" : "Choisissez votre NFT ou image préféré comme fond d’écran de votre Ledger Stax.",
       "actionCompletedPopupLabel" : "Appareil personnalisé"
     },
-    "customImageSet" : "Écran de verrouillage défini",
-    "finishCTA" : "Terminer"
+    "customImageSet" : "Fond d’écran personnalisé",
+    "finishCTA" : "Fermer"
   },
   "onboardingAppInstall" : {
     "restore" : {
-      "title" : "Installer les mêmes apps que sur {{deviceName}} ?",
+      "title" : "Installer les mêmes apps que sur votre {{deviceName}} ?",
       "titleNoDeviceName" : "Installer les mêmes apps que sur votre autre Ledger ?",
       "subtitle" : "Vous pouvez installer ou supprimer des apps à tout moment.",
-      "installCTA" : "Restaurer des apps",
+      "installCTA" : "Installer maintenant",
       "skipCTA" : "Plus tard"
     },
     "default" : {
-      "title" : "Les apps de votre {{ productName }} vous permettent d’effectuer des transactions sécurisées.",
-      "subtitle" : "Nous vous recommandons de télécharger une sélection d’apps par défaut. Vous pourrez en télécharger d’autres plus tard.",
-      "installCTA" : "Installer des apps",
+      "title" : "Le {{ productName }} possède ses propres apps. Elles sont indispensables pour effectuer des opérations.",
+      "subtitle" : "Par exemple, l’app Bitcoin de votre {{productName}} est requise pour approuver des transactions Bitcoin.\n\nPour que votre {{productName}} soit dès maintenant prêt à effectuer des transactions, installez les apps par défaut.",
+      "installCTA" : "Installer maintenant",
       "skipCTA" : "Plus tard"
     },
     "progress" : {
       "loading" : "Chargement...",
-      "resolving" : "Installation des apps requises",
       "progress" : "Restez dans Ledger Live pendant l’installation.",
       "disclaimer" : "Ajoutez ou supprimez des apps à tout moment depuis Ledger Live.",
       "skippedInfo" : "Certaines apps ne sont pas disponibles. Elles doivent encore être développées pour le {{ productName }}.",
-      "skipped" : "Pas encore disponible pour le {{ productName }}"
+      "skipped" : "Pas encore disponible pour le {{ productName }}",
+      "app" : "App {{appName}}"
     },
     "cancelled" : {
       "title" : "Vous avez annulé l’installation de l’app sur votre {{productName}}",
@@ -5954,7 +6029,6 @@
     "networkError" : {
       "title" : "Erreur réseau",
       "subtitle" : "Une erreur est survenue. Veuillez réessayer. Si le problème persiste, enregistrez votre log et contactez l’Assistance Ledger.",
-      "tryAgain" : "Réessayer",
       "contactSupport" : "Contacter l’Assistance Ledger",
       "saveLog" : "Enregistrer le log"
     }

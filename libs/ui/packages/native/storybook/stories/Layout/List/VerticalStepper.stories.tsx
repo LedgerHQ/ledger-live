@@ -1,7 +1,18 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { ScrollView } from "react-native";
-import { Flex, VerticalStepper, Text, Switch, Divider } from "../../../../src";
-import { ItemStatus } from "../../../../src";
+import Divider from "../../../../src/components/Layout/Divider";
+import Flex from "../../../../src/components/Layout/Flex";
+import Switch from "../../../../src/components/Form/Switch";
+import Text from "../../../../src/components/Text";
+import VerticalStepper from "../../../../src/components/Layout/List/VerticalStepper";
+import { ItemStatus } from "../../../../src/components/Layout/List/types";
+
+console.info(Flex, ItemStatus);
+
+export default {
+  title: "Layout/List",
+  component: VerticalStepper,
+};
 
 const restoreSteps = [
   {

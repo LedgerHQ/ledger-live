@@ -1,7 +1,7 @@
 import React from "react";
 import { TouchableWithoutFeedback } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { scrollToTop } from "../navigation/utils";
+import { scrollToTop } from "~/navigation/utils";
 
 type Props = {
   title: React.ReactNode;

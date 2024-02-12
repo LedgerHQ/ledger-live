@@ -18,6 +18,7 @@ import { decodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { nftsFromOperations } from "@ledgerhq/coin-framework/nft/helpers";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { attachOperations, getSyncHash, mergeSubAccounts } from "./logic";
+import { ExplorerApi } from "./api/explorer/types";
 import { getExplorerApi } from "./api/explorer";
 import { getNodeApi } from "./api/node/index";
 
@@ -60,30 +61,33 @@ export const getAccountShape: GetAccountShape = async infos => {
         return (acc?.blockHeight || 0) > (curr?.blockHeight || 0) ? acc : curr;
       }, null);
 
-  const { lastCoinOperations, lastTokenOperations, lastNftOperations } = await (async () => {
-    try {
-      const { getLastOperations } = getExplorerApi(currency);
-      return await getLastOperations(
-        currency,
-        address,
-        accountId,
-        latestSyncedOperation?.blockHeight
-          ? Math.max(latestSyncedOperation.blockHeight - SAFE_REORG_THRESHOLD, 0)
-          : 0,
-        blockHeight,
-      );
-    } catch (e) {
-      log("EVM Family", "Failed to get latest transactions", {
-        address,
-        currency,
-        error: e,
-      });
-      throw e;
-    }
-  })();
+  const { lastCoinOperations, lastTokenOperations, lastNftOperations, lastInternalOperations } =
+    await (async (): ReturnType<ExplorerApi["getLastOperations"]> => {
+      try {
+        const { getLastOperations } = getExplorerApi(currency);
+        return await getLastOperations(
+          currency,
+          address,
+          accountId,
+          latestSyncedOperation?.blockHeight
+            ? Math.max(latestSyncedOperation.blockHeight - SAFE_REORG_THRESHOLD, 0)
+            : 0,
+          blockHeight,
+        );
+      } catch (e) {
+        log("EVM Family", "Failed to get latest transactions", {
+          address,
+          currency,
+          error: e,
+        });
+        throw e;
+      }
+    })();
 
   const newSubAccounts = await getSubAccounts(infos, accountId, lastTokenOperations);
-  const subAccounts = mergeSubAccounts(initialAccount, newSubAccounts); // Merging potential new subAccouns while preserving the references
+  const subAccounts = shouldSyncFromScratch
+    ? newSubAccounts
+    : mergeSubAccounts(initialAccount, newSubAccounts); // Merging potential new subAccouns while preserving the references
 
   // Trying to confirm pending operations that we are sure of
   // because they were made in the live
@@ -99,9 +103,13 @@ export const getAccountShape: GetAccountShape = async infos => {
     lastCoinOperations,
     lastTokenOperations,
     lastNftOperations,
+    lastInternalOperations,
   );
   const newOperations = [...confirmedOperations, ...lastCoinOperationsWithAttachements];
-  const operations = mergeOps(initialAccount?.operations || [], newOperations);
+  const operations =
+    shouldSyncFromScratch || !initialAccount?.operations
+      ? newOperations
+      : mergeOps(initialAccount?.operations, newOperations);
   const operationsWithPendings = mergeOps(operations, initialAccount?.pendingOperations || []);
 
   // Merging potential new nfts while preserving the references.
@@ -212,7 +220,7 @@ export const getOperationStatus = async (
     }
 
     const { timestamp } = await nodeApi.getBlockByHeight(currency, blockHeight);
-    const date = new Date(timestamp * 1000);
+    const date = new Date(timestamp);
 
     return {
       ...op,

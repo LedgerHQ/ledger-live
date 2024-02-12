@@ -5,6 +5,7 @@ import { CryptoCurrency, TokenCurrency, Unit } from "@ledgerhq/types-cryptoasset
 import BigNumber from "bignumber.js";
 import * as RPC_API from "../../api/node/rpc.common";
 import {
+  __testOnlyClearSyncHashMemoize,
   attachOperations,
   eip1559TransactionHasFees,
   getAdditionalLayer2Fees,
@@ -15,6 +16,7 @@ import {
   legacyTransactionHasFees,
   mergeSubAccounts,
   padHexString,
+  safeEncodeEIP55,
 } from "../../logic";
 
 import {
@@ -398,8 +400,33 @@ describe("EVM Family", () => {
         setEnv("NFT_CURRENCIES", oldEnv);
       });
 
-      it("should provide a valid sha256 hash", () => {
-        expect(getSyncHash(currency)).toStrictEqual(expect.stringMatching(/^0x[A-Fa-f0-9]{64}$/));
+      beforeEach(() => {
+        // Clearing the cache of already calculated hashes before each new test
+        __testOnlyClearSyncHashMemoize();
+      });
+
+      it("should provide a valid hex hash", () => {
+        // mumurhash is always returning a 32bits uint, so a 4 bytes hexa string
+        expect(getSyncHash(currency)).toStrictEqual(expect.stringMatching(/^0x[A-Fa-f0-9]{8}$/));
+      });
+
+      // As of today, with respectively 7k tokens on Ethereum, 600 tokens on Polygon
+      // & 1000 tokens on BSC, the CI is taking ~200ms to perform this test.
+      // This test could in theory be flaky depending on the CI perfs
+      // and the number of tokens to hash. Feel free to increase
+      // this 350ms threshold if this test is failing and
+      // you consider it an acceptable behaviour
+      // especially while considering mobile
+      // performances for this action
+      it("should have decent performances (10 syncHashes of each major EVM in less than 350ms on a computer)", () => {
+        const start = performance.now();
+        for (let i = 0; i < 10; i++) {
+          getSyncHash(getCryptoCurrencyById("ethereum"));
+          getSyncHash(getCryptoCurrencyById("polygon"));
+          getSyncHash(getCryptoCurrencyById("bsc"));
+        }
+        const now = performance.now();
+        expect(now - start).toBeLessThan(350);
       });
 
       it("should provide a hash not dependent on reference", () => {
@@ -435,7 +462,7 @@ describe("EVM Family", () => {
               "@ledgerhq/cryptoassets/tokens",
             );
             const [first, ...rest]: TokenCurrency[] = listTokensForCryptoCurrency(currency);
-            const modifedFirst = { ...first, delisted: !first.delisted };
+            const modifedFirst = { ...first, ticker: "$__NEW__TICKER__$" };
             return [modifedFirst, ...rest];
           });
 
@@ -500,19 +527,31 @@ describe("EVM Family", () => {
       it("should provide a new hash if currency is using a new explorer config", () => {
         const hash1 = getSyncHash({
           ...currency,
-          ethereumLikeInfo: { chainId: 1, explorer: { type: "ledger", explorerId: "eth" } },
+          ethereumLikeInfo: {
+            ...currency.ethereumLikeInfo!,
+            explorer: { type: "ledger", explorerId: "eth" },
+          },
         });
         const hash2 = getSyncHash({
           ...currency,
-          ethereumLikeInfo: { chainId: 1, explorer: { type: "ledger", explorerId: "matic" } },
+          ethereumLikeInfo: {
+            ...currency.ethereumLikeInfo!,
+            explorer: { type: "ledger", explorerId: "matic" },
+          },
         });
         const hash3 = getSyncHash({
           ...currency,
-          ethereumLikeInfo: { chainId: 1, explorer: { type: "etherscan", uri: "anything" } },
+          ethereumLikeInfo: {
+            ...currency.ethereumLikeInfo!,
+            explorer: { type: "etherscan", uri: "anything" },
+          },
         });
         const hash4 = getSyncHash({
           ...currency,
-          ethereumLikeInfo: { chainId: 1, explorer: { type: "blockscout", uri: "somethingelse" } },
+          ethereumLikeInfo: {
+            ...currency.ethereumLikeInfo!,
+            explorer: { type: "blockscout", uri: "somethingelse" },
+          },
         });
 
         const hashes = [hash1, hash2, hash3, hash4];
@@ -527,20 +566,25 @@ describe("EVM Family", () => {
         const coinOperation = makeOperation({
           hash: "0xCoinOp3Hash",
         });
+        const tokenAccountId =
+          coinOperation.accountId + "+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin";
         const tokenOperations = [
           makeOperation({
+            accountId: tokenAccountId,
             hash: coinOperation.hash,
             contract: "0xTokenContract",
             value: new BigNumber(1),
             type: "OUT",
           }),
           makeOperation({
+            accountId: tokenAccountId,
             hash: coinOperation.hash,
             contract: "0xTokenContract",
             value: new BigNumber(2),
             type: "IN",
           }),
           makeOperation({
+            accountId: tokenAccountId,
             hash: "0xUnknownHash",
             contract: "0xOtherTokenContract",
             value: new BigNumber(2),
@@ -567,12 +611,23 @@ describe("EVM Family", () => {
             type: "NFT_IN",
           }),
         ];
+        const internalOperations = [
+          makeOperation({
+            accountId: coinOperation.accountId,
+            value: new BigNumber(5),
+            type: "OUT",
+            hash: coinOperation.hash,
+          }),
+        ];
 
-        expect(attachOperations([coinOperation], tokenOperations, nftOperations)).toEqual([
+        expect(
+          attachOperations([coinOperation], tokenOperations, nftOperations, internalOperations),
+        ).toEqual([
           {
             ...coinOperation,
             subOperations: [tokenOperations[0], tokenOperations[1]],
             nftOperations: [nftOperations[0], nftOperations[1]],
+            internalOperations: [internalOperations[0]],
           },
           {
             ...tokenOperations[2],
@@ -584,6 +639,7 @@ describe("EVM Family", () => {
             recipients: [],
             nftOperations: [],
             subOperations: [tokenOperations[2]],
+            internalOperations: [],
             accountId: "",
             contract: undefined,
           },
@@ -597,6 +653,7 @@ describe("EVM Family", () => {
             recipients: [],
             nftOperations: [nftOperations[2]],
             subOperations: [],
+            internalOperations: [],
             accountId: "",
             contract: undefined,
           },
@@ -625,9 +682,14 @@ describe("EVM Family", () => {
             type: "NFT_OUT",
           }),
         ]);
-        expect(
+        const internalOperations = deepFreeze([
+          makeOperation({
+            hash: "0xCoinOpInternal",
+          }),
+        ]);
+        expect(() =>
           // @ts-expect-error purposely ignore readonly ts issue for this
-          () => attachOperations(coinOperations, tokenOperations, nftOperations),
+          attachOperations(coinOperations, tokenOperations, nftOperations, internalOperations),
         ).not.toThrow(); // mutation prevented by deepFreeze method
       });
     });
@@ -636,6 +698,38 @@ describe("EVM Family", () => {
       it("should always return an odd number of characters", () => {
         expect(padHexString("1")).toEqual("01");
         expect(padHexString("01")).toEqual("01");
+      });
+    });
+
+    describe("safeEncodeEIP55", () => {
+      it("Should return encoded address if valid address", () => {
+        const address = "0x9aa99c23f67c81701c772b106b4f83f6e858dd2e";
+        const encodedAddress = safeEncodeEIP55(address);
+        expect(encodedAddress).toBe("0x9AA99C23F67c81701C772B106b4F83f6e858dd2E");
+      });
+
+      it("Should return empty string if empty address", () => {
+        const address = "";
+        const encodedAddress = safeEncodeEIP55(address);
+        expect(encodedAddress).toBe("");
+      });
+
+      it("Should return empty string if 0x0 address", () => {
+        const address = "0x0";
+        const encodedAddress = safeEncodeEIP55(address);
+        expect(encodedAddress).toBe("");
+      });
+
+      it("Should return empty string if 0x address", () => {
+        const address = "0x";
+        const encodedAddress = safeEncodeEIP55(address);
+        expect(encodedAddress).toBe("");
+      });
+
+      it("Should return address if invalid address", () => {
+        const address = "0x00000";
+        const encodedAddress = safeEncodeEIP55(address);
+        expect(encodedAddress).toBe(address);
       });
     });
   });

@@ -7,22 +7,20 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/live-common/currencies/index";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { useFocusEffect } from "@react-navigation/native";
+import ReadOnlyGraphCard from "~/components/ReadOnlyGraphCard";
+import ReadOnlyFabActions from "~/components/FabActions/ReadOnlyFabActions";
+import GradientContainer from "~/components/GradientContainer";
+import BuyDeviceBanner, { IMAGE_PROPS_BIG_NANO } from "~/components/BuyDeviceBanner";
+import SetupDeviceBanner from "~/components/SetupDeviceBanner";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import { TrackScreen } from "~/analytics";
 
-import { TAB_BAR_SAFE_HEIGHT } from "../../../components/TabBar/TabBarSafeAreaView";
-import ReadOnlyGraphCard from "../../../components/ReadOnlyGraphCard";
-import ReadOnlyFabActions from "../../../components/FabActions/ReadOnlyFabActions";
-import GradientContainer from "../../../components/GradientContainer";
-import BuyDeviceBanner, { IMAGE_PROPS_BIG_NANO } from "../../../components/BuyDeviceBanner";
-import SetupDeviceBanner from "../../../components/SetupDeviceBanner";
-import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
-import { TrackScreen } from "../../../analytics";
-
-import { withDiscreetMode } from "../../../context/DiscreetModeContext";
-import { counterValueCurrencySelector, hasOrderedNanoSelector } from "../../../reducers/settings";
-import { AnalyticsContext } from "../../../analytics/AnalyticsContext";
-import type { AccountsNavigatorParamList } from "../../../components/RootNavigator/types/AccountsNavigator";
-import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
-import { ScreenName } from "../../../const";
+import { withDiscreetMode } from "~/context/DiscreetModeContext";
+import { counterValueCurrencySelector, hasOrderedNanoSelector } from "~/reducers/settings";
+import { AnalyticsContext } from "~/analytics/AnalyticsContext";
+import type { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
+import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { ScreenName } from "~/const";
 
 type Props = StackNavigatorProps<AccountsNavigatorParamList, ScreenName.Account>;
 
@@ -117,7 +115,6 @@ function ReadOnlyAccount({ route }: Props) {
     <SafeAreaView style={{ flex: 1 }} edges={["bottom", "left", "right"]}>
       <TrackScreen category="Account" currency={currency.name} operationsSize={0} source={source} />
       <FlatList
-        contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
         data={data}
         renderItem={renderItem}
         keyExtractor={keyExtractor}

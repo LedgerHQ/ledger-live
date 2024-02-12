@@ -7,28 +7,25 @@ import RNRestart from "react-native-restart";
 import { useDispatch, useSelector } from "react-redux";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { from } from "rxjs";
+import { firstValueFrom, from } from "rxjs";
 import { DeviceModelInfo, idsToLanguage, Language } from "@ledgerhq/types-live";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { CompositeScreenProps } from "@react-navigation/native";
-import { useLocale } from "../../../context/Locale";
+import { useLocale } from "~/context/Locale";
 import { languages, supportedLocales, localeIdToDeviceLanguage, Locale } from "../../../languages";
-import { ScreenName } from "../../../const";
-import { setLanguage, setLastSeenDevice } from "../../../actions/settings";
-import { lastConnectedDeviceSelector, lastSeenDeviceSelector } from "../../../reducers/settings";
-import ChangeDeviceLanguageAction from "../../../components/ChangeDeviceLanguageAction";
-import ChangeDeviceLanguagePrompt from "../../../components/ChangeDeviceLanguagePrompt";
-import { track, updateIdentify } from "../../../analytics";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
-import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
-import { BaseOnboardingNavigatorParamList } from "../../../components/RootNavigator/types/BaseOnboardingNavigator";
-import Button from "../../../components/Button";
-import QueuedDrawer from "../../../components/QueuedDrawer";
+import { ScreenName } from "~/const";
+import { setLanguage, setLastSeenDevice } from "~/actions/settings";
+import { lastConnectedDeviceSelector, lastSeenDeviceSelector } from "~/reducers/settings";
+import ChangeDeviceLanguageAction from "~/components/ChangeDeviceLanguageAction";
+import ChangeDeviceLanguagePrompt from "~/components/ChangeDeviceLanguagePrompt";
+import { track, updateIdentify } from "~/analytics";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
+import { BaseOnboardingNavigatorParamList } from "~/components/RootNavigator/types/BaseOnboardingNavigator";
+import Button from "~/components/Button";
+import QueuedDrawer from "~/components/QueuedDrawer";
 
 type NavigationProps = CompositeScreenProps<
   StackNavigatorProps<OnboardingNavigatorParamList, ScreenName.OnboardingLanguage>,
@@ -53,11 +50,11 @@ function OnboardingStepLanguage({ navigation }: NavigationProps) {
   const onActionFinished = useCallback(() => {
     setPreventPromptBackdropClick(false);
     if (lastConnectedDevice && lastSeenDevice) {
-      withDevice(lastConnectedDevice?.deviceId)(transport => from(getDeviceInfo(transport)))
-        .toPromise()
-        .then(deviceInfo => {
-          dispatch(setLastSeenDevice(deviceInfo));
-        });
+      firstValueFrom(
+        withDevice(lastConnectedDevice?.deviceId)(transport => from(getDeviceInfo(transport))),
+      ).then(deviceInfo => {
+        dispatch(setLastSeenDevice(deviceInfo));
+      });
     }
   }, [lastConnectedDevice, lastSeenDevice, dispatch]);
 

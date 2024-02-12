@@ -1,0 +1,42 @@
+{
+  "name": "@ledgerhq/wallet-api-exchange-module",
+  "version": "0.2.0",
+  "description": "Wallet-API Exchange Module for Ledger Live",
+  "license": "Apache-2.0",
+  "keywords": [
+    "Ledger"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LedgerHQ/ledger-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LedgerHQ/ledger-live/issues"
+  },
+  "homepage": "https://github.com/LedgerHQ/ledger-live/tree/develop/libs/exchange-module",
+  "main": "lib/index.js",
+  "module": "lib-es/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "/lib",
+    "/lib-es"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "clean": "rimraf lib lib-es",
+    "build": "tsc && tsc -m ES6 --outDir lib-es && node scripts/createModulePackage.mjs",
+    "prewatch": "pnpm build",
+    "watch": "tsc --watch",
+    "lint": "eslint ./src --no-error-on-unmatched-pattern --ext .ts,.tsx",
+    "lint:fix": "pnpm lint --fix"
+  },
+  "dependencies": {
+    "@ledgerhq/wallet-api-client": "^1.5.2",
+    "@ledgerhq/wallet-api-core": "^1.6.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.2.5"
+  }
+}

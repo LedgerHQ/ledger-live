@@ -31,7 +31,10 @@ const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props
     }
   }, [validators, chosenVoteAccAddr]);
 
-  const onSearch = useCallback(evt => setSearch(evt.target.value), [setSearch]);
+  const onSearch = useCallback(
+    (evt: React.ChangeEvent<HTMLInputElement>) => setSearch(evt.target.value),
+    [setSearch],
+  );
   const renderItem = (validator: ValidatorsAppValidator) => {
     return (
       <ValidatorRow

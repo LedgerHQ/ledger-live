@@ -10,8 +10,8 @@ import { DomainServiceResolution } from "../../types";
 jest.mock("axios");
 jest.mock("../../resolvers");
 
-const mockedResolvedDomain = jest.mocked(resolveDomain, true);
-const mockedResolvedAddress = jest.mocked(resolveAddress, true);
+const mockedResolvedDomain = jest.mocked(resolveDomain);
+const mockedResolvedAddress = jest.mocked(resolveAddress);
 
 const resolutionKeys: (keyof DomainServiceResolution)[] = ["registry", "address", "domain", "type"];
 
@@ -39,7 +39,7 @@ const CustomTest = ({ str }: { str: string }) => {
   );
 };
 
-const wrapper: React.ComponentType<string> = ({ children }) => (
+const wrapper: React.ComponentType<{ children?: React.ReactNode }> = ({ children }) => (
   <DomainServiceProvider>{children}</DomainServiceProvider>
 );
 
@@ -65,6 +65,7 @@ describe("useDomain", () => {
   it("should return an error when no resolution is found", async () => {
     const { result } = renderHook(useDomain, {
       initialProps: "",
+      // @ts-expect-error weird ts error
       wrapper,
     });
 
@@ -76,6 +77,7 @@ describe("useDomain", () => {
   it("should return an error when no resolution is found", async () => {
     const { result, waitForValueToChange } = renderHook(useDomain, {
       initialProps: "404-Not-Found.eth",
+      // @ts-expect-error weird ts error
       wrapper,
     });
 
@@ -87,6 +89,7 @@ describe("useDomain", () => {
   it("should return an error when the input has a forward registry but content is invalid", async () => {
     const { result, waitForValueToChange } = renderHook(useDomain, {
       initialProps: "not|valid|👋.eth",
+      // @ts-expect-error weird ts error
       wrapper,
     });
 

@@ -9,7 +9,7 @@ describe("Domain Service", () => {
     describe("resolveDomain", () => {
       beforeEach(() => {
         jest.restoreAllMocks();
-        jest.spyOn(mockedAxios, "request").mockImplementation(async ({ url }) => {
+        jest.spyOn(mockedAxios, "request").mockImplementation(async ({ url }: { url: string }) => {
           if (url?.endsWith("vitalik.eth")) {
             return { data: "0x123" } as any;
           }
@@ -50,7 +50,7 @@ describe("Domain Service", () => {
     describe("resolveAddress", () => {
       beforeEach(() => {
         jest.restoreAllMocks();
-        jest.spyOn(mockedAxios, "request").mockImplementation(async ({ url }) => {
+        jest.spyOn(mockedAxios, "request").mockImplementation(async ({ url }: { url: string }) => {
           if (url?.endsWith("0xd8da6bf26964af9d7eed9e03e53415d37aa96045")) {
             return { data: "vitalik.eth" } as any;
           }

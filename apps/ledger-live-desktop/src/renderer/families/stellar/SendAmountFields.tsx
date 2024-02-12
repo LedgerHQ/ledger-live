@@ -24,7 +24,7 @@ const Root = (props: Props) => {
   if (!networkInfo || !fees) return null; // these were loaded on the previous send step
   const bridge = getAccountBridge(props.account);
   const onFeeModeChange = (isCustom: boolean) => {
-    track("button_clicked", {
+    track("button_clicked2", {
       ...trackProperties,
       button: "fee",
       isCustom,

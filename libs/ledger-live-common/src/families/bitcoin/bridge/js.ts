@@ -14,7 +14,7 @@ import { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { assignFromAccountRaw, assignToAccountRaw } from "../serialization";
 import { withDevice } from "../../../hw/deviceAccess";
 import Btc from "@ledgerhq/hw-app-btc";
-import { from } from "rxjs";
+import { firstValueFrom, from } from "rxjs";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 const receive = makeAccountBridgeReceive({
@@ -44,9 +44,9 @@ const signerContext: SignerContext = (
   crypto: CryptoCurrency,
   fn: (signer: Btc) => Promise<string>,
 ): Promise<string> =>
-  withDevice(deviceId)(transport =>
-    from(fn(new Btc({ transport, currency: crypto.id }))),
-  ).toPromise();
+  firstValueFrom(
+    withDevice(deviceId)(transport => from(fn(new Btc({ transport, currency: crypto.id })))),
+  );
 
 const currencyBridge: CurrencyBridge = {
   scanAccounts: scanAccounts(signerContext),

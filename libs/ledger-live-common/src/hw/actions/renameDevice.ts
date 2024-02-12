@@ -17,7 +17,7 @@ import { getImplementation } from "./implementations";
 
 type RenameDeviceState = {
   isLoading: boolean;
-  allowManagerRequestedWording: string | null | undefined;
+  allowRenamingRequested: boolean;
   unresponsive: boolean;
   device: Device | null | undefined;
   deviceInfo: DeviceInfo | null | undefined;
@@ -44,7 +44,7 @@ const mapResult = (status: RenameDeviceState) => status.name;
 
 const getInitialState = (device?: Device | null | undefined): RenameDeviceState => ({
   isLoading: !!device,
-  allowManagerRequestedWording: null,
+  allowRenamingRequested: false,
   unresponsive: false,
   name: "",
   device,
@@ -70,7 +70,7 @@ const reducer = (state: RenameDeviceState, e: Event): RenameDeviceState => {
     case "permission-requested":
       return {
         ...state,
-        allowManagerRequestedWording: "renaming", // Nb localize this
+        allowRenamingRequested: true,
         unresponsive: false,
         isLoading: false,
       };

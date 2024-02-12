@@ -1,8 +1,8 @@
 import { genAddress, genHex } from "@ledgerhq/coin-framework/mocks/helpers";
-import { Account, Operation, OperationType } from "@ledgerhq/types-live";
+import { Account, OperationType } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import Prando from "prando";
-import type { AlgorandAccount } from "./types";
+import type { AlgorandAccount, AlgorandOperation } from "./types";
 
 function setAlgorandResources(account: Account): Account {
   /** format algorandResources given the new delegations */
@@ -18,7 +18,7 @@ function genBaseOperation(
   rng: Prando,
   type: OperationType,
   index: number,
-): Operation {
+): AlgorandOperation {
   const { operations: ops } = account;
   const address = genAddress(account.currency, rng);
   const lastOp = ops[index];

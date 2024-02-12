@@ -1,20 +1,20 @@
 import React, { useCallback, useMemo } from "react";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { BigNumber } from "bignumber.js";
-import { isEqual } from "lodash";
+import isEqual from "lodash/isEqual";
 import { GestureResponderEvent } from "react-native";
 import { useStartProfiler } from "@shopify/react-native-performance";
-import { NavigatorName, ScreenName } from "../../const";
-import { usePortfolioForAccounts } from "../../hooks/portfolio";
-import AssetRowLayout from "../../components/AssetRowLayout";
-import { track } from "../../analytics";
+import { NavigatorName, ScreenName } from "~/const";
+import { usePortfolioForAccounts } from "~/hooks/portfolio";
+import AssetRowLayout from "~/components/AssetRowLayout";
+import { track } from "~/analytics";
 import {
   BaseNavigationComposite,
   StackNavigatorNavigation,
-} from "../../components/RootNavigator/types/helpers";
-import { AccountsNavigatorParamList } from "../../components/RootNavigator/types/AccountsNavigator";
-import { PortfolioNavigatorStackParamList } from "../../components/RootNavigator/types/PortfolioNavigator";
-import { Asset } from "../../types/asset";
+} from "~/components/RootNavigator/types/helpers";
+import { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
+import { PortfolioNavigatorStackParamList } from "~/components/RootNavigator/types/PortfolioNavigator";
+import { Asset } from "~/types/asset";
 
 export type NavigationProp = BaseNavigationComposite<
   | StackNavigatorNavigation<AccountsNavigatorParamList, ScreenName.Assets>

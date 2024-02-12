@@ -1,26 +1,36 @@
-import React, { useContext, useMemo, useEffect } from "react";
+import React, { useMemo, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Linking } from "react-native";
 import SplashScreen from "react-native-splash-screen";
-import { getStateFromPath, LinkingOptions, NavigationContainer } from "@react-navigation/native";
+import {
+  getStateFromPath,
+  LinkingOptions,
+  NavigationContainer,
+  NavigationState,
+  PartialState,
+} from "@react-navigation/native";
+import Config from "react-native-config";
 import { useFlipper } from "@react-navigation/devtools";
 import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import Braze from "react-native-appboy-sdk";
+import { DEFAULT_MULTIBUY_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
+
+import Braze from "@braze/react-native-sdk";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-
 import * as Sentry from "@sentry/react-native";
-import { hasCompletedOnboardingSelector } from "../reducers/settings";
-import { context as _wcContext } from "../screens/WalletConnect/Provider";
+
+import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import { navigationRef, isReadyRef } from "../rootnavigation";
-import { ScreenName, NavigatorName } from "../const";
-import { setWallectConnectUri } from "../actions/walletconnect";
-import { TermsContext } from "../logic/terms";
-import { Writeable } from "../types/helpers";
+import { ScreenName, NavigatorName } from "~/const";
+import { setWallectConnectUri } from "~/actions/walletconnect";
+import { useGeneralTermsAccepted } from "~/logic/terms";
+import { Writeable } from "~/types/helpers";
 import { lightTheme, darkTheme, Theme } from "../colors";
-import { track } from "../analytics";
-import { Feature } from "@ledgerhq/types-live/lib/feature";
-import { setEarnInfoModal } from "../actions/earn";
+import { track } from "~/analytics";
+import { setEarnInfoModal } from "~/actions/earn";
+import { OptionalFeatureMap } from "@ledgerhq/types-live";
+import { blockPasswordLock } from "../actions/appstate";
+import { useStorylyContext } from "~/components/StorylyStories/StorylyProvider";
 
 const routingInstrumentation = new Sentry.ReactNavigationInstrumentation();
 
@@ -32,51 +42,27 @@ const themes: {
 };
 
 function isWalletConnectUrl(url: string) {
-  return url.substring(0, 3) === "wc:";
+  return url.startsWith("wc:");
 }
+
 function isWalletConnectLink(url: string) {
   return (
     isWalletConnectUrl(url) ||
-    url.substring(0, 20) === "ledgerlive://wc" ||
-    url.substring(0, 26) === "https://ledger.com/wc"
+    url.startsWith("ledgerlive://wc") ||
+    url.startsWith("https://ledger.com/wc")
   );
 }
-// https://docs.walletconnect.com/mobile-linking#wallet-support
-function isValidWalletConnectUrl(_url: string) {
-  let url = _url;
-  if (!isWalletConnectUrl(url)) {
-    const uri = new URL(url).searchParams.get("uri");
-    if (!uri) {
-      return false;
-    }
-    url = uri;
-  }
-  const { protocol, search } = new URL(url);
-  return protocol === "wc:" && search;
-}
-function isInvalidWalletConnectLink(url: string) {
-  if (!isWalletConnectLink(url) || isValidWalletConnectUrl(url)) {
-    return false;
-  }
-  return true;
-}
 
-const recoverManifests = [
-  "protect",
-  "protect-simu",
-  "protect-staging",
-  "protect-preprod",
-  "protect-prod",
-  "protect-sec",
-  "protect-sit",
-];
+function isStorylyLink(url: string) {
+  return url.startsWith("ledgerlive://storyly?");
+}
 
 function getProxyURL(url: string) {
   const uri = new URL(url);
   const { hostname, pathname } = uri;
   const platform = pathname.split("/")[1];
 
-  if (hostname === "discover" && platform && recoverManifests.includes(platform)) {
+  if (hostname === "discover" && platform && platform.startsWith("protect")) {
     return url.replace("://discover", "://recover");
   }
 
@@ -87,28 +73,26 @@ function getProxyURL(url: string) {
   // This is to handle links set in the useFromAmountStatusMessage in LLC.
   // Also handles a difference in paths between LLD on LLD /platform/:app_id
   // but on LLM /discover/:app_id
-  if (hostname === "platform" && ["multibuy"].includes(platform)) {
+  if (hostname === "platform" && [DEFAULT_MULTIBUY_APP_ID].includes(platform)) {
     return url.replace("://platform", "://discover");
   }
 
   return url;
 }
 
-type FeatureFlags = Record<string, Feature<undefined> | null>;
-
 // DeepLinking
-const linkingOptions = (featureFlags: FeatureFlags) => ({
+const linkingOptions = (featureFlags: OptionalFeatureMap) => ({
   async getInitialURL() {
     const url = await Linking.getInitialURL();
     if (url) {
-      return url && !isInvalidWalletConnectLink(url) ? getProxyURL(url) : null;
+      return url ? getProxyURL(url) : null;
     }
     const brazeUrl: string = await new Promise(resolve => {
       Braze.getInitialURL(initialUrl => {
         resolve(initialUrl);
       });
     });
-    return brazeUrl && !isInvalidWalletConnectLink(brazeUrl) ? getProxyURL(brazeUrl) : null;
+    return brazeUrl ? getProxyURL(brazeUrl) : null;
   },
 
   prefixes: [
@@ -155,7 +139,7 @@ const linkingOptions = (featureFlags: FeatureFlags) => ({
                * @params ?uri: string
                * ie: "ledgerlive://wc?uri=wc:00e46b69-d0cc-4b3e-b6a2-cee442f97188@1?bridge=https%3A%2F%2Fbridge.walletconnect.org&key=91303dedf64285cbbaf9120f6e9d160a5c8aa3deb67017a3874cd272323f48ae
                */
-              [ScreenName.WalletConnectDeeplinkingSelectAccount]: "wc",
+              [ScreenName.WalletConnectConnect]: "wc",
             },
           },
 
@@ -164,8 +148,6 @@ const linkingOptions = (featureFlags: FeatureFlags) => ({
           [ScreenName.BleDevicePairingFlow]: "sync-onboarding",
 
           [ScreenName.RedirectToOnboardingRecoverFlow]: "recover-restore-flow",
-          [ScreenName.RedirectToRecoverStaxFlow]: "recover-restore-stax-flow",
-
           [NavigatorName.PostOnboarding]: {
             screens: {
               /**
@@ -199,22 +181,23 @@ const linkingOptions = (featureFlags: FeatureFlags) => ({
               /**
                * ie: "ledgerlive://portfolio" -> will redirect to the portfolio
                */
+
               [NavigatorName.Portfolio]: {
                 screens: {
+                  [NavigatorName.PortfolioAccounts]: {
+                    screens: {
+                      /**
+                       * "ledgerlive://accounts" opens the main portfolio screen of accounts.
+                       */
+                      [ScreenName.Accounts]: "accounts",
+                    },
+                  },
                   [NavigatorName.WalletTab]: {
                     screens: {
                       [ScreenName.Portfolio]: "portfolio",
                       [ScreenName.WalletNftGallery]: "nftgallery",
-                      [NavigatorName.PortfolioAccounts]: {
-                        screens: {
-                          /**
-                           * @params ?currency: string
-                           * ie: "ledgerlive://account?currency=bitcoin" will open the first bitcoin account
-                           */
-                          [ScreenName.Accounts]: "account",
-                        },
-                      },
-                      ...(featureFlags.ptxEarnFeature?.enabled && {
+
+                      ...(featureFlags?.ptxEarn?.enabled && {
                         [NavigatorName.Market]: {
                           screens: {
                             /**
@@ -228,7 +211,7 @@ const linkingOptions = (featureFlags: FeatureFlags) => ({
                   },
                 },
               },
-              ...(!featureFlags.ptxEarnFeature?.enabled && {
+              ...(!featureFlags?.ptxEarn?.enabled && {
                 [NavigatorName.Market]: {
                   screens: {
                     /**
@@ -305,14 +288,16 @@ const linkingOptions = (featureFlags: FeatureFlags) => ({
               [ScreenName.SendCoin]: "send",
             },
           },
-
+          /** "ledgerlive://account" will open the list of all accounts, where the redirection logic is. */
           [NavigatorName.Accounts]: {
             screens: {
               /**
-               * @params ?id: string
-               * ie: "ledgerlive://accounts?currency=ethereum&address={{eth_account_address}}"
+               * @params ?currency: string
+               * @params ?address: string
+               * ie: "ledgerlive://account?currency=ethereum&address={{eth_account_address}} will open that account's assets screen.
+               * Currency param alone e.g. "ledgerlive://account?currency=tezos" will open the Tezos Assets screen.
                */
-              [ScreenName.Accounts]: "accounts",
+              [ScreenName.Accounts]: "account",
             },
           },
 
@@ -389,24 +374,36 @@ const linkingOptions = (featureFlags: FeatureFlags) => ({
   },
 });
 
-const getOnboardingLinkingOptions = (acceptedTermsOfUse: boolean, featureFlags: FeatureFlags) => ({
+const getOnboardingLinkingOptions = (
+  acceptedTermsOfUse: boolean,
+  featureFlags: OptionalFeatureMap,
+) => ({
   ...linkingOptions(featureFlags),
   config: {
     initialRouteName: NavigatorName.BaseOnboarding,
     screens: !acceptedTermsOfUse
       ? {}
       : {
+          [NavigatorName.BaseOnboarding]: {
+            screens: {
+              [NavigatorName.Onboarding]: {
+                initialRouteName: ScreenName.OnboardingWelcome,
+                screens: {
+                  [ScreenName.OnboardingBleDevicePairingFlow]: "sync-onboarding",
+                },
+              },
+            },
+          },
           [NavigatorName.Base]: {
             screens: {
               [ScreenName.PostBuyDeviceScreen]: "hw-purchase-success",
-              [ScreenName.BleDevicePairingFlow]: "sync-onboarding",
               /**
                * @params ?platform: string
                * ie: "ledgerlive://discover/protect?theme=light" will open the catalog and the protect dapp with a light theme as parameter
                */
               [ScreenName.PlatformApp]: "discover/:platform",
               [ScreenName.Recover]: "recover/:platform",
-              [ScreenName.RedirectToRecoverStaxFlow]: "recover-restore-stax-flow",
+              [ScreenName.RedirectToOnboardingRecoverFlow]: "recover-restore-flow",
             },
           },
         },
@@ -414,6 +411,24 @@ const getOnboardingLinkingOptions = (acceptedTermsOfUse: boolean, featureFlags: 
 });
 
 const emptyObject: LiveAppManifest[] = [];
+
+function isScreenInState(
+  screenName: string,
+  state?: NavigationState | PartialState<NavigationState>,
+) {
+  if (!state) {
+    return false;
+  }
+  for (let i = 0; i < state.routes.length; i++) {
+    if (state.routes[i].name === screenName) {
+      return true;
+    }
+    if (state.routes[i].state && isScreenInState(screenName, state.routes[i].state)) {
+      return true;
+    }
+  }
+  return false;
+}
 
 export const DeeplinksProvider = ({
   children,
@@ -425,13 +440,17 @@ export const DeeplinksProvider = ({
   const dispatch = useDispatch();
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const ptxEarnFeature = useFeature("ptxEarn");
-  const features = useMemo(() => ({ ptxEarnFeature }), [ptxEarnFeature]);
-  const wcContext = useContext(_wcContext);
+  const features = useMemo(
+    () => (ptxEarnFeature ? { ptxEarn: ptxEarnFeature } : {}),
+    [ptxEarnFeature],
+  );
+
   const { state } = useRemoteLiveAppContext();
   const liveAppProviderInitialized = !!state.value || !!state.error;
   const manifests = state?.value?.liveAppByIndex || emptyObject;
   // Can be either true, false or null, meaning we don't know yet
-  const { accepted: userAcceptedTerms } = useContext(TermsContext);
+  const userAcceptedTerms = useGeneralTermsAccepted();
+  const storylyContext = useStorylyContext();
 
   const linking = useMemo<LinkingOptions<ReactNavigation.RootParamList>>(
     () =>
@@ -439,31 +458,25 @@ export const DeeplinksProvider = ({
         ...(hasCompletedOnboarding
           ? linkingOptions(features)
           : getOnboardingLinkingOptions(!!userAcceptedTerms, features)),
-        enabled: wcContext.initDone && !wcContext.session.session,
         subscribe(listener) {
           const sub = Linking.addEventListener("url", ({ url }) => {
-            // Prevent default deeplink if invalid wallet connect link
-            if (isInvalidWalletConnectLink(url)) {
+            // Prevent default deep link if we're already in a wallet connect route.
+            const navigationState = navigationRef.current?.getState();
+            if (
+              isWalletConnectLink(url) &&
+              isScreenInState(ScreenName.WalletConnectConnect, navigationState)
+            ) {
+              const uri = isWalletConnectUrl(url) ? url : new URL(url).searchParams.get("uri");
+              // Only update for a connection not a request
+              if (uri && !new URL(uri).searchParams.get("requestId")) {
+                // TODO use wallet-api to push event instead of reloading the webview
+                dispatch(setWallectConnectUri(uri));
+              }
               return;
             }
 
-            // Prevent default deeplink if we're already in a wallet connect route.
-            const route = navigationRef.current?.getCurrentRoute();
-            if (
-              isWalletConnectLink(url) &&
-              route &&
-              [
-                ScreenName.WalletConnectScan,
-                ScreenName.WalletConnectDeeplinkingSelectAccount,
-                ScreenName.WalletConnectConnect,
-              ].includes(route.name as ScreenName)
-            ) {
-              const uri = isWalletConnectUrl(url)
-                ? url
-                : // we know uri exists in the searchParams because we check it in isValidWalletConnectUrl
-                  new URL(url).searchParams.get("uri")!;
-              dispatch(setWallectConnectUri(uri));
-              return;
+            if (isStorylyLink(url)) {
+              storylyContext.setUrl(url);
             }
 
             listener(getProxyURL(url));
@@ -475,11 +488,44 @@ export const DeeplinksProvider = ({
         },
         getStateFromPath: (path, config) => {
           const url = new URL(`ledgerlive://${path}`);
-          const { hostname, pathname } = url;
+          const { hostname, searchParams, pathname } = url;
+          const query = Object.fromEntries(searchParams);
+
+          const {
+            ajs_prop_campaign: ajsPropCampaign,
+            ajs_prop_track_data: ajsPropTrackData,
+            ajs_prop_source: ajsPropSource,
+            currency,
+            installApp,
+            appName,
+          } = query;
+
+          if (!ajsPropSource && !Config.MOCK) {
+            /** Internal deep links cause the app to "background" on Android.
+             * If "password lock" is enabled then this opens a re-authentication modal every time the user navigates by deep link.
+             * If there is no ajsPropSource then assume deep link is from an internal app, so temporarily prevent password lock:
+             */
+            dispatch(blockPasswordLock(true)); // TODO: Remove this and the timeout after AuthPass refactor
+            setTimeout(() => {
+              dispatch(blockPasswordLock(false));
+            }, 4000); // Allow 4 seconds before resetting password lock, unless on Detox e2e test, as this breaks CI.
+          }
+
+          // Track deeplink only when ajsPropSource attribute exists.
+          if (ajsPropSource) {
+            track("deeplink_clicked", {
+              deeplinkSource: ajsPropSource,
+              deeplinkCampaign: ajsPropCampaign,
+              url: hostname,
+              currency,
+              installApp,
+              appName,
+              ...(ajsPropTrackData ? JSON.parse(ajsPropTrackData) : {}),
+            });
+          }
           const platform = pathname.split("/")[1];
 
           if (hostname === "earn") {
-            const searchParams = url.searchParams;
             if (searchParams.get("action") === "info-modal") {
               const message = searchParams.get("message") || "";
               const messageTitle = searchParams.get("messageTitle") || "";
@@ -494,13 +540,7 @@ export const DeeplinksProvider = ({
             }
           }
           if ((hostname === "discover" || hostname === "recover") && platform) {
-            const whitelistLiveAppsAccessibleInNonOnboardedLL: LiveAppManifest["id"][] =
-              recoverManifests;
-            if (
-              !hasCompletedOnboarding &&
-              !whitelistLiveAppsAccessibleInNonOnboardedLL.includes(platform)
-            )
-              return undefined;
+            if (!hasCompletedOnboarding && !platform.startsWith("protect")) return undefined;
             /**
              * Upstream validation of "ledgerlive://discover/:platform":
              *  - checking that a manifest exists
@@ -529,25 +569,23 @@ export const DeeplinksProvider = ({
 
           return getStateFromPath(path, config);
         },
-      } as LinkingOptions<ReactNavigation.RootParamList>),
+      }) as LinkingOptions<ReactNavigation.RootParamList>,
     [
       hasCompletedOnboarding,
-      wcContext.initDone,
-      wcContext.session.session,
+      features,
+      userAcceptedTerms,
       dispatch,
+      storylyContext,
       liveAppProviderInitialized,
       manifests,
-      userAcceptedTerms,
-      features,
     ],
   );
   const [isReady, setIsReady] = React.useState(false);
 
   useEffect(() => {
-    if (!wcContext.initDone) return;
     if (userAcceptedTerms === null) return;
     setIsReady(true);
-  }, [wcContext.initDone, userAcceptedTerms]);
+  }, [userAcceptedTerms]);
 
   React.useEffect(
     () => () => {

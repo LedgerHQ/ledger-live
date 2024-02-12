@@ -3,10 +3,10 @@ import { useNavigation } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
 import { PlusMedium } from "@ledgerhq/native-ui/assets/icons";
 import { findCryptoCurrencyById, findTokenById } from "@ledgerhq/live-common/currencies/index";
-import Touchable from "../../components/Touchable";
+import Touchable from "~/components/Touchable";
 import AddAccountsModal from "../AddAccounts/AddAccountsModal";
-import { track } from "../../analytics";
-import { BaseNavigation } from "../../components/RootNavigator/types/helpers";
+import { track } from "~/analytics";
+import { BaseNavigation } from "~/components/RootNavigator/types/helpers";
 
 function AddAccount({ currencyId }: { currencyId?: string }) {
   const navigation = useNavigation<BaseNavigation>();
@@ -35,6 +35,7 @@ function AddAccount({ currencyId }: { currencyId?: string }) {
         alignItems={"center"}
         justifyContent={"center"}
         borderRadius={32}
+        testID="add-account-button"
       >
         <PlusMedium size={20} color={"neutral.c00"} />
       </Flex>

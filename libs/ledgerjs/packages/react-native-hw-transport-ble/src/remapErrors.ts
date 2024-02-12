@@ -7,7 +7,8 @@ import {
 } from "@ledgerhq/errors";
 import { BleATTErrorCode, BleError, BleErrorCode } from "react-native-ble-plx";
 
-type IOBleErrorRemap = Error | BleError | null | undefined;
+export type IOBleErrorRemap = Error | BleError | null | undefined;
+
 export const remapError = (error: IOBleErrorRemap): IOBleErrorRemap => {
   if (!error || !error.message) return error;
 

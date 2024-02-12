@@ -18,7 +18,7 @@ import ClockIcon from "~/renderer/icons/Clock";
 import ExclamationCircle from "~/renderer/icons/ExclamationCircle";
 import ToolTip from "~/renderer/components/Tooltip";
 import ExternalLink from "~/renderer/icons/ExternalLink";
-import Identicon from "@polkadot/react-identicon";
+import FirstLetterIcon from "~/renderer/components/FirstLetterIcon";
 
 const Wrapper = styled.div`
   display: flex;
@@ -26,11 +26,13 @@ const Wrapper = styled.div`
   justify-content: space-between;
   padding: 16px 20px;
 `;
+
 const Column = styled(TableLine).attrs(() => ({
   ff: "Inter|SemiBold",
   color: "palette.text.shade80",
   fontSize: 3,
 }))``;
+
 const IconContainer = styled.div`
   display: flex;
   align-items: center;
@@ -39,6 +41,7 @@ const IconContainer = styled.div`
   height: 24px;
   color: ${p => p.theme.colors.palette.primary.main};
 `;
+
 const ValidatorName = styled(TableLine).attrs(() => ({
   ff: "Inter|SemiBold",
   color: "palette.text.shade100",
@@ -57,23 +60,27 @@ const ValidatorName = styled(TableLine).attrs(() => ({
     opacity: 1;
   }
 `;
+
 const Ellipsis = styled.div`
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
+
 const StatusLabel = styled.div`
   flex: 1;
   display: block;
   margin-left: 8px;
 `;
+
 type Props = {
   account: Account;
   nomination: PolkadotNomination;
   validator?: PolkadotValidator;
   onExternalLink: (address: string) => void;
 };
+
 export function Row({
   account,
   nomination: { value, address, status },
@@ -97,6 +104,7 @@ export function Row({
         : "-",
     [status, unit, value, discreet],
   );
+
   const formattedTotal = useMemo(
     () =>
       total && total.gt(0)
@@ -109,16 +117,18 @@ export function Row({
         : "-",
     [unit, total],
   );
+
   const formattedCommission = useMemo(
     () => (commission ? `${commission.multipliedBy(100).toFixed(2)} %` : "-"),
     [commission],
   );
+
   const onExternalLinkClick = useCallback(() => onExternalLink(address), [onExternalLink, address]);
   return (
     <Wrapper>
       <ValidatorName onClick={onExternalLinkClick}>
         <Box mr={2}>
-          <Identicon value={address} size={24} theme="polkadot" />
+          <FirstLetterIcon label={validator?.identity || "-"} />
         </Box>
         <ToolTip content={validator?.identity ? address : null}>
           <Ellipsis>{name}</Ellipsis>
@@ -175,10 +185,12 @@ export function Row({
     </Wrapper>
   );
 }
+
 type UnlockingRowProps = {
   account: Account;
   unlocking: PolkadotUnlocking;
 };
+
 export function UnlockingRow({
   account,
   unlocking: { amount, completionDate },
@@ -198,6 +210,7 @@ export function UnlockingRow({
       }),
     [unit, amount],
   );
+
   return (
     <Wrapper>
       <Column>{formattedAmount}</Column>

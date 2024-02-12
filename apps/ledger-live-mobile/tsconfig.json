@@ -8,14 +8,16 @@
     "types": ["jest", "@testing-library/jest-native/extend-expect"],
     "noEmit": true,
     "target": "esnext",
-    "incremental": true
+    "incremental": true,
+    "baseUrl": ".",
+    "rootDir": ".",
+    "paths": {
+      "~/*": ["src/*"],
+      "LLM/*": ["src/newArch/*"],
+      "@tests/*": ["__tests__/*"],
+      "@mocks/*": ["__mocks__/*"]
+    }
   },
   "include": ["src/**/*", "e2e/**/*", "**/*.d.ts", "services/**/*"],
-  "exclude": [
-    "node_modules",
-    "babel.config.js",
-    "metro.config.js",
-    "jest.config.js",
-    "**/*.js"
-  ]
+  "exclude": ["node_modules", "babel.config.js", "metro.config.js", "jest.config.js", "**/*.js"]
 }

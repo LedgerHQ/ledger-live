@@ -3,23 +3,23 @@ import { useSelector, useDispatch } from "react-redux";
 import { add, isBefore, parseISO } from "date-fns";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { accountsWithPositiveBalanceCountSelector } from "../reducers/accounts";
+import { accountsWithPositiveBalanceCountSelector } from "~/reducers/accounts";
 import {
   ratingsModalOpenSelector,
   ratingsModalLockedSelector,
   ratingsCurrentRouteNameSelector,
   ratingsHappyMomentSelector,
   ratingsDataOfUserSelector,
-} from "../reducers/ratings";
+} from "~/reducers/ratings";
 import {
   setRatingsModalOpen,
   setRatingsCurrentRouteName,
   setRatingsHappyMoment,
   setRatingsDataOfUser,
-} from "../actions/ratings";
-import { track } from "../analytics";
-import { setNotificationsModalLocked } from "../actions/notifications";
-import { setUserNps } from "../actions/settings";
+} from "~/actions/ratings";
+import { track } from "~/analytics";
+import { setNotificationsModalLocked } from "~/actions/notifications";
+import { setUserNps } from "~/actions/settings";
 
 export type RatingsHappyMoment = {
   timeout?: number;
@@ -79,7 +79,7 @@ const useNpsRatings = () => {
   const dispatch = useDispatch();
 
   const setRatingsModalOpenCallback = useCallback(
-    isRatingsModalOpen => {
+    (isRatingsModalOpen: boolean) => {
       if (!isRatingsModalOpen) {
         dispatch(setRatingsModalOpen(isRatingsModalOpen));
         dispatch(setNotificationsModalLocked(false));
@@ -110,6 +110,7 @@ const useNpsRatings = () => {
     }
 
     // minimum accounts number criteria
+    // @ts-expect-error TYPINGS
     const minimumAccountsNumber: number =
       ratingsFeature?.params?.conditions?.minimum_accounts_number;
     if (minimumAccountsNumber && accountsWithAmountCount < minimumAccountsNumber) {
@@ -117,6 +118,7 @@ const useNpsRatings = () => {
     }
 
     // minimum app start number criteria
+    // @ts-expect-error TYPINGS
     const minimumAppStartsNumber: number =
       ratingsFeature?.params?.conditions?.minimum_app_starts_number;
     if (
@@ -127,6 +129,7 @@ const useNpsRatings = () => {
     }
 
     // duration since first app start long enough criteria
+    // @ts-expect-error TYPINGS
     const minimumDurationSinceAppFirstStart: Duration =
       ratingsFeature?.params?.conditions?.minimum_duration_since_app_first_start;
 
@@ -141,6 +144,7 @@ const useNpsRatings = () => {
     }
 
     // No crash in last session criteria
+    // @ts-expect-error TYPINGS
     const minimumNumberOfAppStartsSinceLastCrash: number =
       ratingsFeature?.params?.conditions?.minimum_number_of_app_starts_since_last_crash;
     if (
@@ -168,7 +172,7 @@ const useNpsRatings = () => {
   );
 
   const onRatingsRouteChange = useCallback(
-    (ratingsNewRoute, isOtherModalOpened = false) => {
+    (ratingsNewRoute: string, isOtherModalOpened = false) => {
       if (ratingsHappyMoment?.timeout) {
         dispatch(setNotificationsModalLocked(false));
         clearTimeout(ratingsHappyMoment?.timeout);
@@ -176,7 +180,9 @@ const useNpsRatings = () => {
 
       if (isOtherModalOpened || !areRatingsConditionsMet()) return false;
 
+      // @ts-expect-error TYPINGS
       for (const happyMoment of ratingsFeature?.params?.happy_moments) {
+        // @ts-expect-error TYPINGS
         if (isHappyMomentTriggered(happyMoment, ratingsNewRoute)) {
           dispatch(setNotificationsModalLocked(true));
           const timeout = setTimeout(() => {
@@ -185,6 +191,7 @@ const useNpsRatings = () => {
           dispatch(
             setRatingsHappyMoment({
               ...happyMoment,
+              // @ts-expect-error TYPINGS
               timeout,
             }),
           );
@@ -206,7 +213,7 @@ const useNpsRatings = () => {
   );
 
   const updateRatingsDataOfUserInStateAndStore = useCallback(
-    ratingsDataOfUserUpdated => {
+    (ratingsDataOfUserUpdated: RatingsDataOfUser) => {
       dispatch(setRatingsDataOfUser(ratingsDataOfUserUpdated));
       setRatingsDataOfUserInStorage(ratingsDataOfUserUpdated);
     },
@@ -244,7 +251,7 @@ const useNpsRatings = () => {
   }, [isRatingsModalLocked, dispatch, setRatingsModalOpenCallback]);
 
   const handleRatingsSetDateOfNextAllowedRequest = useCallback(
-    (delay, additionalParams = {}) => {
+    (delay?: Duration, additionalParams = {}) => {
       if (delay !== null && delay !== undefined) {
         const dateOfNextAllowedRequest: Date = add(Date.now(), delay);
         updateRatingsDataOfUserInStateAndStore({
@@ -319,7 +326,7 @@ const useNpsRatings = () => {
   }, [ratingsDataOfUser, updateRatingsDataOfUserInStateAndStore]);
 
   const updateNpsRating = useCallback(
-    nps => {
+    (nps: number) => {
       dispatch(setUserNps(nps));
     },
     [dispatch],

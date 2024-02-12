@@ -10,33 +10,33 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Flex } from "@ledgerhq/native-ui";
 
-import { accountScreenSelector } from "../../reducers/accounts";
-import { ScreenName } from "../../const";
-import { TrackScreen, track } from "../../analytics";
-import SelectDevice from "../../components/SelectDevice";
-import SelectDevice2, { SetHeaderOptionsRequest } from "../../components/SelectDevice2";
-import NavigationScrollView from "../../components/NavigationScrollView";
-import { readOnlyModeEnabledSelector } from "../../reducers/settings";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { ScreenName } from "~/const";
+import { TrackScreen, track } from "~/analytics";
+import SelectDevice from "~/components/SelectDevice";
+import SelectDevice2, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
+import NavigationScrollView from "~/components/NavigationScrollView";
+import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import ReadOnlyWarning from "./ReadOnlyWarning";
 import NotSyncedWarning from "./NotSyncedWarning";
-import GenericErrorView from "../../components/GenericErrorView";
-import DeviceActionModal from "../../components/DeviceActionModal";
+import GenericErrorView from "~/components/GenericErrorView";
+import DeviceActionModal from "~/components/DeviceActionModal";
 import SkipSelectDevice from "../SkipSelectDevice";
 import byFamily from "../../generated/ConnectDevice";
-import { ReceiveFundsStackParamList } from "../../components/RootNavigator/types/ReceiveFundsNavigator";
+import { ReceiveFundsStackParamList } from "~/components/RootNavigator/types/ReceiveFundsNavigator";
 import {
   ReactNavigationHeaderOptions,
   StackNavigatorProps,
-} from "../../components/RootNavigator/types/helpers";
-import { NavigationHeaderCloseButton } from "../../components/NavigationHeaderCloseButton";
-import { NavigationHeaderBackButton } from "../../components/NavigationHeaderBackButton";
-import { useAppDeviceAction } from "../../hooks/deviceActions";
+} from "~/components/RootNavigator/types/helpers";
+import { NavigationHeaderCloseButton } from "~/components/NavigationHeaderCloseButton";
+import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
+import { useAppDeviceAction } from "~/hooks/deviceActions";
 
 // Defines some of the header options for this screen to be able to reset back to them.
 export const connectDeviceHeaderOptions = (
   onHeaderBackButtonPress: () => void,
 ): ReactNavigationHeaderOptions => ({
-  headerRight: () => <NavigationHeaderCloseButton />,
+  headerRight: () => <NavigationHeaderCloseButton onPress={onHeaderBackButtonPress} />,
   headerLeft: () => <NavigationHeaderBackButton onPress={onHeaderBackButtonPress} />,
 });
 
@@ -65,6 +65,7 @@ export default function ConnectDevice({
   );
 
   const onResult = useCallback(
+    // @ts-expect-error should be AppResult but navigation.navigate does not agree
     payload => {
       if (!account) {
         return null;
@@ -143,7 +144,7 @@ export default function ConnectDevice({
   }
 
   if (!mainAccount.freshAddress) {
-    return <NotSyncedWarning continue={onSkipDevice} accountId={mainAccount.id} />;
+    return <NotSyncedWarning accountId={mainAccount.id} />;
   }
 
   return (

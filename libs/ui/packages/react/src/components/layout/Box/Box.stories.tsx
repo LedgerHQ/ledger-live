@@ -7,25 +7,32 @@ export default {
     backgroundColor: {
       type: "text",
       control: "color",
-      defaultValue: "#0EBDCD",
       description:
         "This property defines the backgroundColor of the box. This property any color format.",
     },
     width: {
       type: "text",
-      defaultValue: "200px",
       description: "Width of the box.",
     },
     py: {
       type: "text",
-      defaultValue: "20px",
       description: "Padding top and bottom.",
+    },
+    px: {
+      type: "text",
+      description: "Padding left and right.",
     },
     mx: {
       type: "text",
-      defaultValue: "20px",
       description: "Margin left and right.",
     },
+  },
+  args: {
+    backgroundColor: "#0EBDCD",
+    width: "200px",
+    py: "20px",
+    px: "20px",
+    mx: "20px",
   },
   parameters: {
     docs: {

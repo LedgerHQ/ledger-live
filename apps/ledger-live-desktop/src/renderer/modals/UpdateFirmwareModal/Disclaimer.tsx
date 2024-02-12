@@ -20,14 +20,15 @@ const Disclaimer = ({ firmware, onContinue, t }: Props) => (
       flexShrink={1}
       overflowY="hidden"
       px={12}
-      mt={12}
+      my={12}
     >
       <TrackPage category="Manager" name="DisclaimerModal" />
       <Alert type="info" title={t("manager.firmware.prepareSeed")} />
       {firmware && firmware.osu ? (
         <div style={{ overflow: "scroll", flex: 1 }}>
           <Notes>
-            <Markdown>{firmware.osu.notes}</Markdown>
+            {/*  */}
+            <Markdown>{firmware.osu.notes as string}</Markdown>
           </Notes>
         </div>
       ) : null}
@@ -39,12 +40,12 @@ const Disclaimer = ({ firmware, onContinue, t }: Props) => (
         alignSelf="stretch"
         flexDirection="row"
         justifyContent="space-between"
-        pt={4}
+        pt={6}
         pb={1}
       >
         <Flex flex={1} />
         <Button data-test-id="modal-continue-button" variant="main" onClick={onContinue}>
-          {t("common.continue")}
+          {t("manager.firmware.installUpdate")}
         </Button>
       </Flex>
     </Flex>

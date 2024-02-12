@@ -6,15 +6,17 @@ import { View, StyleSheet, TouchableOpacity, Linking, Platform } from "react-nat
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Box, Flex, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import styled, { useTheme } from "styled-components/native";
-import { NavigatorName, ScreenName } from "../../const";
-import ExternalLinkIcon from "../../icons/ExternalLink";
-import OpenSeaIcon from "../../icons/OpenSea";
-import RaribleIcon from "../../icons/Rarible";
+import { NavigatorName, ScreenName } from "~/const";
+import ExternalLinkIcon from "~/icons/ExternalLink";
+import OpenSeaIcon from "~/icons/OpenSea";
+import RaribleIcon from "~/icons/Rarible";
 import QueuedDrawer from "../QueuedDrawer";
 import { rgba } from "../../colors";
 import HideNftDrawer from "./HideNftDrawer";
-import { track, TrackScreen } from "../../analytics";
+import { track, TrackScreen } from "~/analytics";
 import { extractImageUrlFromNftMetadata } from "../CustomImage/imageUtils";
+import { knownDeviceModelIdsSelector } from "~/reducers/settings";
+import { useSelector } from "react-redux";
 
 type Props = {
   links?: NFTMetadata["links"] | null;
@@ -51,7 +53,7 @@ const NftLink = ({
   <LinkTouchable style={style} onPress={onPress}>
     <Flex flexDirection="row" alignItems="center">
       <Box mr={16}>{leftIcon}</Box>
-      <Flex flexDirection="column">
+      <Flex flexDirection="column" flexShrink={1}>
         <Text fontWeight="semiBold" fontSize={16} color={primary ? "primary.c90" : "neutral.c100"}>
           {title}
         </Text>
@@ -76,8 +78,10 @@ const NftLinksPanel = ({ nftContract, nftId, links, isOpen, onClose, nftMetadata
     useFeature("disableNftRaribleOpensea")?.enabled && Platform.OS === "ios";
 
   const customImageUri = extractImageUrlFromNftMetadata(nftMetadata);
+  const knownDeviceModelIds = useSelector(knownDeviceModelIdsSelector);
 
-  const showCustomImageButton = customImage?.enabled && !!customImageUri;
+  const showCustomImageButton =
+    knownDeviceModelIds.stax && customImage?.enabled && !!customImageUri;
 
   const handleOpenOpenSea = useCallback(() => {
     track("button_clicked", {
@@ -117,7 +121,7 @@ const NftLinksPanel = ({ nftContract, nftId, links, isOpen, onClose, nftMetadata
   const handlePressCustomImage = useCallback(() => {
     if (!customImageUri) return;
     track("button_clicked", {
-      button: "Set as Ledger Stax lockscreen picture",
+      button: "Set as device lockscreen picture",
       drawer: "NFT settings",
     });
     navigation.navigate(NavigatorName.CustomImage, {

@@ -5,9 +5,9 @@ import { Language, DeviceInfo } from "@ledgerhq/types-live";
 import { useAvailableLanguagesForDevice } from "@ledgerhq/live-common/manager/hooks";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import DeviceLanguageSelection from "./DeviceLanguageSelection";
-import QueuedDrawer from "../../../components/QueuedDrawer";
-import ChangeDeviceLanguageActionModal from "../../../components/ChangeDeviceLanguageActionModal";
-import { track } from "../../../analytics";
+import QueuedDrawer from "~/components/QueuedDrawer";
+import ChangeDeviceLanguageActionModal from "~/components/ChangeDeviceLanguageActionModal";
+import { track } from "~/analytics";
 import DeviceOptionRow from "./DeviceOptionRow";
 
 type Props = {
@@ -66,9 +66,9 @@ const DeviceLanguage: React.FC<Props> = ({
     onLanguageChange();
   }, [onLanguageChange]);
 
-  const errorTracked = useRef(null);
+  const errorTracked = useRef<Error | null>(null);
   const handleError = useCallback(
-    error => {
+    (error: Error) => {
       if (errorTracked.current !== error) {
         track("Page Manager LanguageInstallError", { error, type: "drawer" });
         errorTracked.current = error;

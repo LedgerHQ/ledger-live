@@ -10,7 +10,7 @@ import Input from "~/renderer/components/Input";
 import Label from "~/renderer/components/Label";
 import Switch from "~/renderer/components/Switch";
 import { urls } from "~/config/urls";
-import useEnv from "~/renderer/hooks/useEnv";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import Tooltip from "~/renderer/components/Tooltip";
 import IconInfoCircle from "~/renderer/icons/InfoCircle";
 const FormWrapper = styled(Box)`
@@ -64,9 +64,19 @@ const Form = ({
 }) => {
   const { t } = useTranslation();
   const satStackAlreadyConfigured = useEnv("SATSTACK");
-  const hostError = maybeError(errors, "host", satStackAlreadyConfigured, RPCHostRequired);
-  const usernameError = maybeError(errors, "username", satStackAlreadyConfigured, RPCUserRequired);
-  const passwordError = maybeError(errors, "password", satStackAlreadyConfigured, RPCPassRequired);
+  const hostError = maybeError(errors, "host", !!satStackAlreadyConfigured, RPCHostRequired);
+  const usernameError = maybeError(
+    errors,
+    "username",
+    !!satStackAlreadyConfigured,
+    RPCUserRequired,
+  );
+  const passwordError = maybeError(
+    errors,
+    "password",
+    !!satStackAlreadyConfigured,
+    RPCPassRequired,
+  );
   return (
     <Box>
       <Text

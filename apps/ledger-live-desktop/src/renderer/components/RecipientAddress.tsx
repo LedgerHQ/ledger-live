@@ -96,7 +96,7 @@ class RecipientAddress extends PureComponent<Props, State> {
     const { onChange, withQrCode, value, error, ...rest } = this.props;
     const { qrReaderOpened } = this.state;
     const renderRight = withQrCode ? (
-      <Right onClick={this.handleClickQrCode}>
+      <Right data-test-id="open-camera-qrcode-scanner" onClick={this.handleClickQrCode}>
         <IconQrCode size={16} />
         {qrReaderOpened && (
           <>

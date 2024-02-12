@@ -8,7 +8,7 @@ import ImportNFTButton from "~/renderer/components/CustomImage/ImportNFTButton";
 import NFTGallerySelector from "~/renderer/components/CustomImage/NFTGallerySelector";
 import { StepProps } from "./types";
 import StepContainer from "./StepContainer";
-import { Flex, InfiniteLoader } from "@ledgerhq/react-ui";
+import { Flex, IconsLegacy, InfiniteLoader, Link } from "@ledgerhq/react-ui";
 import StepFooter from "./StepFooter";
 import {
   ImageLoadFromNftError,
@@ -19,6 +19,10 @@ import useIsMounted from "@ledgerhq/live-common/hooks/useIsMounted";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { analyticsPageNames, analyticsFlowName } from "./shared";
 import { useTrack } from "~/renderer/analytics/segment";
+import { setDrawer } from "~/renderer/drawers/Provider";
+import RemoveCustomImage from "../manager/DeviceDashboard/DeviceInformationSummary/RemoveCustomImage";
+import { useSelector } from "react-redux";
+import { lastSeenCustomImageSelector } from "~/renderer/reducers/settings";
 
 type Props = StepProps & {
   onResult: (res: ImageBase64Data) => void;
@@ -83,10 +87,13 @@ const StepChooseImage: React.FC<Props> = props => {
              * virtual delay to ensure showing loading state at least 400ms so
              * it doesn't look glitchy if it's too fast
              */
-            setTimeout(() => {
-              if (!isMounted()) return;
-              setSelectedNftBase64({ imageBase64DataUri: res as string });
-            }, Math.max(0, 400 - (Date.now() - t1)));
+            setTimeout(
+              () => {
+                if (!isMounted()) return;
+                setSelectedNftBase64({ imageBase64DataUri: res as string });
+              },
+              Math.max(0, 400 - (Date.now() - t1)),
+            );
           })
           .catch(() => {
             onError(new ImageDownloadError());
@@ -96,6 +103,12 @@ const StepChooseImage: React.FC<Props> = props => {
     [isMounted, onError, selectedNftId],
   );
 
+  const lastSeenCustomImage = useSelector(lastSeenCustomImageSelector);
+
+  const onRemove = useCallback(() => {
+    setDrawer(RemoveCustomImage, {});
+  }, []);
+
   return (
     <StepContainer
       footer={
@@ -104,7 +117,7 @@ const StepChooseImage: React.FC<Props> = props => {
             nextDisabled={!selectedNftBase64Data}
             nextLoading={Boolean(selectedNftId && !selectedNftBase64Data)}
             nextLabel={t("customImage.steps.choose.selectNft")}
-            previousLabel={t("common.previous")}
+            previousLabel={t("common.back")}
             onClickNext={handleClickNext}
             onClickPrevious={handleClickPrevious}
             previousTestId="custom-image-nft-previous-button"
@@ -132,7 +145,7 @@ const StepChooseImage: React.FC<Props> = props => {
             onResult={onResult}
             onError={onError}
             onClick={() =>
-              track("button_clicked", {
+              track("button_clicked2", {
                 button: "Choose from my picture gallery",
               })
             }
@@ -140,11 +153,22 @@ const StepChooseImage: React.FC<Props> = props => {
           <ImportNFTButton
             onClick={() => {
               setIsShowingNftGallery(true);
-              track("button_clicked", {
+              track("button_clicked2", {
                 button: "Choose from NFT gallery",
               });
             }}
           />
+          {lastSeenCustomImage?.size ? (
+            <Link
+              size="medium"
+              color="error.c60"
+              mt={10}
+              onClick={onRemove}
+              Icon={IconsLegacy.TrashMedium}
+            >
+              {t("removeCurrentPicture.cta")}
+            </Link>
+          ) : null}
         </Flex>
       ) : (
         <NFTGallerySelector handlePickNft={handlePickNft} selectedNftId={selectedNftId} />

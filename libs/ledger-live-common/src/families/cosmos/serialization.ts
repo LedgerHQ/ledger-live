@@ -1,6 +1,14 @@
 import { BigNumber } from "bignumber.js";
-import type { CosmosResourcesRaw, CosmosResources, CosmosAccountRaw, CosmosAccount } from "./types";
-import { Account, AccountRaw } from "@ledgerhq/types-live";
+import {
+  type CosmosResourcesRaw,
+  type CosmosResources,
+  type CosmosAccountRaw,
+  type CosmosAccount,
+  isCosmosOperationExtraRaw,
+  CosmosOperationExtra,
+  CosmosOperationExtraRaw,
+} from "./types";
+import { Account, AccountRaw, OperationExtra, OperationExtraRaw } from "@ledgerhq/types-live";
 
 export function toCosmosResourcesRaw(r: CosmosResources): CosmosResourcesRaw {
   const {
@@ -11,6 +19,7 @@ export function toCosmosResourcesRaw(r: CosmosResources): CosmosResourcesRaw {
     withdrawAddress,
     redelegations,
     unbondings,
+    sequence,
   } = r;
 
   return {
@@ -37,6 +46,7 @@ export function toCosmosResourcesRaw(r: CosmosResources): CosmosResourcesRaw {
     pendingRewardsBalance: pendingRewardsBalance.toString(),
     unbondingBalance: unbondingBalance.toString(),
     withdrawAddress,
+    sequence,
   };
 }
 export function fromCosmosResourcesRaw(r: CosmosResourcesRaw): CosmosResources {
@@ -48,6 +58,7 @@ export function fromCosmosResourcesRaw(r: CosmosResourcesRaw): CosmosResources {
     unbondingBalance,
     withdrawAddress,
     unbondings,
+    sequence,
   } = r;
   return {
     delegations: delegations.map(({ amount, status, pendingRewards, validatorAddress }) => ({
@@ -73,6 +84,7 @@ export function fromCosmosResourcesRaw(r: CosmosResourcesRaw): CosmosResources {
     pendingRewardsBalance: new BigNumber(pendingRewardsBalance),
     unbondingBalance: new BigNumber(unbondingBalance),
     withdrawAddress,
+    sequence,
   };
 }
 
@@ -89,4 +101,74 @@ export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account) {
   const cosmosResourcesRaw = (accountRaw as CosmosAccountRaw).cosmosResources;
   if (cosmosResourcesRaw)
     (account as CosmosAccount).cosmosResources = fromCosmosResourcesRaw(cosmosResourcesRaw);
+}
+
+export function fromOperationExtraRaw(extraRaw: OperationExtraRaw): OperationExtra {
+  const extra: CosmosOperationExtra = {};
+  if (!isCosmosOperationExtraRaw(extraRaw)) {
+    return extra;
+  }
+
+  if (extraRaw.validator) {
+    extra.validator = {
+      address: extraRaw.validator.address,
+      amount: new BigNumber(extraRaw.validator.amount),
+    };
+  }
+
+  if (extraRaw.validators && extraRaw.validators.length > 0) {
+    extra.validators = extraRaw.validators.map(validator => ({
+      address: validator.address,
+      amount: new BigNumber(validator.amount),
+    }));
+  }
+
+  if (extraRaw.sourceValidator) {
+    extra.sourceValidator = extraRaw.sourceValidator;
+  }
+
+  if (extraRaw.autoClaimedRewards) {
+    extra.autoClaimedRewards = extraRaw.autoClaimedRewards;
+  }
+
+  if (extraRaw.memo) {
+    extra.memo = extraRaw.memo;
+  }
+
+  return extra;
+}
+
+export function toOperationExtraRaw(extra: OperationExtra): OperationExtraRaw {
+  const extraRaw: CosmosOperationExtraRaw = {};
+  if (!isCosmosOperationExtraRaw(extra)) {
+    return extraRaw;
+  }
+
+  if (extra.validator) {
+    extraRaw.validator = {
+      address: extra.validator.address,
+      amount: extra.validator.amount.toString(),
+    };
+  }
+
+  if (extra.validators && extra.validators.length > 0) {
+    extraRaw.validators = extra.validators.map(validator => ({
+      address: validator.address,
+      amount: validator.amount.toString(),
+    }));
+  }
+
+  if (extra.sourceValidator) {
+    extraRaw.sourceValidator = extra.sourceValidator;
+  }
+
+  if (extra.autoClaimedRewards) {
+    extraRaw.autoClaimedRewards = extra.autoClaimedRewards;
+  }
+
+  if (extra.memo) {
+    extraRaw.memo = extra.memo;
+  }
+
+  return extraRaw;
 }

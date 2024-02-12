@@ -41,6 +41,29 @@ test.describe.parallel("Recover @smoke", () => {
     });
   });
 
+  test("Restore page with nanoSP", async ({ page }) => {
+    const recoverPage = new RecoverRestorePage(page);
+    recoverPage.useDeepLink();
+
+    await test.step("Text is visible", async () => {
+      await expect(recoverPage.connectText).toBeVisible();
+    });
+
+    const modelId = DeviceModelId.nanoSP;
+    await page.evaluate(modelId => {
+      window.ledger.addDevice({
+        deviceId: "",
+        deviceName: "My nanoSP",
+        modelId,
+        wired: true,
+      });
+    }, modelId);
+
+    await test.step("Text is no longer visible", async () => {
+      await expect(recoverPage.connectText).not.toBeVisible();
+    });
+  });
+
   test("Restore page with stax", async ({ page }) => {
     const recoverPage = new RecoverRestorePage(page);
     recoverPage.useDeepLink();

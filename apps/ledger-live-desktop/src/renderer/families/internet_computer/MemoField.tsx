@@ -6,7 +6,7 @@ import { Account } from "@ledgerhq/types-live";
 import {
   Transaction,
   TransactionStatus,
-} from "@ledgerhq/live-common/lib/families/internet_computer/types";
+} from "@ledgerhq/live-common/families/internet_computer/types";
 import { useTranslation } from "react-i18next";
 
 const MemoField = ({

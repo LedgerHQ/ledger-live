@@ -9,7 +9,7 @@ import Text from "~/renderer/components/Text";
 import { centerEllipsis } from "~/renderer/styles/helpers";
 import Media from "~/renderer/components/Nft/Media";
 import Skeleton from "~/renderer/components/Nft/Skeleton";
-import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
+import { useNftMetadata } from "@ledgerhq/live-nft-react";
 import NFTContextMenu from "~/renderer/components/ContextMenu/NFTContextMenu";
 import NFTViewerDrawer from "~/renderer/drawers/NFTViewerDrawer";
 import { setDrawer } from "~/renderer/drawers/Provider";
@@ -67,11 +67,15 @@ const NftCard = ({ id, mode, account, withContextMenu = false, onHideCollection 
   const show = useMemo(() => status === "loading", [status]);
   const isGrid = mode === "grid";
   const onItemClick = useCallback(() => {
-    setDrawer(NFTViewerDrawer, {
-      account,
-      nftId: id,
-      isOpen: true,
-    });
+    setDrawer(
+      NFTViewerDrawer,
+      {
+        account,
+        nftId: id,
+        isOpen: true,
+      },
+      { forceDisableFocusTrap: true },
+    );
   }, [id, account]);
   const MaybeContext = ({ children }: { children: React.ReactNode }) =>
     withContextMenu && nft && metadata ? (

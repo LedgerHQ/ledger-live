@@ -5,7 +5,7 @@
     "composite": true,
     "module": "es2020",
     "jsx": "react",
-    "lib": ["es6", "dom"],
+    "lib": ["ES2021", "dom"],
     "target": "esnext",
     "baseUrl": ".",
     "rootDir": ".",

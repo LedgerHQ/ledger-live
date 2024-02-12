@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { urls } from "../config/urls";
+import { urls } from "~/utils/urls";
 import TranslatedError from "./TranslatedError";
 import Alert from "./Alert";
 

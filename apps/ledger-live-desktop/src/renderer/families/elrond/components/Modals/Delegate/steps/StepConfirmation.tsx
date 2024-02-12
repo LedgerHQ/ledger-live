@@ -39,7 +39,7 @@ const StepConfirmation = (props: StepProps) => {
     if (optimisticOperation && voteAccAddress && validators) {
       const chosenValidator = validators.find(v => v.contract === voteAccAddress);
       track("staking_completed", {
-        currency: "EGLD",
+        currency: "MultiversX",
         validator: chosenValidator?.identity?.name || voteAccAddress,
         source,
         delegation: "delegation",
@@ -56,7 +56,7 @@ const StepConfirmation = (props: StepProps) => {
           name="Step Confirmed"
           flow="stake"
           action="delegate"
-          currency="egld"
+          currency="MultiversX"
         />
         {account ? <SyncOneAccountOnMount priority={10} accountId={account.id} /> : null}
 
@@ -75,7 +75,7 @@ const StepConfirmation = (props: StepProps) => {
           name="Step Confirmation Error"
           flow="stake"
           action="delegate"
-          currency="egld"
+          currency="MultiversX"
         />
 
         {signed ? (

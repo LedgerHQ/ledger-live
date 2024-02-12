@@ -1,20 +1,17 @@
 import React, { useCallback, useState } from "react";
 import { Flex } from "@ledgerhq/native-ui";
-import { WebView } from "react-native-webview";
+import { WebView, WebViewMessageEvent } from "react-native-webview";
 import VersionNumber from "react-native-version-number";
 import { Platform } from "react-native";
 import styled from "styled-components/native";
 import { useSelector } from "react-redux";
-import { TrackScreen } from "../../analytics";
-import useNpsRatings from "../../logic/npsRatings";
-import getWindowDimensions from "../../logic/getWindowDimensions";
-import { screen } from "../../analytics/segment";
-import {
-  languageSelector,
-  lastSeenDeviceSelector,
-  notificationsSelector,
-} from "../../reducers/settings";
-import { knownDevicesSelector } from "../../reducers/ble";
+import { TrackScreen } from "~/analytics";
+import useNpsRatings from "~/logic/npsRatings";
+import getWindowDimensions from "~/logic/getWindowDimensions";
+import { screen } from "~/analytics/segment";
+import { lastSeenDeviceSelector, notificationsSelector } from "~/reducers/settings";
+import { knownDevicesSelector } from "~/reducers/ble";
+import { useSettings } from "~/hooks";
 
 const { height } = getWindowDimensions();
 
@@ -74,10 +71,10 @@ type Props = {
 
 const Form = ({ setStep }: Props) => {
   const { ratingsHappyMoment, ratingsFeatureParams, updateNpsRating } = useNpsRatings();
-  const language = useSelector(languageSelector);
+  const { language } = useSettings();
   const devices = useSelector(knownDevicesSelector);
   const lastDevice = useSelector(lastSeenDeviceSelector) || devices[devices.length - 1];
-  const [selectedRate, setSelectedRate] = useState();
+  const [selectedRate, setSelectedRate] = useState<number>();
 
   const notifications = useSelector(notificationsSelector);
   const notificationsAllowed = notifications.areNotificationsAllowed;
@@ -87,12 +84,12 @@ const Form = ({ setStep }: Props) => {
     .join(",");
 
   const onMessage = useCallback(
-    event => {
+    (event: WebViewMessageEvent) => {
       const { data } = event.nativeEvent;
       if (data.startsWith("nps-submit")) {
-        const rate = data.split("-")[2];
+        const rate = parseInt(data.split("-")[2], 10);
         setSelectedRate(rate);
-        if (rate <= 7) {
+        if (rate <= 8) {
           screen(
             "",
             "NPS Step 2 not Happy",
@@ -109,7 +106,7 @@ const Form = ({ setStep }: Props) => {
         }
       }
       if (data === "form-submit") {
-        updateNpsRating(selectedRate);
+        updateNpsRating(selectedRate as number);
         if (!selectedRate || selectedRate <= 7) {
           setStep("disappointedDone");
         } else {
@@ -121,7 +118,7 @@ const Form = ({ setStep }: Props) => {
   );
   const formUrlSplitted = ratingsFeatureParams?.typeform_url.split("?");
   const formUrl =
-    formUrlSplitted[0] +
+    formUrlSplitted?.[0] +
     `#app_version=${appVersion}` +
     `&app_language=${language}` +
     `&platform_os=${Platform.OS}` +
@@ -130,7 +127,7 @@ const Form = ({ setStep }: Props) => {
     `&firmware_version=${lastDevice?.deviceInfo?.version}` +
     `&notifications_allowed=${notificationsAllowed}` +
     `&notifications_blacklisted=${notificationsBlacklisted}` +
-    `&done?${formUrlSplitted[1] || ""}`;
+    `&done?${formUrlSplitted?.[1] || ""}`;
 
   return (
     <Flex flex={1} height={height * (1 / 2)}>

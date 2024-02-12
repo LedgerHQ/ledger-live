@@ -18,6 +18,7 @@ const AccountHeaderActions: NearFamily["accountHeaderManageActions"] = ({
   const { nearResources } = mainAccount;
   const stakingEnabled = canStake(mainAccount);
   const hasStakingPositions = nearResources.stakingPositions.length > 0;
+
   const onClick = useCallback(() => {
     if (!stakingEnabled) {
       dispatch(
@@ -43,18 +44,21 @@ const AccountHeaderActions: NearFamily["accountHeaderManageActions"] = ({
       }
     }
   }, [stakingEnabled, dispatch, account, mainAccount, parentAccount, hasStakingPositions, source]);
+
   if (parentAccount) return null;
+
   return [
     {
       key: "Stake",
       onClick: onClick,
       icon: IconCoins,
       label: t("account.stake"),
-      event: "button_clicked",
+      event: "button_clicked2",
       eventProperties: {
         button: "stake",
       },
     },
   ];
 };
+
 export default AccountHeaderActions;

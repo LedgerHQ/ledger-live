@@ -4,6 +4,7 @@ import { fetchCurrencyTo } from "../fetchCurrencyTo";
 import { fetchCurrencyToMock } from "../__mocks__/fetchCurrencyTo.mocks";
 import { DEFAULT_SWAP_TIMEOUT_MS } from "../../../const/timeout";
 import { LedgerAPI4xx } from "@ledgerhq/errors";
+import { flattenV5CurrenciesToAndFrom } from "../../../utils/flattenV5CurrenciesToAndFrom";
 
 jest.mock("@ledgerhq/live-network/network");
 
@@ -17,14 +18,14 @@ describe("fetchCurrencyFrom", () => {
 
     const result = await fetchCurrencyTo({
       providers: ["changelly", "cic", "oneinch"],
-      currencyFrom: "bitcoin",
+      currencyFromId: "bitcoin",
     });
 
-    expect(result).toStrictEqual(fetchCurrencyToMock);
+    expect(result).toStrictEqual(flattenV5CurrenciesToAndFrom(fetchCurrencyToMock));
     expect(mockNetwork).toHaveBeenCalledWith({
       method: "GET",
       timeout: DEFAULT_SWAP_TIMEOUT_MS,
-      url: "https://swap-stg.ledger.com/v5/currencies/to?providers-whitelist=changelly%2Ccic%2Coneinch&additional-coins-flag=false&currencyFrom=bitcoin",
+      url: "https://swap.ledger.com/v5/currencies/to?providers-whitelist=changelly%2Ccic%2Coneinch&additional-coins-flag=false&currency-from=bitcoin",
     });
   });
 
@@ -34,7 +35,7 @@ describe("fetchCurrencyFrom", () => {
     try {
       await fetchCurrencyTo({
         providers: ["changelly", "cic", "oneinch"],
-        currencyFrom: "bitcoin",
+        currencyFromId: "bitcoin",
       });
     } catch (e) {
       expect(e).toBeInstanceOf(LedgerAPI4xx);

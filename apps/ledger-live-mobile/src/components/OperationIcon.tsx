@@ -1,13 +1,13 @@
-import React, { PureComponent } from "react";
-import { connect } from "react-redux";
-import type { Account, Operation, OperationType, AccountLike } from "@ledgerhq/types-live";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { isConfirmedOperation } from "@ledgerhq/live-common/operation";
-import OperationStatusIcon from "../icons/OperationStatusIcon";
-import { currencySettingsForAccountSelector } from "../reducers/settings";
+import type { Account, AccountLike, Operation, OperationType } from "@ledgerhq/types-live";
+import React from "react";
+import { connect } from "react-redux";
 import perFamilyOperationDetails from "../generated/operationDetails";
-import { UnionToIntersection } from "../types/helpers";
-import { State } from "../reducers/types";
+import OperationStatusIcon from "~/icons/OperationStatusIcon";
+import { currencySettingsForAccountSelector } from "~/reducers/settings";
+import { State } from "~/reducers/types";
+import { UnionToIntersection } from "~/types/helpers";
 
 type OwnProps = {
   size: number;
@@ -15,6 +15,7 @@ type OwnProps = {
   account: AccountLike;
   parentAccount?: Account | null;
 };
+
 type Props = OwnProps & {
   type: OperationType;
   confirmed: boolean;
@@ -24,44 +25,40 @@ type FamilyOperationDetailsIntersection = UnionToIntersection<
   (typeof perFamilyOperationDetails)[keyof typeof perFamilyOperationDetails]
 >;
 
-class OperationIcon extends PureComponent<Props> {
-  static defaultProps = {
-    confirmed: false,
-  };
+const OperationIcon = ({
+  type,
+  size,
+  confirmed,
+  operation: { hasFailed },
+  operation,
+  account,
+  parentAccount,
+}: Props) => {
+  const mainAccount = getMainAccount(account, parentAccount);
 
-  render() {
-    const {
-      type,
-      size,
-      confirmed,
-      operation: { hasFailed },
-      operation,
-      account,
-      parentAccount,
-    } = this.props;
-    const mainAccount = getMainAccount(account, parentAccount);
-    const specific = mainAccount.currency.family
-      ? (perFamilyOperationDetails[
-          mainAccount.currency.family as keyof typeof perFamilyOperationDetails
-        ] as FamilyOperationDetailsIntersection)
+  const specific = mainAccount.currency.family
+    ? (perFamilyOperationDetails[
+        mainAccount.currency.family as keyof typeof perFamilyOperationDetails
+      ] as FamilyOperationDetailsIntersection)
+    : null;
+
+  const SpecificOperationStatusIcon =
+    specific && specific.operationStatusIcon
+      ? specific.operationStatusIcon[type as keyof typeof specific.operationStatusIcon]
       : null;
-    const SpecificOperationStatusIcon =
-      specific && specific.operationStatusIcon
-        ? specific.operationStatusIcon[type as keyof typeof specific.operationStatusIcon]
-        : null;
-    return SpecificOperationStatusIcon ? (
-      <SpecificOperationStatusIcon
-        operation={operation}
-        confirmed={confirmed}
-        type={type}
-        failed={hasFailed}
-        size={size}
-      />
-    ) : (
-      <OperationStatusIcon confirmed={confirmed} type={type} failed={hasFailed} size={size} />
-    );
-  }
-}
+
+  return SpecificOperationStatusIcon ? (
+    <SpecificOperationStatusIcon
+      operation={operation}
+      confirmed={confirmed}
+      type={type}
+      failed={hasFailed}
+      size={size}
+    />
+  ) : (
+    <OperationStatusIcon confirmed={confirmed} type={type} failed={hasFailed} size={size} />
+  );
+};
 
 export default connect((state: State, props: OwnProps) => {
   const { account, parentAccount, operation } = props;

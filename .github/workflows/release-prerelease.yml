@@ -28,20 +28,18 @@ jobs:
         with:
           app_id: ${{ secrets.GH_BOT_APP_ID }}
           private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         if: ${{ github.event_name == 'push' }}
         with:
           token: ${{ steps.generate-token.outputs.token }}
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         if: ${{ github.event_name == 'workflow_dispatch' }}
         with:
           ref: ${{ inputs.ref }}
           token: ${{ steps.generate-token.outputs.token }}
 
-      - name: set git user
-        run: |
-          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
-          git config user.name "live-github-bot[bot]"
+      - name: Setup git user
+        uses: ./tools/actions/composites/setup-git-user
       - name: Setup the toolchain
         uses: ./tools/actions/composites/setup-toolchain
       - uses: ./tools/actions/get-package-infos
@@ -103,7 +101,7 @@ jobs:
       - name: tag mobile
         if: ${{ steps.mobile-version.outputs.version != steps.post-mobile-version.outputs.version }}
         run: |
-          git tag @ledgerhq/live-mobile@${{ steps.post-mobile-version.outputs.version }}
+          git tag live-mobile@${{ steps.post-mobile-version.outputs.version }}
       - name: push changes (push event)
         if: ${{ github.event_name == 'push' }}
         run: |

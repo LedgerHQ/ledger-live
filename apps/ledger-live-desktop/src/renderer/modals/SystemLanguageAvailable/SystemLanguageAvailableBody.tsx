@@ -12,10 +12,11 @@ import Button from "~/renderer/components/Button";
 import LanguageIcon from "~/renderer/icons/Language";
 import { setLanguage } from "~/renderer/actions/settings";
 import { answerLanguageAvailable } from "~/renderer/components/IsSystemLanguageAvailable";
+import { Language } from "~/config/languages";
 export type Props = {
   data: {
-    currentLanguage: string;
-    osLanguage: string;
+    currentLanguage: Language;
+    osLanguage: Language;
   };
   onClose?: () => void;
   t?: TFunction;

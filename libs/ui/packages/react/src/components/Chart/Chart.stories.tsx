@@ -22,7 +22,7 @@ function getRandomChartValue() {
 const generateData = () => {
   return new Array(50)
     .fill({})
-    .map(() => ({ value: getRandomChartValue(), date: getRandomChartDate() } as Item))
+    .map(() => ({ value: getRandomChartValue(), date: getRandomChartDate() }) as Item)
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 };
 

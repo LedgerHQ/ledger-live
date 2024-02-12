@@ -7,11 +7,11 @@ import { View } from "react-native";
 import BigNumber from "bignumber.js";
 import { ELROND_LEDGER_VALIDATOR_ADDRESS } from "@ledgerhq/live-common/families/elrond/constants";
 
-import CurrencyUnitValue from "../../../../../../../../../components/CurrencyUnitValue";
-import FirstLetterIcon from "../../../../../../../../../components/FirstLetterIcon";
-import Touchable from "../../../../../../../../../components/Touchable";
-import Circle from "../../../../../../../../../components/Circle";
-import LedgerLogo from "../../../../../../../../../icons/LiveLogo";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import FirstLetterIcon from "~/components/FirstLetterIcon";
+import Touchable from "~/components/Touchable";
+import Circle from "~/components/Circle";
+import LedgerLogo from "~/icons/LiveLogo";
 
 import type { ItemPropsType } from "./types";
 

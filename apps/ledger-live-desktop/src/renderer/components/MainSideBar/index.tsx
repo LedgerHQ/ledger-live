@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useHistory, useLocation } from "react-router-dom";
+import { Link, useHistory, useLocation, PromptProps } from "react-router-dom";
 import { Transition } from "react-transition-group";
 import styled from "styled-components";
 import { useManagerBlueDot } from "@ledgerhq/live-common/manager/hooks";
@@ -29,11 +29,14 @@ import Space from "~/renderer/components/Space";
 import UpdateDot from "~/renderer/components/Updater/UpdateDot";
 import { Dot } from "~/renderer/components/Dot";
 import Stars from "~/renderer/components/Stars";
-import useEnv from "~/renderer/hooks/useEnv";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { CARD_APP_ID } from "~/renderer/screens/card";
 import TopGradient from "./TopGradient";
 import Hide from "./Hide";
 import { track } from "~/renderer/analytics/segment";
+import { useAccountPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
+
+type Location = Parameters<Exclude<PromptProps["message"], string>>[0];
 
 const MAIN_SIDEBAR_WIDTH = 230;
 const TagText = styled.div.attrs<{ collapsed?: boolean }>(p => ({
@@ -210,6 +213,11 @@ const TagContainerFeatureFlags = ({ collapsed }: { collapsed: boolean }) => {
     </Tag>
   ) : null;
 };
+
+// Check if the selected tab is a Live-App under discovery tab
+const checkLiveAppTabSelection = (location: Location, liveAppPaths: Array<string>) =>
+  liveAppPaths.find((liveTab: string) => location?.pathname?.includes(liveTab));
+
 const MainSideBar = () => {
   const history = useHistory();
   const location = useLocation();
@@ -227,7 +235,10 @@ const MainSideBar = () => {
   const displayBlueDot = useManagerBlueDot(lastSeenDevice);
 
   const referralProgramConfig = useFeature("referralProgramDesktopSidebar");
+  const ptxEarnConfig = useFeature("ptxEarn");
   const recoverFeature = useFeature("protectServicesDesktop");
+  const recoverHomePath = useAccountPath(recoverFeature);
+
   const handleCollapse = useCallback(() => {
     dispatch(setSidebarCollapsed(!collapsed));
   }, [dispatch, collapsed]);
@@ -262,7 +273,7 @@ const MainSideBar = () => {
   }, [push, trackEntry]);
   const handleClickDashboard = useCallback(() => {
     push("/");
-    trackEntry("/");
+    trackEntry("/portfolio");
   }, [push, trackEntry]);
   const handleClickMarket = useCallback(() => {
     push("/market");
@@ -293,7 +304,7 @@ const MainSideBar = () => {
     trackEntry("swap");
   }, [push, trackEntry]);
   const handleClickRefer = useCallback(() => {
-    if (referralProgramConfig?.enabled && referralProgramConfig?.params.path) {
+    if (referralProgramConfig?.enabled && referralProgramConfig?.params?.path) {
       push(referralProgramConfig?.params.path);
       trackEntry("refer-a-friend", referralProgramConfig?.params.isNew);
     }
@@ -315,21 +326,30 @@ const MainSideBar = () => {
     const openRecoverFromSidebar = recoverFeature?.params?.openRecoverFromSidebar;
     const liveAppId = recoverFeature?.params?.protectId;
 
-    if (enabled && openRecoverFromSidebar && liveAppId) {
-      push(`/recover/${liveAppId}`);
+    if (enabled && openRecoverFromSidebar && liveAppId && recoverHomePath) {
+      history.push(recoverHomePath);
     } else if (enabled) {
       dispatch(openModal("MODAL_PROTECT_DISCOVER", undefined));
     }
-    track("button_clicked", {
+    track("button_clicked2", {
       button: "Protect",
     });
   }, [
     recoverFeature?.enabled,
     recoverFeature?.params?.openRecoverFromSidebar,
     recoverFeature?.params?.protectId,
-    push,
+    recoverHomePath,
+    history,
     dispatch,
   ]);
+
+  // Add your live-app path here if you don't want discovery and the live-app tabs to be both selected
+  const isLiveAppTabSelected = checkLiveAppTabSelection(
+    location,
+    [
+      referralProgramConfig?.params?.path, // Refer-a-friend
+    ].filter((path): path is string => !!path), // Filter undefined values,
+  );
 
   return (
     <Transition
@@ -365,7 +385,7 @@ const MainSideBar = () => {
                   iconSize={20}
                   iconActiveColor="wallet"
                   onClick={handleClickDashboard}
-                  isActive={location.pathname === "/"}
+                  isActive={location.pathname === "/" || location.pathname.startsWith("/asset/")}
                   NotifComponent={<UpdateDot collapsed={collapsed} />}
                   collapsed={secondAnim}
                 />
@@ -376,10 +396,10 @@ const MainSideBar = () => {
                   iconSize={20}
                   iconActiveColor="wallet"
                   onClick={handleClickMarket}
-                  isActive={location.pathname === "/market"}
+                  isActive={location.pathname.startsWith("/market")}
                   collapsed={secondAnim}
                 />
-                <FeatureToggle feature="learn">
+                <FeatureToggle featureId="learn">
                   <SideBarListItem
                     id="learn"
                     label={t("sidebar.learn")}
@@ -408,7 +428,7 @@ const MainSideBar = () => {
                   icon={IconsLegacy.PlanetMedium}
                   iconSize={20}
                   iconActiveColor="wallet"
-                  isActive={location.pathname.startsWith("/platform")}
+                  isActive={location.pathname.startsWith("/platform") && !isLiveAppTabSelected}
                   onClick={handleClickCatalog}
                   collapsed={secondAnim}
                 />
@@ -432,7 +452,7 @@ const MainSideBar = () => {
                   disabled={noAccounts || navigationLocked}
                   collapsed={secondAnim}
                 />
-                <FeatureToggle feature="ptxEarn">
+                <FeatureToggle featureId="ptxEarn">
                   <SideBarListItem
                     id={"earn"}
                     label={t("sidebar.earn")}
@@ -442,6 +462,13 @@ const MainSideBar = () => {
                     onClick={handleClickEarn}
                     isActive={location.pathname === "/earn"}
                     collapsed={secondAnim}
+                    NotifComponent={
+                      ptxEarnConfig?.params?.isNew ? (
+                        <CustomTag active type="plain" size="small">
+                          {t("common.new")}
+                        </CustomTag>
+                      ) : null
+                    }
                   />
                 </FeatureToggle>
                 <SideBarListItem
@@ -466,7 +493,7 @@ const MainSideBar = () => {
                   disabled={noAccounts}
                   collapsed={secondAnim}
                 />
-                <FeatureToggle feature="referralProgramDesktopSidebar">
+                <FeatureToggle featureId="referralProgramDesktopSidebar">
                   <SideBarListItem
                     id={"refer"}
                     label={t("sidebar.refer")}
@@ -474,14 +501,17 @@ const MainSideBar = () => {
                     iconSize={20}
                     iconActiveColor="wallet"
                     onClick={handleClickRefer}
-                    isActive={location.pathname.startsWith(referralProgramConfig?.params.path)}
+                    isActive={
+                      referralProgramConfig?.params &&
+                      location.pathname.startsWith(referralProgramConfig.params.path)
+                    }
                     collapsed={secondAnim}
                     NotifComponent={
-                      referralProgramConfig?.params.amount ? (
+                      referralProgramConfig?.params?.amount ? (
                         <CustomTag active type="plain" size="small">
                           {referralProgramConfig?.params.amount}
                         </CustomTag>
-                      ) : referralProgramConfig?.params.isNew ? (
+                      ) : referralProgramConfig?.params?.isNew ? (
                         <CustomTag active type="plain" size="small">
                           {t("common.new")}
                         </CustomTag>
@@ -500,7 +530,7 @@ const MainSideBar = () => {
                   collapsed={secondAnim}
                   disabled={isCardDisabled}
                 />
-                <FeatureToggle feature="protectServicesDesktop">
+                <FeatureToggle featureId="protectServicesDesktop">
                   <SideBarListItem
                     id={"recover"}
                     label={t("sidebar.recover")}
@@ -509,6 +539,13 @@ const MainSideBar = () => {
                     iconActiveColor="wallet"
                     onClick={handleClickRecover}
                     collapsed={secondAnim}
+                    NotifComponent={
+                      recoverFeature?.params?.isNew && (
+                        <CustomTag active type="plain" size="small">
+                          {t("common.new")}
+                        </CustomTag>
+                      )
+                    }
                   />
                 </FeatureToggle>
                 <SideBarListItem

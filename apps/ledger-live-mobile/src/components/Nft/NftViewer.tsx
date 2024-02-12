@@ -17,18 +17,15 @@ import {
   ViewStyle,
   Animated,
 } from "react-native";
-import {
-  useNftMetadata,
-  decodeNftId,
-  getNftCapabilities,
-  useNftCollectionMetadata,
-  getFloorPrice,
-} from "@ledgerhq/live-common/nft/index";
+import { decodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
+import { getNftCapabilities } from "@ledgerhq/coin-framework/nft/support";
+import { useNftMetadata, useNftCollectionMetadata } from "@ledgerhq/live-nft-react";
+import { getFloorPrice } from "@ledgerhq/live-nft/api/metadataservice";
 import { BigNumber } from "bignumber.js";
 import { useDispatch, useSelector } from "react-redux";
 import { Box, Button, IconsLegacy, Text, Flex } from "@ledgerhq/native-ui";
 import { useTranslation, Trans } from "react-i18next";
-import Clipboard from "@react-native-community/clipboard";
+import Clipboard from "@react-native-clipboard/clipboard";
 import { FloorPrice, Account } from "@ledgerhq/types-live";
 import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
@@ -40,34 +37,35 @@ import {
 } from "@react-navigation/native";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import styled from "styled-components/native";
-import { accountSelector } from "../../reducers/accounts";
-import { ScreenName, NavigatorName } from "../../const";
+import { accountSelector } from "~/reducers/accounts";
+import { ScreenName, NavigatorName } from "~/const";
 import NftLinksPanel from "./NftLinksPanel";
 import Skeleton from "../Skeleton";
 import NftMedia from "./NftMedia";
-import { getMetadataMediaType } from "../../logic/nft";
+import { getMetadataMediaType } from "~/logic/nft";
 import NftPropertiesList from "./NftPropertiesList";
 import CurrencyIcon from "../CurrencyIcon";
-import { State } from "../../reducers/types";
+import { State } from "~/reducers/types";
 import type { NftNavigatorParamList } from "../RootNavigator/types/NftNavigator";
 import type { StackNavigatorNavigation, StackNavigatorProps } from "../RootNavigator/types/helpers";
 import type { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { AccountsNavigatorParamList } from "../RootNavigator/types/AccountsNavigator";
-import InfoModal from "../../modals/Info";
-import { notAvailableModalInfo } from "../../screens/Nft/NftInfoNotAvailable";
-import { track, TrackScreen } from "../../analytics";
+import InfoModal from "~/modals/Info";
+import { notAvailableModalInfo } from "~/screens/Nft/NftInfoNotAvailable";
+import { track, TrackScreen } from "~/analytics";
 import { DesignedForStaxDrawer, DesignedForStaxText } from "./DesignedForStax";
 import {
   discreetModeSelector,
   hasSeenStaxEnabledNftsPopupSelector,
   knownDeviceModelIdsSelector,
-} from "../../reducers/settings";
-import { setHasSeenStaxEnabledNftsPopup } from "../../actions/settings";
+} from "~/reducers/settings";
+import { setHasSeenStaxEnabledNftsPopup } from "~/actions/settings";
 import { useHeaderHeight } from "@react-navigation/elements";
 import NftViewerBackground from "./NftViewerBackground";
 import NftViewerScreenHeader from "./NftViewerScreenHeader";
 import invariant from "invariant";
-import DiscreetModeContext, { withDiscreetMode } from "../../context/DiscreetModeContext";
+import DiscreetModeContext, { withDiscreetMode } from "~/context/DiscreetModeContext";
+import { EvmNftTransaction } from "@ledgerhq/coin-evm/types/index";
 
 type Props = CompositeScreenProps<
   | StackNavigatorProps<NftNavigatorParamList, ScreenName.NftViewer>
@@ -212,26 +210,16 @@ const NftViewer = ({ route }: Props) => {
     const bridge = getAccountBridge(account);
 
     const defaultTransaction = bridge.createTransaction(account);
-    let transaction;
-    if (defaultTransaction.family === "evm") {
-      transaction = bridge.updateTransaction(defaultTransaction, {
-        mode: nft?.standard?.toLowerCase(),
-        nft: {
-          tokenId: nft?.tokenId,
-          // Quantity is set to Infinity first to allow the user to change it on the amount page
-          quantity: new BigNumber(nftCapabilities.hasQuantity ? Infinity : 1),
-          contract: nft?.contract,
-        },
-      });
-    } else if (defaultTransaction.family === "ethereum") {
-      transaction = bridge.updateTransaction(defaultTransaction, {
-        tokenIds: [nft?.tokenId],
+    const transaction = bridge.updateTransaction(defaultTransaction, {
+      mode: nft.standard.toLowerCase() as EvmNftTransaction["mode"],
+      nft: {
+        tokenId: nft.tokenId,
         // Quantity is set to Infinity first to allow the user to change it on the amount page
-        quantities: [new BigNumber(nftCapabilities.hasQuantity ? Infinity : 1)],
-        collection: nft?.contract,
-        mode: `${nft?.standard?.toLowerCase()}.transfer`,
-      });
-    }
+        quantity: new BigNumber(nftCapabilities.hasQuantity ? Infinity : 1),
+        contract: nft.contract,
+        collectionName: collectionMetadata?.tokenName ?? "",
+      },
+    });
 
     track("button_clicked", {
       button: "Send NFT",
@@ -244,7 +232,7 @@ const NftViewer = ({ route }: Props) => {
         transaction,
       },
     });
-  }, [account, nft, nftCapabilities.hasQuantity, navigation]);
+  }, [account, nft, nftCapabilities.hasQuantity, navigation, collectionMetadata]);
 
   const properties = useMemo(() => {
     if (isLoading && !nftMetadata?.properties?.length) {
@@ -461,7 +449,7 @@ const NftViewer = ({ route }: Props) => {
           </Box>
         </Box>
 
-        <FeatureToggle feature="counterValue">
+        <FeatureToggle featureId="counterValue">
           {!floorPriceLoading && floorPrice ? (
             <Section
               title={t("nft.viewer.attributes.floorPrice")}

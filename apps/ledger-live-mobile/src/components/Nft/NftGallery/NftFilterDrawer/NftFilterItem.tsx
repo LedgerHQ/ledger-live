@@ -12,11 +12,12 @@ import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import Switch from "../../../Switch";
 
 export type NftFilterItemProps = {
-  readonly first?: boolean;
-  readonly last?: boolean;
-  readonly leftComponent: ReactElement;
-  readonly rightComponent: ReactElement;
-  readonly onPress: () => void;
+  first?: boolean;
+  last?: boolean;
+  leftComponent: ReactElement;
+  rightComponent: ReactElement;
+  onPress: () => void;
+  children?: React.ReactNode;
 };
 
 const NftFilterItem: FC<NftFilterItemProps> = ({

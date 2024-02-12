@@ -1,5 +1,59 @@
 # @ledgerhq/icons-ui
 
+## 0.6.2
+
+### Patch Changes
+
+- [#4827](https://github.com/LedgerHQ/ledger-live/pull/4827) [`fc121ce96d`](https://github.com/LedgerHQ/ledger-live/commit/fc121ce96dbcc4f30cfd9836644f778b85f997b7) Thanks [@valpinkman](https://github.com/valpinkman)! - Update react to react 18
+
+## 0.6.2-next.0
+
+### Patch Changes
+
+- [#4827](https://github.com/LedgerHQ/ledger-live/pull/4827) [`fc121ce96d`](https://github.com/LedgerHQ/ledger-live/commit/fc121ce96dbcc4f30cfd9836644f778b85f997b7) Thanks [@valpinkman](https://github.com/valpinkman)! - Update react to react 18
+
+## 0.6.1
+
+### Patch Changes
+
+- [#4518](https://github.com/LedgerHQ/ledger-live/pull/4518) [`41a38e953b`](https://github.com/LedgerHQ/ledger-live/commit/41a38e953b17075b5ab7bec307c147d8f74b7501) Thanks [@mle-gall](https://github.com/mle-gall)! - Removal of ProviderIcons from UILib
+
+## 0.6.0
+
+### Minor Changes
+
+- [#4372](https://github.com/LedgerHQ/ledger-live/pull/4372) [`5fb60bc6bb`](https://github.com/LedgerHQ/ledger-live/commit/5fb60bc6bb0bc6a9452d580cdace16ca87e478ff) Thanks [@KVNLS](https://github.com/KVNLS)! - Fix npm package by adding reactLegacy and nativeLegacy folders to it
+
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#4372](https://github.com/LedgerHQ/ledger-live/pull/4372) [`5fb60bc6bb`](https://github.com/LedgerHQ/ledger-live/commit/5fb60bc6bb0bc6a9452d580cdace16ca87e478ff) Thanks [@KVNLS](https://github.com/KVNLS)! - Fix npm package by adding reactLegacy and nativeLegacy folders to it
+
+## 0.5.0
+
+### Minor Changes
+
+- [#4378](https://github.com/LedgerHQ/ledger-live/pull/4378) [`27e4a76f6c`](https://github.com/LedgerHQ/ledger-live/commit/27e4a76f6cc66aa6a7480f48329db04d33200c65) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix npm package by adding reactLegacy and nativeLegacy folders to it
+
+## 0.5.0-hotfix.0
+
+### Minor Changes
+
+- [#4378](https://github.com/LedgerHQ/ledger-live/pull/4378) [`27e4a76f6c`](https://github.com/LedgerHQ/ledger-live/commit/27e4a76f6cc66aa6a7480f48329db04d33200c65) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix npm package by adding reactLegacy and nativeLegacy folders to it
+
+## 0.4.4
+
+### Patch Changes
+
+- [#4214](https://github.com/LedgerHQ/ledger-live/pull/4214) [`5bbcea12f9`](https://github.com/LedgerHQ/ledger-live/commit/5bbcea12f93e3cda41705a4d61d50845628a6de6) Thanks [@mle-gall](https://github.com/mle-gall)! - Changes on the new icons to allow for correct rendering in Native environments + types changes in NativeUI
+
+## 0.4.4-next.0
+
+### Patch Changes
+
+- [#4214](https://github.com/LedgerHQ/ledger-live/pull/4214) [`5bbcea12f9`](https://github.com/LedgerHQ/ledger-live/commit/5bbcea12f93e3cda41705a4d61d50845628a6de6) Thanks [@mle-gall](https://github.com/mle-gall)! - Changes on the new icons to allow for correct rendering in Native environments + types changes in NativeUI
+
 ## 0.4.3
 
 ### Patch Changes

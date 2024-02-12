@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { StyleSheet, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
+import { getEnv } from "@ledgerhq/live-env";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import {
   Exchange,
@@ -14,25 +15,21 @@ import {
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import addToSwapHistory from "@ledgerhq/live-common/exchange/swap/addToSwapHistory";
 import { addPendingOperation, getMainAccount } from "@ledgerhq/live-common/account/index";
-import { AccountLike, DeviceInfo, SignedOperation } from "@ledgerhq/types-live";
+import { AccountLike, DeviceInfo, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { postSwapAccepted, postSwapCancelled } from "@ledgerhq/live-common/exchange/swap/index";
-import { getEnv } from "@ledgerhq/live-common/env";
 import { InstalledItem } from "@ledgerhq/live-common/apps/types";
-import { renderLoading } from "../../../../components/DeviceAction/rendering";
-import { updateAccountWithUpdater } from "../../../../actions/accounts";
-import DeviceAction from "../../../../components/DeviceAction";
-import QueuedDrawer from "../../../../components/QueuedDrawer";
-import ModalBottomAction from "../../../../components/ModalBottomAction";
-import { useBroadcast } from "../../../../components/useBroadcast";
-import { UnionToIntersection } from "../../../../types/helpers";
-import type { StackNavigatorNavigation } from "../../../../components/RootNavigator/types/helpers";
-import { ScreenName } from "../../../../const";
-import type { SwapNavigatorParamList } from "../../../../components/RootNavigator/types/SwapNavigator";
-import {
-  useInitSwapDeviceAction,
-  useTransactionDeviceAction,
-} from "../../../../hooks/deviceActions";
+import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
+import { renderLoading } from "~/components/DeviceAction/rendering";
+import { updateAccountWithUpdater } from "~/actions/accounts";
+import DeviceAction from "~/components/DeviceAction";
+import QueuedDrawer from "~/components/QueuedDrawer";
+import ModalBottomAction from "~/components/ModalBottomAction";
+import { UnionToIntersection } from "~/types/helpers";
+import type { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
+import { ScreenName } from "~/const";
+import type { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
+import { useInitSwapDeviceAction, useTransactionDeviceAction } from "~/hooks/deviceActions";
 
 export type DeviceMeta = {
   result: { installed: InstalledItem[] } | null | undefined;
@@ -91,7 +88,7 @@ export function Confirmation({
   const navigation = useNavigation<NavigationProp>();
 
   const onComplete = useCallback(
-    result => {
+    (result: { operation: Operation; swapId: string }) => {
       const { operation, swapId } = result;
       /**
        * If transaction broadcast are disabled, consider the swap as cancelled

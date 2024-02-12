@@ -5,12 +5,12 @@ import styled from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import Button, { WrappedButtonProps } from "./wrappedUi/Button";
-import { NavigatorName, ScreenName } from "../const";
+import { NavigatorName, ScreenName } from "~/const";
 import ForceTheme from "./theme/ForceTheme";
 
-import buyImgSource from "../images/illustration/Shared/_NanoXTop.png";
-import setupImgSource from "../images/illustration/Shared/_NanoXBoxTop.png";
-import { track } from "../analytics";
+import buyImgSource from "~/images/illustration/Shared/_NanoXTop.png";
+import setupImgSource from "~/images/illustration/Shared/_NanoXBoxTop.png";
+import { track } from "~/analytics";
 import { RootNavigationComposite, StackNavigatorNavigation } from "./RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "./RootNavigator/types/BaseNavigator";
 

@@ -47,7 +47,7 @@ export function createFixtureTokenAccount(
   return {
     type: "TokenAccount",
     id: `js:2:ethereum:0x${id}:+ethereum%2Ferc20%2Fusd_tether__erc20_`,
-    parentId: `ethereumjs:2:ethereum:0x0${id}:`,
+    parentId: `js:2:ethereum:0x0${id}:`,
     token,
     balance: new BigNumber("51281813126095913"),
     spendableBalance: new BigNumber("51281813126095913"),
@@ -80,7 +80,7 @@ export function createFixtureAccount(
 ): Account {
   return {
     type: "Account",
-    id: `${currency.family}js:2:${currency.family}:0x0${id}:`,
+    id: `js:2:${currency.id}:0x0${id}:`,
     seedIdentifier: "0x01",
     derivationMode: "ethM",
     index: 0,

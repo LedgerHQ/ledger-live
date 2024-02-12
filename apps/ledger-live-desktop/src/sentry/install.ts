@@ -3,14 +3,12 @@ import * as SentryMainModule from "@sentry/electron/main";
 import { ElectronMainOptions } from "@sentry/electron/main";
 import pname from "./pname";
 import anonymizer from "./anonymizer";
-import "../env";
 import { getOperatingSystemSupportStatus } from "~/support/os";
 
 /* eslint-disable no-continue */
 
 // will be overriden by setShouldSendCallback
-// initially we will send errors (anonymized as we don't initially know "userId" neither)
-let shouldSendCallback = () => true;
+let shouldSendCallback = () => false;
 let productionBuildSampleRate = 1;
 let tracesSampleRate = 0.0002;
 if (process.env.SENTRY_SAMPLE_RATE) {
@@ -77,13 +75,18 @@ const ignoreErrors = [
   "DisconnectedDevice",
   "DisconnectedDeviceDuringOperation",
   "EthAppPleaseEnableContractData",
+  "VechainAppPleaseEnableContractDataAndMultiClause",
   "failed with status code",
   "GetAppAndVersionUnsupportedFormat",
   "Invalid channel",
   "Ledger Device is busy",
   "ManagerDeviceLocked",
+  "LockedDeviceError",
+  "UnresponsiveDeviceError",
   "PairingFailed",
   "Ledger device: UNKNOWN_ERROR",
+  // wrong My Ledger provider selected for the firmware of the connected device
+  "FirmwareNotRecognized",
   // errors coming from the usage of a Transport implementation
   "HwTransportError",
   // other
@@ -134,21 +137,41 @@ export function init(Sentry: typeof SentryMainModule, opts?: Partial<ElectronMai
         console.log("before-send", {
           data,
           hint,
+          shouldSend: shouldSendCallback(),
         });
       if (!shouldSendCallback()) return null;
       if (typeof data !== "object" || !data) return data;
 
       delete data.server_name; // hides the user machine name
-      anonymizer.filepathRecursiveReplacer(data as unknown as Record<string, unknown>);
+      try {
+        anonymizer.filepathRecursiveReplacer(data as unknown as Record<string, unknown>);
+      } catch (e) {
+        console.error("can't anonymize", e);
+        throw e;
+      }
       console.log("SENTRY REPORT", data);
       return data;
     },
     beforeBreadcrumb(breadcrumb) {
       switch (breadcrumb.category) {
+        case "navigation":
         case "fetch":
         case "xhr": {
           // ignored, too verbose, lot of background http calls
           return null;
+        }
+        case "electron": {
+          if (breadcrumb.data?.url) {
+            // remove urls from the data (useless and can contain ids)
+            return {
+              ...breadcrumb,
+              data: {
+                ...breadcrumb.data,
+                url: undefined,
+              },
+            };
+          }
+          return breadcrumb;
         }
         case "console": {
           if (pname === "internal") {

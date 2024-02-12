@@ -1,18 +1,15 @@
 import React, { useCallback, useState, memo } from "react";
 import type { ViewProps } from "react-native";
-import { useNftCollectionMetadata } from "@ledgerhq/live-common/nft/index";
+import { useNftCollectionMetadata } from "@ledgerhq/live-nft-react";
 import { FlatList, View, SafeAreaView, StyleSheet } from "react-native";
 import { Account, ProtoNFT, NFTMetadata, NFTMetadataResponse } from "@ledgerhq/types-live";
 import { OthersMedium } from "@ledgerhq/native-ui/assets/icons";
-import {
-  NFTResource,
-  NFTResourceLoaded,
-} from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
-import NftCard from "../../../components/Nft/NftCard";
-import Touchable from "../../../components/Touchable";
-import Skeleton from "../../../components/Skeleton";
-import LText from "../../../components/LText";
-import NftCollectionOptionsMenu from "../../../components/Nft/NftCollectionOptionsMenu";
+import { NFTResource, NFTResourceLoaded } from "@ledgerhq/live-nft/types";
+import NftCard from "~/components/Nft/NftCard";
+import Touchable from "~/components/Touchable";
+import Skeleton from "~/components/Skeleton";
+import LText from "~/components/LText";
+import NftCollectionOptionsMenu from "~/components/Nft/NftCollectionOptionsMenu";
 
 const renderItem = ({ item, index }: { item: ProtoNFT; index: number }) => (
   <NftCard

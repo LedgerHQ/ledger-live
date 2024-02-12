@@ -1,6 +1,10 @@
 import type {
   Account,
   AccountRaw,
+  Operation,
+  OperationExtra,
+  OperationExtraRaw,
+  OperationRaw,
   TransactionCommon,
   TransactionCommonRaw,
   TransactionStatusCommon,
@@ -131,3 +135,21 @@ export type PendingStakingOperationAmounts = {
   vote: BigNumber;
   lock: BigNumber;
 };
+
+export type CeloOperation = Operation<CeloOperationExtra>;
+export type CeloOperationRaw = OperationRaw<CeloOperationExtraRaw>;
+
+export type CeloOperationExtra = {
+  celoOperationValue: BigNumber;
+  celoSourceValidator?: string;
+};
+export function isCeloOperationExtra(op: OperationExtra): op is CeloOperationExtra {
+  return op !== null && typeof op === "object" && "celoOperationValue" in op;
+}
+export type CeloOperationExtraRaw = {
+  celoOperationValue: string;
+  celoSourceValidator?: string;
+};
+export function isCeloOperationExtraRaw(op: OperationExtraRaw): op is CeloOperationExtraRaw {
+  return op !== null && typeof op === "object" && "celoOperationValue" in op;
+}

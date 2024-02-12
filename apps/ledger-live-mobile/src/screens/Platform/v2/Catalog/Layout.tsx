@@ -1,6 +1,6 @@
 import { Flex, ScrollContainer, Text } from "@ledgerhq/native-ui";
 import React from "react";
-import { Platform, SafeAreaView, StatusBar, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import Animated, {
   Extrapolate,
   interpolate,
@@ -55,7 +55,7 @@ export function Layout({
   });
 
   return (
-    <SafeAreaView style={styles.container}>
+    <>
       <Flex
         style={[
           styles.marginHorizontal,
@@ -95,19 +95,11 @@ export function Layout({
         )}
         <Flex style={[styles.marginHorizontal]}>{bodyContent}</Flex>
       </ScrollContainer>
-    </SafeAreaView>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-  },
-  topHeader: {
-    flexDirection: "row",
-    alignContent: "center",
-    height: 55,
-  },
   marginHorizontal: {
     marginHorizontal: 16,
   },

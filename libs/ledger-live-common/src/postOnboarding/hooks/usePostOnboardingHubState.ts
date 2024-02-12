@@ -24,6 +24,7 @@ export function usePostOnboardingHubState(): PostOnboardingHubState {
         deviceModelId: hubState.deviceModelId,
         lastActionCompleted: null,
         actionsState: [],
+        postOnboardingInProgress: hubState.postOnboardingInProgress,
       };
     const actionsState = hubState.actionsToComplete
       .map(actionId => ({
@@ -47,6 +48,7 @@ export function usePostOnboardingHubState(): PostOnboardingHubState {
       deviceModelId: hubState.deviceModelId,
       lastActionCompleted: isLastActionCompletedEnabled ? lastActionCompleted : null,
       actionsState,
+      postOnboardingInProgress: hubState.postOnboardingInProgress,
     };
   }, [getFeature, hubState, getPostOnboardingAction]);
 }

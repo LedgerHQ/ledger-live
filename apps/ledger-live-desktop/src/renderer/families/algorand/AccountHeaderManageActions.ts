@@ -15,21 +15,25 @@ const AccountHeaderActions: AlgorandFamily["accountHeaderManageActions"] = ({
   const balance = account.balance;
   const unit = getAccountUnit(account);
   const minRewardsBalance = 10 ** unit.magnitude;
+
   const onClick = useCallback(() => {
     dispatch(openModal("MODAL_ALGORAND_EARN_REWARDS_INFO", { account }));
   }, [dispatch, account]);
+
   if (parentAccount || balance.gt(minRewardsBalance)) return null;
+
   return [
     {
       key: "algorand",
       onClick: onClick,
       icon: IconCoins,
       label: t("account.stake"),
-      event: "button_clicked",
+      event: "button_clicked2",
       eventProperties: {
         button: "stake",
       },
     },
   ];
 };
+
 export default AccountHeaderActions;

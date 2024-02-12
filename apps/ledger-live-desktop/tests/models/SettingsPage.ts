@@ -7,7 +7,6 @@ export class SettingsPage {
   readonly helpTab: Locator;
   readonly experimentalTab: Locator;
   readonly experimentalDevModeToggle: Locator;
-  readonly carouselSwitchButton: Locator;
   readonly counterValueSelector: Locator;
   readonly counterValueSearchBar: Locator;
   readonly counterValueropdownChoiceEuro: Locator;
@@ -16,6 +15,7 @@ export class SettingsPage {
   readonly themeChoiceLight: Locator;
   readonly versionRow: Locator;
   readonly developerTab: Locator;
+  readonly deviceLanguagesDrawer: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -25,7 +25,6 @@ export class SettingsPage {
     this.experimentalTab = page.locator("data-test-id=settings-experimental-tab");
     this.developerTab = page.locator("data-test-id=settings-developer-tab");
     this.experimentalDevModeToggle = page.locator("data-test-id=MANAGER_DEV_MODE-button");
-    this.carouselSwitchButton = page.locator("data-test-id=settings-carousel-switch-button");
     this.counterValueSelector = page.locator(
       "[data-test-id='setting-countervalue-dropDown'] .select__value-container",
     );
@@ -40,6 +39,9 @@ export class SettingsPage {
 
     this.themeChoiceLight = page.locator("text='Clair'");
     this.versionRow = page.locator("data-test-id=version-row");
+    this.deviceLanguagesDrawer = page.locator(
+      "data-test-id=device-language-installation-container",
+    );
   }
 
   async goToAccountsTab() {
@@ -76,6 +78,14 @@ export class SettingsPage {
   async changeTheme() {
     await this.themeSelector.click(); // TODO: make this dynamic
     await this.themeChoiceLight.click();
+  }
+
+  async waitForDeviceLanguagesLoaded() {
+    await this.page.waitForSelector('[aria-label="Select language"]', { state: "attached" });
+  }
+
+  async waitForDeviceLauguagesDrawer() {
+    await this.deviceLanguagesDrawer.waitFor({ state: "visible" });
   }
 
   async enableAndGoToDeveloperTab() {

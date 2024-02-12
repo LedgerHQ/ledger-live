@@ -1,4 +1,5 @@
 import React, { ReactNode } from "react";
+import VersionNumber from "react-native-version-number";
 import { RemoteLiveAppProvider } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { LocalLiveAppProvider } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import { RampCatalogProvider } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/index";
@@ -19,10 +20,6 @@ export default function PlatformAppProviderWrapper({ children }: PlatformAppProv
 
   const isDebugAppEnabled = useEnv<"PLATFORM_DEBUG">("PLATFORM_DEBUG") as boolean;
 
-  // There is no more staging since migration to manifest API. Everything points to prod by default.
-  // const provider = __DEV__ ? "staging" : "production";
-  const provider = "production";
-
   return (
     <RemoteLiveAppProvider
       updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}
@@ -30,10 +27,11 @@ export default function PlatformAppProviderWrapper({ children }: PlatformAppProv
         platform: PLATFORM,
         allowDebugApps: isDebugAppEnabled,
         allowExperimentalApps: isExperimentalAppEnabled,
+        llVersion: VersionNumber.appVersion,
       }}
     >
       <LocalLiveAppProvider>
-        <RampCatalogProvider provider={provider} updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}>
+        <RampCatalogProvider updateFrequency={AUTO_UPDATE_DEFAULT_DELAY}>
           {children}
         </RampCatalogProvider>
       </LocalLiveAppProvider>

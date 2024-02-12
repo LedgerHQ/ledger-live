@@ -16,13 +16,13 @@ import { useDispatch } from "react-redux";
 import { Swipeable } from "react-native-gesture-handler";
 import { TrashMedium } from "@ledgerhq/native-ui/assets/icons";
 
-import useDynamicContent from "../../dynamicContent/dynamicContent";
+import useDynamicContent from "~/dynamicContent/useDynamicContent";
 import SettingsNavigationScrollView from "../Settings/SettingsNavigationScrollView";
-import { NotificationContentCard } from "../../dynamicContent/types";
+import { NotificationContentCard } from "~/dynamicContent/types";
 import { getTime } from "./helper";
-import { setDynamicContentNotificationCards } from "../../actions/dynamicContent";
-import { useDynamicContentLogic } from "../../dynamicContent/useDynamicContentLogic";
-import getWindowDimensions from "../../logic/getWindowDimensions";
+import { setDynamicContentNotificationCards } from "~/actions/dynamicContent";
+import { useDynamicContentLogic } from "~/dynamicContent/useDynamicContentLogic";
+import getWindowDimensions from "~/logic/getWindowDimensions";
 
 const { height } = getWindowDimensions();
 
@@ -43,7 +43,7 @@ export default function NotificationCenter() {
   const dispatch = useDispatch();
   const { colors } = useTheme();
   const {
-    orderedNotificationsCards,
+    notificationCards,
     logImpressionCard,
     logDismissCard,
     logClickCard,
@@ -54,17 +54,17 @@ export default function NotificationCenter() {
 
   const logCardsImpression = useCallback(() => {
     // TODO: REWORK like in the Carousel maybe? For Log impression only when it's clearly visible
-    orderedNotificationsCards.forEach(item => {
+    notificationCards.forEach(item => {
       logImpressionCard(item.id);
     });
 
-    const cards = orderedNotificationsCards.map(n => ({
+    const cards = notificationCards.map(n => ({
       ...n,
       viewed: true,
     }));
 
     dispatch(setDynamicContentNotificationCards(cards));
-  }, [orderedNotificationsCards, dispatch, logImpressionCard]);
+  }, [notificationCards, dispatch, logImpressionCard]);
 
   const refreshNotifications = useCallback(async () => {
     setIsDynamicContentLoading(true);
@@ -117,11 +117,9 @@ export default function NotificationCenter() {
         contentcard: item.title,
       });
 
-      dispatch(
-        setDynamicContentNotificationCards(orderedNotificationsCards.filter(n => n.id !== item.id)),
-      );
+      dispatch(setDynamicContentNotificationCards(notificationCards.filter(n => n.id !== item.id)));
     },
-    [dispatch, logDismissCard, orderedNotificationsCards, trackContentCardEvent],
+    [dispatch, logDismissCard, notificationCards, trackContentCardEvent],
   );
 
   const onClickCard = useCallback(
@@ -200,7 +198,7 @@ export default function NotificationCenter() {
       }
     >
       <FlatList<NotificationContentCard>
-        data={orderedNotificationsCards}
+        data={notificationCards}
         keyExtractor={(card: NotificationContentCard) => card.id}
         renderItem={elem => ListItem(elem.item)}
         ItemSeparatorComponent={() => <Box height={1} width="100%" backgroundColor="neutral.c30" />}

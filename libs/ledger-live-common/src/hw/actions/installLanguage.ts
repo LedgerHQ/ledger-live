@@ -123,6 +123,7 @@ export const createAction = (
         deviceSubject,
         task,
         request,
+        retryableWithDelayDisconnectedErrors: [],
       });
 
       const sub = impl

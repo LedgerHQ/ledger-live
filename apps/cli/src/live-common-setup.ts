@@ -5,7 +5,7 @@ import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocke
 import Transport from "@ledgerhq/hw-transport";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import { log } from "@ledgerhq/logs";
-import { Observable } from "rxjs";
+import { firstValueFrom, Observable } from "rxjs";
 import { map, first, switchMap } from "rxjs/operators";
 import createTransportHttp from "@ledgerhq/hw-transport-http";
 import SpeculosTransport, { SpeculosTransportOpts } from "@ledgerhq/hw-transport-node-speculos";
@@ -13,6 +13,8 @@ import { registerTransportModule, disconnect } from "@ledgerhq/live-common/hw/in
 import { retry } from "@ledgerhq/live-common/promise";
 import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
 import { closeAllSpeculosDevices } from "@ledgerhq/live-common/load/speculos";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import liveConfigSchema from "@ledgerhq/live-common/config/sharedConfig";
 
 checkLibs({
   NotEnoughBalance,
@@ -119,16 +121,19 @@ async function init() {
     if (cacheBle[query]) return cacheBle[query];
     const t = await (!q
       ? ((await getTransport().constructor) as typeof TransportNodeBle).create()
-      : new Observable(((await getTransport().constructor) as typeof TransportNodeBle).listen)
-          .pipe(
+      : // NOTE: NOT SURE HERE, CHECK IT BACK DEFORE MERGING
+        await firstValueFrom(
+          new Observable(
+            ((await getTransport().constructor) as typeof TransportNodeBle).listen,
+          ).pipe(
             first(
               (e: any) =>
                 (e.device.name || "").toLowerCase().includes(q.toLowerCase()) ||
                 e.device.id.toLowerCase() === q.toLowerCase(),
             ),
             switchMap(e => TransportNodeBle.open(e.descriptor)),
-          )
-          .toPromise());
+          ),
+        ));
     cacheBle[query] = t;
     (t as Transport).on("disconnect", () => {
       delete cacheBle[query];
@@ -190,6 +195,8 @@ async function init() {
     disconnect: () => Promise.resolve(),
   });
 }
+
+LiveConfig.setConfig(liveConfigSchema);
 
 if (!process.env.CI) {
   init();

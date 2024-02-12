@@ -24,18 +24,19 @@ export default function uninstallApp(
   ).pipe(
     ignoreElements(),
     catchError((e: Error) => {
-      if (!e || !e.message) return throwError(e);
+      if (!e || !e.message) return throwError(() => e);
       const status = e.message.slice(e.message.length - 4);
 
       if (status === "6a83") {
         return throwError(
-          new ManagerAppDepUninstallRequired("", {
-            appName: app.name,
-          }),
+          () =>
+            new ManagerAppDepUninstallRequired("", {
+              appName: app.name,
+            }),
         );
       }
 
-      return throwError(e);
+      return throwError(() => e);
     }),
   );
 }

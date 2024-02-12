@@ -26,6 +26,7 @@ export type NodeApi = {
   getBlockByHeight: (
     currency: CryptoCurrency,
     blockHeight: number | "latest",
+    // timestamp is in milliseconds
   ) => Promise<{ hash: string; height: number; timestamp: number }>;
   getOptimismAdditionalFees: (
     currency: CryptoCurrency,
@@ -39,7 +40,7 @@ type NodeConfig = EthereumLikeInfo["node"];
  * Type guard
  */
 export const isLedgerNodeConfig = (
-  nodeConfig: NodeConfig,
+  nodeConfig?: NodeConfig,
 ): nodeConfig is NodeConfig & { type: "ledger" } => {
   return nodeConfig?.type === "ledger";
 };
@@ -48,7 +49,7 @@ export const isLedgerNodeConfig = (
  * Type guard
  */
 export const isExternalNodeConfig = (
-  nodeConfig: NodeConfig,
+  nodeConfig?: NodeConfig,
 ): nodeConfig is NodeConfig & { type: "external" } => {
   return nodeConfig?.type === "external";
 };

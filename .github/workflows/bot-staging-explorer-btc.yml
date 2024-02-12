@@ -17,11 +17,11 @@ jobs:
         with:
           app_id: ${{ secrets.GH_BOT_APP_ID }}
           private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: main
       - name: Retrieving coin apps
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: generated/ledger-live-bot
           repository: LedgerHQ/coin-apps
@@ -31,11 +31,11 @@ jobs:
         id: bot
         timeout-minutes: 120
         with:
-          EXPLORER: https://explorers.api-01.live.ledger-stg.com
+          EXPLORER: https://atlas-stg.ledger-test.com
           SHOW_LEGACY_NEW_ACCOUNT: "1"
           SEED: ${{ secrets.SEED2 }}
           SLACK_API_TOKEN: ${{secrets.SLACK_API_TOKEN}}
           SLACK_ICON_EMOJI: ":bot-seed2:"
           SLACK_CHANNEL: explorer-bot-stg
-          BOT_FILTER_FAMILY: bitcoin
+          BOT_FILTER_FAMILIES: bitcoin
           BOT_ENVIRONMENT: staging

@@ -11,32 +11,34 @@ import { getAddressExplorer, getDefaultExplorerView } from "@ledgerhq/live-commo
 import type { ElrondPreloadData } from "@ledgerhq/live-common/families/elrond/types";
 import type { DetailsPropsType } from "./types";
 
-import Section from "../../../../screens/OperationDetails/Section";
-import { discreetModeSelector, localeSelector } from "../../../../reducers/settings";
+import Section from "~/screens/OperationDetails/Section";
+import { discreetModeSelector } from "~/reducers/settings";
+import { useSettings } from "~/hooks";
 
 /*
  * Handle the component declaration.
  */
 
 const Details = (props: DetailsPropsType) => {
-  const { extra, type, account, operation } = props;
+  const { type, account, operation } = props;
   const { t } = useTranslation();
 
   const discreet = useSelector(discreetModeSelector);
-  const locale = useSelector(localeSelector);
+  const { locale } = useSettings();
   const unit = getAccountUnit(account);
 
+  const { extra } = operation;
   const contract = operation && operation.contract ? operation.contract : "";
   const data: ElrondPreloadData = useElrondPreloadData();
   const validator = data.validators.find(validator => contract === validator.contract);
 
   const name = validator ? validator.identity.name || validator.contract : "";
-  const amount = formatCurrencyUnit(unit, BigNumber(extra.amount), {
+  const amount = formatCurrencyUnit(unit, extra.amount ?? new BigNumber(0), {
     disableRounding: true,
     alwaysShowSign: false,
     showCode: true,
     discreet,
-    locale,
+    locale: locale,
   });
 
   /*
@@ -69,8 +71,6 @@ const Details = (props: DetailsPropsType) => {
           {Boolean(amount) && (
             <Section title={t("operationDetails.extra.delegatedAmount")} value={amount} />
           )}
-
-          {extra.memo && <Section title={t("operationDetails.extra.memo")} value={extra.memo} />}
         </View>
       );
 
@@ -92,8 +92,6 @@ const Details = (props: DetailsPropsType) => {
               onPress={() => openExplorer(contract)}
             />
           )}
-
-          {extra.memo && <Section title={t("operationDetails.extra.memo")} value={extra.memo} />}
         </View>
       );
 
@@ -111,8 +109,6 @@ const Details = (props: DetailsPropsType) => {
               value={name}
             />
           )}
-
-          {extra.memo && <Section title={t("operationDetails.extra.memo")} value={extra.memo} />}
         </View>
       );
 
@@ -134,8 +130,6 @@ const Details = (props: DetailsPropsType) => {
               onPress={() => openExplorer(contract)}
             />
           )}
-
-          {extra.memo && <Section title={t("operationDetails.extra.memo")} value={extra.memo} />}
         </View>
       );
 

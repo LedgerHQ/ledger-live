@@ -1,5 +1,5 @@
 const path = require("path");
-const { AliasPlugin } = require("esbuild-utils");
+const { AliasPlugin } = require("@ledgerhq/esbuild-utils");
 
 const rootFolder = path.resolve(__dirname, "..", "..");
 const srcFolder = path.resolve(rootFolder, "src");
@@ -13,6 +13,7 @@ module.exports = {
   nodePaths: ["node_modules", path.resolve(rootFolder, "node_modules")],
   sourcemap: true,
   minify: true,
+  treeShaking: true,
   color: true,
   metafile: true,
   plugins: [
@@ -27,11 +28,12 @@ module.exports = {
     ".ttf": "file",
     ".otf": "file",
     ".webm": "file",
-    ".png": "dataurl",
-    ".jpg": "dataurl",
-    ".jpeg": "dataurl",
-    ".gif": "dataurl",
-    ".svg": "dataurl",
+    ".mp4": "file",
+    ".png": "file",
+    ".jpg": "file",
+    ".jpeg": "file",
+    ".gif": "file",
+    ".svg": "file",
   },
   logOverride: {
     "this-is-undefined-in-esm": "silent",

@@ -8,19 +8,19 @@ import { Alert, Button, Flex, Text } from "@ledgerhq/native-ui";
 import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
-import { ScreenName } from "../../../const";
-import LText from "../../../components/LText";
+import { ScreenName } from "~/const";
+import LText from "~/components/LText";
 
-import ExternalLink from "../../../components/ExternalLink";
-import BulletList, { BulletGreenCheck } from "../../../components/BulletList";
-import NavigationScrollView from "../../../components/NavigationScrollView";
-import { TrackScreen } from "../../../analytics";
-import Illustration from "../../../images/illustration/Illustration";
-import EarnLight from "../../../images/illustration/Light/_003.png";
-import EarnDark from "../../../images/illustration/Dark/_003.png";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import ExternalLink from "~/components/ExternalLink";
+import BulletList, { BulletGreenCheck } from "~/components/BulletList";
+import NavigationScrollView from "~/components/NavigationScrollView";
+import { TrackScreen } from "~/analytics";
+import Illustration from "~/images/illustration/Illustration";
+import EarnLight from "~/images/illustration/Light/_003.png";
+import EarnDark from "~/images/illustration/Dark/_003.png";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CosmosDelegationFlowParamList } from "./types";
-import { accountScreenSelector } from "../../../reducers/accounts";
+import { accountScreenSelector } from "~/reducers/accounts";
 
 type Props = StackNavigatorProps<CosmosDelegationFlowParamList, ScreenName.CosmosDelegationStarted>;
 
@@ -48,7 +48,8 @@ export default function DelegationStarted({ navigation, route }: Props) {
       <NavigationScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
         <TrackScreen
           category="DelegationFlow"
-          name="Started"
+          name="Step Starter"
+          screen="Started"
           flow="stake"
           action="delegation"
           currency={ticker}
@@ -93,7 +94,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
             title={t("cosmos.delegation.flow.steps.starter.warning.description")}
           />
         </View>
-        <Button onPress={onNext} type="main" mt={6}>
+        <Button onPress={onNext} type="main" mt={6} testID="cosmos-delegation-start-button">
           <Trans i18nKey="cosmos.delegation.flow.steps.starter.cta" />
         </Button>
       </View>

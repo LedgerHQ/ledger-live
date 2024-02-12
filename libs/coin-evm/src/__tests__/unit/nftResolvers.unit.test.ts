@@ -1,5 +1,5 @@
-import axios from "axios";
 import { AssertionError, fail } from "assert";
+import axios from "axios";
 import { NFTMetadata } from "@ledgerhq/types-live";
 import { collectionMetadata, nftMetadata } from "../../nftResolvers";
 

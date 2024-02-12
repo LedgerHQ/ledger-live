@@ -3,7 +3,6 @@ import PortfolioPage from "../models/wallet/portfolioPage";
 import SettingsPage from "../models/settings/settingsPage";
 import GeneralSettingsPage from "../models/settings/generalSettingsPage";
 import { loadConfig } from "../bridge/server";
-import { isAndroid } from "../helpers";
 
 let portfolioPage: PortfolioPage;
 let settingsPage: SettingsPage;
@@ -32,10 +31,6 @@ describe("Change Language", () => {
   ];
 
   beforeAll(async () => {
-    if (isAndroid()) {
-      console.warn("Skipping flaky android test");
-      return;
-    }
     loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
 
     portfolioPage = new PortfolioPage();
@@ -46,15 +41,12 @@ describe("Change Language", () => {
   });
 
   it("should go to General Settings", async () => {
-    if (isAndroid()) return;
     await portfolioPage.navigateToSettings();
     await settingsPage.navigateToGeneralSettings();
   });
 
   // test steps for each language
-  if (!isAndroid()) {
-    for (const l10n of langButtonText) {
-      verifyLanguageCanBeChanged(l10n);
-    }
+  for (const l10n of langButtonText) {
+    verifyLanguageCanBeChanged(l10n);
   }
 });

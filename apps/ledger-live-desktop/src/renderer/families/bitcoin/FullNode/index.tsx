@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import Modal from "~/renderer/components/Modal";
-import useEnv from "~/renderer/hooks/useEnv";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { rgba } from "~/renderer/styles/helpers";
 import { ModalsData } from "../modals";
 import FullNodeBody from "./FullNodeBody";

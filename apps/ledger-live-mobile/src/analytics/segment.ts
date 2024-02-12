@@ -4,7 +4,7 @@ import { v4 as uuid } from "uuid";
 import * as Sentry from "@sentry/react-native";
 import Config from "react-native-config";
 import { Platform } from "react-native";
-import { createClient, SegmentClient } from "@segment/analytics-react-native";
+import { createClient, SegmentClient, UserTraits } from "@segment/analytics-react-native";
 import VersionNumber from "react-native-version-number";
 import RNLocalize from "react-native-localize";
 import { ReplaySubject } from "rxjs";
@@ -14,18 +14,20 @@ import {
   RouteProp,
   useRoute,
 } from "@react-navigation/native";
-import { snakeCase } from "lodash";
+import snakeCase from "lodash/snakeCase";
 import React, { MutableRefObject, useCallback } from "react";
-import { Feature, FeatureId, idsToLanguage } from "@ledgerhq/types-live";
+import { FeatureId, Features, idsToLanguage } from "@ledgerhq/types-live";
 import {
   hasNftInAccounts,
   GENESIS_PASS_COLLECTION_CONTRACT,
   INFINITY_PASS_COLLECTION_CONTRACT,
-} from "@ledgerhq/live-common/nft/helpers";
+} from "@ledgerhq/live-nft";
+import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
 import { getAndroidArchitecture, getAndroidVersionCode } from "../logic/cleanBuildVersion";
 import getOrCreateUser from "../user";
 import {
   analyticsEnabledSelector,
+  trackingEnabledSelector,
   languageSelector,
   localeSelector,
   lastSeenDeviceSelector,
@@ -35,13 +37,14 @@ import {
   knownDeviceModelIdsSelector,
   customImageTypeSelector,
   userNpsSelector,
+  personalizedRecommendationsEnabledSelector,
 } from "../reducers/settings";
 import { knownDevicesSelector } from "../reducers/ble";
 import { DeviceLike, State } from "../reducers/types";
 import { satisfactionSelector } from "../reducers/ratings";
 import { accountsSelector } from "../reducers/accounts";
 import type { AppStore } from "../reducers";
-import { NavigatorName } from "../const";
+import { NavigatorName } from "~/const";
 import { previousRouteNameRef, currentRouteNameRef } from "./screenRefs";
 import { AnonymousIpPlugin } from "./AnonymousIpPlugin";
 import { UserIdPlugin } from "./UserIdPlugin";
@@ -57,24 +60,35 @@ type MaybeAppStore = Maybe<AppStore>;
 
 let storeInstance: MaybeAppStore; // is the redux store. it's also used as a flag to know if analytics is on or off.
 let segmentClient: SegmentClient | undefined;
-let analyticsFeatureFlagMethod: null | ((key: FeatureId) => Feature | null);
+let analyticsFeatureFlagMethod: null | (<T extends FeatureId>(key: T) => Features[T] | null);
 
 export function setAnalyticsFeatureFlagMethod(method: typeof analyticsFeatureFlagMethod): void {
   analyticsFeatureFlagMethod = method;
 }
 
-const getFeatureFlagProperties = (): Record<string, boolean | string> => {
-  try {
-    if (!analyticsFeatureFlagMethod) return {};
+const getFeatureFlagProperties = () => {
+  if (!analyticsFeatureFlagMethod || !segmentClient) return {};
+  (async () => {
     const ptxEarnFeatureFlag = analyticsFeatureFlagMethod("ptxEarn");
+    const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
 
-    return {
+    const isBatch1Enabled =
+      !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
+    const isBatch2Enabled =
+      !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 2;
+    const isBatch3Enabled =
+      !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 3;
+
+    updateIdentify({
       ptxEarnEnabled: !!ptxEarnFeatureFlag?.enabled,
-    };
-  } catch (e) {
-    return {};
-  }
+      isBatch1Enabled,
+      isBatch2Enabled,
+      isBatch3Enabled,
+    });
+  })();
 };
+
+runOnceWhen(() => !!analyticsFeatureFlagMethod && !!segmentClient, getFeatureFlagProperties);
 
 export const updateSessionId = () => (sessionId = uuid());
 
@@ -103,7 +117,12 @@ const extraProperties = async (store: AppStore) => {
     : {};
   const onboardingHasDevice = onboardingHasDeviceSelector(state);
   const notifications = notificationsSelector(state);
-  const notificationsAllowed = notifications.areNotificationsAllowed;
+  const notificationsOptedIn = {
+    notificationsAllowed: notifications.areNotificationsAllowed,
+    optInAnnouncements: notifications.announcementsCategory,
+    optInLargeMovers: notifications.largeMoverCategory,
+    optInTxAlerts: notifications.transactionsAlertsCategory,
+  };
   const notificationsBlacklisted = Object.entries(notifications)
     .filter(([key, value]) => key !== "areNotificationsAllowed" && value === false)
     .map(([key]) => key);
@@ -127,6 +146,9 @@ const extraProperties = async (store: AppStore) => {
   const hasGenesisPass = hasNftInAccounts(GENESIS_PASS_COLLECTION_CONTRACT, accounts);
   const hasInfinityPass = hasNftInAccounts(INFINITY_PASS_COLLECTION_CONTRACT, accounts);
   const nps = userNpsSelector(state);
+  const analyticsEnabled: boolean = analyticsEnabledSelector(state);
+  const personalizedRecommendationsEnabled: boolean =
+    personalizedRecommendationsEnabledSelector(state);
 
   return {
     appVersion,
@@ -150,8 +172,8 @@ const extraProperties = async (store: AppStore) => {
         }
       : {}),
     ...deviceInfo,
-    notificationsAllowed,
     notificationsBlacklisted,
+    ...notificationsOptedIn,
     userId: user?.id,
     braze_external_id: user?.id, // Needed for braze with this exact name
     accountsWithFunds,
@@ -161,8 +183,9 @@ const extraProperties = async (store: AppStore) => {
     appTimeToInteractiveMilliseconds: appStartupTime,
     staxDeviceUser: knownDeviceModelIds.stax,
     staxLockscreen: customImageType || "none",
-    ...getFeatureFlagProperties(),
     nps,
+    optInAnalytics: analyticsEnabled,
+    optInPersonalRecommendations: personalizedRecommendationsEnabled,
   };
 };
 
@@ -176,7 +199,6 @@ export const start = async (store: AppStore): Promise<SegmentClient | undefined>
   }
 
   console.log("START ANALYTICS", ANALYTICS_LOGS);
-  const userExtraProperties = await extraProperties(store);
   if (token) {
     segmentClient = createClient({
       writeKey: token,
@@ -190,27 +212,33 @@ export const start = async (store: AppStore): Promise<SegmentClient | undefined>
     if (created) {
       segmentClient.reset();
     }
-    await segmentClient.identify(user.id, userExtraProperties);
+    await updateIdentify();
   }
-  await track("Start", userExtraProperties, true);
+  await track("Start");
 
   return segmentClient;
 };
-export const updateIdentify = async () => {
+
+export const updateIdentify = async (additionalProperties?: UserTraits) => {
   Sentry.addBreadcrumb({
     category: "identify",
     level: "debug",
   });
 
-  if (!storeInstance || !analyticsEnabledSelector(storeInstance.getState())) {
+  if (!storeInstance || !trackingEnabledSelector(storeInstance.getState())) {
     return;
   }
 
   const userExtraProperties = await extraProperties(storeInstance);
-  if (ANALYTICS_LOGS) console.log("analytics:identify", userExtraProperties);
+  const allProperties = {
+    ...userExtraProperties,
+    ...(additionalProperties || {}),
+  };
+  if (ANALYTICS_LOGS) console.log("analytics:identify", allProperties);
   if (!token) return;
-  await segmentClient?.identify(userExtraProperties.userId, userExtraProperties);
+  await segmentClient?.identify(userExtraProperties.userId, allProperties);
 };
+
 export const stop = () => {
   if (ANALYTICS_LOGS) console.log("analytics:stop");
   storeInstance = null;
@@ -229,12 +257,11 @@ type EventType = string | "button_clicked" | "error_message";
 
 export function getIsTracking(
   state: State | null | undefined,
-  mandatory?: boolean | null | undefined,
 ): { enabled: true } | { enabled: false; reason?: string } {
   if (!state) return { enabled: false, reason: "store not initialised" };
-  const analyticsEnabled = state && analyticsEnabledSelector(state);
+  const trackingEnabled = state && trackingEnabledSelector(state);
 
-  if (!mandatory && !analyticsEnabled) {
+  if (!trackingEnabled) {
     return {
       enabled: false,
       reason: "analytics not enabled",
@@ -246,7 +273,6 @@ export function getIsTracking(
 export const track = async (
   event: EventType,
   eventProperties?: Error | Record<string, unknown> | null,
-  mandatory?: boolean | null,
 ) => {
   Sentry.addBreadcrumb({
     message: event,
@@ -257,7 +283,7 @@ export const track = async (
 
   const state = storeInstance && storeInstance.getState();
 
-  const isTracking = getIsTracking(state, mandatory);
+  const isTracking = getIsTracking(state);
   if (!isTracking.enabled) {
     if (ANALYTICS_LOGS) console.log("analytics:track: not tracking because: ", isTracking.reason);
     return;
@@ -292,20 +318,19 @@ export const trackWithRoute = (
   event: EventType,
   route: RouteProp<ParamListBase>,
   properties?: Record<string, unknown> | null,
-  mandatory?: boolean | null,
 ) => {
   const newProperties = {
     page: getPageNameFromRoute(route),
     // don't override page if it's already set
     ...(properties || {}),
   };
-  track(event, newProperties, mandatory);
+  track(event, newProperties);
 };
 export const useTrack = () => {
   const route = useRoute();
   const track = useCallback(
-    (event: EventType, properties?: Record<string, unknown> | null, mandatory?: boolean | null) =>
-      trackWithRoute(event, route, properties, mandatory),
+    (event: EventType, properties?: Record<string, unknown> | null) =>
+      trackWithRoute(event, route, properties),
     [route],
   );
   return track;

@@ -34,13 +34,27 @@ export function LiveApp({ match, appId: propsAppId, location }: Props) {
   const { params: internalParams, search } = location;
   const { state: urlParams, customDappUrl } = useLocation() as ReturnType<typeof useLocation> &
     Props["location"] & {
-      state: { returnTo: string };
+      state: {
+        returnTo: string;
+        accountId?: string;
+        customDappUrl?: string;
+      };
     };
   const appId = propsAppId || match.params?.appId;
   const returnTo = useMemo(() => {
     const params = new URLSearchParams(search);
     return urlParams?.returnTo || params.get("returnTo") || internalParams?.returnTo;
   }, [search, urlParams?.returnTo, internalParams?.returnTo]);
+  const _customDappUrl = useMemo(() => {
+    const params = new URLSearchParams(search);
+    return (
+      customDappUrl ||
+      urlParams?.customDappUrl ||
+      (params.has("customDappUrl") && params.get("customDappUrl")) ||
+      internalParams?.customDappUrl
+    );
+  }, [search, customDappUrl, urlParams?.customDappUrl, internalParams?.customDappUrl]);
+
   const handleClose = useCallback(() => history.push(returnTo || `/platform`), [history, returnTo]);
   const themeType = useTheme().colors.palette.type;
   const lang = useSelector(languageSelector);
@@ -50,15 +64,16 @@ export function LiveApp({ match, appId: propsAppId, location }: Props) {
     ...urlParams,
     ...internalParams,
   };
+
   const localManifest = useLocalLiveAppManifest(appId);
   const remoteManifest = useRemoteLiveAppManifest(appId);
   let manifest = localManifest || remoteManifest;
-  if (customDappUrl && manifest && manifest.params && "dappUrl" in manifest.params) {
+  if (_customDappUrl && manifest && manifest.params && "dappUrl" in manifest.params) {
     manifest = {
       ...manifest,
       params: {
         ...manifest.params,
-        dappUrl: customDappUrl,
+        dappUrl: _customDappUrl,
       },
     };
   }

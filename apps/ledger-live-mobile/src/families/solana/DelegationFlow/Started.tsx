@@ -4,14 +4,14 @@ import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
 import { Linking, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { TrackScreen } from "../../../analytics";
-import BulletList, { BulletGreenCheck } from "../../../components/BulletList";
-import Button from "../../../components/Button";
-import ExternalLink from "../../../components/ExternalLink";
-import NavigationScrollView from "../../../components/NavigationScrollView";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
-import { urls } from "../../../config/urls";
-import { ScreenName } from "../../../const";
+import { TrackScreen } from "~/analytics";
+import BulletList, { BulletGreenCheck } from "~/components/BulletList";
+import Button from "~/components/Button";
+import ExternalLink from "~/components/ExternalLink";
+import NavigationScrollView from "~/components/NavigationScrollView";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { urls } from "~/utils/urls";
+import { ScreenName } from "~/const";
 import IlluStaking from "../../tezos/IlluStaking";
 import { SolanaDelegationFlowParamList } from "./types";
 
@@ -34,7 +34,8 @@ export default function DelegationStarted({ navigation, route }: Props) {
       <NavigationScrollView style={styles.scroll} contentContainerStyle={styles.scrollContainer}>
         <TrackScreen
           category="DelegationFlow"
-          name="Started"
+          name="Step Starter"
+          screen="Started"
           flow="stake"
           action="delegation"
           currency="sol"

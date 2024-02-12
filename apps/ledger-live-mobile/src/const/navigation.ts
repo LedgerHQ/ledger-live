@@ -28,6 +28,7 @@ export enum ScreenName {
   CurrencySettings = "CurrencySettings",
   DebugBLE = "DebugBLE",
   DebugBLEBenchmark = "DebugBLEBenchmark",
+  DebugBLEDevicePairing = "DebugBLEDevicePairing",
   DebugConfiguration = "DebugConfiguration",
   DebugCommandSender = "DebugCommandSender",
   DebugConnectivity = "DebugConnectivity",
@@ -75,7 +76,6 @@ export enum ScreenName {
   EditAccountName = "EditAccountName",
   EditAccountUnits = "EditAccountUnits",
   EditDeviceName = "EditDeviceName",
-  EditTransactionMethodSelection = "EditTransactionMethodSelection",
   Exchange = "Exchange",
   ExchangeBuy = "ExchangeBuy",
   ExchangeHistory = "ExchangeHistory",
@@ -112,7 +112,6 @@ export enum ScreenName {
   Portfolio = "Wallet",
   PortfolioOperationHistory = "PortfolioOperationHistory",
   ProviderList = "ProviderList",
-  ProviderView = "ProviderView",
   PurchaseDevice = "PurchaseDevice",
   RateProviderSettings = "RateProviderSettings",
   ReceiveAddAccount = "ReceiveAddAccount",
@@ -122,7 +121,6 @@ export enum ScreenName {
   ReceiveSelectAccount = "ReceiveSelectAccount",
   ReceiveSelectCrypto = "ReceiveSelectCrypto",
   DepositSelectNetwork = "DepositSelectNetwork",
-  ReceiveVerificationConfirmation = "ReceiveVerificationConfirmation",
   ReceiveVerifyAddress = "ReceiveVerifyAddress",
   Recover = "Recover",
   RegionSettings = "RegionSettings",
@@ -332,14 +330,11 @@ export enum ScreenName {
   AlgorandOptInValidationError = "AlgorandOptInValidationError",
   AlgorandOptInValidationSuccess = "AlgorandOptInValidationSuccess",
 
-  // Ethereum
-  EthereumCustomFees = "EthereumCustomFees",
-  EthereumEditGasLimit = "EthereumEditGasLimit",
-  EthereumEditTransactionSummary = "EthereumEditTransactionSummary",
-
   // Evm
   EvmEditGasLimit = "EvmEditGasLimit",
   EvmCustomFees = "EvmCustomFees",
+  EditTransactionSummary = "EditTransactionSummary",
+  EvmEditTransactionMethodSelection = "EvmEditTransactionMethodSelection",
 
   // Polkadot
   PolkadotBondStarted = "PolkadotBondStarted",
@@ -403,15 +398,13 @@ export enum ScreenName {
   OnboardingImportSelectAccount = "OnboardingImportSelectAccount",
   OnboardingQuiz = "OnboardingQuiz",
   OnboardingQuizFinal = "OnboardingQuizFinal",
+  OnboardingBleDevicePairingFlow = "OnboardingBleDevicePairingFlow",
   OnboardingLanguageModal = "OnboardingLanguageModal",
   OnboardingModalSetupNewDevice = "OnboardingModalSetupNewDevice",
   OnboardingModalSetupSteps = "OnboardingModalSetupSteps",
   OnboardingModalSetupSecureRecovery = "OnboardingModalSetupSecureRecovery",
-  OnboardingModalWarning = "OnboardingModalWarning",
   OnboardingModalGeneralInformation = "OnboardingModalGeneralInformation",
   OnboardingPreQuizModal = "OnboardingPreQuizModal",
-  OnboardingModalSyncDesktopInformation = "OnboardingModalSyncDesktopInformation",
-  OnboardingModalRecoveryPhraseWarning = "OnboardingModalRecoveryPhraseWarning",
   OnboardingProtectFlow = "OnboardingProtectFlow",
   SyncOnboardingCompanion = "SyncOnboardingCompanion",
   SyncOnboardingCompletion = "SyncOnboardingCompletion",
@@ -423,9 +416,7 @@ export enum ScreenName {
   PlatformApp = "PlatformApp",
   PlatformStartExchange = "PlatformStartExchange",
   PlatformCompleteExchange = "PlatformCompleteExchange",
-  WalletConnectScan = "WalletConnectScan",
   WalletConnectConnect = "WalletConnectConnect",
-  WalletConnectDeeplinkingSelectAccount = "WalletConnectDeeplinkingSelectAccount",
   NotificationCenter = "NotificationCenter",
   NotificationCenterStatus = "NotificationCenterStatus",
   SignTransactionSummary = "SignTransactionSummary",
@@ -468,6 +459,8 @@ export enum ScreenName {
 
   // stacks
   StacksEditMemo = "StacksEditMemo",
+  // casper
+  CasperEditTransferId = "CasperEditTransferId",
   // hedera
   HederaEditMemo = "HederaEditMemo",
   // near
@@ -512,7 +505,9 @@ export enum ScreenName {
   Stake = "Stake",
 
   RedirectToOnboardingRecoverFlow = "RedirectToOnboardingRecoverFlow",
-  RedirectToRecoverStaxFlow = "RedirectToRecoverStaxFlow",
+
+  AnalyticsOptInPromptMain = "AnalyticsOptInPromptMain",
+  AnalyticsOptInPromptDetails = "AnalyticsOptInPromptDetails",
 }
 
 export enum NavigatorName {
@@ -572,8 +567,8 @@ export enum NavigatorName {
   RequestAccount = "RequestAccount",
   RequestAccountsAddAccounts = "RequestAccountsAddAccounts",
 
-  // Edit transaction
-  EditTransaction = "EditTransaction",
+  // Evm
+  EvmEditTransaction = "EvmEditTransaction",
 
   // Polkadot
   PolkadotBondFlow = "PolkadotBondFlow",
@@ -623,4 +618,6 @@ export enum NavigatorName {
 
   PostOnboarding = "PostOnboarding",
   SyncOnboarding = "SyncOnboarding",
+
+  AnalyticsOptInPrompt = "AnalyticsOptInPrompt",
 }

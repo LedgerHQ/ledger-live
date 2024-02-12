@@ -1,9 +1,6 @@
 import React, { useMemo, useCallback, useState, useEffect, memo } from "react";
-import {
-  useNftMetadata,
-  useNftCollectionMetadata,
-  getFloorPrice,
-} from "@ledgerhq/live-common/nft/index";
+import { useNftMetadata, useNftCollectionMetadata } from "@ledgerhq/live-nft-react";
+import { getFloorPrice } from "@ledgerhq/live-nft/api/metadataservice";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
@@ -360,7 +357,7 @@ const NFTViewerDrawer = ({ account, nftId, height }: NFTViewerDrawerProps) => {
                 />
               </React.Fragment>
             ) : null}
-            <FeatureToggle feature="counterValue">
+            <FeatureToggle featureId="counterValue">
               {!floorPriceLoading && floorPrice ? (
                 <NFTAttribute
                   separatorTop

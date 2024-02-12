@@ -1,17 +1,16 @@
 import React, { useEffect, Component } from "react";
+import BigNumber from "bignumber.js";
 import { Trans, useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { Action } from "@ledgerhq/live-common/hw/actions/types";
 import {
   OutdatedApp,
   LatestFirmwareVersionRequired,
-  DeviceNotOnboarded,
   NoSuchAppOnProvider,
   EConnResetError,
   LanguageInstallRefusedOnDevice,
   ImageDoesNotExistOnDevice,
 } from "@ledgerhq/live-common/errors";
-import { InitSellResult } from "@ledgerhq/live-common/exchange/sell/types";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import {
   setPreferredDeviceModel,
@@ -27,7 +26,6 @@ import useTheme from "~/renderer/hooks/useTheme";
 import {
   ManagerNotEnoughSpaceError,
   UpdateYourApp,
-  TransportStatusError,
   UserRefusedAddress,
   UserRefusedAllowManager,
   UserRefusedFirmwareUpdate,
@@ -53,7 +51,7 @@ import {
   renderInstallingLanguage,
   renderAllowRemoveCustomLockscreen,
   renderLockedDeviceError,
-  RenderDeviceNotOnboardedError,
+  DeviceNotOnboardedErrorComponent,
 } from "./rendering";
 import { useGetSwapTrackingProperties } from "~/renderer/screens/exchange/Swap2/utils";
 import {
@@ -69,6 +67,7 @@ import { AppAndVersion } from "@ledgerhq/live-common/hw/connectApp";
 import { Device } from "@ledgerhq/types-devices";
 import { LedgerErrorConstructor } from "@ledgerhq/errors/lib/helpers";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { isDeviceNotOnboardedError } from "./utils";
 
 type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;
 
@@ -86,7 +85,8 @@ type States = PartialNullable<{
     managerAppName?: string;
   };
   isLoading: boolean;
-  allowManagerRequestedWording: string;
+  allowManagerRequested: boolean;
+  allowRenamingRequested: boolean;
   requestQuitApp: boolean;
   deviceInfo: DeviceInfo;
   latestFirmware: unknown;
@@ -121,9 +121,6 @@ type States = PartialNullable<{
   completeExchangeResult: Transaction;
   completeExchangeError: Error;
   imageRemoveRequested: boolean;
-  initSellRequested: boolean;
-  initSellResult: InitSellResult;
-  initSellError: Error;
   installingApp: boolean;
   progress: number;
   listingApps: boolean;
@@ -182,7 +179,8 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     isLocked,
     error,
     isLoading,
-    allowManagerRequestedWording,
+    allowManagerRequested,
+    allowRenamingRequested,
     imageRemoveRequested,
     requestQuitApp,
     deviceInfo,
@@ -212,9 +210,6 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     completeExchangeResult,
     completeExchangeError,
     allowOpeningGranted,
-    initSellRequested,
-    initSellResult,
-    initSellError,
     signMessageRequested,
   } = hookState;
 
@@ -288,9 +283,12 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     return renderRequiresAppInstallation({ appNames });
   }
 
-  if (allowManagerRequestedWording) {
-    const wording = allowManagerRequestedWording;
-    return renderAllowManager({ modelId, type, wording });
+  if (allowRenamingRequested) {
+    return renderAllowManager({ modelId, type, requestType: "rename" });
+  }
+
+  if (allowManagerRequested) {
+    return renderAllowManager({ modelId, type });
   }
 
   if (languageInstallationRequested) {
@@ -319,15 +317,41 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
     return renderListingApps();
   }
 
-  if (completeExchangeStarted && !completeExchangeResult && !completeExchangeError) {
+  if (completeExchangeStarted && !completeExchangeResult && !completeExchangeError && !isLoading) {
     const { exchangeType } = request as { exchangeType: number };
 
     // FIXME: could use a TS enum (when LLD will be in TS) or a JS object instead of raw numbers for switch values for clarity
     switch (exchangeType) {
       // swap
       case 0x00: {
-        // FIXME: should use `renderSwapDeviceConfirmationV2` but all params not available in hookState for this SDK exchange flow
-        return <div>{"Confirm swap on your device"}</div>;
+        const {
+          transaction,
+          exchange,
+          provider,
+          rate = 1,
+          amountExpectedTo = 0,
+        } = request as {
+          transaction: Transaction;
+          exchange: Exchange;
+          provider: string;
+          rate: number;
+          amountExpectedTo: number;
+        };
+        const { estimatedFees } = hookState;
+
+        return renderSwapDeviceConfirmation({
+          modelId: device.modelId,
+          type,
+          transaction,
+          exchangeRate: {
+            provider,
+            rate: new BigNumber(rate),
+          } as ExchangeRate,
+          exchange,
+          swapDefaultTrack,
+          amountExpectedTo: amountExpectedTo.toString() ?? undefined,
+          estimatedFees: estimatedFees?.toString() ?? undefined,
+        });
       }
 
       case 0x01: // sell
@@ -360,10 +384,6 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
       estimatedFees: estimatedFees ?? undefined,
       swapDefaultTrack,
     });
-  }
-
-  if (initSellRequested && !initSellResult && !initSellError) {
-    return renderSecureTransferDeviceConfirmation({ exchangeType: "sell", modelId, type });
   }
 
   if (allowOpeningRequestedWording || requestOpenApp) {
@@ -412,12 +432,8 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
 
     // NB Until we find a better way, remap the error if it's 6d06 (LNS, LNSP, LNX) or 6d07 (Stax) and we haven't fallen
     // into another handled case.
-    if (
-      e instanceof DeviceNotOnboarded ||
-      (e instanceof TransportStatusError &&
-        (error.message.includes("0x6d06") || error.message.includes("0x6d07")))
-    ) {
-      return <RenderDeviceNotOnboardedError t={t} device={device} />;
+    if (isDeviceNotOnboardedError(e)) {
+      return <DeviceNotOnboardedErrorComponent t={t} device={device} />;
     }
 
     if (e instanceof NoSuchAppOnProvider) {
@@ -441,6 +457,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
 
     let withExportLogs = true;
     let warning = false;
+    let withDescription = true;
     // User rejections, should be rendered as warnings and not export logs.
     // All the error rendering needs to be unified, the same way we do for ErrorIcon
     // not handled here.
@@ -456,6 +473,10 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
       warning = true;
     }
 
+    if ((error as unknown) instanceof UserRefusedDeviceNameChange) {
+      withDescription = false;
+    }
+
     return renderError({
       t,
       error,
@@ -464,6 +485,7 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
       withExportLogs,
       device: device ?? undefined,
       inlineRetry,
+      withDescription,
     });
   }
 

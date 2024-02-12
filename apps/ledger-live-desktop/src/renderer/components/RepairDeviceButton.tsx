@@ -67,7 +67,7 @@ const RepairDeviceButton = React.forwardRef(function RepairDevice(
     [onRepair, onClose, dispatch],
   );
   const repair = useCallback(
-    (version = null) => {
+    (version: string | null = null) => {
       if (isLoading) return;
       if (onRepair) {
         onRepair(true);

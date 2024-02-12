@@ -5,15 +5,15 @@ import { FlatList, StyleSheet, View, SafeAreaView } from "react-native";
 import { useSelector } from "react-redux";
 import type { StakePool } from "@ledgerhq/live-common/families/cardano/api/api-types";
 import { useCardanoFamilyPools } from "@ledgerhq/live-common/families/cardano/react";
-import { TrackScreen } from "../../../analytics";
-import { ScreenName } from "../../../const";
-import { accountScreenSelector } from "../../../reducers/accounts";
+import { TrackScreen } from "~/analytics";
+import { ScreenName } from "~/const";
+import { accountScreenSelector } from "~/reducers/accounts";
 import PoolHead from "../shared/PoolHead";
 import PoolRow from "../shared/PoolRow";
 import SelectPoolSearchBox from "../shared/SearchBox";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CardanoDelegationFlowParamList } from "./types";
-import Skeleton from "../../../components/Skeleton";
+import Skeleton from "~/components/Skeleton";
 
 type Props = StackNavigatorProps<
   CardanoDelegationFlowParamList,
@@ -41,10 +41,8 @@ export default function SelectPool({ navigation, route }: Props) {
   );
 
   const renderItem = useCallback(
-    ({ item }: { item: StakePool }) => (
-      <PoolRow account={account} pool={item} onPress={onItemPress} />
-    ),
-    [onItemPress, account],
+    ({ item }: { item: StakePool }) => <PoolRow pool={item} onPress={onItemPress} />,
+    [onItemPress],
   );
 
   return (

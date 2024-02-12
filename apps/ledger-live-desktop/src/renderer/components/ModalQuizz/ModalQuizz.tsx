@@ -105,7 +105,7 @@ const ModalQuizz: React.FunctionComponent<Props> = ({
   const { t } = useTranslation();
   const { colors } = useTheme();
 
-  const [userChoiceIndex, setUserChoiceIndex] = useState();
+  const [userChoiceIndex, setUserChoiceIndex] = useState<number>();
 
   const {
     title: stepTitle,
@@ -143,10 +143,11 @@ const ModalQuizz: React.FunctionComponent<Props> = ({
   }, [stepIndex, stepCount, setStepIndex, setUserChoiceIndex, score, onClose, onLose, onWin]);
 
   const onChoiceChanged = useCallback(
-    value => {
+    (value: number | string | readonly string[] | undefined) => {
       if (userMadeAChoice) return;
-      setUserChoiceIndex(value);
-      const isCorrect = choices[value].correct;
+      const n = Number(value); // in our case it's a number
+      setUserChoiceIndex(n);
+      const isCorrect = choices[n].correct;
       if (isCorrect) setScore(score + 1);
       track(`Onboarding - Quizz step ${stepIndex} ${isCorrect ? "correct" : "false"}`);
     },

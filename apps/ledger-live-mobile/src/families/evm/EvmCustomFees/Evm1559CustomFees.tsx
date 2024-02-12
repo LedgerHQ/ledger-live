@@ -10,9 +10,9 @@ import invariant from "invariant";
 import React, { memo, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, View } from "react-native";
-import Button from "../../../components/Button";
-import LText from "../../../components/LText";
-import SectionSeparator from "../../../components/SectionSeparator";
+import Button from "~/components/Button";
+import LText from "~/components/LText";
+import SectionSeparator from "~/components/SectionSeparator";
 import EditFeeUnitEvm from "../EditFeeUnitEvm";
 import EvmGasLimit from "../SendRowGasLimit";
 import { inferMaxFeeRange, inferMaxPriorityFeeRange } from "./utils";
@@ -36,6 +36,9 @@ const Evm1559CustomFees = ({
 
   const { gasOptions } = originalTransaction;
 
+  // TODO: Make GasOptions optional in the future.
+  // Use fallback mechanisms to infer min & max values based on the FeeData returned by a node
+  // This will make this "advanced" mode compatible with EVM chains without gasTracker
   invariant(gasOptions, "PriorityFeeField: 'transaction.gasOptions' should be defined");
 
   const [maxFeePerGas, setMaxFeePerGas] = useState<BigNumber>(
@@ -48,7 +51,7 @@ const Evm1559CustomFees = ({
 
   // Creating a new transaction to simulate the bridge status response before updating
   // the original transaction
-  const bridge = getAccountBridge<EvmTransactionEIP1559>(account);
+  const bridge = getAccountBridge(account);
 
   const { transaction, setTransaction, status } = useBridgeTransaction<EvmTransactionEIP1559>(
     () => ({

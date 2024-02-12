@@ -8,14 +8,16 @@ import { useSelector } from "react-redux";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { Device, DeviceModelId } from "@ledgerhq/types-devices";
 import { useNavigation } from "@react-navigation/native";
+import { IconsLegacy } from "@ledgerhq/native-ui";
 import TransportBLE from "../../react-native-hw-transport-ble";
-import { knownDevicesSelector } from "../../reducers/ble";
+import { knownDevicesSelector } from "~/reducers/ble";
 import Animation from "../Animation";
 import BleDeviceItem from "./BleDeviceItem";
+import Link from "~/components/wrappedUi/Link";
 import lottie from "./assets/bluetooth.json";
-import { urls } from "../../config/urls";
-import { TrackScreen, track } from "../../analytics";
-import { useResetOnNavigationFocusState } from "../../helpers/useResetOnNavigationFocusState";
+import { urls } from "~/utils/urls";
+import { TrackScreen, track } from "~/analytics";
+import { useResetOnNavigationFocusState } from "~/helpers/useResetOnNavigationFocusState";
 import LocationPermissionDenied from "../RequiresLocation/LocationPermissionDenied";
 import LocationDisabled from "../RequiresLocation/LocationDisabled";
 
@@ -71,7 +73,7 @@ const BleDevicesScanning = ({
   }, []);
 
   const onWrappedDeviceSelect = useCallback(
-    device => {
+    (device: Device) => {
       setStopBleScanning(true);
       onDeviceSelect(device);
     },
@@ -80,10 +82,10 @@ const BleDevicesScanning = ({
 
   const onCantSeeDevicePress = useCallback(() => {
     track("button_clicked", {
-      button: `Can't find ${productName ?? "device"} Bluetooth`,
+      button: "Can’t find device Bluetooth",
     });
     Linking.openURL(urls.pairingIssues);
-  }, [productName]);
+  }, []);
 
   // If we want to filter on known devices:
   const knownDevices = useSelector(knownDevicesSelector);
@@ -145,7 +147,7 @@ const BleDevicesScanning = ({
 
   return (
     <Flex flex={1}>
-      <TrackScreen category={`Looking for ${productName ?? "device"} Bluetooth`} />
+      <TrackScreen category={"Looking for device Bluetooth"} />
       <Flex flex={1} px={2}>
         <Flex py={16}>
           <Flex height={100} alignItems="center" justifyContent="center" mb={24}>
@@ -193,15 +195,17 @@ const BleDevicesScanning = ({
         </Flex>
       </Flex>
       {productName !== null && isCantSeeDeviceShown && (
-        <Text
-          textAlign="center"
-          mb={40}
-          fontSize={14}
-          fontWeight="semiBold"
-          onPress={onCantSeeDevicePress}
-        >
-          {t("blePairingFlow.scanning.cantSeeDevice", { productName })}
-        </Text>
+        <Flex pb={16}>
+          <Link
+            onPress={onCantSeeDevicePress}
+            size={"medium"}
+            Icon={IconsLegacy.HelpMedium}
+            type="shade"
+            iconPosition="right"
+          >
+            {t("blePairingFlow.scanning.cantSeeDevice", { productName })}
+          </Link>
+        </Flex>
       )}
     </Flex>
   );

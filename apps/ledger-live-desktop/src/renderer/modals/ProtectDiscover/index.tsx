@@ -13,7 +13,10 @@ const bodyStyle = {
 };
 
 const ProtectDiscoverModal = () => {
-  const renderBody = useCallback(({ onClose }) => <ProtectDiscoverBody onClose={onClose} />, []);
+  const renderBody = useCallback(
+    ({ onClose }: { onClose: () => void }) => <ProtectDiscoverBody onClose={onClose} />,
+    [],
+  );
 
   return (
     <StyleProvider selectedPalette="dark">

@@ -1,8 +1,5 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-require("@electron/remote/main").initialize();
-
-import "./setup";
-import { app, Menu, ipcMain, session, webContents, shell, BrowserWindow } from "electron";
+import "./setup"; // Needs to be imported first
+import { app, Menu, ipcMain, session, webContents, shell, BrowserWindow, dialog } from "electron";
 import Store from "electron-store";
 import menu from "./menu";
 import path from "path";
@@ -13,7 +10,6 @@ import {
   loadWindow,
 } from "./window-lifecycle";
 import { getSentryEnabled, setUserId } from "./internal-lifecycle";
-import resolveUserDataDirectory from "~/helpers/resolveUserDataDirectory";
 import db from "./db";
 import debounce from "lodash/debounce";
 import sentry from "~/sentry/main";
@@ -23,7 +19,9 @@ import { User } from "~/renderer/storage";
 Store.initRenderer();
 
 const gotLock = app.requestSingleInstanceLock();
-const userDataDirectory = resolveUserDataDirectory();
+const { LEDGER_CONFIG_DIRECTORY } = process.env;
+const userDataDirectory = LEDGER_CONFIG_DIRECTORY || app.getPath("userData");
+
 if (!gotLock) {
   app.quit();
 } else {
@@ -82,7 +80,7 @@ app.on("ready", async () => {
     setUserId(userId);
     sentry(() => {
       const value = getSentryEnabled();
-      if (value === null) return settings?.sentryLogs;
+      if (value === undefined) return settings?.sentryLogs;
       return value;
     }, userId);
   }
@@ -171,6 +169,33 @@ app.on("ready", async () => {
   );
   await clearSessionCache(window.webContents.session);
 });
+
+ipcMain.on("set-background-color", (_, color) => {
+  const w = getMainWindow();
+  if (w) {
+    w.setBackgroundColor(color);
+  }
+});
+
+ipcMain.on("app-quit", () => {
+  app.quit();
+});
+
+ipcMain.handle("show-open-dialog", (_, opts) => dialog.showOpenDialog(opts));
+ipcMain.handle("show-save-dialog", (_, opts) => dialog.showSaveDialog(opts));
+
+ipcMain.on("deep-linking", (_, l) => {
+  const win = getMainWindow();
+  if (win) win.webContents.send("deep-linking", l);
+});
+
+ipcMain.on("app-reload", () => {
+  const w = getMainWindow();
+  if (w) {
+    w.reload();
+  }
+});
+
 ipcMain.on("ready-to-show", () => {
   const w = getMainWindow();
   if (w) {

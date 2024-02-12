@@ -13,6 +13,7 @@ const mockedStateNoActions: PostOnboardingHubState = {
   deviceModelId: null,
   lastActionCompleted: null,
   actionsState: [],
+  postOnboardingInProgress: false,
 };
 
 const mockedStateAllActionsCompleted: PostOnboardingHubState = {
@@ -23,6 +24,7 @@ const mockedStateAllActionsCompleted: PostOnboardingHubState = {
     { ...personalizeTestMock, completed: true },
     { ...migrateAssetsTestMock, completed: true },
   ],
+  postOnboardingInProgress: false,
 };
 
 const mockedStateNoActionsCompleted: PostOnboardingHubState = {
@@ -33,6 +35,7 @@ const mockedStateNoActionsCompleted: PostOnboardingHubState = {
     { ...personalizeTestMock, completed: false },
     { ...migrateAssetsTestMock, completed: false },
   ],
+  postOnboardingInProgress: false,
 };
 
 const mockedStateSomeActionsCompleted: PostOnboardingHubState = {
@@ -43,6 +46,7 @@ const mockedStateSomeActionsCompleted: PostOnboardingHubState = {
     { ...personalizeTestMock, completed: true },
     { ...migrateAssetsTestMock, completed: false },
   ],
+  postOnboardingInProgress: false,
 };
 
 describe("useAllPostOnboardingActionsCompleted", () => {

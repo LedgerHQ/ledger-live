@@ -30,8 +30,7 @@ module.exports = ({ patterns, options = {} }) => {
         }
 
         const targetBase =
-          build.initialOptions.outdir ||
-          path.dirname(build.initialOptions.outfile);
+          build.initialOptions.outdir || path.dirname(build.initialOptions.outfile);
 
         patterns.forEach(({ from, to }) => {
           copyFolderRecursivelySync(from, path.join(targetBase, to), options);

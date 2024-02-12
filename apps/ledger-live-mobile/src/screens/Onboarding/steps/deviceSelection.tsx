@@ -5,17 +5,13 @@ import { useNavigation } from "@react-navigation/native";
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Platform } from "react-native";
-import { useSelector } from "react-redux";
-import { NavigateInput } from "../../../components/RootNavigator/types/BaseNavigator";
-import { OnboardingNavigatorParamList } from "../../../components/RootNavigator/types/OnboardingNavigator";
-import { RootStackParamList } from "../../../components/RootNavigator/types/RootNavigator";
+import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import {
   BaseNavigationComposite,
   RootNavigationComposite,
   StackNavigatorNavigation,
-} from "../../../components/RootNavigator/types/helpers";
-import { NavigatorName, ScreenName } from "../../../const";
-import { hasCompletedOnboardingSelector } from "../../../reducers/settings";
+} from "~/components/RootNavigator/types/helpers";
+import { ScreenName } from "~/const";
 import { DeviceCards } from "./Cards/DeviceCard";
 import OnboardingView from "./OnboardingView";
 import { NotCompatibleModal } from "./setupDevice/drawers/NotCompatibleModal";
@@ -55,7 +51,6 @@ function OnboardingStepDeviceSelection() {
   const navigation = useNavigation<NavigationProp>();
   const { t } = useTranslation();
   const syncOnboarding = useFeature("syncOnboarding" as const);
-  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
 
   const [isOpen, setOpen] = useState<boolean>(false);
 
@@ -72,38 +67,10 @@ function OnboardingStepDeviceSelection() {
   const next = (deviceModelId: DeviceModelId) => {
     // Add NanoX.id, NanoSP.id etc. when they will support the sync-onboarding
     if ([devices.stax.id].includes(deviceModelId)) {
-      const navigateInput: NavigateInput<RootStackParamList> = {
-        name: NavigatorName.BaseOnboarding,
-        params: {
-          screen: NavigatorName.SyncOnboarding,
-          params: {
-            screen: ScreenName.SyncOnboardingCompanion,
-            params: {
-              // @ts-expect-error BleDevicePairingFlow will set this param
-              device: null,
-            },
-          },
-        },
-      };
       // On pairing success, navigate to the Sync Onboarding Companion
       // navigation.push on stack navigation because with navigation.navigate
       // it could not go back to this screen in certain cases.
-      navigation.push(NavigatorName.Base, {
-        screen: ScreenName.BleDevicePairingFlow,
-        params: {
-          filterByDeviceModelId: DeviceModelId.stax,
-          areKnownDevicesDisplayed: true,
-          areKnownDevicesPairable: !hasCompletedOnboarding,
-          onSuccessAddToKnownDevices: false,
-          onSuccessNavigateToConfig: {
-            // navigation.push on success because it could not correctly
-            // go back to the previous screens (BLE and then this screen).
-            navigationType: "push",
-            navigateInput,
-            pathToDeviceParam: "params.params.params.device",
-          },
-        },
-      });
+      navigation.push(ScreenName.OnboardingBleDevicePairingFlow);
     } else {
       navigation.navigate(ScreenName.OnboardingUseCase, {
         deviceModelId,

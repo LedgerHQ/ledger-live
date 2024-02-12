@@ -22,6 +22,7 @@ import IconInfoCircle from "~/renderer/icons/InfoCircle";
 import * as S from "./Row.styles";
 import ManageDropDown from "./ManageDropDown";
 import { ModalActions } from "../modals";
+import { DropDownItemType } from "~/renderer/components/DropDownSelector";
 const voteActions = (vote: CeloVote): Array<{ key: ModalActions; label: React.ReactNode }> => {
   const actions: Array<{ key: ModalActions; label: React.ReactNode }> = [];
   if (vote.activatable)
@@ -44,8 +45,8 @@ type Props = {
 };
 export const Row = ({ account, vote, onManageAction, onExternalLink }: Props) => {
   const onSelect = useCallback(
-    action => {
-      onManageAction(vote, action.key);
+    (action: DropDownItemType) => {
+      onManageAction(vote, action?.key as ModalActions);
     },
     [onManageAction, vote],
   );

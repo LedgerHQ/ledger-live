@@ -7,7 +7,10 @@ import {
   getAltStatusMessage,
   TransportStatusError,
 } from "@ledgerhq/errors";
+import { LocalTracer, TraceContext, LogType } from "@ledgerhq/logs";
 export { TransportError, TransportStatusError, StatusCodes, getAltStatusMessage };
+
+const DEFAULT_LOG_TYPE = "transport";
 
 /**
  */
@@ -52,6 +55,11 @@ export default class Transport {
   exchangeTimeout = 30000;
   unresponsiveTimeout = 15000;
   deviceModel: DeviceModel | null | undefined = null;
+  tracer: LocalTracer;
+
+  constructor({ context, logType }: { context?: TraceContext; logType?: LogType } = {}) {
+    this.tracer = new LocalTracer(logType ?? DEFAULT_LOG_TYPE, context);
+  }
 
   /**
    * Check if the transport is supported on the current platform/browser.
@@ -94,19 +102,30 @@ export default class Transport {
    * Attempt to create a Transport instance with a specific descriptor.
    * @param {any} descriptor - The descriptor to open the transport with.
    * @param {number} timeout - An optional timeout for the transport connection.
+   * @param {TraceContext} context Optional tracing/log context
    * @returns {Promise<Transport>} A promise that resolves with a Transport instance.
    * @example
   TransportFoo.open(descriptor).then(transport => ...)
    */
-  static readonly open: (descriptor?: any, timeout?: number) => Promise<Transport>;
+  static readonly open: (
+    descriptor?: any,
+    timeoutMs?: number,
+    context?: TraceContext,
+  ) => Promise<Transport>;
 
   /**
    * Send data to the device using a low level API.
    * It's recommended to use the "send" method for a higher level API.
    * @param {Buffer} apdu - The data to send.
+   * @param {Object} options - Contains optional options for the exchange function
+   *  - abortTimeoutMs: stop the exchange after a given timeout. Another timeout exists
+   *    to detect unresponsive device (see `unresponsiveTimeout`). This timeout aborts the exchange.
    * @returns {Promise<Buffer>} A promise that resolves with the response data from the device.
    */
-  exchange(_apdu: Buffer): Promise<Buffer> {
+  exchange(
+    _apdu: Buffer,
+    { abortTimeoutMs: _abortTimeoutMs }: { abortTimeoutMs?: number } = {},
+  ): Promise<Buffer> {
     throw new Error("exchange not implemented");
   }
 
@@ -148,12 +167,19 @@ export default class Transport {
    * Set the "scramble key" for the next data exchanges with the device.
    * Each app can have a different scramble key and it is set internally during instantiation.
    * @param {string} key - The scramble key to set.
-   * @deprecated This method is no longer needed for modern transports and should be migrated away from.
+   * deprecated This method is no longer needed for modern transports and should be migrated away from.
+   * no @ before deprecated as it breaks documentationjs on version 14.0.2
+   * https://github.com/documentationjs/documentation/issues/1596
    */
   setScrambleKey(_key: string) {}
 
   /**
    * Close the connection with the device.
+   *
+   * Note: for certain transports (hw-transport-node-hid-singleton for ex), once the promise resolved,
+   * the transport instance is actually still cached, and the device is disconnected only after a defined timeout.
+   * But for the consumer of the Transport, this does not matter and it can consider the transport to be closed.
+   *
    * @returns {Promise<void>} A promise that resolves when the transport is closed.
    */
   close(): Promise<void> {
@@ -209,12 +235,16 @@ export default class Transport {
 
   /**
    * Send data to the device using the higher level API.
+   *
    * @param {number} cla - The instruction class for the command.
    * @param {number} ins - The instruction code for the command.
    * @param {number} p1 - The first parameter for the instruction.
    * @param {number} p2 - The second parameter for the instruction.
    * @param {Buffer} data - The data to be sent. Defaults to an empty buffer.
    * @param {Array<number>} statusList - A list of acceptable status codes for the response. Defaults to [StatusCodes.OK].
+   * @param {Object} options - Contains optional options for the exchange function
+   *  - abortTimeoutMs: stop the send after a given timeout. Another timeout exists
+   *    to detect unresponsive device (see `unresponsiveTimeout`). This timeout aborts the exchange.
    * @returns {Promise<Buffer>} A promise that resolves with the response data from the device.
    */
   send = async (
@@ -224,17 +254,25 @@ export default class Transport {
     p2: number,
     data: Buffer = Buffer.alloc(0),
     statusList: Array<number> = [StatusCodes.OK],
+    { abortTimeoutMs }: { abortTimeoutMs?: number } = {},
   ): Promise<Buffer> => {
+    const tracer = this.tracer.withUpdatedContext({ function: "send" });
+
     if (data.length >= 256) {
+      tracer.trace("data.length exceeded 256 bytes limit", { dataLength: data.length });
       throw new TransportError(
         "data.length exceed 256 bytes limit. Got: " + data.length,
         "DataLengthTooBig",
       );
     }
 
+    tracer.trace("Starting an exchange", { abortTimeoutMs });
     const response = await this.exchange(
+      // The size of the data is added in 1 byte just before `data`
       Buffer.concat([Buffer.from([cla, ins, p1, p2]), Buffer.from([data.length]), data]),
+      { abortTimeoutMs },
     );
+    tracer.trace("Received response from exchange");
     const sw = response.readUInt16BE(response.length - 2);
 
     if (!statusList.some(s => s === sw)) {
@@ -282,21 +320,43 @@ export default class Transport {
     });
   }
 
+  // Blocks other exchange to happen concurrently
   exchangeBusyPromise: Promise<void> | null | undefined;
-  exchangeAtomicImpl = async (f: () => Promise<Buffer | void>): Promise<Buffer | void> => {
+
+  /**
+   * Wrapper to make an exchange "atomic" (blocking any other exchange)
+   *
+   * It also handles "unresponsiveness" by emitting "unresponsive" and "responsive" events.
+   *
+   * @param f The exchange job, using the transport to run
+   * @returns a Promise resolving with the output of the given job
+   */
+  async exchangeAtomicImpl<Output>(f: () => Promise<Output>): Promise<Output> {
+    const tracer = this.tracer.withUpdatedContext({
+      function: "exchangeAtomicImpl",
+      unresponsiveTimeout: this.unresponsiveTimeout,
+    });
+
     if (this.exchangeBusyPromise) {
+      tracer.trace("Atomic exchange is already busy");
       throw new TransportRaceCondition(
         "An action was already pending on the Ledger device. Please deny or reconnect.",
       );
     }
 
+    // Sets the atomic guard
     let resolveBusy;
     const busyPromise: Promise<void> = new Promise(r => {
       resolveBusy = r;
     });
     this.exchangeBusyPromise = busyPromise;
+
+    // The device unresponsiveness handler
     let unresponsiveReached = false;
     const timeout = setTimeout(() => {
+      tracer.trace(`Timeout reached, emitting Transport event "unresponsive"`, {
+        unresponsiveTimeout: this.unresponsiveTimeout,
+      });
       unresponsiveReached = true;
       this.emit("unresponsive");
     }, this.unresponsiveTimeout);
@@ -305,16 +365,19 @@ export default class Transport {
       const res = await f();
 
       if (unresponsiveReached) {
+        tracer.trace("Device was unresponsive, emitting responsive");
         this.emit("responsive");
       }
 
       return res;
     } finally {
+      tracer.trace("Finalize, clearing busy guard");
+
       clearTimeout(timeout);
       if (resolveBusy) resolveBusy();
       this.exchangeBusyPromise = null;
     }
-  };
+  }
 
   decorateAppAPIMethods(self: Record<string, any>, methods: Array<string>, scrambleKey: string) {
     for (const methodName of methods) {
@@ -347,6 +410,36 @@ export default class Transport {
         this._appAPIlock = null;
       }
     };
+  }
+
+  /**
+   * Sets the context used by the logging/tracing mechanism
+   *
+   * Useful when re-using (cached) the same Transport instance,
+   * but with a new tracing context.
+   *
+   * @param context A TraceContext, that can undefined to reset the context
+   */
+  setTraceContext(context?: TraceContext) {
+    this.tracer = this.tracer.withContext(context);
+  }
+
+  /**
+   * Updates the context used by the logging/tracing mechanism
+   *
+   * The update only overrides the key-value that are already defined in the current context.
+   *
+   * @param contextToAdd A TraceContext that will be added to the current context
+   */
+  updateTraceContext(contextToAdd: TraceContext) {
+    this.tracer.updateContext(contextToAdd);
+  }
+
+  /**
+   * Gets the tracing context of the transport instance
+   */
+  getTraceContext(): TraceContext | undefined {
+    return this.tracer.getContext();
   }
 
   static ErrorMessage_ListenTimeout = "No Ledger device found (timeout)";

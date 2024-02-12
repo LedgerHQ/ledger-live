@@ -4,15 +4,15 @@ import { useTranslation, Trans } from "react-i18next";
 import { Keyboard, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
-import Button from "../../components/Button";
-import KeyboardView from "../../components/KeyboardView";
-import NavigationScrollView from "../../components/NavigationScrollView";
-import TextInput from "../../components/FocusedTextInput";
-import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { SendFundsNavigatorStackParamList } from "../../components/RootNavigator/types/SendFundsNavigator";
-import { SignTransactionNavigatorParamList } from "../../components/RootNavigator/types/SignTransactionNavigator";
-import { SwapNavigatorParamList } from "../../components/RootNavigator/types/SwapNavigator";
-import { ScreenName } from "../../const";
+import Button from "~/components/Button";
+import KeyboardView from "~/components/KeyboardView";
+import NavigationScrollView from "~/components/NavigationScrollView";
+import TextInput from "~/components/FocusedTextInput";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
+import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
+import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
+import { ScreenName } from "~/const";
 
 const options = {
   title: <Trans i18nKey="send.summary.gasLimit" />,

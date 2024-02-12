@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
-import GradientContainer from "../../components/GradientContainer";
+import GradientContainer from "~/components/GradientContainer";
 
 function EmptyAccountCard({ currencyTicker }: { currencyTicker: string }) {
   const { t } = useTranslation();

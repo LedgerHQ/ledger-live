@@ -14,7 +14,7 @@ import { sharedLogicTaskWrapper } from "../tasks/core";
 
 // Needed for rxjs timeout
 jest.useFakeTimers();
-// Needs to mock the timer from rxjs used in the task retry mechanism (`retryWhen` with `timer`)
+// Needs to mock the timer from rxjs used in the task retry mechanism (`retry` with `timer`)
 jest.mock("rxjs", () => {
   const originalModule = jest.requireActual("rxjs");
 

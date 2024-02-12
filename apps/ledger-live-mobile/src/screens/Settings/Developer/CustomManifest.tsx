@@ -3,14 +3,14 @@ import { TextInput, StyleSheet, TouchableOpacity, TouchableOpacityProps } from "
 import { useTheme, CompositeScreenProps } from "@react-navigation/native";
 import { useLocalLiveAppContext } from "@ledgerhq/live-common/platform/providers/LocalLiveAppProvider/index";
 import { Box } from "@ledgerhq/native-ui";
-import NavigationScrollView from "../../../components/NavigationScrollView";
-import { ScreenName } from "../../../const";
-import KeyboardView from "../../../components/KeyboardView";
-import ImportIcon from "../../../icons/Import";
-import ArrowRight from "../../../icons/ArrowRight";
-import type { SettingsNavigatorStackParamList } from "../../../components/RootNavigator/types/SettingsNavigator";
-import type { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
-import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import NavigationScrollView from "~/components/NavigationScrollView";
+import { ScreenName } from "~/const";
+import KeyboardView from "~/components/KeyboardView";
+import ImportIcon from "~/icons/Import";
+import ArrowRight from "~/icons/ArrowRight";
+import type { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
+import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 
 const DebuggerButton: React.ComponentType<{
   onPress: TouchableOpacityProps["onPress"];
@@ -133,7 +133,7 @@ export default function CustomManifest({ navigation }: Props) {
 function useCustomManifest() {
   const [manifest, setManifest] = useState("");
   const { addLocalManifest } = useLocalLiveAppContext();
-  const onChange = useCallback(val => {
+  const onChange = useCallback((val: string) => {
     try {
       const json = JSON.parse(val);
       setManifest(JSON.stringify(json, null, 2));

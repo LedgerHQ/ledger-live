@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
 import IconCoins from "~/renderer/icons/Coins";
+
 type Props = {
   account: CosmosAccount | SubAccount;
   parentAccount: CosmosAccount | undefined | null;
@@ -53,11 +54,13 @@ const AccountHeaderActions = ({ account, parentAccount, source }: Props) => {
       icon: IconCoins,
       label: t("account.stake"),
       tooltip: disabledLabel,
-      event: "button_clicked",
+      event: "button_clicked2",
       eventProperties: {
         button: "stake",
       },
+      accountActionsTestId: "stake-button-cosmos",
     },
   ];
 };
+
 export default AccountHeaderActions;

@@ -19,15 +19,13 @@ jobs:
           app_id: ${{ secrets.GH_BOT_APP_ID }}
           private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - name: Checkout Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: nightly
           fetch-depth: 0
           token: ${{ steps.generate-token.outputs.token }}
-      - name: set git user
-        run: |
-          git config user.email "105061298+live-github-bot[bot]@users.noreply.github.com"
-          git config user.name "live-github-bot[bot]"
+      - name: Setup git user
+        uses: ./tools/actions/composites/setup-git-user
       - name: merge develop
         run: |
           git merge origin/develop -X theirs
@@ -35,9 +33,9 @@ jobs:
         uses: ./tools/actions/composites/setup-toolchain
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version:
-            3.1.2 # Not needed with a .ruby-version file
-            # runs 'bundle install' and caches installed gems automatically
+          ruby-version: 3.2.2
+          # Not needed with a .ruby-version file
+          # runs 'bundle install' and caches installed gems automatically
       - uses: ./tools/actions/get-package-infos
         id: desktop-version
         with:
@@ -77,9 +75,9 @@ jobs:
       - name: tag mobile
         if: ${{ steps.mobile-version.outputs.version != steps.post-mobile-version.outputs.version }}
         run: |
-          git tag @ledgerhq/live-mobile@${{ steps.post-mobile-version.outputs.version }}
+          git tag live-mobile@${{ steps.post-mobile-version.outputs.version }}
       - name: push changes
-        if: ${{ always() }}
+        if: ${{ !cancelled() }}
         run: |
           git push origin nightly --follow-tags
       - uses: actions/github-script@v6

@@ -2,10 +2,10 @@ import Transport from "@ledgerhq/hw-transport";
 import { DeviceModelId, getDeviceModel, identifyTargetId } from "@ledgerhq/devices";
 import { UnexpectedBootloader } from "@ledgerhq/errors";
 import { Observable, throwError } from "rxjs";
-import { App, AppType, DeviceInfo } from "@ledgerhq/types-live";
-import { log } from "@ledgerhq/logs";
+import { App, AppType, DeviceInfo, idsToLanguage, languageIds } from "@ledgerhq/types-live";
+import { LocalTracer } from "@ledgerhq/logs";
 import type { ListAppsEvent, ListAppsResult } from "../types";
-import manager, { getProviderId } from "../../manager";
+import { getProviderId } from "../../manager";
 import staxFetchImageSize from "../../hw/staxFetchImageSize";
 import {
   listCryptoCurrencies,
@@ -13,10 +13,11 @@ import {
   findCryptoCurrencyById,
 } from "../../currencies";
 import ManagerAPI from "../../manager/api";
-import { getEnv } from "../../env";
+import { getEnv } from "@ledgerhq/live-env";
 
 import { calculateDependencies, polyfillApp, polyfillApplication } from "../polyfill";
 import getDeviceName from "../../hw/getDeviceName";
+import { getLatestFirmwareForDeviceUseCase } from "../../device/use-cases/getLatestFirmwareForDeviceUseCase";
 
 const appsThatKeepChangingHashes = ["Fido U2F", "Security Key"];
 
@@ -25,16 +26,17 @@ const emptyHashData = "000000000000000000000000000000000000000000000000000000000
 //TODO if you are reading this, don't worry, a big rewrite is coming and we'll be able
 //to simplify this a lot. Stay calm.
 const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<ListAppsEvent> => {
-  log("list-apps", "using legacy version");
+  const tracer = new LocalTracer("list-apps", { transport: transport.getTraceContext() });
+  tracer.trace("Using legacy version", { deviceInfo });
 
   if (deviceInfo.isOSU || deviceInfo.isBootloader) {
-    return throwError(new UnexpectedBootloader(""));
+    return throwError(() => new UnexpectedBootloader(""));
   }
 
   const deviceModelId =
     (transport.deviceModel && transport.deviceModel.id) ||
     (deviceInfo && identifyTargetId(deviceInfo.targetId as number))?.id ||
-    getEnv("DEVICE_PROXY_MODEL");
+    (getEnv("DEVICE_PROXY_MODEL") as DeviceModelId);
 
   return new Observable(o => {
     let sub;
@@ -69,7 +71,7 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
             })),
         )
         .catch(e => {
-          log("hw", "failed to HSM list apps " + String(e) + "\n" + e.stack);
+          tracer.trace(`Failed to HSM list apps ${e}`, { error: e });
           throw e;
         })
         .then(apps => [apps, true]);
@@ -85,7 +87,7 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
         }),
       );
 
-      const latestFirmwareForDeviceP = manager.getLatestFirmwareForDevice(deviceInfo);
+      const latestFirmwareForDeviceP = getLatestFirmwareForDeviceUseCase(deviceInfo);
 
       const firmwareP = Promise.all([firmwareDataP, latestFirmwareForDeviceP]).then(
         ([firmwareData, updateAvailable]) => ({
@@ -103,18 +105,22 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
           }),
       );
 
+      const languagePackForDeviceP = ManagerAPI.getLanguagePackagesForDevice(deviceInfo);
+
       const [
         [partialInstalledList, installedAvailable],
         applicationsList,
         compatibleAppVersionsList,
         firmware,
         sortedCryptoCurrencies,
+        languages,
       ] = await Promise.all([
         installedP,
         ManagerAPI.listApps().then(apps => apps.map(polyfillApplication)),
         applicationsByDeviceP,
         firmwareP,
         currenciesByMarketcap(listCryptoCurrencies(getEnv("MANAGER_DEV_MODE"), true)),
+        languagePackForDeviceP,
       ]);
       calculateDependencies();
 
@@ -155,26 +161,6 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
           }
 
           const indexOfMarketCap = crypto ? sortedCryptoCurrencies.indexOf(crypto) : -1;
-          const compatibleWallets: { name: string; url: string }[] = [];
-
-          if (application.compatibleWalletsJSON) {
-            try {
-              const parsed = JSON.parse(application.compatibleWalletsJSON);
-
-              if (parsed && Array.isArray(parsed)) {
-                parsed.forEach(w => {
-                  if (w && typeof w === "object" && w.name) {
-                    compatibleWallets.push({
-                      name: w.name,
-                      url: w.url,
-                    });
-                  }
-                });
-              }
-            } catch (e) {
-              console.error("invalid compatibleWalletsJSON for " + version.name, e);
-            }
-          }
 
           const type =
             application.description &&
@@ -196,7 +182,6 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
             supportURL: application.supportURL,
             contactURL: application.contactURL,
             sourceURL: application.sourceURL,
-            compatibleWallets,
             hash: version.hash,
             perso: version.perso,
             firmware: version.firmware,
@@ -213,8 +198,7 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
         })
         .filter(Boolean);
 
-      log(
-        "list-apps",
+      tracer.trace(
         `${installedList.length} apps installed. ${applicationsList.length} apps store total. ${apps.length} available.`,
         {
           installedList,
@@ -273,6 +257,11 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
         }
       }
 
+      const languageId: number = deviceInfo.languageId || languageIds.english;
+      const installedLanguagePack = languages.find(
+        lang => lang.language === idsToLanguage[languageId],
+      );
+
       // Harmless to run here since we are already in a secure channel, leading to
       // no prompt for the user. Introduced for the device renaming for LLD.
       const deviceName = await getDeviceName(transport);
@@ -286,6 +275,7 @@ const listApps = (transport: Transport, deviceInfo: DeviceInfo): Observable<List
         deviceModelId,
         firmware,
         customImageBlocks,
+        installedLanguagePack,
         deviceName,
       };
       o.next({

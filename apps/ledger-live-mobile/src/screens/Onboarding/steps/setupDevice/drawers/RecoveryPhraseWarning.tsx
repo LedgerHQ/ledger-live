@@ -1,41 +1,39 @@
+import { Button, IconsLegacy } from "@ledgerhq/native-ui";
+import { ModalHeader } from "@ledgerhq/native-ui/components/Layout/Modals/BaseModal/index";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Button, IconsLegacy, ScrollContainer } from "@ledgerhq/native-ui";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import { ModalHeader } from "@ledgerhq/native-ui/components/Layout/Modals/BaseModal/index";
-import { StackNavigatorProps } from "../../../../../components/RootNavigator/types/helpers";
-import { OnboardingCarefulWarningParamList } from "../../../../../components/RootNavigator/types/OnboardingNavigator";
-import { ScreenName } from "../../../../../const";
+import QueuedDrawer from "~/components/QueuedDrawer";
 
-type NavigationProps = StackNavigatorProps<
-  OnboardingCarefulWarningParamList,
-  ScreenName.OnboardingModalRecoveryPhraseWarning
->;
-
-const OnboardingRecoveryPhraseWarning = () => {
+const OnboardingRecoveryPhraseWarning = ({
+  open,
+  onClose,
+  onPress,
+}: {
+  open: boolean;
+  onClose: () => void;
+  onPress: () => void;
+}) => {
   const { t } = useTranslation();
-  const navigation = useNavigation<NavigationProps["navigation"]>();
-  const route = useRoute<NavigationProps["route"]>();
-
-  const handlePress = () => {
-    navigation.goBack();
-    if (route.params.onNext) route.params.onNext();
-  };
 
   return (
-    <>
-      <ScrollContainer flex={1}>
-        <ModalHeader
-          Icon={IconsLegacy.WarningMedium}
-          iconColor={"warning.c50"}
-          title={t("onboarding.stepRecoveryPhrase.importRecoveryPhrase.warning.title")}
-          description={t("onboarding.stepRecoveryPhrase.importRecoveryPhrase.warning.desc")}
-        />
-      </ScrollContainer>
-      <Button type="main" size="large" onPress={handlePress} mt={4}>
+    <QueuedDrawer isRequestingToBeOpened={open} onClose={onClose}>
+      <ModalHeader
+        Icon={IconsLegacy.WarningMedium}
+        iconColor={"warning.c50"}
+        title={t("onboarding.stepRecoveryPhrase.importRecoveryPhrase.warning.title")}
+        description={t("onboarding.stepRecoveryPhrase.importRecoveryPhrase.warning.desc")}
+      />
+
+      <Button
+        type="main"
+        size="large"
+        onPress={onPress}
+        mt={4}
+        testID="onboarding-importRecoveryPhrase-warning"
+      >
         {t("onboarding.stepRecoveryPhrase.importRecoveryPhrase.warning.cta")}
       </Button>
-    </>
+    </QueuedDrawer>
   );
 };
 

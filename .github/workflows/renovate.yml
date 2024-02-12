@@ -4,7 +4,7 @@ on:
   schedule:
     # The "*" (#42, asterisk) character has special semantics in YAML, so this
     # string has to be quoted.
-    - cron: "0/30 * * * *"
+    - cron: "* 22 * * 1-5"
   workflow_dispatch:
 
 jobs:
@@ -21,7 +21,7 @@ jobs:
           app_id: ${{ secrets.GH_BOT_APP_ID }}
           private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Self-hosted Renovate
         uses: renovatebot/github-action@v38.1.6
         with:

@@ -24,7 +24,7 @@
       }
     },
     "catalog" : {
-      "title" : "Discover",
+      "title" : "アプリ一覧",
       "section" : {
         "recentlyUsed" : "最近使用した項目",
         "browse" : "チェックする"
@@ -122,9 +122,9 @@
     "search" : "検索…",
     "searchWithoutEllipsis" : "検索",
     "manage" : "管理",
+    "tryAgain" : "再試行",
     "lockScreen" : {
       "title" : "おかえりなさい",
-      "subTitle" : null,
       "description" : "パスワードを入力して続行",
       "inputPlaceholder" : "パスワードを入力",
       "lostPassword" : "パスワードを忘れた場合"
@@ -142,7 +142,8 @@
     "connectDevice" : "デバイスを接続",
     "add" : "追加",
     "or" : "または",
-    "clearAll" : "全消去"
+    "clearAll" : "全消去",
+    "buyLedger" : "Ledgerを購入する"
   },
   "devices" : {
     "nanoS" : "Nano S",
@@ -166,6 +167,9 @@
       "VOTE" : "投票済み",
       "FREEZE" : "凍結中",
       "UNFREEZE" : "凍結解除済み",
+      "UNDELEGATE_RESOURCE" : "デリゲート解除済み",
+      "WITHDRAW_EXPIRE_UNFREEZE" : "出金",
+      "LEGACYUNFREEZE" : "凍結解除済み",
       "REWARD" : "獲得した報酬",
       "FEES" : "手数料",
       "OPT_IN" : "オプトイン",
@@ -195,11 +199,11 @@
       "description" : "お客様のトランザクションは進行中です。より高いネットワーク手数料で速度を上げるか、キャンセルが可能です。",
       "stuckDescription" : "お客様のトランザクションは進行中です。より高いネットワーク手数料で速度を上げるか、キャンセルが可能です。",
       "previousFeesInfo" : {
-        "pendingTransactionFeesInfo" : "保留中のトランザクション手数料情報： ",
-        "networkfee" : "ネットワーク手数料＝ ",
-        "maxFee" : "最大手数料＝ ",
-        "maxPriorityFee" : "最大優先手数料＝ ",
-        "gasPrice" : "ガス代＝ "
+        "pendingTransactionFeesInfo" : "保留中のトランザクション手数料情報：",
+        "networkfee" : "ネットワーク手数料 = {{amount}}",
+        "maxFee" : "最大手数料 = {{amount}}",
+        "maxPriorityFee" : "最大優先手数料＝{{amount}}",
+        "gasPrice" : "ガス代 = {{amount}}"
       },
       "learnMore" : "詳細を知りたいです",
       "panel" : {
@@ -212,7 +216,7 @@
       },
       "cancel" : {
         "title" : "キャンセル",
-        "description" : "0{{ticker}}をお客様自身のアドレスに送信中です。キャンセルを確定するには、ネットワーク手数料はキャンセルされるトランザクション手数料よりも30%高くなります。"
+        "description" : "0{{ticker}}をお客様のアドレスに送信中です。"
       },
       "steps" : {
         "method" : {
@@ -281,9 +285,9 @@
     "swap" : "スワップ",
     "refer" : "ご友人紹介",
     "lend" : "レンディング",
-    "catalog" : "Discover",
+    "catalog" : "アプリ一覧",
     "market" : "マーケット",
-    "recover" : "Ledger Recover"
+    "recover" : "[L] Recover"
   },
   "stars" : {
     "placeholder" : "お気に入りに登録したアカウントは、こちらに表示されます。",
@@ -299,8 +303,7 @@
     "title" : "スワップ",
     "tabs" : {
       "exchange" : "取引",
-      "history" : "履歴",
-      "kyc" : "本人確認手続き"
+      "history" : "履歴"
     },
     "form" : {
       "changeCTA" : "変更",
@@ -355,33 +358,6 @@
         "title" : "お住まいの地域では、スワップを利用できません。",
         "content" : "この機能は近々追加予定ですので<br/>今しばらくお待ちください。"
       },
-      "providers" : {
-        "kyc" : {
-          "required" : "KYC（本人確認）を完了する必要があります。",
-          "complete" : "KYC（本人確認）を完了",
-          "update" : "KYC（本人確認）を更新",
-          "rejected" : "KYCが却下されたため、承認申請をやり直す必要があります。",
-          "rejectedContactProviderSupport" : "KYCが拒否されました。{{providerName}}サポートにお問い合わせください。",
-          "updateRequired" : "KYC（本人確認手続き）を完了または更新する",
-          "status" : {
-            "pending" : "KYC（本人確認）申請中",
-            "approved" : "KYC（本人確認）承認済み",
-            "closed" : "KYC（本人確認）却下",
-            "upgradeRequired" : "KYC（本人確認手続き）未完了"
-          }
-        },
-        "login" : {
-          "required" : "このプロバイダーでログインする必要があります",
-          "complete" : "ログイン"
-        },
-        "mfa" : {
-          "required" : "このプロバイダーでMFA（多要素認証）を設定する必要があります",
-          "complete" : "MFAを設定"
-        },
-        "withdrawalsBlockedError" : {
-          "message" : "お客様の引き出しは {{providerName}}によってブロックされています。\n\n詳細については、サポートにお問い合わせください。"
-        }
-      },
       "timeout" : {
         "message" : "技術的な問題により、見積もりを作成できませんでした。しばらくしてから再度スワップをお試しください。"
       }
@@ -395,54 +371,6 @@
       "export" : "エクスポート処理",
       "exporting" : "エクスポートしています..."
     },
-    "kyc" : {
-      "updateRequired" : "アプリケーションをアップデートするまで、KYC（本人確認）を完了できません。",
-      "wyre" : {
-        "disclaimer" : "個人情報はKYC用にLedgerによって収集された後、WYREに転送されます。詳しくは以下をご確認ください：",
-        "policy" : "プライバシーポリシー",
-        "title" : "本人認証を行う",
-        "subtitle" : "Wyreでのスワップ実行に必要な情報を、入力してください。",
-        "cta" : "続行",
-        "pending" : {
-          "cta" : "続行",
-          "title" : "個人情報が提出されました。",
-          "subtitle" : "通常、審査が完了するまでに数分かかります。",
-          "link" : "KYC（本人確認）についての詳細",
-          "info" : "本人認証：提出済み"
-        },
-        "closed" : {
-          "cta" : "KYC（本人確認）をリセット",
-          "title" : "KYC（本人確認）の申請却下",
-          "subtitle" : "KYC（本人確認）用に提出したデータがWyreによって却下されました。",
-          "link" : "KYC（本人確認）についての詳細"
-        },
-        "form" : {
-          "firstName" : "名前（名）",
-          "lastName" : "名前（姓）",
-          "street1" : "住所1",
-          "street2" : "住所2",
-          "city" : "市区町村",
-          "state" : "都道府県",
-          "country" : "国",
-          "postalCode" : "郵便番号",
-          "dateOfBirth" : "生年月日",
-          "firstNamePlaceholder" : "名前（名）を入力",
-          "lastNamePlaceholder" : "名前（姓）を入力",
-          "street1Placeholder" : "Eg. 13, Maple street",
-          "street2Placeholder" : "Eg. 13, Maple street",
-          "cityPlaceholder" : "Eg. San José",
-          "postalCodePlaceholder" : "5桁の郵便番号を入力",
-          "dateOfBirthPlaceholder" : "MM/DD/YYYY",
-          "firstNameError" : "名前（名）を入力して続行",
-          "lastNameError" : "名前（姓）を入力して続行",
-          "street1Error" : "住所を入力",
-          "cityError" : "米国の州を入力",
-          "postalCodeError" : "有効な米国の郵便番号を入力してください。",
-          "dateOfBirthError" : "生年月日を入力",
-          "dateOfBirthValidationError" : "有効な生年月日を入力してください"
-        }
-      }
-    },
     "exchangeDrawer" : {
       "title" : "取引を確認",
       "completed" : {
@@ -451,6 +379,11 @@
         "disclaimer" : "<0><0>{{provider}}</0>サポート</0>が必要な場合に備えて、スワップID番号を書き留めてください。",
         "seeDetails" : "詳細を表示"
       }
+    },
+    "webviewErrorDrawer" : {
+      "title" : "再試行してください。",
+      "description" : "サーバーはリクエストを処理できませんでした。再試行するか、Ledgerサポートにお問い合わせください。",
+      "code" : "コード：{{errorCode}}"
     }
   },
   "swap" : {
@@ -460,7 +393,7 @@
     "decentralizedSwapAvailable" : "一部のトランザクションでは、分散型スワップの使用を検討することができます。<0>ParaSwapと<1>1inch</1>の詳細をチェック",
     "paraswap" : {
       "cta" : " 確認する",
-      "description" : "Paraswapをお探しですか？この項目は「Discover」タブに移動されました。"
+      "description" : "Paraswapをお探しですか？この項目は「アプリ一覧」タブに移動されました。"
     },
     "tabs" : {
       "exchange" : "取引",
@@ -491,17 +424,7 @@
     "providers" : {
       "title" : "暗号資産のスワップに利用するプロバイダーを選択",
       "learnMore" : "スワップとは？",
-      "kycRequired" : "本人確認手続きが必要です。",
       "cta" : "続行",
-      "kyc" : {
-        "notAvailable" : "{{provider}}はお住まいの地域ではご利用いただけません。",
-        "status" : {
-          "required" : "本人確認手続きが必要です。",
-          "pending" : "本人確認手続き申請中",
-          "approved" : "本人確認が承認されました！",
-          "closed" : "本人確認却下"
-        }
-      },
       "filter" : {
         "centralised" : "中央集権型",
         "decentralised" : "分散型",
@@ -516,55 +439,7 @@
       "subtitle" : "Ledgerデバイスから直接、暗号資産を取引できます。",
       "disclaimer" : "続行することで、AML/KYCへの準拠におけるサードパーティのサービスプロバイダーと位置情報の共有に同意したことになります。"
     },
-    "kyc" : {
-      "updateRequired" : "アプリケーションをアップデートするまで、KYC（本人確認）を完了できません。",
-      "wyre" : {
-        "disclaimer" : "個人情報はKYC用にLedgerによって収集された後、WYREに転送されます。詳しくは以下をご確認ください：",
-        "policy" : "プライバシーポリシー",
-        "title" : "本人認証を行う",
-        "subtitle" : "Wyreでのスワップ実行に必要な情報を、入力してください。",
-        "pending" : {
-          "cta" : "続行",
-          "title" : "承認申請中",
-          "subtitle" : "個人情報がWyreに提出されました。",
-          "link" : "KYC（本人確認）についての詳細"
-        },
-        "closed" : {
-          "cta" : "KYC（本人確認）をリセット",
-          "title" : "KYC（本人確認）の申請却下",
-          "subtitle" : "KYC（本人確認）用に提出したデータがWyreによって却下されました。",
-          "link" : "KYC（本人確認）についての詳細"
-        },
-        "form" : {
-          "firstName" : "名前（名）",
-          "lastName" : "名前（姓）",
-          "street1" : "住所1",
-          "street2" : "住所2",
-          "city" : "市区町村",
-          "state" : "都道府県",
-          "country" : "国",
-          "postalCode" : "郵便番号",
-          "dateOfBirth" : "生年月日",
-          "firstNamePlaceholder" : "名前（名）を入力",
-          "lastNamePlaceholder" : "名前（姓）を入力",
-          "street1Placeholder" : "Eg. 13, Maple street",
-          "street2Placeholder" : "Eg. 13, Maple street",
-          "cityPlaceholder" : "Eg. San José",
-          "postalCodePlaceholder" : "5桁の郵便番号を入力",
-          "dateOfBirthPlaceholder" : "MM/DD/YYYY",
-          "firstNameError" : "名前（名）を入力して続行",
-          "lastNameError" : "名前（姓）を入力して続行",
-          "street1Error" : "住所を入力",
-          "cityError" : "米国の州を入力",
-          "postalCodeError" : "有効な米国の郵便番号を入力してください。",
-          "dateOfBirthError" : "生年月日を入力",
-          "dateOfBirthValidationError" : "有効な生年月日を入力してください"
-        }
-      }
-    },
     "form" : {
-      "resetKYC" : "Wyreでスワップを行うには、KYC（本人確認）をリセットしてLiveアプリをアップデートする必要があります。",
-      "resetKYCCTA" : "KYC（本人確認）をリセット",
       "amount" : "数量",
       "from" : {
         "title" : "送付元",
@@ -596,16 +471,6 @@
       "noApp" : "{{currencyName}}アプリはインストールされていません。",
       "outdatedApp" : "{{currencyName}}アプリのアップデートが可能です。",
       "loadingRates" : "レートを読み込んでいます..."
-    },
-    "unauthorizedRatesModal" : {
-      "title" : "Ledger Liveのアップデートが必要です。",
-      "subtitle" : "Wyreでスワップを実行するには、Ledger Liveを最新バージョンにアップデートし、本人確認を再度行ってください",
-      "cta" : "認証をリセット"
-    },
-    "resetThirdPartyDataModal" : {
-      "title" : "ローカルのサードパーティーのデータを削除",
-      "subtitle" : "ローカルのサードパーティーのデータを削除します。弊社のパートナーが提供するサービスにアクセスするには、KYC（本人確認）の再提出や再度ログインが必要になる場合があります。",
-      "cta" : "確認"
     },
     "modal" : {
       "title" : "スワップ",
@@ -671,7 +536,7 @@
   },
   "stake" : {
     "noFundsModal" : {
-      "title" : "購入、スワップ、受け取り",
+      "title" : "{{actions, list(type: disjunction)}}",
       "text" : "ステーキングに十分な{{coin}}がありません",
       "description" : "資金が足りませんか？ご心配いりません。Ledger Liveで暗号資産を直接、安全に購入、スワップ、または受け取ることができます。",
       "options" : {
@@ -689,6 +554,10 @@
           "body" : "ウォレットで暗号資産を受け取る"
         }
       }
+    },
+    "getFundsModal" : {
+      "text" : "{{coin}}を入手してステーキング",
+      "description" : "Ledger Liveを使用すると、Ledgerで暗号資産の直接購入、スワップ、受け取りができます。"
     }
   },
   "lottieDebugger" : {
@@ -898,6 +767,8 @@
     "energyTooltip" : "資産を凍結して、エネルギーを獲得",
     "delegatedTooltip" : "デリゲートされた資産は、投票プロセスで使用されます。これは、投票の総数を表します。",
     "undelegatingTooltip" : "デリゲートを解除した資産は、{{timelockInDays}}日間のロック期間後に再び利用可能になります。",
+    "claimableRewards" : "獲得可能な報酬",
+    "claimableRewardsTooltip" : "現在、USDC報酬の獲得申請は利用できません。サードパーティのウォレットを使用してください。",
     "banner" : {
       "redelegation" : {
         "title" : "ご存知でしたか？",
@@ -1280,94 +1151,126 @@
     "hideCTA" : "トークンを非表示"
   },
   "syncOnboarding" : {
+    "exitCTA" : "設定を終了",
     "connection" : {
       "searching" : {
-        "title" : "{{deviceModelName}}をコンピュータに接続",
-        "connectionTrouble" : "デバイスの接続に問題がありますか？"
+        "title" : "USBケーブルを使用して、{{deviceModelName}}をコンピューターに接続",
+        "connectionTrouble" : "Ledgerの接続に問題がありますか？"
       },
       "success" : {
         "title" : "{{ deviceName }}を接続"
       }
     },
     "manual" : {
-      "title" : "{{deviceName}}をセットアップ",
+      "title" : "{{deviceName}}をセットアップする",
       "continueOnDevice" : "{{productName}}でこのアクションを実行する",
       "pairedContent" : {
-        "title" : "{{deviceName}}接続済み",
-        "description" : "{{deviceName}}でセットアップを続行する",
-        "text" : "こちらの画面は、{{deviceName}}のセットアップ中に動的に変化し、関連情報をご提供します。",
-        "continueOnDevice" : "{{productName}}をタップして、次の画面を表示します。"
+        "title" : "この{{deviceName}}は正規品です",
+        "description" : "このLedger Staxは安全です。セットアップに進むことができます。",
+        "continueOnDevice" : "{{productName}}をタップしてセットアップを開始"
       },
       "pinContent" : {
-        "title" : "PINコードを設定する",
-        "description" : "PINコードの長さは4～8桁で設定可能です",
-        "text" : "お客様の{{deviceName}}とPINコードにアクセスできる人は誰でも、お客様の暗号資産とNFT資産すべてにアクセスできます。",
-        "continueOnDevice" : "{{productName}}にPINコードを設定する"
+        "title" : "PINコード",
+        "titleCompleted" : "PINコード設定済み",
+        "description" : "他のパスワードやパスコードと同様に、PINを使用すると、{{productName}}のロックを解除し、不要なアクセスを防ぐことができます。",
+        "continueOnDevice" : "{{productName}}にPINを設定"
       },
       "seedContent" : {
         "title" : "秘密のリカバリーフレーズ",
+        "titleCompleted" : "シークレットリカバリーフレーズ確認済み",
         "recoverSeed" : "Placeholder：Recover",
-        "restoreSeed" : "リカバリーには、資産の安全性を保証するため、必ずLedgerが生成した秘密のリカバリーフレーズを使用してください。\n\nリカバリーフレーズをお持ちではありませんか？{{productName}}を使用して、新しいフレーズを生成してください。",
-        "selection" : "{{productName}}で、最適な設定オプションを選択する。",
-        "selectionContinueOnDevice" : "{{productName}}のオプションをタップする",
-        "newSeedDescription" : "以下の動画で、秘密の単語の詳細を学ぶ。",
-        "newSeedContinueOnDevice" : "{{productName}}でこの操作を行う",
-        "recovery" : "リカバリーには、資産の安全性を保証するため、必ずLedgerが生成した秘密のリカバリーフレーズを使用してください。\n\nリカバリーフレーズをお持ちではありませんか？{{productName}}を使用して、新しいフレーズを生成してください。",
-        "restoreChoiceContinueOnDevice" : "{{productName}}のオプションを選択する",
+        "restoreSeed" : "資産のセキュリティを最大限に高めるため、必ずLedgerデバイスで生成したシークレットリカバリーフレーズを使用してください。\n\nシークレットリカバリーフレーズを持っていませんか？{{productName}}を使用して、新しいフレーズを生成してください。",
+        "selection" : "最適な設定オプションを選択してください：",
+        "selectionNewLedger" : "<0>「Set up as a new Ledger（新しいLedgerとして設定）」</0>で新しいウォレットを作成できます。これにより、新しいシークレットリカバリーフレーズが生成されます。",
+        "selectionRestore" : "<0>「Restore（復元）」</0>で、シークレットリカバリーフレーズまたはLedger Recoverを使用して既存の資産へのアクセスを復元できます。",
+        "selectionContinueOnDevice" : "{{productName}}で関連するオプションを選択",
+        "newSeedDescription1" : "{{productName}}は、24単語からなる一意のリストであるシークレットリカバリーフレーズを生成します。これは、Ledgerが盗難や紛失に遭ったり、PINを忘れた場合に資産を復元する唯一の方法です。",
+        "newSeedDescription2" : "<0>安全かつプライベートに保管：</0>\nシークレットリカバリーフレーズにより全資産を管理できます。シークレットリカバリーフレーズは代替不可能です。フレーズを知っている人は誰でも資産を管理し、盗むこともできます。フレーズを紛失された場合、Ledgerはサポートを提供することができません。",
+        "newSeedDescription3" : "シークレットリカバリーフレーズを尋ねる人物やソフトウェアには、注意してください。それらは、詐欺です。 ",
+        "newSeedDescription4" : "シークレットリカバリーフレーズを入力する必要がある唯一の場所は、Ledgerデバイス上のみです。",
+        "newSeedDescription5" : "第三者と共有しないでください。紛失しないでください。",
+        "newSeedContinueOnDevice" : "{{productName}}で生成されたシークレットリカバリーフレーズを表示して書き留める",
+        "restoreChoiceContinueOnDevice" : "{{productName}}で関連するオプションを選択",
         "restoreChoiceSRPTitle" : "秘密のリカバリーフレーズを使用して復元する",
-        "restoreChoiceSRPDescription" : "資産のセキュリティを保証するために、必ず、Ledgerによって生成されたフレーズを使用してください。",
+        "restoreChoiceSRPDescription" : "セキュリティを最大限に高めるには、Ledgerデバイスによって生成されたシークレットリカバリーフレーズを使用してください。",
         "restoreChoiceRecoverTitle" : "Ledger Recoverを使用して復元",
-        "restoreChoiceRecoverDescription" : "Ledgerアカウントにログインして本人確認を行い、リカバリーフレーズのバックアップを復元します。"
+        "restoreChoiceRecoverDescription" : "Ledger Recoverのサブスクリプション契約をしている場合は、サブスクリプションにログインし、シークレットリカバリーフレーズのバックアップを復元します。",
+        "followInstructions" : "{{productName}}に表示される指示に従ってください。"
       },
       "softwareCheckContent" : {
-        "title" : "ソフトウェアのチェック",
+        "title" : {
+          "active" : "正規品チェックと\nOSアップデートチェック",
+          "completed" : "お客様の{{modelName}}は正規品で最新のものです"
+        },
+        "exitWarningDrawer" : {
+          "title" : "正規品チェックとOSアップデートチェックをキャンセルしますか？",
+          "description" : "Ledger Liveアプリを使用してLedger Staxの設定を続けるには、正規品チェックが必須です。",
+          "cancelCheckCTA" : "チェックをキャンセル",
+          "resumeCheckCTA" : "チェックを再開"
+        },
+        "genuineCheckErrorDrawer" : {
+          "quitSetupCTA" : "セットアップをキャンセルする",
+          "goToSettingsCTA" : "設定を開く",
+          "retryCTA" : "再試行",
+          "contactSupportCTA" : "Ledgerサポートへ問い合わせ",
+          "notFoundEntityError" : {
+            "title" : "正規品チェックを再開する",
+            "description" : "まず「My Ledgerプロバイダー（{{providerNumber}}）」設定を無効化してください。無効にするには、Ledger Liveの「設定」を開き、「試験的機能」を選択して、「My Ledgerプロバイダー」をオフに切り替えます。"
+          },
+          "deviceNotGenuineError" : {
+            "title" : "この{{productName}}は正規品ではありません",
+            "description" : "この{{productName}}は安全に使用できません。\nLedgerサポートにご連絡ください。"
+          }
+        },
+        "whyPerformChecksLink" : "正規品チェックについて詳しく見る",
+        "startChecksCTA" : "私の{{modelName}}をチェック",
+        "continueCTA" : "セットアップを続行する",
         "genuineCheck" : {
-          "active" : "{{deviceName}}をチェックしています",
-          "completed" : "{{deviceName}}は正規品です"
+          "title" : {
+            "active" : "正規品チェック",
+            "completed" : "お客様の{{modelName}}は正規品です",
+            "cancelled" : "正規品チェックが拒否されました"
+          },
+          "subtitle" : {
+            "active" : "これにより、お使いの{{modelName}}が正式なLedgerであることが確認されます。",
+            "cancelled" : "Ledger Liveアプリを使用して{{modelName}}の設定を続けるには、このチェックが必須です。"
+          },
+          "resumeCTA" : "正規品チェックを再開"
         },
         "firmwareUpdate" : {
-          "inactive" : "ソフトウェアのチェック",
-          "active" : "ソフトウェアの更新をチェックしています",
-          "updateAvailable" : "ソフトウェアのアップデートが利用可能です{{firmwareVersion}}",
-          "recommendation" : "今すぐアップデートをダウンロードすることをお勧めします",
-          "downloadUpdate" : "アップデートをダウンロード",
-          "skipUpdate" : "今はしない",
-          "completed" : "ソフトウェアは最新です"
+          "title" : {
+            "active" : "OSアップデートチェック",
+            "completed" : "{{modelName}} OSは最新の状態です。",
+            "updateAvailable" : "OSアップデート{{firmwareVersion}}をご利用いただけます"
+          },
+          "subtitle" : {
+            "active" : "これにより、{{modelName}}のオペレーティングシステムが最新かどうかがチェックされます。",
+            "completed" : "「Restore apps（アプリを復元）」ボタンを選択して{{modelName}}でアプリの復元を開始します。",
+            "updateAvailable" : "最適なセキュリティを確保し、最新機能へアクセスするためにアップデートしてください。"
+          },
+          "viewUpdateCTA" : "{{modelName}} OSをアップデートする",
+          "resumeUpdateCTA" : "アップデートを再開する",
+          "skipUpdateCTA" : "アップデートをスキップする",
+          "retryUpdateCTA" : "再試行",
+          "finalStepSuccessDescription" : "OSチェックに戻る",
+          "finalStepSuccessButtonLabel" : "終了する"
         }
       },
       "installApplications" : {
-        "title" : "ブロックチェーンアプリをインストールする",
+        "title" : "{{productName}}にアプリをインストール",
+        "titleCompleted" : "{{productName}}にアプリインストール済み",
         "install" : "インストール",
         "skip" : "後で",
         "info" : "{{deviceName}}のアプリはトランザクションの承認に使用されます。これはいつでも追加、または削除できます。"
       },
       "endOfSetup" : {
-        "title" : "セットアップの終了"
+        "title" : "セットアップの終了",
+        "titleCompleted" : "{{deviceName}}の準備完了"
       },
-      "genuineCheckModal" : {
-        "title" : "真正性確認",
-        "paragraph1" : "{{deviceName}}が正規品で安全に使用できることを確認しましょう",
-        "paragraph2" : "お客様のデバイスが改ざんされていないことを確認するためのチェックを行います。お使いの{{deviceName}}でこれを承諾していただく必要があります。",
-        "checkDeviceButton" : "デバイスをチェック"
+      "softwareCheckAllowSecureChannelDrawer" : {
+        "title" : "「許可（Allow）」をタップして正規品チェックを開始"
       },
-      "genuineCheckCancelModal" : {
-        "title" : "正規品チェック",
-        "paragraph1" : "正規品チェックがキャンセルされました",
-        "paragraph2" : "このチェックは、お客様の{{deviceName}}が安全に使用できることを確認するために重要です。",
-        "checkDeviceButton" : "再度チェックを実行する",
-        "cancelButton" : "後で"
-      },
-      "genuineCheckNotGenuineModal" : {
-        "title" : "正規品チェック",
-        "paragraph1" : "お使いのデバイスは正規品ではありません",
-        "paragraph2" : "真正性チェックに失敗しました",
-        "checkDeviceButton" : "再度チェックを実行する",
-        "cancelButton" : "後で"
-      },
-      "softwareCheckAllowSecureChannelModal" : {
-        "title" : "{{deviceName}}でマネージャーを許可する"
-      },
-      "softwareCheckLockedDeviceModal" : {
+      "softwareCheckLockedDeviceDrawer" : {
         "title" : "デバイスのロックを解除する"
       },
       "helpDrawer" : {
@@ -1377,13 +1280,13 @@
         "supportButton" : "人と話す"
       },
       "troubleshootingDrawer" : {
-        "title" : "USB接続のトラブル解決",
-        "description" : "デバイスとの接続に問題があるようですが、ご心配なく。デバイスが正常に接続されるまで、いろいろな解決策を1つずつお試しいただけます！",
-        "fixButton" : "修正する",
+        "title" : "USB接続",
+        "description" : "Ledgerへの接続に問題が発生しました。この問題を解決する手順については、「問題解決（トラブルシューティング）」を選択してください。",
+        "fixButton" : "トラブル解決問題",
         "closeButton" : "閉じる"
       },
       "desyncOverlay" : {
-        "errorMessage" : "{{deviceName}}との接続が失われたようです。再接続を試みています。"
+        "errorMessage" : "{{deviceName}}との接続が失われました。再接続を試みています。"
       },
       "header" : {
         "helpButton" : "お困りですか？"
@@ -1393,7 +1296,8 @@
   "postOnboarding" : {
     "postOnboardingScreen" : {
       "title" : "次に、Ledger Staxを\n使用して... ",
-      "titleCompleted" : "はい、\n終わり！"
+      "titleCompleted" : "準備完了！\n引き続きウォレットの使用をお楽しみください。",
+      "exploreCTA" : "ウォレットを探索"
     },
     "postOnboardingContent" : {
       "skipLink" : "後で行う"
@@ -1402,6 +1306,18 @@
       "title" : "Ledger Staxの次は何ですか？",
       "description" : "Infinity NFTを獲得したり、ロック画面をカスタマイズしたり、\n他の取引所から資産を転送したりできます。",
       "link" : "次のステップを見る"
+    },
+    "actions" : {
+      "buyCrypto" : {
+        "title" : "暗号資産を購入する",
+        "description" : "500種類以上のコインと、購入プロバイダーによる見積もりから、お好みに合わせて選択できます。",
+        "actionCompletedPopupLabel" : "購入済み暗号資産"
+      },
+      "assetsTransfer" : {
+        "title" : "資産をLedgerに転送する",
+        "description" : "Coinbaseやその他の取引所、またはウォレットから資産を簡単に転送できます。",
+        "actionCompletedPopupLabel" : "転送済み資産"
+      }
     }
   },
   "hideNftCollection" : {
@@ -1489,31 +1405,7 @@
     }
   },
   "walletconnect" : {
-    "titleAccount" : "Wallet Connect",
-    "disconnect" : "接続を切断",
-    "disconnected" : "接続を切断済み",
-    "connected" : "接続済み",
-    "connecting" : "接続しています...",
-    "invalidAccount" : "無効なアカウントID",
-    "steps" : {
-      "paste" : {
-        "title" : "リンクを貼り付け",
-        "label" : "Wallet Connectアドレス",
-        "placeholder" : "Wallet Connectのリンクを貼り付ける"
-      },
-      "confirm" : {
-        "title" : "接続",
-        "details" : "ウォレットを通じて以下のアカウントに接続：",
-        "deeplinkDetails" : "Ledger Liveに接続します。アカウントを選択",
-        "noAccount" : "互換性のあるアカウントがありません。Wallet Connectを使用するには、互換性のあるアカウントを追加してください。",
-        "alreadyConnected" : "別のdAppを接続中にdAppに接続しようとしています。新しいdAppでLiveを再接続する前に、接続されたdAppを解除してください。"
-      }
-    },
-    "connectedscreen" : {
-      "info" : "ウェブブラウザから、{{name}}dAppにアクセス可能になりました。",
-      "warning" : "dAppsからの受取アドレスの共有は安全ではありません。資金を受け取るためのアドレスを共有するときは、必ずLedger Liveを使用してください。",
-      "disconnected" : "dApp、WalletConnect、Ledger Live間の接続に問題があります。しばらく待つか、接続を再起動してください。"
-    }
+    "titleAccount" : "WalletConnect"
   },
   "dashboard" : {
     "title" : "ポートフォリオ",
@@ -1537,6 +1429,26 @@
       "earn" : {
         "title" : "ステーキング",
         "description" : "Ledgerで暗号資産を運用"
+      }
+    },
+    "recoverBanner" : {
+      "subscribeDone" : {
+        "title" : "お支払いカードの追加を完了する",
+        "description" : "Ledger Recoverを使用して確実に復元する。",
+        "primaryCta" : "カードを追加する",
+        "secondaryCta" : "後で"
+      },
+      "verifyIdentity" : {
+        "title" : "本人認証を完了する",
+        "description" : "Ledger Recoverを使用して確実に復元する。",
+        "primaryCta" : "認証する",
+        "secondaryCta" : "後で"
+      },
+      "connectDevice" : {
+        "title" : "Ledgerを接続する",
+        "description" : "Ledger Recoverまであと1歩です。",
+        "primaryCta" : "接続",
+        "secondaryCta" : "後で"
       }
     }
   },
@@ -1844,12 +1756,13 @@
   "DeviceAction" : {
     "allowAppPermission" : "デバイスで{{wording}} アプリを開く",
     "allowAppPermissionSubtitleToken" : "{{token}} トークンを管理",
-    "allowManagerPermission" : "デバイス上で{{wording}}を許可",
+    "allowManagerPermission" : "{{productName}}でLedger Managerを許可する",
+    "allowRenaming" : "デバイスで名前の変更を許可する",
     "loading" : "読み込み中...",
     "connectAndUnlockDevice" : "デバイスを接続してロックを解除する",
     "unlockDevice" : "デバイスのロックを解除する",
-    "unlockDeviceAfterFirmwareUpdateStep1" : "{{productName}}のインストールが完了するまでお待ちください",
-    "unlockDeviceAfterFirmwareUpdateStep2" : "{{productName}}のロックを解除してインストールを完了",
+    "unlockDeviceAfterFirmwareUpdateStep1" : "{{productName}}でインストールが完了するまで待機してください。",
+    "unlockDeviceAfterFirmwareUpdateStep2" : "PINコードを使用して{{productName}}のロックを解除し、アップデートを完了します。",
     "quitApp" : "デバイスのアプリケーションを終了する",
     "appNotInstalledTitle" : "必要なアプリが揃っていません。",
     "appNotInstalledTitle_plural" : "必要なアプリが揃っていません。",
@@ -1915,7 +1828,7 @@
       "capacity" : "容量",
       "used" : "使用中",
       "OSVersion" : "OSバージョン",
-      "genuine" : "お使いのデバイスは正規品です。",
+      "genuine" : "正規品チェック",
       "incomplete" : "一部のアプリが認識されませんでした。アンインストールしてから、再インストールしてください。"
     },
     "applist" : {
@@ -2007,8 +1920,9 @@
       "dontHaveSeed" : "リカバリーフレーズをお持ちでないですか？ ",
       "followTheGuide" : "アップデートの手順はこちらをご覧ください。",
       "removeApps" : "アップデート前に全アプリをアンインストールする",
-      "update" : "{{productName}}をアップデートする",
+      "update" : "{{productName}} OSアップデート",
       "updateBtn" : "ファームウェアをアップデート",
+      "installUpdate" : "アップデートをインストール",
       "banner" : {
         "warning" : "ファームウェアを{{latestFirmware}}にアップデートできます",
         "cta" : "My Ledgerに移動",
@@ -2021,17 +1935,26 @@
       "latest" : "ファームウェアバージョン{{version}}が利用可能です",
       "contactSupport" : "サポートへのお問い合わせ",
       "deprecated" : "デバイスのファームウェアのバージョンが古いため、アップデートできません。Ledgerサポートに連絡して、デバイスを交換してください。",
-      "prepareSeed" : "万が一に備えて、書き留めた24単語のリカバリーフレーズを用意してください。",
-      "disclaimerTitle" : "<1>ファームウェアバージョン{{version}}</1>をインストールします。"
+      "prepareSeed" : "念のために、24単語のリカバリーフレーズがリカバリーシートに書き留められており、利用可能であることを確認してください。",
+      "disclaimerTitle" : "<1>ファームウェアバージョン{{version}}</1>をインストールします。",
+      "cancelUpdate" : "OSアップデートをキャンセル",
+      "continueUpdate" : "OSアップデートを続行",
+      "restartUpdate" : "OSアップデートを再開",
+      "skipRestore" : "復元をスキップ",
+      "cancelUpdateWarning" : "今アップデートをキャンセルすると、\n設定とアプリが正しく復元されない可能性があります。",
+      "updateInProgress" : "OSアップデート中"
     },
     "modal" : {
-      "title" : "{{productName}}をアップデートする",
+      "title" : "{{productName}}OSアップデート",
       "steps" : {
-        "preparingUpdate" : "アップデートを準備中",
+        "preparingUpdate" : "設定とアプリの\nバックアップ",
         "transferringUpdate" : "アップデートを{{productName}}に転送中",
         "prepare" : "アップデートの準備",
+        "prepareDone" : "アップデートの\nインストール準備が完了",
         "install" : "アップデートをインストール",
+        "installDone" : "アップデートが\nインストール済み",
         "restore" : "設定の復元",
+        "restoreDone" : "設定を復元完了",
         "apps" : "アプリの復元",
         "updateMCU" : "ファームウェアをアップデート",
         "updating" : "ファームウェアをアップデート",
@@ -2039,12 +1962,13 @@
         "osu" : "OSUをインストール中...",
         "flash-mcu" : "MCUをアップデート中...",
         "flash-bootloader" : "Bootloaderをアップデート中...",
-        "progress" : "アップデートをインストール中{{current}}/{{total}}",
+        "progress" : "アップデートをインストール中",
+        "progressStep" : "アップデートをインストール中{{current}}/{{total}}",
         "firmware" : "ファームウェアのアップデート中...",
         "flash" : "デバイスの準備中..."
       },
       "confirmIdentifier" : "識別子を確認する",
-      "confirmIdentifierText" : "{{productName}}へのインストールを確定",
+      "confirmIdentifierText" : "「Install（インストール）」をタップして\nOSアップデートを開始",
       "identifier" : "識別子",
       "newFirmware" : "新しいファームウェア{{version}}",
       "confirmUpdate" : "アップデートをデバイスで確定してください。",
@@ -2052,15 +1976,15 @@
       "mcuFirst" : "デバイスからUSBケーブルを外す",
       "mcuSecond" : "USBケーブルを再接続し、{{repairProcessing}}画面が表示されるまで左ボタンを<1><0>長押し</0></1>",
       "mcuPin" : "アップデートが完了するまでお待ちください",
+      "mcuRestart" : "{{device}}は複数回再起動する場合があります。",
       "mcuSecondNanoX" : "<1><0> {{bootloaderOption}}</0></1>が表示されるまで左ボタンを長押しする。両方のボタンを押して、デバイスを確認して再接続します。",
       "mcuBlueFirst" : "ボタンを10秒間長押しして、デバイスの電源をオフにする。ボタンから指を離す。",
       "mcuBlueSecond" : "ブートオプションが表示されるまで、少なくとも5秒間ボタンを押し続けます。Bootloaderモードをタップしてください。",
-      "successTitle" : "OSアップデートが成功しました。",
-      "successTextApps" : "デバイスにアプリを再インストールしてください。",
-      "successTextNoApps" : "デバイスにアプリをインストールできるようになりました。",
-      "sucessCTAApps" : "アプリを再インストール",
-      "SuccessCTANoApps" : "アプリをインストール",
-      "cancelReinstallCTA" : "アップデートをインストール",
+      "successTitle" : "{{deviceName}} のOSは\n最新の状態です",
+      "successTitleApps" : "{{deviceName}}のOSは\n最新の状態です。最後に...",
+      "successSubtitleApps" : "Ledger Staxでアプリの復元を開始するには、\n下の「Restore apps（アプリを復元）」ボタンを選択します。",
+      "sucessCTAApps" : "アプリを復元",
+      "SuccessCTANoApps" : "終了する",
       "resetSteps" : {
         "first" : "1. デバイスをリセットする",
         "connect" : "USBケーブルを使用して、 {{deviceName}}をコンピュータに接続。",
@@ -2111,7 +2035,7 @@
         "energyDescription" : "スマートコントラクトの実行には、Energy(エネルギー)ポイントが必要です。スマートコントラクトを実行しない場合は、エネルギーポイントで報酬を得る必要はありません。",
         "amountLabel" : "凍結する額",
         "available" : "利用可能: {{amountAvailable}}",
-        "info" : "凍結したTRXは3日間送付ができなくなります。"
+        "info" : "凍結された資産はすぐに凍結解除でき、14日間の凍結解除期間後にアクセスできるようになります。"
       },
       "connectDevice" : {
         "title" : "デバイス"
@@ -2208,7 +2132,8 @@
         "parentAccount" : "1. {{currencyName}}アカウントを選択",
         "token" : "2. トークンを選択する",
         "verifyTokenType" : "<0>{{token}}</0>が<0>{{tokenType}}</0>トークンであることを確認してください。{{currency}}アカウント他の暗号資産を送信すると失われる可能性があります。",
-        "warningTokenType" : "{{currency}}アカウントには、<0>{{ticker}}</0>または<0>{{tokenType}}</0>トークンのみを送金してください他の暗号資産を送信すると、資金が永久に失われる可能性があります。"
+        "warningTokenType" : "{{currency}}アカウントには、<0>{{ticker}}</0>または<0>{{tokenType}}</0>トークンのみを送金してください他の暗号資産を送信すると、資金が永久に失われる可能性があります。",
+        "depositFromCexBannerTitle" : "Coinbaseアカウントから暗号資産を入金する"
       },
       "connectDevice" : {
         "title" : "デバイス",
@@ -2371,21 +2296,28 @@
     "confirmation" : "Ledger Staxの画像の削除を確定する",
     "success" : "ロック画面の画像が削除されました"
   },
+  "changeCustomLockscreen" : {
+    "cta" : "変更"
+  },
+  "removeCurrentPicture" : {
+    "cta" : "現在の画像を削除する"
+  },
+  "appsInstallingDisabledTooltip" : "アプリのインストールが完了するまで無効になります",
   "deviceLocalization" : {
     "language" : "言語",
     "deviceLanguage" : "デバイスの言語を変更する",
-    "changeLanguage" : "変更",
+    "changeLanguage" : "言語の変更",
     "dontChangeLanguage" : "変更しない",
     "changeDeviceLanguage" : "デバイスの言語を変更しますか？",
     "changeDeviceLanguagePrompt" : {
-      "title" : "{{language}}が{{deviceName}}でもご利用可能になりました",
-      "description" : "言語を{{language}}に変更しますか？"
+      "title" : "{{deviceName}}の言語を{{language}}に変更しますか？",
+      "description" : "{{deviceName}}とLedger Liveアプリを同じ言語で使用しますか？"
     },
     "firmwareUpdatePrompt" : {
       "title" : "{{deviceName}}を{{language}}に設定しますか？",
       "description" : "{{language}}が{{deviceName}}でご利用可能になりました。今すぐ設定できます。また、My Ledgerからいつでもデバイスの言語を変更することが可能です。"
     },
-    "allowLanguageInstallation" : "言語のインストールを許可する",
+    "allowLanguageInstallation" : "言語をインストールするには\n「Allow（許可）」をタップする",
     "languageInstalled" : "言語が{{language}}に変更されました",
     "installingLanguage" : "言語をインストール",
     "languages" : {
@@ -2412,6 +2344,7 @@
     "header" : "アカウント配分({{count}})"
   },
   "elrond" : {
+    "guardedAccountWarning" : "アカウントにガーディアンが設定されている場合、Ledger Live経由でトランザクションを送信することはできません。",
     "summary" : {
       "availableBalanceTooltip" : "この額は送金可能です。",
       "availableBalance" : "利用可能残高",
@@ -2597,6 +2530,68 @@
       "stakingRewardsBanner" : {
         "cardTitle" : "合計残高にはステーキング報酬は含まれません"
       }
+    },
+    "delegation" : {
+      "totalStake" : "合計ステーキング量",
+      "cost" : "費用",
+      "pool" : "プール",
+      "changeDelegation" : "デリゲートを変更する",
+      "assetsAlreadyStaked" : "お客様の資産はすでにステーキングされています",
+      "addFundsToStake" : "資金をステーキングに追加する",
+      "commission" : "コミッション",
+      "stakeKeyRegistrationDeposit" : "ステーキングキー登録デポジット",
+      "delegatingTo" : "デリゲート先：",
+      "flow" : {
+        "title" : "デリゲート",
+        "steps" : {
+          "starter" : {
+            "description" : "ADAをプールにデリゲートして報酬を獲得できます。",
+            "bullet" : ["デリゲートされた資産の所有権を保持する", "Ledgerデバイスを使ってデリゲートしましょう", "資産は別のプールに再デリゲートすることも、いつでもデリゲート解除を選択することもできます。"]
+          },
+          "validator" : {
+            "title" : "プール"
+          },
+          "summary" : {
+            "title" : "概要"
+          },
+          "connectDevice" : {
+            "title" : "デバイス"
+          },
+          "confirmation" : {
+            "title" : "確認",
+            "success" : {
+              "title" : "資産が正常にデリゲートされました。",
+              "text" : "ブロックチェーンがトランザクションを承認後、アカウントの残高が更新されます。",
+              "cta" : "詳細を表示"
+            },
+            "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+          }
+        }
+      }
+    },
+    "unDelegation" : {
+      "message" : "デリゲートを解除すると、現在および今後のエポックを対象とした報酬を受け取ることができなくなります",
+      "refund" : "ステーキング登録デポジットの払い戻し",
+      "flow" : {
+        "title" : "デリゲート解除",
+        "steps" : {
+          "summary" : {
+            "title" : "概要"
+          },
+          "connectDevice" : {
+            "title" : "デバイス"
+          },
+          "confirmation" : {
+            "title" : "確認",
+            "success" : {
+              "title" : "デリゲートが正常に解除されました",
+              "text" : "ブロックチェーンがトランザクションを承認後、アカウントの残高が更新されます。",
+              "cta" : "詳細を表示"
+            },
+            "broadcastError" : "トランザクションが失敗した可能性があります。しばらく待ってから、取引履歴を確認した上でもう一度やり直してください。"
+          }
+        }
+      }
     }
   },
   "tron" : {
@@ -2632,7 +2627,7 @@
             "description" : "安全かつ完全に資産を所有しながら、TRXを凍結して報酬を獲得しましょう。",
             "bullet" : {
               "delegate" : "資産をデリゲートしても、資産の所有者は変わりません。",
-              "access" : "資産の凍結は3日後に解除できます。",
+              "access" : "凍結された資産はすぐに凍結解除でき、14日間の凍結解除期間後にアクセスできるようになります。",
               "ledger" : "Ledgerデバイスを使って、資産の凍結と投票を安全に行いましょう。"
             },
             "help" : "投票の仕組み",
@@ -3077,7 +3072,7 @@
         "steps" : {
           "starter" : {
             "title" : "再デリゲート",
-            "description" : "再デリゲートを使用すると、別のバリデーターに変更できます。しかし、再び気が変わった場合は、再デリゲートによって21日間ロックされるため、待機する必要があります。",
+            "description" : "再デリゲートを使用すると、別のバリデーターに簡単に変更できます。しかし、再度変更する場合は、再デリゲートによって{{ numberOfDays }}日間ロックされるため、待機する必要があります。",
             "warning" : "バリデーターは慎重に選択してください。不適切なバリデーターに資産を預けると、資産の一部がペナルティによって失われてしまう危険があります。保留中の最大再デリゲート数は<0>7 つ</0>です。",
             "howDelegationWorks" : "デリゲートの仕組み"
           },
@@ -3106,7 +3101,7 @@
     },
     "undelegation" : {
       "header" : "デリゲート解除",
-      "headerTooltip" : "21日間のロック後に利用可能",
+      "headerTooltip" : "{{numberOfDays}}日間のロック後に利用可能",
       "inactiveTooltip" : "デリゲートされていない金額は報酬を生成しません。",
       "flow" : {
         "title" : "資産のデリゲートを解除",
@@ -3214,7 +3209,7 @@
     "unlockedBalance" : "ボンド解除済み",
     "unlockedTooltip" : "ボンド解除済み資産が、引き出し可能になりました。",
     "networkFees" : "ネットワーク手数料は、Polkadotのコンセンサスアルゴリズムによって自動的に設定されるため、デバイス上で確認することはできません",
-    "bondedBalanceBelowMinimum" : "ボンド残高が、下限額{{minimumBondBalance}}を下回っています。ノミネートが解除されてしまう可能性があります。",
+    "bondedBalanceBelowMinimum" : "ノミネーターとして、ノミネートの意向を提出するには、少なくとも{{minimumBondBalance}}が必要です",
     "nomination" : {
       "emptyState" : {
         "description" : "資産をボンド後、バリデーターをノミネートすることで報酬を獲得できます。",
@@ -3530,7 +3525,8 @@
             "title" : "バリデータ"
           },
           "amount" : {
-            "title" : "数量"
+            "title" : "数量",
+            "reserveWarning" : "今後ステーキングを無効化して引き出す際に必要となるネットワーク手数料として、ウォレットに少なくとも{{amount}}SOLを確保してください。"
           },
           "confirmation" : {
             "success" : {
@@ -3615,6 +3611,9 @@
         "supportLink" : "Kilnプールについての詳細を確認"
       }
     }
+  },
+  "graph" : {
+    "noGraphWarning" : "このトークンでは、グラフを使用できません"
   },
   "near" : {
     "account" : {
@@ -3871,7 +3870,7 @@
         "button" : "完了",
         "title" : "スキャンして、モバイルにエクスポートする",
         "listTitle" : "Ledger Live mobileアプリ：",
-        "step1" : "<highlight><icon>+</icon></highlight>ボタンをタップ（<highlight>アカウント</highlight>内）",
+        "step1" : "メイン画面で<highlight>「アカウントを追加」</highlight>または<highlight>「暗号資産一覧を見る」</highlight>をタップし、<highlight><icon>「+」</icon></highlight>ボタンをタップ。",
         "step2" : "<highlight>デスクトップアカウントのインポート</highlight>をタップ",
         "step3" : "ローダーが100%になるまで<highlight>LiveQRコード</highlight>をスキャンする"
       }
@@ -3886,11 +3885,15 @@
       "region" : "地域",
       "regionDesc" : "地域を選択して日付や時間、通貨をアップデートする。",
       "stock" : "マーケットインジケーターの色分け",
-      "stockDesc" : "マーケットの上昇を緑色で表示したい場合は「ウエスタン」、赤色で表示したい場合は「イースタン」を選択してください。",
-      "carouselVisibility" : "カルーセルの表示／非表示",
-      "carouselVisibilityDesc" : "ポートフォリオ上でカルーセルの表示を有効にします"
+      "stockDesc" : "マーケットの上昇を緑色で表示したい場合は「ウエスタン」、赤色で表示したい場合は「イースタン」を選択してください。"
     },
     "developer" : {
+      "search" : "検索",
+      "all" : "全て",
+      "groups" : "グループ",
+      "open" : "開く",
+      "hide" : "隠す",
+      "show" : "表示",
       "toast" : {
         "title" : "デベロッパーになりました！",
         "text" : "ワンダーランドへようこそ"
@@ -3902,8 +3905,6 @@
       "experimentalAppsDesc" : "試験的とタグ付けされたプラットフォームアプリの表示と実行を許可する",
       "catalogUrl" : "カタログアプリプロバイダーを設定",
       "catalogUrlDesc" : "カスタムカタログプロバイダーのURLを入力",
-      "catalogRampServer" : "購入/売却プロバイダーを設定",
-      "catalogRampServerDesc" : "複数のトレードプロバイダーを切り替える",
       "enablePlatformDevTools" : "プラットフォーム開発ツールの有効化",
       "enablePlatformDevToolsDesc" : "プラットフォームアプリの開発ツールウィンドウ表示を有効化",
       "customLockScreen" : "カスタムロック画面アセット",
@@ -3915,8 +3916,15 @@
       "featureFlagsRestore" : "復元",
       "featureFlagsOverride" : "上書き",
       "featureFlagsRestoreAll" : "すべてのフラグ値を復元する",
+      "flagHint" : "対象のFirebase環境で機能フラグが定義されている\n一方で、次のリストにない場合は、**exact**（完全一致）の名前を\n検索窓に入力すると、リストに表示されます。フラグ名を\n「feature」プレフィックスを付けずにキャメルケース（camelCase）で入力します。",
       "showButtonDesc" : "サイドバーに常に機能フラグボタンを表示する",
       "buttonTitle" : "フラグがローカルでオーバーライドされています",
+      "overridden" : {
+        "byEnv" : "envで上書き",
+        "overriddenLocally" : "ローカルで上書き",
+        "disableForLanguage" : "現在の言語では無効",
+        "disableForVersion" : "現在のバージョンでは無効"
+      },
       "firebaseProject" : "対象となるFirebaseプロジェクト：",
       "addLocalApp" : "ローカルアプリを追加",
       "addLocalAppDesc" : "ローカルファイルを参照し、ローカルのマニフェストファイルを使用してローカルアプリを追加する",
@@ -3954,7 +3962,7 @@
       "analytics" : "アナリティクス",
       "analyticsDesc" : "Ledgerがユーザーエクスペリエンスを改善できるよう、アナリティクスを有効にしてください。クリック、ページの閲覧、リダイレクト、アクション（送金、着金、ロックなど）、ページ末へのスクロール、アプリの（アン）インストール、アプリのバージョン、アカウント数、暗号資産と操作、セッションの持続時間、Ledgerデバイスの種類とファームウェアが含まれます。",
       "reportErrors" : "バグレポート",
-      "reportErrorsDesc" : "製品の向上に役立つレポートを、Ledgerに自動的に送信します。",
+      "reportErrorsDesc" : "製品の向上に役立つレポートを、Ledgerに自動的に送信する。",
       "launchOnboarding" : "デバイスの設定",
       "launchOnboardingDesc" : "新しいデバイスをセットアップ、または既存のデバイスを復元する。アカウントと設定はそのまま保持されます。"
     },
@@ -4010,11 +4018,13 @@
         },
         "testAnimations" : {
           "title" : "Lottieアニメーションのテスト",
-          "description" : "Ledger Liveで使用される全アニメーションをテストする"
+          "description" : "Ledger Liveで使用される全アニメーションをテストする",
+          "longDesc" : "これは、アプリで使用されるLottieアニメーションをチームが検証するためにそのまま提供されるツールです。"
         },
         "testStories" : {
           "title" : "Storylyストーリーをテストする",
-          "description" : "Ledger Liveで使用される全ストーリーをテストする"
+          "description" : "Ledger Liveで使用される全ストーリーをテストする",
+          "longDesc" : "これは、アプリで使用されるStorylyのストーリーをチームが検証するためにそのまま提供されるツールです。"
         },
         "testPostonboarding" : {
           "title" : "ポストオンボーディングをテストする",
@@ -4089,7 +4099,7 @@
     "accounts" : {
       "hideEmptyTokens" : {
         "title" : "未使用アカウントを非表示にする",
-        "desc" : "アカウントページで、残高がゼロのトークンアカウントを非表示にする。"
+        "desc" : "残高がゼロのトークンアカウントを非表示にする。"
       },
       "tokenBlacklist" : {
         "title" : "トークンを非表示",
@@ -4144,12 +4154,11 @@
     "downloadProgress" : "{{progress}}%完了",
     "checking" : "アップデートの確認中...",
     "checkSuccess" : "新しいLedger Liveアップデートをご利用いただけます。アプリを終了すると自動的にインストールされます。",
-    "quitAndInstall" : "今すぐインストールする",
+    "quitAndInstall" : "今すぐインストールして再起動する",
     "updateAvailable" : "Ledger Liveバージョン {{version}} へのアップデートが利用可能です。",
     "error" : "更新中にエラーが発生再度ダウンロードしてください",
     "reDownload" : "再度ダウンロード",
-    "nightlyWarning" : "このバージョンは自動更新できません。手動で最新バージョンをインストールしてください。",
-    "downloadNow" : "アップデートをダウンロード"
+    "nightlyWarning" : "このバージョンは自動更新できません。手動で最新バージョンをインストールしてください。"
   },
   "crash" : {
     "title" : "問題が発生しました。",
@@ -4298,7 +4307,6 @@
         "nextButton" : "はじめに",
         "noDevice" : "デバイスをお持ちでない場合",
         "buyLink" : "デバイスをお持ちですか？Nano Xの購入はこちら",
-        "recoverSignIn" : "Ledger Recoverにログイン",
         "byTapping" : "「はじめる」をタップすることで、お客様が同意したことになります。",
         "termsAndConditions" : "利用規約",
         "and" : "そして",
@@ -4327,7 +4335,7 @@
         }
       },
       "selectDevice" : {
-        "title" : "お使いのデバイスを選択してください",
+        "title" : "お使いのLedgerは何ですか？",
         "selectLabel" : "選択"
       },
       "selectUseCase" : {
@@ -4348,7 +4356,7 @@
           },
           "4" : {
             "title" : "Ledger Recoverを使用して復元",
-            "description" : "You need to have a Ledger Recover subscription."
+            "description" : "Ledger Recoverの登録が必要です。"
           }
         }
       },
@@ -4534,7 +4542,7 @@
           "useRecoverySheet" : {
             "takeYourRecoverySheet" : {
               "title" : "リカバリーシートを手元に用意する",
-              "descr" : "Nanoに同梱されているリカバリーシートを手元に用意してください。\nリカバリーシートが最初から空白でない場合は、Ledger サポートまでご連絡ください。"
+              "descr" : "Nanoに同梱されているリカバリーシートを手元に用意してください。リカバリーシートが最初から空白でない場合は、Ledgerサポートまでご連絡ください。"
             },
             "writeDownWords" : {
               "title" : "24個の単語を書き留めてください。",
@@ -4897,6 +4905,9 @@
       "claimReward" : "操作を完了するために、デバイスで確認してください。",
       "freeze" : "操作を完了するために、デバイスで確認してください。",
       "unfreeze" : "操作を完了するために、デバイスで確認してください。",
+      "withdrawExpireUnfreeze" : "操作を完了するために、デバイスで確認してください。",
+      "unDelegateResource" : "操作を完了するために、デバイスで確認してください。",
+      "legacyUnfreeze" : "操作を完了するために、デバイスで確認してください。",
       "vote" : "操作を完了するために、デバイスで確認してください。",
       "delegate" : "操作を完了するために、デバイスで確認してください。",
       "undelegate" : "操作を完了するために、デバイスで確認してください。",
@@ -4956,6 +4967,11 @@
     "cta" : "続行"
   },
   "families" : {
+    "casper" : {
+      "transferIdPlaceholder" : "任意",
+      "transferId" : "送金ID（メモ）",
+      "transferIdWarningText" : "メモを使用する場合は、受取人と情報をしっかりと確認してください"
+    },
     "cardano" : {
       "memoPlaceholder" : "任意",
       "memo" : "メモ"
@@ -5005,6 +5021,10 @@
     }
   },
   "errors" : {
+    "ReplacementTransactionUnderpriced" : {
+      "title" : "代替トランザクション手数料が低くなっています",
+      "description" : "ネットワーク手数料が低すぎる可能性があります。増額してください"
+    },
     "NoSuchAppOnProvider" : {
       "title" : "特定の設定に必要な{{appName}}アプリが見つかりません。",
       "description" : "My Ledgerからアプリの再インストールを試す"
@@ -5127,6 +5147,10 @@
       "title" : "{{currencyName}} には対応していません。",
       "description" : "この暗号資産には、未対応です。Ledgerサポートにお問合せください。"
     },
+    "DeviceAlreadySetup" : {
+      "title" : "お客様の{{device}}はすでに、シークレットリカバリーフレーズを使用して設定されています",
+      "description" : "設定されていないLedgerを接続してください。"
+    },
     "DeviceNotGenuine" : {
       "title" : "正規品でない可能性があります",
       "description" : "Ledgerサポートのアシスタントを依頼する。"
@@ -5156,12 +5180,12 @@
       "description" : "もう一度お試しください。"
     },
     "DisconnectedDevice" : {
-      "title" : "デバイスの接続が切断されているようです。",
-      "description" : "デバイスを再接続して、もう一度お試しください。"
+      "title" : "デバイスが切断されました",
+      "description" : "Ledger Liveはデバイスに接続できませんでした。もう一度お試しください。"
     },
     "DisconnectedDeviceDuringOperation" : {
-      "title" : "デバイスの接続が切断されているようです。",
-      "description" : "デバイスを再接続して、もう一度お試しください。"
+      "title" : "デバイスが切断されました",
+      "description" : "Ledger Liveはデバイスに接続できませんでした。もう一度お試しください。"
     },
     "EConnReset" : {
       "title" : "Ledgerアプリケーションストアに到達できません",
@@ -5184,16 +5208,17 @@
       "description" : "この機能にアクセスするには、ファームウェアを最新バージョンにアップデートしてください。"
     },
     "FirmwareNotRecognized" : {
-      "title" : "デバイスのファームウェアが認識されません。",
-      "description" : "Ledgerサポートにお問合せください。"
+      "title" : "プロバイダーが無効です",
+      "description" : "「My Ledgerプロバイダー」の設定を変更する必要があります。変更するには、Ledger Live の「設定」を開き、「試験的機能」を選択して、別のプロバイダーを選択します。",
+      "goToSettingsCTA" : "設定を開く"
     },
     "HardResetFail" : {
       "title" : "リセットできませんでした。",
       "description" : "問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにお問い合わせください。"
     },
     "LanguageInstallRefusedOnDevice" : {
-      "title" : "言語のインストールがデバイス上で拒否されました",
-      "description" : "もう一度お試しください。問題が解決しない場合は、以下のボタンを使ってログを保存し、Ledgerサポートに提出してください。"
+      "title" : "デバイスで言語の復元が\nキャンセルされました",
+      "description" : "これが間違いである場合は、今すぐ再試行してください。"
     },
     "RestoreLanguageInstallRefusedOnDevice" : {
       "title" : "Ledger Staxで言語の復元がキャンセルされました",
@@ -5269,6 +5294,10 @@
       "title" : "インターネットがダウンしているようです。",
       "description" : "インターネット接続を確認してください。"
     },
+    "NetworkError" : {
+      "title" : "ネットワークエラー発生",
+      "description" : "再度お試しください。"
+    },
     "NoAddressesFound" : {
       "title" : "アカウントが見つかりませんでした。",
       "description" : "アドレス計算時に問題が発生しました。再試行するか、Ledgerサポートにお問い合わせください。"
@@ -5290,6 +5319,18 @@
       "title" : "トランザクション手数料の支払いに十分なEGLDがありません",
       "description" : "EGLDをアカウントに送付し、トランザクションの支払いを行ってください。"
     },
+    "NotEnoughVTHO" : {
+      "title" : "VTHO資金が不足しています",
+      "description" : "アカウントに十分なVTHO資金があることをご確認ください。"
+    },
+    "MustBeVechain" : {
+      "title" : "VeChainアカウントではありません",
+      "description" : "コインがVTHOまたはVETであることをご確認ください"
+    },
+    "ImpossibleToCalculateAmountAndFees" : {
+      "title" : "金額と手数料を算出できません",
+      "description" : "金額と手数料を算出できません"
+    },
     "NotEnoughBalance" : {
       "title" : "資金が不足しています。",
       "description" : "アカウントに十分な資金があることを確認してください。"
@@ -5298,7 +5339,10 @@
       "title" : "送付先アドレスが無効です。少なくとも{{minimalAmount}}以上を送付して有効化してください。"
     },
     "NotEnoughGas" : {
-      "title" : "親アカウントで、ネットワーク手数料用の残高が不足しています"
+      "title" : "{{cryptoName}}ネットワークを使用しているため、スワップするにはネットワーク手数料{{fees}}{{ticker}}が必要です。<link0>{{ticker}}を購入する</link0>"
+    },
+    "NotEnoughGasSwap" : {
+      "title" : "{{cryptoName}}ネットワークを使用しているため、スワップするにはネットワーク手数料{{fees}}{{ticker}}が必要です。<link0>{{ticker}}を購入する</link0>"
     },
     "OperatingSystemOutdated" : {
       "title" : "お使いのオペレーティングシステムのバージョンが古くなっています",
@@ -5361,7 +5405,7 @@
     },
     "TransportRaceCondition" : {
       "title" : "問題が発生しました。デバイスを再接続してください。",
-      "description" : "{{message}}"
+      "description" : "Ledgerデバイスではアクションがすでに保留中です。拒否するか再接続してください。"
     },
     "TransportStatusError" : {
       "title" : "問題が発生しました。デバイスを再接続してください。",
@@ -5379,12 +5423,16 @@
       "title" : "My Ledgerがデバイスで拒否されました"
     },
     "UserRefusedFirmwareUpdate" : {
-      "title" : "デバイス上でアップデートがキャンセルされました",
-      "description" : "デバイスでOSアップデートのインストールが拒否されました。誤った操作である場合は、アップデートを再開してください。"
+      "title" : "デバイスでOSアップデートのインストールが\nキャンセルされました",
+      "description" : "誤った操作である場合は、アップデートを再開してください。"
     },
     "UserRefusedOnDevice" : {
       "title" : "アクションが拒否されました。",
       "description" : "デバイス上で操作を拒否しました。"
+    },
+    "ExpertModeRequired" : {
+      "title" : "エキスパートモードが必要です",
+      "description" : "エキスパートモードを有効にする必要があります。"
     },
     "TransactionRefusedOnDevice" : {
       "title" : "デバイス上で操作が却下されました。",
@@ -5403,12 +5451,12 @@
       "description" : "デバイスのダッシュボードに戻ってください。"
     },
     "WebsocketConnectionError" : {
-      "title" : "もう一度お試しください。（接続エラー）",
-      "description" : null
+      "title" : "ネットワークエラー",
+      "description" : "インターネットに接続していることを確認し、もう一度お試しください。"
     },
     "WebsocketConnectionFailed" : {
-      "title" : "申し訳ありませんが、もう一度お試しください。（接続が切断されました）",
-      "description" : null
+      "title" : "ネットワークエラー",
+      "description" : "インターネットに接続していることを確認し、もう一度お試しください。"
     },
     "WrongDeviceForAccount" : {
       "title" : "問題が発生しました。",
@@ -5437,6 +5485,15 @@
       "title" : "接続に失敗しました。",
       "description" : "デバイスが検出されましたが接続できません。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにお問い合わせください。"
     },
+    "CasperInvalidTransferId" : {
+      "title" : "送金IDは、{{maxTransferId}}より小さい正数である必要があります"
+    },
+    "InvalidMinimumAmount" : {
+      "title" : "最低送金額は{{minAmount}}です"
+    },
+    "MayBlockAccount" : {
+      "title" : "アカウントの残高は、送付に必要な{{minAmount}}未満になります"
+    },
     "ETHAddressNonEIP" : {
       "title" : "自動認証が利用できません：アドレスを慎重に確認してください。",
       "description" : null
@@ -5446,7 +5503,7 @@
       "description" : "NFTの送付機能は、Nano XとNano S+でのみご利用いただけます。Nano SでNFTを送付する方法については、当社のカスタマーサポートのプラットフォームをご覧ください。"
     },
     "TransactionHasBeenValidatedError" : {
-      "title" : "速度を上げたりキャンセルすることはできません",
+      "title" : "速度を上げたり、キャンセルすることはできません",
       "description" : "このトランザクションはすでに検証済みです"
     },
     "CantScanQRCode" : {
@@ -5454,6 +5511,9 @@
     },
     "FeeNotLoaded" : {
       "title" : "手数料レートを読み込めませんでした。手動で手数料を設定してください"
+    },
+    "FeeNotLoadedSwap" : {
+      "title" : "技術的な問題のため、ネットワーク手数料の見積もりに失敗しました。再試行するか、資産を変更してください。"
     },
     "FeeRequired" : {
       "title" : "手数料がかかります。"
@@ -5519,8 +5579,7 @@
       "description" : "最新版のBitcoinアプリとEthereumアプリを、最初にインストールしてください。"
     },
     "UserRefusedDeviceNameChange" : {
-      "title" : "デバイス上で名前の変更がキャンセルされました。",
-      "description" : "もう一度やり直して、デバイスの名前を変更してください。"
+      "title" : "デバイスで名前の変更がキャンセルされました"
     },
     "SyncError" : {
       "title" : "同期エラー",
@@ -5534,7 +5593,7 @@
       "title" : "凍結解除する資産がありません。",
       "description" : "Energy(エネルギー)に連携している凍結解除アカウントがありません。"
     },
-    "TronUnfreezeNotExpired" : {
+    "TronLegacyUnfreezeNotExpired" : {
       "title" : "凍結解除はまだ利用できません。",
       "description" : "前回の凍結から3日後にご利用ください。"
     },
@@ -5572,16 +5631,26 @@
     "TronNotEnoughEnergy" : {
       "title" : "エネルギーが必要額を満たしていません。手数料には最大50TRXが必要となります。"
     },
+    "TronNoUnfrozenResource" : {
+      "title" : "凍結解除された引き出し可能なリソースはありません"
+    },
+    "TronInvalidUnDelegateResourceAmount" : {
+      "title" : "デリゲートされたリソースが不足しています"
+    },
+    "TronUnfreezeNotExpired" : {
+      "title" : "リソースはまだ凍結解除されていません",
+      "description" : "出金するには{{time}}まで待つ必要があります"
+    },
     "PairingFailed" : {
       "title" : "ペアリングに失敗しました",
       "description" : "再試行するか、疑わしい場合はLedgerサポートにお問い合わせください。"
     },
     "GenuineCheckFailed" : {
       "title" : "正規品チェックに失敗しました。",
-      "description" : "問題が発生しました。再試行するか、疑わしい場合はLedgerサポートにお問い合わせください。"
+      "description" : "問題が発生しました。再試行するか、疑わしい場合はLedgerサポートにご連絡ください。"
     },
     "EthAppPleaseEnableContractData" : {
-      "title" : "Ethereumアプリの設定でコントラクトデータを有効にしてください。"
+      "title" : "Ethereumアプリの設定からブラインド署名またはコントラクトデータを有効にしてください"
     },
     "InvalidXRPTag" : {
       "title" : "無効なXRP宛先タグ"
@@ -5686,6 +5755,9 @@
     "CardanoNotEnoughFunds" : {
       "title" : "お支払いに十分な資金があることをご確認ください"
     },
+    "CardanoStakeKeyDepositError" : {
+      "title" : "デポジット用に{{depositAmount}}ADAを所有していることを確認してください"
+    },
     "StacksMemoTooLong" : {
       "title" : "メモの長さが長すぎます"
     },
@@ -5746,10 +5818,6 @@
       "title" : "画像のダウンロードに失敗しました",
       "description" : "別の画像でもう一度お試しください"
     },
-    "ImageMetadataLoadingError" : {
-      "title" : "画像メタデータの読み込みに失敗しました",
-      "description" : "別の画像でもう一度お試しください"
-    },
     "ImageTooLargeError" : {
       "title" : "画像が大きすぎます",
       "description" : "小さい画像でもう一度お試しください"
@@ -5771,12 +5839,12 @@
       "description" : "別の画像でもう一度お試しください"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "Ledger Staxでロック画面がキャンセルされました",
-      "description" : "この画像が正しくない場合は、別の画像で再度お試しいただけます。"
+      "title" : "Ledger Staxでロック画面画像のインストールが\nキャンセルされました",
+      "description" : "これが間違いである場合は、今すぐ再試行してください。"
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "Ledger Staxでロック画面がキャンセルされました",
-      "description" : "この画像が正しくない場合は、別の画像で再度お試しいただけます。"
+      "title" : "Ledger Staxでロック画面画像のインストールが\nキャンセルされました",
+      "description" : "これが間違いである場合は、今すぐ再試行してください。"
     },
     "ImageDoesNotExistOnDevice" : {
       "title" : "お持ちのLedger Staxには削除するロック画面の画像がありません",
@@ -5820,11 +5888,9 @@
       "descriptionWithProductName" : "{{ productName }}のロックを解除して、再度お試しください。"
     },
     "DeviceNotOnboardedError" : {
-      "title" : "お使いのデバイスはまだ使用できません",
-      "titleWithProductName" : "{{ productName }}はまだ使用準備ができていません",
-      "description" : "最初にデバイスをセットアップする必要があります。\nセットアッププロセスをご案内します。",
-      "descriptionWithProductName" : "最初に{{ productName }}をセットアップする必要があります。\nセットアッププロセスをご案内します。",
-      "goToOnboardingButton" : "デバイスをセットアップ",
+      "title" : "Ledgerが設定されていません",
+      "description" : "セットアップして使用を開始してください。セットアッププロセスをご案内します。",
+      "goToOnboardingButton" : "Ledgerをセットアップ",
       "goToOnboardingButtonWithProductName" : "{{ productName }}をセットアップする"
     },
     "EtherscanAPIError" : {
@@ -5833,6 +5899,13 @@
     },
     "GasEstimationError" : {
       "title" : "ガスの見積もりに失敗しました"
+    },
+    "FailedToRetrieveFirmwareUpdateInfo" : {
+      "title" : "OSアップデートチェックに失敗しました",
+      "description" : "問題が発生しました。再試行するか、疑わしい場合はLedgerサポートにお問い合わせください。"
+    },
+    "TezosUnrevealedAccount" : {
+      "title" : "スワップ利用不可：Tezosアカウントで最初の送付/デリゲートを行うか、ペアを変更する必要があります。"
     }
   },
   "cryptoOrg" : {
@@ -5871,7 +5944,7 @@
     "managerCTARemove" : "削除",
     "steps" : {
       "choose" : {
-        "stepLabel" : "画像を選択してください",
+        "stepLabel" : "画像を選択",
         "description" : "(...) として設定する画像を選択",
         "pickFromNftGallery" : "NFTギャラリーから選択",
         "myNfts" : "私のNFT",
@@ -5879,58 +5952,60 @@
         "chooseNft" : "NFTを選択",
         "remove" : "現在の画像を削除する",
         "selectNft" : "NFTを選択",
-        "previousSelectNft" : "戻る",
         "nftEmptyStateTitle" : "表示できるNFTがありません",
         "nftEmptyStateDescription" : "NFTをウォレットに追加して始めます。"
       },
       "adjust" : {
-        "stepLabel" : "画像を調整",
-        "rotate" : "回転"
+        "stepLabel" : "クロップ",
+        "rotate" : "回転",
+        "confirmCrop" : "トリミングを確定"
       },
       "contrast" : {
-        "stepLabel" : "コントラストを選択"
+        "stepLabel" : "コントラストを設定",
+        "confirmContrast" : "コントラストを確定"
       },
       "transfer" : {
-        "stepLabel" : "送金",
-        "uploadAnotherImage" : "他の画像をアップロードする",
-        "allowPreview" : "{{productName}}でのロック画面の画像の読み込みを許可します",
-        "allowConfirmPreview" : "{{productName}}でロック画面の画像の復元を許可する",
-        "loadingPicture" : "読み込み中...",
+        "stepLabel" : "読み込む",
+        "useAnotherPicture" : "別の写真をアップロード",
+        "allowPreview" : "「Load picture（画像を読み込む）」をタップして\nロック画面画像をカスタマイズする",
+        "allowConfirmPreview" : "「Load picture（画像を読み込む）」をタップして\nロック画面画像を復元する",
+        "loadingPicture" : "インストール中...",
+        "voila" : "これで完了です！",
         "imageLoaded" : "{{productName}}に画像が読み込まれました",
         "confirmPicture" : "気に入りましたか？\n",
-        "confirmRestorePicture" : "ロック画面の画像の復元を確定する",
+        "confirmRestorePicture" : "「Keep（保持）」をタップすると\nロック画面画像が確定されます",
         "doThisLater" : "後で"
       }
     },
     "postOnboarding" : {
-      "title" : "Ledgerデバイスをパーソナライズ",
-      "description" : "画面をカスタマイズ",
+      "title" : "ロック画面をカスタマイズ",
+      "description" : "Ledger Staxのロック画面として設定するNFTまたは写真を選択する。",
       "actionCompletedPopupLabel" : "デバイスがパーソナライズされました"
     },
-    "customImageSet" : "スクリーン設定をロック",
-    "finishCTA" : "終了する"
+    "customImageSet" : "ロック画面がカスタマイズされました",
+    "finishCTA" : "閉じる"
   },
   "onboardingAppInstall" : {
     "restore" : {
       "title" : "{{deviceName}}と同じアプリをインストールしますか？",
       "titleNoDeviceName" : "前のLedgerデバイスと同じアプリをインストールしますか？",
       "subtitle" : "アプリはいつでもインストールまたは削除できます。",
-      "installCTA" : "アプリケーションの復元",
+      "installCTA" : "今すぐインストールする",
       "skipCTA" : "後で行う"
     },
     "default" : {
-      "title" : "{{ productName }} はアプリを使用し、安全なブロックチェーントランザクションを有効にします",
-      "subtitle" : "既定のアプリ一式をダウンロードすることをお勧めします。後でさらにダウンロードできます。",
-      "installCTA" : "アプリケーションをインストール",
+      "title" : "{{ productName }}には、独自のアプリがあります。トランザクションには、これらの専用アプリが必要となります。",
+      "subtitle" : "例えば、{{productName}}のBitcoinアプリはBitcoinトランザクションに署名するのに必要です。\n\nデフォルトのアプリをインストールして、{{productName}}でのトランザクションの準備を整えてください。",
+      "installCTA" : "今すぐインストールする",
       "skipCTA" : "後で行う"
     },
     "progress" : {
       "loading" : "読み込み中...",
-      "resolving" : "依存関係を解決しています",
       "progress" : "アプリのインストール中でもLedger Liveをお使いいただけます。",
       "disclaimer" : "Ledger Liveからいつでもアプリを追加または削除できます。",
       "skippedInfo" : "一部のアプリはご利用いただけません。{{ productName }}は今後開発予定です。",
-      "skipped" : "{{ productName }}は現在はご利用いただけません。"
+      "skipped" : "{{ productName }}は現在はご利用いただけません。",
+      "app" : "{{appName}}アプリ"
     },
     "cancelled" : {
       "title" : "{{productName}}でアプリのインストールがキャンセルされました",
@@ -5954,7 +6029,6 @@
     "networkError" : {
       "title" : "ネットワークエラー",
       "subtitle" : "何か問題が発生しました。もう一度お試しください。問題が解決しない場合は、ログを保存し、Ledgerサポートにご連絡ください。",
-      "tryAgain" : "再試行",
       "contactSupport" : "Ledgerサポートへ問い合わせ",
       "saveLog" : "ログを保存"
     }

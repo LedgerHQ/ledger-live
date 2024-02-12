@@ -25,8 +25,7 @@ export const Default: ComponentStory<typeof NumberedList> = (args: typeof Defaul
           number: 42,
         },
         {
-          description:
-            "Enter your recovery phrase on your new device to restore access to your crypto.",
+          description: "Scan QR code until loader hits 100%.",
         },
       ]}
       itemContainerProps={{ alignItems: args.alignItems }}

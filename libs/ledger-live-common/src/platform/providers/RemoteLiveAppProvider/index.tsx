@@ -4,9 +4,9 @@ import { AppPlatform, LiveAppManifest, Loadable } from "../../types";
 
 import api from "./api";
 import { FilterParams } from "../../filters";
-import { getEnv } from "../../../env";
 import useIsMounted from "../../../hooks/useIsMounted";
 import { AppManifest, Visibility } from "../../../wallet-api/types";
+import useEnv from "../../../hooks/useEnv";
 
 const initialState: Loadable<LiveAppRegistry> = {
   isLoading: false,
@@ -39,6 +39,7 @@ type FetchLiveAppCatalogPrams = {
   platform: AppPlatform;
   allowDebugApps: boolean;
   allowExperimentalApps: boolean;
+  llVersion: string;
 };
 
 type LiveAppProviderProps = {
@@ -54,7 +55,9 @@ export function useRemoteLiveAppManifest(appId?: string): LiveAppManifest | unde
     return undefined;
   }
 
-  return liveAppRegistry.value.liveAppById[appId];
+  return (
+    liveAppRegistry.value.liveAppFilteredById[appId] || liveAppRegistry.value.liveAppById[appId]
+  );
 }
 
 export function useRemoteLiveAppContext(): LiveAppContextType {
@@ -94,13 +97,14 @@ export function RemoteLiveAppProvider({
   const [state, setState] = useState<Loadable<LiveAppRegistry>>(initialState);
   const [provider, setProvider] = useState<string>(initialProvider);
 
-  const { allowExperimentalApps, allowDebugApps, apiVersions, platform } = parameters;
+  const { allowExperimentalApps, allowDebugApps, apiVersions, platform, llVersion } = parameters;
 
   // apiVersion renamed without (s) because param
   const apiVersion = apiVersions ? apiVersions : ["1.0.0", "2.0.0"];
 
-  const providerURL: string =
-    provider === "production" ? getEnv("PLATFORM_MANIFEST_API_URL") : provider;
+  const envProviderURL = useEnv("PLATFORM_MANIFEST_API_URL");
+
+  const providerURL = provider === "production" ? envProviderURL : provider;
 
   const updateManifests = useCallback(async () => {
     setState(currentState => ({
@@ -121,6 +125,7 @@ export function RemoteLiveAppProvider({
         branches,
         platform,
         private: false,
+        llVersion,
       });
 
       if (!isMounted()) return;
@@ -129,6 +134,10 @@ export function RemoteLiveAppProvider({
         value: {
           liveAppByIndex: allManifests,
           liveAppFiltered: catalogManifests,
+          liveAppFilteredById: catalogManifests.reduce((acc, liveAppManifest) => {
+            acc[liveAppManifest.id] = liveAppManifest;
+            return acc;
+          }, {}),
           liveAppById: allManifests.reduce((acc, liveAppManifest) => {
             acc[liveAppManifest.id] = liveAppManifest;
             return acc;

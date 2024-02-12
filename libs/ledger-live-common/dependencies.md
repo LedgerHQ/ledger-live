@@ -9,7 +9,7 @@ yarn upgrade-interactive -i --latest
 ### Direct Dependencies
 
 | library name (what).                        | description of its usage (why)                                    | ideal frequency of update (when) / status                            |
-|---------------------------------------------|-------------------------------------------------------------------| -------------------------------------------------------------------- |
+| ------------------------------------------- | ----------------------------------------------------------------- | -------------------------------------------------------------------- |
 | @celo/contractkit                           | Celo coin integration                                             | monthly                                                              |
 | @celo/wallet-base                           | Celo coin integration                                             | monthly                                                              |
 | @celo/wallet-ledger                         | Celo coin integration                                             | monthly                                                              |
@@ -55,9 +55,8 @@ yarn upgrade-interactive -i --latest
 | @taquito/utils                              | Tezos coin integration                                            | monthly                                                              |
 | @types/bchaddrjs                            | Bitcoin coin integration                                          | monthly                                                              |
 | @types/bs58check                            | Bitcoin coin integration                                          | monthly                                                              |
-| @walletconnect/client                       | Wallet connect feature                                            | monthly                                                              |
 | @xstate/react                               | used for some components                                          |
-TBD DEPRECATE?                                                       |
+| TBD DEPRECATE?                              |
 | algosdk                                     | Algorand coin integration                                         | monthly                                                              |
 | @zondax/ledger-filecoin                     | Filecoin coin integration                                         | monthly                                                              |
 | @zondax/izari-filecoin                      | Filecoin coin integration                                         | monthly                                                              |

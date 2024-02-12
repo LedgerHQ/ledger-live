@@ -6,34 +6,23 @@ import {
   OpDetailsSection,
 } from "~/renderer/drawers/OperationDetails/styledComponents";
 import Ellipsis from "~/renderer/components/Ellipsis";
-import type { Account } from "@ledgerhq/types-live";
+import { InternetComputerOperation } from "@ledgerhq/live-common/families/internet_computer/types";
 
 type OperationDetailsExtraProps = {
-  extra: { [key: string]: string };
-  type: string;
-  account: Account;
+  operation: InternetComputerOperation;
 };
 
-const OperationDetailsExtra = ({ extra }: OperationDetailsExtraProps) => {
-  return (
-    <>
-      {Object.keys(extra).map(key => {
-        if (["memo"].includes(key)) {
-          return (
-            <OpDetailsSection key={key}>
-              <OpDetailsTitle>
-                <Trans i18nKey={`operationDetails.extra.${key}`} defaults={key} />
-              </OpDetailsTitle>
-              <OpDetailsData>
-                <Ellipsis>{extra[key] ?? "-"}</Ellipsis>
-              </OpDetailsData>
-            </OpDetailsSection>
-          );
-        }
-
-        return null;
-      })}
-    </>
+const OperationDetailsExtra = ({ operation }: OperationDetailsExtraProps) => {
+  const { extra } = operation;
+  return !extra.memo ? null : (
+    <OpDetailsSection key={extra.memo}>
+      <OpDetailsTitle>
+        <Trans i18nKey={`operationDetails.extra.memo`} />
+      </OpDetailsTitle>
+      <OpDetailsData>
+        <Ellipsis>{extra.memo}</Ellipsis>
+      </OpDetailsData>
+    </OpDetailsSection>
   );
 };
 

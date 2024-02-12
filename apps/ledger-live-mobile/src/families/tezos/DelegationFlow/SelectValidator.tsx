@@ -8,6 +8,7 @@ import {
   Platform,
   Linking,
   KeyboardEventListener,
+  ListRenderItem,
 } from "react-native";
 import { useSelector } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -17,23 +18,23 @@ import { RecipientRequired } from "@ledgerhq/errors";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import type { Transaction as TezosTransaction } from "@ledgerhq/live-common/families/tezos/types";
-import type { Baker } from "@ledgerhq/live-common/families/tezos/bakers";
+import type { Baker } from "@ledgerhq/live-common/families/tezos/types";
 import { useBakers } from "@ledgerhq/live-common/families/tezos/bakers";
 import whitelist from "@ledgerhq/live-common/families/tezos/bakers.whitelist-default";
 import { useTheme } from "@react-navigation/native";
-import { accountScreenSelector } from "../../../reducers/accounts";
-import { TrackScreen } from "../../../analytics";
-import { ScreenName } from "../../../const";
-import InfoModal from "../../../components/InfoModal";
-import LText, { getFontStyle } from "../../../components/LText";
-import Touchable from "../../../components/Touchable";
-import Button from "../../../components/Button";
-import TextInput from "../../../components/TextInput";
-import TranslatedError from "../../../components/TranslatedError";
-import ExternalLink from "../../../components/ExternalLink";
-import Info from "../../../icons/Info";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { TrackScreen } from "~/analytics";
+import { ScreenName } from "~/const";
+import InfoModal from "~/components/InfoModal";
+import LText, { getFontStyle } from "~/components/LText";
+import Touchable from "~/components/Touchable";
+import Button from "~/components/Button";
+import TextInput from "~/components/TextInput";
+import TranslatedError from "~/components/TranslatedError";
+import ExternalLink from "~/components/ExternalLink";
+import Info from "~/icons/Info";
 import BakerImage from "../BakerImage";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { TezosDelegationFlowParamList } from "./types";
 
 const keyExtractor = (baker: Baker) => baker.address;
@@ -176,7 +177,7 @@ export default function SelectValidator({ navigation, route }: Props) {
   }
 
   const onChangeText = useCallback(
-    recipient => {
+    (recipient: string) => {
       const bridge = getAccountBridge(account, parentAccount);
       setTransaction(
         bridge.updateTransaction(transaction, {
@@ -220,7 +221,7 @@ export default function SelectValidator({ navigation, route }: Props) {
     },
     [account, parentAccount, route.params, navigation, status],
   );
-  const renderItem = useCallback(
+  const renderItem: ListRenderItem<Baker> = useCallback(
     ({ item }) => <BakerRow baker={item} onPress={onItemPress} />,
     [onItemPress],
   );

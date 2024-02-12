@@ -7,7 +7,6 @@
 */
 
 import { ipcRenderer } from "electron";
-import * as remote from "@electron/remote";
 import logo from "./logo.svg";
 import palettes from "~/renderer/styles/palettes";
 const appLoaded = () => {
@@ -27,9 +26,14 @@ const appLoaded = () => {
 };
 const reloadRenderer = () => ipcRenderer.invoke("reloadRenderer");
 
+const params = new URLSearchParams(window.location.search);
+
 // cf. https://gist.github.com/codebytere/409738fcb7b774387b5287db2ead2ccb
 const openWindow = (id: number) => ipcRenderer.send("webview-dom-ready", id);
+
+// TODO in future, we should use contextBridge
 window.api = {
+  appDirname: params.get("appDirname") || "",
   appLoaded,
   reloadRenderer,
   openWindow,
@@ -39,10 +43,11 @@ window.api = {
  * This param "theme" that we are using is set in the main thread,
  * in the main/window-lifecycle.js function loadWindow()
  */
-const theme = new URLSearchParams(window.location.search).get("theme") as "dark" | "light" | "null";
+const theme = params.get("theme") as "dark" | "light" | "null";
 const osTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 const palette = palettes[theme && theme !== "null" ? theme : osTheme] || palettes.dark;
-remote.getCurrentWindow().setBackgroundColor(palette.background.default);
+ipcRenderer.send("set-background-color", palette.background.default);
+
 window.addEventListener("DOMContentLoaded", () => {
   const imgNode = document.getElementById("loading-logo") as unknown as HTMLImageElement;
   const loaderContainer = document.getElementById("loader-container");

@@ -29,8 +29,8 @@ import quitApp from "./quitApp";
 import { LatestFirmwareVersionRequired } from "../errors";
 import { mustUpgrade } from "../apps";
 import isUpdateAvailable from "./isUpdateAvailable";
-import manager from "../manager";
 import { LockedDeviceEvent } from "./actions/types";
+import { getLatestFirmwareForDeviceUseCase } from "../device/use-cases/getLatestFirmwareForDeviceUseCase";
 
 export type RequiresDerivation = {
   currencyId: string;
@@ -71,7 +71,6 @@ export type ConnectAppEvent =
     }
   | {
       type: "device-permission-requested";
-      wording: string;
     }
   | {
       type: "device-permission-granted";
@@ -138,7 +137,7 @@ export const openAppFromDashboard = (
       merge(
         // Nb Allows LLD/LLM to update lastSeenDevice, this can run in parallel
         // since there are no more device exchanges.
-        from(manager.getLatestFirmwareForDevice(deviceInfo)).pipe(
+        from(getLatestFirmwareForDeviceUseCase(deviceInfo)).pipe(
           concatMap(latestFirmware =>
             of<ConnectAppEvent>({
               type: "device-update-last-seen",
@@ -160,7 +159,6 @@ export const openAppFromDashboard = (
             ),
             catchError(e => {
               if (e && e instanceof TransportStatusError) {
-                // @ts-expect-error TransportStatusError to be typed on ledgerjs
                 switch (e.statusCode) {
                   case 0x6984: // No StatusCodes definition
                   case 0x6807: // No StatusCodes definition
@@ -171,7 +169,7 @@ export const openAppFromDashboard = (
                     }) as Observable<ConnectAppEvent>;
                   case StatusCodes.CONDITIONS_OF_USE_NOT_SATISFIED:
                   case 0x5501: // No StatusCodes definition
-                    return throwError(new UserRefusedOnDevice());
+                    return throwError(() => new UserRefusedOnDevice());
                 }
               } else if (e instanceof LockedDeviceError) {
                 // openAppFromDashboard is exported, so LockedDeviceError should be handled here too
@@ -180,7 +178,7 @@ export const openAppFromDashboard = (
                 } as ConnectAppEvent);
               }
 
-              return throwError(e);
+              return throwError(() => e);
             }),
           ),
         ),
@@ -197,7 +195,7 @@ const attemptToQuitApp = (transport, appAndVersion?: AppAndVersion): Observable<
             expected: true,
           }),
         ),
-        catchError(e => throwError(e)),
+        catchError(e => throwError(() => e)),
       )
     : of({
         type: "ask-quit-app",
@@ -231,7 +229,7 @@ const derivationLogic = (
       },
     })),
     catchError(e => {
-      if (!e) return throwError(e);
+      if (!e) return throwError(() => e);
 
       if (e instanceof BtcUnmatchedApp) {
         return of<ConnectAppEvent>({
@@ -241,7 +239,6 @@ const derivationLogic = (
       }
 
       if (e instanceof TransportStatusError) {
-        // @ts-expect-error TransportStatusError to be typed on ledgerjs
         const { statusCode } = e;
 
         if (
@@ -270,7 +267,7 @@ const derivationLogic = (
         } as ConnectAppEvent);
       }
 
-      return throwError(e);
+      return throwError(() => e);
     }),
   );
 
@@ -309,7 +306,7 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
                 if (requireLatestFirmware || outdatedApp) {
                   return from(getDeviceInfo(transport)).pipe(
                     mergeMap((deviceInfo: DeviceInfo) =>
-                      from(manager.getLatestFirmwareForDevice(deviceInfo)).pipe(
+                      from(getLatestFirmwareForDeviceUseCase(deviceInfo)).pipe(
                         mergeMap((latest: FirmwareUpdateContext | undefined | null) => {
                           const isLatest =
                             !latest || semver.eq(deviceInfo.version, latest.final.version);
@@ -322,18 +319,20 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
                               mergeMap(isAvailable =>
                                 isAvailable
                                   ? throwError(
-                                      new UpdateYourApp(undefined, {
-                                        managerAppName: outdatedApp.name,
-                                      }),
+                                      () =>
+                                        new UpdateYourApp(undefined, {
+                                          managerAppName: outdatedApp.name,
+                                        }),
                                     )
                                   : throwError(
-                                      new LatestFirmwareVersionRequired(
-                                        "LatestFirmwareVersionRequired",
-                                        {
-                                          latest: latest?.final.version,
-                                          current: deviceInfo.version,
-                                        },
-                                      ),
+                                      () =>
+                                        new LatestFirmwareVersionRequired(
+                                          "LatestFirmwareVersionRequired",
+                                          {
+                                            latest: latest?.final.version,
+                                            current: deviceInfo.version,
+                                          },
+                                        ),
                                     ),
                               ),
                             );
@@ -349,10 +348,11 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
                             });
                           } else {
                             return throwError(
-                              new LatestFirmwareVersionRequired("LatestFirmwareVersionRequired", {
-                                latest: latest.final.version,
-                                current: deviceInfo.version,
-                              }),
+                              () =>
+                                new LatestFirmwareVersionRequired("LatestFirmwareVersionRequired", {
+                                  latest: latest.final.version,
+                                  current: deviceInfo.version,
+                                }),
                             );
                           }
                         }),
@@ -437,14 +437,13 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
               }
 
               if (e && e instanceof TransportStatusError) {
-                // @ts-expect-error TransportStatusError to be typed on ledgerjs
                 switch (e.statusCode) {
                   case StatusCodes.CLA_NOT_SUPPORTED: // in 1.3.1 dashboard
                   case StatusCodes.INS_NOT_SUPPORTED: // in 1.3.1 and bitcoin app
                     // fallback on "old way" because device does not support getAppAndVersion
                     if (!requiresDerivation) {
                       // if there is no derivation, there is nothing we can do to check an app (e.g. requiring non coin app)
-                      return throwError(new FirmwareOrAppUpdateRequired());
+                      return throwError(() => new FirmwareOrAppUpdateRequired());
                     }
 
                     return derivationLogic(transport, {
@@ -458,7 +457,7 @@ const cmd = ({ deviceId, request }: Input): Observable<ConnectAppEvent> => {
                 } as ConnectAppEvent);
               }
 
-              return throwError(e);
+              return throwError(() => e);
             }),
           );
 

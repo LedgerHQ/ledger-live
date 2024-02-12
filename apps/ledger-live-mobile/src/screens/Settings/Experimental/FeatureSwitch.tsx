@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 
 import { Switch } from "@ledgerhq/native-ui";
-import { EnvName } from "@ledgerhq/live-common/env";
-import Track from "../../../analytics/Track";
+import { EnvName } from "@ledgerhq/live-env";
+import Track from "~/analytics/Track";
 
 type Props = {
   name: EnvName;

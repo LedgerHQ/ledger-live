@@ -41,7 +41,6 @@ type Props = {
   placement?: Placement;
   arrow?: boolean;
   hideOnClick?: boolean;
-  disableWrapper?: boolean;
   containerStyle?: React.CSSProperties;
 };
 
@@ -52,7 +51,6 @@ const ToolTip = ({
   content,
   delay = null,
   enabled = true,
-  disableWrapper = false,
   placement = "top",
   arrow = true,
   hideOnClick = true,
@@ -72,11 +70,7 @@ const ToolTip = ({
       hideOnClick={hideOnClick}
       className={`bg-${tooltipBg ? tooltipBg.replace(/\./g, "-") : "default"}`}
     >
-      {disableWrapper ? (
-        <>{children}</>
-      ) : (
-        <ChildrenContainer style={containerStyle}>{children}</ChildrenContainer>
-      )}
+      <ChildrenContainer style={containerStyle}>{children}</ChildrenContainer>
     </Tippy>
   );
 };

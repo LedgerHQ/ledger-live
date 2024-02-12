@@ -11,13 +11,23 @@ import {
   Link as TextLink,
   ScrollListContainer,
 } from "@ledgerhq/native-ui";
-import { urls } from "../../../../../config/urls";
+import { urls } from "~/utils/urls";
 
 const bullets = [
   "onboarding.stepPairNew.infoModal.bullets.0.label",
   "onboarding.stepPairNew.infoModal.bullets.1.label",
   "onboarding.stepPairNew.infoModal.bullets.2.label",
 ];
+
+const OS_MAPPING = {
+  android: "Android",
+  ios: "iOS",
+  windows: "Windows",
+  macos: "MacOS",
+  web: "Web",
+};
+
+const getOSName = (os: Platform["OS"]) => OS_MAPPING[os] || os;
 
 const BluetoothConnection = () => {
   const { t } = useTranslation();
@@ -40,7 +50,7 @@ const BluetoothConnection = () => {
             items={bullets.map(item => ({
               title: (
                 <Text variant="body" color="neutral.c80">
-                  <Trans i18nKey={item} values={{ Os: Platform.OS }}>
+                  <Trans i18nKey={item} values={{ Os: getOSName(Platform.OS) }}>
                     <Text>{""}</Text>
                     <Text uppercase fontWeight="bold">
                       {""}

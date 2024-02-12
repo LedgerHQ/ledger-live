@@ -40,7 +40,7 @@ const FeatureFlagDetails: React.FC<Props> = props => {
     overriddenByEnv,
     overridesRemote,
     enabledOverriddenForCurrentLanguage,
-    enabledOverriddenForCurrentMobileVersion,
+    enabledOverriddenForCurrentVersion,
   } = flagValue;
 
   return (
@@ -66,7 +66,7 @@ const FeatureFlagDetails: React.FC<Props> = props => {
               disabled for current language
             </Tag>
           )}
-          {enabledOverriddenForCurrentMobileVersion && (
+          {enabledOverriddenForCurrentVersion && (
             <Tag my={1} mr={2}>
               disabled for current version
             </Tag>

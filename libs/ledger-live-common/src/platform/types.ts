@@ -7,7 +7,14 @@ import {
   FAMILIES,
 } from "@ledgerhq/live-app-sdk";
 
-export const PLATFORM_FAMILIES = Object.values(FAMILIES);
+/**
+ * this is a hack to add the "evm" family to the list of supported families of
+ * the deprecated @ledgerhq/live-app-sdk, still used by some live apps.
+ * Since "evm" will be (is) the new family of original currencies under the
+ * "ethereum" family, following the "ethereum" / "evm" families merge
+ * (and removal of the "ethereum" family)
+ */
+export const PLATFORM_FAMILIES = [...Object.values(FAMILIES), "evm"];
 
 export type {
   Account as PlatformAccount,
@@ -38,11 +45,6 @@ export type AppPlatform = "ios" | "android" | "desktop";
 
 export type AppBranch = "stable" | "experimental" | "soon" | "debug";
 export type Visibility = "complete" | "searchable" | "deep";
-
-export type AppPermission = {
-  method: string;
-  params?: any;
-};
 
 export type ParamsWithDappUrl = {
   dappUrl: string;
@@ -95,12 +97,15 @@ export type LiveAppManifest = {
   apiVersion: string;
   manifestVersion: string;
   branch: AppBranch;
-  permissions: AppPermission[];
+  permissions: string[];
   domains: string[];
   categories: string[];
   currencies: string[] | "*";
   visibility: Visibility;
+  highlight?: boolean;
   content: {
+    cta?: TranslatableString;
+    subtitle?: TranslatableString;
     shortDescription: TranslatableString;
     description: TranslatableString;
   };

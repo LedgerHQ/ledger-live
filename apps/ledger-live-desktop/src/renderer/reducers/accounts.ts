@@ -10,9 +10,9 @@ import {
   nestedSortAccounts,
   AccountComparator,
 } from "@ledgerhq/live-common/account/index";
-import { decodeNftId } from "@ledgerhq/live-common/nft/index";
-import { orderByLastReceived } from "@ledgerhq/live-common/nft/helpers";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { decodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
+import { orderByLastReceived } from "@ledgerhq/live-nft";
+import { getEnv } from "@ledgerhq/live-env";
 import isEqual from "lodash/isEqual";
 import logger from "../logger";
 import { State } from ".";
@@ -203,7 +203,7 @@ export const flattenAccountsSelector = createSelector(accountsSelector, flattenA
  *
  * Example:
  * ```
- * import { isEqual } from "lodash";
+ * import isEqual from "lodash/isEqual";
  * // ...
  * const orderedVisibleNfts = useSelector(orderedVisibleNftsSelector, isEqual)
  * ```

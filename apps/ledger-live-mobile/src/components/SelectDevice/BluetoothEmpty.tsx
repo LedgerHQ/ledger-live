@@ -5,7 +5,7 @@ import { Trans } from "react-i18next";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import { BluetoothMedium } from "@ledgerhq/native-ui/assets/icons";
 
-import lottie from "../../screens/Onboarding/assets/nanoX/pairDevice/dark.json";
+import lottie from "~/screens/Onboarding/assets/nanoX/pairDevice/dark.json";
 
 import Animation from "../Animation";
 import Button from "../wrappedUi/Button";
@@ -34,7 +34,7 @@ function BluetoothEmpty({ onPairNewDevice, hideAnimation }: Props) {
           </Text>
         </Box>
       </Flex>
-      <Button mb={8} event="PairDevice" type="main" onPress={onPairNewDevice} testID="pair-device">
+      <Button mb={5} event="PairDevice" type="main" onPress={onPairNewDevice} testID="pair-device">
         <Trans i18nKey="SelectDevice.deviceNotFoundPairNewDevice" />
       </Button>
     </>
@@ -44,6 +44,7 @@ function BluetoothEmpty({ onPairNewDevice, hideAnimation }: Props) {
 const styles = StyleSheet.create({
   imageContainer: {
     minHeight: 200,
+    maxWidth: 550,
     position: "relative",
     overflow: "visible",
   },

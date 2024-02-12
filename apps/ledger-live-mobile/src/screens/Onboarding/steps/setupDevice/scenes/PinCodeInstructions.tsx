@@ -1,9 +1,9 @@
 import React from "react";
 import { useTranslation, Trans } from "react-i18next";
 import { NumberedList } from "@ledgerhq/native-ui";
-import NanoDeviceCheckIcon from "../../../../../icons/NanoDeviceCheckIcon";
-import NanoDeviceCancelIcon from "../../../../../icons/NanoDeviceCancelIcon";
-import Button from "../../../../../components/PreventDoubleClickButton";
+import NanoDeviceCheckIcon from "~/icons/NanoDeviceCheckIcon";
+import NanoDeviceCancelIcon from "~/icons/NanoDeviceCancelIcon";
+import Button from "~/components/PreventDoubleClickButton";
 
 const items = [
   {
@@ -43,7 +43,7 @@ PinCodeInstructionsScene.id = "PinCodeInstructionsScene";
 const Next = ({ onNext }: { onNext: () => void }) => {
   const { t } = useTranslation();
   return (
-    <Button type="main" size="large" onPress={onNext}>
+    <Button type="main" size="large" onPress={onNext} testID="onboarding-pinCodeSetup-cta">
       {t("onboarding.stepSetupDevice.pinCodeSetup.cta")}
     </Button>
   );

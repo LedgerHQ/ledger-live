@@ -1,10 +1,9 @@
 import moment from "moment";
 import { ipcRenderer, webFrame } from "electron";
-import * as remote from "@electron/remote";
 import React, { useState, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { getAllEnvs } from "@ledgerhq/live-common/env";
+import { getAllEnvs } from "@ledgerhq/live-env";
 import { Account } from "@ledgerhq/types-live";
 import KeyHandler from "react-key-handler";
 import logger, { memoryLogger } from "~/renderer/logger";
@@ -13,11 +12,17 @@ import Button, { Props as ButtonProps } from "~/renderer/components/Button";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 
 const saveLogs = async (path: Electron.SaveDialogReturnValue) => {
-  await ipcRenderer.invoke(
-    "save-logs",
-    path,
-    JSON.stringify(memoryLogger.getMemoryLogs(), null, 2),
-  );
+  const memoryLogs = memoryLogger.getMemoryLogs();
+
+  try {
+    // Serializes ourself with `stringify` to avoid "object could not be cloned" errors from the electron IPC serializer.
+    const memoryLogsStr = JSON.stringify(memoryLogs, null, 2);
+
+    // Requests the main process to save logs in a file
+    await ipcRenderer.invoke("save-logs", path, memoryLogsStr);
+  } catch (error) {
+    console.error("Error while requesting to save logs from the renderer process", error);
+  }
 };
 
 type RestProps = ButtonProps & {
@@ -80,7 +85,7 @@ const ExportLogsBtn = ({
       },
       accountsIds: accounts.map(a => a.id),
     });
-    const path = await remote.dialog.showSaveDialog({
+    const path = await ipcRenderer.invoke("show-save-dialog", {
       title: "Export logs",
       defaultPath: `ledgerlive-logs-${moment().format("YYYY.MM.DD-HH.mm.ss")}-${
         __GIT_REVISION__ || "unversioned"
@@ -108,7 +113,7 @@ const ExportLogsBtn = ({
     }
   }, [exporting, setExporting, exportLogs]);
   const onKeyHandle = useCallback(
-    e => {
+    (e: React.KeyboardEvent) => {
       if (e.ctrlKey) {
         handleExportLogs();
       }

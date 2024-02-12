@@ -1,7 +1,7 @@
 import React, { memo, useMemo, useCallback, useRef, useState } from "react";
-import { ScrollView } from "react-native";
-import useDynamicContent from "../../dynamicContent/dynamicContent";
-import { width } from "../../helpers/normalizeSize";
+import { NativeScrollEvent, NativeSyntheticEvent, ScrollView } from "react-native";
+import useDynamicContent from "~/dynamicContent/useDynamicContent";
+import { width } from "~/helpers/normalizeSize";
 import CarouselCard from "./CarouselCard";
 
 const WIDTH = width * 0.85;
@@ -12,14 +12,14 @@ const Carousel = () => {
 
   const { walletCardsDisplayed } = useDynamicContent();
 
-  const onScrollEnd = useCallback(event => {
+  const onScrollEnd = useCallback((event: NativeSyntheticEvent<NativeScrollEvent>) => {
     setCurrentPositionX(
       event.nativeEvent.contentOffset.x + event.nativeEvent.layoutMeasurement.width,
     );
   }, []);
 
   const onScrollViewContentChange = useCallback(
-    contentWidth => {
+    (contentWidth: number) => {
       if (currentPositionX > contentWidth) {
         scrollViewRef.current?.scrollToEnd({ animated: true });
       }

@@ -4,7 +4,7 @@ import {
   initialState,
   loadCountervalues,
   inferTrackingPairForAccounts,
-} from "../countervalues/logic";
+} from "@ledgerhq/live-countervalues/logic";
 import {
   getPortfolioCount,
   getBalanceHistory,
@@ -19,7 +19,7 @@ import {
   startOfDay,
   startOfWeek,
 } from "../portfolio/v2";
-import { setEnv } from "../env";
+import { setEnv } from "@ledgerhq/live-env";
 import { genAccount } from "../mock/account";
 import { getAccountCurrency } from "../account";
 import type { Account, AccountLike, PortfolioRange } from "@ledgerhq/types-live";

@@ -7,7 +7,7 @@ import { hideNftCollection } from "~/renderer/actions/settings";
 const Footer = ({ onClose, collectionId }: { onClose: () => void; collectionId: string }) => {
   const dispatch = useDispatch();
   const confirmHideNftCollection = useCallback(
-    collectionId => {
+    (collectionId: string) => {
       dispatch(hideNftCollection(collectionId));
     },
     [dispatch],

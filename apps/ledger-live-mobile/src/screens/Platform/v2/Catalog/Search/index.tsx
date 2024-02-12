@@ -5,21 +5,20 @@ import * as Animatable from "react-native-animatable";
 import { Flex, Text, InfiniteLoader } from "@ledgerhq/native-ui";
 import { Trans, useTranslation } from "react-i18next";
 import { HTTP_REGEX } from "@ledgerhq/live-common/wallet-api/constants";
-import ArrowLeft from "../../../../../icons/ArrowLeft";
-import { TAB_BAR_SAFE_HEIGHT } from "../../../../../components/TabBar/TabBarSafeAreaView";
+import ArrowLeft from "~/icons/ArrowLeft";
+import { TAB_BAR_SAFE_HEIGHT } from "~/components/TabBar/TabBarSafeAreaView";
 import { Layout } from "../Layout";
-import Illustration from "../../../../../images/illustration/Illustration";
+import Illustration from "~/images/illustration/Illustration";
 import { ManifestList } from "../ManifestList";
 import { SearchBar } from "./SearchBar";
 import { Disclaimer } from "../../hooks";
 import { Search as SearchType } from "../../types";
-import { Categories } from "@ledgerhq/live-common/wallet-api/react";
 
 export * from "./SearchBar";
 
 const noResultIllustration = {
-  dark: require("../../../../../images/illustration/Dark/_051.png"),
-  light: require("../../../../../images/illustration/Light/_051.png"),
+  dark: require("~/images/illustration/Dark/_051.png"),
+  light: require("~/images/illustration/Light/_051.png"),
 };
 
 const AnimatedView = Animatable.View;
@@ -28,12 +27,11 @@ interface Props {
   title: React.ReactNode;
   subtitle?: React.ReactNode;
   listTitle?: React.ReactNode;
-  categories: Pick<Categories, "manifests">;
   disclaimer: Pick<Disclaimer, "onSelect">;
   search: SearchType;
 }
 
-export function Search({ title, categories, disclaimer, search }: Props) {
+export function Search({ title, disclaimer, search }: Props) {
   const { colors } = useTheme();
   const { t } = useTranslation();
 
@@ -103,10 +101,7 @@ export function Search({ title, categories, disclaimer, search }: Props) {
                 {!!search.input.length && !search.result.length ? (
                   noResultFoundComponent
                 ) : (
-                  <ManifestList
-                    manifests={search.input ? search.result : categories.manifests.complete}
-                    onSelect={disclaimer.onSelect}
-                  />
+                  <ManifestList manifests={search.result} onSelect={disclaimer.onSelect} />
                 )}
               </Flex>
             </AnimatedView>

@@ -2,13 +2,8 @@ import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Button, Flex } from "@ledgerhq/native-ui";
-import { OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
-import {
-  useSwapTransaction,
-  useSwapProviders,
-  usePageState,
-} from "@ledgerhq/live-common/exchange/swap/hooks/index";
-import { getCustomDappUrl } from "@ledgerhq/live-common/exchange/swap/utils/index";
+import { ExchangeRate, OnNoRatesCallback } from "@ledgerhq/live-common/exchange/swap/types";
+import { useSwapTransaction, usePageState } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -19,26 +14,15 @@ import {
   isTokenAccount,
   getFeesUnit,
 } from "@ledgerhq/live-common/account/index";
-import { getSwapSelectableCurrencies } from "@ledgerhq/live-common/exchange/swap/logic";
+
 import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
 import { log } from "@ledgerhq/logs";
-import { Feature } from "@ledgerhq/types-live";
-import { shallowAccountsSelector } from "../../../reducers/accounts";
-import { swapAcceptedProvidersSelector } from "../../../reducers/settings";
-import { setSwapSelectableCurrencies } from "../../../actions/settings";
-import {
-  providersSelector,
-  rateSelector,
-  resetSwapAction,
-  updateProvidersAction,
-  updateRateAction,
-  updateTransactionAction,
-} from "../../../actions/swap";
-import { TrackScreen, useAnalytics } from "../../../analytics";
+import { shallowAccountsSelector } from "~/reducers/accounts";
+import { rateSelector, updateRateAction, updateTransactionAction } from "~/actions/swap";
+import { TrackScreen, useAnalytics } from "~/analytics";
 import { Loading } from "../Loading";
-import { NotAvailable } from "./NotAvailable";
 import { TxForm } from "./TxForm";
 import { Summary } from "./Summary";
 import { sharedSwapTracking, useTrackSwapError } from "../utils";
@@ -50,37 +34,18 @@ import { DeviceMeta } from "./Modal/Confirmation";
 import {
   MaterialTopTabNavigatorProps,
   StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
-import { ScreenName } from "../../../const";
-import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
-import { SwapFormNavigatorParamList } from "../../../components/RootNavigator/types/SwapFormNavigator";
+} from "~/components/RootNavigator/types/helpers";
+import { ScreenName } from "~/const";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { SwapFormNavigatorParamList } from "~/components/RootNavigator/types/SwapFormNavigator";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import type { DetailsSwapParamList } from "../types";
+import {
+  getAvailableProviders,
+  maybeTezosAccountUnrevealedAccount,
+} from "@ledgerhq/live-common/exchange/swap/index";
 
 type Navigation = StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.Account>;
-
-export const useProviders = () => {
-  const dispatch = useDispatch();
-  const storedProviders = useSelector(providersSelector);
-  const { providers, error: providersError } = useSwapProviders();
-
-  useEffect(() => {
-    if (providers) {
-      dispatch(updateProvidersAction(providers));
-      dispatch(setSwapSelectableCurrencies(getSwapSelectableCurrencies(providers)));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [providers]);
-
-  useEffect(() => {
-    if (providersError) dispatch(resetSwapAction());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [providersError]);
-
-  return {
-    providers: storedProviders,
-    providersError,
-  };
-};
 
 export function SwapForm({
   route: { params },
@@ -90,21 +55,18 @@ export function SwapForm({
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const accounts = useSelector(shallowAccountsSelector);
-  const { providers, providersError } = useProviders();
   const exchangeRate = useSelector(rateSelector);
   // mobile specific
   const [confirmed, setConfirmed] = useState(false);
 
   const setExchangeRate = useCallback(
-    rate => {
+    (rate?: ExchangeRate) => {
       dispatch(updateRateAction(rate));
     },
     [dispatch],
   );
 
-  const walletApiPartnerList: Feature<{ list: Array<string> }> | null = useFeature(
-    "swapWalletApiPartnerList",
-  );
+  const walletApiPartnerList = useFeature("swapWalletApiPartnerList");
   const navigation = useNavigation<Navigation["navigation"]>();
 
   const onNoRates: OnNoRatesCallback = useCallback(
@@ -120,14 +82,24 @@ export function SwapForm({
   );
 
   const swapTransaction = useSwapTransaction({
+    ...params,
     accounts,
     setExchangeRate,
     onNoRates,
     excludeFixedRates: true,
-    providers,
-    timeout: 10000,
-    timeoutErrorMessage: t("errors.SwapTimeoutError.title"),
   });
+
+  // @TODO: Try to check if we can directly have the right state from `useSwapTransaction`
+  // Used to set the right state (recipient address, data, etc...) when comming from a token account
+  // As of today, we need to call setFromAccount to trigger an updateTransaction in order to set the correct
+  // recipient address (token contract address) and related data to compute the fees
+  // cf. https://github.com/LedgerHQ/ledger-live/blob/c135c887b313ecc9f4a3b3a421ced0e3a081dc37/libs/ledger-live-common/src/exchange/swap/hooks/useFromState.ts#L50-L57
+  useEffect(() => {
+    if (swapTransaction.account) {
+      swapTransaction.setFromAccount(swapTransaction.account);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const exchangeRatesState = swapTransaction.swap?.rates;
   const { partnersList, exchangeRateList } = useMemo(() => {
@@ -152,7 +124,10 @@ export function SwapForm({
     );
   }, [exchangeRatesState.value, swapTransaction.swap.to.currency]);
 
-  const swapError = swapTransaction.fromAmountError || exchangeRatesState?.error;
+  const swapError =
+    swapTransaction.fromAmountError ||
+    exchangeRatesState?.error ||
+    maybeTezosAccountUnrevealedAccount(swapTransaction);
   const swapWarning = swapTransaction.fromAmountWarning;
   const pageState = usePageState(swapTransaction, swapError || swapWarning);
   const provider = exchangeRate?.provider;
@@ -223,7 +198,6 @@ export function SwapForm({
     !swapTransaction.bridgePending &&
     exchangeRatesState.status !== "loading" &&
     swapTransaction.transaction &&
-    !providersError &&
     !swapError &&
     !swapWarning &&
     exchangeRate &&
@@ -232,30 +206,17 @@ export function SwapForm({
   const onSubmit = useCallback(() => {
     if (!exchangeRate) return;
     const { provider, providerURL, providerType } = exchangeRate;
-    track(
-      "button_clicked",
-      {
-        ...sharedSwapTracking,
-        sourceCurrency: swapTransaction.swap.from.currency?.name,
-        targetCurrency: swapTransaction.swap.to.currency?.name,
-        provider,
-        button: "exchange",
-      },
-      undefined,
-    );
+    track("button_clicked", {
+      ...sharedSwapTracking,
+      sourceCurrency: swapTransaction.swap.from.currency?.name,
+      targetCurrency: swapTransaction.swap.to.currency?.name,
+      provider,
+      button: "exchange",
+    });
 
     if (providerType === "DEX") {
       const from = swapTransaction.swap.from;
       const fromAccountId = from.parentAccount?.id || from.account?.id;
-      const customParams = {
-        provider,
-        providerURL,
-      } as {
-        provider: string;
-        providerURL?: string;
-      };
-
-      const customDappUrl = getCustomDappUrl(customParams);
 
       const getAccountId = ({
         accountId,
@@ -284,14 +245,16 @@ export function SwapForm({
         platform: getProviderName(provider).toLowerCase(),
         name: getProviderName(provider),
         accountId,
-        customDappURL: customDappUrl,
+        customDappURL: providerURL,
       });
     } else {
+      swapTransaction.transaction ? (swapTransaction.transaction.useAllAmount = false) : null;
       setConfirmed(true);
     }
   }, [
     exchangeRate,
     track,
+    swapTransaction.transaction,
     swapTransaction.swap.from,
     swapTransaction.swap.to.currency?.name,
     navigation,
@@ -305,33 +268,31 @@ export function SwapForm({
   }, []);
 
   useEffect(() => {
-    if (params?.currency) {
-      swapTransaction.setToCurrency(params.currency);
+    const { currency, accountId, target, transaction } = params as DetailsSwapParamList;
+
+    if (currency) {
+      swapTransaction.setToCurrency(currency);
     }
 
-    if (params?.accountId) {
+    if (accountId) {
       const enhancedAccounts =
-        params.target === "from"
+        target === "from"
           ? accounts
           : accounts.map(acc =>
-              accountWithMandatoryTokens(acc, [(params?.currency as TokenCurrency) || []]),
+              accountWithMandatoryTokens(acc, [(currency as TokenCurrency) || []]),
             );
 
-      const account = flattenAccounts(enhancedAccounts).find(a => a.id === params.accountId);
+      const account = flattenAccounts(enhancedAccounts).find(a => a.id === accountId);
 
-      if (params.target === "from") {
-        track(
-          "Page Swap Form - New Source Account",
-          {
-            ...sharedSwapTracking,
-            provider,
-          },
-          undefined,
-        );
+      if (target === "from") {
+        track("Page Swap Form - New Source Account", {
+          ...sharedSwapTracking,
+          provider,
+        });
         swapTransaction.setFromAccount(account);
       }
 
-      if (params.target === "to") {
+      if (target === "to") {
         swapTransaction.setToAccount(
           swapTransaction.swap.to.currency,
           account,
@@ -340,19 +301,20 @@ export function SwapForm({
       }
     }
 
-    if (params?.transaction) {
-      swapTransaction.setTransaction(params.transaction);
+    if (transaction) {
+      swapTransaction.setTransaction(transaction);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params]);
 
   useEffect(() => {
-    if (params?.rate) {
-      setExchangeRate(params.rate);
+    const { rate } = params as DetailsSwapParamList;
+    if (rate) {
+      setExchangeRate(rate);
     }
   }, [params, setExchangeRate, swapTransaction]);
 
-  const swapAcceptedProviders = useSelector(swapAcceptedProvidersSelector);
+  const swapAcceptedProviders = getAvailableProviders();
   const termsAccepted = (swapAcceptedProviders || []).includes(provider ?? "");
   const [deviceMeta, setDeviceMeta] = useState<DeviceMeta>();
 
@@ -361,9 +323,9 @@ export function SwapForm({
     return <Connect provider={provider} setResult={setDeviceMeta} />;
   }
 
-  if (providers?.length) {
+  if (getAvailableProviders().length) {
     return (
-      <KeyboardAwareScrollView>
+      <KeyboardAwareScrollView testID="exchange-scrollView">
         <Flex flex={1} justifyContent="space-between" padding={6}>
           <Flex flex={1}>
             <TrackScreen category="Swap" providerName={provider} {...sharedSwapTracking} />
@@ -412,11 +374,6 @@ export function SwapForm({
         />
       </KeyboardAwareScrollView>
     );
-  }
-
-  // Sentry?
-  if (providers?.length === 0 || providersError) {
-    return <NotAvailable />;
   }
 
   return <Loading />;

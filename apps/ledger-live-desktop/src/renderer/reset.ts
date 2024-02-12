@@ -1,11 +1,9 @@
-import { ipcRenderer, shell } from "electron";
-import * as remote from "@electron/remote";
+import { ipcRenderer } from "electron";
 import { useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { log } from "@ledgerhq/logs";
 import { delay } from "@ledgerhq/live-common/promise";
-import { useCountervaluesPolling } from "@ledgerhq/live-common/countervalues/react";
-import resolveUserDataDirectory from "~/helpers/resolveUserDataDirectory";
+import { useCountervaluesPolling } from "@ledgerhq/live-countervalues-react";
 import { resetAll, cleanCache } from "~/renderer/storage";
 import { resetStore } from "~/renderer/store";
 import { cleanAccountsCache } from "~/renderer/actions/accounts";
@@ -21,8 +19,7 @@ export async function killInternalProcess() {
   return delay(1000);
 }
 function reload() {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  require("@electron/remote").getCurrentWindow().webContents.reload();
+  ipcRenderer.send("app-reload");
 }
 export async function hardReset() {
   log("clear-cache", "clearBridgeCache()");
@@ -56,6 +53,6 @@ export function useSoftReset() {
   }, [dispatch, wipe]);
 }
 export async function openUserDataFolderAndQuit() {
-  shell.showItemInFolder(resolveUserDataDirectory());
-  remote.app.quit();
+  await ipcRenderer.invoke("openUserDataDirectory");
+  ipcRenderer.send("app-quit");
 }

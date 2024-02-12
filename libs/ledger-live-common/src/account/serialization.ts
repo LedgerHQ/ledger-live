@@ -5,7 +5,6 @@ import {
   getTokenById,
   findTokenById,
 } from "../currencies";
-import accountByFamily from "../generated/account";
 import { isAccountEmpty } from "./helpers";
 import type { SwapOperation, SwapOperationRaw } from "../exchange/swap/types";
 import {
@@ -37,6 +36,7 @@ import {
   fromOperationRaw as commonFromOperationRaw,
 } from "@ledgerhq/coin-framework/account/serialization";
 import { getAccountBridge } from "../bridge";
+import { getAccountBridgeByFamily } from "../bridge/impl";
 
 export function toBalanceHistoryRaw(b: BalanceHistory): BalanceHistoryRaw {
   return b.map(({ date, value }) => [date.toISOString(), value.toString()]);
@@ -51,54 +51,43 @@ export const toOperationRaw = (
   operation: Operation,
   preserveSubOperation?: boolean,
 ): OperationRaw => {
-  const copy: OperationRaw = commonToOperationRaw(operation, preserveSubOperation);
+  const operationRaw: OperationRaw = commonToOperationRaw(operation, preserveSubOperation);
 
-  let e = copy.extra;
-
-  if (e) {
-    const family = inferFamilyFromAccountId(copy.accountId);
+  if (operation.extra) {
+    const family = inferFamilyFromAccountId(operation.accountId);
 
     if (family) {
-      const abf = accountByFamily[family];
-
-      if (abf && abf.toOperationExtraRaw) {
-        e = abf.toOperationExtraRaw(e);
+      const bridge = getAccountBridgeByFamily(family, operation.accountId);
+      if (bridge.toOperationExtraRaw) {
+        operationRaw.extra = bridge.toOperationExtraRaw(operation.extra);
       }
     }
   }
 
-  return {
-    ...copy,
-    extra: e,
-  };
+  return operationRaw;
 };
-export { inferSubOperations } from "@ledgerhq/coin-framework/account/serialization";
+
 export const fromOperationRaw = (
-  operation: OperationRaw,
+  operationRaw: OperationRaw,
   accountId: string,
   subAccounts?: SubAccount[] | null | undefined,
 ): Operation => {
-  const res: Operation = commonFromOperationRaw(operation, accountId, subAccounts);
+  const operation: Operation = commonFromOperationRaw(operationRaw, accountId, subAccounts);
 
-  let e = res.extra;
-
-  if (e) {
-    const family = inferFamilyFromAccountId(res.accountId);
+  if (operationRaw.extra) {
+    const family = inferFamilyFromAccountId(operationRaw.accountId);
 
     if (family) {
-      const abf = accountByFamily[family];
-
-      if (abf && abf.fromOperationExtraRaw) {
-        e = abf.fromOperationExtraRaw(e);
+      const bridge = getAccountBridgeByFamily(family, accountId);
+      if (bridge.fromOperationExtraRaw) {
+        operation.extra = bridge.fromOperationExtraRaw(operationRaw.extra);
       }
     }
   }
 
-  return {
-    ...res,
-    extra: e || {},
-  };
+  return operation;
 };
+
 export function fromSwapOperationRaw(raw: SwapOperationRaw): SwapOperation {
   const { fromAmount, toAmount } = raw;
   return {

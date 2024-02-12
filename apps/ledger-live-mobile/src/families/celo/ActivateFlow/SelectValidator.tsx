@@ -1,20 +1,24 @@
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
 import React, { useCallback, useMemo } from "react";
-import { FlatList, StyleSheet, View, SafeAreaView } from "react-native";
+import { FlatList, StyleSheet, View, SafeAreaView, ListRenderItem } from "react-native";
 import { useSelector } from "react-redux";
-import { CeloAccount, CeloValidatorGroup } from "@ledgerhq/live-common/families/celo/types";
+import {
+  CeloAccount,
+  CeloValidatorGroup,
+  CeloVote,
+} from "@ledgerhq/live-common/families/celo/types";
 import { useCeloPreloadData } from "@ledgerhq/live-common/families/celo/react";
 import {
   activatableVotes,
   fallbackValidatorGroup,
 } from "@ledgerhq/live-common/families/celo/logic";
-import { TrackScreen } from "../../../analytics";
-import { ScreenName } from "../../../const";
-import { accountScreenSelector } from "../../../reducers/accounts";
+import { TrackScreen } from "~/analytics";
+import { ScreenName } from "~/const";
+import { accountScreenSelector } from "~/reducers/accounts";
 import ValidatorHead from "../ValidatorHead";
 import ValidatorRow from "../ValidatorRow";
-import { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CeloActivateFlowParamList } from "./types";
 
 type Props = StackNavigatorProps<CeloActivateFlowParamList, ScreenName.CeloActivateValidatorSelect>;
@@ -51,18 +55,19 @@ export default function SelectValidator({ navigation, route }: Props) {
     [navigation, route.params],
   );
 
-  const renderItem = useCallback(
-    ({ item }) => (
-      <ValidatorRow
-        account={account}
-        validator={item.validatorGroup}
-        vote={item.vote}
-        onPress={onItemPress}
-        amount={item.vote.amount}
-      />
-    ),
-    [onItemPress, account],
-  );
+  const renderItem: ListRenderItem<{ vote: CeloVote; validatorGroup: CeloValidatorGroup }> =
+    useCallback(
+      ({ item }) => (
+        <ValidatorRow
+          account={account}
+          validator={item.validatorGroup}
+          vote={item.vote}
+          onPress={onItemPress}
+          amount={item.vote.amount}
+        />
+      ),
+      [onItemPress, account],
+    );
 
   return (
     <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>

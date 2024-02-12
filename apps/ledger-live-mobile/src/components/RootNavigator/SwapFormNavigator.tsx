@@ -3,11 +3,13 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { Text } from "@ledgerhq/native-ui";
-import { SwapForm } from "../../screens/Swap";
-import { ScreenName } from "../../const";
-import History from "../../screens/Swap/History";
-import { getLineTabNavigatorConfig } from "../../navigation/tabNavigatorConfig";
+import { SwapForm } from "~/screens/Swap";
+import { ScreenName } from "~/const";
+import History from "~/screens/Swap/History";
+import { getLineTabNavigatorConfig } from "~/navigation/tabNavigatorConfig";
 import { SwapFormNavigatorParamList } from "./types/SwapFormNavigator";
+import { SwapNavigatorParamList } from "../RootNavigator/types/SwapNavigator";
+import type { StackNavigatorProps } from "../RootNavigator/types/helpers";
 
 type TabLabelProps = {
   focused: boolean;
@@ -16,7 +18,9 @@ type TabLabelProps = {
 
 const Tab = createMaterialTopTabNavigator<SwapFormNavigatorParamList>();
 
-export default function SwapFormNavigator() {
+export default function SwapFormNavigator({
+  route: { params },
+}: StackNavigatorProps<SwapNavigatorParamList, ScreenName.SwapTab>) {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const tabNavigationConfig = useMemo(() => getLineTabNavigatorConfig(colors), [colors]);
@@ -34,6 +38,9 @@ export default function SwapFormNavigator() {
             </Text>
           ),
           tabBarTestID: "swap-form-tab",
+        }}
+        initialParams={{
+          ...params,
         }}
       />
       <Tab.Screen

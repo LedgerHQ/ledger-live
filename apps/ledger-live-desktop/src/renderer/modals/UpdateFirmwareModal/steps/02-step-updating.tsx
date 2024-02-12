@@ -5,13 +5,13 @@ import styled from "styled-components";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { withDevicePolling } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { renderFirmwareUpdating } from "~/renderer/components/DeviceAction/rendering";
 import useTheme from "~/renderer/hooks/useTheme";
-import { StepProps } from "..";
+import { StepProps } from "../types";
 
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
@@ -22,11 +22,16 @@ const Container = styled(Box).attrs(() => ({
 type BodyProps = {
   modelId: DeviceModelId;
   deviceHasPin?: boolean | undefined;
+  downloadPhase?: { current: number; total: number };
 };
 
-export const Body = ({ modelId, deviceHasPin }: BodyProps) => {
+type StepUpdatingProps = StepProps & {
+  downloadPhase?: { current: number; total: number };
+};
+
+export const Body = ({ modelId, deviceHasPin, downloadPhase }: BodyProps) => {
   const type = useTheme().colors.palette.type;
-  return renderFirmwareUpdating({ modelId, type, deviceHasPin });
+  return renderFirmwareUpdating({ modelId, type, deviceHasPin, downloadPhase });
 };
 
 const StepUpdating = ({
@@ -36,7 +41,8 @@ const StepUpdating = ({
   transitionTo,
   setUpdatedDeviceInfo,
   deviceHasPin,
-}: StepProps) => {
+  downloadPhase,
+}: StepUpdatingProps) => {
   useEffect(() => {
     const sub = (
       getEnv("MOCK")
@@ -68,7 +74,7 @@ const StepUpdating = ({
   return (
     <Container>
       <TrackPage category="Manager" name="Firmware Updating" />
-      <Body modelId={deviceModelId} deviceHasPin={deviceHasPin} />
+      <Body modelId={deviceModelId} deviceHasPin={deviceHasPin} downloadPhase={downloadPhase} />
     </Container>
   );
 };

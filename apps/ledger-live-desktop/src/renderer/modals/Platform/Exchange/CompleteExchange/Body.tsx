@@ -1,20 +1,20 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Exchange } from "@ledgerhq/live-common/exchange/platform/types";
+import { useDispatch } from "react-redux";
 import { Operation, SignedOperation } from "@ledgerhq/types-live";
+import { Exchange } from "@ledgerhq/live-common/exchange/platform/types";
+import { Exchange as SwapExchange } from "@ledgerhq/live-common/exchange/swap/types";
+import { setBroadcastTransaction } from "@ledgerhq/live-common/exchange/swap/setBroadcastTransaction";
+import { getUpdateAccountWithUpdaterParams } from "@ledgerhq/live-common/exchange/swap/getUpdateAccountWithUpdaterParams";
+import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
-import connectApp from "@ledgerhq/live-common/hw/connectApp";
-import { createAction } from "@ledgerhq/live-common/hw/actions/completeExchange";
-import { createAction as txCreateAction } from "@ledgerhq/live-common/hw/actions/transaction";
-import { ModalBody } from "~/renderer/components/Modal";
-import Box from "~/renderer/components/Box";
-import DeviceAction from "~/renderer/components/DeviceAction";
-import BigSpinner from "~/renderer/components/BigSpinner";
-import ErrorDisplay from "~/renderer/components/ErrorDisplay";
-import { useBroadcast } from "~/renderer/hooks/useBroadcast";
-import completeExchange from "@ledgerhq/live-common/exchange/platform/completeExchange";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-const exchangeAction = createAction(completeExchange);
-const sendAction = txCreateAction(connectApp);
+import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
+import Box from "~/renderer/components/Box";
+import { BodyContent } from "./BodyContent";
+import { getMagnitudeAwareRate } from "@ledgerhq/live-common/exchange/swap/webApp/index";
+import { BigNumber } from "bignumber.js";
+import { AccountLike } from "@ledgerhq/types-live";
+import { WrongDeviceForAccount } from "@ledgerhq/errors";
 
 export type Data = {
   provider: string;
@@ -22,96 +22,135 @@ export type Data = {
   transaction: Transaction;
   binaryPayload: string;
   signature: string;
-  onResult: (a: Operation) => void;
+  onResult: (operation: Operation) => void;
   onCancel: (a: Error) => void;
   exchangeType: number;
+  rateType?: number;
+  swapId?: string;
+  rate?: number;
+  amountExpectedTo?: number;
 };
 
-const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined }) => {
-  const { onResult, onCancel, ...exchangeParams } = data;
+export function isCompleteExchangeData(data: unknown): data is Data {
+  if (data === null || typeof data !== "object") {
+    return false;
+  }
+  return "signature" in data && "binaryPayload" in data;
+}
 
-  const { fromAccount: account, fromParentAccount: parentAccount } = exchangeParams.exchange;
-  let tokenCurrency: TokenCurrency | undefined;
-  if (account.type === "TokenAccount") tokenCurrency = account.token;
-  const request = {
-    ...exchangeParams,
-  };
+const Body = ({ data, onClose }: { data: Data; onClose?: () => void | undefined }) => {
+  const dispatch = useDispatch();
+  const { onResult, onCancel, swapId, rate, ...exchangeParams } = data;
+  const { exchange, provider, transaction: transactionParams } = exchangeParams;
+  const { amount } = transactionParams;
+  const { fromAccount: account, fromParentAccount: parentAccount } = exchange;
+  let request = { ...exchangeParams };
+  let amountExpectedTo: number | undefined = undefined;
+  let toAccount: AccountLike | undefined = undefined;
+  let magnitudeAwareRate: BigNumber | undefined = undefined;
+  if ("toAccount" in exchange) {
+    toAccount = exchange.toAccount;
+    if (account && toAccount && rate) {
+      magnitudeAwareRate = getMagnitudeAwareRate({
+        fromAccount: account,
+        toAccount,
+        rate,
+      });
+      amountExpectedTo = +amount * +magnitudeAwareRate;
+
+      request = { ...request, amountExpectedTo };
+    }
+  }
+
+  const tokenCurrency: TokenCurrency | undefined =
+    account.type === "TokenAccount" ? account.token : undefined;
 
   const broadcast = useBroadcast({ account, parentAccount });
   const [transaction, setTransaction] = useState<Transaction>();
   const [signedOperation, setSignedOperation] = useState<SignedOperation>();
   const [error, setError] = useState<Error>();
+
+  const signRequest = useMemo(
+    () =>
+      transaction
+        ? {
+            tokenCurrency,
+            parentAccount,
+            account,
+            transaction,
+            appName: "Exchange",
+          }
+        : null,
+    [account, parentAccount, tokenCurrency, transaction],
+  );
+
+  useEffect(() => {
+    if (error) {
+      onCancel(error);
+      if (!(error instanceof WrongDeviceForAccount)) {
+        onClose?.();
+      }
+    }
+  }, [onCancel, error, onClose]);
+
   useEffect(() => {
     if (signedOperation) {
       broadcast(signedOperation).then(operation => {
+        // Save swap history
+        if (swapId && rate && toAccount && magnitudeAwareRate) {
+          const result = {
+            operation,
+            swapId,
+          };
+          setBroadcastTransaction({
+            result,
+            provider,
+          });
+          const params = getUpdateAccountWithUpdaterParams({
+            result,
+            exchange: exchange as SwapExchange,
+            transaction: transactionParams,
+            magnitudeAwareRate,
+            provider,
+          });
+          if (!params.length) return;
+          const dispatchAction = updateAccountWithUpdater(...params);
+          dispatch(dispatchAction);
+        }
         onResult(operation);
         onClose?.();
       }, setError);
     }
-  }, [broadcast, onClose, onResult, signedOperation]);
-  useEffect(() => {
-    if (error) {
-      onCancel(error);
-    }
-  }, [onCancel, error]);
-  const signRequest = useMemo(
-    () => ({
-      tokenCurrency,
-      parentAccount,
-      account,
-      transaction,
-      appName: "Exchange",
-    }),
-    [account, parentAccount, tokenCurrency, transaction],
-  );
+  }, [
+    account,
+    dispatch,
+    exchange,
+    provider,
+    rate,
+    swapId,
+    transactionParams,
+    broadcast,
+    onClose,
+    onResult,
+    signedOperation,
+    transaction,
+    magnitudeAwareRate,
+    toAccount,
+  ]);
+
   return (
-    <ModalBody
-      onClose={() => {
-        onCancel(new Error("Interrupted by user"));
-        onClose?.();
-      }}
-      render={() => {
-        return (
-          <Box alignItems={"center"} justifyContent={"center"} px={32}>
-            {error ? (
-              <ErrorDisplay error={error} />
-            ) : signedOperation ? (
-              <BigSpinner size={40} />
-            ) : !transaction ? (
-              <DeviceAction
-                key="completeExchange"
-                action={exchangeAction}
-                // TODO: the proper team should investigate why the types mismatch
-                // @ts-expect-error This type is not compatible with the one expected by the action
-                request={request}
-                onResult={result => {
-                  if ("completeExchangeError" in result) {
-                    setError(result.completeExchangeError);
-                  } else {
-                    setTransaction(result.completeExchangeResult);
-                  }
-                }}
-              />
-            ) : (
-              <DeviceAction
-                key="sign"
-                action={sendAction}
-                // TODO: the proper team should investigate why the types mismatch
-                // @ts-expect-error This type is not compatible with the one expected by the action
-                request={signRequest}
-                onResult={result => {
-                  if ("transactionSignError" in result) {
-                    setError(result.transactionSignError);
-                  } else {
-                    setSignedOperation(result.signedOperation);
-                  }
-                }}
-              />
-            )}
-          </Box>
-        );
-      }}
-    />
+    <Box alignItems={"center"} justifyContent={"center"} px={32} height={"100%"}>
+      <BodyContent
+        error={error}
+        signRequest={signRequest}
+        signedOperation={signedOperation}
+        request={request}
+        onError={setError}
+        onOperationSigned={setSignedOperation}
+        onTransactionComplete={setTransaction}
+      />
+    </Box>
   );
 };
+
 export default Body;

@@ -1,12 +1,12 @@
 import React, { memo } from "react";
 import { RectButton } from "react-native-gesture-handler";
 import { View, StyleSheet, Platform, StyleProp, ViewStyle } from "react-native";
-import { useNftMetadata } from "@ledgerhq/live-common/nft/index";
+import { useNftMetadata } from "@ledgerhq/live-nft-react";
 import { useTheme, useNavigation } from "@react-navigation/native";
 import { NFTMetadata, ProtoNFT } from "@ledgerhq/types-live";
-import { NFTResource } from "@ledgerhq/live-common/nft/NftMetadataProvider/types";
+import { NFTResource } from "@ledgerhq/live-nft/types";
 import { useTranslation } from "react-i18next";
-import { NavigatorName, ScreenName } from "../../const";
+import { NavigatorName, ScreenName } from "~/const";
 import Skeleton from "../Skeleton";
 import NftMedia from "./NftMedia";
 import LText from "../LText";

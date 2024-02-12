@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useEffect } from "react";
 import { Divider, Flex, Text, Button } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { ScrollView } from "react-native";
@@ -12,23 +12,25 @@ import { clearPostOnboardingLastActionCompleted } from "@ledgerhq/live-common/po
 import { useDispatch } from "react-redux";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import PostOnboardingActionRow from "../../components/PostOnboarding/PostOnboardingActionRow";
-import { NavigatorName, ScreenName } from "../../const";
-import { BaseComposite, StackNavigatorProps } from "../../components/RootNavigator/types/helpers";
-import { PostOnboardingNavigatorParamList } from "../../components/RootNavigator/types/PostOnboardingNavigator";
-import { useCompleteActionCallback } from "../../logic/postOnboarding/useCompleteAction";
-import { track, TrackScreen } from "../../analytics";
-import Link from "../../components/wrappedUi/Link";
+import PostOnboardingActionRow from "~/components/PostOnboarding/PostOnboardingActionRow";
+import { ScreenName } from "~/const";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { PostOnboardingNavigatorParamList } from "~/components/RootNavigator/types/PostOnboardingNavigator";
+import { useCompleteActionCallback } from "~/logic/postOnboarding/useCompleteAction";
+import { track, TrackScreen } from "~/analytics";
+import Link from "~/components/wrappedUi/Link";
+import { useCompletePostOnboarding } from "~/logic/postOnboarding/useCompletePostOnboarding";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<PostOnboardingNavigatorParamList, ScreenName.PostOnboardingHub>
 >;
 
-const PostOnboardingHub = ({ navigation, route }: NavigationProps) => {
+const PostOnboardingHub = ({ route }: NavigationProps) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { actionsState, deviceModelId } = usePostOnboardingHubState();
   const completePostOnboardingAction = useCompleteActionCallback();
+  const closePostOnboarding = useCompletePostOnboarding();
 
   const clearLastActionCompleted = useCallback(() => {
     dispatch(clearPostOnboardingLastActionCompleted());
@@ -62,14 +64,9 @@ const PostOnboardingHub = ({ navigation, route }: NavigationProps) => {
     [clearLastActionCompleted, completePostOnboardingAction, route],
   );
 
-  const allowClosingScreen = useRef<boolean>(true);
-
   const navigateToMainScreen = useCallback(() => {
-    allowClosingScreen.current = true;
-    navigation.replace(NavigatorName.Base, {
-      screen: NavigatorName.Main,
-    });
-  }, [navigation]);
+    closePostOnboarding();
+  }, [closePostOnboarding]);
 
   const allDone = useAllPostOnboardingActionsCompleted();
 

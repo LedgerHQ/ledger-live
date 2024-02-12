@@ -37,17 +37,6 @@ function readPackage(pkg, context) {
   process(
     [
       /*
-        Fix the unmet peer dep on rxjs for the wallet-api-server
-        Because we're still using rxjs v6 everywhere
-        We only added rxjs v7 as an alias on rxjs7
-      */
-      addDependencies("@ledgerhq/wallet-api-server", {
-        rxjs: pkg.peerDependencies?.rxjs ?? "*",
-      }),
-      removeDependencies("@ledgerhq/wallet-api-server", ["rxjs"], {
-        kind: "peerDependencies",
-      }),
-      /*
         The following packages are broken and do not declare their dependencies properly.
         So we are going to patch these until the maintainers fix their own stuff…
         Feel free to make PRs if you feel like it :).
@@ -94,16 +83,9 @@ function readPackage(pkg, context) {
       addDependencies("@cosmjs/tendermint-rpc", {
         "@cosmjs/utils": pkg.version,
       }),
-      /* @walletconnect/* packages */
-      addDependencies("@walletconnect/iso-crypto", {
-        "@walletconnect/encoding": "*",
-      }),
-      addDependencies(/^@walletconnect\/.*/, {
-        tslib: "*",
-      }),
       /* React Native and Metro bundler packages */
       // Crashes ios build if removed /!\
-      addDependencies("react-native-codegen", {
+      addDependencies("@react-native/codegen", {
         glob: "*",
         invariant: "*",
       }),
@@ -112,8 +94,12 @@ function readPackage(pkg, context) {
         mkdirp: "*",
         yargs: "*",
       }),
+
       addPeerDependencies("@react-native-community/cli", {
         "metro-resolver": "*",
+      }),
+      addPeerDependencies("@react-native-community/cli-tools", {
+        "find-up": "*",
       }),
       addPeerDependencies("metro-config", {
         "metro-transform-worker": "*",
@@ -154,6 +140,8 @@ function readPackage(pkg, context) {
       addPeerDependencies("expo", {
         "react-native": "*",
         react: "*",
+        "expo-modules-autolinking": "*",
+        "expo-modules-core": "*",
       }),
       addPeerDependencies(/^expo-/, {
         "expo-modules-core": "*",
@@ -162,6 +150,7 @@ function readPackage(pkg, context) {
         react: "*",
       }),
       addPeerDependencies("expo-asset", {
+        "expo-modules-core": "*",
         "expo-file-system": "*",
       }),
       addPeerDependencies("expo-font", {
@@ -194,9 +183,6 @@ function readPackage(pkg, context) {
         "postcss-normalize": "*",
       }),
       addPeerDependencies("any-observable", {
-        rxjs: "*",
-      }),
-      addPeerDependencies("rxjs-compat", {
         rxjs: "*",
       }),
       addPeerDependencies("@cspotcode/source-map-support", {
@@ -272,6 +258,12 @@ function readPackage(pkg, context) {
         "@ethersproject/properties": "*",
         "@ethersproject/strings": "*",
         "@ethersproject/logger": "*",
+      }),
+      addDependencies("casper-js-sdk", {
+        "@noble/curves": "*",
+      }),
+      addDependencies("@actions/github", {
+        undici: "*",
       }),
     ],
     pkg,

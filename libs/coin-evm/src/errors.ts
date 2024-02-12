@@ -22,9 +22,6 @@ export const LedgerGasTrackerUsedIncorrectly = createCustomErrorClass(
   "LedgerGasTrackerUsedIncorrectly",
 );
 export const NoGasTrackerFound = createCustomErrorClass("NoGasTrackerFound");
-export const GasTrackerDoesNotSupportEIP1559 = createCustomErrorClass(
-  "GasTrackerDoesNotSupportEIP1559",
-);
 
 // Gas
 export const GasEstimationError = createCustomErrorClass("GasEstimationError");

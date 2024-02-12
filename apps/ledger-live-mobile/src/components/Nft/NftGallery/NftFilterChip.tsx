@@ -3,8 +3,9 @@ import { Text } from "@ledgerhq/native-ui";
 import styled from "@ledgerhq/native-ui/components/styled";
 
 interface Props {
-  readonly onPress: () => void;
-  readonly testID?: string;
+  onPress: () => void;
+  testID?: string;
+  children?: React.ReactNode;
 }
 
 const NftFilterChip: FC<Props> = ({ onPress, children, ...rest }) => {

@@ -5,6 +5,7 @@ import manager from ".";
 import { getProviderId } from "./provider";
 import ManagerAPI from "./api";
 import type { DeviceModelInfo, DeviceInfo, Language } from "@ledgerhq/types-live";
+import { getLatestFirmwareForDeviceUseCase } from "../device/use-cases/getLatestFirmwareForDeviceUseCase";
 
 async function hasOudatedApps({ deviceInfo, apps }: DeviceModelInfo): Promise<boolean> {
   const provider = getProviderId(deviceInfo);
@@ -41,7 +42,7 @@ export function useManagerBlueDot(dmi: DeviceModelInfo | null | undefined): bool
     }
 
     const { deviceInfo } = dmi;
-    Promise.all([manager.getLatestFirmwareForDevice(deviceInfo), hasOudatedApps(dmi)])
+    Promise.all([getLatestFirmwareForDeviceUseCase(deviceInfo), hasOudatedApps(dmi)])
       .then(([fw, outdatedApp]) => {
         if (cancelled) return;
 
@@ -62,19 +63,34 @@ export function useManagerBlueDot(dmi: DeviceModelInfo | null | undefined): bool
 }
 
 export const useAvailableLanguagesForDevice = (
-  deviceInfo?: DeviceInfo,
-): { availableLanguages: Language[]; loaded: boolean } => {
+  deviceInfo?: DeviceInfo | null,
+): { availableLanguages: Language[]; loaded: boolean; error: Error | null } => {
   const [availableLanguages, setAvailableLanguages] = useState<Language[]>([]);
   const [loaded, setLoaded] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
+    let dead = false;
     if (deviceInfo) {
-      manager
-        .getAvailableLanguagesDevice(deviceInfo)
-        .then(setAvailableLanguages)
-        .finally(() => setLoaded(true));
+      manager.getAvailableLanguagesDevice(deviceInfo).then(
+        languages => {
+          if (dead) return;
+          setAvailableLanguages(languages);
+          setError(null);
+          setLoaded(true);
+        },
+        error => {
+          if (dead) return;
+          setAvailableLanguages([]);
+          setError(error);
+          setLoaded(true);
+        },
+      );
     }
+    return () => {
+      dead = true;
+    };
   }, [deviceInfo]);
 
-  return { availableLanguages, loaded };
+  return { availableLanguages, loaded, error };
 };

@@ -2,8 +2,8 @@ import React, { useCallback } from "react";
 import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import { useNavigation } from "@react-navigation/native";
 import { IconsLegacy } from "@ledgerhq/native-ui";
-import SettingsRow from "../../../../components/SettingsRow";
-import { NavigatorName, ScreenName } from "../../../../const";
+import SettingsRow from "~/components/SettingsRow";
+import { NavigatorName, ScreenName } from "~/const";
 
 export default function ClaimNftFlowDebug() {
   const navigation = useNavigation();
@@ -14,7 +14,7 @@ export default function ClaimNftFlowDebug() {
   }, [navigation]);
 
   return (
-    <FeatureToggle feature="postOnboardingClaimNft" fallback={null}>
+    <FeatureToggle featureId="postOnboardingClaimNft" fallback={null}>
       <SettingsRow
         title="Claim NFT flow"
         desc="Convenient access to the flow"

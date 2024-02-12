@@ -16,7 +16,7 @@ import { RowContainer, RowInnerContainer } from "./shared";
 import styled from "styled-components";
 import Plus from "~/renderer/icons/Plus";
 import { darken } from "~/renderer/styles/helpers";
-import { Observable } from "rxjs7";
+import { Observable } from "rxjs";
 import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import { useTranslation } from "react-i18next";
 

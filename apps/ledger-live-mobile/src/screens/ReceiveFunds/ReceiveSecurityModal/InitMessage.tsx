@@ -3,7 +3,7 @@ import { TouchableOpacity } from "react-native";
 import { Trans } from "react-i18next";
 import styled from "styled-components/native";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
-import { track, TrackScreen } from "../../../analytics";
+import { track, TrackScreen } from "~/analytics";
 
 const NotNowButton = styled(TouchableOpacity)`
   align-items: center;
@@ -51,10 +51,15 @@ const InitMessage = ({ setStep, onVerifyAddress }: Props) => {
         <Trans i18nKey="transfer.receive.securityVerify.subtitle2" />
       </Text>
       <Flex alignSelf="stretch" my={8}>
-        <Button onPress={handleVerifyAddress} type="main" size="large">
+        <Button
+          onPress={handleVerifyAddress}
+          type="main"
+          size="large"
+          testID="button-verify-my-address"
+        >
           <Trans i18nKey="transfer.receive.securityVerify.verifyCta" />
         </Button>
-        <NotNowButton onPress={onDontVerify}>
+        <NotNowButton onPress={onDontVerify} testID="button-DontVerify-my-address">
           <Text variant="large" fontWeight="semiBold" color="neutral.c100">
             <Trans i18nKey="transfer.receive.securityVerify.dontVerifyCta" />
           </Text>

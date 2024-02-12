@@ -9,14 +9,14 @@ import { isDeviceLocalizationSupported } from "@ledgerhq/live-common/manager/loc
 import firmwareUpdateMain from "@ledgerhq/live-common/hw/firmwareUpdate-main";
 import { withDevicePolling } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
-import { getEnv } from "@ledgerhq/live-common/env";
+import { getEnv } from "@ledgerhq/live-env";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import FlashMCU from "~/renderer/components/FlashMCU";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import Installing from "../Installing";
 import { Body as StepUpdatingBody } from "./02-step-updating";
-import { StepProps } from "..";
+import { StepProps } from "../types";
 
 const Container = styled(Box).attrs(() => ({
   alignItems: "center",
@@ -45,7 +45,13 @@ const Body = ({
   total,
 }: BodyProps) => {
   return installing || !firmware?.shouldFlashMCU || initialDelayPhase ? (
-    <Installing installing={installing} current={current} total={total} progress={progress} />
+    <Installing
+      isInstalling={!!installing}
+      current={current}
+      total={total}
+      progress={progress}
+      deviceModelId={deviceModelId}
+    />
   ) : (
     <FlashMCU deviceModelId={deviceModelId} />
   );
@@ -59,6 +65,7 @@ const StepFlashMcu = ({
   setError,
   transitionTo,
   setUpdatedDeviceInfo,
+  deviceHasPin,
 }: StepProps) => {
   const [installing, setInstalling] = useState<string | undefined>(undefined);
   const [initialDelayPhase, setInitialDelayPhase] = useState(true);
@@ -142,7 +149,11 @@ const StepFlashMcu = ({
         if (!withFinal && installing === "flash-mcu" && progress === 1) {
           // set a flag to display the "updating" mode
           // timeout will debounces the UI to not see the "loading" if there are possible second mcu in future
-          endOfFirstFlashMcuTimeout = setTimeout(() => setAutoUpdatingMode(true), 1000);
+
+          endOfFirstFlashMcuTimeout = setTimeout(() => {
+            setCurrentStep(currentStep => currentStep + 1);
+            setAutoUpdatingMode(true);
+          }, 1000);
         } else {
           if (endOfFirstFlashMcuTimeout) {
             clearTimeout(endOfFirstFlashMcuTimeout);
@@ -173,7 +184,11 @@ const StepFlashMcu = ({
     return (
       <Container>
         <TrackPage category="Manager" name="Firmware Updating" />
-        <StepUpdatingBody modelId={deviceModelId} />
+        <StepUpdatingBody
+          modelId={deviceModelId}
+          deviceHasPin={deviceHasPin}
+          downloadPhase={{ current: currentStep, total: maxSteps }}
+        />
       </Container>
     );
   }

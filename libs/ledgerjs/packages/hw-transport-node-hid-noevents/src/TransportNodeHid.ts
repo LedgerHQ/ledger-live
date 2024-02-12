@@ -1,5 +1,5 @@
 import HID, { Device } from "node-hid";
-import { log } from "@ledgerhq/logs";
+import { LogType, TraceContext } from "@ledgerhq/logs";
 import Transport, {
   Observer,
   DescriptorEvent,
@@ -32,7 +32,6 @@ export function getDevices(): (Device & { deviceName?: string })[] {
  * ...
  * TransportNodeHid.create().then(transport => ...)
  */
-
 export default class TransportNodeHidNoEvents extends Transport {
   /**
    *
@@ -83,20 +82,31 @@ export default class TransportNodeHidNoEvents extends Transport {
   packetSize = 64;
   disconnected = false;
 
-  constructor(device: HID.HID) {
-    super();
+  constructor(
+    device: HID.HID,
+    { context, logType }: { context?: TraceContext; logType?: LogType } = {},
+  ) {
+    super({ context, logType });
+    this.updateTraceContext({ hidChannel: this.channel });
     this.device = device;
+
     // @ts-expect-error accessing low level API in C
     const info = device.getDeviceInfo();
+
+    this.tracer.trace(`Connected to HID device ${!!info}`, { info });
+
     this.deviceModel = info && info.product ? identifyProductName(info.product) : null;
   }
 
   setDisconnected = () => {
+    this.tracer.trace("Setting to disconnected", { alreadyDisconnected: this.disconnected });
+
     if (!this.disconnected) {
       this.emit("disconnect");
       this.disconnected = true;
     }
   };
+
   writeHID = (content: Buffer): Promise<void> => {
     const data = [0x00];
 
@@ -107,16 +117,23 @@ export default class TransportNodeHidNoEvents extends Transport {
     try {
       this.device.write(data);
       return Promise.resolve();
-    } catch (e: any) {
-      const maybeMappedError =
-        e && e.message ? new DisconnectedDeviceDuringOperation(e.message) : e;
+    } catch (error: unknown) {
+      this.tracer.trace(`Received an error during HID write: ${error}`, { error });
+
+      let maybeMappedError = error;
+      if (error instanceof Error) {
+        maybeMappedError = new DisconnectedDeviceDuringOperation(error.message);
+      }
+
       if (maybeMappedError instanceof DisconnectedDeviceDuringOperation) {
+        this.tracer.trace("Disconnected during HID write");
         this.setDisconnected();
       }
 
       return Promise.reject(maybeMappedError);
     }
   };
+
   readHID = (): Promise<Buffer> =>
     new Promise((resolve, reject) =>
       this.device.read((e, res) => {
@@ -125,9 +142,13 @@ export default class TransportNodeHidNoEvents extends Transport {
         }
 
         if (e) {
+          this.tracer.trace(`Received an error during HID read: ${e}`, { e });
+
           const maybeMappedError =
             e && e.message ? new DisconnectedDeviceDuringOperation(e.message) : e;
+
           if (maybeMappedError instanceof DisconnectedDeviceDuringOperation) {
+            this.tracer.trace("Disconnected during HID read");
             this.setDisconnected();
           }
 
@@ -141,16 +162,24 @@ export default class TransportNodeHidNoEvents extends Transport {
 
   /**
    * Exchange with the device using APDU protocol.
+   *
    * @param apdu
    * @returns a promise of apdu response
    */
   async exchange(apdu: Buffer): Promise<Buffer> {
+    const tracer = this.tracer.withUpdatedContext({
+      function: "exchange",
+    });
+    tracer.trace("Exchanging APDU ...");
+
     const b = await this.exchangeAtomicImpl(async () => {
       const { channel, packetSize } = this;
-      log("apdu", "=> " + apdu.toString("hex"));
-      const framing = hidFraming(channel, packetSize);
-      // Write...
-      const blocks = framing.makeBlocks(apdu);
+      tracer.withType("apdu").trace(`=> ${apdu.toString("hex")}`, { channel, packetSize });
+
+      const framingHelper = hidFraming(channel, packetSize);
+
+      // Creates HID-framed chunks from the APDU to be sent to the device...
+      const blocks = framingHelper.makeBlocks(apdu);
 
       for (let i = 0; i < blocks.length; i++) {
         await this.writeHID(blocks[i]);
@@ -160,12 +189,12 @@ export default class TransportNodeHidNoEvents extends Transport {
       let result;
       let acc;
 
-      while (!(result = framing.getReducedResult(acc))) {
+      while (!(result = framingHelper.getReducedResult(acc))) {
         const buffer = await this.readHID();
-        acc = framing.reduceResponse(acc, buffer);
+        acc = framingHelper.reduceResponse(acc, buffer);
       }
 
-      log("apdu", "<= " + result.toString("hex"));
+      tracer.withType("apdu").trace(`<= ${result.toString("hex")}`, { channel, packetSize });
       return result;
     });
 

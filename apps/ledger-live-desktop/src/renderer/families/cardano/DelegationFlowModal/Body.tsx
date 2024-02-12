@@ -114,7 +114,8 @@ const Body = ({
       "cardano: account and cardano resources required",
     );
     const bridge = getAccountBridge(account, undefined);
-    const transaction = bridge.createTransaction(account);
+    let transaction = bridge.createTransaction(account);
+    transaction = bridge.updateTransaction(transaction, { mode: "delegate" });
 
     return {
       account,
@@ -125,7 +126,7 @@ const Body = ({
   const handleCloseModal = useCallback(() => {
     closeModal(name);
   }, [closeModal, name]);
-  const handleStepChange = useCallback(e => onChangeStepId(e.id), [onChangeStepId]);
+  const handleStepChange = useCallback((e: St) => onChangeStepId(e.id), [onChangeStepId]);
   const handleRetry = useCallback(() => {
     setTransactionError(null);
     onChangeStepId("validator");

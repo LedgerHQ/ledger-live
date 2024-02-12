@@ -14,16 +14,22 @@ import { initialWebviewState } from "../Web3AppWebview/helpers";
 import HeaderTitle from "../HeaderTitle";
 import { InfoPanel } from "../WebPlatformPlayer/InfoPanel";
 import { RightHeader } from "../WebPlatformPlayer/RightHeader";
-import extraStatusBarPadding from "../../logic/extraStatusBarPadding";
+import extraStatusBarPadding from "~/logic/extraStatusBarPadding";
 
-import { completeOnboarding, setHasOrderedNano, setReadOnlyMode } from "../../actions/settings";
+import { completeOnboarding, setHasOrderedNano, setReadOnlyMode } from "~/actions/settings";
 
 type Props = {
   manifest: LiveAppManifest;
-  inputs?: Record<string, string>;
+  inputs?: Record<string, string | undefined>;
 };
 
-const headerShownIds = ["protect-staging", "protect-simu"];
+const headerShownIds = [
+  "protect-local",
+  "protect-local-dev",
+  "protect-simu",
+  "protect-staging",
+  "protect-staging-v2",
+];
 
 const WebRecoverPlayer = ({ manifest, inputs }: Props) => {
   const webviewAPIRef = useRef<WebviewAPI>(null);

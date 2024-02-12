@@ -12,9 +12,11 @@ import { getAccountBridge } from "../bridge";
 import perFamilyMock from "../generated/mock";
 import { CosmosAccount } from "../families/cosmos/types";
 import { BitcoinAccount } from "../families/bitcoin/types";
-import { PolkadotAccount } from "@ledgerhq/coin-polkadot/types";
+import { PolkadotAccount } from "@ledgerhq/coin-polkadot/types/index";
 import { TezosAccount } from "../families/tezos/types";
 import { TronAccount } from "../families/tron/types";
+import { CardanoAccount, PaymentChain } from "../families/cardano/types";
+import { types } from "@stricahq/typhonjs";
 
 /**
  * @memberof mock/account
@@ -55,6 +57,7 @@ export function genAccount(id: number | string, opts: GenAccountOptions = {}): A
             pendingRewardsBalance: new BigNumber(0),
             unbondingBalance: new BigNumber(0),
             withdrawAddress: address,
+            sequence: 0,
           };
           break;
         case "bitcoin":
@@ -89,7 +92,15 @@ export function genAccount(id: number | string, opts: GenAccountOptions = {}): A
               bandwidth: null,
               energy: null,
             },
+            unFrozen: {
+              bandwidth: null,
+              energy: null,
+            },
             delegatedFrozen: {
+              bandwidth: null,
+              energy: null,
+            },
+            legacyFrozen: {
               bandwidth: null,
               energy: null,
             },
@@ -106,6 +117,66 @@ export function genAccount(id: number | string, opts: GenAccountOptions = {}): A
             lastWithdrawnRewardDate: null,
             lastVotedDate: null,
             cacheTransactionInfoById: {},
+          };
+          break;
+        case "cardano":
+          (account as CardanoAccount).cardanoResources = {
+            delegation: {
+              status: true,
+              poolId: "45",
+              ticker: "ADA",
+              name: "Cardano",
+              rewards: new BigNumber(42),
+            },
+            externalCredentials: [
+              {
+                isUsed: false,
+                key: "test",
+                path: {
+                  purpose: 1852,
+                  coin: 1815,
+                  account: 4,
+                  chain: PaymentChain.external,
+                  index: 0,
+                },
+              },
+            ],
+            internalCredentials: [
+              {
+                isUsed: false,
+                key: "test",
+                path: {
+                  purpose: 1852,
+                  coin: 1815,
+                  account: 4,
+                  chain: PaymentChain.internal,
+                  index: 0,
+                },
+              },
+            ],
+            utxos: [
+              {
+                hash: "",
+                index: 0,
+                address: "",
+                amount: new BigNumber(10),
+                tokens: [],
+                paymentCredential: {
+                  key: "",
+                  path: { purpose: 0, coin: 0, account: 0, chain: PaymentChain.internal, index: 0 },
+                },
+              },
+            ],
+            protocolParams: {
+              minFeeA: "",
+              minFeeB: "",
+              stakeKeyDeposit: "",
+              lovelacePerUtxoWord: "",
+              collateralPercent: "",
+              priceMem: "",
+              priceSteps: "",
+              languageView: {} as types.LanguageView,
+            },
           };
           break;
         default: {

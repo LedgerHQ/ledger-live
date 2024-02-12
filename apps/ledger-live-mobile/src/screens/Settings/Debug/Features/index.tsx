@@ -1,14 +1,14 @@
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import { IconsLegacy } from "@ledgerhq/native-ui";
-import SettingsRow from "../../../../components/SettingsRow";
-import { ScreenName } from "../../../../const";
+import SettingsRow from "~/components/SettingsRow";
+import { ScreenName } from "~/const";
 import BLEPairingFlow from "./BLEPairingFlow";
 import CustomImage from "./CustomImage";
 import ClaimNftFlowDebug from "./ClaimNftFlowDebug";
 import SettingsNavigationScrollView from "../../SettingsNavigationScrollView";
-import { StackNavigatorNavigation } from "../../../../components/RootNavigator/types/helpers";
-import { SettingsNavigatorStackParamList } from "../../../../components/RootNavigator/types/SettingsNavigator";
+import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
+import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
 
 export default function Features() {
   const navigation = useNavigation<StackNavigatorNavigation<SettingsNavigatorStackParamList>>();

@@ -5,5 +5,7 @@ export { useFeature, FeatureToggle };
 
 export * from "./defaultFeatures";
 export * from "./groupedFeatures";
-export * from "./provider";
+export * from "./FeatureFlagsContext";
 export * from "./useHasOverriddenFeatureFlags";
+export * from "./firebaseFeatureFlags";
+export * from "./helper";

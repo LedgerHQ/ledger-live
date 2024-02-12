@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo, useState, useCallback } from "react";
 import Config from "react-native-config";
 import { View, StyleSheet } from "react-native";
-import CheckBox from "../../../../components/CheckBox";
-import LText from "../../../../components/LText";
-import Touchable from "../../../../components/Touchable";
+import CheckBox from "~/components/CheckBox";
+import LText from "~/components/LText";
+import Touchable from "~/components/Touchable";
 
 export default function DebugSwap() {
   const [configWrapper, setConfigWrapper] = useState(Config.SWAP_DISABLED_PROVIDERS || "");
@@ -11,7 +11,7 @@ export default function DebugSwap() {
   const currentDisabledProviders = useMemo(() => configWrapper.split(","), [configWrapper]);
 
   const onToggleProvider = useCallback(
-    provider => {
+    (provider: string) => {
       if (currentDisabledProviders.includes(provider)) {
         setConfigWrapper(currentDisabledProviders.filter(p => p !== provider).join(","));
       } else {

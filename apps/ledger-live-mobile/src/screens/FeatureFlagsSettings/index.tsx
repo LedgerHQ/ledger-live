@@ -1,7 +1,7 @@
 import React, { useCallback, useState, useMemo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  defaultFeatures,
+  DEFAULT_FEATURES,
   groupedFeatures,
   useFeature,
   useFeatureFlags,
@@ -19,16 +19,18 @@ import {
   Button,
   Switch,
 } from "@ledgerhq/native-ui";
-import { includes, lowerCase, trim } from "lodash";
+import includes from "lodash/includes";
+import lowerCase from "lodash/lowerCase";
+import trim from "lodash/trim";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Keyboard } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import NavigationScrollView from "../../components/NavigationScrollView";
+import NavigationScrollView from "~/components/NavigationScrollView";
 import FeatureFlagDetails, { TagDisabled, TagEnabled } from "./FeatureFlagDetails";
-import Alert from "../../components/Alert";
+import Alert from "~/components/Alert";
 import GroupedFeatures from "./GroupedFeatures";
-import { featureFlagsBannerVisibleSelector } from "../../reducers/settings";
-import { setFeatureFlagsBannerVisible } from "../../actions/settings";
+import { featureFlagsBannerVisibleSelector } from "~/reducers/settings";
+import { setFeatureFlagsBannerVisible } from "~/actions/settings";
 
 const addFlagHint = `\
 If a feature flag is defined in the Firebase project \
@@ -45,7 +47,7 @@ export default function DebugFeatureFlags() {
   const { resetFeatures, isFeature } = useFeatureFlags();
 
   const featureFlags = useMemo(() => {
-    const featureKeys = Object.keys(defaultFeatures);
+    const featureKeys = Object.keys(DEFAULT_FEATURES);
 
     if (searchInputTrimmed && !featureKeys.includes(searchInputTrimmed)) {
       const isHiddenFeature = isFeature(searchInputTrimmed);
@@ -59,7 +61,7 @@ export default function DebugFeatureFlags() {
     return featureKeys;
   }, [isFeature, searchInputTrimmed]);
 
-  const handleSearch = useCallback(value => {
+  const handleSearch = useCallback((value: string) => {
     setSearchInput(value);
   }, []);
 
@@ -135,7 +137,7 @@ export default function DebugFeatureFlags() {
   const featureFlagsBannerVisible = useSelector(featureFlagsBannerVisibleSelector);
   const dispatch = useDispatch();
   const setFeatureFlagBannerVisible = useCallback(
-    newVal => {
+    (newVal: boolean) => {
       dispatch(setFeatureFlagsBannerVisible(newVal));
     },
     [dispatch],
@@ -143,7 +145,7 @@ export default function DebugFeatureFlags() {
 
   return (
     <SafeAreaView edges={["bottom"]} style={{ flex: 1 }}>
-      <NavigationScrollView>
+      <NavigationScrollView keyboardShouldPersistTaps="handled">
         <Flex px={16}>
           <Alert type="primary" noIcon>
             {t("settings.debug.featureFlagsTitle")}

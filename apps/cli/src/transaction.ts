@@ -1,6 +1,3 @@
-import "lodash.product";
-// @ts-expect-error we imported lodash.product but not recognized by TS in lodash
-import { product } from "lodash";
 import uniqBy from "lodash/uniqBy";
 import shuffle from "lodash/shuffle";
 import flatMap from "lodash/flatMap";
@@ -12,10 +9,10 @@ import type {
   AccountLikeArray,
   TransactionStatusCommon,
 } from "@ledgerhq/types-live";
-import perFamily from "@ledgerhq/live-common/lib/generated/cli-transaction";
-import { getAccountCurrency } from "@ledgerhq/live-common/lib/account/helpers";
-import { parseCurrencyUnit } from "@ledgerhq/live-common/lib/currencies/index";
-import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge/index";
+import perFamily from "@ledgerhq/live-common/generated/cli-transaction";
+import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
+import { parseCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
+import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 
 const inferAmount = (account: AccountLike, str: string): BigNumber => {
   const currency = getAccountCurrency(account);
@@ -169,4 +166,14 @@ export async function inferTransactions(
   );
 
   return transactions;
+}
+
+function product<A, B>(arr1: A[], arr2: B[]): [A, B][] {
+  const result: [A, B][] = [];
+  arr1.forEach(item1 => {
+    arr2.forEach(item2 => {
+      result.push([item1, item2]);
+    });
+  });
+  return result;
 }

@@ -1,7 +1,8 @@
 import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
 import getDeviceInfo from "../../hw/getDeviceInfo";
-import manager from "../../manager";
+import { getLatestFirmwareForDeviceUseCase } from "../../device/use-cases/getLatestFirmwareForDeviceUseCase";
 import { fetchNextFirmware } from "../../hw/installFinalFirmware";
+import { firstValueFrom } from "rxjs";
 jest.setTimeout(20000);
 
 /*
@@ -18,7 +19,7 @@ test("1.2.0", async () => {
     managerAllowed: false,
     pinValidated: false
   };
-  const res = await manager.getLatestFirmwareForDevice(deviceInfo);
+  const res = await getLatestFirmwareForDeviceUseCase(deviceInfo);
   expect(res).toMatchObject({ final: {}, osu: {} });
 });
 */
@@ -34,7 +35,7 @@ test("1.3.1", async () => {
     managerAllowed: true,
     pinValidated: true,
   };
-  const res = await manager.getLatestFirmwareForDevice(deviceInfo);
+  const res = await getLatestFirmwareForDeviceUseCase(deviceInfo);
   expect(res).toMatchObject({
     final: {},
     osu: {},
@@ -52,7 +53,7 @@ test("1.4.2", async () => {
     majMin: "1.4",
     targetId: 823132163,
   };
-  const res = await manager.getLatestFirmwareForDevice(deviceInfo);
+  const res = await getLatestFirmwareForDeviceUseCase(deviceInfo);
   expect(res).toMatchObject({
     final: {},
     osu: {},
@@ -72,7 +73,7 @@ test("1.5.5", async () => {
     majMin: "1.5",
     targetId: 823132164
   };
-  const res = await manager.getLatestFirmwareForDevice(deviceInfo);
+  const res = await getLatestFirmwareForDeviceUseCase(deviceInfo);
   expect(res).toMatchObject({ final: {}, osu: {} });
 });
 */
@@ -88,7 +89,7 @@ test("nano x 1.1.6", async () => {
     providerName: null,
     targetId: 855638020,
   };
-  const res = await manager.getLatestFirmwareForDevice(deviceInfo);
+  const res = await getLatestFirmwareForDeviceUseCase(deviceInfo);
   expect(res).toBe(null);
 });
 // TODO waiting it to be stable
@@ -106,7 +107,7 @@ test("nano x 1.2.4-1", async () => {
     managerAllowed: true,
     pinValidated: true,
   };
-  const res = await manager.getLatestFirmwareForDevice(deviceInfo);
+  const res = await getLatestFirmwareForDeviceUseCase(deviceInfo);
   expect(res).toBe(null);
 });
 */
@@ -122,7 +123,7 @@ test("nanoS das", async () => {
     targetId: 823132163,
     version: "1.4.2-das",
   };
-  const res = await manager.getLatestFirmwareForDevice(deviceInfo);
+  const res = await getLatestFirmwareForDeviceUseCase(deviceInfo);
   expect(res).toBe(null);
 });
 test("OSU 1.4.2", async () => {
@@ -135,7 +136,7 @@ test("OSU 1.4.2", async () => {
     `),
   );
   const deviceInfo = await getDeviceInfo(t);
-  const next = await fetchNextFirmware(deviceInfo).toPromise();
+  const next = await firstValueFrom(fetchNextFirmware(deviceInfo));
   expect(next).toBeDefined();
   expect(next.firmware).toBeTruthy();
 });
@@ -149,7 +150,7 @@ test("OSU 1.5.5", async () => {
     `),
   );
   const deviceInfo = await getDeviceInfo(t);
-  const next = await fetchNextFirmware(deviceInfo).toPromise();
+  const next = await firstValueFrom(fetchNextFirmware(deviceInfo));
   expect(next).toBeDefined();
   expect(next.firmware).toBeTruthy();
 });

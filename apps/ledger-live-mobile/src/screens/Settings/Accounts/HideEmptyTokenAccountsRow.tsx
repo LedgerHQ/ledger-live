@@ -3,9 +3,9 @@ import { Trans } from "react-i18next";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { Switch } from "@ledgerhq/native-ui";
-import SettingsRow from "../../../components/SettingsRow";
-import { setHideEmptyTokenAccounts } from "../../../actions/settings";
-import withEnv from "../../../logic/withEnv";
+import SettingsRow from "~/components/SettingsRow";
+import { setHideEmptyTokenAccounts } from "~/actions/settings";
+import withEnv from "~/logic/withEnv";
 
 type Props = {
   hideEmptyTokenAccountsEnabled: boolean;

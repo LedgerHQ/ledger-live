@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { GestureResponderEvent, TouchableOpacity, TouchableOpacityProps } from "react-native";
-import { track } from "../analytics";
+import { track } from "~/analytics";
 
 const defaultHitSlop = {
   // default & can be overridden by rest

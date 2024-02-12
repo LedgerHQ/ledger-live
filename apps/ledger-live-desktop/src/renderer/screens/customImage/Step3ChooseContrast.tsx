@@ -37,9 +37,9 @@ const StepChooseContrast: React.FC<Props> = props => {
       footer={
         <StepFooter
           previousStep={Step.adjustImage}
-          previousLabel={t("common.previous")}
+          previousLabel={t("common.back")}
           nextStep={Step.transferImage}
-          nextLabel={t("common.continue")}
+          nextLabel={t("customImage.steps.contrast.confirmContrast")}
           nextLoading={loading}
           nextDisabled={loading}
           previousTestId="custom-image-contrast-previous-button"

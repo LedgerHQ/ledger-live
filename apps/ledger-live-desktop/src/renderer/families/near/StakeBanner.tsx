@@ -43,7 +43,7 @@ const StakeBanner: React.FC<{ account: NearAccount }> = ({ account }) => {
     ? "https://support.ledger.com/hc/en-us/articles/7658561043613-How-to-stake-NEAR-through-Ledger-Live-and-earn-rewards"
     : "https://www.ledger.com/staking/staking-near";
   const onClick = () => {
-    track("button_clicked", {
+    track("button_clicked2", {
       ...stakeDefaultTrack,
       delegation: "stake",
       page: "Page Account",

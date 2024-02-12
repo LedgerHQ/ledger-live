@@ -3,7 +3,7 @@ import PortfolioPage from "../models/wallet/portfolioPage";
 import WalletTabNavigatorPage from "../models/wallet/walletTabNavigator";
 import NftViewerPage from "../models/nft/nftViewerPage";
 import NftGalleryPage from "../models/wallet/nftGalleryPage";
-import { isAndroid, tapByElement, tapByText } from "../helpers";
+import { tapByElement, tapByText, waitForElementById } from "../helpers";
 import ReceivePage from "../models/trade/receivePage";
 import { loadConfig } from "../bridge/server";
 
@@ -15,7 +15,7 @@ let receivePage: ReceivePage;
 
 describe("NFT Gallery screen", () => {
   beforeAll(async () => {
-    loadConfig("1Account1NFTReadOnlyFalse");
+    loadConfig("1Account1NFTNotSpam");
 
     portfolioPage = new PortfolioPage();
     walletTabNavigatorPage = new WalletTabNavigatorPage();
@@ -42,6 +42,7 @@ describe("NFT Gallery screen", () => {
   });
 
   it("should have a list of NFTs", async () => {
+    await waitForElementById(nftGalleryPage.nftListComponentId);
     await expect(nftGalleryPage.nftListComponent()).toBeVisible();
     await expect(nftGalleryPage.nftListItem(0)).toBeVisible();
   });
@@ -64,18 +65,14 @@ describe("NFT Gallery screen", () => {
   });
 
   it("should let you pick a crypto account to receive NFT", async () => {
-    await expect(receivePage.getStep1HeaderTitle()).not.toBeVisible();
+    await expect(receivePage.step1HeaderTitle()).not.toBeVisible();
     await nftGalleryPage.continueFromReceiveNFTsModal();
-    await expect(receivePage.getStep1HeaderTitle()).toBeVisible();
-    await expect(receivePage.getStep2HeaderTitle()).not.toExist();
+    await expect(receivePage.step1HeaderTitle()).toBeVisible();
+    await expect(receivePage.step2HeaderTitle()).not.toExist();
     await tapByText("Ethereum");
-    // NOTE: Use .toExist because the modal overlay with an opacity
-    // means we cannot use .toBeVisible
-    if (!isAndroid()) {
-      await expect(receivePage.getStep2HeaderTitle()).toExist();
-      await tapByText("Ethereum");
-      await expect(receivePage.getStep2Accounts()).toBeVisible();
-    }
+    await expect(receivePage.step2HeaderTitle()).toBeVisible();
+    await tapByText("Ethereum");
+    await expect(receivePage.step2Accounts()).toBeVisible();
   });
 
   it("should let users hide NFT's", async () => {
@@ -84,7 +81,7 @@ describe("NFT Gallery screen", () => {
   });
 
   it("should render empty state", async () => {
-    await expect(nftGalleryPage.emptyScreen()).toBeVisible();
+    await expect(nftGalleryPage.emptyScreen()).toBeVisible(50);
   });
 
   it('should show filters on "reset" button tap', async () => {

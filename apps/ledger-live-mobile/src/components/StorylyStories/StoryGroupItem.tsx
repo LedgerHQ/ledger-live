@@ -50,6 +50,7 @@ const Border: React.FC<{ seen: boolean }> = ({ seen }) => {
           cy={containerSize / 2}
           r={innerImageSize / 2 + borderInnerPadding}
           strokeWidth={borderWidth}
+          fill="none"
           stroke="url(#grad)"
         />
       </Svg>

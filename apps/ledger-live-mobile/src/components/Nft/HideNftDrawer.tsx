@@ -5,11 +5,11 @@ import { useNavigation } from "@react-navigation/native";
 import { Button, IconsLegacy } from "@ledgerhq/native-ui";
 import { useDispatch, useSelector } from "react-redux";
 import { Account } from "@ledgerhq/types-live";
-import { decodeNftId } from "@ledgerhq/live-common/nft/index";
-import { track, TrackScreen } from "../../analytics";
-import { hideNftCollection } from "../../actions/settings";
-import { accountSelector } from "../../reducers/accounts";
-import { State } from "../../reducers/types";
+import { decodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
+import { track, TrackScreen } from "~/analytics";
+import { hideNftCollection } from "~/actions/settings";
+import { accountSelector } from "~/reducers/accounts";
+import { State } from "~/reducers/types";
 import QueuedDrawer from "../QueuedDrawer";
 
 type Props = {

@@ -39,7 +39,7 @@ const steps: Array<St> = [
 const Body = ({ onClose, data }: Props) => {
   const { t } = useTranslation();
   const [stepId, setStepId] = useState("summary");
-  const handleStepChange = useCallback(e => setStepId(e.id), [setStepId]);
+  const handleStepChange = useCallback((e: { id: string }) => setStepId(e.id), [setStepId]);
   const stepperOnClose = useCallback(() => {
     if (onClose) {
       onClose();

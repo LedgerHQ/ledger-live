@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { SyntheticEvent, useCallback, useEffect, useRef, useState } from "react";
 import { ImageBase64Data, ImageDimensions } from "./types";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { Button, Flex, IconsLegacy } from "@ledgerhq/react-ui";
@@ -122,6 +122,11 @@ async function cropAndResizeImage(
   };
 }
 
+type CropState = {
+  x: number;
+  y: number;
+};
+
 const ImageCropper: React.FC<Props> = props => {
   const {
     imageBase64DataUri,
@@ -135,7 +140,7 @@ const ImageCropper: React.FC<Props> = props => {
 
   const track = useTrack();
 
-  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [crop, setCrop] = useState<CropState>({ x: 0, y: 0 });
   const [completeCropPixel, setCompleteCropPixel] = useState<Crop>();
 
   const imageUuid = imageBase64DataUri;
@@ -180,14 +185,14 @@ const ImageCropper: React.FC<Props> = props => {
   }, [debouncedCompleteCropPixel, targetDimensions, onResult, setLoading]);
 
   const rotateCounterClockwise: () => void = useCallback(() => {
-    track("button_clicked", { button: "Rotate" });
+    track("button_clicked2", { button: "Rotate" });
     setLoading(true);
     /** the increments are of 90° so 360°/4 */
     setRotationIncrements((rotationIncrements - 1) % 4);
   }, [track, setLoading, rotationIncrements]);
 
   const handleCropChange = useCallback(
-    crop => {
+    (crop: CropState) => {
       setCrop(crop);
     },
     [setCrop],
@@ -205,12 +210,12 @@ const ImageCropper: React.FC<Props> = props => {
      * then it will never trigger onCropComplete, so until further interaction
      * the loading state will be kept on (infinite loading).
      */
-    e => !((zoom === 1 && e.deltaY > 0) || (zoom === MAX_ZOOM && e.deltaY < 0)),
+    (e: WheelEvent) => !((zoom === 1 && e.deltaY > 0) || (zoom === MAX_ZOOM && e.deltaY < 0)),
     [zoom],
   );
 
   const handleCropComplete = useCallback(
-    (_, cropPixel) => {
+    (_: unknown, cropPixel: Crop) => {
       setCompleteCropPixel(cropPixel);
       setCropParams({ crop: cropPixel, imageUuid, rotationIncrements, zoom });
     },
@@ -218,7 +223,7 @@ const ImageCropper: React.FC<Props> = props => {
   );
 
   const handleError = useCallback(
-    e => {
+    (e: SyntheticEvent) => {
       console.error(e);
       onError(new ImageCropError());
     },

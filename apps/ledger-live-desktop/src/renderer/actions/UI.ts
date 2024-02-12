@@ -1,5 +1,9 @@
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { createAction } from "redux-actions";
+import { Data as CompleteExchangeData } from "~/renderer/modals/Platform/Exchange/CompleteExchange/Body";
+import { ExchangeType } from "@ledgerhq/live-common/wallet-api/react";
+
 export const openInformationCenter = createAction(
   "INFORMATION_CENTER_OPEN",
   (tabId: string | undefined) => ({
@@ -21,6 +25,30 @@ export const openPlatformAppInfoDrawer = createAction(
     manifest,
   }),
 );
+export const openExchangeDrawer = createAction(
+  "EXCHANGE_APP_DRAWER_OPEN",
+  ({
+    type,
+    ...data
+  }:
+    | {
+        type: "EXCHANGE_START";
+        exchangeType: ExchangeType;
+        provider?: string;
+        fromAccountId?: string;
+        toAccountId?: string;
+        tokenCurrency?: string;
+        onResult: (nonce: string) => void;
+        onCancel: (error: Error) => void;
+      }
+    | ({
+        type: "EXCHANGE_COMPLETE";
+      } & CompleteExchangeData)) => ({
+    type,
+    title: "swap2.exchangeDrawer.title",
+    data,
+  }),
+);
 export const openPlatformAppDisclaimerDrawer = createAction(
   "PLATFORM_APP_DRAWER_OPEN",
   ({
@@ -30,7 +58,7 @@ export const openPlatformAppDisclaimerDrawer = createAction(
   }: {
     manifest: LiveAppManifest | undefined | null;
     disclaimerId: string;
-    next: () => void;
+    next: (manifest: AppManifest, isChecked: boolean) => void;
   }) => ({
     type: "DAPP_DISCLAIMER",
     manifest,

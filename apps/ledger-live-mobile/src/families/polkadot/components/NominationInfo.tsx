@@ -1,7 +1,7 @@
 import { useTheme } from "@react-navigation/native";
 import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
-import LText from "../../../components/LText";
+import LText from "~/components/LText";
 
 type Props = {
   address: string;

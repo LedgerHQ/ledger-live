@@ -2,16 +2,17 @@ import React, { useCallback } from "react";
 import { Linking } from "react-native";
 import { useTranslation } from "react-i18next";
 import { getDefaultExplorerView, getAddressExplorer } from "@ledgerhq/live-common/explorers";
-import type { Account, OperationType, Operation } from "@ledgerhq/types-live";
+import type { OperationType, Operation } from "@ledgerhq/types-live";
 import { useCosmosFamilyPreloadData } from "@ledgerhq/live-common/families/cosmos/react";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { BigNumber } from "bignumber.js";
 import { getAccountUnit } from "@ledgerhq/live-common/account/helpers";
-import type { CosmosDelegationInfo } from "@ledgerhq/live-common/families/cosmos/types";
+import type { CosmosAccount, CosmosOperation } from "@ledgerhq/live-common/families/cosmos/types";
 import { useSelector } from "react-redux";
 import cryptoFactory from "@ledgerhq/live-common/families/cosmos/chain/chain";
-import Section from "../../screens/OperationDetails/Section";
-import { discreetModeSelector, localeSelector } from "../../reducers/settings";
+import Section from "~/screens/OperationDetails/Section";
+import { discreetModeSelector } from "~/reducers/settings";
+import { useSettings } from "~/hooks";
 
 function getURLFeesInfo(op: Operation, currencyId: string): string | null | undefined {
   return op.fee.gt(200000) ? cryptoFactory(currencyId).stakingDocUrl : undefined;
@@ -24,24 +25,21 @@ function getURLWhatIsThis(op: Operation, currencyId: string): string | null | un
 }
 
 type Props = {
-  extra: {
-    validators: CosmosDelegationInfo[];
-    sourceValidator?: string;
-    memo?: string;
-  };
+  operation: CosmosOperation;
   type: OperationType;
-  account: Account;
+  account: CosmosAccount;
 };
 
-function OperationDetailsExtra({ extra, type, account }: Props) {
+function OperationDetailsExtra({ operation, type, account }: Props) {
   const { t } = useTranslation();
   const discreet = useSelector(discreetModeSelector);
-  const locale = useSelector(localeSelector);
+  const { locale } = useSettings();
   const unit = getAccountUnit(account);
   const currencyId = account.currency.id;
+  const { extra } = operation;
   const { validators: cosmosValidators } = useCosmosFamilyPreloadData(currencyId);
   const redirectAddressCreator = useCallback(
-    address => () => {
+    (address: string) => () => {
       const url = getAddressExplorer(getDefaultExplorerView(account.currency), address);
       if (url) Linking.openURL(url);
     },
@@ -67,12 +65,12 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
     case "DELEGATE": {
       const validator = extra.validators[0];
       const formattedValidator = getValidatorName(validator.address);
-      const formattedAmount = formatCurrencyUnit(unit, BigNumber(validator.amount), {
+      const formattedAmount = formatCurrencyUnit(unit, new BigNumber(validator.amount), {
         disableRounding: true,
         alwaysShowSign: false,
         showCode: true,
         discreet,
-        locale,
+        locale: locale,
       });
       ret = (
         <>
@@ -86,12 +84,12 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
     case "UNDELEGATE": {
       const validator = extra.validators[0];
       const formattedValidator = getValidatorName(validator.address);
-      const formattedAmount = formatCurrencyUnit(unit, BigNumber(validator.amount), {
+      const formattedAmount = formatCurrencyUnit(unit, new BigNumber(validator.amount), {
         disableRounding: true,
         alwaysShowSign: false,
         showCode: true,
         discreet,
-        locale,
+        locale: locale,
       });
       ret = (
         <>
@@ -114,12 +112,12 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
       const validator = extra.validators[0];
       const formattedValidator = getValidatorName(validator.address);
       const formattedSourceValidator = getValidatorName(sourceValidator);
-      const formattedAmount = formatCurrencyUnit(unit, BigNumber(validator.amount), {
+      const formattedAmount = formatCurrencyUnit(unit, new BigNumber(validator.amount), {
         disableRounding: true,
         alwaysShowSign: false,
         showCode: true,
         discreet,
-        locale,
+        locale: locale,
       });
       ret = (
         <>
@@ -154,12 +152,12 @@ function OperationDetailsExtra({ extra, type, account }: Props) {
               value={
                 getValidatorName(v.address) +
                 " " +
-                formatCurrencyUnit(unit, BigNumber(v.amount), {
+                formatCurrencyUnit(unit, new BigNumber(v.amount), {
                   disableRounding: true,
                   alwaysShowSign: false,
                   showCode: true,
                   discreet,
-                  locale,
+                  locale: locale,
                 })
               }
               onPress={() => {

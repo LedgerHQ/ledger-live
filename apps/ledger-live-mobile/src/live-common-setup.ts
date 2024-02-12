@@ -1,11 +1,11 @@
 import Config from "react-native-config";
 import { Observable, timer } from "rxjs";
 import { map, debounce } from "rxjs/operators";
-import { listen } from "@ledgerhq/logs";
+import { TraceContext, listen } from "@ledgerhq/logs";
 import HIDTransport from "@ledgerhq/react-native-hid";
 import withStaticURLs from "@ledgerhq/hw-transport-http";
 import { retry } from "@ledgerhq/live-common/promise";
-import { setEnv } from "@ledgerhq/live-common/env";
+import { setEnv } from "@ledgerhq/live-env";
 import {
   getCryptoCurrencyById,
   setSupportedCurrencies,
@@ -25,11 +25,17 @@ import { setGlobalOnBridgeError } from "@ledgerhq/live-common/bridge/useBridgeTr
 import { prepareCurrency } from "./bridge/cache";
 import BluetoothTransport from "./react-native-hw-transport-ble";
 import "./experimental";
-import logger from "./logger";
+import logger, { ConsoleLogger } from "./logger";
+
+const consoleLogger = ConsoleLogger.getLogger();
+listen(log => {
+  consoleLogger.log(log);
+});
 
 setGlobalOnBridgeError(e => logger.critical(e));
 setDeviceMode("polling");
 setWalletAPIVersion(WALLET_API_VERSION);
+
 setSupportedCurrencies([
   "avalanche_c_chain",
   "axelar",
@@ -37,7 +43,9 @@ setSupportedCurrencies([
   "secret_network",
   "umee",
   "desmos",
+  "dydx",
   "onomy",
+  "sei_network",
   "quicksilver",
   "persistence",
   "bitcoin",
@@ -74,6 +82,8 @@ setSupportedCurrencies([
   "bitcoin_testnet",
   "ethereum_ropsten",
   "ethereum_goerli",
+  "ethereum_sepolia",
+  "ethereum_holesky",
   "elrond",
   "hedera",
   "cardano",
@@ -100,9 +110,8 @@ setSupportedCurrencies([
   "moonriver",
   "velas_evm",
   "syscoin",
+  "vechain",
   "internet_computer",
-  "ethereum_as_evm_test_only",
-  "polygon_as_evm_test_only",
   "klaytn",
   "polygon_zk_evm",
   "polygon_zk_evm_testnet",
@@ -111,20 +120,17 @@ setSupportedCurrencies([
   "stacks",
   "telos_evm",
   "coreum",
+  "injective",
+  "casper",
+  "neon_evm",
+  "lukso",
+  "linea",
+  "linea_goerli",
 ]);
 
-if (Config.VERBOSE) {
-  listen(({ type, message, ...rest }) => {
-    if (Object.keys(rest).length) {
-      console.log(`${type}: ${message || ""}`, rest); // eslint-disable-line no-console
-    } else {
-      console.log(`${type}: ${message || ""}`); // eslint-disable-line no-console
-    }
-  });
-}
-
 if (Config.BLE_LOG_LEVEL) BluetoothTransport.setLogLevel(Config.BLE_LOG_LEVEL);
-if (Config.FORCE_PROVIDER) setEnv("FORCE_PROVIDER", Config.FORCE_PROVIDER);
+if (Config.FORCE_PROVIDER && !isNaN(parseInt(Config.FORCE_PROVIDER, 10)))
+  setEnv("FORCE_PROVIDER", parseInt(Config.FORCE_PROVIDER, 10));
 // Add support of HID (experimental until we stabilize it)
 registerTransportModule({
   id: "hid",
@@ -186,8 +192,9 @@ registerTransportModule(httpdebug);
 // BLE is always the fallback choice because we always keep raw id in it
 registerTransportModule({
   id: "ble",
-  open: id => BluetoothTransport.open(id),
-  disconnect: id => BluetoothTransport.disconnect(id),
+  open: (id: string, timeoutMs?: number, context?: TraceContext) =>
+    BluetoothTransport.open(id, timeoutMs, context),
+  disconnect: id => BluetoothTransport.disconnectDevice(id),
 });
 
 if (process.env.NODE_ENV === "production") {

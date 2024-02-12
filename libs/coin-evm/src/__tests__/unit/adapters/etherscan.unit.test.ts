@@ -6,12 +6,14 @@ import {
   etherscanERC1155EventToOperations,
   etherscanERC20EventToOperations,
   etherscanERC721EventToOperations,
+  etherscanInternalTransactionToOperations,
   etherscanOperationToOperations,
 } from "../../../adapters";
 import {
   EtherscanERC1155Event,
   EtherscanERC20Event,
   EtherscanERC721Event,
+  EtherscanInternalTransaction,
   EtherscanOperation,
 } from "../../../types";
 
@@ -19,6 +21,64 @@ describe("EVM Family", () => {
   describe("adapters", () => {
     describe("etherscan", () => {
       describe("etherscanOperationToOperations", () => {
+        it("should convert an etherscan-like smart contract creation operation (from their API) to a Ledger Live Operation", () => {
+          const etherscanOp: EtherscanOperation = {
+            blockNumber: "14923692",
+            timeStamp: "1654646570",
+            hash: "0xaa45b4858ba44230a5fce5a29570a5dec2bf1f0ba95bacdec4fe8f2c4fa99338",
+            nonce: "7",
+            blockHash: "0x8df71a12a8c06b36c06c26bf6248857dd2a2b75b6edbb4e33e9477078897b282",
+            transactionIndex: "27",
+            from: "0x9aa99c23f67c81701c772b106b4f83f6e858dd2e",
+            to: "",
+            value: "0",
+            gas: "6000000",
+            gasPrice: "125521409858",
+            isError: "0",
+            txreceipt_status: "1",
+            input:
+              "0xa9059cbb000000000000000000000000313143c4088a47c469d06fe3fa5fd4196be6a4d600000000000000000000000000000000000000000003b8e97d229a2d54800000",
+            contractAddress: "0x4969d9fd2542e71e6b3ea87be54ea9a736bcc4e9",
+            cumulativeGasUsed: "1977481",
+            gasUsed: "57168",
+            confirmations: "122471",
+            methodId: "0xa9059cbb",
+            functionName: "transfer(address _to, uint256 _value)",
+          };
+
+          const accountId = encodeAccountId({
+            type: "js",
+            version: "2",
+            currencyId: "ethereum",
+            xpubOrAddress: "0x9aa99c23f67c81701c772b106b4f83f6e858dd2e",
+            derivationMode: "",
+          });
+
+          const expectedOperation: Operation = {
+            id: "js:2:ethereum:0x9aa99c23f67c81701c772b106b4f83f6e858dd2e:-0xaa45b4858ba44230a5fce5a29570a5dec2bf1f0ba95bacdec4fe8f2c4fa99338-FEES",
+            hash: "0xaa45b4858ba44230a5fce5a29570a5dec2bf1f0ba95bacdec4fe8f2c4fa99338",
+            accountId,
+            blockHash: "0x8df71a12a8c06b36c06c26bf6248857dd2a2b75b6edbb4e33e9477078897b282",
+            blockHeight: 14923692,
+            recipients: [""],
+            senders: ["0x9AA99C23F67c81701C772B106b4F83f6e858dd2E"],
+            value: new BigNumber("7175807958762144"),
+            fee: new BigNumber("7175807958762144"),
+            date: new Date("2022-06-08T00:02:50.000Z"),
+            transactionSequenceNumber: 7,
+            hasFailed: false,
+            nftOperations: [],
+            subOperations: [],
+            internalOperations: [],
+            type: "FEES",
+            extra: {},
+          };
+
+          expect(etherscanOperationToOperations(accountId, etherscanOp)).toEqual([
+            expectedOperation,
+          ]);
+        });
+
         it("should convert an etherscan-like smart contract operation (from their API) to a Ledger Live Operation", () => {
           const etherscanOp: EtherscanOperation = {
             blockNumber: "14923692",
@@ -67,6 +127,7 @@ describe("EVM Family", () => {
             hasFailed: false,
             nftOperations: [],
             subOperations: [],
+            internalOperations: [],
             type: "FEES",
             extra: {},
           };
@@ -123,6 +184,7 @@ describe("EVM Family", () => {
             hasFailed: false,
             nftOperations: [],
             subOperations: [],
+            internalOperations: [],
             type: "OUT",
             extra: {},
           };
@@ -179,6 +241,7 @@ describe("EVM Family", () => {
             hasFailed: false,
             nftOperations: [],
             subOperations: [],
+            internalOperations: [],
             type: "IN",
             extra: {},
           };
@@ -235,6 +298,7 @@ describe("EVM Family", () => {
             hasFailed: false,
             nftOperations: [],
             subOperations: [],
+            internalOperations: [],
             type: "NONE",
             extra: {},
           };
@@ -292,6 +356,7 @@ describe("EVM Family", () => {
               hasFailed: false,
               nftOperations: [],
               subOperations: [],
+              internalOperations: [],
               type: "IN",
               extra: {},
             },
@@ -310,6 +375,7 @@ describe("EVM Family", () => {
               hasFailed: false,
               nftOperations: [],
               subOperations: [],
+              internalOperations: [],
               type: "OUT",
               extra: {},
             },
@@ -390,7 +456,7 @@ describe("EVM Family", () => {
           const tokenAccountId = encodeTokenAccountId(accountId, tokenCurrency!);
 
           const expectedOperation: Operation = {
-            id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:+ethereum%2Ferc20%2Fusd__coin-0x02b972f304dc24c9bc362e6435c4ad654241f9af916689a4790145c9bcbdf4cf-OUT-i0",
+            id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin-0x02b972f304dc24c9bc362e6435c4ad654241f9af916689a4790145c9bcbdf4cf-OUT-i0",
             hash: "0x02b972f304dc24c9bc362e6435c4ad654241f9af916689a4790145c9bcbdf4cf",
             accountId: tokenAccountId,
             blockHash: "0x58ee7556044cd139e569c87c173a6dedbfbeb9ada6693ee6090fd510acee9c21",
@@ -445,7 +511,7 @@ describe("EVM Family", () => {
           const tokenAccountId = encodeTokenAccountId(accountId, tokenCurrency!);
 
           const expectedOperation: Operation = {
-            id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:+ethereum%2Ferc20%2Fusd__coin-0x02b972f304dc24c9bc362e6435c4ad654241f9af916689a4790145c9bcbdf4cf-IN-i0",
+            id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin-0x02b972f304dc24c9bc362e6435c4ad654241f9af916689a4790145c9bcbdf4cf-IN-i0",
             hash: "0x02b972f304dc24c9bc362e6435c4ad654241f9af916689a4790145c9bcbdf4cf",
             accountId: tokenAccountId,
             blockHash: "0x58ee7556044cd139e569c87c173a6dedbfbeb9ada6693ee6090fd510acee9c21",
@@ -535,7 +601,7 @@ describe("EVM Family", () => {
 
           const expectedOperations: Operation[] = [
             {
-              id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:+ethereum%2Ferc20%2Fusd__coin-0x02b972f304dc24c9bc362e6435c4ad654241f9af916689a4790145c9bcbdf4cf-IN-i0",
+              id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin-0x02b972f304dc24c9bc362e6435c4ad654241f9af916689a4790145c9bcbdf4cf-IN-i0",
               hash: "0x02b972f304dc24c9bc362e6435c4ad654241f9af916689a4790145c9bcbdf4cf",
               accountId: tokenAccountId,
               blockHash: "0x58ee7556044cd139e569c87c173a6dedbfbeb9ada6693ee6090fd510acee9c21",
@@ -551,7 +617,7 @@ describe("EVM Family", () => {
               extra: {},
             },
             {
-              id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:+ethereum%2Ferc20%2Fusd__coin-0x02b972f304dc24c9bc362e6435c4ad654241f9af916689a4790145c9bcbdf4cf-OUT-i0",
+              id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin-0x02b972f304dc24c9bc362e6435c4ad654241f9af916689a4790145c9bcbdf4cf-OUT-i0",
               hash: "0x02b972f304dc24c9bc362e6435c4ad654241f9af916689a4790145c9bcbdf4cf",
               accountId: tokenAccountId,
               blockHash: "0x58ee7556044cd139e569c87c173a6dedbfbeb9ada6693ee6090fd510acee9c21",
@@ -1011,6 +1077,195 @@ describe("EVM Family", () => {
           ];
 
           expect(etherscanERC1155EventToOperations(accountId, etherscanOp)).toEqual(
+            expectedOperations,
+          );
+        });
+      });
+
+      describe("etherscanInternalTransactionToOperations", () => {
+        it("should convert a etherscan-like out internal transaction (from their API) to a Ledger Live Operation", () => {
+          const etherscanOp: EtherscanInternalTransaction = {
+            blockNumber: "14878012",
+            timeStamp: "1653990239",
+            hash: "0xb3effb3b6c52c719507f8219fe0dd2147a9f7ba366261ab43532efb0b9b01885",
+            from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            to: "0xdef171fe48cf0115b1d80b88dc8eab59176fee57",
+            value: "66616263350003",
+            contractAddress: "",
+            input: "",
+            type: "call",
+            gas: "129878",
+            gasUsed: "0",
+            traceId: "0_1",
+            isError: "0",
+            errCode: "",
+          };
+
+          const accountId = encodeAccountId({
+            type: "js",
+            version: "2",
+            currencyId: "ethereum",
+            xpubOrAddress: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            derivationMode: "",
+          });
+
+          const expectedOperation: Operation = {
+            id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:-0xb3effb3b6c52c719507f8219fe0dd2147a9f7ba366261ab43532efb0b9b01885-OUT-i0",
+            hash: "0xb3effb3b6c52c719507f8219fe0dd2147a9f7ba366261ab43532efb0b9b01885",
+            accountId,
+            blockHeight: 14878012,
+            blockHash: undefined,
+            senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+            recipients: ["0xDEF171Fe48CF0115B1d80b88dc8eAB59176FEe57"],
+            value: new BigNumber("66616263350003"),
+            fee: new BigNumber("0"),
+            date: new Date("2022-05-31T09:43:59.000Z"),
+            type: "OUT",
+            hasFailed: false,
+            extra: {},
+          };
+
+          expect(etherscanInternalTransactionToOperations(accountId, etherscanOp)).toEqual([
+            expectedOperation,
+          ]);
+        });
+
+        it("should convert a etherscan-like in internal transaction (from their API) to a Ledger Live Operation", () => {
+          const etherscanOp: EtherscanInternalTransaction = {
+            blockNumber: "14878012",
+            timeStamp: "1653990239",
+            hash: "0xb3effb3b6c52c719507f8219fe0dd2147a9f7ba366261ab43532efb0b9b01885",
+            from: "0xdef171fe48cf0115b1d80b88dc8eab59176fee57",
+            to: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            value: "66616263350003",
+            contractAddress: "",
+            input: "",
+            type: "call",
+            gas: "129878",
+            gasUsed: "0",
+            traceId: "0_1",
+            isError: "0",
+            errCode: "",
+          };
+
+          const accountId = encodeAccountId({
+            type: "js",
+            version: "2",
+            currencyId: "ethereum",
+            xpubOrAddress: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            derivationMode: "",
+          });
+
+          const expectedOperation: Operation = {
+            id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:-0xb3effb3b6c52c719507f8219fe0dd2147a9f7ba366261ab43532efb0b9b01885-IN-i0",
+            hash: "0xb3effb3b6c52c719507f8219fe0dd2147a9f7ba366261ab43532efb0b9b01885",
+            accountId,
+            blockHeight: 14878012,
+            blockHash: undefined,
+            senders: ["0xDEF171Fe48CF0115B1d80b88dc8eAB59176FEe57"],
+            recipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+            value: new BigNumber("66616263350003"),
+            fee: new BigNumber("0"),
+            date: new Date("2022-05-31T09:43:59.000Z"),
+            type: "IN",
+            hasFailed: false,
+            extra: {},
+          };
+
+          expect(etherscanInternalTransactionToOperations(accountId, etherscanOp)).toEqual([
+            expectedOperation,
+          ]);
+        });
+
+        it("should convert a etherscan-like none internal transaction (from their API) to a Ledger Live Operation", () => {
+          const etherscanOp: EtherscanInternalTransaction = {
+            blockNumber: "14878012",
+            timeStamp: "1653990239",
+            hash: "0xb3effb3b6c52c719507f8219fe0dd2147a9f7ba366261ab43532efb0b9b01885",
+            from: "0xdef171fe48cf0115b1d80b88dc8eab59176fee57",
+            to: "0x3244100A07c7fEE9bDE409e877ed2e8Ff1EdeEda", // pdv.eth
+            value: "66616263350003",
+            contractAddress: "",
+            input: "",
+            type: "call",
+            gas: "129878",
+            gasUsed: "0",
+            traceId: "0_1",
+            isError: "0",
+            errCode: "",
+          };
+
+          const accountId = encodeAccountId({
+            type: "js",
+            version: "2",
+            currencyId: "ethereum",
+            xpubOrAddress: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            derivationMode: "",
+          });
+
+          expect(etherscanInternalTransactionToOperations(accountId, etherscanOp)).toEqual([]);
+        });
+
+        it("should convert a etherscan-like self internal transaction (from their API) to 2 Ledger Live Operations", () => {
+          const etherscanOp: EtherscanInternalTransaction = {
+            blockNumber: "14878012",
+            timeStamp: "1653990239",
+            hash: "0xb3effb3b6c52c719507f8219fe0dd2147a9f7ba366261ab43532efb0b9b01885",
+            from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            to: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            value: "66616263350003",
+            contractAddress: "",
+            input: "",
+            type: "call",
+            gas: "129878",
+            gasUsed: "0",
+            traceId: "0_1",
+            isError: "0",
+            errCode: "",
+          };
+
+          const accountId = encodeAccountId({
+            type: "js",
+            version: "2",
+            currencyId: "ethereum",
+            xpubOrAddress: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            derivationMode: "",
+          });
+
+          const expectedOperations: Operation[] = [
+            {
+              id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:-0xb3effb3b6c52c719507f8219fe0dd2147a9f7ba366261ab43532efb0b9b01885-IN-i0",
+              hash: "0xb3effb3b6c52c719507f8219fe0dd2147a9f7ba366261ab43532efb0b9b01885",
+              accountId,
+              blockHeight: 14878012,
+              blockHash: undefined,
+              senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+              recipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+              value: new BigNumber("66616263350003"),
+              fee: new BigNumber("0"),
+              date: new Date("2022-05-31T09:43:59.000Z"),
+              type: "IN",
+              hasFailed: false,
+              extra: {},
+            },
+            {
+              id: "js:2:ethereum:0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d:-0xb3effb3b6c52c719507f8219fe0dd2147a9f7ba366261ab43532efb0b9b01885-OUT-i0",
+              hash: "0xb3effb3b6c52c719507f8219fe0dd2147a9f7ba366261ab43532efb0b9b01885",
+              accountId,
+              blockHeight: 14878012,
+              blockHash: undefined,
+              senders: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+              recipients: ["0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d"],
+              value: new BigNumber("66616263350003"),
+              fee: new BigNumber("0"),
+              date: new Date("2022-05-31T09:43:59.000Z"),
+              type: "OUT",
+              hasFailed: false,
+              extra: {},
+            },
+          ];
+
+          expect(etherscanInternalTransactionToOperations(accountId, etherscanOp)).toEqual(
             expectedOperations,
           );
         });

@@ -63,12 +63,6 @@ export {
 };
 
 export const isAccountEmpty = (a: AccountLike): boolean => {
-  // FIXME LIVE-5966 why do we need this? also this shouldn't be implemented here / this part must be removed back to the coin specifics
-  if (a.type === "Account" && a.currency.family === "tron") {
-    const tronAcc = a as TronAccount;
-    return tronAcc.tronResources && tronAcc.tronResources.bandwidth.freeLimit.eq(0);
-  }
-
   return commonIsAccountEmpty(a);
 };
 
@@ -113,6 +107,7 @@ export const getVotesCount = (
     case "secret_network":
     case "sei_network":
     case "desmos":
+    case "dydx":
     case "umee":
     case "binance_beacon_chain":
     case "osmosis":

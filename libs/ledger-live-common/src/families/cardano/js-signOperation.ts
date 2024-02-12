@@ -1,8 +1,15 @@
 import { BigNumber } from "bignumber.js";
 import { Observable } from "rxjs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
+import { log } from "@ledgerhq/logs";
 
-import type { CardanoAccount, CardanoResources, Transaction } from "./types";
+import type {
+  CardanoAccount,
+  CardanoOperation,
+  CardanoOperationExtra,
+  CardanoResources,
+  Transaction,
+} from "./types";
 
 import { withDevice } from "../../hw/deviceAccess";
 import { encodeOperationId } from "../../operation";
@@ -31,13 +38,7 @@ import {
   prepareStakeDeRegistrationCertificate,
   prepareWithdrawal,
 } from "./tx-helpers";
-import {
-  Account,
-  Operation,
-  OperationType,
-  SignedOperation,
-  SignOperationEvent,
-} from "@ledgerhq/types-live";
+import { OperationType, SignOperationFnSignature } from "@ledgerhq/types-live";
 import { formatCurrencyUnit } from "../../currencies";
 import { HashType } from "@stricahq/typhonjs/dist/types";
 
@@ -45,7 +46,7 @@ const buildOptimisticOperation = (
   account: CardanoAccount,
   transaction: TyphonTransaction,
   t: Transaction,
-): Operation => {
+): CardanoOperation => {
   const cardanoResources = account.cardanoResources as CardanoResources;
   const accountCreds = new Set(
     [...cardanoResources.externalCredentials, ...cardanoResources.internalCredentials].map(
@@ -85,20 +86,15 @@ const buildOptimisticOperation = (
 
   const transactionHash = transaction.getTransactionHash().toString("hex");
   const auxiliaryData = transaction.getAuxiliaryData();
-  let memo;
+  const extra: CardanoOperationExtra = {};
   if (auxiliaryData) {
     const memoMetadata = auxiliaryData.metadata.find(m => m.label === MEMO_LABEL);
     if (memoMetadata && memoMetadata.data instanceof Map) {
       const msg = memoMetadata.data.get("msg");
       if (Array.isArray(msg) && msg.length) {
-        memo = msg.join(", ");
+        extra.memo = msg.join(", ");
       }
     }
-  }
-
-  const extra = {};
-  if (memo) {
-    extra["memo"] = memo;
   }
 
   let operationValue = accountOutput.minus(accountInput);
@@ -110,7 +106,7 @@ const buildOptimisticOperation = (
         c.stakeCredential.hash === stakeCredential.key,
     );
     if (walletRegistration) {
-      extra["deposit"] = formatCurrencyUnit(
+      extra.deposit = formatCurrencyUnit(
         account.currency.units[0],
         new BigNumber(protocolParams.stakeKeyDeposit),
         {
@@ -129,7 +125,7 @@ const buildOptimisticOperation = (
     );
     if (walletDeRegistration) {
       operationValue = operationValue.minus(protocolParams.stakeKeyDeposit);
-      extra["refund"] = formatCurrencyUnit(
+      extra.refund = formatCurrencyUnit(
         account.currency.units[0],
         new BigNumber(protocolParams.stakeKeyDeposit),
         {
@@ -148,7 +144,7 @@ const buildOptimisticOperation = (
     );
     if (walletWithdraw) {
       operationValue = operationValue.minus(walletWithdraw.amount);
-      extra["rewards"] = formatCurrencyUnit(
+      extra.rewards = formatCurrencyUnit(
         account.currency.units[0],
         new BigNumber(walletWithdraw.amount),
         {
@@ -170,7 +166,7 @@ const buildOptimisticOperation = (
         fees: transaction.getFee(),
       });
 
-  const op: Operation = {
+  const op: CardanoOperation = {
     id: encodeOperationId(account.id, transactionHash, opType),
     hash: transactionHash,
     type: opType,
@@ -182,7 +178,7 @@ const buildOptimisticOperation = (
     recipients: transaction.getOutputs().map(o => o.address.getBech32()),
     accountId: account.id,
     date: new Date(),
-    extra: extra,
+    extra,
   };
 
   const tokenAccount = t.subAccountId
@@ -235,15 +231,7 @@ const signTx = (
 /**
  * Sign Transaction with Ledger hardware
  */
-const signOperation = ({
-  account,
-  deviceId,
-  transaction,
-}: {
-  account: Account;
-  deviceId: string;
-  transaction: Transaction;
-}): Observable<SignOperationEvent> =>
+const signOperation: SignOperationFnSignature<Transaction> = ({ account, deviceId, transaction }) =>
   withDevice(deviceId)(
     transport =>
       new Observable(o => {
@@ -320,6 +308,12 @@ const signOperation = ({
             additionalWitnessPaths: [],
           };
 
+          try {
+            log("debug", `Signing cardano transaction: ${JSON.stringify(trxOptions)}`);
+          } catch (e) {
+            log("debug", `Signing cardano transaction: could not log:`, e);
+          }
+
           // Sign by device
           const appAda = new Ada(transport);
           const r = await appAda.signTransaction(trxOptions);
@@ -338,8 +332,7 @@ const signOperation = ({
             signedOperation: {
               operation,
               signature: signed.payload,
-              expirationDate: null,
-            } as SignedOperation,
+            },
           });
         }
         main().then(

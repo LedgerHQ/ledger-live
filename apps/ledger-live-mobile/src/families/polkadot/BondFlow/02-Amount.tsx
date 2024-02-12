@@ -21,26 +21,23 @@ import { getAccountUnit, getMainAccount } from "@ledgerhq/live-common/account/in
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { isFirstBond } from "@ledgerhq/live-common/families/polkadot/logic";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
-import { urls } from "../../../config/urls";
-import { accountScreenSelector } from "../../../reducers/accounts";
-import { ScreenName } from "../../../const";
-import { TrackScreen } from "../../../analytics";
-import LText from "../../../components/LText";
-import CurrencyUnitValue from "../../../components/CurrencyUnitValue";
-import Button from "../../../components/Button";
-import ToggleButton from "../../../components/ToggleButton";
-import KeyboardView from "../../../components/KeyboardView";
-import CurrencyInput from "../../../components/CurrencyInput";
-import TranslatedError from "../../../components/TranslatedError";
-import InfoModal from "../../../modals/Info";
-import Info from "../../../icons/Info";
+import { urls } from "~/utils/urls";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { ScreenName } from "~/const";
+import { TrackScreen } from "~/analytics";
+import LText from "~/components/LText";
+import CurrencyUnitValue from "~/components/CurrencyUnitValue";
+import Button from "~/components/Button";
+import ToggleButton from "~/components/ToggleButton";
+import KeyboardView from "~/components/KeyboardView";
+import CurrencyInput from "~/components/CurrencyInput";
+import TranslatedError from "~/components/TranslatedError";
+import InfoModal from "~/modals/Info";
+import Info from "~/icons/Info";
 import { getFirstStatusError, hasStatusError } from "../../helpers";
 import FlowErrorBottomModal from "../components/FlowErrorBottomModal";
 import SendRowsFee from "../SendRowsFee";
-import {
-  BaseComposite,
-  StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
+import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { PolkadotBondFlowParamList } from "./types";
 
 const options = [
@@ -121,7 +118,7 @@ export default function PolkadotBondAmount({ navigation, route }: Props) {
     };
   }, [account, parentAccount, debouncedTransaction]);
   const onChange = useCallback(
-    amount => {
+    (amount: BigNumber) => {
       if (!amount.isNaN()) {
         setTransaction(
           bridge.updateTransaction(transaction, {

@@ -3,10 +3,10 @@ import { Flex, Text, Alert, Tag, Divider } from "@ledgerhq/native-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { ChainwatchAccount, ChainwatchNetwork } from "@ledgerhq/types-live";
 import { SafeAreaView } from "react-native-safe-area-context";
-import NavigationScrollView from "../../../../components/NavigationScrollView";
+import NavigationScrollView from "~/components/NavigationScrollView";
 import styled from "styled-components/native";
 import { useSelector } from "react-redux";
-import { notificationsSelector } from "../../../../reducers/settings";
+import { notificationsSelector } from "~/reducers/settings";
 import { getSupportedChainsAccounts } from "@ledgerhq/live-common/transactionsAlerts/index";
 import getOrCreateUser from "../../../../user";
 
@@ -25,10 +25,7 @@ export const TagDisabled = styled(Tag).attrs({
 })``;
 
 export default function DebugTransactionsAlerts() {
-  const featureTransactionsAlerts = useFeature<{
-    chainwatchBaseUrl: string;
-    networks: ChainwatchNetwork[];
-  }>("transactionsAlerts");
+  const featureTransactionsAlerts = useFeature("transactionsAlerts");
   const notifications = useSelector(notificationsSelector);
   const chainwatchBaseUrl = featureTransactionsAlerts?.params?.chainwatchBaseUrl;
   const supportedChains: ChainwatchNetwork[] = useMemo(

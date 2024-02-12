@@ -1,4 +1,4 @@
-import { flatten } from "lodash";
+import flatten from "lodash/flatten";
 import BigNumber from "bignumber.js";
 import Btc from "@ledgerhq/hw-app-btc";
 import { log } from "@ledgerhq/logs";
@@ -68,8 +68,12 @@ class BitcoinLikeWallet {
     };
   }
 
-  async syncAccount(account: Account): Promise<void> {
-    return account.xpub.sync();
+  async syncAccount(account: Account, currentBlockHeight?: number): Promise<void> {
+    account.xpub.currentBlockHeight = currentBlockHeight;
+    await account.xpub.sync();
+    if (currentBlockHeight) {
+      account.xpub.syncedBlockHeight = currentBlockHeight;
+    }
   }
 
   async getAccountNewReceiveAddress(account: Account): Promise<Address> {

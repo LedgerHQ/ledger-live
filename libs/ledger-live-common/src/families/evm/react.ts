@@ -17,15 +17,16 @@ export const useGasOptions = ({
   currency: CryptoCurrency;
   transaction: Transaction;
   interval?: number;
-}): [GasOptions | undefined, Error | null] => {
-  const [gasOptions, setGasOptions] = useState<GasOptions | undefined>(undefined);
-  const [error, setError] = useState<Error | null>(null);
-  const gasTracker = useMemo(() => getGasTracker(currency), [currency]);
-
+}): [GasOptions | undefined, Error | null, boolean] => {
   const shouldUseEip1559 = transaction.type === 2;
+  const gasTracker = useMemo(() => getGasTracker(currency), [currency]);
+  const [error, setError] = useState<Error | null>(null);
+  const [gasOptions, setGasOptions] = useState<GasOptions | undefined>(undefined);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!gasTracker) {
+      setLoading(false);
       return;
     }
 
@@ -33,7 +34,8 @@ export const useGasOptions = ({
       gasTracker
         .getGasOptions({ currency, options: { useEIP1559: shouldUseEip1559 } })
         .then(setGasOptions)
-        .catch(setError);
+        .catch(setError)
+        .finally(() => setLoading(false));
 
     getGasOptionsCallback();
     if (interval > 0) {
@@ -45,5 +47,5 @@ export const useGasOptions = ({
     }
   }, [gasTracker, interval, currency, shouldUseEip1559]);
 
-  return [gasOptions, error];
+  return [gasOptions, error, loading];
 };

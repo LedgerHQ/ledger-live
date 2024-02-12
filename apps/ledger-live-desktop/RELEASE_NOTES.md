@@ -1,3 +1,79 @@
+# 2.75.0
+
+### 🚀 Features
+
+Starting today, you can swap an additional 300 Ethereum and 100 Binance Smart Chain tokens through Ledger Live. 
+
+### 🐛 Fix
+
+Internal transactions for Ethereum, Polygon, and Binance Smart Chain are now visible in the transaction history.
+
+The bug that prevented the hiding of token accounts has been fixed.
+
+You can now clear nominations for your bonded DOT. 
+
+# 2.73.1
+
+### 🐛 Fix
+
+We’ve resolved the bug that caused an error when staking or unstaking the entire Solana (SOL) balance.
+
+# 2.73.0
+
+### 🌷 Improvements
+
+Ledger Live will now display the fiat value of your TRC20/TRC10 tokens.
+
+### 🐛 Fixes
+
+Using the Max toggle to swap the entire balance would block the transaction. The issue has been resolved.
+
+We've fixed a few search bar glitches in the Discover section. 
+
+Some users reported issues when importing legacy Ethereum accounts or accounts with the legacy derivation path from MetaMask to Ledger Live. This has been fixed.
+
+# 2.71.1
+
+### 🐛 Fixes
+
+Some users reported issues when accessing the CL Card tab. We've patched this up.
+
+We've fixed the bug that prevented swapping coins or tokens with values above 1,000.
+
+# 2.71.0
+
+### 🚀 Features
+
+ParaSwap and 1inch, which you can access through the Discover section, are now supporting more EVM-compatible chains, including Base and Polygon zkEVM.
+
+### 🐛 Fixes
+
+We fixed a bug that led to an infinite loading error when trying to access the My Ledger tab. 
+
+The bug that caused the UTK tokens not to be displayed in the MultiversX account is now fixed. 
+
+Some users reported that their undelegated Tezos (XTZ) coins are not visible in the transaction history. This has been fixed. 
+
+# 2.69.0
+
+This release includes minor bug fixes and security improvements.
+
+# 2.68.1
+
+This release includes minor bug fixes and security improvements.
+
+# 2.66.0
+
+### 🚀 Features
+
+Starting today, you can stake Cardano (ADA) through Ledger Live and earn rewards.
+
+When swapping crypto assets, a warning message will alert you if you don’t have enough funds to pay the network fees.
+
+### 🐛 Fixes
+
+Optimism is now Op Mainnet. We’ve made the name change in Ledger Live.
+
 # 2.64.2
 
 Some users reported issues when adding accounts and trying to swap crypto. We've patched this up, and everything is running smoothly again.

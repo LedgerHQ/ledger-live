@@ -1,6 +1,8 @@
 import { usb } from "usb";
 import { ledgerUSBVendorId } from "@ledgerhq/devices";
-import { log } from "@ledgerhq/logs";
+import { LocalTracer } from "@ledgerhq/logs";
+
+const LOG_TYPE = "usb-detection";
 
 export type Device = {
   locationId: number;
@@ -36,11 +38,12 @@ const mapRawDevice = ({
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const listenDevices = (onAdd: (arg0: Device) => void, onRemove: (arg0: Device) => void) => {
+  const tracer = new LocalTracer(LOG_TYPE, { function: "listenDevices " });
   let timeout;
 
   const add = device => {
     if (device.deviceDescriptor.idVendor !== ledgerUSBVendorId) return;
-    log("usb-detection", "add: " + deviceToLog(device));
+    tracer.trace(`add: ${deviceToLog(device)}`, { device });
 
     if (!timeout) {
       // a time is needed for the device to actually be connectable over HID..
@@ -54,7 +57,7 @@ export const listenDevices = (onAdd: (arg0: Device) => void, onRemove: (arg0: De
 
   const remove = device => {
     if (device.deviceDescriptor.idVendor !== ledgerUSBVendorId) return;
-    log("usb-detection", "remove: " + deviceToLog(device));
+    tracer.trace(`remove: ${deviceToLog(device)}`, { device });
 
     if (timeout) {
       clearTimeout(timeout);

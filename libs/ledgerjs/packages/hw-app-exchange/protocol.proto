@@ -1,0 +1,42 @@
+syntax = "proto3";
+package ledger_swap;
+
+message NewTransactionResponse {
+    string payin_address = 1;
+    string payin_extra_id = 2;
+    string refund_address = 3;
+    string refund_extra_id = 4;
+    string payout_address = 5;
+    string payout_extra_id = 6;
+    string currency_from = 7;
+    string currency_to = 8;
+    bytes  amount_to_provider = 9;
+    bytes  amount_to_wallet = 10;
+    string device_transaction_id = 11;
+    bytes  device_transaction_id_ng = 12;
+}
+
+// (coefficient) * 10^(- exponent)
+message UDecimal {
+    bytes  coefficient = 1;
+    uint32 exponent = 2;
+}
+
+message NewSellResponse {
+    string   trader_email = 1;           // traderEmail
+    string   in_currency = 2;            // inCurrency
+    bytes    in_amount = 3;              // inAmount
+    string   in_address = 4;             // account
+    string   out_currency = 5;           // outCurrency
+    UDecimal out_amount = 6;             // outAmount
+    bytes    device_transaction_id = 7;  // nonce
+}
+
+message NewFundResponse {
+    string   user_id = 1;                // user ID
+    string   account_name = 2;           // funded account name ex: Card 1234
+    string   in_currency = 3;            // inCurrency
+    bytes    in_amount = 4;              // inAmount
+    string   in_address = 5;             // account
+    bytes    device_transaction_id = 6;  // nonce
+}

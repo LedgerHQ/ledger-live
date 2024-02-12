@@ -12,10 +12,6 @@ import { LiveAppWebview } from "../../models/LiveAppWebview";
 test.use({
   userdata: "1AccountBTC1AccountETH",
   featureFlags: {
-    ptxSmartRouting: {
-      enabled: true,
-      params: { liveAppId: "multibuy" },
-    },
     portfolioExchangeBanner: { enabled: true },
   },
 });
@@ -23,18 +19,11 @@ test.use({
 let testServerIsRunning = false;
 
 test.beforeAll(async () => {
-  // Check that dummy app in libs/test-utils/dummy-ptx-app has been started successfully
+  // Check that dummy app in tests/dummy-ptx-app has been started successfully
   testServerIsRunning = await LiveAppWebview.startLiveApp("dummy-ptx-app/public", {
     name: "Buy App",
-    id: "multibuy",
-    permissions: [
-      {
-        method: "account.request",
-        params: {
-          currencies: ["ethereum", "bitcoin", "algorand"],
-        },
-      },
-    ],
+    id: "multibuy-v2",
+    permissions: ["account.request"],
   });
 
   if (!testServerIsRunning) {
@@ -66,6 +55,7 @@ test("Buy / Sell @smoke", async ({ page }) => {
 
   await test.step("Navigate to Buy app from portfolio banner", async () => {
     await portfolioPage.startBuyFlow();
+    await liveAppWebview.waitForLoaded();
     await expect(await liveAppWebview.waitForCorrectTextInWebview("theme: dark")).toBe(true);
     await expect(await liveAppWebview.waitForCorrectTextInWebview("lang: en")).toBe(true);
     await expect

@@ -96,7 +96,9 @@ const getTransactionStatus = async (
     if (!t.recipient) {
       errors.recipient = new RecipientRequired("");
     } else if (!isAddressValid(t.recipient)) {
-      errors.recipient = new InvalidAddress("");
+      errors.recipient = new InvalidAddress("", {
+        currencyName: a.currency.name,
+      });
     } else if (a.freshAddress === t.recipient) {
       errors.recipient = new InvalidAddressBecauseDestinationIsAlsoSource();
     }

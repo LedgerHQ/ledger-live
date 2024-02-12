@@ -11,6 +11,7 @@ type ParentCryptoCurrencyIconWrapperProps = {
   doubleIcon?: boolean;
   bigger?: boolean;
   flat?: boolean;
+  children: React.ReactNode;
 };
 
 const ParentCryptoCurrencyIconWrapper: React.ComponentType<ParentCryptoCurrencyIconWrapperProps> = styled.div`

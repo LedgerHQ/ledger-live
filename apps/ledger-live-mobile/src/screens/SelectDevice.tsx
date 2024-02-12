@@ -8,16 +8,16 @@ import { useTheme } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
 import { StackScreenProps } from "@react-navigation/stack";
 
-import { TrackScreen } from "../analytics";
-import SelectDeviceComp from "../components/SelectDevice";
-import SelectDeviceComp2 from "../components/SelectDevice2";
-import NavigationScrollView from "../components/NavigationScrollView";
-import { setLastConnectedDevice, setReadOnlyMode } from "../actions/settings";
+import { TrackScreen } from "~/analytics";
+import SelectDeviceComp from "~/components/SelectDevice";
+import SelectDeviceComp2 from "~/components/SelectDevice2";
+import NavigationScrollView from "~/components/NavigationScrollView";
+import { setLastConnectedDevice, setReadOnlyMode } from "~/actions/settings";
 import SkipSelectDevice from "./SkipSelectDevice";
-import { AddAccountsNavigatorParamList } from "../components/RootNavigator/types/AddAccountsNavigator";
-import { StackNavigatorProps } from "../components/RootNavigator/types/helpers";
-import { ReceiveFundsStackParamList } from "../components/RootNavigator/types/ReceiveFundsNavigator";
-import { ScreenName } from "../const";
+import { AddAccountsNavigatorParamList } from "~/components/RootNavigator/types/AddAccountsNavigator";
+import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import { ReceiveFundsStackParamList } from "~/components/RootNavigator/types/ReceiveFundsNavigator";
+import { ScreenName } from "~/const";
 
 // TODO: FIX THE StackScreenProps<{ [key: string]: object }>
 type SelectDeviceNav =
@@ -33,7 +33,7 @@ export default function SelectDevice({
   const { colors } = useTheme();
   const dispatchRedux = useReduxDispatch();
   const onNavigate = useCallback(
-    device => {
+    (device: Device) => {
       // Assumes that it will always navigate to a "ConnectDevice"
       // type of component accepting mostly the same params as this one.
       navigation.navigate(route.name.replace("SelectDevice", "ConnectDevice"), {

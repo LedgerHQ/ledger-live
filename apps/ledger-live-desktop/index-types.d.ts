@@ -11,15 +11,15 @@ declare module "*.svg";
 declare module "*.png";
 declare module "*.jpg";
 declare module "*.webm";
+declare module "*.mp4";
 
 type Store = import("redux").Store;
 type Device = import("@ledgerhq/live-common/hw/actions/types").Device;
-type ReplaySubject = import("rxjs").ReplaySubject;
+type ReplaySubject = import("rxjs").ReplaySubject<unknown>;
 type ListAppResult = import("@ledgerhq/live-common/apps/types").ListAppsResult;
 type TransactionRaw = import("@ledgerhq/live-common/generated/types").TransactionRaw;
 type Transaction = import("@ledgerhq/live-common/generated/types").Transaction;
 type UpdateStatus = import("./src/main/updater/init").UpdateStatus;
-type WalletConnectClient = import("./tests/mocks/WalletConnectClient");
 
 interface RawEvents {
   [key: string]: unknown;
@@ -39,9 +39,8 @@ interface Window {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__: any;
 
-  WCinstance?: WalletConnectClient;
-
-  api?: {
+  api: {
+    appDirname: string;
     appLoaded: () => void;
     reloadRenderer: () => void;
     openWindow: (id: number) => void;

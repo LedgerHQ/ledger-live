@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { RefreshControl, RefreshControlProps } from "react-native";
 import { useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
-import { useCountervaluesPolling } from "@ledgerhq/live-common/countervalues/react";
+import { useCountervaluesPolling } from "@ledgerhq/live-countervalues-react";
 import { useIsFocused, useTheme } from "@react-navigation/native";
-import { SYNC_DELAY } from "../constants";
+import { SYNC_DELAY } from "~/utils/constants";
 
 type Props = {
   error?: Error;

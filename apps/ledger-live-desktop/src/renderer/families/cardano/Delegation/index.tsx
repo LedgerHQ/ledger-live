@@ -58,7 +58,9 @@ const Delegation = ({ account }: Props) => {
             }}
           >
             <Text ff="Inter|Medium|SemiBold" color="palette.text.shade60" fontSize={4}>
-              {t("delegation.delegationEarn")}
+              {t("delegation.delegationEarn", {
+                name: account.currency.name,
+              })}
             </Text>
             <Box mt={2}>
               <LinkWithExternalIcon

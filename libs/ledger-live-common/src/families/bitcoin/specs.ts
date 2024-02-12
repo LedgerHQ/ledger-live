@@ -15,8 +15,7 @@ import { getCryptoCurrencyById, parseCurrencyUnit } from "../../currencies";
 import { botTest, genericTestDestination, pickSiblings } from "../../bot/specs";
 import { bitcoinPickingStrategy } from "./types";
 import type { MutationSpec, AppSpec, TransactionTestInput } from "../../bot/types";
-import { LowerThanMinimumRelayFee } from "../../errors";
-import { getMinRelayFee, getUTXOStatus } from "./logic";
+import { getUTXOStatus } from "./logic";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { acceptTransaction } from "./speculos-deviceActions";
 
@@ -25,26 +24,6 @@ type Arg = Partial<{
   targetAccountSize: number;
   recipientVariation: (arg0: string) => string;
 }>;
-
-const recoverBadTransactionStatus = ({ bridge, account, transaction, status }) => {
-  const hasErrors = Object.keys(status.errors).length > 0;
-
-  if (
-    !hasErrors &&
-    status.warnings.feePerByte instanceof LowerThanMinimumRelayFee &&
-    status.estimatedFees.gt(0)
-  ) {
-    const feePerByte = new BigNumber(getMinRelayFee(account.currency))
-      .times(transaction.feePerByte || 0)
-      .div(status.estimatedFees)
-      .integerValue(BigNumber.ROUND_CEIL);
-    log("specs/bitcoin", "recovering with feePerByte=" + feePerByte.toString());
-    if (feePerByte.lt(1) || feePerByte.eq(transaction.feePerByte || 0)) return;
-    return bridge.updateTransaction(transaction, {
-      feePerByte,
-    });
-  }
-};
 
 const genericTest = ({
   operation,
@@ -157,7 +136,6 @@ const bitcoinLikeMutations = ({
       };
     },
     testDestination,
-    recoverBadTransactionStatus,
   },
   {
     name: "optimize-size",
@@ -190,7 +168,6 @@ const bitcoinLikeMutations = ({
       };
     },
     testDestination,
-    recoverBadTransactionStatus,
   },
   {
     name: "send 1 utxo",
@@ -234,7 +211,6 @@ const bitcoinLikeMutations = ({
         destination: sibling,
       };
     },
-    recoverBadTransactionStatus,
     testDestination,
     test: ({ accountBeforeTransaction, account, operation, transaction }) => {
       const utxo = (
@@ -297,7 +273,6 @@ const bitcoinLikeMutations = ({
         destination: sibling,
       };
     },
-    recoverBadTransactionStatus,
     testDestination,
   },
   {
@@ -329,7 +304,6 @@ const bitcoinLikeMutations = ({
         destination: sibling,
       };
     },
-    recoverBadTransactionStatus,
     testDestination,
     test: ({ account }) => {
       botTest("total of utxos is zero", () =>

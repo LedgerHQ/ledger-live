@@ -15,16 +15,12 @@ test.use({
 let testServerIsRunning = false;
 
 test.beforeAll(async () => {
-  // Check that dummy app in libs/test-utils/dummy-ptx-app has been started successfully
+  // Check that dummy app in tests/dummy-ptx-app has been started successfully
   testServerIsRunning = await LiveAppWebview.startLiveApp("dummy-ptx-app/public", {
     name: "Earn",
     id: "earn",
     apiVersion: "^2.0.0",
-    permissions: [
-      {
-        method: "account.list",
-      },
-    ],
+    permissions: ["account.list"],
   });
 
   if (!testServerIsRunning) {

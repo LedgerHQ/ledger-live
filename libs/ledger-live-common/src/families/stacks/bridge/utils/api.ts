@@ -14,7 +14,7 @@ import {
   TransactionsResponse,
 } from "./api.types";
 import network from "@ledgerhq/live-network/network";
-import { getEnv } from "../../../../env";
+import { getEnv } from "@ledgerhq/live-env";
 
 const getStacksURL = (path?: string): string => {
   const baseUrl = getEnv("API_STACKS_ENDPOINT");
@@ -94,7 +94,7 @@ export const fetchBlockHeight = async (): Promise<NetworkStatusResponse> => {
 
 export const fetchTxs = async (addr: string, offset = 0): Promise<TransactionsResponse> => {
   const response = await fetch<TransactionsResponse>(
-    `/extended/v1/address/${addr}/transactions_with_transfers?offset=${offset}`,
+    `/extended/v1/address/${addr}/transactions_with_transfers?offset=${offset}&limit=50`,
   );
   return response; // TODO Validate if the response fits this interface
 };
@@ -106,7 +106,7 @@ export const fetchFullTxs = async (addr: string): Promise<TransactionResponse[]>
 
   do {
     const { results, total, limit } = await fetchTxs(addr, offset);
-    txs = txs.concat(results);
+    txs = txs.concat(results.filter(t => t.tx?.tx_type == "token_transfer"));
 
     offset += limit;
     qty = total;

@@ -8,7 +8,6 @@ import {
 import { Observable } from "rxjs";
 import { useCallback, useMemo, useEffect, useState } from "react";
 import { DeviceInfo, idsToLanguage, languageIds } from "@ledgerhq/types-live";
-import { LedgerErrorConstructor } from "@ledgerhq/errors/lib/helpers";
 import {
   CantOpenDevice,
   DisconnectedDevice,
@@ -18,6 +17,8 @@ import {
   UserRefusedAllowManager,
   WebsocketConnectionError,
   WebsocketConnectionFailed,
+  CustomErrorClassType,
+  TransportStatusErrorClassType,
 } from "@ledgerhq/errors";
 import {
   ConnectManagerTimeout,
@@ -34,9 +35,9 @@ import {
 } from "../../hooks/deviceActions";
 
 // Errors related to the device connection
-export const reconnectDeviceErrorClasses: LedgerErrorConstructor<{
-  [key: string]: unknown;
-}>[] = [
+export const reconnectDeviceErrorClasses: Array<
+  CustomErrorClassType | TransportStatusErrorClassType
+> = [
   CantOpenDevice,
   DisconnectedDevice,
   DisconnectedDeviceDuringOperation,
@@ -46,22 +47,22 @@ export const reconnectDeviceErrorClasses: LedgerErrorConstructor<{
 ];
 
 // Errors that could be solved by the user: either on their phone or on their device
-export const userSolvableErrorClasses: LedgerErrorConstructor<{
-  [key: string]: unknown;
-}>[] = [
-  ...reconnectDeviceErrorClasses,
-  WebsocketConnectionError,
-  UserRefusedAllowManager,
-  LanguageInstallRefusedOnDevice,
-  ImageCommitRefusedOnDevice,
-  ImageLoadRefusedOnDevice,
-  WebsocketConnectionFailed,
-];
+export const userSolvableErrorClasses: Array<CustomErrorClassType | TransportStatusErrorClassType> =
+  [
+    ...reconnectDeviceErrorClasses,
+    WebsocketConnectionError,
+    UserRefusedAllowManager,
+    LanguageInstallRefusedOnDevice,
+    ImageCommitRefusedOnDevice,
+    ImageLoadRefusedOnDevice,
+    WebsocketConnectionFailed,
+  ];
 
 export type FirmwareUpdateParams = {
   device: Device;
   deviceInfo: DeviceInfo;
   updateFirmwareAction?: (args: updateFirmwareActionArgs) => Observable<UpdateFirmwareActionState>;
+  isBeforeOnboarding?: boolean;
 };
 
 export type UpdateStep =
@@ -74,10 +75,17 @@ export type UpdateStep =
   | "appsRestore"
   | "completed";
 
+/**
+ * Handles the full logic of a firmware update + restoring settings like the locked screen image or apps
+ *
+ * @param isBeforeOnboarding: to adapt the firmware update in case the device is starting
+ *   its onboarding and it's normal it is not yet seeded. If set to true, short-circuit some steps that are unnecessary
+ */
 export const useUpdateFirmwareAndRestoreSettings = ({
   updateFirmwareAction,
   device,
   deviceInfo,
+  isBeforeOnboarding = false,
 }: FirmwareUpdateParams) => {
   const [updateStep, setUpdateStep] = useState<UpdateStep>("start");
   const [installedApps, setInstalledApps] = useState<string[]>([]);
@@ -253,7 +261,12 @@ export const useUpdateFirmwareAndRestoreSettings = ({
           if (installLanguageState.error) {
             log("FirmwareUpdate", "error while restoring language", installLanguageState.error);
           }
-          proceedToImageRestore();
+
+          if (isBeforeOnboarding) {
+            proceedToUpdateCompleted();
+          } else {
+            proceedToImageRestore();
+          }
         }
         break;
 
@@ -315,7 +328,17 @@ export const useUpdateFirmwareAndRestoreSettings = ({
     restoreAppsState.opened,
     proceedToAppsBackup,
     connectManagerState.error,
+    isBeforeOnboarding,
   ]);
+
+  const startUpdate = useCallback(() => {
+    // The backup of the language package is actually done using the input device info `languageId`
+    if (isBeforeOnboarding) {
+      proceedToFirmwareUpdate();
+    } else {
+      proceedToAppsBackup();
+    }
+  }, [isBeforeOnboarding, proceedToAppsBackup, proceedToFirmwareUpdate]);
 
   const hasReconnectErrors = useMemo(
     () =>
@@ -465,7 +488,7 @@ export const useUpdateFirmwareAndRestoreSettings = ({
   }, [updateStep, proceedToImageRestore, proceedToAppsRestore, proceedToUpdateCompleted]);
 
   return {
-    startUpdate: proceedToAppsBackup,
+    startUpdate,
     updateStep,
     connectManagerState,
     staxFetchImageState,

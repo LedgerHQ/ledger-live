@@ -18,6 +18,9 @@ const iconsComponent = {
   NONE: IconsLegacy.ArrowFromBottomMedium,
   FREEZE: IconsLegacy.FreezeMedium,
   UNFREEZE: IconsLegacy.UnfreezeMedium,
+  UNDELEGATE_RESOURCE: IconsLegacy.UndelegateMedium,
+  WITHDRAW_EXPIRE_UNFREEZE: IconsLegacy.CoinsMedium,
+  LEGACY_UNFREEZE: IconsLegacy.UnfreezeMedium,
   VOTE: IconsLegacy.VoteMedium,
   REWARD: IconsLegacy.StarMedium,
   FEES: IconsLegacy.FeesMedium,
@@ -66,8 +69,8 @@ const OperationStatusIcon = ({
       : confirmed
       ? undefined
       : IconsLegacy.HistoryMedium);
-  const borderColor = failed ? "error.c40" : "neutral.c40";
-  const iconColor = failed ? "error.c50" : confirmed ? "neutral.c100" : "neutral.c50";
+  const borderColor = failed ? "error.c40" : confirmed ? "neutral.c40" : "warning.c40";
+  const iconColor = failed ? "error.c50" : confirmed ? "neutral.c100" : "warning.c50";
   const badgeColor = failed ? "error.c50" : "neutral.c70";
   return (
     <BoxedIcon

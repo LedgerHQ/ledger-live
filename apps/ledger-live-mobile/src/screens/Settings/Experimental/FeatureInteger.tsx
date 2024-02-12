@@ -1,10 +1,10 @@
 import React, { useCallback, useState, useEffect, useRef } from "react";
 import { TextInput, StyleSheet, Keyboard, Platform } from "react-native";
-import { EnvName, getEnvDefault } from "@ledgerhq/live-common/env";
+import { EnvName, getEnvDefault } from "@ledgerhq/live-env";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { Box, Flex, Switch } from "@ledgerhq/native-ui";
-import Track from "../../../analytics/Track";
-import getFontStyle from "../../../components/LText/getFontStyle";
+import Track from "~/analytics/Track";
+import getFontStyle from "~/components/LText/getFontStyle";
 
 type Props = {
   name: EnvName;
@@ -29,6 +29,7 @@ const FeatureInteger = ({
   const navigation = useNavigation();
   const inputRef = useRef<TextInput>(null);
   const constraintValue = useCallback(
+    // @ts-expect-error supposed to be number | string but this means casting everywhere
     v => {
       let value = v;
       if (typeof maxValue === "number" && parseInt(value, 10) > maxValue) {
@@ -81,7 +82,7 @@ const FeatureInteger = ({
   }, [enabled, value, setInputValue, constraintValue]);
 
   const onInputChange = useCallback(
-    str => {
+    (str: string) => {
       if (!enabled) return;
       const sanitized = str.replace(/[^0-9]/g, "");
       if (sanitized.length > 0) {
@@ -94,7 +95,7 @@ const FeatureInteger = ({
   );
 
   const onEnableChange = useCallback(
-    e => {
+    (e: boolean) => {
       setEnabled(!!e);
       if (e) {
         setTimeout(() => {

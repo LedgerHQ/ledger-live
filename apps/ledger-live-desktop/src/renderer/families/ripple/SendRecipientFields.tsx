@@ -16,7 +16,7 @@ const uint32maxPlus1 = BigNumber(2).pow(32);
 const TagField = ({ onChange, account, transaction }: Props) => {
   const { t } = useTranslation();
   const onChangeTag = useCallback(
-    str => {
+    (str: string) => {
       const bridge = getAccountBridge(account);
       const tag = BigNumber(str.replace(/[^0-9]/g, ""));
       const patch = {

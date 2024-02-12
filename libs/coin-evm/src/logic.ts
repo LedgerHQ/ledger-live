@@ -1,12 +1,22 @@
-import { ethers } from "ethers";
+import eip55 from "eip55";
 import BigNumber from "bignumber.js";
+import {
+  Account,
+  AnyMessage,
+  MessageProperties,
+  Operation,
+  SubAccount,
+} from "@ledgerhq/types-live";
+import murmurhash from "imurmurhash";
+import { getEnv } from "@ledgerhq/live-env";
 import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
 import { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { Account, SubAccount, Operation } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets/tokens";
 import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
+import { getEIP712FieldsDisplayedOnNano } from "@ledgerhq/evm-tools/message/EIP712/index";
+import { log } from "@ledgerhq/logs";
 import { getNodeApi } from "./api/node/index";
 import {
   EvmNftTransaction,
@@ -146,22 +156,66 @@ export const mergeSubAccounts = (
 };
 
 /**
+ * A pseudo private Map used to memoize the very long
+ * string used to detect a change in the CAL
+ * tokens and its corresponding hash.
+ */
+const simpleSyncHashMemoize: Record<string, string> = {};
+
+/**
+ * Helper clearing the simpleSyncHashMemoize object
+ * Exported & used only by test runners
+ */
+export const __testOnlyClearSyncHashMemoize = (): void => {
+  for (const key in simpleSyncHashMemoize) {
+    delete simpleSyncHashMemoize[key];
+  }
+};
+
+/**
  * Method creating a hash that will help triggering or not a full synchronization on an account.
  * As of now, it's checking if a token has been added, removed of changed regarding important properties
  * and if the NFTs are activated/supported on this chain
+ *
+ * The hashing algorithm selected to create this hash is murmurhash.
+ * It's a fast non cryptographic algorithm with low collisions.
+ * A collision here would only prevent a potential full sync
+ * which would mean not seeing some potential new tokens.
+ * This can be fixed by simply removing the account
+ * and adding it again, now syncing from block 0.
+ *
+ * This computation could be easily simplified
+ * if the CAL files where to include an
+ * already crafted hash per token
  */
 export const getSyncHash = (currency: CryptoCurrency): string => {
   const tokens = listTokensForCryptoCurrency(currency);
   const basicTokensListString = tokens
-    .map(token => token.id + token.contractAddress + token.name + token.ticker + token.delisted)
+    .map(token => token.id + token.contractAddress + token.name + token.ticker)
     .join("");
   const isNftSupported = isNFTActive(currency);
   const { node = {}, explorer = {} } = currency.ethereumLikeInfo || {};
-  return ethers.utils.sha256(
-    Buffer.from(
-      basicTokensListString + isNftSupported + JSON.stringify(node) + JSON.stringify(explorer),
-    ),
-  );
+  // Did the migration of token accounts IDs
+  // e.g. binance-peg_bsc-usd to binance#!dash!#peg#!underscore!#bsc#!dash!#usd
+  //
+  // This could theorically be removed after a decent amount of releases (~3/4),
+  // just the time necessary for every user to have a different
+  // hash at least once to avoid duplicated TokenAccounts.
+  // For a user with duplicates, a "clear cache"
+  // shoud be enough to fix everything.
+  const hasSafeTokenIdAccount = true;
+
+  const stringToHash =
+    basicTokensListString +
+    isNftSupported +
+    JSON.stringify(node) +
+    JSON.stringify(explorer) +
+    hasSafeTokenIdAccount;
+
+  if (!simpleSyncHashMemoize[stringToHash]) {
+    simpleSyncHashMemoize[stringToHash] = `0x${murmurhash(stringToHash).result().toString(16)}`;
+  }
+  return simpleSyncHashMemoize[stringToHash];
 };
 
 /**
@@ -185,14 +239,16 @@ export const attachOperations = (
   _coinOperations: Operation[],
   _tokenOperations: Operation[],
   _nftOperations: Operation[],
+  _internalOperations: Operation[],
 ): Operation[] => {
   // Creating deep copies of each Operation[] to prevent mutating the originals
   const coinOperations = _coinOperations.map(op => ({ ...op }));
   const tokenOperations = _tokenOperations.map(op => ({ ...op }));
   const nftOperations = _nftOperations.map(op => ({ ...op }));
+  const internalOperations = _internalOperations.map(op => ({ ...op }));
 
   type OperationWithRequiredChildren = Operation &
-    Required<Pick<Operation, "nftOperations" | "subOperations">>;
+    Required<Pick<Operation, "nftOperations" | "subOperations" | "internalOperations">>;
 
   // Helper to create a coin operation with type NONE as a parent of an orphan child operation
   const makeCoinOpForOrphanChildOp = (childOp: Operation): OperationWithRequiredChildren => {
@@ -213,6 +269,7 @@ export const attachOperations = (
       transactionSequenceNumber: childOp.transactionSequenceNumber,
       subOperations: [],
       nftOperations: [],
+      internalOperations: [],
       accountId: "",
       date: childOp.date,
       extra: {},
@@ -230,6 +287,7 @@ export const attachOperations = (
     // by the adapters so it should never be needed
     op.subOperations = [];
     op.nftOperations = [];
+    op.internalOperations = [];
     coinOperationsByHash[op.hash].push(op as OperationWithRequiredChildren);
   });
 
@@ -263,6 +321,21 @@ export const attachOperations = (
     }
   }
 
+  // Looping through internal operations to potentially copy them as a child operation of a coin operation
+  for (const internalOperation of internalOperations) {
+    let mainOperations = coinOperationsByHash[internalOperation.hash];
+    if (!mainOperations?.length) {
+      const noneOperation = makeCoinOpForOrphanChildOp(internalOperation);
+      mainOperations = [noneOperation];
+      coinOperations.push(noneOperation);
+    }
+
+    // Ugly loop in loop but in theory, this can only be a 2 elements array maximum in the case of a self send
+    for (const mainOperation of mainOperations) {
+      mainOperation.internalOperations.push(internalOperation);
+    }
+  }
+
   return coinOperations;
 };
 
@@ -280,4 +353,51 @@ export const isNftTransaction = (
  */
 export const padHexString = (str: string): string => {
   return str.length % 2 !== 0 ? "0" + str : str;
+};
+
+/**
+ * Helper to get the message properties to be displayed on the Nano
+ */
+export const getMessageProperties = async (
+  messageData: AnyMessage,
+): Promise<MessageProperties | null> => {
+  if (messageData.standard === "EIP712") {
+    return getEIP712FieldsDisplayedOnNano(messageData.message, getEnv("DYNAMIC_CAL_BASE_URL"));
+  }
+
+  return null;
+};
+
+/**
+ * Some addresses returned by the explorers are not 40 characters hex addresses
+ * For example the explorers may return "0x0" as an address (for example for
+ * some events or contract interactions, like a contract creation transaction)
+ *
+ * This is not a valid EIP55 address and thus will fail when trying to encode it
+ * with a "Bad address" error.
+ * cf:
+ * https://github.com/cryptocoinjs/eip55/blob/v2.1.1/index.js#L5-L6
+ * https://github.com/cryptocoinjs/eip55/blob/v2.1.1/index.js#L63-L65
+ *
+ * Since we can't control what the explorer returns, and we don't want the app to crash
+ * in these cases, we simply ignore the address and return an empty string.
+ *
+ * For now this has only been observed on the from or to fields of an operation
+ * so we only use this function for these fields.
+ */
+export const safeEncodeEIP55 = (addr: string): string => {
+  if (!addr || addr === "0x" || addr === "0x0") {
+    return "";
+  }
+
+  try {
+    return eip55.encode(addr);
+  } catch (e) {
+    log("EVM Family - logic.ts", "Failed to eip55 encode address", {
+      address: addr,
+      error: e,
+    });
+
+    return addr;
+  }
 };

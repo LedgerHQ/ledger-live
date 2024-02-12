@@ -15,7 +15,7 @@ const StepAmount = (props: StepProps) => {
   const { t, account, transaction, onChangeTransaction, error, status, bridgePending } = props;
   const mainAccount = account ? getMainAccount(account) : null;
   const onUpdateTransactionCallback = useCallback(
-    transaction =>
+    (transaction: NonNullable<StepProps["transaction"]>) =>
       onChangeTransaction({
         ...transaction,
         mode: "delegate",
@@ -30,7 +30,7 @@ const StepAmount = (props: StepProps) => {
         name="Step Amount"
         flow="stake"
         action="delegate"
-        currency="egld"
+        currency="MultiversX"
       />
       {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
       {error ? <ErrorBanner error={error} /> : null}

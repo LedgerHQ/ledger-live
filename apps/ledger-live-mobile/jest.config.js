@@ -1,9 +1,11 @@
-const { defaults: tsjPreset } = require("ts-jest/presets");
+const { pathsToModuleNameMapper } = require("ts-jest");
+const { compilerOptions } = require("./tsconfig");
 
 const transformIncludePatterns = [
   "@react-native/polyfills",
   "(jest-)?react-native",
   "@react-native(-community)?",
+  "@react-navigation",
   "rn-range-slider",
   "react-native-reanimated",
   "react-native-modal",
@@ -16,19 +18,23 @@ const transformIncludePatterns = [
 
 /** @type {import('ts-jest').JestConfigWithTsJest} */
 module.exports = {
-  ...tsjPreset,
   verbose: true,
   preset: "react-native",
-  setupFilesAfterEnv: ["@testing-library/jest-native/extend-expect", "./jest-setup.js"],
-  globals: {
-    "ts-jest": {
-      babelConfig: true,
-    },
-  },
+  modulePaths: [compilerOptions.baseUrl],
+  setupFilesAfterEnv: [
+    "./node_modules/react-native-gesture-handler/jestSetup.js",
+    "./__tests__/jest-setup.js",
+  ],
   testMatch: ["**/src/**/*.test.(ts|tsx)"],
   transform: {
-    "^.+\\.(js|jsx)?$": "babel-jest",
-    "^.+\\.(ts|tsx)?$": "ts-jest",
+    "^.+\\.(t)sx?$": [
+      "@swc/jest",
+      {
+        jsc: {
+          target: "esnext",
+        },
+      },
+    ],
   },
   transformIgnorePatterns: [
     `node_modules/(?!(.pnpm|${transformIncludePatterns.join("|")})/)`,
@@ -36,9 +42,12 @@ module.exports = {
   ],
   testPathIgnorePatterns: ["<rootDir>/node_modules/"],
   moduleDirectories: ["node_modules"],
-  coverageReporters: ["json"],
-  coverageDirectory: "<rootDir>/coverage",
+  collectCoverageFrom: ["src/**/*.{ts,tsx}", "!src/**/*.test.{ts,tsx}", "!src/**/*.spec.{ts,tsx}"],
+  coverageReporters: ["json", "lcov", "json-summary"],
   moduleNameMapper: {
+    ...pathsToModuleNameMapper(compilerOptions.paths),
+    "^react$": "<rootDir>/node_modules/react",
+    "^react/(.*)$": "<rootDir>/node_modules/react/$1",
     "^react-native/(.*)$": "<rootDir>/node_modules/react-native/$1",
     "^react-native$": "<rootDir>/node_modules/react-native",
     "^victory-native$": "victory",

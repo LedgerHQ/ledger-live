@@ -3,14 +3,14 @@ import { useTranslation, Trans } from "react-i18next";
 import { Linking } from "react-native";
 import { Flex, IconsLegacy, ScrollListContainer, Box, Text } from "@ledgerhq/native-ui";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { urls } from "../../../../../config/urls";
-import Button from "../../../../../components/wrappedUi/Button";
+import { urls } from "~/utils/urls";
+import Button from "~/components/wrappedUi/Button";
 
 const ProtectConnectionInformationModal = () => {
   const { t } = useTranslation();
   const servicesConfig = useFeature("protectServicesMobile");
 
-  const restoreInfoDrawer = servicesConfig?.params?.onboardingRestore?.restoreInfoDrawer || {};
+  const restoreInfoDrawer = servicesConfig?.params?.onboardingRestore?.restoreInfoDrawer;
   const supportLink = restoreInfoDrawer?.supportLinkURI;
 
   const handlePressBluetoothIssue = useCallback(() => {

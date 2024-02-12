@@ -6,9 +6,10 @@ import { useTheme } from "styled-components/native";
 import { TFunction } from "react-i18next";
 import Button from "../wrappedUi/Button";
 import Animation from "../Animation";
-import { getDeviceAnimation } from "../../helpers/getDeviceAnimation";
+import { getDeviceAnimation } from "~/helpers/getDeviceAnimation";
 import Link from "../wrappedUi/Link";
-import { TrackScreen } from "../../analytics";
+import { TrackScreen } from "~/analytics";
+import { ArrowRight } from "@ledgerhq/native-ui/assets/icons";
 
 // NEW DEVICE ACTION UX
 // area reserved to the project of redefining the UX of the device actions
@@ -30,27 +31,37 @@ export const AllowManager = ({ wording, device }: { wording: string; device: Dev
 export const ConfirmFirmwareUpdate = ({
   t,
   device,
+  currentFirmwareVersion,
   newFirmwareVersion,
 }: {
   t: TFunction;
   device: Device;
+  currentFirmwareVersion: string;
   newFirmwareVersion: string;
 }) => {
-  const { theme } = useTheme();
+  const { theme, space } = useTheme();
   return (
-    <Flex pb={6} pt={6} alignItems="center">
-      <Flex mb={6}>
+    <Flex pt={6} alignItems="center">
+      <Flex mb={9}>
         <Text fontWeight="semiBold" fontSize={7} textAlign="center">
           {t("FirmwareUpdate.pleaseConfirmUpdateOnYourDevice", {
             deviceName: getDeviceModel(device.modelId).productName,
           })}
         </Text>
       </Flex>
+
       <Flex flexDirection="row" justifyContent="center">
         <Flex borderRadius={4} px={3} py={1} backgroundColor="neutral.c40">
-          <Text>{newFirmwareVersion}</Text>
+          <Text>V {currentFirmwareVersion}</Text>
+        </Flex>
+        <Flex px={space[2]} justifyContent="center">
+          <ArrowRight size="S" />
+        </Flex>
+        <Flex borderRadius={4} px={3} py={1} backgroundColor="neutral.c40">
+          <Text>V {newFirmwareVersion}</Text>
         </Flex>
       </Flex>
+
       <Animation
         source={getDeviceAnimation({
           device,
@@ -105,8 +116,7 @@ export const FirmwareUpdateDenied = ({
   onPressRestart: () => void;
   onPressQuit: () => void;
 }) => {
-  const productName = getDeviceModel(device.modelId).productName;
-  const drawerName = `Error: update cancelled on ${productName}`;
+  const drawerName = "Error: update cancelled on device";
   return (
     <Flex alignItems="center" justifyContent="center" px={1}>
       <TrackScreen category={drawerName} type="drawer" refreshSource={false} />

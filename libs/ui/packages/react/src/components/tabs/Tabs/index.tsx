@@ -9,7 +9,7 @@ export interface TabContent {
   title: string;
   disabled?: boolean;
   badge?: string | number;
-  Component: React.ReactFragment;
+  Component: React.ReactNode;
 }
 
 export type Props = React.PropsWithChildren<{

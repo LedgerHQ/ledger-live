@@ -92,7 +92,7 @@ const Slider = ({ steps, value, onChange, error, theme }: Props) => {
   const root = useRef<HTMLDivElement>(null);
   const internalPadding = 12;
   const reverseX = useCallback(
-    x => {
+    (x: number) => {
       if (!root.current) return 0;
       const { width } = root.current.getBoundingClientRect();
       return Math.max(
@@ -106,13 +106,13 @@ const Slider = ({ steps, value, onChange, error, theme }: Props) => {
     [steps, root],
   );
   const concernedEvent = useCallback(
-    e => {
-      if (!e.targetTouches) {
+    (e: unknown) => {
+      if (!(e as TouchEvent).targetTouches) {
         return e;
       }
-      if (!down) return e.targetTouches[0];
+      if (!down) return (e as TouchEvent).targetTouches[0];
       const touchId = down.touchId;
-      const items = e.changedTouches;
+      const items = (e as TouchEvent).changedTouches;
       for (let i = 0; i < items.length; ++i) {
         if (items[i].identifier === touchId) return items[i];
       }
@@ -121,13 +121,13 @@ const Slider = ({ steps, value, onChange, error, theme }: Props) => {
     [down],
   );
   const onHandleStart = useCallback(
-    e => {
+    (e: MouseEvent) => {
       const event = concernedEvent(e);
       if (!event) return;
       e.preventDefault();
-      const x = xForEvent(root.current, event);
+      const x = xForEvent(root.current, event as MouseEvent);
       setDown({
-        touchId: event.identifier,
+        touchId: (event as { identifier: number }).identifier,
         x,
       });
       const valuePos = reverseX(x);
@@ -136,18 +136,18 @@ const Slider = ({ steps, value, onChange, error, theme }: Props) => {
     [root, concernedEvent, reverseX, onChange, value],
   );
   const onHandleMove = useCallback(
-    e => {
+    (e: MouseEvent) => {
       const event = concernedEvent(e);
       if (!event) return;
       e.preventDefault();
-      const x = xForEvent(root.current, event);
+      const x = xForEvent(root.current, event as MouseEvent);
       const valuePos = reverseX(x);
       if (value !== valuePos) onChange(valuePos);
     },
     [root, concernedEvent, reverseX, value, onChange],
   );
   const onHandleEnd = useCallback(
-    e => {
+    (e: MouseEvent) => {
       const event = concernedEvent(e);
       if (!event) return;
       setDown(null);
@@ -185,6 +185,7 @@ const Slider = ({ steps, value, onChange, error, theme }: Props) => {
   const palette = getPalette(theme);
   const colors = palette[error ? "error" : "default"];
   return (
+    // @ts-expect-error weird events stuff
     <div
       ref={root}
       {...events}

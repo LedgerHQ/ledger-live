@@ -1,18 +1,24 @@
 import invariant from "invariant";
 import React, { useCallback } from "react";
-import { View, StyleSheet, FlatList } from "react-native";
+import { View, StyleSheet, FlatList, ListRenderItem } from "react-native";
 import { useSelector } from "react-redux";
-import type { CosmosAccount, Transaction } from "@ledgerhq/live-common/families/cosmos/types";
+import type {
+  CosmosAccount,
+  CosmosMappedDelegation,
+  CosmosValidatorItem,
+  Transaction,
+} from "@ledgerhq/live-common/families/cosmos/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount, getAccountUnit } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useCosmosFamilyMappedDelegations } from "@ledgerhq/live-common/families/cosmos/react";
 import { useTheme } from "@react-navigation/native";
-import { accountScreenSelector } from "../../../reducers/accounts";
-import { ScreenName } from "../../../const";
+import { accountScreenSelector } from "~/reducers/accounts";
+import { ScreenName } from "~/const";
 import Item from "../shared/Item";
-import type { StackNavigatorProps } from "../../../components/RootNavigator/types/helpers";
+import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import type { CosmosClaimRewardsFlowParamList } from "./types";
+import BigNumber from "bignumber.js";
 
 type Props = StackNavigatorProps<
   CosmosClaimRewardsFlowParamList,
@@ -41,7 +47,7 @@ function ClaimRewardsSelectValidator({ navigation, route }: Props) {
   const unit = getAccountUnit(account);
   const delegations = useCosmosFamilyMappedDelegations(mainAccount, "claimReward");
   const onSelect = useCallback(
-    (validator, value) => {
+    (validator: CosmosValidatorItem, value?: BigNumber | null) => {
       const tx = bridge.updateTransaction(transaction, {
         validators: [
           {
@@ -54,12 +60,12 @@ function ClaimRewardsSelectValidator({ navigation, route }: Props) {
         ...route.params,
         transaction: tx,
         validator,
-        value,
+        value: value as BigNumber,
       });
     },
     [navigation, route.params, transaction, bridge],
   );
-  const renderItem = useCallback(
+  const renderItem: ListRenderItem<CosmosMappedDelegation> = useCallback(
     ({ item }) => (
       <Item
         disabled={false}

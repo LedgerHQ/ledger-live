@@ -20,7 +20,6 @@ test("polyfillApplication set ethereum currency for ethereum app", () => {
     supportURL: undefined,
     contactURL: undefined,
     sourceURL: undefined,
-    compatibleWalletsJSON: undefined,
   };
   const polyfilledApp = polyfillApplication(app);
   expect(polyfilledApp.currencyId).toEqual("ethereum");
@@ -40,7 +39,6 @@ const baseSampleApp: App = {
   supportURL: "",
   contactURL: "",
   sourceURL: "",
-  compatibleWallets: [],
   perso: "perso_11",
   hash: "6298b2dc4b04d7aa4ddfeec2d98502c871f243af273463c5489ca89d4f2cf0ef",
   firmware: "nanos+/1.0.3-rc1/dogecoin/app_2.0.6",

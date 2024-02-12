@@ -33,7 +33,7 @@ import { encodeAccountIdWithTokenAccountAddress, MAX_MEMO_LENGTH } from "./logic
 import createTransaction from "./js-createTransaction";
 import { compact } from "lodash/fp";
 import { assertUnreachable } from "./utils";
-import { getEnv } from "../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import { ChainAPI } from "./api";
 import {
   SolanaStakeAccountIsNotDelegatable,
@@ -726,13 +726,14 @@ function stakingTests(): TransactionTestSpec[] {
       },
       expectedStatus: {
         amount: testOnChainData.fundedSenderBalance
-          .minus(fees(1))
+          .minus(fees(1)) // transaction fee
+          .minus(fees(1).multipliedBy(2)) // undelegate + withdraw fees reserve
           .minus(testOnChainData.fees.stakeAccountRentExempt)
           .minus(testOnChainData.fees.systemAccountRentExempt),
         estimatedFees: fees(1).plus(testOnChainData.fees.stakeAccountRentExempt),
-        totalSpent: testOnChainData.fundedSenderBalance.minus(
-          testOnChainData.fees.systemAccountRentExempt,
-        ),
+        totalSpent: testOnChainData.fundedSenderBalance
+          .minus(testOnChainData.fees.systemAccountRentExempt)
+          .minus(fees(1).multipliedBy(2)), // undelegate + withdraw fees reserve,
         errors: {},
       },
     },
@@ -1050,6 +1051,7 @@ async function runStakeTest(stakeTestSpec: StakeTestSpec) {
           },
         } as SolanaStake,
       ],
+      unstakeReserve: BigNumber(0),
     },
   };
 

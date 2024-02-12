@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import BigNumber from "bignumber.js";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
+import { Unit } from "@ledgerhq/types-cryptoassets";
 import { getAccountUnit } from "@ledgerhq/live-common/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
 import { localeSelector } from "~/renderer/reducers/settings";
@@ -11,7 +13,9 @@ import Text from "~/renderer/components/Text";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
+import { CosmosAPI } from "@ledgerhq/live-common/families/cosmos/api/Cosmos";
 import { SubAccount } from "@ledgerhq/types-live";
+
 const Wrapper = styled(Box).attrs(() => ({
   horizontal: true,
   mt: 4,
@@ -50,9 +54,33 @@ const AmountValue = styled(Text).attrs(() => ({
 type Props = {
   account: CosmosAccount | SubAccount;
 };
+
+const usdcUnit: Unit = {
+  name: "USDC",
+  code: "USDC",
+  magnitude: 6,
+};
+
 const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const discreet = useDiscreetMode();
   const locale = useSelector(localeSelector);
+  const [dydxUsdcRewards, setDydxUsdcRewards] = useState(new BigNumber(0));
+
+  useEffect(() => {
+    if (account.type !== "Account") {
+      return;
+    }
+    if (account.currency.id !== "dydx") {
+      return;
+    }
+
+    const cosmosAPI = new CosmosAPI(account.currency.id);
+
+    cosmosAPI.getUsdcRewards(account.freshAddress).then((rewards: BigNumber) => {
+      setDydxUsdcRewards(rewards);
+    });
+  }, [account]);
+
   if (account.type !== "Account") return null;
   const { spendableBalance: _spendableBalance, cosmosResources } = account;
   const { delegatedBalance: _delegatedBalance, unbondingBalance: _unbondingBalance } =
@@ -68,6 +96,10 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
   const spendableBalance = formatCurrencyUnit(unit, _spendableBalance, formatConfig);
   const delegatedBalance = formatCurrencyUnit(unit, _delegatedBalance, formatConfig);
   const unbondingBalance = formatCurrencyUnit(unit, _unbondingBalance, formatConfig);
+  const dydxUsdcRewardsBalance = formatCurrencyUnit(usdcUnit, dydxUsdcRewards, formatConfig);
+
+  const isDyDx = account.currency.id === "dydx";
+
   return (
     <Wrapper>
       <BalanceDetail>
@@ -96,6 +128,22 @@ const AccountBalanceSummaryFooter = ({ account }: Props) => {
           <Discreet>{delegatedBalance}</Discreet>
         </AmountValue>
       </BalanceDetail>
+      {/* FIXME: this is a hack to display USDC claimableRewards for dYdX until ibc tokens are properly handle in LL */}
+      {isDyDx && (
+        <BalanceDetail>
+          <ToolTip content={<Trans i18nKey="account.claimableRewardsTooltip" />}>
+            <TitleWrapper>
+              <Title>
+                <Trans i18nKey="account.claimableRewards" />
+              </Title>
+              <InfoCircle size={13} />
+            </TitleWrapper>
+          </ToolTip>
+          <AmountValue>
+            <Discreet>{dydxUsdcRewardsBalance}</Discreet>
+          </AmountValue>
+        </BalanceDetail>
+      )}
       {_unbondingBalance.gt(0) && (
         <BalanceDetail>
           <ToolTip

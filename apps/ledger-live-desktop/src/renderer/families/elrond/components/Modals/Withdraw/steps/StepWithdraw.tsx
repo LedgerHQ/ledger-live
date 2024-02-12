@@ -30,6 +30,7 @@ const StepWithdraw = (props: StepProps) => {
   } = props;
   const bridge: AccountBridge<Transaction> = getAccountBridge(account);
   const onDelegationChange = useCallback(
+    // @ts-expect-error another TS puzzle for another day
     validator => {
       onUpdateTransaction(transaction =>
         bridge.updateTransaction(transaction, {
@@ -48,7 +49,7 @@ const StepWithdraw = (props: StepProps) => {
         name="Step 1"
         flow="stake"
         action="withdraw"
-        currency="egld"
+        currency="MultiversX"
       />
       {warning && !error ? <ErrorBanner error={warning} warning={true} /> : null}
       {error ? <ErrorBanner error={error} /> : null}

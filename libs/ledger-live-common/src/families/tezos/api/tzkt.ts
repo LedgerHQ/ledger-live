@@ -1,7 +1,7 @@
 // @flow
 import network from "@ledgerhq/live-network/network";
 import URL from "url";
-import { getEnv } from "../../../env";
+import { getEnv } from "@ledgerhq/live-env";
 
 type APIAccount =
   | {

@@ -1,6 +1,6 @@
+import { AssertionError, fail } from "assert";
 import axios from "axios";
 import BigNumber from "bignumber.js";
-import { AssertionError, fail } from "assert";
 import { delay } from "@ledgerhq/live-promise";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
@@ -275,6 +275,22 @@ describe("EVM Family", () => {
         }
       });
 
+      it("should throw GasEstimationError if request throws ECONNABORTED", async () => {
+        jest
+          .spyOn(axios, "request")
+          .mockImplementation(() => Promise.reject({ code: "ECONNABORTED" }));
+
+        try {
+          await LEDGER_API.getGasEstimation(account, {} as any);
+          fail("Promise should have been rejected");
+        } catch (e) {
+          if (e instanceof AssertionError) {
+            throw e;
+          }
+          expect(e).toBeInstanceOf(GasEstimationError);
+        }
+      });
+
       it("should return the expected payload", async () => {
         jest.spyOn(axios, "request").mockImplementation(async ({ data: transaction }) => {
           return (transaction as any)?.data?.length > 2
@@ -417,12 +433,14 @@ describe("EVM Family", () => {
                 },
               }
             : {
-                data: {
-                  hash: "0xhash",
-                  height: 123,
-                  time: new Date().toISOString(),
-                  txs: ["0xTx1", "0xTx2"],
-                },
+                data: [
+                  {
+                    hash: "0xhash",
+                    height: 123,
+                    time: new Date().toISOString(),
+                    txs: ["0xTx1", "0xTx2"],
+                  },
+                ],
               },
         );
 

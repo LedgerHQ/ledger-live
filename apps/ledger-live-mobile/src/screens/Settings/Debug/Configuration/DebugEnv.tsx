@@ -1,12 +1,12 @@
 import React, { useMemo, useState, useCallback } from "react";
-import Clipboard from "@react-native-community/clipboard";
+import Clipboard from "@react-native-clipboard/clipboard";
 import Config from "react-native-config";
-import { EnvName, setEnvUnsafe, getAllEnvs, getDefinition } from "@ledgerhq/live-common/env";
+import { EnvName, setEnvUnsafe, getAllEnvs, getDefinition } from "@ledgerhq/live-env";
 import { Flex, Button, Text, Tag, Alert } from "@ledgerhq/native-ui";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import NavigationScrollView from "../../../../components/NavigationScrollView";
-import TextInput from "../../../../components/TextInput";
-import SectionSeparator from "../../../../components/SectionSeparator";
+import NavigationScrollView from "~/components/NavigationScrollView";
+import TextInput from "~/components/TextInput";
+import SectionSeparator from "~/components/SectionSeparator";
 
 export default function DebugEnv() {
   const [value, setValue] = useState<string>("");
@@ -53,7 +53,7 @@ export default function DebugEnv() {
     setResetIndex(resetIndex + 1);
   }, [value, resetIndex]);
 
-  const onPress = useCallback(env => {
+  const onPress = useCallback((env: string) => {
     Clipboard.setString(env);
   }, []);
 

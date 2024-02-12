@@ -3,10 +3,10 @@ import { View, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 import type { PolkadotValidator } from "@ledgerhq/live-common/families/polkadot/types";
 import { useTheme } from "styled-components/native";
-import CheckBox from "../../../components/CheckBox";
-import LText from "../../../components/LText";
-import Touchable from "../../../components/Touchable";
-import Identicon from "@polkadot/reactnative-identicon";
+import CheckBox from "~/components/CheckBox";
+import LText from "~/components/LText";
+import Touchable from "~/components/Touchable";
+import FirstLetterIcon from "~/components/FirstLetterIcon";
 
 type Props = {
   item: PolkadotValidator;
@@ -43,7 +43,7 @@ function Item({ item, selected, disabled, onSelect, onClick }: Props) {
         onPress={() => onClick(address)}
         event="PolkadotNominateSelectValidatorsOpenExplorer"
       >
-        <Identicon theme="polkadot" value={address} size={32} />
+        <FirstLetterIcon label={identity || "-"} round size={32} />
       </Touchable>
 
       <View style={styles.nameWrapper}>
@@ -139,4 +139,5 @@ const styles = StyleSheet.create({
     fontSize: 13,
   },
 });
+
 export default memo<Props>(Item);

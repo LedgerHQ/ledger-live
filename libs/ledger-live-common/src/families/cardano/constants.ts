@@ -1,4 +1,4 @@
-import { getEnv } from "../../env";
+import { getEnv } from "@ledgerhq/live-env";
 
 export const STAKING_ADDRESS_INDEX = 0;
 export const TTL_GAP = 7200;

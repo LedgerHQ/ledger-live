@@ -14,9 +14,8 @@ import {
 import { useTranslation } from "react-i18next";
 import { ParamListBase, useNavigation, useTheme } from "@react-navigation/native";
 import { useTheme as useThemeFromStyledComponents } from "styled-components/native";
-import { Flex, Text, IconsLegacy } from "@ledgerhq/native-ui";
+import { Flex, Text, Icons } from "@ledgerhq/native-ui";
 import type { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
-import type { InitSellResult } from "@ledgerhq/live-common/exchange/sell/types";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { AccountLike, AnyMessage, DeviceInfo } from "@ledgerhq/types-live";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
@@ -24,7 +23,7 @@ import { Exchange, ExchangeRate, InitSwapResult } from "@ledgerhq/live-common/ex
 import { AppAndVersion } from "@ledgerhq/live-common/hw/connectApp";
 import { LedgerErrorConstructor } from "@ledgerhq/errors/lib/helpers";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { setLastSeenDeviceInfo } from "../../actions/settings";
+import { setLastSeenDeviceInfo } from "~/actions/settings";
 import ValidateOnDevice from "../ValidateOnDevice";
 import ValidateMessageOnDevice from "../ValidateMessageOnDevice";
 import {
@@ -41,7 +40,6 @@ import {
   renderBootloaderStep,
   renderExchange,
   renderConfirmSwap,
-  renderConfirmSell,
   LoadingAppInstall,
   AutoRepair,
   renderAllowLanguageInstallation,
@@ -54,7 +52,7 @@ import {
 import PreventNativeBack from "../PreventNativeBack";
 import SkipLock from "../behaviour/SkipLock";
 import DeviceActionProgress from "../DeviceActionProgress";
-import { PartialNullable } from "../../types/helpers";
+import { PartialNullable } from "~/types/helpers";
 import ModalLock from "../ModalLock";
 
 type LedgerError = InstanceType<LedgerErrorConstructor<{ [key: string]: unknown }>>;
@@ -69,7 +67,8 @@ type Status = PartialNullable<{
     managerAppName?: string;
   };
   isLoading: boolean;
-  allowManagerRequestedWording: string;
+  allowManagerRequested: boolean;
+  allowRenamingRequested: boolean;
   requestQuitApp: boolean;
   deviceInfo: DeviceInfo;
   requestOpenApp: string;
@@ -102,9 +101,6 @@ type Status = PartialNullable<{
   completeExchangeStarted: boolean;
   completeExchangeResult: Transaction;
   completeExchangeError: Error;
-  initSellRequested: boolean;
-  initSellResult: InitSellResult;
-  initSellError: Error;
   installingApp: boolean;
   progress: number;
   listingApps: boolean;
@@ -125,6 +121,11 @@ type Props<H extends Status, P> = {
   payload?: P | null;
   onSelectDeviceLink?: () => void;
   analyticsPropertyFlow?: string;
+  /*
+   * Defines in what type of component this action will be rendered in.
+   *
+   * Used to adapt the UI to either a drawer or a view.
+   */
 };
 
 export default function DeviceAction<R, H extends Status, P>({
@@ -179,7 +180,8 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     isLocked,
     error,
     isLoading,
-    allowManagerRequestedWording,
+    allowManagerRequested,
+    allowRenamingRequested,
     requestQuitApp,
     deviceInfo,
     requestOpenApp,
@@ -205,9 +207,6 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     completeExchangeStarted,
     completeExchangeResult,
     completeExchangeError,
-    initSellRequested,
-    initSellResult,
-    initSellError,
     installingApp,
     progress,
     listingApps,
@@ -309,15 +308,22 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
       theme,
     });
   }
-
-  if (allowManagerRequestedWording) {
-    const wording = allowManagerRequestedWording;
+  if (allowManagerRequested) {
     return renderAllowManager({
       t,
       device: selectedDevice,
-      wording,
       colors,
       theme,
+    });
+  }
+
+  if (allowRenamingRequested) {
+    return renderAllowManager({
+      t,
+      device: selectedDevice,
+      colors,
+      theme,
+      requestType: "rename",
     });
   }
 
@@ -344,8 +350,8 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
           colors,
           theme,
           hasExportLogButton: false,
-          iconColor: palette.neutral.c20,
-          Icon: () => <IconsLegacy.InfoAltFillMedium size={28} color={palette.primary.c80} />,
+          Icon: Icons.InformationFill,
+          iconColor: palette.primary.c80,
           device: device ?? undefined,
         });
       }
@@ -395,13 +401,6 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
       exchange: req?.exchange,
       amountExpectedTo: status.amountExpectedTo,
       estimatedFees: status.estimatedFees,
-    });
-  }
-
-  if (initSellRequested && !initSellResult && !initSellError) {
-    return renderConfirmSell({
-      t,
-      device: selectedDevice,
     });
   }
 
@@ -467,8 +466,8 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
         onRetry,
         colors,
         theme,
-        iconColor: palette.opacityDefault.c10,
-        Icon: () => <IconsLegacy.WarningSolidMedium size={28} color={colors.warning} />,
+        iconColor: "warning.c60",
+        Icon: Icons.WarningFill,
         device: device ?? undefined,
       });
     }

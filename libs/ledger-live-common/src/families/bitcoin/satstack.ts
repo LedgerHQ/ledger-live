@@ -4,7 +4,7 @@ import { Observable, from, interval } from "rxjs";
 import { filter, share, switchMap } from "rxjs/operators";
 import semver from "semver";
 import { getCryptoCurrencyById } from "../../currencies";
-import { getEnv } from "../../env";
+import { getEnv } from "@ledgerhq/live-env";
 import {
   RPCHostInvalid,
   RPCHostRequired,

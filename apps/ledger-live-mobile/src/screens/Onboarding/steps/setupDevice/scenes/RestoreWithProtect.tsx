@@ -3,11 +3,10 @@ import { useTranslation } from "react-i18next";
 import { IconsLegacy, NumberedList, Text } from "@ledgerhq/native-ui";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Linking } from "react-native";
-import Button from "../../../../../components/wrappedUi/Button";
-import { TrackScreen } from "../../../../../analytics";
-import Touchable from "../../../../../components/Touchable";
-import QueuedDrawer from "../../../../../components/QueuedDrawer";
-import { urls } from "../../../../../config/urls";
+import Button from "~/components/wrappedUi/Button";
+import { TrackScreen } from "~/analytics";
+import QueuedDrawer from "~/components/QueuedDrawer";
+import { urls } from "~/utils/urls";
 
 const RestoreWithProtectScene = () => {
   const { t } = useTranslation();
@@ -41,7 +40,7 @@ const Next = ({ onNext }: { onNext: () => void }) => {
   const [isOpened, setIsOpened] = useState<boolean>(false);
   const servicesConfig = useFeature("protectServicesMobile");
 
-  const restoreInfoDrawer = servicesConfig?.params?.onboardingRestore?.restoreInfoDrawer || {};
+  const restoreInfoDrawer = servicesConfig?.params?.onboardingRestore?.restoreInfoDrawer;
 
   const supportLink = restoreInfoDrawer?.supportLinkURI;
 
@@ -98,11 +97,16 @@ const Next = ({ onNext }: { onNext: () => void }) => {
         />
       </QueuedDrawer>
       {restoreInfoDrawer?.enabled ? (
-        <Touchable onPress={onOpen}>
-          <Text textAlign="center" variant="large">
-            {t("onboarding.stepProtect.extraInfo.tooltip")}
-          </Text>
-        </Touchable>
+        <Button
+          type="shade"
+          outline
+          size="large"
+          onPress={onOpen}
+          event={"button_clicked"}
+          eventProperties={{ button: "Can't see recover" }}
+        >
+          <Text variant="small">{t("onboarding.stepProtect.extraInfo.tooltip")}</Text>
+        </Button>
       ) : null}
     </>
   );

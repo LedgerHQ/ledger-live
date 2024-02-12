@@ -1,16 +1,16 @@
 import React, { useCallback } from "react";
 import { StyleSheet, SafeAreaView } from "react-native";
 import { useTheme } from "@react-navigation/native";
-import { TrackScreen } from "../../../analytics";
-import ValidateError from "../../../components/ValidateError";
+import { TrackScreen } from "~/analytics";
+import ValidateError from "~/components/ValidateError";
 import type {
   BaseComposite,
   StackNavigatorNavigation,
   StackNavigatorProps,
-} from "../../../components/RootNavigator/types/helpers";
+} from "~/components/RootNavigator/types/helpers";
 import type { PolkadotNominateFlowParamList } from "./types";
-import { ScreenName } from "../../../const";
-import { BaseNavigatorStackParamList } from "../../../components/RootNavigator/types/BaseNavigator";
+import { ScreenName } from "~/const";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 
 type Props = BaseComposite<
   StackNavigatorProps<PolkadotNominateFlowParamList, ScreenName.PolkadotNominateValidationError>

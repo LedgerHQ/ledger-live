@@ -5,23 +5,31 @@ import { ChevronRightMedium, InfoMedium } from "@ledgerhq/native-ui/assets/icons
 import styled from "styled-components/native";
 import Touchable from "./Touchable";
 
-const StyledTouchableRow = styled(Touchable)<{
+const StyledRowContainer = styled(Flex)<{
   compact?: boolean;
   hasBorderTop?: boolean;
 }>`
-  background-color: ${p => p.theme.colors.background.main};
-  padding: ${p => p.theme.space[p.compact ? 6 : 7]}px ${p => p.theme.space[6]}px;
-  flex-direction: row;
-  align-items: center;
   border-bottom-color: ${p => p.theme.colors.neutral.c40};
   border-bottom-width: ${p => (p.compact ? 0 : 1)}px;
   ${p =>
     p.hasBorderTop
       ? `
-    border-top-color: ${p.theme.colors.neutral.c40};
-    border-top-width: ${p.compact ? 0 : 1}px;
-  `
+  border-top-color: ${p.theme.colors.neutral.c40};
+  border-top-width: ${p.compact ? 0 : 1}px;
+`
       : ``}
+`;
+
+const StyledTouchableRow = styled(Touchable)<{
+  compact?: boolean;
+  disabled?: boolean;
+}>`
+  background-color: ${p => p.theme.colors.background.main};
+  padding: ${p => p.theme.space[p.compact ? 6 : 7]}px ${p => p.theme.space[6]}px;
+  flex-direction: row;
+  align-items: center;
+
+  ${p => p.disabled && "opacity: 0.6;"}
 `;
 
 export default function SettingsRow({
@@ -46,6 +54,7 @@ export default function SettingsRow({
   label,
   testID,
   hasBorderTop,
+  disabled,
 }: {
   onPress?: () => void;
   onLongPress?: () => void;
@@ -68,6 +77,7 @@ export default function SettingsRow({
   label?: string;
   hasBorderTop?: boolean;
   testID?: string;
+  disabled?: boolean;
 }) {
   let title$ = (
     <Flex flexDirection={"row"} alignItems={"center"} style={titleContainerStyle}>
@@ -95,48 +105,50 @@ export default function SettingsRow({
   }
 
   return (
-    <StyledTouchableRow
-      onPress={onPress}
-      onLongPress={onLongPress}
-      event={event}
-      eventProperties={eventProperties}
-      style={style}
-      compact={compact}
-      hasBorderTop={hasBorderTop}
-      testID={testID}
-    >
-      {iconLeft && (
-        <Flex paddingRight={6} justifyContent={centeredIcon ? "center" : undefined}>
-          {iconLeft}
-        </Flex>
-      )}
-      <Box flexShrink={1} paddingRight={6} marginRight={"auto"}>
-        {title$}
-        {desc && !noTextDesc && (
-          <Text variant={"body"} fontWeight={"medium"} color={"neutral.c70"}>
-            {desc}
-          </Text>
-        )}
-        {desc && noTextDesc && desc}
-      </Box>
-      <Box
-        flexDirection={"row"}
-        alignItems={"center"}
-        justifyContent={"flex-end"}
-        flexShrink={0}
-        maxWidth={"50%"}
+    <StyledRowContainer hasBorderTop={hasBorderTop} compact={compact}>
+      <StyledTouchableRow
+        onPress={onPress}
+        onLongPress={onLongPress}
+        event={event}
+        eventProperties={eventProperties}
+        style={style}
+        compact={compact}
+        testID={testID}
+        disabled={disabled}
       >
-        {children}
-        {arrowRight ? (
-          <Box marginLeft={4}>
-            <ChevronRightMedium size={16} color={"neutral.c70"} />
-          </Box>
-        ) : selected ? (
-          <Box marginRight={4}>
-            <Checkbox checked={true} />
-          </Box>
-        ) : null}
-      </Box>
-    </StyledTouchableRow>
+        {iconLeft && (
+          <Flex paddingRight={6} justifyContent={centeredIcon ? "center" : undefined}>
+            {iconLeft}
+          </Flex>
+        )}
+        <Box flexShrink={1} paddingRight={6} marginRight={"auto"}>
+          {title$}
+          {desc && !noTextDesc && (
+            <Text variant={"body"} fontWeight={"medium"} color={"neutral.c70"}>
+              {desc}
+            </Text>
+          )}
+          {desc && noTextDesc && desc}
+        </Box>
+        <Box
+          flexDirection={"row"}
+          alignItems={"center"}
+          justifyContent={"flex-end"}
+          flexShrink={0}
+          maxWidth={"50%"}
+        >
+          {children}
+          {arrowRight ? (
+            <Box marginLeft={4}>
+              <ChevronRightMedium size={16} color={"neutral.c70"} />
+            </Box>
+          ) : selected ? (
+            <Box marginRight={4}>
+              <Checkbox checked={true} />
+            </Box>
+          ) : null}
+        </Box>
+      </StyledTouchableRow>
+    </StyledRowContainer>
   );
 }

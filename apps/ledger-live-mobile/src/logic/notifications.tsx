@@ -5,7 +5,7 @@ import { add, isBefore, parseISO } from "date-fns";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import messaging from "@react-native-firebase/messaging";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { accountsWithPositiveBalanceCountSelector } from "../reducers/accounts";
+import { accountsWithPositiveBalanceCountSelector } from "~/reducers/accounts";
 import {
   notificationsModalOpenSelector,
   notificationsModalTypeSelector,
@@ -13,19 +13,24 @@ import {
   notificationsEventTriggeredSelector,
   notificationsDataOfUserSelector,
   notificationsModalLockedSelector,
-} from "../reducers/notifications";
+} from "~/reducers/notifications";
 import {
   setNotificationsModalOpen,
   setNotificationsModalType,
   setNotificationsCurrentRouteName,
   setNotificationsEventTriggered,
   setNotificationsDataOfUser,
-} from "../actions/notifications";
-import { setRatingsModalLocked } from "../actions/ratings";
-import { track } from "../analytics";
-import { notificationsSelector, INITIAL_STATE as settingsInitialState } from "../reducers/settings";
-import { setNotifications } from "../actions/settings";
-import { NotificationsSettings } from "../reducers/types";
+} from "~/actions/notifications";
+import { setRatingsModalLocked } from "~/actions/ratings";
+import { track } from "~/analytics";
+import {
+  notificationsSelector,
+  INITIAL_STATE as settingsInitialState,
+  neverClickedOnAllowNotificationsButtonSelector,
+} from "~/reducers/settings";
+import { setNeverClickedOnAllowNotificationsButton, setNotifications } from "~/actions/settings";
+import { NotificationsSettings } from "~/reducers/types";
+import Braze from "@braze/react-native-sdk";
 
 export type EventTrigger = {
   timeout: NodeJS.Timeout;
@@ -90,6 +95,9 @@ const useNotifications = () => {
     .map((notificationsCategory: NotificationCategory) => notificationsCategory?.category || "");
   const isPushNotificationsModalOpen = useSelector(notificationsModalOpenSelector);
   const isPushNotificationsModalLocked = useSelector(notificationsModalLockedSelector);
+  const neverClickedOnAllowNotificationsButton = useSelector(
+    neverClickedOnAllowNotificationsButtonSelector,
+  );
   const pushNotificationsModalType = useSelector(notificationsModalTypeSelector);
   const pushNotificationsOldRoute = useSelector(notificationsCurrentRouteNameSelector);
   const pushNotificationsEventTriggered = useSelector(notificationsEventTriggeredSelector);
@@ -100,10 +108,14 @@ const useNotifications = () => {
 
   const handlePushNotificationsPermission = useCallback(async () => {
     if (Platform.OS === "android") {
-      Linking.openSettings();
+      // Braze.requestPushPermission() is a no-op on Android 12 and below so we only call it on Android 13 and above
+      if (neverClickedOnAllowNotificationsButton && Platform.Version >= 33) {
+        Braze.requestPushPermission();
+      } else {
+        Linking.openSettings();
+      }
     } else {
-      const fcm = messaging();
-      const permission = await fcm.hasPermission();
+      const permission = await messaging().hasPermission();
 
       if (permission === messaging.AuthorizationStatus.DENIED) {
         Linking.openSettings();
@@ -111,13 +123,16 @@ const useNotifications = () => {
         permission === messaging.AuthorizationStatus.NOT_DETERMINED ||
         permission === messaging.AuthorizationStatus.PROVISIONAL
       ) {
-        fcm.requestPermission();
+        Braze.requestPushPermission();
       }
     }
-  }, []);
+    if (neverClickedOnAllowNotificationsButton) {
+      dispatch(setNeverClickedOnAllowNotificationsButton(false));
+    }
+  }, [neverClickedOnAllowNotificationsButton, dispatch]);
 
   const setPushNotificationsModalOpenCallback = useCallback(
-    isModalOpen => {
+    (isModalOpen: boolean) => {
       if (!isModalOpen) {
         dispatch(setNotificationsModalType("generic"));
         dispatch(setNotificationsModalOpen(isModalOpen));
@@ -153,6 +168,7 @@ const useNotifications = () => {
     }
 
     // minimum accounts number criteria
+    // @ts-expect-error TYPINGS
     const minimumAccountsNumber: number =
       pushNotificationsFeature?.params?.conditions?.minimum_accounts_with_funds_number;
     if (minimumAccountsNumber && accountsWithAmountCount < minimumAccountsNumber) {
@@ -160,6 +176,7 @@ const useNotifications = () => {
     }
 
     // minimum app start number criteria
+    // @ts-expect-error TYPINGS
     const minimumAppStartsNumber: number =
       pushNotificationsFeature?.params?.conditions?.minimum_app_starts_number;
     if (
@@ -170,6 +187,7 @@ const useNotifications = () => {
     }
 
     // duration since first app start long enough criteria
+    // @ts-expect-error TYPINGS
     const minimumDurationSinceAppFirstStart: Duration =
       pushNotificationsFeature?.params?.conditions?.minimum_duration_since_app_first_start;
     if (
@@ -199,7 +217,7 @@ const useNotifications = () => {
   );
 
   const onPushNotificationsRouteChange = useCallback(
-    (newRoute, isOtherModalOpened = false) => {
+    (newRoute: string, isOtherModalOpened = false) => {
       if (pushNotificationsEventTriggered?.timeout) {
         clearTimeout(pushNotificationsEventTriggered?.timeout);
         dispatch(setRatingsModalLocked(false));
@@ -207,13 +225,16 @@ const useNotifications = () => {
 
       if (isOtherModalOpened || !areConditionsMet()) return false;
 
+      // @ts-expect-error TYPINGS
       for (const eventTrigger of pushNotificationsFeature?.params?.trigger_events) {
+        // @ts-expect-error TYPINGS
         if (isEventTriggered(eventTrigger, newRoute)) {
           dispatch(setRatingsModalLocked(true));
           const timeout = setTimeout(() => {
             setPushNotificationsModalOpenCallback(true);
           }, eventTrigger.timer);
           dispatch(
+            // @ts-expect-error TYPINGS
             setNotificationsEventTriggered({
               ...eventTrigger,
               timeout,
@@ -250,7 +271,7 @@ const useNotifications = () => {
     } else {
       const newNotificationsState = { ...notifications };
       for (const [key, value] of Object.entries(settingsInitialState.notifications)) {
-        if (!notifications[key as keyof NotificationsSettings]) {
+        if (notifications[key as keyof NotificationsSettings] === undefined) {
           newNotificationsState[key as keyof NotificationsSettings] = value;
         }
       }
@@ -270,10 +291,13 @@ const useNotifications = () => {
     const marketCoinStarredParams = pushNotificationsFeature?.params?.marketCoinStarred;
     if (marketCoinStarredParams?.enabled) {
       dispatch(setRatingsModalLocked(true));
-      const timeout = setTimeout(() => {
-        dispatch(setNotificationsModalType("market"));
-        setPushNotificationsModalOpenCallback(true);
-      }, marketCoinStarredParams?.timer);
+      const timeout = setTimeout(
+        () => {
+          dispatch(setNotificationsModalType("market"));
+          setPushNotificationsModalOpenCallback(true);
+        },
+        marketCoinStarredParams?.timer,
+      );
       dispatch(
         setNotificationsEventTriggered({
           route_name: "MarketDetail",
@@ -295,9 +319,12 @@ const useNotifications = () => {
     const justFinishedOnboardingParams = pushNotificationsFeature?.params?.justFinishedOnboarding;
     if (justFinishedOnboardingParams?.enabled) {
       dispatch(setRatingsModalLocked(true));
-      const timeout = setTimeout(() => {
-        setPushNotificationsModalOpenCallback(true);
-      }, justFinishedOnboardingParams?.timer);
+      const timeout = setTimeout(
+        () => {
+          setPushNotificationsModalOpenCallback(true);
+        },
+        justFinishedOnboardingParams?.timer,
+      );
       dispatch(
         setNotificationsEventTriggered({
           route_name: "Portfolio",
@@ -315,7 +342,7 @@ const useNotifications = () => {
   ]);
 
   const handleSetDateOfNextAllowedRequest = useCallback(
-    (delay, additionalParams?: Partial<DataOfUser>) => {
+    (delay?: Duration, additionalParams?: Partial<DataOfUser>) => {
       if (delay !== null && delay !== undefined) {
         const dateOfNextAllowedRequest: Date = add(Date.now(), delay);
         updatePushNotificationsDataOfUserInStateAndStore({

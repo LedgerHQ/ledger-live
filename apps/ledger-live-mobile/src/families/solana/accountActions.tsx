@@ -4,7 +4,8 @@ import { IconsLegacy } from "@ledgerhq/native-ui";
 import { Trans } from "react-i18next";
 import { ParamListBase, RouteProp } from "@react-navigation/native";
 import { SolanaAccount } from "@ledgerhq/live-common/families/solana/types";
-import { NavigatorName, ScreenName } from "../../const";
+import { NavigatorName, ScreenName } from "~/const";
+import type { ActionButtonEvent, NavigationParamsType } from "~/components/FabActions";
 
 const getMainActions = ({
   account,
@@ -14,10 +15,10 @@ const getMainActions = ({
   account: SolanaAccount;
   parentAccount: Account;
   parentRoute: RouteProp<ParamListBase, ScreenName>;
-}) => {
+}): ActionButtonEvent[] => {
   const delegationDisabled = account.solanaResources?.stakes.length > 1;
 
-  const navigationParams = delegationDisabled
+  const navigationParams: NavigationParamsType = delegationDisabled
     ? [
         NavigatorName.NoFundsFlow,
         {
@@ -48,7 +49,7 @@ const getMainActions = ({
       id: "stake",
       navigationParams,
       label: <Trans i18nKey="account.stake" />,
-      Icon: IconsLegacy.ClaimRewardsMedium,
+      Icon: IconsLegacy.CoinsMedium,
       event: "button_clicked",
       eventProperties: {
         button: "stake",

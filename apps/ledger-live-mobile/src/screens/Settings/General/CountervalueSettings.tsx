@@ -2,18 +2,14 @@ import React from "react";
 
 import { connect } from "react-redux";
 import { Text } from "@ledgerhq/native-ui";
-import { setCountervalue } from "../../../actions/settings";
-import { counterValueCurrencySelector, supportedCountervalues } from "../../../reducers/settings";
-import { State } from "../../../reducers/types";
+import { setCountervalue } from "~/actions/settings";
+import { counterValueCurrencySelector, getSupportedCounterValues } from "~/reducers/settings";
+import { State } from "~/reducers/types";
 import makeGenericSelectScreen from "../../makeGenericSelectScreen";
-
-const items = supportedCountervalues
-  .map(cur => ({ value: cur.ticker, label: cur.name }))
-  .sort((a, b) => a.label.localeCompare(b.label));
 
 const mapStateToProps = (state: State) => ({
   selectedKey: counterValueCurrencySelector(state).ticker,
-  items,
+  items: getSupportedCounterValues(state),
 });
 
 const mapDispatchToProps = {

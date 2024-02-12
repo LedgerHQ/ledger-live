@@ -4,7 +4,11 @@ import type { AccountLike, Account } from "@ledgerhq/types-live";
 import { getMainAccount } from "../../account";
 import type { CardanoAccount, Transaction } from "./types";
 import { createTransaction } from "./js-transaction";
-import { address as TyphonAddress, types as TyphonTypes } from "@stricahq/typhonjs";
+import {
+  address as TyphonAddress,
+  types as TyphonTypes,
+  Transaction as TyphonTransaction,
+} from "@stricahq/typhonjs";
 import { buildTransaction } from "./js-buildTransaction";
 
 /**
@@ -36,7 +40,7 @@ const estimateMaxSpendable = async ({
     amount: new BigNumber(0),
     useAllAmount: true,
   };
-  let typhonTransaction;
+  let typhonTransaction: TyphonTransaction;
   try {
     typhonTransaction = await buildTransaction(a as CardanoAccount, t);
   } catch (error) {

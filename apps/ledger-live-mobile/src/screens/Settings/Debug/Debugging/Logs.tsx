@@ -3,9 +3,9 @@ import { listen, Log } from "@ledgerhq/logs";
 import { View, StyleSheet, SafeAreaView, FlatList } from "react-native";
 import { Flex, Tag, Text } from "@ledgerhq/native-ui";
 import logReport from "../../../../log-report";
-import Button from "../../../../components/Button";
-import useExportLogs from "../../../../components/useExportLogs";
-import TextInput from "../../../../components/TextInput";
+import Button from "~/components/Button";
+import useExportLogs from "~/components/useExportLogs";
+import TextInput from "~/components/TextInput";
 
 export default function Logs() {
   const [logs, setLogs] = useState<Log[]>([]);

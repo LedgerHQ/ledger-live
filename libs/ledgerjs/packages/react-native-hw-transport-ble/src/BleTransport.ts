@@ -1,3 +1,4 @@
+import { v4 as uuid } from "uuid";
 import Transport from "@ledgerhq/hw-transport";
 import type {
   Subscription as TransportSubscription,
@@ -13,7 +14,6 @@ import type {
 // See: https://github.com/LedgerHQ/ledger-live/pull/879
 import { sendAPDU } from "@ledgerhq/devices/lib/ble/sendAPDU";
 import { receiveAPDU } from "@ledgerhq/devices/lib/ble/receiveAPDU";
-
 import {
   BleManager,
   ConnectionPriority,
@@ -32,9 +32,29 @@ import {
   getInfosForServiceUuid,
 } from "@ledgerhq/devices";
 import type { DeviceModel } from "@ledgerhq/devices";
-import { log } from "@ledgerhq/logs";
-import { Observable, defer, merge, from, of, throwError, Observer } from "rxjs";
-import { share, ignoreElements, first, map, tap, catchError } from "rxjs/operators";
+import { trace, LocalTracer, TraceContext } from "@ledgerhq/logs";
+import {
+  Observable,
+  defer,
+  merge,
+  from,
+  of,
+  throwError,
+  Observer,
+  firstValueFrom,
+  TimeoutError,
+  SchedulerLike,
+} from "rxjs";
+import {
+  share,
+  ignoreElements,
+  first,
+  map,
+  tap,
+  catchError,
+  timeout,
+  finalize,
+} from "rxjs/operators";
 import {
   CantOpenDevice,
   TransportError,
@@ -42,11 +62,19 @@ import {
   PairingFailed,
   PeerRemovedPairing,
   HwTransportError,
+  TransportExchangeTimeoutError,
 } from "@ledgerhq/errors";
 import { monitorCharacteristic } from "./monitorCharacteristic";
 import { awaitsBleOn } from "./awaitsBleOn";
-import { decoratePromiseErrors, remapError, mapBleErrorToHwTransportError } from "./remapErrors";
+import {
+  decoratePromiseErrors,
+  remapError,
+  mapBleErrorToHwTransportError,
+  IOBleErrorRemap,
+} from "./remapErrors";
 import { ReconnectionConfig } from "./types";
+
+const LOG_TYPE = "ble-verbose";
 
 /**
  * This is potentially not needed anymore, to be checked if the bug is still
@@ -108,31 +136,52 @@ const bleManagerInstance = (): BleManager => {
   return _bleManager;
 };
 
-const clearDisconnectTimeout = (deviceId: string): void => {
+const clearDisconnectTimeout = (deviceId: string, context?: TraceContext): void => {
   const cachedTransport = transportsCache[deviceId];
   if (cachedTransport && cachedTransport.disconnectTimeout) {
-    log(TAG, "Clearing queued disconnect");
+    trace({ type: LOG_TYPE, message: "Clearing queued disconnect", context });
     clearTimeout(cachedTransport.disconnectTimeout);
   }
 };
 
-async function open(deviceOrId: Device | string, needsReconnect: boolean) {
+/**
+ * Opens a BLE connection with a given device. Returns a Transport instance.
+ *
+ * @param deviceOrId
+ * @param needsReconnect
+ * @param timeoutMs Optional Timeout (in ms) applied during the connection with the device
+ * @param context Optional tracing/log context
+ * @param injectedDependencies Contains optional injected dependencies used by the transport implementation
+ *  - rxjsScheduler: dependency injected RxJS scheduler to control time. Default AsyncScheduler.
+ * @returns A BleTransport instance
+ */
+async function open(
+  deviceOrId: Device | string,
+  needsReconnect: boolean,
+  timeoutMs?: number,
+  context?: TraceContext,
+  { rxjsScheduler }: { rxjsScheduler?: SchedulerLike } = {},
+) {
+  const tracer = new LocalTracer(LOG_TYPE, context);
   let device: Device;
-  log(TAG, `open with ${deviceOrId}`);
+  tracer.trace(`Opening ${deviceOrId}`, { needsReconnect });
 
   if (typeof deviceOrId === "string") {
     if (transportsCache[deviceOrId]) {
-      log(TAG, "Transport in cache, using that.");
+      tracer.trace(`Transport in cache, using it`);
       clearDisconnectTimeout(deviceOrId);
+
+      // The cached transport probably has an older trace/log context
+      transportsCache[deviceOrId].setTraceContext(context);
       return transportsCache[deviceOrId];
     }
 
-    log(TAG, `Tries to open device: ${deviceOrId}`);
+    tracer.trace(`Trying to open device: ${deviceOrId}`);
     await awaitsBleOn(bleManagerInstance());
 
     // Returns a list of known devices by their identifiers
     const devices = await bleManagerInstance().devices([deviceOrId]);
-    log(TAG, `found ${devices.length} devices`);
+    tracer.trace(`Found ${devices.length} already known device(s) with given id`, { deviceOrId });
     [device] = devices;
 
     if (!device) {
@@ -143,22 +192,32 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
         getBluetoothServiceUuids(),
       );
       const connectedDevicesFiltered = connectedDevices.filter(d => d.id === deviceOrId);
-      log(TAG, `found ${connectedDevicesFiltered.length} connected devices`);
+      tracer.trace(
+        `No known device with given id. Found ${connectedDevicesFiltered.length} devices from already connected devices`,
+        { deviceOrId },
+      );
       [device] = connectedDevicesFiltered;
     }
 
     if (!device) {
       // We still don't have a device, so we attempt to connect to it.
-      log(TAG, `connectToDevice(${deviceOrId})`);
+      tracer.trace(`No known nor connected devices with given id. Trying to connect to device`, {
+        deviceOrId,
+        timeoutMs,
+      });
+
       // Nb ConnectionOptions dropped since it's not used internally by ble-plx.
       try {
-        device = await bleManagerInstance().connectToDevice(deviceOrId, connectOptions);
+        device = await bleManagerInstance().connectToDevice(deviceOrId, {
+          ...connectOptions,
+          timeout: timeoutMs,
+        });
       } catch (e: any) {
-        log(TAG, `error code ${e.errorCode}`);
+        tracer.trace(`Error code: ${e.errorCode}`);
         if (e.errorCode === BleErrorCode.DeviceMTUChangeFailed) {
           // If the MTU update did not work, we try to connect without requesting for a specific MTU
           connectOptions = {};
-          device = await bleManagerInstance().connectToDevice(deviceOrId);
+          device = await bleManagerInstance().connectToDevice(deviceOrId, { timeout: timeoutMs });
         } else {
           throw e;
         }
@@ -174,32 +233,43 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
   }
 
   if (!(await device.isConnected())) {
-    log(TAG, "not connected. connecting...");
+    tracer.trace(`Device found but not connected. connecting...`, { timeoutMs, connectOptions });
     try {
-      await device.connect(connectOptions);
-    } catch (e: any) {
-      log("ble-verbose", `connect error - ${JSON.stringify(e)}`);
-      if (e.errorCode === BleErrorCode.DeviceMTUChangeFailed) {
-        log("ble-verbose", `device.mtu=${device.mtu}, reconnecting`);
+      await device.connect({ ...connectOptions, timeout: timeoutMs });
+    } catch (error: any) {
+      tracer.trace(`Connect error`, { error });
+      if (error.errorCode === BleErrorCode.DeviceMTUChangeFailed) {
+        tracer.trace(`Device mtu=${device.mtu}, reconnecting`);
         connectOptions = {};
         await device.connect();
-      } else if (e.iosErrorCode === 14 || e.reason === "Peer removed pairing information") {
-        log("ble-verbose", "iOS broken pairing");
-        log("ble-verbose", JSON.stringify(device));
-        log("ble-verbose", JSON.stringify(bluetoothInfoCache[device.id]));
+      } else if (error.iosErrorCode === 14 || error.reason === "Peer removed pairing information") {
+        tracer.trace(`iOS broken pairing`, {
+          device,
+          bluetoothInfoCache: bluetoothInfoCache[device.id],
+        });
         const { deviceModel } = bluetoothInfoCache[device.id] || {};
         const { productName } = deviceModel || {};
         throw new PeerRemovedPairing(undefined, {
           deviceName: device.name,
           productName,
         });
+      }
+      // This case should not happen, but recording logs to be warned if we see it in production
+      else if (error.errorCode === BleErrorCode.DeviceAlreadyConnected) {
+        tracer.trace(`Device already connected, while it was not supposed to`, {
+          error,
+        });
+
+        throw remapError(error);
       } else {
-        throw remapError(e);
+        throw remapError(error);
       }
     }
   }
 
+  tracer.trace(`Device is connected now, getting services and characteristics`);
   await device.discoverAllServicesAndCharacteristics();
+
   let res: BluetoothInfos | undefined = retrieveInfos(device);
   let characteristics: Characteristic[] | undefined;
 
@@ -216,6 +286,7 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
   }
 
   if (!res) {
+    tracer.trace(`Service not found`);
     throw new TransportError("service not found", "BLEServiceNotFound");
   }
 
@@ -226,72 +297,98 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
   }
 
   if (!characteristics) {
+    tracer.trace(`Characteristics not found`);
     throw new TransportError("service not found", "BLEServiceNotFound");
   }
 
-  let writeC: Characteristic | null | undefined;
-  let writeCmdC: Characteristic | undefined;
-  let notifyC: Characteristic | null | undefined;
+  let writableWithResponseCharacteristic: Characteristic | null | undefined;
+  let writableWithoutResponseCharacteristic: Characteristic | undefined;
+  // A characteristic that can monitor value changes
+  let notifiableCharacteristic: Characteristic | null | undefined;
 
   for (const c of characteristics) {
     if (c.uuid === writeUuid) {
-      writeC = c;
+      writableWithResponseCharacteristic = c;
     } else if (c.uuid === writeCmdUuid) {
-      writeCmdC = c;
+      writableWithoutResponseCharacteristic = c;
     } else if (c.uuid === notifyUuid) {
-      notifyC = c;
+      notifiableCharacteristic = c;
     }
   }
 
-  if (!writeC) {
+  if (!writableWithResponseCharacteristic) {
     throw new TransportError("write characteristic not found", "BLECharacteristicNotFound");
   }
 
-  if (!notifyC) {
+  if (!notifiableCharacteristic) {
     throw new TransportError("notify characteristic not found", "BLECharacteristicNotFound");
   }
 
-  if (!writeC.isWritableWithResponse) {
+  if (!writableWithResponseCharacteristic.isWritableWithResponse) {
     throw new TransportError(
-      "write characteristic not writableWithResponse",
+      "The writable-with-response characteristic is not writable with response",
       "BLECharacteristicInvalid",
     );
   }
 
-  if (!notifyC.isNotifiable) {
+  if (!notifiableCharacteristic.isNotifiable) {
     throw new TransportError("notify characteristic not notifiable", "BLECharacteristicInvalid");
   }
 
-  if (writeCmdC) {
-    if (!writeCmdC.isWritableWithoutResponse) {
+  if (writableWithoutResponseCharacteristic) {
+    if (!writableWithoutResponseCharacteristic.isWritableWithoutResponse) {
       throw new TransportError(
-        "write cmd characteristic not writableWithoutResponse",
+        "The writable-without-response characteristic is not writable without response",
         "BLECharacteristicInvalid",
       );
     }
   }
 
-  log(TAG, `device.mtu=${device.mtu}`);
-  const notifyObservable = monitorCharacteristic(notifyC).pipe(
+  tracer.trace(`device.mtu=${device.mtu}`);
+
+  // Inits the observable that will emit received data from the device via BLE
+  const notifyObservable = monitorCharacteristic(notifiableCharacteristic, context).pipe(
     catchError(e => {
       // LL-9033 fw 2.0.2 introduced this case, we silence the inner unhandled error.
+      // It will be handled when negotiating the MTU in `inferMTU` but will be ignored in other cases.
       const msg = String(e);
-      return msg.includes("notify change failed") ? of(new PairingFailed(msg)) : throwError(e);
+      return msg.includes("notify change failed")
+        ? of(new PairingFailed(msg))
+        : throwError(() => e);
     }),
     tap(value => {
       if (value instanceof PairingFailed) return;
-      log("ble-frame", "<= " + value.toString("hex"));
+      trace({ type: "ble-frame", message: `<= ${value.toString("hex")}`, context });
     }),
+    // Returns a new Observable that multicasts (shares) the original Observable.
+    // As long as there is at least one Subscriber this Observable will be subscribed and emitting data.
     share(),
   );
+
+  // Keeps the input from the device observable alive (multicast observable)
   const notif = notifyObservable.subscribe();
-  const transport = new BleTransport(device, writeC, writeCmdC, notifyObservable, deviceModel);
+
+  const transport = new BleTransport(
+    device,
+    writableWithResponseCharacteristic,
+    writableWithoutResponseCharacteristic,
+    notifyObservable,
+    deviceModel,
+    {
+      context,
+      rxjsScheduler,
+    },
+  );
+  tracer.trace(`New BleTransport created`);
 
   // Keeping it as a comment for now but if no new bluetooth issues occur, we will be able to remove it
   // await transport.requestConnectionPriority("High");
+
   // eslint-disable-next-line prefer-const
   let disconnectedSub: Subscription;
-  const onDisconnect = (e: BleError | null) => {
+
+  // Callbacks on `react-native-ble-plx` notifying the device has been disconnected
+  const onDisconnect = (error: BleError | null) => {
     transport.isConnected = false;
     transport.notYetDisconnected = false;
     notif.unsubscribe();
@@ -299,8 +396,11 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
 
     clearDisconnectTimeout(transport.id);
     delete transportsCache[transport.id];
-    log(TAG, `BleTransport(${transport.id}) disconnected`);
-    transport.emit("disconnect", e);
+    tracer.trace(
+      `On device disconnected callback: cleared cached transport for ${transport.id}, emitting Transport event "disconnect. Error: ${error}"`,
+      { reason: error },
+    );
+    transport.emit("disconnect", error);
   };
 
   // eslint-disable-next-line require-atomic-updates
@@ -325,12 +425,13 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
       if (afterMTUTime - beforeMTUTime < reconnectionConfig.pairingThreshold) {
         needsReconnect = false;
       } else if (deviceModel.id === DeviceModelId.stax) {
-        log(TAG, "skipping needsReconnect for stax");
+        tracer.trace(`Skipping "needsReconnect" strategy for Stax`);
         needsReconnect = false;
       }
 
       if (needsReconnect) {
-        await BleTransport.disconnect(transport.id).catch(() => {});
+        tracer.trace(`Device needs reconnection. Triggering a disconnect`);
+        await BleTransport.disconnectDevice(transport.id);
         await delay(reconnectionConfig.delayAfterFirstPairing);
       }
     } else {
@@ -339,8 +440,8 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
   }
 
   if (needsReconnect) {
-    log(TAG, "reconnecting");
-    return open(device, false);
+    tracer.trace(`Reconnecting`);
+    return open(device, false, timeoutMs, context);
   }
 
   return transport;
@@ -351,7 +452,6 @@ async function open(deviceOrId: Device | string, needsReconnect: boolean) {
  * @example
  * import BleTransport from "@ledgerhq/react-native-hw-transport-ble";
  */
-const TAG = "ble-verbose";
 export default class BleTransport extends Transport {
   static disconnectTimeoutMs = 5000;
   /**
@@ -410,8 +510,12 @@ export default class BleTransport extends Transport {
    * @param observer Device is partial in order to avoid the live-common/this dep
    * @returns TransportSubscription
    */
-  static listen(observer: TransportObserver<any, HwTransportError>): TransportSubscription {
-    log(TAG, "listening for devices");
+  static listen(
+    observer: TransportObserver<any, HwTransportError>,
+    context?: TraceContext,
+  ): TransportSubscription {
+    const tracer = new LocalTracer(LOG_TYPE, context);
+    tracer.trace("Listening for devices ...");
 
     let unsubscribed: boolean;
 
@@ -421,9 +525,9 @@ export default class BleTransport extends Transport {
         const devices = await bleManagerInstance().connectedDevices(getBluetoothServiceUuids());
         if (unsubscribed) return;
         if (devices.length) {
-          log(TAG, "disconnecting from devices");
+          tracer.trace("Disconnecting from all devices", { deviceCount: devices.length });
 
-          await Promise.all(devices.map(d => BleTransport.disconnect(d.id).catch(() => {})));
+          await Promise.all(devices.map(d => BleTransport.disconnectDevice(d.id)));
         }
 
         if (unsubscribed) return;
@@ -457,7 +561,7 @@ export default class BleTransport extends Transport {
       bleManagerInstance().stopDeviceScan();
       stateSub.remove();
 
-      log(TAG, "done listening.");
+      tracer.trace("Done listening");
     };
 
     return {
@@ -466,21 +570,43 @@ export default class BleTransport extends Transport {
   }
 
   /**
-   * Open a BLE transport
+   * Opens a BLE transport
+   *
    * @param {Device | string} deviceOrId
+   * @param timeoutMs Applied when trying to connect to a device
+   * @param context An optional context object for log/tracing strategy
+   * @param injectedDependencies Contains optional injected dependencies used by the transport implementation
+   *  - rxjsScheduler: dependency injected RxJS scheduler to control time. Default AsyncScheduler.
    */
-  static async open(deviceOrId: Device | string): Promise<BleTransport> {
-    return open(deviceOrId, true);
+  static async open(
+    deviceOrId: Device | string,
+    timeoutMs?: number,
+    context?: TraceContext,
+    { rxjsScheduler }: { rxjsScheduler?: SchedulerLike } = {},
+  ): Promise<BleTransport> {
+    return open(deviceOrId, true, timeoutMs, context, { rxjsScheduler });
   }
 
   /**
-   * Exposed method from the ble-plx library
+   * Exposes method from the ble-plx library to disconnect a device
+   *
    * Disconnects from {@link Device} if it's connected or cancels pending connection.
+   * A "disconnect" event will normally be emitted by the ble-plx lib once the device is disconnected.
+   * Errors are logged but silenced.
    */
-  static disconnect = async (id: DeviceId): Promise<void> => {
-    log(TAG, `user disconnect(${id})`);
-    await bleManagerInstance().cancelDeviceConnection(id);
-    log(TAG, "disconnected");
+  static disconnectDevice = async (id: DeviceId, context?: TraceContext): Promise<void> => {
+    const tracer = new LocalTracer(LOG_TYPE, context);
+    tracer.trace(`Trying to disconnect device ${id}`);
+
+    await bleManagerInstance()
+      .cancelDeviceConnection(id)
+      .catch(error => {
+        // Only log, ignore if disconnect did not work
+        tracer
+          .withType("ble-error")
+          .trace(`Error while trying to cancel device connection`, { error });
+      });
+    tracer.trace(`Device ${id} disconnected`);
   };
 
   device: Device;
@@ -489,64 +615,158 @@ export default class BleTransport extends Transport {
   id: string;
   isConnected = true;
   mtuSize = 20;
-  notifyObservable: Observable<any>;
+  // Observable emitting data received from the device via BLE
+  notifyObservable: Observable<Buffer | Error>;
   notYetDisconnected = true;
-  writeCharacteristic: Characteristic;
-  writeCmdCharacteristic: Characteristic | undefined;
+  writableWithResponseCharacteristic: Characteristic;
+  writableWithoutResponseCharacteristic: Characteristic | undefined;
+  rxjsScheduler?: SchedulerLike;
+  // Transaction ids of communication operations that are currently pending
+  currentTransactionIds: Array<string>;
 
+  /**
+   * The static `open` function is used to handle BleTransport instantiation
+   *
+   * @param device
+   * @param writableWithResponseCharacteristic A BLE characteristic that we can write on,
+   *   and that will be acknowledged in response from the device when it receives the written value.
+   * @param writableWithoutResponseCharacteristic A BLE characteristic that we can write on,
+   *   and that will not be acknowledged in response from the device
+   * @param notifyObservable A multicast observable that emits messages received from the device
+   * @param deviceModel
+   * @param params Contains optional options and injected dependencies used by the transport implementation
+   *  - abortTimeoutMs: stop the exchange after a given timeout. Another timeout exists
+   *    to detect unresponsive device (see `unresponsiveTimeout`). This timeout aborts the exchange.
+   *  - rxjsScheduler: dependency injected RxJS scheduler to control time. Default: AsyncScheduler.
+   */
   constructor(
     device: Device,
-    writeCharacteristic: Characteristic,
-    writeCmdCharacteristic: Characteristic | undefined,
-    notifyObservable: Observable<any>,
+    writableWithResponseCharacteristic: Characteristic,
+    writableWithoutResponseCharacteristic: Characteristic | undefined,
+    notifyObservable: Observable<Buffer | Error>,
     deviceModel: DeviceModel,
+    { context, rxjsScheduler }: { context?: TraceContext; rxjsScheduler?: SchedulerLike } = {},
   ) {
-    super();
+    super({ context, logType: LOG_TYPE });
     this.id = device.id;
     this.device = device;
-    this.writeCharacteristic = writeCharacteristic;
-    this.writeCmdCharacteristic = writeCmdCharacteristic;
+    this.writableWithResponseCharacteristic = writableWithResponseCharacteristic;
+    this.writableWithoutResponseCharacteristic = writableWithoutResponseCharacteristic;
     this.notifyObservable = notifyObservable;
     this.deviceModel = deviceModel;
+    this.rxjsScheduler = rxjsScheduler;
+    this.currentTransactionIds = [];
 
-    log(TAG, `BleTransport(${String(this.id)}) new instance`);
     clearDisconnectTimeout(this.id);
+
+    this.tracer.trace(`New instance of BleTransport for device ${this.id}`);
   }
 
   /**
-   * Send data to the device using a low level API.
-   * It's recommended to use the "send" method for a higher level API.
-   * @param {Buffer} apdu - The data to send.
-   * @returns {Promise<Buffer>} A promise that resolves with the response data from the device.
+   * A message exchange (APDU request <-> response) with the device that can be aborted
+   *
+   * The message will be BLE-encoded/framed before being sent, and the response will be BLE-decoded.
+   *
+   * @param message A buffer (u8 array) of a none BLE-encoded message (an APDU for ex) to be sent to the device
+   *   as a request
+   * @param options Contains optional options for the exchange function
+   *  - abortTimeoutMs: stop the exchange after a given timeout. Another timeout exists
+   *    to detect unresponsive device (see `unresponsiveTimeout`). This timeout aborts the exchange.
+   * @returns A promise that resolves with the response data from the device.
    */
-  exchange = (apdu: Buffer): Promise<any> =>
-    this.exchangeAtomicImpl(async () => {
-      try {
-        const msgIn = apdu.toString("hex");
-        log("apdu", `=> ${msgIn}`);
-
-        const data = await merge(
-          this.notifyObservable.pipe(receiveAPDU),
-          sendAPDU(this.write, apdu, this.mtuSize),
-        ).toPromise();
-
-        const msgOut = data.toString("hex");
-        log("apdu", `<= ${msgOut}`);
-
-        return data;
-      } catch (e: any) {
-        log("ble-error", "exchange got " + String(e));
-
-        if (this.notYetDisconnected) {
-          // in such case we will always disconnect because something is bad.
-          await bleManagerInstance()
-            .cancelDeviceConnection(this.id)
-            .catch(() => {}); // but we ignore if disconnect worked.
-        }
-
-        throw remapError(e);
-      }
+  exchange = (
+    message: Buffer,
+    { abortTimeoutMs }: { abortTimeoutMs?: number } = {},
+  ): Promise<Buffer> => {
+    const tracer = this.tracer.withUpdatedContext({
+      function: "exchange",
     });
+    tracer.trace("Exchanging APDU ...", { abortTimeoutMs });
+    tracer.withType("apdu").trace(`=> ${message.toString("hex")}`);
+
+    return this.exchangeAtomicImpl(() => {
+      return firstValueFrom(
+        // `sendApdu` will only emit if an error occurred, otherwise it will complete,
+        // while `receiveAPDU` will emit the full response.
+        // Consequently it monitors the response while being able to reject on an error from the send.
+        merge(
+          this.notifyObservable.pipe(data => receiveAPDU(data, { context: tracer.getContext() })),
+          sendAPDU(this.write, message, this.mtuSize, {
+            context: tracer.getContext(),
+          }),
+        ).pipe(
+          abortTimeoutMs ? timeout(abortTimeoutMs, this.rxjsScheduler) : tap(),
+          tap(data => {
+            tracer.withType("apdu").trace(`<= ${data.toString("hex")}`);
+          }),
+          catchError(async error => {
+            // Currently only 1 reason the exchange has been explicitly aborted (other than job and transport errors): a timeout
+            if (error instanceof TimeoutError) {
+              tracer.trace(
+                "Aborting due to timeout and trying to cancel all communication write of the current exchange",
+                {
+                  abortTimeoutMs,
+                  transactionIds: this.currentTransactionIds,
+                },
+              );
+
+              // No concurrent exchange should happen at the same time, so all pending operations are part of the same exchange
+              this.cancelPendingOperations();
+
+              throw new TransportExchangeTimeoutError("Exchange aborted due to timeout");
+            }
+
+            tracer.withType("ble-error").trace(`Error while exchanging APDU`, { error });
+
+            if (this.notYetDisconnected) {
+              // In such case we will always disconnect because something is bad.
+              // This sends a "disconnect" event
+              await BleTransport.disconnectDevice(this.id);
+            }
+
+            const mappedError = remapError(error as IOBleErrorRemap);
+            tracer.trace("Error while exchanging APDU, mapped and throws following error", {
+              mappedError,
+            });
+            throw mappedError;
+          }),
+          finalize(() => {
+            tracer.trace("Clearing current transaction ids", {
+              currentTransactionIds: this.currentTransactionIds,
+            });
+            this.clearCurrentTransactionIds();
+          }),
+        ),
+      );
+    });
+  };
+
+  /**
+   * Tries to cancel all operations that have a recorded transaction and are pending
+   *
+   * Cancelling transaction which doesn't exist is ignored.
+   *
+   * Note: cancelling `writableWithoutResponseCharacteristic.write...` will throw a `BleError` with code `OperationCancelled`
+   * but this error should be ignored. (In `exchange` our observable is unsubscribed before `cancelPendingOperations`
+   * is called so the error is ignored)
+   */
+  private cancelPendingOperations() {
+    for (const transactionId of this.currentTransactionIds) {
+      try {
+        this.tracer.trace("Cancelling operation", { transactionId });
+        bleManagerInstance().cancelTransaction(transactionId);
+      } catch (error) {
+        this.tracer.trace("Error while cancelling operation", { transactionId, error });
+      }
+    }
+  }
+
+  /**
+   * Sets the collection of current transaction ids to an empty array
+   */
+  private clearCurrentTransactionIds() {
+    this.currentTransactionIds = [];
+  }
 
   /**
    * Negotiate with the device the maximum transfer unit for the ble frames
@@ -554,33 +774,49 @@ export default class BleTransport extends Transport {
    */
   async inferMTU(): Promise<number> {
     let { mtu } = this.device;
+    this.tracer.trace(`Inferring MTU ...`, { currentDeviceMtu: mtu });
 
     await this.exchangeAtomicImpl(async () => {
       try {
-        mtu = await merge(
-          this.notifyObservable.pipe(
-            tap(maybeError => {
-              if (maybeError instanceof Error) throw maybeError;
-            }),
-            first(buffer => buffer.readUInt8(0) === 0x08),
-            map(buffer => buffer.readUInt8(5)),
+        mtu = await firstValueFrom(
+          merge(
+            this.notifyObservable.pipe(
+              map(maybeError => {
+                // Catches the PairingFailed Error that has only been emitted
+                if (maybeError instanceof Error) {
+                  throw maybeError;
+                }
+
+                return maybeError;
+              }),
+              first(buffer => buffer.readUInt8(0) === 0x08),
+              map(buffer => buffer.readUInt8(5)),
+            ),
+            defer(() => from(this.write(Buffer.from([0x08, 0, 0, 0, 0])))).pipe(ignoreElements()),
           ),
-          defer(() => from(this.write(Buffer.from([0x08, 0, 0, 0, 0])))).pipe(ignoreElements()),
-        ).toPromise();
-      } catch (e: any) {
-        log("ble-error", "inferMTU got " + JSON.stringify(e));
+        );
+      } catch (error: any) {
+        this.tracer.withType("ble-error").trace("Error while inferring MTU", { mtu });
 
-        await bleManagerInstance()
-          .cancelDeviceConnection(this.id)
-          .catch(() => {}); // but we ignore if disconnect worked.
+        await BleTransport.disconnectDevice(this.id);
 
-        throw remapError(e);
+        const mappedError = remapError(error);
+        this.tracer.trace("Error while inferring APDU, mapped and throws following error", {
+          mappedError,
+        });
+        throw mappedError;
+      } finally {
+        // When negotiating the MTU, a message is sent/written to the device, and a transaction id was associated to this write
+        this.clearCurrentTransactionIds();
       }
     });
 
+    this.tracer.trace(`Successfully negotiated MTU with device`, {
+      mtu,
+      mtuSize: this.mtuSize,
+    });
     if (mtu > 20) {
       this.mtuSize = mtu;
-      log(TAG, `BleTransport(${this.id}) mtu set to ${this.mtuSize}`);
     }
 
     return this.mtuSize;
@@ -603,23 +839,44 @@ export default class BleTransport extends Transport {
   /**
    * Do not call this directly unless you know what you're doing. Communication
    * with a Ledger device should be through the {@link exchange} method.
-   * @param buffer
-   * @param txid
+   *
+   * For each call a transaction id is added to the current stack of transaction ids.
+   * With this transaction id, a pending BLE communication operations can be cancelled.
+   * Note: each frame/packet of a longer BLE-encoded message to be sent should have their unique transaction id.
+   *
+   * @param buffer BLE-encoded packet to send to the device
+   * @param frameId Frame id to make `write` aware of a bigger message that this frame/packet is part of.
+   *  Helps creating related a collection of transaction ids
    */
-  write = async (buffer: Buffer, txid?: string | undefined): Promise<void> => {
-    log("ble-frame", "=> " + buffer.toString("hex"));
-    if (!this.writeCmdCharacteristic) {
-      try {
-        await this.writeCharacteristic.writeWithResponse(buffer.toString("base64"), txid);
-      } catch (e: any) {
-        throw new DisconnectedDeviceDuringOperation(e.message);
+  write = async (buffer: Buffer): Promise<void> => {
+    const transactionId = uuid();
+    this.currentTransactionIds.push(transactionId);
+
+    const tracer = this.tracer.withUpdatedContext({ transactionId });
+    tracer.trace("Writing to device", {
+      willMessageBeAcked: !this.writableWithoutResponseCharacteristic,
+    });
+
+    try {
+      if (!this.writableWithoutResponseCharacteristic) {
+        // The message will be acked in response by the device
+        await this.writableWithResponseCharacteristic.writeWithResponse(
+          buffer.toString("base64"),
+          transactionId,
+        );
+      } else {
+        // The message won't be acked in response by the device
+        await this.writableWithoutResponseCharacteristic.writeWithoutResponse(
+          buffer.toString("base64"),
+          transactionId,
+        );
       }
-    } else {
-      try {
-        await this.writeCmdCharacteristic.writeWithoutResponse(buffer.toString("base64"), txid);
-      } catch (e: any) {
-        throw new DisconnectedDeviceDuringOperation(e.message);
-      }
+      tracer.withType("ble-frame").trace("=> " + buffer.toString("hex"));
+    } catch (error: unknown) {
+      tracer.trace("Error while writing APDU", { error });
+      throw new DisconnectedDeviceDuringOperation(
+        error instanceof Error ? error.message : `${error}`,
+      );
     }
   };
 
@@ -632,6 +889,9 @@ export default class BleTransport extends Transport {
    * @returns {Promise<void>}
    */
   async close(): Promise<void> {
+    const tracer = this.tracer.withUpdatedContext({ function: "close" });
+    tracer.trace("Closing, queuing a disconnect with a timeout ...");
+
     let resolve: (value: void | PromiseLike<void>) => void;
     const disconnectPromise = new Promise<void>(innerResolve => {
       resolve = innerResolve;
@@ -639,12 +899,10 @@ export default class BleTransport extends Transport {
 
     clearDisconnectTimeout(this.id);
 
-    log(TAG, "Queuing a disconnect");
-
     this.disconnectTimeout = setTimeout(() => {
-      log(TAG, `Triggering a disconnect from ${this.id}`);
+      tracer.trace("Disconnect timeout has been reached ...");
       if (this.isConnected) {
-        BleTransport.disconnect(this.id)
+        BleTransport.disconnectDevice(this.id, tracer.getContext())
           .catch(() => {})
           .finally(resolve);
       } else {

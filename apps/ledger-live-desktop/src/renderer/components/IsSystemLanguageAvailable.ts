@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
-import { languageSelector, getInitialLanguageLocale } from "~/renderer/reducers/settings";
-import { Locale, pushedLanguages } from "~/config/languages";
+import { languageSelector, getInitialLanguageAndLocale } from "~/renderer/reducers/settings";
+import { pushedLanguages } from "~/config/languages";
 
 // To reset os language proposition, change this date !
 const lastAskedLanguageAvailable = "2022-09-23";
@@ -15,12 +15,14 @@ export function answerLanguageAvailable() {
 const IsSystemLanguageAvailable = () => {
   const dispatch = useDispatch();
   const currentLanguage = useSelector(languageSelector);
-  const defaultLanguage = getInitialLanguageLocale();
+  const { language: defaultLanguage } = getInitialLanguageAndLocale();
+
   useEffect(() => {
     if (
       !hasAnsweredLanguageAvailable() &&
       currentLanguage !== defaultLanguage &&
-      pushedLanguages.includes(defaultLanguage as Locale)
+      // TODO casting as string[] because of https://stackoverflow.com/questions/56565528/typescript-const-assertions-how-to-use-array-prototype-includes
+      (pushedLanguages as string[]).includes(defaultLanguage)
     ) {
       dispatch(
         openModal("MODAL_SYSTEM_LANGUAGE_AVAILABLE", {

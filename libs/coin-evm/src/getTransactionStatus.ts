@@ -1,29 +1,36 @@
 import {
-  NotEnoughGas,
-  FeeNotLoaded,
-  InvalidAddress,
-  ETHAddressNonEIP,
-  RecipientRequired,
   AmountRequired,
-  NotEnoughBalance,
+  ETHAddressNonEIP,
+  FeeNotLoaded,
+  FeeTooHigh,
   GasLessThanEstimate,
-  PriorityFeeTooLow,
-  PriorityFeeTooHigh,
-  PriorityFeeHigherThanMaxFee,
+  InvalidAddress,
   MaxFeeTooLow,
+  NotEnoughBalance,
+  NotEnoughBalanceInParentAccount,
+  NotEnoughGas,
+  PriorityFeeHigherThanMaxFee,
+  PriorityFeeTooHigh,
+  PriorityFeeTooLow,
+  RecipientRequired,
+  ReplacementTransactionUnderpriced,
 } from "@ledgerhq/errors";
 import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
-import { Account, AccountBridge, SubAccount } from "@ledgerhq/types-live";
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
+import { findSubAccountById, getFeesUnit } from "@ledgerhq/coin-framework/account/index";
+import { Account, AccountBridge, SubAccount, TransactionStatusCommon } from "@ledgerhq/types-live";
+import { getMinEip1559Fees, getMinLegacyFees } from "./editTransaction/getMinEditTransactionFees";
 import { eip1559TransactionHasFees, getEstimatedFees, legacyTransactionHasFees } from "./logic";
-import {
-  EvmTransactionEIP1559,
-  EvmTransactionLegacy,
-  Transaction as EvmTransaction,
-} from "./types";
 import { NotEnoughNftOwned, NotOwnedNft, QuantityNeedsToBePositive } from "./errors";
 import { DEFAULT_GAS_LIMIT } from "./transaction";
+import {
+  EditType,
+  Transaction as EvmTransaction,
+  EvmTransactionEIP1559,
+  EvmTransactionLegacy,
+  TransactionStatus,
+} from "./types";
 
 type ValidatedTransactionFields =
   | "recipient"
@@ -31,7 +38,8 @@ type ValidatedTransactionFields =
   | "gasPrice"
   | "amount"
   | "maxPriorityFee"
-  | "maxFee";
+  | "maxFee"
+  | "feeTooHigh";
 type ValidationIssues = Partial<Record<ValidatedTransactionFields, Error>>;
 
 // This regex will not work with Starknet since addresses are 65 caracters long after the 0x
@@ -53,7 +61,7 @@ export const validateRecipient = (
 
     if (!isRecipientMatchingEthFormat) {
       errors.recipient = new InvalidAddress("", {
-        currency: account.currency,
+        currencyName: account.currency.name,
       });
     } else {
       // Check if address is respecting EIP-55
@@ -78,7 +86,7 @@ export const validateRecipient = (
 /**
  * Validate the amount of a transaction for an account
  */
-export const validateAmount = (
+const validateAmount = (
   account: Account | SubAccount,
   transaction: EvmTransaction,
   totalSpent: BigNumber,
@@ -87,18 +95,26 @@ export const validateAmount = (
   const warnings: ValidationIssues = {};
 
   const isTokenTransaction = account?.type === "TokenAccount";
-  const isSmartContractInteraction = isTokenTransaction || transaction.data; // if the transaction is a smart contract interaction, it's normal that transaction has no amount
-  const transactionHasFees =
-    legacyTransactionHasFees(transaction as EvmTransactionLegacy) ||
-    eip1559TransactionHasFees(transaction as EvmTransactionEIP1559);
-  const canHaveZeroAmount = isSmartContractInteraction && transactionHasFees;
+  const isSmartContractInteraction = !!transaction.data;
+
+  /**
+   * A transaction can have no amount if:
+   * - it's a smart contract interaction not crafted by the Live
+   * (i.e: data coming from a third party using Wallet-API for example)
+   * OR
+   * - it's an NFT transaction
+   * (since for an NFT transaction, the "amount" is under the `nft.quantity` property)
+   */
+  const canHaveZeroAmount = isSmartContractInteraction && !isTokenTransaction;
 
   // if no amount or 0
   if ((!transaction.amount || transaction.amount.isZero()) && !canHaveZeroAmount) {
     errors.amount = new AmountRequired(); // "Amount required"
   } else if (totalSpent.isGreaterThan(account.balance)) {
     // if not enough to make the transaction
-    errors.amount = new NotEnoughBalance(); // "Sorry, insufficient funds"
+    errors.amount = isTokenTransaction
+      ? new NotEnoughBalanceInParentAccount() // Insufficient balance in the parent account
+      : new NotEnoughBalance(); // "Sorry, insufficient funds"
   }
   return [errors, warnings];
 };
@@ -106,7 +122,7 @@ export const validateAmount = (
 /**
  * Validate gas properties of a transaction, depending on its type and the account emitter
  */
-export const validateGas = (
+const validateGas = (
   account: Account,
   tx: EvmTransaction,
   estimatedFees: BigNumber,
@@ -117,11 +133,20 @@ export const validateGas = (
   const warnings: ValidationIssues = {};
 
   // Gas Limit
-  if (gasLimit.isZero()) {
-    errors.gasLimit = new FeeNotLoaded(); // "Could not load fee rates. Please set manual fees"
-  } else if (gasLimit.isLessThan(DEFAULT_GAS_LIMIT)) {
-    errors.gasLimit = new GasLessThanEstimate(); // "This may be too low. Please increase"
+  if (customGasLimit) {
+    if (customGasLimit.isZero()) {
+      errors.gasLimit = new FeeNotLoaded(); // "Could not load fee rates. Please set manual fees"
+    } else if (customGasLimit.isLessThan(DEFAULT_GAS_LIMIT)) {
+      errors.gasLimit = new GasLessThanEstimate(); // "This may be too low. Please increase"
+    }
+  } else {
+    if (gasLimit.isZero()) {
+      errors.gasLimit = new FeeNotLoaded(); // "Could not load fee rates. Please set manual fees"
+    } else if (gasLimit.isLessThan(DEFAULT_GAS_LIMIT)) {
+      errors.gasLimit = new GasLessThanEstimate(); // "This may be too low. Please increase"
+    }
   }
+
   if (customGasLimit && customGasLimit.isLessThan(gasLimit)) {
     warnings.gasLimit = new GasLessThanEstimate(); // "This may be too low. Please increase"
   }
@@ -136,7 +161,16 @@ export const validateGas = (
   ) {
     errors.gasPrice = new FeeNotLoaded(); // "Could not load fee rates. Please set manual fees"
   } else if (tx.recipient && estimatedFees.gt(account.balance)) {
-    errors.gasPrice = new NotEnoughGas(); // "The parent account balance is insufficient for network fees"
+    const query = new URLSearchParams({
+      ...(account?.id ? { account: account.id } : {}),
+    });
+    errors.gasPrice = new NotEnoughGas(undefined, {
+      // "You need {{fees}} {{ticker}} for network fees to swap as you are on {{cryptoName}} network. <link0>Buy {{ticker}}</link0>"
+      fees: formatCurrencyUnit(getFeesUnit(account.currency), estimatedFees),
+      ticker: account.currency.ticker,
+      cryptoName: account.currency.name,
+      links: [`ledgerlive://buy?${query.toString()}`],
+    });
   }
 
   // Gas Price for EIP-1559
@@ -166,7 +200,7 @@ export const validateGas = (
   return [errors, warnings];
 };
 
-export const validateNft = (account: Account, tx: EvmTransaction): Array<ValidationIssues> => {
+const validateNft = (account: Account, tx: EvmTransaction): Array<ValidationIssues> => {
   if (!tx.nft) return [{}, {}];
 
   const errors: ValidationIssues = {};
@@ -183,6 +217,30 @@ export const validateNft = (account: Account, tx: EvmTransaction): Array<Validat
     errors.amount = new QuantityNeedsToBePositive();
   } else if (nftFromAccount.amount.lt(tx.nft.quantity)) {
     errors.amount = new NotEnoughNftOwned();
+  }
+
+  return [errors, warnings];
+};
+
+/**
+ * Validate business logic related to the fee ratio of a transaction:
+ * - if sending ETH, warn if fees are more than 10% of the amount
+ */
+const validateFeeRatio = (
+  account: Account | SubAccount,
+  tx: EvmTransaction,
+  estimatedFees: BigNumber,
+): Array<ValidationIssues> => {
+  const errors: ValidationIssues = {};
+  const warnings: ValidationIssues = {};
+
+  const isTokenTransaction = account?.type === "TokenAccount";
+
+  // If sending ETH (ie.: no tokens, no nft, no smart contract interactions)
+  if (!tx.nft && !tx.data && !isTokenTransaction) {
+    if (tx.amount.gt(0) && estimatedFees.times(10).gt(tx.amount)) {
+      warnings.feeTooHigh = new FeeTooHigh();
+    }
   }
 
   return [errors, warnings];
@@ -208,19 +266,24 @@ export const getTransactionStatus: AccountBridge<EvmTransaction>["getTransaction
   const [amountErr, amountWarn] = validateAmount(subAccount || account, tx, totalSpent);
   // Gas related errors and warnings
   const [gasErr, gasWarn] = validateGas(account, tx, totalFees, gasLimit, customGasLimit);
+  // NFT related errors and warnings
   const [nftErr, nftWarn] = validateNft(account, tx);
+  // Fee ratio related errors and warnings
+  const [feeRatioErr, feeRatioWarn] = validateFeeRatio(subAccount || account, tx, estimatedFees);
 
   const errors: ValidationIssues = {
     ...recipientErr,
     ...gasErr,
     ...amountErr,
     ...nftErr,
+    ...feeRatioErr,
   };
   const warnings: ValidationIssues = {
     ...recipientWarn,
     ...gasWarn,
     ...amountWarn,
     ...nftWarn,
+    ...feeRatioWarn,
   };
 
   return {
@@ -230,6 +293,156 @@ export const getTransactionStatus: AccountBridge<EvmTransaction>["getTransaction
     amount,
     totalSpent,
   };
+};
+
+type EditTransactionValidatedTransactionFields = "replacementTransactionUnderpriced";
+type EditTransactionValidationIssues = Partial<
+  Record<EditTransactionValidatedTransactionFields, Error>
+>;
+
+/**
+ * Validate an edited transaction and returns related errors and warnings
+ * Makes sure the updated fees are at least 10% higher than the original fees
+ * 10% isn't defined in the protocol, it's just how most nodes & miners implement it
+ * If the new transaction fees are less than 10% higher than the original fees,
+ * the transaction will be rejected by the network with a
+ * "replacement transaction underpriced" error
+ */
+export const validateEditTransaction = ({
+  transaction,
+  transactionToUpdate,
+  editType,
+}: {
+  transaction: EvmTransaction;
+  transactionToUpdate: EvmTransaction;
+  editType?: EditType;
+}): {
+  errors: TransactionStatusCommon["errors"];
+  warnings: TransactionStatusCommon["warnings"];
+} => {
+  const errors: EditTransactionValidationIssues = {};
+  const warnings: EditTransactionValidationIssues = {};
+
+  if (!editType) {
+    return {
+      errors: {},
+      warnings: {},
+    };
+  }
+
+  const { maxFeePerGas, maxPriorityFeePerGas, gasPrice } = transactionToUpdate;
+  const {
+    maxFeePerGas: newMaxFeePerGas,
+    maxPriorityFeePerGas: newMaxPriorityFeePerGas,
+    gasPrice: newGasPrice,
+  } = transaction;
+
+  if (transaction.type === 2) {
+    if (!maxFeePerGas || !maxPriorityFeePerGas) {
+      throw new Error("maxFeePerGas and maxPriorityFeePerGas are required");
+    }
+
+    if (!newMaxFeePerGas || !newMaxPriorityFeePerGas) {
+      // This should already be handled in getTransactionStatus
+      return {
+        errors: {},
+        warnings: {},
+      };
+    }
+
+    const { maxFeePerGas: minNewMaxFeePerGas, maxPriorityFeePerGas: minNewMaxPriorityFeePerGas } =
+      getMinEip1559Fees({ maxFeePerGas, maxPriorityFeePerGas });
+
+    if (
+      newMaxFeePerGas.isLessThan(minNewMaxFeePerGas) ||
+      newMaxPriorityFeePerGas.isLessThan(minNewMaxPriorityFeePerGas)
+    ) {
+      errors.replacementTransactionUnderpriced = new ReplacementTransactionUnderpriced();
+
+      return {
+        errors,
+        warnings,
+      };
+    }
+  } else {
+    if (!gasPrice) {
+      throw new Error("gasPrice is required");
+    }
+
+    if (!newGasPrice) {
+      // This should already be handled in getTransactionStatus
+      return {
+        errors: {},
+        warnings: {},
+      };
+    }
+
+    const { gasPrice: minNewGasPrice } = getMinLegacyFees({ gasPrice });
+
+    if (newGasPrice.isLessThan(minNewGasPrice)) {
+      errors.replacementTransactionUnderpriced = new ReplacementTransactionUnderpriced();
+
+      return {
+        errors,
+        warnings,
+      };
+    }
+  }
+
+  return {
+    errors: {},
+    warnings: {},
+  };
+};
+
+const ERROR_NOT_ENOUGH_NFT_OWNED = new NotEnoughNftOwned();
+const ERROR_NOT_OWNED_NFT = new NotOwnedNft();
+const ERROR_AMOUNT_REQUIRED = new AmountRequired();
+
+/**
+ * This function is used to update the status of an edited transaction
+ */
+export const getEditTransactionStatus = ({
+  transaction,
+  transactionToUpdate,
+  status,
+  editType,
+}: {
+  transaction: EvmTransaction;
+  transactionToUpdate: EvmTransaction;
+  status: TransactionStatus;
+  editType?: EditType;
+}): TransactionStatus => {
+  const { errors: editTxErrors } = validateEditTransaction({
+    editType,
+    transaction,
+    transactionToUpdate,
+  });
+
+  const errors: Record<string, Error> = { ...status.errors, ...editTxErrors };
+
+  // copy errors object to avoid mutating the original one
+  const updatedErrors: Record<string, Error> = { ...errors };
+
+  // discard "AmountRequired" (for cancel and speedup since one can decide to speedup a cancel)
+  // exclude "NotOwnedNft" and "NotEnoughNftOwned" error if it's a nft operation
+  // since nfts being sent are not owned by the user anymore (removed from the account)
+  // cf. this (as of 14-09-2023) https://github.com/LedgerHQ/ledger-live/blob/73217c9aa93c901d9c8d2067dcc7090243d35d35/libs/coin-evm/src/synchronization.ts#L111-L120
+  if (
+    updatedErrors.amount &&
+    (updatedErrors.amount.name === ERROR_NOT_OWNED_NFT.name ||
+      updatedErrors.amount.name === ERROR_NOT_ENOUGH_NFT_OWNED.name ||
+      updatedErrors.amount.name === ERROR_AMOUNT_REQUIRED.name)
+  ) {
+    delete updatedErrors.amount;
+  }
+
+  const updatedStatus: TransactionStatus = {
+    ...status,
+    errors: updatedErrors,
+  };
+
+  return updatedStatus;
 };
 
 export default getTransactionStatus;

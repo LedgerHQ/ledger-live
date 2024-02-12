@@ -4,13 +4,14 @@ import { e2eBridgeServer } from "../../bridge/server";
 import { first, filter, map } from "rxjs/operators";
 import { startDummyServer } from "@ledgerhq/test-utils";
 import { getElementById } from "../../helpers";
+import { firstValueFrom } from "rxjs";
 
 export default class LiveAppWebview {
   appTitle = () => getElementById("live-app-title");
 
   async startLiveApp(liveAppDirectory: string, liveAppPort = 3000) {
     try {
-      const port = await startDummyServer(`${liveAppDirectory}/build`, liveAppPort);
+      const port = await startDummyServer(`${liveAppDirectory}/dist`, liveAppPort);
 
       const url = `http://localhost:${port}`;
       const response = await fetch(url);
@@ -43,13 +44,13 @@ export default class LiveAppWebview {
       window.ledger.e2e.walletApi.send('${json}');
     }`);
 
-    const response = e2eBridgeServer
-      .pipe(
+    const response = firstValueFrom(
+      e2eBridgeServer.pipe(
         filter(msg => msg.type === "walletAPIResponse"),
         first(),
         map(msg => msg.payload),
-      )
-      .toPromise();
+      ),
+    );
 
     return { id, response };
   }
