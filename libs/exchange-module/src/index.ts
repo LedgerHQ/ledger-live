@@ -90,8 +90,8 @@ export class ExchangeModule extends CustomModule {
     swapId: string;
     rate: number;
     transaction: Transaction;
-    binaryPayload: Buffer;
-    signature: Buffer;
+    binaryPayload: string;
+    signature: string;
     feeStrategy: ExchangeCompleteParams["feeStrategy"];
     tokenCurrency?: string;
   }) {
@@ -105,8 +105,8 @@ export class ExchangeModule extends CustomModule {
         swapId,
         rate,
         rawTransaction: serializeTransaction(transaction),
-        hexBinaryPayload: binaryPayload.toString("hex"),
-        hexSignature: signature.toString("hex"),
+        hexBinaryPayload: binaryPayload,
+        hexSignature: signature,
         feeStrategy,
         tokenCurrency,
       },
