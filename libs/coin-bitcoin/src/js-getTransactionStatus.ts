@@ -72,7 +72,6 @@ const getTransactionStatus = async (a: Account, t: Transaction): Promise<Transac
     );
   }
 
-  //TODO: check if it is ok in case of `undefined` value, a zero is ok
   const sumOfInputs = txInputs.reduce((sum, input) => sum.plus(input.value ?? 0), new BigNumber(0));
 
   const sumOfChanges = txOutputs

@@ -8,7 +8,7 @@ import {
   DustLimit,
 } from "@ledgerhq/errors";
 import type { Transaction } from "@ledgerhq/coin-bitcoin/types";
-import { getFeeItems } from "@ledgerhq/coin-bitcoin/api/index";
+import { getAccountNetworkInfo } from "@ledgerhq/coin-bitcoin/getAccountNetworkInfo";
 import {
   makeAccountBridgeReceive,
   scanAccounts,
@@ -104,13 +104,10 @@ const prepareTransaction = async (
 ): Promise<Transaction> => {
   // TODO it needs to set the fee if not in t as well
   if (!transaction.networkInfo) {
-    const feeItems = await getFeeItems(account.currency);
+    const networkInfo = await getAccountNetworkInfo(account);
     return {
       ...transaction,
-      networkInfo: {
-        family: "bitcoin",
-        feeItems,
-      },
+      networkInfo,
     };
   }
 

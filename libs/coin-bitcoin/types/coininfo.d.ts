@@ -33,7 +33,7 @@ type CoinInfo = {
     bip32: {
       private: number;
       public: number;
-    },
+    };
     bip44: number;
     private: number;
     public: number;

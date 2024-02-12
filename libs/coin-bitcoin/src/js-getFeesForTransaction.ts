@@ -27,7 +27,7 @@ const getFeesForTransaction = async ({
       address: o.address,
       isChange: o.isChange,
       value: new BigNumber(o.value),
-      hash: "", //TODO: check that convert `undefined` to empty string is ok.
+      hash: "",
       blockHeight: undefined,
       rbf: transaction.rbf,
     };

@@ -8,7 +8,7 @@ import type {
   SignerTransaction,
 } from "./signer";
 
-class MockBtc implements BitcoinSigner {
+class MockBtcSigner implements BitcoinSigner {
   // eslint-disable-next-line class-methods-use-this
   async getWalletPublicKey(
     path: string,
@@ -63,4 +63,4 @@ class MockBtc implements BitcoinSigner {
   }
 }
 
-export default MockBtc;
+export default MockBtcSigner;

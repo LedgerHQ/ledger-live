@@ -4,7 +4,7 @@ import { DerivationModes } from "../types";
 import BitcoinLikeWallet from "../wallet";
 import { Account } from "../account";
 import { Merge } from "../pickingstrategies/Merge";
-import MockBtc from "../../mockBtc";
+import MockBtcSigner from "../../mockBtcSigner";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
 jest.setTimeout(180000);
@@ -59,7 +59,7 @@ describe("testing wallet", () => {
     });
 
     const tx = await wallet.signAccountTx({
-      btc: new MockBtc(),
+      btc: new MockBtcSigner(),
       fromAccount: account,
       txInfo,
     });
@@ -111,7 +111,7 @@ describe("testing wallet", () => {
       sequence: 0,
     });
     const tx = await wallet.signAccountTx({
-      btc: new MockBtc(),
+      btc: new MockBtcSigner(),
       fromAccount: account,
       txInfo,
     });

@@ -7,7 +7,7 @@ import BitcoinLikeExplorer from "../explorer";
 import BitcoinLikeStorage from "../storage";
 import { Merge } from "../pickingstrategies/Merge";
 import BitcoinLikeWallet from "../wallet";
-import MockBtc from "../../mockBtc";
+import MockBtcSigner from "../../mockBtcSigner";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 
 describe("testing dogecoin transactions", () => {
@@ -84,7 +84,7 @@ describe("testing dogecoin transactions", () => {
       getCryptoCurrencyById("dogecoin"),
     );
     await wallet.signAccountTx({
-      btc: new MockBtc(),
+      btc: new MockBtcSigner(),
       fromAccount: account,
       txInfo,
     });

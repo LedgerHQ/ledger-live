@@ -41,8 +41,8 @@ function inferTransactions(
     invariant(transaction.family === "bitcoin", "bitcoin family");
 
     const bitcoinStragegy = opts["bitcoin-pick-strategy"];
-    if (typeof bitcoinStragegy !== "string" && !(bitcoinStragegy in bitcoinPickingStrategy)) {
-      throw new Error();
+    if (!(bitcoinStragegy in bitcoinPickingStrategy)) {
+      throw new Error("Unknown bitcoinStragegy");
     }
 
     return {

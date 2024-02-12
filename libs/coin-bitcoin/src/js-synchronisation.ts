@@ -55,14 +55,14 @@ const fromWalletUtxo = (utxo: WalletOutput, changeAddresses: Set<string>): Bitco
 // wallet-btc limitation: returns all transactions twice (for each side of the tx)
 // so we need to deduplicate them...
 const deduplicateOperations = (operations: (Operation | undefined)[]): Operation[] => {
-  const seen = new Map();
+  const seen = new Set();
   const out: Operation[] = [];
   let j = 0;
 
   for (const operation of operations) {
     if (operation) {
-      if (seen.get(operation.id) !== 1) {
-        seen.set(operation.id, 1);
+      if (!seen.has(operation.id)) {
+        seen.add(operation.id);
         out[j++] = operation;
       }
     }
