@@ -44,42 +44,42 @@ export function close() {
   wss?.close();
 }
 
-export function loadConfig(fileName: string, agreed: true = true): void {
+export async function loadConfig(fileName: string, agreed: true = true): Promise<void> {
   if (agreed) {
-    acceptTerms();
+    await acceptTerms();
   }
 
   const f = fs.readFileSync(path.resolve("e2e", "setups", `${fileName}.json`), "utf8");
 
   const { data } = JSON.parse(f.toString());
 
-  postMessage({ type: "importSettings", payload: data.settings });
+  await postMessage({ type: "importSettings", payload: data.settings });
 
   navigate(NavigatorName.Base);
 
   if (data.accounts.length) {
-    postMessage({ type: "importAccounts", payload: data.accounts });
+    await postMessage({ type: "importAccounts", payload: data.accounts });
   }
 }
 
-export function loadBleState(bleState: BleState) {
-  postMessage({ type: "importBle", payload: bleState });
+export async function loadBleState(bleState: BleState) {
+  await postMessage({ type: "importBle", payload: bleState });
 }
 
-export function loadAccountsRaw(
+export async function loadAccountsRaw(
   payload: {
     data: AccountRaw;
     version: number;
   }[],
 ) {
-  postMessage({
+  await postMessage({
     type: "importAccounts",
     payload,
   });
 }
 
-export function loadAccounts(accounts: Account[]) {
-  postMessage({
+export async function loadAccounts(accounts: Account[]) {
+  await postMessage({
     type: "importAccounts",
     payload: accounts.map(account => ({
       version: 1,
@@ -88,30 +88,30 @@ export function loadAccounts(accounts: Account[]) {
   });
 }
 
-function navigate(name: string) {
-  postMessage({
+async function navigate(name: string) {
+  await postMessage({
     type: "navigate",
     payload: name,
   });
 }
 
-export function mockDeviceEvent(...args: MockDeviceEvent[]) {
-  postMessage({
+export async function mockDeviceEvent(...args: MockDeviceEvent[]) {
+  await postMessage({
     type: "mockDeviceEvent",
     payload: args,
   });
 }
 
-export function addDevicesBT(
+export async function addDevicesBT(
   deviceNames: string | string[] = [
     "Nano X de David",
     "Nano X de Arnaud",
     "Nano X de Didier Duchmol",
   ],
-): string[] {
+): Promise<string[]> {
   const names = Array.isArray(deviceNames) ? deviceNames : [deviceNames];
-  names.forEach((name, i) => {
-    postMessage({
+  names.forEach(async (name, i) => {
+    await postMessage({
       type: "add",
       payload: { id: `mock_${i + 1}`, name, serviceUUID: `uuid_${i + 1}` },
     });
@@ -119,29 +119,29 @@ export function addDevicesBT(
   return names;
 }
 
-export function addDevicesUSB(
+export async function addDevicesUSB(
   devices: DeviceUSB | DeviceUSB[] = [nanoX_USB, nanoSP_USB, nanoS_USB],
-): DeviceUSB[] {
+): Promise<DeviceUSB[]> {
   const devicesArray = Array.isArray(devices) ? devices : [devices];
-  devicesArray.forEach(device => {
-    postMessage({ type: "addUSB", payload: device });
+  devicesArray.forEach(async device => {
+    await postMessage({ type: "addUSB", payload: device });
   });
   return devicesArray;
 }
 
-export function setInstalledApps(apps: string[] = []) {
-  postMessage({
+export async function setInstalledApps(apps: string[] = []) {
+  await postMessage({
     type: "setGlobals",
     payload: { _listInstalledApps_mock_result: apps },
   });
 }
 
-export function open() {
-  postMessage({ type: "open" });
+export async function open() {
+  await postMessage({ type: "open" });
 }
 
-export function getLogs(fileName: string) {
-  postMessage({ type: "getLogs", fileName: fileName });
+export async function getLogs(fileName: string) {
+  await postMessage({ type: "getLogs", fileName: fileName });
 }
 
 function onMessage(messageStr: string) {
@@ -171,8 +171,8 @@ function log(message: string) {
   console.log(`[E2E Bridge Server]: ${message}`);
 }
 
-function acceptTerms() {
-  postMessage({ type: "acceptTerms" });
+async function acceptTerms() {
+  await postMessage({ type: "acceptTerms" });
 }
 
 async function postMessage(message: MessageData) {

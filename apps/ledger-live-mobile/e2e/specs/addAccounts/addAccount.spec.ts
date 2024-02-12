@@ -15,8 +15,8 @@ let addAccountDrawer: AddAccountDrawer;
 
 describe("Add account from modal", () => {
   beforeAll(async () => {
-    loadConfig("onboardingcompleted", true);
-    loadBleState({ knownDevices: [knownDevice] });
+    await loadConfig("onboardingcompleted", true);
+    await loadBleState({ knownDevices: [knownDevice] });
 
     portfolioPage = new PortfolioPage();
     accountPage = new AccountPage();

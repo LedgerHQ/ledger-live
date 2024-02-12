@@ -11,7 +11,7 @@ let getDevicePage: GetDevicePage;
 
 describe("Market page for user with no device", () => {
   beforeAll(async () => {
-    loadConfig("1accountEth", true);
+    await loadConfig("1accountEth", true);
     portfolioPage = new PortfolioPage();
     marketPage = new MarketPage();
     getDevicePage = new GetDevicePage();

@@ -33,7 +33,7 @@ afterEach(async () => {
   if (process.env.CI) {
     const testFile = (getState().testPath?.split("/").pop() || "logs").split(".")[0];
     const testName = (getState().currentTestName || "").replace(/[^a-z0-9]/gi, "_").toLowerCase();
-    getLogs(`${testFile}_${testName}`);
+    await getLogs(`${testFile}_${testName}`);
   }
 });
 

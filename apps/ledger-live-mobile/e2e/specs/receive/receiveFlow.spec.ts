@@ -13,8 +13,8 @@ const btcReceiveAddress = "173ej2furpaB8mTtN5m9829MPGMD7kCgSPx";
 
 describe("Receive Flow", () => {
   beforeAll(async () => {
-    loadConfig("EthAccountXrpAccountReadOnlyFalse", true);
-    loadBleState({ knownDevices: [knownDevice] });
+    await loadConfig("EthAccountXrpAccountReadOnlyFalse", true);
+    await loadBleState({ knownDevices: [knownDevice] });
     portfolioPage = new PortfolioPage();
     deviceAction = new DeviceAction(knownDevice);
     receivePage = new ReceivePage();
