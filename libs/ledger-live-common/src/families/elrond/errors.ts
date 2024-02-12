@@ -15,3 +15,5 @@ export const ElrondDelegationBelowMinimumError = createCustomErrorClass(
 );
 
 export const NotEnoughEGLDForFees = createCustomErrorClass("NotEnoughEGLDForFees");
+
+export const InvalidToken = createCustomErrorClass("InvalidToken");
