@@ -165,6 +165,11 @@ export const urls = {
         tos: "https://criptointercambio.com/terms-of-use",
         support: "https://criptointercambio.com/en/about",
       },
+      moonpay: {
+        main: "https://www.moonpay.com/",
+        tos: "https://www.moonpay.com/legal/terms_of_use",
+        support: "https://support.moonpay.com",
+      },
     },
   },
   exchange: {

@@ -492,7 +492,7 @@
       "description" : "尝试在 My Ledger（我的 Ledger）中重新安装应用程序"
     },
     "NotEnoughGas" : {
-      "title" : "您需要 {{fees}} {{ticker}} 的网络费用才能在 {{cryptoName}} 网络上进行互换。<link0>买入 {{ticker}}</link0>",
+      "title" : "您需要 {{fees}} {{ticker}} 的费用才能在 {{cryptoName}} 网络上进行操作。<link0>买入 {{ticker}}</link0>",
       "description" : "请向您的账户发送一些币以支付代币交易费用。"
     },
     "NotEnoughGasSwap" : {
@@ -2842,10 +2842,6 @@
       "announcements" : {
         "title" : "公告",
         "desc" : "接收重要 Ledger Live 更新"
-      },
-      "recommendations" : {
-        "title" : "推荐",
-        "desc" : "使用个性化推荐和特别优惠，丰富您的体验"
       },
       "largeMover" : {
         "title" : "大幅波动工具",
@@ -6534,24 +6530,35 @@
     "ethereum" : {
       "title" : "增长您的以太币持有量",
       "subTitle" : "将每日收益直接存入您的 Ledger Live，质押您的以太币并增加您的持仓。",
+      "tagMinimum" : "Requires {{min}} ETH",
       "close" : "关闭",
       "providers" : {
-        "lido" : {
-          "title" : "使用 Lido 赚取",
-          "description" : "使用 Lido 权益质押您的以太币，每天赚取奖励。无最低以太币数量要求。无锁定期。",
-          "supportLink" : "了解关于 Lido 的更多信息"
-        },
-        "kiln" : {
-          "title" : "Kiln 专属质押",
-          "tag" : "需要 32 枚以太币",
-          "description" : "使用专门的验证者进行权益质押。需要是 32 以太币的倍数。奖励需要手动领取。随时退出。",
-          "supportLink" : "了解关于 Kiln 验证者的更多信息"
-        },
         "kiln_pooling" : {
           "title" : "Kiln 质押池",
-          "description" : "加入权益质押池。不要求最低以太币金额。奖励自动按复利计算。随时退出。",
-          "supportLink" : "了解关于 Kiln 池的更多信息",
-          "tag" : "无最低限制"
+          "description" : "权益质押没有最低限制。自动按复利赚取奖励，无锁定期。",
+          "supportLink" : "了解关于 Kiln 池的更多信息"
+        },
+        "stader-eth" : {
+          "title" : "Stader Labs",
+          "description" : "权益质押没有最低限制。自动按复利赚取奖励，获得即时流动性。",
+          "supportLink" : "详细了解 Stader"
+        },
+        "lido" : {
+          "title" : "Lido",
+          "description" : "权益质押任意数量的以太币，获得即时流动性和每日奖励。",
+          "supportLink" : "了解关于 Lido 的更多信息"
+        },
+        "figment" : {
+          "title" : "Figment",
+          "tag" : "需要 32 ETH",
+          "description" : "通过专门的验证者权益质押至少 32 以太币，奖励将自动发送到您的账户。",
+          "supportLink" : "详细了解 Figment"
+        },
+        "kiln" : {
+          "title" : "Kiln 单独质押",
+          "tag" : "需要 32 枚以太币",
+          "description" : "通过专门的验证者权益质押至少 32 以太币，即可轻松申领奖励。",
+          "supportLink" : "详细了解 Kiln"
         }
       }
     },
