@@ -2,7 +2,10 @@ import { from } from "rxjs";
 import { filter, map, mergeMap, repeat } from "rxjs/operators";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
-import { enableListAppsV2, listApps } from "@ledgerhq/live-common/apps/hw";
+import {
+  enableListAppsV2,
+  listAppsUseCase,
+} from "@ledgerhq/live-common/device/use-cases/listAppsUseCase";
 import { deviceOpt } from "../scan";
 export default {
   description: "List apps that can be installed on the device",
@@ -44,7 +47,7 @@ export default {
     return withDevice(device || "")(t =>
       from(getDeviceInfo(t)).pipe(
         mergeMap(deviceInfo =>
-          listApps(t, deviceInfo).pipe(
+          listAppsUseCase(t, deviceInfo).pipe(
             filter(e => e.type === "result"),
             // @ts-expect-error we need better typings and safe guard to infer types
             map(e => e.result),
