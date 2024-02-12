@@ -10,7 +10,10 @@ import network from "@ledgerhq/live-network/network";
 import installApp from "@ledgerhq/live-common/hw/installApp";
 import uninstallApp from "@ledgerhq/live-common/hw/uninstallApp";
 import { initState, reducer, runAll } from "@ledgerhq/live-common/apps/index";
-import { listApps, execWithTransport } from "@ledgerhq/live-common/apps/hw";
+import {
+  listAppsUseCase,
+  execWithTransport,
+} from "@ledgerhq/live-common/device/use-cases/listAppsUseCase";
 import { delay } from "@ledgerhq/live-common/promise";
 import { getEnv } from "@ledgerhq/live-env";
 import { getDependencies } from "@ledgerhq/live-common/apps/polyfill";
@@ -274,7 +277,7 @@ const checkInstalled = (installed, candidate: Candidate) => {
 };
 
 const wipeAll = (t, deviceInfo) =>
-  listApps(t, deviceInfo).pipe(
+  listAppsUseCase(t, deviceInfo).pipe(
     filter(e => e.type === "result"),
     map((e: any) => e.result),
     mergeMap(listAppsResult => {

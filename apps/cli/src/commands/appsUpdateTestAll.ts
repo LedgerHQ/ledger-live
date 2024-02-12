@@ -4,7 +4,10 @@ import { mergeMap, ignoreElements, filter, map } from "rxjs/operators";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import { initState, reducer, runAll, getActionPlan } from "@ledgerhq/live-common/apps/index";
-import { listApps, execWithTransport } from "@ledgerhq/live-common/apps/hw";
+import {
+  listAppsUseCase,
+  execWithTransport,
+} from "@ledgerhq/live-common/device/use-cases/listAppsUseCase";
 import type { AppOp } from "@ledgerhq/live-common/apps/types";
 import { deviceOpt } from "../scan";
 
@@ -34,7 +37,7 @@ export default {
         // FIXME: mergeMap deprecated, using map inside pipe should do the work
         map(
           deviceInfo =>
-            listApps(t, deviceInfo).pipe(
+            listAppsUseCase(t, deviceInfo).pipe(
               filter(e => e.type === "result"),
               map((e: any) => e.result),
               mergeMap(listAppsResult => {
@@ -82,7 +85,7 @@ export default {
                         new Observable(o => {
                           let sub;
                           const timeout = setTimeout(() => {
-                            sub = listApps(t, deviceInfo).subscribe(o);
+                            sub = listAppsUseCase(t, deviceInfo).subscribe(o);
                           }, 4000);
                           return () => {
                             clearTimeout(timeout);

@@ -1,11 +1,18 @@
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import network from "@ledgerhq/live-network/network";
+import { FirmwareNotRecognized, NetworkDown } from "@ledgerhq/errors";
 import { getUserHashes } from "../../../user";
 import URL from "url";
-import { FirmwareNotRecognized } from "@ledgerhq/errors";
 import { ManagerApiRepository } from "./ManagerApiRepository";
 import { FinalFirmware, OsuFirmware } from "../entities/FirmwareUpdateContextEntity";
 import { DeviceVersionEntity } from "../entities/DeviceVersionEntity";
+import { ApplicationV2Entity } from "../entities/AppEntity";
+import { DeviceInfoEntity } from "../entities/DeviceInfoEntity";
+import {
+  LanguagePackageEntity,
+  LanguagePackageResponseEntity,
+} from "../entities/LanguagePackageEntity";
+import { getProviderIdUseCase } from "../use-cases/getProviderIdUseCase";
 
 export class HttpManagerApiRepository implements ManagerApiRepository {
   private readonly managerApiBase: string;
@@ -16,7 +23,10 @@ export class HttpManagerApiRepository implements ManagerApiRepository {
     this.liveCommonVersion = liveCommonVersion;
   }
 
-  readonly fetchLatestFirmware = makeLRUCache(
+  // NB: we are explicitly specifying the type because TypeScript cannot infer
+  // properly the return type of `makeLRUCache` without using `any` for the
+  // parameters.
+  readonly fetchLatestFirmware: ManagerApiRepository["fetchLatestFirmware"] = makeLRUCache(
     async ({ current_se_firmware_final_version, device_version, providerId, userId }) => {
       const salt = getUserHashes(userId).firmwareSalt;
       const {
@@ -51,7 +61,7 @@ export class HttpManagerApiRepository implements ManagerApiRepository {
     a => `${a.current_se_firmware_final_version}_${a.device_version}_${a.providerId}`,
   );
 
-  readonly fetchMcus = makeLRUCache(
+  readonly fetchMcus: ManagerApiRepository["fetchMcus"] = makeLRUCache(
     async () => {
       const { data } = await network({
         method: "GET",
@@ -67,7 +77,7 @@ export class HttpManagerApiRepository implements ManagerApiRepository {
     () => "",
   );
 
-  readonly getDeviceVersion = makeLRUCache(
+  readonly getDeviceVersion: ManagerApiRepository["getDeviceVersion"] = makeLRUCache(
     async ({ targetId, providerId }) => {
       const {
         data,
@@ -101,7 +111,7 @@ export class HttpManagerApiRepository implements ManagerApiRepository {
     ({ targetId, providerId }) => `${targetId}_${providerId}`,
   );
 
-  readonly getCurrentOSU = makeLRUCache(
+  readonly getCurrentOSU: ManagerApiRepository["getCurrentOSU"] = makeLRUCache(
     async input => {
       const { data } = await network({
         method: "POST",
@@ -122,7 +132,7 @@ export class HttpManagerApiRepository implements ManagerApiRepository {
     a => `${a.version}_${a.deviceId}_${a.providerId}`,
   );
 
-  readonly getCurrentFirmware = makeLRUCache(
+  readonly getCurrentFirmware: ManagerApiRepository["getCurrentFirmware"] = makeLRUCache(
     async input => {
       const {
         data,
@@ -147,7 +157,7 @@ export class HttpManagerApiRepository implements ManagerApiRepository {
     a => `${a.version}_${a.deviceId}_${a.providerId}`,
   );
 
-  readonly getFinalFirmwareById = makeLRUCache(
+  readonly getFinalFirmwareById: ManagerApiRepository["getFinalFirmwareById"] = makeLRUCache(
     async id => {
       const {
         data,
@@ -166,4 +176,104 @@ export class HttpManagerApiRepository implements ManagerApiRepository {
     },
     id => String(id),
   );
+
+  readonly getAppsByHash: ManagerApiRepository["getAppsByHash"] = makeLRUCache(
+    async hashes => {
+      const {
+        data,
+      }: {
+        data: Array<ApplicationV2Entity | null>;
+      } = await network({
+        method: "POST",
+        url: URL.format({
+          pathname: `${this.managerApiBase}/v2/apps/hash`,
+          query: {
+            livecommonversion: this.liveCommonVersion,
+          },
+        }),
+        data: hashes,
+      });
+
+      if (!data || !Array.isArray(data)) {
+        throw new NetworkDown("");
+      }
+
+      return data;
+    },
+    hashes => `${this.managerApiBase}_${hashes.join("-")}`,
+  );
+
+  readonly catalogForDevice: ManagerApiRepository["catalogForDevice"] = makeLRUCache(
+    async params => {
+      const { provider, targetId, firmwareVersion } = params;
+      const {
+        data,
+      }: {
+        data: Array<ApplicationV2Entity>;
+      } = await network({
+        method: "GET",
+        url: URL.format({
+          pathname: `${this.managerApiBase}/v2/apps/by-target`,
+          query: {
+            livecommonversion: this.liveCommonVersion,
+            provider,
+            target_id: targetId,
+            firmware_version_name: firmwareVersion,
+          },
+        }),
+      });
+
+      if (!data || !Array.isArray(data)) {
+        throw new NetworkDown("");
+      }
+
+      return data;
+    },
+    a => `${this.managerApiBase}_${a.provider}_${a.targetId}_${a.firmwareVersion}`,
+  );
+
+  readonly getLanguagePackagesForDevice = async (
+    deviceInfo: DeviceInfoEntity,
+    forceProvider?: number,
+  ) => {
+    const deviceVersion = await this.getDeviceVersion({
+      targetId: deviceInfo.targetId,
+      providerId: getProviderIdUseCase({ deviceInfo, forceProvider }),
+    });
+
+    const seFirmwareVersion = await this.getCurrentFirmware({
+      version: deviceInfo.version,
+      deviceId: deviceVersion.id,
+      providerId: getProviderIdUseCase({ deviceInfo, forceProvider }),
+    });
+
+    const { data }: { data: LanguagePackageResponseEntity[] } = await network({
+      method: "GET",
+      url: URL.format({
+        pathname: `${this.managerApiBase}/language-package`,
+        query: {
+          livecommonversion: this.liveCommonVersion,
+        },
+      }),
+    });
+
+    const allPackages: LanguagePackageEntity[] = data.reduce(
+      (acc, response) => [
+        ...acc,
+        ...response.language_package_version.map(p => ({
+          ...p,
+          language: response.language,
+        })),
+      ],
+      [] as LanguagePackageEntity[],
+    );
+
+    const packages = allPackages.filter(
+      pack =>
+        pack.device_versions.includes(deviceVersion.id) &&
+        pack.se_firmware_final_versions.includes(seFirmwareVersion.id),
+    );
+
+    return packages;
+  };
 }
