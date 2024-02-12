@@ -360,6 +360,8 @@ export function useWalletAPIServer({
               parentAccount,
             );
             if (parentAccount) {
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore
               walletApiAccount.parentAccount = accountToWalletAPIAccount(parentAccount);
             }
             resolve(walletApiAccount);
